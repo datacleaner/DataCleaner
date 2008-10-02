@@ -1,0 +1,50 @@
+DataCleaner changelog
+
+DataCleaner 1.4
+===============
+A lot of fixes and usability improvements, totalling more
+than 28 seperate tasks.
+ * Replaced "Repeated values" profile with better and more
+   advanced "Value distribution" profile.
+ * Dictionary matcher drill-to-details options.
+ * New application logo.
+ * Lots of small bugfixes and UI beautifications.
+ * Lots of sample dictionaries and regexes.
+
+DataCleaner 1.3
+===============
+Major improvements, primarily focused on saving and
+loading your work.
+ * Save and load work in Profiler and Validator.
+ * Various bugfixes, optimizations and wider database
+   support.
+ * Support for working with OpenOffice.org
+   database-files.
+ * Support for working with XML files.
+ * Functionality to swap/dice columns and rows in
+   profiler result tables.
+
+DataCleaner 1.2
+===============
+Major improvements to UI and optimization of engine.
+ * Abandonment of internal frames in favor of
+   seperate windows.
+ * Metadata- and data-layer replaced with MetaModel
+   component.
+ * New validation rule: Dictionary lookup.
+ * New profile: Dictionary matcher.
+ * Explode/Drill-to-details on profiling results.
+ * Catalogs of regexes and dictionaries.
+ * First draft for comparator functionality.
+ * CSV file quotation and separator configuration.
+
+DataCleaner 1.0
+===============
+First release of a GUI for profiling and validation
+of data.
+ * Support for JDBC databases, Excel spreadsheets
+   and CSV files.
+ * Profiles: Standard measures, Number analysis,
+   Time analysis, Repeated values, Pattern finder.
+ * Validation rules: Regex validation, Not-null check,
+   Value-range evaluation, Javascript evaluation.

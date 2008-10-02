@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<validator>
+	<dataContext>
+		<property name="password" />
+		<property name="tables">true</property>
+		<property name="views">false</property>
+		<property name="username">SA</property>
+		<property name="catalog" />
+		<property name="connectionString">
+			jdbc:hsqldb:file:samples/database
+		</property>
+	</dataContext>
+	<configuration
+		validationRuleClass="dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule">
+		<property name="Validation rule name">Not null, except REPORTSTO</property>
+		<column schema="PUBLIC" table="EMPLOYEES">EXTENSION</column>
+		<column schema="PUBLIC" table="EMPLOYEES">
+			EMPLOYEENUMBER
+		</column>
+		<column schema="PUBLIC" table="EMPLOYEES">FIRSTNAME</column>
+		<column schema="PUBLIC" table="EMPLOYEES">LASTNAME</column>
+		<column schema="PUBLIC" table="EMPLOYEES">OFFICECODE</column>
+		<column schema="PUBLIC" table="EMPLOYEES">EMAIL</column>
+		<column schema="PUBLIC" table="EMPLOYEES">JOBTITLE</column>
+	</configuration>
+	<configuration
+		validationRuleClass="dk.eobjects.datacleaner.validator.condition.JavascriptValidationRule">
+		<property name="Validation rule name">
+			REPORTSTO javascript
+		</property>
+		<property name="Javascript expression">
+			var reportsto = values.get('REPORTSTO'); var title =
+			values.get('JOBTITLE'); if (title == 'President') {
+			reportsto == null } else { reportsto != null &amp;&amp;
+			reportsto != ''; }
+		</property>
+		<column schema="PUBLIC" table="EMPLOYEES">
+			EMPLOYEENUMBER
+		</column>
+		<column schema="PUBLIC" table="EMPLOYEES">LASTNAME</column>
+		<column schema="PUBLIC" table="EMPLOYEES">FIRSTNAME</column>
+		<column schema="PUBLIC" table="EMPLOYEES">EXTENSION</column>
+		<column schema="PUBLIC" table="EMPLOYEES">EMAIL</column>
+		<column schema="PUBLIC" table="EMPLOYEES">OFFICECODE</column>
+		<column schema="PUBLIC" table="EMPLOYEES">REPORTSTO</column>
+		<column schema="PUBLIC" table="EMPLOYEES">JOBTITLE</column>
+	</configuration>
+	<configuration
+		validationRuleClass="dk.eobjects.datacleaner.validator.trivial.RegexValidationRule">
+		<property name="Validation rule name">
+			email regex
+		</property>
+		<property name="Regular expression">
+			[a-zA-Z0-9._%+-]*@[a-zA-Z0-9._%+-]*\.[a-z]{2,4}
+		</property>
+		<column schema="PUBLIC" table="EMPLOYEES">EMAIL</column>
+	</configuration>
+	<configuration
+		validationRuleClass="dk.eobjects.datacleaner.validator.dictionary.DictionaryValidationRule">
+		<property name="Validation rule name">
+			Check foobar dictionary
+		</property>
+		<property name="Dictionary name">foobar_dictionary</property>
+		<column schema="PUBLIC" table="EMPLOYEES">
+			EMPLOYEENUMBER
+		</column>
+		<column schema="PUBLIC" table="EMPLOYEES">LASTNAME</column>
+		<column schema="PUBLIC" table="EMPLOYEES">FIRSTNAME</column>
+		<column schema="PUBLIC" table="EMPLOYEES">EXTENSION</column>
+		<column schema="PUBLIC" table="EMPLOYEES">EMAIL</column>
+		<column schema="PUBLIC" table="EMPLOYEES">OFFICECODE</column>
+		<column schema="PUBLIC" table="EMPLOYEES">REPORTSTO</column>
+		<column schema="PUBLIC" table="EMPLOYEES">JOBTITLE</column>
+	</configuration>
+	<configuration
+		validationRuleClass="dk.eobjects.datacleaner.validator.trivial.ValueRangeValidationRule">
+		<property name="Validation rule name">
+			Employee no. value range
+		</property>
+		<property name="Highest value">2000</property>
+		<property name="Lowest value">1000</property>
+		<column schema="PUBLIC" table="EMPLOYEES">
+			EMPLOYEENUMBER
+		</column>
+	</configuration>
+</validator>

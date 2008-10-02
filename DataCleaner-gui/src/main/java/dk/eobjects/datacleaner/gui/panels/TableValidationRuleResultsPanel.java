@@ -1,0 +1,128 @@
+/**
+ *  This file is part of DataCleaner.
+ *
+ *  DataCleaner is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  DataCleaner is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package dk.eobjects.datacleaner.gui.panels;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.JXTaskPaneContainer;
+
+import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.widgets.ColumnHighlighter;
+import dk.eobjects.datacleaner.gui.widgets.DataTable;
+import dk.eobjects.datacleaner.validator.IValidationRule;
+import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
+import dk.eobjects.datacleaner.validator.IValidationRuleResult;
+import dk.eobjects.datacleaner.validator.trivial.DummyValidationRule;
+import dk.eobjects.metamodel.data.DataSet;
+import dk.eobjects.metamodel.data.Row;
+import dk.eobjects.metamodel.schema.Column;
+import dk.eobjects.metamodel.schema.Table;
+
+public class TableValidationRuleResultsPanel extends JPanel {
+
+	private static final long serialVersionUID = 78962947201100801L;
+	public static final Icon ICON_FAILED = GuiHelper
+			.getImageIcon("images/validation_failed.png");
+	public static final Icon ICON_SUCCESS = GuiHelper
+			.getImageIcon("images/validation_success.png");
+	public static final Icon ICON_ERROR = GuiHelper
+			.getImageIcon("images/validation_error.png");
+
+	public TableValidationRuleResultsPanel(Table table,
+			Column[] queriedColumns, List<IValidationRuleResult> results) {
+		setLayout(new BorderLayout());
+
+		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
+
+		JLabel label = new JLabel("Validation results for " + table.getName());
+		label.setFont(GuiHelper.FONT_HEADER);
+		taskPaneContainer.add(label);
+
+		for (IValidationRuleResult result : results) {
+			if (result.getDescriptor() != DummyValidationRule.DESCRIPTOR) {
+				JXTaskPane taskPane = new JXTaskPane();
+				taskPane.setAnimated(false);
+				String title = "Unnamed validation rule";
+				IValidationRuleDescriptor descriptor = result.getDescriptor();
+				taskPane.add(new JLabel("Type: " + descriptor.getDisplayName(),
+						GuiHelper.getImageIcon(descriptor.getIconPath()),
+						JLabel.LEFT));
+
+				Map<String, String> resultProperties = result.getProperties();
+				if (resultProperties != null) {
+					String validationRuleName = resultProperties
+							.get(IValidationRule.PROPERTY_NAME);
+					if (validationRuleName != null) {
+						title = validationRuleName;
+					}
+				}
+				taskPane.setTitle(title);
+				if (result.isValidated()) {
+					taskPane.setIcon(ICON_SUCCESS);
+					taskPane.setCollapsed(true);
+					taskPane.add(new JLabel("All rows where validated."));
+				} else {
+					Exception error = result.getError();
+					taskPane.setCollapsed(false);
+					if (error != null) {
+						taskPane.setIcon(ICON_ERROR);
+						JLabel errorLabel = new JLabel(error.getMessage());
+						errorLabel.setFont(errorLabel.getFont().deriveFont(
+								Font.BOLD));
+						taskPane.add(errorLabel);
+						taskPane.add(new JLabel("See the log for details."));
+					} else {
+						taskPane.setIcon(ICON_FAILED);
+						taskPane.add(new JLabel(result.getUnvalidatedRows()
+								.size()
+								+ " rows did not validate"));
+						List<Row> rows = result.getUnvalidatedRows();
+
+						DataSet data = new DataSet(rows);
+
+						DataTable dataTable = new DataTable(data);
+
+						Column[] evaluatedColumns = result
+								.getEvaluatedColumns();
+						int[] evaluatedColumnIndexes = new int[evaluatedColumns.length];
+						for (int i = 0; i < evaluatedColumnIndexes.length; i++) {
+							evaluatedColumnIndexes[i] = ArrayUtils.indexOf(
+									queriedColumns, evaluatedColumns[i]);
+						}
+
+						dataTable.addHighlighter(new ColumnHighlighter(
+								evaluatedColumnIndexes));
+
+						taskPane.add(dataTable.toPanel());
+					}
+				}
+				taskPaneContainer.add(taskPane);
+			}
+		}
+
+		add(taskPaneContainer, BorderLayout.CENTER);
+	}
+}

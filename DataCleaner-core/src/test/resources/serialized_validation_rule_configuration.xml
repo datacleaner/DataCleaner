@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration
+	validationRuleClass="dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule">
+	<property name="foo1">bar1</property>
+	<property name="foo2">bar2</property>
+	<column schema="APP" table="CUSTOMERS">CUSTOMERNAME</column>
+	<column schema="APP" table="CUSTOMERS">PHONE</column>
+</configuration>

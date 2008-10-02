@@ -75,16 +75,6 @@
 	<reporting>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
@@ -100,12 +90,6 @@
 						-collpackages java.util.* -qualify -postfixpackage
 						-nodefontsize 9 -nodefontpackagesize 7
 					</additionalparam>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<configuration>
-					<targetJdk>1.5</targetJdk>
 				</configuration>
 			</plugin>
 		</plugins>

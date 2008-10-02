@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="dk.eobjects.datacleaner.webmonitor.model">
+	<class name="ProfilerResultCell" table="profiler_result_cells">
+		<id name="id">
+			<generator class="increment" />
+		</id>
+		<many-to-one name="profilerResult" column="profiler_result_id">
+		</many-to-one>
+		<property name="columnIndex" />
+		<property name="rowIndex" />
+		<property name="value" />
+	</class>
+</hibernate-mapping>

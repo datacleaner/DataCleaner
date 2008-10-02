@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+      "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+          "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="dk.eobjects.datacleaner.webmonitor.model">
+	<class name="ProfilerJob" table="profiler_jobs">
+		<id name="id">
+			<generator class="increment" />
+		</id>
+		<property name="name" unique="true" />
+		<property name="filename" unique="false" />
+		<set name="triggers" table="profiler_jobs_triggers" lazy="true">
+			<key column="profiler_job_id" />
+			<many-to-many class="Trigger" column="trigger_id" />
+		</set>
+		<set name="results" lazy="true">
+			<key column="profiler_job_id" />
+			<one-to-many class="ProfilerResult"/>
+		</set>
+	</class>
+</hibernate-mapping>

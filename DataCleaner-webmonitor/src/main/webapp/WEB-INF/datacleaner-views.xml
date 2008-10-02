@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd ">
+
+	<!-- With this viewresolver all views are resolved using bean names -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+	<bean name="welcome" class="org.springframework.web.servlet.view.JstlView">
+		<property name="url" value="/WEB-INF/jsp/welcome.jsp" />
+	</bean>
+	<bean name="modules" class="org.springframework.web.servlet.view.tiles2.TilesView">
+		<property name="url" value="modules" />
+	</bean>
+	<bean name="profilerResult" class="org.springframework.web.servlet.view.tiles2.TilesView">
+		<property name="url" value="profilerResult" />
+	</bean>
+</beans>

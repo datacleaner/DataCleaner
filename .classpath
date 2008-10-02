@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="DataCleaner-core/target/classes" path="DataCleaner-core/src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="DataCleaner-core/target/classes" path="DataCleaner-core/src/main/resources"/>
+	<classpathentry kind="src" output="DataCleaner-core/target/test-classes" path="DataCleaner-core/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="DataCleaner-core/target/test-classes" path="DataCleaner-core/src/test/resources"/>
+	<classpathentry kind="src" output="DataCleaner-gui/target/classes" path="DataCleaner-gui/src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="DataCleaner-gui/target/classes" path="DataCleaner-gui/src/main/resources"/>
+	<classpathentry kind="src" output="DataCleaner-gui/target/test-classes" path="DataCleaner-gui/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="DataCleaner-gui/target/test-classes" path="DataCleaner-gui/src/test/resources"/>
+	<classpathentry kind="src" output="DataCleaner-webmonitor/target/classes" path="DataCleaner-webmonitor/src/main/java"/>
+	<classpathentry excluding="**" kind="src" output="DataCleaner-webmonitor/target/classes" path="DataCleaner-webmonitor/src/main/resources"/>
+	<classpathentry kind="src" output="DataCleaner-webmonitor/target/test-classes" path="DataCleaner-webmonitor/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="DataCleaner-webmonitor/target/test-classes" path="DataCleaner-webmonitor/src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

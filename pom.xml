@@ -1,26 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 	<groupId>dk.eobjects.datacleaner</groupId>
-	<artifactId>DataCleaner-core</artifactId>
-	<name>DataCleaner-core</name>
+	<artifactId>DataCleaner</artifactId>
+	<name>DataCleaner</name>
 	<version>1.5-SNAPSHOT</version>
-	<description>
-		The core library of DataCleaner with classes and methods,
-		providing a framework for Open Source Data Quality.
-	</description>
+	<description>DataCleaner is an open source project concerned with creating a data quality solutions for business and organizations wishing to measure and increase the quality of their data. DataCleaner includes functionality to profile and compare data, to validate data against business rules and to monitor the progression of these measurements over time. To do this we provide you with both a standalone desktop-application for exploring and defining the data quality effort and a web application for continuous data quality deployments.</description>
 	<url>http://eobjects.org/datacleaner</url>
 	<inceptionYear>2007</inceptionYear>
+	<packaging>pom</packaging>
 	<scm>
 		<connection>
-			scm:svn:http://eobjects.org/svn/datacleaner/DataCleaner-core/trunk/ 
+			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/ 
 		</connection>
 		<developerConnection>
-			scm:svn:http://eobjects.org/svn/datacleaner/DataCleaner-core/trunk/ 
+			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/ 
 		</developerConnection>
 		<url>
-			http://eobjects.org/trac/browser/datacleaner/DataCleaner-core/trunk 
+			http://eobjects.org/trac/browser/DataCleaner/trunk 
 		</url>
 	</scm>
+	<modules>
+		<module>DataCleaner-core</module>
+		<module>DataCleaner-gui</module>
+		<module>DataCleaner-webmonitor</module>
+		<module>DataCleaner-packaging</module>
+	</modules>
 	<distributionManagement>
 		<repository>
 			<id>datacleaner-sf-repo</id>
@@ -52,8 +56,8 @@
 	</mailingLists>
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<name>Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/lgpl.txt</url>
 		</license>
 	</licenses>
 	<build>
@@ -68,4 +72,42 @@
 			</plugin>
 		</plugins>
 	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+					<doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
+					<docletArtifact>
+						<groupId>gr.spinellis</groupId>
+					    <artifactId>UmlGraph</artifactId>
+					    <version>4.6</version>
+					</docletArtifact>
+					<additionalparam>
+						-inferrel -inferdep -quiet -hide java.*
+						-collpackages java.util.* -qualify -postfixpackage
+						-nodefontsize 9 -nodefontpackagesize 7
+					</additionalparam>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

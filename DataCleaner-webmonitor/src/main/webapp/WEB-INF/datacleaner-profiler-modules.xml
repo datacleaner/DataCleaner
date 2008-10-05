@@ -48,22 +48,4 @@
 		<property name="iconPath" value="images/dictionaries.png" />
 	</bean>
 	
-	<bean class="dk.eobjects.datacleaner.profiler.BasicProfileDescriptor">
-		<property name="displayName" value="Regex matcher" />
-		<property name="profileClass" value="dk.eobjects.datacleaner.profiler.trivial.RegexProfile" />
-		<property name="iconPath" value="images/regexes.png" />
-	</bean>
-	
-	<bean class="dk.eobjects.datacleaner.profiler.BasicProfileDescriptor">
-		<property name="displayName" value="Date mask matcher" />
-		<property name="profileClass" value="dk.eobjects.datacleaner.profiler.trivial.DateMaskProfile" />
-		<property name="literalsRequired" value="true" />
-		<property name="iconPath" value="images/profile_datemask.png" />
-	</bean>
-
-	<bean class="dk.eobjects.datacleaner.profiler.BasicProfileDescriptor">
-		<property name="displayName" value="Value distribution" />
-		<property name="profileClass" value="dk.eobjects.datacleaner.profiler.trivial.ValueDistributionProfile" />
-		<property name="iconPath" value="images/profile_repeated_values.png" />
-	</bean>
 </beans>

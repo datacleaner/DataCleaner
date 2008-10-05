@@ -62,8 +62,7 @@ public class ValidationRuleConfigurationTest extends DataCleanerTestCase {
 		Column[] columns = deserializedConfiguration.getColumns();
 		assertEquals(2, columns.length);
 		assertEquals(
-				"{JdbcColumn[name=CUSTOMERNAME,columnNumber=1,type=VARCHAR,nullable=true,indexed=false,nativeType=VARCHAR,columnSize=255],"
-						+ "JdbcColumn[name=PHONE,columnNumber=4,type=VARCHAR,nullable=true,indexed=false,nativeType=VARCHAR,columnSize=255]}",
+				"{JdbcColumn[name=CUSTOMERNAME,columnNumber=1,type=VARCHAR,nullable=false,indexed=false,nativeType=VARCHAR,columnSize=50],JdbcColumn[name=PHONE,columnNumber=4,type=VARCHAR,nullable=false,indexed=false,nativeType=VARCHAR,columnSize=50]}",
 				ArrayUtils.toString(columns));
 
 		Element serializedConfiguration = deserializedConfiguration
@@ -72,7 +71,7 @@ public class ValidationRuleConfigurationTest extends DataCleanerTestCase {
 		StringWriter sw = new StringWriter();
 		DomHelper.transform(serializedConfiguration, new StreamResult(sw));
 		assertEquals(
-				"<?xml version=_1.0_ encoding=_UTF-8_?><configuration validationRuleClass=_dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule_><property name=_foo1_>bar1</property><property name=_foo2_>bar2</property><column schema=_APP_ table=_CUSTOMERS_>CUSTOMERNAME</column><column schema=_APP_ table=_CUSTOMERS_>PHONE</column></configuration>",
+				"<?xml version=_1.0_ encoding=_UTF-8_?><configuration validationRuleClass=_dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule_><property name=_foo1_>bar1</property><property name=_foo2_>bar2</property><column schema=_PUBLIC_ table=_CUSTOMERS_>CUSTOMERNAME</column><column schema=_PUBLIC_ table=_CUSTOMERS_>PHONE</column></configuration>",
 				sw.toString().replace('\"', '_'));
 	}
 }

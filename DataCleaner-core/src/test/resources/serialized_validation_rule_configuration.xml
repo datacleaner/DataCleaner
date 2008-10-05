@@ -3,6 +3,6 @@
 	validationRuleClass="dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule">
 	<property name="foo1">bar1</property>
 	<property name="foo2">bar2</property>
-	<column schema="APP" table="CUSTOMERS">CUSTOMERNAME</column>
-	<column schema="APP" table="CUSTOMERS">PHONE</column>
+	<column schema="PUBLIC" table="CUSTOMERS">CUSTOMERNAME</column>
+	<column schema="PUBLIC" table="CUSTOMERS">PHONE</column>
 </configuration>

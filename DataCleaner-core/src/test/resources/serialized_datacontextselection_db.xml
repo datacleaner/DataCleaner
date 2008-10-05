@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataContext>
-	<property name="connectionString">jdbc:derby:src/test/resources/datacleaner_testdb;territory=en</property>
+	<property name="connectionString">jdbc:hsqldb:res:database/datacleaner</property>
 	<property name="tables">true</property>
 	<property name="views">false</property>
 </dataContext>

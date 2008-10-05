@@ -77,24 +77,21 @@ public class DataContextSelectionTest extends TestCase {
 	}
 
 	public void testDatabase() throws Exception {
-		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+		Class.forName("org.hsqldb.jdbcDriver");
 		_document = _documentBuilder.parse(new File(
 				"src/test/resources/serialized_datacontextselection_db.xml"));
 
 		_dataContextSelection = DataContextSelection.deserialize(_document
 				.getDocumentElement());
 		assertNotNull(_dataContextSelection);
-		assertEquals("APP", _dataContextSelection.getDataContext()
+		assertEquals("PUBLIC", _dataContextSelection.getDataContext()
 				.getDefaultSchema().getName());
 
 		StringWriter sw = new StringWriter();
 		DomHelper.transform(_dataContextSelection.serialize(_document),
 				new StreamResult(sw));
 		assertEquals(
-				"<?xml version=_1.0_ encoding=_UTF-8_?><dataContext><property name=_catalog_/>"
-						+ "<property name=_connectionString_>jdbc:derby:src/test/resources/datacleaner_testdb;territory=en</property>"
-						+ "<property name=_password_/><property name=_tables_>true</property><property name=_username_/>"
-						+ "<property name=_views_>false</property></dataContext>",
+				"<?xml version=_1.0_ encoding=_UTF-8_?><dataContext><property name=_catalog_/><property name=_connectionString_>jdbc:hsqldb:res:database/datacleaner</property><property name=_password_/><property name=_tables_>true</property><property name=_username_/><property name=_views_>false</property></dataContext>",
 				sw.toString().replace('\"', '_'));
 		_dataContextSelection.selectNothing();
 	}

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import dk.eobjects.datacleaner.profiler.AbstractProfile;
 import dk.eobjects.datacleaner.profiler.IProfile;
 import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
@@ -28,6 +29,8 @@ import dk.eobjects.metamodel.schema.Column;
 
 public class ProfileRunner extends
 		AbstractRunner<ProfileConfiguration, IProfileResult, IProfile> {
+
+	private boolean _detailsEnabled = true;
 
 	@Override
 	protected IProfile[] initConfigurations(
@@ -51,6 +54,10 @@ public class ProfileRunner extends
 			IProfile profile = profileClass.newInstance();
 			profile.setProperties(configuration.getProfileProperties());
 			profile.initialize(columns);
+			if (!_detailsEnabled && profile instanceof AbstractProfile) {
+				AbstractProfile ap = (AbstractProfile) profile;
+				ap.setDetailsEnabled(_detailsEnabled);
+			}
 			return profile;
 		} catch (InstantiationException e) {
 			_log.fatal(e);
@@ -69,5 +76,9 @@ public class ProfileRunner extends
 	@Override
 	protected IProfileResult getResult(IProfile processor) {
 		return processor.getResult();
+	}
+
+	public void setDetailsEnabled(boolean detailsEnabled) {
+		_detailsEnabled  = detailsEnabled;
 	}
 }

@@ -41,7 +41,7 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 	public void testMultipleProfileDefinitions() throws Exception {
 		Connection connection = getTestDbConnection();
 		DataContext dataContext = new DataContext(connection);
-		Schema schema = getTestDbSchema(connection);
+		Schema schema = dataContext.getDefaultSchema();
 
 		ProfileRunner profileRunner = new ProfileRunner();
 
@@ -103,7 +103,7 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		List<IProfileResult> results = profileRunner.getResults();
 
 		String[] expectations = {
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={ADDRESSLINE2},aaaaa 999={MatrixValue[value=11,detailQuery=SELECT \"CUSTOMERS\".\"ADDRESSLINE2\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"ADDRESSLINE2\"]},??? aaaaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"ADDRESSLINE2\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"ADDRESSLINE2\"]},aaaaa aa. 9={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"ADDRESSLINE2\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"ADDRESSLINE2\"]}]}]",
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={ADDRESSLINE2},aaaaa 999={MatrixValue[value=11,detailQuery=SELECT \"CUSTOMERS\".\"ADDRESSLINE2\", COUNT(*) FROM PUBLIC.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"ADDRESSLINE2\"]},??? aaaaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"ADDRESSLINE2\", COUNT(*) FROM PUBLIC.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"ADDRESSLINE2\"]},aaaaa aa. 9={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"ADDRESSLINE2\", COUNT(*) FROM PUBLIC.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"ADDRESSLINE2\"]}]}]",
 				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={POSTALCODE,OFFICECODE},Row count={7,7},Null values={0,0},Empty values={0,0},Highest value={NSW 2010,7},Lowest value={02107,1}]}]" };
 
 		assertEquals(expectations.length, results.size());
@@ -127,10 +127,11 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 	}
 
 	public void testProfileDefinitionsWithSameTable() throws Exception {
-		Connection connection = getTestDbConnection();
-		Schema schema = getTestDbSchema(connection);
+		DataContext dc = getTestDataContext();
+		Schema schema = dc.getDefaultSchema();
 
 		ProfileRunner profileRunner = new ProfileRunner();
+		profileRunner.setDetailsEnabled(false);
 
 		// Create profile definition for a single column
 		final Table customersTable = schema.getTableByName("CUSTOMERS");
@@ -173,11 +174,11 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		};
 
 		profileRunner.addProgressObserver(po);
-		profileRunner.execute(new DataContext(connection));
+		profileRunner.execute(dc);
 		List<IProfileResult> results = profileRunner.getResults();
 
 		String[] expectations = {
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={COUNTRY},aaaaaaaaaaa={MatrixValue[value=116,detailQuery=SELECT \"CUSTOMERS\".\"COUNTRY\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"COUNTRY\"]},aaaaa aaaaaaa={MatrixValue[value=6,detailQuery=SELECT \"CUSTOMERS\".\"COUNTRY\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"COUNTRY\"]}],Matrix[columnNames={CUSTOMERNAME},aaaaaaaaaa aaaaaaaaaaaa={MatrixValue[value=22,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa={MatrixValue[value=15,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaa aaaaaaaaaaaa aaaa.={MatrixValue[value=13,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaa aaaaaaaaaaaaa, aaa={MatrixValue[value=9,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaaaa aaaaaaa aaaaaaaaaaaa aaa.={MatrixValue[value=9,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaa aaaaaaaaaaaa, aaa.={MatrixValue[value=8,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa, aaaa.={MatrixValue[value=8,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaa aaaaaaaa aaaaaaaaaaa, aaa={MatrixValue[value=8,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaa aaaaa aaaaaaaa aaaaaaaaa={MatrixValue[value=3,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaa aaaaaaaaa & aaa.={MatrixValue[value=3,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},?????????????.aaa={MatrixValue[value=2,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaaaa.aaa={MatrixValue[value=2,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaa aaa.={MatrixValue[value=2,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaa & aaaa aa.={MatrixValue[value=2,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaaaaaa.aa.aa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaa-aaaa aaaaaaaa aaa.={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaa+ aaaaaaaa aaaaaaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaa'a aaaaaaaaaaa, aaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaa'a aaaaaaaa aa.={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaa'a aaaa aaaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},a'aaaaaa aaaaaaaaaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aa&a aaaaaaaaaaaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaa aaaaa+ aaaaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaa aaaaa& aa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aa aaaaa a'aaaaaaaaa, aa.={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaa aaaaa aa aaaa, aa.={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaa aaaaaa aaaa aaaaaa, aaa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaa 'a' aa aaaaaaaaa, aaa.={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaaaa & aaaaaaa, aa.={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]},aaaaa & aaaaaaa aa={MatrixValue[value=1,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNAME\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNAME\"]}]}]",
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={COUNTRY},aaaaaaaaaaa={116},aaaaa aaaaaaa={6}],Matrix[columnNames={CUSTOMERNAME},aaaaaaaaaa aaaaaaaaaaaa={22},aaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaaa={15},aaaaaaaaa aaaaaaaaaaaa aaaa.={13},aaaaaaaaaa aaaaaaaaaaaaa, aaa={9},aaaaaaaaaaaa aaaaaaa aaaaaaaaaaaa aaa.={9},aaaaaaaaaa aaaaaaaaaaaa, aaa.={8},aaaaaaaa aaaaaaaaaaaa aaaaaaaaaaaa, aaaa.={8},aaaaaaaaaa aaaaaaaa aaaaaaaaaaa, aaa={8},aaaaaaaa aaaaa aaaaaaaa aaaaaaaaa={3},aaaaa aaaaaaaaa & aaa.={3},?????????????.aaa={2},aaaaaaaaaaaa.aaa={2},aaaaaaaaaa aaa.={2},aaaaaa & aaaa aa.={2},aaaaaaaaaaa.aa.aa={1},aaaa-aaaa aaaaaaaa aaa.={1},aaaa+ aaaaaaaa aaaaaaa={1},aaaa'a aaaaaaaaaaa, aaa={1},aaaaa'a aaaaaaaa aa.={1},aaaaa'a aaaa aaaa={1},a'aaaaaa aaaaaaaaaa={1},aa&a aaaaaaaaaaaa={1},aaaa aaaaa+ aaaaa={1},aaaaaa aaaaa& aa={1},aa aaaaa a'aaaaaaaaa, aa.={1},aaaaaa aaaaa aa aaaa, aa.={1},aaaaaa aaaaaa aaaa aaaaaa, aaa={1},aaa 'a' aa aaaaaaaaa, aaa.={1},aaaaaaa & aaaaaaa, aa.={1},aaaaa & aaaaaaa aa={1}]}]",
 				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={CUSTOMERNAME},Row count={122},Null values={0},Empty values={0},Highest value={giftsbymail.co.uk},Lowest value={ANG Resellers}]}]" };
 
 		assertEquals(2, results.size());
@@ -185,10 +186,11 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 	}
 
 	public void testColumnProfiles() throws Exception {
-		Connection connection = getTestDbConnection();
-		Schema schema = getTestDbSchema(connection);
+		DataContext dc = getTestDataContext();
+		Schema schema = dc.getDefaultSchema();
 
 		ProfileRunner profileRunner = new ProfileRunner();
+		profileRunner.setDetailsEnabled(false);
 
 		// Create profile definition for a single column
 		final Table customersTable = schema.getTableByName("CUSTOMERS");
@@ -209,14 +211,14 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		conf2.setColumns(postalCodeColumn, officeCodeColumn);
 		profileRunner.addConfiguration(conf2);
 
-		profileRunner.execute(new DataContext(connection));
+		profileRunner.execute(dc);
 
 		List<IProfileResult> results = profileRunner.getResults();
 
 		String[] expectations = {
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={EMPLOYEENUMBER},9999={MatrixValue[value=23,detailQuery=SELECT \"EMPLOYEES\".\"EMPLOYEENUMBER\", COUNT(*) FROM APP.\"EMPLOYEES\" GROUP BY \"EMPLOYEES\".\"EMPLOYEENUMBER\"]}]}]",
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={ADDRESSLINE1,ADDRESSLINE2},Row count={122,122},Null values={0,MatrixValue[value=109,detailQuery=SELECT \"CUSTOMERS\".\"ADDRESSLINE1\", \"CUSTOMERS\".\"ADDRESSLINE2\" FROM APP.\"CUSTOMERS\" WHERE \"CUSTOMERS\".\"ADDRESSLINE2\" IS NULL]},Empty values={0,0},Highest value={Åkergatan 24,Suite 750},Lowest value={1 rue Alsace-Lorraine,2nd Floor}]}]",
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={CUSTOMERNUMBER},999={MatrixValue[value=122,detailQuery=SELECT \"CUSTOMERS\".\"CUSTOMERNUMBER\", COUNT(*) FROM APP.\"CUSTOMERS\" GROUP BY \"CUSTOMERS\".\"CUSTOMERNUMBER\"]}]}]" };
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={CUSTOMERNUMBER},999={122}]}]",
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={ADDRESSLINE1,ADDRESSLINE2},Row count={122,122},Null values={0,109},Empty values={0,0},Highest value={Åkergatan 24,Suite 750},Lowest value={1 rue Alsace-Lorraine,2nd Floor}]}]",
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={EMPLOYEENUMBER},9999={23}]}]" };
 
 		assertEquals(expectations.length, results.size());
 		assertEquals(results, expectations);

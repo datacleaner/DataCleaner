@@ -16,7 +16,6 @@
  */
 package dk.eobjects.datacleaner.execution;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +39,8 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 	}
 
 	public void testSingleValidationRule() throws Exception {
-		Connection connection = getTestDbConnection();
-		Schema schema = getTestDbSchema(connection);
+		DataContext dc = getTestDataContext();
+		Schema schema = dc.getDefaultSchema();
 		Table officesTable = schema.getTableByName("OFFICES");
 		Column postalCodeColumn = officesTable.getColumnByName("POSTALCODE");
 		Column officeCodeColumn = officesTable.getColumnByName("OFFICECODE");
@@ -53,7 +52,7 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 
 		runner.addConfiguration(conf1);
 
-		runner.execute(new DataContext(connection));
+		runner.execute(dc);
 
 		assertEquals(1, runner.getResultTables().length);
 		List<IValidationRuleResult> results = runner
@@ -64,8 +63,8 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 	}
 
 	public void testMultipleValidationRules() throws Exception {
-		Connection connection = getTestDbConnection();
-		Schema schema = getTestDbSchema(connection);
+		DataContext dc = getTestDataContext();
+		Schema schema = dc.getDefaultSchema();
 		Table table = schema.getTableByName("PRODUCTS");
 		Column productLineColumn = table.getColumnByName("PRODUCTLINE");
 		Column quantityColumn = table.getColumnByName("QUANTITYINSTOCK");
@@ -86,7 +85,7 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 		conf2.setColumns(quantityColumn);
 		runner.addConfiguration(conf2);
 
-		runner.execute(new DataContext(connection));
+		runner.execute(dc);
 
 		List<IValidationRuleResult> results = runner.getResults();
 

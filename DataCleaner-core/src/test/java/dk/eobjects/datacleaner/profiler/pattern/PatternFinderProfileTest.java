@@ -16,8 +16,6 @@
  */
 package dk.eobjects.datacleaner.profiler.pattern;
 
-import java.sql.Connection;
-
 import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
@@ -37,12 +35,12 @@ public class PatternFinderProfileTest extends DataCleanerTestCase {
 		PatternFinderProfile columnProfile = new PatternFinderProfile();
 
 		// Get data from test db connection
-		Connection connection = getTestDbConnection();
-		Schema schema = getTestDbSchema(connection);
+		DataContext dc = getTestDataContext();
+		Schema schema = dc.getDefaultSchema();
 		Table table = schema.getTableByName("PRODUCTS");
 		Column productLineColumn = table.getColumnByName("PRODUCTLINE");
-		DataSet data = new DataContext(connection).executeQuery(new Query()
-				.from(table).select(productLineColumn));
+		DataSet data = dc.executeQuery(new Query().from(table).select(
+				productLineColumn));
 
 		columnProfile.initialize(productLineColumn);
 
@@ -56,7 +54,7 @@ public class PatternFinderProfileTest extends DataCleanerTestCase {
 		IProfileResult result = columnProfile.getResult();
 
 		assertEquals(
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={PRODUCTLINE},aaaaaaa aaaa={MatrixValue[value=62,detailQuery=SELECT \"PRODUCTS\".\"PRODUCTLINE\", COUNT(*) FROM APP.\"PRODUCTS\" GROUP BY \"PRODUCTS\".\"PRODUCTLINE\"]},aaaaaaaaaaa={MatrixValue[value=37,detailQuery=SELECT \"PRODUCTS\".\"PRODUCTLINE\", COUNT(*) FROM APP.\"PRODUCTS\" GROUP BY \"PRODUCTS\".\"PRODUCTLINE\"]},aaaaaa aaa aaaaa={MatrixValue[value=11,detailQuery=SELECT \"PRODUCTS\".\"PRODUCTLINE\", COUNT(*) FROM APP.\"PRODUCTS\" GROUP BY \"PRODUCTS\".\"PRODUCTLINE\"]}]}]",
-				result.toString());
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={PRODUCTLINE},aaaaaaa aaaa={MatrixValue[value=62,detailQuery=SELECT _PRODUCTS_._PRODUCTLINE_, COUNT(*) FROM PUBLIC._PRODUCTS_ GROUP BY _PRODUCTS_._PRODUCTLINE_]},aaaaaaaaaaa={MatrixValue[value=37,detailQuery=SELECT _PRODUCTS_._PRODUCTLINE_, COUNT(*) FROM PUBLIC._PRODUCTS_ GROUP BY _PRODUCTS_._PRODUCTLINE_]},aaaaaa aaa aaaaa={MatrixValue[value=11,detailQuery=SELECT _PRODUCTS_._PRODUCTLINE_, COUNT(*) FROM PUBLIC._PRODUCTS_ GROUP BY _PRODUCTS_._PRODUCTLINE_]}]}]",
+				result.toString().replace('\"', '_'));
 	}
 }

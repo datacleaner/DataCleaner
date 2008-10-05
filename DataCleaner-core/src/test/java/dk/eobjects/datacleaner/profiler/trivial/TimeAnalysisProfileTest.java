@@ -77,7 +77,7 @@ public class TimeAnalysisProfileTest extends DataCleanerTestCase {
 						.replace('\"', '_'));
 		List<Object[]> objectArrays = dataSet.toObjectArrays();
 		assertEquals(102, objectArrays.size());
-		assertEquals("{103,JM555205,2003-06-05 00:00:00.0,16560}", ArrayUtils
+		assertEquals("{103,JM555205,2003-06-05 00:00:00.0,16560.3}", ArrayUtils
 				.toString(objectArrays.get(0)));
 
 		connection.close();

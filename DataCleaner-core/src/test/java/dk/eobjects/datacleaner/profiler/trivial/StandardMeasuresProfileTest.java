@@ -115,8 +115,7 @@ public class StandardMeasuresProfileTest extends DataCleanerTestCase {
 	public void testDetailedResults() throws Exception {
 		Connection connection = getTestDbConnection();
 		DataContext dc = new DataContext(connection);
-		Table customerTable = dc.getSchemaByName("APP").getTableByName(
-				"CUSTOMERS");
+		Table customerTable = dc.getDefaultSchema().getTableByName("CUSTOMERS");
 		assertNotNull(customerTable);
 
 		Column[] columns = customerTable.getColumns();
@@ -175,7 +174,7 @@ public class StandardMeasuresProfileTest extends DataCleanerTestCase {
 				ArrayUtils.toString(detailData.getSelectItems()));
 		assertTrue(detailData.next());
 		assertEquals(
-				"Row[values={103,Atelier graphique,Schmitt,Carine,40.32.2555,54, rue Royale,<null>,Nantes,<null>,44000,France,1370,21000}]",
+				"Row[values={103,Atelier graphique,Schmitt,Carine,40.32.2555,54, rue Royale,<null>,Nantes,<null>,44000,France,1370,21000.0}]",
 				ArrayUtils.toString(detailData.getRow().toString()));
 		assertEquals(108, detailData.toTableModel().getRowCount());
 	}

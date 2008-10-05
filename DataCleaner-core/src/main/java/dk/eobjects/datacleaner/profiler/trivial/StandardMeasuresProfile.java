@@ -133,19 +133,21 @@ public class StandardMeasuresProfile extends AbstractProfile {
 			MatrixValue[] values = mb.addColumn(columnName, _totalCount,
 					nullCount, emptyCount, highestValue, lowestValue);
 
-			if (((Long) nullCount) > 0) {
-				values[1].setDetailSource(new Query().from(column.getTable())
-						.select(_columns).where(
-								new FilterItem(new SelectItem(column),
-										OperatorType.EQUALS_TO, null)));
-			}
-
-			if (((Long) emptyCount) > 0) {
-				if (column.getType() == null || column.getType().isLiteral()) {
-					values[2].setDetailSource(new Query().from(
-							column.getTable()).select(_columns).where(
-							new FilterItem(new SelectItem(column),
-									OperatorType.EQUALS_TO, "")));
+			if (isDetailsEnabled()) {
+				if (((Long) nullCount) > 0) {
+					values[1].setDetailSource(new Query().from(column.getTable())
+							.select(_columns).where(
+									new FilterItem(new SelectItem(column),
+											OperatorType.EQUALS_TO, null)));
+				}
+				
+				if (((Long) emptyCount) > 0) {
+					if (column.getType() == null || column.getType().isLiteral()) {
+						values[2].setDetailSource(new Query().from(
+								column.getTable()).select(_columns).where(
+										new FilterItem(new SelectItem(column),
+												OperatorType.EQUALS_TO, "")));
+					}
 				}
 			}
 		}

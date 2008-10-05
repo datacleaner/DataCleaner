@@ -216,7 +216,6 @@ public class HTMLTokenMarker extends TokenMarker {
 	private int lastOffset;
 	private int lastKeyword;
 
-	@SuppressWarnings("unused")
 	private boolean doKeyword(Segment line, int i, char c) {
 		int i1 = i + 1;
 

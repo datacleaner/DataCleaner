@@ -6,15 +6,4 @@
 	<import resource="datacleaner-profiler-modules.xml" />
 	<import resource="datacleaner-validator-modules.xml" />
 
-	<!-- Named connections. Add your own connections here. -->
-	<bean class="dk.eobjects.datacleaner.gui.model.NamedConnection">
-		<property name="name" value="DataCleaner TestDB (derby)" />
-		<property name="driverClass"
-			value="org.apache.derby.jdbc.ClientDriver" />
-		<property name="connectionString"
-			value="jdbc:derby://localhost:1527/databases/datacleaner_testdb" />
-		<property name="username" value="APP" />
-		<property name="password" value="APP" />
-	</bean>
-
 </beans>

@@ -1870,7 +1870,6 @@ public class JEditTextArea extends JComponent implements UndoableEditListener,
 			}
 		}
 
-		@SuppressWarnings("unused")
 		private void doSingleClick(MouseEvent evt, int line, int offset, int dot) {
 			if ((evt.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
 				rectSelect = (evt.getModifiers() & InputEvent.CTRL_MASK) != 0;
@@ -1879,7 +1878,6 @@ public class JEditTextArea extends JComponent implements UndoableEditListener,
 				setCaretPosition(dot);
 		}
 
-		@SuppressWarnings("unused")
 		private void doDoubleClick(MouseEvent evt, int line, int offset, int dot)
 				throws BadLocationException {
 			// Ignore empty lines
@@ -1953,7 +1951,6 @@ public class JEditTextArea extends JComponent implements UndoableEditListener,
 			 */
 		}
 
-		@SuppressWarnings("unused")
 		private void doTripleClick(MouseEvent evt, int line, int offset, int dot) {
 			select(getLineStartOffset(line), getLineEndOffset(line) - 1);
 		}

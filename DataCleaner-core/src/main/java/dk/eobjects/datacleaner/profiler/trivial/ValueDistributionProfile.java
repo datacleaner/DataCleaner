@@ -60,12 +60,6 @@ public class ValueDistributionProfile extends AbstractProfile {
 	@Override
 	protected void processValue(Column column, Object value, long valueCount,
 			Row row) {
-		/**
-		 * TODO: Ticket #203: Enable Value Distribution for numeric values (not
-		 * only strings)
-		 * 
-		 * @see http://eobjects.org/trac/ticket/203
-		 */
 		String repeatedValue = null;
 		if (value != null) {
 			repeatedValue = value.toString();

@@ -4,9 +4,6 @@
 <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
 <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/DataCleaner-core/DataCleaner-core">
-<dependency-type>uses</dependency-type>
-</dependent-module>
 <property name="context-root" value="DataCleaner-webmonitor"/>
 <property name="java-output-path" value="build/classes"/>
 </wb-module>

@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>DataCleaner</artifactId>
@@ -17,7 +16,10 @@
 			<artifactId>DataCleaner-gui</artifactId>
 			<version>${project.version}</version>
 			<exclusions>
-				<!-- Replace the old looks jar with a new one (from the third party repository) -->
+				<!--
+					Replace the old looks jar with a new one (from the third party
+					repository)
+				-->
 				<exclusion>
 					<groupId>com.jgoodies</groupId>
 					<artifactId>looks</artifactId>
@@ -67,20 +69,15 @@
 						</goals>
 						<configuration>
 							<descriptorRefs>
-								<descriptorRef>
-									jar-with-dependencies
-								</descriptorRef>
+								<descriptorRef> jar-with-dependencies </descriptorRef>
 							</descriptorRefs>
 							<archive>
 								<manifest>
-									<mainClass>
-										dk.eobjects.datacleaner.gui.DataCleanerGui
+									<mainClass> dk.eobjects.datacleaner.gui.DataCleanerGui 
 									</mainClass>
 								</manifest>
 							</archive>
-							<outputDirectory>
-								${project.build.directory}
-							</outputDirectory>
+							<outputDirectory> ${project.build.directory} </outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -117,19 +114,9 @@
 						<phase>install</phase>
 						<configuration>
 							<tasks>
-								<copy
-									file="target/datacleaner-jar-with-dependencies.jar"
+								<copy file="target/datacleaner-jar-with-dependencies.jar"
 									tofile="target/dist/datacleaner.jar" />
-								<zip
-									destfile="target/dist/${project.name}-${project.version}-win32.zip">
-									<fileset dir="target/dist">
-										<include name="datacleaner-*.xml" />
-										<include name="datacleaner.exe" />
-										<include name="samples/**" />
-									</fileset>
-								</zip>
-								<zip
-									destfile="target/dist/${project.name}-${project.version}-all.zip">
+								<zip destfile="target/dist/${project.name}-${project.version}.zip">
 									<fileset dir="target/dist">
 										<include name="datacleaner-*.xml" />
 										<include name="datacleaner.jar" />
@@ -138,8 +125,7 @@
 										<include name="samples/**" />
 									</fileset>
 								</zip>
-								<tar
-									destfile="target/dist/${project.name}-${project.version}-all.tar.gz"
+								<tar destfile="target/dist/${project.name}-${project.version}.tar.gz"
 									compression="gzip">
 									<tarfileset dir="target/dist">
 										<include name="datacleaner-*.xml" />
@@ -160,40 +146,29 @@
 			<plugin>
 				<groupId>com.akathist.maven.plugins.launch4j</groupId>
 				<artifactId>launch4j-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<!-- Needs to run after 'copy-dist-files' -->
-						<id>gui-windows-executable</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<headerType>gui</headerType>
-							<outfile>
-								${project.build.directory}/dist/datacleaner.exe
-							</outfile>
-							<jar>
-								${project.build.directory}/datacleaner-jar-with-dependencies.jar
-							</jar>
-							<errTitle>DataCleaner</errTitle>
-							<icon>src/packaging/icon.ico</icon>
-							<jre>
-								<minVersion>1.5.0</minVersion>
-								<maxHeapSize>1024</maxHeapSize>
-								<opts>
-									<opt>-XX:MaxPermSize=256m</opt>
-								</opts>
-							</jre>
-							<splash>
-								<file>src/packaging/splash.bmp</file>
-								<waitForWindow>true</waitForWindow>
-								<timeout>90</timeout>
-								<timeoutErr>true</timeoutErr>
-							</splash>
-						</configuration>
-					</execution>
-				</executions>
+				<configuration>
+					<headerType>gui</headerType>
+					<outfile> ${project.build.directory}/dist/datacleaner.exe 
+					</outfile>
+					<jar>
+						${project.build.directory}/dist/datacleaner.jar 
+					</jar>
+					<errTitle>DataCleaner</errTitle>
+					<icon>src/packaging/icon.ico</icon>
+					<jre>
+						<minVersion>1.5.0</minVersion>
+						<maxHeapSize>1024</maxHeapSize>
+						<opts>
+							<opt>-XX:MaxPermSize=256m</opt>
+						</opts>
+					</jre>
+					<splash>
+						<file>src/packaging/splash.bmp</file>
+						<waitForWindow>true</waitForWindow>
+						<timeout>90</timeout>
+						<timeoutErr>true</timeoutErr>
+					</splash>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

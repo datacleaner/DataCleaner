@@ -197,8 +197,7 @@ public class PythonTokenMarker extends TokenMarker {
 	private int lastOffset;
 	private int lastKeyword;
 
-	private boolean doKeyword(Segment line, int i, @SuppressWarnings("unused")
-	char c) {
+	private boolean doKeyword(Segment line, int i, char c) {
 		int i1 = i + 1;
 
 		int len = i - lastKeyword;

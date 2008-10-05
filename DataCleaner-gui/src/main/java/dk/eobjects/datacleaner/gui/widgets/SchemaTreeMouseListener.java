@@ -170,8 +170,7 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 	 * Handles double clicks on the schema tree, which toggles the selected
 	 * metadata item in the data selection
 	 */
-	private void handleDoubleClick(
-			@SuppressWarnings("unused") final Schema schema, final Table table,
+	private void handleDoubleClick(final Schema schema, final Table table,
 			final Column column) {
 		if (table != null) {
 			if (column == null) {

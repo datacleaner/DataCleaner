@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>DataCleaner</artifactId>
@@ -15,7 +14,11 @@
 		<dependency>
 			<groupId>dk.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-core</artifactId>
-			<version>${project.version}</version>
+			<!--
+				webmonitor is still under heavy development so a dependency in flux
+				is discouraged
+			-->
+			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

@@ -1,5 +1,22 @@
 DataCleaner changelog
 
+DataCleaner 1.5
+===============
+major update to functionality with lots of new features
+built upon the stabilization release of 1.4:
+ * Change of license to LGPL.
+ * Command line (batch) execution of DataCleaner tasks.
+ * More Pattern finder configuration options.
+ * New profile: Date mask matcher.
+ * New profile: Regex matcher.
+ * New profile: Duplicate records profile.
+ * More file types supported (.dat, .txt)
+ * Memory improvements in Value distribution and
+   Time analysis profiles.
+ * Improved logging when running profiling and
+   validation.
+ * New MAC OSX native executable. 
+
 DataCleaner 1.4
 ===============
 A lot of fixes and usability improvements, totalling more

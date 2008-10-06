@@ -1,6 +1,8 @@
 DataCleaner ${version}
 Copyright 2008 eobjects.org
 
+Licensed under the LGPL license
+
 Developers:
  Kasper Sørensen
  Jesper Lind

@@ -26,6 +26,7 @@ import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Schema;
 import dk.eobjects.metamodel.schema.Table;
@@ -40,7 +41,7 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 
 	public void testMultipleProfileDefinitions() throws Exception {
 		Connection connection = getTestDbConnection();
-		DataContext dataContext = new DataContext(connection);
+		DataContext dataContext = JdbcDataContextFactory.getDataContext(connection);
 		Schema schema = dataContext.getDefaultSchema();
 
 		ProfileRunner profileRunner = new ProfileRunner();

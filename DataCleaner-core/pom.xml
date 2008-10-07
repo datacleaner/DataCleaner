@@ -13,9 +13,9 @@
 	<name>DataCleaner-core</name>
 	<dependencies>
 		<dependency>
-			<groupId>dk.eobjects.commons</groupId>
-			<artifactId>MetaModel</artifactId>
-			<version>1.0.7</version>
+			<groupId>dk.eobjects.metamodel</groupId>
+			<artifactId>MetaModel-full</artifactId>
+			<version>1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>rhino</groupId>

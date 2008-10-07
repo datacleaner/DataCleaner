@@ -165,7 +165,9 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	public static void saveSettings(GuiSettings settings) {
 		try {
 			if (settings != null) {
-				sortDictionaries(settings.getDictionaries());
+				List<IDictionary> dictionaries = settings.getDictionaries();
+				DictionaryManager.setDictionaries(dictionaries);
+				sortDictionaries(dictionaries);
 				ObjectOutputStream outputStream = new ObjectOutputStream(
 						new FileOutputStream(new File(SETTINGS_FILE)));
 				outputStream.writeObject(settings);

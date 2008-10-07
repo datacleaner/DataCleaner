@@ -19,6 +19,7 @@ package dk.eobjects.datacleaner.gui.widgets;
 import java.io.File;
 
 import junit.framework.TestCase;
+import dk.eobjects.metamodel.CsvDataContextStrategy;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.query.Query;
@@ -28,7 +29,8 @@ public class DataTableTest extends TestCase {
 
 	public void testMoreColumnsThanRows() throws Exception {
 		File file = new File("src/test/resources/more_columns_than_rows.csv");
-		DataContext dataContext = new DataContext(file);
+		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
+				file));
 		Table table = dataContext.getSchemas()[0].getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));
@@ -39,7 +41,8 @@ public class DataTableTest extends TestCase {
 
 	public void testMoreRowsThanColumns() throws Exception {
 		File file = new File("src/test/resources/more_rows_than_columns.csv");
-		DataContext dataContext = new DataContext(file);
+		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
+				file));
 		Table table = dataContext.getSchemas()[0].getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));
@@ -54,7 +57,8 @@ public class DataTableTest extends TestCase {
 
 	public void testMoreColumnsThanRowsWithSchema() throws Exception {
 		File file = new File("src/test/resources/more_columns_than_rows.csv");
-		DataContext dataContext = new DataContext(file);
+		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
+				file));
 		Table table = dataContext.getSchemas()[0].getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));
@@ -65,7 +69,8 @@ public class DataTableTest extends TestCase {
 
 	public void testMoreRowsThanColumnsWithSchema() throws Exception {
 		File file = new File("src/test/resources/more_rows_than_columns.csv");
-		DataContext dataContext = new DataContext(file);
+		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
+				file));
 		Table table = dataContext.getSchemas()[0].getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));

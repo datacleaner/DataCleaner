@@ -36,6 +36,10 @@ import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.datacleaner.util.WeakObservable;
 import dk.eobjects.metamodel.CsvDataContextStrategy;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.ExcelDataContextStrategy;
+import dk.eobjects.metamodel.IDataContextStrategy;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
+import dk.eobjects.metamodel.OpenOfficeDataContextStrategy;
 import dk.eobjects.metamodel.XmlDataContextStrategy;
 import dk.eobjects.metamodel.schema.TableType;
 
@@ -50,6 +54,13 @@ import dk.eobjects.metamodel.schema.TableType;
 public class DataContextSelection extends WeakObservable {
 
 	public static final String NODE_NAME = "dataContext";
+	public static final String EXTENSION_COMMA_SEPARATED = "csv";
+	public static final String EXTENSION_TAB_SEPARATED = "tsv";
+	public static final String EXTENSION_XLS = "xls";
+	public static final String EXTENSION_ODB = "odb";
+	public static final String EXTENSION_XML = "xml";
+	public static final String EXTENSION_DAT = "dat";
+	public static final String EXTENSION_TEXT = "txt";
 
 	private DataContext _dataContext;
 	private Connection _connectionObject;
@@ -121,7 +132,8 @@ public class DataContextSelection extends WeakObservable {
 		Connection connection = DriverManager.getConnection(connectionString,
 				username, password);
 		connection.setReadOnly(true);
-		DataContext dc = new DataContext(connection, catalog, tableTypes);
+		DataContext dc = JdbcDataContextFactory.getDataContext(connection,
+				catalog, tableTypes);
 		setDataContext(dc, connection);
 		_connectionMetadata.clear();
 		_connectionMetadata.put("connectionString", connectionString);
@@ -152,25 +164,34 @@ public class DataContextSelection extends WeakObservable {
 		if (_log.isDebugEnabled() && file != null) {
 			_log.debug("selectFile(" + file.getAbsolutePath() + ")");
 		}
+
 		DataContext dc;
 		try {
-			dc = new DataContext(file);
+			IDataContextStrategy strategy = null;
+			String extention = getExtention(file);
+			if (extention.equals(EXTENSION_ODB)) {
+				strategy = new OpenOfficeDataContextStrategy(file);
+			} else if (extention.equals(EXTENSION_XML)) {
+				strategy = new XmlDataContextStrategy(file, true);
+			} else if (extention.equals(EXTENSION_XLS)) {
+				strategy = new ExcelDataContextStrategy(file);
+			} else {
+				// Try XML parsing, perhaps there's a DOM that can be used
+				Document document = DocumentBuilderFactory.newInstance()
+						.newDocumentBuilder().parse(file);
+				strategy = new XmlDataContextStrategy(file.getName(), document,
+						true);
+			}
+			dc = new DataContext(strategy);
 		} catch (Exception e1) {
 			_log
 					.debug(
 							"Could not open file by using new DataContext(file)",
 							e1);
-			try {
-				Document document = DocumentBuilderFactory.newInstance()
-						.newDocumentBuilder().parse(file);
-				dc = new DataContext(new XmlDataContextStrategy(file.getName(),
-						document, true));
-			} catch (Exception e2) {
-				if (e2 instanceof RuntimeException) {
-					throw (RuntimeException) e2;
-				}
-				throw new IllegalArgumentException(e2);
+			if (e1 instanceof RuntimeException) {
+				throw (RuntimeException) e1;
 			}
+			throw new IllegalArgumentException(e1);
 		}
 		setDataContext(dc, null);
 		_connectionMetadata.clear();
@@ -232,5 +253,16 @@ public class DataContextSelection extends WeakObservable {
 							+ properties.toString());
 		}
 		return dcs;
+	}
+
+	public static String getExtention(File file) {
+		if (file != null) {
+			String temp = file.getName();
+			int i = temp.lastIndexOf('.');
+			if (i != -1) {
+				return (temp.substring(i + 1, temp.length()));
+			}
+		}
+		return null;
 	}
 }

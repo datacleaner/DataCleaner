@@ -26,6 +26,7 @@ import dk.eobjects.datacleaner.catalog.ColumnDictionary;
 import dk.eobjects.datacleaner.catalog.IDictionary;
 import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.schema.Column;
 
 public class DatabaseDictionary implements IDictionary {
@@ -77,7 +78,7 @@ public class DatabaseDictionary implements IDictionary {
 							namedConnection.getUsername(), namedConnection
 									.getPassword());
 					connection.setReadOnly(true);
-					dc = new DataContext(connection, namedConnection
+					dc = JdbcDataContextFactory.getDataContext(connection, namedConnection
 							.getCatalog());
 				}
 			}

@@ -34,11 +34,11 @@ import dk.eobjects.datacleaner.catalog.IDictionary;
 import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
 import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
 import dk.eobjects.datacleaner.profiler.trivial.DictionaryProfile;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
-import dk.eobjects.datacleaner.validator.dictionary.DictionaryManager;
 import dk.eobjects.metamodel.schema.Column;
 
 public class DictionaryProfileConfigurationPanel implements IConfigurationPanel {
@@ -61,17 +61,18 @@ public class DictionaryProfileConfigurationPanel implements IConfigurationPanel 
 		_subsetDataSelectionPanel = SubsetDataSelectionPanel.createPanel(
 				columnSelection, _descriptor);
 
-		JPanel dictionaryPanel = GuiHelper.createPanel().applyTitledBorder("Use dictionaries").applyVerticalLayout()
-				.toComponent();
+		JPanel dictionaryPanel = GuiHelper.createPanel().applyTitledBorder(
+				"Use dictionaries").applyVerticalLayout().toComponent();
 
-		IDictionary[] dictionaries = DictionaryManager.getDictionaries();
+		List<IDictionary> dictionaries = GuiSettings.getSettings()
+				.getDictionaries();
 
 		List<String> enabledDictionaryNames = ReflectionHelper
 				.getIteratedProperties(
 						DictionaryProfile.PREFIX_PROPERTY_DICTIONARY,
 						_configuration.getProfileProperties());
 		if (enabledDictionaryNames.isEmpty()) {
-			enabledDictionaryNames = new ArrayList<String>(dictionaries.length);
+			enabledDictionaryNames = new ArrayList<String>(dictionaries.size());
 			for (IDictionary dictionary : dictionaries) {
 				enabledDictionaryNames.add(dictionary.getName());
 			}

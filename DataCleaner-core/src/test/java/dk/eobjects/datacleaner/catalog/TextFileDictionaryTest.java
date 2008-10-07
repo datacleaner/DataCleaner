@@ -16,9 +16,15 @@
  */
 package dk.eobjects.datacleaner.catalog;
 
+import java.io.File;
+
+import org.apache.commons.lang.ArrayUtils;
+
 import dk.eobjects.datacleaner.catalog.IDictionary;
 import dk.eobjects.datacleaner.catalog.TextFileDictionary;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
+import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.schema.Column;
 
 public class TextFileDictionaryTest extends DataCleanerTestCase {
 
@@ -35,7 +41,7 @@ public class TextFileDictionaryTest extends DataCleanerTestCase {
 		assertTrue(valid[0]);
 		assertFalse(valid[1]);
 	}
-	
+
 	public void testNull() throws Exception {
 		boolean[] valid = _dictionary.isValid("foo", null, "foo bar");
 		assertTrue(valid[0]);
@@ -74,5 +80,23 @@ public class TextFileDictionaryTest extends DataCleanerTestCase {
 		assertTrue(valid[1]);
 		assertTrue(valid[2]);
 		assertFalse(valid[3]);
+	}
+
+	public void testWriteDictionary() throws Exception {
+		File outputFile = getTestResourceAsFile("dictionary_write_output.txt");
+		File benchmarkFile = getTestResourceAsFile("dictionary_write_bench.txt");
+
+		DataContext dc = getTestDataContext();
+		Column cityColumn = dc.getDefaultSchema().getTableByName("CUSTOMERS")
+				.getColumnByName("CITY");
+
+		TextFileDictionary dictionary = TextFileDictionary
+				.createTextFileDictionary("foobar", cityColumn, dc, outputFile);
+		assertEquals("TextFileDictionary[name=foobar]", dictionary.toString());
+
+		assertEqualsFile(benchmarkFile, outputFile);
+
+		assertEquals("{true,false}", ArrayUtils.toString(dictionary.isValid(
+				"Brisbane", "uggamomma")));
 	}
 }

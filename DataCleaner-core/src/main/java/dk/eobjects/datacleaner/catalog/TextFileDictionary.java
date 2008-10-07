@@ -17,6 +17,7 @@
 package dk.eobjects.datacleaner.catalog;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +30,11 @@ import org.apache.commons.logging.LogFactory;
 import dk.eobjects.datacleaner.profiler.pattern.ITokenizer;
 import dk.eobjects.datacleaner.profiler.pattern.Token;
 import dk.eobjects.datacleaner.profiler.pattern.WordAndNumberTokenizer;
+import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.data.DataSet;
+import dk.eobjects.metamodel.data.Row;
+import dk.eobjects.metamodel.query.Query;
+import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.util.FileHelper;
 
 /**
@@ -41,6 +47,37 @@ public class TextFileDictionary implements IDictionary {
 	private transient ArrayList<String> _wordList;
 	private File _dictionaryFile;
 	private String _name;
+
+	public static TextFileDictionary createTextFileDictionary(String name,
+			Column column, DataContext dc, File file) {
+		BufferedWriter writer = FileHelper.getBufferedWriter(file);
+		try {
+			Query q = new Query().select(column).from(column.getTable())
+					.orderBy(column);
+			q.getSelectClause().setDistinct(true);
+			DataSet dataSet = dc.executeQuery(q);
+			while (dataSet.next()) {
+				Row row = dataSet.getRow();
+				Object value = row.getValue(column);
+				if (value != null) {
+					writer.write(value.toString());
+					writer.write('\n');
+				}
+			}
+			dataSet.close();
+		} catch (IOException e) {
+			_log.info("Couldn't write line: " + e.getMessage());
+			_log.debug(e);
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				_log.info("Couldn't close writer: " + e.getMessage());
+			}
+		}
+		
+		return new TextFileDictionary(name, file);
+	}
 
 	public String getName() {
 		return _name;

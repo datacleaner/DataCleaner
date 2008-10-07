@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import dk.eobjects.datacleaner.catalog.IDictionary;
 import dk.eobjects.datacleaner.catalog.TextFileDictionary;
 import dk.eobjects.datacleaner.data.ColumnSelection;
+import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.validator.BasicValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
@@ -39,7 +40,7 @@ public class DictionaryValidationRuleConfigurationPanelTest extends TestCase {
 		List<IDictionary> dictionaries = new ArrayList<IDictionary>();
 		dictionaries.add(new TextFileDictionary("foo", new File("foo.txt")));
 		dictionaries.add(new TextFileDictionary("bar", new File("bar.txt")));
-		DictionaryManager.setDictionaries(dictionaries);
+		GuiSettings.getSettings().setDictionaries(dictionaries);
 
 		IValidationRuleDescriptor descriptor = new BasicValidationRuleDescriptor(
 				"Dictionary lookup", DictionaryValidationRule.class);

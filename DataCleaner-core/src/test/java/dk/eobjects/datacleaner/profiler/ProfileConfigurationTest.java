@@ -30,6 +30,7 @@ import dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.schema.Column;
 
 public class ProfileConfigurationTest extends DataCleanerTestCase {
@@ -45,7 +46,7 @@ public class ProfileConfigurationTest extends DataCleanerTestCase {
 		Document document = db
 				.parse(getTestResourceAsFile("serialized_profile_configuration.xml"));
 
-		DataContext dc = new DataContext(getTestDbConnection());
+		DataContext dc = JdbcDataContextFactory.getDataContext(getTestDbConnection());
 
 		ProfileConfiguration deserializedConfiguration = ProfileConfiguration
 				.deserialize(document.getDocumentElement(), dc);

@@ -28,6 +28,7 @@ import java.awt.LayoutManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +41,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -115,6 +117,19 @@ public class GuiHelper {
 			buttonGroup.add(component);
 		}
 		return new GuiBuilder<JRadioButton>(component).applyLightBackground();
+	}
+
+	public static GuiBuilder<JMenuItem> createMenuItem(String text,
+			String iconFilename) {
+		JMenuItem menuItem = new JMenuItem();
+		if (text != null) {
+			menuItem.setText(text);
+			menuItem.setToolTipText(text);
+		}
+		if (iconFilename != null) {
+			menuItem.setIcon(getImageIcon(iconFilename));
+		}
+		return new GuiBuilder<JMenuItem>(menuItem);
 	}
 
 	public static GuiBuilder<JTextArea> createLabelTextArea() {
@@ -215,9 +230,12 @@ public class GuiHelper {
 	}
 
 	public static Image getImage(String imagePath) {
+		URL url = ClassLoader.getSystemResource(imagePath);
 		try {
-			return ImageIO.read(ClassLoader.getSystemResource(imagePath));
+			return ImageIO.read(url);
 		} catch (IOException e) {
+			_log.error("Could not read image data from path: " + imagePath);
+			_log.error("System resource: " + url);
 			throw new IllegalArgumentException(e);
 		}
 	}

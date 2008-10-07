@@ -28,6 +28,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.easymock.EasyMock;
 
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
+import dk.eobjects.metamodel.util.FileHelper;
 
 /**
  * Testcase implementation with some additional functionality suited for testing
@@ -83,7 +85,7 @@ public abstract class DataCleanerTestCase extends TestCase {
 	}
 
 	public DataContext getTestDataContext() throws Exception {
-		return new DataContext(getTestDbConnection());
+		return JdbcDataContextFactory.getDataContext(getTestDbConnection());
 	}
 
 	public void assertEqualsIgnoreCase(String expected, String actual) {
@@ -134,5 +136,12 @@ public abstract class DataCleanerTestCase extends TestCase {
 
 	protected File getTestResourceAsFile(String filename) {
 		return new File("src/test/resources/" + filename);
+	}
+
+	public void assertEqualsFile(File benchmarkFile, File outputFile) {
+		assertTrue("Benchmark file does not exist", benchmarkFile.exists());
+		assertTrue("Output file does not exist", outputFile.exists());
+		assertEquals(FileHelper.readFileAsString(benchmarkFile), FileHelper
+				.readFileAsString(outputFile));
 	}
 }

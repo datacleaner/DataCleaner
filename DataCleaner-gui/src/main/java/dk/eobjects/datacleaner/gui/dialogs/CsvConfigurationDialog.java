@@ -35,7 +35,6 @@ import javax.swing.border.LineBorder;
 
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.gui.GuiHelper;
-import dk.eobjects.datacleaner.gui.model.ExtensionFilter;
 import dk.eobjects.datacleaner.gui.widgets.DataTable;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.data.DataSet;
@@ -78,8 +77,8 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 		toolbar.add(okButton);
 		add(toolbar, BorderLayout.SOUTH);
 
-		String fileExtension = ExtensionFilter.getExtention(file);
-		if (DataFileChooser.EXTENSION_TAB_SEPARATED.equals(fileExtension)) {
+		String fileExtension = DataContextSelection.getExtention(file);
+		if (DataContextSelection.EXTENSION_TAB_SEPARATED.equals(fileExtension)) {
 			_tabButton.setSelected(true);
 			_curSeparator = TAB_ACTION_CMD.charAt(0);
 		}

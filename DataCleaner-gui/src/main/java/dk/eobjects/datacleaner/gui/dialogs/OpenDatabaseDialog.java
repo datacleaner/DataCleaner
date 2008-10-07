@@ -19,11 +19,11 @@ package dk.eobjects.datacleaner.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -127,8 +127,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		_nameComboBox = new JComboBox(connectionNames);
 		_nameComboBox.setEditable(false);
 		_nameComboBox.setName("Named connection");
-		_nameComboBox.addActionListener(new AbstractAction() {
-			private static final long serialVersionUID = -2655701156220804159L;
+		_nameComboBox.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				Object selectedItem = _nameComboBox.getSelectedItem();
@@ -143,9 +142,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		GuiHelper.addToGridBag(_nameComboBox, panel, 1, 1, 1, 1);
 
 		JButton connectButton = new JButton();
-		connectButton.setAction(new AbstractAction() {
-
-			private static final long serialVersionUID = -8103304465976127793L;
+		connectButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
 				String connectionString = _connectionStringField.getText();

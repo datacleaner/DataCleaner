@@ -30,6 +30,7 @@ import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.schema.Column;
 
 public class ValidationRuleConfigurationTest extends DataCleanerTestCase {
@@ -45,7 +46,7 @@ public class ValidationRuleConfigurationTest extends DataCleanerTestCase {
 		Document document = db
 				.parse(getTestResourceAsFile("serialized_validation_rule_configuration.xml"));
 
-		DataContext dc = new DataContext(getTestDbConnection());
+		DataContext dc = JdbcDataContextFactory.getDataContext(getTestDbConnection());
 
 		ValidationRuleConfiguration deserializedConfiguration = ValidationRuleConfiguration
 				.deserialize(document.getDocumentElement(), dc);

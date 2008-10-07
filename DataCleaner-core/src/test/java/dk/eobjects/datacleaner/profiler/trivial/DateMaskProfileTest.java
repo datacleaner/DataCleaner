@@ -26,6 +26,7 @@ import org.joda.time.format.DateTimeFormatter;
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
+import dk.eobjects.metamodel.CsvDataContextStrategy;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.Row;
@@ -96,8 +97,8 @@ public class DateMaskProfileTest extends DataCleanerTestCase {
 	}
 
 	public void testSeveralColumns() throws Exception {
-		DataContext dc = new DataContext(
-				getTestResourceAsFile("datemask_fields.csv"));
+		DataContext dc = new DataContext(new CsvDataContextStrategy(
+				getTestResourceAsFile("datemask_fields.csv")));
 		Table table = dc.getDefaultSchema().getTables()[0];
 		Column[] columns = table.getColumns();
 
@@ -134,7 +135,7 @@ public class DateMaskProfileTest extends DataCleanerTestCase {
 
 		assertEquals(3, matrix.getValue("dd-MM-yyyy", "date1").getDetails(dc)
 				.toObjectArrays().size());
-		
+
 		assertEquals(4, matrix.getValue("No Matches", "desc").getDetails(dc)
 				.toObjectArrays().size());
 	}

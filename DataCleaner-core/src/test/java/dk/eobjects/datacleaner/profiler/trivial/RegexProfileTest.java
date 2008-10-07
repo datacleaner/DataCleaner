@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.Query;
@@ -69,7 +70,7 @@ public class RegexProfileTest extends DataCleanerTestCase {
 
 	public void testSeveralColumns() throws Exception {
 		Connection connection = getTestDbConnection();
-		DataContext dc = new DataContext(connection);
+		DataContext dc = JdbcDataContextFactory.getDataContext(connection);
 
 		Table employeesTable = dc.getDefaultSchema()
 				.getTableByName("EMPLOYEES");

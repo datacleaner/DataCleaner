@@ -20,6 +20,8 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+import dk.eobjects.datacleaner.data.DataContextSelection;
+
 /**
  * A file filter for JFileChooser's which filters on behalf of the file
  * extension
@@ -39,7 +41,7 @@ public class ExtensionFilter extends FileFilter {
 		if (f.isDirectory()) {
 			return true;
 		}
-		String fileExtension = getExtention(f);
+		String fileExtension = DataContextSelection.getExtention(f);
 
 		if (fileExtension != null) {
 			if (fileExtension.equals(_extension)) {
@@ -53,16 +55,5 @@ public class ExtensionFilter extends FileFilter {
 	@Override
 	public String getDescription() {
 		return _desc;
-	}
-
-	public static String getExtention(File file) {
-		if (file != null) {
-			String temp = file.getName();
-			int i = temp.lastIndexOf('.');
-			if (i != -1) {
-				return (temp.substring(i + 1, temp.length()));
-			}
-		}
-		return null;
 	}
 }

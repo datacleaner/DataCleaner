@@ -22,6 +22,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
@@ -29,7 +30,7 @@ public class ColumnDictionaryTest extends DataCleanerTestCase {
 
 	public void testIsValid() throws Exception {
 		Connection con = getTestDbConnection();
-		DataContext dc = new DataContext(con);
+		DataContext dc = JdbcDataContextFactory.getDataContext(con);
 		Table employeeTable = dc.getDefaultSchema().getTableByName("EMPLOYEES");
 
 		Column column = employeeTable.getColumnByName("LASTNAME");
@@ -55,7 +56,7 @@ public class ColumnDictionaryTest extends DataCleanerTestCase {
 	 */
 	public void testValueWithSingleQuote() throws Exception {
 		Connection con = getTestDbConnection();
-		DataContext dc = new DataContext(con);
+		DataContext dc = JdbcDataContextFactory.getDataContext(con);
 		Table employeeTable = dc.getDefaultSchema().getTableByName("CUSTOMERS");
 
 		Column column = employeeTable.getColumnByName("CUSTOMERNAME");
@@ -75,7 +76,7 @@ public class ColumnDictionaryTest extends DataCleanerTestCase {
 
 	public void testValueNull() throws Exception {
 		Connection con = getTestDbConnection();
-		DataContext dc = new DataContext(con);
+		DataContext dc = JdbcDataContextFactory.getDataContext(con);
 		Table employeeTable = dc.getDefaultSchema().getTableByName("CUSTOMERS");
 
 		Column column = employeeTable.getColumnByName("CUSTOMERNAME");

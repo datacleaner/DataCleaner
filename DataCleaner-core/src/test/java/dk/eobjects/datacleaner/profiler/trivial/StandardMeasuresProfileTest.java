@@ -28,6 +28,7 @@ import dk.eobjects.datacleaner.profiler.MatrixValue;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.Query;
@@ -114,7 +115,7 @@ public class StandardMeasuresProfileTest extends DataCleanerTestCase {
 
 	public void testDetailedResults() throws Exception {
 		Connection connection = getTestDbConnection();
-		DataContext dc = new DataContext(connection);
+		DataContext dc = JdbcDataContextFactory.getDataContext(connection);
 		Table customerTable = dc.getDefaultSchema().getTableByName("CUSTOMERS");
 		assertNotNull(customerTable);
 

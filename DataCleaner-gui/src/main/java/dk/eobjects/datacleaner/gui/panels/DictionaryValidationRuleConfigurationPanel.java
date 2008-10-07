@@ -24,8 +24,8 @@ import javax.swing.JPanel;
 
 import dk.eobjects.datacleaner.catalog.IDictionary;
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
-import dk.eobjects.datacleaner.validator.dictionary.DictionaryManager;
 import dk.eobjects.datacleaner.validator.dictionary.DictionaryValidationRule;
 import dk.eobjects.metamodel.schema.Column;
 
@@ -79,10 +79,10 @@ public class DictionaryValidationRuleConfigurationPanel extends
 	}
 
 	private void createDictionaryDropDown() {
-		IDictionary[] dictionaries = DictionaryManager.getDictionaries();
-		for (int i = 0; i < dictionaries.length; i++) {
-			IDictionary d = dictionaries[i];
-			String dictionaryName = d.getName();
+		List<IDictionary> dictionaries = GuiSettings.getSettings()
+				.getDictionaries();
+		for (IDictionary dictionary : dictionaries) {
+			String dictionaryName = dictionary.getName();
 			if (dictionaryName != null) {
 				_dictionaryDropDown.addItem(dictionaryName);
 			}

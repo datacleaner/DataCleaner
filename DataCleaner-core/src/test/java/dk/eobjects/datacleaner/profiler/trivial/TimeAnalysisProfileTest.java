@@ -32,6 +32,7 @@ import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.profiler.MatrixValue;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.IRowFilter;
 import dk.eobjects.metamodel.data.Row;
@@ -45,7 +46,7 @@ public class TimeAnalysisProfileTest extends DataCleanerTestCase {
 
 	public void testDrillToDetails() throws Exception {
 		Connection connection = getTestDbConnection();
-		DataContext dc = new DataContext(connection);
+		DataContext dc = JdbcDataContextFactory.getDataContext(connection);
 		Table paymentsTable = dc.getDefaultSchema().getTableByName("PAYMENTS");
 		Column column = paymentsTable.getColumnByName("PAYMENTDATE");
 		Query q = new Query().select(column).selectCount().from(paymentsTable)

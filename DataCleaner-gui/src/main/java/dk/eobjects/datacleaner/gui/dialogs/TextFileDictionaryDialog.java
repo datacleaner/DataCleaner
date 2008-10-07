@@ -46,7 +46,8 @@ public class TextFileDictionaryDialog extends BanneredDialog {
 	public TextFileDictionaryDialog(TextFileDictionary dictionary) {
 		super(400, 320);
 
-		JTextArea aboutTextFileDictionaries = GuiHelper.createLabelTextArea().toComponent();
+		JTextArea aboutTextFileDictionaries = GuiHelper.createLabelTextArea()
+				.toComponent();
 		aboutTextFileDictionaries
 				.setText("Text-file dictionaries are dictionaries based on flat files. Register a flat file here and all the words (seperated by whitespace or line-breaks) within the file will be used to populate the dictionary.");
 		add(aboutTextFileDictionaries, BorderLayout.SOUTH);
@@ -82,7 +83,7 @@ public class TextFileDictionaryDialog extends BanneredDialog {
 		browseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser(new File(
-						"samples/dictionaries"));
+						GuiSettings.DICTIONARIES_SAMPLES));
 				GuiHelper.centerOnScreen(fileChooser);
 				if (fileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();

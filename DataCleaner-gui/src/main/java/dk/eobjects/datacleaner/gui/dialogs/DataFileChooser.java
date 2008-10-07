@@ -34,22 +34,32 @@ public class DataFileChooser extends JFileChooser {
 	public DataFileChooser(DataContextSelection dataContextSelection) {
 		super();
 		_dataContextSelection = dataContextSelection;
+
+		// Each supported file type is represented by a file filter
 		ExtensionFilter csvFilter = new ExtensionFilter(
-				"Comma-separated file (.csv)", DataContextSelection.EXTENSION_COMMA_SEPARATED);
+				"Comma-separated file (.csv)",
+				DataContextSelection.EXTENSION_COMMA_SEPARATED);
 		ExtensionFilter tsvFilter = new ExtensionFilter(
-				"Tab-separated file (.tsv)", DataContextSelection.EXTENSION_TAB_SEPARATED);
+				"Tab-separated file (.tsv)",
+				DataContextSelection.EXTENSION_TAB_SEPARATED);
 		ExtensionFilter excelFilter = new ExtensionFilter("Excel File (.xls)",
 				DataContextSelection.EXTENSION_XLS);
 		ExtensionFilter odbFilter = new ExtensionFilter(
-				"OpenOffice.org database (.odb)", DataContextSelection.EXTENSION_ODB);
+				"OpenOffice.org database (.odb)",
+				DataContextSelection.EXTENSION_ODB);
 		ExtensionFilter xmlFilter = new ExtensionFilter(
-				"Extensible Markup Language (.xml)", DataContextSelection.EXTENSION_XML);
-		CombinationFilter combinationFilter = new CombinationFilter(csvFilter,
-				tsvFilter, excelFilter, odbFilter, xmlFilter);
+				"Extensible Markup Language (.xml)",
+				DataContextSelection.EXTENSION_XML);
 		ExtensionFilter txtFilter = new ExtensionFilter("Text File (.txt)",
 				DataContextSelection.EXTENSION_TEXT);
 		ExtensionFilter datFilter = new ExtensionFilter("DAT File (.dat)",
 				DataContextSelection.EXTENSION_DAT);
+
+		// A filter that combines all the other filters
+		CombinationFilter combinationFilter = new CombinationFilter(csvFilter,
+				tsvFilter, excelFilter, odbFilter, xmlFilter, txtFilter,
+				datFilter);
+		
 		addChoosableFileFilter(combinationFilter);
 		addChoosableFileFilter(csvFilter);
 		addChoosableFileFilter(tsvFilter);
@@ -70,14 +80,17 @@ public class DataFileChooser extends JFileChooser {
 		try {
 			File file = getSelectedFile();
 			String fileExtension = DataContextSelection.getExtention(file);
-			if (fileExtension.equalsIgnoreCase(DataContextSelection.EXTENSION_COMMA_SEPARATED)
+			if (fileExtension
+					.equalsIgnoreCase(DataContextSelection.EXTENSION_COMMA_SEPARATED)
 					|| fileExtension.equals(DataContextSelection.EXTENSION_DAT)
-					|| fileExtension.equals(DataContextSelection.EXTENSION_TEXT)
-					|| fileExtension.equalsIgnoreCase(DataContextSelection.EXTENSION_TAB_SEPARATED)) {
+					|| fileExtension
+							.equals(DataContextSelection.EXTENSION_TEXT)
+					|| fileExtension
+							.equalsIgnoreCase(DataContextSelection.EXTENSION_TAB_SEPARATED)) {
 				CsvConfigurationDialog dialog = new CsvConfigurationDialog(
 						_dataContextSelection, file);
 				dialog.setVisible(true);
-			} else  {
+			} else {
 				_dataContextSelection.selectFile(file);
 			}
 		} catch (Exception e) {

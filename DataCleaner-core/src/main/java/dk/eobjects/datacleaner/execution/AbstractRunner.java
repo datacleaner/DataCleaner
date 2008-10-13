@@ -58,111 +58,148 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 		_configurations.add(configuration);
 	}
 
+	public void setLog(Log log) {
+		_log = log;
+	}
+
 	public void execute(DataContext dataContext) {
-		try {
+		if (_log.isDebugEnabled()) {
+			_log.debug("execute() beginning");
+			_log.debug("data context: " + dataContext);
+			_log.debug("progress observers: "
+					+ ArrayUtils.toString(_progressObservers));
+		}
 
-			if (_log.isDebugEnabled()) {
-				_log.debug("execute() beginning");
-				_log.debug("data context: " + dataContext);
-				_log.debug("progress observers: "
-						+ ArrayUtils.toString(_progressObservers));
-			}
+		List<Column> columns = getAllColumns();
+		Table[] tables = MetaModelHelper.getTables(columns);
+		initObservers(tables);
+		for (int i = 0; i < tables.length; i++) {
+			Table table = tables[i];
+			notifyExecutionBegin(table);
 
-			List<Column> columns = getAllColumns();
-			Table[] tables = MetaModelHelper.getTables(columns);
-			initObservers(tables);
-			for (int i = 0; i < tables.length; i++) {
-				Table table = tables[i];
-				if (_log.isDebugEnabled()) {
-					_log.debug("querying table: " + table.getName());
+			int rowNumber = 0;
+			// This is a per-table try-catch block
+			try {
+				Map<E, Column[]> configurations = getConfigurationsForTable(table);
+				G[] processors = initConfigurations(configurations);
+
+				Column[] columnsToQuery = getColumnsToQuery(configurations);
+				if (_log.isInfoEnabled()) {
+					_log.info("Querying...");
+					_log.info("\nTable:" + table);
+					_log.info("\nColumns: "
+							+ ArrayUtils.toString(columnsToQuery));
 				}
-				notifyExecutionBegin(table);
-				try {
 
-					Map<E, Column[]> configurations = getConfigurationsForTable(table);
-					G[] processors = initConfigurations(configurations);
+				Query q = new Query();
+				q.from(new FromItem(table).setAlias("t"));
+				q.select(columnsToQuery);
+				SelectItem countAllItem = SelectItem.getCountAllItem();
+				q.select(countAllItem);
+				q.groupBy(columnsToQuery);
+				DataSet data = dataContext.executeQuery(q);
 
-					Column[] columnsToQuery = getColumnsToQuery(configurations);
-					if (_log.isDebugEnabled()) {
-						_log.debug("querying columns: "
-								+ ArrayUtils.toString(columnsToQuery));
+				if (_log.isInfoEnabled()) {
+					_log.info("Starting to process rows...");
+					_log.info("Query:" + q);
+				}
+				while (data.next()) {
+					Row row = data.getRow();
+					Long count;
+					Object countValue = row.getValue(countAllItem);
+					if (countValue instanceof Long) {
+						count = (Long) countValue;
+					} else if (countValue instanceof Number) {
+						count = ((Number) countValue).longValue();
+					} else {
+						count = new Long(countValue.toString());
 					}
-
-					Query q = new Query();
-					q.from(new FromItem(table).setAlias("t"));
-					q.select(columnsToQuery);
-					SelectItem countAllItem = SelectItem.getCountAllItem();
-					q.select(countAllItem);
-					q.groupBy(columnsToQuery);
-					DataSet data = dataContext.executeQuery(q);
-
-					int rowNumber = 0;
-					while (data.next()) {
-						Row row = data.getRow();
-						Long count;
-						Object countValue = row.getValue(countAllItem);
-						if (countValue instanceof Long) {
-							count = (Long) countValue;
-						} else if (countValue instanceof Number) {
-							count = ((Number) countValue).longValue();
-						} else {
-							count = new Long(countValue.toString());
-						}
-						for (int j = 0; j < processors.length; j++) {
-							G processor = processors[j];
-							processRow(row, count, processor);
-						}
-						rowNumber++;
-						if (rowNumber % 500 == 0) {
-							if (_log.isInfoEnabled()) {
-								_log
-										.info("Processing row number: "
-												+ rowNumber);
-							}
-						}
-					}
-
 					for (int j = 0; j < processors.length; j++) {
 						G processor = processors[j];
-						F result = getResult(processor);
-						addResultForTable(table, result);
+						try {
+							processRow(row, count, processor);
+						} catch (Throwable e) {
+							_log.error("Processor threw exception...");
+							_log.error("Processor: " + processor);
+							_log.error("Row: " + row);
+							_log.error("Row number: " + rowNumber);
+							throw e;
+						}
 					}
-				} catch (Throwable t) {
-					_log.error(t);
-					notifyExecutionFailed(table, t);
+					rowNumber++;
+					if (rowNumber % 500 == 0) {
+						if (_log.isInfoEnabled()) {
+							_log.info("Processing row number: " + rowNumber);
+						}
+					}
 				}
-				notifyExecutionSuccess(table);
-			}
+				if (_log.isInfoEnabled()) {
+					_log.info("Finished processing rows...");
+					_log.info("Total rows processed: " + rowNumber);
+				}
 
-			if (_log.isDebugEnabled()) {
-				_log.debug("execute() finished");
+				for (int j = 0; j < processors.length; j++) {
+					G processor = processors[j];
+					F result = getResult(processor);
+					addResultForTable(table, result);
+				}
+
+				notifyExecutionSuccess(table);
+			} catch (Error e) {
+				// If we encounter an error (such as a out of memory error)
+				// we should stop processing completely.
+				_log.fatal("Fatal error occurred...");
+				_log.error("Table: " + table);
+				_log.error("Row number: " + rowNumber);
+				_log.fatal(e);
+				notifyExecutionFailed(table, e);
+
+				// Send an cancel/error message to all the remaining tables
+				String cancelMessage = "Execution was cancelled due to errors with table '"
+						+ table.getName() + "'";
+				for (i = i + 1; i < tables.length; i++) {
+					table = tables[i];
+					notifyExecutionBegin(table);
+					notifyExecutionFailed(table, new IllegalStateException(
+							cancelMessage));
+				}
+				throw e;
+			} catch (Throwable t) {
+				// If we encounter a non-error throwable (such as a illegal
+				// argument exception) we stop processing the table
+				_log.error(t);
+				notifyExecutionFailed(table, t);
 			}
-		} catch (Throwable t) {
-			// This shouldn't be possible, but to comply with the no-exceptions
-			// requirement, we add logging.
-			_log.fatal(t);
+		}
+
+		if (_log.isDebugEnabled()) {
+			_log.debug("execute() finished");
 		}
 	}
 
 	private void initObservers(Table[] tables) {
+		_log.debug("initObservers()");
 		for (IProgressObserver observer : _progressObservers) {
 			observer.init(tables);
 		}
 	}
 
 	private void notifyExecutionSuccess(Table table) {
+		_log.debug("notifyExecutionSuccess()");
 		for (IProgressObserver observer : _progressObservers) {
 			observer.notifyExecutionSuccess(table);
 		}
 	}
 
 	private void notifyExecutionFailed(Table table, Throwable t) {
+		_log.debug("notifyExecutionFailed()");
 		for (IProgressObserver observer : _progressObservers) {
 			observer.notifyExecutionFailed(table, t);
 		}
 	}
 
 	private void notifyExecutionBegin(Table table) {
+		_log.debug("notifyExecutionBegin()");
 		for (IProgressObserver observer : _progressObservers) {
 			observer.notifyExecutionBegin(table);
 		}

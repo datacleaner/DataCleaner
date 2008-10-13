@@ -17,19 +17,33 @@
 package dk.eobjects.datacleaner.execution;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 
+import dk.eobjects.datacleaner.profiler.BasicProfileDescriptor;
+import dk.eobjects.datacleaner.profiler.OutOfMemoryProfile;
 import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
+import dk.eobjects.datacleaner.profiler.ProfilerManager;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.IDataContextStrategy;
 import dk.eobjects.metamodel.JdbcDataContextFactory;
+import dk.eobjects.metamodel.data.DataSet;
+import dk.eobjects.metamodel.data.IDataSetStrategy;
+import dk.eobjects.metamodel.data.Row;
+import dk.eobjects.metamodel.query.Query;
+import dk.eobjects.metamodel.query.SelectItem;
 import dk.eobjects.metamodel.schema.Column;
+import dk.eobjects.metamodel.schema.ColumnType;
 import dk.eobjects.metamodel.schema.Schema;
 import dk.eobjects.metamodel.schema.Table;
+import dk.eobjects.metamodel.schema.TableType;
 
 public class ProfileRunnerTest extends DataCleanerTestCase {
 
@@ -41,7 +55,8 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 
 	public void testMultipleProfileDefinitions() throws Exception {
 		Connection connection = getTestDbConnection();
-		DataContext dataContext = JdbcDataContextFactory.getDataContext(connection);
+		DataContext dataContext = JdbcDataContextFactory
+				.getDataContext(connection);
 		Schema schema = dataContext.getDefaultSchema();
 
 		ProfileRunner profileRunner = new ProfileRunner();
@@ -223,5 +238,49 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 
 		assertEquals(expectations.length, results.size());
 		assertEquals(results, expectations);
+	}
+
+	public void testOutOfMemoryError() throws Exception {
+		Table table = new Table("table1", TableType.TABLE);
+		final Column column = new Column("col1", ColumnType.VARCHAR, table, 0,
+				true);
+		table.addColumn(column);
+
+		ProfileRunner profileRunner = new ProfileRunner();
+		BasicProfileDescriptor descriptor = new BasicProfileDescriptor(
+				"Memory aggregator", OutOfMemoryProfile.class);
+		ProfilerManager.addProfileDescriptor(descriptor);
+		ProfileConfiguration conf1 = new ProfileConfiguration(descriptor);
+		conf1.setColumns(column);
+		profileRunner.addConfiguration(conf1);
+
+		IDataContextStrategy dcStrategy = createMock(IDataContextStrategy.class);
+		IDataSetStrategy dsStrategy = createMock(IDataSetStrategy.class);
+		
+		EasyMock.expect(
+				dcStrategy.executeQuery((Query) EasyMock.notNull())).andReturn(
+				new DataSet(dsStrategy));
+
+		EasyMock.expect(dsStrategy.next()).andReturn(true).anyTimes();
+		IAnswer<Row> stubRowAnswer = new IAnswer<Row>() {
+			public Row answer() throws Throwable {
+				Row row = new Row(new SelectItem[] { new SelectItem(column),
+						SelectItem.getCountAllItem() }, new Object[] {
+						new Date().toString(), 1l });
+				return row;
+			}
+		};
+		EasyMock.expect(dsStrategy.getRow()).andStubAnswer(stubRowAnswer);
+
+		replayMocks();
+
+		try {
+			profileRunner.execute(new DataContext(dcStrategy));
+			fail("Exception should have been thrown");
+		} catch (OutOfMemoryError e) {
+			assertEquals("Java heap space", e.getMessage());
+		}
+
+		verifyMocks();
 	}
 }

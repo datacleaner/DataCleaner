@@ -41,7 +41,7 @@ public class ProfileManagerTest extends TestCase {
 			"Number analysis", NumberAnalysisProfile.class);
 	public static final BasicProfileDescriptor DESCRIPTOR_TIME_ANALYSIS = new BasicProfileDescriptor(
 			"Time analysis", TimeAnalysisProfile.class);
-	public static final BasicProfileDescriptor DESCRIPTOR_FREQUENCY_TABLE = new BasicProfileDescriptor(
+	public static final BasicProfileDescriptor DESCRIPTOR_VALUE_DISTRIBUTION = new BasicProfileDescriptor(
 			"Frequency table", ValueDistributionProfile.class);
 
 	public void testGetDescriptorByProfileClass() throws Exception {

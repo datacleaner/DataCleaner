@@ -233,7 +233,7 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 
 		String[] expectations = {
 				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={CUSTOMERNUMBER},999={122}]}]",
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={ADDRESSLINE1,ADDRESSLINE2},Row count={122,122},Null values={0,109},Empty values={0,0},Highest value={Ã…kergatan 24,Suite 750},Lowest value={1 rue Alsace-Lorraine,2nd Floor}]}]",
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={ADDRESSLINE1,ADDRESSLINE2},Row count={122,122},Null values={0,109},Empty values={0,0},Highest value={Åkergatan 24,Suite 750},Lowest value={1 rue Alsace-Lorraine,2nd Floor}]}]",
 				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={EMPLOYEENUMBER},9999={23}]}]" };
 
 		assertEquals(expectations.length, results.size());
@@ -256,10 +256,9 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 
 		IDataContextStrategy dcStrategy = createMock(IDataContextStrategy.class);
 		IDataSetStrategy dsStrategy = createMock(IDataSetStrategy.class);
-		
-		EasyMock.expect(
-				dcStrategy.executeQuery((Query) EasyMock.notNull())).andReturn(
-				new DataSet(dsStrategy));
+
+		EasyMock.expect(dcStrategy.executeQuery((Query) EasyMock.notNull()))
+				.andReturn(new DataSet(dsStrategy));
 
 		EasyMock.expect(dsStrategy.next()).andReturn(true).anyTimes();
 		IAnswer<Row> stubRowAnswer = new IAnswer<Row>() {

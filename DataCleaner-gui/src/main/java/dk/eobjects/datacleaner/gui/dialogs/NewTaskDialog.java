@@ -49,7 +49,7 @@ public class NewTaskDialog extends BanneredDialog {
 
 		JTextArea profileDesc = createDescLabel("Gain insight into the structure and content of your data. With a data profile you will know where to improve quality.");
 		JTextArea validateDesc = createDescLabel("Create validation rules and test them on your data to ensure the continous integrity of your data's quality.");
-		JTextArea compareDesc = createDescLabel("Compare columns, tables and schemas with each others! Find out if what you think is consistent really is! Please wait for DataCleaner 1.1 for this feature.");
+		JTextArea compareDesc = createDescLabel("Compare columns, tables and schemas with each others! Find out if what you think is consistent really is!");
 		JTextArea openFileDesc = createDescLabel("... or you can load your profiling or validation work from a saved file.");
 
 		addToPanel(

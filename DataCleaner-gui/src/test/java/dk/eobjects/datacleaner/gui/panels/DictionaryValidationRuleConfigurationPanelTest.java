@@ -31,7 +31,6 @@ import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.validator.BasicValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
-import dk.eobjects.datacleaner.validator.dictionary.DictionaryManager;
 import dk.eobjects.datacleaner.validator.dictionary.DictionaryValidationRule;
 
 public class DictionaryValidationRuleConfigurationPanelTest extends TestCase {

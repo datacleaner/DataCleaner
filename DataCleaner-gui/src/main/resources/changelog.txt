@@ -11,11 +11,12 @@ built upon the stabilization release of 1.4:
  * New profile: Regex matcher.
  * New profile: Duplicate records profile.
  * More file types supported (.dat, .txt)
+ * XML file support improved (.xml)
  * Memory improvements in Value distribution and
    Time analysis profiles.
  * Improved logging when running profiling and
    validation.
- * New MAC OSX native executable. 
+ * New MAC OSX native executable.
 
 DataCleaner 1.4
 ===============

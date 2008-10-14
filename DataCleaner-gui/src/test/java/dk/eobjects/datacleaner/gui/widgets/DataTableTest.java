@@ -31,7 +31,7 @@ public class DataTableTest extends TestCase {
 		File file = new File("src/test/resources/more_columns_than_rows.csv");
 		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
 				file));
-		Table table = dataContext.getSchemas()[0].getTables()[0];
+		Table table = dataContext.getDefaultSchema().getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));
 		DataTable dataTable = new DataTable(data);
@@ -43,7 +43,7 @@ public class DataTableTest extends TestCase {
 		File file = new File("src/test/resources/more_rows_than_columns.csv");
 		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
 				file));
-		Table table = dataContext.getSchemas()[0].getTables()[0];
+		Table table = dataContext.getDefaultSchema().getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));
 		DataTable dataTable = new DataTable(data);
@@ -59,7 +59,7 @@ public class DataTableTest extends TestCase {
 		File file = new File("src/test/resources/more_columns_than_rows.csv");
 		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
 				file));
-		Table table = dataContext.getSchemas()[0].getTables()[0];
+		Table table = dataContext.getDefaultSchema().getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));
 		DataTable dataTable = new DataTable(data);
@@ -71,7 +71,7 @@ public class DataTableTest extends TestCase {
 		File file = new File("src/test/resources/more_rows_than_columns.csv");
 		DataContext dataContext = new DataContext(new CsvDataContextStrategy(
 				file));
-		Table table = dataContext.getSchemas()[0].getTables()[0];
+		Table table = dataContext.getDefaultSchema().getTables()[0];
 		DataSet data = dataContext.executeQuery(new Query().from(table).select(
 				table.getColumns()));
 		DataTable dataTable = new DataTable(data);

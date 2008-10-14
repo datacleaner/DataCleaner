@@ -118,8 +118,15 @@ public class SchemaTree extends JTree implements WeakObserver,
 			if (UNNAMED_SCHEMA_STRING.equals(schemaName)) {
 				schemaName = null;
 			}
-			Schema schema = dc.getSchemaByName(schemaName);
-			return schema;
+			try {
+				Schema schema = dc.getSchemaByName(schemaName);
+				return schema;
+			} catch (RuntimeException e) {
+				GuiHelper.showErrorMessage("Could not open schema",
+						"An exception occurred when trying to retrieve schema details of schema '"
+								+ schemaName + "'", e);
+				throw e;
+			}
 		}
 		return null;
 	}

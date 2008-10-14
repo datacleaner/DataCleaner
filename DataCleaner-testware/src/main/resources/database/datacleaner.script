@@ -270,7 +270,7 @@ INSERT INTO CUSTOMERS VALUES(415,'Bavarian Collectables Imports, Co.','Donnermey
 INSERT INTO CUSTOMERS VALUES(424,'Classic Legends Inc.','Hernandez','Maria','2125558493','5905 Pompton St.','Suite 750','NYC','NY','10022','USA',1286,67500.0)
 INSERT INTO CUSTOMERS VALUES(443,'Feuer Online Stores, Inc','Feuer','Alexander','0342-555176','Heerstr. 22',NULL,'Leipzig',NULL,'04179','Germany',NULL,0.0)
 INSERT INTO CUSTOMERS VALUES(447,'Gift Ideas Corp.','Lewis','Dan','2035554407','2440 Pompton St.',NULL,'Glendale','CT','97561','USA',1323,49700.0)
-INSERT INTO CUSTOMERS VALUES(448,'Scandinavian Gift Ideas','Larsson','Maria','0695-34 6555','\u00c5kergatan 24',NULL,'Br\u00e4cke',NULL,'S-844 67','Sweden',1504,116400.0)
+INSERT INTO CUSTOMERS VALUES(448,'Scandinavian Gift Ideas','Larsson','Maria','0695-34 6555','Aakergatan 24',NULL,'Br\u00e4cke',NULL,'S-844 67','Sweden',1504,116400.0)
 INSERT INTO CUSTOMERS VALUES(450,'The Sharp Gifts Warehouse','Frick','Sue','4085553659','3086 Ingle Ln.',NULL,'San Jose','CA','94217','USA',1165,77600.0)
 INSERT INTO CUSTOMERS VALUES(452,'Mini Auto Werke','Mendel','Roland','7675-3555','Kirchgasse 6',NULL,'Graz',NULL,'8010','Austria',1401,45300.0)
 INSERT INTO CUSTOMERS VALUES(455,'Super Scale Inc.','Murphy','Leslie','2035559545','567 North Pendale Street',NULL,'New Haven','CT','97823','USA',1286,95400.0)

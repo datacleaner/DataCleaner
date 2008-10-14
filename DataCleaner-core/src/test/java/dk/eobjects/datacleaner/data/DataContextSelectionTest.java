@@ -42,7 +42,7 @@ public class DataContextSelectionTest extends TestCase {
 				.getDocumentElement());
 		assertNotNull(_dataContextSelection);
 		assertEquals("customers_semicolon.csv", _dataContextSelection
-				.getDataContext().getSchemaNames()[0]);
+				.getDataContext().getSchemaNames()[1]);
 
 		StringWriter sw = new StringWriter();
 		DomHelper.transform(_dataContextSelection.serialize(_document),
@@ -63,7 +63,7 @@ public class DataContextSelectionTest extends TestCase {
 				.getDocumentElement());
 		assertNotNull(_dataContextSelection);
 		assertEquals("customers.xls", _dataContextSelection.getDataContext()
-				.getSchemaNames()[0]);
+				.getSchemaNames()[1]);
 
 		StringWriter sw = new StringWriter();
 		DomHelper.transform(_dataContextSelection.serialize(_document),

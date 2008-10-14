@@ -232,8 +232,8 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		List<IProfileResult> results = profileRunner.getResults();
 
 		String[] expectations = {
+				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={ADDRESSLINE1,ADDRESSLINE2},Row count={122,122},Null values={0,109},Empty values={0,0},Highest value={ul. Filtrowa 68,Suite 750},Lowest value={1 rue Alsace-Lorraine,2nd Floor}]}]",
 				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={CUSTOMERNUMBER},999={122}]}]",
-				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Standard measures,profileClass=class dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile],matrices={Matrix[columnNames={ADDRESSLINE1,ADDRESSLINE2},Row count={122,122},Null values={0,109},Empty values={0,0},Highest value={Åkergatan 24,Suite 750},Lowest value={1 rue Alsace-Lorraine,2nd Floor}]}]",
 				"ProfileResult[profileDescriptor=BasicProfileDescriptor[displayName=Pattern finder,profileClass=class dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile],matrices={Matrix[columnNames={EMPLOYEENUMBER},9999={23}]}]" };
 
 		assertEquals(expectations.length, results.size());

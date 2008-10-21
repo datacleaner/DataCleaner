@@ -21,11 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -56,41 +53,73 @@ public class TimeAnalysisProfile extends AbstractProfile {
 	private static final DateTimeFormatter DATE_ONLY_PATTERN = DateTimeFormat
 			.forPattern("yyyy-MM-dd");
 
-	private Map<Column, SortedMap<DateTime, Long>> _sortedMaps = new HashMap<Column, SortedMap<DateTime, Long>>();
+	// private Map<Column, SortedMap<DateTime, Long>> _sortedMaps = new
+	// HashMap<Column, SortedMap<DateTime, Long>>();
+	// private SortedSet<Integer> _years = new TreeSet<Integer>();
+	private Map<Column, Map<Integer, Long>> _yearCounts = new HashMap<Column, Map<Integer, Long>>();
 	private Map<Column, Boolean> _isDateOnly = new HashMap<Column, Boolean>();
-	private SortedSet<Integer> _years = new TreeSet<Integer>();
+	private Map<Column, DateTime> _lowestValues = new HashMap<Column, DateTime>();
+	private Map<Column, DateTime> _highestValues = new HashMap<Column, DateTime>();
 
 	@Override
 	protected void processValue(Column column, Object value, long valueCount,
 			Row row) {
-		SortedMap<DateTime, Long> sortedMap = _sortedMaps.get(column);
-		if (sortedMap == null) {
-			sortedMap = new TreeMap<DateTime, Long>();
-			_sortedMaps.put(column, sortedMap);
-		}
+		if (value != null) {
+			Map<Integer, Long> yearCountsForColumn = _yearCounts.get(column);
+			if (yearCountsForColumn == null) {
+				yearCountsForColumn = new HashMap<Integer, Long>();
+				_yearCounts.put(column, yearCountsForColumn);
+			}
 
-		DateTime dateTime = new DateTime(value);
+			DateTime dateTime = new DateTime(value);
 
-		Boolean isDateOnly = _isDateOnly.get(column);
-		if (isDateOnly == null) {
-			isDateOnly = Boolean.TRUE;
-			_isDateOnly.put(column, isDateOnly);
-		}
-		if (isDateOnly == Boolean.TRUE) {
-			if (!LocalTime.MIDNIGHT.equals(dateTime.toLocalTime())) {
-				isDateOnly = Boolean.FALSE;
+			// Determines if this value is the lowest value so far
+			DateTime lowestValueForColumn = _lowestValues.get(column);
+			if (lowestValueForColumn == null) {
+				lowestValueForColumn = dateTime;
+				_lowestValues.put(column, lowestValueForColumn);
+			} else {
+				if (lowestValueForColumn.compareTo(dateTime) > 0) {
+					lowestValueForColumn = dateTime;
+					_lowestValues.put(column, lowestValueForColumn);
+				}
+			}
+
+			// Determines if this value is the highest value so far
+			DateTime highestValueForColumn = _highestValues.get(column);
+			if (highestValueForColumn == null) {
+				highestValueForColumn = dateTime;
+				_highestValues.put(column, highestValueForColumn);
+			} else {
+				if (highestValueForColumn.compareTo(dateTime) < 0) {
+					highestValueForColumn = dateTime;
+					_highestValues.put(column, highestValueForColumn);
+				}
+			}
+
+			// Defaultly sets this column to be "date only", but only untill any
+			// a date that has a non-midnight time occurs
+			Boolean isDateOnly = _isDateOnly.get(column);
+			if (isDateOnly == null) {
+				isDateOnly = Boolean.TRUE;
 				_isDateOnly.put(column, isDateOnly);
 			}
-		}
+			if (isDateOnly == Boolean.TRUE) {
+				if (!LocalTime.MIDNIGHT.equals(dateTime.toLocalTime())) {
+					isDateOnly = Boolean.FALSE;
+					_isDateOnly.put(column, isDateOnly);
+				}
+			}
 
-		_years.add(dateTime.getYear());
-
-		Long dateTimeCount = sortedMap.get(dateTime);
-		if (dateTimeCount == null) {
-			dateTimeCount = 0l;
+			// Increments the year count for the specified year
+			int year = dateTime.getYear();
+			Long yearCount = yearCountsForColumn.get(year);
+			if (yearCount == null) {
+				yearCount = 0l;
+			}
+			yearCount += valueCount;
+			yearCountsForColumn.put(year, yearCount);
 		}
-		dateTimeCount += valueCount;
-		sortedMap.put(dateTime, dateTimeCount);
 	}
 
 	@Override
@@ -100,30 +129,48 @@ public class TimeAnalysisProfile extends AbstractProfile {
 		matrixBuilder.addRow("Highest value");
 		matrixBuilder.addRow("Lowest value");
 
-		for (Integer year : _years) {
+		// Create a complete list of all years to make the row labels of the
+		// matrix
+		SortedSet<Integer> years = new TreeSet<Integer>();
+		for (final Column column : _columns) {
+			Map<Integer, Long> yearCountForColumn = _yearCounts.get(column);
+			if (yearCountForColumn != null) {
+				Set<Integer> yearsForColumn = yearCountForColumn.keySet();
+				for (Integer year : yearsForColumn) {
+					years.add(year);
+				}
+			}
+		}
+
+		for (Integer year : years) {
 			matrixBuilder.addRow("Where [Year=" + year + "]");
 		}
 
 		for (final Column column : _columns) {
-			SortedMap<DateTime, Long> sortedMap = _sortedMaps.get(column);
 			Boolean isDateOnly = _isDateOnly.get(column);
 
 			String lowestValue = null;
 			String highestValue = null;
-			if (column.getType() == ColumnType.TIME) {
-				lowestValue = sortedMap.firstKey().toString(TIME_ONLY_PATTERN);
-				highestValue = sortedMap.lastKey().toString(TIME_ONLY_PATTERN);
-			} else {
-				if (isDateOnly) {
-					lowestValue = sortedMap.firstKey().toString(
-							DATE_ONLY_PATTERN);
-					highestValue = sortedMap.lastKey().toString(
-							DATE_ONLY_PATTERN);
+			DateTime lowestValueForColumn = _lowestValues.get(column);
+			DateTime highestValueForColumn = _highestValues.get(column);
+			if (lowestValueForColumn != null) {
+				if (column.getType() == ColumnType.TIME) {
+					lowestValue = lowestValueForColumn
+							.toString(TIME_ONLY_PATTERN);
+					highestValue = highestValueForColumn
+							.toString(TIME_ONLY_PATTERN);
 				} else {
-					lowestValue = sortedMap.firstKey().toString(
-							DATE_AND_TIME_PATTERN);
-					highestValue = sortedMap.lastKey().toString(
-							DATE_AND_TIME_PATTERN);
+					if (isDateOnly) {
+						lowestValue = lowestValueForColumn
+								.toString(DATE_ONLY_PATTERN);
+						highestValue = highestValueForColumn
+								.toString(DATE_ONLY_PATTERN);
+					} else {
+						lowestValue = lowestValueForColumn
+								.toString(DATE_AND_TIME_PATTERN);
+						highestValue = highestValueForColumn
+								.toString(DATE_AND_TIME_PATTERN);
+					}
 				}
 			}
 
@@ -131,30 +178,37 @@ public class TimeAnalysisProfile extends AbstractProfile {
 			Object[] columnContent = new Object[rowCount];
 			columnContent[0] = highestValue;
 			columnContent[1] = lowestValue;
-			Integer[] yearArray = _years.toArray(new Integer[_years.size()]);
-			for (int i = 0; i < yearArray.length; i++) {
-				int yearCount = 0;
-				DateTime from = new DateTime(yearArray[i], 1, 1, 0, 0, 0, 0);
-				DateTime to = new DateTime(yearArray[i] + 1, 1, 1, 0, 0, 0, 0);
-				SortedMap<DateTime, Long> subMap = sortedMap.subMap(from, to);
-				Set<Entry<DateTime, Long>> entrySet = subMap.entrySet();
-				for (Entry<DateTime, Long> entry : entrySet) {
-					yearCount += entry.getValue();
+			Map<Integer, Long> yearCountsForColumn = _yearCounts.get(column);
+			if (yearCountsForColumn != null) {
+				int i = 0;
+				for (Integer year : years) {
+					Long yearCount = yearCountsForColumn.get(year);
+					if (yearCount == null) {
+						yearCount = 0l;
+					}
+					columnContent[2 + i] = yearCount;
+					i++;
 				}
-				columnContent[2 + i] = yearCount;
+			} else {
+				for (int i = 0; i < years.size(); i++) {
+					columnContent[2 + i] = 0l;
+				}
 			}
 
 			MatrixValue[] matrixValues = matrixBuilder.addColumn(column
 					.getName(), columnContent);
-			for (int i = 0; i < yearArray.length; i++) {
-				final int year = yearArray[i];
+
+			int i = 0;
+			for (final Integer year : years) {
 				MatrixValue mv = matrixValues[2 + i];
-				if (((Integer) mv.getValue()) > 0) {
+				Long value = (Long) mv.getValue();
+				if (value > 0) {
 					Query q = getBaseQuery();
 					if (column.getType() == ColumnType.DATE
 							|| column.getType() == ColumnType.TIMESTAMP) {
 						q.where(column, OperatorType.HIGHER_THAN,
-								new LocalDate(year - 1, 12, 31).toDateTimeAtStartOfDay());
+								new LocalDate(year - 1, 12, 31)
+										.toDateTimeAtStartOfDay());
 						q.where(column, OperatorType.LOWER_THAN, new LocalDate(
 								year + 1, 1, 1).toDateTimeAtStartOfDay());
 					}
@@ -174,6 +228,7 @@ public class TimeAnalysisProfile extends AbstractProfile {
 
 					});
 				}
+				i++;
 			}
 		}
 		if (!matrixBuilder.isEmpty()) {

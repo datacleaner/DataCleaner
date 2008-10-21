@@ -42,8 +42,9 @@ public class DatabaseDriverDialog extends BanneredDialog {
 	private static final String[] COMMON_DRIVER_NAMES = {
 			"org.postgresql.Driver", "org.firebirdsql.jdbc.FBDriver",
 			"org.apache.derby.jdbc.ClientDriver", "oracle.jdbc.OracleDriver",
-			"com.mysql.jdbc.Driver",
-			"com.microsoft.sqlserver.jdbc.SQLServerDriver" };
+			"com.mysql.jdbc.Driver", "net.sourceforge.jtds.jdbc.Driver",
+			"com.microsoft.sqlserver.jdbc.SQLServerDriver",
+			"com.ingres.jdbc.IngresDriver", "org.sqlite.JDBC" };
 	private JTextField _filenameField;
 	private AutoCompleteComboBox _driverClassField;
 	private File _file;
@@ -68,7 +69,8 @@ public class DatabaseDriverDialog extends BanneredDialog {
 	public DatabaseDriverDialog(File file) {
 		super();
 
-		JTextArea aboutDatabaseDrivers = GuiHelper.createLabelTextArea().toComponent();
+		JTextArea aboutDatabaseDrivers = GuiHelper.createLabelTextArea()
+				.toComponent();
 		aboutDatabaseDrivers
 				.setText("Database drivers are java classes that enable programs to connect to a database. To add a database driver you have to obtain the driver file as well as the class name from you database vendor.");
 		add(aboutDatabaseDrivers, BorderLayout.SOUTH);

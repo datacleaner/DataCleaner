@@ -56,8 +56,8 @@ public class NumberAnalysisProfileTest extends TestCase {
 		Column[] columns = { bigintColumn, floatColumn };
 		SelectItem[] selectItems = new SelectItem[] {
 				new SelectItem(bigintColumn), new SelectItem(floatColumn) };
-		IProfile profile = new NumberAnalysisProfile();
 
+		IProfile profile = new NumberAnalysisProfile();
 		profile.initialize(columns);
 
 		profile.process(new Row(selectItems, new Object[] { 10, 0.1f }), 1);
@@ -74,6 +74,35 @@ public class NumberAnalysisProfileTest extends TestCase {
 		assertEquals(1, matrices.length);
 		assertEquals(
 				"Matrix[columnNames={My bigint column,My float column},Highest value={MatrixValue[value=80,detailQuery= FROM foobar WHERE foobar.My bigint column = 80],MatrixValue[value=0,8,detailQuery= FROM foobar WHERE foobar.My float column = 0.8]},Lowest value={MatrixValue[value=10,detailQuery= FROM foobar WHERE foobar.My bigint column = 10],MatrixValue[value=0,1,detailQuery= FROM foobar WHERE foobar.My float column = 0.1]},Sum={360,3,6},Mean={45,0,45},Geometric mean={37,64,0,38},Standard deviation={24,49,0,24},Variance={600,0,06}]",
+				matrices[0].toString());
+	}
+
+	/**
+	 * Ticket #238: Number Analysis result contains weird chars when fed with
+	 * nulls
+	 */
+	public void testOnlyNulls() throws Exception {
+		Table table = new Table("foobar");
+		Column bigintColumn = new Column("My bigint column", ColumnType.BIGINT,
+				table, 0, true);
+		Column floatColumn = new Column("My float column", ColumnType.FLOAT,
+				table, 1, true);
+		Column[] columns = { bigintColumn, floatColumn };
+		SelectItem[] selectItems = new SelectItem[] {
+				new SelectItem(bigintColumn), new SelectItem(floatColumn) };
+
+		IProfile profile = new NumberAnalysisProfile();
+		profile.initialize(columns);
+
+		profile.process(new Row(selectItems, new Object[] { null, null }), 1);
+		profile.process(new Row(selectItems, new Object[] { null, null }), 1);
+		profile.process(new Row(selectItems, new Object[] { null, null }), 1);
+
+		IProfileResult result = profile.getResult();
+		IMatrix[] matrices = result.getMatrices();
+		assertEquals(1, matrices.length);
+		assertEquals(
+				"Matrix[columnNames={My bigint column,My float column},Highest value={<null>,<null>},Lowest value={<null>,<null>},Sum={<null>,<null>},Mean={<null>,<null>},Geometric mean={<null>,<null>},Standard deviation={<null>,<null>},Variance={<null>,<null>}]",
 				matrices[0].toString());
 	}
 }

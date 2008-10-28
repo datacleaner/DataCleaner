@@ -17,6 +17,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>dk.eobjects.metamodel</groupId>
+			<artifactId>MetaModel-swingcomponents</artifactId>
+			<version>1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
 			<version>2.5.5</version>
@@ -24,7 +29,7 @@
 		<dependency>
 			<groupId>com.jgoodies</groupId>
 			<artifactId>looks</artifactId>
-			<version>2.1.2</version>
+			<version>2.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.swinglabs</groupId>

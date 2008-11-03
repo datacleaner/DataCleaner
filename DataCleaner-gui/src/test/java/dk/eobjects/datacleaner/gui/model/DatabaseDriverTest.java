@@ -49,7 +49,7 @@ public class DatabaseDriverTest extends TestCase {
 			DriverManager.getConnection("jdbc:eobjects-dummy:foobar");
 			fail("Exception should have been thrown");
 		} catch (SQLException e) {
-			assertEquals("No suitable driver", e.getMessage());
+			assertEquals("No suitable driver found for jdbc:eobjects-dummy:foobar", e.getMessage());
 		}
 	}
 }

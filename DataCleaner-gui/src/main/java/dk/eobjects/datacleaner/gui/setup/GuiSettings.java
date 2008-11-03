@@ -85,6 +85,7 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	 * Initializes settings on program start-up (only called once)
 	 */
 	public static void initialize() {
+		_cachedSettings = null;
 		GuiSettings settings = getSettings();
 
 		// Initialize look and feel

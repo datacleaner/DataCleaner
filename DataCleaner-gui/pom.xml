@@ -24,11 +24,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>dk.eobjects.metamodel</groupId>
-			<artifactId>MetaModel-swingcomponents</artifactId>
-			<version>1.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring</artifactId>
 			<version>2.5.5</version>

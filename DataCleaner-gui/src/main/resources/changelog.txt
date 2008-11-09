@@ -17,6 +17,8 @@ built upon the stabilization release of 1.4:
  * Improved logging when running profiling and
    validation.
  * New MAC OSX native executable.
+ * Information schema provided for file-based datastores.
+ * Lazy-loading of columns in datastore-tree
 
 DataCleaner 1.4
 ===============

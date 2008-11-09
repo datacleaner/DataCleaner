@@ -15,15 +15,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
 
-JAVA_OPTS="$JAVA_OPTS -Xmx1024m -XX:MaxPermSize=256m"
-
-macos=false
-case "`uname`" in
-	Darwin*) macos=true;;
-esac
-
-if $macos; then
-	JAVA_OPTS="$JAVA_OPTS -Xdock:name=DataCleaner"
-fi
-
-exec java $JAVA_OPTS -jar datacleaner.jar
+exec mvn install
+cd DataCleaner-packaging/target/dist
+exec datacleaner.sh
+cd ../../..

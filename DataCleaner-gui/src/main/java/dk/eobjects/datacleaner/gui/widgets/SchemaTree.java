@@ -44,7 +44,8 @@ public class SchemaTree extends JTree implements WeakObserver,
 
 	private static final Log _log = LogFactory.getLog(SchemaTree.class);
 	private static final long serialVersionUID = 7763827443642264329L;
-	public static final String LOADING_NODE_STRING = "Loading tables...";
+	public static final String LOADING_TABLES_STRING = "Loading tables...";
+	public static final String LOADING_COLUMNS_STRING = "Loading columns...";
 	public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
 	public static final String ROOT_NODE_STRING = "Schemas";
 	private DataContextSelection _dataContextSelection;
@@ -84,7 +85,8 @@ public class SchemaTree extends JTree implements WeakObserver,
 				}
 				DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(
 						schemaName);
-				schemaNode.add(new DefaultMutableTreeNode(LOADING_NODE_STRING));
+				schemaNode
+						.add(new DefaultMutableTreeNode(LOADING_TABLES_STRING));
 				rootNode.add(schemaNode);
 			}
 		}
@@ -141,36 +143,94 @@ public class SchemaTree extends JTree implements WeakObserver,
 		TreePath path = event.getPath();
 		DefaultMutableTreeNode lastComponent = (DefaultMutableTreeNode) path
 				.getLastPathComponent();
+		Runnable runnable = null;
 		if (lastComponent.getChildCount() == 1) {
-			if (((DefaultMutableTreeNode) lastComponent.getChildAt(0))
-					.getUserObject() == LOADING_NODE_STRING) {
-				DataContext dc = _dataContextSelection.getDataContext();
-				try {
-					Schema schema = getSchema(dc, path);
-					Table[] tables = schema.getTables();
-					for (Table table : tables) {
-						DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(
-								table.getName());
-						Column[] columns = table.getColumns();
-						for (Column column : columns) {
-							DefaultMutableTreeNode columnNode = new DefaultMutableTreeNode(
-									column.getName());
-							tableNode.add(columnNode);
-						}
-						lastComponent.add(tableNode);
-					}
-				} catch (MetaModelException e) {
-					_log.fatal("Error retrieving schema from path: " + path);
-					_log.error(e);
-					GuiHelper
-							.showErrorMessage(
-									"Error retrieving schema",
-									"A fatal error was encountered retrieving metadata about the selected schema.",
-									e);
-				} finally {
-					lastComponent.remove(0);
-					setModel(getModel());
+			DefaultMutableTreeNode firstChildNode = (DefaultMutableTreeNode) lastComponent
+					.getChildAt(0);
+			if (firstChildNode.getUserObject() == LOADING_TABLES_STRING) {
+				// Load a schema's tables
+				runnable = new LoadTablesRunnable(path, lastComponent);
+			} else if (firstChildNode.getUserObject() == LOADING_COLUMNS_STRING) {
+				// Load a table's columns
+				runnable = new LoadColumnsRunnable(path, lastComponent);
+			}
+		}
+		
+		if (runnable != null) {
+			runnable.run();
+		}
+	}
+
+	class LoadTablesRunnable implements Runnable {
+		private TreePath _path;
+		private DefaultMutableTreeNode _schemaNode;
+
+		public LoadTablesRunnable(TreePath path,
+				DefaultMutableTreeNode schemaNode) {
+			_path = path;
+			_schemaNode = schemaNode;
+		}
+
+		public void run() {
+			try {
+				Schema schema = getSchema(_dataContextSelection
+						.getDataContext(), _path);
+				String[] tableNames = schema.getTableNames();
+				for (String tableName : tableNames) {
+					DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(
+							tableName);
+					DefaultMutableTreeNode loadingColumnsNode = new DefaultMutableTreeNode(
+							LOADING_COLUMNS_STRING);
+					tableNode.add(loadingColumnsNode);
+					_schemaNode.add(tableNode);
 				}
+			} catch (MetaModelException e) {
+				_log.fatal("Error retrieving schema from path: " + _path);
+				_log.error(e);
+				GuiHelper
+						.showErrorMessage(
+								"Error retrieving schema",
+								"A fatal error was encountered retrieving metadata about the selected schema.",
+								e);
+			} finally {
+				_schemaNode.remove(0);
+				setModel(getModel());
+			}
+		}
+	}
+
+	class LoadColumnsRunnable implements Runnable {
+		private TreePath _path;
+		private DefaultMutableTreeNode _tableNode;
+
+		public LoadColumnsRunnable(TreePath path,
+				DefaultMutableTreeNode tableNode) {
+			_path = path;
+			_tableNode = tableNode;
+		}
+
+		public void run() {
+			try {
+				Schema schema = getSchema(_dataContextSelection
+						.getDataContext(), _path);
+				Table table = getTable(schema, _path);
+				String[] columnNames = table.getColumnNames();
+				for (String columnName : columnNames) {
+					DefaultMutableTreeNode columnNode = new DefaultMutableTreeNode(
+							columnName);
+					_tableNode.add(columnNode);
+				}
+			} catch (MetaModelException e) {
+				_log.fatal("Error retrieving table from path: " + _path);
+				_log.error(e);
+				GuiHelper
+						.showErrorMessage(
+								"Error retrieving table",
+								"A fatal error was encountered retrieving metadata about the selected table.",
+								e);
+			} finally {
+				_tableNode.remove(0);
+				setModel(getModel());
 			}
 		}
 	}

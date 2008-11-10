@@ -39,6 +39,8 @@ public class DataCleanerGui {
 	private static MainWindow _mainWindow;
 
 	public static void main(String[] args) throws Exception {
+		Thread.setDefaultUncaughtExceptionHandler(new GuiExceptionHandler());
+		
 		_log.info("DataCleaner-gui starting up.");
 
 		GuiConfiguration.initialize();

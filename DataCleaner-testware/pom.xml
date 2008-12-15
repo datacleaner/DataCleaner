@@ -10,6 +10,16 @@
 	<artifactId>DataCleaner-testware</artifactId>
 	<name>DataCleaner-testware</name>
 	<description>The testware project provides some common sample data and shared test functionality throughout the DataCleaner project</description>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>dk.eobjects.metamodel</groupId>

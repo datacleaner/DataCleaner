@@ -131,7 +131,13 @@ public class DataContextSelection extends WeakObservable {
 		}
 		Connection connection = DriverManager.getConnection(connectionString,
 				username, password);
-		connection.setReadOnly(true);
+		try {
+			connection.setReadOnly(true);
+		} catch (SQLException e) {
+			_log
+					.warn("Could not set the readOnly flag on the JDBC connection: "
+							+ e.getMessage());
+		}
 		DataContext dc = JdbcDataContextFactory.getDataContext(connection,
 				catalog, tableTypes);
 		setDataContext(dc, connection);

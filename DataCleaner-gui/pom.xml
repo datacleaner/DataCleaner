@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>DataCleaner</artifactId>
@@ -10,13 +9,13 @@
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner-gui</artifactId>
 	<name>DataCleaner-gui</name>
-        <repositories>
-                <repository>
-                        <id>maven2-repository.dev.java.net</id>
-                        <name>Java.net Repository for Maven</name>
-                        <url>http://download.java.net/maven/2/</url>
-                </repository>
-        </repositories>
+	<repositories>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>dk.eobjects.datacleaner</groupId>
@@ -41,6 +40,11 @@
 		<dependency>
 			<groupId>org.swinglabs</groupId>
 			<artifactId>swing-worker</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
 			<version>1.1</version>
 		</dependency>
 		<dependency>

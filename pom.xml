@@ -80,17 +80,6 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
 					<aggregate>true</aggregate>
-					<doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
-					<docletArtifact>
-						<groupId>gr.spinellis</groupId>
-					    <artifactId>UmlGraph</artifactId>
-					    <version>4.6</version>
-					</docletArtifact>
-					<additionalparam>
-						-inferrel -inferdep -quiet -hide java.*
-						-collpackages java.util.* -qualify -postfixpackage
-						-nodefontsize 9 -nodefontpackagesize 7
-					</additionalparam>
 				</configuration>
 			</plugin>
 		</plugins>

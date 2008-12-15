@@ -20,13 +20,4 @@ echo "Using DATACLEANER_HOME: $DATACLEANER_HOME"
 
 JAVA_OPTS="$JAVA_OPTS -Xmx1024m -XX:MaxPermSize=256m"
 
-macos=false
-case "`uname`" in
-	Darwin*) macos=true;;
-esac
-
-if $macos; then
-	JAVA_OPTS="$JAVA_OPTS -Xdock:name=DataCleaner"
-fi
-
-exec java $JAVA_OPTS -jar datacleaner.jar
+exec java $JAVA_OPTS -cp datacleaner.jar dk.eobjects.datacleaner.gui.DataCleanerCli $*

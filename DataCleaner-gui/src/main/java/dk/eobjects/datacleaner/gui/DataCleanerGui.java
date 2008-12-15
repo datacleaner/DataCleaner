@@ -16,7 +16,8 @@
  */
 package dk.eobjects.datacleaner.gui;
 
-import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +29,8 @@ import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.gui.windows.MainWindow;
 
 /**
- * This is the class with the main method for DataCleaner GUI
+ * This is the class with the main method for the DataCleaner Graphical
+ * User-Interface (GUI)
  */
 public class DataCleanerGui {
 
@@ -40,7 +42,7 @@ public class DataCleanerGui {
 
 	public static void main(String[] args) throws Exception {
 		Thread.setDefaultUncaughtExceptionHandler(new GuiExceptionHandler());
-		
+
 		_log.info("DataCleaner-gui starting up.");
 
 		GuiConfiguration.initialize();
@@ -55,19 +57,11 @@ public class DataCleanerGui {
 	}
 
 	private static void loadDrivers() {
-		Collection<DatabaseDriver> databaseDrivers = GuiSettings.getSettings()
-				.getDatabaseDrivers();
-		for (DatabaseDriver databaseDriver : databaseDrivers) {
-			try {
-				databaseDriver.loadDriver();
-			} catch (Exception e) {
-				_log.error("Could not load database driver: " + databaseDriver,
-						e);
-			}
-		}
+		List<DatabaseDriver> databaseDrivers = new LinkedList<DatabaseDriver>();
+		databaseDrivers.addAll(GuiConfiguration
+				.getBeansOfClass(DatabaseDriver.class));
+		databaseDrivers.addAll(GuiSettings.getSettings().getDatabaseDrivers());
 
-		databaseDrivers = GuiConfiguration
-				.getBeansOfClass(DatabaseDriver.class);
 		for (DatabaseDriver databaseDriver : databaseDrivers) {
 			try {
 				databaseDriver.loadDriver();

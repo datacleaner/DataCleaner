@@ -74,6 +74,9 @@
 								<copy file="datacleaner.sh" todir="target/dist" />
 								<chmod file="target/dist/datacleaner.sh" perm="+x" />
 								<copy file="datacleaner.cmd" todir="target/dist" />
+								<copy file="runjob.sh" todir="target/dist" />
+								<chmod file="target/dist/runjob.sh" perm="+x" />
+								<copy file="runjob.cmd" todir="target/dist" />
 								<copy todir="target/dist/samples">
 									<fileset dir="samples">
 										<exclude name="database.properties" />

@@ -103,7 +103,7 @@ public class DatabaseDriverDialog extends BanneredDialog {
 
 		result
 				.add(downloadAndInstallItem(
-						"MS SQL Server",
+						"SQL Server",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/net/sourceforge/jtds/jtds/1.2.2/jtds-1.2.2.jar",
 						JTDS_DRIVER));
 

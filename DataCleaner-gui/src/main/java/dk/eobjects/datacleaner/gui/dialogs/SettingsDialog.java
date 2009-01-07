@@ -23,13 +23,16 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.LookAndFeel;
@@ -129,10 +132,20 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		header.setPreferredSize(d);
 		_driversPanel.add(header);
 
-		JButton registerDriverButton = new JButton("Register database driver",
+		final JButton registerDriverButton = new JButton("Register database driver",
 				GuiHelper.getImageIcon("images/toolbar_database.png"));
-		registerDriverButton.addActionListener(DatabaseDriverDialog
-				.getActionListener());
+		registerDriverButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				JPopupMenu popupMenu = new JPopupMenu();
+				List<JMenuItem> menuItems = DatabaseDriverDialog.getMenuItems();
+				for (JMenuItem menuItem : menuItems) {
+					popupMenu.add(menuItem);
+				}
+				popupMenu.show(registerDriverButton, 0, registerDriverButton.getHeight());
+			}
+			
+		});
 		registerDriverButton.setName("registerDriverButton");
 		d = new Dimension();
 		d.width = 205;
@@ -154,7 +167,7 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 					.toComponent();
 			JLabel nameLabel;
 			if (driver.getName() == null) {
-				nameLabel = new JLabel(driver.getFilename());
+				nameLabel = new JLabel(beautifyPath(driver.getFilename()));
 			} else {
 				nameLabel = new JLabel(driver.getName());
 			}
@@ -193,6 +206,20 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 
 			_driversPanel.add(driverPanel);
 		}
+	}
+
+	public static String beautifyPath(String filename) {
+		if (filename != null && filename.length() > 50) {
+			
+			int lastSeparator = filename.lastIndexOf(File.separatorChar);
+			String lastToken = "..." + filename.substring(lastSeparator);
+			StringBuilder sb = new StringBuilder(filename);
+			sb.delete(50-lastToken.length(), sb.length());
+			sb.append(lastToken);
+			
+			return sb.toString();
+		}
+		return filename;
 	}
 
 	private void saveSettings() {

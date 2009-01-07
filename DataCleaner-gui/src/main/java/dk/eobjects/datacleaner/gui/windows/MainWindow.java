@@ -171,14 +171,8 @@ public class MainWindow implements WeakObserver, WindowListener {
 			}
 		});
 		fileMenu.add(loadRegexesItem);
-
-		JMenuItem databaseDriverItem = new JMenuItem(
-				"Register database driver", GuiHelper
-						.getImageIcon("images/toolbar_database.png"));
-		databaseDriverItem.setMnemonic('d');
-		databaseDriverItem.addActionListener(DatabaseDriverDialog
-				.getActionListener());
-		fileMenu.add(databaseDriverItem);
+		
+		fileMenu.add(DatabaseDriverDialog.getMenu());
 
 		fileMenu.add(new JSeparator(JSeparator.HORIZONTAL));
 
@@ -209,7 +203,7 @@ public class MainWindow implements WeakObserver, WindowListener {
 		Action action = null;
 		try {
 			action = new OpenBrowserAction(
-					"http://eobjects.org/trac/wiki/DataCleanerUserGuide");
+					"http://datacleaner.eobjects.org/docs");
 		} catch (MalformedURLException e) {
 			_log.error(e);
 		}
@@ -267,7 +261,7 @@ public class MainWindow implements WeakObserver, WindowListener {
 
 		action = null;
 		try {
-			action = new OpenBrowserAction("http://eobjects.org/datacleaner");
+			action = new OpenBrowserAction("http://datacleaner.eobjects.org");
 		} catch (MalformedURLException e) {
 			_log.error(e);
 		}

@@ -226,7 +226,8 @@ public class GuiHelper {
 	}
 
 	public static ImageIcon getImageIcon(String imagePath) {
-		return new ImageIcon(getImage(imagePath));
+		URL resource = ClassLoader.getSystemResource(imagePath);
+		return new ImageIcon(resource);
 	}
 
 	public static Image getImage(String imagePath) {

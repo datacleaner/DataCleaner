@@ -17,6 +17,8 @@
 package dk.eobjects.datacleaner.gui.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,34 +59,43 @@ public class DownloadDialog extends JDialog {
 		_file = file;
 
 		setLayout(new BorderLayout());
-		setBackground(GuiHelper.BG_COLOR_LIGHT);
+		setBackground(Color.WHITE);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setTitle("Downloading: " + _downloadUrl);
-		setSize(400, 130);
+		setSize(250, 180);
 		setResizable(false);
 		GuiHelper.centerOnScreen(this);
 
-		JLabel iconLabel = new GuiBuilder<JLabel>(new JLabel(_workingIcon))
-				.applyLightBackground().applyBorder().toComponent();
-		_workingIcon.setImageObserver(iconLabel);
-		add(iconLabel, BorderLayout.WEST);
-
-		JPanel textPanel = GuiHelper.createPanel().applyVerticalLayout()
-				.applyLightBackground().toComponent();
+		JPanel topPanel = GuiHelper.createPanel().applyBackground(Color.WHITE)
+				.applyBorderLayout().toComponent();
 		JLabel downloadingLabel = new GuiBuilder<JLabel>(new JLabel(
-				"Downloading:\n" + downloadUrl)).applyLightBackground()
-				.toComponent();
+				"Downloading:")).applyBackground(
+				Color.WHITE).applyHeaderFont().toComponent();
+		downloadingLabel.setOpaque(true);
 		downloadingLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
-		textPanel.add(downloadingLabel);
-		JLabel toFileLabel = new GuiBuilder<JLabel>(new JLabel("To file:\n"
-				+ file.getAbsolutePath())).applyLightBackground().toComponent();
-		toFileLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
-		textPanel.add(toFileLabel);
+		topPanel.add(downloadingLabel, BorderLayout.NORTH);
+		JLabel fileLabel = new GuiBuilder<JLabel>(new JLabel(_file.getName()))
+				.applyBackground(Color.WHITE).applyNormalFont().toComponent();
+		fileLabel.setOpaque(true);
+		fileLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
+		topPanel.add(fileLabel, BorderLayout.CENTER);
+		add(topPanel, BorderLayout.NORTH);
+
+		JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		centerPanel.setBackground(Color.WHITE);
+		JLabel iconLabel = new GuiBuilder<JLabel>(new JLabel(_workingIcon))
+				.toComponent();
+		iconLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
+		_workingIcon.setImageObserver(iconLabel);
+		centerPanel.add(iconLabel);
+		add(centerPanel, BorderLayout.CENTER);
+
 		_statusLabel = new GuiBuilder<JLabel>(new JLabel("Read " + _bytes
-				+ " bytes")).applyLightBackground().toComponent();
+				+ " bytes")).applyBackground(Color.WHITE).applyNormalFont()
+				.toComponent();
+		_statusLabel.setOpaque(true);
 		_statusLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
-		textPanel.add(_statusLabel);
-		add(textPanel, BorderLayout.CENTER);
+		add(_statusLabel, BorderLayout.SOUTH);
 	}
 
 	public void download() {

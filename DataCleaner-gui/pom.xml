@@ -54,12 +54,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>uispec4j</groupId>
-			<artifactId>uispec4j</artifactId>
-			<version>1.5</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<version>2.3</version>

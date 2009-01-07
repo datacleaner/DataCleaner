@@ -176,6 +176,11 @@ public class DataCleanerCli {
 
 				cli.initialize();
 				cli.runInputFile();
+
+				// Run garbage collection and finalization in order to close any
+				// DataContext objects properly
+				System.gc();
+				System.runFinalization();
 			}
 		}
 	}

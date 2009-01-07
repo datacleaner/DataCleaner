@@ -20,11 +20,13 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -35,6 +37,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -98,6 +101,10 @@ public class OpenDatabaseDialog extends BanneredDialog {
 
 		_connectionStringField = new JTextField(FIELD_COLUMNS);
 		_connectionStringField.setName("connectionStringField");
+		_connectionStringField.getInputMap().put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
+		_connectionStringField.getActionMap().put("nextTemplateItem",
+				getNextTemplateItemAction());
 		GuiHelper.addToGridBag(_connectionStringField, panel, 1, 2, 1, 1);
 
 		final JButton samplesButton = new JButton(GuiHelper
@@ -105,39 +112,49 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		samplesButton
 				.setToolTipText("Click to select among configuration samples.");
 		samplesButton.addActionListener(new ActionListener() {
-			
-			private ImageIcon _itemIcon = GuiHelper.getImageIcon("images/toolbar_database.png");
-			
+
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popup = new JPopupMenu("Samples");
 				popup.add(sampleItem("MySQL sample",
-						"jdbc:mysql://<hostname>:3306/<database>", ""));
+						"jdbc:mysql://<hostname>:3306/<database>",
+						"images/database_mysql.png"));
 				popup.add(sampleItem("PostgreSQL sample",
-						"jdbc:postgresql://<hostname>:5432/<database>", ""));
+						"jdbc:postgresql://<hostname>:5432/<database>",
+						"images/database_postgresql.png"));
 				popup.add(sampleItem("Oracle sample",
-						"jdbc:oracle:thin:@<hostname>:1521:<schema>", ""));
-				popup
-						.add(sampleItem(
-								"SQL Server sample",
-								"jdbc:jtds:sqlserver://<hostname>:1434/<database>",
-								""));
+						"jdbc:oracle:thin:@<hostname>:1521:<schema>",
+						"images/database_oracle.png"));
+				popup.add(sampleItem("SQL Server sample",
+						"jdbc:jtds:sqlserver://<hostname>:1434/<database>",
+						"images/database_sqlserver.png"));
 				popup.add(sampleItem("Firebird sample",
 						"jdbc:firebirdsql:<hostname>:<path/to/database.fdb>",
-						""));
+						"images/database_firebird.png"));
 				popup.add(sampleItem("Derby sample",
-						"jdbc:derby://<hostname>:1527/<path/to/database>", ""));
+						"jdbc:derby://<hostname>:1527/<path/to/database>",
+						"images/database_derby.png"));
+				popup.add(sampleItem("SQLite sample",
+						"jdbc:sqlite:<path/to/database.db>",
+						"images/database_sqlite.png"));
+				popup.add(sampleItem("Ingres sample",
+						"jdbc:ingres://<hostname>:II7/<database>",
+						"images/database_ingres.png"));
 				popup.show(samplesButton, 0, samplesButton.getHeight());
 			}
 
 			private JMenuItem sampleItem(String title,
-					final String connectionString, final String catalog) {
-				JMenuItem item = new JMenuItem(title, _itemIcon);
+					final String connectionString, String iconPath) {
+				JMenuItem item = new JMenuItem(title, GuiHelper
+						.getImageIcon(iconPath));
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
+						_connectionStringField.setFocusTraversalKeysEnabled(false);
 						_connectionStringField.setText(connectionString);
-						_catalogField.setText(catalog);
-						_connectionStringField.setSelectionStart(connectionString.indexOf('<'));
-						_connectionStringField.setSelectionEnd(connectionString.indexOf('>')+1);
+						_connectionStringField
+								.setSelectionStart(connectionString
+										.indexOf('<'));
+						_connectionStringField.setSelectionEnd(connectionString
+								.indexOf('>') + 1);
 						_connectionStringField.requestFocus();
 					}
 				});
@@ -239,6 +256,39 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		}
 
 		return panel;
+	}
+
+	private Action getNextTemplateItemAction() {
+		return new AbstractAction() {
+			private static final long serialVersionUID = -953964742803082696L;
+
+			public void actionPerformed(ActionEvent e) {
+				String text = _connectionStringField.getText();
+				int selectionEnd = _connectionStringField.getSelectionEnd();
+				int selectionStart = text.indexOf('<', selectionEnd);
+				if (selectionStart != -1) {
+					selectionEnd = text.indexOf('>', selectionStart);
+				}
+
+				if (selectionStart != -1 && selectionEnd != -1) {
+					_connectionStringField.setSelectionStart(selectionStart);
+					_connectionStringField.setSelectionEnd(selectionEnd + 1);
+					_connectionStringField.requestFocus();
+				} else {
+					selectionStart = text.indexOf('<');
+					if (selectionStart != -1) {
+						selectionEnd = text.indexOf('>', selectionStart);
+						if (selectionEnd != -1) {
+							_connectionStringField
+									.setSelectionStart(selectionStart);
+							_connectionStringField
+									.setSelectionEnd(selectionEnd + 1);
+							_connectionStringField.requestFocus();
+						}
+					}
+				}
+			}
+		};
 	}
 
 	private void updateForm(NamedConnection namedConnection) {

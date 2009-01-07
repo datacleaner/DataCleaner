@@ -52,11 +52,11 @@ public class DatabaseDriverDialog extends BanneredDialog {
 	private static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
 	private static final String JTDS_DRIVER = "net.sourceforge.jtds.jdbc.Driver";
 	private static final String SQLITE_DRIVER = "org.sqlite.JDBC";
+	private static final String DERBY_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 	private static final long serialVersionUID = -7450893693170647726L;
 	private static final String[] COMMON_DRIVER_NAMES = { POSTGRESQL_DRIVER,
-			"org.firebirdsql.jdbc.FBDriver",
-			"org.apache.derby.jdbc.ClientDriver", "oracle.jdbc.OracleDriver",
-			MYSQL_DRIVER, JTDS_DRIVER,
+			"org.firebirdsql.jdbc.FBDriver", DERBY_DRIVER,
+			"oracle.jdbc.OracleDriver", MYSQL_DRIVER, JTDS_DRIVER,
 			"com.microsoft.sqlserver.jdbc.SQLServerDriver",
 			"com.ingres.jdbc.IngresDriver", SQLITE_DRIVER };
 	private static final Log _log = LogFactory
@@ -84,43 +84,61 @@ public class DatabaseDriverDialog extends BanneredDialog {
 
 	public static List<JMenuItem> getMenuItems() {
 		List<JMenuItem> result = new ArrayList<JMenuItem>();
-		JMenuItem fromFileItem = new JMenuItem("From JAR file", GuiHelper
+
+		JMenu automaticMenu = new JMenu("Automatic download and install");
+		automaticMenu.setIcon(GuiHelper
+				.getImageIcon("images/toolbar_download.png"));
+		result.add(automaticMenu);
+
+		JMenu websiteMenu = new JMenu("Visit driver website");
+		websiteMenu.setIcon(GuiHelper
+				.getImageIcon("images/toolbar_visit_website.png"));
+		result.add(websiteMenu);
+		
+		JMenuItem fromFileItem = new JMenuItem("Local JAR file ...", GuiHelper
 				.getImageIcon("images/toolbar_jar_file.png"));
 		fromFileItem.setMnemonic('d');
 		fromFileItem.addActionListener(getFileActionListener());
-
 		result.add(fromFileItem);
-		result
+
+		automaticMenu
 				.add(downloadAndInstallItem(
 						"MySQL",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar",
-						MYSQL_DRIVER));
-		result
+						MYSQL_DRIVER, "images/database_mysql.png"));
+		automaticMenu
 				.add(downloadAndInstallItem(
 						"PostgreSQL",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/postgresql/postgresql/8.3-603.jdbc4/postgresql-8.3-603.jdbc4.jar",
-						POSTGRESQL_DRIVER));
-
-		result
+						POSTGRESQL_DRIVER, "images/database_postgresql.png"));
+		automaticMenu
 				.add(downloadAndInstallItem(
 						"SQL Server",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/net/sourceforge/jtds/jtds/1.2.2/jtds-1.2.2.jar",
-						JTDS_DRIVER));
-
-		result
+						JTDS_DRIVER, "images/database_sqlserver.png"));
+		automaticMenu
+				.add(downloadAndInstallItem(
+						"Derby",
+						"http://mirrors.ibiblio.org/pub/mirrors/maven2/org/apache/derby/derbyclient/10.4.2.0/derbyclient-10.4.2.0.jar",
+						DERBY_DRIVER, "images/database_derby.png"));
+		automaticMenu
 				.add(downloadAndInstallItem(
 						"SQLite",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/org/xerial/sqlite-jdbc/3.6.7/sqlite-jdbc-3.6.7.jar",
-						SQLITE_DRIVER));
-
-		result
-				.add(downloadItem("Oracle",
-						"http://www.oracle.com/technology/software/tech/java/sqlj_jdbc"));
-		result.add(downloadItem("Firebird",
-				"http://www.firebirdsql.org/index.php?op=files&id=jaybird"));
-		result
-				.add(downloadItem("Ingres",
-						"http://esd.ingres.com/product/Community_Projects/Drivers/java/JDBC"));
+						SQLITE_DRIVER, "images/database_sqlite.png"));
+		websiteMenu
+				.add(downloadItem(
+						"Oracle",
+						"http://www.oracle.com/technology/software/tech/java/sqlj_jdbc",
+						"images/database_oracle.png"));
+		websiteMenu.add(downloadItem("Firebird",
+				"http://www.firebirdsql.org/index.php?op=files&id=jaybird",
+				"images/database_firebird.png"));
+		websiteMenu
+				.add(downloadItem(
+						"Ingres",
+						"http://esd.ingres.com/product/Community_Projects/Drivers/java/JDBC",
+						"images/database_ingres.png"));
 		return result;
 	}
 
@@ -136,29 +154,16 @@ public class DatabaseDriverDialog extends BanneredDialog {
 		return menu;
 	}
 
-	private static JMenuItem downloadItem(final String databaseName,
-			final String url) {
-		JMenuItem menuItem = new JMenuItem("Visit driver website: "
-				+ databaseName, GuiHelper
-				.getImageIcon("images/toolbar_visit_website.png"));
-		try {
-			menuItem.addActionListener(new OpenBrowserAction(url));
-		} catch (MalformedURLException e) {
-			_log.error(e);
-		}
-		return menuItem;
-	}
-
 	private static JMenuItem downloadAndInstallItem(final String databaseName,
-			final String downloadUrl, final String driverClass) {
-		JMenuItem menuItem = new JMenuItem("Download and install driver: "
-				+ databaseName, GuiHelper
-				.getImageIcon("images/toolbar_download.png"));
+			final String downloadUrl, final String driverClass, String iconPath) {
+		JMenuItem menuItem = new JMenuItem(databaseName, GuiHelper
+				.getImageIcon(iconPath));
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
 				final File file = new File(databaseName.toLowerCase().replace(
-						' ', '_') + "-driver.jar");
+						' ', '_')
+						+ "-driver.jar");
 				final DownloadDialog dialog = new DownloadDialog(downloadUrl,
 						file);
 				dialog.setCompleteAction(new ActionListener() {
@@ -192,6 +197,18 @@ public class DatabaseDriverDialog extends BanneredDialog {
 
 		});
 
+		return menuItem;
+	}
+
+	private static JMenuItem downloadItem(final String databaseName,
+			final String url, String iconPath) {
+		JMenuItem menuItem = new JMenuItem(databaseName, GuiHelper
+				.getImageIcon(iconPath));
+		try {
+			menuItem.addActionListener(new OpenBrowserAction(url));
+		} catch (MalformedURLException e) {
+			_log.error(e);
+		}
 		return menuItem;
 	}
 

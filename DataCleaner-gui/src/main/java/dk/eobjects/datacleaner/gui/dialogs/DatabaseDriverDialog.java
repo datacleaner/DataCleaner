@@ -94,7 +94,7 @@ public class DatabaseDriverDialog extends BanneredDialog {
 		websiteMenu.setIcon(GuiHelper
 				.getImageIcon("images/toolbar_visit_website.png"));
 		result.add(websiteMenu);
-		
+
 		JMenuItem fromFileItem = new JMenuItem("Local JAR file ...", GuiHelper
 				.getImageIcon("images/toolbar_jar_file.png"));
 		fromFileItem.setMnemonic('d');
@@ -161,38 +161,46 @@ public class DatabaseDriverDialog extends BanneredDialog {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				final File file = new File(databaseName.toLowerCase().replace(
-						' ', '_')
-						+ "-driver.jar");
-				final DownloadDialog dialog = new DownloadDialog(downloadUrl,
-						file);
-				dialog.setCompleteAction(new ActionListener() {
+				if (GuiSettings.getSettings().isDriverInstalled(driverClass)) {
+					GuiHelper.showErrorMessage("Driver already installed",
+							"An existing driver for " + databaseName
+									+ " (class name '" + driverClass
+									+ "') is already installed.", null);
+				} else {
+					final File file = new File(databaseName.toLowerCase()
+							.replace(' ', '_')
+							+ "-driver.jar");
+					final DownloadDialog dialog = new DownloadDialog(
+							downloadUrl, file);
+					dialog.setCompleteAction(new ActionListener() {
 
-					public void actionPerformed(ActionEvent event) {
-						DatabaseDriver driver = new DatabaseDriver(file,
-								driverClass);
-						try {
-							driver.loadDriver();
-							GuiSettings settings = GuiSettings.getSettings();
-							settings.getDatabaseDrivers().add(driver);
-							GuiSettings.saveSettings(settings);
-						} catch (Exception e) {
-							GuiHelper
-									.showErrorMessage(
-											"Could not load driver",
-											"An error occurred while loading the database driver",
-											e);
+						public void actionPerformed(ActionEvent event) {
+							DatabaseDriver driver = new DatabaseDriver(file,
+									driverClass);
+							try {
+								driver.loadDriver();
+								GuiSettings settings = GuiSettings
+										.getSettings();
+								settings.getDatabaseDrivers().add(driver);
+								GuiSettings.saveSettings(settings);
+							} catch (Exception e) {
+								GuiHelper
+										.showErrorMessage(
+												"Could not load driver",
+												"An error occurred while loading the database driver",
+												e);
+							}
 						}
-					}
+					});
+					dialog.setVisible(true);
+					new Thread() {
+						@Override
+						public void run() {
+							dialog.download();
+						}
+					}.start();
+				}
 
-				});
-				dialog.setVisible(true);
-				new Thread() {
-					@Override
-					public void run() {
-						dialog.download();
-					}
-				}.start();
 			}
 
 		});

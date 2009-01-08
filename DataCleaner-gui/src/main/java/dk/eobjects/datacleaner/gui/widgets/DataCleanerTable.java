@@ -56,6 +56,24 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 	protected List<JMenuItem> _rightClickMenuItems;
 	protected JPanel _panel;
 
+	public DataCleanerTable(String[] columnNames) {
+		super(new Object[0][columnNames.length], columnNames);
+		setHighlighters(GuiHelper.LIBERELLO_HIGHLIGHTER);
+		getTableHeader().setReorderingAllowed(true);
+		setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		setRowSelectionAllowed(true);
+		setColumnSelectionAllowed(true);
+		setColumnControlVisible(true);
+		setSortable(true);
+		setEditable(false);
+		addMouseListener(this);
+		_rightClickMenuItems = getCopyMenuItems();
+	}
+
+	public DataCleanerTable() {
+		this(new String[0]);
+	}
+
 	private ActionListener _copySelectItemsActionListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			int rowIndex = DataCleanerTable.this.getSelectedRow();
@@ -85,26 +103,13 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 		dataModel = EMPTY_TABLEMODEL;
 	}
 
-	public DataCleanerTable() {
-		super();
-		setHighlighters(GuiHelper.LIBERELLO_HIGHLIGHTER);
-		getTableHeader().setReorderingAllowed(true);
-		setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		setRowSelectionAllowed(true);
-		setColumnSelectionAllowed(true);
-		setColumnControlVisible(true);
-		setSortable(true);
-		setEditable(false);
-		addMouseListener(this);
-		_rightClickMenuItems = getCopyMenuItems();
-	}
-
 	/**
 	 * Convenience method to create a panel with this table, including it's
 	 * header, correctly layed out.
 	 */
 	public JPanel toPanel() {
-		GuiBuilder<JPanel> guiBuilder = GuiHelper.createPanel().applyBorderLayout();
+		GuiBuilder<JPanel> guiBuilder = GuiHelper.createPanel()
+				.applyBorderLayout();
 		Dimension panelPreferredSize = getPanelPreferredSize();
 		guiBuilder.applySize(panelPreferredSize);
 		_panel = guiBuilder.toComponent();

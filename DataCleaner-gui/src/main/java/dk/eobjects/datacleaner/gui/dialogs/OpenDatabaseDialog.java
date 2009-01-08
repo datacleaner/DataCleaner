@@ -148,7 +148,8 @@ public class OpenDatabaseDialog extends BanneredDialog {
 						.getImageIcon(iconPath));
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						_connectionStringField.setFocusTraversalKeysEnabled(false);
+						_connectionStringField
+								.setFocusTraversalKeysEnabled(false);
 						_connectionStringField.setText(connectionString);
 						_connectionStringField
 								.setSelectionStart(connectionString
@@ -284,7 +285,11 @@ public class OpenDatabaseDialog extends BanneredDialog {
 							_connectionStringField
 									.setSelectionEnd(selectionEnd + 1);
 							_connectionStringField.requestFocus();
+						} else {
+							_usernameField.requestFocus();
 						}
+					} else {
+						_usernameField.requestFocus();
 					}
 				}
 			}

@@ -64,6 +64,7 @@ import dk.eobjects.datacleaner.gui.dialogs.DatabaseDictionaryDialog;
 import dk.eobjects.datacleaner.gui.dialogs.DatabaseDriverDialog;
 import dk.eobjects.datacleaner.gui.dialogs.NamedRegexDialog;
 import dk.eobjects.datacleaner.gui.dialogs.NewTaskDialog;
+import dk.eobjects.datacleaner.gui.dialogs.RegexSwapDialog;
 import dk.eobjects.datacleaner.gui.dialogs.SettingsDialog;
 import dk.eobjects.datacleaner.gui.dialogs.TextFileDictionaryDialog;
 import dk.eobjects.datacleaner.gui.model.DatabaseDictionary;
@@ -142,36 +143,6 @@ public class MainWindow implements WeakObserver, WindowListener {
 
 		fileMenu.add(new JSeparator(JSeparator.HORIZONTAL));
 
-		JMenuItem loadRegexesItem = new JMenuItem(
-				"Load regexes from properties file", GuiHelper
-						.getImageIcon("images/regexes.png"));
-		loadRegexesItem.setMnemonic('r');
-		loadRegexesItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				JFileChooser fileChooser = new JFileChooser(new File(
-						"samples/regexes"));
-				ExtensionFilter filter = new ExtensionFilter(
-						"Property file (.properties)", "properties");
-				fileChooser.setFileFilter(filter);
-				GuiHelper.centerOnScreen(fileChooser);
-				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = fileChooser.getSelectedFile();
-					try {
-						List<NamedRegex> regexes = NamedRegex
-								.loadFromFile(selectedFile);
-						GuiSettings settings = GuiSettings.getSettings();
-						settings.getRegexes().addAll(regexes);
-						GuiSettings.saveSettings(settings);
-					} catch (IllegalArgumentException e) {
-						GuiHelper.showErrorMessage("Could not load regexes",
-								"Error occurred during load of regexes from file: "
-										+ selectedFile.getAbsolutePath(), e);
-					}
-				}
-			}
-		});
-		fileMenu.add(loadRegexesItem);
-		
 		fileMenu.add(DatabaseDriverDialog.getMenu());
 
 		fileMenu.add(new JSeparator(JSeparator.HORIZONTAL));
@@ -431,12 +402,67 @@ public class MainWindow implements WeakObserver, WindowListener {
 		GuiHelper.addToGridBag(buttonBar, panel, 1, 1);
 
 		buttonBar = GuiHelper.createToolBar();
-		JButton addButton = new JButton("New regex", GuiHelper
+		final JButton addButton = new JButton("New regex", GuiHelper
 				.getImageIcon("images/toolbar_add.png"));
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NamedRegexDialog dialog = new NamedRegexDialog(null);
-				dialog.setVisible(true);
+				JPopupMenu popup = new JPopupMenu();
+
+				JMenuItem createRegexItem = new JMenuItem("Create new expression",
+						GuiHelper.getImageIcon("images/regexes.png"));
+				createRegexItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						NamedRegexDialog dialog = new NamedRegexDialog(null);
+						dialog.setVisible(true);
+					}
+				});
+				popup.add(createRegexItem);
+				
+				JMenuItem regexSwapItem = new JMenuItem(
+						"Import from the RegexSwap", GuiHelper
+								.getImageIcon("images/toolbar_visit_website.png"));
+				regexSwapItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						RegexSwapDialog dialog = new RegexSwapDialog();
+						dialog.setVisible(true);
+					}
+				});
+				popup.add(regexSwapItem);
+
+				JMenuItem loadRegexesItem = new JMenuItem(
+						"Load from .properties file", GuiHelper
+								.getImageIcon("images/toolbar_file.png"));
+				loadRegexesItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						JFileChooser fileChooser = new JFileChooser(new File(
+								"samples/regexes"));
+						ExtensionFilter filter = new ExtensionFilter(
+								"Property file (.properties)", "properties");
+						fileChooser.setFileFilter(filter);
+						GuiHelper.centerOnScreen(fileChooser);
+						if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+							File selectedFile = fileChooser.getSelectedFile();
+							try {
+								List<NamedRegex> regexes = NamedRegex
+										.loadFromFile(selectedFile);
+								GuiSettings settings = GuiSettings
+										.getSettings();
+								settings.getRegexes().addAll(regexes);
+								GuiSettings.saveSettings(settings);
+							} catch (IllegalArgumentException e) {
+								GuiHelper.showErrorMessage(
+										"Could not load regexes",
+										"Error occurred during load of regexes from file: "
+												+ selectedFile
+														.getAbsolutePath(), e);
+							}
+						}
+					}
+				});
+				popup.add(loadRegexesItem);
+
+				popup.show(addButton, addButton.getWidth(), 0);
+
 			}
 		});
 		buttonBar.add(addButton);

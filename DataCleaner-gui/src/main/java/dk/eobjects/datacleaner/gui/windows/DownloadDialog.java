@@ -42,8 +42,6 @@ import dk.eobjects.datacleaner.gui.GuiHelper;
 public class DownloadDialog extends JDialog {
 
 	private static final long serialVersionUID = 4508004420458673048L;
-	private static final ImageIcon _workingIcon = GuiHelper
-			.getImageIcon("images/working.gif");
 	private static final Log _log = LogFactory.getLog(DownloadDialog.class);
 	private String _downloadUrl;
 	private File _file;
@@ -83,10 +81,11 @@ public class DownloadDialog extends JDialog {
 
 		JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		centerPanel.setBackground(Color.WHITE);
-		JLabel iconLabel = new GuiBuilder<JLabel>(new JLabel(_workingIcon))
-				.toComponent();
+		ImageIcon workingIcon = GuiHelper
+				.getImageIcon("images/working.gif");
+		JLabel iconLabel = new JLabel(workingIcon);
 		iconLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
-		_workingIcon.setImageObserver(iconLabel);
+		workingIcon.setImageObserver(iconLabel);
 		centerPanel.add(iconLabel);
 		add(centerPanel, BorderLayout.CENTER);
 

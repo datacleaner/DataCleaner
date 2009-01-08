@@ -187,6 +187,18 @@ public class GuiSettings extends WeakObservable implements Serializable {
 					e);
 		}
 	}
+	
+	public boolean isDriverInstalled(String driverClassName) {
+		if (driverClassName != null) {
+			List<DatabaseDriver> databaseDrivers = getDatabaseDrivers();
+			for (DatabaseDriver driver : databaseDrivers) {
+				if (driverClassName.equals(driver.getDriverClass())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Retrieves the settings (will be called each time the user accesses or

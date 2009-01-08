@@ -32,6 +32,7 @@ public class Regex {
 	private List<Category> _categories = new ArrayList<Category>();
 	
 	public Regex(String name) {
+		_name = name;
 	}
 
 	public String getName() {

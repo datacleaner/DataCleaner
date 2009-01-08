@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<book>
+	<title>DataCleaner reference documentation</title>
+	<titleabbrev>DataCleaner</titleabbrev>
+	<bookinfo>
+		<author>
+			<personname>
+				<firstname>Kasper</firstname>
+				<surname>S&#248;rensen</surname>
+			</personname>
+		</author>
+		<edition>1.5-SNAPSHOT</edition>
+	</bookinfo>
+	<preface id="preface1">
+		<title>Preface</title>
+		<para>
+			Data quality is an issue too often ignored. With almost any type of application,
+			datastore or document comes a set of potential data quality pitfalls. DataCleaner
+			was founded upon the idea of promoting data quality awareness and bringing it to the
+			general public. This required a drastic change from the strategy that commercial data
+			quality products are practicing. If we want the general public to be aware of the
+			data quality domain, then we have to provide them with the tools to experience it themselves.
+		</para>
+		<para>
+			Although we recognize that dedicated data quality analysis is, and probably
+			always will be, a professional niche with a limited audience, we believe that for the most part,
+			data quality tools should be free and developed in coorporation and participation between
+			those professionals. Since data quality in many ways represents a "common good" and a an
+			issue of general interest, we believe in this model of shared ownership and responsibility. This
+			is why DataCleaner was founded as an Open Source project and we hope that the implifications of
+			the Open Source philosophy will influence the products future in a positive way.
+		</para>
+	</preface>
+	<chapter>
+		<title>Introduction to the concepts and features of DataCleaner</title>
+		<section>
+			<title>What is Data Quality?</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>What is Open Source software?</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>Data Profiling</title>
+			<para>
+				The profiler is used to calculate and analyse various important measures based on the values of data.
+				In this sense the results of a profiling will always have to be read and contemplated upon by a
+				physical person, for example a Database Administrator, BI engineer or similar. The results are
+				supposed to help this person determine where to look for data quality problem in the data source -
+				to get an impression of the state of the data.
+			</para>
+		</section>
+		<section>
+			<title>Data Validation</title>
+			<para>
+				In contrast to the profiler and the comparator, the validator will give you a result that can be
+				interpreted as "good" or "bad", since the validator validates your data. In the validator-mode you
+				set up business rules that apply to your data and recieve a result that can be used to fix
+				validation errors.
+			</para>
+		</section>
+	</chapter>
+	<chapter>
+		<title>Installation and configuration</title>
+		<para>This chapter covers the installation and configuration of DataCleaner.</para>
+		<section>
+			<title>Software requirements</title>
+			<para>
+				DataCleaner requires a Java Runtime Environment (JRE) version 5.0 or higher.
+				You can download the JRE at Sun Microsystems Java website:
+			</para>
+			<para>
+				<ulink url="http://java.sun.com/javase/downloads">http://java.sun.com/javase/downloads</ulink>
+			</para>
+			<para>
+				DataCleaner runs in both desktop-application mode and command-line interface mode on
+				Microsoft Windows Operating Systems, Mac OS X and Linux. For optimal performance, a minimum
+				of 1024 megabytes (1 gigabyte) of free memory is recommended.
+			</para>
+		</section>
+		<section>
+			<title>Database drivers</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>Database connections</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>Dictionaries</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>Regular Expressions (regexes)</title>
+			<para>TODO</para>
+		</section>
+	</chapter>
+	<chapter>
+		<title>The DataCleaner desktop-applicatoin</title>
+		<section>
+			<title>What is the desktop-application used for?</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>The Profiler</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>The Validator</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>The Comparator</title>
+			<para>TODO</para>
+		</section>
+	</chapter>
+	<chapter>
+		<title>The DataCleaner command-line interface</title>
+		<section>
+			<title>What is the command-line interface used for?</title>
+			<para>TODO: Running batches of DQ analysis, automation, etc.</para>
+		</section>
+		<section>
+			<title>Running a DataCleaner job</title>
+			<para>TODO: calling runjob.sh/.cmd</para>
+		</section>
+		<section>
+			<title>Output formats</title>
+			<para>TODO: XML and CSV output formats</para>
+		</section>
+		<section>
+			<title>Scheduling jobs</title>
+			<para>TODO: Examples of scheduling using cron and Scheduled Tasks</para>
+		</section>
+	</chapter>
+	<chapter>
+		<title>Developers guide</title>
+		<section>
+			<title>Java API reference documentation</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>An introduction to the architecture of DataCleaner</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>Understanding the DataCleaner ecosystem</title>
+			<para>TODO</para>
+		</section>
+		<section>
+			<title>Developing custom profiles</title>
+			<para>TODO</para>
+		</section>
+	</chapter>
+</book>

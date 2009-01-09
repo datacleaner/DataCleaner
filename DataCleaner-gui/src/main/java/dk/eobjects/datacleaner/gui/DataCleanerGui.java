@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.eobjects.datacleaner.gui.dialogs.NewTaskDialog;
+import dk.eobjects.datacleaner.gui.dialogs.UserRegistrationDialog;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
 import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
@@ -52,8 +53,12 @@ public class DataCleanerGui {
 
 		_mainWindow = new MainWindow();
 
-		NewTaskDialog dialog = new NewTaskDialog();
-		dialog.setVisible(true);
+		String username = GuiSettings.getSettings().getUsername();
+		if (username == null) {
+			new UserRegistrationDialog().setVisible(true);
+		} else {
+			new NewTaskDialog().setVisible(true);
+		}
 	}
 
 	private static void loadDrivers() {

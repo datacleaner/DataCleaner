@@ -15,7 +15,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
 
-exec mvn install
+mvn install -Dmaven.test.skip=true
 cd DataCleaner-packaging/target/dist
-exec datacleaner.sh
+./datacleaner.sh
 cd ../../..

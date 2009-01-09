@@ -68,6 +68,7 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	private List<IDictionary> _dictionaries;
 	private List<DatabaseDriver> _databaseDrivers;
 	private String _lookAndFeelClassName;
+	private String _username;
 	private boolean _horisontalMatrixTables;
 
 	// Regexes are not serialized, but loaded from REGEXES_FILE
@@ -187,7 +188,7 @@ public class GuiSettings extends WeakObservable implements Serializable {
 					e);
 		}
 	}
-	
+
 	public boolean isDriverInstalled(String driverClassName) {
 		if (driverClassName != null) {
 			List<DatabaseDriver> databaseDrivers = getDatabaseDrivers();
@@ -277,6 +278,14 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	public GuiSettings setRegexes(List<NamedRegex> regexes) {
 		_regexes = regexes;
 		return this;
+	}
+
+	public String getUsername() {
+		return _username;
+	}
+
+	public void setUsername(String username) {
+		_username = username;
 	}
 
 	@Override

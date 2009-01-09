@@ -17,14 +17,17 @@
 package dk.eobjects.datacleaner.gui.panels;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -32,36 +35,63 @@ import dk.eobjects.datacleaner.gui.GuiBuilder;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 
-public class LookAndFeelSettingsPanel extends JPanel {
+public class GeneralSettingsPanel extends JPanel {
 
 	private static final long serialVersionUID = 4806801697950234450L;
 	private ButtonGroup _buttonGroup;
 	private JComboBox _tableLayoutComboBox;
+	private JTextField _usernameField;
+	private JButton _clearUsernameButton;
 
-	public LookAndFeelSettingsPanel(GuiSettings settings) {
+	public GeneralSettingsPanel(GuiSettings settings) {
 		super();
-		new GuiBuilder<JPanel>(this).applyLightBackground().applyLayout(
-				new FlowLayout(FlowLayout.LEFT, 10, 10));
-
 		Dimension d = new Dimension();
 		d.width = 430;
-		setSize(d);
-		setPreferredSize(d);
+		new GuiBuilder<JPanel>(this).applyLightBackground().applySize(d);
 
-		setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+		// User registration
+		JPanel userRegistrationPanel = GuiHelper.createPanel()
+				.applyTitledBorder("User registration").toComponent();
+		userRegistrationPanel.add(new JLabel("Registered user:"));
 
-		JLabel header = new JLabel("Look and feel");
-		header.setFont(GuiHelper.FONT_HEADER);
-		d = new Dimension();
-		d.width = 400;
-		d.height = 20;
-		header.setSize(d);
-		header.setPreferredSize(d);
-		add(header);
+		_usernameField = new JTextField(settings.getUsername(), 18);
+		_usernameField.setEnabled(false);
+		userRegistrationPanel.add(_usernameField);
 
-		JPanel buttonPanel = GuiHelper.createPanel().applyBorder()
-				.applyVerticalLayout().toComponent();
+		_clearUsernameButton = new JButton(GuiHelper
+				.getImageIcon("images/toolbar_remove.png"));
+		_clearUsernameButton.setToolTipText("Clear user registration");
+		_clearUsernameButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GuiSettings settings = GuiSettings.getSettings();
+				settings.setUsername(null);
+				GuiSettings.saveSettings(settings);
+				_usernameField.setText("");
+			}
+		});
+		if (settings.getUsername() == null) {
+			_clearUsernameButton.setEnabled(false);
+		}
+		userRegistrationPanel.add(_clearUsernameButton);
 
+		GuiHelper.addToGridBag(userRegistrationPanel, this, 0, 0);
+
+		// Layout
+		JPanel matrixTableLayoutPanel = GuiHelper.createPanel()
+				.applyTitledBorder("Layout").toComponent();
+		matrixTableLayoutPanel
+				.add(new JLabel("Profiling result-table layout:"));
+		_tableLayoutComboBox = new JComboBox(new Object[] { "Horizontal",
+				"Vertical" });
+		if (!settings.isHorisontalMatrixTables()) {
+			_tableLayoutComboBox.setSelectedIndex(1);
+		}
+		matrixTableLayoutPanel.add(_tableLayoutComboBox);
+		GuiHelper.addToGridBag(matrixTableLayoutPanel, this, 0, 1);
+
+		// Look and feel
+		JPanel lookAndFeelPanel = GuiHelper.createPanel().applyTitledBorder(
+				"Look and feel").applyVerticalLayout().toComponent();
 		_buttonGroup = new ButtonGroup();
 		String selectedLookAndFeelClassName = settings
 				.getLookAndFeelClassName();
@@ -76,30 +106,10 @@ public class LookAndFeelSettingsPanel extends JPanel {
 				radioButton.setSelected(true);
 			}
 			radioButton.setActionCommand(lookAndFeelInfos[i].getClassName());
-			buttonPanel.add(radioButton);
+			lookAndFeelPanel.add(radioButton);
 		}
 
-		add(buttonPanel);
-
-		header = new JLabel("Layout");
-		header.setFont(GuiHelper.FONT_HEADER);
-		d = new Dimension();
-		d.width = 400;
-		d.height = 20;
-		header.setSize(d);
-		header.setPreferredSize(d);
-		add(header);
-
-		JPanel matrixTableLayoutPanel = GuiHelper.createPanel().applyBorder()
-				.toComponent();
-		matrixTableLayoutPanel.add(new JLabel("Profiling result-table layout"));
-		_tableLayoutComboBox = new JComboBox(new Object[] { "Horizontal",
-				"Vertical" });
-		if (!settings.isHorisontalMatrixTables()) {
-			_tableLayoutComboBox.setSelectedIndex(1);
-		}
-		matrixTableLayoutPanel.add(_tableLayoutComboBox);
-		add(matrixTableLayoutPanel);
+		GuiHelper.addToGridBag(lookAndFeelPanel, this, 0, 2);
 	}
 
 	public boolean isTableLayoutHorizontal() {

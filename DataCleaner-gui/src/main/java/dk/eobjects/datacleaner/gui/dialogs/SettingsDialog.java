@@ -41,7 +41,7 @@ import javax.swing.UIManager;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
-import dk.eobjects.datacleaner.gui.panels.LookAndFeelSettingsPanel;
+import dk.eobjects.datacleaner.gui.panels.GeneralSettingsPanel;
 import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.util.WeakObservable;
@@ -55,7 +55,7 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 	private static final ImageIcon ICON_ERROR = GuiHelper
 			.getImageIcon("images/driver_error.png");
 	private static final long serialVersionUID = -2821019697454011890L;
-	private LookAndFeelSettingsPanel _lafPanel;
+	private GeneralSettingsPanel _generalPanel;
 	private GuiSettings _settings;
 	private CloseableTabbedPane _tabbedPane;
 	private JPanel _driversPanel;
@@ -75,7 +75,7 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		_tabbedPane = new CloseableTabbedPane();
 		_tabbedPane.setUnclosableTab(0).setUnclosableTab(1);
 		_tabbedPane.setName("categoriesTab");
-		_tabbedPane.addTab("Look and feel", getLookAndFeelTab());
+		_tabbedPane.addTab("General", getLookAndFeelTab());
 		_driversPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		_driversPanel.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		_driversPanel.setName("driversPanel");
@@ -109,8 +109,8 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 	}
 
 	private Component getLookAndFeelTab() {
-		_lafPanel = new LookAndFeelSettingsPanel(_settings);
-		JScrollPane scrollPane = new JScrollPane(_lafPanel);
+		_generalPanel = new GeneralSettingsPanel(_settings);
+		JScrollPane scrollPane = new JScrollPane(_generalPanel);
 		scrollPane.setBorder(null);
 		return scrollPane;
 	}
@@ -225,13 +225,13 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 	private void saveSettings() {
 		try {
 			LookAndFeel originalLaf = UIManager.getLookAndFeel();
-			String newLafClassName = _lafPanel.getLookAndFeelClassName();
+			String newLafClassName = _generalPanel.getLookAndFeelClassName();
 			if (!originalLaf.getClass().getName().equals(newLafClassName)) {
 				UIManager.setLookAndFeel(newLafClassName);
 				DataCleanerGui.getMainWindow().repaintAll();
 			}
 			_settings.setLookAndFeelClassName(newLafClassName);
-			_settings.setHorisontalMatrixTables(_lafPanel
+			_settings.setHorisontalMatrixTables(_generalPanel
 					.isTableLayoutHorizontal());
 		} catch (Exception e) {
 			GuiHelper.showErrorMessage("Could not apply Look and feel", e

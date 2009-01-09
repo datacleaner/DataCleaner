@@ -30,7 +30,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -171,18 +170,27 @@ public class MainWindow implements WeakObserver, WindowListener {
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic('H');
 
-		Action action = null;
+		JMenuItem helpContentItem = new JMenuItem("Help contents", GuiHelper
+				.getImageIcon("images/menu_help.png"));
+		helpContentItem.setMnemonic('H');
 		try {
-			action = new OpenBrowserAction(
-					"http://datacleaner.eobjects.org/docs");
+			helpContentItem.addActionListener(new OpenBrowserAction(
+					"http://datacleaner.eobjects.org/docs"));
 		} catch (MalformedURLException e) {
 			_log.error(e);
 		}
-		JMenuItem helpContentItem = new JMenuItem(action);
-		helpContentItem.setMnemonic('H');
-		helpContentItem.setText("Help contents");
-		helpContentItem.setIcon(GuiHelper.getImageIcon("images/menu_help.png"));
 		helpMenu.add(helpContentItem);
+
+		JMenuItem forumItem = new JMenuItem("Ask at the forums", GuiHelper
+				.getImageIcon("images/toolbar_forum.png"));
+		forumItem.setMnemonic('F');
+		try {
+			forumItem.addActionListener(new OpenBrowserAction(
+					"http://datacleaner.eobjects.org/forum/1"));
+		} catch (MalformedURLException e) {
+			_log.error(e);
+		}
+		helpMenu.add(forumItem);
 
 		JMenuItem aboutItem = new JMenuItem("About DataCleaner", GuiHelper
 				.getImageIcon("images/menu_about.png"));
@@ -230,16 +238,15 @@ public class MainWindow implements WeakObserver, WindowListener {
 
 		_bottomToolbar = GuiHelper.createToolBar();
 
-		action = null;
-		try {
-			action = new OpenBrowserAction("http://datacleaner.eobjects.org");
-		} catch (MalformedURLException e) {
-			_log.error(e);
-		}
 		JButton websiteButton = GuiHelper
 				.createButton("Visit DataCleaner website",
 						"images/toolbar_visit_website.png").toComponent();
-		websiteButton.addActionListener(action);
+		try {
+			websiteButton.addActionListener(new OpenBrowserAction(
+					"http://datacleaner.eobjects.org"));
+		} catch (MalformedURLException e) {
+			_log.error(e);
+		}
 		_bottomToolbar.add(websiteButton);
 
 		_contentPanel.add(_bottomToolbar, BorderLayout.SOUTH);
@@ -408,8 +415,9 @@ public class MainWindow implements WeakObserver, WindowListener {
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popup = new JPopupMenu();
 
-				JMenuItem createRegexItem = new JMenuItem("Create new expression",
-						GuiHelper.getImageIcon("images/regexes.png"));
+				JMenuItem createRegexItem = new JMenuItem(
+						"Create new expression", GuiHelper
+								.getImageIcon("images/regexes.png"));
 				createRegexItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						NamedRegexDialog dialog = new NamedRegexDialog(null);
@@ -417,9 +425,10 @@ public class MainWindow implements WeakObserver, WindowListener {
 					}
 				});
 				popup.add(createRegexItem);
-				
+
 				JMenuItem regexSwapItem = new JMenuItem(
-						"Import from the RegexSwap", GuiHelper
+						"Import from the RegexSwap",
+						GuiHelper
 								.getImageIcon("images/toolbar_visit_website.png"));
 				regexSwapItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {

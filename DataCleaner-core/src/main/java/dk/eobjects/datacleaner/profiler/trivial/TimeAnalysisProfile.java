@@ -46,11 +46,11 @@ import dk.eobjects.metamodel.schema.ColumnType;
  */
 public class TimeAnalysisProfile extends AbstractProfile {
 
-	private static final DateTimeFormatter DATE_AND_TIME_PATTERN = DateTimeFormat
+	public static final DateTimeFormatter DATE_AND_TIME_PATTERN = DateTimeFormat
 			.forPattern("yyyy-MM-dd HH:mm:ss");
-	private static final DateTimeFormatter TIME_ONLY_PATTERN = DateTimeFormat
+	public static final DateTimeFormatter TIME_ONLY_PATTERN = DateTimeFormat
 			.forPattern("HH:mm:ss");
-	private static final DateTimeFormatter DATE_ONLY_PATTERN = DateTimeFormat
+	public static final DateTimeFormatter DATE_ONLY_PATTERN = DateTimeFormat
 			.forPattern("yyyy-MM-dd");
 
 	// private Map<Column, SortedMap<DateTime, Long>> _sortedMaps = new

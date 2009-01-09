@@ -1,16 +1,26 @@
 package dk.eobjects.datacleaner.gui.dialogs;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -18,7 +28,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
+import org.jdesktop.swingx.action.OpenBrowserAction;
+import org.joda.time.DateTime;
+
+import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.widgets.DataCleanerTable;
+import dk.eobjects.datacleaner.profiler.trivial.TimeAnalysisProfile;
 import dk.eobjects.datacleaner.regexswap.Category;
 import dk.eobjects.datacleaner.regexswap.Regex;
 import dk.eobjects.datacleaner.regexswap.RegexSwapClient;
@@ -30,11 +45,14 @@ public class RegexSwapDialog extends BanneredDialog {
 	private static final long serialVersionUID = 3585352325115158622L;
 	private RegexSwapClient _client;
 	private JTree _categoryTree;
-	private JPanel _regexDetailsPanel;
 	private DataCleanerTable _regexSelectionTable;
+	private JTextArea _regexDescriptionLabel;
+	private JButton _importRegexButton;
+	private Regex _selectedRegex;
+	private JButton _viewOnlineButton;
 
 	public RegexSwapDialog() {
-		super(600, 400);
+		super(700, 500);
 	}
 
 	@Override
@@ -42,13 +60,13 @@ public class RegexSwapDialog extends BanneredDialog {
 		_client = new RegexSwapClient();
 		_categoryTree = createCategoryTree();
 		JPanel regexSelectionTablePanel = createRegexSelectionTable();
-		_regexDetailsPanel = createRegexDetailsPanel();
+		JPanel regexDetailsPanel = createRegexDetailsPanel();
 
 		JSplitPane rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				regexSelectionTablePanel, _regexDetailsPanel);
-		rightPane.setDividerLocation(200);
+				new JScrollPane(regexSelectionTablePanel), regexDetailsPanel);
+		rightPane.setDividerLocation(170);
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				_categoryTree, rightPane);
+				new JScrollPane(_categoryTree), rightPane);
 		splitPane.setDividerLocation(200);
 
 		updateCategories();
@@ -56,14 +74,71 @@ public class RegexSwapDialog extends BanneredDialog {
 	}
 
 	private JPanel createRegexDetailsPanel() {
-		// TODO
-		return new JPanel();
+		JPanel panel = GuiHelper.createPanel().applyBorderLayout()
+				.toComponent();
+
+		_regexDescriptionLabel = GuiHelper.createLabelTextArea().applyBorder()
+				.applyLightBackground().toComponent();
+		_regexDescriptionLabel.setText("No regex selected");
+		panel.add(new JScrollPane(_regexDescriptionLabel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+
+		JToolBar toolBar = GuiHelper.createToolBar();
+		_importRegexButton = new JButton("Import regex", GuiHelper
+				.getImageIcon("images/regexes.png"));
+		_importRegexButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				NamedRegexDialog dialog = new NamedRegexDialog(_selectedRegex
+						.getName(), _selectedRegex.getExpression());
+				dialog.setVisible(true);
+			}
+		});
+		_importRegexButton.setEnabled(false);
+		toolBar.add(_importRegexButton);
+
+		_viewOnlineButton = new JButton("View online", GuiHelper
+				.getImageIcon("images/toolbar_visit_website.png"));
+		_viewOnlineButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				try {
+					new OpenBrowserAction(
+							"http://datacleaner.eobjects.org/regex/"
+									+ _selectedRegex.getName())
+							.actionPerformed(event);
+				} catch (MalformedURLException e) {
+					_log.error(e);
+				}
+			}
+
+		});
+		_viewOnlineButton.setEnabled(false);
+		toolBar.add(_viewOnlineButton);
+
+		panel.add(toolBar, BorderLayout.SOUTH);
+
+		return panel;
 	}
 
 	private JPanel createRegexSelectionTable() {
 		_regexSelectionTable = new DataCleanerTable();
-		_regexSelectionTable.setModel(new DefaultTableModel(TABLE_HEADERS, 0));
+		_regexSelectionTable.getSelectionModel().addListSelectionListener(
+				new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent e) {
+						int selectedRow = _regexSelectionTable.getSelectedRow();
+						if (selectedRow >= 0) {
+							String regexName = (String) _regexSelectionTable
+									.getValueAt(selectedRow, 0);
+							Regex regex = _client.getRegexes().get(regexName);
+							fireRegexSelected(regex);
+						} else {
+							fireRegexSelected(null);
+						}
+					}
+				});
 
+		_regexSelectionTable.setModel(new DefaultTableModel(TABLE_HEADERS, 0));
 		return _regexSelectionTable.toPanel();
 	}
 
@@ -106,6 +181,7 @@ public class RegexSwapDialog extends BanneredDialog {
 		});
 
 		_categoryTree.addMouseListener(new MouseAdapter() {
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				int selRow = _categoryTree
@@ -114,6 +190,7 @@ public class RegexSwapDialog extends BanneredDialog {
 					TreePath path = _categoryTree.getPathForLocation(e.getX(),
 							e.getY());
 					_categoryTree.setSelectionPath(path);
+					_categoryTree.updateUI();
 					if (path.getPathCount() == 2) {
 						// A category is selected
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
@@ -149,36 +226,46 @@ public class RegexSwapDialog extends BanneredDialog {
 	}
 
 	private void fireCategorySelected(final Category category) {
-		new Thread() {
-			@Override
-			public void run() {
-				_client.updateRegexes(category);
-				List<Regex> regexes = category.getRegexes();
+		_client.updateRegexes(category);
+		List<Regex> regexes = category.getRegexes();
 
-				//TODO: Weird, weird runtime exception happening sometimes
-				DefaultTableModel tableModel;
-				if (regexes.isEmpty()) {
-					tableModel = new DefaultTableModel(TABLE_HEADERS, 1);
-					tableModel.setValueAt("n/a", 0, 0);
-					tableModel.setValueAt("n/a", 0, 1);
-					tableModel.setValueAt("n/a", 0, 2);
-				} else {
-					tableModel = new DefaultTableModel(TABLE_HEADERS, regexes
-							.size());
-					for (int i = 0; i < regexes.size(); i++) {
-						Regex regex = regexes.get(i);
-						tableModel.setValueAt(regex.getName(), i, 0);
-						tableModel.setValueAt(regex.getPositiveVotes() + "/"
-								+ regex.getNegativeVotes(), i, 1);
-						tableModel.setValueAt(regex.getAuthor(), i, 2);
-					}
-				}
-				synchronized (_regexSelectionTable) {
-					_regexSelectionTable.setModel(tableModel);
-					_regexSelectionTable.updateUI();
-				}
+		DefaultTableModel tableModel = new DefaultTableModel(TABLE_HEADERS,
+				regexes.size());
+		if (!regexes.isEmpty()) {
+			for (int i = 0; i < regexes.size(); i++) {
+				Regex regex = regexes.get(i);
+				tableModel.setValueAt(regex.getName(), i, 0);
+				tableModel.setValueAt(regex.getPositiveVotes() + "/"
+						+ regex.getNegativeVotes(), i, 1);
+				tableModel.setValueAt(regex.getAuthor(), i, 2);
 			}
-		}.start();
+		}
+		synchronized (_regexSelectionTable) {
+			_regexSelectionTable.setModel(tableModel);
+			_regexSelectionTable.updateUI();
+		}
+	}
+
+	private void fireRegexSelected(final Regex regex) {
+		_selectedRegex = regex;
+		if (regex == null) {
+			_importRegexButton.setEnabled(false);
+			_viewOnlineButton.setEnabled(false);
+			_regexDescriptionLabel.setText("No regex selected");
+		} else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("EXPRESSION:\n");
+			sb.append(regex.getExpression());
+			sb.append("\n\nDESCRIPTION:\n");
+			sb.append(regex.getDescription());
+			sb.append("\n\nSUBMISSION DATE:\n");
+			sb.append(new DateTime(regex.getTimestamp() * 1000)
+					.toString(TimeAnalysisProfile.DATE_AND_TIME_PATTERN));
+
+			_regexDescriptionLabel.setText(sb.toString());
+			_importRegexButton.setEnabled(true);
+			_viewOnlineButton.setEnabled(true);
+		}
 	}
 
 	@Override

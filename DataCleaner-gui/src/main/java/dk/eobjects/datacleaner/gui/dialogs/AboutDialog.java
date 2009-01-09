@@ -46,7 +46,9 @@ public class AboutDialog extends BanneredDialog {
 		final JTextArea textArea = GuiHelper.createLabelTextArea()
 				.toComponent();
 		textArea.setText(GuiHelper.getCreditsText());
-		JScrollPane scrollPane = new JScrollPane(textArea);
+		JScrollPane scrollPane = new JScrollPane(textArea,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setBorder(GuiHelper.BORDER_WIDE);
 		panel.add(scrollPane, BorderLayout.CENTER);
 		JToolBar toolbar = GuiHelper.createToolBar();

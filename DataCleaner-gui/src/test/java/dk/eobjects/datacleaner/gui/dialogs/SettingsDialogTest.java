@@ -23,13 +23,16 @@ import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 public class SettingsDialogTest extends DataCleanerTestCase {
 
 	public void testBeautifyPath() throws Exception {
-		assertEquals("", SettingsDialog.beautifyPath(File.separatorChar
-				+ "foobar1" + File.separatorChar + "foobar2"
-				+ File.separatorChar + "foobar3" + File.separatorChar
-				+ "foobar4" + File.separatorChar + "foobar5"
-				+ File.separatorChar + "foobar6" + File.separatorChar
-				+ "foobar7" + File.separatorChar + "foobar8"
-				+ File.separatorChar + "foobar9" + File.separatorChar
-				+ "foobar10"));
+		assertEquals("" + File.separatorChar + "foobar1" + File.separatorChar
+				+ "foobar2" + File.separatorChar + "foobar3"
+				+ File.separatorChar + "foobar4" + File.separatorChar
+				+ "fooba..." + File.separatorChar + "foobar10", SettingsDialog
+				.beautifyPath(File.separatorChar + "foobar1"
+						+ File.separatorChar + "foobar2" + File.separatorChar
+						+ "foobar3" + File.separatorChar + "foobar4"
+						+ File.separatorChar + "foobar5" + File.separatorChar
+						+ "foobar6" + File.separatorChar + "foobar7"
+						+ File.separatorChar + "foobar8" + File.separatorChar
+						+ "foobar9" + File.separatorChar + "foobar10"));
 	}
 }

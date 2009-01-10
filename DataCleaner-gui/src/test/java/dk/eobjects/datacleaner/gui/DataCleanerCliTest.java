@@ -34,7 +34,7 @@ public class DataCleanerCliTest extends TestCase {
 						+ " -?,--help                show this help message\n"
 						+ " -f,--file <arg>          input file path (.dcp or .dcv file)\n"
 						+ " -o,--output-type <arg>   output type (csv|xml)\n"
-						+ "Please visit http://eobjects.org/datacleaner for more information\n",
-				stringWriter.toString());
+						+ "Please visit http://eobjects.org/datacleaner for more information",
+				stringWriter.toString().trim());
 	}
 }

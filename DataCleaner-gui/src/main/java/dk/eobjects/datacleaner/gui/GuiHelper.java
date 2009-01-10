@@ -24,6 +24,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -276,9 +277,34 @@ public class GuiHelper {
 
 	/**
 	 * Adds a component to a panel with a grid bag layout
+	 * 
+	 * @param comp
+	 * @param panel
+	 * @param gridx
+	 * @param gridy
+	 * @param width
+	 * @param height
+	 * @param anchor
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
 			int gridy, int width, int height, int anchor) {
+		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, 2);
+	}
+
+	/**
+	 * Adds a component to a panel with a grid bag layout
+	 * 
+	 * @param comp
+	 * @param panel
+	 * @param gridx
+	 * @param gridy
+	 * @param width
+	 * @param height
+	 * @param anchor
+	 * @param padding
+	 */
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
+			int gridy, int width, int height, int anchor, int padding) {
 		LayoutManager layout = panel.getLayout();
 		if (!(layout instanceof GridBagLayout)) {
 			layout = new GridBagLayout();
@@ -292,14 +318,20 @@ public class GuiHelper {
 		constraints.gridheight = height;
 		constraints.anchor = anchor;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.ipadx = 4;
-		constraints.ipady = 4;
+		constraints.insets = new Insets(padding, padding, padding, padding);
 		gridBagLayout.addLayoutComponent(comp, constraints);
 		panel.add(comp);
 	}
 
 	/**
 	 * Adds a component to a panel with a grid bag layout
+	 * 
+	 * @param comp
+	 * @param panel
+	 * @param gridx
+	 * @param gridy
+	 * @param width
+	 * @param height
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
 			int gridy, int width, int height) {
@@ -309,6 +341,11 @@ public class GuiHelper {
 
 	/**
 	 * Adds a component to a panel with a grid bag layout
+	 * 
+	 * @param comp
+	 * @param panel
+	 * @param gridx
+	 * @param gridy
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
 			int gridy) {
@@ -317,6 +354,12 @@ public class GuiHelper {
 
 	/**
 	 * Adds a component to a panel with a grid bag layout
+	 * 
+	 * @param comp
+	 * @param panel
+	 * @param gridx
+	 * @param gridy
+	 * @param anchor
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
 			int gridy, int anchor) {

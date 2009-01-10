@@ -18,8 +18,6 @@ package dk.eobjects.datacleaner.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -75,8 +73,8 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		_tabbedPane = new CloseableTabbedPane();
 		_tabbedPane.setUnclosableTab(0).setUnclosableTab(1);
 		_tabbedPane.setName("categoriesTab");
-		_tabbedPane.addTab("General", getLookAndFeelTab());
-		_driversPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+		_tabbedPane.addTab("General", getGeneralTab());
+		_driversPanel = GuiHelper.createPanel().toComponent();
 		_driversPanel.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		_driversPanel.setName("driversPanel");
 		JScrollPane scrollPane = new JScrollPane(_driversPanel);
@@ -108,7 +106,7 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		return toolbar;
 	}
 
-	private Component getLookAndFeelTab() {
+	private Component getGeneralTab() {
 		_generalPanel = new GeneralSettingsPanel(_settings);
 		JScrollPane scrollPane = new JScrollPane(_generalPanel);
 		scrollPane.setBorder(null);
@@ -118,22 +116,13 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 	private void updateDatabaseDriversTab() {
 		_driversPanel.removeAll();
 
-		Dimension d = new Dimension();
-		d.width = 430;
-		_driversPanel.setSize(d);
-		_driversPanel.setPreferredSize(d);
-
 		JLabel header = new JLabel("Database drivers");
 		header.setFont(GuiHelper.FONT_HEADER);
-		d = new Dimension();
-		d.width = 200;
-		d.height = 20;
-		header.setSize(d);
-		header.setPreferredSize(d);
-		_driversPanel.add(header);
+		GuiHelper.addToGridBag(header, _driversPanel, 0, 0);
 
-		final JButton registerDriverButton = new JButton("Register database driver",
-				GuiHelper.getImageIcon("images/toolbar_database.png"));
+		final JButton registerDriverButton = new JButton(
+				"Register database driver", GuiHelper
+						.getImageIcon("images/toolbar_database.png"));
 		registerDriverButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -142,27 +131,20 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 				for (JMenuItem menuItem : menuItems) {
 					popupMenu.add(menuItem);
 				}
-				popupMenu.show(registerDriverButton, 0, registerDriverButton.getHeight());
+				popupMenu.show(registerDriverButton, 0, registerDriverButton
+						.getHeight());
 			}
-			
+
 		});
 		registerDriverButton.setName("registerDriverButton");
-		d = new Dimension();
-		d.width = 205;
-		d.height = 30;
-		registerDriverButton.setSize(d);
-		registerDriverButton.setPreferredSize(d);
-		_driversPanel.add(registerDriverButton);
+		GuiHelper.addToGridBag(registerDriverButton, _driversPanel, 1, 0);
 
 		final List<DatabaseDriver> drivers = new ArrayList<DatabaseDriver>(
 				GuiConfiguration.getBeansOfClass(DatabaseDriver.class));
 		drivers.addAll(_settings.getDatabaseDrivers());
 
-		d = new Dimension();
-		d.width = 22;
-		d.height = 22;
-		int i = 0;
-		for (final DatabaseDriver driver : drivers) {
+		for (int i = 0; i < drivers.size(); i++) {
+			final DatabaseDriver driver = drivers.get(i);
 			final JPanel driverPanel = GuiHelper.createPanel().applyBorder()
 					.toComponent();
 			JLabel nameLabel;
@@ -185,7 +167,8 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 			if (driver.getFilename() != null) {
 				driverPanel.setName("driverPanel" + i);
 				JButton removeButton = GuiHelper.createButton(null,
-						"images/toolbar_remove.png").applySize(d).toComponent();
+						"images/toolbar_remove.png").applySize(22, 22)
+						.toComponent();
 				removeButton.setToolTipText("Remove driver");
 				removeButton.setName("removeButton" + i);
 				removeButton.addActionListener(new ActionListener() {
@@ -198,25 +181,24 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 					}
 				});
 				GuiHelper.addToGridBag(removeButton, driverPanel, 1, 1, 1, 1);
-				i++;
 			}
 
 			GridBagLayout layout = (GridBagLayout) driverPanel.getLayout();
 			layout.columnWidths = new int[] { 380, 30 };
 
-			_driversPanel.add(driverPanel);
+			GuiHelper.addToGridBag(driverPanel, _driversPanel, 0, i + 1, 2, 1);
 		}
 	}
 
 	public static String beautifyPath(String filename) {
 		if (filename != null && filename.length() > 50) {
-			
+
 			int lastSeparator = filename.lastIndexOf(File.separatorChar);
 			String lastToken = "..." + filename.substring(lastSeparator);
 			StringBuilder sb = new StringBuilder(filename);
-			sb.delete(50-lastToken.length(), sb.length());
+			sb.delete(50 - lastToken.length(), sb.length());
 			sb.append(lastToken);
-			
+
 			return sb.toString();
 		}
 		return filename;

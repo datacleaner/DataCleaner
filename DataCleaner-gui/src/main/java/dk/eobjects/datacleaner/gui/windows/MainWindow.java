@@ -230,9 +230,6 @@ public class MainWindow implements WeakObserver, WindowListener {
 				.toComponent();
 		GuiSettings settings = GuiSettings.getSettings();
 		GuiHelper.addToGridBag(getDictionaryPanel(settings), panel, 0, 0);
-		GuiHelper.addToGridBag(GuiHelper.createPanel()
-				.applyDarkBlueBackground().applySize(null, 2).toComponent(),
-				panel, 0, 1);
 		GuiHelper.addToGridBag(getRegexPanel(settings), panel, 0, 2);
 		_contentPanel.add(panel, BorderLayout.CENTER);
 

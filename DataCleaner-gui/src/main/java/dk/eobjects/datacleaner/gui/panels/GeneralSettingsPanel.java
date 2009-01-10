@@ -16,7 +16,6 @@
  */
 package dk.eobjects.datacleaner.gui.panels;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -45,9 +44,8 @@ public class GeneralSettingsPanel extends JPanel {
 
 	public GeneralSettingsPanel(GuiSettings settings) {
 		super();
-		Dimension d = new Dimension();
-		d.width = 430;
-		new GuiBuilder<JPanel>(this).applyLightBackground().applySize(d);
+		new GuiBuilder<JPanel>(this).applyLightBackground()
+				.applyVerticalLayout();
 
 		// User registration
 		JPanel userRegistrationPanel = GuiHelper.createPanel()
@@ -74,7 +72,7 @@ public class GeneralSettingsPanel extends JPanel {
 		}
 		userRegistrationPanel.add(_clearUsernameButton);
 
-		GuiHelper.addToGridBag(userRegistrationPanel, this, 0, 0);
+		add(userRegistrationPanel);
 
 		// Layout
 		JPanel matrixTableLayoutPanel = GuiHelper.createPanel()
@@ -87,11 +85,11 @@ public class GeneralSettingsPanel extends JPanel {
 			_tableLayoutComboBox.setSelectedIndex(1);
 		}
 		matrixTableLayoutPanel.add(_tableLayoutComboBox);
-		GuiHelper.addToGridBag(matrixTableLayoutPanel, this, 0, 1);
+		add(matrixTableLayoutPanel);
 
 		// Look and feel
 		JPanel lookAndFeelPanel = GuiHelper.createPanel().applyTitledBorder(
-				"Look and feel").applyVerticalLayout().toComponent();
+				"Look and feel").toComponent();
 		_buttonGroup = new ButtonGroup();
 		String selectedLookAndFeelClassName = settings
 				.getLookAndFeelClassName();
@@ -106,10 +104,10 @@ public class GeneralSettingsPanel extends JPanel {
 				radioButton.setSelected(true);
 			}
 			radioButton.setActionCommand(lookAndFeelInfos[i].getClassName());
-			lookAndFeelPanel.add(radioButton);
+			GuiHelper.addToGridBag(radioButton, lookAndFeelPanel, 0, i);
 		}
 
-		GuiHelper.addToGridBag(lookAndFeelPanel, this, 0, 2);
+		add(lookAndFeelPanel);
 	}
 
 	public boolean isTableLayoutHorizontal() {

@@ -28,12 +28,18 @@ public class DataCleanerCliTest extends TestCase {
 		DataCleanerCli cli = new DataCleanerCli();
 		cli.setConsoleWriter(new PrintWriter(stringWriter));
 		cli.printHelp();
+		String separator = System.getProperty("line.separator");
 		assertEquals(
-				"usage: runjob\n"
-						+ "Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)\n"
-						+ " -?,--help                show this help message\n"
-						+ " -f,--file <arg>          input file path (.dcp or .dcv file)\n"
-						+ " -o,--output-type <arg>   output type (csv|xml)\n"
+				"usage: runjob"
+						+ System.getProperty("line.separator")
+						+ "Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)"
+						+ separator
+						+ " -?,--help                show this help message"
+						+ separator
+						+ " -f,--file <arg>          input file path (.dcp or .dcv file)"
+						+ separator
+						+ " -o,--output-type <arg>   output type (csv|xml)"
+						+ separator
 						+ "Please visit http://eobjects.org/datacleaner for more information",
 				stringWriter.toString().trim());
 	}

@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.eobjects.datacleaner.gui.dialogs;
+package dk.eobjects.datacleaner.gui.website;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -39,7 +39,10 @@ import javax.swing.border.EmptyBorder;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.dialogs.BanneredDialog;
+import dk.eobjects.datacleaner.gui.dialogs.NewTaskDialog;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
+import dk.eobjects.thirdparty.jcrypt.Jcrypt;
 
 public class UserRegistrationDialog extends BanneredDialog {
 
@@ -90,24 +93,31 @@ public class UserRegistrationDialog extends BanneredDialog {
 					@Override
 					public void run() {
 						try {
+							boolean validated = false;
 							String username = _usernameField.getText();
-							String password = new String(_passwordField
-									.getPassword());
-							_log.info("Querying http://datacleaner.eobjects.org/ws/login for user credentials.");
-							URL url = new URL(
-									"http://datacleaner.eobjects.org/ws/login?username="
-											+ username + "&password="
-											+ password);
-							StringBuilder sb = new StringBuilder();
-							BufferedReader reader = new BufferedReader(
-									new InputStreamReader(url.openStream()));
-							for (String line = reader.readLine(); line != null; line = reader
-									.readLine()) {
-								sb.append(line);
-							}
-							reader.close();
 
-							if ("true".equals(sb.toString())) {
+							_log
+									.info("Querying http://datacleaner.eobjects.org/ws/get_salt for salt.");
+							String salt = getUrlContent("http://datacleaner.eobjects.org/ws/get_salt?username="
+									+ username);
+
+							if (!"not found".equals(salt)) {
+								String hashedPassword = Jcrypt
+										.crypt(salt, new String(_passwordField
+												.getPassword()));
+
+								_log.info("Querying for user credentials.");
+								String accepted = getUrlContent("http://datacleaner.eobjects.org/ws/login?username="
+										+ username
+										+ "&hashed_password="
+										+ hashedPassword);
+
+								if ("true".equals(accepted)) {
+									validated = true;
+								}
+							}
+
+							if (validated) {
 								GuiSettings settings = GuiSettings
 										.getSettings();
 								settings.setUsername(username);
@@ -121,12 +131,14 @@ public class UserRegistrationDialog extends BanneredDialog {
 												"Invalid username and password, please try again.",
 												null);
 							}
+
 						} catch (MalformedURLException e) {
 							_log.error(e);
 						} catch (IOException e) {
 							_log.error(e);
 						}
 					}
+
 				}.start();
 			}
 		});
@@ -169,5 +181,18 @@ public class UserRegistrationDialog extends BanneredDialog {
 		panel.add(loginPanel, BorderLayout.CENTER);
 
 		return panel;
+	}
+
+	private String getUrlContent(String urlString) throws IOException {
+		URL url = new URL(urlString);
+		StringBuilder sb = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(url
+				.openStream()));
+		for (String line = reader.readLine(); line != null; line = reader
+				.readLine()) {
+			sb.append(line);
+		}
+		reader.close();
+		return sb.toString();
 	}
 }

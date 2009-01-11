@@ -1,4 +1,4 @@
-package dk.eobjects.datacleaner.gui.dialogs;
+package dk.eobjects.datacleaner.gui.website;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -32,6 +32,8 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.joda.time.DateTime;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.dialogs.BanneredDialog;
+import dk.eobjects.datacleaner.gui.dialogs.NamedRegexDialog;
 import dk.eobjects.datacleaner.gui.widgets.DataCleanerTable;
 import dk.eobjects.datacleaner.profiler.trivial.TimeAnalysisProfile;
 import dk.eobjects.datacleaner.regexswap.Category;

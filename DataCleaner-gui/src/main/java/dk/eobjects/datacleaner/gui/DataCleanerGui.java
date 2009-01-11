@@ -23,10 +23,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.eobjects.datacleaner.gui.dialogs.NewTaskDialog;
-import dk.eobjects.datacleaner.gui.dialogs.UserRegistrationDialog;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
 import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
+import dk.eobjects.datacleaner.gui.website.UserRegistrationDialog;
 import dk.eobjects.datacleaner.gui.windows.MainWindow;
 
 /**

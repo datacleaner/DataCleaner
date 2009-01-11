@@ -75,6 +75,9 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		_tabbedPane.setName("categoriesTab");
 		_tabbedPane.addTab("General", getGeneralTab());
 		_driversPanel = GuiHelper.createPanel().toComponent();
+		GridBagLayout layout = new GridBagLayout();
+		layout.columnWidths = new int[] { 190, 220 };
+		_driversPanel.setLayout(layout);
 		_driversPanel.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		_driversPanel.setName("driversPanel");
 		JScrollPane scrollPane = new JScrollPane(_driversPanel);
@@ -120,9 +123,9 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		header.setFont(GuiHelper.FONT_HEADER);
 		GuiHelper.addToGridBag(header, _driversPanel, 0, 0);
 
-		final JButton registerDriverButton = new JButton(
-				"Register database driver", GuiHelper
-						.getImageIcon("images/toolbar_database.png"));
+		final JButton registerDriverButton = GuiHelper.createButton(
+				"Register database driver", "images/toolbar_database.png")
+				.toComponent();
 		registerDriverButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

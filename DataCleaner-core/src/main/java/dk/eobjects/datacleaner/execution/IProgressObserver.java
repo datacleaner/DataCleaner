@@ -16,20 +16,53 @@
  */
 package dk.eobjects.datacleaner.execution;
 
+import dk.eobjects.metamodel.schema.Table;
+
 /**
  * A progress observer is an object who recieves notifications about an ongoing
  * progress. A progress observer is initialized with the init method and
- * subsequently notifyExecutionBegin and notifyExecutionEnd is called for each
- * unit of progress.
+ * subsequently notified using the notifyBegin, notifyProgress and
+ * notifySuccess/notifyFailure methods
  */
 public interface IProgressObserver {
 
-	public void init(Object[] executingObjects);
+	/**
+	 * @param tablesToProcess
+	 *            the tables that are going to be processed
+	 */
+	public void init(Table[] tablesToProcess);
 
-	public void notifyExecutionBegin(Object executingObject);
+	/**
+	 * @param tableToProcess
+	 *            the table for which process is beginning
+	 * @param numRows
+	 *            the number of rows from the table that is going to be
+	 *            processed (before processing)
+	 */
+	public void notifyBeginning(Table tableToProcess, long numRows);
 
-	public void notifyExecutionSuccess(Object executingObject);
+	/**
+	 * @param numRowsProcessed
+	 *            how many rows that are currently processed
+	 */
+	public void notifyProgress(long numRowsProcessed);
 
-	public void notifyExecutionFailed(Object executingObject,
-			Throwable throwable);
+	/**
+	 * @param processedTable
+	 *            the table for which processing was a success
+	 * @param numRowsProcessed
+	 *            the total number of processed rows (this CAN differ from the
+	 *            numRows variable in notifyBeginning, if the table content have
+	 *            changed while processing)
+	 */
+	public void notifySuccess(Table processedTable, long numRowsProcessed);
+
+	/**
+	 * @param processedTable
+	 *            the table for which processing failed
+	 * @param lastRow
+	 *            the last processed row number or -1 if processing never began
+	 */
+	public void notifyFailure(Table processedTable, Throwable throwable,
+			long lastRow);
 }

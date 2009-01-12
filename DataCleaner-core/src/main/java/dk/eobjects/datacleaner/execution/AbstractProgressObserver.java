@@ -14,31 +14,28 @@
  *  You should have received a copy of the GNU General Public License
  *  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.eobjects.datacleaner.gui.tasks;
+package dk.eobjects.datacleaner.execution;
 
-import dk.eobjects.datacleaner.data.DataContextSelection;
-import dk.eobjects.datacleaner.execution.IRunner;
+import dk.eobjects.metamodel.schema.Table;
 
 /**
- * Runs a runner task in the background thread.
+ * Stub implementation of the IProgressObserver interface
  */
-public class RunnerWrapper extends AbstractTaskRunner {
+public abstract class AbstractProgressObserver implements IProgressObserver {
 
-	@SuppressWarnings("unchecked")
-	protected IRunner _runner;
-	private DataContextSelection _dataContextSelection;
-
-	@SuppressWarnings("unchecked")
-	public RunnerWrapper(DataContextSelection schemaSelection, IRunner runner) {
-		_dataContextSelection = schemaSelection;
-		_runner = runner;
+	public void init(Table[] tablesToProcess) {
 	}
 
-	public void runTask() {
-		_runner.execute(_dataContextSelection.getDataContext());
+	public void notifyBeginning(Table tableToProcess, long numRows) {
 	}
 
-	@Override
-	protected void done() {
+	public void notifyFailure(Table processedTable, Throwable throwable,
+			long lastRow) {
+	}
+
+	public void notifyProgress(long numRowsProcessed) {
+	}
+
+	public void notifySuccess(Table processedTable, long numRowsProcessed) {
 	}
 }

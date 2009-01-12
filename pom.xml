@@ -23,7 +23,6 @@
 		<module>DataCleaner-testware</module>
 		<module>DataCleaner-core</module>
 		<module>DataCleaner-gui</module>
-		<module>DataCleaner-webmonitor</module>
 		<module>DataCleaner-packaging</module>
 	</modules>
 	<distributionManagement>

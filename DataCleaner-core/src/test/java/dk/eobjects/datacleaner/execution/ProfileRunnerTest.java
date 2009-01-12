@@ -25,8 +25,8 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 
 import dk.eobjects.datacleaner.profiler.BasicProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.OutOfMemoryProfile;
 import dk.eobjects.datacleaner.profiler.IProfileResult;
+import dk.eobjects.datacleaner.profiler.OutOfMemoryProfile;
 import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
 import dk.eobjects.datacleaner.profiler.ProfilerManager;
@@ -83,26 +83,30 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 			long _time = 0;
 			boolean _begun = false;
 
-			public void init(Object[] executingObjects) {
-				assertEquals(2, executingObjects.length);
+			public void init(Table[] tablesToProcess) {
+				assertEquals(2, tablesToProcess.length);
 			}
 
-			public void notifyExecutionBegin(Object executingObject) {
+			public void notifyBeginning(Table tableToProcess, long numRows) {
 				assertFalse(_begun);
 				_begun = true;
 				_time = System.currentTimeMillis();
 			}
 
-			public void notifyExecutionSuccess(Object executingObject) {
+			public void notifyFailure(Table processedTable,
+					Throwable throwable, long lastRow) {
+				fail("Execution should not have failed");
+			}
+
+			public void notifyProgress(long numRowsProcessed) {
+			}
+
+			public void notifySuccess(Table processedTable,
+					long numRowsProcessed) {
 				assertTrue(_begun);
 				_begun = false;
 				assertTrue("CurrentTime was less than when execution began.",
 						_time <= System.currentTimeMillis());
-			}
-
-			public void notifyExecutionFailed(Object executingObject,
-					Throwable throwable) {
-				fail("Execution should not have failed");
 			}
 		};
 		profileRunner.addProgressObserver(po);
@@ -168,24 +172,28 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		IProgressObserver po = new IProgressObserver() {
 			private int _notifications = 0;
 
-			public void init(Object[] executingObjects) {
-				assertEquals(1, executingObjects.length);
-				assertSame(customersTable, executingObjects[0]);
+			public void init(Table[] tablesToProcess) {
+				assertEquals(1, tablesToProcess.length);
+				assertSame(customersTable, tablesToProcess[0]);
 			}
 
-			public void notifyExecutionBegin(Object executingObject) {
+			public void notifyBeginning(Table tableToProcess, long numRows) {
 				_notifications++;
 				assertEquals(1, _notifications);
 			}
 
-			public void notifyExecutionSuccess(Object executingObject) {
-				_notifications++;
-				assertEquals(2, _notifications);
+			public void notifyFailure(Table processedTable,
+					Throwable throwable, long lastRow) {
+				fail("Execution should not have failed");
 			}
 
-			public void notifyExecutionFailed(Object executingObject,
-					Throwable throwable) {
-				fail("Execution should not have failed");
+			public void notifyProgress(long numRowsProcessed) {
+			}
+
+			public void notifySuccess(Table processedTable,
+					long numRowsProcessed) {
+				_notifications++;
+				assertEquals(2, _notifications);
 			}
 		};
 
@@ -258,7 +266,19 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		IDataSetStrategy dsStrategy = createMock(IDataSetStrategy.class);
 
 		EasyMock.expect(dcStrategy.executeQuery((Query) EasyMock.notNull()))
-				.andReturn(new DataSet(dsStrategy));
+				.andReturn(new DataSet(dsStrategy)).times(2);
+
+		EasyMock.expect(dsStrategy.next()).andReturn(true);
+		EasyMock.expect(dsStrategy.next()).andReturn(false);
+		dsStrategy.close();
+
+		EasyMock.expect(dsStrategy.getRow()).andStubAnswer(new IAnswer<Row>() {
+			public Row answer() throws Throwable {
+				return new Row(
+						new SelectItem[] { SelectItem.getCountAllItem() },
+						new Object[] { Long.MAX_VALUE });
+			}
+		});
 
 		EasyMock.expect(dsStrategy.next()).andReturn(true).anyTimes();
 		IAnswer<Row> stubRowAnswer = new IAnswer<Row>() {

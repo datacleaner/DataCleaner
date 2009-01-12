@@ -38,11 +38,11 @@ import dk.eobjects.metamodel.query.Query;
 import dk.eobjects.metamodel.query.SelectItem;
 import dk.eobjects.metamodel.schema.Column;
 
-public class RunComparisonButton extends JButton implements ActionListener {
+public class RunComparatorButton extends JButton implements ActionListener {
 
 	private static final long serialVersionUID = 3477825266323556984L;
 	private static final Log _log = LogFactory
-			.getLog(RunComparisonButton.class);
+			.getLog(RunComparatorButton.class);
 	private DataContextSelection _leftDataContextSelection;
 	private DataContextSelection _rightDataContextSelection;
 	private ColumnSelection _leftColumnSelection;
@@ -58,7 +58,7 @@ public class RunComparisonButton extends JButton implements ActionListener {
 		_rightColumnSelection = null;
 	}
 
-	public RunComparisonButton(DataContextSelection leftDataContextSelection,
+	public RunComparatorButton(DataContextSelection leftDataContextSelection,
 			DataContextSelection rightDataContextSelection,
 			ColumnSelection leftColumnSelection,
 			ColumnSelection rightColumnSelection) {
@@ -77,15 +77,16 @@ public class RunComparisonButton extends JButton implements ActionListener {
 		Iterator<Column> rightIterator = _rightColumnSelection.getColumns()
 				.iterator();
 
-		ComparatorResultWindow resultFrame = new ComparatorResultWindow();
-		DataCleanerGui.getMainWindow().addWindow(resultFrame);
+		ComparatorResultWindow resultWindow = new ComparatorResultWindow();
+		DataCleanerGui.getMainWindow().addWindow(resultWindow);
 
 		while (leftIterator.hasNext() && rightIterator.hasNext()) {
 			Column leftColumn = leftIterator.next();
 			Column rightColumn = rightIterator.next();
 
-			resultFrame.addLogMessage("Comparing columns: " + leftColumn
-					+ " and " + rightColumn);
+			//TODO:
+//			resultWindow.addLogMessage("Comparing columns: " + leftColumn
+//					+ " and " + rightColumn);
 
 			try {
 
@@ -119,11 +120,12 @@ public class RunComparisonButton extends JButton implements ActionListener {
 				leftData.close();
 				rightData.close();
 
-				resultFrame.addResults(columnComparator);
+				resultWindow.addResults(columnComparator);
 
 			} catch (Exception e) {
 				_log.error(e);
-				resultFrame.addLogMessage("Error occurred: " + e.getMessage());
+				//TODO:
+//				resultWindow.addLogMessage("Error occurred: " + e.getMessage());
 			}
 		}
 	}

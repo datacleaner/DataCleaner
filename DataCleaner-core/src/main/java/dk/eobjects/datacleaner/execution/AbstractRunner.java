@@ -75,9 +75,10 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 		initObservers(tables);
 		for (int i = 0; i < tables.length; i++) {
 			Table table = tables[i];
-			notifyExecutionBegin(table);
 
-			int rowNumber = 0;
+			notifyBeginning(table, getCount(dataContext, table));
+
+			long rowNumber = 0;
 			// This is a per-table try-catch block
 			try {
 				Map<E, Column[]> configurations = getConfigurationsForTable(table);
@@ -104,6 +105,7 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 					_log.info("Query:" + q);
 				}
 				while (data.next()) {
+					rowNumber++;
 					Row row = data.getRow();
 					Long count;
 					Object countValue = row.getValue(countAllItem);
@@ -126,8 +128,8 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 							throw e;
 						}
 					}
-					rowNumber++;
 					if (rowNumber % 500 == 0) {
+						notifyProgress(rowNumber);
 						if (_log.isInfoEnabled()) {
 							_log.info("Processing row number: " + rowNumber);
 						}
@@ -144,7 +146,7 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 					addResultForTable(table, result);
 				}
 
-				notifyExecutionSuccess(table);
+				notifySuccess(table, rowNumber);
 			} catch (Error e) {
 				// If we encounter an error (such as a out of memory error)
 				// we should stop processing completely.
@@ -152,29 +154,35 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 				_log.error("Table: " + table);
 				_log.error("Row number: " + rowNumber);
 				_log.fatal(e);
-				notifyExecutionFailed(table, e);
+				notifyFailure(table, e, rowNumber);
 
 				// Send an cancel/error message to all the remaining tables
 				String cancelMessage = "Execution was cancelled due to errors with table '"
 						+ table.getName() + "'";
 				for (i = i + 1; i < tables.length; i++) {
 					table = tables[i];
-					notifyExecutionBegin(table);
-					notifyExecutionFailed(table, new IllegalStateException(
-							cancelMessage));
+					notifyBeginning(table, 0);
+					notifyFailure(table, new IllegalStateException(
+							cancelMessage), -1);
 				}
 				throw e;
 			} catch (Throwable t) {
 				// If we encounter a non-error throwable (such as a illegal
 				// argument exception) we stop processing the table
 				_log.error(t);
-				notifyExecutionFailed(table, t);
+				notifyFailure(table, t, rowNumber);
 			}
 		}
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("execute() finished");
 		}
+	}
+
+	private long getCount(DataContext dc, Table table) {
+		Object value = MetaModelHelper.executeSingleRowQuery(dc,
+				new Query().selectCount().from(table)).getValue(0);
+		return ((Number) value).longValue();
 	}
 
 	private void initObservers(Table[] tables) {
@@ -184,24 +192,31 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 		}
 	}
 
-	private void notifyExecutionSuccess(Table table) {
+	private void notifySuccess(Table table, long numRowsProcessed) {
 		_log.debug("notifyExecutionSuccess()");
 		for (IProgressObserver observer : _progressObservers) {
-			observer.notifyExecutionSuccess(table);
+			observer.notifySuccess(table, numRowsProcessed);
 		}
 	}
 
-	private void notifyExecutionFailed(Table table, Throwable t) {
+	private void notifyFailure(Table table, Throwable t, long lastRow) {
 		_log.debug("notifyExecutionFailed()");
 		for (IProgressObserver observer : _progressObservers) {
-			observer.notifyExecutionFailed(table, t);
+			observer.notifyFailure(table, t, lastRow);
 		}
 	}
 
-	private void notifyExecutionBegin(Table table) {
+	private void notifyBeginning(Table table, long numRows) {
 		_log.debug("notifyExecutionBegin()");
 		for (IProgressObserver observer : _progressObservers) {
-			observer.notifyExecutionBegin(table);
+			observer.notifyBeginning(table, numRows);
+		}
+	}
+
+	private void notifyProgress(long numRowsProcessed) {
+		_log.debug("notifyProgress()");
+		for (IProgressObserver observer : _progressObservers) {
+			observer.notifyProgress(numRowsProcessed);
 		}
 	}
 

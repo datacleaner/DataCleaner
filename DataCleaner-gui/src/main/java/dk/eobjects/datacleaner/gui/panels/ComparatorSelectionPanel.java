@@ -34,7 +34,7 @@ import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.widgets.DataCleanerTable;
-import dk.eobjects.datacleaner.gui.widgets.RunComparisonButton;
+import dk.eobjects.datacleaner.gui.widgets.RunComparatorButton;
 import dk.eobjects.datacleaner.util.WeakObservable;
 import dk.eobjects.datacleaner.util.WeakObserver;
 import dk.eobjects.metamodel.schema.Column;
@@ -79,7 +79,7 @@ public class ComparatorSelectionPanel extends JPanel implements WeakObserver {
 		// Top toolbar
 		JToolBar toolbar = GuiHelper.createToolBar();
 		toolbar.add(new JSeparator(JSeparator.VERTICAL));
-		toolbar.add(new RunComparisonButton(_leftDataContextSelection,
+		toolbar.add(new RunComparatorButton(_leftDataContextSelection,
 				_rightDataContextSelection, _leftColumnSelection,
 				_rightColumnSelection));
 		add(toolbar, BorderLayout.NORTH);

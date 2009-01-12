@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.eobjects.datacleaner.data.DataContextSelection;
+import dk.eobjects.datacleaner.execution.AbstractProgressObserver;
 import dk.eobjects.datacleaner.execution.ProfileRunner;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
@@ -77,24 +78,21 @@ public class RunProfilerButton extends JButton implements ActionListener {
 		if (foundConfiguration) {
 			final ProfilerResultWindow resultWindow = new ProfilerResultWindow();
 			DataCleanerGui.getMainWindow().addWindow(resultWindow);
-			profileRunner
-					.addProgressObserver(new LogInternalFrameProgressObserver(
-							resultWindow));
-			RunnerWrapper runnerWrapper = new RunnerWrapper(
-					_dataContextSelection, profileRunner, resultWindow) {
-
+			profileRunner.addProgressObserver(resultWindow);
+			profileRunner.addProgressObserver(new StatusTabProgressObserver(
+					resultWindow));
+			profileRunner.addProgressObserver(new AbstractProgressObserver() {
 				@Override
-				public void notifyExecutionSuccess(Object executingObject) {
-					super.notifyExecutionSuccess(executingObject);
-					if (executingObject instanceof Table) {
-						Table table = (Table) executingObject;
-						List<IProfileResult> results = profileRunner
-								.getResultsForTable(table);
-						resultWindow.addResults(table, results,
-								_dataContextSelection.getDataContext());
-					}
+				public void notifySuccess(Table processedTable,
+						long numRowsProcessed) {
+					List<IProfileResult> results = profileRunner
+							.getResultsForTable(processedTable);
+					resultWindow.addResults(processedTable, results,
+							_dataContextSelection.getDataContext());
 				}
-			};
+			});
+			RunnerWrapper runnerWrapper = new RunnerWrapper(
+					_dataContextSelection, profileRunner);
 			runnerWrapper.execute();
 		} else {
 			GuiHelper

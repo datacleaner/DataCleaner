@@ -32,7 +32,7 @@ import dk.eobjects.datacleaner.gui.widgets.MatrixTable;
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.metamodel.schema.Column;
 
-public class ComparatorResultWindow extends LogResultWindow {
+public class ComparatorResultWindow extends ResultWindow {
 
 	public ComparatorResultWindow() {
 		super("Comparison results");

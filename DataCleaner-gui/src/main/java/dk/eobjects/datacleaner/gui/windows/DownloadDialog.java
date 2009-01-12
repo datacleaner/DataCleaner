@@ -83,10 +83,10 @@ public class DownloadDialog extends JDialog {
 		centerPanel.setBackground(Color.WHITE);
 		ImageIcon workingIcon = GuiHelper
 				.getImageIcon("images/working.gif");
-		JLabel iconLabel = new JLabel(workingIcon);
-		iconLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
-		workingIcon.setImageObserver(iconLabel);
-		centerPanel.add(iconLabel);
+		JLabel workingIconLabel = new JLabel(workingIcon);
+		workingIconLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
+		workingIcon.setImageObserver(workingIconLabel);
+		centerPanel.add(workingIconLabel);
 		add(centerPanel, BorderLayout.CENTER);
 
 		_statusLabel = new GuiBuilder<JLabel>(new JLabel("Read " + _bytes

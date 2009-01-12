@@ -16,9 +16,6 @@
  */
 package dk.eobjects.datacleaner.gui.windows;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -31,7 +28,7 @@ import dk.eobjects.metamodel.MetaModelHelper;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
-public class ValidatorResultWindow extends LogResultWindow {
+public class ValidatorResultWindow extends ResultWindow {
 
 	private List<Column> _columns;
 
@@ -52,24 +49,12 @@ public class ValidatorResultWindow extends LogResultWindow {
 	}
 
 	public void addResults(Table table, List<IValidationRuleResult> results) {
-		for (IValidationRuleResult result : results) {
-			Exception error = result.getError();
-			if (error != null) {
-				StringWriter stringWriter = new StringWriter();
-				error.printStackTrace(new PrintWriter(stringWriter));
-				addLogMessage(stringWriter.toString());
-			}
-		}
-
-		String tableName = table.getName();
-		addLogMessage("Validation rule results for table '" + tableName
-				+ "' ready: " + new Date().toString());
 		Column[] queriedColumns = MetaModelHelper.getTableColumns(table,
 				_columns);
 		TableValidationRuleResultsPanel tableProfileResultsPanel = new TableValidationRuleResultsPanel(
 				table, queriedColumns, results);
 		JScrollPane scrollPane = new JScrollPane(tableProfileResultsPanel);
-		addTab(tableName, GuiHelper
+		addTab(table.getName(), GuiHelper
 				.getImageIcon("images/toolbar_preview_data.png"), scrollPane);
 	}
 }

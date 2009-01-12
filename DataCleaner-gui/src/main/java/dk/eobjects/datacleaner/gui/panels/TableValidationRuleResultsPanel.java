@@ -93,7 +93,7 @@ public class TableValidationRuleResultsPanel extends JPanel {
 						errorLabel.setFont(errorLabel.getFont().deriveFont(
 								Font.BOLD));
 						taskPane.add(errorLabel);
-						taskPane.add(new JLabel("See the log for details."));
+						taskPane.add(new JLabel("See the Status tab for details."));
 					} else {
 						taskPane.setIcon(ICON_FAILED);
 						taskPane.add(new JLabel(result.getUnvalidatedRows()

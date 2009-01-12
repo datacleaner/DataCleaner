@@ -16,7 +16,6 @@
  */
 package dk.eobjects.datacleaner.gui.windows;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -28,11 +27,10 @@ import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Table;
 
-public class ProfilerResultWindow extends LogResultWindow {
+public class ProfilerResultWindow extends ResultWindow {
 
 	public ProfilerResultWindow() {
 		super("Profiling results");
-		addLogMessage("Profiling beginning: " + new Date().toString());
 	}
 
 	@Override
@@ -43,8 +41,6 @@ public class ProfilerResultWindow extends LogResultWindow {
 	public void addResults(Table table, List<IProfileResult> results,
 			DataContext dataContext) {
 		String tableName = table.getName();
-		addLogMessage("Profile results for table '" + tableName + "' ready: "
-				+ new Date().toString());
 		TableProfileResultsPanel tableProfileResultsPanel = new TableProfileResultsPanel(
 				dataContext, table, results);
 		JScrollPane scrollPane = new JScrollPane(tableProfileResultsPanel);

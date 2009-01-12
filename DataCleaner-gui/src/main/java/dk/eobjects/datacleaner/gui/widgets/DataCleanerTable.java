@@ -108,13 +108,15 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 	 * header, correctly layed out.
 	 */
 	public JPanel toPanel() {
-		GuiBuilder<JPanel> guiBuilder = GuiHelper.createPanel()
-				.applyBorderLayout();
-		Dimension panelPreferredSize = getPanelPreferredSize();
-		guiBuilder.applySize(panelPreferredSize);
-		_panel = guiBuilder.toComponent();
-		_panel.add(getTableHeader(), BorderLayout.NORTH);
-		_panel.add(this, BorderLayout.CENTER);
+		if (_panel == null) {
+			GuiBuilder<JPanel> guiBuilder = GuiHelper.createPanel()
+					.applyBorderLayout();
+			Dimension panelPreferredSize = getPanelPreferredSize();
+			guiBuilder.applySize(panelPreferredSize);
+			_panel = guiBuilder.toComponent();
+			_panel.add(getTableHeader(), BorderLayout.NORTH);
+			_panel.add(this, BorderLayout.CENTER);
+		}
 		return _panel;
 	}
 

@@ -32,6 +32,8 @@ import dk.eobjects.datacleaner.gui.GuiHelper;
 public class AboutDialog extends BanneredDialog {
 
 	private static final long serialVersionUID = -5222815622872491531L;
+	private JScrollPane _scrollPane;
+	private JTextArea _textArea;
 
 	public AboutDialog() {
 		super();
@@ -43,20 +45,25 @@ public class AboutDialog extends BanneredDialog {
 		JPanel panel = GuiHelper.createPanel().applyBorderLayout()
 				.applyDarkBlueBackground().toComponent();
 
-		final JTextArea textArea = GuiHelper.createLabelTextArea()
-				.toComponent();
-		textArea.setText(GuiHelper.getCreditsText());
-		JScrollPane scrollPane = new JScrollPane(textArea,
+		_textArea = GuiHelper.createLabelTextArea().toComponent();
+		_scrollPane = new JScrollPane(_textArea,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBorder(GuiHelper.BORDER_WIDE);
-		panel.add(scrollPane, BorderLayout.CENTER);
+		_scrollPane.setBorder(GuiHelper.BORDER_WIDE);
+		panel.add(_scrollPane, BorderLayout.CENTER);
+
+		_textArea.setText(GuiHelper.getCreditsText());
+		_textArea.setSelectionStart(0);
+		_textArea.setSelectionEnd(0);
+
 		JToolBar toolbar = GuiHelper.createToolBar();
 		JButton creditsButton = new JButton("Credits", GuiHelper
 				.getImageIcon("images/toolbar_credits.png"));
 		creditsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textArea.setText(GuiHelper.getCreditsText());
+				_textArea.setText(GuiHelper.getCreditsText());
+				_textArea.setSelectionStart(0);
+				_textArea.setSelectionEnd(0);
 			}
 		});
 		toolbar.add(creditsButton);
@@ -65,7 +72,9 @@ public class AboutDialog extends BanneredDialog {
 				.getImageIcon("images/toolbar_licence.png"));
 		licenceButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textArea.setText(GuiHelper.getLicenceText());
+				_textArea.setText(GuiHelper.getLicenceText());
+				_textArea.setSelectionStart(0);
+				_textArea.setSelectionEnd(0);
 			}
 		});
 		toolbar.add(licenceButton);
@@ -74,7 +83,9 @@ public class AboutDialog extends BanneredDialog {
 				.getImageIcon("images/toolbar_licence.png"));
 		changelogButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textArea.setText(GuiHelper.getChangelogText());
+				_textArea.setText(GuiHelper.getChangelogText());
+				_textArea.setSelectionStart(0);
+				_textArea.setSelectionEnd(0);
 			}
 		});
 		toolbar.add(changelogButton);

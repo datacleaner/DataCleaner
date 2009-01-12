@@ -6,10 +6,14 @@ major update to functionality with lots of new features
 built upon the stabilization release of 1.4:
  * Change of license to LGPL.
  * Command line (batch) execution of DataCleaner tasks.
+ * More elaborate status information during profiler and
+   validator execution.
  * More Pattern finder configuration options.
  * New profile: Date mask matcher.
  * New profile: Regex matcher.
  * New profile: Duplicate records profile.
+ * Load regex from the online RegexSwap repository.
+ * Automatic download and install of popular database drivers. 
  * More file types supported (.dat, .txt)
  * XML file support improved (.xml)
  * Memory improvements in Value distribution and
@@ -18,7 +22,7 @@ built upon the stabilization release of 1.4:
    validation.
  * New MAC OSX native executable.
  * Information schema provided for file-based datastores.
- * Lazy-loading of columns in datastore-tree
+ * Lazy-loading of columns in datastore-tree.
 
 DataCleaner 1.4
 ===============

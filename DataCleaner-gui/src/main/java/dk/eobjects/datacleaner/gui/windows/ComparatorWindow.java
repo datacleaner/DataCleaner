@@ -77,6 +77,8 @@ public class ComparatorWindow extends AbstractWindow {
 				_leftColumnSelection, _rightColumnSelection);
 		comparisonSelectionPanel.setName("center");
 		_panel.add(comparisonSelectionPanel, BorderLayout.CENTER);
+
+		GuiHelper.silentNotification("comparator-window");
 	}
 
 	private JPanel createSchemaPanel(DataContextSelection dataContextSelection,

@@ -25,14 +25,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,6 +52,7 @@ public class DownloadDialog extends JDialog {
 	private long _bytes;
 	private boolean _finished = false;
 	private boolean _disposed = false;
+	private long _responseSize;
 
 	public DownloadDialog(String downloadUrl, File file) {
 		super();
@@ -67,8 +70,8 @@ public class DownloadDialog extends JDialog {
 		JPanel topPanel = GuiHelper.createPanel().applyBackground(Color.WHITE)
 				.applyBorderLayout().toComponent();
 		JLabel downloadingLabel = new GuiBuilder<JLabel>(new JLabel(
-				"Downloading:")).applyBackground(
-				Color.WHITE).applyHeaderFont().toComponent();
+				"Downloading:")).applyBackground(Color.WHITE).applyHeaderFont()
+				.toComponent();
 		downloadingLabel.setOpaque(true);
 		downloadingLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
 		topPanel.add(downloadingLabel, BorderLayout.NORTH);
@@ -81,8 +84,7 @@ public class DownloadDialog extends JDialog {
 
 		JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		centerPanel.setBackground(Color.WHITE);
-		ImageIcon workingIcon = GuiHelper
-				.getImageIcon("images/working.gif");
+		ImageIcon workingIcon = GuiHelper.getImageIcon("images/working.gif");
 		JLabel workingIconLabel = new JLabel(workingIcon);
 		workingIconLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
 		workingIcon.setImageObserver(workingIconLabel);
@@ -98,30 +100,51 @@ public class DownloadDialog extends JDialog {
 	}
 
 	public void download() {
+		_log.info("Begin download: " + _downloadUrl);
+		_log.info("Saving as: " + _file.getAbsolutePath());
+
 		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
 			byte[] buffer = new byte[1024];
 			outputStream = new FileOutputStream(_file);
-			URL url = new URL(_downloadUrl);
-			inputStream = url.openStream();
-			_log.info("Begin download: " + _downloadUrl);
-			_log.info("Saving as: " + _file.getAbsolutePath());
-			for (int numChars = inputStream.read(buffer); numChars != -1; numChars = inputStream
+			HttpClient httpClient = GuiHelper.getHttpClient();
+			GetMethod method = new GetMethod(_downloadUrl);
+			httpClient.executeMethod(method);
+			_responseSize = method.getResponseContentLength();
+			inputStream = method.getResponseBodyAsStream();
+
+			for (int numBytes = inputStream.read(buffer); numBytes != -1; numBytes = inputStream
 					.read(buffer)) {
 				if (_disposed) {
 					break;
 				}
-				outputStream.write(buffer, 0, numChars);
-				_bytes += numChars;
-				_statusLabel.setText("Read " + _bytes + " bytes");
+				outputStream.write(buffer, 0, numBytes);
+				_bytes += numBytes;
+				if (_responseSize != -1) {
+					_statusLabel.setText("Read " + _bytes + " of "
+							+ _responseSize + " bytes");
+				} else {
+					_statusLabel.setText("Read " + _bytes + " bytes");
+				}
 			}
 			_log.info("End download: " + _downloadUrl);
+			_statusLabel.setText("Read " + _bytes + " bytes - Done!");
 			_finished = true;
 		} catch (IOException e) {
-			_log.error(e);
+			_log.warn(e);
+			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this,
+					"Could not establish connection.\nError type: "
+							+ e.getClass().getSimpleName()
+							+ "\nError message: " + e.getMessage()
+							+ "\n\nRetry?", "Connection error",
+					JOptionPane.YES_NO_OPTION)) {
+				_log.info("Retrying...");
+				download();
+			} else {
+				dispose();
+			}
 		} finally {
-			_statusLabel.setText("Read " + _bytes + " bytes - Done!");
 			if (inputStream != null) {
 				try {
 					inputStream.close();

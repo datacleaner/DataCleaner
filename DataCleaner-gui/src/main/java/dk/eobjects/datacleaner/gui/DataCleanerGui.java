@@ -59,6 +59,7 @@ public class DataCleanerGui {
 		} else {
 			new NewTaskDialog().setVisible(true);
 		}
+		GuiHelper.silentNotification("GUI started");
 	}
 
 	private static void loadDrivers() {

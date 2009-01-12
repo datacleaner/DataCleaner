@@ -20,14 +20,15 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
@@ -36,6 +37,8 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
@@ -92,53 +95,46 @@ public class UserRegistrationDialog extends BanneredDialog {
 				new Thread() {
 					@Override
 					public void run() {
-						try {
-							boolean validated = false;
-							String username = _usernameField.getText();
+						boolean validated = false;
+						String username = _usernameField.getText();
 
-							_log
-									.info("Querying http://datacleaner.eobjects.org/ws/get_salt for salt.");
-							String salt = getUrlContent("http://datacleaner.eobjects.org/ws/get_salt?username="
-									+ username);
+						_log
+								.info("Querying http://datacleaner.eobjects.org/ws/get_salt for salt.");
+						Map<String, String> params = new HashMap<String, String>();
+						params.put("username", username);
+						String salt = getUrlContent(
+								"http://datacleaner.eobjects.org/ws/get_salt",
+								params);
 
-							if (!"not found".equals(salt)) {
-								String hashedPassword = Jcrypt
-										.crypt(salt, new String(_passwordField
-												.getPassword()));
+						if (salt != null && !"not found".equals(salt)) {
+							String hashedPassword = Jcrypt.crypt(salt,
+									new String(_passwordField.getPassword()));
 
-								_log.info("Querying for user credentials.");
-								String accepted = getUrlContent("http://datacleaner.eobjects.org/ws/login?username="
-										+ username
-										+ "&hashed_password="
-										+ hashedPassword);
+							params.put("hashed_password", hashedPassword);
+							_log.info("Querying for user credentials.");
+							String accepted = getUrlContent(
+									"http://datacleaner.eobjects.org/ws/login",
+									params);
 
-								if ("true".equals(accepted)) {
-									validated = true;
-								}
+							if ("true".equals(accepted)) {
+								validated = true;
 							}
+						}
 
-							if (validated) {
-								GuiSettings settings = GuiSettings
-										.getSettings();
-								settings.setUsername(username);
-								GuiSettings.saveSettings(settings);
-								dispose();
-								new NewTaskDialog().setVisible(true);
-							} else {
-								GuiHelper
-										.showErrorMessage(
-												"Invalid username and password",
-												"Invalid username and password, please try again.",
-												null);
-							}
-
-						} catch (MalformedURLException e) {
-							_log.error(e);
-						} catch (IOException e) {
-							_log.error(e);
+						if (validated) {
+							GuiSettings settings = GuiSettings.getSettings();
+							settings.setUsername(username);
+							GuiSettings.saveSettings(settings);
+							dispose();
+							new NewTaskDialog().setVisible(true);
+						} else {
+							GuiHelper
+									.showErrorMessage(
+											"Invalid username and password",
+											"Invalid username and password, please try again.",
+											null);
 						}
 					}
-
 				}.start();
 			}
 		});
@@ -183,16 +179,29 @@ public class UserRegistrationDialog extends BanneredDialog {
 		return panel;
 	}
 
-	private String getUrlContent(String urlString) throws IOException {
-		URL url = new URL(urlString);
-		StringBuilder sb = new StringBuilder();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(url
-				.openStream()));
-		for (String line = reader.readLine(); line != null; line = reader
-				.readLine()) {
-			sb.append(line);
+	private String getUrlContent(String url, Map<String, String> params) {
+		PostMethod method = new PostMethod(url);
+		for (Entry<String, String> entry : params.entrySet()) {
+			method.addParameter(entry.getKey(), entry.getValue());
 		}
-		reader.close();
-		return sb.toString();
+		try {
+			GuiHelper.getHttpClient().executeMethod(method);
+			return method.getResponseBodyAsString();
+		} catch (HttpException e) {
+			_log.error(e);
+			throw new IllegalArgumentException(url);
+		} catch (IOException e) {
+			_log.warn(e);
+			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this,
+					"Could not establish connection.\nError type: "
+							+ e.getClass().getSimpleName() + "\nError message: "
+							+ e.getMessage() + "\n\nRetry?",
+					"Connection error", JOptionPane.YES_NO_OPTION)) {
+				_log.info("Retrying...");
+				return getUrlContent(url, params);
+			} else {
+				return null;
+			}
+		}
 	}
 }

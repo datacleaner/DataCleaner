@@ -4,8 +4,8 @@
 	<artifactId>DataCleaner</artifactId>
 	<name>DataCleaner</name>
 	<version>1.5-SNAPSHOT</version>
-	<description>DataCleaner is an open source project concerned with creating a data quality solutions for business and organizations wishing to measure and increase the quality of their data. DataCleaner includes functionality to profile and compare data, to validate data against business rules and to monitor the progression of these measurements over time. To do this we provide you with both a standalone desktop-application for exploring and defining the data quality effort and a web application for continuous data quality deployments.</description>
-	<url>http://eobjects.org/datacleaner</url>
+	<description>DataCleaner is an Open Source application for profiling, validating and comparing data. These activities help you administer and monitor your data quality in order to ensure that your data is useful and applicable to your business situation.</description>
+	<url>http://datacleaber.eobjects.org</url>
 	<inceptionYear>2007</inceptionYear>
 	<packaging>pom</packaging>
 	<scm>
@@ -33,7 +33,7 @@
 	</distributionManagement>
 	<ciManagement>
 		<system>hudson</system>
-		<url>http://eobjects.org/hudson/</url>
+		<url>http://jee.eobjects.org/hudson/</url>
 		<notifiers>
 			<notifier>
 				<address>datacleaner-notify@googlegroups.com</address>
@@ -49,9 +49,19 @@
 	</issueManagement>
 	<mailingLists>
 		<mailingList>
-			<name>DataCleaner mailing list</name>
-			<archive>http://groups.google.com/group/datacleaner</archive>
-			<post>datacleaner@googlegroups.com</post>
+			<name>DataCleaner-dev mailing list</name>
+			<archive>http://groups.google.com/group/datacleaner-dev</archive>
+			<post>datacleaner-dev@googlegroups.com</post>
+		</mailingList>
+		<mailingList>
+			<name>DataCleaner-announce mailing list</name>
+			<archive>http://groups.google.com/group/datacleaner-announce</archive>
+			<post>datacleaner-announce@googlegroups.com</post>
+		</mailingList>
+		<mailingList>
+			<name>DataCleaner-notify mailing list</name>
+			<archive>http://groups.google.com/group/datacleaner-notify</archive>
+			<post>datacleaner-notify@googlegroups.com</post>
 		</mailingList>
 	</mailingLists>
 	<licenses>

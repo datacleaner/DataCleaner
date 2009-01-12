@@ -181,6 +181,8 @@ public class ProfilerWindow extends AbstractWindow {
 		splitPane.setBackground(GuiHelper.BG_COLOR_DARKBLUE);
 
 		_panel.add(splitPane, BorderLayout.CENTER);
+		
+		GuiHelper.silentNotification("profiler-window");
 	}
 
 	@Override

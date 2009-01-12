@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -59,7 +61,7 @@ public class RegexSwapDialog extends BanneredDialog {
 
 	@Override
 	protected Component getContent() {
-		_client = new RegexSwapClient();
+		_client = new RegexSwapClient(GuiHelper.getHttpClient());
 		_categoryTree = createCategoryTree();
 		JPanel regexSelectionTablePanel = createRegexSelectionTable();
 		JPanel regexDetailsPanel = createRegexDetailsPanel();
@@ -211,40 +213,68 @@ public class RegexSwapDialog extends BanneredDialog {
 		new Thread() {
 			@Override
 			public void run() {
-				DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(
-						"Categories");
-				_client.updateCategories();
-				Map<String, Category> categories = _client.getCategories();
-				for (Category category : categories.values()) {
-					DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(
-							category);
-					rootNode.add(categoryNode);
-				}
+				try {
+					DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(
+							"Categories");
+					_client.updateCategories();
+					Map<String, Category> categories = _client.getCategories();
+					for (Category category : categories.values()) {
+						DefaultMutableTreeNode categoryNode = new DefaultMutableTreeNode(
+								category);
+						rootNode.add(categoryNode);
+					}
 
-				TreeModel treeModel = new DefaultTreeModel(rootNode);
-				_categoryTree.setModel(treeModel);
+					TreeModel treeModel = new DefaultTreeModel(rootNode);
+					_categoryTree.setModel(treeModel);
+				} catch (IOException e) {
+					_log.warn(e);
+					if (JOptionPane.YES_OPTION == JOptionPane
+							.showConfirmDialog(RegexSwapDialog.this,
+									"Could not establish connection.\nError type: "
+											+ e.getClass().getSimpleName()
+											+ "\nError message: "
+											+ e.getMessage() + "\n\nRetry?",
+									"Connection error",
+									JOptionPane.YES_NO_OPTION)) {
+						_log.info("Retrying...");
+						run();
+					}
+				}
 			}
 		}.start();
 	}
 
 	private void fireCategorySelected(final Category category) {
-		_client.updateRegexes(category);
-		List<Regex> regexes = category.getRegexes();
+		try {
+			_client.updateRegexes(category);
+			List<Regex> regexes = category.getRegexes();
 
-		DefaultTableModel tableModel = new DefaultTableModel(TABLE_HEADERS,
-				regexes.size());
-		if (!regexes.isEmpty()) {
-			for (int i = 0; i < regexes.size(); i++) {
-				Regex regex = regexes.get(i);
-				tableModel.setValueAt(regex.getName(), i, 0);
-				tableModel.setValueAt(regex.getPositiveVotes() + "/"
-						+ regex.getNegativeVotes(), i, 1);
-				tableModel.setValueAt(regex.getAuthor(), i, 2);
+			DefaultTableModel tableModel = new DefaultTableModel(TABLE_HEADERS,
+					regexes.size());
+			if (!regexes.isEmpty()) {
+				for (int i = 0; i < regexes.size(); i++) {
+					Regex regex = regexes.get(i);
+					tableModel.setValueAt(regex.getName(), i, 0);
+					tableModel.setValueAt(regex.getPositiveVotes() + "/"
+							+ regex.getNegativeVotes(), i, 1);
+					tableModel.setValueAt(regex.getAuthor(), i, 2);
+				}
 			}
-		}
-		synchronized (_regexSelectionTable) {
-			_regexSelectionTable.setModel(tableModel);
-			_regexSelectionTable.updateUI();
+			synchronized (_regexSelectionTable) {
+				_regexSelectionTable.setModel(tableModel);
+				_regexSelectionTable.updateUI();
+			}
+		} catch (IOException e) {
+			_log.warn(e);
+			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this,
+					"Could not establish connection.\nError type: "
+							+ e.getClass().getSimpleName()
+							+ "\nError message: " + e.getMessage()
+							+ "\n\nRetry?", "Connection error",
+					JOptionPane.YES_NO_OPTION)) {
+				_log.info("Retrying...");
+				fireCategorySelected(category);
+			}
 		}
 	}
 

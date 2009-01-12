@@ -53,6 +53,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,6 +67,7 @@ import org.jdesktop.swingx.error.ErrorInfo;
 import org.jdesktop.swingx.error.ErrorLevel;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
+import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
@@ -70,6 +75,8 @@ import dk.eobjects.metamodel.schema.Table;
 public class GuiHelper {
 
 	private static Log _log = LogFactory.getLog(GuiHelper.class);
+
+	private static HttpClient _httpClient;
 
 	public static final Font FONT_HEADER = new Font("Sans", Font.BOLD, 15);
 	public static final Font FONT_MONOSPACE = new Font("Monospaced",
@@ -364,5 +371,44 @@ public class GuiHelper {
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
 			int gridy, int anchor) {
 		addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor);
+	}
+
+	public static HttpClient getHttpClient() {
+		if (_httpClient == null) {
+			MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
+			HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
+			connectionManagerParams.setConnectionTimeout(10 * 1000);
+			connectionManager.setParams(connectionManagerParams);
+			_httpClient = new HttpClient(connectionManager);
+		}
+		return _httpClient;
+	}
+
+	/**
+	 * Silently notifies server that the user is using the application (for
+	 * usage statistics)
+	 * 
+	 * @param string
+	 */
+	public static void silentNotification(final String action) {
+		final String username = GuiSettings.getSettings().getUsername();
+		if (username != null) {
+
+			new Thread() {
+				@Override
+				public void run() {
+					try {
+						PostMethod method = new PostMethod(
+								"http://datacleaner.eobjects.org/ws/user_action");
+						method.setParameter("username", username);
+						method.setParameter("action", action);
+						getHttpClient().executeMethod(method);
+					} catch (Throwable t) {
+						// Do nothing, this is a low priority task
+						_log.debug(t);
+					}
+				}
+			}.start();
+		}
 	}
 }

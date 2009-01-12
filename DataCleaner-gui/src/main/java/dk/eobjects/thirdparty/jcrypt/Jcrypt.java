@@ -23,7 +23,7 @@ public class Jcrypt {
 
 	private static final int ITERATIONS = 16;
 
-	private static final int con_salt[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	private static final int CON_SALT[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -37,10 +37,10 @@ public class Jcrypt {
 			0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x00, 0x00, 0x00, 0x00,
 			0x00, };
 
-	private static final boolean shifts2[] = { false, false, true, true, true,
+	private static final boolean SHIFTS2[] = { false, false, true, true, true,
 			true, true, true, false, true, true, true, true, true, true, false };
 
-	private static final int skb[][] = {
+	private static final int SKB[][] = {
 			{
 			/* for C bits (numbered as per FIPS 46) 1 2 3 4 5 6 */
 			0x00000000, 0x00000010, 0x20000000, 0x20000010, 0x00010000,
@@ -162,7 +162,7 @@ public class Jcrypt {
 					0x04040822, 0x00002820, 0x04002820, 0x00042820, 0x04042820,
 					0x00002822, 0x04002822, 0x00042822, 0x04042822, }, };
 
-	private static final int SPtrans[][] = {
+	private static final int SPTRANS[][] = {
 			{
 			/* nibble 0 */
 			0x00820200, 0x00020000, 0x80800000, 0x80820200, 0x00800000,
@@ -284,7 +284,7 @@ public class Jcrypt {
 					0x08200000, 0x00000020, 0x08208000, 0x00208020, 0x00000000,
 					0x08000000, 0x08200020, 0x00008000, 0x00208020 } };
 
-	private static final int cov_2char[] = { 0x2E, 0x2F, 0x30, 0x31, 0x32,
+	private static final int COV_2CHAR[] = { 0x2E, 0x2F, 0x30, 0x31, 0x32,
 			0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x41, 0x42, 0x43, 0x44,
 			0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F,
 			0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A,
@@ -371,7 +371,7 @@ public class Jcrypt {
 		int j = 0;
 
 		for (int i = 0; i < ITERATIONS; i++) {
-			if (shifts2[i]) {
+			if (SHIFTS2[i]) {
 				c = (c >>> 2) | (c << 26);
 				d = (d >>> 2) | (d << 26);
 			} else {
@@ -382,16 +382,16 @@ public class Jcrypt {
 			c &= 0x0fffffff;
 			d &= 0x0fffffff;
 
-			s = skb[0][(c) & 0x3f]
-					| skb[1][((c >>> 6) & 0x03) | ((c >>> 7) & 0x3c)]
-					| skb[2][((c >>> 13) & 0x0f) | ((c >>> 14) & 0x30)]
-					| skb[3][((c >>> 20) & 0x01) | ((c >>> 21) & 0x06)
+			s = SKB[0][(c) & 0x3f]
+					| SKB[1][((c >>> 6) & 0x03) | ((c >>> 7) & 0x3c)]
+					| SKB[2][((c >>> 13) & 0x0f) | ((c >>> 14) & 0x30)]
+					| SKB[3][((c >>> 20) & 0x01) | ((c >>> 21) & 0x06)
 							| ((c >>> 22) & 0x38)];
 
-			t = skb[4][(d) & 0x3f]
-					| skb[5][((d >>> 7) & 0x03) | ((d >>> 8) & 0x3c)]
-					| skb[6][(d >>> 15) & 0x3f]
-					| skb[7][((d >>> 21) & 0x0f) | ((d >>> 22) & 0x30)];
+			t = SKB[4][(d) & 0x3f]
+					| SKB[5][((d >>> 7) & 0x03) | ((d >>> 8) & 0x3c)]
+					| SKB[6][(d >>> 15) & 0x3f]
+					| SKB[7][((d >>> 21) & 0x0f) | ((d >>> 22) & 0x30)];
 
 			schedule[j++] = ((t << 16) | (s & 0x0000ffff)) & 0xffffffff;
 			s = ((s >>> 16) | (t & 0xffff0000));
@@ -413,10 +413,10 @@ public class Jcrypt {
 		t = (v ^ (v << 16)) ^ R ^ s[S + 1];
 		t = (t >>> 4) | (t << 28);
 
-		L ^= SPtrans[1][(t) & 0x3f] | SPtrans[3][(t >>> 8) & 0x3f]
-				| SPtrans[5][(t >>> 16) & 0x3f] | SPtrans[7][(t >>> 24) & 0x3f]
-				| SPtrans[0][(u) & 0x3f] | SPtrans[2][(u >>> 8) & 0x3f]
-				| SPtrans[4][(u >>> 16) & 0x3f] | SPtrans[6][(u >>> 24) & 0x3f];
+		L ^= SPTRANS[1][(t) & 0x3f] | SPTRANS[3][(t >>> 8) & 0x3f]
+				| SPTRANS[5][(t >>> 16) & 0x3f] | SPTRANS[7][(t >>> 24) & 0x3f]
+				| SPTRANS[0][(u) & 0x3f] | SPTRANS[2][(u >>> 8) & 0x3f]
+				| SPTRANS[4][(u >>> 16) & 0x3f] | SPTRANS[6][(u >>> 24) & 0x3f];
 
 		return (L);
 	}
@@ -486,8 +486,8 @@ public class Jcrypt {
 		buffer.setCharAt(0, charZero);
 		buffer.setCharAt(1, charOne);
 
-		int Eswap0 = con_salt[(int) charZero];
-		int Eswap1 = con_salt[(int) charOne] << 4;
+		int Eswap0 = CON_SALT[(int) charZero];
+		int Eswap1 = CON_SALT[(int) charOne] << 4;
 
 		byte key[] = new byte[8];
 
@@ -522,35 +522,9 @@ public class Jcrypt {
 					y++;
 					u = 0x80;
 				}
-				buffer.setCharAt(i, (char) cov_2char[c]);
+				buffer.setCharAt(i, (char) COV_2CHAR[c]);
 			}
 		}
 		return (buffer.toString());
-	}
-
-	/*
-	 * usage :
-	 * 
-	 * inside this package :
-	 * org.xmlBlaster.authentication.plugins.htpasswd.jcrypt <salt> <password>
-	 * 
-	 * or put that class out of package, then : jcrypt <salt> <password>
-	 * 
-	 * Output: [XY] [blabla] => [XYgByTb9Qr46s]
-	 * 
-	 * to only return the crypt: -plain <salt> <password>
-	 */
-	public static void main(String args[]) {
-		if (args.length == 2) {
-			System.out.println("[" + args[0] + "] [" + args[1] + "] => ["
-					+ Jcrypt.crypt(args[0], args[1]) + "]");
-		} else if (args.length == 3) {
-			String salt = args[1];
-			String pepper = args[2];
-			System.out.println(Jcrypt.crypt(salt, pepper));
-		} else {
-			System.out
-					.println("Usage:\njava org.xmlBlaster.authentication.plugins.htpasswd.jcrypt <salt> <password>");
-		}
 	}
 }

@@ -16,12 +16,17 @@
  */
 package dk.eobjects.datacleaner.regexswap;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.xml.sax.InputSource;
 
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.DataContextFactory;
@@ -37,6 +42,15 @@ public class RegexSwapClient {
 
 	private Map<String, Category> _categories = new HashMap<String, Category>();
 	private Map<String, Regex> _regexes = new HashMap<String, Regex>();
+	private HttpClient _httpClient;
+
+	public RegexSwapClient() {
+		this(new HttpClient());
+	}
+
+	public RegexSwapClient(HttpClient httpClient) {
+		_httpClient = httpClient;
+	}
 
 	public Map<String, Category> getCategories() {
 		return _categories;
@@ -46,7 +60,7 @@ public class RegexSwapClient {
 		return _regexes;
 	}
 
-	public void updateCategories() {
+	public void updateCategories() throws IOException {
 		DataContext dc = getDataContext(CATEGORIES_URL);
 		Table table = dc.getDefaultSchema().getTableByName("category");
 		DataSet dataSet = dc.executeQuery(new Query()
@@ -69,7 +83,7 @@ public class RegexSwapClient {
 		dataSet.close();
 	}
 
-	public void updateRegex(Regex regex) {
+	public void updateRegex(Regex regex) throws IOException {
 		DataContext dc = getDataContext(regex.getDetailsUrl());
 		Table table = dc.getDefaultSchema().getTableByName("regex");
 		if (table != null) {
@@ -107,7 +121,8 @@ public class RegexSwapClient {
 						.select(table.getColumns()).from(table));
 				while (dataSet.next()) {
 					row = dataSet.getRow();
-					String categoryName = (String)row.getValue(table.getColumnByName("category"));
+					String categoryName = (String) row.getValue(table
+							.getColumnByName("category"));
 					Category category = _categories.get(categoryName);
 					if (!category.containsRegex(regex)) {
 						category.addRegex(regex);
@@ -120,7 +135,7 @@ public class RegexSwapClient {
 		}
 	}
 
-	public void updateRegexes(Category category) {
+	public void updateRegexes(Category category) throws IOException {
 		List<Regex> regexes = new ArrayList<Regex>();
 		DataContext dc = getDataContext(category.getDetailsUrl());
 		Table table = dc.getDefaultSchema().getTableByName("regex");
@@ -157,11 +172,11 @@ public class RegexSwapClient {
 				regex.setPositiveVotes(Integer.parseInt(positiveVotes));
 				regex.setNegativeVotes(Integer.parseInt(negativeVotes));
 				regex.setDetailsUrl(detailsUrl);
-				
+
 				if (!regex.containsCategory(category)) {
 					regex.addCategory(category);
 				}
-				
+
 				regexes.add(regex);
 			}
 			dataSet.close();
@@ -169,13 +184,22 @@ public class RegexSwapClient {
 		category.setRegexes(regexes);
 	}
 
-	private DataContext getDataContext(String url) {
+	private DataContext getDataContext(String url) throws IOException {
+		GetMethod method = new GetMethod(url);
 		try {
+			_httpClient.executeMethod(method);
+			final InputStream stream = method.getResponseBodyAsStream();
+			InputSource inputSource = new InputSource() {
+				@Override
+				public InputStream getByteStream() {
+					return stream;
+				}
+			};
 			DataContext dataContext = DataContextFactory.createXmlDataContext(
-					new URL(url), true, false);
+					inputSource, "public", true, false);
 			return dataContext;
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException(e);
+		} catch (HttpException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 }

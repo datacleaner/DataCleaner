@@ -54,7 +54,7 @@ public class UserRegistrationDialog extends BanneredDialog {
 	private JPasswordField _passwordField;
 
 	public UserRegistrationDialog() {
-		super(420, 375);
+		super(420, 420);
 	}
 
 	@Override
@@ -169,7 +169,9 @@ public class UserRegistrationDialog extends BanneredDialog {
 				.setText("Thank you for using DataCleaner. We kindly ask you to identify yourself by "
 						+ "providing us with your eobjects.org user credentials.\n"
 						+ "If you are not registered yet, we hope that you will do so now, giving "
-						+ "the DataCleaner development community a better sense of it's users and audience.");
+						+ "the DataCleaner development community a better sense of it's users and audience.\n\n"
+						+ "By logging in, you also accept transmitting very simple usage statistics to the DataCleaner "
+						+ "community, signaling which features you are using.");
 		panel.add(aboutUserRegistrationLabel, BorderLayout.NORTH);
 
 		panel.add(leftPanel, BorderLayout.WEST);
@@ -194,9 +196,10 @@ public class UserRegistrationDialog extends BanneredDialog {
 			_log.warn(e);
 			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this,
 					"Could not establish connection.\nError type: "
-							+ e.getClass().getSimpleName() + "\nError message: "
-							+ e.getMessage() + "\n\nRetry?",
-					"Connection error", JOptionPane.YES_NO_OPTION)) {
+							+ e.getClass().getSimpleName()
+							+ "\nError message: " + e.getMessage()
+							+ "\n\nRetry?", "Connection error",
+					JOptionPane.YES_NO_OPTION)) {
 				_log.info("Retrying...");
 				return getUrlContent(url, params);
 			} else {

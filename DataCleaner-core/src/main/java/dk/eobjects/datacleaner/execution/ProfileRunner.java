@@ -23,22 +23,20 @@ import java.util.Map.Entry;
 import dk.eobjects.datacleaner.profiler.AbstractProfile;
 import dk.eobjects.datacleaner.profiler.IProfile;
 import dk.eobjects.datacleaner.profiler.IProfileResult;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.schema.Column;
 
 public class ProfileRunner extends
-		AbstractRunner<ProfileConfiguration, IProfileResult, IProfile> {
-
-	private boolean _detailsEnabled = true;
+		AbstractRunner<ProfilerJobConfiguration, IProfileResult, IProfile> {
 
 	@Override
 	protected IProfile[] initConfigurations(
-			Map<ProfileConfiguration, Column[]> configurations) {
+			Map<ProfilerJobConfiguration, Column[]> configurations) {
 		ArrayList<IProfile> result = new ArrayList<IProfile>();
-		for (Entry<ProfileConfiguration, Column[]> entry : configurations
+		for (Entry<ProfilerJobConfiguration, Column[]> entry : configurations
 				.entrySet()) {
-			ProfileConfiguration configuration = entry.getKey();
+			ProfilerJobConfiguration configuration = entry.getKey();
 			Column[] columns = entry.getValue();
 			IProfile profile = initProfile(configuration, columns);
 			result.add(profile);
@@ -46,7 +44,7 @@ public class ProfileRunner extends
 		return result.toArray(new IProfile[result.size()]);
 	}
 
-	private IProfile initProfile(ProfileConfiguration configuration,
+	private IProfile initProfile(ProfilerJobConfiguration configuration,
 			Column[] columns) {
 		Class<? extends IProfile> profileClass = configuration
 				.getProfileDescriptor().getProfileClass();
@@ -54,9 +52,9 @@ public class ProfileRunner extends
 			IProfile profile = profileClass.newInstance();
 			profile.setProperties(configuration.getProfileProperties());
 			profile.initialize(columns);
-			if (!_detailsEnabled && profile instanceof AbstractProfile) {
+			if (!_executionConfiguration.isDrillToDetailEnabled() && profile instanceof AbstractProfile) {
 				AbstractProfile ap = (AbstractProfile) profile;
-				ap.setDetailsEnabled(_detailsEnabled);
+				ap.setDetailsEnabled(_executionConfiguration.isDrillToDetailEnabled());
 			}
 			return profile;
 		} catch (InstantiationException e) {
@@ -76,9 +74,5 @@ public class ProfileRunner extends
 	@Override
 	protected IProfileResult getResult(IProfile processor) {
 		return processor.getResult();
-	}
-
-	public void setDetailsEnabled(boolean detailsEnabled) {
-		_detailsEnabled  = detailsEnabled;
 	}
 }

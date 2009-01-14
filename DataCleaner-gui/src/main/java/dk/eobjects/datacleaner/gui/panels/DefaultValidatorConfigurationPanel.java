@@ -19,7 +19,7 @@ package dk.eobjects.datacleaner.gui.panels;
 import javax.swing.JPanel;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.metamodel.schema.Column;
 
 public class DefaultValidatorConfigurationPanel extends
@@ -29,14 +29,14 @@ public class DefaultValidatorConfigurationPanel extends
 
 	@Override
 	protected void createPanel(JPanel panel,
-			ValidationRuleConfiguration configuration) {
+			ValidatorJobConfiguration configuration) {
 		_subsetDataSelectionPanel = SubsetDataSelectionPanel.createPanel(
 				_columnSelection, _descriptor);
 		_propertiesPanel.addManagedProperties(_descriptor.getPropertyNames());
 		_propertiesPanel.updateManagedFields(configuration
 				.getValidationRuleProperties());
 
-		Column[] columns = _configuration.getColumns();
+		Column[] columns = _jobConfiguration.getColumns();
 		if (columns != null && columns.length > 0) {
 			_subsetDataSelectionPanel.setSelectedColumns(columns);
 		}
@@ -50,7 +50,7 @@ public class DefaultValidatorConfigurationPanel extends
 
 	@Override
 	protected void updateConfiguration() {
-		_configuration.setColumns(_subsetDataSelectionPanel
+		_jobConfiguration.setColumns(_subsetDataSelectionPanel
 				.getSelectedColumns());
 	}
 }

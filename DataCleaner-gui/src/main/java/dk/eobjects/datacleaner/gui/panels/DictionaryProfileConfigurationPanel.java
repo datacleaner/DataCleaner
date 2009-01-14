@@ -32,11 +32,11 @@ import javax.swing.JTabbedPane;
 
 import dk.eobjects.datacleaner.catalog.IDictionary;
 import dk.eobjects.datacleaner.data.ColumnSelection;
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.profiler.trivial.DictionaryProfile;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
 import dk.eobjects.metamodel.schema.Column;
@@ -47,14 +47,14 @@ public class DictionaryProfileConfigurationPanel implements IConfigurationPanel 
 			.toComponent();
 	private IProfileDescriptor _descriptor;
 	private SubsetDataSelectionPanel _subsetDataSelectionPanel;
-	private ProfileConfiguration _configuration;
+	private ProfilerJobConfiguration _jobConfiguration;
 	private Map<IDictionary, JCheckBox> _dictionaryCheckBoxes = new HashMap<IDictionary, JCheckBox>();
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
 			ColumnSelection columnSelection,
-			IRunnableConfiguration configuration) {
+			IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
-		_configuration = (ProfileConfiguration) configuration;
+		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 
 		_panel.removeAll();
 
@@ -70,7 +70,7 @@ public class DictionaryProfileConfigurationPanel implements IConfigurationPanel 
 		List<String> enabledDictionaryNames = ReflectionHelper
 				.getIteratedProperties(
 						DictionaryProfile.PREFIX_PROPERTY_DICTIONARY,
-						_configuration.getProfileProperties());
+						_jobConfiguration.getProfileProperties());
 		if (enabledDictionaryNames.isEmpty()) {
 			enabledDictionaryNames = new ArrayList<String>(dictionaries.size());
 			for (IDictionary dictionary : dictionaries) {
@@ -116,7 +116,7 @@ public class DictionaryProfileConfigurationPanel implements IConfigurationPanel 
 
 		GuiHelper.addComponentAligned(_panel, dictionaryPanel);
 
-		Column[] columns = _configuration.getColumns();
+		Column[] columns = _jobConfiguration.getColumns();
 		if (columns != null && columns.length > 0) {
 			_subsetDataSelectionPanel.setSelectedColumns(columns);
 		}
@@ -128,8 +128,8 @@ public class DictionaryProfileConfigurationPanel implements IConfigurationPanel 
 		return _panel;
 	}
 
-	public IRunnableConfiguration getConfiguration() {
-		ProfileConfiguration configuration = new ProfileConfiguration(
+	public IJobConfiguration getJobConfiguration() {
+		ProfilerJobConfiguration configuration = new ProfilerJobConfiguration(
 				_descriptor);
 		configuration
 				.setColumns(_subsetDataSelectionPanel.getSelectedColumns());

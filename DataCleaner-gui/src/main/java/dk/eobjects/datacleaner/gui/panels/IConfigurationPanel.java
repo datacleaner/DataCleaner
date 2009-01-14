@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 
 /**
  * This is the interface that defines the behaviour of a panel used to configure
@@ -49,12 +49,12 @@ public interface IConfigurationPanel {
 	 *            being used
 	 * @param columnSelection
 	 *            the current column selection
-	 * @param configuration
+	 * @param jobConfiguration
 	 *            the initial configuration of this panel
 	 */
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
 			ColumnSelection columnSelection,
-			IRunnableConfiguration configuration);
+			IJobConfiguration jobConfiguration);
 
 	/**
 	 * Gets the Swing JPanel used to represent the panel. This method will only
@@ -71,7 +71,7 @@ public interface IConfigurationPanel {
 	 * 
 	 * @return
 	 */
-	public IRunnableConfiguration getConfiguration();
+	public IJobConfiguration getJobConfiguration();
 
 	/**
 	 * Signals that the window or tab has been closed. Use this method for

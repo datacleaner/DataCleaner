@@ -32,9 +32,12 @@ import dk.eobjects.metamodel.schema.Table;
  *            the result (output) type, for example ProfileResult or
  *            ValidationRuleResult
  */
-public interface IRunner<E, F> {
+public interface IRunner<E extends IJobConfiguration, F> {
 
-	public void addConfiguration(E configuration);
+	public void addJobConfiguration(E configuration);
+
+	public void setExecutionConfiguration(
+			ExecutionConfiguration executionConfiguration);
 
 	/**
 	 * Executes this runner. No exceptions will be thrown from running this

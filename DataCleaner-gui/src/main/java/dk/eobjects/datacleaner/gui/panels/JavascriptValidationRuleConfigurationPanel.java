@@ -30,7 +30,7 @@ import javax.swing.border.LineBorder;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.widgets.TableDataSelectionComboBox;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.condition.JavascriptValidationRule;
 import dk.eobjects.metamodel.MetaModelHelper;
 import dk.eobjects.metamodel.schema.Column;
@@ -50,7 +50,7 @@ public class JavascriptValidationRuleConfigurationPanel extends
 
 	@Override
 	protected void createPanel(JPanel panel,
-			ValidationRuleConfiguration configuration) {
+			ValidatorJobConfiguration configuration) {
 		_tableComboBox = new TableDataSelectionComboBox(_columnSelection);
 		_tableComboBox.setName("tableComboBox");
 		_tableComboBox.addActionListener(new ActionListener() {
@@ -90,7 +90,7 @@ public class JavascriptValidationRuleConfigurationPanel extends
 
 	@Override
 	protected void updateConfiguration() {
-		Map<String, String> properties = _configuration
+		Map<String, String> properties = _jobConfiguration
 				.getValidationRuleProperties();
 		properties.put(JavascriptValidationRule.PROPERTY_JAVASCRIPT_EXPRESSION,
 				_expressionTextArea.getText());
@@ -99,7 +99,7 @@ public class JavascriptValidationRuleConfigurationPanel extends
 		if (selectedTable != null) {
 			Column[] tableColumns = MetaModelHelper.getTableColumns(
 					selectedTable, _columnSelection.getColumns());
-			_configuration.setColumns(tableColumns);
+			_jobConfiguration.setColumns(tableColumns);
 		}
 	}
 
@@ -117,7 +117,7 @@ public class JavascriptValidationRuleConfigurationPanel extends
 
 	private void updateScript() {
 		if (_updateScriptOnColumnSelectionChange) {
-			String expression = _configuration
+			String expression = _jobConfiguration
 					.getValidationRuleProperties()
 					.get(
 							JavascriptValidationRule.PROPERTY_JAVASCRIPT_EXPRESSION);

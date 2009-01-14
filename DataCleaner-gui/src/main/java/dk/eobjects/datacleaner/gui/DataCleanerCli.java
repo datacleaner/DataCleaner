@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import dk.eobjects.datacleaner.data.DataContextSelection;
+import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
 import dk.eobjects.datacleaner.execution.ProfileRunner;
 import dk.eobjects.datacleaner.execution.ValidationRuleRunner;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
@@ -40,9 +41,9 @@ import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.gui.windows.ProfilerWindow;
 import dk.eobjects.datacleaner.gui.windows.ValidatorWindow;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.util.DomHelper;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.metamodel.DataContext;
 
 /**
@@ -66,21 +67,23 @@ public class DataCleanerCli {
 	private PrintWriter _consoleWriter = new PrintWriter(System.out);
 	private OutputType _outputType = OutputType.XML;
 	private DataContext _dataContext;
-	private List<ProfileConfiguration> _profileConfigurations;
-	private List<ValidationRuleConfiguration> _validationRuleConfigurations;
+	private List<ProfilerJobConfiguration> _profileConfigurations;
+	private List<ValidatorJobConfiguration> _validationRuleConfigurations;
 	private File _inputFile;
+
+	private ExecutionConfiguration _executionConfiguration;
 
 	public void setDataContext(DataContext dataContext) {
 		_dataContext = dataContext;
 	}
 
 	public void setProfileConfigurations(
-			List<ProfileConfiguration> profileConfigurations) {
+			List<ProfilerJobConfiguration> profileConfigurations) {
 		_profileConfigurations = profileConfigurations;
 	}
 
 	public void setValidationRuleConfigurations(
-			List<ValidationRuleConfiguration> validationRuleConfigurations) {
+			List<ValidatorJobConfiguration> validationRuleConfigurations) {
 		_validationRuleConfigurations = validationRuleConfigurations;
 	}
 
@@ -204,16 +207,28 @@ public class DataCleanerCli {
 				DataContextSelection.NODE_NAME).get(0);
 		DataContextSelection dataContextSelection = DataContextSelection
 				.deserialize(dataContextSelectionNode);
+		Node executionConfigurationNode = DomHelper.getChildNodesByName(node,
+				ExecutionConfiguration.NODE_NAME).get(0);
+		ExecutionConfiguration executionConfiguration;
+		if (executionConfigurationNode == null) {
+			executionConfiguration = new ExecutionConfiguration();
+		} else {
+			executionConfiguration = ExecutionConfiguration
+					.deserialize(executionConfigurationNode);
+		}
+		executionConfiguration.setDrillToDetailEnabled(false);
+		setExecutionConfiguration(executionConfiguration);
+
 		DataContext dc = dataContextSelection.getDataContext();
 		setDataContext(dc);
 
 		if (ProfilerWindow.NODE_NAME.equals(node.getNodeName())) {
 			// Profiler specific parsing and execution
 			List<Node> configurationNodes = DomHelper.getChildNodesByName(node,
-					ProfileConfiguration.NODE_NAME);
-			List<ProfileConfiguration> configurations = new ArrayList<ProfileConfiguration>();
+					ProfilerJobConfiguration.NODE_NAME);
+			List<ProfilerJobConfiguration> configurations = new ArrayList<ProfilerJobConfiguration>();
 			for (Node configurationNode : configurationNodes) {
-				ProfileConfiguration configuration = ProfileConfiguration
+				ProfilerJobConfiguration configuration = ProfilerJobConfiguration
 						.deserialize(configurationNode, dc);
 				configurations.add(configuration);
 			}
@@ -224,10 +239,10 @@ public class DataCleanerCli {
 		} else if (ValidatorWindow.NODE_NAME.equals(node.getNodeName())) {
 			// Validator specific parsing and execution
 			List<Node> configurationNodes = DomHelper.getChildNodesByName(node,
-					ValidationRuleConfiguration.NODE_NAME);
-			List<ValidationRuleConfiguration> configurations = new ArrayList<ValidationRuleConfiguration>();
+					ValidatorJobConfiguration.NODE_NAME);
+			List<ValidatorJobConfiguration> configurations = new ArrayList<ValidatorJobConfiguration>();
 			for (Node configurationNode : configurationNodes) {
-				ValidationRuleConfiguration configuration = ValidationRuleConfiguration
+				ValidatorJobConfiguration configuration = ValidatorJobConfiguration
 						.deserialize(configurationNode, dc);
 				configurations.add(configuration);
 			}
@@ -241,6 +256,11 @@ public class DataCleanerCli {
 		}
 	}
 
+	private void setExecutionConfiguration(
+			ExecutionConfiguration executionConfiguration) {
+		_executionConfiguration = executionConfiguration;
+	}
+
 	/**
 	 * Runs a profiler job. Requires that the DataContext and
 	 * ProfilerConfigurations have been set and that the DataCleaner-core
@@ -250,12 +270,12 @@ public class DataCleanerCli {
 		_consoleWriter.println("Executing profiler");
 
 		ProfileRunner runner = new ProfileRunner();
-		runner.setDetailsEnabled(false);
-		for (ProfileConfiguration configuration : _profileConfigurations) {
-			runner.addConfiguration(configuration);
+		for (ProfilerJobConfiguration configuration : _profileConfigurations) {
+			runner.addJobConfiguration(configuration);
 		}
+		runner.setExecutionConfiguration(_executionConfiguration);
 		runner.execute(_dataContext);
-
+		
 		// TODO: Handle result
 		_consoleWriter.println("TODO: Print to " + _outputType + " source");
 
@@ -271,12 +291,12 @@ public class DataCleanerCli {
 		_consoleWriter.println("Executing validator");
 
 		ValidationRuleRunner runner = new ValidationRuleRunner();
-		for (ValidationRuleConfiguration configuration : _validationRuleConfigurations) {
-			runner.addConfiguration(configuration);
+		for (ValidatorJobConfiguration configuration : _validationRuleConfigurations) {
+			runner.addJobConfiguration(configuration);
 		}
-
+		runner.setExecutionConfiguration(_executionConfiguration);
 		runner.execute(_dataContext);
-
+		
 		// TODO: Handle result
 		_consoleWriter.println("TODO: Print to " + _outputType + " source");
 

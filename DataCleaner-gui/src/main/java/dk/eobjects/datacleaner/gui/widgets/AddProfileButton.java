@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.windows.ProfilerWindow;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.profiler.ProfilerManager;
 
 public class AddProfileButton extends JButton implements ActionListener {
@@ -64,7 +64,7 @@ public class AddProfileButton extends JButton implements ActionListener {
 		JMenuItem item = new JMenuItem(displayName, icon);
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ProfileConfiguration configuration = new ProfileConfiguration(
+				ProfilerJobConfiguration configuration = new ProfilerJobConfiguration(
 						descriptor);
 				_window.addTab(configuration);
 			}

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.windows.ValidatorWindow;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.ValidatorManager;
 
 public class AddValidationRuleButton extends JButton implements ActionListener {
@@ -64,7 +64,7 @@ public class AddValidationRuleButton extends JButton implements ActionListener {
 		JMenuItem item = new JMenuItem(displayName, icon);
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ValidationRuleConfiguration configuration = new ValidationRuleConfiguration(
+				ValidatorJobConfiguration configuration = new ValidatorJobConfiguration(
 						descriptor);
 				_window.addTab(configuration);
 			}

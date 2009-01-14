@@ -25,7 +25,7 @@ import javax.swing.JPanel;
 import dk.eobjects.datacleaner.catalog.IDictionary;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.dictionary.DictionaryValidationRule;
 import dk.eobjects.metamodel.schema.Column;
 
@@ -37,7 +37,7 @@ public class DictionaryValidationRuleConfigurationPanel extends
 
 	@Override
 	protected void createPanel(JPanel panel,
-			ValidationRuleConfiguration configuration) {
+			ValidatorJobConfiguration configuration) {
 		createDictionaryDropDown();
 
 		_dictionaryDropDown.setName("dictionaryDropDown");
@@ -63,10 +63,10 @@ public class DictionaryValidationRuleConfigurationPanel extends
 	@Override
 	protected void updateConfiguration() {
 		List<Column> columns = _subsetDataSelectionPanel.getSelectedColumns();
-		_configuration.setColumns(columns);
+		_jobConfiguration.setColumns(columns);
 		Object selectedItem = _dictionaryDropDown.getSelectedItem();
 
-		Map<String, String> properties = _configuration
+		Map<String, String> properties = _jobConfiguration
 				.getValidationRuleProperties();
 		if (selectedItem != null) {
 			properties.put(DictionaryValidationRule.PROPERTY_DICTIONARY_NAME,

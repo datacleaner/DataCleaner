@@ -27,13 +27,14 @@ import org.easymock.IAnswer;
 import dk.eobjects.datacleaner.profiler.BasicProfileDescriptor;
 import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.profiler.OutOfMemoryProfile;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
 import dk.eobjects.datacleaner.profiler.ProfilerManager;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.IDataContextStrategy;
 import dk.eobjects.metamodel.JdbcDataContextFactory;
+import dk.eobjects.metamodel.MetaModelHelper;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.IDataSetStrategy;
 import dk.eobjects.metamodel.data.Row;
@@ -53,6 +54,40 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		ProfileManagerTest.initProfileManager();
 	}
 
+	public void testSplitQueries() throws Exception {
+		final String result = "Matrix[columnNames={ORDERNUMBER,PRODUCTCODE},Row count={2996,2996},Null values={0,0},Empty values={0,0},Highest value={10425,S72_3212},Lowest value={10100,S10_1678}]";
+
+		Connection connection = getTestDbConnection();
+		DataContext dataContext = JdbcDataContextFactory
+				.getDataContext(connection);
+		Schema schema = dataContext.getDefaultSchema();
+
+		Table orderFactTable = schema.getTableByName("ORDERFACT");
+		assertEquals(2996, MetaModelHelper.executeSingleRowQuery(dataContext,
+				new Query().selectCount().from(orderFactTable)).getValue(0));
+
+		ProfilerJobConfiguration conf = new ProfilerJobConfiguration(
+				ProfileManagerTest.DESCRIPTOR_STANDARD_MEASURES);
+		conf.setColumns(orderFactTable.getColumns()[0], orderFactTable
+				.getColumns()[1]);
+
+		ProfileRunner profileRunner = new ProfileRunner();
+		profileRunner.addJobConfiguration(conf);
+		profileRunner.execute(dataContext);
+
+		assertEquals(result, profileRunner.getResults().get(0).getMatrices()[0]
+				.toString());
+
+		profileRunner = new ProfileRunner();
+		profileRunner.addJobConfiguration(conf);
+		profileRunner.setExecutionConfiguration(new ExecutionConfiguration(
+				800l, false, false));
+		profileRunner.execute(dataContext);
+
+		assertEquals(result, profileRunner.getResults().get(0).getMatrices()[0]
+				.toString());
+	}
+
 	public void testMultipleProfileDefinitions() throws Exception {
 		Connection connection = getTestDbConnection();
 		DataContext dataContext = JdbcDataContextFactory
@@ -65,19 +100,19 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		Table customersTable = schema.getTableByName("CUSTOMERS");
 		Column addressLine2Column = customersTable
 				.getColumnByName("ADDRESSLINE2");
-		ProfileConfiguration conf1 = new ProfileConfiguration(
+		ProfilerJobConfiguration conf1 = new ProfilerJobConfiguration(
 				ProfileManagerTest.DESCRIPTOR_PATTERN_FINDER);
 		conf1.setColumns(addressLine2Column);
-		profileRunner.addConfiguration(conf1);
+		profileRunner.addJobConfiguration(conf1);
 
 		// Create profile definition for multiple columns
 		Table officesTable = schema.getTableByName("OFFICES");
 		Column postalCodeColumn = officesTable.getColumnByName("POSTALCODE");
 		Column officeCodeColumn = officesTable.getColumnByName("OFFICECODE");
-		ProfileConfiguration conf2 = new ProfileConfiguration(
+		ProfilerJobConfiguration conf2 = new ProfilerJobConfiguration(
 				ProfileManagerTest.DESCRIPTOR_STANDARD_MEASURES);
 		conf2.setColumns(postalCodeColumn, officeCodeColumn);
-		profileRunner.addConfiguration(conf2);
+		profileRunner.addJobConfiguration(conf2);
 
 		IProgressObserver po = new IProgressObserver() {
 			long _time = 0;
@@ -151,23 +186,24 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		Schema schema = dc.getDefaultSchema();
 
 		ProfileRunner profileRunner = new ProfileRunner();
-		profileRunner.setDetailsEnabled(false);
+		profileRunner.setExecutionConfiguration(new ExecutionConfiguration(
+				false, true));
 
 		// Create profile definition for a single column
 		final Table customersTable = schema.getTableByName("CUSTOMERS");
 		Column customerNameColumn = customersTable
 				.getColumnByName("CUSTOMERNAME");
-		ProfileConfiguration conf1 = new ProfileConfiguration(
+		ProfilerJobConfiguration conf1 = new ProfilerJobConfiguration(
 				ProfileManagerTest.DESCRIPTOR_STANDARD_MEASURES);
 		conf1.setColumns(customerNameColumn);
-		profileRunner.addConfiguration(conf1);
+		profileRunner.addJobConfiguration(conf1);
 
 		// Create profile definition for multiple columns
 		Column countryColumn = customersTable.getColumnByName("COUNTRY");
-		ProfileConfiguration conf2 = new ProfileConfiguration(
+		ProfilerJobConfiguration conf2 = new ProfilerJobConfiguration(
 				ProfileManagerTest.DESCRIPTOR_PATTERN_FINDER);
 		conf2.setColumns(countryColumn, customerNameColumn);
-		profileRunner.addConfiguration(conf2);
+		profileRunner.addJobConfiguration(conf2);
 
 		IProgressObserver po = new IProgressObserver() {
 			private int _notifications = 0;
@@ -214,26 +250,27 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		Schema schema = dc.getDefaultSchema();
 
 		ProfileRunner profileRunner = new ProfileRunner();
-		profileRunner.setDetailsEnabled(false);
+		profileRunner.setExecutionConfiguration(new ExecutionConfiguration(
+				false, true));
 
 		// Create profile definition for a single column
 		final Table customersTable = schema.getTableByName("CUSTOMERS");
 		final Table employeesTable = schema.getTableByName("EMPLOYEES");
-		ProfileConfiguration conf1 = new ProfileConfiguration(
+		ProfilerJobConfiguration conf1 = new ProfilerJobConfiguration(
 				ProfileManagerTest.DESCRIPTOR_PATTERN_FINDER);
 		conf1.setColumns(employeesTable.getColumns()[0], customersTable
 				.getColumns()[0]);
-		profileRunner.addConfiguration(conf1);
+		profileRunner.addJobConfiguration(conf1);
 
 		// Create profile definition for multiple columns
 		Column postalCodeColumn = customersTable
 				.getColumnByName("ADDRESSLINE1");
 		Column officeCodeColumn = customersTable
 				.getColumnByName("ADDRESSLINE2");
-		ProfileConfiguration conf2 = new ProfileConfiguration(
+		ProfilerJobConfiguration conf2 = new ProfilerJobConfiguration(
 				ProfileManagerTest.DESCRIPTOR_STANDARD_MEASURES);
 		conf2.setColumns(postalCodeColumn, officeCodeColumn);
-		profileRunner.addConfiguration(conf2);
+		profileRunner.addJobConfiguration(conf2);
 
 		profileRunner.execute(dc);
 
@@ -258,9 +295,10 @@ public class ProfileRunnerTest extends DataCleanerTestCase {
 		BasicProfileDescriptor descriptor = new BasicProfileDescriptor(
 				"Memory aggregator", OutOfMemoryProfile.class);
 		ProfilerManager.addProfileDescriptor(descriptor);
-		ProfileConfiguration conf1 = new ProfileConfiguration(descriptor);
+		ProfilerJobConfiguration conf1 = new ProfilerJobConfiguration(
+				descriptor);
 		conf1.setColumns(column);
-		profileRunner.addConfiguration(conf1);
+		profileRunner.addJobConfiguration(conf1);
 
 		IDataContextStrategy dcStrategy = createMock(IDataContextStrategy.class);
 		IDataSetStrategy dsStrategy = createMock(IDataSetStrategy.class);

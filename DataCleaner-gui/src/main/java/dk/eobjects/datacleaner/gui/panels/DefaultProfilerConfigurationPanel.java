@@ -20,10 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.metamodel.schema.Column;
 
 public class DefaultProfilerConfigurationPanel implements IConfigurationPanel {
@@ -34,13 +34,13 @@ public class DefaultProfilerConfigurationPanel implements IConfigurationPanel {
 			.toComponent();
 	private IProfileDescriptor _descriptor;
 	private SubsetDataSelectionPanel _subsetDataSelectionPanel;
-	private ProfileConfiguration _configuration;
+	private ProfilerJobConfiguration _jobConfiguration;
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
 			ColumnSelection columnSelection,
-			IRunnableConfiguration configuration) {
+			IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
-		_configuration = (ProfileConfiguration) configuration;
+		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 
 		_panel.removeAll();
 
@@ -50,12 +50,12 @@ public class DefaultProfilerConfigurationPanel implements IConfigurationPanel {
 		String[] propertyNames = _descriptor.getPropertyNames();
 		if (propertyNames.length > 0) {
 			_propertiesPanel.addManagedProperties(propertyNames);
-			_propertiesPanel.updateManagedFields(_configuration
+			_propertiesPanel.updateManagedFields(_jobConfiguration
 					.getProfileProperties());
 			GuiHelper.addComponentAligned(_panel, _propertiesPanel.getPanel());
 		}
 
-		Column[] columns = _configuration.getColumns();
+		Column[] columns = _jobConfiguration.getColumns();
 		if (columns != null && columns.length > 0) {
 			_subsetDataSelectionPanel.setSelectedColumns(columns);
 		}
@@ -63,8 +63,8 @@ public class DefaultProfilerConfigurationPanel implements IConfigurationPanel {
 		GuiHelper.addComponentAligned(_panel, _subsetDataSelectionPanel);
 	}
 
-	public ProfileConfiguration getConfiguration() {
-		ProfileConfiguration configuration = new ProfileConfiguration(
+	public ProfilerJobConfiguration getJobConfiguration() {
+		ProfilerJobConfiguration configuration = new ProfilerJobConfiguration(
 				_descriptor);
 		configuration
 				.setColumns(_subsetDataSelectionPanel.getSelectedColumns());

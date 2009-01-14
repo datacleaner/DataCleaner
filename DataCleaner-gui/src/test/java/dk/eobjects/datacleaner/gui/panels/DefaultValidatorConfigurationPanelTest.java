@@ -23,7 +23,7 @@ import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.validator.BasicValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule;
 
 import junit.framework.TestCase;
@@ -36,7 +36,7 @@ public class DefaultValidatorConfigurationPanelTest extends TestCase {
 				"foobar", NotNullValidationRule.class);
 		configurationPanel.initialize(new JTabbedPane(), descriptor,
 				new ColumnSelection(new DataContextSelection()),
-				new ValidationRuleConfiguration(descriptor));
+				new ValidatorJobConfiguration(descriptor));
 		JPanel panel = configurationPanel.getPanel();
 		assertNotNull(panel);
 	}

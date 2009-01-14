@@ -104,12 +104,17 @@ public class DomHelper {
 		};
 		Collections.sort(entryList, comparator);
 		for (Entry<String, String> entry : entryList) {
-			Element propertyElement = doc.createElement("property");
-			propertyElement.setAttribute("name", entry.getKey());
-			propertyElement.setTextContent(entry.getValue());
-
-			superNode.appendChild(propertyElement);
+			addPropertyNode(doc, superNode, entry.getKey(), entry.getValue());
 		}
+	}
+
+	public static void addPropertyNode(Document doc, Node superNode,
+			String key, String value) {
+		Element propertyElement = doc.createElement("property");
+		propertyElement.setAttribute("name", key);
+		propertyElement.setTextContent(value);
+
+		superNode.appendChild(propertyElement);
 	}
 
 	public static Map<String, String> getPropertiesFromChildNodes(Node node) {

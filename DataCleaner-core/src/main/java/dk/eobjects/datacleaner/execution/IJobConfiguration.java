@@ -20,7 +20,14 @@ import java.io.Serializable;
 
 import dk.eobjects.metamodel.schema.Column;
 
-public interface IRunnableConfiguration extends Serializable {
+/**
+ * Represents a configured part of a composite job, to be run by an IRunner
+ * instance.
+ * 
+ * @see ProfileRunner
+ * @see ValidationRuleRunner
+ */
+public interface IJobConfiguration extends Serializable {
 
 	public Column[] getColumns();
 }

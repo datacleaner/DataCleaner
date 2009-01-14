@@ -22,21 +22,21 @@ import java.util.Map.Entry;
 
 import dk.eobjects.datacleaner.validator.IValidationRule;
 import dk.eobjects.datacleaner.validator.IValidationRuleResult;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.schema.Column;
 
 public class ValidationRuleRunner
 		extends
-		AbstractRunner<ValidationRuleConfiguration, IValidationRuleResult, IValidationRule> {
+		AbstractRunner<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> {
 
 	@Override
 	protected IValidationRule[] initConfigurations(
-			Map<ValidationRuleConfiguration, Column[]> configurations) {
+			Map<ValidatorJobConfiguration, Column[]> configurations) {
 		ArrayList<IValidationRule> result = new ArrayList<IValidationRule>();
-		for (Entry<ValidationRuleConfiguration, Column[]> entry : configurations
+		for (Entry<ValidatorJobConfiguration, Column[]> entry : configurations
 				.entrySet()) {
-			ValidationRuleConfiguration configuration = entry.getKey();
+			ValidatorJobConfiguration configuration = entry.getKey();
 			Column[] columns = entry.getValue();
 			IValidationRule vr = initValidationRule(configuration, columns);
 			result.add(vr);
@@ -45,7 +45,7 @@ public class ValidationRuleRunner
 	}
 
 	private IValidationRule initValidationRule(
-			ValidationRuleConfiguration configuration, Column[] columns) {
+			ValidatorJobConfiguration configuration, Column[] columns) {
 		Class<? extends IValidationRule> validationRuleClass = configuration
 				.getValidationRuleDescriptor().getValidationRuleClass();
 		try {

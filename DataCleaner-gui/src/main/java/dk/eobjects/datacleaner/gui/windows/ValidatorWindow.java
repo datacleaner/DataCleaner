@@ -47,8 +47,10 @@ import org.w3c.dom.Node;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.data.DataContextSelection;
+import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.dialogs.ExecutionConfigurationDialog;
 import dk.eobjects.datacleaner.gui.model.ExtensionFilter;
 import dk.eobjects.datacleaner.gui.panels.ColumnSelectionPanel;
 import dk.eobjects.datacleaner.gui.panels.ConfigurationPanelManager;
@@ -65,7 +67,7 @@ import dk.eobjects.datacleaner.gui.widgets.SchemaTreeMouseListener;
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.datacleaner.validator.IValidationRule;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.thirdparty.tabs.CloseableTabbedPane;
@@ -79,9 +81,9 @@ public class ValidatorWindow extends AbstractWindow {
 
 	private DataContextSelection _dataContextSelection;
 	private ColumnSelection _columnSelection;
-
-	private Map<JPanel, IConfigurationPanel> _configurationPanels = new HashMap<JPanel, IConfigurationPanel>();
 	private CloseableTabbedPane _tabbedPane;
+	private ExecutionConfiguration _executionConfiguration;
+	private Map<JPanel, IConfigurationPanel> _configurationPanels = new HashMap<JPanel, IConfigurationPanel>();
 
 	@Override
 	public void disposeInternal() {
@@ -98,12 +100,14 @@ public class ValidatorWindow extends AbstractWindow {
 	}
 
 	public ValidatorWindow() {
-		this(new DataContextSelection());
+		this(new DataContextSelection(), new ExecutionConfiguration());
 	}
 
-	public ValidatorWindow(DataContextSelection dataContextSelection) {
+	public ValidatorWindow(DataContextSelection dataContextSelection,
+			ExecutionConfiguration executionConfiguration) {
 		super();
 		_dataContextSelection = dataContextSelection;
+		_executionConfiguration = executionConfiguration;
 		_columnSelection = new ColumnSelection(_dataContextSelection);
 		_tabbedPane = new CloseableTabbedPane();
 		_tabbedPane.addTabCloseListener(new ConfigurationPanelTabCloseListener(
@@ -153,6 +157,15 @@ public class ValidatorWindow extends AbstractWindow {
 		toolbar.add(new OpenFileButton(_dataContextSelection));
 		toolbar.add(new JSeparator(JSeparator.VERTICAL));
 		toolbar.add(saveValidatorButton);
+		JButton optionsButton = GuiHelper.createButton("Validator options",
+				"images/toolbar_configure.png").toComponent();
+		optionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new ExecutionConfigurationDialog(_executionConfiguration, false)
+						.setVisible(true);
+			}
+		});
+		toolbar.add(optionsButton);
 		toolbar.add(new AddValidationRuleButton(this));
 		toolbar.add(new RunValidatorButton(_dataContextSelection,
 				_columnSelection, _configurationPanels));
@@ -181,7 +194,7 @@ public class ValidatorWindow extends AbstractWindow {
 		splitPane.setBackground(GuiHelper.BG_COLOR_DARKBLUE);
 
 		_panel.add(splitPane, BorderLayout.CENTER);
-		
+
 		GuiHelper.silentNotification("validator-window");
 	}
 
@@ -195,7 +208,7 @@ public class ValidatorWindow extends AbstractWindow {
 		return "Validator";
 	}
 
-	public void addTab(ValidationRuleConfiguration configuration) {
+	public void addTab(ValidatorJobConfiguration configuration) {
 		ConfigurationPanelManager configurationPanelManager = GuiConfiguration
 				.getConfigurationPanelManager();
 		IValidationRuleDescriptor descriptor = configuration
@@ -213,8 +226,7 @@ public class ValidatorWindow extends AbstractWindow {
 		panel.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		_configurationPanels.put(panel, configurationPanel);
 		ImageIcon icon = GuiHelper.getImageIcon(descriptor.getIconPath());
-		JScrollPane scrollPane = new JScrollPane(
-				panel);
+		JScrollPane scrollPane = new JScrollPane(panel);
 		scrollPane.setBorder(null);
 		_tabbedPane.addTab(tabTitle, icon, scrollPane);
 	}
@@ -223,10 +235,11 @@ public class ValidatorWindow extends AbstractWindow {
 		Element validatorNode = document.createElement(NODE_NAME);
 		validatorNode.setAttribute("version", DataCleanerGui.VERSION);
 		validatorNode.appendChild(_dataContextSelection.serialize(document));
+		validatorNode.appendChild(_executionConfiguration.serialize(document));
 		for (IConfigurationPanel configurationPanel : _configurationPanels
 				.values()) {
-			ValidationRuleConfiguration configuration = (ValidationRuleConfiguration) configurationPanel
-					.getConfiguration();
+			ValidatorJobConfiguration configuration = (ValidatorJobConfiguration) configurationPanel
+					.getJobConfiguration();
 			validatorNode.appendChild(configuration.serialize(document));
 		}
 		return validatorNode;
@@ -237,17 +250,29 @@ public class ValidatorWindow extends AbstractWindow {
 				DataContextSelection.NODE_NAME).get(0);
 		DataContextSelection dataContextSelection = DataContextSelection
 				.deserialize(dataContextSelectionNode);
-		ValidatorWindow window = new ValidatorWindow(dataContextSelection);
+
+		Node executionConfigurationNode = DomHelper.getChildNodesByName(node,
+				ExecutionConfiguration.NODE_NAME).get(0);
+		ExecutionConfiguration executionConfiguration;
+		if (executionConfigurationNode == null) {
+			executionConfiguration = new ExecutionConfiguration();
+		} else {
+			executionConfiguration = ExecutionConfiguration
+					.deserialize(executionConfigurationNode);
+		}
+
+		ValidatorWindow window = new ValidatorWindow(dataContextSelection,
+				executionConfiguration);
 
 		DataContext dc = dataContextSelection.getDataContext();
 		List<Node> configurationNodes = DomHelper.getChildNodesByName(node,
-				ValidationRuleConfiguration.NODE_NAME);
+				ValidatorJobConfiguration.NODE_NAME);
 		Set<Column> columns = new HashSet<Column>();
-		List<ValidationRuleConfiguration> configurations = new ArrayList<ValidationRuleConfiguration>();
+		List<ValidatorJobConfiguration> configurations = new ArrayList<ValidatorJobConfiguration>();
 		List<IllegalArgumentException> configurationExceptions = new ArrayList<IllegalArgumentException>();
 		for (Node configurationNode : configurationNodes) {
 			try {
-				ValidationRuleConfiguration configuration = ValidationRuleConfiguration
+				ValidatorJobConfiguration configuration = ValidatorJobConfiguration
 						.deserialize(configurationNode, dc);
 				columns.addAll(Arrays.asList(configuration.getColumns()));
 				configurations.add(configuration);
@@ -258,7 +283,7 @@ public class ValidatorWindow extends AbstractWindow {
 		for (Column column : columns) {
 			window._columnSelection.toggleColumn(column);
 		}
-		for (ValidationRuleConfiguration configuration : configurations) {
+		for (ValidatorJobConfiguration configuration : configurations) {
 			window.addTab(configuration);
 		}
 		if (!configurationExceptions.isEmpty()) {

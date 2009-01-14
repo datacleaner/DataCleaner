@@ -31,11 +31,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.gui.GuiBuilder;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.profiler.trivial.ValueDistributionProfile;
 
 public class ValueDistributionProfileConfigurationPanel implements
@@ -45,7 +45,7 @@ public class ValueDistributionProfileConfigurationPanel implements
 	private JPanel _panel = GuiHelper.createPanel().applyVerticalLayout()
 			.toComponent();
 	private IProfileDescriptor _descriptor;
-	private ProfileConfiguration _configuration;
+	private ProfilerJobConfiguration _jobConfiguration;
 	private SubsetDataSelectionPanel _subsetDataSelectionPanel;
 	private JSlider _topSlider;
 	private JSlider _bottomSlider;
@@ -55,9 +55,9 @@ public class ValueDistributionProfileConfigurationPanel implements
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
 			ColumnSelection columnSelection,
-			IRunnableConfiguration configuration) {
+			IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
-		_configuration = (ProfileConfiguration) configuration;
+		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 
 		_subsetDataSelectionPanel = SubsetDataSelectionPanel.createPanel(
 				columnSelection, _descriptor);
@@ -109,7 +109,7 @@ public class ValueDistributionProfileConfigurationPanel implements
 			}
 		});
 
-		Map<String, String> properties = _configuration.getProfileProperties();
+		Map<String, String> properties = _jobConfiguration.getProfileProperties();
 		String topValueString = properties
 				.get(ValueDistributionProfile.PROPERTY_TOP_N);
 		if (topValueString != null) {
@@ -130,8 +130,8 @@ public class ValueDistributionProfileConfigurationPanel implements
 		}
 	}
 
-	public IRunnableConfiguration getConfiguration() {
-		ProfileConfiguration configuration = new ProfileConfiguration(
+	public IJobConfiguration getJobConfiguration() {
+		ProfilerJobConfiguration configuration = new ProfilerJobConfiguration(
 				_descriptor);
 		configuration
 				.setColumns(_subsetDataSelectionPanel.getSelectedColumns());

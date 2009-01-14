@@ -25,7 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Column;
@@ -38,7 +38,7 @@ import dk.eobjects.metamodel.schema.Column;
  * 
  * @see dk.eobjects.datacleaner.execution.ValidationRuleRunner
  */
-public class ValidationRuleConfiguration implements IRunnableConfiguration {
+public class ValidatorJobConfiguration implements IJobConfiguration {
 
 	public static final String NODE_NAME = "configuration";
 	private static final long serialVersionUID = -3666518358685662574L;
@@ -46,10 +46,10 @@ public class ValidationRuleConfiguration implements IRunnableConfiguration {
 	private Map<String, String> _validationRuleProperties = new HashMap<String, String>();
 	private Column[] _columns;
 
-	public ValidationRuleConfiguration() {
+	public ValidatorJobConfiguration() {
 	}
 
-	public ValidationRuleConfiguration(IValidationRuleDescriptor descriptor) {
+	public ValidatorJobConfiguration(IValidationRuleDescriptor descriptor) {
 		this();
 		setValidationRuleDescriptor(descriptor);
 	}
@@ -99,7 +99,7 @@ public class ValidationRuleConfiguration implements IRunnableConfiguration {
 		setColumns(columns.toArray(new Column[columns.size()]));
 	}
 
-	public static ValidationRuleConfiguration deserialize(Node node,
+	public static ValidatorJobConfiguration deserialize(Node node,
 			DataContext dc) throws IllegalArgumentException {
 		if (!NODE_NAME.equals(node.getNodeName())) {
 			throw new IllegalArgumentException(
@@ -115,7 +115,7 @@ public class ValidationRuleConfiguration implements IRunnableConfiguration {
 					"Could not resolve validationRuleClass '"
 							+ validationRuleClassName + "'");
 		}
-		ValidationRuleConfiguration configuration = new ValidationRuleConfiguration(
+		ValidatorJobConfiguration configuration = new ValidatorJobConfiguration(
 				validationRuleDescriptor);
 		Map<String, String> properties = DomHelper
 				.getPropertiesFromChildNodes(node);

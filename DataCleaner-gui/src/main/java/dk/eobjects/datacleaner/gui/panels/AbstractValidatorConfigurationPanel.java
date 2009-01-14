@@ -28,11 +28,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.validator.IValidationRule;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 
 public abstract class AbstractValidatorConfigurationPanel implements
 		IConfigurationPanel {
@@ -40,7 +40,7 @@ public abstract class AbstractValidatorConfigurationPanel implements
 	private JPanel _panel = GuiHelper.createPanel().applyVerticalLayout().toComponent();
 	protected IValidationRuleDescriptor _descriptor;
 	protected ColumnSelection _columnSelection;
-	protected ValidationRuleConfiguration _configuration;
+	protected ValidatorJobConfiguration _jobConfiguration;
 	protected ConfigurationPropertiesPanel _propertiesPanel = new ConfigurationPropertiesPanel(
 			"Validation rule properties");
 	protected JTabbedPane _tabbedPane;
@@ -71,27 +71,27 @@ public abstract class AbstractValidatorConfigurationPanel implements
 	public void destroy() throws Exception {
 		_descriptor = null;
 		_columnSelection = null;
-		_configuration = null;
+		_jobConfiguration = null;
 		_nameField.removeActionListener(_updateNameAction);
 		_nameField.removeKeyListener(_updateNameKeyListener);
 	}
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
 			ColumnSelection columnSelection,
-			IRunnableConfiguration configuration) {
+			IJobConfiguration jobConfiguration) {
 		_tabbedPane = tabbedPane;
 		_descriptor = (IValidationRuleDescriptor) descriptor;
 		_columnSelection = columnSelection;
-		_configuration = (ValidationRuleConfiguration) configuration;
+		_jobConfiguration = (ValidatorJobConfiguration) jobConfiguration;
 	}
 
 	public JPanel getPanel() {
 		_panel.removeAll();
 		initNameField();
-		_propertiesPanel.updateManagedFields(_configuration
+		_propertiesPanel.updateManagedFields(_jobConfiguration
 				.getValidationRuleProperties());
 		GuiHelper.addComponentAligned(_panel, _propertiesPanel.getPanel());
-		createPanel(_panel, _configuration);
+		createPanel(_panel, _jobConfiguration);
 		return _panel;
 	}
 
@@ -104,13 +104,13 @@ public abstract class AbstractValidatorConfigurationPanel implements
 	}
 
 	protected abstract void createPanel(JPanel panel,
-			ValidationRuleConfiguration configuration);
+			ValidatorJobConfiguration configuration);
 
-	public ValidationRuleConfiguration getConfiguration() {
-		_configuration.setValidationRuleProperties(_propertiesPanel
+	public ValidatorJobConfiguration getJobConfiguration() {
+		_jobConfiguration.setValidationRuleProperties(_propertiesPanel
 				.getProperties());
 		updateConfiguration();
-		return _configuration;
+		return _jobConfiguration;
 	}
 
 	public void updateTabTitle(String newTitle) {

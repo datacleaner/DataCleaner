@@ -25,7 +25,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Column;
@@ -38,7 +38,7 @@ import dk.eobjects.metamodel.schema.Column;
  * 
  * @see dk.eobjects.datacleaner.execution.ProfileRunner
  */
-public class ProfileConfiguration implements IRunnableConfiguration {
+public class ProfilerJobConfiguration implements IJobConfiguration {
 
 	public static final String NODE_NAME = "configuration";
 
@@ -48,10 +48,10 @@ public class ProfileConfiguration implements IRunnableConfiguration {
 	private Map<String, String> _profileProperties = new HashMap<String, String>();
 	private Column[] _columns;
 
-	public ProfileConfiguration() {
+	public ProfilerJobConfiguration() {
 	}
 
-	public ProfileConfiguration(IProfileDescriptor profileDescriptor) {
+	public ProfilerJobConfiguration(IProfileDescriptor profileDescriptor) {
 		this();
 		setProfileDescriptor(profileDescriptor);
 	}
@@ -98,7 +98,7 @@ public class ProfileConfiguration implements IRunnableConfiguration {
 				+ _profileProperties.toString() + "]";
 	}
 
-	public static ProfileConfiguration deserialize(Node node, DataContext dc)
+	public static ProfilerJobConfiguration deserialize(Node node, DataContext dc)
 			throws IllegalArgumentException {
 		if (!NODE_NAME.equals(node.getNodeName())) {
 			throw new IllegalArgumentException(
@@ -113,7 +113,7 @@ public class ProfileConfiguration implements IRunnableConfiguration {
 			throw new IllegalArgumentException(
 					"Could not resolve profileClass '" + profileClassName + "'");
 		}
-		ProfileConfiguration configuration = new ProfileConfiguration(
+		ProfilerJobConfiguration configuration = new ProfilerJobConfiguration(
 				profileDescriptor);
 		Map<String, String> properties = DomHelper
 				.getPropertiesFromChildNodes(node);

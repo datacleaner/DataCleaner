@@ -25,7 +25,7 @@ import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.gui.widgets.TableDataSelectionComboBox;
 import dk.eobjects.datacleaner.validator.BasicValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.condition.JavascriptValidationRule;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.ColumnType;
@@ -58,7 +58,7 @@ public class JavascriptValidationRuleConfigurationPanelTest extends TestCase {
 
 		JavascriptValidationRuleConfigurationPanel panel = new JavascriptValidationRuleConfigurationPanel();
 		panel.initialize(tabbedPane, descriptor, columnSelection,
-				new ValidationRuleConfiguration(descriptor));
+				new ValidatorJobConfiguration(descriptor));
 		panel.getPanel();
 
 		JEditTextArea expressionTextArea = panel.getExpressionTextArea();
@@ -117,7 +117,7 @@ public class JavascriptValidationRuleConfigurationPanelTest extends TestCase {
 
 		JavascriptValidationRuleConfigurationPanel panel = new JavascriptValidationRuleConfigurationPanel();
 		panel.initialize(tabbedPane, descriptor, columnSelection,
-				new ValidationRuleConfiguration(descriptor));
+				new ValidatorJobConfiguration(descriptor));
 		panel.getPanel();
 		JEditTextArea expressionTextArea = panel.getExpressionTextArea();
 

@@ -117,6 +117,10 @@ public class DataContextSelection extends WeakObservable {
 		}
 	}
 
+	public boolean isSqlSource() {
+		return _connectionMetadata.containsKey("connectionString");
+	}
+
 	public void selectDatabase(String connectionString, String catalog,
 			String username, String password, TableType[] tableTypes)
 			throws SQLException {

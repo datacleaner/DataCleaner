@@ -16,7 +16,6 @@
  */
 package dk.eobjects.datacleaner.gui.panels;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -31,10 +30,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.profiler.trivial.DateMaskProfile;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
 import dk.eobjects.metamodel.schema.Column;
@@ -45,16 +44,16 @@ public class DateMaskProfileConfigurationPanel implements IConfigurationPanel {
 			.toComponent();
 	private IProfileDescriptor _descriptor;
 	private SubsetDataSelectionPanel _subsetDataSelectionPanel;
-	private ProfileConfiguration _configuration;
+	private ProfilerJobConfiguration _jobConfiguration;
 	private List<JTextField> _dateMaskFields;
 	private JPanel _dateMaskPanel;
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
 			ColumnSelection columnSelection,
-			IRunnableConfiguration configuration) {
+			IJobConfiguration jobConfiguration) {
 		_dateMaskFields = new ArrayList<JTextField>();
 		_descriptor = (IProfileDescriptor) descriptor;
-		_configuration = (ProfileConfiguration) configuration;
+		_jobConfiguration = (ProfilerJobConfiguration) jobConfiguration;
 
 		_panel.removeAll();
 
@@ -64,7 +63,7 @@ public class DateMaskProfileConfigurationPanel implements IConfigurationPanel {
 		_dateMaskPanel = GuiHelper.createPanel().toComponent();
 
 		List<String> dateMasks = ReflectionHelper.getIteratedProperties(
-				DateMaskProfile.PREFIX_PROPERTY_REGEX, _configuration
+				DateMaskProfile.PREFIX_PROPERTY_REGEX, _jobConfiguration
 						.getProfileProperties());
 		if (dateMasks.isEmpty()) {
 			// Set up default date masks
@@ -86,7 +85,7 @@ public class DateMaskProfileConfigurationPanel implements IConfigurationPanel {
 				"Use date masks").toComponent();
 		GuiHelper.addToGridBag(_dateMaskPanel, splitPanel, 0, 0, 1, 2);
 		JTextArea informationLabel = GuiHelper.createLabelTextArea()
-				.applyBackground(Color.WHITE).applySize(190, 170).toComponent();
+				.applyWhiteBackground().applySize(190, 170).toComponent();
 		informationLabel
 				.setText("Date masks define the format of date and time fields. "
 						+ "The main formatting characters are:\n\n"
@@ -106,7 +105,7 @@ public class DateMaskProfileConfigurationPanel implements IConfigurationPanel {
 
 		GuiHelper.addComponentAligned(_panel, splitPanel);
 
-		Column[] columns = _configuration.getColumns();
+		Column[] columns = _jobConfiguration.getColumns();
 		if (columns != null && columns.length > 0) {
 			_subsetDataSelectionPanel.setSelectedColumns(columns);
 		}
@@ -124,8 +123,8 @@ public class DateMaskProfileConfigurationPanel implements IConfigurationPanel {
 		return _panel;
 	}
 
-	public IRunnableConfiguration getConfiguration() {
-		ProfileConfiguration configuration = new ProfileConfiguration(
+	public IJobConfiguration getJobConfiguration() {
+		ProfilerJobConfiguration configuration = new ProfilerJobConfiguration(
 				_descriptor);
 		configuration
 				.setColumns(_subsetDataSelectionPanel.getSelectedColumns());

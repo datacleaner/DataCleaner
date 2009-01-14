@@ -42,7 +42,7 @@ import dk.eobjects.datacleaner.gui.tasks.RunnerWrapper;
 import dk.eobjects.datacleaner.gui.windows.ValidatorResultWindow;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.IValidationRuleResult;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.trivial.DummyValidationRule;
 import dk.eobjects.metamodel.schema.Table;
 
@@ -80,23 +80,23 @@ public class RunValidatorButton extends JButton implements ActionListener {
 
 		for (IConfigurationPanel configurationsPanel : _configurationPanels
 				.values()) {
-			ValidationRuleConfiguration configuration = (ValidationRuleConfiguration) configurationsPanel
-					.getConfiguration();
+			ValidatorJobConfiguration configuration = (ValidatorJobConfiguration) configurationsPanel
+					.getJobConfiguration();
 			if (configuration.getColumns().length > 0) {
 				foundConfiguration = true;
-				validationRuleRunner.addConfiguration(configuration);
+				validationRuleRunner.addJobConfiguration(configuration);
 			}
 		}
 
 		if (foundConfiguration) {
 			// Add a dummy validation rule to ensure that all
 			// columns are queried by the validation rule runner
-			ValidationRuleConfiguration dummyConfiguration = new ValidationRuleConfiguration(
+			ValidatorJobConfiguration dummyConfiguration = new ValidatorJobConfiguration(
 					DummyValidationRule.DESCRIPTOR);
 			dummyConfiguration.setColumns(_columnSelection.getColumns());
 			dummyConfiguration
 					.setValidationRuleProperties(new HashMap<String, String>());
-			validationRuleRunner.addConfiguration(dummyConfiguration);
+			validationRuleRunner.addJobConfiguration(dummyConfiguration);
 
 			final ValidatorResultWindow resultWindow = new ValidatorResultWindow(
 					_columnSelection.getColumns());

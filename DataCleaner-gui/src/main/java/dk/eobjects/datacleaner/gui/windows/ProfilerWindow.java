@@ -47,8 +47,10 @@ import org.w3c.dom.Node;
 
 import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.data.DataContextSelection;
+import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.dialogs.ExecutionConfigurationDialog;
 import dk.eobjects.datacleaner.gui.model.ExtensionFilter;
 import dk.eobjects.datacleaner.gui.panels.ColumnSelectionPanel;
 import dk.eobjects.datacleaner.gui.panels.ConfigurationPanelManager;
@@ -63,7 +65,7 @@ import dk.eobjects.datacleaner.gui.widgets.RunProfilerButton;
 import dk.eobjects.datacleaner.gui.widgets.SchemaTree;
 import dk.eobjects.datacleaner.gui.widgets.SchemaTreeMouseListener;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Column;
@@ -79,6 +81,7 @@ public class ProfilerWindow extends AbstractWindow {
 	private DataContextSelection _dataContextSelection;
 	private ColumnSelection _columnSelection;
 	private CloseableTabbedPane _tabbedPane;
+	private ExecutionConfiguration _executionConfiguration;
 	private Map<JPanel, IConfigurationPanel> _configurationPanels = new HashMap<JPanel, IConfigurationPanel>();
 
 	@Override
@@ -96,12 +99,14 @@ public class ProfilerWindow extends AbstractWindow {
 	}
 
 	public ProfilerWindow() {
-		this(new DataContextSelection());
+		this(new DataContextSelection(), new ExecutionConfiguration());
 	}
 
-	public ProfilerWindow(DataContextSelection dataContextSelection) {
+	public ProfilerWindow(DataContextSelection dataContextSelection,
+			ExecutionConfiguration executionConfiguration) {
 		super();
 		_dataContextSelection = dataContextSelection;
+		_executionConfiguration = executionConfiguration;
 		_columnSelection = new ColumnSelection(_dataContextSelection);
 		_tabbedPane = new CloseableTabbedPane();
 		_tabbedPane.addTabCloseListener(new ConfigurationPanelTabCloseListener(
@@ -151,9 +156,18 @@ public class ProfilerWindow extends AbstractWindow {
 		toolbar.add(new OpenFileButton(_dataContextSelection));
 		toolbar.add(new JSeparator(JSeparator.VERTICAL));
 		toolbar.add(saveProfilerButton);
+		JButton optionsButton = GuiHelper.createButton("Profiler options",
+				"images/toolbar_configure.png").toComponent();
+		optionsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new ExecutionConfigurationDialog(_executionConfiguration, true)
+						.setVisible(true);
+			}
+		});
+		toolbar.add(optionsButton);
 		toolbar.add(new AddProfileButton(this));
 		toolbar.add(new RunProfilerButton(_dataContextSelection,
-				_configurationPanels));
+				_configurationPanels, _executionConfiguration));
 
 		_panel.add(toolbar, BorderLayout.NORTH);
 
@@ -181,7 +195,7 @@ public class ProfilerWindow extends AbstractWindow {
 		splitPane.setBackground(GuiHelper.BG_COLOR_DARKBLUE);
 
 		_panel.add(splitPane, BorderLayout.CENTER);
-		
+
 		GuiHelper.silentNotification("profiler-window");
 	}
 
@@ -195,7 +209,7 @@ public class ProfilerWindow extends AbstractWindow {
 		return "Profiler";
 	}
 
-	public void addTab(ProfileConfiguration configuration) {
+	public void addTab(ProfilerJobConfiguration configuration) {
 		ConfigurationPanelManager configurationPanelManager = GuiConfiguration
 				.getConfigurationPanelManager();
 		IProfileDescriptor descriptor = configuration.getProfileDescriptor();
@@ -207,8 +221,7 @@ public class ProfilerWindow extends AbstractWindow {
 		panel.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		_configurationPanels.put(panel, configurationPanel);
 		ImageIcon icon = GuiHelper.getImageIcon(descriptor.getIconPath());
-		JScrollPane scrollPane = new JScrollPane(
-				panel);
+		JScrollPane scrollPane = new JScrollPane(panel);
 		scrollPane.setBorder(null);
 		_tabbedPane.addTab(descriptor.getDisplayName(), icon, scrollPane);
 	}
@@ -217,10 +230,11 @@ public class ProfilerWindow extends AbstractWindow {
 		Element profilerNode = document.createElement(NODE_NAME);
 		profilerNode.setAttribute("version", DataCleanerGui.VERSION);
 		profilerNode.appendChild(_dataContextSelection.serialize(document));
+		profilerNode.appendChild(_executionConfiguration.serialize(document));
 		for (IConfigurationPanel configurationPanel : _configurationPanels
 				.values()) {
-			ProfileConfiguration configuration = (ProfileConfiguration) configurationPanel
-					.getConfiguration();
+			ProfilerJobConfiguration configuration = (ProfilerJobConfiguration) configurationPanel
+					.getJobConfiguration();
 			profilerNode.appendChild(configuration.serialize(document));
 		}
 		return profilerNode;
@@ -231,17 +245,29 @@ public class ProfilerWindow extends AbstractWindow {
 				DataContextSelection.NODE_NAME).get(0);
 		DataContextSelection dataContextSelection = DataContextSelection
 				.deserialize(dataContextSelectionNode);
-		ProfilerWindow window = new ProfilerWindow(dataContextSelection);
+
+		Node executionConfigurationNode = DomHelper.getChildNodesByName(node,
+				ExecutionConfiguration.NODE_NAME).get(0);
+		ExecutionConfiguration executionConfiguration;
+		if (executionConfigurationNode == null) {
+			executionConfiguration = new ExecutionConfiguration();
+		} else {
+			executionConfiguration = ExecutionConfiguration
+					.deserialize(executionConfigurationNode);
+		}
+
+		ProfilerWindow window = new ProfilerWindow(dataContextSelection,
+				executionConfiguration);
 
 		DataContext dc = dataContextSelection.getDataContext();
 		List<Node> configurationNodes = DomHelper.getChildNodesByName(node,
-				ProfileConfiguration.NODE_NAME);
+				ProfilerJobConfiguration.NODE_NAME);
 		Set<Column> columns = new HashSet<Column>();
-		List<ProfileConfiguration> configurations = new ArrayList<ProfileConfiguration>();
+		List<ProfilerJobConfiguration> configurations = new ArrayList<ProfilerJobConfiguration>();
 		List<IllegalArgumentException> configurationExceptions = new ArrayList<IllegalArgumentException>();
 		for (Node configurationNode : configurationNodes) {
 			try {
-				ProfileConfiguration configuration = ProfileConfiguration
+				ProfilerJobConfiguration configuration = ProfilerJobConfiguration
 						.deserialize(configurationNode, dc);
 				columns.addAll(Arrays.asList(configuration.getColumns()));
 				configurations.add(configuration);
@@ -252,7 +278,7 @@ public class ProfilerWindow extends AbstractWindow {
 		for (Column column : columns) {
 			window._columnSelection.toggleColumn(column);
 		}
-		for (ProfileConfiguration configuration : configurations) {
+		for (ProfilerJobConfiguration configuration : configurations) {
 			window.addTab(configuration);
 		}
 		if (!configurationExceptions.isEmpty()) {

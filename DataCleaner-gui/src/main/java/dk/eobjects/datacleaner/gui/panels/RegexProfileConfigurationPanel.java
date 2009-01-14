@@ -32,11 +32,11 @@ import javax.swing.JTabbedPane;
 
 import dk.eobjects.datacleaner.catalog.NamedRegex;
 import dk.eobjects.datacleaner.data.ColumnSelection;
-import dk.eobjects.datacleaner.execution.IRunnableConfiguration;
+import dk.eobjects.datacleaner.execution.IJobConfiguration;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
-import dk.eobjects.datacleaner.profiler.ProfileConfiguration;
+import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.profiler.trivial.RegexProfile;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
 import dk.eobjects.metamodel.schema.Column;
@@ -47,14 +47,14 @@ public class RegexProfileConfigurationPanel implements IConfigurationPanel {
 			.toComponent();
 	private IProfileDescriptor _descriptor;
 	private SubsetDataSelectionPanel _subsetDataSelectionPanel;
-	private ProfileConfiguration _configuration;
+	private ProfilerJobConfiguration _jobConfiguration;
 	private Map<NamedRegex, JCheckBox> _regexCheckBoxes = new HashMap<NamedRegex, JCheckBox>();
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
 			ColumnSelection columnSelection,
-			IRunnableConfiguration configuration) {
+			IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
-		_configuration = (ProfileConfiguration) configuration;
+		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 
 		_panel.removeAll();
 
@@ -68,7 +68,7 @@ public class RegexProfileConfigurationPanel implements IConfigurationPanel {
 
 		List<String> enabledRegexNames = ReflectionHelper
 				.getIteratedProperties(RegexProfile.PREFIX_PROPERTY_LABEL,
-						_configuration.getProfileProperties());
+						_jobConfiguration.getProfileProperties());
 		if (enabledRegexNames.isEmpty()) {
 			enabledRegexNames = new ArrayList<String>(namedRegexes.size());
 			for (NamedRegex regex : namedRegexes) {
@@ -112,7 +112,7 @@ public class RegexProfileConfigurationPanel implements IConfigurationPanel {
 
 		GuiHelper.addComponentAligned(_panel, regexPanel);
 
-		Column[] columns = _configuration.getColumns();
+		Column[] columns = _jobConfiguration.getColumns();
 		if (columns != null && columns.length > 0) {
 			_subsetDataSelectionPanel.setSelectedColumns(columns);
 		}
@@ -124,8 +124,8 @@ public class RegexProfileConfigurationPanel implements IConfigurationPanel {
 		return _panel;
 	}
 
-	public IRunnableConfiguration getConfiguration() {
-		ProfileConfiguration configuration = new ProfileConfiguration(
+	public IJobConfiguration getJobConfiguration() {
+		ProfilerJobConfiguration configuration = new ProfilerJobConfiguration(
 				_descriptor);
 		configuration
 				.setColumns(_subsetDataSelectionPanel.getSelectedColumns());

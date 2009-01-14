@@ -34,7 +34,7 @@ import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.dialogs.TestRegexDialog;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.trivial.RegexValidationRule;
 import dk.eobjects.metamodel.schema.Column;
 
@@ -47,7 +47,7 @@ public class RegexValidationRuleConfigurationPanel extends
 
 	@Override
 	protected void createPanel(JPanel panel,
-			ValidationRuleConfiguration configuration) {
+			ValidatorJobConfiguration configuration) {
 		JPanel expressionPanel = GuiHelper.createPanel().applyLightBackground()
 				.applyLayout(new FlowLayout(FlowLayout.LEFT, 0, 0))
 				.toComponent();
@@ -105,8 +105,8 @@ public class RegexValidationRuleConfigurationPanel extends
 	@Override
 	protected void updateConfiguration() {
 		List<Column> columns = _subsetDataSelectionPanel.getSelectedColumns();
-		_configuration.setColumns(columns);
-		Map<String, String> properties = _configuration
+		_jobConfiguration.setColumns(columns);
+		Map<String, String> properties = _jobConfiguration
 				.getValidationRuleProperties();
 		properties.put(RegexValidationRule.PROPERTY_REGEX, _expressionField
 				.getText());

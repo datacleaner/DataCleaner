@@ -48,7 +48,7 @@ public class ValidationRuleConfigurationTest extends DataCleanerTestCase {
 
 		DataContext dc = JdbcDataContextFactory.getDataContext(getTestDbConnection());
 
-		ValidationRuleConfiguration deserializedConfiguration = ValidationRuleConfiguration
+		ValidatorJobConfiguration deserializedConfiguration = ValidatorJobConfiguration
 				.deserialize(document.getDocumentElement(), dc);
 
 		assertSame(NotNullValidationRule.class, deserializedConfiguration

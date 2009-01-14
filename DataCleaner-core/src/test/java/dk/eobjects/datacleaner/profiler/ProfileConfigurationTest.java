@@ -48,7 +48,7 @@ public class ProfileConfigurationTest extends DataCleanerTestCase {
 
 		DataContext dc = JdbcDataContextFactory.getDataContext(getTestDbConnection());
 
-		ProfileConfiguration deserializedConfiguration = ProfileConfiguration
+		ProfilerJobConfiguration deserializedConfiguration = ProfilerJobConfiguration
 				.deserialize(document.getDocumentElement(), dc);
 
 		assertSame(StandardMeasuresProfile.class, deserializedConfiguration

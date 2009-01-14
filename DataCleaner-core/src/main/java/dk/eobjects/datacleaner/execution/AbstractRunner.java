@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.MetaModelHelper;
+import dk.eobjects.metamodel.QuerySplitter;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.FromItem;
@@ -46,16 +47,23 @@ import dk.eobjects.metamodel.schema.Table;
  *            the type that is being configured by <E>
  * 
  */
-public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
+public abstract class AbstractRunner<E extends IJobConfiguration, F, G>
 		implements IRunner<E, F> {
 
 	protected Log _log = LogFactory.getLog(getClass());
 	protected Map<Table, List<F>> _results = new HashMap<Table, List<F>>();
 	protected List<E> _configurations = new ArrayList<E>();
+	protected ExecutionConfiguration _executionConfiguration;
 	private List<IProgressObserver> _progressObservers = new ArrayList<IProgressObserver>();
+	private SelectItem _countAllItem = null;
 
-	public void addConfiguration(E configuration) {
+	public void addJobConfiguration(E configuration) {
 		_configurations.add(configuration);
+	}
+
+	public void setExecutionConfiguration(
+			ExecutionConfiguration executionConfiguration) {
+		_executionConfiguration = executionConfiguration;
 	}
 
 	public void setLog(Log log) {
@@ -69,6 +77,9 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 			_log.debug("progress observers: "
 					+ ArrayUtils.toString(_progressObservers));
 		}
+		if (_executionConfiguration == null) {
+			_executionConfiguration = new ExecutionConfiguration();
+		}
 
 		List<Column> columns = getAllColumns();
 		Table[] tables = MetaModelHelper.getTables(columns);
@@ -76,10 +87,8 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 		for (int i = 0; i < tables.length; i++) {
 			Table table = tables[i];
 
-			notifyBeginning(table, getCount(dataContext, table));
-
-			long rowNumber = 0;
 			// This is a per-table try-catch block
+			long rowNumber = 0;
 			try {
 				Map<E, Column[]> configurations = getConfigurationsForTable(table);
 				G[] processors = initConfigurations(configurations);
@@ -95,26 +104,49 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 				Query q = new Query();
 				q.from(new FromItem(table).setAlias("t"));
 				q.select(columnsToQuery);
-				SelectItem countAllItem = SelectItem.getCountAllItem();
-				q.select(countAllItem);
-				q.groupBy(columnsToQuery);
-				DataSet data = dataContext.executeQuery(q);
+
+				QuerySplitter qs = new QuerySplitter(dataContext, q);
+				notifyBeginning(table, qs.getRowCount());
+
+				if (_executionConfiguration.isGroupByOptimizationEnabled()) {
+					_log.info("Using group by optimization.");
+					_countAllItem = SelectItem.getCountAllItem();
+					q.select(_countAllItem);
+					q.groupBy(columnsToQuery);
+				}
+				DataSet data;
+				if (_executionConfiguration.isQuerySplitterEnabled()) {
+					_log.info("Using split query optimization.");
+
+					// TODO: Fix to long as soon as new MetaModel is released
+					qs.setMaxRows((int) _executionConfiguration
+							.getQuerySplitterSize());
+					data = qs.executeQueries();
+				} else {
+					qs = null;
+					data = dataContext.executeQuery(q);
+				}
 
 				if (_log.isInfoEnabled()) {
 					_log.info("Starting to process rows...");
 					_log.info("Query:" + q);
 				}
+
 				while (data.next()) {
 					rowNumber++;
 					Row row = data.getRow();
 					Long count;
-					Object countValue = row.getValue(countAllItem);
-					if (countValue instanceof Long) {
-						count = (Long) countValue;
-					} else if (countValue instanceof Number) {
-						count = ((Number) countValue).longValue();
+					if (_countAllItem == null) {
+						count = 1l;
 					} else {
-						count = new Long(countValue.toString());
+						Object countValue = row.getValue(_countAllItem);
+						if (countValue instanceof Long) {
+							count = (Long) countValue;
+						} else if (countValue instanceof Number) {
+							count = ((Number) countValue).longValue();
+						} else {
+							count = new Long(countValue.toString());
+						}
 					}
 					for (int j = 0; j < processors.length; j++) {
 						G processor = processors[j];
@@ -177,12 +209,6 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 		if (_log.isDebugEnabled()) {
 			_log.debug("execute() finished");
 		}
-	}
-
-	private long getCount(DataContext dc, Table table) {
-		Object value = MetaModelHelper.executeSingleRowQuery(dc,
-				new Query().selectCount().from(table)).getValue(0);
-		return ((Number) value).longValue();
 	}
 
 	private void initObservers(Table[] tables) {
@@ -263,7 +289,7 @@ public abstract class AbstractRunner<E extends IRunnableConfiguration, F, G>
 
 	protected List<Column> getAllColumns() {
 		List<Column> result = new ArrayList<Column>();
-		for (IRunnableConfiguration configuration : _configurations) {
+		for (IJobConfiguration configuration : _configurations) {
 			Column[] columns = configuration.getColumns();
 			for (int i = 0; i < columns.length; i++) {
 				Column column = columns[i];

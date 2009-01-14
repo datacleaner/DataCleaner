@@ -57,7 +57,7 @@ public class ConfigurationPanelTabCloseListener implements TabCloseListener {
 			try {
 				if (_log.isInfoEnabled()) {
 					_log.info("Destroying configuration: "
-							+ configurationPanel.getConfiguration());
+							+ configurationPanel.getJobConfiguration());
 				}
 				configurationPanel.destroy();
 			} catch (Exception e) {

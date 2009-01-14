@@ -30,7 +30,7 @@ import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.validator.BasicValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.dictionary.DictionaryValidationRule;
 
 public class DictionaryValidationRuleConfigurationPanelTest extends TestCase {
@@ -46,7 +46,7 @@ public class DictionaryValidationRuleConfigurationPanelTest extends TestCase {
 		ColumnSelection columnSelection = new ColumnSelection(null);
 		DictionaryValidationRuleConfigurationPanel panel = new DictionaryValidationRuleConfigurationPanel();
 		panel.initialize(new JTabbedPane(), descriptor, columnSelection,
-				new ValidationRuleConfiguration(descriptor));
+				new ValidatorJobConfiguration(descriptor));
 		panel.getPanel();
 
 		JComboBox dropDown = panel.getDictionaryDropDown();

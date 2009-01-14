@@ -22,7 +22,7 @@ import java.util.Map;
 
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.datacleaner.validator.IValidationRuleResult;
-import dk.eobjects.datacleaner.validator.ValidationRuleConfiguration;
+import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.ValidationRuleManagerTest;
 import dk.eobjects.datacleaner.validator.condition.JavascriptValidationRule;
 import dk.eobjects.metamodel.DataContext;
@@ -46,11 +46,11 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 		Column officeCodeColumn = officesTable.getColumnByName("OFFICECODE");
 		ValidationRuleRunner runner = new ValidationRuleRunner();
 
-		ValidationRuleConfiguration conf1 = new ValidationRuleConfiguration(
+		ValidatorJobConfiguration conf1 = new ValidatorJobConfiguration(
 				ValidationRuleManagerTest.DESCRIPTOR_NOT_NULL);
 		conf1.setColumns(postalCodeColumn, officeCodeColumn);
 
-		runner.addConfiguration(conf1);
+		runner.addJobConfiguration(conf1);
 
 		runner.execute(dc);
 
@@ -70,7 +70,7 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 		Column quantityColumn = table.getColumnByName("QUANTITYINSTOCK");
 		ValidationRuleRunner runner = new ValidationRuleRunner();
 
-		ValidationRuleConfiguration conf1 = new ValidationRuleConfiguration(
+		ValidatorJobConfiguration conf1 = new ValidatorJobConfiguration(
 				ValidationRuleManagerTest.DESCRIPTOR_JAVASCRIPT);
 		Map<String, String> javascriptProperties = new HashMap<String, String>();
 		javascriptProperties.put(
@@ -78,12 +78,12 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 				"values.get('PRODUCTLINE') != 'Planes'");
 		conf1.setValidationRuleProperties(javascriptProperties);
 		conf1.setColumns(productLineColumn);
-		runner.addConfiguration(conf1);
+		runner.addJobConfiguration(conf1);
 
-		ValidationRuleConfiguration conf2 = new ValidationRuleConfiguration(
+		ValidatorJobConfiguration conf2 = new ValidatorJobConfiguration(
 				ValidationRuleManagerTest.DESCRIPTOR_NOT_NULL);
 		conf2.setColumns(quantityColumn);
-		runner.addConfiguration(conf2);
+		runner.addJobConfiguration(conf2);
 
 		runner.execute(dc);
 

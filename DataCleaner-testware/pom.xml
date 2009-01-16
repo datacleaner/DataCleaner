@@ -3,12 +3,13 @@
 	<parent>
 		<artifactId>DataCleaner</artifactId>
 		<groupId>dk.eobjects.datacleaner</groupId>
-		<version>1.5-SNAPSHOT</version>
+		<version>${datacleaner.version}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner-testware</artifactId>
 	<name>DataCleaner-testware</name>
+	<version>${datacleaner.version}</version>
 	<description>The testware project provides some common sample data and shared test functionality throughout the DataCleaner project</description>
 	<build>
 		<plugins>
@@ -24,7 +25,7 @@
 		<dependency>
 			<groupId>dk.eobjects.metamodel</groupId>
 			<artifactId>MetaModel-full</artifactId>
-			<version>1.1.4</version>
+			<version>${metamodel.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

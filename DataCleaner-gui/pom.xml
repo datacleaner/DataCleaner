@@ -3,12 +3,13 @@
 	<parent>
 		<artifactId>DataCleaner</artifactId>
 		<groupId>dk.eobjects.datacleaner</groupId>
-		<version>1.5-SNAPSHOT</version>
+		<version>${datacleaner.version}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner-gui</artifactId>
 	<name>DataCleaner-gui</name>
+	<version>${datacleaner.version}</version>
 	<repositories>
 		<repository>
 			<id>maven2-repository.dev.java.net</id>
@@ -20,7 +21,7 @@
 		<dependency>
 			<groupId>dk.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-core</artifactId>
-			<version>${project.version}</version>
+			<version>${datacleaner.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>

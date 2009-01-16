@@ -3,36 +3,21 @@
 	<parent>
 		<artifactId>DataCleaner</artifactId>
 		<groupId>dk.eobjects.datacleaner</groupId>
-		<version>1.5-SNAPSHOT</version>
+		<version>${datacleaner.version}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner-packaging</artifactId>
 	<packaging>pom</packaging>
 	<name>DataCleaner-packaging</name>
+	<version>${datacleaner.version}</version>
 	<dependencies>
 		<dependency>
 			<groupId>dk.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-gui</artifactId>
-			<version>${project.version}</version>
+			<version>${datacleaner.version}</version>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<!-- Used for the launch4j windows executable plugin -->
-			<id>akathist-repository</id>
-			<name>Akathist Repository</name>
-			<url>http://www.9stmaryrd.com/maven</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<!-- Used for the launch4j windows executable plugin -->
-			<id>akathist-repository</id>
-			<name>Akathist Repository</name>
-			<url>http://www.9stmaryrd.com/maven</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<build>
 		<finalName>datacleaner</finalName>
 		<plugins>
@@ -129,33 +114,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.akathist.maven.plugins.launch4j</groupId>
-				<artifactId>launch4j-maven-plugin</artifactId>
-				<configuration>
-					<headerType>gui</headerType>
-					<outfile> ${project.build.directory}/dist/datacleaner.exe 
-					</outfile>
-					<jar>
-						${project.build.directory}/dist/datacleaner.jar 
-					</jar>
-					<errTitle>DataCleaner</errTitle>
-					<icon>src/packaging/icon.ico</icon>
-					<jre>
-						<minVersion>1.5.0</minVersion>
-						<maxHeapSize>1024</maxHeapSize>
-						<opts>
-							<opt>-XX:MaxPermSize=256m</opt>
-						</opts>
-					</jre>
-					<splash>
-						<file>src/packaging/splash.bmp</file>
-						<waitForWindow>true</waitForWindow>
-						<timeout>90</timeout>
-						<timeoutErr>true</timeoutErr>
-					</splash>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

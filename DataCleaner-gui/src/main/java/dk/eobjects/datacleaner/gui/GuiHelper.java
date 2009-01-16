@@ -27,6 +27,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -234,14 +235,23 @@ public class GuiHelper {
 	}
 
 	public static ImageIcon getImageIcon(String imagePath) {
-		URL resource = ClassLoader.getSystemResource(imagePath);
-		return new ImageIcon(resource);
+		URL url = ClassLoader.getSystemResource(imagePath);
+		if (url == null) {
+			return new ImageIcon("src/main/resources/" + imagePath);
+		} else {
+			return new ImageIcon(url);
+		}
 	}
 
 	public static Image getImage(String imagePath) {
 		URL url = ClassLoader.getSystemResource(imagePath);
 		try {
-			return ImageIO.read(url);
+			if (url == null) {
+				File file = new File("src/main/resources/" + imagePath);
+				return ImageIO.read(file);
+			} else {
+				return ImageIO.read(url);
+			}
 		} catch (IOException e) {
 			_log.error("Could not read image data from path: " + imagePath);
 			_log.error("System resource: " + url);

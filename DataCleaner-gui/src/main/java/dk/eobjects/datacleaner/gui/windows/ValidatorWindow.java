@@ -65,6 +65,8 @@ import dk.eobjects.datacleaner.gui.widgets.RunValidatorButton;
 import dk.eobjects.datacleaner.gui.widgets.SchemaTree;
 import dk.eobjects.datacleaner.gui.widgets.SchemaTreeMouseListener;
 import dk.eobjects.datacleaner.util.DomHelper;
+import dk.eobjects.datacleaner.util.WeakObservable;
+import dk.eobjects.datacleaner.util.WeakObserver;
 import dk.eobjects.datacleaner.validator.IValidationRule;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
@@ -72,7 +74,7 @@ import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.thirdparty.tabs.CloseableTabbedPane;
 
-public class ValidatorWindow extends AbstractWindow {
+public class ValidatorWindow extends AbstractWindow implements WeakObserver {
 
 	public static final String NODE_NAME = "validator";
 
@@ -85,13 +87,16 @@ public class ValidatorWindow extends AbstractWindow {
 	private ExecutionConfiguration _executionConfiguration;
 	private Map<JPanel, IConfigurationPanel> _configurationPanels = new HashMap<JPanel, IConfigurationPanel>();
 
+	private JButton _optionsButton;
+
 	@Override
 	public void disposeInternal() {
 		_tabbedPane.removeAll();
 
 		if (_dataContextSelection != null) {
-			_dataContextSelection.selectNothing();
 			_dataContextSelection.deleteObserver(_columnSelection);
+			_dataContextSelection.deleteObserver(this);
+			_dataContextSelection.selectNothing();
 		}
 
 		_dataContextSelection = null;
@@ -107,6 +112,7 @@ public class ValidatorWindow extends AbstractWindow {
 			ExecutionConfiguration executionConfiguration) {
 		super();
 		_dataContextSelection = dataContextSelection;
+		_dataContextSelection.addObserver(this);
 		_executionConfiguration = executionConfiguration;
 		_columnSelection = new ColumnSelection(_dataContextSelection);
 		_tabbedPane = new CloseableTabbedPane();
@@ -157,15 +163,16 @@ public class ValidatorWindow extends AbstractWindow {
 		toolbar.add(new OpenFileButton(_dataContextSelection));
 		toolbar.add(new JSeparator(JSeparator.VERTICAL));
 		toolbar.add(saveValidatorButton);
-		JButton optionsButton = GuiHelper.createButton("Validator options",
+		_optionsButton = GuiHelper.createButton("Validator options",
 				"images/toolbar_configure.png").toComponent();
-		optionsButton.addActionListener(new ActionListener() {
+		_optionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new ExecutionConfigurationDialog(_executionConfiguration, false)
 						.setVisible(true);
 			}
 		});
-		toolbar.add(optionsButton);
+		updateOptionsButton();
+		toolbar.add(_optionsButton);
 		toolbar.add(new AddValidationRuleButton(this));
 		toolbar.add(new RunValidatorButton(_dataContextSelection,
 				_columnSelection, _configurationPanels));
@@ -294,5 +301,23 @@ public class ValidatorWindow extends AbstractWindow {
 			}
 		}
 		return window;
+	}
+
+	public void update(WeakObservable observable) {
+		if (observable instanceof DataContextSelection) {
+			updateOptionsButton();
+		}
+	}
+
+	private void updateOptionsButton() {
+		if (_dataContextSelection.isSqlSource()) {
+			_optionsButton.setEnabled(true);
+		} else {
+			_optionsButton.setEnabled(false);
+
+			// Don't (sub)optimize non SQL based datastores
+			_executionConfiguration.setGroupByOptimizationEnabled(false);
+			_executionConfiguration.setQuerySplitterSize(null);
+		}
 	}
 }

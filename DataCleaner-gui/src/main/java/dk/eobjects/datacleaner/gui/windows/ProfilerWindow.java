@@ -67,11 +67,13 @@ import dk.eobjects.datacleaner.gui.widgets.SchemaTreeMouseListener;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
 import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.util.DomHelper;
+import dk.eobjects.datacleaner.util.WeakObservable;
+import dk.eobjects.datacleaner.util.WeakObserver;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.thirdparty.tabs.CloseableTabbedPane;
 
-public class ProfilerWindow extends AbstractWindow {
+public class ProfilerWindow extends AbstractWindow implements WeakObserver {
 
 	public static final String NODE_NAME = "profiler";
 
@@ -84,13 +86,16 @@ public class ProfilerWindow extends AbstractWindow {
 	private ExecutionConfiguration _executionConfiguration;
 	private Map<JPanel, IConfigurationPanel> _configurationPanels = new HashMap<JPanel, IConfigurationPanel>();
 
+	private JButton _optionsButton;
+
 	@Override
 	public void disposeInternal() {
 		_tabbedPane.removeAll();
 
 		if (_dataContextSelection != null) {
-			_dataContextSelection.selectNothing();
 			_dataContextSelection.deleteObserver(_columnSelection);
+			_dataContextSelection.deleteObserver(this);
+			_dataContextSelection.selectNothing();
 		}
 
 		_dataContextSelection = null;
@@ -106,6 +111,7 @@ public class ProfilerWindow extends AbstractWindow {
 			ExecutionConfiguration executionConfiguration) {
 		super();
 		_dataContextSelection = dataContextSelection;
+		_dataContextSelection.addObserver(this);
 		_executionConfiguration = executionConfiguration;
 		_columnSelection = new ColumnSelection(_dataContextSelection);
 		_tabbedPane = new CloseableTabbedPane();
@@ -156,15 +162,16 @@ public class ProfilerWindow extends AbstractWindow {
 		toolbar.add(new OpenFileButton(_dataContextSelection));
 		toolbar.add(new JSeparator(JSeparator.VERTICAL));
 		toolbar.add(saveProfilerButton);
-		JButton optionsButton = GuiHelper.createButton("Profiler options",
+		_optionsButton = GuiHelper.createButton("Profiler options",
 				"images/toolbar_configure.png").toComponent();
-		optionsButton.addActionListener(new ActionListener() {
+		_optionsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new ExecutionConfigurationDialog(_executionConfiguration, true)
 						.setVisible(true);
 			}
 		});
-		toolbar.add(optionsButton);
+		updateOptionsButton();
+		toolbar.add(_optionsButton);
 		toolbar.add(new AddProfileButton(this));
 		toolbar.add(new RunProfilerButton(_dataContextSelection,
 				_configurationPanels, _executionConfiguration));
@@ -289,5 +296,23 @@ public class ProfilerWindow extends AbstractWindow {
 			}
 		}
 		return window;
+	}
+
+	public void update(WeakObservable observable) {
+		if (observable instanceof DataContextSelection) {
+			updateOptionsButton();
+		}
+	}
+
+	private void updateOptionsButton() {
+		if (_dataContextSelection.isSqlSource()) {
+			_optionsButton.setEnabled(true);
+		} else {
+			_optionsButton.setEnabled(false);
+
+			// Don't (sub)optimize non SQL based datastores
+			_executionConfiguration.setGroupByOptimizationEnabled(false);
+			_executionConfiguration.setQuerySplitterSize(null);
+		}
 	}
 }

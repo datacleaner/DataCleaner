@@ -144,7 +144,6 @@ public class DataContextSelection extends WeakObservable {
 		}
 		DataContext dc = JdbcDataContextFactory.getDataContext(connection,
 				catalog, tableTypes);
-		setDataContext(dc, connection);
 		_connectionMetadata.clear();
 		_connectionMetadata.put("connectionString", connectionString);
 		_connectionMetadata.put("catalog", catalog);
@@ -154,6 +153,7 @@ public class DataContextSelection extends WeakObservable {
 				TableType.TABLE) != -1 ? "true" : "false"));
 		_connectionMetadata.put("views", (ArrayUtils.indexOf(tableTypes,
 				TableType.VIEW) != -1 ? "true" : "false"));
+		setDataContext(dc, connection);
 	}
 
 	public void selectFile(File file, char separatorChar, char quoteChar) {
@@ -163,11 +163,11 @@ public class DataContextSelection extends WeakObservable {
 		}
 		DataContext dc = new DataContext(new CsvDataContextStrategy(file,
 				separatorChar, quoteChar));
-		setDataContext(dc, null);
 		_connectionMetadata.clear();
 		_connectionMetadata.put("filename", file.getAbsolutePath());
 		_connectionMetadata.put("separator", "" + separatorChar);
 		_connectionMetadata.put("quoteChar", "" + quoteChar);
+		setDataContext(dc, null);
 	}
 
 	public void selectFile(File file) {
@@ -203,15 +203,15 @@ public class DataContextSelection extends WeakObservable {
 			}
 			throw new IllegalArgumentException(e1);
 		}
-		setDataContext(dc, null);
 		_connectionMetadata.clear();
 		_connectionMetadata.put("filename", file.getAbsolutePath());
+		setDataContext(dc, null);
 	}
 
 	public void selectNothing() {
 		_log.debug("selectNothing()");
-		setDataContext(null, null);
 		_connectionMetadata.clear();
+		setDataContext(null, null);
 	}
 
 	public Element serialize(Document document) {

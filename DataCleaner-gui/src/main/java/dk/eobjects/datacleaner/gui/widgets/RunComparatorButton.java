@@ -84,10 +84,6 @@ public class RunComparatorButton extends JButton implements ActionListener {
 			Column leftColumn = leftIterator.next();
 			Column rightColumn = rightIterator.next();
 
-			//TODO:
-//			resultWindow.addLogMessage("Comparing columns: " + leftColumn
-//					+ " and " + rightColumn);
-
 			try {
 
 				DataSet leftData = executeQuery(_leftDataContextSelection,
@@ -124,8 +120,6 @@ public class RunComparatorButton extends JButton implements ActionListener {
 
 			} catch (Exception e) {
 				_log.error(e);
-				//TODO:
-//				resultWindow.addLogMessage("Error occurred: " + e.getMessage());
 			}
 		}
 	}

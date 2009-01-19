@@ -28,6 +28,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -47,7 +49,10 @@ import dk.eobjects.metamodel.schema.TableType;
  * Represents the users selection of a data context. While the data context
  * itself can change and be replaced over time, the data context selection will
  * be the same in order to provide a hook for object who needs to access the
- * current data selection.
+ * currently selected data context.
+ * 
+ * Also, the DataContextSelection provides some methods to serializing,
+ * deserializing and duplicating DataContexts.
  * 
  * @see DataContext
  */
@@ -68,6 +73,16 @@ public class DataContextSelection extends WeakObservable {
 
 	public DataContextSelection() {
 		super();
+	}
+
+	/**
+	 * Convenience constructor mostly used for tests. When using this
+	 * constructor, serialization, deserialization and duplication is not
+	 * supported, since no metadata are recorded.
+	 */
+	public DataContextSelection(DataContext dataContext) {
+		this();
+		setDataContext(dataContext, null);
 	}
 
 	/**
@@ -117,8 +132,17 @@ public class DataContextSelection extends WeakObservable {
 		}
 	}
 
-	public boolean isSqlSource() {
-		return _connectionMetadata.containsKey("connectionString");
+	public boolean isJdbcSource() {
+		if (_connectionMetadata.containsKey("connectionString")) {
+			return true;
+		}
+		if (_connectionObject instanceof Connection) {
+			return true;
+		}
+		// TODO: Ideally we would check whether or not the datacontext's
+		// strategy was a JdbcDataContextStrategy instance, but we can't access
+		// that object
+		return false;
 	}
 
 	public void selectDatabase(String connectionString, String catalog,
@@ -265,6 +289,45 @@ public class DataContextSelection extends WeakObservable {
 		return dcs;
 	}
 
+	public boolean isDuplicatable() {
+		return isJdbcSource();
+	}
+
+	/**
+	 * Creates a duplicate of this DataContextSelection with an individual
+	 * connection object if it is an SQL based datastore.
+	 * 
+	 * @throws SQLException
+	 *             if making a new connection based on the existing connections
+	 *             metadata throws an exception.
+	 * @throws IllegalStateException
+	 *             if the DataContextSelection is not duplicatable
+	 * 
+	 * @see #isDuplicatable()
+	 */
+	public DataContextSelection duplicate() throws SQLException,
+			IllegalStateException {
+		if (isDuplicatable()) {
+			DataContextSelection result = new DataContextSelection();
+			List<TableType> tableTypes = new ArrayList<TableType>();
+			if ("true".equals(_connectionMetadata.get("tables"))) {
+				tableTypes.add(TableType.TABLE);
+			}
+			if ("true".equals(_connectionMetadata.get("views"))) {
+				tableTypes.add(TableType.VIEW);
+			}
+			result.selectDatabase(_connectionMetadata.get("connectionString"),
+					_connectionMetadata.get("catalog"), _connectionMetadata
+							.get("username"), _connectionMetadata
+							.get("password"), tableTypes
+							.toArray(new TableType[tableTypes.size()]));
+			return result;
+		} else {
+			throw new IllegalStateException(
+					"DataContextSelection is not duplicatable");
+		}
+	}
+
 	public static String getExtention(File file) {
 		if (file != null) {
 			String temp = file.getName();
@@ -274,5 +337,14 @@ public class DataContextSelection extends WeakObservable {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("connectionString",
+						_connectionMetadata.get("connectionString")).append(
+						"filename", _connectionMetadata.get("filename"))
+				.toString();
 	}
 }

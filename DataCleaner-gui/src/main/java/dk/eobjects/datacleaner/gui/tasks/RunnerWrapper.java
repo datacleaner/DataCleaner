@@ -17,7 +17,7 @@
 package dk.eobjects.datacleaner.gui.tasks;
 
 import dk.eobjects.datacleaner.data.DataContextSelection;
-import dk.eobjects.datacleaner.execution.IRunner;
+import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
 
 /**
  * Runs a runner task in the background thread.
@@ -25,17 +25,17 @@ import dk.eobjects.datacleaner.execution.IRunner;
 public class RunnerWrapper extends AbstractTaskRunner {
 
 	@SuppressWarnings("unchecked")
-	protected IRunner _runner;
+	protected DataCleanerExecutor _runner;
 	private DataContextSelection _dataContextSelection;
 
 	@SuppressWarnings("unchecked")
-	public RunnerWrapper(DataContextSelection schemaSelection, IRunner runner) {
+	public RunnerWrapper(DataContextSelection schemaSelection, DataCleanerExecutor runner) {
 		_dataContextSelection = schemaSelection;
 		_runner = runner;
 	}
 
 	public void runTask() {
-		_runner.execute(_dataContextSelection.getDataContext());
+		_runner.execute(_dataContextSelection, false);
 	}
 
 	@Override

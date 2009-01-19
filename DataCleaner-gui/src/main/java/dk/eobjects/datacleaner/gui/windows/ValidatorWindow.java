@@ -310,7 +310,7 @@ public class ValidatorWindow extends AbstractWindow implements WeakObserver {
 	}
 
 	private void updateOptionsButton() {
-		if (_dataContextSelection.isSqlSource()) {
+		if (_dataContextSelection.isJdbcSource()) {
 			_optionsButton.setEnabled(true);
 		} else {
 			_optionsButton.setEnabled(false);

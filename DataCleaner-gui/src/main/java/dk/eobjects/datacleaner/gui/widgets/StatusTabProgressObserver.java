@@ -32,6 +32,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.joda.time.DateTime;
 
 import dk.eobjects.datacleaner.execution.IProgressObserver;
@@ -50,11 +51,10 @@ public class StatusTabProgressObserver implements IProgressObserver {
 	private JLabel _workingIconLabel;
 	private ResultWindow _resultWindow;
 
-	// Status instance variables
-	private int _currentTable;
-	private int _numTables;
-	private long _currentRow;
-	private long _currentTableNumRows;
+	private Table[] _tables;
+	private long[] _totalRows;
+	private long[] _processedRows;
+	private int _processedTables;
 
 	public StatusTabProgressObserver(ResultWindow resultWindow) {
 		_logTextArea = GuiHelper.createLabelTextArea().toComponent();
@@ -79,34 +79,16 @@ public class StatusTabProgressObserver implements IProgressObserver {
 		_logTextArea.append(getTimestamp() + message + '\n');
 	}
 
-	/**
-	 * Updates labels for tables during execution
-	 */
-	private void updateStatusLabel() {
-		if (_verboseMonitoringCheckBox.isSelected()) {
-			addLogMessage(_currentRow + " rows processed.");
-		}
-		String statusString = _currentRow + "/" + _currentTableNumRows;
-		TableModel model = _statusTable.getModel();
-		model.setValueAt(statusString, _currentTable, 1);
-		_statusTable.setModel(model);
-	}
-
-	private void updateStatusBarAfterExecution() {
-		if (_currentTable + 1 == _numTables) {
-			_workingIconLabel.setVisible(false);
-		}
-	}
-
-	public synchronized void init(Table[] tablesToProcess) {
+	public synchronized void init(Table[] tables) {
 		// Panel for table information
 		_statusTable = new DataCleanerTable(TABLE_COLUMNS);
-		_currentTable = -1;
-		_numTables = tablesToProcess.length;
+		_tables = tables;
+		_totalRows = new long[_tables.length];
+		_processedRows = new long[_tables.length];
 		DefaultTableModel model = new DefaultTableModel(TABLE_COLUMNS,
-				_numTables);
-		for (int i = 0; i < tablesToProcess.length; i++) {
-			Table table = tablesToProcess[i];
+				_tables.length);
+		for (int i = 0; i < tables.length; i++) {
+			Table table = tables[i];
 			String name = table.getName();
 
 			model.setValueAt(name, i, 0);
@@ -141,34 +123,52 @@ public class StatusTabProgressObserver implements IProgressObserver {
 				rightPanel);
 	}
 
-	public void notifyBeginning(Table tableToProcess, long numRows) {
-		_currentTable++;
-		_currentTableNumRows = numRows;
-		_currentRow = 0;
-		addLogMessage("Analysis begin: " + tableToProcess.getName());
+	private void updateStatusLabel(int tableIndex) {
+		TableModel model = _statusTable.getModel();
+		model.setValueAt(_processedRows[tableIndex] + " / "
+				+ _totalRows[tableIndex], tableIndex, 1);
+		_statusTable.setModel(model);
+	}
+
+	public void notifyBeginning(Table table, long numRows) {
+		addLogMessage("Analysis begin: " + table.getName());
 		addLogMessage("Rows in table: " + numRows);
-		updateStatusLabel();
+		int tableIndex = ArrayUtils.indexOf(_tables, table);
+		_totalRows[tableIndex] = numRows;
+		updateStatusLabel(tableIndex);
 	}
 
-	public void notifyProgress(long numRowsProcessed) {
-		_currentRow = numRowsProcessed;
-		updateStatusLabel();
+	public synchronized void notifyProgress(Table table, long numRowsProcessed) {
+		int tableIndex = ArrayUtils.indexOf(_tables, table);
+		_processedRows[tableIndex] += numRowsProcessed;
+		updateStatusLabel(tableIndex);
+		addLogMessage(table.getName() + ": " + _processedRows[tableIndex]
+				+ " rows processed.");
 	}
 
-	public void notifySuccess(Table processedTable, long numRowsProcessed) {
-		_currentRow = numRowsProcessed;
-		updateStatusLabel();
-		updateStatusBarAfterExecution();
-		addLogMessage("Analysis success: " + processedTable.getName());
+	public synchronized void notifySuccess(Table table, long numRowsProcessed) {
+		_processedTables++;
+		if (_processedTables == _tables.length) {
+			_workingIconLabel.setVisible(false);
+		}
+		int tableIndex = ArrayUtils.indexOf(_tables, table);
+		_processedRows[tableIndex] = numRowsProcessed;
+		updateStatusLabel(tableIndex);
+		addLogMessage(table.getName() + ": Analysis success!");
 	}
 
-	public void notifyFailure(Table processedTable, Throwable throwable,
-			long lastRow) {
-		_currentRow = lastRow;
-		updateStatusLabel();
-		updateStatusBarAfterExecution();
-
-		addLogMessage("Analysis failure: " + processedTable.getName());
+	public synchronized void notifyFailure(Table table, Throwable throwable,
+			Long lastRow) {
+		_processedTables++;
+		if (_processedTables == _tables.length) {
+			_workingIconLabel.setVisible(false);
+		}
+		if (lastRow != null) {
+			int tableIndex = ArrayUtils.indexOf(_tables, table);
+			_processedRows[tableIndex] = lastRow;
+			updateStatusLabel(tableIndex);
+		}
+		addLogMessage(table.getName() + ": Analysis failure!");
 
 		if (throwable != null) {
 			StringWriter stringWriter = new StringWriter();

@@ -16,26 +16,29 @@
  */
 package dk.eobjects.datacleaner.execution;
 
-import dk.eobjects.metamodel.schema.Table;
+import java.util.List;
+import java.util.Map;
+
+import dk.eobjects.metamodel.data.Row;
+import dk.eobjects.metamodel.schema.Column;
 
 /**
- * Stub implementation of the IProgressObserver interface
+ * Provides an interface for callback methods to do the actual processing of a
+ * DataCleanerExecutor instance
+ * 
+ * @param <C extends IJobConfiguration>
+ *            the job configuration object type
+ * @param <R>
+ *            the result object type
+ * @param <P>
+ *            the processor object type
  */
-public abstract class AbstractProgressObserver implements IProgressObserver {
+public interface IExecutorCallback<C extends IJobConfiguration, R, P> {
 
-	public void init(Table[] tablesToProcess) {
-	}
+	public List<P> initProcessors(Map<C, Column[]> jobConfigurations,
+			ExecutionConfiguration executionConfiguration);
 
-	public void notifyBeginning(Table tableToProcess, long numRows) {
-	}
+	public void processRow(Row row, long count, P processor);
 
-	public void notifyFailure(Table processedTable, Throwable throwable,
-			Long lastRow) {
-	}
-
-	public void notifyProgress(Table processingTable, long numRowsProcessed) {
-	}
-
-	public void notifySuccess(Table processedTable, long numRowsProcessed) {
-	}
+	public R getResult(P processor);
 }

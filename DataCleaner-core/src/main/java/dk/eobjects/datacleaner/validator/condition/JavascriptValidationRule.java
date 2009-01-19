@@ -35,9 +35,9 @@ public class JavascriptValidationRule extends AbstractValidationRule {
 
 	public static final String PROPERTY_JAVASCRIPT_EXPRESSION = "Javascript expression";
 	private Set<Column> _evaluatedColumns = new HashSet<Column>();
-	private Context _context;
 	private Script _script;
 	private ScriptableObject _standardObjectsScope;
+	private Context _context;
 
 	@Override
 	public void initialize(Column... columns) {
@@ -51,32 +51,37 @@ public class JavascriptValidationRule extends AbstractValidationRule {
 		_script = _context.compileString(expression,
 				"JavascriptValidationRule", 1, null);
 		_standardObjectsScope = _context.initStandardObjects();
+		Context.exit();
 	}
 
 	@Override
 	protected boolean isValid(Row row) throws Exception {
-		Map<String, Object> values = new ScriptAccessColumnMap(_columns, row,
-				_evaluatedColumns);
+		ContextFactory.getGlobal().enterContext(_context);
+		try {
 
-		Scriptable scope = _context.newObject(_standardObjectsScope);
-		scope.setPrototype(_standardObjectsScope);
-		scope.setParentScope(null);
+			Map<String, Object> values = new ScriptAccessColumnMap(_columns,
+					row, _evaluatedColumns);
 
-		Object wrappedValues = Context.javaToJS(values, scope);
-		ScriptableObject.putProperty(scope, "values", wrappedValues);
-		Object result = _script.exec(_context, scope);
+			Scriptable scope = _context.newObject(_standardObjectsScope);
+			scope.setPrototype(_standardObjectsScope);
+			scope.setParentScope(null);
 
-		if (result instanceof Boolean) {
-			return (Boolean) result;
+			Object wrappedValues = Context.javaToJS(values, scope);
+			ScriptableObject.putProperty(scope, "values", wrappedValues);
+			Object result = _script.exec(_context, scope);
+
+			if (result instanceof Boolean) {
+				return (Boolean) result;
+			}
+			throw new IllegalStateException(
+					"Javascript expression did not return a boolean");
+		} finally {
+			Context.exit();
 		}
-		throw new IllegalStateException(
-				"Javascript expression did not return a boolean");
 	}
 
 	@Override
 	public IValidationRuleResult getResult() {
-		Context.exit();
-
 		setEvaluatedColumns(_evaluatedColumns
 				.toArray(new Column[_evaluatedColumns.size()]));
 		return super.getResult();

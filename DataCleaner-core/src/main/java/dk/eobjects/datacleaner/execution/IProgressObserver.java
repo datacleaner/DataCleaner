@@ -42,10 +42,14 @@ public interface IProgressObserver {
 	public void notifyBeginning(Table tableToProcess, long numRows);
 
 	/**
-	 * @param numRowsProcessed
-	 *            how many rows that are currently processed
+	 * @param processingTable
+	 *            the table that is being processed
+	 * @param numRows
+	 *            how many rows that have been processed since last time a
+	 *            notification was sent (ie. the size of the increment, not the
+	 *            total)
 	 */
-	public void notifyProgress(long numRowsProcessed);
+	public void notifyProgress(Table processingTable, long numRows);
 
 	/**
 	 * @param processedTable
@@ -61,8 +65,9 @@ public interface IProgressObserver {
 	 * @param processedTable
 	 *            the table for which processing failed
 	 * @param lastRow
-	 *            the last processed row number or -1 if processing never began
+	 *            the last processed row number, -1 if processing never began or
+	 *            null if unknown
 	 */
 	public void notifyFailure(Table processedTable, Throwable throwable,
-			long lastRow);
+			Long lastRow);
 }

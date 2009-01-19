@@ -29,32 +29,46 @@ public class ExecutionConfigurationDialog extends BanneredDialog implements
 	private JCheckBox _drillToDetailCheckBox;
 	private JCheckBox _groupByOptimizationCheckBox;
 	private JComboBox _splitQueriesCombobox;
+	private JComboBox _maxConnectionsCombobox;
+	private JComboBox _maxQueriesPerConnectionCombobox;
 	private JPanel _formPanel;
 
 	public ExecutionConfigurationDialog(
 			ExecutionConfiguration executionConfiguration,
 			boolean includeDrillToDetails) {
-		super(400, 550);
+		super(430, 680);
 		_executionConfiguration = executionConfiguration;
 
 		if (includeDrillToDetails) {
 			// Drill to details
+			int rowIndex = 7;
+			rowIndex++;
 			_drillToDetailCheckBox = GuiHelper.createCheckBox(
 					"Enable drill-to-detail in profiler results", false)
 					.toComponent();
-			GuiHelper.addToGridBag(_drillToDetailCheckBox, _formPanel, 0, 4, 3,
-					1);
+			GuiHelper.addToGridBag(_drillToDetailCheckBox, _formPanel, 0,
+					rowIndex, 3, 1);
+
+			rowIndex++;
 			JTextArea aboutDrillToDetail = GuiHelper.createLabelTextArea()
 					.applyWhiteBackground().applyBorder().toComponent();
 			aboutDrillToDetail
-					.setText("Drill-to-detail enables you to click profiling result measures in order to investigate the root cause of the measures. Providing this functionality does however take up some memory in order to keep metadata about the details and in some cases the detail-content itself.");
-			GuiHelper.addToGridBag(aboutDrillToDetail, _formPanel, 1, 5, 2, 1);
+					.setText("Drill-to-detail enables you to click the profiling measures in order to investigate "
+							+ "the root causes of the results. Providing this functionality takes up some memory "
+							+ "to keep metadata about the details and in some cases the detail-content itself.");
+			GuiHelper.addToGridBag(aboutDrillToDetail, _formPanel, 1, rowIndex,
+					2, 1);
 
 			_drillToDetailCheckBox.setSelected(_executionConfiguration
 					.isDrillToDetailEnabled());
 		}
 		_groupByOptimizationCheckBox.setSelected(_executionConfiguration
 				.isGroupByOptimizationEnabled());
+		_maxConnectionsCombobox.setSelectedItem(_executionConfiguration
+				.getMaxConnections());
+		_maxQueriesPerConnectionCombobox
+				.setSelectedItem(_executionConfiguration
+						.getMaxQueriesPerConnection());
 
 		if (_executionConfiguration.isQuerySplitterEnabled()) {
 			int itemCount = _splitQueriesCombobox.getItemCount();
@@ -79,6 +93,9 @@ public class ExecutionConfigurationDialog extends BanneredDialog implements
 				_splitQueriesCombobox.setSelectedItem(option);
 			}
 		}
+
+		GridBagLayout layout = (GridBagLayout) _formPanel.getLayout();
+		layout.columnWidths = new int[] { 30, 230, 130 };
 	}
 
 	@Override
@@ -88,21 +105,58 @@ public class ExecutionConfigurationDialog extends BanneredDialog implements
 		panel.setBorder(GuiHelper.BORDER_WIDE);
 		_formPanel = GuiHelper.createPanel().toComponent();
 
+		// Max connections
+		int rowIndex = 0;
+		GuiHelper.addToGridBag(new JLabel("Max connections:"), _formPanel, 0,
+				rowIndex, 2, 1);
+		_maxConnectionsCombobox = new JComboBox(new Object[] { 1, 2, 3, 4 });
+		GuiHelper.addToGridBag(_maxConnectionsCombobox, _formPanel, 2,
+				rowIndex, 1, 1);
+
+		// Max queries per connection
+		rowIndex++;
+		GuiHelper.addToGridBag(new JLabel(
+				"Max simultanious queries per connection:"), _formPanel, 0,
+				rowIndex, 2, 1);
+		_maxQueriesPerConnectionCombobox = new JComboBox(new Object[] { 1, 2,
+				3, 4 });
+		GuiHelper.addToGridBag(_maxQueriesPerConnectionCombobox, _formPanel, 2,
+				rowIndex, 1, 1);
+
+		rowIndex++;
+		JTextArea aboutMultithreading = GuiHelper.createLabelTextArea()
+				.applyWhiteBackground().applyBorder().toComponent();
+		aboutMultithreading
+				.setText("The 'Max connections' and 'Max simultanious queries per connection' options "
+						+ "define the multi-threading strategy when executing DataCleaner jobs. The more "
+						+ "connections and simultanious queries you enable, the more working threads and "
+						+ "thus higher utilization of CPU it will produce. However not all databases "
+						+ "support multiple connections and multiple queries per connections, "
+						+ "so tune these options to fit your database.");
+		GuiHelper.addToGridBag(aboutMultithreading, _formPanel, 1, rowIndex, 2,
+				1);
+
 		// Group by optimization
+		rowIndex++;
 		_groupByOptimizationCheckBox = GuiHelper.createCheckBox(
 				"Enable GROUP BY optimization", false).toComponent();
-		GuiHelper.addToGridBag(_groupByOptimizationCheckBox, _formPanel, 0, 0,
-				3, 1);
+		GuiHelper.addToGridBag(_groupByOptimizationCheckBox, _formPanel, 0,
+				rowIndex, 3, 1);
+		rowIndex++;
 		JTextArea aboutGroupByOptimization = GuiHelper.createLabelTextArea()
 				.applyWhiteBackground().applyBorder().toComponent();
 		aboutGroupByOptimization
-				.setText("When GROUP BY optimization is enabled the generated queries will contain a GROUP BY clause for every column in the queried dataset. This causes the database to do most of the grouping instead of DataCleaner, which is useful for datasets with similar values, but also represents an unescesary action for datasets with many distinct values.");
-		GuiHelper
-				.addToGridBag(aboutGroupByOptimization, _formPanel, 1, 1, 2, 1);
+				.setText("For tables with a lot of repeated values DataCleaner can save a lot "
+						+ "of computation by adding GROUP BY clauses to the generated queries. "
+						+ "For tables with a lot of distinct values this type of suboptimization "
+						+ "is however a waste of resources.");
+		GuiHelper.addToGridBag(aboutGroupByOptimization, _formPanel, 1,
+				rowIndex, 2, 1);
 
 		// Split query optimization
-		GuiHelper.addToGridBag(new JLabel("Split queries:"), _formPanel, 0, 2,
-				2, 1);
+		rowIndex++;
+		GuiHelper.addToGridBag(new JLabel("Split queries:"), _formPanel, 0,
+				rowIndex, 2, 1);
 		_splitQueriesCombobox = new JComboBox(new Object[] { NEVER_ITEM,
 				new QuerySplitOption(5000), new QuerySplitOption(100000),
 				new QuerySplitOption(200000), new QuerySplitOption(500000),
@@ -117,9 +171,9 @@ public class ExecutionConfigurationDialog extends BanneredDialog implements
 					boolean cellHasFocus) {
 				if (value instanceof QuerySplitOption) {
 					QuerySplitOption option = (QuerySplitOption) value;
-					return super.getListCellRendererComponent(list,
-							"When table has > " + option.getNumRowsRequired()
-									+ " rows", index, isSelected, cellHasFocus);
+					return super.getListCellRendererComponent(list, " > "
+							+ option.getNumRowsRequired() + " rows", index,
+							isSelected, cellHasFocus);
 				} else {
 					return super.getListCellRendererComponent(list, value,
 							index, isSelected, cellHasFocus);
@@ -127,16 +181,17 @@ public class ExecutionConfigurationDialog extends BanneredDialog implements
 			}
 
 		});
-		GuiHelper.addToGridBag(_splitQueriesCombobox, _formPanel, 2, 2, 1, 1);
+		GuiHelper.addToGridBag(_splitQueriesCombobox, _formPanel, 2, rowIndex,
+				1, 1);
+		rowIndex++;
 		JTextArea aboutSplitQueryOptimization = GuiHelper.createLabelTextArea()
 				.applyWhiteBackground().applyBorder().toComponent();
 		aboutSplitQueryOptimization
-				.setText("Split query optimization is used to generate queries that yield partitioned result sets and thus keeping memory consumption down. This is mostly used for some database drivers that unfortunately boasts huge result sets directly into memory.");
-		GuiHelper.addToGridBag(aboutSplitQueryOptimization, _formPanel, 1, 3,
-				2, 1);
-
-		GridBagLayout layout = (GridBagLayout) _formPanel.getLayout();
-		layout.columnWidths = new int[] { 20, 110, 240 };
+				.setText("Split query optimization is used to generate queries that yield partitioned "
+						+ "result sets and thus better leveling of queries on multiple threads. "
+						+ "Splitting queries requires preliminary table-querying to establish split-query criteria.");
+		GuiHelper.addToGridBag(aboutSplitQueryOptimization, _formPanel, 1,
+				rowIndex, 2, 1);
 
 		JToolBar toolbar = GuiHelper.createToolBar();
 		JButton saveButton = GuiHelper.createButton("Save options",
@@ -167,6 +222,12 @@ public class ExecutionConfigurationDialog extends BanneredDialog implements
 		_executionConfiguration
 				.setGroupByOptimizationEnabled(_groupByOptimizationCheckBox
 						.isSelected());
+		_executionConfiguration
+				.setMaxConnections((Integer) _maxConnectionsCombobox
+						.getSelectedItem());
+		_executionConfiguration
+				.setMaxQueriesPerConnection((Integer) _maxQueriesPerConnectionCombobox
+						.getSelectedItem());
 		Object item = _splitQueriesCombobox.getSelectedItem();
 		if (item == NEVER_ITEM) {
 			_executionConfiguration.setQuerySplitterSize(null);

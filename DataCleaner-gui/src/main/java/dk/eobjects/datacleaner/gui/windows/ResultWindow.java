@@ -17,6 +17,7 @@
 package dk.eobjects.datacleaner.gui.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -24,10 +25,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.jdesktop.swingx.JXStatusBar;
 
 import dk.eobjects.datacleaner.execution.IProgressObserver;
 import dk.eobjects.datacleaner.gui.GuiBuilder;
+import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.metamodel.schema.Table;
 import dk.eobjects.thirdparty.tabs.CloseableTabbedPane;
 
@@ -40,9 +43,11 @@ public abstract class ResultWindow extends AbstractWindow implements
 	private JLabel _progressLabel;
 
 	// Instance variables for execution status monitoring
-	private int _numTables;
-	private int _currentTable;
 	private boolean _failures = false;
+	private Table[] _tables;
+	private long[] _processedRows;
+	private long _totalRows;
+	private int _processedTables = 0;
 
 	@Override
 	public void disposeInternal() {
@@ -66,9 +71,11 @@ public abstract class ResultWindow extends AbstractWindow implements
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(
 				JXStatusBar.Constraint.ResizeBehavior.FILL);
 		_progressLabel = new JLabel("");
+		_progressLabel.setFont(GuiHelper.FONT_NORMAL.deriveFont(Font.BOLD));
 		statusBar.add(_progressLabel, c1);
 
 		_progressBar = new JProgressBar(0, 100);
+		_progressBar.setForeground(GuiHelper.BG_COLOR_DARKBLUE);
 		statusBar.add(_progressBar, new JXStatusBar.Constraint(300));
 		_panel.add(statusBar, BorderLayout.SOUTH);
 	}
@@ -89,17 +96,18 @@ public abstract class ResultWindow extends AbstractWindow implements
 	}
 
 	/**
-	 * Updates statusbar before execution
-	 */
-	private void updateStatusBarBeforeExecution(String tableName) {
-		_progressLabel.setText("Analyzing: " + tableName);
-	}
-
-	/**
 	 * Updates statusbar after execution
 	 */
 	private void updateStatusBarAfterExecution() {
-		if (_currentTable + 1 == _numTables) {
+		if (_totalRows > 0) {
+			long processedRows = 0l;
+			for (long count : _processedRows) {
+				processedRows += count;
+			}
+			int progress = Math.round(100 * processedRows / _totalRows);
+			_progressBar.setValue(progress);
+		}
+		if (_processedTables == _tables.length) {
 			if (_failures) {
 				_progressLabel.setText("Done, but with failures.");
 			} else {
@@ -108,27 +116,35 @@ public abstract class ResultWindow extends AbstractWindow implements
 		}
 	}
 
-	public void init(Table[] tablesToProcess) {
-		_currentTable = -1;
-		_numTables = tablesToProcess.length;
+	public void init(Table[] tables) {
+		_tables = tables;
+		_processedRows = new long[_tables.length];
 	}
 
-	public void notifyBeginning(Table tableToProcess, long numRows) {
-		_currentTable++;
-		updateStatusBarBeforeExecution(tableToProcess.getName());
+	public void notifyBeginning(Table table, long numRows) {
+		_totalRows += numRows;
 	}
 
-	public void notifyProgress(long numRowsProcessed) {
-	}
-
-	public void notifySuccess(Table processedTable, long numRowsProcessed) {
+	public synchronized void notifyProgress(Table table, long numRowsProcessed) {
+		int tableIndex = ArrayUtils.indexOf(_tables, table);
+		_processedRows[tableIndex] += numRowsProcessed;
 		updateStatusBarAfterExecution();
-		int progress = Math.round(100 * (_currentTable + 1) / _numTables);
-		_progressBar.setValue(progress);
 	}
 
-	public void notifyFailure(Table processedTable, Throwable throwable,
-			long lastRow) {
+	public synchronized void notifySuccess(Table table, long numRowsProcessed) {
+		int tableIndex = ArrayUtils.indexOf(_tables, table);
+		_processedRows[tableIndex] = numRowsProcessed;
+		_processedTables++;
+		updateStatusBarAfterExecution();
+	}
+
+	public synchronized void notifyFailure(Table table, Throwable throwable,
+			Long lastRow) {
+		if (lastRow != null) {
+			int tableIndex = ArrayUtils.indexOf(_tables, table);
+			_processedRows[tableIndex] = lastRow;
+		}
+		_processedTables++;
 		_failures = true;
 		updateStatusBarAfterExecution();
 	}

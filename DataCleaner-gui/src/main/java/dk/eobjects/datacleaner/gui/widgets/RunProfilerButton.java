@@ -29,14 +29,16 @@ import org.apache.commons.logging.LogFactory;
 
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.execution.AbstractProgressObserver;
+import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
 import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
-import dk.eobjects.datacleaner.execution.ProfileRunner;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.panels.IConfigurationPanel;
 import dk.eobjects.datacleaner.gui.tasks.RunnerWrapper;
 import dk.eobjects.datacleaner.gui.windows.ProfilerResultWindow;
+import dk.eobjects.datacleaner.profiler.IProfile;
 import dk.eobjects.datacleaner.profiler.IProfileResult;
+import dk.eobjects.datacleaner.profiler.ProfilerExecutorCallback;
 import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.metamodel.schema.Table;
 
@@ -67,15 +69,16 @@ public class RunProfilerButton extends JButton implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		final ProfileRunner profileRunner = new ProfileRunner();
-		profileRunner.setExecutionConfiguration(_executionConfiguration);
+		final DataCleanerExecutor<ProfilerJobConfiguration, IProfileResult, IProfile> executor = ProfilerExecutorCallback
+				.createExecutor();
+		executor.setExecutionConfiguration(_executionConfiguration);
 		boolean foundConfiguration = false;
 		for (IConfigurationPanel configurationsPanel : _configurationPanels
 				.values()) {
 			ProfilerJobConfiguration configuration = (ProfilerJobConfiguration) configurationsPanel
 					.getJobConfiguration();
 			if (configuration.getColumns().length > 0) {
-				profileRunner.addJobConfiguration(configuration);
+				executor.addJobConfiguration(configuration);
 				foundConfiguration = true;
 			}
 		}
@@ -83,21 +86,22 @@ public class RunProfilerButton extends JButton implements ActionListener {
 		if (foundConfiguration) {
 			final ProfilerResultWindow resultWindow = new ProfilerResultWindow();
 			DataCleanerGui.getMainWindow().addWindow(resultWindow);
-			profileRunner.addProgressObserver(resultWindow);
-			profileRunner.addProgressObserver(new StatusTabProgressObserver(
+			executor.addProgressObserver(resultWindow);
+			executor.addProgressObserver(new StatusTabProgressObserver(
 					resultWindow));
-			profileRunner.addProgressObserver(new AbstractProgressObserver() {
+			executor.addProgressObserver(new AbstractProgressObserver() {
 				@Override
 				public void notifySuccess(Table processedTable,
 						long numRowsProcessed) {
-					List<IProfileResult> results = profileRunner
+					List<IProfileResult> results = executor
 							.getResultsForTable(processedTable);
 					resultWindow.addResults(processedTable, results,
 							_dataContextSelection.getDataContext());
 				}
 			});
+			
 			RunnerWrapper runnerWrapper = new RunnerWrapper(
-					_dataContextSelection, profileRunner);
+					_dataContextSelection, executor);
 			runnerWrapper.execute();
 		} else {
 			GuiHelper

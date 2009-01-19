@@ -36,7 +36,7 @@ import dk.eobjects.metamodel.schema.Column;
  * validation rule configuration does not store the validation rule instance,
  * but just the class and the configuration to use for making instances.
  * 
- * @see dk.eobjects.datacleaner.execution.ValidationRuleRunner
+ * @see dk.eobjects.datacleaner.validator.ValidatorExecutorCallback
  */
 public class ValidatorJobConfiguration implements IJobConfiguration {
 

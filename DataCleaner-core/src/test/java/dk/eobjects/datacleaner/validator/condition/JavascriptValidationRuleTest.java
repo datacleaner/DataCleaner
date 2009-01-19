@@ -170,4 +170,46 @@ public class JavascriptValidationRuleTest extends DataCleanerTestCase {
 				"Wrapped java.lang.IllegalArgumentException: No such column 'foobar' (JavascriptValidationRule#1)",
 				error.getMessage());
 	}
+
+	public void testMultithreading() throws Exception {
+		final JavascriptValidationRule vr = new JavascriptValidationRule();
+		Column genderColumn = new Column("gender", ColumnType.VARCHAR);
+		Column[] columns = new Column[] { genderColumn };
+
+		Map<String, String> properties = new HashMap<String, String>();
+		String expression = "var gvar = values.get('gender').toLowerCase(); "
+				+ "if (gvar == 'm' || gvar == 'f') { true; } else { false; }";
+		properties.put(JavascriptValidationRule.PROPERTY_JAVASCRIPT_EXPRESSION,
+				expression);
+		vr.setProperties(properties);
+
+		vr.initialize(columns);
+
+		final SelectItem[] selectItems = new SelectItem[] { new SelectItem(
+				genderColumn) };
+
+		// Let two different threads call the process() method
+		new Thread() {
+			@Override
+			public void run() {
+				synchronized (vr) {
+					vr.process(new Row(selectItems, new Object[] { "M" }), 1);
+				}
+			}
+		}.start();
+		new Thread() {
+			@Override
+			public void run() {
+				synchronized (vr) {
+					vr.process(new Row(selectItems, new Object[] { "F" }), 1);
+				}
+			}
+		}.start();
+
+		IValidationRuleResult result = vr.getResult();
+		Exception error = result.getError();
+		if (error != null) {
+			throw error;
+		}
+	}
 }

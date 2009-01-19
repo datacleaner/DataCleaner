@@ -14,34 +14,45 @@
  *  You should have received a copy of the GNU General Public License
  *  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.eobjects.datacleaner.execution;
+package dk.eobjects.datacleaner.validator;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import dk.eobjects.datacleaner.validator.IValidationRule;
-import dk.eobjects.datacleaner.validator.IValidationRuleResult;
-import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
+import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
+import dk.eobjects.datacleaner.execution.IExecutorCallback;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.schema.Column;
 
-public class ValidationRuleRunner
-		extends
-		AbstractRunner<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> {
+public class ValidatorExecutorCallback
+		implements
+		IExecutorCallback<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> {
 
-	@Override
-	protected IValidationRule[] initConfigurations(
-			Map<ValidatorJobConfiguration, Column[]> configurations) {
+	protected Log _log = LogFactory.getLog(getClass());
+
+	public static DataCleanerExecutor<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> createExecutor() {
+		return new DataCleanerExecutor<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule>(
+				new ValidatorExecutorCallback());
+	}
+
+	public List<IValidationRule> initProcessors(
+			Map<ValidatorJobConfiguration, Column[]> jobConfigurations,
+			ExecutionConfiguration executionConfiguration) {
 		ArrayList<IValidationRule> result = new ArrayList<IValidationRule>();
-		for (Entry<ValidatorJobConfiguration, Column[]> entry : configurations
+		for (Entry<ValidatorJobConfiguration, Column[]> entry : jobConfigurations
 				.entrySet()) {
 			ValidatorJobConfiguration configuration = entry.getKey();
 			Column[] columns = entry.getValue();
 			IValidationRule vr = initValidationRule(configuration, columns);
 			result.add(vr);
 		}
-		return result.toArray(new IValidationRule[result.size()]);
+		return result;
 	}
 
 	private IValidationRule initValidationRule(
@@ -62,14 +73,12 @@ public class ValidationRuleRunner
 		}
 	}
 
-	@Override
-	protected IValidationRuleResult getResult(IValidationRule processor) {
+	public IValidationRuleResult getResult(IValidationRule processor) {
 		IValidationRuleResult result = processor.getResult();
 		return result;
 	}
 
-	@Override
-	protected void processRow(Row row, long count, IValidationRule processor) {
+	public void processRow(Row row, long count, IValidationRule processor) {
 		processor.process(row, count);
 	}
 }

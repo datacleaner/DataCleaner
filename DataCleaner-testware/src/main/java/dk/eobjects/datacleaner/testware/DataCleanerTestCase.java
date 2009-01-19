@@ -37,9 +37,9 @@ import dk.eobjects.metamodel.util.FileHelper;
  */
 public abstract class DataCleanerTestCase extends TestCase {
 
-	private static final String CONNECTION_STRING = "jdbc:hsqldb:res:database/datacleaner";
-	private static final String USERNAME = "SA";
-	private static final String PASSWORD = "";
+	public static final String CONNECTION_STRING = "jdbc:hsqldb:res:database/datacleaner";
+	public static final String USERNAME = "SA";
+	public static final String PASSWORD = "";
 	private List<Object> _mocks = new ArrayList<Object>();
 	private Connection _connection;
 

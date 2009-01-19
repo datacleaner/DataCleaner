@@ -36,7 +36,7 @@ import dk.eobjects.metamodel.schema.Column;
  * configuration does not store the profile instance, but just the class and the
  * configuration to use for making instances.
  * 
- * @see dk.eobjects.datacleaner.execution.ProfileRunner
+ * @see dk.eobjects.datacleaner.profiler.ProfilerExecutorCallback
  */
 public class ProfilerJobConfiguration implements IJobConfiguration {
 

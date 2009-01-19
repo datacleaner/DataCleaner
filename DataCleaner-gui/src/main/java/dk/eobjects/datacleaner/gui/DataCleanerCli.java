@@ -33,16 +33,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import dk.eobjects.datacleaner.data.DataContextSelection;
+import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
 import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
-import dk.eobjects.datacleaner.execution.ProfileRunner;
-import dk.eobjects.datacleaner.execution.ValidationRuleRunner;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
 import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.gui.windows.ProfilerWindow;
 import dk.eobjects.datacleaner.gui.windows.ValidatorWindow;
+import dk.eobjects.datacleaner.profiler.IProfile;
+import dk.eobjects.datacleaner.profiler.IProfileResult;
+import dk.eobjects.datacleaner.profiler.ProfilerExecutorCallback;
 import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
 import dk.eobjects.datacleaner.util.DomHelper;
+import dk.eobjects.datacleaner.validator.IValidationRule;
+import dk.eobjects.datacleaner.validator.IValidationRuleResult;
+import dk.eobjects.datacleaner.validator.ValidatorExecutorCallback;
 import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.metamodel.DataContext;
 
@@ -66,15 +71,16 @@ public class DataCleanerCli {
 
 	private PrintWriter _consoleWriter = new PrintWriter(System.out);
 	private OutputType _outputType = OutputType.XML;
-	private DataContext _dataContext;
+	private DataContextSelection _dataContextSelection;
 	private List<ProfilerJobConfiguration> _profileConfigurations;
 	private List<ValidatorJobConfiguration> _validationRuleConfigurations;
 	private File _inputFile;
 
 	private ExecutionConfiguration _executionConfiguration;
 
-	public void setDataContext(DataContext dataContext) {
-		_dataContext = dataContext;
+	public void setDataContextSelection(
+			DataContextSelection dataContextSelection) {
+		_dataContextSelection = dataContextSelection;
 	}
 
 	public void setProfileConfigurations(
@@ -219,8 +225,8 @@ public class DataCleanerCli {
 		executionConfiguration.setDrillToDetailEnabled(false);
 		setExecutionConfiguration(executionConfiguration);
 
+		setDataContextSelection(dataContextSelection);
 		DataContext dc = dataContextSelection.getDataContext();
-		setDataContext(dc);
 
 		if (ProfilerWindow.NODE_NAME.equals(node.getNodeName())) {
 			// Profiler specific parsing and execution
@@ -269,13 +275,14 @@ public class DataCleanerCli {
 	public void runProfiler() {
 		_consoleWriter.println("Executing profiler");
 
-		ProfileRunner runner = new ProfileRunner();
+		DataCleanerExecutor<ProfilerJobConfiguration, IProfileResult, IProfile> executor = ProfilerExecutorCallback
+				.createExecutor();
 		for (ProfilerJobConfiguration configuration : _profileConfigurations) {
-			runner.addJobConfiguration(configuration);
+			executor.addJobConfiguration(configuration);
 		}
-		runner.setExecutionConfiguration(_executionConfiguration);
-		runner.execute(_dataContext);
-		
+		executor.setExecutionConfiguration(_executionConfiguration);
+		executor.execute(_dataContextSelection);
+
 		// TODO: Handle result
 		_consoleWriter.println("TODO: Print to " + _outputType + " source");
 
@@ -290,13 +297,15 @@ public class DataCleanerCli {
 	public void runValidator() {
 		_consoleWriter.println("Executing validator");
 
-		ValidationRuleRunner runner = new ValidationRuleRunner();
+		DataCleanerExecutor<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> executor = ValidatorExecutorCallback
+				.createExecutor();
+
 		for (ValidatorJobConfiguration configuration : _validationRuleConfigurations) {
-			runner.addJobConfiguration(configuration);
+			executor.addJobConfiguration(configuration);
 		}
-		runner.setExecutionConfiguration(_executionConfiguration);
-		runner.execute(_dataContext);
-		
+		executor.setExecutionConfiguration(_executionConfiguration);
+		executor.execute(_dataContextSelection);
+
 		// TODO: Handle result
 		_consoleWriter.println("TODO: Print to " + _outputType + " source");
 

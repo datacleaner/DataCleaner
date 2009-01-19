@@ -39,6 +39,8 @@ public class ExecutionConfiguration implements Serializable {
 	public static final String NODE_NAME = "executionConfiguration";
 
 	private Long _querySplitterSize;
+	private int _maxQueriesPerConnection;
+	private int _maxConnections;
 	private boolean _drillToDetailEnabled;
 	private boolean _groupByOptimizationEnabled;
 
@@ -48,18 +50,21 @@ public class ExecutionConfiguration implements Serializable {
 
 	public ExecutionConfiguration(boolean drillToDetailsEnabled,
 			boolean groupByOptimizationEnabled) {
-		this(null, drillToDetailsEnabled, groupByOptimizationEnabled);
+		this(null, drillToDetailsEnabled, groupByOptimizationEnabled, 1, 1);
 	}
 
 	public ExecutionConfiguration(Long querySplitterSize) {
-		this(querySplitterSize, true, false);
+		this(querySplitterSize, true, false, 1, 1);
 	}
 
 	public ExecutionConfiguration(Long querySplitterSize,
-			boolean drillToDetailsEnabled, boolean groupByOptimizationEnabled) {
-		_querySplitterSize = querySplitterSize;
+			boolean drillToDetailsEnabled, boolean groupByOptimizationEnabled,
+			int maxConnections, int maxQueriesPerConnection) {
+		setQuerySplitterSize(querySplitterSize);
 		_drillToDetailEnabled = drillToDetailsEnabled;
 		_groupByOptimizationEnabled = groupByOptimizationEnabled;
+		setMaxConnections(maxConnections);
+		setMaxQueriesPerConnection(maxQueriesPerConnection);
 	}
 
 	public boolean isQuerySplitterEnabled() {
@@ -71,6 +76,10 @@ public class ExecutionConfiguration implements Serializable {
 	}
 
 	public void setQuerySplitterSize(Long size) {
+		if (size != null && size < 1) {
+			throw new IllegalArgumentException(
+					"querySplitterSize cannot be less than 1");
+		}
 		_querySplitterSize = size;
 	}
 
@@ -90,6 +99,44 @@ public class ExecutionConfiguration implements Serializable {
 		_groupByOptimizationEnabled = groupByOptimizationEnabled;
 	}
 
+	public boolean isMultipleConnectionsEnabled() {
+		if (_maxConnections == 1) {
+			return false;
+		}
+		return true;
+	}
+
+	public int getMaxConnections() {
+		return _maxConnections;
+	}
+
+	public void setMaxConnections(int maxConnections) {
+		if (maxConnections <= 0) {
+			throw new IllegalArgumentException(
+					"maxConnections cannot be negative or 0");
+		}
+		_maxConnections = maxConnections;
+	}
+
+	public boolean isMultipleQueriesPerConnectionEnabled() {
+		if (_maxQueriesPerConnection == 1) {
+			return false;
+		}
+		return true;
+	}
+
+	public int getMaxQueriesPerConnection() {
+		return _maxQueriesPerConnection;
+	}
+
+	public void setMaxQueriesPerConnection(int maxQueriesPerConnection) {
+		if (maxQueriesPerConnection <= 0) {
+			throw new IllegalArgumentException(
+					"maxQueriesPerConnection cannot be negative or 0");
+		}
+		_maxQueriesPerConnection = maxQueriesPerConnection;
+	}
+
 	public Element serialize(Document document) {
 		Element executionConfigurationElement = document
 				.createElement(NODE_NAME);
@@ -97,6 +144,11 @@ public class ExecutionConfiguration implements Serializable {
 			DomHelper.addPropertyNode(document, executionConfigurationElement,
 					"querySplitterSize", Long.toString(_querySplitterSize));
 		}
+		DomHelper.addPropertyNode(document, executionConfigurationElement,
+				"maxConnections", Integer.toString(_maxConnections));
+		DomHelper.addPropertyNode(document, executionConfigurationElement,
+				"maxQueriesPerConnection", Integer
+						.toString(_maxQueriesPerConnection));
 		DomHelper
 				.addPropertyNode(document, executionConfigurationElement,
 						"drillToDetailEnabled", Boolean
@@ -122,6 +174,14 @@ public class ExecutionConfiguration implements Serializable {
 		if (properties.containsKey("querySplitterSize")) {
 			ec.setQuerySplitterSize(Long.parseLong(properties
 					.get("querySplitterSize")));
+		}
+		if (properties.containsKey("maxConnections")) {
+			ec.setMaxConnections(Integer.parseInt(properties
+					.get("maxConnections")));
+		}
+		if (properties.containsKey("maxQueriesPerConnection")) {
+			ec.setMaxQueriesPerConnection(Integer.parseInt(properties
+					.get("maxQueriesPerConnection")));
 		}
 		ec.setDrillToDetailEnabled(Boolean.parseBoolean(properties
 				.get("drillToDetailEnabled")));

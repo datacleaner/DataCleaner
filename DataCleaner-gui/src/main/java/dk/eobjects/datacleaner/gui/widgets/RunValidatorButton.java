@@ -34,14 +34,16 @@ import org.apache.commons.logging.LogFactory;
 import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.execution.AbstractProgressObserver;
-import dk.eobjects.datacleaner.execution.ValidationRuleRunner;
+import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.panels.IConfigurationPanel;
 import dk.eobjects.datacleaner.gui.tasks.RunnerWrapper;
 import dk.eobjects.datacleaner.gui.windows.ValidatorResultWindow;
+import dk.eobjects.datacleaner.validator.IValidationRule;
 import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
 import dk.eobjects.datacleaner.validator.IValidationRuleResult;
+import dk.eobjects.datacleaner.validator.ValidatorExecutorCallback;
 import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.datacleaner.validator.trivial.DummyValidationRule;
 import dk.eobjects.metamodel.schema.Table;
@@ -75,7 +77,8 @@ public class RunValidatorButton extends JButton implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		final ValidationRuleRunner validationRuleRunner = new ValidationRuleRunner();
+		final DataCleanerExecutor<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> executor = ValidatorExecutorCallback
+				.createExecutor();
 		boolean foundConfiguration = false;
 
 		for (IConfigurationPanel configurationsPanel : _configurationPanels
@@ -84,7 +87,7 @@ public class RunValidatorButton extends JButton implements ActionListener {
 					.getJobConfiguration();
 			if (configuration.getColumns().length > 0) {
 				foundConfiguration = true;
-				validationRuleRunner.addJobConfiguration(configuration);
+				executor.addJobConfiguration(configuration);
 			}
 		}
 
@@ -96,63 +99,61 @@ public class RunValidatorButton extends JButton implements ActionListener {
 			dummyConfiguration.setColumns(_columnSelection.getColumns());
 			dummyConfiguration
 					.setValidationRuleProperties(new HashMap<String, String>());
-			validationRuleRunner.addJobConfiguration(dummyConfiguration);
+			executor.addJobConfiguration(dummyConfiguration);
 
 			final ValidatorResultWindow resultWindow = new ValidatorResultWindow(
 					_columnSelection.getColumns());
 			DataCleanerGui.getMainWindow().addWindow(resultWindow);
-			validationRuleRunner.addProgressObserver(resultWindow);
+			executor.addProgressObserver(resultWindow);
 			final StatusTabProgressObserver statusTab = new StatusTabProgressObserver(
 					resultWindow);
-			validationRuleRunner.addProgressObserver(statusTab);
-			validationRuleRunner
-					.addProgressObserver(new AbstractProgressObserver() {
-						@Override
-						public void notifySuccess(Table processedTable,
-								long numRowsProcessed) {
-							List<IValidationRuleResult> results = validationRuleRunner
-									.getResultsForTable(processedTable);
-							String tableName = processedTable.getName();
+			executor.addProgressObserver(statusTab);
+			executor.addProgressObserver(new AbstractProgressObserver() {
+				@Override
+				public void notifySuccess(Table processedTable,
+						long numRowsProcessed) {
+					List<IValidationRuleResult> results = executor
+							.getResultsForTable(processedTable);
+					String tableName = processedTable.getName();
 
-							// Print any errors out as exceptions into the
-							// status tab.
-							for (IValidationRuleResult result : results) {
-								Exception error = result.getError();
-								if (error != null) {
-									IValidationRuleDescriptor descriptor = result
-											.getDescriptor();
-									StringWriter stringWriter = new StringWriter();
-									stringWriter
-											.append("Exception occurred when processing table '"
-													+ tableName + "':\n");
-									stringWriter.append("   ");
-									stringWriter.append("Validation rule: ");
-									stringWriter.append(descriptor
-											.getDisplayName());
-									stringWriter.append("\n");
-									Map<String, String> properties = result
-											.getProperties();
-									for (Entry<String, String> entry : properties
-											.entrySet()) {
-										stringWriter.append("   ");
-										stringWriter.append(entry.getKey());
-										stringWriter.append(": ");
-										stringWriter.append(entry.getValue());
-										stringWriter.append("\n");
-									}
-
-									error.printStackTrace(new PrintWriter(
-											stringWriter));
-									statusTab.addLogMessage(stringWriter
-											.toString());
-								}
+					// Print any errors out as exceptions into the
+					// status tab.
+					for (IValidationRuleResult result : results) {
+						Exception error = result.getError();
+						if (error != null) {
+							IValidationRuleDescriptor descriptor = result
+									.getDescriptor();
+							StringWriter stringWriter = new StringWriter();
+							stringWriter
+									.append("Exception occurred when processing table '"
+											+ tableName + "':\n");
+							stringWriter.append("   ");
+							stringWriter.append("Validation rule: ");
+							stringWriter.append(descriptor.getDisplayName());
+							stringWriter.append("\n");
+							Map<String, String> properties = result
+									.getProperties();
+							for (Entry<String, String> entry : properties
+									.entrySet()) {
+								stringWriter.append("   ");
+								stringWriter.append(entry.getKey());
+								stringWriter.append(": ");
+								stringWriter.append(entry.getValue());
+								stringWriter.append("\n");
 							}
 
-							resultWindow.addResults(processedTable, results);
+							error
+									.printStackTrace(new PrintWriter(
+											stringWriter));
+							statusTab.addLogMessage(stringWriter.toString());
 						}
-					});
+					}
+
+					resultWindow.addResults(processedTable, results);
+				}
+			});
 			RunnerWrapper runnerWrapper = new RunnerWrapper(
-					_dataContextSelection, validationRuleRunner);
+					_dataContextSelection, executor);
 			runnerWrapper.execute();
 		} else {
 			GuiHelper

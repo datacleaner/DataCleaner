@@ -18,14 +18,16 @@ package dk.eobjects.datacleaner.execution;
 
 import java.io.Serializable;
 
+import dk.eobjects.datacleaner.profiler.ProfilerExecutorCallback;
+import dk.eobjects.datacleaner.validator.ValidatorExecutorCallback;
 import dk.eobjects.metamodel.schema.Column;
 
 /**
  * Represents a configured part of a composite job, to be run by an IRunner
  * instance.
  * 
- * @see ProfileRunner
- * @see ValidationRuleRunner
+ * @see ProfilerExecutorCallback
+ * @see ValidatorExecutorCallback
  */
 public interface IJobConfiguration extends Serializable {
 

@@ -14,23 +14,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.eobjects.datacleaner.execution;
+package dk.eobjects.datacleaner.validator;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import dk.eobjects.datacleaner.data.DataContextSelection;
+import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
+import dk.eobjects.datacleaner.validator.IValidationRule;
 import dk.eobjects.datacleaner.validator.IValidationRuleResult;
+import dk.eobjects.datacleaner.validator.ValidatorExecutorCallback;
 import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
-import dk.eobjects.datacleaner.validator.ValidationRuleManagerTest;
 import dk.eobjects.datacleaner.validator.condition.JavascriptValidationRule;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Schema;
 import dk.eobjects.metamodel.schema.Table;
 
-public class ValidationRuleRunnerTest extends DataCleanerTestCase {
+public class ValidatorExecutorCallbackTest extends DataCleanerTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
@@ -44,18 +47,20 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 		Table officesTable = schema.getTableByName("OFFICES");
 		Column postalCodeColumn = officesTable.getColumnByName("POSTALCODE");
 		Column officeCodeColumn = officesTable.getColumnByName("OFFICECODE");
-		ValidationRuleRunner runner = new ValidationRuleRunner();
+
+		DataCleanerExecutor<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> executor = ValidatorExecutorCallback
+				.createExecutor();
 
 		ValidatorJobConfiguration conf1 = new ValidatorJobConfiguration(
 				ValidationRuleManagerTest.DESCRIPTOR_NOT_NULL);
 		conf1.setColumns(postalCodeColumn, officeCodeColumn);
 
-		runner.addJobConfiguration(conf1);
+		executor.addJobConfiguration(conf1);
 
-		runner.execute(dc);
+		executor.execute(new DataContextSelection(dc));
 
-		assertEquals(1, runner.getResultTables().length);
-		List<IValidationRuleResult> results = runner
+		assertEquals(1, executor.getResultTables().length);
+		List<IValidationRuleResult> results = executor
 				.getResultsForTable(officesTable);
 		assertEquals(1, results.size());
 		assertEquals("SimpleValidationRuleResult[error=null,errorRows=[]]",
@@ -68,7 +73,8 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 		Table table = schema.getTableByName("PRODUCTS");
 		Column productLineColumn = table.getColumnByName("PRODUCTLINE");
 		Column quantityColumn = table.getColumnByName("QUANTITYINSTOCK");
-		ValidationRuleRunner runner = new ValidationRuleRunner();
+		DataCleanerExecutor<ValidatorJobConfiguration, IValidationRuleResult, IValidationRule> executor = ValidatorExecutorCallback
+				.createExecutor();
 
 		ValidatorJobConfiguration conf1 = new ValidatorJobConfiguration(
 				ValidationRuleManagerTest.DESCRIPTOR_JAVASCRIPT);
@@ -78,16 +84,16 @@ public class ValidationRuleRunnerTest extends DataCleanerTestCase {
 				"values.get('PRODUCTLINE') != 'Planes'");
 		conf1.setValidationRuleProperties(javascriptProperties);
 		conf1.setColumns(productLineColumn);
-		runner.addJobConfiguration(conf1);
+		executor.addJobConfiguration(conf1);
 
 		ValidatorJobConfiguration conf2 = new ValidatorJobConfiguration(
 				ValidationRuleManagerTest.DESCRIPTOR_NOT_NULL);
 		conf2.setColumns(quantityColumn);
-		runner.addJobConfiguration(conf2);
+		executor.addJobConfiguration(conf2);
 
-		runner.execute(dc);
+		executor.execute(new DataContextSelection(dc));
 
-		List<IValidationRuleResult> results = runner.getResults();
+		List<IValidationRuleResult> results = executor.getResults();
 
 		assertEquals(2, results.size());
 

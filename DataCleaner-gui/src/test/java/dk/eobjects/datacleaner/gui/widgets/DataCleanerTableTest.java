@@ -131,9 +131,9 @@ public class DataCleanerTableTest extends TestCase {
 		dcTable.setModel(model);
 
 		assertEquals("c", dcTable.getValueAt(0, 2));
-		
-		
-		dcTable.copyToClipboard(0, 0, dcTable.getColumnCount(), dcTable.getRowCount());
+
+		dcTable.copyToClipboard(0, 0, dcTable.getColumnCount(), dcTable
+				.getRowCount());
 
 		assertEquals("col1\tcol2\tcol3\na\tb\tc\nd\te\tf\ng\th\ti\n", Toolkit
 				.getDefaultToolkit().getSystemClipboard().getData(

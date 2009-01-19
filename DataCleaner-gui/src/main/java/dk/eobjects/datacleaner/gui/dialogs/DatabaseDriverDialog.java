@@ -48,19 +48,30 @@ import dk.eobjects.datacleaner.util.ReflectionHelper;
 
 public class DatabaseDriverDialog extends BanneredDialog {
 
-	private static final String POSTGRESQL_DRIVER = "org.postgresql.Driver";
-	private static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
-	private static final String JTDS_DRIVER = "net.sourceforge.jtds.jdbc.Driver";
-	private static final String SQLITE_DRIVER = "org.sqlite.JDBC";
-	private static final String DERBY_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 	private static final long serialVersionUID = -7450893693170647726L;
+
+	public static final String DB2_DRIVER = "com.ibm.db2.jdbc.app.DB2Driver";
+	public static final String INGRES_DRIVER = "com.ingres.jdbc.IngresDriver";
+	public static final String FIREBIRD_DRIVER = "org.firebirdsql.jdbc.FBDriver";
+	public static final String SAPDB_DRIVER = "com.sap.dbtech.jdbc.DriverSapDB";
+	public static final String POSTGRESQL_DRIVER = "org.postgresql.Driver";
+	public static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
+	public static final String JTDS_DRIVER = "net.sourceforge.jtds.jdbc.Driver";
+	public static final String SQLITE_DRIVER = "org.sqlite.JDBC";
+	public static final String DERBY_DRIVER = "org.apache.derby.jdbc.ClientDriver";
+	public static final String ORACLE_DRIVER = "oracle.jdbc.OracleDriver";
+	public static final String JDBC4OLAP_DRIVER = "org.jdbc4olap.jdbc.OlapDriver";
+	public static final String HSQLDB_DRIVER = "org.hsqldb.jdbcDriver";
+	public static final String SQLSERVER_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+	public static final String ODBC_BRIDGE_DRIVER = "sun.jdbc.odbc.JdbcOdbcDriver";
+
 	private static final String[] COMMON_DRIVER_NAMES = { POSTGRESQL_DRIVER,
-			"org.firebirdsql.jdbc.FBDriver", DERBY_DRIVER,
-			"oracle.jdbc.OracleDriver", MYSQL_DRIVER, JTDS_DRIVER,
-			"com.microsoft.sqlserver.jdbc.SQLServerDriver",
-			"com.ingres.jdbc.IngresDriver", SQLITE_DRIVER };
+			FIREBIRD_DRIVER, DERBY_DRIVER, ORACLE_DRIVER, MYSQL_DRIVER,
+			JTDS_DRIVER, SQLSERVER_DRIVER, INGRES_DRIVER, SQLITE_DRIVER,
+			DB2_DRIVER, SAPDB_DRIVER, JDBC4OLAP_DRIVER };
 	private static final Log _log = LogFactory
 			.getLog(DatabaseDriverDialog.class);
+
 	private JTextField _filenameField;
 	private AutoCompleteComboBox _driverClassField;
 	private File _file;
@@ -113,9 +124,10 @@ public class DatabaseDriverDialog extends BanneredDialog {
 						POSTGRESQL_DRIVER, "images/database_postgresql.png"));
 		automaticMenu
 				.add(downloadAndInstallItem(
-						"SQL Server",
+						"SQL Server + Sybase",
+						"jtds-driver.jar",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/net/sourceforge/jtds/jtds/1.2.2/jtds-1.2.2.jar",
-						JTDS_DRIVER, "images/database_sqlserver.png"));
+						JTDS_DRIVER, "images/database_jtds.png"));
 		automaticMenu
 				.add(downloadAndInstallItem(
 						"Derby",
@@ -139,6 +151,11 @@ public class DatabaseDriverDialog extends BanneredDialog {
 						"Ingres",
 						"http://esd.ingres.com/product/Community_Projects/Drivers/java/JDBC",
 						"images/database_ingres.png"));
+		websiteMenu.add(downloadItem("IBM DB2",
+				"http://www.ibm.com/software/data/db2/java/",
+				"images/database_db2.png"));
+		websiteMenu.add(downloadItem("Mondrian + SAP BW + Analysis Services",
+				"http://www.jdbc4olap.org", "images/database_jdbc4olap.png"));
 		return result;
 	}
 
@@ -156,6 +173,15 @@ public class DatabaseDriverDialog extends BanneredDialog {
 
 	private static JMenuItem downloadAndInstallItem(final String databaseName,
 			final String downloadUrl, final String driverClass, String iconPath) {
+		String filename = databaseName.toLowerCase().replace(' ', '_')
+				+ "-driver.jar";
+		return downloadAndInstallItem(databaseName, filename, downloadUrl,
+				driverClass, iconPath);
+	}
+
+	private static JMenuItem downloadAndInstallItem(final String databaseName,
+			final String filename, final String downloadUrl,
+			final String driverClass, String iconPath) {
 		JMenuItem menuItem = new JMenuItem(databaseName, GuiHelper
 				.getImageIcon(iconPath));
 		menuItem.addActionListener(new ActionListener() {
@@ -167,9 +193,7 @@ public class DatabaseDriverDialog extends BanneredDialog {
 									+ " (class name '" + driverClass
 									+ "') is already installed.", null);
 				} else {
-					final File file = new File(databaseName.toLowerCase()
-							.replace(' ', '_')
-							+ "-driver.jar");
+					final File file = new File(filename);
 					final DownloadDialog dialog = new DownloadDialog(
 							downloadUrl, file);
 					dialog.setCompleteAction(new ActionListener() {

@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -45,6 +46,7 @@ import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.model.NamedConnection;
 import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
+import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
 import dk.eobjects.metamodel.schema.TableType;
 
@@ -114,31 +116,126 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		samplesButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
+				GuiSettings settings = GuiSettings.getSettings();
+
 				JPopupMenu popup = new JPopupMenu("Samples");
-				popup.add(sampleItem("MySQL sample",
-						"jdbc:mysql://<hostname>:3306/<database>",
-						"images/database_mysql.png"));
-				popup.add(sampleItem("PostgreSQL sample",
-						"jdbc:postgresql://<hostname>:5432/<database>",
-						"images/database_postgresql.png"));
-				popup.add(sampleItem("Oracle sample",
-						"jdbc:oracle:thin:@<hostname>:1521:<schema>",
-						"images/database_oracle.png"));
-				popup.add(sampleItem("SQL Server sample",
-						"jdbc:jtds:sqlserver://<hostname>:1434/<database>",
-						"images/database_sqlserver.png"));
-				popup.add(sampleItem("Firebird sample",
-						"jdbc:firebirdsql:<hostname>:<path/to/database.fdb>",
-						"images/database_firebird.png"));
-				popup.add(sampleItem("Derby sample",
-						"jdbc:derby://<hostname>:1527/<path/to/database>",
-						"images/database_derby.png"));
-				popup.add(sampleItem("SQLite sample",
-						"jdbc:sqlite:<path/to/database.db>",
-						"images/database_sqlite.png"));
-				popup.add(sampleItem("Ingres sample",
-						"jdbc:ingres://<hostname>:II7/<database>",
-						"images/database_ingres.png"));
+
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.MYSQL_DRIVER)) {
+					popup.add(sampleItem("MySQL template",
+							"jdbc:mysql://<hostname>:3306/<database>",
+							"images/database_mysql.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.POSTGRESQL_DRIVER)) {
+					popup.add(sampleItem("PostgreSQL template",
+							"jdbc:postgresql://<hostname>:5432/<database>",
+							"images/database_postgresql.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.ORACLE_DRIVER)) {
+					popup.add(sampleItem("Oracle template",
+							"jdbc:oracle:thin:@<hostname>:1521:<schema>",
+							"images/database_oracle.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.JTDS_DRIVER)) {
+					popup.add(sampleItem("SQL Server template",
+							"jdbc:jtds:sqlserver://<hostname>:1434/<database>",
+							"images/database_microsoft.png"));
+					popup.add(sampleItem("Sybase template",
+							"jdbc:jtds:sybase://<hostname>:7100/<database>",
+							"images/database_sybase.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.FIREBIRD_DRIVER)) {
+					popup
+							.add(sampleItem(
+									"Firebird template",
+									"jdbc:firebirdsql:<hostname>:<path/to/database.fdb>",
+									"images/database_firebird.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.DERBY_DRIVER)) {
+					popup.add(sampleItem("Derby template",
+							"jdbc:derby://<hostname>:1527/<path/to/database>",
+							"images/database_derby.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.SQLITE_DRIVER)) {
+					popup.add(sampleItem("SQLite template",
+							"jdbc:sqlite:<path/to/database.db>",
+							"images/database_sqlite.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.INGRES_DRIVER)) {
+					popup.add(sampleItem("Ingres template",
+							"jdbc:ingres://<hostname>:II7/<database>",
+							"images/database_ingres.png"));
+				}
+				if (settings.isDriverInstalled(DatabaseDriverDialog.DB2_DRIVER)) {
+					popup.add(sampleItem("IBM DB2 template",
+							"jdbc:db2:<database>", "images/database_db2.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.JDBC4OLAP_DRIVER)) {
+					popup
+							.add(sampleItem(
+									"Pentaho Analysis template",
+									"jdbc:jdbc4olap:http://<hostname>:8080/pentaho/Xmla",
+									"images/database_pentaho.png"));
+					popup
+							.add(sampleItem(
+									"Mondrian template",
+									"jdbc:jdbc4olap:http://<hostname>:8080/mondrian/xmla",
+									"images/database_pentaho.png"));
+					popup
+							.add(sampleItem(
+									"Analysis Services template",
+									"jdbc:jdbc4olap:http://<hostname>:<port>/OLAP/msmdpump.dll",
+									"images/database_microsoft.png"));
+					popup
+							.add(sampleItem(
+									"SAP BW template",
+									"jdbc:jdbc4olap:http://<hostname>:<port>/sap/bw/soap/xmla?sap-client=<number>",
+									"images/database_sap.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.SQLSERVER_DRIVER)) {
+					popup
+							.add(sampleItem(
+									"SQL Server template",
+									"jdbc:sqlserver://<hostname>:3341;databaseName=<database>",
+									"images/database_microsoft.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.HSQLDB_DRIVER)) {
+					popup.add(sampleItem("HSQLDB (server) template",
+							"jdbc:hsqldb:hsql://<hostname>:9001/<database>",
+							"images/database_hsqldb.png"));
+					popup.add(sampleItem("HSQLDB (file) template",
+							"jdbc:hsqldb:file:<filename>",
+							"images/database_hsqldb.png"));
+				}
+				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.ODBC_BRIDGE_DRIVER)) {
+					popup.add(sampleItem("ODBC-bridge template",
+							"jdbc:odbc:<data-source-name>",
+							"images/database_odbc.png"));
+				}
+				popup.add(new JSeparator(JSeparator.HORIZONTAL));
+				JMenuItem manageDriversItem = new JMenuItem(
+						"Manage database drivers", GuiHelper
+								.getImageIcon("images/toolbar_settings.png"));
+				manageDriversItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						SettingsDialog dialog = new SettingsDialog();
+						dialog.setSelectedTab(1);
+						dispose();
+						dialog.setVisible(true);
+					}
+				});
+				popup.add(manageDriversItem);
 				popup.show(samplesButton, 0, samplesButton.getHeight());
 			}
 

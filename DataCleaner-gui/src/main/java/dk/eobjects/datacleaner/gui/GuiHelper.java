@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
@@ -77,8 +78,6 @@ public class GuiHelper {
 
 	private static Log _log = LogFactory.getLog(GuiHelper.class);
 
-	private static HttpClient _httpClient;
-
 	public static final Font FONT_HEADER = new Font("Sans", Font.BOLD, 15);
 	public static final Font FONT_MONOSPACE = new Font("Monospaced",
 			Font.PLAIN, 14);
@@ -91,6 +90,9 @@ public class GuiHelper {
 			GuiHelper.BG_COLOR_DARKBLUE, 4);
 	public static final CompoundBorder BORDER_THIN = new CompoundBorder(
 			new LineBorder(Color.DARK_GRAY), new EmptyBorder(2, 2, 2, 2));
+
+	private static HttpClient _httpClient;
+	private static Map<String, Image> _cachedImageIcons = new WeakHashMap<String, Image>();
 
 	/**
 	 * A highlighter for coloring odd/even rows in a JXTable
@@ -235,28 +237,28 @@ public class GuiHelper {
 	}
 
 	public static ImageIcon getImageIcon(String imagePath) {
-		URL url = ClassLoader.getSystemResource(imagePath);
-		if (url == null) {
-			return new ImageIcon("src/main/resources/" + imagePath);
-		} else {
-			return new ImageIcon(url);
-		}
+		return new ImageIcon(getImage(imagePath));
 	}
 
 	public static Image getImage(String imagePath) {
-		URL url = ClassLoader.getSystemResource(imagePath);
-		try {
-			if (url == null) {
-				File file = new File("src/main/resources/" + imagePath);
-				return ImageIO.read(file);
-			} else {
-				return ImageIO.read(url);
+		Image image = _cachedImageIcons.get(imagePath);
+		if (image == null) {
+			URL url = ClassLoader.getSystemResource(imagePath);
+			try {
+				if (url == null) {
+					File file = new File("src/main/resources/" + imagePath);
+					image = ImageIO.read(file);
+				} else {
+					image = ImageIO.read(url);
+				}
+				_cachedImageIcons.put(imagePath, image);
+			} catch (IOException e) {
+				_log.error("Could not read image data from path: " + imagePath);
+				_log.error("System resource: " + url);
+				throw new IllegalArgumentException(e);
 			}
-		} catch (IOException e) {
-			_log.error("Could not read image data from path: " + imagePath);
-			_log.error("System resource: " + url);
-			throw new IllegalArgumentException(e);
 		}
+		return image;
 	}
 
 	public static String getLabelForTable(Table table) {

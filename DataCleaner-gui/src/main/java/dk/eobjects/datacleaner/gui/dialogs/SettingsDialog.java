@@ -243,4 +243,8 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		_settings.deleteObserver(this);
 		_settings = null;
 	}
+
+	public void setSelectedTab(int i) {
+		_tabbedPane.setSelectedIndex(i);
+	}
 }

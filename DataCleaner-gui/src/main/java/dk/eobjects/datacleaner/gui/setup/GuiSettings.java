@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -193,6 +194,17 @@ public class GuiSettings extends WeakObservable implements Serializable {
 		if (driverClassName != null) {
 			List<DatabaseDriver> databaseDrivers = getDatabaseDrivers();
 			for (DatabaseDriver driver : databaseDrivers) {
+				if (driver.isLoaded()) {
+					if (driverClassName.equals(driver.getDriverClass())) {
+						return true;
+					}
+				}
+			}
+		}
+		Collection<DatabaseDriver> databaseDrivers = GuiConfiguration
+				.getBeansOfClass(DatabaseDriver.class);
+		for (DatabaseDriver driver : databaseDrivers) {
+			if (driver.isLoaded()) {
 				if (driverClassName.equals(driver.getDriverClass())) {
 					return true;
 				}

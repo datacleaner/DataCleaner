@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -61,14 +62,19 @@ public class DatabaseDriverDialog extends BanneredDialog {
 	public static final String DERBY_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 	public static final String ORACLE_DRIVER = "oracle.jdbc.OracleDriver";
 	public static final String JDBC4OLAP_DRIVER = "org.jdbc4olap.jdbc.OlapDriver";
-	public static final String HSQLDB_DRIVER = "org.hsqldb.jdbcDriver";
 	public static final String SQLSERVER_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+	public static final String HSQLDB_DRIVER = "org.hsqldb.jdbcDriver";
 	public static final String ODBC_BRIDGE_DRIVER = "sun.jdbc.odbc.JdbcOdbcDriver";
 
 	private static final String[] COMMON_DRIVER_NAMES = { POSTGRESQL_DRIVER,
 			FIREBIRD_DRIVER, DERBY_DRIVER, ORACLE_DRIVER, MYSQL_DRIVER,
 			JTDS_DRIVER, SQLSERVER_DRIVER, INGRES_DRIVER, SQLITE_DRIVER,
 			DB2_DRIVER, SAPDB_DRIVER, JDBC4OLAP_DRIVER };
+
+	static {
+		Arrays.sort(COMMON_DRIVER_NAMES);
+	}
+
 	private static final Log _log = LogFactory
 			.getLog(DatabaseDriverDialog.class);
 

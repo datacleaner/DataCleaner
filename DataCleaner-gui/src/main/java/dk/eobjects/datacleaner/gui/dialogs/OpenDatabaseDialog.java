@@ -209,6 +209,12 @@ public class OpenDatabaseDialog extends BanneredDialog {
 									"images/database_microsoft.png"));
 				}
 				if (settings
+						.isDriverInstalled(DatabaseDriverDialog.SAPDB_DRIVER)) {
+					popup.add(sampleItem("SAP DB template",
+							"jdbc:sapdb://<hostname>/<database>",
+							"images/database_sap.png"));
+				}
+				if (settings
 						.isDriverInstalled(DatabaseDriverDialog.HSQLDB_DRIVER)) {
 					popup.add(sampleItem("HSQLDB (server) template",
 							"jdbc:hsqldb:hsql://<hostname>:9001/<database>",

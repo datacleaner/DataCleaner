@@ -180,6 +180,7 @@ public class ValidatorWindow extends AbstractWindow implements WeakObserver {
 		_panel.add(toolbar, BorderLayout.NORTH);
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane.setDividerLocation(170);
 
 		SchemaTree schemaTree = new SchemaTree(_dataContextSelection);
 		schemaTree.addMouseListener(new SchemaTreeMouseListener(schemaTree,
@@ -258,14 +259,15 @@ public class ValidatorWindow extends AbstractWindow implements WeakObserver {
 		DataContextSelection dataContextSelection = DataContextSelection
 				.deserialize(dataContextSelectionNode);
 
-		Node executionConfigurationNode = DomHelper.getChildNodesByName(node,
-				ExecutionConfiguration.NODE_NAME).get(0);
+		List<Node> executionConfigurationNodes = DomHelper.getChildNodesByName(
+				node, ExecutionConfiguration.NODE_NAME);
 		ExecutionConfiguration executionConfiguration;
-		if (executionConfigurationNode == null) {
+		if (executionConfigurationNodes == null
+				|| executionConfigurationNodes.isEmpty()) {
 			executionConfiguration = new ExecutionConfiguration();
 		} else {
 			executionConfiguration = ExecutionConfiguration
-					.deserialize(executionConfigurationNode);
+					.deserialize(executionConfigurationNodes.get(0));
 		}
 
 		ValidatorWindow window = new ValidatorWindow(dataContextSelection,

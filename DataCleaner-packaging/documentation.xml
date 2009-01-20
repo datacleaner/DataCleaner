@@ -96,6 +96,200 @@
 			<title>Regular Expressions (regexes)</title>
 			<para>TODO</para>
 		</section>
+		<section>
+			<title>Optimization techniques</title>
+			<para>
+				DataCleaner supports a number of different optimization techniques that can be combined in
+				order to make your job execute as quick and efficient as possible. Most optimization techniques
+				have trade-offs which is why the default configuration of DataCleaner is the most fail-safe configuration
+				that works with any type of dataset.
+			</para>
+			<para>
+				Most optimization techniques regard the generation and execution of database-queries. For the Profiler and Validator
+				to run it relies on an advanced querying and query-execution framework which supports various ways of processing
+				the data in your database.
+			</para>
+			<para>
+				In the base-case DataCleaner will query columns from each profiled/validated table in sequence using a
+				very simple SELECT statement:
+			</para>
+				<blockquote>
+					<para>SELECT [col1], [col2] FROM [table]</para>
+				</blockquote>
+			<para>
+				Optimization techniques fall into two categories, which affect this execution process:
+			</para>
+				<orderedlist>
+					<listitem>
+						<para><emphasis>Parallel execution</emphasis>, which enables simultanious (as opposed to sequential) execution of queries.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Query modification</emphasis>, which optimizes the generated queries for faster individual execution time.</para>
+					</listitem>
+				</orderedlist>
+			<para>
+				To access optimization options, click the <emphasis>Profiler Options</emphasis> button in the Profiler or
+				<emphasis>Validator Options</emphasis> button in the Validator (only enabled when databases have been opened).
+			</para>
+			<section>
+				<title>Max connections</title>
+				<para>
+					This is probably the most significant optimization options for any job (that spans multiple queries).
+					Depending on this option DataCleaner will open several connections to the same database which can
+					be used to feed simultanious execution of independent queries. Running independent queries simultaniously
+					provides for a much better utilization of CPU, especially for systems with multiple processors.
+				</para>
+			</section>
+			<section>
+				<title>Max simultanious queries per connection</title>
+				<para>
+					Instead of opening separate connections, you can also enable execution of multiple simultanious queries
+					on the same connection(s). Depending on the database-type this may or may not be more efficient than the
+					<emphasis>Max connections</emphasis> option above. Used in conjunction with the
+					<emphasis>Max connections</emphasis> option, this option enables another layer of simultanious execution
+					(ie. if <emphasis>Max connections</emphasis> is set to 3 and <emphasis>Max simultanious queries per connection</emphasis>
+					is set to 4, then there can be up to 12 (3x4) queries executing at the same time).
+				</para>
+				<para>
+					Note: Some databases and/or database-drivers doesn't support multiple simultanious
+					queries on the same connection, so make sure to test it before relying on absolute compatibility.
+				</para>
+			</section>
+			<section>
+				<title>Enabled GROUP BY optimization</title>
+				<para>
+					This optimization technique modifies the generated queries to include GROUP BY clauses for each queried column. This means that
+					if you are analyzing column A, B and C then the generated query will be transformed from:
+				</para>
+				<blockquote>
+					<para>SELECT <emphasis>A, B, C</emphasis> FROM [table]</para>
+				</blockquote>
+				<para>... to:</para>
+				<blockquote>
+					<para>SELECT <emphasis>A, B, C, COUNT(*)</emphasis> FROM [table] GROUP BY <emphasis>A, B, C</emphasis></para>
+				</blockquote>
+				<para>
+					What does this accomplish? There are several interesting features of this optimization technique:
+				</para>
+				<orderedlist>
+					<listitem>
+						<para>
+							<emphasis>Smaller result set size</emphasis> - The result set of the query will be smaller than or (in rare cases) equal
+							to the original result set. This means that there is less data to transport from the database to DataCleaner, which means
+							less I/O.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Longer querying time</emphasis> - The generated query is more complex for the database to calculate so more time
+							is expected to be consumed from the database which can be bad if it is used by other applications as well.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Push-down optimization</emphasis> - Some profiles and validation rules performs most of the aggregation that is included
+							in the query any way, so doing it in the query is from a "total execution time" perspective probably the most efficient way to do it,
+							since aggregation is usually fastest on the database/server-side.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Unfortunate scenarious</emphasis> - If your tables contain a lot of distinct rows then this is a very bad optimization
+							technique! What will happen is that the database will get a huge overhead of comparing rows that are uncomparable and that the
+							COUNT-value will be 1 in almost all cases. Thus no improvement is introduced in DataCleaner.
+						</para>
+					</listitem>
+				</orderedlist>
+				<para>
+					Enabling GROUP BY optimization should be considered carefully and is only recommended if you know that the tables you are
+					querying are expected to have a lot of repeated values (ie. a relatively low distinct row count).
+				</para>
+				<para>
+					Note: In DataCleaner 1.0 to 1.4 this option was enabled by default! If you are experiencing poorer performance in
+					DataCleaner 1.5+ then this is probably the cause and you should consider turning it on.
+				</para>
+			</section>
+			<section>
+				<title>Split queries</title>
+				<para>
+					Splitting queries is the process of turning a single query into multiple queries that yield the same collective result.
+					The easiest way of explaining it is by example. The following query:
+				</para>
+				<blockquote>
+					<para>SELECT name, email FROM persons</para>
+				</blockquote>
+				<para>
+					 ... can be transformed into several queries:
+				</para>
+				<orderedlist>
+					<listitem>
+						<para>SELECT name, email FROM persons WHERE age &lt; 20 OR age IS NULL</para>
+					</listitem>
+					<listitem>
+						<para>SELECT name, email FROM persons WHERE age &lt; 40 AND age &gt;= 20</para>
+					</listitem>
+					<listitem>
+						<para>SELECT name, email FROM persons WHERE age &gt;= 40</para>
+					</listitem>
+				</orderedlist>
+				<para>
+					As you can see, the result sets of the three generated queries will contain the same collective result as the original query.
+					Splitting queries requires a small initial analysis to establish which indexes (the age column in the example above) and which
+					index values (1000 in the example above) should be used to create the WHERE-clause(s).
+				</para>
+				<para>
+					So what does splitting queries accomplish? One might think that this is useless processing overhead, but there are scenarios where
+					seperate queries can yield a better total execution-time:
+				</para>
+				<orderedlist>
+					<listitem>
+						<para>
+							<emphasis>Simultanious execution of queries</emphasis> - When used in conjunction with the <emphasis>Max connections</emphasis>
+							and/or <emphasis>Max simultanious queries per connection</emphasis> options, splitting queries can introduct parallel execution
+							of queries on the same table, which is otherwise not possible.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Memory management for dysfunctional database drivers</emphasis> - Some database drivers (no names mentioned here) are
+							less briliant than others. In developing applications for large resultsets we've found that some drivers haven't really considered
+							their data-streaming strategy that well. This means that sometimes when you execute a query that yields a really large result set
+							you can potentially be killing your application because it is flooded with data that it has to keep in memory! Splitting queries can
+							be seen as a countermeasure to such a problem because the result sets of splitted queries are smaller and thus less memory consuming. 
+						</para>
+					</listitem>
+				</orderedlist>
+				<para>
+					We recommend enabling Split queries for tables that have a relatively high amount of rows. If for instance you are analyzing three tables with
+					10.000, 15.000 and 530.000 rows, then we recommend enabling Split queries for tables with more than 500.000 rows. This will mean that only the
+					largest of the three tables will be processed using split queries and thus providing parallel execution of that table's queries, because analysis
+					of the first two tables are quickly done with.
+				</para>
+				<para>
+					To learn more about splitting queries, please visit the website of MetaModel, the data-access framework used by DataCleaner, and
+					specifically the subsite for the Query Splitter component:
+				</para>
+				<para>
+					<ulink url="http://eobjects.org/metamodel">http://eobjects.org/metamodel</ulink>
+				</para>
+				<para>
+					<ulink url="http://eobjects.org/trac/wiki/QuerySplitter">http://eobjects.org/trac/wiki/QuerySplitter</ulink>
+				</para>
+			</section>
+			<section>
+				<title>Enable drill-to-detail in profiler results (Profiler only)</title>
+				<para>
+					In the Profiler this is an extra optimization technique which regards the content-size of the generated profiler results. Typically, the
+					profiler results will include drill-to-details capabilities that enable you to click a measure and view the rows of your database that represent
+					the measure. This is very usuful for investigation and interactive analysis.
+				</para>
+				<para>
+					In some scenarios this drill-to-details feature is however not used. Since the metadata about each drill-to-details enabled measure consumes
+					memory as well as requires additional processing in the profiles, this feature can be turned off. Turning it off will improve execution time and
+					memory consumption, but don't expect a drastic difference.
+				</para>
+			</section>
+		</section>
 	</chapter>
 	<chapter>
 		<title>The DataCleaner desktop-applicatoin</title>

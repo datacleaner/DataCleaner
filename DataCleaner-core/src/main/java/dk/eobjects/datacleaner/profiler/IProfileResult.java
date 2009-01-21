@@ -16,11 +16,25 @@
  */
 package dk.eobjects.datacleaner.profiler;
 
+import java.util.Map;
+
+import dk.eobjects.metamodel.schema.Column;
+
 /**
  * The profile result is the a profile. The result contains of one or more
  * matrices containing numbers with named rows and named columns.
  */
 public interface IProfileResult {
+	
+	/**
+	 * @return the properties of the profile
+	 */
+	public Map<String, String> getProperties();
+	
+	/**
+	 * @return the columns that was used for profiling
+	 */
+	public Column[] getColumns();
 
 	/**
 	 * @return the descriptor of the profile that has been executed

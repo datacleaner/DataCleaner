@@ -22,7 +22,7 @@ public class ProfileResultTest extends TestCase {
 
 	public void testAddMatrix() throws Exception {
 		ProfileResult profileResult = new ProfileResult(
-				new BasicProfileDescriptor());
+				new BasicProfileDescriptor(), null, null);
 		MatrixValue[][] numbers = { { mv(1), mv(2) }, { mv(3), mv(4) } };
 		SimpleMatrix matrix = new SimpleMatrix("col1,col2", "row1,row2",
 				numbers);
@@ -37,7 +37,7 @@ public class ProfileResultTest extends TestCase {
 		ProfileManagerTest.initProfileManager();
 
 		ProfileResult profileResult = new ProfileResult(
-				new BasicProfileDescriptor());
+				new BasicProfileDescriptor(), null, null);
 		MatrixValue[][] numbers1 = { { mv(1), mv(2) }, { mv(3), mv(4) } };
 		SimpleMatrix matrix1 = new SimpleMatrix("col1,col2", "row1,row2",
 				numbers1);

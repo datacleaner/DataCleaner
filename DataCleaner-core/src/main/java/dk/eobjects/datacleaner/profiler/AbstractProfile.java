@@ -121,7 +121,11 @@ public abstract class AbstractProfile implements IProfile {
 			long valueCount, Row row);
 
 	public IProfileResult getResult() {
-		ProfileResult result = new ProfileResult(this.getClass());
+		Class<? extends AbstractProfile> profileClass = this.getClass();
+		IProfileDescriptor descriptor = ProfilerManager
+				.getProfileDescriptorByProfileClass(profileClass);
+		ProfileResult result = new ProfileResult(descriptor, _properties,
+				_columns);
 		if (_error == null) {
 			if (_totalCount > 0) {
 				result.setMatrices(getResultMatrices());

@@ -28,11 +28,11 @@ public class ProfileHelperTest extends TestCase {
 	public void testGetProfileResultsByProfileDisplayName() throws Exception {
 		List<IProfileResult> profileResults = new ArrayList<IProfileResult>();
 		profileResults.add(new ProfileResult(
-				ProfileManagerTest.DESCRIPTOR_PATTERN_FINDER));
+				ProfileManagerTest.DESCRIPTOR_PATTERN_FINDER, null, null));
 		profileResults.add(new ProfileResult(
-				ProfileManagerTest.DESCRIPTOR_PATTERN_FINDER));
+				ProfileManagerTest.DESCRIPTOR_PATTERN_FINDER, null, null));
 		profileResults.add(new ProfileResult(
-				ProfileManagerTest.DESCRIPTOR_STANDARD_MEASURES));
+				ProfileManagerTest.DESCRIPTOR_STANDARD_MEASURES, null, null));
 
 		Map<IProfileDescriptor, List<IProfileResult>> result = ProfilerHelper
 				.getProfileResultsByProfileDescriptor(profileResults);

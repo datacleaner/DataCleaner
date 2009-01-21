@@ -94,6 +94,7 @@
 										<include name="datacleaner.jar" />
 										<include name="datacleaner.sh" />
 										<include name="datacleaner.cmd" />
+										<include name="runjob.*" />
 										<include name="samples/**" />
 									</fileset>
 								</zip>
@@ -104,6 +105,7 @@
 										<include name="datacleaner.jar" />
 										<include name="datacleaner.sh" />
 										<include name="datacleaner.cmd" />
+										<include name="runjob.*" />
 										<include name="samples/**" />
 									</tarfileset>
 								</tar>

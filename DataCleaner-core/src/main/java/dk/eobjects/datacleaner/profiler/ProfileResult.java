@@ -18,22 +18,25 @@ package dk.eobjects.datacleaner.profiler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
+
+import dk.eobjects.metamodel.schema.Column;
 
 public class ProfileResult implements IProfileResult {
 
 	private List<IMatrix> _matrices = new ArrayList<IMatrix>();
 	private IProfileDescriptor _profileDescriptor;
 	private Exception _error;
+	private Column[] _columns;
+	private Map<String, String> _properties;
 
-	public ProfileResult(IProfileDescriptor profileDescriptor) {
+	public ProfileResult(IProfileDescriptor profileDescriptor,
+			Map<String, String> properties, Column[] columns) {
 		_profileDescriptor = profileDescriptor;
-	}
-
-	public ProfileResult(Class<? extends IProfile> profileClass) {
-		_profileDescriptor = ProfilerManager
-				.getProfileDescriptorByProfileClass(profileClass);
+		_properties = properties;
+		_columns = columns;
 	}
 
 	public IMatrix[] getMatrices() {
@@ -64,5 +67,13 @@ public class ProfileResult implements IProfileResult {
 
 	public void setError(Exception error) {
 		_error = error;
+	}
+
+	public Column[] getColumns() {
+		return _columns;
+	}
+
+	public Map<String, String> getProperties() {
+		return _properties;
 	}
 }

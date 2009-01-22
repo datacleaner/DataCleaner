@@ -34,7 +34,7 @@ import dk.eobjects.metamodel.schema.Table;
 
 public class DataCleanerExecutorTest extends DataCleanerTestCase {
 
-	DataCleanerExecutor<MockConfiguration, MockResult, MockProcessor> _executor;
+	private DataCleanerExecutor<MockConfiguration, MockResult, MockProcessor> _executor;
 	private DataContextSelection _dataContextSelection;
 
 	@Override

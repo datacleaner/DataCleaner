@@ -69,7 +69,7 @@ class DataContextProvider<P> {
 			}
 		}
 		_threads.add(requestingThread);
-		requestingThread.setDataContext(_dataContextSelection.getDataContext());
+		requestingThread.setDataContextSelection(_dataContextSelection);
 		requestingThread.start();
 		return true;
 	}

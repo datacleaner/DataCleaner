@@ -24,16 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import dk.eobjects.metamodel.DataContext;
-import dk.eobjects.metamodel.DataContextFactory;
-import dk.eobjects.metamodel.data.DataSet;
-import dk.eobjects.metamodel.data.Row;
-import dk.eobjects.metamodel.query.Query;
-import dk.eobjects.metamodel.schema.Table;
+import dk.eobjects.datacleaner.util.DomHelper;
 
 public class RegexSwapClient {
 
@@ -61,17 +59,15 @@ public class RegexSwapClient {
 	}
 
 	public void updateCategories() throws IOException {
-		DataContext dc = getDataContext(CATEGORIES_URL);
-		Table table = dc.getDefaultSchema().getTableByName("category");
-		DataSet dataSet = dc.executeQuery(new Query()
-				.select(table.getColumns()).from(table));
-		while (dataSet.next()) {
-			Row row = dataSet.getRow();
-			String name = (String) row.getValue(table.getColumnByName("name"));
-			String description = (String) row.getValue(table
-					.getColumnByName("description"));
-			String detailsUrl = (String) row.getValue(table
-					.getColumnByName("detailsUrl"));
+		Element rootNode = getRootNode(CATEGORIES_URL);
+		List<Node> categoryNodes = DomHelper.getChildNodesByName(rootNode,
+				"category");
+		for (Node categoryNode : categoryNodes) {
+			String name = DomHelper.getChildNodeText(categoryNode, "name");
+			String description = DomHelper.getChildNodeText(categoryNode,
+					"description");
+			String detailsUrl = DomHelper.getChildNodeText(categoryNode,
+					"detailsUrl");
 			Category category = _categories.get(name);
 			if (category == null) {
 				category = new Category(name);
@@ -80,31 +76,73 @@ public class RegexSwapClient {
 			category.setDetailsUrl(detailsUrl);
 			category.setDescription(description);
 		}
-		dataSet.close();
 	}
 
 	public void updateRegex(Regex regex) throws IOException {
-		DataContext dc = getDataContext(regex.getDetailsUrl());
-		Table table = dc.getDefaultSchema().getTableByName("regex");
-		if (table != null) {
-			DataSet dataSet = dc.executeQuery(new Query().select(
-					table.getColumns()).from(table));
-			dataSet.next();
-			Row row = dataSet.getRow();
-			String description = (String) row.getValue(table
-					.getColumnByName("description"));
-			String expression = (String) row.getValue(table
-					.getColumnByName("expression"));
-			String author = (String) row.getValue(table
-					.getColumnByName("author"));
-			String timestamp = (String) row.getValue(table
-					.getColumnByName("timestamp"));
-			String positiveVotes = (String) row.getValue(table
-					.getColumnByName("positiveVotes"));
-			String negativeVotes = (String) row.getValue(table
-					.getColumnByName("negativeVotes"));
-			String detailsUrl = (String) row.getValue(table
-					.getColumnByName("detailsUrl"));
+		Element regexNode = getRootNode(regex.getDetailsUrl());
+		String description = DomHelper.getChildNodeText(regexNode,
+				"description");
+		String expression = DomHelper.getChildNodeText(regexNode, "expression");
+		String author = DomHelper.getChildNodeText(regexNode, "author");
+		String timestamp = DomHelper.getChildNodeText(regexNode, "timestamp");
+		String positiveVotes = DomHelper.getChildNodeText(regexNode,
+				"positiveVotes");
+		String negativeVotes = DomHelper.getChildNodeText(regexNode,
+				"negativeVotes");
+		String detailsUrl = DomHelper.getChildNodeText(regexNode, "detailsUrl");
+		regex.setDescription(description);
+		regex.setExpression(expression);
+		regex.setAuthor(author);
+		regex.setTimestamp(Long.parseLong(timestamp));
+		regex.setPositiveVotes(Integer.parseInt(positiveVotes));
+		regex.setNegativeVotes(Integer.parseInt(negativeVotes));
+		regex.setDetailsUrl(detailsUrl);
+
+		List<Category> categories = new ArrayList<Category>();
+		List<Node> categoriesNodes = DomHelper.getChildNodesByName(regexNode,
+				"categories");
+		if (!categoriesNodes.isEmpty()) {
+			Node categoriesNode = categoriesNodes.get(0);
+			List<Node> categoryNodes = DomHelper.getChildNodesByName(
+					categoriesNode, "category");
+			for (Node categoryNode : categoryNodes) {
+				String categoryName = DomHelper.getText(categoryNode);
+				Category category = _categories.get(categoryName);
+				if (!category.containsRegex(regex)) {
+					category.addRegex(regex);
+				}
+				categories.add(category);
+			}
+		}
+		regex.setCategories(categories);
+	}
+
+	public void updateRegexes(Category category) throws IOException {
+		List<Regex> regexes = new ArrayList<Regex>();
+		Node rootNode = getRootNode(category.getDetailsUrl());
+		List<Node> regexNodes = DomHelper
+				.getChildNodesByName(rootNode, "regex");
+		for (Node regexNode : regexNodes) {
+
+			String name = DomHelper.getChildNodeText(regexNode, "name");
+			Regex regex = _regexes.get(name);
+			if (regex == null) {
+				regex = new Regex(name);
+				_regexes.put(name, regex);
+			}
+			String description = DomHelper.getChildNodeText(regexNode,
+					"description");
+			String expression = DomHelper.getChildNodeText(regexNode,
+					"expression");
+			String author = DomHelper.getChildNodeText(regexNode, "author");
+			String timestamp = DomHelper.getChildNodeText(regexNode,
+					"timestamp");
+			String positiveVotes = DomHelper.getChildNodeText(regexNode,
+					"positiveVotes");
+			String negativeVotes = DomHelper.getChildNodeText(regexNode,
+					"negativeVotes");
+			String detailsUrl = DomHelper.getChildNodeText(regexNode,
+					"detailsUrl");
 			regex.setDescription(description);
 			regex.setExpression(expression);
 			regex.setAuthor(author);
@@ -112,79 +150,17 @@ public class RegexSwapClient {
 			regex.setPositiveVotes(Integer.parseInt(positiveVotes));
 			regex.setNegativeVotes(Integer.parseInt(negativeVotes));
 			regex.setDetailsUrl(detailsUrl);
-			dataSet.close();
 
-			List<Category> categories = new ArrayList<Category>();
-			table = dc.getDefaultSchema().getTableByName("category");
-			if (table != null) {
-				dataSet = dc.executeQuery(new Query()
-						.select(table.getColumns()).from(table));
-				while (dataSet.next()) {
-					row = dataSet.getRow();
-					String categoryName = (String) row.getValue(table
-							.getColumnByName("category"));
-					Category category = _categories.get(categoryName);
-					if (!category.containsRegex(regex)) {
-						category.addRegex(regex);
-					}
-					categories.add(category);
-				}
-				dataSet.close();
+			if (!regex.containsCategory(category)) {
+				regex.addCategory(category);
 			}
-			regex.setCategories(categories);
-		}
-	}
 
-	public void updateRegexes(Category category) throws IOException {
-		List<Regex> regexes = new ArrayList<Regex>();
-		DataContext dc = getDataContext(category.getDetailsUrl());
-		Table table = dc.getDefaultSchema().getTableByName("regex");
-		if (table != null) {
-			DataSet dataSet = dc.executeQuery(new Query().select(
-					table.getColumns()).from(table));
-			while (dataSet.next()) {
-				Row row = dataSet.getRow();
-				String name = (String) row.getValue(table
-						.getColumnByName("name"));
-				Regex regex = _regexes.get(name);
-				if (regex == null) {
-					regex = new Regex(name);
-					_regexes.put(name, regex);
-				}
-				String description = (String) row.getValue(table
-						.getColumnByName("description"));
-				String expression = (String) row.getValue(table
-						.getColumnByName("expression"));
-				String author = (String) row.getValue(table
-						.getColumnByName("author"));
-				String timestamp = (String) row.getValue(table
-						.getColumnByName("timestamp"));
-				String positiveVotes = (String) row.getValue(table
-						.getColumnByName("positiveVotes"));
-				String negativeVotes = (String) row.getValue(table
-						.getColumnByName("negativeVotes"));
-				String detailsUrl = (String) row.getValue(table
-						.getColumnByName("detailsUrl"));
-				regex.setDescription(description);
-				regex.setExpression(expression);
-				regex.setAuthor(author);
-				regex.setTimestamp(Long.parseLong(timestamp));
-				regex.setPositiveVotes(Integer.parseInt(positiveVotes));
-				regex.setNegativeVotes(Integer.parseInt(negativeVotes));
-				regex.setDetailsUrl(detailsUrl);
-
-				if (!regex.containsCategory(category)) {
-					regex.addCategory(category);
-				}
-
-				regexes.add(regex);
-			}
-			dataSet.close();
+			regexes.add(regex);
 		}
 		category.setRegexes(regexes);
 	}
 
-	private DataContext getDataContext(String url) throws IOException {
+	private Element getRootNode(String url) throws IOException {
 		GetMethod method = new GetMethod(url);
 		try {
 			_httpClient.executeMethod(method);
@@ -195,10 +171,11 @@ public class RegexSwapClient {
 					return stream;
 				}
 			};
-			DataContext dataContext = DataContextFactory.createXmlDataContext(
-					inputSource, "public", true, false);
-			return dataContext;
-		} catch (HttpException e) {
+
+			Document document = DomHelper.getDocumentBuilder().parse(
+					inputSource);
+			return (Element) document.getFirstChild();
+		} catch (SAXException e) {
 			throw new IllegalStateException(e);
 		}
 	}

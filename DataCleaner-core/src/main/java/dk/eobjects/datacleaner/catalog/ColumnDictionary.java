@@ -54,8 +54,7 @@ public class ColumnDictionary implements IDictionary {
 			if (sentence != null) {
 				if (sentence.indexOf('\'') != -1) {
 					// If the value contains a single quote we will have to use
-					// a
-					// workaround to ensure that the query can be executed
+					// a workaround to ensure that the query can be executed
 					String wildcardValue = sentence.replace('\'', '%');
 					items.add(new FilterItem(selectItem, OperatorType.LIKE,
 							wildcardValue));
@@ -76,8 +75,9 @@ public class ColumnDictionary implements IDictionary {
 			String value = values[i];
 			boolean found = false;
 			if (value != null) {
-				for (Iterator<Object[]> it = queryResult.iterator(); it.hasNext()
-				&& !found;) {
+				for (Iterator<Object[]> it = queryResult.iterator(); it
+						.hasNext()
+						&& !found;) {
 					Object[] objects = it.next();
 					if (value.equals(objects[0])) {
 						found = true;

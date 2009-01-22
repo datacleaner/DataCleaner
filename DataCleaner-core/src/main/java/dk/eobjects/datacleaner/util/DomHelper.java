@@ -179,4 +179,21 @@ public class DomHelper {
 			throw new IllegalArgumentException(e);
 		}
 	}
+
+	public static String getChildNodeText(Node node, String childNodeName) {
+		List<Node> childNodes = getChildNodesByName(node, childNodeName);
+		if (childNodes.isEmpty()) {
+			return null;
+		}
+		if (childNodes.size() > 1) {
+			throw new IllegalArgumentException("The node " + node
+					+ " contains several childNodes named " + childNodeName);
+		}
+		return getText(childNodes.get(0));
+	}
+
+	public static String getText(Node node) {
+		Element element = (Element) node;
+		return element.getTextContent();
+	}
 }

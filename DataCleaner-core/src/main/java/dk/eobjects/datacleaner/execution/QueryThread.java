@@ -16,7 +16,7 @@
  */
 package dk.eobjects.datacleaner.execution;
 
-import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.Query;
@@ -28,7 +28,7 @@ class QueryThread<P> extends StoppableThread {
 
 	private ProcessorDelegate<?, P> _processorDelegate;
 	private Query _query;
-	private DataContext _dataContext;
+	private DataContextSelection _dataContextSelection;
 
 	public QueryThread(ThreadGroup group, String name, Query query,
 			ProcessorDelegate<?, P> processorDelegate) {
@@ -37,8 +37,9 @@ class QueryThread<P> extends StoppableThread {
 		_processorDelegate = processorDelegate;
 	}
 
-	public void setDataContext(DataContext dataContext) {
-		_dataContext = dataContext;
+	public void setDataContextSelection(
+			DataContextSelection dataContextSelection) {
+		_dataContextSelection = dataContextSelection;
 	}
 
 	public ProcessorDelegate<?, P> getProcessorDelegate() {
@@ -49,8 +50,8 @@ class QueryThread<P> extends StoppableThread {
 		return _query;
 	}
 
-	public DataContext getDataContext() {
-		return _dataContext;
+	public DataContextSelection getDataContextSelection() {
+		return _dataContextSelection;
 	}
 
 	@Override
@@ -58,7 +59,7 @@ class QueryThread<P> extends StoppableThread {
 		DataSet data = null;
 		try {
 			if (keepRunning()) {
-				data = _dataContext.executeQuery(_query);
+				data = _dataContextSelection.getDataContext().executeQuery(_query);
 				while (keepRunning() && data.next()) {
 					Row row = data.getRow();
 					Long count;

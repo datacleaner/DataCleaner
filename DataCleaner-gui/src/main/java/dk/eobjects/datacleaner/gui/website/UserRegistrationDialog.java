@@ -58,6 +58,11 @@ public class UserRegistrationDialog extends BanneredDialog {
 	}
 
 	@Override
+	protected String getBannerIconLabel() {
+		return "images/dialog_banner_online.png";
+	}
+
+	@Override
 	protected String getDialogTitle() {
 		return "DataCleaner user registration";
 	}

@@ -76,10 +76,18 @@ public abstract class BanneredDialog extends JDialog {
 			}
 		};
 		panel.setBorder(new MatteBorder(0, 0, 1, 0, Color.BLACK));
-		Icon logo = GuiHelper.getImageIcon("images/dialog_banner.png");
+		Icon logo = GuiHelper.getImageIcon(getBannerIconLabel());
 		JLabel label = new JLabel(logo);
 		panel.add(label, 0, 0);
 		return panel;
+	}
+	
+	/**
+	 * Override this method to provide custom banner headers
+	 * @return
+	 */
+	protected String getBannerIconLabel() {
+		return "images/dialog_banner.png";
 	}
 
 	protected abstract Component getContent();

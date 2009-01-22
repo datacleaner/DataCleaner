@@ -141,7 +141,7 @@ public class DataCleanerCli {
 						"Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)",
 						OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD,
 						HelpFormatter.DEFAULT_DESC_PAD,
-						"Please visit http://eobjects.org/datacleaner for more information");
+						"Please visit http://datacleaner.eobjects.org/ for more information");
 
 		_resultWriter.flush();
 	}

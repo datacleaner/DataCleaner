@@ -68,6 +68,11 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		super.dispose();
 		_dataContextSelection = null;
 	}
+	
+	@Override
+	protected String getBannerIconLabel() {
+		return "images/dialog_banner_opendatabase.png";
+	}
 
 	public OpenDatabaseDialog(DataContextSelection dataContextSelection) {
 		super();

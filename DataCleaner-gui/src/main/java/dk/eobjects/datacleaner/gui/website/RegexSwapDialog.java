@@ -54,6 +54,11 @@ public class RegexSwapDialog extends BanneredDialog {
 	private JButton _importRegexButton;
 	private Regex _selectedRegex;
 	private JButton _viewOnlineButton;
+	
+	@Override
+	protected String getBannerIconLabel() {
+		return "images/dialog_banner_regexswap.png";
+	}
 
 	public RegexSwapDialog() {
 		super(700, 500);

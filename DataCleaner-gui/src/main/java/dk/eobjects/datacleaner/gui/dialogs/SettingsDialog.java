@@ -61,6 +61,11 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 	public SettingsDialog() {
 		super(470, 500);
 	}
+	
+	@Override
+	protected String getBannerIconLabel() {
+		return "images/dialog_banner_settings.png";
+	}
 
 	@Override
 	protected Component getContent() {

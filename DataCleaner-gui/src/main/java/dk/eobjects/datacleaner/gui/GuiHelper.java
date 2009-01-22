@@ -48,6 +48,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.border.Border;
@@ -422,5 +423,12 @@ public class GuiHelper {
 				}
 			}.start();
 		}
+	}
+
+	public static JSeparator createSeparator() {
+		JSeparator separator = new JSeparator(JSeparator.VERTICAL);
+		separator.setBackground(GuiHelper.BG_COLOR_LIGHT);
+		separator.setForeground(GuiHelper.BG_COLOR_LIGHT);
+		return separator;
 	}
 }

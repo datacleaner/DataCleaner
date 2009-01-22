@@ -31,7 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -164,7 +163,7 @@ public class UserRegistrationDialog extends BanneredDialog {
 				.getImageIcon("images/toolbar_visit_website_large.png")));
 
 		JToolBar toolBar = GuiHelper.createToolBar();
-		toolBar.add(new JSeparator(JSeparator.VERTICAL));
+		toolBar.add(GuiHelper.createSeparator());
 		toolBar.add(skipButton);
 
 		JTextArea aboutUserRegistrationLabel = GuiHelper.createLabelTextArea()

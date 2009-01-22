@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.table.DefaultTableModel;
 
@@ -78,7 +77,7 @@ public class ComparatorSelectionPanel extends JPanel implements WeakObserver {
 
 		// Top toolbar
 		JToolBar toolbar = GuiHelper.createToolBar();
-		toolbar.add(new JSeparator(JSeparator.VERTICAL));
+		toolbar.add(GuiHelper.createSeparator());
 		toolbar.add(new RunComparatorButton(_leftDataContextSelection,
 				_rightDataContextSelection, _leftColumnSelection,
 				_rightColumnSelection));

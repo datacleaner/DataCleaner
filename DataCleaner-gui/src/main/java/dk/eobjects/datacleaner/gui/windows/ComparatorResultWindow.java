@@ -48,7 +48,7 @@ public class ComparatorResultWindow extends ResultWindow {
 		String title = getTitle(columns);
 
 		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
-		JLabel label = new JLabel("Comparison results for columns: " + title);
+		JLabel label = new JLabel("Comparator results for columns: " + title);
 		label.setFont(GuiHelper.FONT_HEADER);
 		taskPaneContainer.add(label);
 		JPanel panel = GuiHelper.createPanel().applyBorderLayout().toComponent();

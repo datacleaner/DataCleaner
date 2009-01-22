@@ -19,7 +19,6 @@ package dk.eobjects.datacleaner.gui.windows;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.panels.TableProfileResultsPanel;
@@ -43,8 +42,8 @@ public class ProfilerResultWindow extends ResultWindow {
 		String tableName = table.getName();
 		TableProfileResultsPanel tableProfileResultsPanel = new TableProfileResultsPanel(
 				dataContext, table, results);
-		JScrollPane scrollPane = new JScrollPane(tableProfileResultsPanel);
 		addTab(tableName, GuiHelper
-				.getImageIcon("images/toolbar_preview_data.png"), scrollPane);
+				.getImageIcon("images/toolbar_preview_data.png"),
+				tableProfileResultsPanel);
 	}
 }

@@ -16,14 +16,15 @@
  */
 package dk.eobjects.datacleaner.gui.windows;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.panels.TableValidationRuleResultsPanel;
 import dk.eobjects.datacleaner.validator.IValidationRuleResult;
+import dk.eobjects.datacleaner.validator.trivial.DummyValidationRule;
 import dk.eobjects.metamodel.MetaModelHelper;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
@@ -49,12 +50,20 @@ public class ValidatorResultWindow extends ResultWindow {
 	}
 
 	public void addResults(Table table, List<IValidationRuleResult> results) {
+		// Remove dummy validation rules from the result
+		for (Iterator<IValidationRuleResult> it = results.iterator(); it
+				.hasNext();) {
+			IValidationRuleResult validationRuleResult = it.next();
+			if (validationRuleResult.getDescriptor() == DummyValidationRule.DESCRIPTOR) {
+				it.remove();
+			}
+		}
 		Column[] queriedColumns = MetaModelHelper.getTableColumns(table,
 				_columns);
 		TableValidationRuleResultsPanel tableProfileResultsPanel = new TableValidationRuleResultsPanel(
 				table, queriedColumns, results);
-		JScrollPane scrollPane = new JScrollPane(tableProfileResultsPanel);
 		addTab(table.getName(), GuiHelper
-				.getImageIcon("images/toolbar_preview_data.png"), scrollPane);
+				.getImageIcon("images/toolbar_preview_data.png"),
+				tableProfileResultsPanel);
 	}
 }

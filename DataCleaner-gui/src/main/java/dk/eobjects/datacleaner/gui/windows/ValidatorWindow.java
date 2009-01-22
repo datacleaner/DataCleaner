@@ -35,7 +35,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.xml.parsers.DocumentBuilder;
@@ -161,7 +160,7 @@ public class ValidatorWindow extends AbstractWindow implements WeakObserver {
 		JToolBar toolbar = GuiHelper.createToolBar();
 		toolbar.add(new OpenDatabaseButton(_dataContextSelection));
 		toolbar.add(new OpenFileButton(_dataContextSelection));
-		toolbar.add(new JSeparator(JSeparator.VERTICAL));
+		toolbar.add(GuiHelper.createSeparator());
 		toolbar.add(saveValidatorButton);
 		_optionsButton = GuiHelper.createButton("Validator options",
 				"images/toolbar_configure.png").toComponent();

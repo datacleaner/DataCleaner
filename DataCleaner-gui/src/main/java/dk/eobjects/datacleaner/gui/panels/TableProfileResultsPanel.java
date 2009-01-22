@@ -17,20 +17,28 @@
 package dk.eobjects.datacleaner.gui.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
+import dk.eobjects.datacleaner.export.XmlResultExporter;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.widgets.MatrixTable;
 import dk.eobjects.datacleaner.profiler.IMatrix;
@@ -39,22 +47,66 @@ import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.profiler.ProfilerHelper;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Table;
+import dk.eobjects.metamodel.util.FileHelper;
 
 public class TableProfileResultsPanel extends JPanel {
 
 	private static final long serialVersionUID = 7504166314384076977L;
 
-	public TableProfileResultsPanel(DataContext dataContext, Table table,
-			List<IProfileResult> results) {
+	public TableProfileResultsPanel(DataContext dataContext, final Table table,
+			final List<IProfileResult> results) {
 		super();
 		setLayout(new BorderLayout());
 
+		JLabel headerLabel = new JLabel("Profiler results for "
+				+ table.getName());
+		headerLabel.setFont(GuiHelper.FONT_HEADER);
+
+		JButton exportButton = new JButton("Export", GuiHelper
+				.getImageIcon("images/toolbar_save.png"));
+		exportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser f = new JFileChooser();
+				f.setSelectedFile(new File(table.getName() + "-results.xml"));
+				if (JFileChooser.APPROVE_OPTION == f
+						.showSaveDialog(TableProfileResultsPanel.this)) {
+					boolean accepted = false;
+					File file = f.getSelectedFile();
+					if (file.exists()) {
+						if (JOptionPane.YES_OPTION == JOptionPane
+								.showConfirmDialog(
+										TableProfileResultsPanel.this,
+										"File already exists, overwrite?",
+										"Overwrite", JOptionPane.YES_NO_OPTION)) {
+							accepted = true;
+						}
+					} else {
+						accepted = true;
+					}
+					if (accepted) {
+						PrintWriter writer = new PrintWriter(FileHelper
+								.getBufferedWriter(file));
+						XmlResultExporter xmlResultExporter = new XmlResultExporter();
+						xmlResultExporter.writeProfileResultHeader(writer);
+						for (IProfileResult profileResult : results) {
+							xmlResultExporter.writeProfileResult(table,
+									profileResult, writer);
+						}
+						xmlResultExporter.writeProfileResultFooter(writer);
+						writer.close();
+					}
+				}
+			}
+		});
+
+		JToolBar toolBar = GuiHelper.createToolBar();
+		toolBar.add(headerLabel);
+		toolBar.add(GuiHelper.createSeparator());
+		toolBar.add(exportButton);
+
+		add(toolBar, BorderLayout.NORTH);
+
 		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
-
-		JLabel label = new JLabel("Profile results for " + table.getName());
-		label.setFont(GuiHelper.FONT_HEADER);
-		taskPaneContainer.add(label);
-
 		// Loop through every profile for this table
 		Map<IProfileDescriptor, List<IProfileResult>> profiles = ProfilerHelper
 				.getProfileResultsByProfileDescriptor(results);
@@ -111,32 +163,14 @@ public class TableProfileResultsPanel extends JPanel {
 
 						MatrixTable matrixTable = new MatrixTable(matrix,
 								dataContext);
-						JPanel tableContainerPanel = GuiHelper.createPanel()
-								.applyLayout(
-										new FlowLayout(FlowLayout.LEFT, 0, 0))
-								.toComponent();
-						JPanel matrixTablePanel = matrixTable.toPanel();
-						int numColumns = matrixTable.getColumnCount();
-						if (numColumns < 8) {
-							Dimension d = new Dimension();
-							Dimension preferredSize = matrixTablePanel
-									.getPreferredSize();
-							if (numColumns < 4) {
-								d.width = numColumns * 200;
-							} else {
-								d.width = numColumns * 100;
-							}
-							d.height = preferredSize.height;
-							matrixTablePanel.setSize(d);
-							matrixTablePanel.setPreferredSize(d);
-						}
-						tableContainerPanel.add(matrixTablePanel);
-						taskPane.add(tableContainerPanel);
+						taskPane.add(new JScrollPane(matrixTable.toPanel(),
+								JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+								JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 						taskPaneContainer.add(taskPane);
 					}
 				}
 			}
 		}
-		add(taskPaneContainer, BorderLayout.CENTER);
+		add(new JScrollPane(taskPaneContainer), BorderLayout.CENTER);
 	}
 }

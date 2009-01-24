@@ -319,21 +319,95 @@
 		<section>
 			<title>Running a DataCleaner job</title>
 			<para>TODO: calling runjob.sh/.cmd</para>
+			<blockquote>
+				<literallayout>usage: runjob
+Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)
+ -?,--help                show this help message
+ -i,--input-file &lt;arg&gt;    input file path (.dcp or .dcv file)
+ -o,--output-file &lt;arg&gt;   output file path
+ -ow,--overwrite          overwrite output-file if it already exists
+ -t,--output-type &lt;arg&gt;   output type (xml|customClassName)
+Please visit http://datacleaner.eobjects.org/ for more information</literallayout>
+			</blockquote>
 		</section>
 		<section>
 			<title>Output formats</title>
-			<para>TODO: XML and CSV output formats</para>
+			<para>
+				As described above you can specify output format by using the <emphasis>output-type</emphasis>
+				CLI-parameter. In the following sections we will describe the default output type, XML, and how
+				to extend DataCleaner with custom output formats.
+			</para>
+			<section>
+				<title>XML output format</title>
+				<para>
+					The default <emphasis>output-type</emphasis> of DataCleaner CLI is an XML format suited
+					for persisting all the available information about the job. Most users will find the XML
+					output format satisfying and sufficient. 
+				</para>
+			</section>
+			<section>
+				<title>Custom output formats</title>
+				<para>
+					With little effort it is possible to extend DataCleaner with your own output formats
+					for the DataCleaner CLI application. To do this you will need a little Java development
+					skills but the complexity level is kept at a minimum.
+				</para>
+				<para>
+					To create your own type of output you will have to create a Java class that implements the
+					<emphasis>dk.eobjects.datacleaner.export.IResultExporter</emphasis> interface.
+					In the interface a PrintWriter instance is offered to support textual formating of the results
+					but you are not limited to this kind of format. If you need it, you can create your own
+					class that saves the results to a database, sends them as web-service calls. All this is leveraged
+					by the standard Java class library which is at your disposal.
+				</para>
+				<para>
+					When you're done developing your custom IResultExplorer implementing class,
+					using it from the command line requires two things:
+				</para>
+				<orderedlist>
+					<listitem>
+						<para>
+							Adding your class to the class path. This can be done either by placing
+							your java .class file(s) relative to DataCleaner's root-directory or if you prefer
+							to bundle the .class file(s) inside a JAR-file, you can add the JAR-file to the
+							classpath by editing runjob.cmd/.sh to include it when calling the java command.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							Providing the class as the <emphasis>--output-type</emphasis>
+							parameter when you call DataCleaner:
+						</para>
+						<blockquote>
+							<para>runjob --output-type <emphasis>com.mycompany.MyResultExporter</emphasis></para>
+						</blockquote>
+					</listitem>
+				</orderedlist>
+			</section>
 		</section>
 		<section>
 			<title>Scheduling jobs</title>
-			<para>TODO: Examples of scheduling using cron and Scheduled Tasks</para>
+			<para>
+				DataCleaner does not ship with a scheduler. This is a deliberate choice because there are so many
+				priorities that go into selecting the right scheduler. For people who just want a simple scheduling
+				of DataCleaner tasks, we recommend using <emphasis>cron</emphasis> for linux/unix machines and 
+				<emphasis>scheduled tasks</emphasis> for windows machines.
+			</para>
+			<para>
+				If you're applying DataCleaner to an enterprise data warehousing environment be aware that most
+				enterprise suites have their own schedulers and applying DataCleaner jobs to their workflows should
+				be quite possible.
+			</para>
 		</section>
 	</chapter>
 	<chapter>
 		<title>Developers guide</title>
 		<section>
 			<title>Java API reference documentation</title>
-			<para>TODO</para>
+			<para>The Java API reference documentation ("javadoc") is available at the following URL:</para>
+			<para>
+				<ulink url="http://eobjects.org/datacleaner/javadoc/current">http://eobjects.org/datacleaner/javadoc/current</ulink>
+			</para>
 		</section>
 		<section>
 			<title>An introduction to the architecture of DataCleaner</title>
@@ -346,6 +420,35 @@
 		<section>
 			<title>Developing custom profiles</title>
 			<para>TODO</para>
+		</section>
+		<section>
+			<title>RegexSwap RESTful web services</title>
+			<para>
+				The <ulink url="http://datacleaner.eobjects.org/regexswap">RegexSwap</ulink> was made with
+				the broadest audience in mind, not just users of DataCleaner. For this reason we have applied
+				some RESTful web services to service anyone who wants to access the online repository of
+				regular expressions.
+			</para>
+			<para>
+				The RESTful web services are:
+			</para>
+			<section>
+				<title>Categories</title>
+				<para>Provides a list of all the categories in the RegexSwap</para>
+				<para>URL: <ulink url="http://datacleaner.eobjects.org/ws/categories">http://datacleaner.eobjects.org/ws/categories</ulink></para>
+			</section>
+			<section>
+				<title>Regexes in category</title>
+				<para>Provides a list of regexes in a specified category</para>
+				<para>URL template: http://datacleaner.eobjects.org/ws/regexes/[category name]</para>
+				<para>Example URL: <ulink url="http://datacleaner.eobjects.org/ws/regexes/programming">http://datacleaner.eobjects.org/ws/regexes/programming</ulink></para>
+			</section>
+			<section>
+				<title>Regex details</title>
+				<para>Provides detail data about a single regex.</para>
+				<para>URL template: http://datacleaner.eobjects.org/ws/regex/[regex name]</para>
+				<para>Example URL: <ulink url="http://datacleaner.eobjects.org/ws/regex/Java%20class%20name">http://datacleaner.eobjects.org/ws/regex/Java%20class%20name</ulink></para>
+			</section>
 		</section>
 	</chapter>
 </book>

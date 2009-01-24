@@ -20,4 +20,4 @@ echo "Using DATACLEANER_HOME: $DATACLEANER_HOME"
 
 JAVA_OPTS="$JAVA_OPTS -Xmx1024m -XX:MaxPermSize=256m"
 
-exec java $JAVA_OPTS -cp datacleaner.jar dk.eobjects.datacleaner.gui.DataCleanerCli $*
+exec java $JAVA_OPTS -cp .:datacleaner.jar dk.eobjects.datacleaner.gui.DataCleanerCli $*

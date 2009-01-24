@@ -18,4 +18,4 @@ set DATACLEANER_HOME=%~dp0
 cd /d %DATACLEANER_HOME%
 echo Using DATACLEANER_HOME: %DATACLEANER_HOME%
 
-call java -Xmx1024m -XX:MaxPermSize=256m -cp datacleaner.jar dk.eobjects.datacleaner.gui.DataCleanerCli %*
+call java -Xmx1024m -XX:MaxPermSize=256m -cp .;datacleaner.jar dk.eobjects.datacleaner.gui.DataCleanerCli %*

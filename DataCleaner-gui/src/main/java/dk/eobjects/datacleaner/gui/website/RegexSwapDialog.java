@@ -300,6 +300,8 @@ public class RegexSwapDialog extends BanneredDialog {
 					.toString(TimeAnalysisProfile.DATE_AND_TIME_PATTERN));
 
 			_regexDescriptionLabel.setText(sb.toString());
+			_regexDescriptionLabel.setSelectionStart(0);
+			_regexDescriptionLabel.setSelectionEnd(0);
 			_importRegexButton.setEnabled(true);
 			_viewOnlineButton.setEnabled(true);
 		}

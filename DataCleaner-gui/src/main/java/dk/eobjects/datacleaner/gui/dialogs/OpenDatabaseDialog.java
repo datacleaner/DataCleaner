@@ -75,10 +75,9 @@ public class OpenDatabaseDialog extends BanneredDialog {
 	}
 
 	public OpenDatabaseDialog(DataContextSelection dataContextSelection) {
-		super();
+		super(400, 520);
 		setModal(true);
 		_dataContextSelection = dataContextSelection;
-		setSize(400, 520);
 
 		JTextArea aboutDatabases = GuiHelper.createLabelTextArea()
 				.toComponent();

@@ -22,16 +22,21 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -57,11 +62,17 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 	private GuiSettings _settings;
 	private CloseableTabbedPane _tabbedPane;
 	private JPanel _driversPanel;
+	private JTextField _proxyHostField;
+	private JFormattedTextField _proxyPortField;
+	private JCheckBox _proxyCheckBox;
+	private JTextField _proxyUsernameField;
+	private JPasswordField _proxyPasswordField;
+	private JCheckBox _proxyAuthCheckBox;
 
 	public SettingsDialog() {
 		super(470, 500);
 	}
-	
+
 	@Override
 	protected String getBannerIconLabel() {
 		return "images/dialog_banner_settings.png";
@@ -76,7 +87,7 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 
 		// tabbed pane with settings categories
 		_tabbedPane = new CloseableTabbedPane();
-		_tabbedPane.setUnclosableTab(0).setUnclosableTab(1);
+		_tabbedPane.setUnclosableTab(0).setUnclosableTab(1).setUnclosableTab(2);
 		_tabbedPane.setName("categoriesTab");
 		_tabbedPane.addTab("General", getGeneralTab());
 		_driversPanel = GuiHelper.createPanel().toComponent();
@@ -90,6 +101,8 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		_tabbedPane.addTab("Database drivers", scrollPane);
 		updateDatabaseDriversTab();
 		content.add(_tabbedPane, BorderLayout.CENTER);
+
+		_tabbedPane.addTab("Network", getNetworkTab());
 
 		// toolbar with save settings button
 		JToolBar toolBar = getToolbar();
@@ -119,6 +132,62 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		JScrollPane scrollPane = new JScrollPane(_generalPanel);
 		scrollPane.setBorder(null);
 		return scrollPane;
+	}
+
+	private Component getNetworkTab() {
+		JPanel networkTabPanel = GuiHelper.createPanel().toComponent();
+
+		_proxyCheckBox = GuiHelper.createCheckBox("Enable HTTP proxy?",
+				_settings.isProxyEnabled()).toComponent();
+
+		JPanel proxyPanel = GuiHelper.createPanel().applyTitledBorder(
+				"Proxy settings").toComponent();
+
+		GuiHelper.addToGridBag(new JLabel("Proxy host"), proxyPanel, 0, 0);
+		_proxyHostField = new JTextField(_settings.getProxyHost(), 16);
+		GuiHelper.addToGridBag(_proxyHostField, proxyPanel, 1, 0);
+
+		GuiHelper.addToGridBag(new JLabel("Proxy port"), proxyPanel, 0, 1);
+		_proxyPortField = new JFormattedTextField(new DecimalFormat("#####0"));
+		_proxyPortField.setText("" + _settings.getProxyPort());
+		GuiHelper.addToGridBag(_proxyPortField, proxyPanel, 1, 1);
+
+		_proxyAuthCheckBox = GuiHelper.createCheckBox("Enable authentication?",
+				_settings.isProxyAuthenticationEnabled()).toComponent();
+
+		JPanel proxyAuthPanel = GuiHelper.createPanel().applyTitledBorder(
+				"Proxy authentication").toComponent();
+		GuiHelper.addToGridBag(new JLabel("Username"), proxyAuthPanel, 0, 0);
+		_proxyUsernameField = new JTextField(_settings.getProxyUsername(), 16);
+		GuiHelper.addToGridBag(_proxyUsernameField, proxyAuthPanel, 1, 0);
+
+		GuiHelper.addToGridBag(new JLabel("Password"), proxyAuthPanel, 0, 1);
+		_proxyPasswordField = new JPasswordField(_settings.getProxyPassword(),
+				16);
+		GuiHelper.addToGridBag(_proxyPasswordField, proxyAuthPanel, 1, 1);
+
+		GuiHelper.addToGridBag(_proxyAuthCheckBox, proxyPanel, 0, 2, 2, 1);
+		GuiHelper.addToGridBag(proxyAuthPanel, proxyPanel, 0, 3, 2, 1);
+
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_proxyHostField.setEnabled(_proxyCheckBox.isSelected());
+				_proxyPortField.setEnabled(_proxyCheckBox.isSelected());
+				_proxyAuthCheckBox.setEnabled(_proxyCheckBox.isSelected());
+				_proxyUsernameField.setEnabled(_proxyAuthCheckBox.isSelected() && _proxyCheckBox.isSelected());
+				_proxyPasswordField.setEnabled(_proxyAuthCheckBox.isSelected() && _proxyCheckBox.isSelected());
+			}
+		};
+		_proxyCheckBox.addActionListener(actionListener);
+		_proxyAuthCheckBox.addActionListener(actionListener);
+
+		// use ActionListener to initialize components
+		actionListener.actionPerformed(null);
+
+		GuiHelper.addToGridBag(_proxyCheckBox, networkTabPanel, 0, 0);
+		GuiHelper.addToGridBag(proxyPanel, networkTabPanel, 0, 1);
+
+		return networkTabPanel;
 	}
 
 	private void updateDatabaseDriversTab() {
@@ -221,12 +290,36 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 				DataCleanerGui.getMainWindow().repaintAll();
 			}
 			_settings.setLookAndFeelClassName(newLafClassName);
-			_settings.setHorisontalMatrixTables(_generalPanel
-					.isTableLayoutHorizontal());
 		} catch (Exception e) {
 			GuiHelper.showErrorMessage("Could not apply Look and feel", e
 					.getMessage(), e);
 		}
+		_settings.setHorisontalMatrixTables(_generalPanel
+				.isTableLayoutHorizontal());
+		if (_proxyCheckBox.isSelected()) {
+			_settings.setProxyHost(_proxyHostField.getText());
+			try {
+				int port = Integer.parseInt(_proxyPortField.getText());
+				_settings.setProxyPort(port);
+			} catch (NumberFormatException e) {
+				GuiHelper.showErrorMessage("Invalid proxy port",
+						e.getMessage(), e);
+			}
+
+			if (_proxyAuthCheckBox.isSelected()) {
+				_settings.setProxyUsername(_proxyUsernameField.getText());
+				_settings.setProxyPassword(new String(_proxyPasswordField
+						.getPassword()));
+			} else {
+				_settings.setProxyUsername(null);
+				_settings.setProxyPassword(null);
+			}
+		} else {
+			_settings.setProxyHost(null);
+			_settings.setProxyUsername(null);
+			_settings.setProxyPassword(null);
+		}
+
 		GuiSettings.saveSettings(_settings);
 	}
 

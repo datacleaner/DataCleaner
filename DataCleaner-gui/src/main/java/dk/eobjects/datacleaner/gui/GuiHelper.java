@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -56,13 +57,19 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpHost;
+import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -72,6 +79,8 @@ import org.jdesktop.swingx.error.ErrorLevel;
 import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
+import dk.eobjects.datacleaner.util.WeakObservable;
+import dk.eobjects.datacleaner.util.WeakObserver;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
@@ -388,13 +397,39 @@ public class GuiHelper {
 
 	public static HttpClient getHttpClient() {
 		if (_httpClient == null) {
-			MultiThreadedHttpConnectionManager connectionManager = new MultiThreadedHttpConnectionManager();
-			HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
-			connectionManagerParams.setConnectionTimeout(10 * 1000);
-			connectionManager.setParams(connectionManagerParams);
-			_httpClient = new HttpClient(connectionManager);
+			GuiSettings settings = GuiSettings.getSettings();
+			_httpClient = createHttpClient(settings);
+
+			// Add an observer for replacing the httpClient in case proxy
+			// settings change
+			settings.addObserver(new WeakObserver() {
+				public void update(WeakObservable observable) {
+					_httpClient = createHttpClient(GuiSettings.getSettings());
+				}
+			});
 		}
 		return _httpClient;
+	}
+
+	private static HttpClient createHttpClient(GuiSettings settings) {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		if (settings.isProxyEnabled()) {
+			HttpHost proxy = new HttpHost(settings.getProxyHost(), settings
+					.getProxyPort());
+			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,
+					proxy);
+
+			if (settings.isProxyAuthenticationEnabled()) {
+				AuthScope authScope = new AuthScope(settings.getProxyHost(),
+						settings.getProxyPort());
+				UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+						settings.getProxyUsername(), settings
+								.getProxyPassword());
+				httpClient.getCredentialsProvider().setCredentials(authScope,
+						credentials);
+			}
+		}
+		return httpClient;
 	}
 
 	/**
@@ -411,11 +446,16 @@ public class GuiHelper {
 				@Override
 				public void run() {
 					try {
-						PostMethod method = new PostMethod(
+						List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+						HttpPost method = new HttpPost(
 								"http://datacleaner.eobjects.org/ws/user_action");
-						method.setParameter("username", username);
-						method.setParameter("action", action);
-						getHttpClient().executeMethod(method);
+						nameValuePairs.add(new BasicNameValuePair("username",
+								username));
+						nameValuePairs.add(new BasicNameValuePair("action",
+								action));
+						method.setEntity(new UrlEncodedFormEntity(
+								nameValuePairs));
+						getHttpClient().execute(method);
 					} catch (Throwable t) {
 						// Do nothing, this is a low priority task
 						_log.debug(t);

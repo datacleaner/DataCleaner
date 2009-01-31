@@ -71,6 +71,10 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	private String _lookAndFeelClassName;
 	private String _username;
 	private boolean _horisontalMatrixTables;
+	private String _proxyHost;
+	private int _proxyPort = 8080;
+	private String _proxyUsername;
+	private String _proxyPassword;
 
 	// Regexes are not serialized, but loaded from REGEXES_FILE
 	private transient List<NamedRegex> _regexes;
@@ -317,5 +321,45 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	public GuiSettings setDatabaseDrivers(List<DatabaseDriver> driverLocations) {
 		_databaseDrivers = driverLocations;
 		return this;
+	}
+
+	public boolean isProxyEnabled() {
+		return _proxyHost != null;
+	}
+
+	public void setProxyHost(String proxyHost) {
+		_proxyHost = proxyHost;
+	}
+
+	public String getProxyHost() {
+		return _proxyHost;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		_proxyPort = proxyPort;
+	}
+
+	public int getProxyPort() {
+		return _proxyPort;
+	}
+
+	public boolean isProxyAuthenticationEnabled() {
+		return _proxyUsername != null;
+	}
+
+	public void setProxyUsername(String proxyUsername) {
+		_proxyUsername = proxyUsername;
+	}
+
+	public String getProxyUsername() {
+		return _proxyUsername;
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		_proxyPassword = proxyPassword;
+	}
+
+	public String getProxyPassword() {
+		return _proxyPassword;
 	}
 }

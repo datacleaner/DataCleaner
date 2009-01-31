@@ -33,10 +33,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 
 import dk.eobjects.datacleaner.gui.GuiBuilder;
 import dk.eobjects.datacleaner.gui.GuiHelper;
@@ -109,10 +110,10 @@ public class DownloadDialog extends JDialog {
 			byte[] buffer = new byte[1024];
 			outputStream = new FileOutputStream(_file);
 			HttpClient httpClient = GuiHelper.getHttpClient();
-			GetMethod method = new GetMethod(_downloadUrl);
-			httpClient.executeMethod(method);
-			_responseSize = method.getResponseContentLength();
-			inputStream = method.getResponseBodyAsStream();
+			HttpGet method = new HttpGet(_downloadUrl);
+			HttpResponse response = httpClient.execute(method);
+			_responseSize = response.getEntity().getContentLength();
+			inputStream = response.getEntity().getContent();
 
 			for (int numBytes = inputStream.read(buffer); numBytes != -1; numBytes = inputStream
 					.read(buffer)) {

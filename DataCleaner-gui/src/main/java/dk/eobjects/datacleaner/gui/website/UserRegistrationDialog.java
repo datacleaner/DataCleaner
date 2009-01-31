@@ -22,7 +22,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,8 +38,12 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.message.BasicNameValuePair;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
@@ -186,18 +192,20 @@ public class UserRegistrationDialog extends BanneredDialog {
 	}
 
 	private String getUrlContent(String url, Map<String, String> params) {
-		PostMethod method = new PostMethod(url);
+		HttpPost method = new HttpPost(url);
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		for (Entry<String, String> entry : params.entrySet()) {
-			method.addParameter(entry.getKey(), entry.getValue());
+			nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry
+					.getValue()));
 		}
 		try {
-			GuiHelper.getHttpClient().executeMethod(method);
-			return method.getResponseBodyAsString();
-		} catch (HttpException e) {
-			_log.error(e);
-			throw new IllegalArgumentException(url);
+			method.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+			String response = GuiHelper.getHttpClient().execute(method,
+					responseHandler);
+			return response;
 		} catch (IOException e) {
-			_log.warn(e);
+			_log.warn("Exception when executing HTTP method", e);
 			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this,
 					"Could not establish connection.\nError type: "
 							+ e.getClass().getSimpleName()

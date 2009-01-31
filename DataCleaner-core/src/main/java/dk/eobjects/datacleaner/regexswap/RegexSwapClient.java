@@ -23,12 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import dk.eobjects.datacleaner.util.DomHelper;
@@ -43,7 +44,7 @@ public class RegexSwapClient {
 	private HttpClient _httpClient;
 
 	public RegexSwapClient() {
-		this(new HttpClient());
+		this(new DefaultHttpClient());
 	}
 
 	public RegexSwapClient(HttpClient httpClient) {
@@ -161,19 +162,12 @@ public class RegexSwapClient {
 	}
 
 	private Element getRootNode(String url) throws IOException {
-		GetMethod method = new GetMethod(url);
+		HttpGet method = new HttpGet(url);
 		try {
-			_httpClient.executeMethod(method);
-			final InputStream stream = method.getResponseBodyAsStream();
-			InputSource inputSource = new InputSource() {
-				@Override
-				public InputStream getByteStream() {
-					return stream;
-				}
-			};
-
+			HttpResponse response = _httpClient.execute(method);
+			InputStream inputStream = response.getEntity().getContent();
 			Document document = DomHelper.getDocumentBuilder().parse(
-					inputSource);
+					inputStream);
 			return (Element) document.getFirstChild();
 		} catch (SAXException e) {
 			throw new IllegalStateException(e);

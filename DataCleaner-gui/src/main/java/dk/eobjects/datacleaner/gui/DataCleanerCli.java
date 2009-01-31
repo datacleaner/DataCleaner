@@ -67,13 +67,9 @@ import dk.eobjects.metamodel.util.FileHelper;
 public class DataCleanerCli {
 
 	private static final String OPTION_HELP = "?";
-
 	private static final String OPTION_INPUT_FILE = "i";
-
 	private static final String OPTION_OVERWRITE = "ow";
-
 	private static final String OPTION_OUTPUT_TYPE = "t";
-
 	private static final String OPTION_OUTPUT_FILE = "o";
 
 	private static final Log _log = LogFactory.getLog(DataCleanerCli.class);

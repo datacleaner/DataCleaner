@@ -48,10 +48,10 @@ public class DataContextSelectionTest extends TestCase {
 		DomHelper.transform(_dataContextSelection.serialize(_document),
 				new StreamResult(sw));
 		assertEquals(
-				"<?xml version=_1.0_ encoding=_UTF-8_?><dataContext><property name=_filename_>"
+				"<?xml version=_1.0_ encoding=_UTF-8_?>\n<dataContext>\n<property name=_filename_>"
 						+ new File("src/test/resources/customers_semicolon.csv")
 								.getAbsolutePath()
-						+ "</property><property name=_quoteChar_>_</property><property name=_separator_>;</property></dataContext>",
+						+ "</property>\n<property name=_quoteChar_>_</property>\n<property name=_separator_>;</property>\n</dataContext>\n",
 				sw.toString().replace('\"', '_'));
 	}
 
@@ -69,11 +69,11 @@ public class DataContextSelectionTest extends TestCase {
 		DomHelper.transform(_dataContextSelection.serialize(_document),
 				new StreamResult(sw));
 		assertEquals(
-				"<?xml version=_1.0_ encoding=_UTF-8_?><dataContext><property name=_filename_>"
+				"<?xml version=_1.0_ encoding=_UTF-8_?>\n<dataContext>\n<property name=_filename_>"
 						+ new File("src/test/resources/customers.xls")
 								.getAbsolutePath()
-						+ "</property></dataContext>", sw.toString().replace(
-						'\"', '_'));
+						+ "</property>\n</dataContext>\n", sw.toString()
+						.replace('\"', '_'));
 	}
 
 	public void testDatabase() throws Exception {
@@ -91,7 +91,7 @@ public class DataContextSelectionTest extends TestCase {
 		DomHelper.transform(_dataContextSelection.serialize(_document),
 				new StreamResult(sw));
 		assertEquals(
-				"<?xml version=_1.0_ encoding=_UTF-8_?><dataContext><property name=_catalog_/><property name=_connectionString_>jdbc:hsqldb:res:database/datacleaner</property><property name=_password_/><property name=_tables_>true</property><property name=_username_/><property name=_views_>false</property></dataContext>",
+				"<?xml version=_1.0_ encoding=_UTF-8_?>\n<dataContext>\n<property name=_catalog_/>\n<property name=_connectionString_>jdbc:hsqldb:res:database/datacleaner</property>\n<property name=_password_/>\n<property name=_tables_>true</property>\n<property name=_username_/>\n<property name=_views_>false</property>\n</dataContext>\n",
 				sw.toString().replace('\"', '_'));
 		_dataContextSelection.selectNothing();
 	}

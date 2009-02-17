@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -174,6 +175,7 @@ public class DomHelper {
 		try {
 			TransformerFactory tf = TransformerFactory.newInstance();
 			Transformer trans = tf.newTransformer();
+			trans.setOutputProperty(OutputKeys.INDENT, "yes");
 			trans.transform(new DOMSource(node), result);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);

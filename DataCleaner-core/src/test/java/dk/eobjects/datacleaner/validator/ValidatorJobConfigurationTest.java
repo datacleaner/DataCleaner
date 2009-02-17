@@ -72,7 +72,7 @@ public class ValidatorJobConfigurationTest extends DataCleanerTestCase {
 		StringWriter sw = new StringWriter();
 		DomHelper.transform(serializedConfiguration, new StreamResult(sw));
 		assertEquals(
-				"<?xml version=_1.0_ encoding=_UTF-8_?><configuration validationRuleClass=_dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule_><property name=_foo1_>bar1</property><property name=_foo2_>bar2</property><column schema=_PUBLIC_ table=_CUSTOMERS_>CUSTOMERNAME</column><column schema=_PUBLIC_ table=_CUSTOMERS_>PHONE</column></configuration>",
+				"<?xml version=_1.0_ encoding=_UTF-8_?>\n<configuration validationRuleClass=_dk.eobjects.datacleaner.validator.trivial.NotNullValidationRule_>\n<property name=_foo1_>bar1</property>\n<property name=_foo2_>bar2</property>\n<column schema=_PUBLIC_ table=_CUSTOMERS_>CUSTOMERNAME</column>\n<column schema=_PUBLIC_ table=_CUSTOMERS_>PHONE</column>\n</configuration>\n",
 				sw.toString().replace('\"', '_'));
 	}
 }

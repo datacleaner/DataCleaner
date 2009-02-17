@@ -49,8 +49,7 @@ public class DateMaskProfileConfigurationPanel implements IConfigurationPanel {
 	private JPanel _dateMaskPanel;
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
-			ColumnSelection columnSelection,
-			IJobConfiguration jobConfiguration) {
+			ColumnSelection columnSelection, IJobConfiguration jobConfiguration) {
 		_dateMaskFields = new ArrayList<JTextField>();
 		_descriptor = (IProfileDescriptor) descriptor;
 		_jobConfiguration = (ProfilerJobConfiguration) jobConfiguration;

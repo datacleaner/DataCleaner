@@ -86,8 +86,8 @@ public abstract class SubsetDataSelectionPanel extends JPanel implements
 
 	public SubsetDataSelectionPanel(ColumnSelection columnSelection) {
 		super();
-		new GuiBuilder<JPanel>(this).applyVerticalLayout().applyTitledBorder("Apply to columns")
-				.applyLightBackground();
+		new GuiBuilder<JPanel>(this).applyVerticalLayout().applyTitledBorder(
+				"Apply to columns").applyLightBackground();
 		_dataSelection = columnSelection;
 		_dataSelection.addObserver(this);
 		_allDataRadio = new JRadioButton("All selected data.", true);

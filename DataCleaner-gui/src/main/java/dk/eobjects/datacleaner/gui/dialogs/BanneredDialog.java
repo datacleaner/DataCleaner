@@ -81,9 +81,10 @@ public abstract class BanneredDialog extends JDialog {
 		panel.add(label, 0, 0);
 		return panel;
 	}
-	
+
 	/**
 	 * Override this method to provide custom banner headers
+	 * 
 	 * @return
 	 */
 	protected String getBannerIconLabel() {

@@ -99,7 +99,7 @@ public class RunProfilerButton extends JButton implements ActionListener {
 							_dataContextSelection.getDataContext());
 				}
 			});
-			
+
 			RunnerWrapper runnerWrapper = new RunnerWrapper(
 					_dataContextSelection, executor);
 			runnerWrapper.execute();

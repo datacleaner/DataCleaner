@@ -28,7 +28,9 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
@@ -40,6 +42,7 @@ import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
 import dk.eobjects.datacleaner.export.IResultExporter;
 import dk.eobjects.datacleaner.export.XmlResultExporter;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
+import dk.eobjects.datacleaner.gui.model.NamedConnection;
 import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.gui.windows.ProfilerWindow;
@@ -55,6 +58,7 @@ import dk.eobjects.datacleaner.validator.ValidatorExecutorCallback;
 import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.schema.Table;
+import dk.eobjects.metamodel.schema.TableType;
 import dk.eobjects.metamodel.util.FileHelper;
 
 /**
@@ -68,21 +72,12 @@ public class DataCleanerCli {
 
 	private static final String OPTION_HELP = "?";
 	private static final String OPTION_INPUT_FILE = "i";
+	private static final String OPTION_NAMED_CONNECTION = "c";
 	private static final String OPTION_OVERWRITE = "ow";
 	private static final String OPTION_OUTPUT_TYPE = "t";
 	private static final String OPTION_OUTPUT_FILE = "o";
 
 	private static final Log _log = LogFactory.getLog(DataCleanerCli.class);
-
-	public static final Options OPTIONS = new Options().addOption(
-			OPTION_INPUT_FILE, "input-file", true,
-			"input file path (.dcp or .dcv file)").addOption(
-			OPTION_OUTPUT_TYPE, "output-type", true,
-			"output type (xml|customClassName)").addOption(OPTION_OUTPUT_FILE,
-			"output-file", true, "output file path").addOption(
-			OPTION_OVERWRITE, "overwrite", false,
-			"overwrite output-file if it already exists").addOption(
-			OPTION_HELP, "help", false, "show this help message");
 
 	private IResultExporter _resultExporter;
 	private PrintWriter _resultWriter = new PrintWriter(System.out);
@@ -92,6 +87,47 @@ public class DataCleanerCli {
 	private File _inputFile;
 
 	private ExecutionConfiguration _executionConfiguration;
+
+	public static Options getOptions() {
+		Options options = new Options();
+		OptionBuilder.withValueSeparator(' ');
+
+		OptionBuilder.hasArgs();
+		OptionBuilder.withLongOpt("input-file");
+		OptionBuilder
+				.withDescription("input file path (DataCleaner Profiler (.dcp) or DataCleaner Validator (.dcv) file)");
+		options.addOption(OptionBuilder.create(OPTION_INPUT_FILE));
+
+		OptionBuilder.hasArgs();
+		OptionBuilder.withLongOpt("output-type");
+		OptionBuilder.withDescription("output type (xml|customClassName)");
+		options.addOption(OptionBuilder.create(OPTION_OUTPUT_TYPE));
+
+		OptionBuilder.hasArgs();
+		OptionBuilder.withLongOpt("output-file");
+		OptionBuilder
+				.withDescription("output file path (should match the output type)");
+		options.addOption(OptionBuilder.create(OPTION_OUTPUT_FILE));
+
+		OptionBuilder.hasArgs(0);
+		OptionBuilder.withLongOpt("overwrite");
+		OptionBuilder
+				.withDescription("overwrite output-file if it already exists");
+		options.addOption(OptionBuilder.create(OPTION_OVERWRITE));
+
+		OptionBuilder.hasArgs();
+		OptionBuilder.withLongOpt("named-connection");
+		OptionBuilder
+				.withDescription("Named database connection to use (replaces the connection specified in the input-file)");
+		options.addOption(OptionBuilder.create(OPTION_NAMED_CONNECTION));
+
+		OptionBuilder.hasArgs(0);
+		OptionBuilder.withLongOpt("help");
+		OptionBuilder.withDescription("show this help message");
+		options.addOption(OptionBuilder.create(OPTION_HELP));
+
+		return options;
+	}
 
 	public void setDataContextSelection(
 			DataContextSelection dataContextSelection) {
@@ -135,7 +171,7 @@ public class DataCleanerCli {
 						100,
 						"runjob",
 						"Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)",
-						OPTIONS, HelpFormatter.DEFAULT_LEFT_PAD,
+						getOptions(), HelpFormatter.DEFAULT_LEFT_PAD,
 						HelpFormatter.DEFAULT_DESC_PAD,
 						"Please visit http://datacleaner.eobjects.org/ for more information");
 
@@ -159,8 +195,7 @@ public class DataCleanerCli {
 		GuiSettings.initialize();
 
 		List<DatabaseDriver> databaseDrivers = new LinkedList<DatabaseDriver>();
-		databaseDrivers.addAll(GuiConfiguration
-				.getBeansOfClass(DatabaseDriver.class));
+		databaseDrivers.addAll(GuiConfiguration.getDatabaseDrivers());
 		databaseDrivers.addAll(GuiSettings.getSettings().getDatabaseDrivers());
 
 		for (DatabaseDriver databaseDriver : databaseDrivers) {
@@ -174,7 +209,7 @@ public class DataCleanerCli {
 		DataCleanerCli cli = new DataCleanerCli();
 
 		CommandLineParser parser = new GnuParser();
-		CommandLine commandLine = parser.parse(OPTIONS, args);
+		CommandLine commandLine = parser.parse(getOptions(), args);
 
 		if (commandLine.getOptions().length == 0) {
 			cli.printHelp();
@@ -185,7 +220,8 @@ public class DataCleanerCli {
 
 			boolean overwrite = commandLine.hasOption(OPTION_OVERWRITE);
 
-			String outputType = commandLine.getOptionValue(OPTION_OUTPUT_TYPE);
+			String outputType = concatArgs(commandLine
+					.getOptionValues(OPTION_OUTPUT_TYPE));
 			if (outputType == null) {
 				// Default output type is xml
 				outputType = "xml";
@@ -200,7 +236,8 @@ public class DataCleanerCli {
 			// interfaces
 			cli.setResultExporterClass(outputType);
 
-			String filePath = commandLine.getOptionValue(OPTION_OUTPUT_FILE);
+			String filePath = concatArgs(commandLine
+					.getOptionValues(OPTION_OUTPUT_FILE));
 			if (filePath != null) {
 				File file = new File(filePath);
 				if (file.exists() && !overwrite) {
@@ -213,20 +250,13 @@ public class DataCleanerCli {
 						.getBufferedWriter(file)));
 			}
 
-			filePath = commandLine.getOptionValue(OPTION_INPUT_FILE);
+			filePath = concatArgs(commandLine
+					.getOptionValues(OPTION_INPUT_FILE));
 			if (filePath == null) {
 				// Test if unnamed arguments match the file option
-				StringBuilder sb = new StringBuilder();
 				String[] remainingArgs = commandLine.getArgs();
 				if (remainingArgs.length > 0) {
-					for (int i = 0; i < remainingArgs.length; i++) {
-						if (i != 0) {
-							sb.append(' ');
-						}
-						String arg = remainingArgs[i];
-						sb.append(arg);
-					}
-					filePath = sb.toString();
+					filePath = concatArgs(remainingArgs);
 				}
 			}
 			if (filePath != null) {
@@ -245,6 +275,39 @@ public class DataCleanerCli {
 				cli.setInputFile(file);
 
 				cli.initialize();
+
+				String namedConnectionName = concatArgs(commandLine
+						.getOptionValues(OPTION_NAMED_CONNECTION));
+				if (namedConnectionName != null) {
+					NamedConnection namedConnection = GuiConfiguration
+							.getNamedConnection(namedConnectionName);
+					if (namedConnection == null) {
+						throw new IllegalArgumentException(
+								"The named database connection '"
+										+ namedConnectionName
+										+ "' could not be resolved");
+					}
+
+					DataContextSelection dataContextSelection = new DataContextSelection();
+					String[] tableTypes = namedConnection.getTableTypes();
+					List<TableType> types = new ArrayList<TableType>();
+					if (ArrayUtils.indexOf(tableTypes, "TABLE") != -1) {
+						types.add(TableType.TABLE);
+					}
+					if (ArrayUtils.indexOf(tableTypes, "VIEW") != -1) {
+						types.add(TableType.VIEW);
+					}
+					dataContextSelection.selectDatabase(namedConnection
+							.getConnectionString(), namedConnection
+							.getCatalog(), namedConnection.getUsername(),
+							namedConnection.getPassword(), types
+									.toArray(new TableType[types.size()]));
+
+					// Set the DataContextSelection (which will override the
+					// input-file's DataContextSelection
+					cli.setDataContextSelection(dataContextSelection);
+				}
+
 				cli.runInputFile();
 
 				// Run garbage collection and finalization in order to close any
@@ -255,6 +318,20 @@ public class DataCleanerCli {
 		}
 	}
 
+	private static String concatArgs(String[] args) {
+		if (args == null) {
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < args.length; i++) {
+			if (i != 0) {
+				sb.append(' ');
+			}
+			sb.append(args[i]);
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Runs a job based on an input file. Requires that the InputFile have been
 	 * set and that the DataCleaner-core framework have been initialized.
@@ -263,15 +340,17 @@ public class DataCleanerCli {
 	 *             if the InputFile is not a parsable DataCleaner file
 	 */
 	public void runInputFile() throws Exception {
+		// Some parsing common to both dcp and dcv files
 		DocumentBuilder documentBuilder = DomHelper.getDocumentBuilder();
 		Document document = documentBuilder.parse(_inputFile);
 		Node node = document.getDocumentElement();
 
-		// Some common parsing
-		Node dataContextSelectionNode = DomHelper.getChildNodesByName(node,
-				DataContextSelection.NODE_NAME).get(0);
-		DataContextSelection dataContextSelection = DataContextSelection
-				.deserialize(dataContextSelectionNode);
+		if (_dataContextSelection == null) {
+			Node dataContextSelectionNode = DomHelper.getChildNodesByName(node,
+					DataContextSelection.NODE_NAME).get(0);
+			_dataContextSelection = DataContextSelection
+					.deserialize(dataContextSelectionNode);
+		}
 		List<Node> executionConfigurationNodes = DomHelper.getChildNodesByName(
 				node, ExecutionConfiguration.NODE_NAME);
 		ExecutionConfiguration executionConfiguration;
@@ -288,8 +367,7 @@ public class DataCleanerCli {
 		executionConfiguration.setDrillToDetailEnabled(false);
 		setExecutionConfiguration(executionConfiguration);
 
-		setDataContextSelection(dataContextSelection);
-		DataContext dc = dataContextSelection.getDataContext();
+		DataContext dc = _dataContextSelection.getDataContext();
 
 		if (ProfilerWindow.NODE_NAME.equals(node.getNodeName())) {
 			// Profiler specific parsing and execution

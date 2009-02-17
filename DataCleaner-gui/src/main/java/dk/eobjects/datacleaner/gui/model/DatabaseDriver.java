@@ -33,9 +33,10 @@ import org.apache.commons.logging.LogFactory;
  * Represents a database driver consisting of a filename (referencing the JAR
  * file) and a class name (the driver class)
  * 
- * Note: DatabaseDrivers are contained BOTH in GuiSettings and GuiConfiguration -
- * GuiSettings contains the dynamically loaded drivers (which are interchangable
- * during runtime) and GuiConfiguration contains the statically loaded drivers.
+ * Note: DatabaseDrivers are contained BOTH in GuiSettings and GuiConfiguration
+ * - GuiSettings contains the dynamically loaded drivers (which are
+ * interchangable during runtime) and GuiConfiguration contains the statically
+ * loaded drivers.
  */
 public class DatabaseDriver implements Serializable {
 

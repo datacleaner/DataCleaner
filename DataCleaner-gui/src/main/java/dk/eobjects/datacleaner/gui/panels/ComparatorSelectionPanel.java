@@ -109,7 +109,8 @@ public class ComparatorSelectionPanel extends JPanel implements WeakObserver {
 		});
 
 		// Bottom toolbar
-		JPanel bottomPanel = GuiHelper.createPanel().applyBorderLayout().toComponent();
+		JPanel bottomPanel = GuiHelper.createPanel().applyBorderLayout()
+				.toComponent();
 		bottomPanel.add(clearLeftButton, BorderLayout.WEST);
 		bottomPanel.add(clearRightButton, BorderLayout.EAST);
 		add(bottomPanel, BorderLayout.SOUTH);

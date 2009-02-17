@@ -63,7 +63,8 @@ public class CloseableTabbedPane extends JTabbedPane {
 	 * with a {@link TabCloseListener}, you can use {@link #getTabCount()} and
 	 * when it is 1, you can call {@link #setUncloseableTab(int)}(0) to make the
 	 * last tab unclosable.
-	 * @return 
+	 * 
+	 * @return
 	 * 
 	 * @see #setCloseableTab(int);
 	 */

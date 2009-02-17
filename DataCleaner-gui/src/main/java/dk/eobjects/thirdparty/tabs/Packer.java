@@ -113,7 +113,7 @@ public class Packer extends GridBagLayout {
 	 * @param comp
 	 *            the component to get the constraints
 	 * 
-	 * <pre>
+	 *            <pre>
 	 * Packer pk = new Packer(pan);
 	 * pk.pack(lab).gridx(0).inset(10, 10, 10, 10);
 	 * pk.pack(text).like(lab).gridx(1).fillx(); // same insets
@@ -327,8 +327,8 @@ public class Packer extends GridBagLayout {
 	}
 
 	/**
-	 * Add anchor=NORTHWEST to the constraints for the current component if how ==
-	 * true remove it if false.
+	 * Add anchor=NORTHWEST to the constraints for the current component if how
+	 * == true remove it if false.
 	 */
 	public Packer setAnchorNorthWest(boolean how) {
 		if (how == true)
@@ -355,8 +355,8 @@ public class Packer extends GridBagLayout {
 	}
 
 	/**
-	 * Add anchor=SOUTHWEST to the constraints for the current component if how ==
-	 * true remove it if false.
+	 * Add anchor=SOUTHWEST to the constraints for the current component if how
+	 * == true remove it if false.
 	 */
 	public Packer setAnchorSouthWest(boolean how) {
 		if (how == true)
@@ -383,8 +383,8 @@ public class Packer extends GridBagLayout {
 	}
 
 	/**
-	 * Add anchor=NORTHEAST to the constraints for the current component if how ==
-	 * true remove it if false.
+	 * Add anchor=NORTHEAST to the constraints for the current component if how
+	 * == true remove it if false.
 	 */
 	public Packer setAnchorNorthEast(boolean how) {
 		if (how == true)
@@ -411,8 +411,8 @@ public class Packer extends GridBagLayout {
 	}
 
 	/**
-	 * Add anchor=SOUTHEAST to the constraints for the current component if how ==
-	 * true remove it if false.
+	 * Add anchor=SOUTHEAST to the constraints for the current component if how
+	 * == true remove it if false.
 	 */
 	public Packer setAnchorSouthEast(boolean how) {
 		if (how == true)
@@ -553,8 +553,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add gridx=tot to the constraints for the current component.
 	 * 
-	 * @param tot -
-	 *            the value to set gridx to.
+	 * @param tot
+	 *            - the value to set gridx to.
 	 */
 	public Packer gridx(int tot) {
 		gc.gridx = tot;
@@ -569,8 +569,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add gridy=tot to the constraints for the current component.
 	 * 
-	 * @param tot -
-	 *            the value to set gridy to.
+	 * @param tot
+	 *            - the value to set gridy to.
 	 */
 	public Packer gridy(int tot) {
 		gc.gridy = tot;
@@ -585,8 +585,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add gridwidth=tot to the constraints for the current component.
 	 * 
-	 * @param tot -
-	 *            the value to set gridwidth to.
+	 * @param tot
+	 *            - the value to set gridwidth to.
 	 */
 	public Packer gridw(int tot) {
 		gc.gridwidth = tot;
@@ -601,8 +601,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add gridheight=tot to the constraints for the current component.
 	 * 
-	 * @param tot -
-	 *            the value to set gridheight to.
+	 * @param tot
+	 *            - the value to set gridheight to.
 	 */
 	public Packer gridh(int tot) {
 		gc.gridheight = tot;
@@ -617,8 +617,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add ipadx=cnt to the constraints for the current component.
 	 * 
-	 * @param cnt -
-	 *            the value to set ipadx to.
+	 * @param cnt
+	 *            - the value to set ipadx to.
 	 */
 	public Packer padx(int cnt) {
 		gc.ipadx = cnt;
@@ -633,8 +633,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add ipady=cnt to the constraints for the current component.
 	 * 
-	 * @param cnt -
-	 *            the value to set ipady to.
+	 * @param cnt
+	 *            - the value to set ipady to.
 	 */
 	public Packer pady(int cnt) {
 		gc.ipady = cnt;
@@ -877,8 +877,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add weightx=wt to the constraints for the current component.
 	 * 
-	 * @param wt -
-	 *            the value to set weightx to.
+	 * @param wt
+	 *            - the value to set weightx to.
 	 */
 	public Packer weightx(double wt) {
 		gc.weightx = wt;
@@ -897,8 +897,8 @@ public class Packer extends GridBagLayout {
 	/**
 	 * Add weighty=wt to the constraints for the current component.
 	 * 
-	 * @param wt -
-	 *            the value to set weightx to.
+	 * @param wt
+	 *            - the value to set weightx to.
 	 */
 	public Packer weighty(double wt) {
 		gc.weighty = wt;

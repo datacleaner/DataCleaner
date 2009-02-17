@@ -174,8 +174,10 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 				_proxyHostField.setEnabled(_proxyCheckBox.isSelected());
 				_proxyPortField.setEnabled(_proxyCheckBox.isSelected());
 				_proxyAuthCheckBox.setEnabled(_proxyCheckBox.isSelected());
-				_proxyUsernameField.setEnabled(_proxyAuthCheckBox.isSelected() && _proxyCheckBox.isSelected());
-				_proxyPasswordField.setEnabled(_proxyAuthCheckBox.isSelected() && _proxyCheckBox.isSelected());
+				_proxyUsernameField.setEnabled(_proxyAuthCheckBox.isSelected()
+						&& _proxyCheckBox.isSelected());
+				_proxyPasswordField.setEnabled(_proxyAuthCheckBox.isSelected()
+						&& _proxyCheckBox.isSelected());
 			}
 		};
 		_proxyCheckBox.addActionListener(actionListener);
@@ -217,7 +219,7 @@ public class SettingsDialog extends BanneredDialog implements WeakObserver {
 		GuiHelper.addToGridBag(registerDriverButton, _driversPanel, 1, 0);
 
 		final List<DatabaseDriver> drivers = new ArrayList<DatabaseDriver>(
-				GuiConfiguration.getBeansOfClass(DatabaseDriver.class));
+				GuiConfiguration.getDatabaseDrivers());
 		drivers.addAll(_settings.getDatabaseDrivers());
 
 		for (int i = 0; i < drivers.size(); i++) {

@@ -37,7 +37,8 @@ import dk.eobjects.datacleaner.validator.ValidatorJobConfiguration;
 public abstract class AbstractValidatorConfigurationPanel implements
 		IConfigurationPanel {
 
-	private JPanel _panel = GuiHelper.createPanel().applyVerticalLayout().toComponent();
+	private JPanel _panel = GuiHelper.createPanel().applyVerticalLayout()
+			.toComponent();
 	protected IValidationRuleDescriptor _descriptor;
 	protected ColumnSelection _columnSelection;
 	protected ValidatorJobConfiguration _jobConfiguration;
@@ -77,8 +78,7 @@ public abstract class AbstractValidatorConfigurationPanel implements
 	}
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
-			ColumnSelection columnSelection,
-			IJobConfiguration jobConfiguration) {
+			ColumnSelection columnSelection, IJobConfiguration jobConfiguration) {
 		_tabbedPane = tabbedPane;
 		_descriptor = (IValidationRuleDescriptor) descriptor;
 		_columnSelection = columnSelection;

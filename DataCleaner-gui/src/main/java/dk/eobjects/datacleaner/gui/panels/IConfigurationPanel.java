@@ -53,8 +53,7 @@ public interface IConfigurationPanel {
 	 *            the initial configuration of this panel
 	 */
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
-			ColumnSelection columnSelection,
-			IJobConfiguration jobConfiguration);
+			ColumnSelection columnSelection, IJobConfiguration jobConfiguration);
 
 	/**
 	 * Gets the Swing JPanel used to represent the panel. This method will only

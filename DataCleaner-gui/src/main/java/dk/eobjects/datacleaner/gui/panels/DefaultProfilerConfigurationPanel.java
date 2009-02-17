@@ -37,8 +37,7 @@ public class DefaultProfilerConfigurationPanel implements IConfigurationPanel {
 	private ProfilerJobConfiguration _jobConfiguration;
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
-			ColumnSelection columnSelection,
-			IJobConfiguration configuration) {
+			ColumnSelection columnSelection, IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
 		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 

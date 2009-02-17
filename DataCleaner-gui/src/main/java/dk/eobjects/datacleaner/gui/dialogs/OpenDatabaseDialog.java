@@ -68,7 +68,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		super.dispose();
 		_dataContextSelection = null;
 	}
-	
+
 	@Override
 	protected String getBannerIconLabel() {
 		return "images/dialog_banner_opendatabase.png";
@@ -293,8 +293,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		GuiHelper.addToGridBag(tableTypePanel, panel, 1, 6, 1, 1);
 
 		final NamedConnection[] namedConnections = GuiConfiguration
-				.getBeansOfClass(NamedConnection.class).toArray(
-						new NamedConnection[0]);
+				.getNamedConnections().toArray(new NamedConnection[0]);
 		final Object[] connectionNames = ReflectionHelper.getProperties(
 				namedConnections, "name");
 

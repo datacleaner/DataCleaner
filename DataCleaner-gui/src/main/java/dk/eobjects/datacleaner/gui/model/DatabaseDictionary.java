@@ -68,7 +68,7 @@ public class DatabaseDictionary implements IDictionary {
 		if (_columnDictionary == null) {
 			DataContext dc = null;
 			Collection<NamedConnection> namedConnections = GuiConfiguration
-					.getBeansOfClass(NamedConnection.class);
+					.getNamedConnections();
 			for (Iterator<NamedConnection> it = namedConnections.iterator(); it
 					.hasNext();) {
 				NamedConnection namedConnection = it.next();
@@ -78,8 +78,8 @@ public class DatabaseDictionary implements IDictionary {
 							namedConnection.getUsername(), namedConnection
 									.getPassword());
 					connection.setReadOnly(true);
-					dc = JdbcDataContextFactory.getDataContext(connection, namedConnection
-							.getCatalog());
+					dc = JdbcDataContextFactory.getDataContext(connection,
+							namedConnection.getCatalog());
 				}
 			}
 

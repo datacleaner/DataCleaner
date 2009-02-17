@@ -51,9 +51,10 @@ public class ComparatorResultWindow extends ResultWindow {
 		JLabel label = new JLabel("Comparator results for columns: " + title);
 		label.setFont(GuiHelper.FONT_HEADER);
 		taskPaneContainer.add(label);
-		JPanel panel = GuiHelper.createPanel().applyBorderLayout().toComponent();
-		addTab(title, GuiHelper
-				.getImageIcon("images/toolbar_preview_data.png"),
+		JPanel panel = GuiHelper.createPanel().applyBorderLayout()
+				.toComponent();
+		addTab(title,
+				GuiHelper.getImageIcon("images/toolbar_preview_data.png"),
 				new JScrollPane(panel));
 
 		for (int i = 0; i < columns.length; i++) {

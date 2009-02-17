@@ -64,8 +64,7 @@ public class DataCleanerGui {
 
 	private static void loadDrivers() {
 		List<DatabaseDriver> databaseDrivers = new LinkedList<DatabaseDriver>();
-		databaseDrivers.addAll(GuiConfiguration
-				.getBeansOfClass(DatabaseDriver.class));
+		databaseDrivers.addAll(GuiConfiguration.getDatabaseDrivers());
 		databaseDrivers.addAll(GuiSettings.getSettings().getDatabaseDrivers());
 
 		for (DatabaseDriver databaseDriver : databaseDrivers) {

@@ -51,8 +51,7 @@ public class RegexProfileConfigurationPanel implements IConfigurationPanel {
 	private Map<NamedRegex, JCheckBox> _regexCheckBoxes = new HashMap<NamedRegex, JCheckBox>();
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
-			ColumnSelection columnSelection,
-			IJobConfiguration configuration) {
+			ColumnSelection columnSelection, IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
 		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 

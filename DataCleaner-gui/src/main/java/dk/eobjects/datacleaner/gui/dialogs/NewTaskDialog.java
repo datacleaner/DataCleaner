@@ -41,7 +41,7 @@ public class NewTaskDialog extends BanneredDialog {
 	public NewTaskDialog() {
 		super(400, 510);
 	}
-	
+
 	@Override
 	protected String getBannerIconLabel() {
 		return "images/dialog_banner_newtask.png";

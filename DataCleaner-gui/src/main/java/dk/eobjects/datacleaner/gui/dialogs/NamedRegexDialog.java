@@ -39,8 +39,8 @@ public class NamedRegexDialog extends BanneredDialog {
 	private JTextField _nameField;
 	private JTextField _expressionField;
 	private JButton _testButton;
-	
-	public NamedRegexDialog(String name, String expression) { 
+
+	public NamedRegexDialog(String name, String expression) {
 		this(null);
 		_nameField.setText(name);
 		_expressionField.setText(expression);

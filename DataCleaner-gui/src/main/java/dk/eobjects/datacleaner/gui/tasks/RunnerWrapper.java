@@ -29,7 +29,8 @@ public class RunnerWrapper extends AbstractTaskRunner {
 	private DataContextSelection _dataContextSelection;
 
 	@SuppressWarnings("unchecked")
-	public RunnerWrapper(DataContextSelection schemaSelection, DataCleanerExecutor runner) {
+	public RunnerWrapper(DataContextSelection schemaSelection,
+			DataCleanerExecutor runner) {
 		_dataContextSelection = schemaSelection;
 		_runner = runner;
 	}

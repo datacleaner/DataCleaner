@@ -59,7 +59,7 @@ public class DataFileChooser extends JFileChooser {
 		CombinationFilter combinationFilter = new CombinationFilter(csvFilter,
 				tsvFilter, excelFilter, odbFilter, xmlFilter, txtFilter,
 				datFilter);
-		
+
 		addChoosableFileFilter(combinationFilter);
 		addChoosableFileFilter(csvFilter);
 		addChoosableFileFilter(tsvFilter);

@@ -155,7 +155,7 @@ public class SchemaTree extends JTree implements WeakObserver,
 				runnable = new LoadColumnsRunnable(path, lastComponent);
 			}
 		}
-		
+
 		if (runnable != null) {
 			runnable.run();
 		}

@@ -12,9 +12,9 @@ package dk.eobjects.thirdparty.textarea.tokermarkers;
 /**
  * A linked list of tokens. Each token has three fields - a token identifier,
  * which is a byte value that can be looked up in the array returned by
- * <code>SyntaxDocument.getColors()</code> to get a color value, a length
- * value which is the length of the token in the text, and a pointer to the next
- * token in the list.
+ * <code>SyntaxDocument.getColors()</code> to get a color value, a length value
+ * which is the length of the token in the text, and a pointer to the next token
+ * in the list.
  * 
  * @author Slava Pestov
  * @version $Id: Token.java,v 1.12 1999/12/13 03:40:30 sp Exp $

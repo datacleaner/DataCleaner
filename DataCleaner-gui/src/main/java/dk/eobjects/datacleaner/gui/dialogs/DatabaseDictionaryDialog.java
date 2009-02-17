@@ -126,7 +126,8 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 		scrollPane.setSize(d);
 		add(scrollPane, BorderLayout.EAST);
 
-		JTextArea aboutDatabaseDictionaries = GuiHelper.createLabelTextArea().toComponent();
+		JTextArea aboutDatabaseDictionaries = GuiHelper.createLabelTextArea()
+				.toComponent();
 		aboutDatabaseDictionaries
 				.setText("Database dictionaries are dictionaries based on columns in databases. To use this kind of dictionary you need to register your database as a named connection in the '"
 						+ GuiConfiguration.CONFIGURATION_FILE + "' file.");
@@ -200,8 +201,7 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 		GuiHelper.addToGridBag(new JLabel("Named connection:"), panel, 0, 2);
 
 		final NamedConnection[] namedConnections = GuiConfiguration
-				.getBeansOfClass(NamedConnection.class).toArray(
-						new NamedConnection[0]);
+				.getNamedConnections().toArray(new NamedConnection[0]);
 		Object[] connectionNames = ReflectionHelper.getProperties(
 				namedConnections, "name");
 

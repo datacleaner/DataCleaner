@@ -28,8 +28,8 @@ import javax.swing.text.Segment;
  */
 public abstract class TokenMarker {
 	/**
-	 * A wrapper for the lower-level <code>markTokensImpl</code> method that
-	 * is called to split a line up into tokens.
+	 * A wrapper for the lower-level <code>markTokensImpl</code> method that is
+	 * called to split a line up into tokens.
 	 * 
 	 * @param line
 	 *            The line
@@ -103,9 +103,8 @@ public abstract class TokenMarker {
 
 	/**
 	 * An abstract method that splits a line up into tokens. It should parse the
-	 * line, and call <code>addToken()</code> to add syntax tokens to the
-	 * token list. Then, it should return the initial token type for the next
-	 * line.
+	 * line, and call <code>addToken()</code> to add syntax tokens to the token
+	 * list. Then, it should return the initial token type for the next line.
 	 * <p>
 	 * 
 	 * For example if the current line contains the start of a multiline comment
@@ -126,8 +125,7 @@ public abstract class TokenMarker {
 	/**
 	 * Returns if the token marker supports tokens that span multiple lines. If
 	 * this is true, the object using this token marker is required to pass all
-	 * lines in the document to the <code>markTokens()</code> method (in
-	 * turn).
+	 * lines in the document to the <code>markTokens()</code> method (in turn).
 	 * <p>
 	 * 
 	 * The default implementation returns true; it should be overridden to
@@ -161,8 +159,7 @@ public abstract class TokenMarker {
 
 	/**
 	 * Informs the token marker that line have been deleted from the document.
-	 * This removes the lines in question from the <code>lineInfo</code>
-	 * array.
+	 * This removes the lines in question from the <code>lineInfo</code> array.
 	 * 
 	 * @param index
 	 *            The first line number
@@ -231,9 +228,8 @@ public abstract class TokenMarker {
 	protected boolean nextLineRequested;
 
 	/**
-	 * Creates a new <code>TokenMarker</code>. This DOES NOT create a
-	 * lineInfo array; an initial call to <code>insertLines()</code> does
-	 * that.
+	 * Creates a new <code>TokenMarker</code>. This DOES NOT create a lineInfo
+	 * array; an initial call to <code>insertLines()</code> does that.
 	 */
 	protected TokenMarker() {
 		lastLine = -1;

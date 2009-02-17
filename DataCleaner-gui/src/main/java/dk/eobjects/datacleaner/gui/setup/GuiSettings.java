@@ -206,7 +206,7 @@ public class GuiSettings extends WeakObservable implements Serializable {
 			}
 		}
 		Collection<DatabaseDriver> databaseDrivers = GuiConfiguration
-				.getBeansOfClass(DatabaseDriver.class);
+				.getDatabaseDrivers();
 		for (DatabaseDriver driver : databaseDrivers) {
 			if (driver.isLoaded()) {
 				if (driverClassName.equals(driver.getDriverClass())) {

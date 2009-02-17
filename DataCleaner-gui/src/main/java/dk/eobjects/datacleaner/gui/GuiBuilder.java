@@ -45,7 +45,7 @@ public class GuiBuilder<E extends JComponent> {
 		_component.setBackground(color);
 		return this;
 	}
-	
+
 	public GuiBuilder<E> applyWhiteBackground() {
 		return applyBackground(Color.WHITE);
 	}

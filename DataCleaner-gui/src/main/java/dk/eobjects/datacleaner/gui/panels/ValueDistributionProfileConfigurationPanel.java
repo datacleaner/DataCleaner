@@ -54,8 +54,7 @@ public class ValueDistributionProfileConfigurationPanel implements
 	private JCheckBox _fixedTopBottomCheckbox;
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
-			ColumnSelection columnSelection,
-			IJobConfiguration configuration) {
+			ColumnSelection columnSelection, IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
 		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 
@@ -109,7 +108,8 @@ public class ValueDistributionProfileConfigurationPanel implements
 			}
 		});
 
-		Map<String, String> properties = _jobConfiguration.getProfileProperties();
+		Map<String, String> properties = _jobConfiguration
+				.getProfileProperties();
 		String topValueString = properties
 				.get(ValueDistributionProfile.PROPERTY_TOP_N);
 		if (topValueString != null) {

@@ -51,8 +51,7 @@ public class DictionaryProfileConfigurationPanel implements IConfigurationPanel 
 	private Map<IDictionary, JCheckBox> _dictionaryCheckBoxes = new HashMap<IDictionary, JCheckBox>();
 
 	public void initialize(JTabbedPane tabbedPane, Object descriptor,
-			ColumnSelection columnSelection,
-			IJobConfiguration configuration) {
+			ColumnSelection columnSelection, IJobConfiguration configuration) {
 		_descriptor = (IProfileDescriptor) descriptor;
 		_jobConfiguration = (ProfilerJobConfiguration) configuration;
 

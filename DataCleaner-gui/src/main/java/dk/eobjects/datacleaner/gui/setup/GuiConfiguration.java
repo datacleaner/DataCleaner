@@ -26,6 +26,8 @@ import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.FileSystemResource;
 
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
+import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
+import dk.eobjects.datacleaner.gui.model.NamedConnection;
 import dk.eobjects.datacleaner.gui.panels.ConfigurationPanelManager;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
 import dk.eobjects.datacleaner.profiler.ProfilerManager;
@@ -77,10 +79,18 @@ public class GuiConfiguration {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E extends Object> Collection<E> getBeansOfClass(
+	protected static <E extends Object> Collection<E> getBeansOfClass(
 			Class<E> clazz) {
 		Map beansOfType = _beanFactory.getBeansOfType(clazz);
 		return beansOfType.values();
+	}
+
+	public static Collection<DatabaseDriver> getDatabaseDrivers() {
+		return getBeansOfClass(DatabaseDriver.class);
+	}
+
+	public static Collection<NamedConnection> getNamedConnections() {
+		return getBeansOfClass(NamedConnection.class);
 	}
 
 	public static ConfigurationPanelManager getConfigurationPanelManager() {
@@ -92,5 +102,17 @@ public class GuiConfiguration {
 			manager = new ConfigurationPanelManager();
 		}
 		return manager;
+	}
+
+	public static NamedConnection getNamedConnection(String namedConnectionName) {
+		if (namedConnectionName != null) {
+			Collection<NamedConnection> namedConnections = getNamedConnections();
+			for (NamedConnection namedConnection : namedConnections) {
+				if (namedConnectionName.equals(namedConnection.getName())) {
+					return namedConnection;
+				}
+			}
+		}
+		return null;
 	}
 }

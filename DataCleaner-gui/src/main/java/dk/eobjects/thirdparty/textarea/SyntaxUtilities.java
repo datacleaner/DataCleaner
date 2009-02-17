@@ -92,8 +92,8 @@ public class SyntaxUtilities {
 
 	/**
 	 * Returns the default style table. This can be passed to the
-	 * <code>setStyles()</code> method of <code>SyntaxDocument</code> to use
-	 * the default syntax styles.
+	 * <code>setStyles()</code> method of <code>SyntaxDocument</code> to use the
+	 * default syntax styles.
 	 */
 	public static SyntaxStyle[] getDefaultSyntaxStyles() {
 		SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];

@@ -36,8 +36,8 @@ public class GuiConfigurationTest extends TestCase {
 				.getBeansOfClass(IProfileDescriptor.class);
 		String[] expectations = new String[] { "Standard measures",
 				"String analysis", "Pattern finder", "Value distribution",
-				"Number analysis", "Time analysis", "Dictionary matcher", "Date mask matcher",
-				"Regex matcher" };
+				"Number analysis", "Time analysis", "Dictionary matcher",
+				"Date mask matcher", "Regex matcher" };
 		assertEquals(expectations.length, profileDescriptors.size());
 		Object[] displayNames = ReflectionHelper.getProperties(
 				profileDescriptors, "displayName");
@@ -58,7 +58,7 @@ public class GuiConfigurationTest extends TestCase {
 		}
 
 		Collection<NamedConnection> namedConnections = GuiConfiguration
-				.getBeansOfClass(NamedConnection.class);
+				.getNamedConnections();
 		expectations = new String[] { "- select -", "Some Derby database" };
 		assertEquals(expectations.length, namedConnections.size());
 		displayNames = ReflectionHelper.getProperties(namedConnections, "name");

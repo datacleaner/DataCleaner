@@ -51,7 +51,7 @@ public class DatabaseDriverDialog extends BanneredDialog {
 
 	private static final long serialVersionUID = -7450893693170647726L;
 
-	public static final String DB2_DRIVER = "com.ibm.db2.jdbc.app.DB2Driver";
+	public static final String DB2_DRIVER = "com.ibm.db2.jcc.DB2Driver";
 	public static final String INGRES_DRIVER = "com.ingres.jdbc.IngresDriver";
 	public static final String FIREBIRD_DRIVER = "org.firebirdsql.jdbc.FBDriver";
 	public static final String SAPDB_DRIVER = "com.sap.dbtech.jdbc.DriverSapDB";

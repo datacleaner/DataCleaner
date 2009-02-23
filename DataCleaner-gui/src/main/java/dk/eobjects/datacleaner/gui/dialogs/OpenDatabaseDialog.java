@@ -179,7 +179,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 				}
 				if (settings.isDriverInstalled(DatabaseDriverDialog.DB2_DRIVER)) {
 					popup.add(sampleItem("IBM DB2 template",
-							"jdbc:db2:<database>", "images/database_db2.png"));
+							"jdbc:db2://<hostname>:<port>/<database>", "images/database_db2.png"));
 				}
 				if (settings
 						.isDriverInstalled(DatabaseDriverDialog.JDBC4OLAP_DRIVER)) {

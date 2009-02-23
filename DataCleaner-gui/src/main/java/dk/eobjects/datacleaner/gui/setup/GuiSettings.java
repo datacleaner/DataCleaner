@@ -90,46 +90,48 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	/**
 	 * Initializes settings on program start-up (only called once)
 	 */
-	public static void initialize() {
+	public static void initialize(boolean includeLookAndFeel) {
 		_cachedSettings = null;
 		GuiSettings settings = getSettings();
 
-		// Initialize look and feel
-		LookAndFeel lookAndFeel = null;
-
-		if (LookUtils.IS_OS_WINDOWS) {
-			WindowsLookAndFeel windowsLookAndFeel = new WindowsLookAndFeel();
-			installLookAndFeel(windowsLookAndFeel);
-			lookAndFeel = windowsLookAndFeel;
-		}
-
-		try {
-			// Ticket #213: Temporary workaround untill Looks 2.2.0 can be
-			// retrieved from Central Maven repository
-			PlasticXPLookAndFeel plasticXPLookAndFeel = new PlasticXPLookAndFeel();
-			installLookAndFeel(plasticXPLookAndFeel);
-			Plastic3DLookAndFeel plastic3DLookAndFeel = new Plastic3DLookAndFeel();
-			installLookAndFeel(plastic3DLookAndFeel);
-			PlasticLookAndFeel plasticLookAndFeel = new PlasticLookAndFeel();
-			installLookAndFeel(plasticLookAndFeel);
-
-			lookAndFeel = plasticXPLookAndFeel;
-		} catch (Exception e) {
-			_log.warn(e);
-		}
-
-		try {
-			String settingsLookAndFeel = settings.getLookAndFeelClassName();
-			if (settingsLookAndFeel != null) {
-				UIManager.setLookAndFeel(settingsLookAndFeel);
-			} else if (lookAndFeel != null) {
-				UIManager.setLookAndFeel(lookAndFeel);
+		if (includeLookAndFeel) {
+			// Initialize look and feel
+			LookAndFeel lookAndFeel = null;
+			
+			if (LookUtils.IS_OS_WINDOWS) {
+				WindowsLookAndFeel windowsLookAndFeel = new WindowsLookAndFeel();
+				installLookAndFeel(windowsLookAndFeel);
+				lookAndFeel = windowsLookAndFeel;
 			}
-		} catch (Exception e) {
-			_log.error(e);
+			
+			try {
+				// Ticket #213: Temporary workaround untill Looks 2.2.0 can be
+				// retrieved from Central Maven repository
+				PlasticXPLookAndFeel plasticXPLookAndFeel = new PlasticXPLookAndFeel();
+				installLookAndFeel(plasticXPLookAndFeel);
+				Plastic3DLookAndFeel plastic3DLookAndFeel = new Plastic3DLookAndFeel();
+				installLookAndFeel(plastic3DLookAndFeel);
+				PlasticLookAndFeel plasticLookAndFeel = new PlasticLookAndFeel();
+				installLookAndFeel(plasticLookAndFeel);
+				
+				lookAndFeel = plasticXPLookAndFeel;
+			} catch (Exception e) {
+				_log.warn(e);
+			}
+			
+			try {
+				String settingsLookAndFeel = settings.getLookAndFeelClassName();
+				if (settingsLookAndFeel != null) {
+					UIManager.setLookAndFeel(settingsLookAndFeel);
+				} else if (lookAndFeel != null) {
+					UIManager.setLookAndFeel(lookAndFeel);
+				}
+			} catch (Exception e) {
+				_log.error(e);
+			}
+			settings.setLookAndFeelClassName(UIManager.getLookAndFeel().getClass()
+					.getName());
 		}
-		settings.setLookAndFeelClassName(UIManager.getLookAndFeel().getClass()
-				.getName());
 
 		List<IDictionary> dictionaries = settings.getDictionaries();
 

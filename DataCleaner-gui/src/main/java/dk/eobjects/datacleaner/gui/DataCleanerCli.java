@@ -192,7 +192,7 @@ public class DataCleanerCli {
 	 */
 	public void initialize() throws Exception {
 		GuiConfiguration.initialize();
-		GuiSettings.initialize();
+		GuiSettings.initialize(false);
 
 		List<DatabaseDriver> databaseDrivers = new LinkedList<DatabaseDriver>();
 		databaseDrivers.addAll(GuiConfiguration.getDatabaseDrivers());

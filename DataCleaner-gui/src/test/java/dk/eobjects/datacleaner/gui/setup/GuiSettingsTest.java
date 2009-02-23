@@ -30,7 +30,7 @@ public class GuiSettingsTest extends TestCase {
 	public void testInitialize() throws Exception {
 		File file = new File(GuiSettings.SETTINGS_FILE);
 		file.delete();
-		GuiSettings.initialize();
+		GuiSettings.initialize(true);
 		GuiSettings settings = GuiSettings.getSettings();
 		assertEquals(
 				"GuiSettings[lookAndFeelClassName=com.jgoodies.looks.plastic.PlasticXPLookAndFeel,dictionaries={},databaseDrivers={},regexes={}]",

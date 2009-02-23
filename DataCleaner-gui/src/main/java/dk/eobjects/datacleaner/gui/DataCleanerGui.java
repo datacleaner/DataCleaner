@@ -47,7 +47,7 @@ public class DataCleanerGui {
 		_log.info("DataCleaner-gui starting up.");
 
 		GuiConfiguration.initialize();
-		GuiSettings.initialize();
+		GuiSettings.initialize(true);
 
 		loadDrivers();
 

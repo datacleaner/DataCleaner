@@ -36,7 +36,33 @@
 		<title>Introduction to the concepts and features of DataCleaner</title>
 		<section>
 			<title>What is Data Quality?</title>
-			<para>TODO</para>
+			<para>
+				The field of data quality has been overseen in the IT-business for a long time. Organizations are
+				beginning to feel the pain from inconsistent and flawed systems and interest is being built to support
+				the employment of more ambitious goals as to the quality of our data. To illustrate the concept, let's
+				imagine an information chain typically centered around the process of building a data warehouse. Even
+				though you can employ data quality principles in lots of other scenarios, the data warehouse is the
+				archetypical situation since the data warehouse seeks to create a single version of the truth - and
+				obviously this truth has to be of high quality!</para>
+			<para>Consider the information chain illustrated below.</para>
+			<graphic fileref="docs/dataqualityscenarios.png" />
+			<para>
+				Data quality problems can exist at many levels, let's take a couple of examples:
+			</para>
+			<orderedlist>
+				<listitem>
+					<para>The users who provide input to the operational systems may have entered invalid, inconsistent or insufficient information.</para>
+				</listitem>
+				<listitem>
+					<para>The data integration specialist is not aware of all the business rules that apply to some fields in the databases.</para>
+				</listitem>
+				<listitem>
+					<para>Some of the operational systems provide data to each other but have done so in a non-historical way, which can make for faulty records.</para>
+				</listitem>
+				<listitem>
+					<para>and so on...</para>
+				</listitem>
+			</orderedlist>
 		</section>
 		<section>
 			<title>What is Open Source software?</title>

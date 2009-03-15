@@ -44,7 +44,6 @@
 	<bean class="dk.eobjects.datacleaner.profiler.BasicProfileDescriptor">
 		<property name="displayName" value="Dictionary matcher" />
 		<property name="profileClass" value="dk.eobjects.datacleaner.profiler.trivial.DictionaryProfile" />
-		<property name="literalsRequired" value="true" />
 		<property name="iconPath" value="images/dictionaries.png" />
 	</bean>
 	

@@ -17,8 +17,10 @@
 package dk.eobjects.datacleaner.catalog;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.util.DefaultTransformer;
 
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.query.FilterItem;
@@ -27,6 +29,7 @@ import dk.eobjects.metamodel.query.OperatorType;
 import dk.eobjects.metamodel.query.Query;
 import dk.eobjects.metamodel.query.SelectItem;
 import dk.eobjects.metamodel.schema.Column;
+import dk.eobjects.metamodel.schema.SuperColumnType;
 
 public class ColumnDictionary implements IDictionary {
 
@@ -49,21 +52,50 @@ public class ColumnDictionary implements IDictionary {
 		SelectItem selectItem = new SelectItem(_column);
 		boolean[] result = new boolean[values.length];
 		List<FilterItem> items = new ArrayList<FilterItem>();
-		for (int i = 0; i < values.length; i++) {
-			String sentence = values[i];
-			if (sentence != null) {
-				if (sentence.indexOf('\'') != -1) {
-					// If the value contains a single quote we will have to use
-					// a workaround to ensure that the query can be executed
-					String wildcardValue = sentence.replace('\'', '%');
-					items.add(new FilterItem(selectItem, OperatorType.LIKE,
-							wildcardValue));
-				} else {
-					items.add(new FilterItem(selectItem,
-							OperatorType.EQUALS_TO, sentence));
+		double[] numbers = null;
+
+		if (_column.getType() != null
+				&& _column.getType().getSuperType() == SuperColumnType.NUMBER_TYPE) {
+			numbers = new double[values.length];
+			for (int i = 0; i < values.length; i++) {
+				String sentence = values[i];
+				try {
+					numbers[i] = new DefaultTransformer().transform(sentence);
+				} catch (MathException e) {
+					throw new IllegalArgumentException(
+							"Dictionary column type: " + _column.getType()
+									+ ", but '" + sentence
+									+ "' is not a valid number");
 				}
 			}
 		}
+
+		for (int i = 0; i < values.length; i++) {
+			String sentence = values[i];
+			if (sentence != null) {
+				if (numbers != null) {
+					// Use number comparison
+					items.add(new FilterItem(selectItem,
+							OperatorType.EQUALS_TO, numbers[i]));
+				} else {
+					// Use string comparison
+
+					if (sentence.indexOf('\'') != -1) {
+						// If the value contains a single quote we will have to
+						// use
+						// a workaround to ensure that the query can be executed
+						String wildcardValue = sentence.replace('\'', '%');
+						items.add(new FilterItem(selectItem, OperatorType.LIKE,
+								wildcardValue));
+					} else {
+						items.add(new FilterItem(selectItem,
+								OperatorType.EQUALS_TO, sentence));
+					}
+				}
+			}
+		}
+
+		// Generates a group by query that counts rows with the selected values
 		Query q = new Query().select(selectItem).selectCount().from(
 				_column.getTable()).where(
 				new FilterItem(items.toArray(new FilterItem[items.size()])))
@@ -72,20 +104,30 @@ public class ColumnDictionary implements IDictionary {
 				.toObjectArrays();
 
 		for (int i = 0; i < values.length; i++) {
-			String value = values[i];
+			Object value;
+			if (numbers != null) {
+				value = numbers[i];
+			} else {
+				value = values[i];
+			}
 			boolean found = false;
 			if (value != null) {
-				for (Iterator<Object[]> it = queryResult.iterator(); it
-						.hasNext()
-						&& !found;) {
-					Object[] objects = it.next();
+
+				for (Object[] objects : queryResult) {
+					if (numbers != null) {
+						// Convert to double to make it comparable to the
+						// "numbers" array
+						objects[0] = ((Number) objects[0]).doubleValue();
+					}
 					if (value.equals(objects[0])) {
 						found = true;
-						if (((Number) objects[1]).intValue() > 0) {
+						Number valueCount = (Number) objects[1];
+						if (valueCount.intValue() > 0) {
 							result[i] = true;
 						} else {
 							result[i] = false;
 						}
+						break;
 					}
 				}
 			}

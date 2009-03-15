@@ -102,7 +102,7 @@ public abstract class SubsetDataSelectionPanel extends JPanel implements
 		buttonGroup.add(_subsetRadio);
 		GuiHelper.addToGridBag(_subsetRadio, this, 0, 1);
 		_subsetPanel = GuiHelper.createPanel().applyVerticalLayout()
-				.applyDarkBackground().toComponent();
+				.applyLightBackground().toComponent();
 		_subsetPanel.setBorder(new EmptyBorder(0, 20, 0, 0));
 		GuiHelper.addToGridBag(_subsetPanel, this, 0, 2);
 

@@ -87,4 +87,17 @@ public class ColumnDictionaryTest extends DataCleanerTestCase {
 				.isValid("kasper's source's site", null,
 						"Anna's Decorations, Ltd")));
 	}
+
+	public void testNumberValues() throws Exception {
+		Connection con = getTestDbConnection();
+		DataContext dc = JdbcDataContextFactory.getDataContext(con);
+		Table employeeTable = dc.getDefaultSchema().getTableByName("EMPLOYEES");
+
+		Column column = employeeTable.getColumnByName("EMPLOYEENUMBER");
+		ColumnDictionary dictionary = new ColumnDictionary("my_dictionary", dc,
+				column);
+
+		boolean[] validationResults = dictionary.isValid("1002", "1088", "-21");
+		assertEquals("{true,true,false}", ArrayUtils.toString(validationResults));
+	}
 }

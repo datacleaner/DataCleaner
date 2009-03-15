@@ -35,7 +35,7 @@ import dk.eobjects.datacleaner.gui.windows.MainWindow;
  */
 public class DataCleanerGui {
 
-	public static final String VERSION = "1.5-RC3";
+	public static final String VERSION = "1.5";
 	public static final int EXIT_CODE_NORMAL_EXIT = 0;
 	public static final int EXIT_CODE_COULD_NOT_OPEN_CONFIGURATION_FILE = 15;
 	private static Log _log = LogFactory.getLog(DataCleanerGui.class);

@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<datacleaner.version>1.5-SNAPSHOT</datacleaner.version>
+		<datacleaner.version>1.5</datacleaner.version>
 		<metamodel.version>1.1.4</metamodel.version>
 	</properties>
 	<groupId>dk.eobjects.datacleaner</groupId>

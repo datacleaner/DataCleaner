@@ -20,7 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 
 import javax.swing.ImageIcon;
-import javax.swing.JScrollPane;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.widgets.DataTable;
@@ -52,8 +51,7 @@ public class PreviewDataWindow extends AbstractWindow {
 
 		_panel.setLayout(new BorderLayout());
 		DataTable dataTable = new DataTable(data);
-		JScrollPane scrollPane = new JScrollPane(dataTable.toPanel());
-		_panel.add(scrollPane, BorderLayout.CENTER);
+		_panel.add(dataTable.toPanel(), BorderLayout.CENTER);
 
 		Dimension tableSize = dataTable.getPreferredSize();
 		_panel.setPreferredSize(new Dimension(tableSize.width + 60, 400));

@@ -72,7 +72,7 @@ public class RegexSwapDialog extends BanneredDialog {
 		JPanel regexDetailsPanel = createRegexDetailsPanel();
 
 		JSplitPane rightPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-				new JScrollPane(regexSelectionTablePanel), regexDetailsPanel);
+				regexSelectionTablePanel, regexDetailsPanel);
 		rightPane.setDividerLocation(170);
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				new JScrollPane(_categoryTree), rightPane);

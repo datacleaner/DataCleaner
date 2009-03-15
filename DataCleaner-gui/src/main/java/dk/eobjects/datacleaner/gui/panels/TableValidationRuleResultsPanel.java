@@ -169,9 +169,7 @@ public class TableValidationRuleResultsPanel extends JPanel {
 					dataTable.addHighlighter(new ColumnHighlighter(
 							evaluatedColumnIndexes));
 
-					taskPane.add(new JScrollPane(dataTable.toPanel(),
-							JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+					taskPane.add(dataTable.toPanel());
 				}
 			}
 			taskPaneContainer.add(taskPane);

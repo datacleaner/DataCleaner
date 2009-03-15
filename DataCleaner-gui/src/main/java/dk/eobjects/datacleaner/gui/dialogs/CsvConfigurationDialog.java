@@ -17,8 +17,8 @@
 package dk.eobjects.datacleaner.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.border.LineBorder;
 
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.gui.GuiHelper;
@@ -40,29 +39,34 @@ import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.Query;
+import dk.eobjects.metamodel.query.SelectItem;
+import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
 public class CsvConfigurationDialog extends BanneredDialog implements
 		ActionListener {
 
 	private static final long serialVersionUID = -8449807287294665745L;
+
 	private static final String COMMA_ACTION_CMD = ",";
 	private static final String SEMI_COLON_ACTION_CMD = ";";
 	private static final String TAB_ACTION_CMD = "\t";
 	private static final String SINGLE_QUOTE_ACTION_CMD = "'";
 	private static final String DOUBLE_QUOTE_ACTION_CMD = "\"";
-	private JPanel _dataConfigurationPanel;
+	private static final int PREVIEW_ROWS = 5;
+
+	private JPanel _panel;
 	private JTextField _sampleText;
 	private DataTable _table;
 	private char _curSeparator = ',';
 	private char _curQuoteChar = '"';
 	private DataContextSelection _dataContextSelection;
 	private File _file;
-	private JRadioButton _tabButton;
+	private String _fileExtension;
 	private JPanel _tablePanel;
 
 	public CsvConfigurationDialog(DataContextSelection selection, File file) {
-		super(600, 480);
+		super(500, 480);
 		_file = file;
 		_dataContextSelection = selection;
 
@@ -77,11 +81,7 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 		toolbar.add(okButton);
 		add(toolbar, BorderLayout.SOUTH);
 
-		String fileExtension = DataContextSelection.getExtention(file);
-		if (DataContextSelection.EXTENSION_TAB_SEPARATED.equals(fileExtension)) {
-			_tabButton.setSelected(true);
-			_curSeparator = TAB_ACTION_CMD.charAt(0);
-		}
+		_fileExtension = DataContextSelection.getExtention(file);
 
 		updateContent();
 	}
@@ -89,70 +89,77 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 	@Override
 	protected Component getContent() {
 		ButtonGroup delimitorGroup = new ButtonGroup();
-		_dataConfigurationPanel = GuiHelper.createPanel().applyLayout(null)
-				.toComponent();
-		JLabel delimitorLbl = new JLabel("Select the Delimitor:");
-		addToPanel(delimitorLbl, 10, 5, 200, 20);
+		_panel = GuiHelper.createPanel().toComponent();
+
+		JLabel delimitorLabel = new JLabel("Select the Delimitor:");
+		GuiHelper.addToGridBag(delimitorLabel, _panel, 0, 0);
+
 		JRadioButton commaButton = GuiHelper.createRadio("Use Comma [,]",
 				delimitorGroup).toComponent();
 		commaButton.setActionCommand(COMMA_ACTION_CMD);
 		commaButton.setSelected(true);
 		commaButton.addActionListener(this);
-		addToPanel(commaButton, 10, 35, 150, 20);
+		GuiHelper.addToGridBag(commaButton, _panel, 0, 1);
 
 		JRadioButton semiColonButton = GuiHelper.createRadio(
 				"Use Semi Colon [;]", delimitorGroup).toComponent();
 		semiColonButton.setActionCommand(SEMI_COLON_ACTION_CMD);
 		semiColonButton.addActionListener(this);
-		addToPanel(semiColonButton, 10, 60, 150, 20);
+		GuiHelper.addToGridBag(semiColonButton, _panel, 0, 2);
 
-		_tabButton = GuiHelper.createRadio("Use Tab [   ]", delimitorGroup)
-				.toComponent();
-		_tabButton.setActionCommand(TAB_ACTION_CMD);
-		_tabButton.addActionListener(this);
-		addToPanel(_tabButton, 10, 85, 150, 20);
+		JRadioButton tabButton = GuiHelper.createRadio("Use Tab [   ]",
+				delimitorGroup).toComponent();
+		tabButton.setActionCommand(TAB_ACTION_CMD);
+		tabButton.addActionListener(this);
+		if (DataContextSelection.EXTENSION_TAB_SEPARATED.equals(_fileExtension)) {
+			tabButton.setSelected(true);
+			_curSeparator = TAB_ACTION_CMD.charAt(0);
+		}
+		GuiHelper.addToGridBag(tabButton, _panel, 0, 3);
 
-		delimitorGroup.add(_tabButton);
+		delimitorGroup.add(tabButton);
 
-		JLabel quotationLbl = new JLabel("Select the Quotation type:");
+		JLabel quotationLabel = new JLabel("Select the Quotation type:");
+		GuiHelper.addToGridBag(quotationLabel, _panel, 1, 0);
 
 		ButtonGroup quoteGroup = new ButtonGroup();
-		addToPanel(quotationLbl, 200, 5, 200, 20);
-		JRadioButton doubleButton = GuiHelper.createRadio(
+		JRadioButton doubleQuoteButton = GuiHelper.createRadio(
 				"Use Double Quote [\"sample text\"]", quoteGroup).toComponent();
-		doubleButton.setActionCommand(DOUBLE_QUOTE_ACTION_CMD);
-		doubleButton.setSelected(true);
-		doubleButton.addActionListener(this);
-		addToPanel(doubleButton, 200, 35, 200, 20);
-		JRadioButton singleButton = GuiHelper.createRadio(
+		doubleQuoteButton.setActionCommand(DOUBLE_QUOTE_ACTION_CMD);
+		doubleQuoteButton.setSelected(true);
+		doubleQuoteButton.addActionListener(this);
+		GuiHelper.addToGridBag(doubleQuoteButton, _panel, 1, 1);
+
+		JRadioButton singleQuoteButton = GuiHelper.createRadio(
 				"Use Single Quote ['sample text']", quoteGroup).toComponent();
-		singleButton.setActionCommand(SINGLE_QUOTE_ACTION_CMD);
-		singleButton.addActionListener(this);
-		addToPanel(singleButton, 200, 60, 200, 20);
+		singleQuoteButton.setActionCommand(SINGLE_QUOTE_ACTION_CMD);
+		singleQuoteButton.addActionListener(this);
+		GuiHelper.addToGridBag(singleQuoteButton, _panel, 1, 2);
 
 		_sampleText = new JTextField("Sample Text");
 		_sampleText.setText("\"sample text1\", \"sample text2\", ...");
 		_sampleText.setEnabled(false);
-		addToPanel(_sampleText, 10, 115, 400, 20);
+		GuiHelper.addToGridBag(_sampleText, _panel, 0, 10, 2, 1);
 
 		JLabel tableHeading = new JLabel("Preview Data:");
-		addToPanel(tableHeading, 10, 145, 200, 20);
+		GuiHelper.addToGridBag(tableHeading, _panel, 0, 11, 2, 1);
 
-		_table = new DataTable(new DataSet(new ArrayList<Row>(0)));
+		ArrayList<Row> initialData = new ArrayList<Row>(PREVIEW_ROWS);
+		SelectItem[] selectItems = new SelectItem[] { new SelectItem(
+				new Column("")) };
+		for (int i = 0; i < PREVIEW_ROWS; i++) {
+			initialData.add(new Row(selectItems, new Object[] { "" }));
+		}
+
+		_table = new DataTable(new DataSet(initialData));
 		_table.setName("previewTable");
 		_tablePanel = _table.toPanel();
-		_tablePanel.setBorder(new LineBorder(Color.GRAY, 1));
-		_tablePanel.setLocation(10, 170);
-		_dataConfigurationPanel.add(_tablePanel);
-		// addToPanel(tablePanel, 10, 150, 580, 108);
-		return _dataConfigurationPanel;
-	}
+		GuiHelper.addToGridBag(_tablePanel, _panel, 0, 12, 2, 1);
 
-	private void addToPanel(Component c, int xPos, int yPos, int width,
-			int height) {
-		c.setLocation(xPos, yPos);
-		c.setSize(width, height);
-		_dataConfigurationPanel.add(c);
+		GridBagLayout layout = (GridBagLayout) _panel.getLayout();
+		layout.columnWidths = new int[] { 240, 240 };
+
+		return _panel;
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -179,10 +186,9 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 
 		Query q = new Query();
 		q.from(table).select(table.getColumns());
-		q.setMaxRows(5);
+		q.setMaxRows(PREVIEW_ROWS);
 
 		_table.updateTable(dataContext.executeQuery(q));
-		_tablePanel.setSize(_table.getPanelPreferredSize());
 	}
 
 	private String buildSampleString(char seperatorChar, char quoteChar) {

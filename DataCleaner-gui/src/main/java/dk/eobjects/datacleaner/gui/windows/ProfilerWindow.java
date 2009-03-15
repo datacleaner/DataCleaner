@@ -193,8 +193,7 @@ public class ProfilerWindow extends AbstractWindow implements WeakObserver {
 				.getImageIcon("images/tab_data_selection.png"),
 				columnSelectionPanel);
 		_tabbedPane.addTab("Metadata", GuiHelper
-				.getImageIcon("images/tab_metadata.png"), new JScrollPane(
-				metadataPanel));
+				.getImageIcon("images/tab_metadata.png"), metadataPanel);
 		_tabbedPane.setUnclosableTab(0);
 		_tabbedPane.setUnclosableTab(1);
 

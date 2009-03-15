@@ -163,9 +163,7 @@ public class TableProfileResultsPanel extends JPanel {
 
 						MatrixTable matrixTable = new MatrixTable(matrix,
 								dataContext);
-						taskPane.add(new JScrollPane(matrixTable.toPanel(),
-								JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-								JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+						taskPane.add(matrixTable.toPanel());
 						taskPaneContainer.add(taskPane);
 					}
 				}

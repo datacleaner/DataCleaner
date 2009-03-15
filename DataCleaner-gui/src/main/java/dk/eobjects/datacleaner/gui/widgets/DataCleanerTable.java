@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -40,7 +41,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.JXTable;
 
-import dk.eobjects.datacleaner.gui.GuiBuilder;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.profiler.MatrixValue;
 
@@ -109,13 +109,11 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 	 */
 	public JPanel toPanel() {
 		if (_panel == null) {
-			GuiBuilder<JPanel> guiBuilder = GuiHelper.createPanel()
-					.applyBorderLayout();
-			Dimension panelPreferredSize = getPanelPreferredSize();
-			guiBuilder.applySize(panelPreferredSize);
-			_panel = guiBuilder.toComponent();
+			_panel = GuiHelper.createPanel()
+					.applyBorderLayout().toComponent();
 			_panel.add(getTableHeader(), BorderLayout.NORTH);
-			_panel.add(this, BorderLayout.CENTER);
+			_panel.add(new JScrollPane(this), BorderLayout.CENTER);
+			_panel.setPreferredSize(getPanelPreferredSize());
 		}
 		return _panel;
 	}
@@ -126,6 +124,10 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 		d.width = tableSize.width;
 		Dimension headerSize = getTableHeader().getPreferredSize();
 		d.height = headerSize.height + tableSize.height;
+		
+		// Adding a 20 pixel buffer for horisontal scroll bars
+		// (Ticket #272)
+		d.height = d.height + 20;
 		return d;
 	}
 

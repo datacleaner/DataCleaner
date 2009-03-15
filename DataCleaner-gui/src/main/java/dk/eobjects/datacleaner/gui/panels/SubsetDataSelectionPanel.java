@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -86,23 +87,57 @@ public abstract class SubsetDataSelectionPanel extends JPanel implements
 
 	public SubsetDataSelectionPanel(ColumnSelection columnSelection) {
 		super();
-		new GuiBuilder<JPanel>(this).applyVerticalLayout().applyTitledBorder(
-				"Apply to columns").applyLightBackground();
+		new GuiBuilder<JPanel>(this).applyTitledBorder("Apply to columns")
+				.applyLightBackground();
+
 		_dataSelection = columnSelection;
 		_dataSelection.addObserver(this);
 		_allDataRadio = new JRadioButton("All selected data.", true);
 		_allDataRadio.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(_allDataRadio);
-		add(_allDataRadio);
+		GuiHelper.addToGridBag(_allDataRadio, this, 0, 0);
 		_subsetRadio = new JRadioButton("Subset of data:");
 		_subsetRadio.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		buttonGroup.add(_subsetRadio);
-		add(_subsetRadio);
+		GuiHelper.addToGridBag(_subsetRadio, this, 0, 1);
 		_subsetPanel = GuiHelper.createPanel().applyVerticalLayout()
-				.toComponent();
+				.applyDarkBackground().toComponent();
 		_subsetPanel.setBorder(new EmptyBorder(0, 20, 0, 0));
-		add(_subsetPanel);
+		GuiHelper.addToGridBag(_subsetPanel, this, 0, 2);
+
+		JPanel toggleColumnsPanel = GuiHelper.createPanel().toComponent();
+		JButton selectAllColumnsButton = new JButton("Select all");
+		selectAllColumnsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_subsetRadio.setSelected(true);
+				_allDataRadio.setSelected(false);
+				Collection<JCheckBox> checkBoxes = _subsetCheckBoxes.values();
+				for (JCheckBox checkBox : checkBoxes) {
+					if (checkBox.isEnabled()) {
+						checkBox.setSelected(true);
+					}
+				}
+			}
+		});
+		toggleColumnsPanel.add(selectAllColumnsButton);
+
+		JButton selectNoneColumnsButton = new JButton("Select none");
+		selectNoneColumnsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				_subsetRadio.setSelected(true);
+				_allDataRadio.setSelected(false);
+				Collection<JCheckBox> checkBoxes = _subsetCheckBoxes.values();
+				for (JCheckBox checkBox : checkBoxes) {
+					if (checkBox.isEnabled()) {
+						checkBox.setSelected(false);
+					}
+				}
+			}
+		});
+		toggleColumnsPanel.add(selectNoneColumnsButton);
+		GuiHelper.addToGridBag(toggleColumnsPanel, this, 0, 3);
+
 		updateProfileDataPanel();
 	}
 

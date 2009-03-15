@@ -82,11 +82,121 @@
 		</section>
 		<section>
 			<title>Database drivers</title>
-			<para>TODO</para>
+			<para>
+				Database drivers enable applications to connect to databases. Since DataCleaner was developed using the Java platform, you will need
+				Java-based database drivers, so-called JDBC-drivers, to use DataCleaner with your database. JDBC-drivers exist for all major database-types
+				so don't worry, it's highly unlikely that you can't use DataCleaner! 
+			</para>
+			<para>
+				To install a driver you need a JAR (Java Archive) file, containing the driver. To obtain the driver there are a few options,
+				depicted in the screenshot below:
+			</para>
+			<graphic fileref="docs/downloaddriver.png" />
+			<orderedlist>
+				<listitem>
+					<para>
+						<emphasis>Automatic download and install:</emphasis> Let DataCleaner take care of everything. If your database-type is represented
+						in the submenu for this option, then you are in luck - DataCleaner can automatically download the driver and install it for you.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>Visit driver website:</emphasis> Some database-vendors require that you register yourself and other stuff before you are
+						allowed to download the driver. DataCleaner provides some handy shortcuts for these vendors websites but we can't do much more to
+						easen the process for you. Once you have downloaded the drivers, proceed to the next option, the Local JAR file.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>Local JAR file:</emphasis> When you've aquired the driver file by yourself then you need to pick it out using this option.
+						Once you've selected a JAR file from your local harddrive you will be prompted for a driver class name. DataCleaner contains suggestions
+						for almost every major database-vendor's driver class name but should it not be provided by DataCleaner you can also manually enter a new
+						class name here.
+					</para>
+				</listitem>
+			</orderedlist>
+			<para>
+				<emphasis>Note:</emphasis> DataCleaner is compatible with <emphasis>any database</emphasis> that complies to two standards: JDBC and SQL 99. Most
+				databases are compliant with these standards but some aren't. We are sorry that the application is not compatible with such databases, but if you
+				find yourself in such a situation, we strongly suggest you reconsider your choice of database-vendor (because standards, especially in this vital
+				area, is a good thing).
+			</para>
 		</section>
 		<section>
 			<title>Database connections</title>
-			<para>TODO</para>
+			<para>
+				To begin with we recommend getting your database connection up and running using the DataCleaner desktop-application. From within the
+				Profiler, the Validator or the Comparator you can click one of the Open database buttons, which brings up the <emphasis>Open database dialog</emphasis>:
+			</para>
+			<graphic fileref="docs/opendatabase.png" />
+			<para>
+				The Open database dialog contains the configuration properties for a database connection. Here are the main ones:
+			</para>
+			<orderedlist>
+				<listitem>
+					<para>
+						<emphasis>Name:</emphasis> The name field at the top specifies the name of the connection. This is a read-only property since connection
+						naming is only possible through the configuration file (more about this later).
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>Connection string:</emphasis> The connection string is a vendor-specific string that tells the database driver where and how
+						to connect to the database. Notice the small button to the right of the connection string text-field. This button will bring up a drop-down
+						list with template for the database drivers that you have installed. When a template is selected the connection string field will be
+						<emphasis>automatically filled out</emphasis> but certain parts of the template will still need to be filled out by you (such as the
+						network address of your server). You can swap between these parts of the template by pressing the TAB key on your keyboard.
+					</para>
+				</listitem>
+			</orderedlist>
+			<para>
+				In order to always have easy access to your database we recommend adding it to a configured list of database connections.
+				Modify the file <emphasis>datacleaner-config.xml</emphasis> and insert a &lt;bean&gt; XML-element like the ones that
+				already exist in there. Here are a few useful examples:
+			</para>
+			<orderedlist>
+				<listitem>
+					<para>
+						<emphasis>Oracle example</emphasis>
+						<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
+  &lt;property name="name" value="Oracle database example" /&gt;
+  &lt;property name="driverClass" value="oracle.jdbc.OracleDriver" /&gt;
+  &lt;property name="connectionString" value="jdbc:oracle:thin:@host:port/service" /&gt;
+  &lt;property name="username" value="username" /&gt;
+  &lt;property name="password" value="password" /&gt;
+&lt;/bean&gt;</literallayout>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>PostgreSQL example</emphasis>
+						<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
+ &lt;property name="name" value="Postgresql database example" /&gt;
+ &lt;property name="driverClass" value="org.postgresql.Driver" /&gt;
+ &lt;property name="connectionString" value="jdbc:postgresql://localhost:5432/my_database" /&gt;
+ &lt;property name="username" value="username" /&gt;
+ &lt;property name="password" value="password" /&gt;
+&lt;/bean></literallayout>
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>MySQL example</emphasis>
+						<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
+ &lt;property name="name" value="MySQL database example" /&gt;
+ &lt;property name="driverClass" value="com.mysql.jdbc.Driver" /&gt;
+ &lt;property name="connectionString" value="jdbc:mysql://localhost:3306" /&gt;
+ &lt;property name="catalog" value="my_database" /&gt;
+ &lt;property name="username" value="username" /&gt;
+ &lt;property name="password" value="password" /&gt;
+&lt;/bean&gt;</literallayout>
+					</para>
+				</listitem>
+			</orderedlist>
+			<para>
+				You can produce your own &lt;bean&gt; XML-elements simply by mapping the connection properties in the Open Database dialog
+				within the DataCleaner desktop-application to the corresponding &lt;property&gt; XML elements inside the &lt;bean&gt; XML-element.
+			</para>
 		</section>
 		<section>
 			<title>Dictionaries</title>
@@ -119,14 +229,14 @@
 			<para>
 				Optimization techniques fall into two categories, which affect this execution process:
 			</para>
-				<orderedlist>
-					<listitem>
-						<para><emphasis>Parallel execution</emphasis>, which enables simultanious (as opposed to sequential) execution of queries.</para>
-					</listitem>
-					<listitem>
-						<para><emphasis>Query modification</emphasis>, which optimizes the generated queries for faster individual execution time.</para>
-					</listitem>
-				</orderedlist>
+			<orderedlist>
+				<listitem>
+					<para><emphasis>Parallel execution</emphasis>, which enables simultanious (as opposed to sequential) execution of queries.</para>
+				</listitem>
+				<listitem>
+					<para><emphasis>Query modification</emphasis>, which optimizes the generated queries for faster individual execution time.</para>
+				</listitem>
+			</orderedlist>
 			<para>
 				To access optimization options, click the <emphasis>Profiler Options</emphasis> button in the Profiler or
 				<emphasis>Validator Options</emphasis> button in the Validator (only enabled when databases have been opened).
@@ -318,31 +428,56 @@
 		</section>
 		<section>
 			<title>Running a DataCleaner job</title>
-			<para>TODO: calling runjob.sh/.cmd</para>
+			<para>
+				DataCleaner supports command-line execution using the runjob tool, aka. runjob.sh (on linux/unix platforms)
+				and runjob.cmd (on windows platforms). Calling the runjob command with no parameters yields the following
+				result:
+			</para>
 			<blockquote>
 				<literallayout>usage: runjob
 Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)
- -?,--help                show this help message
- -i,--input-file &lt;arg&gt;    input file path (.dcp or .dcv file)
- -o,--output-file &lt;arg&gt;   output file path
- -ow,--overwrite          overwrite output-file if it already exists
- -t,--output-type &lt;arg&gt;   output type (xml|customClassName)
-Please visit http://datacleaner.eobjects.org/ for more information</literallayout>
+ -?,--help                     show this help message
+ -c,--named-connection &lt;arg&gt;   Named database connection to use (replaces the connection specified
+                               in the input-file)
+ -i,--input-file &lt;arg&gt;         input file path (DataCleaner Profiler (.dcp) or DataCleaner Validator
+                               (.dcv) file)
+ -o,--output-file &lt;arg&gt;        output file path (should match the output type)
+ -ow,--overwrite               overwrite output-file if it already exists
+ -t,--output-type &lt;arg&gt;        output type (xml|csv|customClassName)</literallayout>
 			</blockquote>
+			<para>
+				The only required parameter is the <emphasis>input-file</emphasis> parameter, which tells DataCleaner which .dcp or .dcv file
+				to execute (using the Profiler or Validator respectively). The following sections contains explanations for the parameters.
+			</para>
 		</section>
 		<section>
 			<title>Output formats</title>
 			<para>
 				As described above you can specify output format by using the <emphasis>output-type</emphasis>
-				CLI-parameter. In the following sections we will describe the default output type, XML, and how
-				to extend DataCleaner with custom output formats.
+				CLI-parameter. In the following sections we will describe the default output type, XML, an alternative
+				CSV output format and how to extend DataCleaner with custom output formats.
 			</para>
 			<section>
-				<title>XML output format</title>
+				<title>XML and CSV output formats</title>
 				<para>
 					The default <emphasis>output-type</emphasis> of DataCleaner CLI is an XML format suited
 					for persisting all the available information about the job. Most users will find the XML
 					output format satisfying and sufficient. 
+				</para>
+				<para>
+					The CSV <emphasis>output-type</emphasis> will generate multiple files, one for each profiled
+					or validated table. If an exception occurs during execution, the csv file will contain only
+					the stack trace from the exception. The CSV output format is comma-based, with double-quotes
+					around values. 
+				</para>
+			</section>
+			<section>
+				<title>Using named connections in command-line execution</title>
+				<para>
+					It is possible to overwrite the connection metadata written in the .dcp or .dcv files to be
+					executed using the runjob tool. To to this, use the <emphasis>named-connection</emphasis>
+					parameter to specify a connection name to use (defined in the datacleaner-config.xml configuration
+					file).
 				</para>
 			</section>
 			<section>

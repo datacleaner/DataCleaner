@@ -34,6 +34,12 @@ public class DataContextSelectionTest extends TestCase {
 	private Document _document;
 	private DataContextSelection _dataContextSelection;
 
+	public void testGetExtension() throws Exception {
+		String extention = DataContextSelection
+				.getExtention(new File("foo.bar"));
+		assertEquals("bar", extention);
+	}
+
 	public void testCsv() throws Exception {
 		_document = _documentBuilder.parse(new File(
 				"src/test/resources/serialized_datacontextselection_csv.xml"));

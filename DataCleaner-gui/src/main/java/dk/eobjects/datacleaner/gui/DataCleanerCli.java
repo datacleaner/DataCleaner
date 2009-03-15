@@ -39,6 +39,7 @@ import org.w3c.dom.Node;
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
 import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
+import dk.eobjects.datacleaner.export.CsvResultExporter;
 import dk.eobjects.datacleaner.export.IResultExporter;
 import dk.eobjects.datacleaner.export.XmlResultExporter;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
@@ -80,11 +81,12 @@ public class DataCleanerCli {
 	private static final Log _log = LogFactory.getLog(DataCleanerCli.class);
 
 	private IResultExporter _resultExporter;
-	private PrintWriter _resultWriter = new PrintWriter(System.out);
 	private DataContextSelection _dataContextSelection;
 	private List<ProfilerJobConfiguration> _profileConfigurations;
 	private List<ValidatorJobConfiguration> _validationRuleConfigurations;
 	private File _inputFile;
+	private String _outputFilePath;
+	private int _numOutputWriters = 0;
 
 	private ExecutionConfiguration _executionConfiguration;
 
@@ -100,7 +102,7 @@ public class DataCleanerCli {
 
 		OptionBuilder.hasArgs();
 		OptionBuilder.withLongOpt("output-type");
-		OptionBuilder.withDescription("output type (xml|customClassName)");
+		OptionBuilder.withDescription("output type (xml|csv|customClassName)");
 		options.addOption(OptionBuilder.create(OPTION_OUTPUT_TYPE));
 
 		OptionBuilder.hasArgs();
@@ -144,10 +146,6 @@ public class DataCleanerCli {
 		_validationRuleConfigurations = validationRuleConfigurations;
 	}
 
-	public void setResultWriter(PrintWriter writer) {
-		_resultWriter = writer;
-	}
-
 	public void setInputFile(File inputFile) {
 		_inputFile = inputFile;
 	}
@@ -167,19 +165,16 @@ public class DataCleanerCli {
 		HelpFormatter helpFormatter = new HelpFormatter();
 		helpFormatter
 				.printHelp(
-						_resultWriter,
 						100,
 						"runjob",
 						"Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)",
-						getOptions(), HelpFormatter.DEFAULT_LEFT_PAD,
-						HelpFormatter.DEFAULT_DESC_PAD,
+						getOptions(),
 						"Please visit http://datacleaner.eobjects.org/ for more information");
 
-		_resultWriter.flush();
 	}
 
 	private void printVersionInfo(String[] args) {
-		_resultWriter.println("Running DataCleaner version "
+		System.out.println("Running DataCleaner version "
 				+ DataCleanerGui.VERSION);
 	}
 
@@ -231,6 +226,9 @@ public class DataCleanerCli {
 			if ("xml".equalsIgnoreCase(outputType)) {
 				outputType = XmlResultExporter.class.getName();
 			}
+			if ("csv".equalsIgnoreCase(outputType)) {
+				outputType = CsvResultExporter.class.getName();
+			}
 
 			// Leave this open for people to develop their own IResultExporter
 			// interfaces
@@ -246,8 +244,7 @@ public class DataCleanerCli {
 									+ filePath
 									+ "' already exists. Turn on the --overwrite option to allow writing to existing files.");
 				}
-				cli.setResultWriter(new PrintWriter(FileHelper
-						.getBufferedWriter(file)));
+				cli.setOutputFilePath(filePath);
 			}
 
 			filePath = concatArgs(commandLine
@@ -316,6 +313,10 @@ public class DataCleanerCli {
 				System.runFinalization();
 			}
 		}
+	}
+
+	public void setOutputFilePath(String filePath) {
+		_outputFilePath = filePath;
 	}
 
 	private static String concatArgs(String[] args) {
@@ -428,28 +429,62 @@ public class DataCleanerCli {
 		boolean collectiveResults = _resultExporter
 				.isCollectiveResultsCapable();
 
+		PrintWriter resultWriter = null;
 		if (collectiveResults) {
-			_resultExporter.writeProfileResultHeader(_resultWriter);
+			resultWriter = createOutputWriter(false);
+			_resultExporter.writeProfileResultHeader(resultWriter);
 		}
 		for (Table table : tables) {
 			List<IProfileResult> results = executor.getResultsForTable(table);
 			for (IProfileResult result : results) {
 				if (!collectiveResults) {
-					// TODO: init new resultWriter
-					_resultExporter.writeProfileResultHeader(_resultWriter);
+					resultWriter = createOutputWriter(true);
+					_resultExporter.writeProfileResultHeader(resultWriter);
 				}
-				_resultExporter
-						.writeProfileResult(table, result, _resultWriter);
+				_resultExporter.writeProfileResult(table, result, resultWriter);
 				if (!collectiveResults) {
-					_resultExporter.writeProfileResultFooter(_resultWriter);
+					_resultExporter.writeProfileResultFooter(resultWriter);
+					resultWriter.flush();
+					resultWriter.close();
 				}
 			}
 		}
 		if (collectiveResults) {
-			_resultExporter.writeProfileResultFooter(_resultWriter);
+			_resultExporter.writeProfileResultFooter(resultWriter);
+			resultWriter.flush();
+			resultWriter.close();
+		}
+	}
+
+	private PrintWriter createOutputWriter(boolean enumerateFilePath) {
+		_numOutputWriters++;
+
+		if (_outputFilePath == null) {
+			return new PrintWriter(System.out);
+		}
+		String path = _outputFilePath;
+		if (enumerateFilePath) {
+			// Generate a new output filename
+
+			String extension = null;
+			int i = _outputFilePath.lastIndexOf('.');
+			if (i != -1) {
+				extension = _outputFilePath.substring(i + 1);
+			}
+
+			if (extension == null) {
+				path = path + '.' + _numOutputWriters;
+			} else {
+				StringBuilder sb = new StringBuilder(_outputFilePath);
+				sb.delete(i + 1, _outputFilePath.length());
+				sb.append(_numOutputWriters);
+				sb.append('.');
+				sb.append(extension);
+				path = sb.toString();
+			}
 		}
 
-		_resultWriter.close();
+		return new PrintWriter(FileHelper.getBufferedWriter(new File(path)));
 	}
 
 	/**
@@ -473,30 +508,34 @@ public class DataCleanerCli {
 		boolean collectiveResults = _resultExporter
 				.isCollectiveResultsCapable();
 
+		PrintWriter resultWriter = null;
 		if (collectiveResults) {
-			_resultExporter.writeValidationRuleResultHeader(_resultWriter);
+			resultWriter = createOutputWriter(false);
+			_resultExporter.writeValidationRuleResultHeader(resultWriter);
 		}
 		for (Table table : tables) {
 			List<IValidationRuleResult> results = executor
 					.getResultsForTable(table);
 			for (IValidationRuleResult result : results) {
 				if (!collectiveResults) {
-					// TODO: init new resultWriter
+					resultWriter = createOutputWriter(true);
 					_resultExporter
-							.writeValidationRuleResultHeader(_resultWriter);
+							.writeValidationRuleResultHeader(resultWriter);
 				}
 				_resultExporter.writeValidationRuleResult(table, result,
-						_resultWriter);
+						resultWriter);
 				if (!collectiveResults) {
 					_resultExporter
-							.writeValidationRuleResultFooter(_resultWriter);
+							.writeValidationRuleResultFooter(resultWriter);
+					resultWriter.flush();
+					resultWriter.close();
 				}
 			}
 		}
 		if (collectiveResults) {
-			_resultExporter.writeValidationRuleResultFooter(_resultWriter);
+			_resultExporter.writeValidationRuleResultFooter(resultWriter);
+			resultWriter.flush();
+			resultWriter.close();
 		}
-
-		_resultWriter.close();
 	}
 }

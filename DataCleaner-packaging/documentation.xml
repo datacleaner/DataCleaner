@@ -101,7 +101,7 @@
 				<ulink url="http://java.sun.com/javase/downloads">http://java.sun.com/javase/downloads</ulink>
 			</para>
 			<para>
-				DataCleaner runs in both desktop-application mode and command-line interface mode on
+				DataCleaner runs in both desktop application mode and command-line interface mode on
 				Microsoft Windows Operating Systems, Mac OS X and Linux. For optimal performance, a minimum
 				of 1024 megabytes (1 gigabyte) of free memory is recommended.
 			</para>
@@ -151,7 +151,7 @@
 		<section>
 			<title>Database connections</title>
 			<para>
-				To begin with we recommend getting your database connection up and running using the DataCleaner desktop-application. From within the
+				To begin with we recommend getting your database connection up and running using the DataCleaner desktop application. From within the
 				Profiler, the Validator or the Comparator you can click one of the Open database buttons, which brings up the <emphasis>Open database dialog</emphasis>:
 			</para>
 			<graphic fileref="docs/opendatabase.png" />
@@ -221,16 +221,26 @@
 			</orderedlist>
 			<para>
 				You can produce your own &lt;bean&gt; XML-elements simply by mapping the connection properties in the Open Database dialog
-				within the DataCleaner desktop-application to the corresponding &lt;property&gt; XML elements inside the &lt;bean&gt; XML-element.
+				within the DataCleaner desktop application to the corresponding &lt;property&gt; XML elements inside the &lt;bean&gt; XML-element.
 			</para>
 		</section>
 		<section>
 			<title>Dictionaries</title>
-			<para>TODO</para>
+			<para>
+				Dictionaries are used for matching or validating entries in your datastore. A dictionary can hold
+				a large set of values representing a category of values, for example "valid first names". Dictionaries
+				in DataCleaner can be based either on a text-file containing the values or a database column.
+			</para>
 		</section>
 		<section>
 			<title>Regular Expressions (regexes)</title>
-			<para>TODO</para>
+			<para>
+				Regular expressions (or "regexes" in short) are expressions that define a rule for formatting
+				text-strings. You can create these expressions yourself or use the online
+				<ulink url="http://datacleaner.eobjects.org/regexswap">RegexSwap</ulink> facility which holds a lot
+				of reusable expressions for you to use. The regexes can be used in conjunction with the "Regex matcher"
+				profile or the "Regex validation" validation rule.
+			</para>
 		</section>
 		<section>
 			<title>Optimization techniques</title>
@@ -428,29 +438,73 @@
 		</section>
 	</chapter>
 	<chapter>
-		<title>The DataCleaner desktop-applicatoin</title>
+		<title>The DataCleaner desktop application</title>
 		<section>
-			<title>What is the desktop-application used for?</title>
-			<para>TODO</para>
+			<title>What is the desktop application used for?</title>
+			<para>
+				The desktop application is the main entry for the end user to the wonders of DataCleaner. Use the
+				desktop application (sometimes referred to as "DataCleaner GUI") to perform datastore investigations,
+				explore it and get interactive snapshots of the current datastore state. The desktop application is divided
+				into three main task-oriented sub-applications: The Profiler, The Validator and The Comparator.
+			</para>
 		</section>
 		<section>
 			<title>The Profiler</title>
-			<para>TODO</para>
+			<para>
+				They layout of the main Profiler window is depicted in the figure below. It is divided
+				into three main sections:
+			</para>
+			<orderedlist>
+				<listitem>
+					<para>
+						<emphasis>Right: Control buttons</emphasis>. These button let you select your datastore, save
+						the Profiler job to file, handle execution options, add profiles to the job and run the job.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>Left: Schema tree</emphasis>. The schema tree is used for datastore browsing. From it
+						you can select tables and columns to add to your Profiler job as well as previewing table data.
+					</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>Right: Profiles configuration</emphasis>. Each added profile will have it's own tab
+						which contains profile-specific configuration options. Most profiles let you select a subset
+						of columns to profile from the general data selection specified in the "Data selection" tab. The
+						"Metadata" tab contains static metadata about the selected columns, obtained from the datastore
+						itself (ie. not profiled metadata).
+					</para>
+				</listitem>
+			</orderedlist>
+			<graphic fileref="docs/profiler-window.png" scale="37" />
+			<para>
+				When you have finished setting up the Profiler, click the "Run profiling" button
+				which will bring up the Profiler results window. The results window will let you view
+				the execution status browse the results, explore drill-to-details enabled measures (by
+				clicking the green arrows) and export the results to file.
+			</para>
+			<graphic fileref="docs/profiler-results-window.png" scale="37" />
 		</section>
 		<section>
 			<title>The Validator</title>
-			<para>TODO</para>
+			<para>TODO: Not yet written. The Profiler documentation is somewhat transferable to the Validator as well.</para>
 		</section>
 		<section>
 			<title>The Comparator</title>
-			<para>TODO</para>
+			<para>TODO: Not yet written. </para>
 		</section>
 	</chapter>
 	<chapter>
 		<title>The DataCleaner command-line interface</title>
 		<section>
 			<title>What is the command-line interface used for?</title>
-			<para>TODO: Running batches of DQ analysis, automation, etc.</para>
+			<para>
+				Whereas the desktop application is used for typical desktop work as well as an explorative style of
+				work, the command-line interface is used for more repetitive or static jobs. The command-line interface
+				is great for keeping track of changes in profiling and validation measures over time, but less appropriate
+				for uncovering the initial mysteries of datastore contents.
+			</para>
 		</section>
 		<section>
 			<title>Running a DataCleaner job</title>
@@ -572,15 +626,15 @@ Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)
 		</section>
 		<section>
 			<title>An introduction to the architecture of DataCleaner</title>
-			<para>TODO</para>
+			<para>TODO: Please refer to <ulink url="http://eobjects.org/trac/wiki/DataCleanerDesign">http://eobjects.org/trac/wiki/DataCleanerDesign</ulink></para>
 		</section>
 		<section>
 			<title>Understanding the DataCleaner ecosystem</title>
-			<para>TODO</para>
+			<para>TODO: Please refer to <ulink url="http://eobjects.org/trac/wiki/CreatingPatches">http://eobjects.org/trac/wiki/CreatingPatches</ulink></para>
 		</section>
 		<section>
 			<title>Developing custom profiles</title>
-			<para>TODO</para>
+			<para>TODO: Please refer to <ulink url="http://eobjects.org/trac/wiki/DataCleanerDesign">http://eobjects.org/trac/wiki/DataCleanerDesign</ulink></para>
 		</section>
 		<section>
 			<title>RegexSwap RESTful web services</title>

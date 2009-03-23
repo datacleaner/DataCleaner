@@ -45,7 +45,7 @@
 				archetypical situation since the data warehouse seeks to create a single version of the truth - and
 				obviously this truth has to be of high quality!</para>
 			<para>Consider the information chain illustrated below.</para>
-			<graphic fileref="docs/dataqualityscenarios.png" />
+			<graphic fileref="docs/dataqualityscenarios.png" scale="37" />
 			<para>
 				Data quality problems can exist at many levels, let's take a couple of examples:
 			</para>

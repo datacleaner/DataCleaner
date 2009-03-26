@@ -621,7 +621,7 @@ Use this command line tool to execute DataCleaner jobs (.dcp or .dcv files)
 			<title>Java API reference documentation</title>
 			<para>The Java API reference documentation ("javadoc") is available at the following URL:</para>
 			<para>
-				<ulink url="http://eobjects.org/datacleaner/javadoc/current">http://eobjects.org/datacleaner/javadoc/current</ulink>
+				<ulink url="http://eobjects.org/datacleaner/apidocs/current">http://eobjects.org/datacleaner/apidocs/current</ulink>
 			</para>
 		</section>
 		<section>

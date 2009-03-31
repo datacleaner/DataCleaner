@@ -1,5 +1,11 @@
 DataCleaner changelog
 
+DataCleaner 1.5.1
+=================
+ * Additional String analysis measures
+ * Additional export formats
+ * Choise of export format in GUI 
+
 DataCleaner 1.5
 ===============
 major update to functionality with lots of new features

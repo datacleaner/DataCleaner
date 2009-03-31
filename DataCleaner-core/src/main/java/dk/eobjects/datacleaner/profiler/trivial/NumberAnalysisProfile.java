@@ -43,8 +43,15 @@ import dk.eobjects.metamodel.util.FormatHelper;
  * Number analysis profile, which provides statistical information for number
  * columns:
  * 
- * <li>Highest value</li> <li>Lowest value</li> <li>Sum</li> <li>Mean</li> <li>
- * Geometric mean</li> <li>Standard deviation</li> <li>Variance</li>
+ * <ul>
+ * <li>Highest value</li>
+ * <li>Lowest value</li>
+ * <li>Sum</li>
+ * <li>Mean</li>
+ * <li>Geometric mean</li>
+ * <li>Standard deviation</li>
+ * <li>Variance</li>
+ * </ul>
  */
 public class NumberAnalysisProfile extends AbstractProfile {
 
@@ -52,8 +59,7 @@ public class NumberAnalysisProfile extends AbstractProfile {
 	private NumberFormat _numberFormat = FormatHelper.getUiNumberFormat();
 
 	@Override
-	protected void processValue(Column column, Object value, long valueCount,
-			Row row) {
+	protected void processValue(Column column, Object value, long valueCount, Row row) {
 		SummaryStatistics statistics = _statistics.get(column);
 		if (statistics == null) {
 			statistics = new SummaryStatisticsImpl();
@@ -91,24 +97,18 @@ public class NumberAnalysisProfile extends AbstractProfile {
 					double variance = s.getVariance();
 					double sum = s.getSum();
 
-					MatrixValue[] matrixValues = mb.addColumn(_columns[i]
-							.getName(), nf.valueToString(highestValue), nf
-							.valueToString(lowestValue), nf.valueToString(sum),
-							nf.valueToString(mean), nf
-									.valueToString(geometricMean), nf
-									.valueToString(standardDeviation), nf
-									.valueToString(variance));
+					MatrixValue[] matrixValues = mb.addColumn(_columns[i].getName(), nf.valueToString(highestValue), nf
+							.valueToString(lowestValue), nf.valueToString(sum), nf.valueToString(mean), nf
+							.valueToString(geometricMean), nf.valueToString(standardDeviation), nf
+							.valueToString(variance));
 
 					matrixValues[0].setDetailSource(getBaseQuery().where(
-							new FilterItem(new SelectItem(_columns[i]),
-									OperatorType.EQUALS_TO, highestValue)));
+							new FilterItem(new SelectItem(_columns[i]), OperatorType.EQUALS_TO, highestValue)));
 
 					matrixValues[1].setDetailSource(getBaseQuery().where(
-							new FilterItem(new SelectItem(_columns[i]),
-									OperatorType.EQUALS_TO, lowestValue)));
+							new FilterItem(new SelectItem(_columns[i]), OperatorType.EQUALS_TO, lowestValue)));
 				} else {
-					mb.addColumn(_columns[i].getName(), null, null, null, null,
-							null, null, null);
+					mb.addColumn(_columns[i].getName(), null, null, null, null, null, null, null);
 				}
 			} catch (ParseException e) {
 				throw new RuntimeException(e);

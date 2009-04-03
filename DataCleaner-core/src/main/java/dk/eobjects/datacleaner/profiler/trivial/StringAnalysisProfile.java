@@ -31,11 +31,14 @@ import dk.eobjects.datacleaner.util.AverageBuilder;
 import dk.eobjects.metamodel.data.IRowFilter;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.schema.Column;
+import dk.eobjects.metamodel.util.FormatHelper;
 
 /**
  * Provides profiling information for string-based columns.
  */
 public class StringAnalysisProfile extends AbstractProfile {
+	
+	private NumberFormat _numberFormat = FormatHelper.getUiNumberFormat();
 
 	private static final short INDEX_NUM_CHARS = 0;
 	private static final short INDEX_MAX_CHARS = 1;
@@ -157,7 +160,7 @@ public class StringAnalysisProfile extends AbstractProfile {
 			final Long minChars = counts[INDEX_MIN_CHARS];
 			String avgChars = null;
 			if (charAverageBuilder.getNumValues() > 0) {
-				avgChars = NumberFormat.getNumberInstance().format(charAverageBuilder.getAverage());
+				avgChars = _numberFormat.format(charAverageBuilder.getAverage());
 			}
 			String numUppercase = "0%";
 			String numLowercase = "0%";

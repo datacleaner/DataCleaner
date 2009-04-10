@@ -61,7 +61,7 @@ public class StringAnalysisProfileTest extends TestCase {
 						+ "Char count={7,33},"
 						+ "Max chars={MatrixValue[value=1,detailQuery=SELECT myTable.charColumn, COUNT(*) FROM myTable GROUP BY myTable.charColumn],MatrixValue[value=11,detailQuery=SELECT myTable.stringColumn, COUNT(*) FROM myTable GROUP BY myTable.stringColumn]},"
 						+ "Min chars={MatrixValue[value=1,detailQuery=SELECT myTable.charColumn, COUNT(*) FROM myTable GROUP BY myTable.charColumn],MatrixValue[value=0,detailQuery=SELECT myTable.stringColumn, COUNT(*) FROM myTable GROUP BY myTable.stringColumn]},"
-						+ "Avg chars={1,4,71},Uppercase chars={42%,21%},"
+						+ "Avg chars={1,4,71},Max white spaces={0,3},Min white spaces={0,0},Avg white spaces={0,0,57},Uppercase chars={42%,21%},"
 						+ "Lowercase chars={28%,66%},"
 						+ "Non-letter chars={28%,12%},"
 						+ "Word count={7,10},"
@@ -90,16 +90,11 @@ public class StringAnalysisProfileTest extends TestCase {
 		assertNull("found error: " + result.getError(), result.getError());
 		IMatrix[] matrices = result.getMatrices();
 		assertEquals(1, matrices.length);
-		assertEquals(
-				"Matrix[columnNames={charColumn,stringColumn}," +
-				"Char count={0,0},Max chars={<null>,<null>}," +
-				"Min chars={<null>,<null>},Avg chars={<null>,<null>}," +
-				"Uppercase chars={0%,0%}," +
-				"Lowercase chars={0%,0%}," +
-				"Non-letter chars={0%,0%}," +
-				"Word count={0,0}," +
-				"Max words={<null>,<null>}," +
-				"Min words={<null>,<null>}]",
-				matrices[0].toString());
+		assertEquals("Matrix[columnNames={charColumn,stringColumn}," + "Char count={0,0},Max chars={<null>,<null>},"
+				+ "Min chars={<null>,<null>},Avg chars={<null>,<null>},"
+				+ "Max white spaces={<null>,<null>},Min white spaces={<null>,<null>},Avg white spaces={<null>,<null>},"
+				+ "Uppercase chars={0%,0%}," + "Lowercase chars={0%,0%}," + "Non-letter chars={0%,0%},"
+				+ "Word count={0,0}," + "Max words={<null>,<null>}," + "Min words={<null>,<null>}]", matrices[0]
+				.toString());
 	}
 }

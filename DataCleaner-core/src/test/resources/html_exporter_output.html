@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>DataCleaner profiler results</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+	@import "http://o.aolcdn.com/dojo/1.3/dojox/grid/resources/nihiloGrid.css";
+	@import "http://o.aolcdn.com/dojo/1.3/dojox/grid/resources/Grid.css";
+	h1 { margin-left: 5px; }
+	h2 { margin-left: 10px; }
+	.gridContainer { margin-left: 20px; }
+</style>
+<script type="text/javascript" src="http://o.aolcdn.com/dojo/1.3/dojo/dojo.xd.js"
+	djConfig="parseOnLoad: true"></script>
+<script type="text/javascript">
+	dojo.require("dojox.grid.DataGrid");
+	dojo.require("dojox.data.HtmlStore");
+	dojo.require("dojo.parser");
+</script>
+</head>
+<body class="niholo">
+<a href="http://datacleaner.eobjects.org" target="_blank"><img src="http://datacleaner.eobjects.org/resources/icon_datacleaner.png" alt="Created with DataCleaner" style="float: right; border: none;" /></a>
+<h1>Results for table: fooTable</h1>
+<h2>Number analysis</h2>
+<table id="dataTable1" style="visibility: hidden; display: none;">
+	<thead>
+	<tr><th>_</th><th>fooColumn</th><th>barColumn</th></tr>
+	</thead>
+	<tbody>
+	<tr><td>Highest value</td><td>8</td><td>2,4</td></tr>
+	<tr><td>Lowest value</td><td>4</td><td>0</td></tr>
+	<tr><td>Sum</td><td>18</td><td>4,4</td></tr>
+	<tr><td>Mean</td><td>6</td><td>1,47</td></tr>
+	<tr><td>Geometric mean</td><td>5,77</td><td>0</td></tr>
+	<tr><td>Standard deviation</td><td>2</td><td>1,29</td></tr>
+	<tr><td>Variance</td><td>4</td><td>1,65</td></tr>
+	</tbody>
+</table>
+<div dojoType="dojox.data.HtmlStore" dataId="dataTable1" jsId="gridStore1"></div>
+<div class="gridContainer"><table dojoType="dojox.grid.DataGrid"
+	store="gridStore1" autoHeight="8" columnReordering="true">
+<thead>
+	<tr><th>_</th><th>fooColumn</th><th>barColumn</th></thead>
+</table></div>
+</body>
+</html>

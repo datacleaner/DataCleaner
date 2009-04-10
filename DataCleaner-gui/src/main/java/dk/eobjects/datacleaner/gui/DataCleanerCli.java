@@ -40,6 +40,7 @@ import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.execution.DataCleanerExecutor;
 import dk.eobjects.datacleaner.execution.ExecutionConfiguration;
 import dk.eobjects.datacleaner.export.CsvResultExporter;
+import dk.eobjects.datacleaner.export.HtmlResultExporter;
 import dk.eobjects.datacleaner.export.IResultExporter;
 import dk.eobjects.datacleaner.export.XmlResultExporter;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
@@ -102,7 +103,7 @@ public class DataCleanerCli {
 
 		OptionBuilder.hasArgs();
 		OptionBuilder.withLongOpt("output-type");
-		OptionBuilder.withDescription("output type (xml|csv|customClassName)");
+		OptionBuilder.withDescription("output type (xml|csv|html|customClassName)");
 		options.addOption(OptionBuilder.create(OPTION_OUTPUT_TYPE));
 
 		OptionBuilder.hasArgs();
@@ -228,6 +229,9 @@ public class DataCleanerCli {
 			}
 			if ("csv".equalsIgnoreCase(outputType)) {
 				outputType = CsvResultExporter.class.getName();
+			}
+			if ("html".equalsIgnoreCase(outputType)) {
+				outputType = HtmlResultExporter.class.getName();
 			}
 
 			// Leave this open for people to develop their own IResultExporter

@@ -61,7 +61,7 @@ public class StringAnalysisProfileTest extends TestCase {
 						+ "Char count={7,33},"
 						+ "Max chars={MatrixValue[value=1,detailQuery=SELECT myTable.charColumn, COUNT(*) FROM myTable GROUP BY myTable.charColumn],MatrixValue[value=11,detailQuery=SELECT myTable.stringColumn, COUNT(*) FROM myTable GROUP BY myTable.stringColumn]},"
 						+ "Min chars={MatrixValue[value=1,detailQuery=SELECT myTable.charColumn, COUNT(*) FROM myTable GROUP BY myTable.charColumn],MatrixValue[value=0,detailQuery=SELECT myTable.stringColumn, COUNT(*) FROM myTable GROUP BY myTable.stringColumn]},"
-						+ "Avg chars={1,4.714},Uppercase chars={42%,21%},"
+						+ "Avg chars={1,4,71},Uppercase chars={42%,21%},"
 						+ "Lowercase chars={28%,66%},"
 						+ "Non-letter chars={28%,12%},"
 						+ "Word count={7,10},"

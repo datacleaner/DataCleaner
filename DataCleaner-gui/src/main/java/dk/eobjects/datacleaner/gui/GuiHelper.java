@@ -89,17 +89,15 @@ public class GuiHelper {
 	private static Log _log = LogFactory.getLog(GuiHelper.class);
 
 	public static final Font FONT_HEADER = new Font("Sans", Font.BOLD, 15);
-	public static final Font FONT_MONOSPACE = new Font("Monospaced",
-			Font.PLAIN, 14);
+	public static final Font FONT_MONOSPACE = new Font("Monospaced", Font.PLAIN, 14);
 	public static final Font FONT_NORMAL = new Font("Arial", Font.PLAIN, 12);
 	public static final String NULL_STRING = "<null>";
 	public static final Color BG_COLOR_LIGHT = new Color(243, 243, 243);
 	public static final Color BG_COLOR_DARK = new Color(191, 192, 200);
 	public static final Color BG_COLOR_DARKBLUE = new Color(80, 84, 104);
-	public static final Border BORDER_WIDE = new LineBorder(
-			GuiHelper.BG_COLOR_DARKBLUE, 4);
-	public static final CompoundBorder BORDER_THIN = new CompoundBorder(
-			new LineBorder(Color.DARK_GRAY), new EmptyBorder(2, 2, 2, 2));
+	public static final Border BORDER_WIDE = new LineBorder(GuiHelper.BG_COLOR_DARKBLUE, 4);
+	public static final CompoundBorder BORDER_THIN = new CompoundBorder(new LineBorder(Color.DARK_GRAY),
+			new EmptyBorder(2, 2, 2, 2));
 
 	private static HttpClient _httpClient;
 	private static Map<String, Image> _cachedImageIcons = new WeakHashMap<String, Image>();
@@ -107,13 +105,11 @@ public class GuiHelper {
 	/**
 	 * A highlighter for coloring odd/even rows in a JXTable
 	 */
-	public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory
-			.createAlternateStriping(HighlighterFactory.BEIGE,
-					HighlighterFactory.FLORAL_WHITE);
+	public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory.createAlternateStriping(
+			HighlighterFactory.BEIGE, HighlighterFactory.FLORAL_WHITE);
 
 	public static void confirmExit() {
-		int feedback = JOptionPane.showConfirmDialog(null,
-				"Are you sure you want to exit DataCleaner?", "Exit",
+		int feedback = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
 				JOptionPane.YES_NO_OPTION);
 		if (feedback == JOptionPane.YES_OPTION) {
 			_log.info("DataCleaner-gui shutting down.");
@@ -125,14 +121,11 @@ public class GuiHelper {
 		return new GuiBuilder<JPanel>(new JPanel()).applyLightBackground();
 	}
 
-	public static GuiBuilder<JCheckBox> createCheckBox(String text,
-			boolean selected) {
-		return new GuiBuilder<JCheckBox>(new JCheckBox(text, selected))
-				.applyLightBackground();
+	public static GuiBuilder<JCheckBox> createCheckBox(String text, boolean selected) {
+		return new GuiBuilder<JCheckBox>(new JCheckBox(text, selected)).applyLightBackground();
 	}
 
-	public static GuiBuilder<JRadioButton> createRadio(String text,
-			ButtonGroup buttonGroup) {
+	public static GuiBuilder<JRadioButton> createRadio(String text, ButtonGroup buttonGroup) {
 		JRadioButton component = new JRadioButton(text);
 		if (buttonGroup != null) {
 			buttonGroup.add(component);
@@ -140,8 +133,7 @@ public class GuiHelper {
 		return new GuiBuilder<JRadioButton>(component).applyLightBackground();
 	}
 
-	public static GuiBuilder<JMenuItem> createMenuItem(String text,
-			String iconFilename) {
+	public static GuiBuilder<JMenuItem> createMenuItem(String text, String iconFilename) {
 		JMenuItem menuItem = new JMenuItem();
 		if (text != null) {
 			menuItem.setText(text);
@@ -158,12 +150,10 @@ public class GuiHelper {
 		textArea.setEditable(false);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
-		return new GuiBuilder<JTextArea>(textArea).applyLightBackground()
-				.applyBorder();
+		return new GuiBuilder<JTextArea>(textArea).applyLightBackground().applyBorder();
 	}
 
-	public static GuiBuilder<JButton> createButton(String label,
-			String iconFilename) {
+	public static GuiBuilder<JButton> createButton(String label, String iconFilename) {
 		JButton button = new JButton();
 		if (label != null) {
 			button.setText(label);
@@ -186,8 +176,7 @@ public class GuiHelper {
 	public static void centerOnScreen(Component component) {
 		Dimension paneSize = component.getSize();
 		Dimension screenSize = component.getToolkit().getScreenSize();
-		component.setLocation((screenSize.width - paneSize.width) / 2,
-				(screenSize.height - paneSize.height) / 2);
+		component.setLocation((screenSize.width - paneSize.width) / 2, (screenSize.height - paneSize.height) / 2);
 	}
 
 	public static String getLicenceText() {
@@ -217,10 +206,9 @@ public class GuiHelper {
 		}
 	}
 
-	private static String getResourceContent(String filename)
-			throws IOException {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				ClassLoader.getSystemResourceAsStream(filename), "UTF8"));
+	private static String getResourceContent(String filename) throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(ClassLoader
+				.getSystemResourceAsStream(filename), "UTF8"));
 		StringBuilder sb = new StringBuilder();
 		String line = reader.readLine();
 		while (line != null) {
@@ -233,15 +221,12 @@ public class GuiHelper {
 		return sb.toString();
 	}
 
-	public static void showErrorMessage(String shortMessage,
-			String detailedMessage, Throwable exception) {
+	public static void showErrorMessage(String shortMessage, String detailedMessage, Throwable exception) {
 		JXErrorPane.setDefaultLocale(Locale.ENGLISH);
 		JXErrorPane errorPane = new JXErrorPane();
-		ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null,
-				"error", exception, ErrorLevel.SEVERE, null);
+		ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception, ErrorLevel.SEVERE, null);
 		errorPane.setErrorInfo(info);
-		JDialog dialog = JXErrorPane.createDialog(DataCleanerGui
-				.getMainWindow().getFrame(), errorPane);
+		JDialog dialog = JXErrorPane.createDialog(DataCleanerGui.getMainWindow().getFrame(), errorPane);
 		dialog.setTitle(shortMessage);
 		dialog.setVisible(true);
 	}
@@ -280,8 +265,7 @@ public class GuiHelper {
 		return table.getName() + "." + column.getName();
 	}
 
-	public static Column getColumnByLabel(ColumnSelection columnSelection,
-			String label) {
+	public static Column getColumnByLabel(ColumnSelection columnSelection, String label) {
 		List<Column> columns = columnSelection.getColumns();
 		Object[] tables = ReflectionHelper.getProperties(columns, "table");
 		for (int i = 0; i < tables.length; i++) {
@@ -297,8 +281,7 @@ public class GuiHelper {
 		return null;
 	}
 
-	public static void addComponentAligned(Container container,
-			JComponent component) {
+	public static void addComponentAligned(Container container, JComponent component) {
 		component.setAlignmentX(Component.LEFT_ALIGNMENT);
 		component.setAlignmentY(Component.TOP_ALIGNMENT);
 		container.add(component);
@@ -315,8 +298,8 @@ public class GuiHelper {
 	 * @param height
 	 * @param anchor
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
-			int gridy, int width, int height, int anchor) {
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height,
+			int anchor) {
 		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, 2);
 	}
 
@@ -332,8 +315,8 @@ public class GuiHelper {
 	 * @param anchor
 	 * @param padding
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
-			int gridy, int width, int height, int anchor, int padding) {
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height,
+			int anchor, int padding) {
 		LayoutManager layout = panel.getLayout();
 		if (!(layout instanceof GridBagLayout)) {
 			layout = new GridBagLayout();
@@ -362,10 +345,8 @@ public class GuiHelper {
 	 * @param width
 	 * @param height
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
-			int gridy, int width, int height) {
-		addToGridBag(comp, panel, gridx, gridy, width, height,
-				GridBagConstraints.WEST);
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height) {
+		addToGridBag(comp, panel, gridx, gridy, width, height, GridBagConstraints.WEST);
 	}
 
 	/**
@@ -376,8 +357,7 @@ public class GuiHelper {
 	 * @param gridx
 	 * @param gridy
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
-			int gridy) {
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy) {
 		addToGridBag(comp, panel, gridx, gridy, 1, 1);
 	}
 
@@ -390,8 +370,7 @@ public class GuiHelper {
 	 * @param gridy
 	 * @param anchor
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx,
-			int gridy, int anchor) {
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int anchor) {
 		addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor);
 	}
 
@@ -414,19 +393,14 @@ public class GuiHelper {
 	private static HttpClient createHttpClient(GuiSettings settings) {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		if (settings.isProxyEnabled()) {
-			HttpHost proxy = new HttpHost(settings.getProxyHost(), settings
-					.getProxyPort());
-			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY,
-					proxy);
+			HttpHost proxy = new HttpHost(settings.getProxyHost(), settings.getProxyPort());
+			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
 			if (settings.isProxyAuthenticationEnabled()) {
-				AuthScope authScope = new AuthScope(settings.getProxyHost(),
-						settings.getProxyPort());
-				UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-						settings.getProxyUsername(), settings
-								.getProxyPassword());
-				httpClient.getCredentialsProvider().setCredentials(authScope,
-						credentials);
+				AuthScope authScope = new AuthScope(settings.getProxyHost(), settings.getProxyPort());
+				UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(settings.getProxyUsername(),
+						settings.getProxyPassword());
+				httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
 			}
 		}
 		return httpClient;
@@ -447,14 +421,10 @@ public class GuiHelper {
 				public void run() {
 					try {
 						List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-						HttpPost method = new HttpPost(
-								"http://datacleaner.eobjects.org/ws/user_action");
-						nameValuePairs.add(new BasicNameValuePair("username",
-								username));
-						nameValuePairs.add(new BasicNameValuePair("action",
-								action));
-						method.setEntity(new UrlEncodedFormEntity(
-								nameValuePairs));
+						HttpPost method = new HttpPost("http://datacleaner.eobjects.org/ws/user_action");
+						nameValuePairs.add(new BasicNameValuePair("username", username));
+						nameValuePairs.add(new BasicNameValuePair("action", action));
+						method.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 						getHttpClient().execute(method);
 					} catch (Throwable t) {
 						// Do nothing, this is a low priority task

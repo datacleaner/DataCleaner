@@ -72,7 +72,7 @@ public class TableProfileResultsPanel extends JPanel {
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popupMenu = new JPopupMenu();
-				JMenuItem xmlMenuItem = new JMenuItem("XML");
+				JMenuItem xmlMenuItem = new JMenuItem("To XML format",GuiHelper.getImageIcon("images/file_xml.png"));
 				xmlMenuItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						exportToFile(new XmlResultExporter(), "xml");
@@ -80,7 +80,7 @@ public class TableProfileResultsPanel extends JPanel {
 				});
 				popupMenu.add(xmlMenuItem);
 
-				JMenuItem htmlMenuItem = new JMenuItem("HTML");
+				JMenuItem htmlMenuItem = new JMenuItem("To HTML format", GuiHelper.getImageIcon("images/file_html.png"));
 				htmlMenuItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						exportToFile(new HtmlResultExporter(), "html");

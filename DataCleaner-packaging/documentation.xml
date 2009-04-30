@@ -381,7 +381,7 @@
 				<para>
 					As you can see, the result sets of the three generated queries will contain the same collective result as the original query.
 					Splitting queries requires a small initial analysis to establish which indexes (the age column in the example above) and which
-					index values (1000 in the example above) should be used to create the WHERE-clause(s).
+					index values (20 and 40 in the example above) should be used to create the WHERE-clause(s).
 				</para>
 				<para>
 					So what does splitting queries accomplish? One might think that this is useless processing overhead, but there are scenarios where

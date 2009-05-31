@@ -32,8 +32,7 @@ public class TextFileDictionaryTest extends DataCleanerTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		_dictionary = new TextFileDictionary(
-				getTestResourceAsFile("Dictionary.txt"));
+		_dictionary = new TextFileDictionary(getTestResourceAsFile("Dictionary.txt"));
 	}
 
 	public void testSingleWord() throws Exception {
@@ -49,17 +48,22 @@ public class TextFileDictionaryTest extends DataCleanerTestCase {
 	}
 
 	public void testSentense() throws Exception {
-		boolean[] valid = _dictionary.isValid("foo,  bar", "fooo barrr",
-				"for bar", "foo bar");
+		boolean[] valid = _dictionary.isValid("foo,  bar", "fooo barrr", "for bar", "foo bar");
 		assertTrue(valid[0]);
 		assertFalse(valid[1]);
 		assertFalse(valid[2]);
 		assertTrue(valid[3]);
 	}
 
-	public void testNumeric() throws Exception {
-		boolean[] valid = _dictionary.isValid("there are 2 brown foxes",
-				"there are two brown foxes", "there are 2brown foxes", "");
+	public void testOnlyNumbers() throws Exception {
+		TextFileDictionary dict = new TextFileDictionary("my_dict", getTestResourceAsFile("numbers_dictionary.txt"));
+		assertTrue(dict.isValid("2200")[0]);
+		assertFalse(dict.isValid("2201")[0]);
+	}
+
+	public void testNumbersInText() throws Exception {
+		boolean[] valid = _dictionary.isValid("there are 2 brown foxes", "there are two brown foxes",
+				"there are 2brown foxes", "");
 		assertTrue(valid[0]);
 		assertTrue(valid[1]);
 		assertFalse(valid[2]);
@@ -71,10 +75,8 @@ public class TextFileDictionaryTest extends DataCleanerTestCase {
 	 * the english ASpell wordlist
 	 */
 	public void testAspellDictionary() throws Exception {
-		TextFileDictionary dictionary = new TextFileDictionary(
-				getTestResourceAsFile("aspell-english.txt"));
-		boolean[] valid = dictionary.isValid("hello world", "hi john",
-				"my name is g. bush and I'm a jerk", "foob bar");
+		TextFileDictionary dictionary = new TextFileDictionary(getTestResourceAsFile("aspell-english.txt"));
+		boolean[] valid = dictionary.isValid("hello world", "hi john", "my name is g. bush and I'm a jerk", "foob bar");
 		assertEquals(4, valid.length);
 		assertTrue(valid[0]);
 		assertTrue(valid[1]);
@@ -87,16 +89,14 @@ public class TextFileDictionaryTest extends DataCleanerTestCase {
 		File benchmarkFile = getTestResourceAsFile("dictionary_write_bench.txt");
 
 		DataContext dc = getTestDataContext();
-		Column cityColumn = dc.getDefaultSchema().getTableByName("CUSTOMERS")
-				.getColumnByName("CITY");
+		Column cityColumn = dc.getDefaultSchema().getTableByName("CUSTOMERS").getColumnByName("CITY");
 
-		TextFileDictionary dictionary = TextFileDictionary
-				.createTextFileDictionary("foobar", cityColumn, dc, outputFile);
+		TextFileDictionary dictionary = TextFileDictionary.createTextFileDictionary("foobar", cityColumn, dc,
+				outputFile);
 		assertEquals("TextFileDictionary[name=foobar]", dictionary.toString());
 
 		assertEqualsFile(benchmarkFile, outputFile);
 
-		assertEquals("{true,false}", ArrayUtils.toString(dictionary.isValid(
-				"Brisbane", "uggamomma")));
+		assertEquals("{true,false}", ArrayUtils.toString(dictionary.isValid("Brisbane", "uggamomma")));
 	}
 }

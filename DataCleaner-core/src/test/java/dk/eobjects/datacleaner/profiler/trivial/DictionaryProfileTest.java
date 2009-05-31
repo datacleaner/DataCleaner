@@ -57,37 +57,56 @@ public class DictionaryProfileTest extends DataCleanerTestCase {
 			assertEquals("No dictionaries specified", e.getMessage());
 		}
 
-		properties.put(DictionaryProfile.PREFIX_PROPERTY_DICTIONARY + 0,
-				"foo_bar_foo_bar");
+		properties.put(DictionaryProfile.PREFIX_PROPERTY_DICTIONARY + 0, "foo_bar_foo_bar");
 
 		try {
 			dictionaryProfile.initialize(cols);
 		} catch (Exception e) {
-			assertEquals("No such dictionary, 'foo_bar_foo_bar'", e
-					.getMessage());
+			assertEquals("No such dictionary, 'foo_bar_foo_bar'", e.getMessage());
 		}
+	}
+
+	public void testNumbers() throws Exception {
+		TextFileDictionary dict = new TextFileDictionary("my_dict", getTestResourceAsFile("numbers_dictionary.txt"));
+		DictionaryProfile profile = new DictionaryProfile();
+
+		Column column = new Column("foobar");
+
+		profile.initialize(column);
+		ArrayList<IDictionary> dictionaryList = new ArrayList<IDictionary>();
+		dictionaryList.add(dict);
+		profile.setDictionaryList(dictionaryList);
+		profile.setDetailsEnabled(false);
+
+		SelectItem[] selectItems = new SelectItem[] { new SelectItem(column) };
+
+		profile.process(new Row(selectItems, new Object[] { 2200 }), 1);
+
+		assertEquals("Matrix[columnNames={foobar},my_dict={1},No Matches={0},Multiple Matches={0}]", profile
+				.getResult().getMatrices()[0].toString());
+		
+		profile.process(new Row(selectItems, new Object[] { 2201 }), 1);
+
+		assertEquals("Matrix[columnNames={foobar},my_dict={1},No Matches={1},Multiple Matches={0}]", profile
+				.getResult().getMatrices()[0].toString());
 	}
 
 	public void testProcessValue() throws Exception {
 		ProfileManagerTest.initProfileManager();
 		List<IDictionary> dictionaries = new ArrayList<IDictionary>();
-		dictionaries.add(new TextFileDictionary("foo", new File(
-				"src/test/resources/Dictionary.txt")));
-		dictionaries.add(new TextFileDictionary("english", new File(
-				"src/test/resources/aspell-english.txt")));
+		dictionaries.add(new TextFileDictionary("foo", new File("src/test/resources/Dictionary.txt")));
+		dictionaries.add(new TextFileDictionary("english", new File("src/test/resources/aspell-english.txt")));
 
 		DictionaryManager.setDictionaries(dictionaries);
 		DictionaryProfile dictionaryProfile = new DictionaryProfile();
 		Column strCol1 = new Column("col1", ColumnType.VARCHAR);
 		Column strCol2 = new Column("col2", ColumnType.VARCHAR);
 		Column[] cols = new Column[] { strCol1, strCol2 };
-		SelectItem[] selectItems = new SelectItem[] { new SelectItem(strCol1),
-				new SelectItem(strCol2) };
+		SelectItem[] selectItems = new SelectItem[] { new SelectItem(strCol1), new SelectItem(strCol2) };
 
 		Map<String, String> properties = new HashMap<String, String>();
-		ReflectionHelper.addIteratedProperties(properties,
-				DictionaryProfile.PREFIX_PROPERTY_DICTIONARY, new String[] {
-						"foo", "english" });
+		ReflectionHelper.addIteratedProperties(properties, DictionaryProfile.PREFIX_PROPERTY_DICTIONARY, new String[] {
+				"foo", "english" });
 		dictionaryProfile.setProperties(properties);
 
 		dictionaryProfile.initialize(cols);
@@ -134,12 +153,9 @@ public class DictionaryProfileTest extends DataCleanerTestCase {
 
 		DictionaryManager.setDictionaries(dictionaries);
 
-		EasyMock.expect(dict1.isValid("foo", "bar")).andReturn(
-				new boolean[] { true, true });
-		EasyMock.expect(dict2.isValid("foo", "bar")).andReturn(
-				new boolean[] { false, true });
-		EasyMock.expect(dict3.isValid("foo", "bar")).andReturn(
-				new boolean[] { false, true });
+		EasyMock.expect(dict1.isValid("foo", "bar")).andReturn(new boolean[] { true, true });
+		EasyMock.expect(dict2.isValid("foo", "bar")).andReturn(new boolean[] { false, true });
+		EasyMock.expect(dict3.isValid("foo", "bar")).andReturn(new boolean[] { false, true });
 
 		EasyMock.expect(dict1.getName()).andReturn("d1").anyTimes();
 		EasyMock.expect(dict2.getName()).andReturn("d2").anyTimes();
@@ -150,9 +166,8 @@ public class DictionaryProfileTest extends DataCleanerTestCase {
 		DictionaryProfile dictionaryProfile = new DictionaryProfile();
 
 		Map<String, String> properties = new HashMap<String, String>();
-		ReflectionHelper.addIteratedProperties(properties,
-				DictionaryProfile.PREFIX_PROPERTY_DICTIONARY, new String[] {
-						"d1", "d2", "d3" });
+		ReflectionHelper.addIteratedProperties(properties, DictionaryProfile.PREFIX_PROPERTY_DICTIONARY, new String[] {
+				"d1", "d2", "d3" });
 		dictionaryProfile.setProperties(properties);
 
 		Column col = new Column("some_column", ColumnType.VARCHAR);
@@ -161,17 +176,14 @@ public class DictionaryProfileTest extends DataCleanerTestCase {
 		dictionaryProfile.setDetailsEnabled(false);
 
 		SelectItem[] selectItems = new SelectItem[] { new SelectItem(col) };
-		dictionaryProfile.process(new Row(selectItems, new Object[] { "foo" }),
-				1);
-		dictionaryProfile.process(new Row(selectItems, new Object[] { "bar" }),
-				1);
+		dictionaryProfile.process(new Row(selectItems, new Object[] { "foo" }), 1);
+		dictionaryProfile.process(new Row(selectItems, new Object[] { "bar" }), 1);
 
 		IProfileResult result = dictionaryProfile.getResult();
 		IMatrix[] matrices = result.getMatrices();
 		assertEquals(1, matrices.length);
 
-		assertEquals(
-				"Matrix[columnNames={some_column},d1={2},d2={1},d3={1},No Matches={0},Multiple Matches={1}]",
+		assertEquals("Matrix[columnNames={some_column},d1={2},d2={1},d3={1},No Matches={0},Multiple Matches={1}]",
 				matrices[0].toString());
 
 		verifyMocks();

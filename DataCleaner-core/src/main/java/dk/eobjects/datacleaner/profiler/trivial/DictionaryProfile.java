@@ -64,33 +64,40 @@ public class DictionaryProfile extends AbstractProfile {
 	public void setQueryBufferSize(int i) {
 		_queryBufferSize = i;
 	}
+	
+	public void setDictionaryList(List<IDictionary> dictionaryList) {
+		_dictionaryList = dictionaryList;
+	}
+	
 
 	@Override
 	public void initialize(Column... columns) {
 		super.initialize(columns);
-		String bufferSizeStr = _properties.get(PROPERTY_BUFFER_SIZE);
-		if (bufferSizeStr != null) {
-			try {
-				_queryBufferSize = Integer.parseInt(bufferSizeStr);
-			} catch (NumberFormatException e) {
-				_log.info(e);
+		if (_properties != null) {
+			String bufferSizeStr = _properties.get(PROPERTY_BUFFER_SIZE);
+			if (bufferSizeStr != null) {
+				try {
+					_queryBufferSize = Integer.parseInt(bufferSizeStr);
+				} catch (NumberFormatException e) {
+					_log.info(e);
+				}
 			}
-		}
-
-		List<String> dictionaryNames = ReflectionHelper.getIteratedProperties(
-				PREFIX_PROPERTY_DICTIONARY, _properties);
-		if (dictionaryNames.isEmpty()) {
-			throw new IllegalArgumentException("No dictionaries specified");
-		}
-		_dictionaryList = new ArrayList<IDictionary>(dictionaryNames.size());
-		for (String name : dictionaryNames) {
-			IDictionary dictionary = DictionaryManager
-					.getDictionaryByName(name);
-			if (dictionary == null) {
-				throw new IllegalArgumentException("No such dictionary, '"
-						+ name + "'");
+			
+			List<String> dictionaryNames = ReflectionHelper.getIteratedProperties(
+					PREFIX_PROPERTY_DICTIONARY, _properties);
+			if (dictionaryNames.isEmpty()) {
+				throw new IllegalArgumentException("No dictionaries specified");
 			}
-			_dictionaryList.add(dictionary);
+			_dictionaryList = new ArrayList<IDictionary>(dictionaryNames.size());
+			for (String name : dictionaryNames) {
+				IDictionary dictionary = DictionaryManager
+				.getDictionaryByName(name);
+				if (dictionary == null) {
+					throw new IllegalArgumentException("No such dictionary, '"
+							+ name + "'");
+				}
+				_dictionaryList.add(dictionary);
+			}
 		}
 	}
 

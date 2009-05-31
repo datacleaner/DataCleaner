@@ -148,6 +148,7 @@ public class TextFileDictionary implements IDictionary {
 				// anymore
 				boolean sentenceValid = existsInFile(sentence);
 				if (!sentenceValid) {
+					
 					// Tokenize the sentence to check individual token validity
 					Token[] tokens = tokenizer.tokenize(sentence);
 					if (debugEnabled) {
@@ -156,7 +157,7 @@ public class TextFileDictionary implements IDictionary {
 								+ ArrayUtils.toString(tokens));
 					}
 					for (int j = 0; j < tokens.length && results[i]; j++) {
-						if (tokens[j].isWord() || tokens[j].isMixed()) {
+						if (tokens[j].isWord() || tokens[j].isMixed() || tokens[j].isNumber()) {
 							String tokenString = tokens[j].toString();
 							results[i] = existsInFile(tokenString);
 							if (debugEnabled && !results[i]) {
@@ -186,6 +187,12 @@ public class TextFileDictionary implements IDictionary {
 
 	@Override
 	public int hashCode() {
+		if (_name == null) {
+			if (_dictionaryFile == null) {
+				return 0;
+			}
+			return _dictionaryFile.hashCode();
+		}
 		return _name.hashCode();
 	}
 

@@ -29,6 +29,7 @@
             </plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-3</version>
 				<executions>
 					<execution>
 						<id>jar-assembly</id>
@@ -38,15 +39,13 @@
 						</goals>
 						<configuration>
 							<descriptorRefs>
-								<descriptorRef> jar-with-dependencies </descriptorRef>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
 							</descriptorRefs>
 							<archive>
 								<manifest>
-									<mainClass> dk.eobjects.datacleaner.gui.DataCleanerGui 
-									</mainClass>
+									<mainClass>dk.eobjects.datacleaner.gui.DataCleanerGui</mainClass>
 								</manifest>
 							</archive>
-							<outputDirectory> ${project.build.directory} </outputDirectory>
 						</configuration>
 					</execution>
 				</executions>

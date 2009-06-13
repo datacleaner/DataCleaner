@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import javax.swing.ImageIcon;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.widgets.DataCleanerTable;
 import dk.eobjects.datacleaner.gui.widgets.DataTable;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.data.DataSet;
@@ -39,8 +40,7 @@ public class PreviewDataWindow extends AbstractWindow {
 		_title = null;
 	}
 
-	public PreviewDataWindow(Table table, Column[] columns,
-			DataContext dataContext, int numRows) {
+	public PreviewDataWindow(Table table, Column[] columns, DataContext dataContext, int numRows) {
 		super();
 		_title = "Preview: " + table.getName();
 		if (columns == null || columns.length == 0) {
@@ -50,7 +50,13 @@ public class PreviewDataWindow extends AbstractWindow {
 		DataSet data = dataContext.executeQuery(q);
 
 		_panel.setLayout(new BorderLayout());
-		DataTable dataTable = new DataTable(data);
+		DataCleanerTable dataTable = new DataTable(data);
+		if (columns.length > 50) {
+			// For tables with huge numbers of columns we can just as well do a
+			// rather coarse sub-selection
+			dataTable.setVisibleColumns(0, 20);
+		}
+
 		_panel.add(dataTable.toPanel(), BorderLayout.CENTER);
 
 		Dimension tableSize = dataTable.getPreferredSize();

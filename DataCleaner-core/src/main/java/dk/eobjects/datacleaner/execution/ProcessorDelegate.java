@@ -90,7 +90,7 @@ class ProcessorDelegate<R, P> {
 		if (_succesfull) {
 			synchronized (this) {
 				_tempCount += count;
-				if (_tempCount > 500) {
+				if (_tempCount >= 500) {
 					_progressObserver.notifyProgress(_table, _tempCount);
 					_totalCount += _tempCount;
 					_tempCount = 0;

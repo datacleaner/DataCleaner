@@ -30,9 +30,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -246,7 +249,8 @@ public class GuiHelper {
 	public static Image getImage(String imagePath) {
 		Image image = _cachedImageIcons.get(imagePath);
 		if (image == null) {
-			URL url = ClassLoader.getSystemResource(imagePath);
+			URL url = getUrl(imagePath);
+
 			try {
 				if (url == null) {
 					File file = new File("src/main/resources/" + imagePath);
@@ -450,56 +454,99 @@ public class GuiHelper {
 		return separator;
 	}
 
-	public static void copyFromClasspathToFileSystem(String classpathPath, String fileSystemPath) throws IOException {
-		copyFileFromClasspathToFileSystem(classpathPath, new File(fileSystemPath));
-	}
-
-	public static void copyFileFromClasspathToFileSystem(String classpathPath, File fileSystemFile) throws IOException {
-		BufferedInputStream inputStream = new BufferedInputStream(ClassLoader.getSystemResource(classpathPath)
-				.openStream());
-		BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(fileSystemFile));
-		for (int b = inputStream.read(); b != -1; b = inputStream.read()) {
-			outputStream.write(b);
-		}
-		inputStream.close();
-		outputStream.flush();
-		outputStream.close();
-	}
-
-	public static void copyDirectoryContentsFromClasspathToFileSystem(String classpathDirectoryPath,
-			File dataCleanerHome) throws IOException {
-		URL url = ClassLoader.getSystemResource(classpathDirectoryPath);
-		URLConnection connection = url.openConnection();
-		if (connection instanceof JarURLConnection) {
-			if (!classpathDirectoryPath.endsWith("/")) {
-				classpathDirectoryPath = classpathDirectoryPath + "/";
-			}
-			int substringIndex = classpathDirectoryPath.length();
-
-			URL jarFileURL = ((JarURLConnection) connection).getJarFileURL();
-			JarFile jarFile = new JarFile(jarFileURL.getFile());
-
-			Enumeration<JarEntry> entries = jarFile.entries();
-			while (entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				String name = entry.getName();
-				if (name != null && name.startsWith(classpathDirectoryPath)) {
-					String relativeName = name.substring(substringIndex);
-					
-					File newFile = new File(dataCleanerHome, relativeName);
-					if (entry.isDirectory()) {
-						newFile.mkdirs();
-					} else {
-						BufferedInputStream is = new BufferedInputStream(jarFile.getInputStream(entry));
-						BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(newFile));
-						for (int b = is.read(); b != -1; b = is.read()) {
-							os.write(b);
-						}
-						is.close();
-						os.flush();
-						os.close();
-					}
+	public static void copyDirectoryContentsFromClasspathToFileSystem(String classpathDirectoryPath, File destDir)
+			throws IOException {
+		URL url = getUrl(classpathDirectoryPath);
+		File file = new File(url.getFile());
+		if (file.isDirectory()) {
+			copyRecursively(file, destDir);
+		} else {
+			URLConnection connection = url.openConnection();
+			if (connection instanceof JarURLConnection) {
+				copyRecursively((JarURLConnection) connection, classpathDirectoryPath, destDir);
+			} else {
+				if (connection == null) {
+					throw new IllegalStateException("Connection is null");
+				} else {
+					throw new UnsupportedOperationException("Unsupported connection type: "
+							+ connection.getClass().getName());
 				}
+			}
+		}
+	}
+
+	public static URL getUrl(String path) {
+		URL url = ClassLoader.getSystemResource(path);
+		if (url == null) {
+			// in Java Web Start mode the getSystemResource will return null
+			url = Thread.currentThread().getContextClassLoader().getResource(path);
+		}
+		return url;
+	}
+
+	private static void copyRecursively(JarURLConnection connection, String directoryInJarPath, File destDir)
+			throws IOException {
+		if (!directoryInJarPath.endsWith("/")) {
+			directoryInJarPath = directoryInJarPath + "/";
+		}
+		int substringIndex = directoryInJarPath.length();
+
+//		URL jarFileURL = connection.getJarFileURL();
+//		JarFile jarFile = new JarFile(jarFileURL.getFile());
+		JarFile jarFile = connection.getJarFile();
+
+		Enumeration<JarEntry> entries = jarFile.entries();
+		while (entries.hasMoreElements()) {
+			JarEntry entry = entries.nextElement();
+			String name = entry.getName();
+			if (name != null && name.startsWith(directoryInJarPath)) {
+				String relativeName = name.substring(substringIndex);
+
+				File newFile = new File(destDir, relativeName);
+				if (entry.isDirectory()) {
+					newFile.mkdirs();
+				} else {
+					transferStreams(jarFile.getInputStream(entry), new FileOutputStream(newFile));
+				}
+			}
+		}
+	}
+
+	public static void transferStreams(InputStream input, OutputStream output) {
+		BufferedInputStream is = null;
+		BufferedOutputStream os = null;
+		try {
+			is = new BufferedInputStream(input);
+			os = new BufferedOutputStream(output);
+			for (int b = is.read(); b != -1; b = is.read()) {
+				os.write(b);
+			}
+		} catch (IOException e) {
+
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+				if (os != null) {
+					os.flush();
+					os.close();
+				}
+			} catch (IOException e) {
+				_log.error(e);
+			}
+		}
+	}
+
+	public static void copyRecursively(File fromDir, File toDir) throws IOException {
+		File[] files = fromDir.listFiles();
+		for (File file : files) {
+			File newFile = new File(toDir, file.getName());
+			if (file.isDirectory()) {
+				newFile.mkdirs();
+				copyRecursively(file, newFile);
+			} else if (file.isFile()) {
+				transferStreams(new FileInputStream(file), new FileOutputStream(newFile));
 			}
 		}
 	}

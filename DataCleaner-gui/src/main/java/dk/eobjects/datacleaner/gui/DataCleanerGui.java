@@ -71,8 +71,7 @@ public class DataCleanerGui {
 			try {
 				databaseDriver.loadDriver();
 			} catch (Exception e) {
-				_log.error("Could not load database driver: " + databaseDriver,
-						e);
+				_log.error("Could not load database driver: " + databaseDriver, e);
 			}
 		}
 	}

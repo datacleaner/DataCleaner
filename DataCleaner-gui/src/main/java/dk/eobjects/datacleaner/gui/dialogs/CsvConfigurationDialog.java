@@ -32,6 +32,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.widgets.DataTable;
@@ -43,8 +45,7 @@ import dk.eobjects.metamodel.query.SelectItem;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
-public class CsvConfigurationDialog extends BanneredDialog implements
-		ActionListener {
+public class CsvConfigurationDialog extends BanneredDialog implements ActionListener {
 
 	private static final long serialVersionUID = -8449807287294665745L;
 
@@ -70,8 +71,7 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 		_file = file;
 		_dataContextSelection = selection;
 
-		JButton okButton = new JButton("Open", GuiHelper
-				.getImageIcon("images/toolbar_file.png"));
+		JButton okButton = new JButton("Open", GuiHelper.getImageIcon("images/toolbar_file.png"));
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				CsvConfigurationDialog.this.setVisible(false);
@@ -94,21 +94,18 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 		JLabel delimitorLabel = new JLabel("Select the Delimitor:");
 		GuiHelper.addToGridBag(delimitorLabel, _panel, 0, 0);
 
-		JRadioButton commaButton = GuiHelper.createRadio("Use Comma [,]",
-				delimitorGroup).toComponent();
+		JRadioButton commaButton = GuiHelper.createRadio("Use Comma [,]", delimitorGroup).toComponent();
 		commaButton.setActionCommand(COMMA_ACTION_CMD);
 		commaButton.setSelected(true);
 		commaButton.addActionListener(this);
 		GuiHelper.addToGridBag(commaButton, _panel, 0, 1);
 
-		JRadioButton semiColonButton = GuiHelper.createRadio(
-				"Use Semi Colon [;]", delimitorGroup).toComponent();
+		JRadioButton semiColonButton = GuiHelper.createRadio("Use Semi Colon [;]", delimitorGroup).toComponent();
 		semiColonButton.setActionCommand(SEMI_COLON_ACTION_CMD);
 		semiColonButton.addActionListener(this);
 		GuiHelper.addToGridBag(semiColonButton, _panel, 0, 2);
 
-		JRadioButton tabButton = GuiHelper.createRadio("Use Tab [   ]",
-				delimitorGroup).toComponent();
+		JRadioButton tabButton = GuiHelper.createRadio("Use Tab [   ]", delimitorGroup).toComponent();
 		tabButton.setActionCommand(TAB_ACTION_CMD);
 		tabButton.addActionListener(this);
 		if (DataContextSelection.EXTENSION_TAB_SEPARATED.equals(_fileExtension)) {
@@ -123,15 +120,15 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 		GuiHelper.addToGridBag(quotationLabel, _panel, 1, 0);
 
 		ButtonGroup quoteGroup = new ButtonGroup();
-		JRadioButton doubleQuoteButton = GuiHelper.createRadio(
-				"Use Double Quote [\"sample text\"]", quoteGroup).toComponent();
+		JRadioButton doubleQuoteButton = GuiHelper.createRadio("Use Double Quote [\"sample text\"]", quoteGroup)
+				.toComponent();
 		doubleQuoteButton.setActionCommand(DOUBLE_QUOTE_ACTION_CMD);
 		doubleQuoteButton.setSelected(true);
 		doubleQuoteButton.addActionListener(this);
 		GuiHelper.addToGridBag(doubleQuoteButton, _panel, 1, 1);
 
-		JRadioButton singleQuoteButton = GuiHelper.createRadio(
-				"Use Single Quote ['sample text']", quoteGroup).toComponent();
+		JRadioButton singleQuoteButton = GuiHelper.createRadio("Use Single Quote ['sample text']", quoteGroup)
+				.toComponent();
 		singleQuoteButton.setActionCommand(SINGLE_QUOTE_ACTION_CMD);
 		singleQuoteButton.addActionListener(this);
 		GuiHelper.addToGridBag(singleQuoteButton, _panel, 1, 2);
@@ -145,8 +142,7 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 		GuiHelper.addToGridBag(tableHeading, _panel, 0, 11, 2, 1);
 
 		ArrayList<Row> initialData = new ArrayList<Row>(PREVIEW_ROWS);
-		SelectItem[] selectItems = new SelectItem[] { new SelectItem(
-				new Column("")) };
+		SelectItem[] selectItems = new SelectItem[] { new SelectItem(new Column("")) };
 		for (int i = 0; i < PREVIEW_ROWS; i++) {
 			initialData.add(new Row(selectItems, new Object[] { "" }));
 		}
@@ -164,13 +160,10 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
-		if (command.equals(COMMA_ACTION_CMD)
-				|| command.equals(SEMI_COLON_ACTION_CMD)
-				|| command.equals(TAB_ACTION_CMD)) {
+		if (command.equals(COMMA_ACTION_CMD) || command.equals(SEMI_COLON_ACTION_CMD) || command.equals(TAB_ACTION_CMD)) {
 			_curSeparator = command.charAt(0);
 		}
-		if (command.equals(SINGLE_QUOTE_ACTION_CMD)
-				|| command.equals(DOUBLE_QUOTE_ACTION_CMD)) {
+		if (command.equals(SINGLE_QUOTE_ACTION_CMD) || command.equals(DOUBLE_QUOTE_ACTION_CMD)) {
 			_curQuoteChar = command.charAt(0);
 		}
 		updateContent();
@@ -182,18 +175,29 @@ public class CsvConfigurationDialog extends BanneredDialog implements
 		_sampleText.setText(buildSampleString(_curSeparator, _curQuoteChar));
 
 		DataContext dataContext = _dataContextSelection.getDataContext();
-		Table table = dataContext.getSchemas()[0].getTables()[0];
+		Table table = dataContext.getDefaultSchema().getTables()[0];
 
 		Query q = new Query();
-		q.from(table).select(table.getColumns());
+		Column[] columns = table.getColumns();
+
+		// if there are a lot of columns, we only present 10 of them
+		if (columns.length > 20) {
+			Object[] subarray = ArrayUtils.subarray(columns, 0, 10);
+			columns = new Column[subarray.length];
+			for (int i = 0; i < subarray.length; i++) {
+				columns[i] = (Column) subarray[i];
+			}
+		}
+		
+		q.from(table).select(columns);
 		q.setMaxRows(PREVIEW_ROWS);
 
 		_table.updateTable(dataContext.executeQuery(q));
 	}
 
 	private String buildSampleString(char seperatorChar, char quoteChar) {
-		return quoteChar + "sample text 1" + quoteChar + seperatorChar + "423"
-				+ seperatorChar + quoteChar + "sample text 2" + quoteChar;
+		return quoteChar + "sample text 1" + quoteChar + seperatorChar + "423" + seperatorChar + quoteChar
+				+ "sample text 2" + quoteChar;
 	}
 
 	protected JTextField getSampleText() {

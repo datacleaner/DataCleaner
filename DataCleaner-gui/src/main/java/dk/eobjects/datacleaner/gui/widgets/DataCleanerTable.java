@@ -88,8 +88,7 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 
 	private ActionListener _copyEntireTableActionListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			copyToClipboard(0, 0, DataCleanerTable.this.getColumnCount(),
-					DataCleanerTable.this.getRowCount());
+			copyToClipboard(0, 0, DataCleanerTable.this.getColumnCount(), DataCleanerTable.this.getRowCount());
 		}
 	};
 
@@ -109,8 +108,7 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 	 */
 	public JPanel toPanel() {
 		if (_panel == null) {
-			_panel = GuiHelper.createPanel()
-					.applyBorderLayout().toComponent();
+			_panel = GuiHelper.createPanel().applyBorderLayout().toComponent();
 			_panel.add(getTableHeader(), BorderLayout.NORTH);
 			_panel.add(new JScrollPane(this), BorderLayout.CENTER);
 			_panel.setPreferredSize(getPanelPreferredSize());
@@ -124,7 +122,7 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 		d.width = tableSize.width;
 		Dimension headerSize = getTableHeader().getPreferredSize();
 		d.height = headerSize.height + tableSize.height;
-		
+
 		// Adding a 20 pixel buffer for horisontal scroll bars
 		// (Ticket #272)
 		d.height = d.height + 20;
@@ -136,14 +134,12 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 		List<JMenuItem> result = new ArrayList<JMenuItem>();
 
 		// JMenuItem for "Copy selected cells to clipboard"
-		JMenuItem copySelectedItem = new JMenuItem(
-				"Copy selected cells to clipboard", icon);
+		JMenuItem copySelectedItem = new JMenuItem("Copy selected cells to clipboard", icon);
 		copySelectedItem.addActionListener(_copySelectItemsActionListener);
 		result.add(copySelectedItem);
 
 		// JMenuItem for "Copy entire table to clipboard"
-		JMenuItem copyTableItem = new JMenuItem(
-				"Copy entire table to clipboard", icon);
+		JMenuItem copyTableItem = new JMenuItem("Copy entire table to clipboard", icon);
 		copyTableItem.addActionListener(_copyEntireTableActionListener);
 		result.add(copyTableItem);
 
@@ -166,8 +162,7 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 		if (e.getClickCount() == 1) {
 			int button = e.getButton();
 			if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-				if (_rightClickMenuItems != null
-						&& _rightClickMenuItems.size() > 0) {
+				if (_rightClickMenuItems != null && _rightClickMenuItems.size() > 0) {
 					JPopupMenu popup = new JPopupMenu();
 					for (JMenuItem item : _rightClickMenuItems) {
 						popup.add(item);
@@ -184,11 +179,9 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 	 * 
 	 * @see http://www.copy--paste.org/copy-paste-jtables-excel.htm
 	 */
-	public void copyToClipboard(int rowIndex, int colIndex, int width,
-			int height) {
+	public void copyToClipboard(int rowIndex, int colIndex, int width, int height) {
 		StringBuilder sb = new StringBuilder();
-		if (rowIndex == 0 && colIndex == 0 && width == getColumnCount()
-				&& height == getRowCount()) {
+		if (rowIndex == 0 && colIndex == 0 && width == getColumnCount() && height == getRowCount()) {
 			for (int i = 0; i < width; i++) {
 				sb.append(getColumnName(i));
 				if (i < height - 1) {
@@ -226,5 +219,18 @@ public class DataCleanerTable extends JXTable implements MouseListener {
 			value = GuiHelper.NULL_STRING;
 		}
 		return value;
+	}
+
+	public void setVisibleColumns(int min, int max) {
+		// Note: The loop starts in the top and goes down, this is because the
+		// getColumnExt() index is affected directly, when setting a column as
+		// invisible!
+		for (int i = getColumnCount(); i > 0; i--) {
+			if (i >= min && i <= max) {
+				getColumnExt(i - 1).setVisible(true);
+			} else {
+				getColumnExt(i - 1).setVisible(false);
+			}
+		}
 	}
 }

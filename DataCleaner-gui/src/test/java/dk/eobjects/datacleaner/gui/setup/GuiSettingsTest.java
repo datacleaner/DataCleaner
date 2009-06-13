@@ -32,9 +32,7 @@ public class GuiSettingsTest extends TestCase {
 		file.delete();
 		GuiSettings.initialize(true);
 		GuiSettings settings = GuiSettings.getSettings();
-		assertEquals(
-				"GuiSettings[lookAndFeelClassName=com.jgoodies.looks.plastic.PlasticXPLookAndFeel,dictionaries={},databaseDrivers={},regexes={}]",
-				settings.toString());
+		assertEquals("com.jgoodies.looks.plastic.PlasticXPLookAndFeel", settings.getLookAndFeelClassName());
 		assertFalse(file.exists());
 		settings.getDictionaries().clear();
 		settings.getRegexes().clear();
@@ -44,23 +42,19 @@ public class GuiSettingsTest extends TestCase {
 
 	public void testLoadAndSave() throws Exception {
 		GuiSettings settings = new GuiSettings();
-		assertEquals(
-				"GuiSettings[lookAndFeelClassName=null,dictionaries={},databaseDrivers={},regexes={}]",
-				settings.toString());
+		assertNull(settings.getLookAndFeelClassName());
 		List<IDictionary> dictionaries = new ArrayList<IDictionary>();
-		dictionaries.add(new TextFileDictionary("bar", new File(
-				"src/test/resources/test-text-file.txt")));
+		dictionaries.add(new TextFileDictionary("bar", new File("src/test/resources/test-text-file.txt")));
 		settings.setDictionaries(dictionaries);
-		settings.getRegexes().add(
-				new NamedRegex().setName("foo").setExpression("bar"));
+		List<NamedRegex> regexes = settings.getRegexes();
+		regexes.clear();
+		regexes.add(new NamedRegex().setName("foo").setExpression("bar"));
 		GuiSettings.saveSettings(settings);
 		settings = GuiSettings.getSettings();
-		assertEquals(
-				"GuiSettings[lookAndFeelClassName=null,dictionaries={TextFileDictionary[name=bar]},databaseDrivers={},regexes={NamedRegex[name=foo,expression=bar]}]",
-				settings.toString());
+		assertEquals(1, settings.getRegexes().size());
 
 		settings.getDictionaries().clear();
-		settings.getRegexes().clear();
+		regexes.clear();
 		GuiSettings.saveSettings(settings);
 	}
 }

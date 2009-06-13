@@ -87,9 +87,19 @@ public class GuiConfiguration {
 				if (!_dataCleanerHome.mkdirs()) {
 					_log.warn("Could not create DATACLEANER_HOME: " + _dataCleanerHome.getAbsolutePath());
 				}
+				copyConfigurationFilesToDataCleanerHome();
 			}
 		}
 		return _dataCleanerHome;
+	}
+
+	private static void copyConfigurationFilesToDataCleanerHome() {
+		try {
+			GuiHelper.copyDirectoryContentsFromClasspathToFileSystem("datacleaner-userhome", _dataCleanerHome);
+		} catch (IOException e) {
+			_log.fatal("Could not write configuration files to file system", e);
+			System.exit(DataCleanerGui.EXIT_CODE_COULD_NOT_OPEN_CONFIGURATION_FILE);
+		}
 	}
 
 	public static void initialize(File configurationFile) {
@@ -109,23 +119,10 @@ public class GuiConfiguration {
 	}
 
 	public static void initialize() {
-
 		File mainConfigurationFile = getDataCleanerFile("datacleaner-config.xml");
 		if (!mainConfigurationFile.exists()) {
-			try {
-				GuiHelper.copyDirectoryContentsFromClasspathToFileSystem("datacleaner-userhome", getDataCleanerHome());
-//				GuiHelper.copyFileFromClasspathToFileSystem("datacleaner-userhome/datacleaner-config.xml",
-//						mainConfigurationFile);
-//				GuiHelper.copyFileFromClasspathToFileSystem("datacleaner-userhome/datacleaner-profiler-modules.xml",
-//						getDataCleanerFile("datacleaner-profiler-modules.xml"));
-//				GuiHelper.copyFileFromClasspathToFileSystem("datacleaner-userhome/datacleaner-validator-modules.xml",
-//						getDataCleanerFile("datacleaner-validator-modules.xml"));
-			} catch (IOException e) {
-				_log.error("Could not write configuration files to file system", e);
-				System.exit(DataCleanerGui.EXIT_CODE_COULD_NOT_OPEN_CONFIGURATION_FILE);
-			}
+			copyConfigurationFilesToDataCleanerHome();
 		}
-
 		initialize(mainConfigurationFile);
 	}
 

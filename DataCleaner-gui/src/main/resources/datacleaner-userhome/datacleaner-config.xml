@@ -14,7 +14,7 @@
 	</bean>
 	<bean class="dk.eobjects.datacleaner.gui.model.NamedConnection">
 		<property name="name" value="DataCleaner sampledata" />
-		<property name="connectionString" value="jdbc:hsqldb:file:../DataCleaner-packaging/samples/database" />
+		<property name="connectionString" value="jdbc:hsqldb:res:datacleaner-database" />
 		<property name="username" value="SA" />
 		<property name="password" value="" />
 		<property name="tableTypes">

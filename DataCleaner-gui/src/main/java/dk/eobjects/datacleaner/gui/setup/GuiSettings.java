@@ -19,6 +19,7 @@ package dk.eobjects.datacleaner.gui.setup;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -47,6 +49,9 @@ import dk.eobjects.datacleaner.catalog.NamedRegex;
 import dk.eobjects.datacleaner.catalog.TextFileDictionary;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
+import dk.eobjects.datacleaner.regexswap.Category;
+import dk.eobjects.datacleaner.regexswap.Regex;
+import dk.eobjects.datacleaner.regexswap.RegexSwapClient;
 import dk.eobjects.datacleaner.util.WeakObservable;
 import dk.eobjects.datacleaner.validator.dictionary.DictionaryManager;
 import dk.eobjects.metamodel.util.ObjectComparator;
@@ -54,13 +59,13 @@ import dk.eobjects.metamodel.util.ObjectComparator;
 /**
  * The GuiSettings represents the users settings, that are modified during use
  * of DataCleaner. Thus the settings are in contrast to the configuration which
- * cannot be * modified or saved during runtime.
+ * cannot be modified or saved during runtime.
  */
 public class GuiSettings extends WeakObservable implements Serializable {
 
 	public static final String SETTINGS_FILE = "datacleaner-settings.data";
 	public static final String REGEXES_FILE = "datacleaner-regexes.properties";
-	public static final String DICTIONARIES_SAMPLES = "samples/dictionaries";
+	public static final String DICTIONARIES_SAMPLES = "dictionaries";
 
 	private static final long serialVersionUID = -8625459660466339757L;
 	private static final Log _log = LogFactory.getLog(GuiSettings.class);
@@ -97,13 +102,13 @@ public class GuiSettings extends WeakObservable implements Serializable {
 		if (includeLookAndFeel) {
 			// Initialize look and feel
 			LookAndFeel lookAndFeel = null;
-			
+
 			if (LookUtils.IS_OS_WINDOWS) {
 				WindowsLookAndFeel windowsLookAndFeel = new WindowsLookAndFeel();
 				installLookAndFeel(windowsLookAndFeel);
 				lookAndFeel = windowsLookAndFeel;
 			}
-			
+
 			try {
 				// Ticket #213: Temporary workaround untill Looks 2.2.0 can be
 				// retrieved from Central Maven repository
@@ -113,12 +118,12 @@ public class GuiSettings extends WeakObservable implements Serializable {
 				installLookAndFeel(plastic3DLookAndFeel);
 				PlasticLookAndFeel plasticLookAndFeel = new PlasticLookAndFeel();
 				installLookAndFeel(plasticLookAndFeel);
-				
+
 				lookAndFeel = plasticXPLookAndFeel;
 			} catch (Exception e) {
 				_log.warn(e);
 			}
-			
+
 			try {
 				String settingsLookAndFeel = settings.getLookAndFeelClassName();
 				if (settingsLookAndFeel != null) {
@@ -129,27 +134,24 @@ public class GuiSettings extends WeakObservable implements Serializable {
 			} catch (Exception e) {
 				_log.error(e);
 			}
-			settings.setLookAndFeelClassName(UIManager.getLookAndFeel().getClass()
-					.getName());
+			settings.setLookAndFeelClassName(UIManager.getLookAndFeel().getClass().getName());
 		}
 
 		List<IDictionary> dictionaries = settings.getDictionaries();
 
 		// If no dictionaries exist, load dictionaries from samples directory
 		if (dictionaries == null || dictionaries.isEmpty()) {
-			File dictionaryDir = new File(DICTIONARIES_SAMPLES);
+			File dictionaryDir = GuiConfiguration.getDataCleanerFile(DICTIONARIES_SAMPLES);
 			if (dictionaryDir.exists() && dictionaryDir.isDirectory()) {
 				File[] dictionaryFiles = dictionaryDir.listFiles();
 				for (int i = 0; i < dictionaryFiles.length; i++) {
 					File dictionaryFile = dictionaryFiles[i];
 					if (dictionaryFile.getName().endsWith(".txt")) {
-						dictionaries.add(new TextFileDictionary(dictionaryFile
-								.getName(), dictionaryFile));
+						dictionaries.add(new TextFileDictionary(dictionaryFile.getName(), dictionaryFile));
 					}
 				}
 			} else {
-				_log.warn("Could not find dictionary samples directory: "
-						+ DICTIONARIES_SAMPLES);
+				_log.warn("Could not find dictionary samples directory: " + DICTIONARIES_SAMPLES);
 			}
 		}
 		sortDictionaries(dictionaries);
@@ -160,11 +162,9 @@ public class GuiSettings extends WeakObservable implements Serializable {
 
 	private static void installLookAndFeel(LookAndFeel lookAndFeel) {
 		String lookAndFeelClass = lookAndFeel.getClass().getCanonicalName();
-		LookAndFeelInfo[] installedLookAndFeels = UIManager
-				.getInstalledLookAndFeels();
+		LookAndFeelInfo[] installedLookAndFeels = UIManager.getInstalledLookAndFeels();
 		for (int i = 0; i < installedLookAndFeels.length; i++) {
-			if (installedLookAndFeels[i].getClassName()
-					.equals(lookAndFeelClass)) {
+			if (installedLookAndFeels[i].getClassName().equals(lookAndFeelClass)) {
 				return;
 			}
 		}
@@ -177,13 +177,13 @@ public class GuiSettings extends WeakObservable implements Serializable {
 				List<IDictionary> dictionaries = settings.getDictionaries();
 				DictionaryManager.setDictionaries(dictionaries);
 				sortDictionaries(dictionaries);
-				ObjectOutputStream outputStream = new ObjectOutputStream(
-						new FileOutputStream(new File(SETTINGS_FILE)));
+				ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(GuiConfiguration
+						.getDataCleanerFile(SETTINGS_FILE)));
 				outputStream.writeObject(settings);
 				outputStream.close();
 
 				List<NamedRegex> regexes = settings.getRegexes();
-				NamedRegex.saveToFile(regexes, new File(REGEXES_FILE));
+				NamedRegex.saveToFile(regexes, GuiConfiguration.getDataCleanerFile(REGEXES_FILE));
 
 				_cachedSettings = settings;
 				settings.setChanged();
@@ -191,8 +191,7 @@ public class GuiSettings extends WeakObservable implements Serializable {
 			}
 		} catch (Exception e) {
 			_log.error(e);
-			GuiHelper.showErrorMessage("Error saving settings", e.getMessage(),
-					e);
+			GuiHelper.showErrorMessage("Error saving settings", e.getMessage(), e);
 		}
 	}
 
@@ -207,8 +206,7 @@ public class GuiSettings extends WeakObservable implements Serializable {
 				}
 			}
 		}
-		Collection<DatabaseDriver> databaseDrivers = GuiConfiguration
-				.getDatabaseDrivers();
+		Collection<DatabaseDriver> databaseDrivers = GuiConfiguration.getDatabaseDrivers();
 		for (DatabaseDriver driver : databaseDrivers) {
 			if (driver.isLoaded()) {
 				if (driverClassName.equals(driver.getDriverClass())) {
@@ -226,18 +224,16 @@ public class GuiSettings extends WeakObservable implements Serializable {
 	public static GuiSettings getSettings() {
 		if (_cachedSettings == null) {
 			// Gets settings from file
-			File settingsFile = new File(SETTINGS_FILE);
-			File regexesFile = new File(REGEXES_FILE);
+			File settingsFile = GuiConfiguration.getDataCleanerFile(SETTINGS_FILE);
+			File regexesFile = GuiConfiguration.getDataCleanerFile(REGEXES_FILE);
 			if (settingsFile.exists()) {
 				try {
-					ObjectInputStream inputStream = new ObjectInputStream(
-							new FileInputStream(settingsFile));
+					ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(settingsFile));
 					_cachedSettings = (GuiSettings) inputStream.readObject();
 					inputStream.close();
 
 				} catch (Exception e) {
-					GuiHelper.showErrorMessage("Error loading settings", e
-							.getMessage(), e);
+					GuiHelper.showErrorMessage("Error loading settings", e.getMessage(), e);
 				}
 			} else {
 				_cachedSettings = new GuiSettings();
@@ -247,8 +243,39 @@ public class GuiSettings extends WeakObservable implements Serializable {
 				Collections.sort(regexes, ObjectComparator.getComparator());
 				_cachedSettings.setRegexes(regexes);
 			} else {
-				_log.warn("Regex file does not exist: " + REGEXES_FILE);
 				_cachedSettings.setRegexes(new ArrayList<NamedRegex>());
+				_log.info("Regex file does not exist: " + REGEXES_FILE + ", downloading from RegexSwap");
+				new Thread() {
+					@Override
+					public void run() {
+						try {
+							List<NamedRegex> regexesFromRegexSwap = new ArrayList<NamedRegex>();
+							RegexSwapClient regexSwapClient = new RegexSwapClient(GuiHelper.getHttpClient());
+							regexSwapClient.updateCategories();
+							Map<String, Category> categories = regexSwapClient.getCategories();
+							for (Category category : categories.values()) {
+								_log.info("Retrieving regexes for RegexSwap category: " + category.getName());
+								regexSwapClient.updateRegexes(category);
+							}
+							Map<String, Regex> regexes = regexSwapClient.getRegexes();
+							for (Regex regex : regexes.values()) {
+								String name = regex.getName();
+								String expression = regex.getExpression();
+								regexesFromRegexSwap.add(new NamedRegex(name, expression));
+							}
+
+							// check to see that user has not added any regexes
+							// on his own in the mean time
+							if (_cachedSettings.getRegexes().isEmpty()) {
+								_log.info("Adding " + regexesFromRegexSwap.size() + " regexes from the RegexSwap");
+								_cachedSettings.setRegexes(regexesFromRegexSwap);
+								saveSettings(_cachedSettings);
+							}
+						} catch (IOException e) {
+							_log.error(e);
+						}
+					}
+				}.start();
 			}
 		}
 		return _cachedSettings;
@@ -308,10 +335,8 @@ public class GuiSettings extends WeakObservable implements Serializable {
 
 	@Override
 	public String toString() {
-		return "GuiSettings[lookAndFeelClassName=" + _lookAndFeelClassName
-				+ ",dictionaries="
-				+ ArrayUtils.toString(_dictionaries.toArray())
-				+ ",databaseDrivers="
+		return "GuiSettings[lookAndFeelClassName=" + _lookAndFeelClassName + ",dictionaries="
+				+ ArrayUtils.toString(_dictionaries.toArray()) + ",databaseDrivers="
 				+ ArrayUtils.toString(_databaseDrivers.toArray()) + ",regexes="
 				+ ArrayUtils.toString(_regexes.toArray()) + "]";
 	}

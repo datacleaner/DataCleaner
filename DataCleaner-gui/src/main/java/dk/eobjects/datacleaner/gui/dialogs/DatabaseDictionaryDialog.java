@@ -72,30 +72,23 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 				GuiSettings settings = GuiSettings.getSettings();
 				String name = _nameField.getText();
 				if (name.length() > 2) {
-					String namedConnection = (String) _namedConnectionComboBox
-							.getSelectedItem();
+					String namedConnection = (String) _namedConnectionComboBox.getSelectedItem();
 					String schemaName = _schema.getName();
 					String tableName = _table.getName();
 					String columnName = _column.getName();
 					if (_dictionary == null) {
-						_dictionary = new DatabaseDictionary(name,
-								namedConnection, schemaName, tableName,
-								columnName);
+						_dictionary = new DatabaseDictionary(name, namedConnection, schemaName, tableName, columnName);
 						settings.getDictionaries().add(_dictionary);
 					} else {
-						_dictionary.setName(name).setNamedConnectionName(
-								namedConnection).setSchemaName(schemaName)
-								.setTableName(tableName).setColumnName(
-										columnName);
+						_dictionary.setName(name).setNamedConnectionName(namedConnection).setSchemaName(schemaName)
+								.setTableName(tableName).setColumnName(columnName);
 					}
 					GuiSettings.saveSettings(settings);
 					dispose();
 				} else {
-					GuiHelper
-							.showErrorMessage(
-									"Dictionary name required",
-									"Please provide a name of minimum 3 characters for your dictionary.",
-									new IllegalArgumentException(name));
+					GuiHelper.showErrorMessage("Dictionary name required",
+							"Please provide a name of minimum 3 characters for your dictionary.",
+							new IllegalArgumentException(name));
 				}
 			}
 		});
@@ -107,8 +100,7 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 			public void valueChanged(TreeSelectionEvent e) {
 				TreePath path = _schemaTree.getSelectionPath();
 				if (path != null && path.getPathCount() >= 4) {
-					_schema = SchemaTree.getSchema(_dataContextSelection
-							.getDataContext(), path);
+					_schema = SchemaTree.getSchema(_dataContextSelection.getDataContext(), path);
 					_table = SchemaTree.getTable(_schema, path);
 					_column = SchemaTree.getColumn(_table, path);
 					if (_column != null) {
@@ -126,11 +118,11 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 		scrollPane.setSize(d);
 		add(scrollPane, BorderLayout.EAST);
 
-		JTextArea aboutDatabaseDictionaries = GuiHelper.createLabelTextArea()
-				.toComponent();
-		aboutDatabaseDictionaries
-				.setText("Database dictionaries are dictionaries based on columns in databases. To use this kind of dictionary you need to register your database as a named connection in the '"
-						+ GuiConfiguration.CONFIGURATION_FILE + "' file.");
+		JTextArea aboutDatabaseDictionaries = GuiHelper.createLabelTextArea().toComponent();
+		aboutDatabaseDictionaries.setText("Database dictionaries are dictionaries based on columns in databases. "
+				+ "To use this kind of dictionary you need to register your database as a "
+				+ "named connection in the configuration file, located at "
+				+ GuiConfiguration.getDataCleanerHome().getAbsolutePath());
 		add(aboutDatabaseDictionaries, BorderLayout.SOUTH);
 
 		_dictionary = dictionary;
@@ -141,45 +133,34 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 	private void updateDialog() {
 		if (_dictionary != null) {
 			try {
-				_namedConnectionComboBox.setSelectedItem(_dictionary
-						.getNamedConnectionName());
-				DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) _schemaTree
-						.getModel().getRoot();
-				DefaultMutableTreeNode schemaNode = getSubNode(rootNode,
-						_dictionary.getSchemaName());
-				DefaultMutableTreeNode tableNode = getSubNode(schemaNode,
-						_dictionary.getTableName());
-				DefaultMutableTreeNode columnNode = getSubNode(tableNode,
-						_dictionary.getColumnName());
+				_namedConnectionComboBox.setSelectedItem(_dictionary.getNamedConnectionName());
+				DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) _schemaTree.getModel().getRoot();
+				DefaultMutableTreeNode schemaNode = getSubNode(rootNode, _dictionary.getSchemaName());
+				DefaultMutableTreeNode tableNode = getSubNode(schemaNode, _dictionary.getTableName());
+				DefaultMutableTreeNode columnNode = getSubNode(tableNode, _dictionary.getColumnName());
 
-				_schemaTree.setSelectionPath(new TreePath(new Object[] {
-						rootNode, schemaNode, tableNode, columnNode }));
+				_schemaTree
+						.setSelectionPath(new TreePath(new Object[] { rootNode, schemaNode, tableNode, columnNode }));
 
 				_nameField.setText(_dictionary.getName());
 			} catch (Exception e) {
 				GuiHelper
 						.showErrorMessage("Could not load Database dictionary",
 								"Please verify that the dictionary metadata is correct...\nNamed connection: "
-										+ _dictionary.getNamedConnectionName()
-										+ "\nSchema:"
-										+ _dictionary.getSchemaName()
-										+ "\nTable: "
-										+ _dictionary.getTableName()
-										+ "\nColumn: "
-										+ _dictionary.getColumnName(), e);
+										+ _dictionary.getNamedConnectionName() + "\nSchema:"
+										+ _dictionary.getSchemaName() + "\nTable: " + _dictionary.getTableName()
+										+ "\nColumn: " + _dictionary.getColumnName(), e);
 				dispose();
 			}
 		}
 	}
 
-	private DefaultMutableTreeNode getSubNode(DefaultMutableTreeNode node,
-			String name) {
+	private DefaultMutableTreeNode getSubNode(DefaultMutableTreeNode node, String name) {
 		if (name == null) {
 			name = SchemaTree.UNNAMED_SCHEMA_STRING;
 		}
 		for (int i = 0; i < node.getChildCount(); i++) {
-			DefaultMutableTreeNode subNode = (DefaultMutableTreeNode) node
-					.getChildAt(i);
+			DefaultMutableTreeNode subNode = (DefaultMutableTreeNode) node.getChildAt(i);
 			if (name.equals(subNode.getUserObject())) {
 				return subNode;
 			}
@@ -200,17 +181,15 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 
 		GuiHelper.addToGridBag(new JLabel("Named connection:"), panel, 0, 2);
 
-		final NamedConnection[] namedConnections = GuiConfiguration
-				.getNamedConnections().toArray(new NamedConnection[0]);
-		Object[] connectionNames = ReflectionHelper.getProperties(
-				namedConnections, "name");
+		final NamedConnection[] namedConnections = GuiConfiguration.getNamedConnections().toArray(
+				new NamedConnection[0]);
+		Object[] connectionNames = ReflectionHelper.getProperties(namedConnections, "name");
 
 		_namedConnectionComboBox = new JComboBox(connectionNames);
 		_namedConnectionComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				_dataContextSelection.selectNothing();
-				NamedConnection namedConnection = namedConnections[_namedConnectionComboBox
-						.getSelectedIndex()];
+				NamedConnection namedConnection = namedConnections[_namedConnectionComboBox.getSelectedIndex()];
 				if (namedConnection.getConnectionString() != null) {
 					try {
 						String[] typesString = namedConnection.getTableTypes();
@@ -218,30 +197,24 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 						if (typesString != null && typesString.length > 0) {
 							tableTypes = new TableType[typesString.length];
 							for (int i = 0; i < typesString.length; i++) {
-								tableTypes[i] = TableType
-										.valueOf(typesString[i]);
+								tableTypes[i] = TableType.valueOf(typesString[i]);
 							}
 						} else {
 							tableTypes = new TableType[] { TableType.TABLE };
 						}
-						_dataContextSelection.selectDatabase(namedConnection
-								.getConnectionString(), namedConnection
-								.getCatalog(), namedConnection.getUsername(),
-								namedConnection.getPassword(), tableTypes);
+						_dataContextSelection
+								.selectDatabase(namedConnection.getConnectionString(), namedConnection.getCatalog(),
+										namedConnection.getUsername(), namedConnection.getPassword(), tableTypes);
 					} catch (Exception e) {
-						GuiHelper
-								.showErrorMessage(
-										"Could not open connection",
-										"An error occurred while trying to open connection to the database.",
-										e);
+						GuiHelper.showErrorMessage("Could not open connection",
+								"An error occurred while trying to open connection to the database.", e);
 					}
 				}
 			}
 		});
 		GuiHelper.addToGridBag(_namedConnectionComboBox, panel, 1, 2);
 
-		_saveButton = new JButton("Save dictionary", GuiHelper
-				.getImageIcon("images/dictionaries.png"));
+		_saveButton = new JButton("Save dictionary", GuiHelper.getImageIcon("images/dictionaries.png"));
 		_saveButton.setEnabled(false);
 		GuiHelper.addToGridBag(_saveButton, panel, 1, 3, 2, 1);
 

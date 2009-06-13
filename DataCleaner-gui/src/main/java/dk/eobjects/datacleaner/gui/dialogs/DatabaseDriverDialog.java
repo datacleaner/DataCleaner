@@ -42,6 +42,7 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
 import dk.eobjects.datacleaner.gui.model.ExtensionFilter;
+import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.gui.widgets.AutoCompleteComboBox;
 import dk.eobjects.datacleaner.gui.windows.DownloadDialog;
@@ -199,7 +200,7 @@ public class DatabaseDriverDialog extends BanneredDialog {
 									+ " (class name '" + driverClass
 									+ "') is already installed.", null);
 				} else {
-					final File file = new File(filename);
+					final File file = GuiConfiguration.getDataCleanerFile(filename);
 					final DownloadDialog dialog = new DownloadDialog(
 							downloadUrl, file);
 					dialog.setCompleteAction(new ActionListener() {

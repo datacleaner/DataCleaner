@@ -28,7 +28,7 @@ import dk.eobjects.datacleaner.catalog.TextFileDictionary;
 public class GuiSettingsTest extends TestCase {
 
 	public void testInitialize() throws Exception {
-		File file = new File(GuiSettings.SETTINGS_FILE);
+		File file = GuiConfiguration.getDataCleanerFile(GuiSettings.SETTINGS_FILE);
 		file.delete();
 		GuiSettings.initialize(true);
 		GuiSettings settings = GuiSettings.getSettings();

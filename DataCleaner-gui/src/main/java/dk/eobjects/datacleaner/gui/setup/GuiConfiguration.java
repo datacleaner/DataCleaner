@@ -16,6 +16,8 @@
  */
 package dk.eobjects.datacleaner.gui.setup;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.FileSystemResource;
 
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
+import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.model.DatabaseDriver;
 import dk.eobjects.datacleaner.gui.model.NamedConnection;
 import dk.eobjects.datacleaner.gui.panels.ConfigurationPanelManager;
@@ -42,9 +45,9 @@ import dk.eobjects.datacleaner.validator.ValidatorManager;
  */
 public class GuiConfiguration {
 
-	public static final String CONFIGURATION_FILE = "datacleaner-config.xml";
 	private static Log _log = LogFactory.getLog(GuiConfiguration.class);
 	private static XmlBeanFactory _beanFactory;
+	private static File _dataCleanerHome;
 
 	/**
 	 * Prevent instantiation
@@ -52,35 +55,88 @@ public class GuiConfiguration {
 	private GuiConfiguration() {
 	}
 
-	public static void initialize(String configurationFile) {
+	/**
+	 * Inject a DATACLEANER_HOME path (for testing purposes)
+	 */
+	public static void setDataCleanerHome(File dataCleanerHome) {
+		_dataCleanerHome = dataCleanerHome;
+	}
+
+	public static File getDataCleanerHome() {
+		if (_dataCleanerHome == null) {
+			// Look for the DATACLEANER_HOME environment variable
+			String dataCleanerHomePath = System.getenv("DATACLEANER_HOME");
+			if (dataCleanerHomePath == null) {
+				// If no DATACLEANER_HOME environment variable is set, use the
+				// users home directory: ~/.datacleaner/${version}
+				String userHomePath = System.getProperty("user.home");
+				if (userHomePath == null) {
+					_log.fatal("User home non existing: " + userHomePath);
+					System.exit(DataCleanerGui.EXIT_CODE_COULD_NOT_OPEN_CONFIGURATION_FILE);
+				}
+				_dataCleanerHome = new File(userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar
+						+ DataCleanerGui.VERSION);
+			} else {
+				_dataCleanerHome = new File(dataCleanerHomePath);
+			}
+
+			// Fill in standard configuration, if no configuration exists
+			if (!_dataCleanerHome.exists()) {
+				_log.info("Creating new DATACLEANER_HOME: " + _dataCleanerHome.getAbsolutePath());
+
+				if (!_dataCleanerHome.mkdirs()) {
+					_log.warn("Could not create DATACLEANER_HOME: " + _dataCleanerHome.getAbsolutePath());
+				}
+			}
+		}
+		return _dataCleanerHome;
+	}
+
+	public static void initialize(File configurationFile) {
 		_log.info("Reading configuration file: " + configurationFile);
-		FileSystemResource fileSystemResource = new FileSystemResource(
-				configurationFile);
+		FileSystemResource fileSystemResource = new FileSystemResource(configurationFile);
 		if (fileSystemResource.exists()) {
 			_beanFactory = new XmlBeanFactory(fileSystemResource);
 			Collection<IProfileDescriptor> pd = getBeansOfClass(IProfileDescriptor.class);
-			ProfilerManager
-					.setProfileDescriptors(new ArrayList<IProfileDescriptor>(pd));
+			ProfilerManager.setProfileDescriptors(new ArrayList<IProfileDescriptor>(pd));
 
 			Collection<IValidationRuleDescriptor> vrd = getBeansOfClass(IValidationRuleDescriptor.class);
-			ValidatorManager
-					.setValidationRuleDescriptors(new ArrayList<IValidationRuleDescriptor>(
-							vrd));
+			ValidatorManager.setValidationRuleDescriptors(new ArrayList<IValidationRuleDescriptor>(vrd));
 		} else {
-			_log.fatal("Could not open configuration file: "
-					+ CONFIGURATION_FILE);
-			System
-					.exit(DataCleanerGui.EXIT_CODE_COULD_NOT_OPEN_CONFIGURATION_FILE);
+			_log.fatal("Could not open configuration file: " + configurationFile);
+			System.exit(DataCleanerGui.EXIT_CODE_COULD_NOT_OPEN_CONFIGURATION_FILE);
 		}
 	}
 
 	public static void initialize() {
-		initialize(CONFIGURATION_FILE);
+
+		File mainConfigurationFile = getDataCleanerFile("datacleaner-config.xml");
+		if (!mainConfigurationFile.exists()) {
+			try {
+				GuiHelper.copyDirectoryContentsFromClasspathToFileSystem("datacleaner-userhome", getDataCleanerHome());
+//				GuiHelper.copyFileFromClasspathToFileSystem("datacleaner-userhome/datacleaner-config.xml",
+//						mainConfigurationFile);
+//				GuiHelper.copyFileFromClasspathToFileSystem("datacleaner-userhome/datacleaner-profiler-modules.xml",
+//						getDataCleanerFile("datacleaner-profiler-modules.xml"));
+//				GuiHelper.copyFileFromClasspathToFileSystem("datacleaner-userhome/datacleaner-validator-modules.xml",
+//						getDataCleanerFile("datacleaner-validator-modules.xml"));
+			} catch (IOException e) {
+				_log.error("Could not write configuration files to file system", e);
+				System.exit(DataCleanerGui.EXIT_CODE_COULD_NOT_OPEN_CONFIGURATION_FILE);
+			}
+		}
+
+		initialize(mainConfigurationFile);
+	}
+
+	public static File getDataCleanerFile(String filename) {
+		File dataCleanerHome = getDataCleanerHome();
+		String configurationFilePath = dataCleanerHome.getAbsolutePath() + File.separator + filename;
+		return new File(configurationFilePath);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <E extends Object> Collection<E> getBeansOfClass(
-			Class<E> clazz) {
+	protected static <E extends Object> Collection<E> getBeansOfClass(Class<E> clazz) {
 		Map beansOfType = _beanFactory.getBeansOfType(clazz);
 		return beansOfType.values();
 	}
@@ -97,8 +153,7 @@ public class GuiConfiguration {
 		ConfigurationPanelManager manager = (ConfigurationPanelManager) _beanFactory
 				.getBean("configurationPanelManager");
 		if (manager == null) {
-			_log
-					.warn("No bean named 'configurationPanelManager' found in configuration. Creating default manager.");
+			_log.warn("No bean named 'configurationPanelManager' found in configuration. Creating default manager.");
 			manager = new ConfigurationPanelManager();
 		}
 		return manager;

@@ -33,6 +33,7 @@ import javax.swing.JTextField;
 
 import dk.eobjects.datacleaner.catalog.TextFileDictionary;
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 
 public class TextFileDictionaryDialog extends BanneredDialog {
@@ -46,8 +47,7 @@ public class TextFileDictionaryDialog extends BanneredDialog {
 	public TextFileDictionaryDialog(TextFileDictionary dictionary) {
 		super(400, 320);
 
-		JTextArea aboutTextFileDictionaries = GuiHelper.createLabelTextArea()
-				.toComponent();
+		JTextArea aboutTextFileDictionaries = GuiHelper.createLabelTextArea().toComponent();
 		aboutTextFileDictionaries
 				.setText("Text-file dictionaries are dictionaries based on flat files. Register a flat file here and all the words (seperated by whitespace or line-breaks) within the file will be used to populate the dictionary.");
 		add(aboutTextFileDictionaries, BorderLayout.SOUTH);
@@ -59,8 +59,7 @@ public class TextFileDictionaryDialog extends BanneredDialog {
 	private void updateDialog() {
 		if (_dictionary != null) {
 			_nameField.setText(_dictionary.getName());
-			_filenameField.setText(_dictionary.getDictionaryFile()
-					.getAbsolutePath());
+			_filenameField.setText(_dictionary.getDictionaryFile().getAbsolutePath());
 		}
 	}
 
@@ -82,27 +81,25 @@ public class TextFileDictionaryDialog extends BanneredDialog {
 		JButton browseButton = new JButton("Browse");
 		browseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(new File(
-						GuiSettings.DICTIONARIES_SAMPLES));
+				JFileChooser fileChooser = new JFileChooser(GuiConfiguration
+						.getDataCleanerFile(GuiSettings.DICTIONARIES_SAMPLES));
 				GuiHelper.centerOnScreen(fileChooser);
 				if (fileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
-					TextFileDictionaryDialog.this._filenameField
-							.setText(selectedFile.getAbsolutePath());
+					TextFileDictionaryDialog.this._filenameField.setText(selectedFile.getAbsolutePath());
 				}
 			}
 		});
 		browseButton.setPreferredSize(BUTTON_DIMENSION);
 		GuiHelper.addToGridBag(browseButton, panel, 2, 2);
 
-		JButton saveButton = new JButton("Save dictionary", GuiHelper
-				.getImageIcon("images/dictionaries.png"));
+		JButton saveButton = new JButton("Save dictionary", GuiHelper.getImageIcon("images/dictionaries.png"));
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String name = _nameField.getText();
 				String filename = _filenameField.getText();
 				GuiSettings settings = GuiSettings.getSettings();
-				File file = new File(filename);
+				File file = GuiConfiguration.getDataCleanerFile(filename);
 
 				if (file.exists() && file.isFile()) {
 					name = name.trim();
@@ -120,11 +117,9 @@ public class TextFileDictionaryDialog extends BanneredDialog {
 						GuiSettings.saveSettings(settings);
 						dispose();
 					} else {
-						GuiHelper
-								.showErrorMessage(
-										"Dictionary name required",
-										"Please provide a name of minimum 3 characters for your dictionary.",
-										new IllegalArgumentException(name));
+						GuiHelper.showErrorMessage("Dictionary name required",
+								"Please provide a name of minimum 3 characters for your dictionary.",
+								new IllegalArgumentException(name));
 					}
 				} else {
 					GuiHelper

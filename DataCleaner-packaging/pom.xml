@@ -59,21 +59,12 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks>
-								<copy file="datacleaner-config.xml" todir="target/dist" />
-								<copy file="datacleaner-profiler-modules.xml" todir="target/dist" />
-								<copy file="datacleaner-validator-modules.xml" todir="target/dist" />
 								<copy file="datacleaner.sh" todir="target/dist" />
 								<chmod file="target/dist/datacleaner.sh" perm="+x" />
 								<copy file="datacleaner.cmd" todir="target/dist" />
 								<copy file="runjob.sh" todir="target/dist" />
 								<chmod file="target/dist/runjob.sh" perm="+x" />
 								<copy file="runjob.cmd" todir="target/dist" />
-								<copy todir="target/dist/samples">
-									<fileset dir="samples">
-										<exclude name="database.properties" />
-										<exclude name="database.log" />
-									</fileset>
-								</copy>
 							</tasks>
 						</configuration>
 						<goals>
@@ -90,23 +81,19 @@
 									tofile="target/dist/datacleaner.jar" />
 								<zip destfile="target/dist/${project.name}-${project.version}.zip">
 									<fileset dir="target/dist">
-										<include name="datacleaner-*.xml" />
 										<include name="datacleaner.jar" />
 										<include name="datacleaner.sh" />
 										<include name="datacleaner.cmd" />
 										<include name="runjob.*" />
-										<include name="samples/**" />
 									</fileset>
 								</zip>
 								<tar destfile="target/dist/${project.name}-${project.version}.tar.gz"
 									compression="gzip">
 									<tarfileset dir="target/dist">
-										<include name="datacleaner-*.xml" />
 										<include name="datacleaner.jar" />
 										<include name="datacleaner.sh" />
 										<include name="datacleaner.cmd" />
 										<include name="runjob.*" />
-										<include name="samples/**" />
 									</tarfileset>
 								</tar>
 							</tasks>

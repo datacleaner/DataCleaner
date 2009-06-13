@@ -44,6 +44,7 @@ import dk.eobjects.datacleaner.export.HtmlResultExporter;
 import dk.eobjects.datacleaner.export.IResultExporter;
 import dk.eobjects.datacleaner.export.XmlResultExporter;
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.widgets.MatrixTable;
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
@@ -72,7 +73,7 @@ public class TableProfileResultsPanel extends JPanel {
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popupMenu = new JPopupMenu();
-				JMenuItem xmlMenuItem = new JMenuItem("To XML format",GuiHelper.getImageIcon("images/file_xml.png"));
+				JMenuItem xmlMenuItem = new JMenuItem("To XML format", GuiHelper.getImageIcon("images/file_xml.png"));
 				xmlMenuItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						exportToFile(new XmlResultExporter(), "xml");
@@ -160,7 +161,7 @@ public class TableProfileResultsPanel extends JPanel {
 
 	private void exportToFile(IResultExporter resultExporter, String fileExtension) {
 		JFileChooser f = new JFileChooser();
-		f.setSelectedFile(new File(_table.getName() + "-results." + fileExtension));
+		f.setSelectedFile(GuiConfiguration.getDataCleanerFile(_table.getName() + "-results." + fileExtension));
 		if (JFileChooser.APPROVE_OPTION == f.showSaveDialog(TableProfileResultsPanel.this)) {
 			boolean accepted = false;
 			File file = f.getSelectedFile();

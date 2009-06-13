@@ -26,17 +26,25 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.JarURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
@@ -440,5 +448,71 @@ public class GuiHelper {
 		separator.setBackground(GuiHelper.BG_COLOR_LIGHT);
 		separator.setForeground(GuiHelper.BG_COLOR_LIGHT);
 		return separator;
+	}
+
+	public static void copyFromClasspathToFileSystem(String classpathPath, String fileSystemPath) throws IOException {
+		copyFileFromClasspathToFileSystem(classpathPath, new File(fileSystemPath));
+	}
+
+	public static void copyFileFromClasspathToFileSystem(String classpathPath, File fileSystemFile) throws IOException {
+		BufferedInputStream inputStream = new BufferedInputStream(ClassLoader.getSystemResource(classpathPath)
+				.openStream());
+		BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(fileSystemFile));
+		for (int b = inputStream.read(); b != -1; b = inputStream.read()) {
+			outputStream.write(b);
+		}
+		inputStream.close();
+		outputStream.flush();
+		outputStream.close();
+	}
+
+	public static void copyDirectoryContentsFromClasspathToFileSystem(String classpathDirectoryPath,
+			File dataCleanerHome) throws IOException {
+		URL url = ClassLoader.getSystemResource(classpathDirectoryPath);
+		URLConnection connection = url.openConnection();
+		if (connection instanceof JarURLConnection) {
+			if (!classpathDirectoryPath.endsWith("/")) {
+				classpathDirectoryPath = classpathDirectoryPath + "/";
+			}
+			int substringIndex = classpathDirectoryPath.length();
+
+			URL jarFileURL = ((JarURLConnection) connection).getJarFileURL();
+			JarFile jarFile = new JarFile(jarFileURL.getFile());
+
+			Enumeration<JarEntry> entries = jarFile.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				String name = entry.getName();
+				if (name != null && name.startsWith(classpathDirectoryPath)) {
+					String relativeName = name.substring(substringIndex);
+					
+					File newFile = new File(dataCleanerHome, relativeName);
+					if (entry.isDirectory()) {
+						newFile.mkdirs();
+					} else {
+						BufferedInputStream is = new BufferedInputStream(jarFile.getInputStream(entry));
+						BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(newFile));
+						for (int b = is.read(); b != -1; b = is.read()) {
+							os.write(b);
+						}
+						is.close();
+						os.flush();
+						os.close();
+					}
+				}
+			}
+		}
+	}
+
+	public static void deleteRecursively(File directory) {
+		File[] files = directory.listFiles();
+		for (File file : files) {
+			if (file.isDirectory()) {
+				deleteRecursively(file);
+			} else {
+				file.delete();
+			}
+		}
+		directory.delete();
 	}
 }

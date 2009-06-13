@@ -35,6 +35,7 @@ import dk.eobjects.datacleaner.data.DataContextSelection;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.model.ExtensionFilter;
+import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.gui.windows.PreviewDataWindow;
 import dk.eobjects.metamodel.DataContext;
@@ -51,8 +52,7 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 	private DataContextSelection _dataContextSelection;
 	private ColumnSelection _columnSelection;
 
-	public SchemaTreeMouseListener(JTree tree,
-			DataContextSelection dataContextSelection,
+	public SchemaTreeMouseListener(JTree tree, DataContextSelection dataContextSelection,
 			ColumnSelection columnSelection) {
 		super();
 		_tree = tree;
@@ -66,15 +66,13 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 		if (selRow != -1) {
 			TreePath path = _tree.getPathForLocation(e.getX(), e.getY());
 			_tree.setSelectionPath(path);
-			Schema schema = SchemaTree.getSchema(_dataContextSelection
-					.getDataContext(), path);
+			Schema schema = SchemaTree.getSchema(_dataContextSelection.getDataContext(), path);
 			Table table = SchemaTree.getTable(schema, path);
 			Column column = SchemaTree.getColumn(table, path);
 
 			if (e.getClickCount() == 1) {
 				int button = e.getButton();
-				if (button == MouseEvent.BUTTON2
-						|| button == MouseEvent.BUTTON3) {
+				if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
 					JPopupMenu popup = handleRightClick(schema, table, column);
 					if (popup != null) {
 						popup.show(_tree, e.getX(), e.getY());
@@ -90,8 +88,7 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 	 * Handles right clicks on the schema tree, which creates context-based
 	 * popups.
 	 */
-	private JPopupMenu handleRightClick(final Schema schema, final Table table,
-			final Column column) {
+	private JPopupMenu handleRightClick(final Schema schema, final Table table, final Column column) {
 		if (schema != null) {
 			if (table != null) {
 				if (column == null) {
@@ -109,8 +106,7 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 
 	private JPopupMenu getRightClickSchemaPopup(final Schema schema) {
 		JPopupMenu popup = new JPopupMenu(schema.getName());
-		JMenuItem toggleColumnsItem = GuiHelper.createMenuItem(
-				"Toggle schema columns in data selection",
+		JMenuItem toggleColumnsItem = GuiHelper.createMenuItem("Toggle schema columns in data selection",
 				"images/toolbar_toggle_data.png").toComponent();
 		toggleColumnsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -126,8 +122,7 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 
 	private JPopupMenu getRightClickColumnPopup(final Column column) {
 		JPopupMenu popup = new JPopupMenu(column.getName());
-		JMenuItem toggleColumnItem = GuiHelper.createMenuItem(null,
-				"images/toolbar_toggle_data.png").toComponent();
+		JMenuItem toggleColumnItem = GuiHelper.createMenuItem(null, "images/toolbar_toggle_data.png").toComponent();
 		toggleColumnItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_columnSelection.toggleColumn(column);
@@ -140,32 +135,26 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 		}
 		popup.add(toggleColumnItem);
 
-		JMenuItem createDictionaryItem = GuiHelper.createMenuItem(
-				"Create dictionary from column", "images/dictionaries.png")
-				.toComponent();
+		JMenuItem createDictionaryItem = GuiHelper.createMenuItem("Create dictionary from column",
+				"images/dictionaries.png").toComponent();
 		createDictionaryItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser f = new JFileChooser((new File(
-						GuiSettings.DICTIONARIES_SAMPLES)));
+				JFileChooser f = new JFileChooser((GuiConfiguration
+						.getDataCleanerFile(GuiSettings.DICTIONARIES_SAMPLES)));
 				f.setSelectedFile(new File("my_dictionary.txt"));
-				f.addChoosableFileFilter(new ExtensionFilter(
-						"DataCleaner text-file dictionary (.txt)", "txt"));
+				f.addChoosableFileFilter(new ExtensionFilter("DataCleaner text-file dictionary (.txt)", "txt"));
 				if (f.showSaveDialog(_tree) == JFileChooser.APPROVE_OPTION) {
 					File file = f.getSelectedFile();
 					boolean saveFile = true;
 					if (file.exists()) {
-						if (JOptionPane.showConfirmDialog(_tree,
-								"A file with the filename '" + file.getName()
-										+ "' already exists. Overwrite?",
-								"Overwrite?", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+						if (JOptionPane.showConfirmDialog(_tree, "A file with the filename '" + file.getName()
+								+ "' already exists. Overwrite?", "Overwrite?", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
 							saveFile = false;
 						}
 					}
 					if (saveFile) {
-						TextFileDictionary dictionary = TextFileDictionary
-								.createTextFileDictionary(file.getName(),
-										column, _dataContextSelection
-												.getDataContext(), file);
+						TextFileDictionary dictionary = TextFileDictionary.createTextFileDictionary(file.getName(),
+								column, _dataContextSelection.getDataContext(), file);
 						GuiSettings settings = GuiSettings.getSettings();
 						settings.getDictionaries().add(dictionary);
 						GuiSettings.saveSettings(settings);
@@ -181,8 +170,7 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 
 	private JPopupMenu getRightClickTablePopup(final Table table) {
 		JPopupMenu popup = new JPopupMenu(table.getName());
-		JMenuItem toggleColumnsItem = GuiHelper.createMenuItem(
-				"Toggle table columns in data selection",
+		JMenuItem toggleColumnsItem = GuiHelper.createMenuItem("Toggle table columns in data selection",
 				"images/toolbar_toggle_data.png").toComponent();
 		toggleColumnsItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -191,15 +179,13 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 		});
 		popup.add(toggleColumnsItem);
 
-		JMenuItem previewTableItem = GuiHelper.createMenuItem("Preview table",
-				"images/toolbar_preview_data.png").toComponent();
+		JMenuItem previewTableItem = GuiHelper.createMenuItem("Preview table", "images/toolbar_preview_data.png")
+				.toComponent();
 		previewTableItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DataContext dataContext = _dataContextSelection
-						.getDataContext();
+				DataContext dataContext = _dataContextSelection.getDataContext();
 				DataCleanerGui.getMainWindow().addWindow(
-						new PreviewDataWindow(table, table.getColumns(),
-								dataContext, 400));
+						new PreviewDataWindow(table, table.getColumns(), dataContext, 400));
 			}
 		});
 		popup.add(previewTableItem);
@@ -210,8 +196,7 @@ public class SchemaTreeMouseListener extends MouseAdapter {
 	 * Handles double clicks on the schema tree, which toggles the selected
 	 * metadata item in the data selection
 	 */
-	private void handleDoubleClick(final Schema schema, final Table table,
-			final Column column) {
+	private void handleDoubleClick(final Schema schema, final Table table, final Column column) {
 		if (table != null) {
 			if (column == null) {
 				_columnSelection.toggleTable(table);

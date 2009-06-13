@@ -131,7 +131,7 @@ public class ValidatorWindow extends AbstractWindow implements WeakObserver {
 									null);
 				} else {
 					JFileChooser f = new JFileChooser();
-					f.setSelectedFile(new File("my_validator.dcv"));
+					f.setSelectedFile(GuiConfiguration.getDataCleanerFile("my_validator.dcv"));
 					f.addChoosableFileFilter(EXTENSION_FILTER);
 					if (f.showSaveDialog(_panel) == JFileChooser.APPROVE_OPTION) {
 						File file = f.getSelectedFile();

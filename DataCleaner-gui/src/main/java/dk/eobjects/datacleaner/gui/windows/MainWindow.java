@@ -67,6 +67,7 @@ import dk.eobjects.datacleaner.gui.dialogs.SettingsDialog;
 import dk.eobjects.datacleaner.gui.dialogs.TextFileDictionaryDialog;
 import dk.eobjects.datacleaner.gui.model.DatabaseDictionary;
 import dk.eobjects.datacleaner.gui.model.ExtensionFilter;
+import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.gui.website.RegexSwapDialog;
 import dk.eobjects.datacleaner.gui.widgets.OpenFileActionListener;
@@ -128,14 +129,12 @@ public class MainWindow implements WeakObserver, WindowListener {
 		_menubar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setMnemonic('F');
-		JMenuItem newTaskItem = new JMenuItem("New task", GuiHelper
-				.getImageIcon("images/toolbar_new_window.png"));
+		JMenuItem newTaskItem = new JMenuItem("New task", GuiHelper.getImageIcon("images/toolbar_new_window.png"));
 		newTaskItem.addActionListener(newTaskListener);
 		newTaskItem.setMnemonic('N');
 		fileMenu.add(newTaskItem);
 
-		JMenuItem openFileItem = new JMenuItem("Open file", GuiHelper
-				.getImageIcon("images/toolbar_open.png"));
+		JMenuItem openFileItem = new JMenuItem("Open file", GuiHelper.getImageIcon("images/toolbar_open.png"));
 		openFileItem.setMnemonic('O');
 		openFileItem.addActionListener(new OpenFileActionListener());
 		fileMenu.add(openFileItem);
@@ -146,8 +145,7 @@ public class MainWindow implements WeakObserver, WindowListener {
 
 		fileMenu.add(new JSeparator(JSeparator.HORIZONTAL));
 
-		JMenuItem exitItem = new JMenuItem("Exit DataCleaner", GuiHelper
-				.getImageIcon("images/menu_exit.png"));
+		JMenuItem exitItem = new JMenuItem("Exit DataCleaner", GuiHelper.getImageIcon("images/menu_exit.png"));
 		exitItem.setMnemonic('x');
 		exitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -170,30 +168,25 @@ public class MainWindow implements WeakObserver, WindowListener {
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setMnemonic('H');
 
-		JMenuItem helpContentItem = new JMenuItem("Help contents", GuiHelper
-				.getImageIcon("images/menu_help.png"));
+		JMenuItem helpContentItem = new JMenuItem("Help contents", GuiHelper.getImageIcon("images/menu_help.png"));
 		helpContentItem.setMnemonic('H');
 		try {
-			helpContentItem.addActionListener(new OpenBrowserAction(
-					"http://datacleaner.eobjects.org/docs"));
+			helpContentItem.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/docs"));
 		} catch (MalformedURLException e) {
 			_log.error(e);
 		}
 		helpMenu.add(helpContentItem);
 
-		JMenuItem forumItem = new JMenuItem("Ask at the forums", GuiHelper
-				.getImageIcon("images/toolbar_forum.png"));
+		JMenuItem forumItem = new JMenuItem("Ask at the forums", GuiHelper.getImageIcon("images/toolbar_forum.png"));
 		forumItem.setMnemonic('F');
 		try {
-			forumItem.addActionListener(new OpenBrowserAction(
-					"http://datacleaner.eobjects.org/forum/1"));
+			forumItem.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/forum/1"));
 		} catch (MalformedURLException e) {
 			_log.error(e);
 		}
 		helpMenu.add(forumItem);
 
-		JMenuItem aboutItem = new JMenuItem("About DataCleaner", GuiHelper
-				.getImageIcon("images/menu_about.png"));
+		JMenuItem aboutItem = new JMenuItem("About DataCleaner", GuiHelper.getImageIcon("images/menu_about.png"));
 		aboutItem.setMnemonic('A');
 		aboutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -207,27 +200,22 @@ public class MainWindow implements WeakObserver, WindowListener {
 		_frame.setJMenuBar(_menubar);
 
 		_topToolbar = GuiHelper.createToolBar();
-		JButton newTaskButton = new JButton("New task", GuiHelper
-				.getImageIcon("images/toolbar_new_window.png"));
+		JButton newTaskButton = new JButton("New task", GuiHelper.getImageIcon("images/toolbar_new_window.png"));
 		newTaskButton.addActionListener(newTaskListener);
 		_topToolbar.add(newTaskButton);
 
-		JButton settingsButton = new JButton("Settings", GuiHelper
-				.getImageIcon("images/toolbar_settings.png"));
+		JButton settingsButton = new JButton("Settings", GuiHelper.getImageIcon("images/toolbar_settings.png"));
 		settingsButton.addActionListener(settingsActionListener);
 		_topToolbar.add(settingsButton);
 
 		_statusBar = new JXStatusBar();
-		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(
-				JXStatusBar.Constraint.ResizeBehavior.FILL);
+		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
 		_statusBar.add(new JLabel("DataCleaner " + DataCleanerGui.VERSION), c1);
 
-		_contentPanel = GuiHelper.createPanel().applyBorderLayout()
-				.applyDarkBlueBackground().toComponent();
+		_contentPanel = GuiHelper.createPanel().applyBorderLayout().applyDarkBlueBackground().toComponent();
 		_contentPanel.add(_topToolbar, BorderLayout.NORTH);
 
-		JPanel panel = GuiHelper.createPanel().applyDarkBlueBackground()
-				.toComponent();
+		JPanel panel = GuiHelper.createPanel().applyDarkBlueBackground().toComponent();
 		GuiSettings settings = GuiSettings.getSettings();
 		GuiHelper.addToGridBag(getDictionaryPanel(settings), panel, 0, 0);
 		GuiHelper.addToGridBag(getRegexPanel(settings), panel, 0, 2);
@@ -235,12 +223,10 @@ public class MainWindow implements WeakObserver, WindowListener {
 
 		_bottomToolbar = GuiHelper.createToolBar();
 
-		JButton websiteButton = GuiHelper
-				.createButton("Visit DataCleaner website",
-						"images/toolbar_visit_website.png").toComponent();
+		JButton websiteButton = GuiHelper.createButton("Visit DataCleaner website", "images/toolbar_visit_website.png")
+				.toComponent();
 		try {
-			websiteButton.addActionListener(new OpenBrowserAction(
-					"http://datacleaner.eobjects.org"));
+			websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
 		} catch (MalformedURLException e) {
 			_log.error(e);
 		}
@@ -258,9 +244,8 @@ public class MainWindow implements WeakObserver, WindowListener {
 
 	private JPanel getDictionaryPanel(GuiSettings settings) {
 		JPanel panel = GuiHelper.createPanel().applyBorder().toComponent();
-		GuiHelper.addToGridBag(new JLabel("Dictionary catalog", GuiHelper
-				.getImageIcon("images/dictionaries.png"), JLabel.LEFT), panel,
-				0, 0, 2, 1);
+		GuiHelper.addToGridBag(new JLabel("Dictionary catalog", GuiHelper.getImageIcon("images/dictionaries.png"),
+				JLabel.LEFT), panel, 0, 0, 2, 1);
 
 		_dictionaryList = new JComboBox(new DefaultComboBoxModel());
 		_dictionaryList.setEditable(false);
@@ -271,36 +256,29 @@ public class MainWindow implements WeakObserver, WindowListener {
 		GuiHelper.addToGridBag(_dictionaryList, panel, 0, 1);
 
 		JToolBar buttonBar = GuiHelper.createToolBar();
-		_editDictionaryButton = new JButton(GuiHelper
-				.getImageIcon("images/toolbar_open.png"));
+		_editDictionaryButton = new JButton(GuiHelper.getImageIcon("images/toolbar_open.png"));
 		_editDictionaryButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				IDictionary dictionary = GuiSettings.getSettings()
-						.getDictionaries().get(
-								_dictionaryList.getSelectedIndex());
+				IDictionary dictionary = GuiSettings.getSettings().getDictionaries().get(
+						_dictionaryList.getSelectedIndex());
 				if (dictionary instanceof TextFileDictionary) {
-					TextFileDictionaryDialog dialog = new TextFileDictionaryDialog(
-							(TextFileDictionary) dictionary);
+					TextFileDictionaryDialog dialog = new TextFileDictionaryDialog((TextFileDictionary) dictionary);
 					dialog.setVisible(true);
 				} else if (dictionary instanceof DatabaseDictionary) {
-					DatabaseDictionaryDialog dialog = new DatabaseDictionaryDialog(
-							(DatabaseDictionary) dictionary);
+					DatabaseDictionaryDialog dialog = new DatabaseDictionaryDialog((DatabaseDictionary) dictionary);
 					dialog.setVisible(true);
 				}
 			}
 		});
 		buttonBar.add(_editDictionaryButton);
-		_removeDictionaryButton = new JButton(GuiHelper
-				.getImageIcon("images/toolbar_remove.png"));
+		_removeDictionaryButton = new JButton(GuiHelper.getImageIcon("images/toolbar_remove.png"));
 		_removeDictionaryButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int choise = JOptionPane.showConfirmDialog(_frame,
-						"Are you sure you want to remove this dictionary?",
+				int choise = JOptionPane.showConfirmDialog(_frame, "Are you sure you want to remove this dictionary?",
 						"Remove dictionary", JOptionPane.YES_NO_OPTION);
 				if (choise == JOptionPane.YES_OPTION) {
 					GuiSettings settings = GuiSettings.getSettings();
-					settings.getDictionaries().remove(
-							_dictionaryList.getSelectedIndex());
+					settings.getDictionaries().remove(_dictionaryList.getSelectedIndex());
 					GuiSettings.saveSettings(settings);
 				}
 			}
@@ -309,27 +287,24 @@ public class MainWindow implements WeakObserver, WindowListener {
 		GuiHelper.addToGridBag(buttonBar, panel, 1, 1);
 
 		buttonBar = GuiHelper.createToolBar();
-		final JButton addButton = new JButton("New dictionary", GuiHelper
-				.getImageIcon("images/toolbar_add.png"));
+		final JButton addButton = new JButton("New dictionary", GuiHelper.getImageIcon("images/toolbar_add.png"));
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popupMenu = new JPopupMenu("Add dictionary");
-				JMenuItem textfileItem = new JMenuItem("Text-file dictionary",
-						GuiHelper.getImageIcon("images/toolbar_file.png"));
+				JMenuItem textfileItem = new JMenuItem("Text-file dictionary", GuiHelper
+						.getImageIcon("images/toolbar_file.png"));
 				textfileItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						TextFileDictionaryDialog dialog = new TextFileDictionaryDialog(
-								null);
+						TextFileDictionaryDialog dialog = new TextFileDictionaryDialog(null);
 						dialog.setVisible(true);
 					}
 				});
 				popupMenu.add(textfileItem);
-				JMenuItem databaseItem = new JMenuItem("Database dictionary",
-						GuiHelper.getImageIcon("images/toolbar_database.png"));
+				JMenuItem databaseItem = new JMenuItem("Database dictionary", GuiHelper
+						.getImageIcon("images/toolbar_database.png"));
 				databaseItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						DatabaseDictionaryDialog dialog = new DatabaseDictionaryDialog(
-								null);
+						DatabaseDictionaryDialog dialog = new DatabaseDictionaryDialog(null);
 						dialog.setVisible(true);
 					}
 				});
@@ -346,8 +321,7 @@ public class MainWindow implements WeakObserver, WindowListener {
 	}
 
 	private void updateDictionaryList(GuiSettings settings) {
-		DefaultComboBoxModel model = (DefaultComboBoxModel) _dictionaryList
-				.getModel();
+		DefaultComboBoxModel model = (DefaultComboBoxModel) _dictionaryList.getModel();
 		model.removeAllElements();
 		List<IDictionary> dictionaries = settings.getDictionaries();
 		for (IDictionary dictionary : dictionaries) {
@@ -363,11 +337,9 @@ public class MainWindow implements WeakObserver, WindowListener {
 	}
 
 	private JPanel getRegexPanel(GuiSettings settings) {
-		JPanel panel = GuiHelper.createPanel().applyBorder()
-				.applyBorderLayout().toComponent();
-		GuiHelper.addToGridBag(new JLabel("Regex catalog", GuiHelper
-				.getImageIcon("images/regexes.png"), JLabel.LEFT), panel, 0, 0,
-				2, 1);
+		JPanel panel = GuiHelper.createPanel().applyBorder().applyBorderLayout().toComponent();
+		GuiHelper.addToGridBag(new JLabel("Regex catalog", GuiHelper.getImageIcon("images/regexes.png"), JLabel.LEFT),
+				panel, 0, 0, 2, 1);
 		_regexList = new JComboBox(new DefaultComboBoxModel());
 		_regexList.setEditable(false);
 		Dimension d = new Dimension(105, 16);
@@ -377,23 +349,19 @@ public class MainWindow implements WeakObserver, WindowListener {
 		GuiHelper.addToGridBag(_regexList, panel, 0, 1);
 
 		JToolBar buttonBar = GuiHelper.createToolBar();
-		_editRegexButton = new JButton(GuiHelper
-				.getImageIcon("images/toolbar_open.png"));
+		_editRegexButton = new JButton(GuiHelper.getImageIcon("images/toolbar_open.png"));
 		_editRegexButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NamedRegex regex = GuiSettings.getSettings().getRegexes().get(
-						_regexList.getSelectedIndex());
+				NamedRegex regex = GuiSettings.getSettings().getRegexes().get(_regexList.getSelectedIndex());
 				NamedRegexDialog dialog = new NamedRegexDialog(regex);
 				dialog.setVisible(true);
 			}
 		});
 		buttonBar.add(_editRegexButton);
-		_removeRegexButton = new JButton(GuiHelper
-				.getImageIcon("images/toolbar_remove.png"));
+		_removeRegexButton = new JButton(GuiHelper.getImageIcon("images/toolbar_remove.png"));
 		_removeRegexButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int choise = JOptionPane.showConfirmDialog(_frame,
-						"Are you sure you want to remove this regex?",
+				int choise = JOptionPane.showConfirmDialog(_frame, "Are you sure you want to remove this regex?",
 						"Remove regex", JOptionPane.YES_NO_OPTION);
 				if (choise == JOptionPane.YES_OPTION) {
 					GuiSettings settings = GuiSettings.getSettings();
@@ -406,15 +374,13 @@ public class MainWindow implements WeakObserver, WindowListener {
 		GuiHelper.addToGridBag(buttonBar, panel, 1, 1);
 
 		buttonBar = GuiHelper.createToolBar();
-		final JButton addButton = new JButton("New regex", GuiHelper
-				.getImageIcon("images/toolbar_add.png"));
+		final JButton addButton = new JButton("New regex", GuiHelper.getImageIcon("images/toolbar_add.png"));
 		addButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popup = new JPopupMenu();
 
-				JMenuItem createRegexItem = new JMenuItem(
-						"Create new expression", GuiHelper
-								.getImageIcon("images/regexes.png"));
+				JMenuItem createRegexItem = new JMenuItem("Create new expression", GuiHelper
+						.getImageIcon("images/regexes.png"));
 				createRegexItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						NamedRegexDialog dialog = new NamedRegexDialog(null);
@@ -423,10 +389,8 @@ public class MainWindow implements WeakObserver, WindowListener {
 				});
 				popup.add(createRegexItem);
 
-				JMenuItem regexSwapItem = new JMenuItem(
-						"Import from the RegexSwap",
-						GuiHelper
-								.getImageIcon("images/toolbar_visit_website.png"));
+				JMenuItem regexSwapItem = new JMenuItem("Import from the RegexSwap", GuiHelper
+						.getImageIcon("images/toolbar_visit_website.png"));
 				regexSwapItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						RegexSwapDialog dialog = new RegexSwapDialog();
@@ -435,32 +399,26 @@ public class MainWindow implements WeakObserver, WindowListener {
 				});
 				popup.add(regexSwapItem);
 
-				JMenuItem loadRegexesItem = new JMenuItem(
-						"Load from .properties file", GuiHelper
-								.getImageIcon("images/toolbar_file.png"));
+				JMenuItem loadRegexesItem = new JMenuItem("Load from .properties file", GuiHelper
+						.getImageIcon("images/toolbar_file.png"));
 				loadRegexesItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
-						JFileChooser fileChooser = new JFileChooser(new File(
-								"samples/regexes"));
-						ExtensionFilter filter = new ExtensionFilter(
-								"Property file (.properties)", "properties");
+						JFileChooser fileChooser = new JFileChooser(GuiConfiguration
+								.getDataCleanerFile("samples/regexes"));
+						ExtensionFilter filter = new ExtensionFilter("Property file (.properties)", "properties");
 						fileChooser.setFileFilter(filter);
 						GuiHelper.centerOnScreen(fileChooser);
 						if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 							File selectedFile = fileChooser.getSelectedFile();
 							try {
-								List<NamedRegex> regexes = NamedRegex
-										.loadFromFile(selectedFile);
-								GuiSettings settings = GuiSettings
-										.getSettings();
+								List<NamedRegex> regexes = NamedRegex.loadFromFile(selectedFile);
+								GuiSettings settings = GuiSettings.getSettings();
 								settings.getRegexes().addAll(regexes);
 								GuiSettings.saveSettings(settings);
 							} catch (IllegalArgumentException e) {
-								GuiHelper.showErrorMessage(
-										"Could not load regexes",
+								GuiHelper.showErrorMessage("Could not load regexes",
 										"Error occurred during load of regexes from file: "
-												+ selectedFile
-														.getAbsolutePath(), e);
+												+ selectedFile.getAbsolutePath(), e);
 							}
 						}
 					}
@@ -481,8 +439,7 @@ public class MainWindow implements WeakObserver, WindowListener {
 	}
 
 	private void updateRegexList(GuiSettings settings) {
-		DefaultComboBoxModel model = (DefaultComboBoxModel) _regexList
-				.getModel();
+		DefaultComboBoxModel model = (DefaultComboBoxModel) _regexList.getModel();
 		model.removeAllElements();
 		List<NamedRegex> regexes = settings.getRegexes();
 		for (NamedRegex regex : regexes) {
@@ -501,14 +458,12 @@ public class MainWindow implements WeakObserver, WindowListener {
 		_windowMenu = new JMenu("Window");
 		_windowMenu.setMnemonic('W');
 
-		JMenuItem settingsItem = new JMenuItem("Settings", GuiHelper
-				.getImageIcon("images/toolbar_settings.png"));
+		JMenuItem settingsItem = new JMenuItem("Settings", GuiHelper.getImageIcon("images/toolbar_settings.png"));
 		settingsItem.setMnemonic('S');
 		settingsItem.addActionListener(settingsActionListener);
 		_windowMenu.add(settingsItem);
 
-		JMenuItem cascadeItem = new JMenuItem("Cascade", GuiHelper
-				.getImageIcon("images/menu_cascade.png"));
+		JMenuItem cascadeItem = new JMenuItem("Cascade", GuiHelper.getImageIcon("images/menu_cascade.png"));
 		cascadeItem.setMnemonic('C');
 		cascadeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -550,8 +505,7 @@ public class MainWindow implements WeakObserver, WindowListener {
 	}
 
 	private Component getBanner() {
-		JPanel panel = GuiHelper.createPanel().applyLayout(
-				new FlowLayout(FlowLayout.LEFT, 0, 0)).toComponent();
+		JPanel panel = GuiHelper.createPanel().applyLayout(new FlowLayout(FlowLayout.LEFT, 0, 0)).toComponent();
 		panel.setBorder(new MatteBorder(0, 0, 1, 0, Color.BLACK));
 		Icon logo = GuiHelper.getImageIcon("images/main_banner.png");
 		JLabel label = new JLabel(logo);

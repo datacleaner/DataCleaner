@@ -130,7 +130,7 @@ public class ProfilerWindow extends AbstractWindow implements WeakObserver {
 									null);
 				} else {
 					JFileChooser f = new JFileChooser();
-					f.setSelectedFile(new File("my_profiler.dcp"));
+					f.setSelectedFile(GuiConfiguration.getDataCleanerFile("my_profiler.dcp"));
 					f.addChoosableFileFilter(EXTENSION_FILTER);
 					if (f.showSaveDialog(_panel) == JFileChooser.APPROVE_OPTION) {
 						File file = f.getSelectedFile();

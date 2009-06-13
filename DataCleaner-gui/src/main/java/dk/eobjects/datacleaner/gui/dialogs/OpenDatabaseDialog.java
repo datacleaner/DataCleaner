@@ -79,27 +79,20 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		setModal(true);
 		_dataContextSelection = dataContextSelection;
 
-		JTextArea aboutDatabases = GuiHelper.createLabelTextArea()
-				.toComponent();
-		aboutDatabases
-				.setText("The named connections are pre-configured database connections that have been stored for easy reuse. To add or modify the named connections edit the '"
-						+ GuiConfiguration.CONFIGURATION_FILE
-						+ "' file in the root of the DataCleaner installation.");
+		JTextArea aboutDatabases = GuiHelper.createLabelTextArea().toComponent();
+		aboutDatabases.setText("The named connections are pre-configured database connections that "
+				+ "have been stored for easy reuse. To add or modify the named connections "
+				+ "edit the configuration file located at " + GuiConfiguration.getDataCleanerHome().getAbsolutePath());
 		add(aboutDatabases, BorderLayout.SOUTH);
 	}
 
 	@Override
 	protected Component getContent() {
 		JPanel panel = GuiHelper.createPanel().toComponent();
-		GuiHelper
-				.addToGridBag(
-						new JLabel(
-								"Please fill out the form below to connect to your database..."),
-						panel, 0, 0, 2, 1);
-		GuiHelper.addToGridBag(new JLabel("Named connection:"), panel, 0, 1, 1,
-				1);
-		GuiHelper.addToGridBag(new JLabel("Connection string:"), panel, 0, 2,
-				1, 1);
+		GuiHelper.addToGridBag(new JLabel("Please fill out the form below to connect to your database..."), panel, 0,
+				0, 2, 1);
+		GuiHelper.addToGridBag(new JLabel("Named connection:"), panel, 0, 1, 1, 1);
+		GuiHelper.addToGridBag(new JLabel("Connection string:"), panel, 0, 2, 1, 1);
 		GuiHelper.addToGridBag(new JLabel("Username:"), panel, 0, 3, 1, 1);
 		GuiHelper.addToGridBag(new JLabel("Password:"), panel, 0, 4, 1, 1);
 		GuiHelper.addToGridBag(new JLabel("Catalog:"), panel, 0, 5, 1, 1);
@@ -107,16 +100,12 @@ public class OpenDatabaseDialog extends BanneredDialog {
 
 		_connectionStringField = new JTextField(FIELD_COLUMNS);
 		_connectionStringField.setName("connectionStringField");
-		_connectionStringField.getInputMap().put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
-		_connectionStringField.getActionMap().put("nextTemplateItem",
-				getNextTemplateItemAction());
+		_connectionStringField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
+		_connectionStringField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
 		GuiHelper.addToGridBag(_connectionStringField, panel, 1, 2, 1, 1);
 
-		final JButton samplesButton = new JButton(GuiHelper
-				.getImageIcon("images/hint.png"));
-		samplesButton
-				.setToolTipText("Click to select among configuration samples.");
+		final JButton samplesButton = new JButton(GuiHelper.getImageIcon("images/hint.png"));
+		samplesButton.setToolTipText("Click to select among configuration samples.");
 		samplesButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -124,119 +113,79 @@ public class OpenDatabaseDialog extends BanneredDialog {
 
 				JPopupMenu popup = new JPopupMenu("Samples");
 
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.MYSQL_DRIVER)) {
-					popup.add(sampleItem("MySQL template",
-							"jdbc:mysql://<hostname>:3306/<database>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.MYSQL_DRIVER)) {
+					popup.add(sampleItem("MySQL template", "jdbc:mysql://<hostname>:3306/<database>",
 							"images/database_mysql.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.POSTGRESQL_DRIVER)) {
-					popup.add(sampleItem("PostgreSQL template",
-							"jdbc:postgresql://<hostname>:5432/<database>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.POSTGRESQL_DRIVER)) {
+					popup.add(sampleItem("PostgreSQL template", "jdbc:postgresql://<hostname>:5432/<database>",
 							"images/database_postgresql.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.ORACLE_DRIVER)) {
-					popup.add(sampleItem("Oracle template",
-							"jdbc:oracle:thin:@<hostname>:1521:<schema>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.ORACLE_DRIVER)) {
+					popup.add(sampleItem("Oracle template", "jdbc:oracle:thin:@<hostname>:1521:<schema>",
 							"images/database_oracle.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.JTDS_DRIVER)) {
-					popup.add(sampleItem("SQL Server template",
-							"jdbc:jtds:sqlserver://<hostname>:1434/<database>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.JTDS_DRIVER)) {
+					popup.add(sampleItem("SQL Server template", "jdbc:jtds:sqlserver://<hostname>:1434/<database>",
 							"images/database_microsoft.png"));
-					popup.add(sampleItem("Sybase template",
-							"jdbc:jtds:sybase://<hostname>:7100/<database>",
+					popup.add(sampleItem("Sybase template", "jdbc:jtds:sybase://<hostname>:7100/<database>",
 							"images/database_sybase.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.FIREBIRD_DRIVER)) {
-					popup
-							.add(sampleItem(
-									"Firebird template",
-									"jdbc:firebirdsql:<hostname>:<path/to/database.fdb>",
-									"images/database_firebird.png"));
+				if (settings.isDriverInstalled(DatabaseDriverDialog.FIREBIRD_DRIVER)) {
+					popup.add(sampleItem("Firebird template", "jdbc:firebirdsql:<hostname>:<path/to/database.fdb>",
+							"images/database_firebird.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.DERBY_DRIVER)) {
-					popup.add(sampleItem("Derby template",
-							"jdbc:derby://<hostname>:1527/<path/to/database>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.DERBY_DRIVER)) {
+					popup.add(sampleItem("Derby template", "jdbc:derby://<hostname>:1527/<path/to/database>",
 							"images/database_derby.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.SQLITE_DRIVER)) {
-					popup.add(sampleItem("SQLite template",
-							"jdbc:sqlite:<path/to/database.db>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.SQLITE_DRIVER)) {
+					popup.add(sampleItem("SQLite template", "jdbc:sqlite:<path/to/database.db>",
 							"images/database_sqlite.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.INGRES_DRIVER)) {
-					popup.add(sampleItem("Ingres template",
-							"jdbc:ingres://<hostname>:II7/<database>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.INGRES_DRIVER)) {
+					popup.add(sampleItem("Ingres template", "jdbc:ingres://<hostname>:II7/<database>",
 							"images/database_ingres.png"));
 				}
 				if (settings.isDriverInstalled(DatabaseDriverDialog.DB2_DRIVER)) {
-					popup.add(sampleItem("IBM DB2 template",
-							"jdbc:db2://<hostname>:<port>/<database>", "images/database_db2.png"));
+					popup.add(sampleItem("IBM DB2 template", "jdbc:db2://<hostname>:<port>/<database>",
+							"images/database_db2.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.JDBC4OLAP_DRIVER)) {
-					popup
-							.add(sampleItem(
-									"Pentaho Analysis template",
-									"jdbc:jdbc4olap:http://<hostname>:8080/pentaho/Xmla",
-									"images/database_pentaho.png"));
-					popup
-							.add(sampleItem(
-									"Mondrian template",
-									"jdbc:jdbc4olap:http://<hostname>:8080/mondrian/xmla",
-									"images/database_pentaho.png"));
-					popup
-							.add(sampleItem(
-									"Analysis Services template",
-									"jdbc:jdbc4olap:http://<hostname>:<port>/OLAP/msmdpump.dll",
-									"images/database_microsoft.png"));
-					popup
-							.add(sampleItem(
-									"SAP BW template",
-									"jdbc:jdbc4olap:http://<hostname>:<port>/sap/bw/soap/xmla?sap-client=<number>",
-									"images/database_sap.png"));
+				if (settings.isDriverInstalled(DatabaseDriverDialog.JDBC4OLAP_DRIVER)) {
+					popup.add(sampleItem("Pentaho Analysis template",
+							"jdbc:jdbc4olap:http://<hostname>:8080/pentaho/Xmla", "images/database_pentaho.png"));
+					popup.add(sampleItem("Mondrian template", "jdbc:jdbc4olap:http://<hostname>:8080/mondrian/xmla",
+							"images/database_pentaho.png"));
+					popup.add(sampleItem("Analysis Services template",
+							"jdbc:jdbc4olap:http://<hostname>:<port>/OLAP/msmdpump.dll",
+							"images/database_microsoft.png"));
+					popup.add(sampleItem("SAP BW template",
+							"jdbc:jdbc4olap:http://<hostname>:<port>/sap/bw/soap/xmla?sap-client=<number>",
+							"images/database_sap.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.SQLSERVER_DRIVER)) {
+				if (settings.isDriverInstalled(DatabaseDriverDialog.SQLSERVER_DRIVER)) {
 					popup
-							.add(sampleItem(
-									"SQL Server template",
+							.add(sampleItem("SQL Server template",
 									"jdbc:sqlserver://<hostname>:3341;databaseName=<database>",
 									"images/database_microsoft.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.SAPDB_DRIVER)) {
-					popup.add(sampleItem("SAP DB template",
-							"jdbc:sapdb://<hostname>/<database>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.SAPDB_DRIVER)) {
+					popup.add(sampleItem("SAP DB template", "jdbc:sapdb://<hostname>/<database>",
 							"images/database_sap.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.HSQLDB_DRIVER)) {
-					popup.add(sampleItem("HSQLDB (server) template",
-							"jdbc:hsqldb:hsql://<hostname>:9001/<database>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.HSQLDB_DRIVER)) {
+					popup.add(sampleItem("HSQLDB (server) template", "jdbc:hsqldb:hsql://<hostname>:9001/<database>",
 							"images/database_hsqldb.png"));
-					popup.add(sampleItem("HSQLDB (file) template",
-							"jdbc:hsqldb:file:<filename>",
+					popup.add(sampleItem("HSQLDB (file) template", "jdbc:hsqldb:file:<filename>",
 							"images/database_hsqldb.png"));
 				}
-				if (settings
-						.isDriverInstalled(DatabaseDriverDialog.ODBC_BRIDGE_DRIVER)) {
-					popup.add(sampleItem("ODBC-bridge template",
-							"jdbc:odbc:<data-source-name>",
+				if (settings.isDriverInstalled(DatabaseDriverDialog.ODBC_BRIDGE_DRIVER)) {
+					popup.add(sampleItem("ODBC-bridge template", "jdbc:odbc:<data-source-name>",
 							"images/database_odbc.png"));
 				}
 				popup.add(new JSeparator(JSeparator.HORIZONTAL));
-				JMenuItem manageDriversItem = new JMenuItem(
-						"Manage database drivers", GuiHelper
-								.getImageIcon("images/toolbar_settings.png"));
+				JMenuItem manageDriversItem = new JMenuItem("Manage database drivers", GuiHelper
+						.getImageIcon("images/toolbar_settings.png"));
 				manageDriversItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						SettingsDialog dialog = new SettingsDialog();
@@ -249,20 +198,14 @@ public class OpenDatabaseDialog extends BanneredDialog {
 				popup.show(samplesButton, 0, samplesButton.getHeight());
 			}
 
-			private JMenuItem sampleItem(String title,
-					final String connectionString, String iconPath) {
-				JMenuItem item = new JMenuItem(title, GuiHelper
-						.getImageIcon(iconPath));
+			private JMenuItem sampleItem(String title, final String connectionString, String iconPath) {
+				JMenuItem item = new JMenuItem(title, GuiHelper.getImageIcon(iconPath));
 				item.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						_connectionStringField
-								.setFocusTraversalKeysEnabled(false);
+						_connectionStringField.setFocusTraversalKeysEnabled(false);
 						_connectionStringField.setText(connectionString);
-						_connectionStringField
-								.setSelectionStart(connectionString
-										.indexOf('<'));
-						_connectionStringField.setSelectionEnd(connectionString
-								.indexOf('>') + 1);
+						_connectionStringField.setSelectionStart(connectionString.indexOf('<'));
+						_connectionStringField.setSelectionEnd(connectionString.indexOf('>') + 1);
 						_connectionStringField.requestFocus();
 					}
 				});
@@ -280,22 +223,18 @@ public class OpenDatabaseDialog extends BanneredDialog {
 		_catalogField = new JTextField(FIELD_COLUMNS);
 		GuiHelper.addToGridBag(_catalogField, panel, 1, 5, 1, 1);
 
-		JPanel tableTypePanel = GuiHelper.createPanel().applyVerticalLayout()
-				.toComponent();
+		JPanel tableTypePanel = GuiHelper.createPanel().applyVerticalLayout().toComponent();
 
-		_typeTableCheckBox = GuiHelper.createCheckBox("Table", true)
-				.toComponent();
+		_typeTableCheckBox = GuiHelper.createCheckBox("Table", true).toComponent();
 		tableTypePanel.add(_typeTableCheckBox);
-		_typeViewCheckBox = GuiHelper.createCheckBox("View", false)
-				.toComponent();
+		_typeViewCheckBox = GuiHelper.createCheckBox("View", false).toComponent();
 		tableTypePanel.add(_typeViewCheckBox);
 
 		GuiHelper.addToGridBag(tableTypePanel, panel, 1, 6, 1, 1);
 
-		final NamedConnection[] namedConnections = GuiConfiguration
-				.getNamedConnections().toArray(new NamedConnection[0]);
-		final Object[] connectionNames = ReflectionHelper.getProperties(
-				namedConnections, "name");
+		final NamedConnection[] namedConnections = GuiConfiguration.getNamedConnections().toArray(
+				new NamedConnection[0]);
+		final Object[] connectionNames = ReflectionHelper.getProperties(namedConnections, "name");
 
 		_nameComboBox = new JComboBox(connectionNames);
 		_nameComboBox.setEditable(false);
@@ -338,9 +277,8 @@ public class OpenDatabaseDialog extends BanneredDialog {
 				}
 
 				try {
-					_dataContextSelection.selectDatabase(connectionString,
-							catalog, username, password, types
-									.toArray(new TableType[types.size()]));
+					_dataContextSelection.selectDatabase(connectionString, catalog, username, password, types
+							.toArray(new TableType[types.size()]));
 					setVisible(false);
 					dispose();
 				} catch (SQLException e) {
@@ -354,8 +292,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 
 		});
 		connectButton.setText("Connect to database");
-		connectButton.setIcon(GuiHelper
-				.getImageIcon("images/toolbar_database.png"));
+		connectButton.setIcon(GuiHelper.getImageIcon("images/toolbar_database.png"));
 		GuiHelper.addToGridBag(connectButton, panel, 0, 8, 2, 1);
 
 		if (namedConnections.length > 0) {
@@ -386,10 +323,8 @@ public class OpenDatabaseDialog extends BanneredDialog {
 					if (selectionStart != -1) {
 						selectionEnd = text.indexOf('>', selectionStart);
 						if (selectionEnd != -1) {
-							_connectionStringField
-									.setSelectionStart(selectionStart);
-							_connectionStringField
-									.setSelectionEnd(selectionEnd + 1);
+							_connectionStringField.setSelectionStart(selectionStart);
+							_connectionStringField.setSelectionEnd(selectionEnd + 1);
 							_connectionStringField.requestFocus();
 						} else {
 							_usernameField.requestFocus();
@@ -404,17 +339,14 @@ public class OpenDatabaseDialog extends BanneredDialog {
 
 	private void updateForm(NamedConnection namedConnection) {
 		if (namedConnection != null) {
-			_connectionStringField.setText(namedConnection
-					.getConnectionString());
+			_connectionStringField.setText(namedConnection.getConnectionString());
 			_usernameField.setText(namedConnection.getUsername());
 			_passwordField.setText(namedConnection.getPassword());
 			_catalogField.setText(namedConnection.getCatalog());
 			String[] tableTypes = namedConnection.getTableTypes();
 			if (tableTypes != null && tableTypes.length > 0) {
-				_typeTableCheckBox.setSelected(ArrayUtils.indexOf(tableTypes,
-						"TABLE") != -1);
-				_typeViewCheckBox.setSelected(ArrayUtils.indexOf(tableTypes,
-						"VIEW") != -1);
+				_typeTableCheckBox.setSelected(ArrayUtils.indexOf(tableTypes, "TABLE") != -1);
+				_typeViewCheckBox.setSelected(ArrayUtils.indexOf(tableTypes, "VIEW") != -1);
 			} else {
 				_typeTableCheckBox.setEnabled(true);
 				_typeViewCheckBox.setEnabled(false);

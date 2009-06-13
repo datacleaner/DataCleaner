@@ -40,6 +40,7 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
 
 import dk.eobjects.datacleaner.export.XmlResultExporter;
 import dk.eobjects.datacleaner.gui.GuiHelper;
+import dk.eobjects.datacleaner.gui.setup.GuiConfiguration;
 import dk.eobjects.datacleaner.gui.widgets.ColumnHighlighter;
 import dk.eobjects.datacleaner.gui.widgets.DataTable;
 import dk.eobjects.datacleaner.validator.IValidationRule;
@@ -74,7 +75,7 @@ public class TableValidationRuleResultsPanel extends JPanel {
 		exportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser f = new JFileChooser();
-				f.setSelectedFile(new File(table.getName() + "-results.xml"));
+				f.setSelectedFile(GuiConfiguration.getDataCleanerFile(table.getName() + "-results.xml"));
 				if (JFileChooser.APPROVE_OPTION == f
 						.showSaveDialog(TableValidationRuleResultsPanel.this)) {
 					boolean accepted = false;

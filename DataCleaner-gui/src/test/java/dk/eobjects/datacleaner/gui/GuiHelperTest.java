@@ -16,6 +16,8 @@
  */
 package dk.eobjects.datacleaner.gui;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.metamodel.schema.Column;
@@ -23,6 +25,19 @@ import dk.eobjects.metamodel.schema.ColumnType;
 import dk.eobjects.metamodel.schema.Table;
 
 public class GuiHelperTest extends TestCase {
+
+	public void testCopyDirectoryContentsFromClasspathToFileSystem() throws Exception {
+		File schemaClassFile = new File("target/GuiHelperTest/Schema.class");
+		assertFalse(schemaClassFile.exists());
+
+		File destDir = new File("target/GuiHelperTest");
+		destDir.mkdir();
+		GuiHelper.copyDirectoryContentsFromClasspathToFileSystem("dk/eobjects/metamodel/schema", destDir);
+
+		assertTrue(schemaClassFile.exists());
+		
+		GuiHelper.deleteRecursively(destDir);
+	}
 
 	public void testColumnLabelFunctions() throws Exception {
 		ColumnSelection dataSelection = new ColumnSelection(null);
@@ -48,8 +63,7 @@ public class GuiHelperTest extends TestCase {
 		String column4Label = GuiHelper.getLabelForColumn(column4);
 		assertEquals("table2.column4", column4Label);
 
-		Object columnByLabel = GuiHelper.getColumnByLabel(dataSelection,
-				column4Label);
+		Object columnByLabel = GuiHelper.getColumnByLabel(dataSelection, column4Label);
 		assertSame(columnByLabel, column4);
 
 		String table1Label = GuiHelper.getLabelForTable(table1);

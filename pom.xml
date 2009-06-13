@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<datacleaner.version>1.5.1</datacleaner.version>
-		<metamodel.version>1.1.5-SNAPSHOT</metamodel.version>
+		<metamodel.version>1.1.5</metamodel.version>
 	</properties>
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>

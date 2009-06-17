@@ -103,9 +103,9 @@ public class XmlResultExporter implements IResultExporter {
 						String rowName = rowNames[j];
 						MatrixValue value = matrix
 								.getValue(rowName, columnName);
-						writer.print("   <measure columnName=\"" + columnName
+						writer.print("   <measure columnName=\"" + safePrint(columnName)
 								+ "\" columnIndex=\"" + i + "\" rowName=\""
-								+ rowName + "\" rowIndex=\"" + j
+								+ safePrint(rowName) + "\" rowIndex=\"" + j
 								+ "\" value=\"" + safePrint(value.getValue())
 								+ "\" />\n");
 					}

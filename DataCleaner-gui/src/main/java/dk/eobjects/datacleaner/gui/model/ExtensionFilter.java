@@ -44,7 +44,7 @@ public class ExtensionFilter extends FileFilter {
 		String fileExtension = DataContextSelection.getExtention(f);
 
 		if (fileExtension != null) {
-			if (fileExtension.equals(_extension)) {
+			if (fileExtension.equalsIgnoreCase(_extension)) {
 				return true;
 			}
 		}

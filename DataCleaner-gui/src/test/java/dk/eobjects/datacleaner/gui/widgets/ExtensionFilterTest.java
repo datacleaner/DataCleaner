@@ -26,8 +26,11 @@ public class ExtensionFilterTest extends TestCase {
 
 	public void testExtension() throws Exception {
 		ExtensionFilter extensionFilter = new ExtensionFilter("My filter",
-				"txt");
-		File file = new File("src/test/resources/license.txt");
+				"csv");
+		File file = new File("src/test/resources/customers.csv");
+		assertTrue(extensionFilter.accept(file));
+		
+		file = new File("src/test/resources/EmptyFile.CSV");
 		assertTrue(extensionFilter.accept(file));
 
 		file = new File("src/test/resources/images/dialog_banner.png");

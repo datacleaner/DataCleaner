@@ -17,10 +17,11 @@
 package dk.eobjects.datacleaner.profiler.valuedist;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +59,7 @@ public class ValueDistributionProfile extends AbstractProfile {
 
 	private Map<Column, StoredMap> _repeatedValues = new HashMap<Column, StoredMap>();
 	private Map<Column, Long> _nullValues = new HashMap<Column, Long>();
+	private List<Database> _databases = new LinkedList<Database>();
 	private Environment _environment;
 	private Integer _topCount;
 	private Integer _bottomCount;
@@ -97,16 +99,21 @@ public class ValueDistributionProfile extends AbstractProfile {
 					DatabaseConfig databaseConfig = new DatabaseConfig();
 					databaseConfig.setAllowCreate(true);
 					try {
+						String databaseName = column.getQualifiedLabel()
+								+ System.currentTimeMillis();
 						Database database = _environment.openDatabase(null,
-								column.getQualifiedLabel()
-										+ System.currentTimeMillis(),
-								databaseConfig);
+								databaseName, databaseConfig);
+						_databases.add(database);
 						EntryBinding keyBinding = new StringBinding();
 						EntryBinding valueBinding = new LongBinding();
 						map = new StoredMap(database, keyBinding, valueBinding,
 								true);
 
 						_repeatedValues.put(column, map);
+
+						_log
+								.info("Created temporary database: "
+										+ databaseName);
 					} catch (DatabaseException e) {
 						throw new IllegalStateException(e);
 					}
@@ -361,16 +368,31 @@ public class ValueDistributionProfile extends AbstractProfile {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void close() {
 		super.close();
 		try {
-			Collection<StoredMap> maps = _repeatedValues.values();
-			for (StoredMap storedMap : maps) {
-				storedMap.clear();
+			for (Database database : _databases) {
+				String databaseName = database.getDatabaseName();
+				database.close();
+				_environment.removeDatabase(null, databaseName);
+				_log.info("Removed temporary database: " + databaseName);
 			}
+			_environment.compress();
+			_environment.cleanLog();
+			_environment.sync();
+			File home = _environment.getHome();
 			_environment.close();
+			File[] databaseFiles = home.listFiles(new FilenameFilter() {
+
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".jdb");
+				}
+			});
+			for (File file : databaseFiles) {
+				file.deleteOnExit();
+			}
 		} catch (DatabaseException e) {
 			_log.error(e);
 		}

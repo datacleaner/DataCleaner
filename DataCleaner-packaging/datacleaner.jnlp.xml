@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jnlp PUBLIC "http://java.sun.com/dtd/JNLP-1.5.dtd" "http://java.sun.com/dtd/JNLP-1.5.dtd">
+<jnlp spec="1.5+" codebase="http://datacleaner.eobjects.org/resources/webstart"
+	href="datacleaner.jnlp">
+	<information>
+		<title>DataCleaner</title>
+		<vendor>eobjects.org</vendor>
+		<homepage href="http://datacleaner.eobjects.org" />
+		<description>DataCleaner is an Open Source application for profiling, validating and comparing data. These activities help you administer and monitor your data quality in order to ensure that your data is useful and applicable to your business situation.</description>
+		<description kind="short">The premier Open Source Data Quality solution</description>
+		<description kind="one-line">The premier Open Source Data Quality solution</description>
+		<description kind="tooltip">The premier Open Source Data Quality solution</description>
+		<icon href="icon.gif" />
+		<offline-allowed />
+		<shortcut>
+			<desktop />
+			<menu submenu="eobjects.org DataCleaner" />
+		</shortcut>
+	</information>
+	<security>
+		<all-permissions />
+	</security>
+	<resources>
+		<j2se version="1.5+" href="http://java.sun.com/products/autodl/j2se"
+			java-vm-args="-Xmx1024m -XX:MaxPermSize=256m" />
+		<jar href="datacleaner.jar" />
+	</resources>
+	<application-desc main-class="dk.eobjects.datacleaner.gui.DataCleanerGui">
+	</application-desc>
+</jnlp>

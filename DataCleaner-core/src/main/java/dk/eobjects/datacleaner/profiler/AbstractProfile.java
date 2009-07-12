@@ -140,4 +140,8 @@ public abstract class AbstractProfile implements IProfile {
 	}
 
 	protected abstract List<IMatrix> getResultMatrices();
+
+	public void close() {
+		//Do nothing
+	}
 }

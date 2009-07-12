@@ -14,17 +14,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.eobjects.datacleaner.profiler.trivial;
+package dk.eobjects.datacleaner.profiler.valuedist;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+
+import com.sleepycat.bind.EntryBinding;
+import com.sleepycat.bind.tuple.LongBinding;
+import com.sleepycat.bind.tuple.StringBinding;
+import com.sleepycat.collections.StoredMap;
+import com.sleepycat.je.Database;
+import com.sleepycat.je.DatabaseConfig;
+import com.sleepycat.je.DatabaseException;
+import com.sleepycat.je.Environment;
+import com.sleepycat.je.EnvironmentConfig;
 
 import dk.eobjects.datacleaner.profiler.AbstractProfile;
 import dk.eobjects.datacleaner.profiler.IMatrix;
@@ -38,7 +48,7 @@ import dk.eobjects.metamodel.query.OperatorType;
 import dk.eobjects.metamodel.query.Query;
 import dk.eobjects.metamodel.query.SelectItem;
 import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.util.ObjectComparator;
+import dk.eobjects.metamodel.util.FileHelper;
 
 public class ValueDistributionProfile extends AbstractProfile {
 
@@ -46,9 +56,65 @@ public class ValueDistributionProfile extends AbstractProfile {
 	public static final String PROPERTY_BOTTOM_N = "Bottom n least frequent values";
 	private static final String UNIQUE_VALUES_LABEL = "<Unique values>";
 
-	private Map<Column, Map<String, Long>> _repeatedValues = new HashMap<Column, Map<String, Long>>();
+	private Map<Column, StoredMap> _repeatedValues = new HashMap<Column, StoredMap>();
+	private Map<Column, Long> _nullValues = new HashMap<Column, Long>();
+	private Environment _environment;
 	private Integer _topCount;
 	private Integer _bottomCount;
+
+	@Override
+	public void initialize(Column... columns) {
+		super.initialize(columns);
+		EnvironmentConfig environmentConfig = new EnvironmentConfig();
+		environmentConfig.setAllowCreate(true);
+
+		try {
+			File tempDir = FileHelper.getTempDir();
+			_environment = new Environment(tempDir, environmentConfig);
+		} catch (DatabaseException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	private long incrementNullCount(Column column, long amount) {
+		Long count = _nullValues.get(column);
+		if (count == null) {
+			count = amount;
+		} else {
+			count += amount;
+		}
+		_nullValues.put(column, count);
+		return count;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Long> getRepeatedValues(Column column) {
+		StoredMap map = _repeatedValues.get(column);
+		if (map == null) {
+			synchronized (_repeatedValues) {
+				map = _repeatedValues.get(column);
+				if (map == null) {
+					DatabaseConfig databaseConfig = new DatabaseConfig();
+					databaseConfig.setAllowCreate(true);
+					try {
+						Database database = _environment.openDatabase(null,
+								column.getQualifiedLabel()
+										+ System.currentTimeMillis(),
+								databaseConfig);
+						EntryBinding keyBinding = new StringBinding();
+						EntryBinding valueBinding = new LongBinding();
+						map = new StoredMap(database, keyBinding, valueBinding,
+								true);
+
+						_repeatedValues.put(column, map);
+					} catch (DatabaseException e) {
+						throw new IllegalStateException(e);
+					}
+				}
+			}
+		}
+		return map;
+	}
 
 	@Override
 	public void setProperties(Map<String, String> properties) {
@@ -60,22 +126,20 @@ public class ValueDistributionProfile extends AbstractProfile {
 	@Override
 	protected void processValue(Column column, Object value, long valueCount,
 			Row row) {
-		String repeatedValue = null;
-		if (value != null) {
-			repeatedValue = value.toString();
-		}
 
-		Map<String, Long> valueMap = _repeatedValues.get(column);
-		if (valueMap == null) {
-			valueMap = new HashMap<String, Long>();
-			_repeatedValues.put(column, valueMap);
+		if (value == null) {
+			incrementNullCount(column, valueCount);
+		} else {
+			String repeatedValue = value.toString();
+			Map<String, Long> valueMap = getRepeatedValues(column);
+			Long repeatCount = valueMap.get(repeatedValue);
+			if (repeatCount == null) {
+				repeatCount = valueCount;
+			} else {
+				repeatCount += valueCount;
+			}
+			valueMap.put(repeatedValue, repeatCount);
 		}
-		Long repeatCount = valueMap.get(repeatedValue);
-		if (repeatCount == null) {
-			repeatCount = 0l;
-		}
-		repeatCount += valueCount;
-		valueMap.put(repeatedValue, repeatCount);
 	}
 
 	@Override
@@ -124,120 +188,78 @@ public class ValueDistributionProfile extends AbstractProfile {
 			String columnName = column.getName();
 			Object[] rowValues = new Object[topCount + bottomCount];
 
-			Set<Entry<String, Long>> entries = _repeatedValues.get(column)
+			Set<Entry<String, Long>> entries = getRepeatedValues(column)
 					.entrySet();
 
-			// Create two lists: A list of unique values and a list with the
-			// entries sorted (highest count first).
-			List<Object[]> uniqueValues = new ArrayList<Object[]>();
-			List<Entry<String, Long>> sortedEntries = new ArrayList<Entry<String, Long>>(
-					entries);
-			// Populate the unique values list (and remove these unique values
-			// from the sorted list)
-			for (Iterator<Entry<String, Long>> it = sortedEntries.iterator(); it
+			ScoredList topEntries = new ScoredList(true, _topCount);
+			ScoredList bottomEntries = new ScoredList(false, _bottomCount);
+			long uniqueValuesCount = 0l;
+
+			// add null values first
+			Long nullCount = _nullValues.get(column);
+			if (nullCount != null) {
+				topEntries.register(null, nullCount);
+				bottomEntries.register(null, nullCount);
+			}
+
+			for (Iterator<Entry<String, Long>> it = entries.iterator(); it
 					.hasNext();) {
 				Entry<String, Long> entry = it.next();
-				if (entry.getValue() == 1l) {
-					uniqueValues.add(new Object[] { entry.getKey() });
-					it.remove();
+				Long count = entry.getValue();
+
+				// Add to the uniqueValues list
+				if (count == 1l) {
+					uniqueValuesCount++;
+					if (uniqueValuesCount == 1l) {
+						bottomEntries.decrementCapacity();
+					}
+				} else {
+					topEntries.register(entry);
+					bottomEntries.register(entry);
 				}
-			}
-			// Sort the sorted list
-			Collections.sort(sortedEntries,
-					new Comparator<Entry<String, Long>>() {
-						public int compare(Entry<String, Long> o1,
-								Entry<String, Long> o2) {
-							Long o1count = o1.getValue();
-							Long o2count = o2.getValue();
-							int compareTo = o2count.compareTo(o1count);
-							if (compareTo == 0) {
-								compareTo = ObjectComparator.getComparator()
-										.compare(o1.getKey(), o2.getKey());
-							}
-							return compareTo;
-						}
-					});
 
-			int registeredEntries = 0;
-			// Take out the top n values from the sorted list and put them in a
-			// seperate list
-			List<Entry<String, Long>> topValues = new ArrayList<Entry<String, Long>>();
-			for (Iterator<Entry<String, Long>> it = sortedEntries.iterator(); it
-					.hasNext();) {
-				Entry<String, Long> entry = it.next();
-				topValues.add(entry);
-
-				// remove the entry from the list so the list will only contain
-				// bottom values (or none if it has been emptied out)
-				it.remove();
-
-				registeredEntries++;
-				if (registeredEntries == topCount) {
-					break;
-				}
 			}
 
-			registeredEntries = 0;
-			// Take out the bottom n values from the sorted list and put them in
-			// a seperate list
-			Collections.reverse(sortedEntries);
-			List<Entry<String, Long>> bottomValues = new ArrayList<Entry<String, Long>>();
-			boolean hasUniqueValues = !uniqueValues.isEmpty();
-			if (hasUniqueValues) {
-				// If there are unique values, these will get the bottom 1
-				// placement
-				rowValues[topCount + bottomCount - 1] = UNIQUE_VALUES_LABEL
-						+ " (" + uniqueValues.size() + ")";
-				registeredEntries++;
+			// Remove any duplicate entries
+			Long lowestScore = topEntries.getLowestScore();
+			if (lowestScore != null) {
+				bottomEntries.removeAbove(lowestScore - 1);
 			}
-			for (Iterator<Entry<String, Long>> it = sortedEntries.iterator(); it
-					.hasNext();) {
-				Entry<String, Long> entry = it.next();
-				bottomValues.add(entry);
-
-				registeredEntries++;
-				if (registeredEntries == bottomCount) {
-					break;
-				}
-			}
-			sortedEntries = null;
 
 			String[] detailOperands = new String[topCount + bottomCount];
-			for (int i = 0; i < topCount; i++) {
-				if (topValues.size() > i) {
-					Entry<String, Long> topEntry = topValues.get(i);
-					final String key = topEntry.getKey();
-					if (key == null) {
-						rowValues[i] = "<null> (" + topEntry.getValue() + ")";
-					} else {
-						rowValues[i] = key + " (" + topEntry.getValue() + ")";
-					}
-					detailOperands[i] = key;
-				}
-			}
-			for (int i = 0; i < bottomCount; i++) {
-				if (bottomValues.size() > i) {
-					Entry<String, Long> bottomEntry = bottomValues.get(i);
-					int bottomIndex = topCount + bottomCount - 1 - i;
-					if (hasUniqueValues) {
-						bottomIndex--;
-					}
-					if (rowValues.length > bottomIndex) {
-						String key = bottomEntry.getKey();
-						if (key == null) {
-							rowValues[bottomIndex] = "<null> ("
-									+ bottomEntry.getValue() + ")";
-						} else {
-							rowValues[bottomIndex] = key + " ("
-									+ bottomEntry.getValue() + ")";
-						}
-						detailOperands[bottomIndex] = key;
-					}
-				}
+			int numTopEntries = topEntries.size();
+			Iterator<Entry<String, Long>> entryIterator = topEntries
+					.iterateLowToHigh();
+			int i = 0;
+			while (entryIterator.hasNext()) {
+				int index = numTopEntries - 1 - i;
+				Entry<String, Long> topEntry = entryIterator.next();
+				String value = topEntry.getKey();
+				rowValues[index] = value + " (" + topEntry.getValue() + ")";
+				detailOperands[index] = value;
+				i++;
 			}
 
+			i = rowValues.length - 1;
+			if (uniqueValuesCount > 0l) {
+				i--;
+			}
+			entryIterator = bottomEntries.iterateLowToHigh();
+			while (entryIterator.hasNext()) {
+				Entry<String, Long> bottomEntry = entryIterator.next();
+				String value = bottomEntry.getKey();
+				if (value == null) {
+					rowValues[i] = "<null> (" + bottomEntry.getValue() + ")";
+				} else {
+					rowValues[i] = value + " (" + bottomEntry.getValue() + ")";
+				}
+				detailOperands[i] = value;
+				i--;
+			}
+			entryIterator = null;
+
 			MatrixValue[] matrixValues = mb.addColumn(columnName, rowValues);
-			for (int i = 0; i < matrixValues.length; i++) {
+			for (i = 0; i < matrixValues.length; i++) {
 				MatrixValue matrixValue = matrixValues[i];
 				if (matrixValue.getValue() != null) {
 					generateDetailSources(matrixValue, column,
@@ -245,11 +267,14 @@ public class ValueDistributionProfile extends AbstractProfile {
 				}
 			}
 
-			if (hasUniqueValues) {
+			if (uniqueValuesCount > 0l) {
 				Query q = getBaseQuery(column).having(
 						new FilterItem(SelectItem.getCountAllItem(),
 								OperatorType.EQUALS_TO, 1));
 				matrixValues[matrixValues.length - 1].setDetailSource(q);
+				matrixValues[matrixValues.length - 1]
+						.setValue(UNIQUE_VALUES_LABEL + " ("
+								+ uniqueValuesCount + ")");
 			}
 		}
 
@@ -290,7 +315,7 @@ public class ValueDistributionProfile extends AbstractProfile {
 			final Column column = _columns[i];
 			String columnName = column.getName();
 
-			Map<String, Long> valueMap = _repeatedValues.get(column);
+			Map<String, Long> valueMap = getRepeatedValues(column);
 
 			MatrixBuilder mb = new MatrixBuilder();
 			mb.addColumn(columnName + " frequency");
@@ -305,8 +330,14 @@ public class ValueDistributionProfile extends AbstractProfile {
 					uniqueValues.add(new Object[] { value });
 				} else {
 					int repeatPercentage = (int) (repeatCount * 100 / _totalCount);
-					MatrixValue[] matrixValues = mb.addRow(value, repeatCount,
-							repeatPercentage + "%");
+					MatrixValue[] matrixValues;
+					if (value == null) {
+						matrixValues = mb.addRow("<null>", repeatCount,
+								repeatPercentage + "%");
+					} else {
+						matrixValues = mb.addRow(value, repeatCount,
+								repeatPercentage + "%");
+					}
 
 					generateDetailSources(matrixValues[0], column, value);
 				}
@@ -329,5 +360,19 @@ public class ValueDistributionProfile extends AbstractProfile {
 			result.add(mb.getMatrix());
 		}
 		return result;
+	}
+	
+	@Override
+	public void close() {
+		super.close();
+		try {
+			Collection<StoredMap> maps = _repeatedValues.values();
+			for (StoredMap storedMap : maps) {
+				storedMap.clear();
+			}
+			_environment.close();
+		} catch (DatabaseException e) {
+			_log.error(e);
+		}
 	}
 }

@@ -14,7 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with DataCleaner.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dk.eobjects.datacleaner.profiler.trivial;
+package dk.eobjects.datacleaner.profiler.valuedist;
 
 import java.util.HashMap;
 
@@ -37,6 +37,33 @@ public class ValueDistributionProfileTest extends DataCleanerTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		ProfileManagerTest.initProfileManager();
+	}
+
+	public void testOnlyUnique() throws Exception {
+		Table t = new Table("foobar");
+		Column[] columns = new Column[] { new Column("foo").setTable(t),
+				new Column("bar").setTable(t) };
+		t.addColumn(columns[0]).addColumn(columns[1]);
+
+		SelectItem[] selectItems = new SelectItem[] {
+				new SelectItem(columns[0]), new SelectItem(columns[1]) };
+
+		IProfile profile = new ValueDistributionProfile();
+		HashMap<String, String> properties = new HashMap<String, String>();
+		properties.put(ValueDistributionProfile.PROPERTY_TOP_N, "4");
+		properties.put(ValueDistributionProfile.PROPERTY_BOTTOM_N, "3");
+		profile.setProperties(properties);
+		profile.initialize(columns);
+
+		profile.process(new Row(selectItems, new Object[] { "foo", 26 }), 1);
+		profile.process(new Row(selectItems, new Object[] { "bar", 22 }), 1);
+		profile.process(new Row(selectItems, new Object[] { "foobar", 12 }), 1);
+
+		assertEquals(
+				"{Matrix[columnNames={foo,bar},top 1={<null>,<null>},top 2={<null>,<null>},top 3={<null>,<null>},top 4={<null>,<null>},bottom 3={<null>,<null>},bottom 2={<null>,<null>},bottom 1={MatrixValue[value=<Unique values> (3),detailQuery=SELECT foobar.foo, COUNT(*) FROM foobar GROUP BY foobar.foo HAVING COUNT(*) = 1],MatrixValue[value=<Unique values> (3),detailQuery=SELECT foobar.bar, COUNT(*) FROM foobar GROUP BY foobar.bar HAVING COUNT(*) = 1]}]}",
+				ArrayUtils.toString(profile.getResult().getMatrices()));
+
+		profile.close();
 	}
 
 	public void testProfilingWithoutTopBottom() throws Exception {
@@ -76,6 +103,8 @@ public class ValueDistributionProfileTest extends DataCleanerTestCase {
 		assertEquals(
 				"{Matrix[columnNames={foo frequency,Percentage of total},kasper={MatrixValue[value=3,detailQuery=SELECT foobar.foo, foobar.bar FROM foobar WHERE foobar.foo = 'kasper'],100%}],Matrix[columnNames={bar frequency,Percentage of total},25={MatrixValue[value=2,detailQuery=SELECT foobar.foo, foobar.bar FROM foobar WHERE foobar.bar = '25'],66%},<Unique values>={MatrixValue[value=1,detailSelectItems={<Unique values>},detailRows=1],33%}]}",
 				ArrayUtils.toString(profile.getResult().getMatrices()));
+
+		profile.close();
 	}
 
 	public void testTopBottomProperty() throws Exception {
@@ -132,11 +161,19 @@ public class ValueDistributionProfileTest extends DataCleanerTestCase {
 		profile.process(new Row(selectItems, new Object[] { "o", "u" }), 1);
 		profile.process(new Row(selectItems, new Object[] { "o", "v" }), 1);
 
+		Exception error = profile.getResult().getError();
+		if (error != null) {
+			error.printStackTrace();
+			fail("Error while executing profile: " + error.getMessage());
+		}
+
 		matrices = profile.getResult().getMatrices();
 		assertEquals(1, matrices.length);
 		assertEquals(
 				"Matrix[columnNames={col1,col2},top 1={MatrixValue[value=foo (40),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col1 = 'foo'],MatrixValue[value=bar (49),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col2 = 'bar']},top 2={MatrixValue[value=foobar (19),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col1 = 'foobar'],MatrixValue[value= (10),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col2 = '']},top 3={MatrixValue[value=abc (8),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col1 = 'abc'],MatrixValue[value=123 (8),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col2 = '123']},top 4={MatrixValue[value=! (7),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col1 = '!'],MatrixValue[value=- (7),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col2 = '-']},bottom 3={MatrixValue[value=<null> (2),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col1 IS NULL],MatrixValue[value=<null> (2),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col2 IS NULL]},bottom 2={MatrixValue[value=n (2),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col1 = 'n'],MatrixValue[value=s (2),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col2 = 's']},bottom 1={MatrixValue[value=o (2),detailQuery=SELECT foobar.col1, foobar.col2 FROM foobar WHERE foobar.col1 = 'o'],MatrixValue[value=<Unique values> (3),detailQuery=SELECT foobar.col2, COUNT(*) FROM foobar GROUP BY foobar.col2 HAVING COUNT(*) = 1]}]",
 				matrices[0].toString());
+
+		profile.close();
 	}
 
 	public void testSingleQuoteInValue() throws Exception {
@@ -171,5 +208,7 @@ public class ValueDistributionProfileTest extends DataCleanerTestCase {
 		assertEquals(
 				"Matrix[columnNames={blog name},top 1={MatrixValue[value=kasper's source (4),detailQuery=SELECT \"blogs\".\"blog name\" FROM \"blogs\" WHERE \"blogs\".\"blog name\" LIKE 'kasper%s source']},top 2={<null>},bottom 2={<null>},bottom 1={MatrixValue[value=<Unique values> (1),detailQuery=SELECT \"blogs\".\"blog name\", COUNT(*) FROM \"blogs\" GROUP BY \"blogs\".\"blog name\" HAVING COUNT(*) = 1]}]",
 				matrix.toString());
+
+		profile.close();
 	}
 }

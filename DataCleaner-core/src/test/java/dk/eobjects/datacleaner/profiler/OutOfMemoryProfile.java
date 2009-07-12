@@ -47,4 +47,9 @@ public class OutOfMemoryProfile implements IProfile {
 
 	public void setProperties(Map<String, String> properties) {
 	}
+
+	public void close() {
+		throw new UnsupportedOperationException(
+				"This method should not be called");
+	}
 }

@@ -26,6 +26,7 @@ import dk.eobjects.datacleaner.profiler.AbstractProfile;
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.datacleaner.profiler.MatrixBuilder;
 import dk.eobjects.datacleaner.profiler.MatrixValue;
+import dk.eobjects.datacleaner.profiler.valuedist.ValueDistributionProfile;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.FilterItem;
 import dk.eobjects.metamodel.query.OperatorType;

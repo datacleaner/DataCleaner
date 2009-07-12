@@ -45,7 +45,7 @@
 					value="dk.eobjects.datacleaner.gui.panels.RegexProfileConfigurationPanel" />
 					<entry key="dk.eobjects.datacleaner.profiler.trivial.DateMaskProfile"
 					value="dk.eobjects.datacleaner.gui.panels.DateMaskProfileConfigurationPanel" />
-				<entry key="dk.eobjects.datacleaner.profiler.trivial.ValueDistributionProfile"
+				<entry key="dk.eobjects.datacleaner.profiler.valuedist.ValueDistributionProfile"
 					value="dk.eobjects.datacleaner.gui.panels.ValueDistributionProfileConfigurationPanel" />
 			</map>
 		</property>

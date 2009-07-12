@@ -84,6 +84,8 @@ public class ProfilerExecutorCallback implements
 	}
 
 	public IProfileResult getResult(IProfile processor) {
-		return processor.getResult();
+		IProfileResult result = processor.getResult();
+		processor.close();
+		return result;
 	}
 }

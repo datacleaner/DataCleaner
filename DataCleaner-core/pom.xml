@@ -23,6 +23,11 @@
 			<version>1.7R1</version>
 		</dependency>
 		<dependency>
+			<groupId>berkeleydb</groupId>
+			<artifactId>je</artifactId>
+			<version>3.2.76</version>
+		</dependency>
+		<dependency>
 			<groupId>dk.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-testware</artifactId>
 			<version>${datacleaner.version}</version>

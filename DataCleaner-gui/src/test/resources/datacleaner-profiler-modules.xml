@@ -63,7 +63,7 @@
 
 	<bean class="dk.eobjects.datacleaner.profiler.BasicProfileDescriptor">
 		<property name="displayName" value="Value distribution" />
-		<property name="profileClass" value="dk.eobjects.datacleaner.profiler.trivial.ValueDistributionProfile" />
+		<property name="profileClass" value="dk.eobjects.datacleaner.profiler.valuedist.ValueDistributionProfile" />
 		<property name="iconPath" value="images/profile_repeated_values.png" />
 	</bean>
 </beans>

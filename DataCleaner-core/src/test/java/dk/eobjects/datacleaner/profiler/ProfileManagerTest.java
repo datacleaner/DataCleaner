@@ -22,11 +22,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import dk.eobjects.datacleaner.profiler.pattern.PatternFinderProfile;
-import dk.eobjects.datacleaner.profiler.trivial.ValueDistributionProfile;
 import dk.eobjects.datacleaner.profiler.trivial.NumberAnalysisProfile;
 import dk.eobjects.datacleaner.profiler.trivial.StandardMeasuresProfile;
 import dk.eobjects.datacleaner.profiler.trivial.StringAnalysisProfile;
 import dk.eobjects.datacleaner.profiler.trivial.TimeAnalysisProfile;
+import dk.eobjects.datacleaner.profiler.valuedist.ValueDistributionProfile;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
 
 public class ProfileManagerTest extends TestCase {

@@ -36,7 +36,7 @@ import dk.eobjects.datacleaner.gui.GuiBuilder;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.profiler.IProfileDescriptor;
 import dk.eobjects.datacleaner.profiler.ProfilerJobConfiguration;
-import dk.eobjects.datacleaner.profiler.trivial.ValueDistributionProfile;
+import dk.eobjects.datacleaner.profiler.valuedist.ValueDistributionProfile;
 
 public class ValueDistributionProfileConfigurationPanel implements
 		IConfigurationPanel {

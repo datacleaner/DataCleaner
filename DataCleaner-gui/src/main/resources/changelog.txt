@@ -1,5 +1,19 @@
 DataCleaner changelog
 
+DataCleaner 1.5.2
+=================
+ * Added on-disk caching for the Value Distribution Profile.
+ * DataCleaner can now be distributed as a single JAR file
+   and as a Java WebStart app.
+ * When starting the application, it automatically downloads
+   regular expressions from the RegexSwap.
+ * Bugfix: Dictionary-matching number-based columns.
+ * Bugfix: Invalid characters in XML-export formats.
+ * File suffix case is now ignored.
+ * The number of columns shown in the preview window are
+   automatically restricted if there are too many to show
+   on a single screen.
+
 DataCleaner 1.5.1
 =================
  * Additional String analysis measures

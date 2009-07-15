@@ -142,8 +142,10 @@ public class StatusTabProgressObserver implements IProgressObserver {
 		int tableIndex = ArrayUtils.indexOf(_tables, table);
 		_processedRows[tableIndex] += numRowsProcessed;
 		updateStatusLabel(tableIndex);
-		addLogMessage(table.getName() + ": " + _processedRows[tableIndex]
-				+ " rows processed.");
+		if (_verboseMonitoringCheckBox.isSelected()) {
+			addLogMessage(table.getName() + ": " + _processedRows[tableIndex]
+					+ " rows processed.");
+		}
 	}
 
 	public synchronized void notifySuccess(Table table, long numRowsProcessed) {

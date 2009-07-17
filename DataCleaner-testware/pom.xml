@@ -3,13 +3,14 @@
 	<parent>
 		<artifactId>DataCleaner</artifactId>
 		<groupId>dk.eobjects.datacleaner</groupId>
-		<version>${datacleaner.version}</version>
+		<version>1.5.3-SNAPSHOT</version>
+		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner-testware</artifactId>
 	<name>DataCleaner-testware</name>
-	<version>${datacleaner.version}</version>
+	<version>${parent.version}</version>
 	<description>The testware project provides some common sample data and shared test functionality throughout the DataCleaner project</description>
 	<build>
 		<plugins>

@@ -2,13 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
-		<datacleaner.version>1.5.3-SNAPSHOT</datacleaner.version>
 		<metamodel.version>1.1.6</metamodel.version>
 	</properties>
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<name>DataCleaner</name>
-	<version>${datacleaner.version}</version>
+	<version>1.5.3-SNAPSHOT</version>
 	<description>DataCleaner is an Open Source application for profiling, validating and comparing data. These activities help you administer and monitor your data quality in order to ensure that your data is useful and applicable to your business situation.</description>
 	<url>http://datacleaber.eobjects.org</url>
 	<inceptionYear>2007</inceptionYear>

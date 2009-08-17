@@ -39,6 +39,33 @@ public class ValueDistributionProfileTest extends DataCleanerTestCase {
 		ProfileManagerTest.initProfileManager();
 	}
 
+	public void testNullValues() throws Exception {
+		Table t = new Table("foobar");
+		Column[] columns = new Column[] { new Column("foo").setTable(t) };
+		t.addColumn(columns[0]);
+
+		SelectItem[] selectItems = new SelectItem[] { new SelectItem(columns[0]) };
+
+		ValueDistributionProfile profile = new ValueDistributionProfile();
+		HashMap<String, String> properties = new HashMap<String, String>();
+		properties.put(ValueDistributionProfile.PROPERTY_TOP_N, "4");
+		properties.put(ValueDistributionProfile.PROPERTY_BOTTOM_N, "3");
+		profile.setDetailsEnabled(false);
+		profile.setProperties(properties);
+		profile.initialize(columns);
+
+		profile.process(new Row(selectItems, new Object[] { null }), 3);
+		profile.process(new Row(selectItems, new Object[] { "foo" }), 2);
+		profile.process(new Row(selectItems, new Object[] { "bar" }), 1);
+
+		assertEquals(
+				"{Matrix[columnNames={foo},top 1={null (3)},top 2={foo (2)},top 3={<null>},top 4={<null>},"
+						+ "bottom 3={<null>},bottom 2={<null>},bottom 1={<Unique values> (1)}]}",
+				ArrayUtils.toString(profile.getResult().getMatrices()));
+
+		profile.close();
+	}
+
 	public void testOnlyUnique() throws Exception {
 		Table t = new Table("foobar");
 		Column[] columns = new Column[] { new Column("foo").setTable(t),

@@ -266,19 +266,25 @@ public class ValueDistributionProfile extends AbstractProfile {
 			entryIterator = null;
 
 			MatrixValue[] matrixValues = mb.addColumn(columnName, rowValues);
-			for (i = 0; i < matrixValues.length; i++) {
-				MatrixValue matrixValue = matrixValues[i];
-				if (matrixValue.getValue() != null) {
-					generateDetailSources(matrixValue, column,
-							detailOperands[i]);
+			if (isDetailsEnabled()) {
+				for (i = 0; i < matrixValues.length; i++) {
+					MatrixValue matrixValue = matrixValues[i];
+					if (matrixValue.getValue() != null) {
+						generateDetailSources(matrixValue, column,
+								detailOperands[i]);
+					}
 				}
+
 			}
 
 			if (uniqueValuesCount > 0l) {
-				Query q = getBaseQuery(column).having(
-						new FilterItem(SelectItem.getCountAllItem(),
-								OperatorType.EQUALS_TO, 1));
-				matrixValues[matrixValues.length - 1].setDetailSource(q);
+				if (isDetailsEnabled()) {
+					Query q = getBaseQuery(column).having(
+							new FilterItem(SelectItem.getCountAllItem(),
+									OperatorType.EQUALS_TO, 1));
+					matrixValues[matrixValues.length - 1].setDetailSource(q);
+
+				}
 				matrixValues[matrixValues.length - 1]
 						.setValue(UNIQUE_VALUES_LABEL + " ("
 								+ uniqueValuesCount + ")");

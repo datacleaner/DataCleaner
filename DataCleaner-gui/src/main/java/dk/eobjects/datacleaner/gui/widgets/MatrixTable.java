@@ -32,6 +32,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import dk.eobjects.datacleaner.LabelConstants;
 import dk.eobjects.datacleaner.gui.DataCleanerGui;
 import dk.eobjects.datacleaner.gui.GuiHelper;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
@@ -165,7 +166,7 @@ public class MatrixTable extends DataCleanerTable {
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
 			final MatrixValue mv = (MatrixValue) value;
-			String text = "<null>";
+			String text = LabelConstants.NULL_LABEL;
 			if (mv.getValue() != null) {
 				text = mv.getValue().toString();
 			}
@@ -187,7 +188,7 @@ public class MatrixTable extends DataCleanerTable {
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
-			String text = GuiHelper.NULL_STRING;
+			String text = LabelConstants.NULL_LABEL;
 			if (value instanceof MatrixValue) {
 				MatrixValue mv = (MatrixValue) value;
 				if (mv.getValue() != null) {

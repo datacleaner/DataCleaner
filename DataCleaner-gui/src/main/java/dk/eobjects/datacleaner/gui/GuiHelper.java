@@ -102,7 +102,6 @@ public class GuiHelper {
 	public static final Font FONT_HEADER = new Font("Sans", Font.BOLD, 15);
 	public static final Font FONT_MONOSPACE = new Font("Monospaced", Font.PLAIN, 14);
 	public static final Font FONT_NORMAL = new Font("Arial", Font.PLAIN, 12);
-	public static final String NULL_STRING = "<null>";
 	public static final Color BG_COLOR_LIGHT = new Color(243, 243, 243);
 	public static final Color BG_COLOR_DARK = new Color(191, 192, 200);
 	public static final Color BG_COLOR_DARKBLUE = new Color(80, 84, 104);

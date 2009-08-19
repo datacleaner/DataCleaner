@@ -24,6 +24,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import dk.eobjects.datacleaner.LabelConstants;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.IRowFilter;
@@ -143,7 +144,7 @@ public class MatrixValue implements Comparable<MatrixValue> {
 		if (_detailQuery == null && _detailRows == null
 				&& _detailSelectItems == null) {
 			if (_value == null) {
-				return "<null>";
+				return LabelConstants.NULL_LABEL;
 			}
 			return _value.toString();
 		}

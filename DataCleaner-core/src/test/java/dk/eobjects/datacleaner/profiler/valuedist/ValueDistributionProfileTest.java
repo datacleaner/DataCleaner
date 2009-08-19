@@ -25,6 +25,7 @@ import dk.eobjects.datacleaner.profiler.IProfile;
 import dk.eobjects.datacleaner.profiler.MatrixValue;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
+import dk.eobjects.metamodel.data.DataSet;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.SelectItem;
 import dk.eobjects.metamodel.schema.Column;
@@ -39,7 +40,47 @@ public class ValueDistributionProfileTest extends DataCleanerTestCase {
 		ProfileManagerTest.initProfileManager();
 	}
 
-	public void testNullValues() throws Exception {
+	public void testNullValuesFullResult() throws Exception {
+		Table t = new Table("foobar");
+		Column[] columns = new Column[] { new Column("foo").setTable(t) };
+		t.addColumn(columns[0]);
+
+		SelectItem[] selectItems = new SelectItem[] { new SelectItem(columns[0]) };
+
+		ValueDistributionProfile profile = new ValueDistributionProfile();
+		HashMap<String, String> properties = new HashMap<String, String>();
+		profile.setDetailsEnabled(true);
+		profile.setProperties(properties);
+		profile.initialize(columns);
+
+		profile.process(new Row(selectItems, new Object[] { null }), 1);
+
+		assertEquals(
+				"Matrix[columnNames={foo frequency,Percentage of total},<Unique values>={MatrixValue[value=1,detailSelectItems={<Unique values>},detailRows=1],100%}]",
+				profile.getResult().getMatrices()[0].toString());
+		DataSet details = profile.getResult().getMatrices()[0].getValue(0, 0)
+				.getDetails(null);
+		assertNotNull(details);
+		assertTrue(details.next());
+		assertNull(details.getRow().getValue(0));
+		assertFalse(details.next());
+
+		profile.process(new Row(selectItems, new Object[] { "foo" }), 1);
+
+		assertEquals(
+				"Matrix[columnNames={foo frequency,Percentage of total},<Unique values>={MatrixValue[value=2,detailSelectItems={<Unique values>},detailRows=2],100%}]",
+				profile.getResult().getMatrices()[0].toString());
+
+		profile.process(new Row(selectItems, new Object[] { null }), 1);
+
+		assertEquals(
+				"Matrix[columnNames={foo frequency,Percentage of total},<null>={MatrixValue[value=2,detailQuery=SELECT foobar.foo FROM foobar WHERE foobar.foo IS NULL],66%},<Unique values>={MatrixValue[value=1,detailSelectItems={<Unique values>},detailRows=1],33%}]",
+				profile.getResult().getMatrices()[0].toString());
+
+		profile.close();
+	}
+
+	public void testNullValuesTopBottomResult() throws Exception {
 		Table t = new Table("foobar");
 		Column[] columns = new Column[] { new Column("foo").setTable(t) };
 		t.addColumn(columns[0]);

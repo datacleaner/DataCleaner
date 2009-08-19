@@ -25,6 +25,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import dk.eobjects.datacleaner.LabelConstants;
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.datacleaner.profiler.MatrixBuilder;
 import dk.eobjects.metamodel.schema.Column;
@@ -77,7 +78,7 @@ public class ColumnComparator {
 		for (Entry<Object, Map<Column, Long>> entry : entries) {
 			Object value = entry.getKey();
 			Map<Column, Long> valueCount = entry.getValue();
-			String valueName = "<null>";
+			String valueName = LabelConstants.NULL_LABEL;
 			if (value != null) {
 				valueName = value.toString();
 			}
@@ -116,7 +117,7 @@ public class ColumnComparator {
 			if (valueCount.containsKey(column)) {
 				Object value = entry.getKey();
 
-				String valueName = "<null>";
+				String valueName = LabelConstants.NULL_LABEL;
 				if (value != null) {
 					valueName = value.toString();
 				}

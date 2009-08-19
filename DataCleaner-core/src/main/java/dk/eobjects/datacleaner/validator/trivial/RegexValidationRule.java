@@ -57,13 +57,15 @@ public class RegexValidationRule extends AbstractValidationRule {
 	protected boolean isValid(Row row) throws Exception {
 		for (int i = 0; i < _columns.length; i++) {
 			Object value = row.getValue(_columns[i]);
-			if (value != null) {
-				Matcher matcher = _pattern.matcher(value.toString());
-				return matcher.matches();
+			if (value == null) {
+				return false;
 			}
-			return false;
+			Matcher matcher = _pattern.matcher(value.toString());
+			if (!matcher.matches()) {
+				return false;
+			}
 		}
-		return false;
+		return true;
 	}
 
 }

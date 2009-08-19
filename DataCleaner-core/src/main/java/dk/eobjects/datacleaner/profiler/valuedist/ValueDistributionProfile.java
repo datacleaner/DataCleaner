@@ -37,6 +37,7 @@ import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
 import com.sleepycat.je.EnvironmentConfig;
 
+import dk.eobjects.datacleaner.LabelConstants;
 import dk.eobjects.datacleaner.profiler.AbstractProfile;
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.datacleaner.profiler.MatrixBuilder;
@@ -55,7 +56,6 @@ public class ValueDistributionProfile extends AbstractProfile {
 
 	public static final String PROPERTY_TOP_N = "Top n most frequent values";
 	public static final String PROPERTY_BOTTOM_N = "Bottom n least frequent values";
-	private static final String UNIQUE_VALUES_LABEL = "<Unique values>";
 
 	private Map<Column, StoredMap> _repeatedValues = new HashMap<Column, StoredMap>();
 	private Map<Column, Long> _nullValues = new HashMap<Column, Long>();
@@ -256,7 +256,8 @@ public class ValueDistributionProfile extends AbstractProfile {
 				Entry<String, Long> bottomEntry = entryIterator.next();
 				String value = bottomEntry.getKey();
 				if (value == null) {
-					rowValues[i] = "<null> (" + bottomEntry.getValue() + ")";
+					rowValues[i] = LabelConstants.NULL_LABEL + " ("
+							+ bottomEntry.getValue() + ")";
 				} else {
 					rowValues[i] = value + " (" + bottomEntry.getValue() + ")";
 				}
@@ -286,7 +287,7 @@ public class ValueDistributionProfile extends AbstractProfile {
 
 				}
 				matrixValues[matrixValues.length - 1]
-						.setValue(UNIQUE_VALUES_LABEL + " ("
+						.setValue(LabelConstants.UNIQUE_VALUES_LABEL + " ("
 								+ uniqueValuesCount + ")");
 			}
 		}
@@ -336,6 +337,20 @@ public class ValueDistributionProfile extends AbstractProfile {
 
 			List<Object[]> uniqueValues = new ArrayList<Object[]>();
 
+			// add null values first
+			Long nullValues = _nullValues.get(column);
+			if (nullValues != null) {
+				if (nullValues.longValue() == 1l) {
+					uniqueValues.add(new Object[] { null });
+				} else if (nullValues.longValue() > 0l) {
+					int repeatPercentage = (int) (nullValues * 100 / _totalCount);
+					MatrixValue[] matrixValues = mb.addRow(
+							LabelConstants.NULL_LABEL, nullValues,
+							repeatPercentage + "%");
+					generateDetailSources(matrixValues[0], column, null);
+				}
+			}
+
 			for (Entry<String, Long> entry : valueMap.entrySet()) {
 				Long repeatCount = entry.getValue();
 				final String value = entry.getKey();
@@ -343,14 +358,8 @@ public class ValueDistributionProfile extends AbstractProfile {
 					uniqueValues.add(new Object[] { value });
 				} else {
 					int repeatPercentage = (int) (repeatCount * 100 / _totalCount);
-					MatrixValue[] matrixValues;
-					if (value == null) {
-						matrixValues = mb.addRow("<null>", repeatCount,
-								repeatPercentage + "%");
-					} else {
-						matrixValues = mb.addRow(value, repeatCount,
-								repeatPercentage + "%");
-					}
+					MatrixValue[] matrixValues = mb.addRow(value, repeatCount,
+							repeatPercentage + "%");
 
 					generateDetailSources(matrixValues[0], column, value);
 				}
@@ -363,11 +372,13 @@ public class ValueDistributionProfile extends AbstractProfile {
 			int uniqueCount = uniqueValues.size();
 			if (uniqueCount > 0) {
 				int otherPercentage = (int) (uniqueCount * 100 / _totalCount);
-				MatrixValue[] matrixValues = mb.addRow(UNIQUE_VALUES_LABEL,
-						uniqueCount, otherPercentage + "%");
+				MatrixValue[] matrixValues = mb.addRow(
+						LabelConstants.UNIQUE_VALUES_LABEL, uniqueCount,
+						otherPercentage + "%");
 				matrixValues[0].setDetailSource(new DataSet(
-						new SelectItem[] { new SelectItem(UNIQUE_VALUES_LABEL,
-								null) }, uniqueValues));
+						new SelectItem[] { new SelectItem(
+								LabelConstants.UNIQUE_VALUES_LABEL, null) },
+						uniqueValues));
 			}
 
 			result.add(mb.getMatrix());

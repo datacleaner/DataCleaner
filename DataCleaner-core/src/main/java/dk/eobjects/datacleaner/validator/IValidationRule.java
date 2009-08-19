@@ -23,7 +23,10 @@ import dk.eobjects.metamodel.schema.Column;
 
 /**
  * A validation rule is a rule that can applied to data to verify that an
- * assertion is true or false.
+ * assertion is true or false. The life-cycle of an IValidator is similar to
+ * that of the IProfile, so have a look there.
+ * 
+ * @see dk.lundogbendsen.datacleaner.profiler.IProfile
  */
 public interface IValidationRule {
 

@@ -24,9 +24,9 @@
 			<version>1.7R1</version>
 		</dependency>
 		<dependency>
-			<groupId>berkeleydb</groupId>
+			<groupId>com.sleepycat</groupId>
 			<artifactId>je</artifactId>
-			<version>3.2.76</version>
+			<version>3.3.62</version>
 		</dependency>
 		<dependency>
 			<groupId>dk.eobjects.datacleaner</groupId>

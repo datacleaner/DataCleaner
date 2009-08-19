@@ -25,11 +25,14 @@ import dk.eobjects.metamodel.schema.Column;
  * A profile is an abstract mechanism/engine for calculating a collection of
  * (preferebly related) measures.
  * 
- * The profile lifecycle is: <li>set the properties of the profile with
- * <code>setProperties</code></li> <li>initialize the profile with
- * <code>initialize</code></li> <li>run the <code>process</code> for all rows of
- * data</li> <li>end the profiling and recieve the result by calling the
+ * The profile lifecycle is:
+ * <ul>
+ * <li>set the properties of the profile with <code>setProperties</code></li>
+ * <li>initialize the profile with <code>initialize</code></li>
+ * <li>run the <code>process</code> for all rows of data</li>
+ * <li>end the profiling and recieve the result by calling the
  * <code>getResult</code> method</li>
+ * </ul>
  */
 public interface IProfile {
 

@@ -12,6 +12,12 @@
 	<artifactId>DataCleaner-core</artifactId>
 	<name>DataCleaner-core</name>
 	<version>${parent.version}</version>
+	<repositories>
+		<repository>
+			<id>oracle-repository</id>
+			<url>http://download.oracle.com/maven</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>dk.eobjects.metamodel</groupId>

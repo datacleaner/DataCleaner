@@ -34,6 +34,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import dk.eobjects.datacleaner.export.XmlResultExporter.XmlType;
 import dk.eobjects.datacleaner.profiler.MatrixBuilder;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
 import dk.eobjects.datacleaner.profiler.ProfileResult;
@@ -133,6 +134,52 @@ public class XmlResultExporterTest extends TestCase {
 		});
 	}
 
+	public void testWriteRowBasedProfileResult() throws Exception {
+		Column[] columns = new Column[] { new Column("col1"),
+				new Column("col2") };
+
+		HashMap<String, String> props = new HashMap<String, String>();
+		props.put("foo", "bar");
+		props.put("eobj", "ects");
+		ProfileResult profileResult = new ProfileResult(
+				ProfileManagerTest.DESCRIPTOR_STRING_ANALYSIS, props, columns);
+
+		MatrixBuilder mb = new MatrixBuilder();
+		mb.addColumn("measure1");
+		mb.addColumn("measure2");
+		mb.addRow("foo", 1, 2);
+		mb.addRow("bar", 3, 4);
+		profileResult.addMatrix(mb.getMatrix());
+
+		StringWriter sw = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(sw);
+
+		XmlResultExporter exporter = new XmlResultExporter();
+		exporter.setXmlType(XmlType.ROW);
+		exporter.writeProfileResultHeader(printWriter);
+		exporter.writeProfileResult(new Table("myTable"), profileResult,
+				printWriter);
+		exporter.writeProfileResultFooter(printWriter);
+
+		final String xmlOutput = sw.toString();
+		String expectedResult = "<?xml version=_1.0_ encoding=_UTF-8_?>n<datacleanerResults xmlns=_http://datacleaner.eobjects.org/1.5/results_ xmlns:xsi=_http://www.w3.org/2001/XMLSchema-instance_>n<profileResult>n <jobConfiguration>n  <profile displayName=_String analysis_ className=_class dk.eobjects.datacleaner.profiler.trivial.StringAnalysisProfile_ />n  <table name=_myTable_ />n  <profiledColumns>n   <column name=_col1_ />n   <column name=_col2_ />n  </profiledColumns>n  <properties>n   <property name=_eobj_ value=_ects_ />n   <property name=_foo_ value=_bar_ />n  </properties>n </jobConfiguration>n <result>n  <matrix>n    <Row name=_foo_>n      <measure measureName=_measure1_ measeureIndex=_0_ rowIndex=_0_ value=_1_ />n      <measure measureName=_measure2_ measeureIndex=_1_ rowIndex=_0_ value=_2_ />n    </Row>n    <Row name=_bar_>n      <measure measureName=_measure1_ measeureIndex=_0_ rowIndex=_1_ value=_3_ />n      <measure measureName=_measure2_ measeureIndex=_1_ rowIndex=_1_ value=_4_ />n    </Row>n  </matrix>n </result>n</profileResult>n</datacleanerResults>";
+		assertEquals(expectedResult, xmlOutput.replace('\"', '_').replace('\n',
+				'n'));
+
+		// Make sure that the result is parseable
+
+		//FIXME: update XSD
+		/*getDocumentBuilder().parse(new InputSource() {
+
+			@Override
+			public Reader getCharacterStream() {
+				return new StringReader(xmlOutput);
+			}
+		});*/
+	}
+	
+	
+	
 	/**
 	 * Creates a schema aware, validating document builder
 	 */

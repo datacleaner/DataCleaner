@@ -40,6 +40,25 @@ import dk.eobjects.metamodel.util.ToStringComparator;
 
 public class XmlResultExporter implements IResultExporter {
 
+	public enum XmlType {
+		ROW, COLUMN
+	};
+
+	private XmlType _xmlType;
+
+	public XmlType getXMLType() {
+		//default is COLUMN
+		if (_xmlType == null) {
+			return XmlType.COLUMN;
+		} else {
+			return _xmlType;
+		}
+	}
+
+	public void setXmlType(XmlType xmlType) {
+		this._xmlType = xmlType;
+	}
+
 	public boolean isCollectiveResultsCapable() {
 		return true;
 	}
@@ -52,6 +71,7 @@ public class XmlResultExporter implements IResultExporter {
 		writeXmlHeader(writer);
 		writer
 				.print("<datacleanerResults xmlns=\"http://datacleaner.eobjects.org/1.5/results\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
+
 	}
 
 	private void writeFooter(PrintWriter writer) {
@@ -68,6 +88,11 @@ public class XmlResultExporter implements IResultExporter {
 	}
 
 	public void writeProfileResult(Table table, IProfileResult result,
+			PrintWriter writer) {
+		writeColumnProfileResult(table, result, writer);
+	}
+
+	public void writeColumnProfileResult(Table table, IProfileResult result,
 			PrintWriter writer) {
 		writer.print("<profileResult>\n");
 
@@ -95,20 +120,16 @@ public class XmlResultExporter implements IResultExporter {
 			IMatrix[] matrices = result.getMatrices();
 			for (IMatrix matrix : matrices) {
 				writer.print("  <matrix>\n");
-				String[] columnNames = matrix.getColumnNames();
-				String[] rowNames = matrix.getRowNames();
-				for (int i = 0; i < columnNames.length; i++) {
-					String columnName = columnNames[i];
-					for (int j = 0; j < rowNames.length; j++) {
-						String rowName = rowNames[j];
-						MatrixValue value = matrix
-								.getValue(rowName, columnName);
-						writer.print("   <measure columnName=\"" + safePrint(columnName)
-								+ "\" columnIndex=\"" + i + "\" rowName=\""
-								+ safePrint(rowName) + "\" rowIndex=\"" + j
-								+ "\" value=\"" + safePrint(value.getValue())
-								+ "\" />\n");
-					}
+				switch (getXMLType()) {
+				case COLUMN:
+					printMatrixColumnBased(writer, matrix);
+					break;
+				case ROW:
+					printMatrixRowBased(writer, matrix);
+					break;
+				default:
+					throw new UnsupportedOperationException(
+							"Internal error. XMLTYPE should be either row or column");
 				}
 				writer.print("  </matrix>\n");
 				writer.flush();
@@ -123,6 +144,44 @@ public class XmlResultExporter implements IResultExporter {
 		writer.print(" </result>\n");
 		writer.print("</profileResult>\n");
 		writer.flush();
+	}
+
+	private void printMatrixRowBased(PrintWriter writer, IMatrix matrix) {
+		String[] rowNames = matrix.getRowNames();
+		String[] columnNames = matrix.getColumnNames();
+		for (int rowIndex = 0; rowIndex < rowNames.length; rowIndex++) {
+			String rowName = rowNames[rowIndex];
+			writer.print("    <Row name=\"" + safePrint(rowName) + "\">\n");
+			for (int columnIndex = 0; columnIndex < columnNames.length; columnIndex++) {
+				String columnName = columnNames[columnIndex];
+				MatrixValue value = matrix.getValue(rowName, columnName);
+				writer.print("      <measure measureName=\""
+						+ safePrint(columnName) + "\" measeureIndex=\""
+						+ columnIndex + "\" rowIndex=\"" + rowIndex
+						+ "\" value=\"" + safePrint(value.getValue())
+						+ "\" />\n");
+
+			}
+			writer.print("    </Row>\n");
+		}
+
+	}
+
+	private void printMatrixColumnBased(PrintWriter writer, IMatrix matrix) {
+		String[] columnNames = matrix.getColumnNames();
+		String[] rowNames = matrix.getRowNames();
+		for (int i = 0; i < columnNames.length; i++) {
+			String columnName = columnNames[i];
+			for (int j = 0; j < rowNames.length; j++) {
+				String rowName = rowNames[j];
+				MatrixValue value = matrix.getValue(rowName, columnName);
+				writer.print("   <measure columnName=\""
+						+ safePrint(columnName) + "\" columnIndex=\"" + i
+						+ "\" rowName=\"" + safePrint(rowName)
+						+ "\" rowIndex=\"" + j + "\" value=\""
+						+ safePrint(value.getValue()) + "\" />\n");
+			}
+		}
 	}
 
 	private void writeProperties(String prefix, PrintWriter writer,

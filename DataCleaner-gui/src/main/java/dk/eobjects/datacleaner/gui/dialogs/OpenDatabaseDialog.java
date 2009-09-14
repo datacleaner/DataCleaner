@@ -166,7 +166,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 				if (settings.isDriverInstalled(DatabaseDriverDialog.SQLSERVER_DRIVER)) {
 					popup
 							.add(sampleItem("SQL Server template",
-									"jdbc:sqlserver://<hostname>:3341;databaseName=<database>",
+									"jdbc:sqlserver://<hostname>:1433;databaseName=<database>",
 									"images/database_microsoft.png"));
 				}
 				if (settings.isDriverInstalled(DatabaseDriverDialog.SAPDB_DRIVER)) {

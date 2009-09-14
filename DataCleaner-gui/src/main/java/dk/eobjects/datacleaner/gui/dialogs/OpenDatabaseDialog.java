@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -281,7 +280,7 @@ public class OpenDatabaseDialog extends BanneredDialog {
 							.toArray(new TableType[types.size()]));
 					setVisible(false);
 					dispose();
-				} catch (SQLException e) {
+				} catch (Throwable e) {
 					GuiHelper
 							.showErrorMessage(
 									"Could not open connection",

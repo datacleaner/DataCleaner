@@ -31,7 +31,7 @@ public interface IDictionary extends Serializable {
 	public String getName();
 
 	/**
-	 * Evaluates a list of wors
+	 * Evaluates a list of words
 	 * 
 	 * @param values
 	 *            the words

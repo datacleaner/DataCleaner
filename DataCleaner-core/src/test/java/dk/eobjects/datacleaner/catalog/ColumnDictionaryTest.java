@@ -74,7 +74,7 @@ public class ColumnDictionaryTest extends DataCleanerTestCase {
 						"Anna's Decorations, Ltd")));
 	}
 
-	public void testValueNull() throws Exception {
+	public void testValueNullWithStrings() throws Exception {
 		Connection con = getTestDbConnection();
 		DataContext dc = JdbcDataContextFactory.getDataContext(con);
 		Table employeeTable = dc.getDefaultSchema().getTableByName("CUSTOMERS");
@@ -88,6 +88,18 @@ public class ColumnDictionaryTest extends DataCleanerTestCase {
 						"Anna's Decorations, Ltd")));
 	}
 
+	public void testValueNullWithNumerics() throws Exception {
+		Connection con = getTestDbConnection();
+		DataContext dc = JdbcDataContextFactory.getDataContext(con);
+		Table employeeTable = dc.getDefaultSchema().getTableByName("CUSTOMERS");
+
+		Column column = employeeTable.getColumnByName("CUSTOMERNUMBER");
+		ColumnDictionary dictionary = new ColumnDictionary("my_dictionary", dc,
+				column);
+
+		assertEquals("{false,false,true}", ArrayUtils.toString(dictionary.isValid("-99", null,"103")));
+	}
+
 	public void testNumberValues() throws Exception {
 		Connection con = getTestDbConnection();
 		DataContext dc = JdbcDataContextFactory.getDataContext(con);
@@ -98,6 +110,7 @@ public class ColumnDictionaryTest extends DataCleanerTestCase {
 				column);
 
 		boolean[] validationResults = dictionary.isValid("1002", "1088", "-21");
-		assertEquals("{true,true,false}", ArrayUtils.toString(validationResults));
+		assertEquals("{true,true,false}", ArrayUtils
+				.toString(validationResults));
 	}
 }

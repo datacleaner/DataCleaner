@@ -52,20 +52,25 @@ public class ColumnDictionary implements IDictionary {
 		SelectItem selectItem = new SelectItem(_column);
 		boolean[] result = new boolean[values.length];
 		List<FilterItem> items = new ArrayList<FilterItem>();
-		double[] numbers = null;
+		Double[] numbers = null;
 
 		if (_column.getType() != null
 				&& _column.getType().getSuperType() == SuperColumnType.NUMBER_TYPE) {
-			numbers = new double[values.length];
+			numbers = new Double[values.length];
 			for (int i = 0; i < values.length; i++) {
 				String sentence = values[i];
-				try {
-					numbers[i] = new DefaultTransformer().transform(sentence);
-				} catch (MathException e) {
-					throw new IllegalArgumentException(
-							"Dictionary column type: " + _column.getType()
-									+ ", but '" + sentence
-									+ "' is not a valid number");
+				if (sentence == null) {
+					numbers[i] = null;
+				} else {
+					try {
+						numbers[i] = new DefaultTransformer()
+								.transform(sentence);
+					} catch (MathException e) {
+						throw new IllegalArgumentException(
+								"Dictionary column type: " + _column.getType()
+										+ ", but '" + sentence
+										+ "' is not a valid number");
+					}
 				}
 			}
 		}

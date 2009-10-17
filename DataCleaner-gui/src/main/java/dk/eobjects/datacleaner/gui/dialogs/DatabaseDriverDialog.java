@@ -62,15 +62,15 @@ public class DatabaseDriverDialog extends BanneredDialog {
 	public static final String SQLITE_DRIVER = "org.sqlite.JDBC";
 	public static final String DERBY_DRIVER = "org.apache.derby.jdbc.ClientDriver";
 	public static final String ORACLE_DRIVER = "oracle.jdbc.OracleDriver";
-	public static final String JDBC4OLAP_DRIVER = "org.jdbc4olap.jdbc.OlapDriver";
 	public static final String SQLSERVER_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	public static final String HSQLDB_DRIVER = "org.hsqldb.jdbcDriver";
+	public static final String TERADATA_DRIVER = "com.teradata.jdbc.TeraDriver";
 	public static final String ODBC_BRIDGE_DRIVER = "sun.jdbc.odbc.JdbcOdbcDriver";
 
 	private static final String[] COMMON_DRIVER_NAMES = { POSTGRESQL_DRIVER,
 			FIREBIRD_DRIVER, DERBY_DRIVER, ORACLE_DRIVER, MYSQL_DRIVER,
-			JTDS_DRIVER, SQLSERVER_DRIVER, INGRES_DRIVER, SQLITE_DRIVER,
-			DB2_DRIVER, SAPDB_DRIVER, JDBC4OLAP_DRIVER };
+			TERADATA_DRIVER, JTDS_DRIVER, SQLSERVER_DRIVER, INGRES_DRIVER,
+			SQLITE_DRIVER, DB2_DRIVER, SAPDB_DRIVER };
 
 	static {
 		Arrays.sort(COMMON_DRIVER_NAMES);
@@ -153,6 +153,9 @@ public class DatabaseDriverDialog extends BanneredDialog {
 		websiteMenu.add(downloadItem("Firebird",
 				"http://www.firebirdsql.org/index.php?op=files&id=jaybird",
 				"images/database_firebird.png"));
+		websiteMenu.add(downloadItem("Teradata",
+				"http://www.teradata.com/downloadcenter/",
+				"images/database_teradata.png"));
 		websiteMenu
 				.add(downloadItem(
 						"Ingres",
@@ -161,8 +164,6 @@ public class DatabaseDriverDialog extends BanneredDialog {
 		websiteMenu.add(downloadItem("IBM DB2",
 				"http://www.ibm.com/software/data/db2/java/",
 				"images/database_db2.png"));
-		websiteMenu.add(downloadItem("Mondrian + SAP BW + Analysis Services",
-				"http://www.jdbc4olap.org", "images/database_jdbc4olap.png"));
 		return result;
 	}
 
@@ -200,7 +201,8 @@ public class DatabaseDriverDialog extends BanneredDialog {
 									+ " (class name '" + driverClass
 									+ "') is already installed.", null);
 				} else {
-					final File file = GuiConfiguration.getDataCleanerFile(filename);
+					final File file = GuiConfiguration
+							.getDataCleanerFile(filename);
 					final DownloadDialog dialog = new DownloadDialog(
 							downloadUrl, file);
 					dialog.setCompleteAction(new ActionListener() {

@@ -54,7 +54,7 @@ public class DataContextSelectionTest extends TestCase {
 		DomHelper.transform(_dataContextSelection.serialize(_document),
 				new StreamResult(sw));
 		assertEquals(
-				"<?xml version=_1.0_ encoding=_UTF-8_?>\n<dataContext>\n<property name=_filename_>"
+				"<?xml version=_1.0_ encoding=_UTF-8_?>\n<dataContext>\n<property name=_encoding_>UTF-8</property>\n<property name=_filename_>"
 						+ new File("src/test/resources/customers_semicolon.csv")
 								.getAbsolutePath()
 						+ "</property>\n<property name=_quoteChar_>_</property>\n<property name=_separator_>;</property>\n</dataContext>\n",

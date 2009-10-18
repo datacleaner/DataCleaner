@@ -135,10 +135,17 @@ public class DatabaseDictionaryDialog extends BanneredDialog {
 			try {
 				_namedConnectionComboBox.setSelectedItem(_dictionary.getNamedConnectionName());
 				DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) _schemaTree.getModel().getRoot();
-				DefaultMutableTreeNode schemaNode = getSubNode(rootNode, _dictionary.getSchemaName());
-				DefaultMutableTreeNode tableNode = getSubNode(schemaNode, _dictionary.getTableName());
-				DefaultMutableTreeNode columnNode = getSubNode(tableNode, _dictionary.getColumnName());
+				_schemaTree.expandPath(new TreePath(rootNode.getPath()));
 
+				DefaultMutableTreeNode schemaNode = getSubNode(rootNode, _dictionary.getSchemaName());
+				_schemaTree.expandPath(new TreePath(schemaNode.getPath()));
+				
+				DefaultMutableTreeNode tableNode = getSubNode(schemaNode, _dictionary.getTableName());
+				_schemaTree.expandPath(new TreePath(tableNode.getPath()));
+				
+				DefaultMutableTreeNode columnNode = getSubNode(tableNode, _dictionary.getColumnName());
+				_schemaTree.expandPath(new TreePath(columnNode.getPath()));
+				
 				_schemaTree
 						.setSelectionPath(new TreePath(new Object[] { rootNode, schemaNode, tableNode, columnNode }));
 

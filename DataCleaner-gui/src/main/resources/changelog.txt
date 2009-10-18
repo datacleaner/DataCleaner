@@ -1,5 +1,24 @@
 DataCleaner changelog
 
+DataCleaner 1.5.3
+=================
+ * Upgraded to MetaModel 1.1.8 which means:
+   * Improved Excel spreadsheet support
+   * Improved SQL Server support
+   * Improved performance for CSV files
+ * Fixed a bug that caused certain database connection errors
+   to be ignored in terms of user feedback.
+ * Fixed a bug that caused re-opening of database dictionaries
+   to throw a NullPointerException.
+ * Fixed a bug related to dictionary lookups of null values.
+ * Added support for Teradata databases.
+ * Added connection templates for SQL Server connections.
+ * Added support for selection of custom encodings when reading
+   CSV files.
+ * Fixed a minor bug relating to reading files on the classpath
+   when running in Java WebStart mode (which manifested in an
+   exception thrown when clicking on "About DataCleaner").
+
 DataCleaner 1.5.2
 =================
  * Added on-disk caching for the Value Distribution Profile.

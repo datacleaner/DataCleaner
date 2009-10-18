@@ -7,7 +7,7 @@
 	<groupId>dk.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<name>DataCleaner</name>
-	<version>1.5.3-SNAPSHOT</version>
+	<version>1.5.3</version>
 	<description>DataCleaner is an Open Source application for profiling, validating and comparing data. These activities help you administer and monitor your data quality in order to ensure that your data is useful and applicable to your business situation.</description>
 	<url>http://datacleaber.eobjects.org</url>
 	<inceptionYear>2007</inceptionYear>

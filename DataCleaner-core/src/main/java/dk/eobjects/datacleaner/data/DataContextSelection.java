@@ -36,8 +36,8 @@ import org.w3c.dom.Node;
 
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.datacleaner.util.WeakObservable;
-import dk.eobjects.metamodel.CsvDataContextStrategy;
 import dk.eobjects.metamodel.DataContext;
+import dk.eobjects.metamodel.DataContextFactory;
 import dk.eobjects.metamodel.ExcelDataContextStrategy;
 import dk.eobjects.metamodel.IDataContextStrategy;
 import dk.eobjects.metamodel.JdbcDataContextFactory;
@@ -180,17 +180,19 @@ public class DataContextSelection extends WeakObservable {
 		setDataContext(dc, connection);
 	}
 
-	public void selectFile(File file, char separatorChar, char quoteChar) {
+	public void selectFile(File file, char separatorChar, char quoteChar,
+			String encoding) {
 		if (_log.isDebugEnabled() && file != null) {
 			_log.debug("selectFile(" + file.getAbsolutePath() + ','
 					+ separatorChar + ',' + quoteChar + ")");
 		}
-		DataContext dc = new DataContext(new CsvDataContextStrategy(file,
-				separatorChar, quoteChar));
+		DataContext dc = DataContextFactory.createCsvDataContext(file,
+				separatorChar, quoteChar, false, encoding);
 		_connectionMetadata.clear();
 		_connectionMetadata.put("filename", file.getAbsolutePath());
 		_connectionMetadata.put("separator", "" + separatorChar);
 		_connectionMetadata.put("quoteChar", "" + quoteChar);
+		_connectionMetadata.put("encoding", encoding);
 		setDataContext(dc, null);
 	}
 
@@ -260,10 +262,11 @@ public class DataContextSelection extends WeakObservable {
 			File file = new File(properties.get("filename"));
 			String seperatorString = properties.get("separator");
 			String quoteCharString = properties.get("quoteChar");
+			String encoding = properties.get("encoding");
 			if (seperatorString != null && seperatorString.length() == 1
 					&& quoteCharString != null && quoteCharString.length() == 1) {
 				dcs.selectFile(file, seperatorString.charAt(0), quoteCharString
-						.charAt(0));
+						.charAt(0), encoding);
 			} else {
 				dcs.selectFile(file);
 			}

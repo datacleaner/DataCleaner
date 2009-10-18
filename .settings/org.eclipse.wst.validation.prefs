@@ -1,0 +1,21 @@
+#Sun Oct 18 11:27:39 CEST 2009
+DELEGATES_PREFERENCE=delegateValidatorList
+USER_BUILD_PREFERENCE=enabledBuildValidatorList
+USER_MANUAL_PREFERENCE=enabledManualValidatorList
+USER_PREFERENCE=overrideGlobalPreferencestruedisableAllValidationfalseversion1.2.102.v200905201610
+eclipse.preferences.version=1
+override=true
+suspend=false
+vals/org.eclipse.jst.jsf.ui.JSFAppConfigValidator/global=FF01
+vals/org.eclipse.jst.jsp.core.JSPBatchValidator/global=FF01
+vals/org.eclipse.jst.jsp.core.JSPContentValidator/global=FF01
+vals/org.eclipse.jst.jsp.core.TLDValidator/global=FF01
+vals/org.eclipse.wst.dtd.core.dtdDTDValidator/global=FF01
+vals/org.eclipse.wst.html.ui.HTMLValidator/global=FF01
+vals/org.eclipse.wst.wsdl.validation.wsdl/global=FF02158org.eclipse.wst.wsdl.validation.internal.eclipse.Validator
+vals/org.eclipse.wst.xml.core.xml/global=FF03
+vals/org.eclipse.wst.xsd.core.xsd/global=FF02162org.eclipse.wst.xsd.core.internal.validation.eclipse.Validator
+vals/org.eclipse.wst.xsl.core.xsl/global=FF02
+vals/org.jboss.tools.flow.jpdl4/global=FF01
+vals/org.jboss.tools.jsf.xhtml/global=FF03
+vf.version=3

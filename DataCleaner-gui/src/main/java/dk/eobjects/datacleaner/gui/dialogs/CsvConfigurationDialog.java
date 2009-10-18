@@ -44,8 +44,10 @@ import dk.eobjects.metamodel.query.Query;
 import dk.eobjects.metamodel.query.SelectItem;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
+import dk.eobjects.metamodel.util.FileHelper;
 
-public class CsvConfigurationDialog extends BanneredDialog implements ActionListener {
+public class CsvConfigurationDialog extends BanneredDialog implements
+		ActionListener {
 
 	private static final long serialVersionUID = -8449807287294665745L;
 
@@ -54,6 +56,10 @@ public class CsvConfigurationDialog extends BanneredDialog implements ActionList
 	private static final String TAB_ACTION_CMD = "\t";
 	private static final String SINGLE_QUOTE_ACTION_CMD = "'";
 	private static final String DOUBLE_QUOTE_ACTION_CMD = "\"";
+	private static final String ENCODING_UTF8_CMD = FileHelper.UTF_8_ENCODING;
+	private static final String ENCODING_UTF16_CMD = "UTF-16";
+	private static final String ENCODING_ISO8859_CMD = FileHelper.ISO_8859_1_ENCODING;
+	private static final String ENCODING_US_ASCII_CMD = FileHelper.US_ASCII_ENCODING;
 	private static final int PREVIEW_ROWS = 5;
 
 	private JPanel _panel;
@@ -61,6 +67,7 @@ public class CsvConfigurationDialog extends BanneredDialog implements ActionList
 	private DataTable _table;
 	private char _curSeparator = ',';
 	private char _curQuoteChar = '"';
+	private String _curEncoding = FileHelper.DEFAULT_ENCODING;
 	private DataContextSelection _dataContextSelection;
 	private File _file;
 	private String _fileExtension;
@@ -71,7 +78,8 @@ public class CsvConfigurationDialog extends BanneredDialog implements ActionList
 		_file = file;
 		_dataContextSelection = selection;
 
-		JButton okButton = new JButton("Open", GuiHelper.getImageIcon("images/toolbar_file.png"));
+		JButton okButton = new JButton("Open", GuiHelper
+				.getImageIcon("images/toolbar_file.png"));
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				CsvConfigurationDialog.this.setVisible(false);
@@ -88,24 +96,28 @@ public class CsvConfigurationDialog extends BanneredDialog implements ActionList
 
 	@Override
 	protected Component getContent() {
+		// Delimitor selection
 		ButtonGroup delimitorGroup = new ButtonGroup();
 		_panel = GuiHelper.createPanel().toComponent();
 
-		JLabel delimitorLabel = new JLabel("Select the Delimitor:");
+		JLabel delimitorLabel = new JLabel("Select the delimitor:");
 		GuiHelper.addToGridBag(delimitorLabel, _panel, 0, 0);
 
-		JRadioButton commaButton = GuiHelper.createRadio("Use Comma [,]", delimitorGroup).toComponent();
+		JRadioButton commaButton = GuiHelper.createRadio("Use Comma [,]",
+				delimitorGroup).toComponent();
 		commaButton.setActionCommand(COMMA_ACTION_CMD);
 		commaButton.setSelected(true);
 		commaButton.addActionListener(this);
 		GuiHelper.addToGridBag(commaButton, _panel, 0, 1);
 
-		JRadioButton semiColonButton = GuiHelper.createRadio("Use Semi Colon [;]", delimitorGroup).toComponent();
+		JRadioButton semiColonButton = GuiHelper.createRadio(
+				"Use Semi Colon [;]", delimitorGroup).toComponent();
 		semiColonButton.setActionCommand(SEMI_COLON_ACTION_CMD);
 		semiColonButton.addActionListener(this);
 		GuiHelper.addToGridBag(semiColonButton, _panel, 0, 2);
 
-		JRadioButton tabButton = GuiHelper.createRadio("Use Tab [   ]", delimitorGroup).toComponent();
+		JRadioButton tabButton = GuiHelper.createRadio("Use Tab [   ]",
+				delimitorGroup).toComponent();
 		tabButton.setActionCommand(TAB_ACTION_CMD);
 		tabButton.addActionListener(this);
 		if (DataContextSelection.EXTENSION_TAB_SEPARATED.equals(_fileExtension)) {
@@ -116,33 +128,71 @@ public class CsvConfigurationDialog extends BanneredDialog implements ActionList
 
 		delimitorGroup.add(tabButton);
 
-		JLabel quotationLabel = new JLabel("Select the Quotation type:");
-		GuiHelper.addToGridBag(quotationLabel, _panel, 1, 0);
+		// Quotation selection
+		GuiHelper.addToGridBag(new JLabel("Select the quotation type:"), _panel, 1, 0);
 
 		ButtonGroup quoteGroup = new ButtonGroup();
-		JRadioButton doubleQuoteButton = GuiHelper.createRadio("Use Double Quote [\"sample text\"]", quoteGroup)
-				.toComponent();
+		JRadioButton doubleQuoteButton = GuiHelper.createRadio(
+				"Use Double Quote [\"sample text\"]", quoteGroup).toComponent();
 		doubleQuoteButton.setActionCommand(DOUBLE_QUOTE_ACTION_CMD);
 		doubleQuoteButton.setSelected(true);
 		doubleQuoteButton.addActionListener(this);
 		GuiHelper.addToGridBag(doubleQuoteButton, _panel, 1, 1);
 
-		JRadioButton singleQuoteButton = GuiHelper.createRadio("Use Single Quote ['sample text']", quoteGroup)
-				.toComponent();
+		JRadioButton singleQuoteButton = GuiHelper.createRadio(
+				"Use Single Quote ['sample text']", quoteGroup).toComponent();
 		singleQuoteButton.setActionCommand(SINGLE_QUOTE_ACTION_CMD);
 		singleQuoteButton.addActionListener(this);
 		GuiHelper.addToGridBag(singleQuoteButton, _panel, 1, 2);
 
+		// Encoding selection
+		GuiHelper.addToGridBag(new JLabel("Select the file encoding:"), _panel,
+				1, 3);
+		JPanel encodingPanel = GuiHelper.createPanel().toComponent();
+
+		ButtonGroup encodingGroup = new ButtonGroup();
+		JRadioButton utf8Button = GuiHelper.createRadio("UTF-8", encodingGroup)
+				.toComponent();
+		utf8Button.setActionCommand(ENCODING_UTF8_CMD);
+		utf8Button.setSelected(true);
+		utf8Button.addActionListener(this);
+		encodingPanel.add(utf8Button);
+
+		JRadioButton utf16Button = GuiHelper.createRadio("UTF-16",
+				encodingGroup).toComponent();
+		utf16Button.setActionCommand(ENCODING_UTF16_CMD);
+		utf16Button.addActionListener(this);
+		encodingPanel.add(utf16Button);
+		
+		GuiHelper.addToGridBag(encodingPanel, _panel, 1, 4);
+		encodingPanel = GuiHelper.createPanel().toComponent();
+
+		JRadioButton iso8859Button = GuiHelper.createRadio("ISO-8859",
+				encodingGroup).toComponent();
+		iso8859Button.setActionCommand(ENCODING_ISO8859_CMD);
+		iso8859Button.addActionListener(this);
+		encodingPanel.add(iso8859Button);
+
+		JRadioButton asciiButton = GuiHelper
+				.createRadio("ASCII", encodingGroup).toComponent();
+		asciiButton.setActionCommand(ENCODING_US_ASCII_CMD);
+		asciiButton.addActionListener(this);
+		encodingPanel.add(asciiButton);
+
+		GuiHelper.addToGridBag(encodingPanel, _panel, 1, 5);
+
+		// Sample area
 		_sampleText = new JTextField("Sample Text");
 		_sampleText.setText("\"sample text1\", \"sample text2\", ...");
 		_sampleText.setEnabled(false);
 		GuiHelper.addToGridBag(_sampleText, _panel, 0, 10, 2, 1);
 
-		JLabel tableHeading = new JLabel("Preview Data:");
-		GuiHelper.addToGridBag(tableHeading, _panel, 0, 11, 2, 1);
+		GuiHelper
+				.addToGridBag(new JLabel("Preview Data:"), _panel, 0, 11, 2, 1);
 
 		ArrayList<Row> initialData = new ArrayList<Row>(PREVIEW_ROWS);
-		SelectItem[] selectItems = new SelectItem[] { new SelectItem(new Column("")) };
+		SelectItem[] selectItems = new SelectItem[] { new SelectItem(
+				new Column("")) };
 		for (int i = 0; i < PREVIEW_ROWS; i++) {
 			initialData.add(new Row(selectItems, new Object[] { "" }));
 		}
@@ -160,17 +210,27 @@ public class CsvConfigurationDialog extends BanneredDialog implements ActionList
 
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
-		if (command.equals(COMMA_ACTION_CMD) || command.equals(SEMI_COLON_ACTION_CMD) || command.equals(TAB_ACTION_CMD)) {
+		if (command.equals(COMMA_ACTION_CMD)
+				|| command.equals(SEMI_COLON_ACTION_CMD)
+				|| command.equals(TAB_ACTION_CMD)) {
 			_curSeparator = command.charAt(0);
 		}
-		if (command.equals(SINGLE_QUOTE_ACTION_CMD) || command.equals(DOUBLE_QUOTE_ACTION_CMD)) {
+		if (command.equals(SINGLE_QUOTE_ACTION_CMD)
+				|| command.equals(DOUBLE_QUOTE_ACTION_CMD)) {
 			_curQuoteChar = command.charAt(0);
+		}
+		if (command.equals(ENCODING_UTF8_CMD)
+				|| command.equals(ENCODING_UTF16_CMD)
+				|| command.equals(ENCODING_ISO8859_CMD)
+				|| command.equals(ENCODING_US_ASCII_CMD)) {
+			_curEncoding = command;
 		}
 		updateContent();
 	}
 
 	private void updateContent() {
-		_dataContextSelection.selectFile(_file, _curSeparator, _curQuoteChar);
+		_dataContextSelection.selectFile(_file, _curSeparator, _curQuoteChar,
+				_curEncoding);
 
 		_sampleText.setText(buildSampleString(_curSeparator, _curQuoteChar));
 
@@ -188,16 +248,17 @@ public class CsvConfigurationDialog extends BanneredDialog implements ActionList
 				columns[i] = (Column) subarray[i];
 			}
 		}
-		
+
 		q.from(table).select(columns);
 		q.setMaxRows(PREVIEW_ROWS);
 
 		_table.updateTable(dataContext.executeQuery(q));
+		_table.updateUI();
 	}
 
 	private String buildSampleString(char seperatorChar, char quoteChar) {
-		return quoteChar + "sample text 1" + quoteChar + seperatorChar + "423" + seperatorChar + quoteChar
-				+ "sample text 2" + quoteChar;
+		return quoteChar + "sample text 1" + quoteChar + seperatorChar + "423"
+				+ seperatorChar + quoteChar + "sample text 2" + quoteChar;
 	}
 
 	protected JTextField getSampleText() {

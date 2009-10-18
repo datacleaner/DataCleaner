@@ -4,7 +4,6 @@ import java.util.List;
 
 import dk.eobjects.datacleaner.profiler.IMatrix;
 import dk.eobjects.datacleaner.profiler.ProfileManagerTest;
-import dk.eobjects.datacleaner.profiler.valuedist.ValueDistributionProfile;
 import dk.eobjects.datacleaner.testware.DataCleanerTestCase;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.query.SelectItem;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,8 +13,6 @@ import com.sleepycat.je.EnvironmentConfig;
 
 import dk.eobjects.datacleaner.profiler.AbstractProfile;
 import dk.eobjects.datacleaner.profiler.IMatrix;
-import dk.eobjects.datacleaner.profiler.IProfile;
-import dk.eobjects.datacleaner.profiler.IProfileResult;
 import dk.eobjects.datacleaner.profiler.MatrixBuilder;
 import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.schema.Column;

@@ -10,54 +10,85 @@
 				<surname>S&#248;rensen</surname>
 			</personname>
 		</author>
-		<edition>1.5-SNAPSHOT</edition>
+		<edition>1.5.3</edition>
 	</bookinfo>
 	<preface id="preface1">
 		<title>Preface</title>
 		<para>
-			Data quality is an issue too often ignored. With almost any type of application,
-			datastore or document comes a set of potential data quality pitfalls. DataCleaner
-			was founded upon the idea of promoting data quality awareness and bringing it to the
-			general public. This required a drastic change from the strategy that commercial data
-			quality products are practicing. If we want the general public to be aware of the
-			data quality domain, then we have to provide them with the tools to experience it themselves.
+			Data quality is an issue too often ignored. With almost any type
+			of application,
+			datastore or document comes a set of potential data
+			quality pitfalls. DataCleaner
+			was founded upon the idea of promoting
+			data quality awareness and bringing it to the
+			general public. This
+			required a drastic change from the strategy that commercial data
+			quality products are practicing. If we want the general public to be
+			aware of the
+			data quality domain, then we have to provide them with
+			the tools to experience it themselves.
 		</para>
 		<para>
-			Although we recognize that dedicated data quality analysis is, and probably
-			always will be, a professional niche with a limited audience, we believe that for the most part,
-			data quality tools should be free and developed in coorporation and participation between
-			those professionals. Since data quality in many ways represents a "common good" and a an
-			issue of general interest, we believe in this model of shared ownership and responsibility. This
-			is why DataCleaner was founded as an Open Source project and we hope that the implifications of
-			the Open Source philosophy will influence the products future in a positive way.
+			Although we recognize that dedicated data quality analysis is,
+			and probably
+			always will be, a professional niche with a limited
+			audience, we believe that for the most part,
+			data quality tools should
+			be free and developed in coorporation and participation between
+			those
+			professionals. Since data quality in many ways represents a "common
+			good" and a an
+			issue of general interest, we believe in this model of
+			shared ownership and responsibility. This
+			is why DataCleaner was
+			founded as an Open Source project and we hope that the implifications
+			of
+			the Open Source philosophy will influence the products future in a
+			positive way.
 		</para>
 	</preface>
 	<chapter>
-		<title>Introduction to the concepts and features of DataCleaner</title>
+		<title>Introduction to the concepts and features of DataCleaner
+		</title>
 		<section>
 			<title>What is Data Quality?</title>
 			<para>
-				The field of data quality has been overseen in the IT-business for a long time. Organizations are
-				beginning to feel the pain from inconsistent and flawed systems and interest is being built to support
-				the employment of more ambitious goals as to the quality of our data. To illustrate the concept, let's
-				imagine an information chain typically centered around the process of building a data warehouse. Even
-				though you can employ data quality principles in lots of other scenarios, the data warehouse is the
-				archetypical situation since the data warehouse seeks to create a single version of the truth - and
+				The field of data quality has been overseen in the IT-business
+				for a long time. Organizations are
+				beginning to feel the pain from
+				inconsistent and flawed systems and interest is being built to
+				support
+				the employment of more ambitious goals as to the quality of
+				our data. To illustrate the concept, let's
+				imagine an information
+				chain typically centered around the process of building a data
+				warehouse. Even
+				though you can employ data quality principles in lots
+				of other scenarios, the data warehouse is the
+				archetypical situation
+				since the data warehouse seeks to create a single version of the
+				truth - and
 				obviously this truth has to be of high quality!</para>
 			<para>Consider the information chain illustrated below.</para>
 			<graphic fileref="docs/dataqualityscenarios.png" scale="37" />
 			<para>
-				Data quality problems can exist at many levels, let's take a couple of examples:
+				Data quality problems can exist at many levels, let's take a
+				couple of examples:
 			</para>
 			<orderedlist>
 				<listitem>
-					<para>The users who provide input to the operational systems may have entered invalid, inconsistent or insufficient information.</para>
+					<para>The users who provide input to the operational systems may
+						have entered invalid, inconsistent or insufficient information.
+					</para>
 				</listitem>
 				<listitem>
-					<para>The data integration specialist is not aware of all the business rules that apply to some fields in the databases.</para>
+					<para>The data integration specialist is not aware of all the
+						business rules that apply to some fields in the databases.</para>
 				</listitem>
 				<listitem>
-					<para>Some of the operational systems provide data to each other but have done so in a non-historical way, which can make for faulty records.</para>
+					<para>Some of the operational systems provide data to each other
+						but have done so in a non-historical way, which can make for
+						faulty records.</para>
 				</listitem>
 				<listitem>
 					<para>and so on...</para>
@@ -66,163 +97,308 @@
 		</section>
 		<section>
 			<title>What is Open Source software?</title>
-			<para>TODO</para>
+			<para>That software is Open Source software basically means that the
+				software is licensed under a license that gives you the right to use
+				it (and it's source code) freely. But there are of course some
+				limitations to these rights: First and foremost you sell the
+				software to a third party for money. In the case of DataCleaner it
+				also means that if you modify or enhance the product, then you have
+				to contribute back to the community your modifications. The idea
+				here is that we should cooperate on building great software and that
+				we should make this great software available to anyone for
+				everybody's benefit.
+			</para>
+			<para>
+				So what
+				<emphasis>can</emphasis>
+				you do with it? You can use it for any purpose you'd like. You can
+				even include it in a software bundle that you sell for money - but
+				just the bundle, not the specific product.
+			</para>
+			<para>For more information on Open Source software and the LGPL
+				license which DataCleaner is distributed under, visit the Free
+				Software Foundation:</para>
+			<para>
+				<ulink url="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</ulink>
+			</para>
 		</section>
 		<section>
 			<title>Data Profiling</title>
 			<para>
-				The profiler is used to calculate and analyse various important measures based on the values of data.
-				In this sense the results of a profiling will always have to be read and contemplated upon by a
-				physical person, for example a Database Administrator, BI engineer or similar. The results are
-				supposed to help this person determine where to look for data quality problem in the data source -
-				to get an impression of the state of the data.
+				The profiler is used to calculate and analyse various important
+				measures based on the values of data.
+				In this sense the results of a
+				profiling will always have to be read and contemplated upon by a
+				physical person, for example a Database Administrator, BI engineer
+				or similar. The results are
+				supposed to help this person determine
+				where to look for data quality problem in the data source -
+				to get an
+				impression of the state of the data.
 			</para>
 		</section>
 		<section>
 			<title>Data Validation</title>
 			<para>
-				In contrast to the profiler and the comparator, the validator will give you a result that can be
-				interpreted as "good" or "bad", since the validator validates your data. In the validator-mode you
-				set up business rules that apply to your data and recieve a result that can be used to fix
+				In contrast to the profiler and the comparator, the validator
+				will give you a result that can be
+				interpreted as "good" or "bad",
+				since the validator validates your data. In the validator-mode you
+				set up business rules that apply to your data and recieve a result
+				that can be used to fix
 				validation errors.
 			</para>
 		</section>
 	</chapter>
 	<chapter>
 		<title>Installation and configuration</title>
-		<para>This chapter covers the installation and configuration of DataCleaner.</para>
+		<para>This chapter covers the installation and configuration of
+			DataCleaner.</para>
 		<section>
 			<title>Software requirements</title>
 			<para>
-				DataCleaner requires a Java Runtime Environment (JRE) version 5.0 or higher.
-				You can download the JRE at Sun Microsystems Java website:
+				DataCleaner requires a Java Runtime Environment (JRE) version
+				5.0 or higher.
+				You can download the JRE at Sun Microsystems Java
+				website:
 			</para>
 			<para>
 				<ulink url="http://java.sun.com/javase/downloads">http://java.sun.com/javase/downloads</ulink>
 			</para>
 			<para>
-				DataCleaner runs in both desktop application mode and command-line interface mode on
-				Microsoft Windows Operating Systems, Mac OS X and Linux. For optimal performance, a minimum
-				of 1024 megabytes (1 gigabyte) of free memory is recommended.
+				DataCleaner runs in both desktop application mode and
+				command-line interface mode on
+				Microsoft Windows Operating Systems,
+				Mac OS X and Linux. For optimal performance, a minimum
+				of 1024
+				megabytes (1 gigabyte) of free memory is recommended.
 			</para>
 		</section>
 		<section>
 			<title>Database drivers</title>
 			<para>
-				Database drivers enable applications to connect to databases. Since DataCleaner was developed using the Java platform, you will need
-				Java-based database drivers, so-called JDBC-drivers, to use DataCleaner with your database. JDBC-drivers exist for all major database-types
-				so don't worry, it's highly unlikely that you can't use DataCleaner! 
+				Database drivers enable applications to connect to databases.
+				Since DataCleaner was developed using the Java platform, you will
+				need
+				Java-based database drivers, so-called JDBC-drivers, to use
+				DataCleaner with your database. JDBC-drivers exist for all major
+				database-types
+				so don't worry, it's highly unlikely that you can't
+				use DataCleaner! 
 			</para>
 			<para>
-				To install a driver you need a JAR (Java Archive) file, containing the driver. To obtain the driver there are a few options,
+				To install a driver you need a JAR (Java Archive) file,
+				containing the driver. To obtain the driver there are a few options,
 				depicted in the screenshot below:
 			</para>
 			<graphic fileref="docs/downloaddriver.png" />
 			<orderedlist>
 				<listitem>
 					<para>
-						<emphasis>Automatic download and install:</emphasis> Let DataCleaner take care of everything. If your database-type is represented
-						in the submenu for this option, then you are in luck - DataCleaner can automatically download the driver and install it for you.
+						<emphasis>Automatic download and install:</emphasis>
+						Let DataCleaner take care of everything. If your database-type is
+						represented
+						in the submenu for this option, then you are in luck -
+						DataCleaner can automatically download the driver and install it
+						for you.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis>Visit driver website:</emphasis> Some database-vendors require that you register yourself and other stuff before you are
-						allowed to download the driver. DataCleaner provides some handy shortcuts for these vendors websites but we can't do much more to
-						easen the process for you. Once you have downloaded the drivers, proceed to the next option, the Local JAR file.
+						<emphasis>Visit driver website:</emphasis>
+						Some database-vendors require that you register yourself and other
+						stuff before you are
+						allowed to download the driver. DataCleaner
+						provides some handy shortcuts for these vendors websites but we
+						can't do much more to
+						easen the process for you. Once you have
+						downloaded the drivers, proceed to the next option, the Local JAR
+						file.
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis>Local JAR file:</emphasis> When you've aquired the driver file by yourself then you need to pick it out using this option.
-						Once you've selected a JAR file from your local harddrive you will be prompted for a driver class name. DataCleaner contains suggestions
-						for almost every major database-vendor's driver class name but should it not be provided by DataCleaner you can also manually enter a new
+						<emphasis>Local JAR file:</emphasis>
+						When you've aquired the driver file by yourself then you need to
+						pick it out using this option.
+						Once you've selected a JAR file from
+						your local harddrive you will be prompted for a driver class name.
+						DataCleaner contains suggestions
+						for almost every major
+						database-vendor's driver class name but should it not be provided
+						by DataCleaner you can also manually enter a new
 						class name here.
 					</para>
 				</listitem>
 			</orderedlist>
 			<para>
-				<emphasis>Note:</emphasis> DataCleaner is compatible with <emphasis>any database</emphasis> that complies to two standards: JDBC and SQL 99. Most
-				databases are compliant with these standards but some aren't. We are sorry that the application is not compatible with such databases, but if you
-				find yourself in such a situation, we strongly suggest you reconsider your choice of database-vendor (because standards, especially in this vital
+				<emphasis>Note:</emphasis>
+				DataCleaner is compatible with
+				<emphasis>any database</emphasis>
+				that complies to two standards: JDBC and SQL 99. Most
+				databases are
+				compliant with these standards but some aren't. We are sorry that
+				the application is not compatible with such databases, but if you
+				find yourself in such a situation, we strongly suggest you
+				reconsider your choice of database-vendor (because standards,
+				especially in this vital
 				area, is a good thing).
 			</para>
 		</section>
+	</chapter>
+	<chapter>
+		<title>Using DataCleaner</title>
+		<para>In this chapter we will deal with the individual steps of using
+			DataCleaner for specific tasks.</para>
 		<section>
 			<title>Database connections</title>
 			<para>
-				To begin with we recommend getting your database connection up and running using the DataCleaner desktop application. From within the
-				Profiler, the Validator or the Comparator you can click one of the Open database buttons, which brings up the <emphasis>Open database dialog</emphasis>:
+				To begin with we recommend getting your database connection up and
+				running using the DataCleaner desktop application. From within the
+				Profiler, the Validator or the Comparator you can click one of the
+				Open database buttons, which brings up the
+				<emphasis>Open database dialog</emphasis>
+				:
 			</para>
 			<graphic fileref="docs/opendatabase.png" />
 			<para>
-				The Open database dialog contains the configuration properties for a database connection. Here are the main ones:
+				The Open database dialog contains the configuration properties
+				for a database connection. Here are the main ones:
 			</para>
 			<orderedlist>
 				<listitem>
 					<para>
-						<emphasis>Name:</emphasis> The name field at the top specifies the name of the connection. This is a read-only property since connection
-						naming is only possible through the configuration file (more about this later).
+						<emphasis>Name:</emphasis>
+						The name field at the top specifies the name of the connection.
+						This is a read-only property since connection
+						naming is only
+						possible through the configuration file (more about this later).
 					</para>
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis>Connection string:</emphasis> The connection string is a vendor-specific string that tells the database driver where and how
-						to connect to the database. Notice the small button to the right of the connection string text-field. This button will bring up a drop-down
-						list with template for the database drivers that you have installed. When a template is selected the connection string field will be
-						<emphasis>automatically filled out</emphasis> but certain parts of the template will still need to be filled out by you (such as the
-						network address of your server). You can swap between these parts of the template by pressing the TAB key on your keyboard.
+						<emphasis>Connection string:</emphasis>
+						The connection string is a vendor-specific string that tells the
+						database driver where and how
+						to connect to the database. Notice
+						the small button to the right of the connection string text-field.
+						This button will bring up a drop-down
+						list with template for the
+						database drivers that you have installed. When a template is
+						selected the connection string field will be
+						<emphasis>automatically filled out</emphasis>
+						but certain parts of the template will still need to be filled out
+						by you (such as the
+						network address of your server). You can swap
+						between these parts of the template by pressing the TAB key on
+						your keyboard.
 					</para>
 				</listitem>
 			</orderedlist>
-			<para>
-				In order to always have easy access to your database we recommend adding it to a configured list of database connections.
-				Modify the file <emphasis>datacleaner-config.xml</emphasis> and insert a &lt;bean&gt; XML-element like the ones that
-				already exist in there. Here are a few useful examples:
-			</para>
-			<orderedlist>
-				<listitem>
+			<section>
+				<title>Reusable 'Named connections'</title>
+				<para>
+					In order to always have easy access to your database we recommend
+					adding it to a configured list of database connections.
+					Modify the
+					file
+					<emphasis>datacleaner-config.xml</emphasis>
+					and insert a &lt;bean&gt; XML-element like the ones that
+					already
+					exist in there. Here are a few useful examples:
+				</para>
+				<orderedlist>
+					<listitem>
+						<para>
+							<emphasis>Oracle example</emphasis>
+							<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
+	  &lt;property name="name" value="Oracle database example" /&gt;
+	  &lt;property name="driverClass" value="oracle.jdbc.OracleDriver" /&gt;
+	  &lt;property name="connectionString" value="jdbc:oracle:thin:@host:port/service" /&gt;
+	  &lt;property name="username" value="username" /&gt;
+	  &lt;property name="password" value="password" /&gt;
+	&lt;/bean&gt;</literallayout>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>PostgreSQL example</emphasis>
+							<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
+	 &lt;property name="name" value="Postgresql database example" /&gt;
+	 &lt;property name="driverClass" value="org.postgresql.Driver" /&gt;
+	 &lt;property name="connectionString" value="jdbc:postgresql://localhost:5432/my_database" /&gt;
+	 &lt;property name="username" value="username" /&gt;
+	 &lt;property name="password" value="password" /&gt;
+	&lt;/bean></literallayout>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>MySQL example</emphasis>
+							<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
+	 &lt;property name="name" value="MySQL database example" /&gt;
+	 &lt;property name="driverClass" value="com.mysql.jdbc.Driver" /&gt;
+	 &lt;property name="connectionString" value="jdbc:mysql://localhost:3306" /&gt;
+	 &lt;property name="catalog" value="my_database" /&gt;
+	 &lt;property name="username" value="username" /&gt;
+	 &lt;property name="password" value="password" /&gt;
+	&lt;/bean&gt;</literallayout>
+						</para>
+					</listitem>
+				</orderedlist>
+				<para>
+					You can produce your own &lt;bean&gt; XML-elements simply by mapping the connection properties in the Open Database dialog
+					within the DataCleaner desktop application to the corresponding &lt;property&gt; XML elements inside the &lt;bean&gt; XML-element.
+				</para>
+			</section>
+		</section>
+		<section>
+			<title>Non-trivial database connections for specific vendors</title>
+			<para>Some databases are more trivial than others to connect to. This section is a guide for for the more "tricky" database connections.</para>
+			<section>
+				<title>Teradata</title>
+				<para>Teradata needs two JAR-files on the classpath in order to work, which makes it a bit of an odd installation compared to normal database drivers. Here's what you need to do:</para>
+				<orderedlist>
+					<listitem>
+						<para>Copy both the <emphasis>tdgssconfig.jar</emphasis> file to the datacleaner directory.</para>
+					</listitem>
+					<listitem>
+						<para>On Windows, open datacleaner.cmd and replace the "-jar datacleaner.jar" part of the last line with this:</para>
+						<blockquote>
+							<para>
+							-cp datacleaner.jar;tdgssconfig.jar dk.eobjects.datacleaner.gui.DataCleanerGui
+							</para>
+						</blockquote>
+					</listitem>
+					<listitem>
+						<para>On *nix or Mac, open datacleaner.sh and replace the "-jar datacleaner.jar" part of the last line with this:</para>
+						<blockquote>
+							<para>
+								-cp datacleaner.jar:tdgssconfig.jar dk.eobjects.datacleaner.gui.DataCleanerGui
+							</para>
+						</blockquote>
+					</listitem>
+					<listitem>
+						<para>Install the teradata driver as usual using the "Local JAR file" option and select the <emphasis>terajdbc4.jar</emphasis> file for this.</para>
+					</listitem>
+				</orderedlist>
+			</section>
+			<section>
+				<title>Microsoft SQL Server with Integrated Security</title>
+				<para>Using integrated security is only possible on MS Windows.</para>
+				<para>First you need to modify the java command in your datacleaner.cmd. Add the following parameter:</para>
+				<blockquote>
 					<para>
-						<emphasis>Oracle example</emphasis>
-						<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
-  &lt;property name="name" value="Oracle database example" /&gt;
-  &lt;property name="driverClass" value="oracle.jdbc.OracleDriver" /&gt;
-  &lt;property name="connectionString" value="jdbc:oracle:thin:@host:port/service" /&gt;
-  &lt;property name="username" value="username" /&gt;
-  &lt;property name="password" value="password" /&gt;
-&lt;/bean&gt;</literallayout>
+						-Djava.libary.path=&lt;path&gt;\Microsoft SQL Server JDBC Driver 2.0\sqljdbc_2.0\enu\auth\x86\
 					</para>
-				</listitem>
-				<listitem>
+				</blockquote>
+				<para>Afterwards, add the following parameter to your connection string:</para>
+				<blockquote>
 					<para>
-						<emphasis>PostgreSQL example</emphasis>
-						<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
- &lt;property name="name" value="Postgresql database example" /&gt;
- &lt;property name="driverClass" value="org.postgresql.Driver" /&gt;
- &lt;property name="connectionString" value="jdbc:postgresql://localhost:5432/my_database" /&gt;
- &lt;property name="username" value="username" /&gt;
- &lt;property name="password" value="password" /&gt;
-&lt;/bean></literallayout>
+						integratedSecurity=true
 					</para>
-				</listitem>
-				<listitem>
-					<para>
-						<emphasis>MySQL example</emphasis>
-						<literallayout>&lt;bean class="dk.eobjects.datacleaner.gui.model.NamedConnection"&gt;
- &lt;property name="name" value="MySQL database example" /&gt;
- &lt;property name="driverClass" value="com.mysql.jdbc.Driver" /&gt;
- &lt;property name="connectionString" value="jdbc:mysql://localhost:3306" /&gt;
- &lt;property name="catalog" value="my_database" /&gt;
- &lt;property name="username" value="username" /&gt;
- &lt;property name="password" value="password" /&gt;
-&lt;/bean&gt;</literallayout>
-					</para>
-				</listitem>
-			</orderedlist>
-			<para>
-				You can produce your own &lt;bean&gt; XML-elements simply by mapping the connection properties in the Open Database dialog
-				within the DataCleaner desktop application to the corresponding &lt;property&gt; XML elements inside the &lt;bean&gt; XML-element.
-			</para>
+				</blockquote>
+			</section>
 		</section>
 		<section>
 			<title>Dictionaries</title>

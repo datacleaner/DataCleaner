@@ -42,6 +42,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -486,55 +487,67 @@ public class GuiHelper {
 
 	public static void copyDirectoryContentsFromClasspathToFileSystem(
 			String classpathDirectoryPath, File destDir) throws IOException {
-		URL url = getUrl(classpathDirectoryPath);
-		File file = new File(url.getFile());
-		if (file.isDirectory()) {
-			copyRecursively(file, destDir);
-		} else {
-			URLConnection connection = url.openConnection();
-			if (connection instanceof JarURLConnection) {
-				copyRecursively((JarURLConnection) connection,
-						classpathDirectoryPath, destDir);
+		List<URL> urls = getUrls(classpathDirectoryPath);
+		for (URL url : urls) {
+			File file = new File(url.getFile());
+			if (file.isDirectory()) {
+				copyRecursively(file, destDir);
 			} else {
-				if (connection == null) {
-					throw new IllegalStateException("Connection is null");
+				URLConnection connection = url.openConnection();
+				if (connection instanceof JarURLConnection) {
+					copyRecursively((JarURLConnection) connection,
+							classpathDirectoryPath, destDir);
 				} else {
-					throw new UnsupportedOperationException(
-							"Unsupported connection type: "
-									+ connection.getClass().getName());
+					if (connection == null) {
+						throw new IllegalStateException("Connection is null");
+					} else {
+						throw new UnsupportedOperationException(
+								"Unsupported connection type: "
+								+ connection.getClass().getName());
+					}
 				}
 			}
 		}
 	}
 
-	public static URL getUrl(String path) {
+	public static List<URL> getUrls(String path) {
+		List<URL> result = new LinkedList<URL>();
 		URL url = GuiHelper.class.getResource(path);
-
-		if (url == null) {
-			try {
-				Enumeration<URL> resources = ClassLoader
-						.getSystemResources(path);
-				if (resources.hasMoreElements()) {
-					url = resources.nextElement();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		if (url != null) {
+			result.add(url);
 		}
 
-		if (url == null) {
-			// in Java Web Start mode the getSystemResource will return null
-			try {
-				Enumeration<URL> resources = Thread.currentThread()
-						.getContextClassLoader().getResources(path);
-				if (resources.hasMoreElements()) {
-					url = resources.nextElement();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+		try {
+			Enumeration<URL> resources = ClassLoader.getSystemResources(path);
+			while (resources.hasMoreElements()) {
+				result.add(resources.nextElement());
 			}
+		} catch (IOException e) {
+			_log.error("IOException when investigating system resources", e);
 		}
-		return url;
+
+		// in Java Web Start mode the getSystemResource will return null
+		try {
+			Enumeration<URL> resources = Thread.currentThread()
+					.getContextClassLoader().getResources(path);
+			while (resources.hasMoreElements()) {
+				result.add(resources.nextElement());
+			}
+		} catch (IOException e) {
+			_log
+					.error(
+							"IOException when investigating context classloader resources",
+							e);
+		}
+		return result;
+	}
+
+	public static URL getUrl(String path) {
+		List<URL> urls = getUrls(path);
+		if (urls.isEmpty()) {
+			return null;
+		}
+		return urls.get(0);
 	}
 
 	private static void copyRecursively(JarURLConnection connection,

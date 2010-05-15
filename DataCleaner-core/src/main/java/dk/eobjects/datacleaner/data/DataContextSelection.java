@@ -344,7 +344,7 @@ public class DataContextSelection extends WeakObservable {
 			String temp = file.getName();
 			int i = temp.lastIndexOf('.');
 			if (i != -1) {
-				return temp.substring(i + 1);
+				return temp.substring(i + 1).toLowerCase();
 			}
 		}
 		return null;

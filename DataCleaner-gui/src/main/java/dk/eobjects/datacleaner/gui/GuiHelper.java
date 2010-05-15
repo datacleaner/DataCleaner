@@ -91,8 +91,6 @@ import org.jdesktop.swingx.error.ErrorLevel;
 import dk.eobjects.datacleaner.data.ColumnSelection;
 import dk.eobjects.datacleaner.gui.setup.GuiSettings;
 import dk.eobjects.datacleaner.util.ReflectionHelper;
-import dk.eobjects.datacleaner.util.WeakObservable;
-import dk.eobjects.datacleaner.util.WeakObserver;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
@@ -112,7 +110,6 @@ public class GuiHelper {
 	public static final CompoundBorder BORDER_THIN = new CompoundBorder(
 			new LineBorder(Color.DARK_GRAY), new EmptyBorder(2, 2, 2, 2));
 
-	private static HttpClient _httpClient;
 	private static Map<String, Image> _cachedImageIcons = new WeakHashMap<String, Image>();
 
 	/**
@@ -409,19 +406,8 @@ public class GuiHelper {
 	}
 
 	public static HttpClient getHttpClient() {
-		if (_httpClient == null) {
-			GuiSettings settings = GuiSettings.getSettings();
-			_httpClient = createHttpClient(settings);
-
-			// Add an observer for replacing the httpClient in case proxy
-			// settings change
-			settings.addObserver(new WeakObserver() {
-				public void update(WeakObservable observable) {
-					_httpClient = createHttpClient(GuiSettings.getSettings());
-				}
-			});
-		}
-		return _httpClient;
+		GuiSettings settings = GuiSettings.getSettings();
+		return createHttpClient(settings);
 	}
 
 	private static HttpClient createHttpClient(GuiSettings settings) {
@@ -460,15 +446,14 @@ public class GuiHelper {
 				public void run() {
 					try {
 						List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-						HttpPost method = new HttpPost(
+						HttpPost req = new HttpPost(
 								"http://datacleaner.eobjects.org/ws/user_action");
 						nameValuePairs.add(new BasicNameValuePair("username",
 								username));
 						nameValuePairs.add(new BasicNameValuePair("action",
 								action));
-						method.setEntity(new UrlEncodedFormEntity(
-								nameValuePairs));
-						getHttpClient().execute(method);
+						req.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+						getHttpClient().execute(req);
 					} catch (Throwable t) {
 						// Do nothing, this is a low priority task
 						_log.debug(t);
@@ -503,7 +488,7 @@ public class GuiHelper {
 					} else {
 						throw new UnsupportedOperationException(
 								"Unsupported connection type: "
-								+ connection.getClass().getName());
+										+ connection.getClass().getName());
 					}
 				}
 			}

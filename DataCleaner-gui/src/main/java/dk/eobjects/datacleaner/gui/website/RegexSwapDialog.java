@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
@@ -111,14 +110,8 @@ public class RegexSwapDialog extends BanneredDialog {
 		_viewOnlineButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				try {
-					new OpenBrowserAction(
-							"http://datacleaner.eobjects.org/regex/"
-									+ _selectedRegex.getName())
-							.actionPerformed(event);
-				} catch (MalformedURLException e) {
-					_log.error(e);
-				}
+				new OpenBrowserAction("http://datacleaner.eobjects.org/regex/"
+						+ _selectedRegex.getName()).actionPerformed(event);
 			}
 
 		});

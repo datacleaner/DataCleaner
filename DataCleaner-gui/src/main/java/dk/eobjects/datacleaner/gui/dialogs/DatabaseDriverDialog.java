@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,8 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 import dk.eobjects.datacleaner.gui.GuiHelper;
@@ -75,9 +72,6 @@ public class DatabaseDriverDialog extends BanneredDialog {
 	static {
 		Arrays.sort(COMMON_DRIVER_NAMES);
 	}
-
-	private static final Log _log = LogFactory
-			.getLog(DatabaseDriverDialog.class);
 
 	private JTextField _filenameField;
 	private AutoCompleteComboBox _driverClassField;
@@ -245,11 +239,7 @@ public class DatabaseDriverDialog extends BanneredDialog {
 			final String url, String iconPath) {
 		JMenuItem menuItem = new JMenuItem(databaseName, GuiHelper
 				.getImageIcon(iconPath));
-		try {
-			menuItem.addActionListener(new OpenBrowserAction(url));
-		} catch (MalformedURLException e) {
-			_log.error(e);
-		}
+		menuItem.addActionListener(new OpenBrowserAction(url));
 		return menuItem;
 	}
 

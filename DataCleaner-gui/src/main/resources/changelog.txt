@@ -1,5 +1,15 @@
 DataCleaner changelog
 
+DataCleaner 1.5.4
+=================
+ * Upgraded to MetaModel 1.2 which adds support for:
+   * dBase (.dbf) database-files
+   * MS Access (.mdb) database-files
+ * Fixed a bug that caused problems registering text-file
+   dictionaries.
+ * Upgraded JRE-requirements to Java 6.
+ * Various minor bug-fixes and upgrades to underlying API's.
+
 DataCleaner 1.5.3
 =================
  * Upgraded to MetaModel 1.1.8 which means:

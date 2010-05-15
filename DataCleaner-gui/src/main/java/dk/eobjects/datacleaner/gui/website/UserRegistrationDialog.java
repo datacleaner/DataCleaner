@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,12 +90,8 @@ public class UserRegistrationDialog extends BanneredDialog {
 
 		JButton registerButton = GuiHelper.createButton("Register",
 				"images/toolbar_login.png").toComponent();
-		try {
-			registerButton.addActionListener(new OpenBrowserAction(
-					"http://datacleaner.eobjects.org/?register"));
-		} catch (MalformedURLException e) {
-			_log.error(e);
-		}
+		registerButton.addActionListener(new OpenBrowserAction(
+				"http://datacleaner.eobjects.org/?register"));
 
 		JButton loginButton = GuiHelper.createButton("Login",
 				"images/toolbar_login.png").toComponent();

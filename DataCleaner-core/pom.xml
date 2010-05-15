@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>DataCleaner</artifactId>
 		<groupId>dk.eobjects.datacleaner</groupId>
-		<version>1.5.3</version>
+		<version>1.5.4</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -12,12 +11,6 @@
 	<artifactId>DataCleaner-core</artifactId>
 	<name>DataCleaner-core</name>
 	<version>${parent.version}</version>
-	<repositories>
-		<repository>
-			<id>oracle-repository</id>
-			<url>http://download.oracle.com/maven</url>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>dk.eobjects.metamodel</groupId>
@@ -30,9 +23,9 @@
 			<version>1.7R1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sleepycat</groupId>
+			<groupId>berkeleydb</groupId>
 			<artifactId>je</artifactId>
-			<version>3.3.62</version>
+			<version>3.2.76</version>
 		</dependency>
 		<dependency>
 			<groupId>dk.eobjects.datacleaner</groupId>

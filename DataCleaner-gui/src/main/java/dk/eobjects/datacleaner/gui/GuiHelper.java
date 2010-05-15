@@ -508,7 +508,7 @@ public class GuiHelper {
 	}
 
 	public static URL getUrl(String path) {
-		URL url = ClassLoader.getSystemResource(path);
+		URL url = GuiHelper.class.getResource(path);
 		if (url == null) {
 			// in Java Web Start mode the getSystemResource will return null
 			url = Thread.currentThread().getContextClassLoader().getResource(

@@ -18,6 +18,8 @@ import dk.eobjects.metamodel.data.Row;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.util.FileHelper;
 
+// this profile is currently not used, so warnings are suppressed
+@SuppressWarnings("unused")
 public class LevenshteinDistanceProfile extends AbstractProfile {
 
 

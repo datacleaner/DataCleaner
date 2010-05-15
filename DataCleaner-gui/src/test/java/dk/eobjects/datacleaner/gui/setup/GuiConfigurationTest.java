@@ -58,4 +58,8 @@ public class GuiConfigurationTest extends DataCleanerTestCase {
 			assertTrue(ArrayUtils.indexOf(expectations, displayName) != -1);
 		}
 	}
+	
+	public void testGetDataCleanerFile() throws Exception {
+		assertTrue(GuiConfiguration.getDataCleanerFile("changelog.txt").exists());
+	}
 }

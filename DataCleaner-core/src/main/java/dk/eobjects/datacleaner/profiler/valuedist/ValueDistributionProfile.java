@@ -56,7 +56,7 @@ public class ValueDistributionProfile extends AbstractProfile {
 	public static final String PROPERTY_TOP_N = "Top n most frequent values";
 	public static final String PROPERTY_BOTTOM_N = "Bottom n least frequent values";
 
-	private Map<Column, StoredMap<String,Long>> _repeatedValues = new HashMap<Column, StoredMap<String,Long>>();
+	private Map<Column, StoredMap> _repeatedValues = new HashMap<Column, StoredMap>();
 	private Map<Column, Long> _nullValues = new HashMap<Column, Long>();
 	private List<Database> _databases = new LinkedList<Database>();
 	private Environment _environment;
@@ -88,8 +88,9 @@ public class ValueDistributionProfile extends AbstractProfile {
 		return count;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Long> getRepeatedValues(Column column) {
-		StoredMap<String,Long> map = _repeatedValues.get(column);
+		StoredMap map = _repeatedValues.get(column);
 		if (map == null) {
 			synchronized (_repeatedValues) {
 				map = _repeatedValues.get(column);
@@ -104,7 +105,7 @@ public class ValueDistributionProfile extends AbstractProfile {
 						_databases.add(database);
 						StringBinding keyBinding = new StringBinding();
 						LongBinding valueBinding = new LongBinding();
-						map = new StoredMap<String,Long>(database, keyBinding, valueBinding,
+						map = new StoredMap(database, keyBinding, valueBinding,
 								true);
 
 						_repeatedValues.put(column, map);

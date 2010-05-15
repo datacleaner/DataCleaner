@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 
 import dk.eobjects.datacleaner.util.DomHelper;
 import dk.eobjects.datacleaner.util.WeakObservable;
+import dk.eobjects.metamodel.AccessDataContextStrategy;
 import dk.eobjects.metamodel.DataContext;
 import dk.eobjects.metamodel.DataContextFactory;
 import dk.eobjects.metamodel.ExcelDataContextStrategy;
@@ -43,6 +44,7 @@ import dk.eobjects.metamodel.IDataContextStrategy;
 import dk.eobjects.metamodel.JdbcDataContextFactory;
 import dk.eobjects.metamodel.OpenOfficeDataContextStrategy;
 import dk.eobjects.metamodel.XmlDataContextStrategy;
+import dk.eobjects.metamodel.dbase.DbaseDataContextStrategy;
 import dk.eobjects.metamodel.schema.TableType;
 
 /**
@@ -63,6 +65,8 @@ public class DataContextSelection extends WeakObservable {
 	public static final String EXTENSION_TAB_SEPARATED = "tsv";
 	public static final String EXTENSION_XLS = "xls";
 	public static final String EXTENSION_ODB = "odb";
+	public static final String EXTENSION_MDB = "mdb";
+	public static final String EXTENSION_DBF = "dbf";
 	public static final String EXTENSION_XML = "xml";
 	public static final String EXTENSION_DAT = "dat";
 	public static final String EXTENSION_TEXT = "txt";
@@ -207,6 +211,10 @@ public class DataContextSelection extends WeakObservable {
 			String extention = getExtention(file);
 			if (extention.equals(EXTENSION_ODB)) {
 				strategy = new OpenOfficeDataContextStrategy(file);
+			} else if (extention.equals(EXTENSION_MDB)) {
+				strategy = new AccessDataContextStrategy(file);
+			} else if (extention.equals(EXTENSION_DBF)) {
+				strategy = new DbaseDataContextStrategy(file);
 			} else if (extention.equals(EXTENSION_XML)) {
 				strategy = new XmlDataContextStrategy(file, true);
 			} else if (extention.equals(EXTENSION_XLS)) {

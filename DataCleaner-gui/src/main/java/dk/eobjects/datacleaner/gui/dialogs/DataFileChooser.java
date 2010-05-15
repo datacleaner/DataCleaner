@@ -47,6 +47,10 @@ public class DataFileChooser extends JFileChooser {
 		ExtensionFilter odbFilter = new ExtensionFilter(
 				"OpenOffice.org database (.odb)",
 				DataContextSelection.EXTENSION_ODB);
+		ExtensionFilter mdbFilter = new ExtensionFilter(
+				"MS Access database (.mdb)", DataContextSelection.EXTENSION_MDB);
+		ExtensionFilter dbfFilter = new ExtensionFilter(
+				"dBase database (.dbf)", DataContextSelection.EXTENSION_DBF);
 		ExtensionFilter xmlFilter = new ExtensionFilter(
 				"Extensible Markup Language (.xml)",
 				DataContextSelection.EXTENSION_XML);
@@ -57,14 +61,16 @@ public class DataFileChooser extends JFileChooser {
 
 		// A filter that combines all the other filters
 		CombinationFilter combinationFilter = new CombinationFilter(csvFilter,
-				tsvFilter, excelFilter, odbFilter, xmlFilter, txtFilter,
-				datFilter);
+				tsvFilter, excelFilter, odbFilter, mdbFilter, dbfFilter,
+				xmlFilter, txtFilter, datFilter);
 
 		addChoosableFileFilter(combinationFilter);
 		addChoosableFileFilter(csvFilter);
 		addChoosableFileFilter(tsvFilter);
 		addChoosableFileFilter(excelFilter);
 		addChoosableFileFilter(odbFilter);
+		addChoosableFileFilter(mdbFilter);
+		addChoosableFileFilter(dbfFilter);
 		addChoosableFileFilter(xmlFilter);
 		addChoosableFileFilter(datFilter);
 		addChoosableFileFilter(txtFilter);

@@ -127,9 +127,14 @@ public class GuiConfiguration {
 	}
 
 	public static File getDataCleanerFile(String filename) {
-		File dataCleanerHome = getDataCleanerHome();
-		String configurationFilePath = dataCleanerHome.getAbsolutePath() + File.separator + filename;
-		return new File(configurationFilePath);
+		File file = new File(filename);
+		
+		if (!file.exists()) {
+			File dataCleanerHome = getDataCleanerHome();
+			file = new File(dataCleanerHome, filename);
+		}
+		
+		return file;
 	}
 
 	@SuppressWarnings("unchecked")

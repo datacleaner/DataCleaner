@@ -16,6 +16,7 @@
  */
 package dk.eobjects.datacleaner.gui.setup;
 
+import java.io.File;
 import java.util.Collection;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -29,28 +30,35 @@ import dk.eobjects.datacleaner.validator.IValidationRuleDescriptor;
 public class GuiConfigurationTest extends DataCleanerTestCase {
 
 	public void testInitialize() throws Exception {
-		GuiConfiguration.initialize(getTestResourceAsFile("datacleaner-config-test.xml"));
-		Collection<IProfileDescriptor> profileDescriptors = GuiConfiguration.getBeansOfClass(IProfileDescriptor.class);
-		String[] expectations = new String[] { "Standard measures", "String analysis", "Pattern finder",
-				"Value distribution", "Number analysis", "Time analysis", "Dictionary matcher", "Date mask matcher",
-				"Regex matcher" };
+		GuiConfiguration
+				.initialize(getTestResourceAsFile("datacleaner-config-test.xml"));
+		Collection<IProfileDescriptor> profileDescriptors = GuiConfiguration
+				.getBeansOfClass(IProfileDescriptor.class);
+		String[] expectations = new String[] { "Standard measures",
+				"String analysis", "Pattern finder", "Value distribution",
+				"Number analysis", "Time analysis", "Dictionary matcher",
+				"Date mask matcher", "Regex matcher" };
 		assertEquals(expectations.length, profileDescriptors.size());
-		Object[] displayNames = ReflectionHelper.getProperties(profileDescriptors, "displayName");
+		Object[] displayNames = ReflectionHelper.getProperties(
+				profileDescriptors, "displayName");
 		for (Object displayName : displayNames) {
 			assertTrue(ArrayUtils.indexOf(expectations, displayName) != -1);
 		}
 
 		Collection<IValidationRuleDescriptor> validationRuleDescriptors = GuiConfiguration
 				.getBeansOfClass(IValidationRuleDescriptor.class);
-		expectations = new String[] { "Javascript evaluation", "Dictionary lookup", "Value range evaluation",
+		expectations = new String[] { "Javascript evaluation",
+				"Dictionary lookup", "Value range evaluation",
 				"Regex validation", "Not-null check" };
 		assertEquals(expectations.length, validationRuleDescriptors.size());
-		displayNames = ReflectionHelper.getProperties(validationRuleDescriptors, "displayName");
+		displayNames = ReflectionHelper.getProperties(
+				validationRuleDescriptors, "displayName");
 		for (Object displayName : displayNames) {
 			assertTrue(ArrayUtils.indexOf(expectations, displayName) != -1);
 		}
 
-		Collection<NamedConnection> namedConnections = GuiConfiguration.getNamedConnections();
+		Collection<NamedConnection> namedConnections = GuiConfiguration
+				.getNamedConnections();
 		expectations = new String[] { "- select -", "Some Derby database" };
 		assertEquals(expectations.length, namedConnections.size());
 		displayNames = ReflectionHelper.getProperties(namedConnections, "name");
@@ -58,8 +66,18 @@ public class GuiConfigurationTest extends DataCleanerTestCase {
 			assertTrue(ArrayUtils.indexOf(expectations, displayName) != -1);
 		}
 	}
-	
+
 	public void testGetDataCleanerFile() throws Exception {
-		assertTrue(GuiConfiguration.getDataCleanerFile("changelog.txt").exists());
+		assertFalse(GuiConfiguration.getDataCleanerFile("foo.bar").exists());
+		assertTrue(GuiConfiguration.getDataCleanerFile(
+				"src/main/resources/changelog.txt").exists());
+		assertTrue(GuiConfiguration
+				.getDataCleanerFile("datacleaner-config.xml").exists());
+
+		String absolutePath = new File("src/main/resources/changelog.txt")
+				.getAbsolutePath();
+		assertTrue(absolutePath.endsWith("changelog.txt"));
+
+		assertTrue(GuiConfiguration.getDataCleanerFile(absolutePath).exists());
 	}
 }

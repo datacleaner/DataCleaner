@@ -509,10 +509,30 @@ public class GuiHelper {
 
 	public static URL getUrl(String path) {
 		URL url = GuiHelper.class.getResource(path);
+
+		if (url == null) {
+			try {
+				Enumeration<URL> resources = ClassLoader
+						.getSystemResources(path);
+				if (resources.hasMoreElements()) {
+					url = resources.nextElement();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 		if (url == null) {
 			// in Java Web Start mode the getSystemResource will return null
-			url = Thread.currentThread().getContextClassLoader().getResource(
-					path);
+			try {
+				Enumeration<URL> resources = Thread.currentThread()
+						.getContextClassLoader().getResources(path);
+				if (resources.hasMoreElements()) {
+					url = resources.nextElement();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return url;
 	}

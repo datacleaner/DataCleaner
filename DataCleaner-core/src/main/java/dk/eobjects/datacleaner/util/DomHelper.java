@@ -66,26 +66,34 @@ public class DomHelper {
 
 	public static String getAttributeValue(Node node, String attributeName) {
 		Attr attr = (Attr) node.getAttributes().getNamedItem(attributeName);
+		if (attr == null) {
+			return null;
+		}
 		return attr.getValue();
 	}
 
 	public static void addColumnNodes(Document doc, Node superNode,
 			Column[] columns) {
 		for (Column column : columns) {
-			Element columnElement = doc.createElement("column");
-			columnElement.setTextContent(column.getName());
+			if (column != null) {
+				Element columnElement = doc.createElement("column");
+				columnElement.setTextContent(column.getName());
+				
+				Table table = column.getTable();
+				if (table != null) {
 
-			Table table = column.getTable();
-			if (table != null && table.getName() != null) {
-				columnElement.setAttribute("table", table.getName());
+					if (table.getName() != null) {
+						columnElement.setAttribute("table", table.getName());
+					}
+				
+					Schema schema = table.getSchema();
+					if (schema != null && schema.getName() != null) {
+						columnElement.setAttribute("schema", schema.getName());
+					}
+				}
+				
+				superNode.appendChild(columnElement);
 			}
-
-			Schema schema = table.getSchema();
-			if (schema != null && schema.getName() != null) {
-				columnElement.setAttribute("schema", schema.getName());
-			}
-
-			superNode.appendChild(columnElement);
 		}
 	}
 

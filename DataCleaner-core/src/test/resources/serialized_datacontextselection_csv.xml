@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataContext>
-	<property name="filename">src/test/resources/customers_semicolon.csv</property>
-	<property name="separator">;</property>
-	<property name="quoteChar">"</property>
-	<property name="encoding">UTF-8</property>
-</dataContext>

@@ -104,7 +104,8 @@ public class DCTable extends JXTable implements MouseListener {
 			_panel.add(getTableHeader(), BorderLayout.NORTH);
 			_scrollPane = WidgetUtils.scrolleable(this);
 			_panel.add(_scrollPane, BorderLayout.CENTER);
-			_panel.setPreferredSize(getPanelPreferredSize());
+			Dimension ps = getPanelPreferredSize();
+			_panel.setPreferredSize(ps);
 		}
 		return _panel;
 	}

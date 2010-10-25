@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -18,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoresListPanel;
 import org.eobjects.datacleaner.panels.JobListPanel;
@@ -66,7 +66,7 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	protected DCPanel getWindowContent() {
-		DCPanel panel = new DCPanel();
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
 		Dimension dimension = new Dimension(WINDOW_WIDTH, 650);
 		panel.setPreferredSize(dimension);
 		panel.setSize(dimension);
@@ -75,6 +75,7 @@ public class MainWindow extends AbstractWindow {
 		panel.add(getHeaderPanel(), BorderLayout.NORTH);
 
 		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
+		taskPaneContainer.setOpaque(false);
 
 		JXTaskPane datastoresTaskPane = new JXTaskPane();
 		datastoresTaskPane.setTitle("Datastores");
@@ -106,8 +107,7 @@ public class MainWindow extends AbstractWindow {
 		expressionsTaskPane.setCollapsed(true);
 		taskPaneContainer.add(expressionsTaskPane);
 
-		JScrollPane scrollPane = new JScrollPane(taskPaneContainer);
-		scrollPane.setBorder(null);
+		JScrollPane scrollPane = WidgetUtils.scrolleable(taskPaneContainer);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
@@ -123,12 +123,9 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	private JPanel getHeaderPanel() {
-		Image headerImage = imageManager.getImage("images/window/main-window-header.png");
-		ImageIcon headerImageIcon = new ImageIcon(headerImage);
-		DCPanel headerPanel = new DCPanel(headerImage, 0, 0);
+		DCBannerPanel headerPanel = new DCBannerPanel();
 		headerPanel.setLayout(new HorizontalLayout());
-		int iconHeight = headerImageIcon.getIconHeight();
-		headerPanel.add(Box.createVerticalStrut(iconHeight));
+		headerPanel.add(Box.createVerticalStrut(headerPanel.getHeight()));
 
 		DCPanel buttonPanel = new DCPanel();
 		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.X_AXIS);
@@ -137,7 +134,8 @@ public class MainWindow extends AbstractWindow {
 
 		buttonPanel.add(Box.createHorizontalStrut(WidgetUtils.BORDER_WIDE_WIDTH));
 
-		JButton visitWebsiteButton = new JButton(imageManager.getImageIcon("images/actions/website.png", IconUtils.ICON_SIZE_SMALL));
+		JButton visitWebsiteButton = new JButton(imageManager.getImageIcon("images/actions/website.png",
+				IconUtils.ICON_SIZE_SMALL));
 		visitWebsiteButton.setToolTipText("Visit the DataCleaner website");
 		visitWebsiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
 		visitWebsiteButton.setAlignmentY(BOTTOM_ALIGNMENT);
@@ -166,7 +164,7 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	protected boolean isWindowResizable() {
-		return false;
+		return true;
 	}
 
 	private JMenuBar getWindowMenuBar() {

@@ -16,7 +16,15 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 	private volatile boolean initialized = false;
 
 	protected void initialize() {
-		setTitle(getWindowTitle());
+		String windowTitle = getWindowTitle();
+		if (windowTitle == null) {
+			windowTitle = "DataCleaner";
+		} else {
+			if (windowTitle.indexOf("DataCleaner") == -1) {
+				windowTitle = windowTitle + " | DataCleaner";
+			}
+		}
+		setTitle(windowTitle);
 		setIconImage(getWindowIcon());
 		addWindowListener(this);
 		setResizable(isWindowResizable());
@@ -25,9 +33,9 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 		JComponent content = getWindowContent();
 		getContentPane().add(content);
 		setPreferredSize(content.getPreferredSize());
-		
+
 		pack();
-		
+
 		if (isCentered()) {
 			centerOnScreen();
 		}
@@ -37,7 +45,7 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 	}
 
 	protected abstract boolean isWindowResizable();
-	
+
 	protected abstract boolean isCentered();
 
 	@Override
@@ -51,7 +59,7 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 		}
 		super.setVisible(true);
 	}
-	
+
 	protected abstract String getWindowTitle();
 
 	protected abstract Image getWindowIcon();

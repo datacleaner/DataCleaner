@@ -1,5 +1,6 @@
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.awt.GridLayout;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 
 	public AbstractPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
 		super();
+		setLayout(new GridLayout(1, 1));
 		_propertyDescriptor = propertyDescriptor;
 	}
 

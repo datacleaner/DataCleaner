@@ -10,7 +10,6 @@ import java.util.TreeSet;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -37,14 +36,13 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 
 	public AbstractJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, String backgroundImagePath,
 			AnalysisJobBuilder analysisJobBuilder) {
-		super(ImageManager.getInstance().getImage(backgroundImagePath), 95, 95);
+		super(ImageManager.getInstance().getImage(backgroundImagePath), 95, 95, WidgetUtils.BG_COLOR_BRIGHT,
+				WidgetUtils.BG_COLOR_BRIGHTEST);
 		_parentWindow = parentWindow;
 		_analysisJobBuilder = analysisJobBuilder;
 		_taskPaneContainer = new JXTaskPaneContainer();
 		_taskPaneContainer.setOpaque(false);
 		setLayout(new BorderLayout());
-		JScrollPane scroll = new JScrollPane(_taskPaneContainer);
-		scroll.setOpaque(false);
 		add(WidgetUtils.scrolleable(_taskPaneContainer));
 	}
 

@@ -42,7 +42,8 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 	private final JXTaskPaneContainer _taskPaneContainer;
 
 	public FilterListPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
-		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"),95,95);
+		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
+				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		setLayout(new BorderLayout());
 		_filterJobBuilders = new IdentityHashMap<FilterJobBuilder<?, ?>, JXTaskPane>();
 		_propertyWidgets = new IdentityHashMap<FilterJobBuilder<?, ?>, List<PropertyWidget<?>>>();

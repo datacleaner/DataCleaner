@@ -86,8 +86,9 @@ public final class WidgetFactory {
 		WidgetBuilder<JButton> wb = create(JButton.class);
 		Image image = ImageManager.getInstance().getImage(imagePath, 16);
 		ImageIcon imageIcon = new ImageIcon(image);
-		wb.toComponent().setIcon(imageIcon);
-		wb.toComponent().setMargin(new Insets(0, 0, 0, 0));
+		JButton button = wb.toComponent();
+		button.setIcon(imageIcon);
+		button.setMargin(new Insets(0, 0, 0, 0));
 		return wb;
 	}
 

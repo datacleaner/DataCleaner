@@ -23,7 +23,8 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	private final AnalyzerBeansConfiguration _configuration;
 
 	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration) {
-		super(ImageManager.getInstance().getImage("images/window/source-tab-background.png"), 95, 95);
+		super(ImageManager.getInstance().getImage("images/window/source-tab-background.png"), 95, 95,
+				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		setOpaque(true);
 		_analysisJobBuilder = analysisJobBuilder;
 		_configuration = configuration;

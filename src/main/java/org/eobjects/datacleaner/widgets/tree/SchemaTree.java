@@ -197,7 +197,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 					+ (value == null ? "<null>" : value.getClass().getName()));
 		}
 
-		final boolean opaque = hasFocus;
+		final boolean opaque = hasFocus || selected;
 		if (component instanceof JComponent) {
 			((JComponent) component).setOpaque(opaque);
 		}

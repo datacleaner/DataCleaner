@@ -21,19 +21,24 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetListener;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
-public abstract class AbstractJobBuilderPanel extends DCPanel {
+public abstract class AbstractJobBuilderPanel extends DCPanel implements PropertyWidgetListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private final List<PropertyWidget<?>> _propertyWidgets = new ArrayList<PropertyWidget<?>>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final JXTaskPaneContainer _taskPaneContainer;
+	private final AnalysisJobBuilderWindow _parentWindow;
 
-	public AbstractJobBuilderPanel(String backgroundImagePath, AnalysisJobBuilder analysisJobBuilder) {
+	public AbstractJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, String backgroundImagePath,
+			AnalysisJobBuilder analysisJobBuilder) {
 		super(ImageManager.getInstance().getImage(backgroundImagePath), 95, 95);
+		_parentWindow = parentWindow;
 		_analysisJobBuilder = analysisJobBuilder;
 		_taskPaneContainer = new JXTaskPaneContainer();
 		_taskPaneContainer.setOpaque(false);
@@ -92,7 +97,10 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 
 	protected PropertyWidget<?> createPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-		return PropertyWidgetFactory.create(analysisJobBuilder, beanJobBuilder, propertyDescriptor);
+		PropertyWidget<?> propertyWidget = PropertyWidgetFactory.create(analysisJobBuilder, beanJobBuilder,
+				propertyDescriptor);
+		propertyWidget.addListener(this);
+		return propertyWidget;
 	}
 
 	protected void addTaskPane(Icon icon, String title, JComponent content) {
@@ -130,6 +138,14 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 
 	public AnalysisJobBuilder getAnalysisJobBuilder() {
 		return _analysisJobBuilder;
+	}
+
+	@Override
+	public final void onValueChanged(PropertyWidget<?> widget, Object value) {
+		if (widget.isSet()) {
+			setConfiguredProperty(widget.getPropertyDescriptor(), value);
+		}
+		_parentWindow.updateStatusLabel();
 	}
 
 	protected abstract void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value);

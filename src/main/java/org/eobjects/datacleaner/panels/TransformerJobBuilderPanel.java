@@ -12,6 +12,7 @@ import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerChangeListener {
 
@@ -21,9 +22,9 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private final AnalyzerBeansConfiguration _configuration;
 	private final ColumnListTable _outputColumnsTable;
 
-	public TransformerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder,
+	public TransformerJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder,
 			AnalyzerBeansConfiguration configuration) {
-		super("images/window/transformer-tab-background.png", analysisJobBuilder);
+		super(parentWindow, "images/window/transformer-tab-background.png", analysisJobBuilder);
 		getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
 		_transformerJobBuilder = transformerJobBuilder;
 		_configuration = configuration;

@@ -21,4 +21,8 @@ public interface PropertyWidget<E> {
 	public boolean isSet();
 
 	public E getValue();
+
+	public void addListener(PropertyWidgetListener listener);
+
+	public void removeListener(PropertyWidgetListener listener);
 }

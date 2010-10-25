@@ -18,7 +18,7 @@ public class NumberDocument extends PlainDocument {
 			it.next();
 			if (!it.isDigit()) {
 				if (!it.is('.')) {
-					if (it.is('%')) {
+					if (!it.is('%')) {
 						number = false;
 					}
 				}

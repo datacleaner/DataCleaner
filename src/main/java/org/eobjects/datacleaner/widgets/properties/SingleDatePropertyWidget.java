@@ -1,41 +1,35 @@
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
-
-import javax.swing.JComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.jdesktop.swingx.JXDatePicker;
 
-public class SingleDatePropertyWidget implements PropertyWidget<Date> {
+public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
-	private final ConfiguredPropertyDescriptor _propertyDescriptor;
+	private static final long serialVersionUID = 1L;
+
 	private final JXDatePicker _datePicker;
 
 	public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		_propertyDescriptor = propertyDescriptor;
+		super(propertyDescriptor);
 		_datePicker = new JXDatePicker();
-		Date currentValue = (Date) beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		_datePicker.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				fireValueChanged();
+			}
+		});
+		Date currentValue = (Date) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
 			_datePicker.setDate(currentValue);
 		}
-	}
-
-	@Override
-	public JComponent getWidget() {
-		return _datePicker;
-	}
-
-	@Override
-	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
-		return _propertyDescriptor;
-	}
-
-	@Override
-	public boolean isSet() {
-		return _datePicker.getDate() != null;
+		add(_datePicker);
 	}
 
 	@Override

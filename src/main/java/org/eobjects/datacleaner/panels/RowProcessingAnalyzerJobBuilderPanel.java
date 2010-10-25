@@ -7,6 +7,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPanel {
 
@@ -14,9 +15,9 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 
 	private final RowProcessingAnalyzerJobBuilder<?> _analyzerJobBuilder;
 
-	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder,
+	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, AnalysisJobBuilder analysisJobBuilder,
 			RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		super("images/window/analyzer-tab-background.png", analysisJobBuilder);
+		super(parentWindow, "images/window/analyzer-tab-background.png", analysisJobBuilder);
 		_analyzerJobBuilder = analyzerJobBuilder;
 
 		AnalyzerBeanDescriptor<?> descriptor = _analyzerJobBuilder.getDescriptor();
@@ -28,7 +29,10 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (_analyzerJobBuilder.isMultipleJobsSupported()) {
 			if (propertyDescriptor.isInputColumn()) {
-				return new MultipleInputColumnsPropertyWidget(analysisJobBuilder, beanJobBuilder, propertyDescriptor);
+				MultipleInputColumnsPropertyWidget propertyWidget = new MultipleInputColumnsPropertyWidget(
+						analysisJobBuilder, beanJobBuilder, propertyDescriptor);
+				propertyWidget.addListener(this);
+				return propertyWidget;
 			}
 		}
 		return super.createPropertyWidget(analysisJobBuilder, beanJobBuilder, propertyDescriptor);

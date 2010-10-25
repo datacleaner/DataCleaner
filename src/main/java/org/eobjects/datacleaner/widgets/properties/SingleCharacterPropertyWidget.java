@@ -1,41 +1,46 @@
 package org.eobjects.datacleaner.widgets.properties;
 
-import javax.swing.JComponent;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.util.SingleCharacterDocument;
 
-public class SingleCharacterPropertyWidget implements PropertyWidget<Character> {
+public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Character> {
 
-	private final ConfiguredPropertyDescriptor _propertyDescriptor;
+	private static final long serialVersionUID = 1L;
+
 	private final JTextField _textField;
 
-	public SingleCharacterPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		_propertyDescriptor = propertyDescriptor;
+	public SingleCharacterPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+		super(propertyDescriptor);
 		_textField = new JTextField(1);
 		_textField.setDocument(new SingleCharacterDocument());
-		Character currentValue = (Character) beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		Character currentValue = (Character) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
 			_textField.setText(currentValue.toString());
 		}
-	}
+		_textField.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				fireValueChanged();
+			}
 
-	@Override
-	public JComponent getWidget() {
-		return _textField;
-	}
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				fireValueChanged();
+			}
 
-	@Override
-	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
-		return _propertyDescriptor;
-	}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				fireValueChanged();
+			}
+		});
 
-	@Override
-	public boolean isSet() {
-		String text = _textField.getText();
-		return (text != null && text.length() == 1);
+		add(_textField);
 	}
 
 	@Override

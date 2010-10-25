@@ -3,8 +3,9 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JRadioButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
@@ -17,10 +18,11 @@ import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.jdesktop.swingx.JXRadioGroup;
 
-public class SingleInputColumnPropertyWidget extends JXRadioGroup<JRadioButton> implements PropertyWidget<InputColumn<?>>,
+public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
 	private static final long serialVersionUID = 1L;
+	private final JXRadioGroup<JRadioButton> _radioGroup = new JXRadioGroup<JRadioButton>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
@@ -30,9 +32,9 @@ public class SingleInputColumnPropertyWidget extends JXRadioGroup<JRadioButton> 
 
 	public SingleInputColumnPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-		super();
-		setLayoutAxis(BoxLayout.Y_AXIS);
-		setOpaque(false);
+		super(propertyDescriptor);
+		_radioGroup.setLayoutAxis(BoxLayout.Y_AXIS);
+		_radioGroup.setOpaque(false);
 		_analysisJobBuilder = analysisJobBuilder;
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
@@ -40,6 +42,7 @@ public class SingleInputColumnPropertyWidget extends JXRadioGroup<JRadioButton> 
 		_propertyDescriptor = propertyDescriptor;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 		updateComponents();
+		add(_radioGroup);
 	}
 
 	private void updateComponents() {
@@ -86,7 +89,18 @@ public class SingleInputColumnPropertyWidget extends JXRadioGroup<JRadioButton> 
 				_radioButtons[_radioButtons.length - 1] = radioButton;
 			}
 		}
-		setValues(_radioButtons);
+
+		for (int i = 0; i < _radioButtons.length; i++) {
+			_radioButtons[i].addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					fireValueChanged();
+				}
+			});
+		}
+
+		_radioGroup.setValues(_radioButtons);
+		fireValueChanged();
 	}
 
 	@Override
@@ -127,21 +141,6 @@ public class SingleInputColumnPropertyWidget extends JXRadioGroup<JRadioButton> 
 	}
 
 	@Override
-	public JComponent getWidget() {
-		return this;
-	}
-
-	@Override
-	public boolean isSet() {
-		for (JRadioButton radio : _radioButtons) {
-			if (radio.isSelected()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
 	public InputColumn<?> getValue() {
 		for (int i = 0; i < _inputColumns.size(); i++) {
 			JRadioButton radio = _radioButtons[i];
@@ -150,10 +149,5 @@ public class SingleInputColumnPropertyWidget extends JXRadioGroup<JRadioButton> 
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
-		return _propertyDescriptor;
 	}
 }

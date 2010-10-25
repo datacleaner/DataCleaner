@@ -1,34 +1,34 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 
-public class SingleBooleanPropertyWidget implements PropertyWidget<Boolean> {
+public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean> {
 
-	private final ConfiguredPropertyDescriptor _propertyDescriptor;
+	private static final long serialVersionUID = 1L;
+
 	private final JCheckBox _checkBox;
 
-	public SingleBooleanPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		_propertyDescriptor = propertyDescriptor;
+	public SingleBooleanPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+		super(propertyDescriptor);
 		_checkBox = new JCheckBox();
-		Boolean currentValue = (Boolean) beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		Boolean currentValue = (Boolean) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		_checkBox.setOpaque(false);
 		if (currentValue != null) {
 			_checkBox.setSelected(currentValue.booleanValue());
 		}
-	}
-
-	@Override
-	public JComponent getWidget() {
-		return _checkBox;
-	}
-
-	@Override
-	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
-		return _propertyDescriptor;
+		_checkBox.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				fireValueChanged();
+			}
+		});
+		add(_checkBox);
 	}
 
 	@Override

@@ -100,7 +100,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		updateStatusLabel();
 	}
 
-	private void updateStatusLabel() {
+	public void updateStatusLabel() {
 		ImageManager imageManager = ImageManager.getInstance();
 		try {
 			if (_analysisJobBuilder.isConfigured(true)) {
@@ -277,7 +277,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(_analysisJobBuilder,
+		RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(this, _analysisJobBuilder,
 				analyzerJobBuilder);
 		_rowProcessingTabPanels.add(panel);
 		_tabbedPane.addTab(analyzerJobBuilder.getDescriptor().getDisplayName(),
@@ -305,7 +305,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
-		TransformerJobBuilderPanel panel = new TransformerJobBuilderPanel(_analysisJobBuilder, transformerJobBuilder,
+		TransformerJobBuilderPanel panel = new TransformerJobBuilderPanel(this, _analysisJobBuilder, transformerJobBuilder,
 				_configuration);
 		_transformerTabPanels.add(panel);
 		_tabbedPane.addTab(transformerJobBuilder.getDescriptor().getDisplayName(),

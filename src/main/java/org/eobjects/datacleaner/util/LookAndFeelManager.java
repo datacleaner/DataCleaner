@@ -16,6 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 
+/**
+ * Class that encapsulates all central configuration of look and feel and
+ * similar Swing constructs.
+ * 
+ * @author Kasper Sørensen
+ * 
+ */
 public final class LookAndFeelManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(LookAndFeelManager.class);
@@ -43,7 +50,7 @@ public final class LookAndFeelManager {
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-				
+
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
@@ -53,10 +60,10 @@ public final class LookAndFeelManager {
 				}
 			}
 		}
-		
-		ToolTipManager.sharedInstance().setInitialDelay(0);
+
+		ToolTipManager.sharedInstance().setInitialDelay(500);
 		PopupFactory.setSharedInstance(new DCPopupFactory());
-		
+
 		UIManager.put("ScrollPane.border", new EmptyBorder(0, 0, 0, 0));
 
 		// white background for input components
@@ -68,7 +75,7 @@ public final class LookAndFeelManager {
 		UIManager.put("ComboBox.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TextField.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("Spinner.background", WidgetUtils.BG_COLOR_BRIGHTEST);
-		
+
 		// table header styling
 		UIManager.put("TableHeader.background", WidgetUtils.BG_COLOR_DARK);
 		UIManager.put("TableHeader.focusCellBackground", WidgetUtils.BG_COLOR_LESS_DARK);

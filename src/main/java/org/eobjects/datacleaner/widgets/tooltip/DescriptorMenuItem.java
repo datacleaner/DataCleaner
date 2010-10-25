@@ -1,7 +1,8 @@
 package org.eobjects.datacleaner.widgets.tooltip;
 
-import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -12,6 +13,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -38,29 +40,56 @@ public class DescriptorMenuItem extends JMenuItem {
 		DCPanel panel = new DCPanel();
 		panel.setOpaque(true);
 		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
-		panel.setLayout(new BorderLayout());
+
+		JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor));
+		iconLabel.setOpaque(false);
 
 		JLabel nameLabel = new JLabel(_descriptor.getDisplayName());
 		nameLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		nameLabel.setOpaque(false);
 		nameLabel.setFont(WidgetUtils.FONT_HEADER);
-		panel.add(nameLabel, BorderLayout.NORTH);
 
-		JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor));
-		iconLabel.setOpaque(false);
-		panel.add(iconLabel, BorderLayout.WEST);
+		// if the bean has a description, add it in the CENTER of the tooltip
+		String description = _descriptor.getDescription();
+		if (StringUtils.isNullOrEmpty(description)) {
 
-		JTextArea descriptionLabel = new JTextArea(
-				"Description goes here. Foo bar. Description goes here. Foo bar. Description goes here. Foo bar. Description goes here. Foo bar. Description goes here. Foo bar.");
-		descriptionLabel.setEditable(false);
-		descriptionLabel.setColumns(30);
-		descriptionLabel.setLineWrap(true);
-		descriptionLabel.setWrapStyleWord(true);
-		descriptionLabel.setOpaque(false);
-		descriptionLabel.setBorder(null);
-		descriptionLabel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		descriptionLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		panel.add(descriptionLabel, BorderLayout.CENTER);
+			WidgetUtils.addToGridBag(iconLabel, panel, 0, 0);
+			WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
+
+		} else {
+			String[] lines = description.split("\n");
+
+			WidgetUtils.addToGridBag(iconLabel, panel, 0, 0, 1, lines.length + 1, GridBagConstraints.WEST);
+			WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
+
+			int width = 0;
+			int height = 0;
+
+			for (int i = 0; i < lines.length; i++) {
+				String line = lines[i];
+				JTextArea textArea = new JTextArea();
+				textArea.setText(line.trim());
+				textArea.setEditable(false);
+				textArea.setLineWrap(true);
+				textArea.setWrapStyleWord(true);
+				textArea.setOpaque(false);
+				textArea.setBorder(null);
+				textArea.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				textArea.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+				textArea.setColumns(30);
+
+				Dimension ps = textArea.getPreferredSize();
+				height += ps.height + 8;
+				width = Math.max(ps.width, width);
+
+				WidgetUtils.addToGridBag(textArea, panel, 1, i + 1);
+			}
+
+			// TODO: Make a more accurate width/height calculation
+			width += iconLabel.getPreferredSize().width + 50;
+			height += nameLabel.getPreferredSize().height + 50;
+			panel.setPreferredSize(new Dimension(width, height));
+		}
 
 		Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
 

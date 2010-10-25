@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<configuration-metadata>
+		<configuration-name>Example configuration</configuration-name>
+	</configuration-metadata>
+
+	<datastore-catalog>
+		<jdbc-datastore name="orderdb">
+			<url>jdbc:hsqldb:file:orderdb;readonly=true</url>
+			<driver>org.hsqldb.jdbcDriver</driver>
+			<username>SA</username>
+			<password></password>
+		</jdbc-datastore>
+	</datastore-catalog>
+
+	<multithreaded-taskrunner max-threads="20" />
+	
+	<classpath-scanner>
+		<package recursive="true">org.eobjects.analyzer.beans</package>
+		<package>org.eobjects.analyzer.result.renderer</package>
+		<package recursive="true">org.eobjects.datacleaner.widgets.result</package>
+	</classpath-scanner>
+
+</configuration>

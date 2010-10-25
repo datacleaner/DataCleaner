@@ -53,7 +53,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	private static final Logger logger = LoggerFactory.getLogger(OpenCsvFileDialog.class);
 
 	private static final int PREVIEW_ROWS = 7;
-	
+
 	private static final String SEPARATOR_TAB = "Tab (\\t)";
 	private static final String SEPARATOR_COMMA = "Comma (,)";
 	private static final String SEPARATOR_SEMICOLON = "Semicolon (;)";
@@ -71,7 +71,8 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	private final JButton _browseButton;
 	private final JLabel _statusLabel;
 	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, 10));
-	
+	private final DCPanel _outerPanel = new DCPanel();
+
 	public OpenCsvFileDialog(AnalyzerBeansConfiguration configuration) {
 		this((MutableDatastoreCatalog) configuration.getDatastoreCatalog());
 	}
@@ -251,6 +252,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			DataSet dataSet = dc.executeQuery(q);
 
 			_previewTable.setModel(dataSet.toTableModel());
+			_outerPanel.updateUI();
 		} catch (Exception e) {
 			logger.error("Unexpected error when updating preview table", e);
 		}
@@ -310,19 +312,18 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		centerPanel.add(formPanel);
 		centerPanel.add(_previewTable.toPanel());
 		centerPanel.add(buttonPanel);
-		
+
 		centerPanel.setPreferredSize(getDialogWidth(), 380);
 
 		JXStatusBar statusBar = new JXStatusBar();
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
 		statusBar.add(_statusLabel, c1);
 
-		DCPanel outerPanel = new DCPanel();
-		outerPanel.setLayout(new BorderLayout());
-		outerPanel.add(centerPanel, BorderLayout.CENTER);
-		outerPanel.add(statusBar, BorderLayout.SOUTH);
+		_outerPanel.setLayout(new BorderLayout());
+		_outerPanel.add(centerPanel, BorderLayout.CENTER);
+		_outerPanel.add(statusBar, BorderLayout.SOUTH);
 
-		return outerPanel;
+		return _outerPanel;
 	}
 
 	public String getEncoding() {

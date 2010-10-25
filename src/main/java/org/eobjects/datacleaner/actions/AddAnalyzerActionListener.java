@@ -36,22 +36,24 @@ public final class AddAnalyzerActionListener implements ActionListener {
 				.getAnalyzerBeanDescriptors();
 		descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
 		for (final AnalyzerBeanDescriptor<?> descriptor : descriptors) {
-			JMenuItem menuItem = new DescriptorMenuItem(descriptor);
-			menuItem.addActionListener(new ActionListener() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Class<?> analyzerClass = descriptor.getBeanClass();
-					if (descriptor.isExploringAnalyzer()) {
-						_analysisJobBuilder.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
-					} else {
-						_analysisJobBuilder
-								.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
+			if (descriptor.isRowProcessingAnalyzer()) {
+				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
+				menuItem.addActionListener(new ActionListener() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						Class<?> analyzerClass = descriptor.getBeanClass();
+						if (descriptor.isExploringAnalyzer()) {
+							_analysisJobBuilder.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
+						} else {
+							_analysisJobBuilder
+									.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
+						}
 					}
-				}
-			});
+				});
 
-			popup.add(menuItem);
+				popup.add(menuItem);
+			}
 		}
 
 		Component source = (Component) e.getSource();

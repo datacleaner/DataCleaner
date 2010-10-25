@@ -10,6 +10,8 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerChangeListener {
 
@@ -33,7 +35,10 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		List<MutableInputColumn<?>> outputColumns = transformerJobBuilder.getOutputColumns();
 
 		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, getAnalysisJobBuilder());
-		addTaskPane("Output columns", _outputColumnsTable);
+
+		ImageManager imageManager = ImageManager.getInstance();
+
+		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns", _outputColumnsTable);
 	}
 
 	@Override

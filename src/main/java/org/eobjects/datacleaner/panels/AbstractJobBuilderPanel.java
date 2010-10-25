@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -15,6 +16,7 @@ import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
@@ -38,7 +40,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 		setLayout(new BorderLayout());
 		JScrollPane scroll = new JScrollPane(_taskPaneContainer);
 		scroll.setOpaque(false);
-		add(_taskPaneContainer);
+		add(WidgetUtils.scrolleable(_taskPaneContainer));
 	}
 
 	protected void init(BeanDescriptor<?> descriptor, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
@@ -59,12 +61,16 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 			}
 		}
 
-		buildTaskPane(inputProperties, "Input columns", beanJobBuilder);
-		buildTaskPane(requiredProperties, "Required properties", beanJobBuilder);
-		buildTaskPane(optionalProperties, "Optional properties", beanJobBuilder);
+		ImageManager imageManager = ImageManager.getInstance();
+		buildTaskPane(inputProperties, imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL),
+				"Input columns", beanJobBuilder);
+		buildTaskPane(requiredProperties, imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL),
+				"Required properties", beanJobBuilder);
+		buildTaskPane(optionalProperties, imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL),
+				"Optional properties", beanJobBuilder);
 	}
 
-	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, String title,
+	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		if (!properties.isEmpty()) {
 			DCPanel panel = new DCPanel();
@@ -80,7 +86,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 1, GridBagConstraints.NORTHWEST, 4);
 				i++;
 			}
-			addTaskPane(title, panel);
+			addTaskPane(icon, title, panel);
 		}
 	}
 
@@ -89,8 +95,11 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 		return PropertyWidgetFactory.create(analysisJobBuilder, beanJobBuilder, propertyDescriptor);
 	}
 
-	protected void addTaskPane(String title, JComponent content) {
+	protected void addTaskPane(Icon icon, String title, JComponent content) {
 		JXTaskPane taskPane = new JXTaskPane();
+		if (icon != null) {
+			taskPane.setIcon(icon);
+		}
 		taskPane.setTitle(title);
 		taskPane.add(content);
 		_taskPaneContainer.add(taskPane);

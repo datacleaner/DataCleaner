@@ -12,11 +12,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -24,6 +27,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.table.DCTable;
+import org.jdesktop.swingx.HorizontalLayout;
 
 import dk.eobjects.metamodel.schema.Table;
 
@@ -58,8 +62,8 @@ public final class ColumnListTable extends DCPanel {
 		setLayout(new BorderLayout());
 
 		if (table != null) {
-			JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(),
-					imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+			JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(), imageManager.getImageIcon(
+					"images/model/column.png", IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
 			tableNameLabel.setOpaque(false);
 			tableNameLabel.setFont(WidgetUtils.FONT_HEADER);
 			add(tableNameLabel, BorderLayout.NORTH);
@@ -71,7 +75,7 @@ public final class ColumnListTable extends DCPanel {
 
 		JPanel tablePanel = _columnTable.toPanel();
 		tablePanel.setBorder(WidgetUtils.BORDER_EMPTY);
-		
+
 		tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_EMPTY, WidgetUtils.BORDER_THIN));
 		add(tablePanel, BorderLayout.CENTER);
 
@@ -88,10 +92,32 @@ public final class ColumnListTable extends DCPanel {
 		int i = 0;
 		Icon icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
 		for (InputColumn<?> column : _columns) {
-			if (column.isPhysicalColumn()) {
-				model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
+			if (column instanceof MutableInputColumn<?>) {
+				final JTextField textField = new JTextField(column.getName());
+				final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
+				textField.getDocument().addDocumentListener(new DocumentListener() {
+					@Override
+					public void removeUpdate(DocumentEvent e) {
+						mutableInputColumn.setName(textField.getText());
+					}
+
+					@Override
+					public void insertUpdate(DocumentEvent e) {
+						mutableInputColumn.setName(textField.getText());
+					}
+
+					@Override
+					public void changedUpdate(DocumentEvent e) {
+						mutableInputColumn.setName(textField.getText());
+					}
+				});
+				DCPanel panel = new DCPanel();
+				panel.setLayout(new HorizontalLayout(4));
+				panel.add(new JLabel(icon));
+				panel.add(textField);
+				model.setValueAt(panel, i, 0);
 			} else {
-				model.setValueAt(new JTextField(column.getName()), i, 0);
+				model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
 			}
 			model.setValueAt(column.getDataTypeFamily(), i, 1);
 

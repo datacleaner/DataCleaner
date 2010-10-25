@@ -10,8 +10,9 @@ public class SingleCharacterDocument extends PlainDocument {
 
 	@Override
 	public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-		if (str == null)
+		if (str == null) {
 			return;
+		}
 
 		if ((getLength() + str.length()) <= 1) {
 			super.insertString(offs, str, a);

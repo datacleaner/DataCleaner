@@ -21,6 +21,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 
 import org.jdesktop.swingx.JXErrorPane;
+import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -194,6 +195,12 @@ public final class WidgetUtils {
 		JXTextField tf = new JXTextField(promptText);
 		tf.setColumns(18);
 		return tf;
+	}
+
+	public static JXTextArea createTextArea(String promptText) {
+		JXTextArea ta = new JXTextArea(promptText);
+		ta.setColumns(18);
+		return ta;
 	}
 	
 }

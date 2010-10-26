@@ -30,7 +30,9 @@ public final class PropertyWidgetFactory {
 		Class<?> type = propertyDescriptor.getType();
 
 		if (propertyDescriptor.isArray()) {
-
+			if (ReflectionUtils.isString(type)) {
+				return new MultipleStringPropertyWidget(propertyDescriptor, beanJobBuilder);
+			}
 		} else {
 			if (ReflectionUtils.isCharacter(type)) {
 				return new SingleCharacterPropertyWidget(propertyDescriptor, beanJobBuilder);

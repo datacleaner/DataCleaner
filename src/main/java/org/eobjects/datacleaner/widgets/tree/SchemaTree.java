@@ -1,10 +1,6 @@
 package org.eobjects.datacleaner.widgets.tree;
 
 import java.awt.Component;
-import java.awt.GradientPaint;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.event.MouseListener;
 
 import javax.swing.Icon;
@@ -38,8 +34,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	private static final long serialVersionUID = 7763827443642264329L;
 
 	private static final Logger logger = LoggerFactory.getLogger(SchemaTree.class);
-	private static final Image BACKGROUND_IMAGE = ImageManager.getInstance().getImage(
-			"images/window/schema-tree-background.png");
 
 	public static final String LOADING_TABLES_STRING = "Loading tables...";
 	public static final String LOADING_COLUMNS_STRING = "Loading columns...";
@@ -213,29 +207,5 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		}
 
 		return component;
-	}
-
-	@Override
-	protected void paintComponent(Graphics g) {
-		final int x = getX();
-		final int y = getY();
-		final int width = getWidth();
-		final int height = getHeight();
-		
-		GradientPaint gradient = new GradientPaint(x, y, WidgetUtils.BG_COLOR_BRIGHTEST, x, y + height,
-				WidgetUtils.BG_COLOR_BRIGHT);
-		if (g instanceof Graphics2D) {
-			((Graphics2D) g).setPaint(gradient);
-		} else {
-			g.setColor(WidgetUtils.BG_COLOR_BRIGHTEST);
-		}
-		g.fillRect(x, y, width, height);
-
-		final int imgWidth = BACKGROUND_IMAGE.getWidth(null);
-		final int imgHeight = BACKGROUND_IMAGE.getHeight(null);
-
-		g.drawImage(BACKGROUND_IMAGE, width - imgWidth - 5, height - imgHeight - 5, this);
-
-		super.paintComponent(g);
 	}
 }

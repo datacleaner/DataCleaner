@@ -13,7 +13,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -69,7 +68,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final JLabel _statusLabel;
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
-	
+
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName) {
 		this(configuration, configuration.getDatastoreCatalog().getDatastore(datastoreName));
 	}
@@ -203,9 +202,13 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		splitPane.setBackground(WidgetUtils.BG_COLOR_DARK);
 
 		SchemaTree schemaTree = new SchemaTree(_datastore, _analysisJobBuilder);
-		JScrollPane treeScroll = WidgetUtils.scrolleable(schemaTree);
-		treeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		splitPane.add(treeScroll);
+
+		Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
+		DCPanel treePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
+				WidgetUtils.BG_COLOR_BRIGHT);
+		treePanel.setLayout(new BorderLayout());
+		treePanel.add(WidgetUtils.scrolleable(schemaTree), BorderLayout.CENTER);
+		splitPane.add(treePanel);
 
 		SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),

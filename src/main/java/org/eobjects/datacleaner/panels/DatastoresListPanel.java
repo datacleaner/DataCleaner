@@ -54,8 +54,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 
 				ImageManager imageManager = ImageManager.getInstance();
 
-				JMenuItem csvMenuItem = new JMenuItem("Comma-separated file", imageManager
-						.getImageIcon(IconUtils.CSV_IMAGEPATH));
+				JMenuItem csvMenuItem = new JMenuItem("Comma-separated file", imageManager.getImageIcon(
+						IconUtils.CSV_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				csvMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -63,8 +63,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 					}
 				});
 
-				JMenuItem excelMenuItem = new JMenuItem("Microsoft Excel spreadsheet", imageManager
-						.getImageIcon(IconUtils.EXCEL_IMAGEPATH));
+				JMenuItem excelMenuItem = new JMenuItem("Microsoft Excel spreadsheet", imageManager.getImageIcon(
+						IconUtils.EXCEL_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				excelMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -72,8 +72,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 					}
 				});
 
-				JMenuItem accessMenuItem = new JMenuItem("Microsoft Access database-file", imageManager
-						.getImageIcon(IconUtils.ACCESS_IMAGEPATH));
+				JMenuItem accessMenuItem = new JMenuItem("Microsoft Access database-file", imageManager.getImageIcon(
+						IconUtils.ACCESS_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				accessMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -82,8 +82,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 				});
 
 				// TODO: Not yet functional
-				JMenuItem jdbcMenuItem = new JMenuItem("Database connection", imageManager
-						.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH));
+				JMenuItem jdbcMenuItem = new JMenuItem("Database connection", imageManager.getImageIcon(
+						IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				jdbcMenuItem.setEnabled(false);
 
 				popup.add(jdbcMenuItem);

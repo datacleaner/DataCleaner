@@ -1,5 +1,7 @@
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.io.File;
+
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -44,6 +46,12 @@ public final class PropertyWidgetFactory {
 			}
 			if (ReflectionUtils.isDate(type)) {
 				return new SingleDatePropertyWidget(propertyDescriptor, beanJobBuilder);
+			}
+			if (type.isEnum()) {
+				return new SingleEnumPropertyWidget(propertyDescriptor, beanJobBuilder);
+			}
+			if (type == File.class) {
+				return new SingleFilePropertyWidget(propertyDescriptor, beanJobBuilder);
 			}
 		}
 

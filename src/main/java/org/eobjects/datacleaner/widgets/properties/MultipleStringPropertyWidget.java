@@ -20,6 +20,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		super(propertyDescriptor);
 
 		_textArea = WidgetUtils.createTextArea(propertyDescriptor.getName());
+		_textArea.setRows(3);
 
 		String[] currentValue = (String[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {

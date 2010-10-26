@@ -7,6 +7,8 @@ import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -20,6 +22,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenCsvFileDialog;
+import org.eobjects.datacleaner.windows.OpenExcelSpreadsheetDialog;
 
 public final class DatastoresListPanel extends DCPanel implements DatastoreListener {
 
@@ -39,19 +42,50 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 		ImageManager imageManager = ImageManager.getInstance();
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
-		JButton addDatastoreMenuItem = new JButton(imageManager.getImageIcon("images/actions/create_datastore.png"));
+
+		final JButton addDatastoreMenuItem = new JButton("Add datastore",
+				imageManager.getImageIcon("images/actions/create_datastore.png"));
 		addDatastoreMenuItem.setToolTipText("Add datastore");
 		addDatastoreMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new OpenCsvFileDialog(_configuration).setVisible(true);
+				JPopupMenu popup = new JPopupMenu();
+
+				ImageManager imageManager = ImageManager.getInstance();
+
+				JMenuItem csvMenuItem = new JMenuItem("Comma-separated file", imageManager
+						.getImageIcon(IconUtils.CSV_IMAGEPATH));
+				csvMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new OpenCsvFileDialog(_catalog).setVisible(true);
+					}
+				});
+
+				JMenuItem excelMenuItem = new JMenuItem("Microsoft Excel spreadsheet", imageManager
+						.getImageIcon(IconUtils.EXCEL_IMAGEPATH));
+				excelMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new OpenExcelSpreadsheetDialog(_catalog).setVisible(true);
+					}
+				});
+
+				JMenuItem accessMenuItem = new JMenuItem("Microsoft Access database-file", imageManager
+						.getImageIcon(IconUtils.ACCESS_IMAGEPATH));
+
+				JMenuItem jdbcMenuItem = new JMenuItem("Database connection", imageManager
+						.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH));
+
+				popup.add(jdbcMenuItem);
+				popup.add(csvMenuItem);
+				popup.add(excelMenuItem);
+				popup.add(accessMenuItem);
+
+				popup.show(addDatastoreMenuItem, 0, addDatastoreMenuItem.getHeight());
 			}
 		});
 		toolBar.add(addDatastoreMenuItem);
-
-		JButton configureDriversItem = new JButton(imageManager.getImageIcon("images/menu/options.png"));
-		configureDriversItem.setToolTipText("Configure database drivers");
-		toolBar.add(configureDriversItem);
 
 		setLayout(new BorderLayout());
 		add(toolBar, BorderLayout.NORTH);

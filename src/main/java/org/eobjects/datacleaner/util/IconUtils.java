@@ -16,6 +16,12 @@ public final class IconUtils {
 	public static int ICON_SIZE_LARGE = 32;
 	public static int ICON_SIZE_SMALL = 20;
 
+	public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
+	public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
+	public static final String EXCEL_IMAGEPATH = "images/datastore-types/excel.png";
+	public static final String ACCESS_IMAGEPATH = "images/datastore-types/access.png";
+	public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
+
 	public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
 	public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
 	public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
@@ -82,15 +88,15 @@ public final class IconUtils {
 	}
 
 	protected static String getDatastoreImagePath(Datastore datastore) {
-		String imagePath = "images/model/datastore.png";
+		String imagePath = GENERIC_DATASTORE_IMAGEPATH;
 		if (datastore instanceof CsvDatastore) {
-			imagePath = "images/datastore-types/csv.png";
+			imagePath = CSV_IMAGEPATH;
 		} else if (datastore instanceof ExcelDatastore) {
-			imagePath = "images/datastore-types/excel.png";
+			imagePath = EXCEL_IMAGEPATH;
 		} else if (datastore instanceof AccessDatastore) {
-			imagePath = "images/datastore-types/access.png";
+			imagePath = ACCESS_IMAGEPATH;
 		} else if (datastore instanceof CompositeDatastore) {
-			imagePath = "images/datastore-types/composite.png";
+			imagePath = COMPOSITE_IMAGEPATH;
 		}
 		return imagePath;
 	}

@@ -17,9 +17,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -73,10 +73,6 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, 10));
 	private final DCPanel _outerPanel = new DCPanel();
 
-	public OpenCsvFileDialog(AnalyzerBeansConfiguration configuration) {
-		this((MutableDatastoreCatalog) configuration.getDatastoreCatalog());
-	}
-
 	public OpenCsvFileDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
@@ -125,10 +121,15 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getOpenFileDirectory());
+				FileFilter combinedFilter = FileFilters.combined("Any ", FileFilters.CSV, FileFilters.TSV, FileFilters.DAT,
+						FileFilters.TXT);
+				fileChooser.addChoosableFileFilter(combinedFilter);
 				fileChooser.addChoosableFileFilter(FileFilters.CSV);
 				fileChooser.addChoosableFileFilter(FileFilters.TSV);
+				fileChooser.addChoosableFileFilter(FileFilters.DAT);
+				fileChooser.addChoosableFileFilter(FileFilters.TXT);
 				fileChooser.addChoosableFileFilter(FileFilters.ALL);
-				fileChooser.setFileFilter(FileFilters.CSV);
+				fileChooser.setFileFilter(combinedFilter);
 				WidgetUtils.centerOnScreen(fileChooser);
 				int result = fileChooser.showOpenDialog(OpenCsvFileDialog.this);
 				if (result == JFileChooser.APPROVE_OPTION) {

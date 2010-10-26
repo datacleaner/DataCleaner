@@ -77,7 +77,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
-		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
+		_filterListPanel = new FilterListPanel(this, _configuration, _analysisJobBuilder);
 		_tabbedPane = new CloseableTabbedPane();
 		_tabbedPane.addTabCloseListener(this);
 		_tabbedPane.addChangeListener(new ChangeListener() {

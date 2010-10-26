@@ -1,5 +1,7 @@
 package org.eobjects.datacleaner.panels;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -12,6 +14,7 @@ import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.widgets.properties.ChangeRequirementButton;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerChangeListener {
@@ -22,8 +25,8 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private final AnalyzerBeansConfiguration _configuration;
 	private final ColumnListTable _outputColumnsTable;
 
-	public TransformerJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder,
-			AnalyzerBeansConfiguration configuration) {
+	public TransformerJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, AnalysisJobBuilder analysisJobBuilder,
+			TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration) {
 		super(parentWindow, "images/window/transformer-tab-background.png", analysisJobBuilder);
 		getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
 		_transformerJobBuilder = transformerJobBuilder;
@@ -39,7 +42,14 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 
 		ImageManager imageManager = ImageManager.getInstance();
 
-		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns", _outputColumnsTable);
+		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
+				_outputColumnsTable);
+
+		ChangeRequirementButton requirementButton = new ChangeRequirementButton(analysisJobBuilder, transformerJobBuilder);
+		DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.add(requirementButton);
+		add(buttonPanel, BorderLayout.NORTH);
 	}
 
 	@Override

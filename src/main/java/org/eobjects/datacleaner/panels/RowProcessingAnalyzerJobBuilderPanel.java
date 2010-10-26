@@ -1,10 +1,14 @@
 package org.eobjects.datacleaner.panels;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.datacleaner.widgets.properties.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -22,6 +26,12 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 
 		AnalyzerBeanDescriptor<?> descriptor = _analyzerJobBuilder.getDescriptor();
 		init(descriptor, analyzerJobBuilder);
+		
+		ChangeRequirementButton requirementButton = new ChangeRequirementButton(analysisJobBuilder, analyzerJobBuilder);
+		DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.add(requirementButton);
+		add(buttonPanel, BorderLayout.NORTH);
 	}
 
 	@Override

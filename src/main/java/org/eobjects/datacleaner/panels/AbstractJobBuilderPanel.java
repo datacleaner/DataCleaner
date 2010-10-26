@@ -43,7 +43,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 		_taskPaneContainer = new JXTaskPaneContainer();
 		_taskPaneContainer.setOpaque(false);
 		setLayout(new BorderLayout());
-		add(WidgetUtils.scrolleable(_taskPaneContainer));
+		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
 
 	protected void init(BeanDescriptor<?> descriptor, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {

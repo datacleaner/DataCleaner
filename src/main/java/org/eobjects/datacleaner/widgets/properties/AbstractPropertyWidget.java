@@ -62,4 +62,10 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 			listener.onValueChanged(this, newValue);
 		}
 	}
+	
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_listeners.clear();
+	}
 }

@@ -33,6 +33,10 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
 	private static final String NO_FILTER_TEXT = "(No filter requirement)";
 	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final Icon mappedFilterIcon = imageManager.getImageIcon("images/status/valid.png",
+			IconUtils.ICON_SIZE_SMALL);
+	private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon("images/status/warning.png",
+			IconUtils.ICON_SIZE_SMALL);
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;
@@ -76,40 +80,47 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 		for (final FilterJobBuilder<?, ?> fjb : fjbs) {
 			JMenu filterMenuItem = new JMenu(fjb.getDescriptor().getDisplayName());
 
-			FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
-			Set<String> categoryNames = fjbDescriptor.getCategoryNames();
-			for (final String category : categoryNames) {
-				JMenuItem categoryMenuItem = new JMenuItem(category);
+			if (!fjb.isConfigured()) {
+				filterMenuItem.setIcon(unconfiguredFilterIcon);
+				filterMenuItem.setEnabled(false);
+				filterMenuItem.setToolTipText("Filter is not correctly configured");
+			} else {
+				FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
+				Set<String> categoryNames = fjbDescriptor.getCategoryNames();
+				for (final String category : categoryNames) {
+					JMenuItem categoryMenuItem = new JMenuItem(category);
 
-				if (currentRequirement != null) {
-					// put an icon on the currently configured requirement
-					try {
-						FilterJob filterJob = fjb.toFilterJob();
+					if (currentRequirement != null) {
+						// put an icon on the currently configured requirement
+						try {
+							FilterJob filterJob = fjb.toFilterJob();
 
-						if (currentRequirement.getFilterJob().equals(filterJob)) {
-							if (currentRequirement.getCategory().equals(fjbDescriptor.getCategoryByName(category))) {
-								Icon icon = imageManager.getImageIcon("images/status/valid", IconUtils.ICON_SIZE_SMALL);
-								filterMenuItem.setIcon(icon);
-								categoryMenuItem.setIcon(icon);
+							if (currentRequirement.getFilterJob().equals(filterJob)) {
+								if (currentRequirement.getCategory().equals(fjbDescriptor.getCategoryByName(category))) {
+									filterMenuItem.setIcon(mappedFilterIcon);
+									categoryMenuItem.setIcon(mappedFilterIcon);
+								}
 							}
+						} catch (Exception ex) {
+							System.out.println("ex: " + ex.getMessage());
+							logger.warn("Filterjob matching threw exception, probably because of incomplete configuration",
+									ex);
 						}
-					} catch (Exception ex) {
-						logger.warn("Filterjob matching threw exception, probably because of incomplete configuration", ex);
 					}
+
+					categoryMenuItem.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							_jobBuilder.setRequirement(fjb, category);
+							setText(fjb.getDescriptor().getDisplayName() + ": " + category);
+							updateParentUI();
+						}
+					});
+
+					filterMenuItem.add(categoryMenuItem);
 				}
 
-				categoryMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						_jobBuilder.setRequirement(fjb, category);
-						setText(fjb.getDescriptor().getDisplayName() + ": " + category);
-						updateParentUI();
-					}
-				});
-
-				filterMenuItem.add(categoryMenuItem);
 			}
-
 			popup.add(filterMenuItem);
 		}
 
@@ -131,7 +142,6 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 			parent = nextParent;
 		}
 		if (parent instanceof JComponent) {
-			System.out.println("parent: " + parent);
 			((JComponent) parent).updateUI();
 		}
 	}

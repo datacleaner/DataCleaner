@@ -57,6 +57,11 @@ public final class IconUtils {
 	}
 
 	protected static String getDescriptorImagePath(BeanDescriptor<?> descriptor) {
+		if (!descriptor.getBeanClass().getPackage().getName().startsWith("org.eobjects")) {
+			// plugins get a special icon
+			return "images/component-types/plugin.png";
+		}
+
 		String imagePath;
 		if (descriptor instanceof TransformerBeanDescriptor<?>) {
 			imagePath = TRANSFORMER_IMAGEPATH;
@@ -65,6 +70,7 @@ public final class IconUtils {
 		} else {
 			imagePath = ANALYZER_IMAGEPATH;
 		}
+
 		String displayName = descriptor.getDisplayName().toLowerCase();
 		if (displayName.indexOf("string") != -1 || displayName.indexOf("word") != -1) {
 			imagePath = "images/component-types/type_string.png";

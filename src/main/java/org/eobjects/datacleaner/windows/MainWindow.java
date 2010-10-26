@@ -86,7 +86,7 @@ public class MainWindow extends AbstractWindow {
 		JXTaskPane analysisJobsTaskPane = new JXTaskPane();
 		analysisJobsTaskPane.setTitle("Analysis jobs");
 		analysisJobsTaskPane.setIcon(imageManager.getImageIcon("images/model/job.png"));
-		analysisJobsTaskPane.add(new JobListPanel());
+		analysisJobsTaskPane.add(new JobListPanel(_configuration));
 		taskPaneContainer.add(analysisJobsTaskPane);
 
 		JXTaskPane dictionariesTaskPane = new JXTaskPane();

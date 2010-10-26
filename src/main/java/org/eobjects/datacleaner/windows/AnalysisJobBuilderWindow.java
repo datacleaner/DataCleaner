@@ -68,6 +68,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final JLabel _statusLabel;
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
+	
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName) {
+		this(configuration, configuration.getDatastoreCatalog().getDatastore(datastoreName));
+	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, Datastore datastore) {
 		_configuration = configuration;

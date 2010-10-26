@@ -3,6 +3,7 @@ package org.eobjects.datacleaner.windows;
 import java.awt.Image;
 
 import javax.swing.JComponent;
+import javax.swing.table.TableModel;
 
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.table.DCTable;
@@ -17,6 +18,8 @@ public class DataSetWindow extends AbstractWindow {
 	private final Query _query;
 	private final DataContext _dataContext;
 	private final int _maxRows;
+	private final String _title;
+	private TableModel _tableModel;
 
 	public DataSetWindow(Query query, DataContext dataContext) {
 		this(query, dataContext, -1);
@@ -27,15 +30,21 @@ public class DataSetWindow extends AbstractWindow {
 		_query = query;
 		_dataContext = dataContext;
 		_maxRows = maxRows;
+		_title = "DataSet: " + _query.toSql() + (_maxRows > 0 ? " (first " + _maxRows + " rows)" : "");
+	}
+
+	public DataSetWindow(String title, TableModel tableModel) {
+		super();
+		_query = null;
+		_dataContext = null;
+		_maxRows = -1;
+		_title = title;
+		_tableModel = tableModel;
 	}
 
 	@Override
 	protected String getWindowTitle() {
-		String title = "DataSet: " + _query.toSql();
-		if (_maxRows > 0) {
-			title = title + " (first " + _maxRows + " rows)";
-		}
-		return title;
+		return _title;
 	}
 
 	@Override
@@ -50,11 +59,14 @@ public class DataSetWindow extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		if (_maxRows > 0) {
-			_query.setMaxRows(_maxRows);
+		if (_tableModel == null) {
+			if (_maxRows > 0) {
+				_query.setMaxRows(_maxRows);
+			}
+			DataSet dataSet = _dataContext.executeQuery(_query);
+			_tableModel = dataSet.toTableModel();
 		}
-		DataSet dataSet = _dataContext.executeQuery(_query);
-		return new DCTable(dataSet.toTableModel()).toPanel();
+		return new DCTable(_tableModel).toPanel();
 	}
 
 	@Override

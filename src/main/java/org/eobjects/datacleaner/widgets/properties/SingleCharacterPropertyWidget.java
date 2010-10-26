@@ -2,10 +2,10 @@ package org.eobjects.datacleaner.widgets.properties;
 
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.SingleCharacterDocument;
 
 public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Character> {
@@ -23,19 +23,10 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 		if (currentValue != null) {
 			_textField.setText(currentValue.toString());
 		}
-		_textField.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				fireValueChanged();
-			}
+		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
 
 			@Override
-			public void insertUpdate(DocumentEvent e) {
-				fireValueChanged();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
+			protected void onChange(DocumentEvent e) {
 				fireValueChanged();
 			}
 		});

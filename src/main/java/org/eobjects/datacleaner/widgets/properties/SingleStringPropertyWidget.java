@@ -1,10 +1,10 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTextField;
 
@@ -22,20 +22,9 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 		if (currentValue != null) {
 			_textField.setText(currentValue);
 		}
-		_textField.getDocument().addDocumentListener(new DocumentListener() {
-
+		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
-			public void removeUpdate(DocumentEvent e) {
-				fireValueChanged();
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				fireValueChanged();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
+			protected void onChange(DocumentEvent e) {
 				fireValueChanged();
 			}
 		});

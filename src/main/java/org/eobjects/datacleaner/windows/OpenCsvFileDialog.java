@@ -16,7 +16,6 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,6 +24,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -79,19 +79,9 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		_datastoreNameField = WidgetUtils.createTextField("Datastore name");
 
 		_filenameField = WidgetUtils.createTextField("Filename");
-		_filenameField.getDocument().addDocumentListener(new DocumentListener() {
+		_filenameField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
-			public void removeUpdate(DocumentEvent e) {
-				autoDetectQuoteAndSeparator();
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				autoDetectQuoteAndSeparator();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
+			protected void onChange(DocumentEvent e) {
 				autoDetectQuoteAndSeparator();
 			}
 		});

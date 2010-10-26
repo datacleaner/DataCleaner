@@ -10,10 +10,8 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.border.CompoundBorder;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -22,12 +20,14 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
+import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.HorizontalLayout;
+import org.jdesktop.swingx.JXTextField;
 
 import dk.eobjects.metamodel.schema.Table;
 
@@ -93,21 +93,12 @@ public final class ColumnListTable extends DCPanel {
 		Icon icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
 		for (InputColumn<?> column : _columns) {
 			if (column instanceof MutableInputColumn<?>) {
-				final JTextField textField = new JTextField(column.getName());
+				final JXTextField textField = WidgetUtils.createTextField("Column name");
+				textField.setText(column.getName());
 				final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
-				textField.getDocument().addDocumentListener(new DocumentListener() {
+				textField.getDocument().addDocumentListener(new DCDocumentListener() {
 					@Override
-					public void removeUpdate(DocumentEvent e) {
-						mutableInputColumn.setName(textField.getText());
-					}
-
-					@Override
-					public void insertUpdate(DocumentEvent e) {
-						mutableInputColumn.setName(textField.getText());
-					}
-
-					@Override
-					public void changedUpdate(DocumentEvent e) {
+					protected void onChange(DocumentEvent e) {
 						mutableInputColumn.setName(textField.getText());
 					}
 				});

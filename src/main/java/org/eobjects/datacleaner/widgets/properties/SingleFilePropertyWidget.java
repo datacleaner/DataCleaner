@@ -8,13 +8,13 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -38,20 +38,10 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 			_textField.setText(currentValue.getAbsolutePath());
 		}
 
-		_textField.getDocument().addDocumentListener(new DocumentListener() {
+		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
 
 			@Override
-			public void removeUpdate(DocumentEvent e) {
-				fireValueChanged();
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				fireValueChanged();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
+			protected void onChange(DocumentEvent e) {
 				fireValueChanged();
 			}
 		});

@@ -12,6 +12,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
@@ -20,10 +21,13 @@ public final class AddFilterActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilder _analysisJobBuilder;
+	private final FilterListPanel _filterListPanel;
 
-	public AddFilterActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
+	public AddFilterActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+			FilterListPanel filterListPanel) {
 		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
+		_filterListPanel = filterListPanel;
 	}
 
 	@Override
@@ -39,6 +43,7 @@ public final class AddFilterActionListener implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					_analysisJobBuilder.addFilter(descriptor);
+					_filterListPanel.updateUI();
 				}
 			});
 			popup.add(menuItem);

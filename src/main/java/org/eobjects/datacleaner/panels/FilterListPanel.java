@@ -24,6 +24,7 @@ import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.datacleaner.actions.AddFilterActionListener;
 import org.eobjects.datacleaner.actions.AddFilterMappingActionListener;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
@@ -56,7 +57,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		// Add filter
 		ImageManager imageManager = ImageManager.getInstance();
 		JButton addFilterButton = new JButton("Add filter", imageManager.getImageIcon("images/component-types/filter.png"));
-		addFilterButton.addActionListener(new AddFilterActionListener(configuration, _analysisJobBuilder));
+		addFilterButton.addActionListener(new AddFilterActionListener(configuration, _analysisJobBuilder, this));
 		toolBar.add(addFilterButton);
 
 		add(toolBar, BorderLayout.NORTH);
@@ -88,11 +89,13 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 		DCPanel panel = new DCPanel();
 
-		JButton removeButton = new JButton("Remove filter");
+		JButton removeButton = new JButton("Remove filter", ImageManager.getInstance().getImageIcon(
+				"images/actions/remove.png", IconUtils.ICON_SIZE_SMALL));
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				_analysisJobBuilder.removeFilter(fjb);
+				FilterListPanel.this.updateUI();
 			}
 		});
 

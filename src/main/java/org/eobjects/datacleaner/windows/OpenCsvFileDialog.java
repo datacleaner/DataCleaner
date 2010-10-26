@@ -120,8 +120,8 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getOpenFileDirectory());
-				FileFilter combinedFilter = FileFilters.combined("Any ", FileFilters.CSV, FileFilters.TSV, FileFilters.DAT,
-						FileFilters.TXT);
+				FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)",
+						FileFilters.CSV, FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
 				fileChooser.addChoosableFileFilter(combinedFilter);
 				fileChooser.addChoosableFileFilter(FileFilters.CSV);
 				fileChooser.addChoosableFileFilter(FileFilters.TSV);

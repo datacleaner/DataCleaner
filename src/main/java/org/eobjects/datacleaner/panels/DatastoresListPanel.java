@@ -21,6 +21,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.OpenAccessDatabaseDialog;
 import org.eobjects.datacleaner.windows.OpenCsvFileDialog;
 import org.eobjects.datacleaner.windows.OpenExcelSpreadsheetDialog;
 
@@ -73,9 +74,17 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 
 				JMenuItem accessMenuItem = new JMenuItem("Microsoft Access database-file", imageManager
 						.getImageIcon(IconUtils.ACCESS_IMAGEPATH));
+				accessMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new OpenAccessDatabaseDialog(_catalog).setVisible(true);
+					}
+				});
 
+				// TODO: Not yet functional
 				JMenuItem jdbcMenuItem = new JMenuItem("Database connection", imageManager
 						.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH));
+				jdbcMenuItem.setEnabled(false);
 
 				popup.add(jdbcMenuItem);
 				popup.add(csvMenuItem);

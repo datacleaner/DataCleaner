@@ -48,5 +48,6 @@ public final class FileFilters {
 	public static final FileFilter TXT = new ExtensionFilter("Text files (.csv)", ".txt");
 	public static final FileFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
 	public static final FileFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
+	public static final FileFilter MDB = new ExtensionFilter("Access database (.mdb)", ".mdb");
 
 }

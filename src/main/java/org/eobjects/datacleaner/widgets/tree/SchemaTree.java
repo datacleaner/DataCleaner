@@ -221,7 +221,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		final int y = getY();
 		final int width = getWidth();
 		final int height = getHeight();
-
+		
 		GradientPaint gradient = new GradientPaint(x, y, WidgetUtils.BG_COLOR_BRIGHTEST, x, y + height,
 				WidgetUtils.BG_COLOR_BRIGHT);
 		if (g instanceof Graphics2D) {

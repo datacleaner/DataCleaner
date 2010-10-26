@@ -63,8 +63,11 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		Collections.reverse(transformerJobs);
 
 		Table[] tables = MetaModelHelper.getTables(physicalColumns);
+		
+		if (tables.length != 1) {
+			throw new IllegalStateException("Transformer is expected to contain columns originating from 1 table, found " + tables.length);
+		}
 
-		assert tables.length == 1;
 		Table table = tables[0];
 
 		DataContext dc = _analysisJobBuilder.getDataContextProvider().getDataContext();

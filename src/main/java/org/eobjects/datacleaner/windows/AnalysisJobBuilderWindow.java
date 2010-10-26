@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
@@ -202,7 +203,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		splitPane.setBackground(WidgetUtils.BG_COLOR_DARK);
 
 		SchemaTree schemaTree = new SchemaTree(_datastore, _analysisJobBuilder);
-		splitPane.add(schemaTree);
+		JScrollPane treeScroll = WidgetUtils.scrolleable(schemaTree);
+		treeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		splitPane.add(treeScroll);
 
 		SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),

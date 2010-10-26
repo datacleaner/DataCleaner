@@ -42,10 +42,9 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 	public OpenExcelSpreadsheetDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
-		_datastoreNameField = new JXTextField("Datastore name");
+		_datastoreNameField = WidgetUtils.createTextField("Datastore name");
 
-		_filenameField = new JXTextField("Filename");
-		_filenameField.setColumns(40);
+		_filenameField = WidgetUtils.createTextField("Filename");
 		_filenameField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
@@ -153,7 +152,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 		centerPanel.add(formPanel);
 		centerPanel.add(buttonPanel);
 
-		centerPanel.setPreferredSize(getDialogWidth(), 380);
+		centerPanel.setPreferredSize(getDialogWidth(), 190);
 
 		JXStatusBar statusBar = new JXStatusBar();
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);

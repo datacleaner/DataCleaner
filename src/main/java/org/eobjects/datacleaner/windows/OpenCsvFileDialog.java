@@ -76,10 +76,9 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	public OpenCsvFileDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
-		_datastoreNameField = new JXTextField("Datastore name");
+		_datastoreNameField = WidgetUtils.createTextField("Datastore name");
 
-		_filenameField = new JXTextField("Filename");
-		_filenameField.setColumns(40);
+		_filenameField = WidgetUtils.createTextField("Filename");
 		_filenameField.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
@@ -154,14 +153,20 @@ public class OpenCsvFileDialog extends AbstractDialog {
 
 	private void autoDetectQuoteAndSeparator() {
 		ImageManager imageManager = ImageManager.getInstance();
-		String text = _filenameField.getText();
-		if (text == null) {
+
+		File file = new File(_filenameField.getText());
+		if (file.exists()) {
+			if (!file.isFile()) {
+				_statusLabel.setText("Not a valid file!");
+				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				return;
+			}
+		} else {
+			_statusLabel.setText("The file does not exist!");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
 			return;
 		}
-		File file = new File(text);
-		if (!file.exists() || !file.isFile()) {
-			return;
-		}
+
 		try {
 			Reader reader = FileHelper.getReader(file, _encodingComboBox.getSelectedItem().toString());
 

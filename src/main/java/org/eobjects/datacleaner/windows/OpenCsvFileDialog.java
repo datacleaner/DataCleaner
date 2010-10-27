@@ -7,8 +7,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -142,6 +145,8 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	}
 
 	private void autoDetectQuoteAndSeparator() {
+		List<String> warnings = new ArrayList<String>();
+		boolean showPreview = true;
 		ImageManager imageManager = ImageManager.getInstance();
 
 		File file = new File(_filenameField.getText());
@@ -157,44 +162,70 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			return;
 		}
 
+		char[] buffer;
+
+		Reader reader = null;
 		try {
-			Reader reader = FileHelper.getReader(file, _encodingComboBox.getSelectedItem().toString());
+			reader = FileHelper.getReader(file, _encodingComboBox.getSelectedItem().toString());
 
 			// take 1024 sample characters to auto-detect quotes and separators
-			char[] buffer = new char[1024];
+			buffer = new char[2048];
 			int bufferSize = reader.read(buffer);
 			if (bufferSize != -1) {
 				buffer = Arrays.copyOf(buffer, bufferSize);
 			}
-			reader.close();
-			int tabs = 0;
-			int commas = 0;
-			int semicolons = 0;
-			int pipes = 0;
-			int singleQuotes = 0;
-			int doubleQuotes = 0;
-			for (int i = 0; i < buffer.length; i++) {
-				char c = buffer[i];
-				if (c == '\t') {
-					tabs++;
-				} else if (c == ',') {
-					commas++;
-				} else if (c == ';') {
-					semicolons++;
-				} else if (c == '\'') {
-					singleQuotes++;
-				} else if (c == '|') {
-					pipes++;
-				} else if (c == '"') {
-					doubleQuotes++;
+		} catch (Exception e) {
+			if (logger.isWarnEnabled()) {
+				logger.warn("Error reading from file: " + e.getMessage(), e);
+			}
+			_statusLabel.setText("Error reading from file: " + e.getMessage());
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			return;
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException ioe) {
+					logger.debug("Could not close reader", ioe);
 				}
 			}
+		}
 
-			int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
-			if (detectedSeparator == 0) {
-				throw new IllegalStateException("Could not autodetect separator char");
+		if (indexOf('\n', buffer) == -1) {
+			warnings.add("No newline in first " + buffer.length + " chars");
+			// don't show the preview if no newlines where found (it may try
+			// to treat the whole file as a single row)
+			showPreview = false;
+		}
+
+		int tabs = 0;
+		int commas = 0;
+		int semicolons = 0;
+		int pipes = 0;
+		int singleQuotes = 0;
+		int doubleQuotes = 0;
+		for (int i = 0; i < buffer.length; i++) {
+			char c = buffer[i];
+			if (c == '\t') {
+				tabs++;
+			} else if (c == ',') {
+				commas++;
+			} else if (c == ';') {
+				semicolons++;
+			} else if (c == '\'') {
+				singleQuotes++;
+			} else if (c == '|') {
+				pipes++;
+			} else if (c == '"') {
+				doubleQuotes++;
 			}
+		}
 
+		int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
+		if (detectedSeparator == 0) {
+			warnings.add("Could not autodetect separator char");
+		} else {
+			// set the separator
 			if (detectedSeparator == commas) {
 				_separatorCharField.setSelectedItem(SEPARATOR_COMMA);
 			} else if (detectedSeparator == semicolons) {
@@ -204,29 +235,52 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			} else if (detectedSeparator == pipes) {
 				_separatorCharField.setSelectedItem(SEPARATOR_PIPE);
 			}
+		}
 
-			int detectedQuote = Math.max(singleQuotes, doubleQuotes);
-			if (detectedQuote == 0) {
-				throw new IllegalStateException("Could not autodetect quote char");
-			}
-
+		int detectedQuote = Math.max(singleQuotes, doubleQuotes);
+		if (detectedQuote == 0) {
+			warnings.add("Could not autodetect quote char");
+		} else {
+			// set the quote
 			if (detectedQuote == singleQuotes) {
 				_quoteCharField.setSelectedItem(QUOTE_SINGLE_QUOTE);
 			} else if (detectedQuote == doubleQuotes) {
 				_quoteCharField.setSelectedItem(QUOTE_DOUBLE_QUOTE);
 			}
+		}
 
+		if (showPreview) {
 			updatePreviewTable();
+		}
 
+		if (warnings.isEmpty()) {
 			_statusLabel.setText("File read - separator and quote chars have been autodetected!");
 			_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
-		} catch (Exception e) {
-			if (logger.isWarnEnabled()) {
-				logger.warn("Error reading from file: " + e.getMessage(), e);
+		} else {
+			StringBuilder sb = new StringBuilder();
+			for (String warning : warnings) {
+				sb.append(warning);
+				sb.append(". ");
 			}
-			_statusLabel.setText("Error reading from file: " + e.getMessage());
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_statusLabel.setText(sb.toString());
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
 		}
+	}
+
+	/**
+	 * Finds the index of a char in a char-array, similar to String.indexOf(...)
+	 * 
+	 * @param c
+	 * @param arr
+	 * @return
+	 */
+	private int indexOf(char c, char[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			if (c == arr[i]) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	private void updatePreviewTable() {

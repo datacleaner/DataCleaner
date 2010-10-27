@@ -51,6 +51,8 @@ import dk.eobjects.metamodel.util.FileHelper;
 
 public class OpenCsvFileDialog extends AbstractDialog {
 
+	private static final int SAMPLE_BUFFER_SIZE = 2048;
+
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(OpenCsvFileDialog.class);
@@ -75,6 +77,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	private final JLabel _statusLabel;
 	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, 10));
 	private final DCPanel _outerPanel = new DCPanel();
+	private final JButton _addDatastoreButton;
 
 	public OpenCsvFileDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
@@ -85,23 +88,35 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		_filenameField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
-				autoDetectQuoteAndSeparator();
+				onSettingsUpdated(true);
 			}
 		});
 
 		_separatorCharField = new JComboBox(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
 				SEPARATOR_PIPE });
 		_separatorCharField.setEditable(true);
+		_separatorCharField.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				onSettingsUpdated(false);
+			}
+		});
 
 		_quoteCharField = new JComboBox(new String[] { QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
 		_quoteCharField.setEditable(true);
+		_quoteCharField.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				onSettingsUpdated(false);
+			}
+		});
 
 		_encodingComboBox = new JComboBox(new String[] { "UTF-8", "ASCII", "CP1252" });
 		_encodingComboBox.setEditable(true);
 		_encodingComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				autoDetectQuoteAndSeparator();
+				onSettingsUpdated(true);
 			}
 		});
 
@@ -137,14 +152,15 @@ public class OpenCsvFileDialog extends AbstractDialog {
 					if (FileFilters.TSV.accept(selectedFile)) {
 						_separatorCharField.setSelectedItem(SEPARATOR_TAB);
 					}
-
-					autoDetectQuoteAndSeparator();
 				}
 			}
 		});
+		
+		_addDatastoreButton = new JButton("Create datastore");
+		_addDatastoreButton.setEnabled(false);
 	}
 
-	private void autoDetectQuoteAndSeparator() {
+	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote) {
 		List<String> warnings = new ArrayList<String>();
 		boolean showPreview = true;
 		ImageManager imageManager = ImageManager.getInstance();
@@ -154,13 +170,16 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			if (!file.isFile()) {
 				_statusLabel.setText("Not a valid file!");
 				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				_addDatastoreButton.setEnabled(false);
 				return;
 			}
 		} else {
 			_statusLabel.setText("The file does not exist!");
 			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
 			return;
 		}
+		_addDatastoreButton.setEnabled(true);
 
 		char[] buffer;
 
@@ -168,8 +187,8 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		try {
 			reader = FileHelper.getReader(file, _encodingComboBox.getSelectedItem().toString());
 
-			// take 1024 sample characters to auto-detect quotes and separators
-			buffer = new char[2048];
+			// read a sample of the file auto-detect quotes and separators
+			buffer = new char[SAMPLE_BUFFER_SIZE];
 			int bufferSize = reader.read(buffer);
 			if (bufferSize != -1) {
 				buffer = Arrays.copyOf(buffer, bufferSize);
@@ -191,61 +210,66 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			}
 		}
 
-		if (indexOf('\n', buffer) == -1) {
+		if (indexOf('\n', buffer) == -1 && buffer.length == SAMPLE_BUFFER_SIZE) {
 			warnings.add("No newline in first " + buffer.length + " chars");
 			// don't show the preview if no newlines where found (it may try
 			// to treat the whole file as a single row)
 			showPreview = false;
 		}
 
-		int tabs = 0;
-		int commas = 0;
-		int semicolons = 0;
-		int pipes = 0;
-		int singleQuotes = 0;
-		int doubleQuotes = 0;
-		for (int i = 0; i < buffer.length; i++) {
-			char c = buffer[i];
-			if (c == '\t') {
-				tabs++;
-			} else if (c == ',') {
-				commas++;
-			} else if (c == ';') {
-				semicolons++;
-			} else if (c == '\'') {
-				singleQuotes++;
-			} else if (c == '|') {
-				pipes++;
-			} else if (c == '"') {
-				doubleQuotes++;
+		if (autoDetectSeparatorAndQuote) {
+			int newlines = 0;
+			int tabs = 0;
+			int commas = 0;
+			int semicolons = 0;
+			int pipes = 0;
+			int singleQuotes = 0;
+			int doubleQuotes = 0;
+			for (int i = 0; i < buffer.length; i++) {
+				char c = buffer[i];
+				if (c == '\n') {
+					newlines++;
+				} else if (c == '\t') {
+					tabs++;
+				} else if (c == ',') {
+					commas++;
+				} else if (c == ';') {
+					semicolons++;
+				} else if (c == '\'') {
+					singleQuotes++;
+				} else if (c == '|') {
+					pipes++;
+				} else if (c == '"') {
+					doubleQuotes++;
+				}
 			}
-		}
-
-		int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
-		if (detectedSeparator == 0) {
-			warnings.add("Could not autodetect separator char");
-		} else {
-			// set the separator
-			if (detectedSeparator == commas) {
-				_separatorCharField.setSelectedItem(SEPARATOR_COMMA);
-			} else if (detectedSeparator == semicolons) {
-				_separatorCharField.setSelectedItem(SEPARATOR_SEMICOLON);
-			} else if (detectedSeparator == tabs) {
-				_separatorCharField.setSelectedItem(SEPARATOR_TAB);
-			} else if (detectedSeparator == pipes) {
-				_separatorCharField.setSelectedItem(SEPARATOR_PIPE);
+			
+			int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
+			if (detectedSeparator == 0 || detectedSeparator < newlines) {
+				warnings.add("Could not autodetect separator char");
+			} else {
+				// set the separator
+				if (detectedSeparator == commas) {
+					_separatorCharField.setSelectedItem(SEPARATOR_COMMA);
+				} else if (detectedSeparator == semicolons) {
+					_separatorCharField.setSelectedItem(SEPARATOR_SEMICOLON);
+				} else if (detectedSeparator == tabs) {
+					_separatorCharField.setSelectedItem(SEPARATOR_TAB);
+				} else if (detectedSeparator == pipes) {
+					_separatorCharField.setSelectedItem(SEPARATOR_PIPE);
+				}
 			}
-		}
-
-		int detectedQuote = Math.max(singleQuotes, doubleQuotes);
-		if (detectedQuote == 0) {
-			warnings.add("Could not autodetect quote char");
-		} else {
-			// set the quote
-			if (detectedQuote == singleQuotes) {
-				_quoteCharField.setSelectedItem(QUOTE_SINGLE_QUOTE);
-			} else if (detectedQuote == doubleQuotes) {
-				_quoteCharField.setSelectedItem(QUOTE_DOUBLE_QUOTE);
+			
+			int detectedQuote = Math.max(singleQuotes, doubleQuotes);
+			if (detectedQuote == 0 || detectedQuote < newlines) {
+				warnings.add("Could not autodetect quote char");
+			} else {
+				// set the quote
+				if (detectedQuote == singleQuotes) {
+					_quoteCharField.setSelectedItem(QUOTE_SINGLE_QUOTE);
+				} else if (detectedQuote == doubleQuotes) {
+					_quoteCharField.setSelectedItem(QUOTE_DOUBLE_QUOTE);
+				}
 			}
 		}
 
@@ -319,11 +343,11 @@ public class OpenCsvFileDialog extends AbstractDialog {
 
 		// temporary variable to make it easier to refactor the layout
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Datastore name"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("Datastore name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Filename"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("Filename:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
 		WidgetUtils.addToGridBag(_browseButton, formPanel, 2, row);
 
@@ -342,8 +366,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		row++;
 		WidgetUtils.addToGridBag(_previewTable.toPanel(), formPanel, 0, row, 3, 1);
 
-		JButton addDatastoreButton = new JButton("Create datastore");
-		addDatastoreButton.addActionListener(new ActionListener() {
+		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				CsvDatastore datastore = new CsvDatastore(_datastoreNameField.getText(), _filenameField.getText(),
@@ -355,7 +378,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 
 		DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(addDatastoreButton);
+		buttonPanel.add(_addDatastoreButton);
 
 		DCPanel centerPanel = new DCPanel();
 		centerPanel.setLayout(new VerticalLayout(4));

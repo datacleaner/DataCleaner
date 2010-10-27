@@ -38,6 +38,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 	private final JButton _browseButton;
 	private final JLabel _statusLabel;
 	private final DCPanel _outerPanel = new DCPanel();
+	private final JButton _addDatastoreButton;
 
 	public OpenExcelSpreadsheetDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
@@ -83,6 +84,9 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 				}
 			}
 		});
+
+		_addDatastoreButton = new JButton("Create datastore");
+		_addDatastoreButton.setEnabled(false);
 	}
 
 	private void autoDetectQuoteAndSeparator() {
@@ -93,13 +97,16 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 			if (file.isFile()) {
 				_statusLabel.setText("Excel spreadsheet ready");
 				_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+				_addDatastoreButton.setEnabled(true);
 			} else {
 				_statusLabel.setText("Not a valid file!");
 				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				_addDatastoreButton.setEnabled(false);
 			}
 		} else {
 			_statusLabel.setText("The file does not exist!");
 			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
 		}
 
 	}
@@ -115,16 +122,15 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 
 		// temporary variable to make it easier to refactor the layout
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Datastore name"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("Datastore name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Filename"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("Filename:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
 		WidgetUtils.addToGridBag(_browseButton, formPanel, 2, row);
 
-		JButton addDatastoreButton = new JButton("Create datastore");
-		addDatastoreButton.addActionListener(new ActionListener() {
+		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Datastore datastore = new ExcelDatastore(_datastoreNameField.getText(), _filenameField.getText());
@@ -135,7 +141,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 
 		DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(addDatastoreButton);
+		buttonPanel.add(_addDatastoreButton);
 
 		DCPanel centerPanel = new DCPanel();
 		centerPanel.setLayout(new VerticalLayout(4));

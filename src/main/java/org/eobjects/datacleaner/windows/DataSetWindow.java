@@ -1,5 +1,6 @@
 package org.eobjects.datacleaner.windows;
 
+import java.awt.Dimension;
 import java.awt.Image;
 
 import javax.swing.JComponent;
@@ -67,6 +68,15 @@ public class DataSetWindow extends AbstractWindow {
 			_tableModel = dataSet.toTableModel();
 		}
 		return new DCTable(_tableModel).toPanel();
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		Dimension preferredSize = super.getPreferredSize();
+		if (preferredSize.width < 300) {
+			preferredSize.width = 300;
+		}
+		return preferredSize;
 	}
 
 	@Override

@@ -67,7 +67,6 @@ public final class ColumnMouseListener extends MouseAdapter implements MouseList
 						public void actionPerformed(ActionEvent e) {
 							DataContext dc = _analysisJobBuilder.getDataContextProvider().getDataContext();
 							Query q = dc.query().from(column.getTable()).select(column).toQuery();
-							q.selectDistinct();
 							DataSetWindow window = new DataSetWindow(q, dc, 400);
 							window.setVisible(true);
 						}

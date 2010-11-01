@@ -21,7 +21,7 @@ public final class Main {
 
 		// make the configuration mutable
 		c = new AnalyzerBeansConfigurationImpl(new MutableDatastoreCatalog(c.getDatastoreCatalog()),
-				c.getReferenceDataCatalog(), c.getDescriptorProvider(), c.getTaskRunner(), c.getCollectionProvider());
+				c.getReferenceDataCatalog(), c.getDescriptorProvider(), c.getTaskRunner(), c.getStorageProvider());
 
 		Thread.setDefaultUncaughtExceptionHandler(new DCUncaughtExceptionHandler());
 		LookAndFeelManager.getInstance().init();

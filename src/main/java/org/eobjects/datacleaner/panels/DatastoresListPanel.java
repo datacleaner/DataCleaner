@@ -80,7 +80,17 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 						new OpenAccessDatabaseDialog(_catalog).setVisible(true);
 					}
 				});
-
+				
+				// TODO: Not yet functional
+				JMenuItem dbaseMenuItem = new JMenuItem("Dbase database-file", imageManager.getImageIcon(
+						IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				dbaseMenuItem.setEnabled(false);
+				
+				// TODO: Not yet functional
+				JMenuItem odbMenuItem = new JMenuItem("OpenOffice.org database-file", imageManager.getImageIcon(
+						IconUtils.ODB_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				odbMenuItem.setEnabled(false);
+				
 				// TODO: Not yet functional
 				JMenuItem jdbcMenuItem = new JMenuItem("Database connection", imageManager.getImageIcon(
 						IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
@@ -90,6 +100,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 				popup.add(csvMenuItem);
 				popup.add(excelMenuItem);
 				popup.add(accessMenuItem);
+				popup.add(dbaseMenuItem);
+				popup.add(odbMenuItem);
 
 				popup.show(addDatastoreMenuItem, 0, addDatastoreMenuItem.getHeight());
 			}

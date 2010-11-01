@@ -20,6 +20,8 @@ public final class IconUtils {
 	public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
 	public static final String EXCEL_IMAGEPATH = "images/datastore-types/excel.png";
 	public static final String ACCESS_IMAGEPATH = "images/datastore-types/access.png";
+	public static final String DBASE_IMAGEPATH = "images/datastore-types/dbase.png";
+	public static final String ODB_IMAGEPATH = "images/datastore-types/odb.png";
 	public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
 
 	public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";

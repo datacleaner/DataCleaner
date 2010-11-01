@@ -1,6 +1,7 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -54,6 +55,9 @@ public final class PropertyWidgetFactory {
 			}
 			if (type == File.class) {
 				return new SingleFilePropertyWidget(propertyDescriptor, beanJobBuilder);
+			}
+			if(type == Pattern.class) {
+				return new PatternPropertyWidget(propertyDescriptor, beanJobBuilder);
 			}
 		}
 

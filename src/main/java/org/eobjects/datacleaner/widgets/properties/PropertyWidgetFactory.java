@@ -16,7 +16,7 @@ public final class PropertyWidgetFactory {
 
 	public static PropertyWidget<?> create(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-
+		
 		if (propertyDescriptor.isInputColumn()) {
 			if (propertyDescriptor.isArray()) {
 				// use checkboxes but only enable selection with a single row

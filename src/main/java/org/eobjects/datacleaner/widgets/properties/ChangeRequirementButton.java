@@ -17,6 +17,7 @@ import javax.swing.JPopupMenu;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.FilterOutcome;
+import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
@@ -52,7 +53,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		FilterOutcome currentRequirement = _jobBuilder.getRequirement();
+		Outcome currentRequirement = _jobBuilder.getRequirement();
 		logger.info("Current requirement: {}", currentRequirement);
 
 		JPopupMenu popup = new JPopupMenu();
@@ -90,13 +91,14 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 				for (final String category : categoryNames) {
 					JMenuItem categoryMenuItem = new JMenuItem(category);
 
-					if (currentRequirement != null) {
+					if (currentRequirement != null && currentRequirement instanceof FilterOutcome) {
+						FilterOutcome filterOutcome = (FilterOutcome) currentRequirement;
 						// put an icon on the currently configured requirement
 						try {
 							FilterJob filterJob = fjb.toFilterJob();
 
-							if (currentRequirement.getFilterJob().equals(filterJob)) {
-								if (currentRequirement.getCategory().equals(fjbDescriptor.getCategoryByName(category))) {
+							if (filterOutcome.getFilterJob().equals(filterJob)) {
+								if (filterOutcome.getCategory().equals(fjbDescriptor.getCategoryByName(category))) {
 									filterMenuItem.setIcon(mappedFilterIcon);
 									categoryMenuItem.setIcon(mappedFilterIcon);
 								}

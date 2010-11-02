@@ -75,7 +75,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private void updateComponents() {
 		removeAll();
-		_inputColumns = _analysisJobBuilder.getInputColumns(_dataTypeFamily);
+		_inputColumns = _analysisJobBuilder.getAvailableInputColumns(_dataTypeFamily);
 		InputColumn<?>[] currentValue = (InputColumn<?>[]) _beanJobBuilder.getConfiguredProperty(getPropertyDescriptor());
 
 		DCPanel buttonPanel = new DCPanel();

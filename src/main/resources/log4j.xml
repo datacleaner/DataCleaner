@@ -20,6 +20,10 @@
 	<logger name="org.eobjects.analyzer.job.runner">
 		<level value="info" />
 	</logger>
+	
+	<logger name="org.eobjects.analyzer.storage">
+		<level value="info" />
+	</logger>
 
 	<logger
 		name="org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider">

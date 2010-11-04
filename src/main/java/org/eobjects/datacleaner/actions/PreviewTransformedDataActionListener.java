@@ -63,9 +63,10 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		Collections.reverse(transformerJobs);
 
 		Table[] tables = MetaModelHelper.getTables(physicalColumns);
-		
+
 		if (tables.length != 1) {
-			throw new IllegalStateException("Transformer is expected to contain columns originating from 1 table, found " + tables.length);
+			throw new IllegalStateException("Transformer is expected to contain columns originating from 1 table, found "
+					+ tables.length);
 		}
 
 		Table table = tables[0];
@@ -82,9 +83,10 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		}
 
 		DataSet dataSet = dc.executeQuery(q);
+		int rowNumber = 0;
 		while (dataSet.next()) {
 			Row row = dataSet.getRow();
-			InputRow inputRow = new MetaModelInputRow(row);
+			InputRow inputRow = new MetaModelInputRow(rowNumber, row);
 
 			for (TransformerJobBuilder<?> tjb : transformerJobs) {
 				List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
@@ -100,6 +102,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 			}
 
 			result.add(inputRow);
+			rowNumber++;
 		}
 
 		// close

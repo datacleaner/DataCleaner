@@ -2,6 +2,7 @@ package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import java.text.NumberFormat;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -61,7 +62,7 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 			cols += verticalDimensions.size();
 
 			_tableModel = new DefaultTableModel(rows, cols);
-			
+
 			if (ReflectionUtils.isNumber(crosstab.getValueClass())) {
 				_alignment = SwingConstants.RIGHT;
 			}
@@ -100,17 +101,18 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 			JLabel label = new JLabel();
 			if (value == null) {
 				label.setText(LabelConstants.NULL_LABEL);
+			} else if (value instanceof Double || value instanceof Float) {
+				label.setText(NumberFormat.getInstance().format(value));
 			} else {
 				label.setText(value.toString());
 			}
 			panel.add(label);
-			
+
 			if (drillToDetailResultProducer != null) {
 				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png").toComponent();
 				button.setMargin(new Insets(0, 0, 0, 0));
 				button.addActionListener(new InvokeResultProducerActionListener(drillToDetailResultProducer));
 				panel.add(button);
-
 			}
 			panel.setAlignmentX(_alignment);
 			_tableModel.setValueAt(panel, _row, _col);

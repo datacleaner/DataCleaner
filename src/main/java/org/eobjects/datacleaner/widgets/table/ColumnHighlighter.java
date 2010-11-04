@@ -2,7 +2,6 @@ package org.eobjects.datacleaner.widgets.table;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.event.ChangeListener;
 
@@ -18,7 +17,7 @@ import org.jdesktop.swingx.decorator.Highlighter;
  */
 public final class ColumnHighlighter implements Highlighter {
 
-	private static final Color BACKGROUND_COLOR = WidgetUtils.BG_COLOR_DARK;
+	private static final Color BACKGROUND_COLOR = WidgetUtils.BG_COLOR_LESS_DARK;
 	private static final Color FOREGROUND_COLOR = WidgetUtils.BG_COLOR_BRIGHTEST;
 	private ColorHighlighter _colorHighlighter;
 	private ColumnHighlightPredicate _evaluatedColumnsPredicate;
@@ -43,7 +42,6 @@ public final class ColumnHighlighter implements Highlighter {
 	public Component highlight(Component component, ComponentAdapter adapter) {
 		if (_evaluatedColumnsPredicate.isHighlighted(component, adapter)) {
 			Component highlight = _colorHighlighter.highlight(component, adapter);
-			highlight.setFont(highlight.getFont().deriveFont(Font.BOLD));
 			return highlight;
 		}
 		return component;

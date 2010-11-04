@@ -16,14 +16,20 @@ public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsR
 	@Override
 	public JPanel render(AnnotatedRowsResult result) {
 		DCTable table = new DCTable(result.toTableModel());
-		InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
-		if (highlightedColumns.length > 0) {
-			int[] highligthedColumnIndexes = new int[highlightedColumns.length];
-			for (int i = 0; i < highligthedColumnIndexes.length; i++) {
-				highligthedColumnIndexes[i] = result.getColumnIndex(highlightedColumns[i]);
-			}
 
-			table.addHighlighter(new ColumnHighlighter(highligthedColumnIndexes));
+		InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
+		if (result.getInputColumns().size() > highlightedColumns.length) {
+			// if there's context information available (columns besides the
+			// actual columns of interest) then highlight the columns of
+			// interest.
+			if (highlightedColumns.length > 0) {
+				int[] highligthedColumnIndexes = new int[highlightedColumns.length];
+				for (int i = 0; i < highligthedColumnIndexes.length; i++) {
+					highligthedColumnIndexes[i] = result.getColumnIndex(highlightedColumns[i]);
+				}
+
+				table.addHighlighter(new ColumnHighlighter(highligthedColumnIndexes));
+			}
 		}
 		return table.toPanel();
 	}

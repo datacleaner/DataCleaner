@@ -17,6 +17,10 @@
 		<level value="warn" />
 	</logger>
 
+	<logger name="org.eobjects.analyzer.job.runner">
+		<level value="info" />
+	</logger>
+
 	<logger
 		name="org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider">
 		<level value="info" />

@@ -26,6 +26,7 @@ public class ProgressBarWindow extends AbstractWindow implements AnalysisListene
 
 	private final DCPanel panel = new DCPanel();
 	private final Map<Table, JProgressBar> progressBars = new HashMap<Table, JProgressBar>();
+	private final Map<Table, Long> progressBeginTimes = new HashMap<Table, Long>();
 
 	public ProgressBarWindow() {
 		super();
@@ -72,6 +73,7 @@ public class ProgressBarWindow extends AbstractWindow implements AnalysisListene
 		JProgressBar progressBar = new JProgressBar();
 		progressBar.setMaximum(expectedRows);
 		progressBars.put(table, progressBar);
+		progressBeginTimes.put(table, System.currentTimeMillis());
 		panel.add(progressBar);
 		panel.updateUI();
 	}
@@ -86,8 +88,13 @@ public class ProgressBarWindow extends AbstractWindow implements AnalysisListene
 
 	@Override
 	public void rowProcessingSuccess(AnalysisJob job, Table table) {
+		long totalMillis = System.currentTimeMillis() - progressBeginTimes.get(table);
+
 		JProgressBar progressBar = progressBars.get(table);
 		progressBar.setValue(progressBar.getMaximum());
+
+		panel.add(new JLabel("Processing of " + table.getName() + " took:"));
+		panel.add(new JLabel(totalMillis + " ms."));
 	}
 
 	@Override

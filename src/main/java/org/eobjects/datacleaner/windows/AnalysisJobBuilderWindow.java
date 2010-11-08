@@ -282,6 +282,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	@Override
 	public void onAdd(ExploringAnalyzerJobBuilder<?> analyzerJobBuilder) {
 		_tabbedPane.addTab(analyzerJobBuilder.getDescriptor().getDisplayName(), new JLabel("TODO: Exploring analyzer"));
+		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
 		updateStatusLabel();
 	}
 
@@ -292,6 +293,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_rowProcessingTabPanels.add(panel);
 		_tabbedPane.addTab(analyzerJobBuilder.getDescriptor().getDisplayName(),
 				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), panel);
+		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
 		updateStatusLabel();
 	}
 
@@ -320,6 +322,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_transformerTabPanels.add(panel);
 		_tabbedPane.addTab(transformerJobBuilder.getDescriptor().getDisplayName(),
 				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), panel);
+		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
 		updateStatusLabel();
 	}
 

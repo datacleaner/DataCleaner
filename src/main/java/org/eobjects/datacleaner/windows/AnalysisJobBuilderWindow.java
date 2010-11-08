@@ -156,6 +156,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		ImageManager imageManager = ImageManager.getInstance();
 		JButton saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
+		saveButton.setEnabled(false);
 		toolBar.add(saveButton);
 
 		toolBar.add(new JSeparator(JSeparator.VERTICAL));

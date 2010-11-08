@@ -19,6 +19,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.FontUIResource;
 
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTextArea;
@@ -30,9 +31,9 @@ import org.jdesktop.swingx.error.ErrorLevel;
 
 public final class WidgetUtils {
 
-	public static final Font FONT_HEADER = new Font("Sans", Font.BOLD, 15);
-	public static final Font FONT_MONOSPACE = new Font("Monospaced", Font.PLAIN, 14);
-	public static final Font FONT_NORMAL = new Font("Sans", Font.PLAIN, 12);
+	public static final Font FONT_HEADER = new FontUIResource("SansSerif", Font.BOLD, 15);
+	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
+	public static final Font FONT_NORMAL = new FontUIResource("SansSerif", Font.PLAIN, 12);
 
 	// #f0f0ff
 	public static final Color BG_COLOR_BRIGHT = new ColorUIResource(240, 240, 255);

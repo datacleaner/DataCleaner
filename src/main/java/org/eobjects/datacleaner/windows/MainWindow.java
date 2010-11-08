@@ -144,6 +144,7 @@ public class MainWindow extends AbstractWindow {
 
 		JButton optionsButton = new JButton(imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL));
 		optionsButton.setToolTipText("Options");
+		optionsButton.setEnabled(false);
 		optionsButton.setAlignmentY(BOTTOM_ALIGNMENT);
 		buttonPanel.add(optionsButton);
 
@@ -180,10 +181,14 @@ public class MainWindow extends AbstractWindow {
 		fileMenu.add(exitMenuItem);
 
 		JMenu editMenu = WidgetFactory.createMenu("Edit", 'E').toComponent();
-		editMenu.add(WidgetFactory.createMenuItem("Options ...", "images/menu/options.png").toComponent());
+		JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png").toComponent();
+		optionsMenuItem.setEnabled(false);
+		editMenu.add(optionsMenuItem);
 
 		JMenu helpMenu = WidgetFactory.createMenu("Help", 'H').toComponent();
-		helpMenu.add(WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png").toComponent());
+		JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png").toComponent();
+		aboutMenuItem.setEnabled(false);
+		helpMenu.add(aboutMenuItem);
 
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);

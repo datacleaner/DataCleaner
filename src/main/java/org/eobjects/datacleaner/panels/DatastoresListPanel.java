@@ -136,6 +136,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 
 			JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png").toComponent();
 			editButton.setToolTipText("Edit datastore");
+			editButton.setEnabled(false);
 
 			JButton jobButton = WidgetFactory.createSmallButton("images/actions/create_job.png").toComponent();
 			jobButton.setToolTipText("Create job");

@@ -36,7 +36,7 @@ public final class LookAndFeelManager {
 	}
 
 	public void init() {
-
+		
 		try {
 			LookAndFeel laf = new PlasticXPLookAndFeel();
 			UIManager.setLookAndFeel(laf);

@@ -17,6 +17,10 @@
 
 	<multithreaded-taskrunner max-threads="20" />
 	
+	<h2-database-storage-provider in-memory-threshold="20000">
+		<temp-directory>temp</temp-directory>
+	</h2-database-storage-provider>
+	
 	<classpath-scanner>
 		<package recursive="true">org.eobjects.analyzer.beans</package>
 		<package>org.eobjects.analyzer.result.renderer</package>

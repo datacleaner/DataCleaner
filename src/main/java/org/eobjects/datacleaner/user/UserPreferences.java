@@ -11,6 +11,7 @@ public class UserPreferences implements Serializable {
 
 	private File openDatastoreFileDirectory = new File(".");
 	private File openPropertyFileDirectory = new File(".");
+	private File saveFileDirectory = new File(".");
 
 	public static UserPreferences getInstance() {
 		return instance;
@@ -34,5 +35,13 @@ public class UserPreferences implements Serializable {
 
 	public void setOpenPropertyFileDirectory(File openPropertyFileDirectory) {
 		this.openPropertyFileDirectory = openPropertyFileDirectory;
+	}
+	
+	public File getSaveFileDirectory() {
+		return saveFileDirectory;
+	}
+	
+	public void setSaveFileDirectory(File saveFileDirectory) {
+		this.saveFileDirectory = saveFileDirectory;
 	}
 }

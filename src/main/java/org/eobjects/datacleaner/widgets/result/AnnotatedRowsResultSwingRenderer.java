@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.table.TableModel;
@@ -13,7 +14,9 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.datacleaner.actions.SaveDataSetActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.table.ColumnHighlighter;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -35,6 +38,9 @@ public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsR
 		InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
 		List<InputColumn<?>> inputColumns = result.getInputColumns();
 
+		DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setLayout(new HorizontalLayout(4));
+
 		if (highlightedColumns.length == 1 && inputColumns.size() > 1) {
 			final JComboBox comboBox = new JComboBox(VIEWS);
 			comboBox.addActionListener(new ActionListener() {
@@ -49,16 +55,19 @@ public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsR
 			});
 			comboBox.setSelectedItem(VIEWS[0]);
 
-			DCPanel buttonPanel = new DCPanel();
-			buttonPanel.setLayout(new HorizontalLayout(4));
 			buttonPanel.add(comboBox);
-			panel.add(buttonPanel);
 		} else if (inputColumns.size() == 1) {
 			applyDistinctValuesView(table, result);
 		} else {
 			applyDetailedView(table, result);
 		}
 
+		final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
+				"images/actions/save.png"));
+		saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(), result.getRows()));
+		buttonPanel.add(saveToFileButton);
+
+		panel.add(buttonPanel);
 		panel.add(table.toPanel());
 		return panel;
 	}

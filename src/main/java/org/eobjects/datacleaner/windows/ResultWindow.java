@@ -14,6 +14,7 @@ import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
@@ -52,7 +53,7 @@ public final class ResultWindow extends AbstractWindow {
 		AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
 		RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider());
 
-		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
+		JXTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		taskPaneContainer.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
 
 		for (AnalyzerResult analyzerResult : _results) {

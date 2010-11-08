@@ -67,7 +67,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 
 		add(toolBar, BorderLayout.NORTH);
 
-		_taskPaneContainer = new JXTaskPaneContainer();
+		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_taskPaneContainer.setOpaque(false);
 		add(_taskPaneContainer, BorderLayout.CENTER);
 	}

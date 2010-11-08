@@ -15,6 +15,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
 import org.eobjects.datacleaner.util.ImageManager;
+import org.jdesktop.swingx.JXTaskPaneContainer;
 
 public final class WidgetFactory {
 
@@ -94,5 +95,12 @@ public final class WidgetFactory {
 
 	public static WidgetBuilder<JPopupMenu> createPopupMenu() {
 		return create(JPopupMenu.class);
+	}
+
+	public static JXTaskPaneContainer createTaskPaneContainer() {
+		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
+		taskPaneContainer.setOpaque(false);
+		taskPaneContainer.setBackgroundPainter(null);
+		return taskPaneContainer;
 	}
 }

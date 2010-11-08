@@ -74,8 +74,7 @@ public class MainWindow extends AbstractWindow {
 
 		panel.add(getHeaderPanel(), BorderLayout.NORTH);
 
-		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
-		taskPaneContainer.setOpaque(false);
+		JXTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 
 		JXTaskPane datastoresTaskPane = new JXTaskPane();
 		datastoresTaskPane.setTitle("Datastores");

@@ -46,11 +46,11 @@ public final class LookAndFeelManager {
 		}
 
 		Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
-
+		
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-
+				
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);

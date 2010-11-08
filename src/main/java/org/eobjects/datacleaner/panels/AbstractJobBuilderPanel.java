@@ -18,6 +18,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetListener;
@@ -40,8 +41,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 				WidgetUtils.BG_COLOR_BRIGHTEST);
 		_parentWindow = parentWindow;
 		_analysisJobBuilder = analysisJobBuilder;
-		_taskPaneContainer = new JXTaskPaneContainer();
-		_taskPaneContainer.setOpaque(false);
+		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		setLayout(new BorderLayout());
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}

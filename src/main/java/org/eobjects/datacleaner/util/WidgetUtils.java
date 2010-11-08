@@ -186,11 +186,11 @@ public final class WidgetUtils {
 		scroll.getViewport().setOpaque(false);
 		return scroll;
 	}
-	
+
 	public static JXTextField createTextField() {
 		return createTextField(null);
 	}
-	
+
 	public static JXTextField createTextField(String promptText) {
 		JXTextField tf = new JXTextField(promptText);
 		tf.setColumns(18);
@@ -202,5 +202,5 @@ public final class WidgetUtils {
 		ta.setColumns(18);
 		return ta;
 	}
-	
+
 }

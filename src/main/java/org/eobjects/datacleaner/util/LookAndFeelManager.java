@@ -46,11 +46,11 @@ public final class LookAndFeelManager {
 		}
 
 		Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
-		
+
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-				
+
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
@@ -93,5 +93,13 @@ public final class LookAndFeelManager {
 		UIManager.put("TaskPane.titleBackgroundGradientEnd", WidgetUtils.BG_COLOR_DARK);
 		UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_DARK);
 		UIManager.put("TaskPane.background", WidgetUtils.BG_COLOR_BRIGHT);
+
+		// scrollbar color
+		UIManager.put("ScrollBar.thumb", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("ScrollBar.thumbHighlight", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("ScrollBar.thumbShadow", WidgetUtils.BG_COLOR_DARK);
+
+		// progressbar color
+		UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_DARK);
 	}
 }

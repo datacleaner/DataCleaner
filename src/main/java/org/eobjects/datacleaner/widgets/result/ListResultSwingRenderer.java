@@ -23,7 +23,8 @@ public class ListResultSwingRenderer implements Renderer<ListResult<?>, JCompone
 			model.setValueAt(object, i, 0);
 			i++;
 		}
-		return new DCTable(model).toPanel();
+		DCTable table = new DCTable(model);
+		return table.toPanel();
 	}
 
 }

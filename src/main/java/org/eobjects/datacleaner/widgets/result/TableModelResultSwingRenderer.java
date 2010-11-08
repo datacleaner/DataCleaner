@@ -15,7 +15,8 @@ public class TableModelResultSwingRenderer implements Renderer<TableModelResult,
 	@Override
 	public JComponent render(TableModelResult result) {
 		TableModel tableModel = result.toTableModel();
-		return new DCTable(tableModel).toPanel();
+		DCTable table = new DCTable(tableModel);
+		return table.toPanel();
 	}
 
 }

@@ -24,6 +24,7 @@ import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.actions.InvokeResultProducerActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.LabelConstants;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 
@@ -35,7 +36,9 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 		CrosstabRenderer renderer = new CrosstabRenderer(result.getCrosstab());
 		TableModel tableModel = renderer.render(new Callback());
 		DCTable table = new DCTable(tableModel);
+		table.setColumnControlVisible(false);
 		table.setRowHeight(22);
+		table.setBorder(WidgetUtils.BORDER_THIN);
 		return table;
 	}
 

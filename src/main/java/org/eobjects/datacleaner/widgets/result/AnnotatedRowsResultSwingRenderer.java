@@ -34,6 +34,7 @@ public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsR
 		panel.setLayout(new VerticalLayout(4));
 
 		final DCTable table = new DCTable();
+		table.setColumnControlVisible(false);
 
 		InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
 		List<InputColumn<?>> inputColumns = result.getInputColumns();

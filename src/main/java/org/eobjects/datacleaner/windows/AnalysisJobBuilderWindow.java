@@ -149,8 +149,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	protected JComponent getWindowContent() {
 		DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());
-		panel.setSize(750, 630);
-		panel.setPreferredSize(new Dimension(750, 630));
+		panel.setSize(780, 630);
+		panel.setPreferredSize(new Dimension(780, 630));
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 

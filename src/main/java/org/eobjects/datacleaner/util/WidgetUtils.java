@@ -35,22 +35,19 @@ public final class WidgetUtils {
 	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
 	public static final Font FONT_NORMAL = new FontUIResource("SansSerif", Font.PLAIN, 12);
 
-	// #f0f0ff
-	public static final Color BG_COLOR_BRIGHT = new ColorUIResource(240, 240, 255);
+	// #e1e1e1 (silver-ish)
+	public static final Color BG_COLOR_BRIGHT = new ColorUIResource(225, 225, 225);
 
-	// slightly darker than LIGHT
+	// slightly darker than BRIGHT
 	public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(220, 220, 220);
 
 	// white
 	public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
-	// white
-	public static final Color BG_COLOR_MEDIUM = new ColorUIResource(186, 190, 200);
-
 	// #353f48 (brownish dark gray)
 	public static final Color BG_COLOR_DARK = new ColorUIResource(53, 63, 72);
 
-	// #5d656d
+	// #5d656d (less brownish dark gray)
 	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(93, 101, 109);
 
 	// #2a323a (more brownish dark gray)

@@ -141,6 +141,7 @@ public class DCTable extends JXTable implements MouseListener {
 		super.setModel(dataModel);
 		if (_panel != null) {
 			_panel.setPreferredSize(getPanelPreferredSize());
+			_panel.updateUI();
 		}
 	}
 

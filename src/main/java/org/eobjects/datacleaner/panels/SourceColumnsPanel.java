@@ -50,7 +50,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		sourceColumnTable.removeColumn(sourceColumn);
 		if (sourceColumnTable.getColumnCount() == 0) {
 			this.remove(sourceColumnTable);
-			_sourceColumnTables.remove(table);
+			_sourceColumnTables.remove(sourceColumnTable);
 
 			// force UI update because sometimes the removed panel doesn't go
 			// away automatically
@@ -71,6 +71,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 			sourceColumnTable = new ColumnListTable(table, _configuration, _analysisJobBuilder);
 			this.add(sourceColumnTable);
 			_sourceColumnTables.add(sourceColumnTable);
+			updateUI();
 		}
 		return sourceColumnTable;
 	}

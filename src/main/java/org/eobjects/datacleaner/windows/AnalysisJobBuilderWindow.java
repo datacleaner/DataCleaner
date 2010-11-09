@@ -58,6 +58,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
 
+	private static final int SOURCE_TAB = 0;
+	private static final int METADATA_TAB = 1;
+	private static final int FILTERS_TAB = 2;
+
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final Datastore _datastore;
@@ -221,9 +225,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_tabbedPane.addTab("Filters", imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH),
 				WidgetUtils.scrolleable(_filterListPanel));
 
-		_tabbedPane.setUnclosableTab(0);
-		_tabbedPane.setUnclosableTab(1);
-		_tabbedPane.setUnclosableTab(2);
+		_tabbedPane.setUnclosableTab(SOURCE_TAB);
+		_tabbedPane.setUnclosableTab(METADATA_TAB);
+		_tabbedPane.setUnclosableTab(FILTERS_TAB);
 
 		_tabbedPane.addSeparator();
 
@@ -353,6 +357,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(FilterJobBuilder<?, ?> filterJobBuilder) {
+		_tabbedPane.setSelectedIndex(FILTERS_TAB);
 		updateStatusLabel();
 	}
 

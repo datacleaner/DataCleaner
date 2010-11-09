@@ -159,8 +159,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 
 	@Override
 	public void removeNotify() {
-		super.removeNotify();
 		_catalog.removeListener(this);
+		super.removeNotify();
 	}
 
 	@Override

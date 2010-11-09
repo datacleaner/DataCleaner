@@ -19,6 +19,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.actions.AddQuickFilterActionListener;
 import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -112,15 +113,20 @@ public final class ColumnListTable extends DCPanel {
 			}
 			model.setValueAt(column.getDataTypeFamily(), i, 1);
 
-			final JButton transformButton = WidgetFactory.createSmallButton("images/component-types/transformer.png")
+			JButton transformButton = WidgetFactory.createSmallButton("images/component-types/transformer.png")
 					.toComponent();
-
 			transformButton.setToolTipText("Quick transformation");
 			transformButton.addActionListener(new AddQuickTransformationActionListener(transformButton, _configuration,
 					_analysisJobBuilder, column));
 
+			JButton filterButton = WidgetFactory.createSmallButton("images/component-types/filter.png").toComponent();
+			filterButton.setToolTipText("Quick filter");
+			filterButton.addActionListener(new AddQuickFilterActionListener(filterButton, _configuration,
+					_analysisJobBuilder, column));
+
 			DCPanel buttonPanel = new DCPanel();
 			buttonPanel.add(transformButton);
+			buttonPanel.add(filterButton);
 
 			model.setValueAt(buttonPanel, i, 2);
 			i++;

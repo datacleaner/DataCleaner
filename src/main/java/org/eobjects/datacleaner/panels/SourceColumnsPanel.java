@@ -79,5 +79,6 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	@Override
 	public void removeNotify() {
 		_analysisJobBuilder.getSourceColumnListeners().remove(this);
+		super.removeNotify();
 	}
 }

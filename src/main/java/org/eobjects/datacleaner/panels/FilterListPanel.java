@@ -143,8 +143,8 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 
 	@Override
 	public void removeNotify() {
-		super.removeNotify();
 		_analysisJobBuilder.getFilterChangeListeners().remove(this);
+		super.removeNotify();
 	}
 
 	@Override

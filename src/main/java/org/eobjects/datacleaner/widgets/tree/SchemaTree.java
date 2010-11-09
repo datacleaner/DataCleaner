@@ -2,6 +2,8 @@ package org.eobjects.datacleaner.widgets.tree;
 
 import java.awt.Component;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -59,8 +61,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		setOpaque(false);
 		setBorder(WidgetUtils.BORDER_WIDE);
 		addTreeWillExpandListener(this);
-		addMouseListener(new ColumnMouseListener(this, _analysisJobBuilder));
+		addMouseListener(new SchemaMouseListener(this, _analysisJobBuilder));
 		addMouseListener(new TableMouseListener(this, _analysisJobBuilder));
+		addMouseListener(new ColumnMouseListener(this, _analysisJobBuilder));
 		updateTree();
 	}
 
@@ -68,6 +71,23 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 		rootNode.setUserObject(_datastore);
 		Schema[] schemas = _datastore.getDataContextProvider().getDataContext().getSchemas();
+
+		// make sure that information schemas are arranged at the top
+		Arrays.sort(schemas, new Comparator<Schema>() {
+			@Override
+			public int compare(Schema o1, Schema o2) {
+				String name1 = o1.getName();
+				if ("information_schema".equals(name1.toLowerCase())) {
+					return -1;
+				}
+				String name2 = o2.getName();
+				if ("information_schema".equals(name2.toLowerCase())) {
+					return 1;
+				}
+				return name1.compareTo(name2);
+			}
+		});
+
 		for (Schema schema : schemas) {
 			DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(schema);
 			schemaNode.add(new DefaultMutableTreeNode(LOADING_TABLES_STRING));

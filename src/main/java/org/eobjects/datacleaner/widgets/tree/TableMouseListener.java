@@ -21,7 +21,7 @@ import dk.eobjects.metamodel.query.Query;
 import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
-public final class TableMouseListener extends MouseAdapter implements MouseListener {
+final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final SchemaTree _schemaTree;
@@ -38,22 +38,39 @@ public final class TableMouseListener extends MouseAdapter implements MouseListe
 			return;
 		}
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-		int button = e.getButton();
-		if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-			Object userObject = node.getUserObject();
-			if (userObject instanceof Table) {
-				final Table table = (Table) userObject;
+		Object userObject = node.getUserObject();
+		if (userObject instanceof Table) {
+			final Table table = (Table) userObject;
+
+			int button = e.getButton();
+
+			if (button == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+				// double click = add table
+				addTable(table);
+			} else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+				// right click = open popup menu
+
 				JPopupMenu popup = WidgetFactory.createPopupMenu().toComponent();
 				popup.setLabel(table.getName());
-				JMenuItem toggleTableItem = WidgetFactory.createMenuItem("Toggle table columns",
+				JMenuItem addTableItem = WidgetFactory.createMenuItem("Add table to source",
 						"images/actions/toggle-source-table.png").toComponent();
-				toggleTableItem.addActionListener(new ActionListener() {
+				addTableItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						toggleTable(table);
+						addTable(table);
 					}
 				});
-				popup.add(toggleTableItem);
+				popup.add(addTableItem);
+
+				JMenuItem removeTableItem = WidgetFactory.createMenuItem("Remove table from source",
+						"images/actions/toggle-source-table.png").toComponent();
+				removeTableItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						removeTable(table);
+					}
+				});
+				popup.add(removeTableItem);
 
 				JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table", "images/actions/preview_data.png")
 						.toComponent();
@@ -76,14 +93,22 @@ public final class TableMouseListener extends MouseAdapter implements MouseListe
 	/**
 	 * toggles whether or not the column is in the source selection
 	 */
-	public void toggleTable(Table table) {
+	public void addTable(Table table) {
 		Column[] columns = table.getColumns();
 		for (Column column : columns) {
-			if (_analysisJobBuilder.containsSourceColumn(column)) {
-				_analysisJobBuilder.removeSourceColumn(column);
-			} else {
+			if (!_analysisJobBuilder.containsSourceColumn(column)) {
 				_analysisJobBuilder.addSourceColumn(column);
 			}
+		}
+	}
+
+	/**
+	 * toggles whether or not the column is in the source selection
+	 */
+	public void removeTable(Table table) {
+		Column[] columns = table.getColumns();
+		for (Column column : columns) {
+			_analysisJobBuilder.removeSourceColumn(column);
 		}
 	}
 }

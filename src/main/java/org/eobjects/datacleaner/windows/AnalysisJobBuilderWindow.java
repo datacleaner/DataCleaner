@@ -14,8 +14,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
-import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -47,7 +47,9 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
+import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXStatusBar;
+import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,36 +153,30 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	protected JComponent getWindowContent() {
-		DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		panel.setSize(780, 630);
-		panel.setPreferredSize(new Dimension(780, 630));
+		final ImageManager imageManager = ImageManager.getInstance();
 
-		JToolBar toolBar = WidgetFactory.createToolBar();
-
-		ImageManager imageManager = ImageManager.getInstance();
-		JButton saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
+		final JButton saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
 		saveButton.setEnabled(false);
-		toolBar.add(saveButton);
-
-		toolBar.add(new JSeparator(JSeparator.VERTICAL));
 
 		// Add transformer
-		JButton addTransformerButton = new JButton("Add transformer",
+		final JButton addTransformerButton = new JButton("Add transformer",
 				imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
 		addTransformerButton.addActionListener(new AddTransformerActionListener(_configuration, _analysisJobBuilder));
-		toolBar.add(addTransformerButton);
 
 		// Add analyzer
-		JButton addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
+		final JButton addAnalyzerButton = new JButton("Add analyzer",
+				imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
 		addAnalyzerButton.addActionListener(new AddAnalyzerActionListener(_configuration, _analysisJobBuilder));
-		toolBar.add(addAnalyzerButton);
 
+		final JToolBar toolBar = WidgetFactory.createToolBar();
+		toolBar.add(saveButton);
+		toolBar.add(new JSeparator(JSeparator.VERTICAL));
+		toolBar.add(addTransformerButton);
+		toolBar.add(addAnalyzerButton);
 		toolBar.add(new JSeparator(JSeparator.VERTICAL));
 
 		// Run analysis
-		JButton runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
-
+		final JButton runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -201,27 +197,21 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		});
 		toolBar.add(runButton);
 
-		panel.add(toolBar, BorderLayout.NORTH);
+		final SchemaTree schemaTree = new SchemaTree(_datastore, _analysisJobBuilder);
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setBackground(WidgetUtils.BG_COLOR_DARK);
-
-		SchemaTree schemaTree = new SchemaTree(_datastore, _analysisJobBuilder);
-
-		Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
-		DCPanel treePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
+		final Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
+		final DCPanel treePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
 				WidgetUtils.BG_COLOR_BRIGHT);
 		treePanel.setLayout(new BorderLayout());
-		treePanel.add(WidgetUtils.scrolleable(schemaTree), BorderLayout.CENTER);
-		splitPane.add(treePanel);
+		treePanel.add(schemaTree, BorderLayout.CENTER);
 
-		SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
+		final SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
+		final DCPanel metadataPanel = new DCPanel(imageManager.getImage("images/window/metadata-tab-background.png"), 95, 95);
+
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
 				WidgetUtils.scrolleable(sourceColumnsPanel));
-		DCPanel metadataPanel = new DCPanel(imageManager.getImage("images/window/metadata-tab-background.png"), 95, 95);
 		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"),
 				WidgetUtils.scrolleable(metadataPanel));
-
 		_tabbedPane.addTab("Filters", imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH),
 				WidgetUtils.scrolleable(_filterListPanel));
 
@@ -231,14 +221,55 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		_tabbedPane.addSeparator();
 
-		splitPane.add(_tabbedPane);
+		final JXCollapsiblePane collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
+		collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
+		collapsibleTreePane.add(treePanel);
 
-		panel.add(splitPane, BorderLayout.CENTER);
+		final JButton toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
+		toggleTreeViewButton.setBorder(null);
+		toggleTreeViewButton.setOpaque(false);
+		toggleTreeViewButton.setContentAreaFilled(false);
+		toggleTreeViewButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				boolean collapsed = collapsibleTreePane.isCollapsed();
+				if (collapsed) {
+					toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
+					toggleTreeViewButton.setBorder(null);
+				} else {
+					toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
+					toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
+				}
+				collapsibleTreePane.setCollapsed(!collapsed);
+			}
+		});
 
-		JXStatusBar statusBar = new JXStatusBar();
-		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
+		final DCPanel collapseButtonPanel = new DCPanel();
+		collapseButtonPanel.setOpaque(true);
+		collapseButtonPanel.setBackground(WidgetUtils.BG_COLOR_DARK);
+		collapseButtonPanel.setLayout(new VerticalLayout(4));
+		collapseButtonPanel.setBorder(null);
+		collapseButtonPanel.add(toggleTreeViewButton);
+
+		final DCPanel leftPanel = new DCPanel();
+		leftPanel.setLayout(new BorderLayout());
+		leftPanel.add(collapsibleTreePane, BorderLayout.CENTER);
+		leftPanel.add(collapseButtonPanel, BorderLayout.EAST);
+
+
+		final JXStatusBar statusBar = new JXStatusBar();
+		final JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
 		statusBar.add(_statusLabel, c1);
 
+		final Dimension windowSize = new Dimension(780, 630);
+
+		final DCPanel panel = new DCPanel();
+		panel.setLayout(new BorderLayout());
+		panel.setSize(windowSize);
+		panel.setPreferredSize(windowSize);
+		panel.add(toolBar, BorderLayout.NORTH);
+		panel.add(leftPanel, BorderLayout.WEST);
+		panel.add(_tabbedPane, BorderLayout.CENTER);
 		panel.add(statusBar, BorderLayout.SOUTH);
 
 		WidgetUtils.centerOnScreen(this);

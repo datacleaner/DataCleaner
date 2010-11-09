@@ -36,6 +36,8 @@ public final class CloseableTabbedPane extends JTabbedPane {
 		setUI(new CloseableTabbedPaneUI(this));
 		setBorder(new LineBorder(WidgetUtils.BG_COLOR_DARK, 4));
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		setBackground(WidgetUtils.BG_COLOR_DARK);
+		setOpaque(true);
 	}
 
 	/**

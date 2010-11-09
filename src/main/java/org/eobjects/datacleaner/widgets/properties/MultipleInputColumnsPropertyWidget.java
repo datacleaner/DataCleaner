@@ -155,7 +155,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 				result.add(_inputColumns.get(i));
 			}
 		}
-		return result.toArray(new InputColumn<?>[0]);
+		return result.toArray(new InputColumn<?>[result.size()]);
 	}
 
 	@Override

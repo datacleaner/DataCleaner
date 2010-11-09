@@ -15,12 +15,37 @@
 		</jdbc-datastore>
 	</datastore-catalog>
 
+	<reference-data-catalog>
+		<dictionaries>
+			<value-list-dictionary name="english lastnames">
+				<value>Murphy</value>
+				<value>Patterson</value>
+				<value>Patterson</value>
+				<value>Jennings</value>
+				<value>Thompson</value>
+				<value>Patterson</value>
+				<value>Jones</value>
+				<value>King</value>
+			</value-list-dictionary>
+			<value-list-dictionary name="spanish lastnames">
+				<value>Firrelli</value>
+				<value>Hernandez</value>
+			</value-list-dictionary>
+			<value-list-dictionary name="eastern lastnames">
+				<value>Tseng</value>
+				<value>Nishi</value>
+				<value>Kato</value>
+			</value-list-dictionary>
+		</dictionaries>
+	</reference-data-catalog>
+
 	<multithreaded-taskrunner max-threads="20" />
-	
-	<h2-database-storage-provider in-memory-threshold="20000">
+
+	<h2-database-storage-provider
+		in-memory-threshold="20000">
 		<temp-directory>temp</temp-directory>
 	</h2-database-storage-provider>
-	
+
 	<classpath-scanner>
 		<package recursive="true">org.eobjects.analyzer.beans</package>
 		<package>org.eobjects.analyzer.result.renderer</package>

@@ -70,6 +70,10 @@ public final class LookAndFeelManager {
 		UIManager.put("Menu.border", borderDarkest3);
 		UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
 		UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		
+		UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
+		
 		UIManager.put("PopupMenu.border", emptyBorder);
 		UIManager.put("PopupMenu.background", WidgetUtils.BG_COLOR_DARKEST);
 		UIManager.put("PopupMenu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);

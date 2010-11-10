@@ -14,8 +14,8 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.datacleaner.output.beans.HiddenFromMenu;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
 
 public final class AddAnalyzerActionListener implements ActionListener {
@@ -30,29 +30,31 @@ public final class AddAnalyzerActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPopupMenu popup = WidgetFactory.createPopupMenu().toComponent();
+		JPopupMenu popup = new JPopupMenu();
 
 		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
 				.getAnalyzerBeanDescriptors();
 		descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
 		for (final AnalyzerBeanDescriptor<?> descriptor : descriptors) {
-			if (descriptor.isRowProcessingAnalyzer()) {
-				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
-				menuItem.addActionListener(new ActionListener() {
-					@SuppressWarnings("unchecked")
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						Class<?> analyzerClass = descriptor.getBeanClass();
-						if (descriptor.isExploringAnalyzer()) {
-							_analysisJobBuilder.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
-						} else {
-							_analysisJobBuilder
-									.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
+			if (descriptor.getAnnotation(HiddenFromMenu.class) == null) {
+				if (descriptor.isRowProcessingAnalyzer()) {
+					JMenuItem menuItem = new DescriptorMenuItem(descriptor);
+					menuItem.addActionListener(new ActionListener() {
+						@SuppressWarnings("unchecked")
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							Class<?> analyzerClass = descriptor.getBeanClass();
+							if (descriptor.isExploringAnalyzer()) {
+								_analysisJobBuilder.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
+							} else {
+								_analysisJobBuilder
+								.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
+							}
 						}
-					}
-				});
-
-				popup.add(menuItem);
+					});
+					
+					popup.add(menuItem);
+				}
 			}
 		}
 

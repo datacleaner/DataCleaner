@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
 import org.eobjects.datacleaner.util.ImageManager;
@@ -92,10 +91,6 @@ public final class WidgetFactory {
 		button.setIcon(imageIcon);
 		button.setMargin(new Insets(0, 0, 0, 0));
 		return wb;
-	}
-
-	public static WidgetBuilder<JPopupMenu> createPopupMenu() {
-		return create(JPopupMenu.class);
 	}
 
 	public static JXTaskPaneContainer createTaskPaneContainer() {

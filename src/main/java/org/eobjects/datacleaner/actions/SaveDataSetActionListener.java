@@ -14,8 +14,10 @@ import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.datacleaner.output.CsvDataSetWriter;
-import org.eobjects.datacleaner.output.DatastoreDataSetWriter;
+import org.eobjects.datacleaner.output.OutputRow;
+import org.eobjects.datacleaner.output.OutputWriter;
+import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
+import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 
@@ -29,6 +31,15 @@ public class SaveDataSetActionListener implements ActionListener {
 		_rows = rows;
 	}
 
+	private void performWrite(OutputWriter writer) {
+		for (InputRow row : _rows) {
+			OutputRow outputRow = writer.createRow();
+			outputRow.setValues(row);
+			outputRow.write();
+		}
+		writer.close();
+	}
+
 	@Override
 	public void actionPerformed(final ActionEvent event) {
 		JMenuItem saveAsDatastoreItem = new JMenuItem("As datastore");
@@ -36,8 +47,8 @@ public class SaveDataSetActionListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String datastoreName = JOptionPane.showInputDialog("Datastore name");
-				DatastoreDataSetWriter writer = new DatastoreDataSetWriter(datastoreName);
-				writer.write(_inputColumns, _rows);
+				OutputWriter writer = DatastoreOutputWriterFactory.getWriter(datastoreName, _inputColumns);
+				performWrite(writer);
 			}
 		});
 
@@ -53,8 +64,8 @@ public class SaveDataSetActionListener implements ActionListener {
 						selectedFile = new File(selectedFile.getPath() + ".csv");
 					}
 
-					CsvDataSetWriter writer = new CsvDataSetWriter(selectedFile);
-					writer.write(_inputColumns, _rows);
+					OutputWriter writer = CsvOutputWriterFactory.getWriter(selectedFile.getAbsolutePath(), _inputColumns);
+					performWrite(writer);
 
 					File dir = selectedFile.getParentFile();
 					UserPreferences.getInstance().setSaveFileDirectory(dir);

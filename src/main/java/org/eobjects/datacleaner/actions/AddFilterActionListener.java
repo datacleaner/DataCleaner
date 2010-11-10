@@ -14,7 +14,6 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
 
 public final class AddFilterActionListener implements ActionListener {
@@ -32,7 +31,7 @@ public final class AddFilterActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPopupMenu popup = WidgetFactory.createPopupMenu().toComponent();
+		JPopupMenu popup = new JPopupMenu();
 
 		Collection<FilterBeanDescriptor<?, ?>> descriptors = _configuration.getDescriptorProvider()
 				.getFilterBeanDescriptors();

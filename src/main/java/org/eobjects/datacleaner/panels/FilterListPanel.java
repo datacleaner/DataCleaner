@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.border.TitledBorder;
@@ -22,7 +25,10 @@ import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.actions.AddFilterActionListener;
+import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
+import org.eobjects.datacleaner.output.beans.DatastoreOutputAnalyzer;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -46,7 +52,8 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 	private final JXTaskPaneContainer _taskPaneContainer;
 	private final AnalysisJobBuilderWindow _parentWindow;
 
-	public FilterListPanel(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
+	public FilterListPanel(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
+			AnalysisJobBuilder analysisJobBuilder) {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_parentWindow = parentWindow;
@@ -87,17 +94,17 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 	}
 
 	private JXTaskPane createTaskPane(final FilterJobBuilder<?, ?> fjb) {
-		JXTaskPane taskPane = new JXTaskPane();
-		List<PropertyWidget<?>> propertyWidgets = _propertyWidgets.get(fjb);
-		FilterBeanDescriptor<?, ?> descriptor = fjb.getDescriptor();
+		final JXTaskPane taskPane = new JXTaskPane();
+		final List<PropertyWidget<?>> propertyWidgets = _propertyWidgets.get(fjb);
+		final FilterBeanDescriptor<?, ?> descriptor = fjb.getDescriptor();
 		taskPane.setTitle(descriptor.getDisplayName());
 		taskPane.setIcon(IconUtils.getDescriptorIcon(fjb.getDescriptor(), IconUtils.ICON_SIZE_SMALL));
 
-		DCPanel panel = new DCPanel();
-		
-		ChangeRequirementButton requirementButton = new ChangeRequirementButton(_analysisJobBuilder, fjb);
+		final DCPanel panel = new DCPanel();
 
-		JButton removeButton = new JButton("Remove filter", ImageManager.getInstance().getImageIcon(
+		final ChangeRequirementButton requirementButton = new ChangeRequirementButton(_analysisJobBuilder, fjb);
+
+		final JButton removeButton = new JButton("Remove filter", ImageManager.getInstance().getImageIcon(
 				"images/actions/remove.png", IconUtils.ICON_SIZE_SMALL));
 		removeButton.addActionListener(new ActionListener() {
 			@Override
@@ -106,12 +113,12 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 				FilterListPanel.this.updateUI();
 			}
 		});
-		
-		DCPanel buttonPanel = new DCPanel();
+
+		final DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new VerticalLayout(4));
 		buttonPanel.add(requirementButton);
 		buttonPanel.add(removeButton);
-		
+
 		WidgetUtils.addToGridBag(buttonPanel, panel, 2, 0, 1, 1, GridBagConstraints.NORTHEAST, 4);
 
 		int i = 0;
@@ -127,12 +134,51 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 			i++;
 		}
 
-		DCPanel outcomePanel = new DCPanel();
+		final DCPanel outcomePanel = new DCPanel();
 		outcomePanel.setBorder(new TitledBorder("Outcomes"));
 
-		Set<String> categoryNames = descriptor.getCategoryNames();
-		for (String categoryName : categoryNames) {
-			outcomePanel.add(new JLabel(categoryName));
+		final Set<String> categoryNames = descriptor.getCategoryNames();
+		for (final String categoryName : categoryNames) {
+			final JButton outcomeButton = new JButton(categoryName);
+			outcomeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JPopupMenu popup = new JPopupMenu();
+
+					JMenuItem saveAsDatastoreMenuItem = new JMenuItem("Create new datastore from outcome");
+					saveAsDatastoreMenuItem.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+
+							RowProcessingAnalyzerJobBuilder<DatastoreOutputAnalyzer> ajb = _analysisJobBuilder
+									.addRowProcessingAnalyzer(DatastoreOutputAnalyzer.class);
+							ajb.getConfigurableBean().setDatastoreName(
+									"output-" + descriptor.getDisplayName() + "-" + categoryName);
+							ajb.setRequirement(fjb, categoryName);
+							ajb.onConfigurationChanged();
+						}
+					});
+					popup.add(saveAsDatastoreMenuItem);
+
+					JMenuItem saveToCsvFileMenuItem = new JMenuItem("Create CSV file from outcome");
+					saveToCsvFileMenuItem.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+
+							RowProcessingAnalyzerJobBuilder<CsvOutputAnalyzer> ajb = _analysisJobBuilder
+									.addRowProcessingAnalyzer(CsvOutputAnalyzer.class);
+							File file = new File("output-" + descriptor.getDisplayName() + "-" + categoryName + ".csv");
+							ajb.getConfigurableBean().setFile(file);
+							ajb.setRequirement(fjb, categoryName);
+							ajb.onConfigurationChanged();
+						}
+					});
+					popup.add(saveToCsvFileMenuItem);
+
+					popup.show(outcomeButton, 0, outcomeButton.getHeight());
+				}
+			});
+			outcomePanel.add(outcomeButton);
 		}
 
 		WidgetUtils.addToGridBag(outcomePanel, panel, 1, i, 2, 1, GridBagConstraints.NORTHWEST, 4);

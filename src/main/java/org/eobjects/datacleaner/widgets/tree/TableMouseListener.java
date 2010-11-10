@@ -65,7 +65,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 					}
 				}
 
-				JPopupMenu popup = WidgetFactory.createPopupMenu().toComponent();
+				JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(table.getName());
 
 				if (enableAddTable) {

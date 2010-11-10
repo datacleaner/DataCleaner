@@ -180,8 +180,8 @@ public final class WidgetUtils {
 		dialog.setVisible(true);
 	}
 
-	public static JScrollPane scrolleable(JComponent comp) {
-		JScrollPane scroll = new JScrollPane(comp);
+	public static JScrollPane scrolleable(final JComponent comp) {
+		final JScrollPane scroll = new JScrollPane(comp);
 		scroll.setOpaque(false);
 		scroll.getViewport().setOpaque(false);
 		return scroll;

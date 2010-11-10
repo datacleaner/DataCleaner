@@ -13,7 +13,6 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
 
 public final class AddTransformerActionListener implements ActionListener {
@@ -28,7 +27,7 @@ public final class AddTransformerActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPopupMenu popup = WidgetFactory.createPopupMenu().toComponent();
+		JPopupMenu popup = new JPopupMenu();
 
 		Collection<TransformerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
 				.getTransformerBeanDescriptors();

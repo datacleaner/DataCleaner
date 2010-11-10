@@ -19,16 +19,18 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 
 	private final RowProcessingAnalyzerJobBuilder<?> _analyzerJobBuilder;
 
-	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, AnalysisJobBuilder analysisJobBuilder,
-			RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilderWindow parentWindow,
+			AnalysisJobBuilder analysisJobBuilder, RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
 		super(parentWindow, "images/window/analyzer-tab-background.png", analysisJobBuilder);
 		_analyzerJobBuilder = analyzerJobBuilder;
 
-		AnalyzerBeanDescriptor<?> descriptor = _analyzerJobBuilder.getDescriptor();
+		final AnalyzerBeanDescriptor<?> descriptor = _analyzerJobBuilder.getDescriptor();
+
 		init(descriptor, analyzerJobBuilder);
-		
-		ChangeRequirementButton requirementButton = new ChangeRequirementButton(analysisJobBuilder, analyzerJobBuilder);
-		DCPanel buttonPanel = new DCPanel();
+
+		final ChangeRequirementButton requirementButton = new ChangeRequirementButton(analysisJobBuilder, analyzerJobBuilder);
+
+		final DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.add(requirementButton);
 		add(buttonPanel, BorderLayout.NORTH);

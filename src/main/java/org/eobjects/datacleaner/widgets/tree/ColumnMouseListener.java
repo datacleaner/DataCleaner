@@ -47,7 +47,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				toggleColumn(column);
 			} else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
 				// right click = open popup menu
-				JPopupMenu popup = WidgetFactory.createPopupMenu().toComponent();
+				JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(column.getName());
 				JMenuItem toggleColumnItem = WidgetFactory.createMenuItem(null, "images/actions/toggle-source-column.png")
 						.toComponent();

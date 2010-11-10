@@ -41,7 +41,7 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 			int button = e.getButton();
 
 			if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-				JPopupMenu popup = WidgetFactory.createPopupMenu().toComponent();
+				JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(schema.getName());
 				JMenuItem addTableItem = WidgetFactory.createMenuItem("Add all schema tables to source",
 						"images/actions/toggle-source-table.png").toComponent();

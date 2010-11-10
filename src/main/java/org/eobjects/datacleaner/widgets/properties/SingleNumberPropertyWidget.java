@@ -81,4 +81,12 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 		throw new IllegalStateException("Unsupported number-property type: " + type);
 	}
 
+	@Override
+	protected void setValue(Number value) {
+		if (value == null) {
+			_textField.setText("");
+			return;
+		}
+		_textField.setText(value.toString());
+	}
 }

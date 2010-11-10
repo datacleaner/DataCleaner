@@ -55,4 +55,21 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		return text.split("\n");
 	}
 
+	@Override
+	protected void setValue(String[] value) {
+		if (value == null) {
+			_textArea.setText("");
+			return;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < value.length; i++) {
+			if (i!=0) {
+				sb.append("\n");
+			}
+			sb.append(value[i]);
+		}
+		_textArea.setText(sb.toString());
+	}
+
 }

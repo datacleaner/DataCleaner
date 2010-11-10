@@ -43,4 +43,9 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
 		return (Enum<?>) _comboBox.getSelectedItem();
 	}
 
+	@Override
+	protected void setValue(Enum<?> value) {
+		_comboBox.setSelectedItem(value);
+	}
+
 }

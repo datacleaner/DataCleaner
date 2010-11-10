@@ -158,4 +158,10 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 	@Override
 	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
 	}
+	
+	@Override
+	protected void setValue(InputColumn<?> value) {
+		updateComponents();
+		updateUI();
+	}
 }

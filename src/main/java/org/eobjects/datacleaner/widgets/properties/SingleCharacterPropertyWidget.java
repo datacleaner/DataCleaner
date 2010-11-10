@@ -13,6 +13,12 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 	private static final long serialVersionUID = 1L;
 
 	private final JTextField _textField;
+	private final DCDocumentListener _listener = new DCDocumentListener() {
+		@Override
+		protected void onChange(DocumentEvent e) {
+			fireValueChanged();
+		}
+	};
 
 	public SingleCharacterPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
@@ -23,13 +29,7 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 		if (currentValue != null) {
 			_textField.setText(currentValue.toString());
 		}
-		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
-
-			@Override
-			protected void onChange(DocumentEvent e) {
-				fireValueChanged();
-			}
-		});
+		_textField.getDocument().addDocumentListener(_listener);
 
 		add(_textField);
 	}
@@ -43,4 +43,14 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 		return text.charAt(0);
 	}
 
+	@Override
+	protected void setValue(Character value) {
+		_textField.getDocument().removeDocumentListener(_listener);
+		if (value == null) {
+			_textField.setText("");
+		} else {
+			_textField.setText(value.toString());
+		}
+		_textField.getDocument().addDocumentListener(_listener);
+	}
 }

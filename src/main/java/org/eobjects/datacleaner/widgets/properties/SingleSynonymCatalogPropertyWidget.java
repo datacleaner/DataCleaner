@@ -50,4 +50,13 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 		return _configuration.getReferenceDataCatalog().getSynonymCatalog(synonymCatalogName);
 	}
 
+	@Override
+	protected void setValue(SynonymCatalog value) {
+		if (value == null) {
+			_comboBox.setSelectedItem(null);
+			return;
+		}
+		_comboBox.setSelectedItem(value.getName());
+	}
+
 }

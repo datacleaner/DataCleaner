@@ -131,6 +131,10 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 			}
 		}
 	}
+	
+	public PropertyWidgetFactory getPropertyWidgetFactory() {
+		return _propertyWidgetFactory;
+	}
 
 	public AnalysisJobBuilder getAnalysisJobBuilder() {
 		return _analysisJobBuilder;

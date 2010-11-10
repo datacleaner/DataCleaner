@@ -50,4 +50,13 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 		return _configuration.getReferenceDataCatalog().getDictionary(dictionaryName);
 	}
 
+	@Override
+	protected void setValue(Dictionary value) {
+		if (value == null) {
+			_comboBox.setSelectedItem(null);
+			return;
+		}
+		
+		_comboBox.setSelectedItem(value.getName());
+	}
 }

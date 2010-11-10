@@ -6,6 +6,7 @@ import javax.swing.JComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.util.CompareUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 
 public abstract class AbstractPropertyWidget<E> extends DCPanel implements PropertyWidget<E> {
@@ -50,4 +51,14 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 	public void removeNotify() {
 		super.removeNotify();
 	}
+
+	public void onValueTouched(E value) {
+		E existingValue = getValue();
+		if (CompareUtils.equals(value, existingValue)) {
+			return;
+		}
+		setValue(value);
+	}
+
+	protected abstract void setValue(E value);
 }

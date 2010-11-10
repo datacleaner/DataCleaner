@@ -8,6 +8,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 public class DummyPropertyWidget implements PropertyWidget<Object> {
 
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
+	private Object _value;
 
 	public DummyPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
 		_propertyDescriptor = propertyDescriptor;
@@ -20,16 +21,21 @@ public class DummyPropertyWidget implements PropertyWidget<Object> {
 
 	@Override
 	public boolean isSet() {
-		return false;
+		return _value != null;
 	}
 
 	@Override
 	public Object getValue() {
-		return null;
+		return _value;
 	}
-
+	
 	@Override
 	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
 		return _propertyDescriptor;
+	}
+
+	@Override
+	public void onValueTouched(Object value) {
+		_value = value;
 	}
 }

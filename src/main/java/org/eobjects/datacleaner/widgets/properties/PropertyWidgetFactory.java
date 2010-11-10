@@ -36,6 +36,14 @@ public final class PropertyWidgetFactory {
 		return _widgets.values();
 	}
 
+	public PropertyWidget<?> getWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+		return _widgets.get(propertyDescriptor);
+	}
+
+	public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
+		return _beanJobBuilder;
+	}
+
 	public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor) {
 		final PropertyWidget<?> result;
 		final Class<?> type = propertyDescriptor.getBaseType();
@@ -84,5 +92,15 @@ public final class PropertyWidgetFactory {
 
 		_widgets.put(propertyDescriptor, result);
 		return result;
+	}
+
+	public void onConfigurationChanged() {
+		Collection<PropertyWidget<?>> widgets = getWidgets();
+		for (PropertyWidget<?> widget : widgets) {
+			@SuppressWarnings("unchecked")
+			PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
+			Object value = _beanJobBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
+			objectWidget.onValueTouched(value);
+		}
 	}
 }

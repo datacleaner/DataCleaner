@@ -139,4 +139,9 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidge
 		}
 		return result.toArray(new SynonymCatalog[result.size()]);
 	}
+	
+	@Override
+	protected void setValue(SynonymCatalog[] value) {
+		updateComponents();
+	}
 }

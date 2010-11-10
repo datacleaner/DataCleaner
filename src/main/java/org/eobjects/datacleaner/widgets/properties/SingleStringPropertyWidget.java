@@ -40,4 +40,9 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 	public String getValue() {
 		return _textField.getText();
 	}
+
+	@Override
+	protected void setValue(String value) {
+		_textField.setText(value);
+	}
 }

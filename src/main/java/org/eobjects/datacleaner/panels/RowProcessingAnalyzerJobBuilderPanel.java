@@ -16,6 +16,7 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	private static final long serialVersionUID = 1L;
 
 	private final RowProcessingAnalyzerJobBuilder<?> _analyzerJobBuilder;
+	private final ChangeRequirementButton _requirementButton;
 
 	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder,
 			RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
@@ -24,11 +25,11 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 
 		init();
 
-		final ChangeRequirementButton requirementButton = new ChangeRequirementButton(analysisJobBuilder, analyzerJobBuilder);
+		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, analyzerJobBuilder);
 
 		final DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(requirementButton);
+		buttonPanel.add(_requirementButton);
 		add(buttonPanel, BorderLayout.NORTH);
 	}
 
@@ -52,5 +53,9 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	@Override
 	protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
 		_analyzerJobBuilder.setConfiguredProperty(propertyDescriptor, value);
+	}
+
+	public void onRequirementChanged() {
+		_requirementButton.updateText();
 	}
 }

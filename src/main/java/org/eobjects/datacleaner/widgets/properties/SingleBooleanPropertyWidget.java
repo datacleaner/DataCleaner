@@ -41,4 +41,12 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 		return _checkBox.isSelected();
 	}
 
+	@Override
+	protected void setValue(Boolean value) {
+		if (value == null) {
+			_checkBox.setSelected(false);
+		}
+		_checkBox.setSelected(value.booleanValue());
+	}
+
 }

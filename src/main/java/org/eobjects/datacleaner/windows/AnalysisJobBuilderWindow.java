@@ -9,8 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -67,12 +68,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private static final int METADATA_TAB = 1;
 	private static final int FILTERS_TAB = 2;
 
+	private final Map<RowProcessingAnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPanel> _rowProcessingTabPanels = new LinkedHashMap<RowProcessingAnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPanel>();
+	private final Map<TransformerJobBuilder<?>, TransformerJobBuilderPanel> _transformerTabPanels = new LinkedHashMap<TransformerJobBuilder<?>, TransformerJobBuilderPanel>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final Datastore _datastore;
 	private final CloseableTabbedPane _tabbedPane;
-	private final List<RowProcessingAnalyzerJobBuilderPanel> _rowProcessingTabPanels = new LinkedList<RowProcessingAnalyzerJobBuilderPanel>();
-	private final List<TransformerJobBuilderPanel> _transformerTabPanels = new LinkedList<TransformerJobBuilderPanel>();
 	private final FilterListPanel _filterListPanel;
 	private final JLabel _statusLabel = new JLabel();
 
@@ -112,7 +113,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		updateStatusLabel();
 	}
 
-	public void updateStatusLabel() {
+	private void updateStatusLabel() {
 		ImageManager imageManager = ImageManager.getInstance();
 		try {
 			if (_analysisJobBuilder.isConfigured(true)) {
@@ -177,11 +178,11 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			public void actionPerformed(ActionEvent e) {
 				_filterListPanel.applyPropertyValues();
 
-				for (TransformerJobBuilderPanel panel : _transformerTabPanels) {
+				for (TransformerJobBuilderPanel panel : _transformerTabPanels.values()) {
 					panel.applyPropertyValues();
 				}
 
-				for (RowProcessingAnalyzerJobBuilderPanel panel : _rowProcessingTabPanels) {
+				for (RowProcessingAnalyzerJobBuilderPanel panel : _rowProcessingTabPanels.values()) {
 					panel.applyPropertyValues();
 				}
 
@@ -323,20 +324,18 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 			if (panel != null) {
 				if (panel instanceof RowProcessingAnalyzerJobBuilderPanel) {
-					for (Iterator<RowProcessingAnalyzerJobBuilderPanel> it = _rowProcessingTabPanels.iterator(); it
+					for (Iterator<RowProcessingAnalyzerJobBuilderPanel> it = _rowProcessingTabPanels.values().iterator(); it
 							.hasNext();) {
 						RowProcessingAnalyzerJobBuilderPanel analyzerPanel = it.next();
 						if (analyzerPanel == panel) {
-							it.remove();
 							_analysisJobBuilder.removeAnalyzer(analyzerPanel.getAnalyzerJobBuilder());
 							return;
 						}
 					}
 				} else if (panel instanceof TransformerJobBuilderPanel) {
-					for (Iterator<TransformerJobBuilderPanel> it = _transformerTabPanels.iterator(); it.hasNext();) {
+					for (Iterator<TransformerJobBuilderPanel> it = _transformerTabPanels.values().iterator(); it.hasNext();) {
 						TransformerJobBuilderPanel transformerPanel = it.next();
 						if (transformerPanel == panel) {
-							it.remove();
 							_analysisJobBuilder.removeTransformer(transformerPanel.getTransformerJobBuilder());
 							return;
 						}
@@ -359,7 +358,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	public void onAdd(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
 		RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(_analysisJobBuilder,
 				analyzerJobBuilder);
-		_rowProcessingTabPanels.add(panel);
+		_rowProcessingTabPanels.put(analyzerJobBuilder, panel);
 		_tabbedPane.addTab(analyzerJobBuilder.getDescriptor().getDisplayName(),
 				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), panel);
 		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
@@ -374,21 +373,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onRemove(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		for (Iterator<RowProcessingAnalyzerJobBuilderPanel> it = _rowProcessingTabPanels.iterator(); it.hasNext();) {
-			RowProcessingAnalyzerJobBuilderPanel analyzerPanel = it.next();
-			if (analyzerJobBuilder == analyzerPanel.getAnalyzerJobBuilder()) {
-				it.remove();
-				updateStatusLabel();
-				return;
-			}
-		}
+		_rowProcessingTabPanels.remove(analyzerJobBuilder);
+		updateStatusLabel();
 	}
 
 	@Override
 	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
 		TransformerJobBuilderPanel panel = new TransformerJobBuilderPanel(_analysisJobBuilder, transformerJobBuilder,
 				_configuration);
-		_transformerTabPanels.add(panel);
+		_transformerTabPanels.put(transformerJobBuilder, panel);
 		_tabbedPane.addTab(transformerJobBuilder.getDescriptor().getDisplayName(),
 				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), panel);
 		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
@@ -397,25 +390,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
-		for (Iterator<TransformerJobBuilderPanel> it = _transformerTabPanels.iterator(); it.hasNext();) {
-			TransformerJobBuilderPanel panel = it.next();
-			if (transformerJobBuilder == panel.getTransformerJobBuilder()) {
-				it.remove();
-				updateStatusLabel();
-				return;
-			}
-		}
+		_transformerTabPanels.remove(transformerJobBuilder);
+		updateStatusLabel();
 	}
 
 	@Override
 	public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder, List<MutableInputColumn<?>> outputColumns) {
-		for (Iterator<TransformerJobBuilderPanel> it = _transformerTabPanels.iterator(); it.hasNext();) {
-			TransformerJobBuilderPanel panel = it.next();
-			if (transformerJobBuilder == panel.getTransformerJobBuilder()) {
-				panel.setOutputColumns(outputColumns);
-				updateStatusLabel();
-				return;
-			}
+		TransformerJobBuilderPanel panel = _transformerTabPanels.get(transformerJobBuilder);
+		if (panel != null) {
+			panel.onOutputChanged(outputColumns);
 		}
 	}
 
@@ -441,11 +424,19 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+		TransformerJobBuilderPanel panel = _transformerTabPanels.get(transformerJobBuilder);
+		if (panel != null) {
+			panel.getPropertyWidgetFactory().onConfigurationChanged();
+		}
 		updateStatusLabel();
 	}
 
 	@Override
 	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+		TransformerJobBuilderPanel panel = _transformerTabPanels.get(transformerJobBuilder);
+		if (panel != null) {
+			panel.onRequirementChanged();
+		}
 	}
 
 	@Override
@@ -455,10 +446,18 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onConfigurationChanged(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+		RowProcessingAnalyzerJobBuilderPanel panel = _rowProcessingTabPanels.get(analyzerJobBuilder);
+		if (panel != null) {
+			panel.getPropertyWidgetFactory().onConfigurationChanged();
+		}
 		updateStatusLabel();
 	}
 
 	@Override
 	public void onRequirementChanged(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+		RowProcessingAnalyzerJobBuilderPanel panel = _rowProcessingTabPanels.get(analyzerJobBuilder);
+		if (panel != null) {
+			panel.onRequirementChanged();
+		}
 	}
 }

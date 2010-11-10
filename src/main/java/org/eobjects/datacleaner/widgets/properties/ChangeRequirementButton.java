@@ -63,8 +63,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				_jobBuilder.setRequirement(null);
-				setText(NO_FILTER_TEXT);
-				updateParentUI();
+				updateText();
 			}
 		});
 		popup.add(noFilterMenuItem);
@@ -114,8 +113,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							_jobBuilder.setRequirement(fjb, category);
-							setText(fjb.getDescriptor().getDisplayName() + ": " + category);
-							updateParentUI();
+							updateText();
 						}
 					});
 
@@ -127,6 +125,25 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 		}
 
 		popup.show(this, 0, getHeight());
+	}
+
+	public void updateText() {
+		logger.info("updateText()");
+		Outcome requirement = _jobBuilder.getRequirement();
+		if (requirement == null) {
+			setText(NO_FILTER_TEXT);
+		} else {
+			if (requirement instanceof FilterOutcome) {
+				Enum<?> category = ((FilterOutcome) requirement).getCategory();
+				FilterJob filterJob = ((FilterOutcome) requirement).getFilterJob();
+				setText(filterJob.getDescriptor().getDisplayName() + ": " + category);
+			} else {
+				// TODO: Other requirement types not yet supported
+				setText(requirement.toString());
+			}
+		}
+
+		updateParentUI();
 	}
 
 	// hack to update the UI of the parent tab - seems there's a problem with

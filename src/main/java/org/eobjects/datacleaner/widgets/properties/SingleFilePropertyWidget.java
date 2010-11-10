@@ -83,4 +83,12 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 		return file;
 	}
 
+	@Override
+	protected void setValue(File value) {
+		if (value == null) {
+			_textField.setText("");
+			return;
+		}
+		_textField.setText(value.getAbsolutePath());
+	}
 }

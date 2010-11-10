@@ -85,4 +85,9 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 	public void removeUpdate(DocumentEvent e) {
 		updateColor();
 	}
+	
+	@Override
+	protected void setValue(Pattern value) {
+		_textField.setText(value.pattern());
+	}
 }

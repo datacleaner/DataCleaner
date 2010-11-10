@@ -201,4 +201,9 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	@Override
 	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
 	}
+
+	@Override
+	protected void setValue(InputColumn<?>[] value) {
+		updateComponents();
+	}
 }

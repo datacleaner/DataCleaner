@@ -37,4 +37,8 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 		return _datePicker.getDate();
 	}
 
+	@Override
+	protected void setValue(Date value) {
+		_datePicker.setDate(value);
+	}
 }

@@ -139,4 +139,19 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 		}
 		return result.toArray(new Dictionary[result.size()]);
 	}
+
+	@Override
+	protected void setValue(Dictionary[] value) {
+		for (JCheckBox checkBox : _checkBoxes) {
+			String text = checkBox.getText();
+			boolean enabled = false;
+			for (Dictionary dictionary : value) {
+				if (text.equals(dictionary)) {
+					enabled = true;
+					break;
+				}
+			}
+			checkBox.setEnabled(enabled);
+		}
+	}
 }

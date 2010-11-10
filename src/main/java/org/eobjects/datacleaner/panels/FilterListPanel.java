@@ -5,9 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,30 +34,25 @@ import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
-import org.eobjects.datacleaner.widgets.properties.PropertyWidgetListener;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class FilterListPanel extends DCPanel implements FilterChangeListener, PropertyWidgetListener {
+public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private final Map<FilterJobBuilder<?, ?>, JXTaskPane> _filterJobBuilders;
-	private final Map<FilterJobBuilder<?, ?>, List<PropertyWidget<?>>> _propertyWidgets;
+	private final Map<FilterJobBuilder<?, ?>, PropertyWidgetFactory> _propertyWidgetFactories;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final JXTaskPaneContainer _taskPaneContainer;
-	private final AnalysisJobBuilderWindow _parentWindow;
 
-	public FilterListPanel(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
-			AnalysisJobBuilder analysisJobBuilder) {
+	public FilterListPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		_parentWindow = parentWindow;
 		setLayout(new BorderLayout());
 		_filterJobBuilders = new IdentityHashMap<FilterJobBuilder<?, ?>, JXTaskPane>();
-		_propertyWidgets = new IdentityHashMap<FilterJobBuilder<?, ?>, List<PropertyWidget<?>>>();
+		_propertyWidgetFactories = new IdentityHashMap<FilterJobBuilder<?, ?>, PropertyWidgetFactory>();
 		_analysisJobBuilder = analysisJobBuilder;
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 
@@ -80,10 +73,10 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 	}
 
 	public void applyPropertyValues() {
-		Set<FilterJobBuilder<?, ?>> filterJobBuilders = _propertyWidgets.keySet();
+		Set<FilterJobBuilder<?, ?>> filterJobBuilders = _propertyWidgetFactories.keySet();
 		for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
-			List<PropertyWidget<?>> propertyWidgets = _propertyWidgets.get(filterJobBuilder);
-			for (PropertyWidget<?> propertyWidget : propertyWidgets) {
+			PropertyWidgetFactory propertyWidgetFactory = _propertyWidgetFactories.get(filterJobBuilder);
+			for (PropertyWidget<?> propertyWidget : propertyWidgetFactory.getWidgets()) {
 				if (propertyWidget.isSet()) {
 					Object value = propertyWidget.getValue();
 					ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
@@ -95,7 +88,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 
 	private JXTaskPane createTaskPane(final FilterJobBuilder<?, ?> fjb) {
 		final JXTaskPane taskPane = new JXTaskPane();
-		final List<PropertyWidget<?>> propertyWidgets = _propertyWidgets.get(fjb);
+		final PropertyWidgetFactory propertyWidgetFactory = _propertyWidgetFactories.get(fjb);
 		final FilterBeanDescriptor<?, ?> descriptor = fjb.getDescriptor();
 		taskPane.setTitle(descriptor.getDisplayName());
 		taskPane.setIcon(IconUtils.getDescriptorIcon(fjb.getDescriptor(), IconUtils.ICON_SIZE_SMALL));
@@ -127,9 +120,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 			label.setOpaque(false);
 			WidgetUtils.addToGridBag(label, panel, 0, i, 1, 1, GridBagConstraints.NORTHEAST, 4);
 
-			PropertyWidget<?> propertyWidget = PropertyWidgetFactory.create(_analysisJobBuilder, fjb, propertyDescriptor);
-			propertyWidget.addListener(this);
-			propertyWidgets.add(propertyWidget);
+			PropertyWidget<?> propertyWidget = propertyWidgetFactory.create(propertyDescriptor);
 			WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 1, GridBagConstraints.NORTHWEST, 4);
 			i++;
 		}
@@ -195,7 +186,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 
 	@Override
 	public void onAdd(FilterJobBuilder<?, ?> fjb) {
-		_propertyWidgets.put(fjb, new ArrayList<PropertyWidget<?>>());
+		_propertyWidgetFactories.put(fjb, new PropertyWidgetFactory(_analysisJobBuilder, fjb));
 		JXTaskPane taskPane = createTaskPane(fjb);
 		_filterJobBuilders.put(fjb, taskPane);
 		_taskPaneContainer.add(taskPane);
@@ -203,16 +194,16 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener, Pr
 
 	@Override
 	public void onRemove(FilterJobBuilder<?, ?> fjb) {
-		_propertyWidgets.remove(fjb);
+		_propertyWidgetFactories.remove(fjb);
 		JXTaskPane taskPane = _filterJobBuilders.remove(fjb);
 		_taskPaneContainer.remove(taskPane);
 	}
 
 	@Override
-	public void onValueChanged(PropertyWidget<?> widget, Object value) {
-		// TODO: Could be made more effecient by only updating the configuration
-		// of the particular filter
-		applyPropertyValues();
-		_parentWindow.updateStatusLabel();
+	public void onConfigurationChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
+	}
+
+	@Override
+	public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
 	}
 }

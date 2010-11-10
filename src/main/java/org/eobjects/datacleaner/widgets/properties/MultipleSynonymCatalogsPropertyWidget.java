@@ -55,7 +55,7 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidge
 
 	public MultipleSynonymCatalogsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_beanJobBuilder = beanJobBuilder;
 		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
 		setLayout(new VerticalLayout(2));

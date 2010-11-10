@@ -18,7 +18,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 
 	public SingleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_textField = new JTextField(5);
 		_textField.setDocument(new NumberDocument());
 		Number currentValue = (Number) beanJobBuilder.getConfiguredProperty(propertyDescriptor);

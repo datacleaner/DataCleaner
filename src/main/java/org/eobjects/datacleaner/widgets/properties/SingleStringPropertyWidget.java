@@ -16,7 +16,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
 	public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_textField = WidgetUtils.createTextField(propertyDescriptor.getName());
 		String currentValue = (String) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {

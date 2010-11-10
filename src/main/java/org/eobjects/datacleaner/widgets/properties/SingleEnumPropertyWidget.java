@@ -16,7 +16,7 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
 
 	public SingleEnumPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 
 		Enum<?>[] enumConstants = (Enum<?>[]) propertyDescriptor.getType().getEnumConstants();
 

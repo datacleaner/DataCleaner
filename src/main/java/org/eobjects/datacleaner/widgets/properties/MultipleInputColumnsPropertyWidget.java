@@ -63,7 +63,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	public MultipleInputColumnsPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_analysisJobBuilder = analysisJobBuilder;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
@@ -192,5 +192,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	public void removeNotify() {
 		super.removeNotify();
 		_analysisJobBuilder.getSourceColumnListeners().remove(this);
+	}
+
+	@Override
+	public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+	}
+
+	@Override
+	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
 	}
 }

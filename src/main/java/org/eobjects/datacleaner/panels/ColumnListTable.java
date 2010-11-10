@@ -19,6 +19,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.util.InputColumnComparator;
 import org.eobjects.datacleaner.actions.AddQuickFilterActionListener;
 import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
 import org.eobjects.datacleaner.util.DCDocumentListener;
@@ -42,7 +43,7 @@ public final class ColumnListTable extends DCPanel {
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final Table _table;
 	private final DCTable _columnTable;
-	private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>();
+	private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>(new InputColumnComparator());
 
 	public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalyzerBeansConfiguration configuration,
 			AnalysisJobBuilder analysisJobBuilder) {

@@ -32,14 +32,4 @@ public class DummyPropertyWidget implements PropertyWidget<Object> {
 	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
 		return _propertyDescriptor;
 	}
-
-	@Override
-	public void addListener(PropertyWidgetListener listener) {
-		// do nothing
-	}
-	
-	@Override
-	public void removeListener(PropertyWidgetListener listener) {
-		// do nothing
-	}
 }

@@ -15,7 +15,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 
 	public SingleBooleanPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_checkBox = new JCheckBox();
 		Boolean currentValue = (Boolean) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		_checkBox.setOpaque(false);

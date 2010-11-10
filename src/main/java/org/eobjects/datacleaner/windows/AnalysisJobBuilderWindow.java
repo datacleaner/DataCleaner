@@ -90,7 +90,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
-		_filterListPanel = new FilterListPanel(this, _configuration, _analysisJobBuilder);
+		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_tabbedPane = new CloseableTabbedPane();
 		_tabbedPane.addTabCloseListener(this);
 		_tabbedPane.addChangeListener(new ChangeListener() {
@@ -271,7 +271,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		leftPanel.setLayout(new BorderLayout());
 		leftPanel.add(collapsibleTreePane, BorderLayout.CENTER);
 		leftPanel.add(collapseButtonPanel, BorderLayout.EAST);
-		
+
 		schemaTree.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -357,7 +357,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(this, _analysisJobBuilder,
+		RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(_analysisJobBuilder,
 				analyzerJobBuilder);
 		_rowProcessingTabPanels.add(panel);
 		_tabbedPane.addTab(analyzerJobBuilder.getDescriptor().getDisplayName(),
@@ -386,7 +386,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
-		TransformerJobBuilderPanel panel = new TransformerJobBuilderPanel(this, _analysisJobBuilder, transformerJobBuilder,
+		TransformerJobBuilderPanel panel = new TransformerJobBuilderPanel(_analysisJobBuilder, transformerJobBuilder,
 				_configuration);
 		_transformerTabPanels.add(panel);
 		_tabbedPane.addTab(transformerJobBuilder.getDescriptor().getDisplayName(),
@@ -428,5 +428,37 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	@Override
 	public void onRemove(FilterJobBuilder<?, ?> filterJobBuilder) {
 		updateStatusLabel();
+	}
+
+	@Override
+	public void onConfigurationChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
+		updateStatusLabel();
+	}
+
+	@Override
+	public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
+	}
+
+	@Override
+	public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+		updateStatusLabel();
+	}
+
+	@Override
+	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+	}
+
+	@Override
+	public void onConfigurationChanged(ExploringAnalyzerJobBuilder<?> analyzerJobBuilder) {
+		updateStatusLabel();
+	}
+
+	@Override
+	public void onConfigurationChanged(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+		updateStatusLabel();
+	}
+
+	@Override
+	public void onRequirementChanged(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
 	}
 }

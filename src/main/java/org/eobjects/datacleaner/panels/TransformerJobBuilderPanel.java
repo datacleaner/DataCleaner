@@ -10,7 +10,6 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -18,7 +17,6 @@ import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.properties.ChangeRequirementButton;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerChangeListener {
 
@@ -30,22 +28,18 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private final AnalyzerBeansConfiguration _configuration;
 	private final ColumnListTable _outputColumnsTable;
 
-	public TransformerJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, AnalysisJobBuilder analysisJobBuilder,
+	public TransformerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder,
 			TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration) {
-		super(parentWindow, "images/window/transformer-tab-background.png", analysisJobBuilder);
+		super("images/window/transformer-tab-background.png", analysisJobBuilder, transformerJobBuilder);
 		_transformerJobBuilder = transformerJobBuilder;
 		_configuration = configuration;
 
-		TransformerBeanDescriptor<?> descriptor = _transformerJobBuilder.getDescriptor();
 		List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
 
 		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, analysisJobBuilder);
 		getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
 
-
-		init(descriptor, transformerJobBuilder);
-
-
+		init();
 
 		JButton previewButton = new JButton("Preview transformed data",
 				imageManager.getImageIcon("images/actions/preview_data.png"));
@@ -99,5 +93,13 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		if (transformerJobBuilder == _transformerJobBuilder) {
 			_outputColumnsTable.setColumns(outputColumns);
 		}
+	}
+
+	@Override
+	public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+	}
+
+	@Override
+	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
 	}
 }

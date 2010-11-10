@@ -21,34 +21,35 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
-import org.eobjects.datacleaner.widgets.properties.PropertyWidgetListener;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
-public abstract class AbstractJobBuilderPanel extends DCPanel implements PropertyWidgetListener {
+public abstract class AbstractJobBuilderPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private final List<PropertyWidget<?>> _propertyWidgets = new ArrayList<PropertyWidget<?>>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final JXTaskPaneContainer _taskPaneContainer;
-	private final AnalysisJobBuilderWindow _parentWindow;
+	private final PropertyWidgetFactory _propertyWidgetFactory;
+	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
+	private final BeanDescriptor<?> _descriptor;
 
-	public AbstractJobBuilderPanel(AnalysisJobBuilderWindow parentWindow, String backgroundImagePath,
-			AnalysisJobBuilder analysisJobBuilder) {
+	public AbstractJobBuilderPanel(String backgroundImagePath, AnalysisJobBuilder analysisJobBuilder,
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(ImageManager.getInstance().getImage(backgroundImagePath), 95, 95, WidgetUtils.BG_COLOR_BRIGHT,
 				WidgetUtils.BG_COLOR_BRIGHTEST);
-		_parentWindow = parentWindow;
 		_analysisJobBuilder = analysisJobBuilder;
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+		_beanJobBuilder = beanJobBuilder;
+		_descriptor = beanJobBuilder.getDescriptor();
+		_propertyWidgetFactory = new PropertyWidgetFactory(analysisJobBuilder, beanJobBuilder);
 		setLayout(new BorderLayout());
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
 
-	protected void init(BeanDescriptor<?> descriptor, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+	protected void init() {
 		Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
-				descriptor.getConfiguredProperties());
+				_descriptor.getConfiguredProperties());
 
 		List<ConfiguredPropertyDescriptor> inputProperties = new ArrayList<ConfiguredPropertyDescriptor>();
 		List<ConfiguredPropertyDescriptor> requiredProperties = new ArrayList<ConfiguredPropertyDescriptor>();
@@ -66,11 +67,11 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 
 		ImageManager imageManager = ImageManager.getInstance();
 		buildTaskPane(inputProperties, imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL),
-				"Input columns", beanJobBuilder);
+				"Input columns", _beanJobBuilder);
 		buildTaskPane(requiredProperties, imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL),
-				"Required properties", beanJobBuilder);
+				"Required properties", _beanJobBuilder);
 		buildTaskPane(optionalProperties, imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL),
-				"Optional properties", beanJobBuilder);
+				"Optional properties", _beanJobBuilder);
 	}
 
 	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
@@ -85,7 +86,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 
 				PropertyWidget<?> propertyWidget = createPropertyWidget(_analysisJobBuilder, beanJobBuilder,
 						propertyDescriptor);
-				_propertyWidgets.add(propertyWidget);
 				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 1, GridBagConstraints.NORTHWEST, 4);
 				i++;
 			}
@@ -95,9 +95,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 
 	protected PropertyWidget<?> createPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-		PropertyWidget<?> propertyWidget = PropertyWidgetFactory.create(analysisJobBuilder, beanJobBuilder,
-				propertyDescriptor);
-		propertyWidget.addListener(this);
+		PropertyWidget<?> propertyWidget = _propertyWidgetFactory.create(propertyDescriptor);
 		return propertyWidget;
 	}
 
@@ -121,7 +119,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 	 *            case some of the applied properties are missing or errornous
 	 */
 	public void applyPropertyValues(boolean errorAware) {
-		for (PropertyWidget<?> propertyWidget : _propertyWidgets) {
+		for (PropertyWidget<?> propertyWidget : _propertyWidgetFactory.getWidgets()) {
 			ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
 			if (propertyWidget.isSet()) {
 				Object value = propertyWidget.getValue();
@@ -136,14 +134,6 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Propert
 
 	public AnalysisJobBuilder getAnalysisJobBuilder() {
 		return _analysisJobBuilder;
-	}
-
-	@Override
-	public final void onValueChanged(PropertyWidget<?> widget, Object value) {
-		if (widget.isSet()) {
-			setConfiguredProperty(widget.getPropertyDescriptor(), value);
-		}
-		_parentWindow.updateStatusLabel();
 	}
 
 	protected abstract void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value);

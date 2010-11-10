@@ -20,7 +20,7 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 
 	public SingleSynonymCatalogPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 
 		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
 		String[] synonymCatalogNames = _configuration.getReferenceDataCatalog().getSynonymCatalogNames();

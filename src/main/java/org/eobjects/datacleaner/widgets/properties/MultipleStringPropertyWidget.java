@@ -17,7 +17,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 
 	public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 
 		_textArea = WidgetUtils.createTextArea(propertyDescriptor.getName());
 		_textArea.setRows(3);

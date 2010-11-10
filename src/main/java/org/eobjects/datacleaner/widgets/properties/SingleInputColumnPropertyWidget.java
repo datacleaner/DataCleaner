@@ -32,7 +32,7 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 
 	public SingleInputColumnPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_radioGroup.setLayoutAxis(BoxLayout.Y_AXIS);
 		_radioGroup.setOpaque(false);
 		_analysisJobBuilder = analysisJobBuilder;
@@ -149,5 +149,13 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+	}
+
+	@Override
+	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
 	}
 }

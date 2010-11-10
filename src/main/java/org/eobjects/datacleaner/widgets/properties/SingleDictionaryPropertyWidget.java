@@ -20,7 +20,7 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 
 	public SingleDictionaryPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 
 		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
 		String[] dictionaryNames = _configuration.getReferenceDataCatalog().getDictionaryNames();

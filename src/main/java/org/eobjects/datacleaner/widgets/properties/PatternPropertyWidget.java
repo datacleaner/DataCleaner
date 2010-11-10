@@ -21,7 +21,7 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 
 	public PatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_textField = WidgetUtils.createTextField(propertyDescriptor.getName());
 		_textField.getDocument().addDocumentListener(this);
 		String currentValue = (String) beanJobBuilder.getConfiguredProperty(propertyDescriptor);

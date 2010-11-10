@@ -29,7 +29,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
 	public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 
 		_textField = WidgetUtils.createTextField("Filename");
 

@@ -55,7 +55,7 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 
 	public MultipleDictionariesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_beanJobBuilder = beanJobBuilder;
 		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
 		setLayout(new VerticalLayout(2));

@@ -16,7 +16,7 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
 	public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor);
+		super(beanJobBuilder, propertyDescriptor);
 		_datePicker = new JXDatePicker();
 		_datePicker.addActionListener(new ActionListener() {
 

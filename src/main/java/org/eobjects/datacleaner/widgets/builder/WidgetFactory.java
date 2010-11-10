@@ -29,22 +29,28 @@ public final class WidgetFactory {
 		}
 	}
 
+	public static WidgetBuilder<JMenuBar> createMenuBar() {
+		JMenuBar menuBar = new JMenuBar();
+		WidgetBuilder<JMenuBar> wb = new WidgetBuilder<JMenuBar>(menuBar);
+		return wb;
+	}
+
 	public static MenuBuilder<JMenu> createMenu(String text, char mnemonic) {
 		WidgetBuilder<JMenu> wb = create(JMenu.class);
-		JMenu component = wb.toComponent();
+		JMenu menu = wb.toComponent();
 		wb.applyTooltip(text);
-		component.setText(text);
-		component.setMnemonic(mnemonic);
+		menu.setText(text);
+		menu.setMnemonic(mnemonic);
 		return new MenuBuilder<JMenu>(wb.toComponent());
 	}
 
 	public static MenuBuilder<JMenuItem> createMenuItem(String text, String iconPath) {
 		WidgetBuilder<JMenuItem> wb = create(JMenuItem.class);
-		JMenuItem component = wb.toComponent();
+		JMenuItem menu = wb.toComponent();
 		wb.applyTooltip(text);
-		component.setText(text);
+		menu.setText(text);
 		if (iconPath != null) {
-			component.setIcon(ImageManager.getInstance().getImageIcon(iconPath));
+			menu.setIcon(ImageManager.getInstance().getImageIcon(iconPath));
 		}
 		return new MenuBuilder<JMenuItem>(wb.toComponent());
 	}
@@ -64,11 +70,6 @@ public final class WidgetFactory {
 		toolbar.setFloatable(false);
 		toolbar.setAlignmentY(JToolBar.LEFT_ALIGNMENT);
 		return toolbar;
-	}
-
-	public static WidgetBuilder<JMenuBar> createMenuBar() {
-		WidgetBuilder<JMenuBar> wb = new WidgetBuilder<JMenuBar>(new JMenuBar());
-		return wb;
 	}
 
 	public static WidgetBuilder<JLabel> createLabel(Icon icon) {

@@ -46,6 +46,8 @@ public class DCPanel extends JPanel {
 		super();
 		if (topColor == null || bottomColor == null) {
 			setOpaque(false);
+		} else {
+			setOpaque(true);
 		}
 		_topColor = topColor;
 		_bottomColor = bottomColor;

@@ -36,7 +36,7 @@ public final class LookAndFeelManager {
 	}
 
 	public void init() {
-		
+
 		try {
 			LookAndFeel laf = new PlasticXPLookAndFeel();
 			UIManager.setLookAndFeel(laf);
@@ -44,13 +44,13 @@ public final class LookAndFeelManager {
 		} catch (UnsupportedLookAndFeelException e) {
 			throw new IllegalStateException(e);
 		}
-
+		
 		Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
 
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-
+				
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
@@ -60,11 +60,25 @@ public final class LookAndFeelManager {
 				}
 			}
 		}
-
+		
 		ToolTipManager.sharedInstance().setInitialDelay(500);
 		PopupFactory.setSharedInstance(new DCPopupFactory());
 
-		UIManager.put("ScrollPane.border", new EmptyBorder(0, 0, 0, 0));
+		EmptyBorder emptyBorder = new EmptyBorder(0, 0, 0, 0);
+		LineBorder borderDarkest3 = new LineBorder(WidgetUtils.BG_COLOR_DARKEST, 3);
+		UIManager.put("ScrollPane.border", emptyBorder);
+		UIManager.put("Menu.border", borderDarkest3);
+		UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
+		UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("PopupMenu.border", emptyBorder);
+		UIManager.put("PopupMenu.background", WidgetUtils.BG_COLOR_DARKEST);
+		UIManager.put("PopupMenu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("MenuItem.border", borderDarkest3);
+		UIManager.put("MenuItem.background", WidgetUtils.BG_COLOR_DARKEST);
+		UIManager.put("MenuItem.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("MenuBar.border", emptyBorder);
+		UIManager.put("MenuBar.background", WidgetUtils.BG_COLOR_DARKEST);
+		UIManager.put("MenuBar.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
 
 		// white background for input components
 		UIManager.put("Tree.background", WidgetUtils.BG_COLOR_BRIGHTEST);

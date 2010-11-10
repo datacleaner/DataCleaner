@@ -39,13 +39,15 @@ public final class WidgetUtils {
 	public static final Color BG_COLOR_BRIGHT = new ColorUIResource(225, 225, 225);
 
 	// slightly darker than BRIGHT
-	public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(220, 220, 220);
+	public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(210, 210, 210);
 
 	// white
 	public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
 	// #353f48 (brownish dark gray)
 	public static final Color BG_COLOR_DARK = new ColorUIResource(53, 63, 72);
+
+	public static final Color BG_COLOR_MEDIUM  = new ColorUIResource(150, 150, 150);
 
 	// #5d656d (less brownish dark gray)
 	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(93, 101, 109);

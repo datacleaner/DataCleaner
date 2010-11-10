@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
@@ -71,7 +74,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final List<RowProcessingAnalyzerJobBuilderPanel> _rowProcessingTabPanels = new LinkedList<RowProcessingAnalyzerJobBuilderPanel>();
 	private final List<TransformerJobBuilderPanel> _transformerTabPanels = new LinkedList<TransformerJobBuilderPanel>();
 	private final FilterListPanel _filterListPanel;
-	private final JLabel _statusLabel;
+	private final JLabel _statusLabel = new JLabel();
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
 
@@ -106,7 +109,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				updateStatusLabel();
 			}
 		});
-		_statusLabel = new JLabel();
 		updateStatusLabel();
 	}
 
@@ -168,13 +170,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
 		addAnalyzerButton.addActionListener(new AddAnalyzerActionListener(_configuration, _analysisJobBuilder));
 
-		final JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.add(saveButton);
-		toolBar.add(new JSeparator(JSeparator.VERTICAL));
-		toolBar.add(addTransformerButton);
-		toolBar.add(addAnalyzerButton);
-		toolBar.add(new JSeparator(JSeparator.VERTICAL));
-
 		// Run analysis
 		final JButton runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 		runButton.addActionListener(new ActionListener() {
@@ -195,15 +190,36 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				new RunAnalysisActionListener(_analysisJobBuilder, _configuration).actionPerformed(e);
 			}
 		});
+
+		final JToolBar toolBar = WidgetFactory.createToolBar();
+		saveButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		saveButton.setFocusPainted(false);
+		addTransformerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		addTransformerButton.setFocusPainted(false);
+		addAnalyzerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		addAnalyzerButton.setFocusPainted(false);
+		runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		runButton.setFocusPainted(false);
+		toolBar.setOpaque(false);
+		toolBar.setBorder(null);
+		toolBar.add(saveButton);
+		toolBar.add(createToolBarSeparator());
+		toolBar.add(addTransformerButton);
+		toolBar.add(addAnalyzerButton);
+		toolBar.add(createToolBarSeparator());
 		toolBar.add(runButton);
 
 		final SchemaTree schemaTree = new SchemaTree(_datastore, _analysisJobBuilder);
 
 		final Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
-		final DCPanel treePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
+		final JScrollPane schemaTreeScroll = WidgetUtils.scrolleable(schemaTree);
+		schemaTreeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+		final DCPanel schemaTreePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
 				WidgetUtils.BG_COLOR_BRIGHT);
-		treePanel.setLayout(new BorderLayout());
-		treePanel.add(schemaTree, BorderLayout.CENTER);
+		schemaTreePanel.setLayout(new BorderLayout());
+		schemaTreePanel.setBorder(WidgetUtils.BORDER_WIDE);
+		schemaTreePanel.add(schemaTreeScroll, BorderLayout.CENTER);
 
 		final SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
 		final DCPanel metadataPanel = new DCPanel(imageManager.getImage("images/window/metadata-tab-background.png"), 95, 95);
@@ -223,7 +239,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		final JXCollapsiblePane collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
 		collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
-		collapsibleTreePane.add(treePanel);
+		collapsibleTreePane.add(schemaTreePanel);
 
 		final JButton toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
 		toggleTreeViewButton.setBorder(null);
@@ -255,7 +271,13 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		leftPanel.setLayout(new BorderLayout());
 		leftPanel.add(collapsibleTreePane, BorderLayout.CENTER);
 		leftPanel.add(collapseButtonPanel, BorderLayout.EAST);
-
+		
+		schemaTree.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				leftPanel.updateUI();
+			}
+		});
 
 		final JXStatusBar statusBar = new JXStatusBar();
 		final JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
@@ -263,11 +285,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		final Dimension windowSize = new Dimension(780, 630);
 
+		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
+		toolBarPanel.setLayout(new BorderLayout());
+		toolBarPanel.add(toolBar, BorderLayout.CENTER);
+
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());
 		panel.setSize(windowSize);
 		panel.setPreferredSize(windowSize);
-		panel.add(toolBar, BorderLayout.NORTH);
+		panel.add(toolBarPanel, BorderLayout.NORTH);
 		panel.add(leftPanel, BorderLayout.WEST);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 		panel.add(statusBar, BorderLayout.SOUTH);
@@ -275,6 +301,13 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		WidgetUtils.centerOnScreen(this);
 
 		return panel;
+	}
+
+	private JSeparator createToolBarSeparator() {
+		JSeparator sep = new JSeparator(JSeparator.VERTICAL);
+		sep.setForeground(WidgetUtils.BG_COLOR_LESS_DARK);
+		sep.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+		return sep;
 	}
 
 	@Override

@@ -20,7 +20,6 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
@@ -59,7 +58,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
 		setOpaque(false);
-		setBorder(WidgetUtils.BORDER_WIDE);
 		addTreeWillExpandListener(this);
 		addMouseListener(new SchemaMouseListener(this, _analysisJobBuilder));
 		addMouseListener(new TableMouseListener(this, _analysisJobBuilder));

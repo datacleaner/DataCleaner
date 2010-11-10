@@ -1,10 +1,10 @@
 package org.eobjects.datacleaner.windows;
 
+import java.awt.BorderLayout;
 import java.awt.Image;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -12,6 +12,8 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.datacleaner.panels.DCBannerPanel;
+import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
@@ -73,7 +75,11 @@ public final class ResultWindow extends AbstractWindow {
 			taskPaneContainer.add(taskPane);
 		}
 
-		return new JScrollPane(taskPaneContainer);
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_LESS_DARK);
+		panel.setLayout(new BorderLayout());
+		panel.add(new DCBannerPanel(), BorderLayout.NORTH);
+		panel.add(WidgetUtils.scrolleable(taskPaneContainer), BorderLayout.CENTER);
+		return panel;
 	}
 
 }

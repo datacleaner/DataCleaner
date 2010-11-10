@@ -66,7 +66,7 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	protected DCPanel getWindowContent() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_LESS_DARK);
 		Dimension dimension = new Dimension(WINDOW_WIDTH, 650);
 		panel.setPreferredSize(dimension);
 		panel.setSize(dimension);
@@ -122,31 +122,33 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	private JPanel getHeaderPanel() {
-		DCBannerPanel headerPanel = new DCBannerPanel();
-		headerPanel.setLayout(new HorizontalLayout());
-		headerPanel.add(Box.createVerticalStrut(headerPanel.getHeight()));
-
-		DCPanel buttonPanel = new DCPanel();
-		BoxLayout layout = new BoxLayout(buttonPanel, BoxLayout.X_AXIS);
-		buttonPanel.setLayout(layout);
-		headerPanel.add(buttonPanel);
-
-		buttonPanel.add(Box.createHorizontalStrut(WidgetUtils.BORDER_WIDE_WIDTH));
-
-		JButton visitWebsiteButton = new JButton(imageManager.getImageIcon("images/actions/website.png",
+		final JButton visitWebsiteButton = new JButton(imageManager.getImageIcon("images/actions/website.png",
 				IconUtils.ICON_SIZE_SMALL));
 		visitWebsiteButton.setToolTipText("Visit the DataCleaner website");
 		visitWebsiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
 		visitWebsiteButton.setAlignmentY(BOTTOM_ALIGNMENT);
-		buttonPanel.add(visitWebsiteButton);
+		visitWebsiteButton.setBackground(WidgetUtils.BG_COLOR_DARK);
+		visitWebsiteButton.setFocusPainted(false);
 
-		buttonPanel.add(Box.createHorizontalStrut(WidgetUtils.BORDER_WIDE_WIDTH));
-
-		JButton optionsButton = new JButton(imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL));
+		final JButton optionsButton = new JButton(imageManager.getImageIcon("images/menu/options.png",
+				IconUtils.ICON_SIZE_SMALL));
 		optionsButton.setToolTipText("Options");
 		optionsButton.setEnabled(false);
 		optionsButton.setAlignmentY(BOTTOM_ALIGNMENT);
+		optionsButton.setBackground(WidgetUtils.BG_COLOR_DARK);
+		optionsButton.setFocusPainted(false);
+
+		final DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+		buttonPanel.add(Box.createHorizontalStrut(WidgetUtils.BORDER_WIDE_WIDTH));
+		buttonPanel.add(visitWebsiteButton);
+		buttonPanel.add(Box.createHorizontalStrut(WidgetUtils.BORDER_WIDE_WIDTH));
 		buttonPanel.add(optionsButton);
+
+		final DCBannerPanel headerPanel = new DCBannerPanel();
+		headerPanel.setLayout(new HorizontalLayout());
+		headerPanel.add(Box.createVerticalStrut(headerPanel.getHeight()));
+		headerPanel.add(buttonPanel);
 
 		return headerPanel;
 	}

@@ -112,9 +112,22 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 			panel.add(label);
 
 			if (drillToDetailResultProducer != null) {
+				StringBuilder sb = new StringBuilder("Detailed result for [");
+
+				sb.append(label.getText());
+				sb.append(" (");
+
+				String cat1 = _tableModel.getValueAt(0, _col).toString();
+				sb.append(cat1).append(", ");
+
+				String cat2 = _tableModel.getValueAt(_row, 0).toString();
+				sb.append(cat2);
+
+				sb.append(")]");
+
 				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png").toComponent();
 				button.setMargin(new Insets(0, 0, 0, 0));
-				button.addActionListener(new InvokeResultProducerActionListener(drillToDetailResultProducer));
+				button.addActionListener(new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer));
 				panel.add(button);
 			}
 			panel.setAlignmentX(_alignment);

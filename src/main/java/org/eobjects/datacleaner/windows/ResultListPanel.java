@@ -7,6 +7,12 @@ import javax.swing.JTextArea;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.AnalyzerJob;
+import org.eobjects.analyzer.job.FilterJob;
+import org.eobjects.analyzer.job.FilterOutcome;
+import org.eobjects.analyzer.job.MergeInput;
+import org.eobjects.analyzer.job.MergedOutcome;
+import org.eobjects.analyzer.job.MergedOutcomeJob;
+import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
@@ -63,6 +69,13 @@ public class ResultListPanel extends DCPanel {
 			sb.append(")");
 		}
 
+		Outcome req = analyzerJob.getRequirement();
+		if (req != null) {
+			sb.append(" (");
+			appendRequirement(sb, req);
+			sb.append(")");
+		}
+
 		taskPane.setTitle(sb.toString());
 		taskPane.add(component);
 
@@ -71,4 +84,31 @@ public class ResultListPanel extends DCPanel {
 		}
 	}
 
+	private void appendRequirement(StringBuilder sb, Outcome req) {
+		if (req instanceof FilterOutcome) {
+			FilterJob filterJob = ((FilterOutcome) req).getFilterJob();
+			Enum<?> category = ((FilterOutcome) req).getCategory();
+
+			sb.append(filterJob.getDescriptor().getDisplayName());
+			sb.append("=");
+			sb.append(category);
+		} else if (req instanceof MergedOutcome) {
+			sb.append('[');
+			MergedOutcomeJob mergedOutcomeJob = ((MergedOutcome) req).getMergedOutcomeJob();
+
+			MergeInput[] mergeInputs = mergedOutcomeJob.getMergeInputs();
+			for (int i = 0; i < mergeInputs.length; i++) {
+				if (i != 0) {
+					sb.append(',');
+				}
+				MergeInput mergeInput = mergeInputs[i];
+				Outcome outcome = mergeInput.getOutcome();
+				appendRequirement(sb, outcome);
+			}
+			sb.append(']');
+		} else {
+			// should not happen
+			sb.append(req.toString());
+		}
+	}
 }

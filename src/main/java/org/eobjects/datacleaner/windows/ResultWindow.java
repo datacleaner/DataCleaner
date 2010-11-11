@@ -69,8 +69,7 @@ public final class ResultWindow extends AbstractWindow {
 	private void addTableResultPanel(Table table) {
 		ResultListPanel panel = new ResultListPanel(_rendererFactory);
 		_resultPanels.put(table, panel);
-		_tabbedPane.addTab(table.getName(), imageManager.getImageIcon("images/model/table.png"),
-				WidgetUtils.scrolleable(panel));
+		_tabbedPane.addTab(table.getName(), imageManager.getImageIcon("images/model/table.png"), panel);
 	}
 
 	private ResultListPanel getTableResultPanel(Table table) {

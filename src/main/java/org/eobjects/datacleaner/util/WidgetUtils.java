@@ -34,6 +34,17 @@ public final class WidgetUtils {
 	public static final Font FONT_HEADER = new FontUIResource("SansSerif", Font.BOLD, 15);
 	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
 	public static final Font FONT_NORMAL = new FontUIResource("SansSerif", Font.PLAIN, 12);
+	public static final Font FONT_SMALL = new FontUIResource("SansSerif", Font.PLAIN, 10);
+
+	// the three blue variants in the DataCleaner logo
+	public static final Color BG_COLOR_BLUE_BRIGHT = new ColorUIResource(85, 148, 221);
+	public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(35, 93, 160);
+	public static final Color BG_COLOR_BLUE_DARK = new ColorUIResource(2, 58, 124);
+
+	// the three orange/yellow/brown variants in the DataCleaner logo
+	public static final Color BG_COLOR_ORANGE_BRIGHT = new ColorUIResource(255, 168, 0);
+	public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 102, 5);
+	public static final Color BG_COLOR_ORANGE_DARK = new ColorUIResource(168, 99, 15);
 
 	// #e1e1e1 (silver-ish)
 	public static final Color BG_COLOR_BRIGHT = new ColorUIResource(225, 225, 225);
@@ -47,7 +58,7 @@ public final class WidgetUtils {
 	// #353f48 (brownish dark gray)
 	public static final Color BG_COLOR_DARK = new ColorUIResource(53, 63, 72);
 
-	public static final Color BG_COLOR_MEDIUM  = new ColorUIResource(150, 150, 150);
+	public static final Color BG_COLOR_MEDIUM = new ColorUIResource(150, 150, 150);
 
 	// #5d656d (less brownish dark gray)
 	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(93, 101, 109);

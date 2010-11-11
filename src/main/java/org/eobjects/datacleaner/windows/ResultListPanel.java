@@ -29,7 +29,7 @@ public class ResultListPanel extends DCPanel {
 		_rendererFactory = rendererFactory;
 		setLayout(new BorderLayout());
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-		add(_taskPaneContainer, BorderLayout.CENTER);
+		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
 
 	public void addResult(AnalyzerJob analyzerJob, AnalyzerResult result) {

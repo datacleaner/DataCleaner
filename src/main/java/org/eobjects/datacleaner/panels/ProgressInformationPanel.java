@@ -3,17 +3,29 @@ package org.eobjects.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
+import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.jdesktop.swingx.VerticalLayout;
+
+import dk.eobjects.metamodel.schema.Table;
 
 public class ProgressInformationPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	private final JTextArea _textArea = new JTextArea();
+	private final DCPanel _progressBarPanel;
+	private final Map<Table, JProgressBar> _progressBars = new IdentityHashMap<Table, JProgressBar>();
 	private final JScrollPane _textAreaScroll;
 
 	public ProgressInformationPanel() {
@@ -21,11 +33,23 @@ public class ProgressInformationPanel extends DCPanel {
 		setLayout(new BorderLayout());
 		_textArea.setText("--- DataCleaner progress information user-log ---");
 		_textAreaScroll = WidgetUtils.scrolleable(_textArea);
-		add(_textAreaScroll, BorderLayout.CENTER);
+		_textAreaScroll.setBorder(WidgetUtils.BORDER_THIN);
+
+		_progressBarPanel = new DCPanel(WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_LESS_DARK);
+		_progressBarPanel.setLayout(new VerticalLayout(4));
+		_progressBarPanel.setBorder(WidgetUtils.BORDER_EMPTY);
+
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane.setDividerLocation(190);
+
+		splitPane.add(WidgetUtils.scrolleable(_progressBarPanel));
+		splitPane.add(_textAreaScroll);
+
+		add(splitPane, BorderLayout.CENTER);
 	}
 
 	public void addUserLog(String string) {
-		_textArea.append("\nINFO: " + string);
+		appendMessage("\nINFO: " + string);
 	}
 
 	public void addUserLog(String string, Throwable throwable) {
@@ -34,8 +58,44 @@ public class ProgressInformationPanel extends DCPanel {
 		stringWriter.append(string);
 		stringWriter.append('\n');
 		throwable.printStackTrace(new PrintWriter(stringWriter));
-		_textArea.append(stringWriter.toString());
-//		JScrollBar verticalScrollBar = _textAreaScroll.getVerticalScrollBar();
-//		verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+		appendMessage(stringWriter.toString());
+	}
+
+	private void appendMessage(String message) {
+		_textArea.append(message);
+
+		// moves the vertical scroll to the bottom
+		JScrollBar verticalScrollBar = _textAreaScroll.getVerticalScrollBar();
+		verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+	}
+
+	public void setExpectedRows(Table table, int expectedRows) {
+		boolean firstTable = _progressBars.isEmpty();
+
+		JProgressBar progressBar = new JProgressBar(0, expectedRows);
+		_progressBars.put(table, progressBar);
+
+		JLabel tableLabel = new JLabel(table.getName());
+		tableLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		
+		JLabel rowsLabel = new JLabel(expectedRows + " rows");
+		rowsLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		rowsLabel.setFont(WidgetUtils.FONT_SMALL);
+
+		if (!firstTable) {
+			_progressBarPanel.add(Box.createVerticalStrut(10));
+		}
+		
+		_progressBarPanel.add(tableLabel);
+		_progressBarPanel.add(rowsLabel);
+		_progressBarPanel.add(progressBar);
+		updateUI();
+	}
+
+	public void updateProgress(Table table, int currentRow) {
+		JProgressBar progressBar = _progressBars.get(table);
+		if (progressBar.getValue() < currentRow) {
+			progressBar.setValue(currentRow);
+		}
 	}
 }

@@ -83,14 +83,20 @@ public class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultFuture,
 				} else {
 					_progressInformationPanel.addUserLog("Starting row processing for " + table.getQualifiedLabel()
 							+ " (approx. " + expectedRows + " rows)");
+					_progressInformationPanel.setExpectedRows(table, expectedRows);
 				}
 			}
 		});
 	}
 
 	@Override
-	public void rowProcessingProgress(AnalysisJob job, Table table, int currentRow) {
-		// how much logging do we want here?
+	public void rowProcessingProgress(AnalysisJob job, final Table table, final int currentRow) {
+		publish(new Task() {
+			@Override
+			public void execute() throws Exception {
+				_progressInformationPanel.updateProgress(table, currentRow);
+			}
+		});
 	}
 
 	@Override

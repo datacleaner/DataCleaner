@@ -67,17 +67,23 @@ public class DCPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		if (isOpaque()) {
+			// int x = getX();
+			// int y = getY();
+
+			int x = 0;
+			int y = 0;
+
 			if (_topColor == null || _bottomColor == null) {
 				super.paintComponent(g);
 			} else {
-				GradientPaint paint = new GradientPaint(getX(), getY(), _topColor, getX(), getHeight(), _bottomColor);
+				GradientPaint paint = new GradientPaint(x, y, _topColor, x, getHeight(), _bottomColor);
 				if (g instanceof Graphics2D) {
 					Graphics2D g2d = (Graphics2D) g;
 					g2d.setPaint(paint);
 				} else {
 					g.setColor(_bottomColor);
 				}
-				g.fillRect(getX(), getY(), getWidth(), getHeight());
+				g.fillRect(x, y, getWidth(), getHeight());
 			}
 		}
 

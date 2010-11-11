@@ -118,6 +118,6 @@ public final class LookAndFeelManager {
 		UIManager.put("ScrollBar.thumbShadow", WidgetUtils.BG_COLOR_DARK);
 
 		// progressbar color
-		UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 	}
 }

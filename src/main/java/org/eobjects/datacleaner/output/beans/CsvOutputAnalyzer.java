@@ -6,13 +6,14 @@ import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
+import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 
 @AnalyzerBean("Write to CSV file")
-@HiddenFromMenu
-public class CsvOutputAnalyzer extends AbstractOutputAnalyzer {
+@OutputWriterAnalyzer
+public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	private OutputWriter _outputWriter;
 
@@ -24,6 +25,11 @@ public class CsvOutputAnalyzer extends AbstractOutputAnalyzer {
 
 	@Configured
 	File file;
+	
+	@Override
+	public void configureForOutcome(FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
+		file = new File("output-" + descriptor.getDisplayName() + "-" + categoryName + ".csv");
+	}
 
 	@Override
 	public OutputWriter getOutputWriter() {

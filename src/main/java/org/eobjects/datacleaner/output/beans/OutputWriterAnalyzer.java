@@ -9,8 +9,9 @@ import java.lang.annotation.Target;
 
 /**
  * Marker annotation used to signal to DataCleaner that a specific AnalyzerBean
- * is to be hidden from the typical menu (ie. not appear in the "Add analyzer"
- * drop down).
+ * is used to write output and not to present analysis results. Such analyzers
+ * will be hidden from the main "add analyzer" menu but shown in the filter
+ * outcome mapping menu.
  * 
  * @author Kasper Sørensen
  */
@@ -18,6 +19,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Documented
 @Inherited
-public @interface HiddenFromMenu {
+public @interface OutputWriterAnalyzer {
 
 }

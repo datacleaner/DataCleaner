@@ -2,17 +2,23 @@ package org.eobjects.datacleaner.output.beans;
 
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 
 @AnalyzerBean("Write to Datastore")
-@HiddenFromMenu
-public class DatastoreOutputAnalyzer extends AbstractOutputAnalyzer {
+@OutputWriterAnalyzer
+public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	private OutputWriter _outputWriter;
 
 	@Configured
 	String datastoreName;
+
+	@Override
+	public void configureForOutcome(FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
+		datastoreName = "output-" + descriptor.getDisplayName() + "-" + categoryName;
+	}
 
 	@Override
 	public OutputWriter getOutputWriter() {

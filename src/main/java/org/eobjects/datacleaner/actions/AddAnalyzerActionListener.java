@@ -14,7 +14,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.output.beans.HiddenFromMenu;
+import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
 
@@ -36,7 +36,7 @@ public final class AddAnalyzerActionListener implements ActionListener {
 				.getAnalyzerBeanDescriptors();
 		descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
 		for (final AnalyzerBeanDescriptor<?> descriptor : descriptors) {
-			if (descriptor.getAnnotation(HiddenFromMenu.class) == null) {
+			if (descriptor.getAnnotation(OutputWriterAnalyzer.class) == null) {
 				if (descriptor.isRowProcessingAnalyzer()) {
 					JMenuItem menuItem = new DescriptorMenuItem(descriptor);
 					menuItem.addActionListener(new ActionListener() {

@@ -3,7 +3,7 @@ package org.eobjects.datacleaner.panels;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.util.Collection;
 import java.util.Set;
 
 import javax.swing.JButton;
@@ -12,32 +12,39 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.border.TitledBorder;
 
+import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
-import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
-import org.eobjects.datacleaner.output.beans.DatastoreOutputAnalyzer;
+import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
+import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.properties.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
+import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class FilterJobBuilderPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	private final AnalyzerBeansConfiguration _configuration;
 	private final PropertyWidgetFactory _propertyWidgetFactory;
 	private final FilterJobBuilder<?, ?> _filterJobBuilder;
 	private final ChangeRequirementButton _requirementButton;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final FilterBeanDescriptor<?, ?> _descriptor;
 
-	public FilterJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder, FilterJobBuilder<?, ?> filterJobBuilder) {
+	public FilterJobBuilderPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+			FilterJobBuilder<?, ?> filterJobBuilder) {
+		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
 		_filterJobBuilder = filterJobBuilder;
 		_propertyWidgetFactory = new PropertyWidgetFactory(analysisJobBuilder, filterJobBuilder);
@@ -82,35 +89,36 @@ public class FilterJobBuilderPanel extends DCPanel {
 				public void actionPerformed(ActionEvent e) {
 					JPopupMenu popup = new JPopupMenu();
 
-					JMenuItem saveAsDatastoreMenuItem = new JMenuItem("Create new datastore from outcome");
-					saveAsDatastoreMenuItem.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
+					Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
+							.getAnalyzerBeanDescriptors();
+					for (final AnalyzerBeanDescriptor<?> descriptor : descriptors) {
+						if (descriptor.isRowProcessingAnalyzer()
+								&& descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {
 
-							RowProcessingAnalyzerJobBuilder<DatastoreOutputAnalyzer> ajb = _analysisJobBuilder
-									.addRowProcessingAnalyzer(DatastoreOutputAnalyzer.class);
-							ajb.getConfigurableBean().setDatastoreName(
-									"output-" + _descriptor.getDisplayName() + "-" + categoryName);
-							ajb.setRequirement(_filterJobBuilder, categoryName);
-							ajb.onConfigurationChanged();
+							JMenuItem outputWriterMenuItem = new DescriptorMenuItem(descriptor);
+							outputWriterMenuItem.addActionListener(new ActionListener() {
+								@SuppressWarnings("unchecked")
+								@Override
+								public void actionPerformed(ActionEvent e) {
+									Class<? extends RowProcessingAnalyzer<?>> beanClass = (Class<? extends RowProcessingAnalyzer<?>>) descriptor
+											.getBeanClass();
+
+									RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> ajb = _analysisJobBuilder
+											.addRowProcessingAnalyzer(beanClass);
+
+									RowProcessingAnalyzer<?> configurableBean = ajb.getConfigurableBean();
+									if (configurableBean instanceof AbstractOutputWriterAnalyzer) {
+										((AbstractOutputWriterAnalyzer) configurableBean).configureForOutcome(_descriptor,
+												categoryName);
+									}
+
+									ajb.setRequirement(_filterJobBuilder, categoryName);
+									ajb.onConfigurationChanged();
+								}
+							});
+							popup.add(outputWriterMenuItem);
 						}
-					});
-					popup.add(saveAsDatastoreMenuItem);
-
-					JMenuItem saveToCsvFileMenuItem = new JMenuItem("Create CSV file from outcome");
-					saveToCsvFileMenuItem.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-
-							RowProcessingAnalyzerJobBuilder<CsvOutputAnalyzer> ajb = _analysisJobBuilder
-									.addRowProcessingAnalyzer(CsvOutputAnalyzer.class);
-							File file = new File("output-" + _descriptor.getDisplayName() + "-" + categoryName + ".csv");
-							ajb.getConfigurableBean().setFile(file);
-							ajb.setRequirement(_filterJobBuilder, categoryName);
-							ajb.onConfigurationChanged();
-						}
-					});
-					popup.add(saveToCsvFileMenuItem);
+					}
 
 					popup.show(outcomeButton, 0, outcomeButton.getHeight());
 				}

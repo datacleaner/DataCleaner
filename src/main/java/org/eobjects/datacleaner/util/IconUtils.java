@@ -10,6 +10,7 @@ import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
+import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 
 public final class IconUtils {
 
@@ -62,6 +63,10 @@ public final class IconUtils {
 		if (!descriptor.getBeanClass().getPackage().getName().startsWith("org.eobjects")) {
 			// plugins get a special icon
 			return "images/component-types/plugin.png";
+		}
+
+		if (descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {
+			return "images/component-types/type_output_writer.png";
 		}
 
 		String imagePath;

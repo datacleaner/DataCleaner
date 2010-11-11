@@ -4,10 +4,11 @@ import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
+import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 
-public abstract class AbstractOutputAnalyzer implements RowProcessingAnalyzer<OutputAnalyzerResult> {
+public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnalyzer<OutputAnalyzerResult> {
 
 	@Configured
 	InputColumn<?>[] columns;
@@ -19,6 +20,16 @@ public abstract class AbstractOutputAnalyzer implements RowProcessingAnalyzer<Ou
 	}
 
 	public abstract OutputWriter getOutputWriter();
+
+	/**
+	 * Subclasses should implement this method with any configuration logic such
+	 * as setting filenames etc. when the output writer analyzer is being
+	 * created.
+	 * 
+	 * @param descriptor
+	 * @param categoryName
+	 */
+	public abstract void configureForOutcome(FilterBeanDescriptor<?, ?> descriptor, String categoryName);
 
 	@Override
 	public void run(InputRow row, int distinctCount) {

@@ -29,6 +29,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private final AnalyzerBeansConfiguration _configuration;
 	private final Map<FilterJobBuilder<?, ?>, JXTaskPane> _taskPanes;
 	private final Map<FilterJobBuilder<?, ?>, FilterJobBuilderPanel> _panels;
 	private final AnalysisJobBuilder _analysisJobBuilder;
@@ -38,6 +39,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		setLayout(new BorderLayout());
+		_configuration = configuration;
 		_taskPanes = new IdentityHashMap<FilterJobBuilder<?, ?>, JXTaskPane>();
 		_panels = new IdentityHashMap<FilterJobBuilder<?, ?>, FilterJobBuilderPanel>();
 		_analysisJobBuilder = analysisJobBuilder;
@@ -92,7 +94,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	@Override
 	public void onAdd(FilterJobBuilder<?, ?> fjb) {
-		final FilterJobBuilderPanel panel = new FilterJobBuilderPanel(_analysisJobBuilder, fjb);
+		final FilterJobBuilderPanel panel = new FilterJobBuilderPanel(_configuration, _analysisJobBuilder, fjb);
 		_panels.put(fjb, panel);
 		JXTaskPane taskPane = createTaskPane(fjb);
 		_taskPanes.put(fjb, taskPane);

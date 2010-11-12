@@ -56,7 +56,7 @@ public class SaveDataSetActionListener implements ActionListener {
 		saveAsCsvItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getSaveFileDirectory());
+				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getAnalysisJobDirectory());
 				fileChooser.addChoosableFileFilter(FileFilters.CSV);
 				if (fileChooser.showSaveDialog((Component) event.getSource()) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
@@ -68,7 +68,7 @@ public class SaveDataSetActionListener implements ActionListener {
 					performWrite(writer);
 
 					File dir = selectedFile.getParentFile();
-					UserPreferences.getInstance().setSaveFileDirectory(dir);
+					UserPreferences.getInstance().setAnalysisJobDirectory(dir);
 				}
 			}
 		});

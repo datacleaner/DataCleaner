@@ -41,4 +41,8 @@ public class ExtensionFilter extends FileFilter {
 	public String getDescription() {
 		return _desc;
 	}
+	
+	public String getExtension() {
+		return _extension;
+	}
 }

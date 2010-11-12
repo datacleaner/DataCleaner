@@ -59,7 +59,7 @@ public class OpenAccessDatabaseDialog extends AbstractDialog {
 		_browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getOpenDatastoreFileDirectory());
+				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getDatastoreDirectory());
 				fileChooser.addChoosableFileFilter(FileFilters.MDB);
 				fileChooser.addChoosableFileFilter(FileFilters.ALL);
 				fileChooser.setFileFilter(FileFilters.MDB);
@@ -68,7 +68,7 @@ public class OpenAccessDatabaseDialog extends AbstractDialog {
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
 					File dir = selectedFile.getParentFile();
-					UserPreferences.getInstance().setOpenDatastoreFileDirectory(dir);
+					UserPreferences.getInstance().setDatastoreDirectory(dir);
 					_filenameField.setText(selectedFile.getAbsolutePath());
 
 					if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {

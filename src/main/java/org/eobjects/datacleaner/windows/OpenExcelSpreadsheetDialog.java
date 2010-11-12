@@ -60,7 +60,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 		_browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getOpenDatastoreFileDirectory());
+				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getDatastoreDirectory());
 				FileFilter combinedFilter = FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS,
 						FileFilters.XLSX);
 				fileChooser.addChoosableFileFilter(combinedFilter);
@@ -73,7 +73,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
 					File dir = selectedFile.getParentFile();
-					UserPreferences.getInstance().setOpenDatastoreFileDirectory(dir);
+					UserPreferences.getInstance().setDatastoreDirectory(dir);
 					_filenameField.setText(selectedFile.getAbsolutePath());
 
 					if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {

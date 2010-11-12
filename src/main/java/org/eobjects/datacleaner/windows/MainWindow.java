@@ -21,6 +21,7 @@ import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoresListPanel;
 import org.eobjects.datacleaner.panels.JobListPanel;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -160,7 +161,7 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		UserPreferences.getInstance().save();
 		System.exit(0);
 	}
 
@@ -172,7 +173,10 @@ public class MainWindow extends AbstractWindow {
 	private JMenuBar getWindowMenuBar() {
 		JMenuBar menuBar = WidgetFactory.createMenuBar().toComponent();
 
-		JMenu fileMenu = WidgetFactory.createMenu("File", 'F').toComponent();
+		JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job", "images/actions/open.png")
+				.toComponent();
+		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
+
 		JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png").toComponent();
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
@@ -180,16 +184,21 @@ public class MainWindow extends AbstractWindow {
 				windowClosing(null);
 			}
 		});
+
+		JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png").toComponent();
+		optionsMenuItem.setEnabled(false);
+
+		JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png").toComponent();
+		aboutMenuItem.setEnabled(false);
+
+		JMenu fileMenu = WidgetFactory.createMenu("File", 'F').toComponent();
+		fileMenu.add(openJobMenuItem);
 		fileMenu.add(exitMenuItem);
 
 		JMenu editMenu = WidgetFactory.createMenu("Edit", 'E').toComponent();
-		JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png").toComponent();
-		optionsMenuItem.setEnabled(false);
 		editMenu.add(optionsMenuItem);
 
 		JMenu helpMenu = WidgetFactory.createMenu("Help", 'H').toComponent();
-		JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png").toComponent();
-		aboutMenuItem.setEnabled(false);
 		helpMenu.add(aboutMenuItem);
 
 		menuBar.add(fileMenu);

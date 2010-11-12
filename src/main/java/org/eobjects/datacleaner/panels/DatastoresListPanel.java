@@ -80,17 +80,17 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 						new OpenAccessDatabaseDialog(_catalog).setVisible(true);
 					}
 				});
-				
+
 				// TODO: Not yet functional
 				JMenuItem dbaseMenuItem = new JMenuItem("Dbase database-file", imageManager.getImageIcon(
 						IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				dbaseMenuItem.setEnabled(false);
-				
+
 				// TODO: Not yet functional
 				JMenuItem odbMenuItem = new JMenuItem("OpenOffice.org database-file", imageManager.getImageIcon(
 						IconUtils.ODB_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				odbMenuItem.setEnabled(false);
-				
+
 				// TODO: Not yet functional
 				JMenuItem jdbcMenuItem = new JMenuItem("Database connection", imageManager.getImageIcon(
 						IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
@@ -138,7 +138,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 			editButton.setToolTipText("Edit datastore");
 			editButton.setEnabled(false);
 
-			JButton jobButton = WidgetFactory.createSmallButton("images/actions/create_job.png").toComponent();
+			JButton jobButton = WidgetFactory.createSmallButton("images/actions/new.png").toComponent();
 			jobButton.setToolTipText("Create job");
 			jobButton.addActionListener(new ActionListener() {
 				@Override

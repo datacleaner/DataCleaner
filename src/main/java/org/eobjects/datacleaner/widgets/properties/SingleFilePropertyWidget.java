@@ -51,7 +51,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 		browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getOpenPropertyFileDirectory());
+				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getConfiguredFileDirectory());
 				fileChooser.addChoosableFileFilter(FileFilters.ALL);
 				fileChooser.setFileFilter(FileFilters.ALL);
 				WidgetUtils.centerOnScreen(fileChooser);
@@ -59,7 +59,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
 					File dir = selectedFile.getParentFile();
-					UserPreferences.getInstance().setOpenPropertyFileDirectory(dir);
+					UserPreferences.getInstance().setConfiguredFileDirectory(dir);
 					_textField.setText(selectedFile.getAbsolutePath());
 				}
 			}

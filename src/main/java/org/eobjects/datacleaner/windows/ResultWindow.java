@@ -113,7 +113,7 @@ public final class ResultWindow extends AbstractWindow {
 		panel.setOpaque(true);
 		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
 		panel.setLayout(new BorderLayout());
-		panel.add(new DCBannerPanel(), BorderLayout.NORTH);
+		panel.add(new DCBannerPanel(getWindowTitle()), BorderLayout.NORTH);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

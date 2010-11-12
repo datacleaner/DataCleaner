@@ -13,6 +13,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.OpenAnalysisJobActionListener;
 
 public class JobListPanel extends DCPanel {
 
@@ -26,10 +27,10 @@ public class JobListPanel extends DCPanel {
 		setLayout(new BorderLayout());
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
-		final JButton addAnalysisJobItem = new JButton("Add job", ImageManager.getInstance().getImageIcon(
-				"images/actions/create_job.png"));
-
-		addAnalysisJobItem.addActionListener(new ActionListener() {
+		final JButton addJobButton = new JButton("New", ImageManager.getInstance()
+				.getImageIcon("images/actions/new.png"));
+		addJobButton.setToolTipText("Add analysis job");
+		addJobButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popupMenu = new JPopupMenu();
@@ -44,12 +45,16 @@ public class JobListPanel extends DCPanel {
 					});
 					popupMenu.add(menuItem);
 				}
-				popupMenu.show(addAnalysisJobItem, 0, addAnalysisJobItem.getHeight());
+				popupMenu.show(addJobButton, 0, addJobButton.getHeight());
 			}
 		});
 
-		addAnalysisJobItem.setToolTipText("Add analysis job");
-		toolBar.add(addAnalysisJobItem);
+		JButton openJobButton = new JButton("Open", ImageManager.getInstance().getImageIcon("images/actions/open.png"));
+		openJobButton.setToolTipText("Open analysis job");
+		openJobButton.addActionListener(new OpenAnalysisJobActionListener(_configuration));
+
+		toolBar.add(addJobButton);
+		toolBar.add(openJobButton);
 
 		add(toolBar, BorderLayout.NORTH);
 	}

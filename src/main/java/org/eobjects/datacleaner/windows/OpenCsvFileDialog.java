@@ -127,7 +127,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		_browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getOpenDatastoreFileDirectory());
+				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getDatastoreDirectory());
 				FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)",
 						FileFilters.CSV, FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
 				fileChooser.addChoosableFileFilter(combinedFilter);
@@ -142,7 +142,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
 					File dir = selectedFile.getParentFile();
-					UserPreferences.getInstance().setOpenDatastoreFileDirectory(dir);
+					UserPreferences.getInstance().setDatastoreDirectory(dir);
 					_filenameField.setText(selectedFile.getAbsolutePath());
 
 					if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {

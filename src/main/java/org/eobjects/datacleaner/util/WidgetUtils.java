@@ -31,6 +31,7 @@ import org.jdesktop.swingx.error.ErrorLevel;
 
 public final class WidgetUtils {
 
+	public static final Font FONT_BANNER = new FontUIResource("SansSerif", Font.BOLD, 28);
 	public static final Font FONT_HEADER = new FontUIResource("SansSerif", Font.BOLD, 15);
 	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
 	public static final Font FONT_NORMAL = new FontUIResource("SansSerif", Font.PLAIN, 12);

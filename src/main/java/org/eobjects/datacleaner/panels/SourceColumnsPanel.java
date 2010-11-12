@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -31,6 +32,11 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		setBorder(WidgetUtils.BORDER_EMPTY);
 		setLayout(new VerticalLayout(4));
+		
+		List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns();
+		for (InputColumn<?> column : sourceColumns) {
+			onAdd(column);
+		}
 	}
 
 	@Override

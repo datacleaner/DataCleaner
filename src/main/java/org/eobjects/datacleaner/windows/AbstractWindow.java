@@ -16,15 +16,7 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 	private volatile boolean initialized = false;
 
 	protected void initialize() {
-		String windowTitle = getWindowTitle();
-		if (windowTitle == null) {
-			windowTitle = "DataCleaner";
-		} else {
-			if (windowTitle.indexOf("DataCleaner") == -1) {
-				windowTitle = windowTitle + " | DataCleaner";
-			}
-		}
-		setTitle(windowTitle);
+		updateWindowTitle();
 		setIconImage(getWindowIcon());
 		addWindowListener(this);
 		setResizable(isWindowResizable());
@@ -58,6 +50,18 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 			initialize();
 		}
 		super.setVisible(true);
+	}
+	
+	protected void updateWindowTitle() {
+		String windowTitle = getWindowTitle();
+		if (windowTitle == null) {
+			windowTitle = "DataCleaner";
+		} else {
+			if (windowTitle.indexOf("DataCleaner") == -1) {
+				windowTitle = windowTitle + " | DataCleaner";
+			}
+		}
+		setTitle(windowTitle);
 	}
 
 	protected abstract String getWindowTitle();

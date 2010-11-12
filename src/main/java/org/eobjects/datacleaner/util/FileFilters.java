@@ -42,12 +42,14 @@ public final class FileFilters {
 		};
 	}
 
-	public static final FileFilter CSV = new ExtensionFilter("Comma-separated files (.csv)", ".csv");
-	public static final FileFilter TSV = new ExtensionFilter("Tab-separated files (.tsv)", ".tsv");
-	public static final FileFilter DAT = new ExtensionFilter("Data files (.dat)", ".dat");
-	public static final FileFilter TXT = new ExtensionFilter("Text files (.csv)", ".txt");
-	public static final FileFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
-	public static final FileFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
-	public static final FileFilter MDB = new ExtensionFilter("Access database (.mdb)", ".mdb");
+	public static final ExtensionFilter CSV = new ExtensionFilter("Comma-separated files (.csv)", ".csv");
+	public static final ExtensionFilter TSV = new ExtensionFilter("Tab-separated files (.tsv)", ".tsv");
+	public static final ExtensionFilter DAT = new ExtensionFilter("Data files (.dat)", ".dat");
+	public static final ExtensionFilter TXT = new ExtensionFilter("Text files (.csv)", ".txt");
+	public static final ExtensionFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
+	public static final ExtensionFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
+	public static final ExtensionFilter MDB = new ExtensionFilter("Access database (.mdb)", ".mdb");
+
+	public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)", ".analysis.xml");
 
 }

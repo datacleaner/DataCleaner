@@ -28,15 +28,18 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.ExploringAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
+import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.FilterListPanel;
@@ -78,21 +81,35 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final JLabel _statusLabel = new JLabel();
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
+	private String _jobFilename;
 
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName) {
-		this(configuration, configuration.getDatastoreCatalog().getDatastore(datastoreName));
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+			String jobFilename) {
+		this(configuration, analysisJobBuilder, analysisJobBuilder.getDataContextProvider().getDatastore());
+		setJobFilename(jobFilename);
 	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, Datastore datastore) {
+		this(configuration, new AnalysisJobBuilder(configuration), datastore);
+
+	}
+
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName) {
+		this(configuration, new AnalysisJobBuilder(configuration), configuration.getDatastoreCatalog().getDatastore(
+				datastoreName));
+	}
+
+	private AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb, Datastore datastore) {
 		_configuration = configuration;
 		_datastore = datastore;
-		_analysisJobBuilder = new AnalysisJobBuilder(configuration);
+		_analysisJobBuilder = ajb;
 		_analysisJobBuilder.setDatastore(datastore);
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_tabbedPane = new CloseableTabbedPane();
+
 		_tabbedPane.addTabCloseListener(this);
 		_tabbedPane.addChangeListener(new ChangeListener() {
 			@Override
@@ -129,6 +146,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		}
 	}
 
+	public String getStatusLabelText() {
+		return _statusLabel.getText();
+	}
+
 	@Override
 	protected boolean onWindowClosing() {
 		boolean windowClosing = super.onWindowClosing();
@@ -139,9 +160,17 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		return windowClosing;
 	}
 
+	public void setJobFilename(String jobFilename) {
+		_jobFilename = jobFilename;
+		updateWindowTitle();
+	}
+
 	@Override
 	protected String getWindowTitle() {
-		return "Analysis job";
+		if (_jobFilename == null) {
+			return "Analysis job";
+		}
+		return _jobFilename + " | Analysis job";
 	}
 
 	@Override
@@ -159,7 +188,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		final ImageManager imageManager = ImageManager.getInstance();
 
 		final JButton saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
-		saveButton.setEnabled(false);
+		saveButton.addActionListener(new SaveAnalysisJobActionListener(this, _analysisJobBuilder));
 
 		// Add transformer
 		final JButton addTransformerButton = new JButton("Add transformer",
@@ -301,7 +330,43 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		WidgetUtils.centerOnScreen(this);
 
+		initializeExistingComponents();
+
 		return panel;
+	}
+
+	/**
+	 * Method used to initialize any components that may be in the
+	 * AnalysisJobBuilder before this window has been created. Typically this
+	 * will only happen when opening a saved job.
+	 */
+	private void initializeExistingComponents() {
+		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
+		for (FilterJobBuilder<?, ?> fjb : filterJobBuilders) {
+			onAdd(fjb);
+		}
+
+		List<TransformerJobBuilder<?>> transformerJobBuilders = _analysisJobBuilder.getTransformerJobBuilders();
+		for (TransformerJobBuilder<?> tjb : transformerJobBuilders) {
+			onAdd(tjb);
+		}
+
+		List<MergedOutcomeJobBuilder> mergedOutcomeJobBuilders = _analysisJobBuilder.getMergedOutcomeJobBuilders();
+		for (MergedOutcomeJobBuilder mojb : mergedOutcomeJobBuilders) {
+			// TODO: onAdd(mojb)
+			logger.warn("Job contains unsupported MergedOutcomeJobBuilders: {}", mojb);
+		}
+
+		List<AnalyzerJobBuilder<?>> analyzerJobBuilders = _analysisJobBuilder.getAnalyzerJobBuilders();
+		for (AnalyzerJobBuilder<?> ajb : analyzerJobBuilders) {
+			if (ajb instanceof RowProcessingAnalyzerJobBuilder<?>) {
+				onAdd((RowProcessingAnalyzerJobBuilder<?>) ajb);
+			} else if (ajb instanceof ExploringAnalyzerJobBuilder<?>) {
+				onAdd((ExploringAnalyzerJobBuilder<?>) ajb);
+			} else {
+				throw new IllegalStateException("Unknown analyzer type: " + ajb);
+			}
+		}
 	}
 
 	private JSeparator createToolBarSeparator() {

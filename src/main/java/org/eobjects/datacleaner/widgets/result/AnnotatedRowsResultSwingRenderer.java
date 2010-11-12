@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
@@ -24,12 +23,12 @@ import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.decorator.Highlighter;
 
 @RendererBean(SwingRenderingFormat.class)
-public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsResult, JPanel> {
+public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsResult, DCPanel> {
 
 	private static final String[] VIEWS = new String[] { "View detailed rows", "View distinct values & counts" };
 
 	@Override
-	public JPanel render(final AnnotatedRowsResult result) {
+	public DCPanel render(final AnnotatedRowsResult result) {
 		DCPanel panel = new DCPanel();
 		panel.setLayout(new VerticalLayout(4));
 

@@ -4,26 +4,25 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Set;
+import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTree;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.beans.similarity.SimilarValues;
+import org.eobjects.analyzer.beans.similarity.SimilarityGroup;
+import org.eobjects.analyzer.result.AnnotatedRowsResult;
 import org.eobjects.analyzer.result.SimilarityResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 
@@ -35,32 +34,63 @@ public class SimilarityResultSwingRenderer implements Renderer<SimilarityResult,
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());
 
-		final DCTable table = new DCTable();
-
 		final DefaultTreeRenderer rendererDelegate = new DefaultTreeRenderer();
 
 		final DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("Similarity groups");
 
-		final Set<SimilarValues> similarValues = result.getSimilarValues();
-		for (SimilarValues sv : similarValues) {
-			rootNode.add(new DefaultMutableTreeNode(sv));
+		final List<SimilarityGroup> similarityGroups = result.getSimilarityGroups();
+		for (SimilarityGroup sg : similarityGroups) {
+			rootNode.add(new DefaultMutableTreeNode(sg));
 		}
 
 		final DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
 		final JXTree tree = new JXTree();
-		tree.setModel(treeModel);
 		tree.setCellRenderer(new TreeCellRenderer() {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
 					boolean leaf, int row, boolean hasFocus) {
-				if (value instanceof SimilarValues) {
-					String[] values = ((SimilarValues) value).getValues();
-					value = "\"" + values[0] + "\" (" + values.length + ")";
+				if (value instanceof DefaultMutableTreeNode) {
+					final Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+					if (userObject instanceof SimilarityGroup) {
+						final SimilarityGroup similarityGroup = (SimilarityGroup) userObject;
+						final String[] values = similarityGroup.getValues();
+
+						final StringBuilder sb = new StringBuilder();
+						sb.append(values.length);
+						sb.append(": [");
+						for (int i = 0; i < values.length; i++) {
+							if (i != 0) {
+								sb.append(',');
+							}
+							sb.append('\"');
+							sb.append(values[i]);
+							sb.append('\"');
+							if (sb.length() > 17) {
+								sb.delete(17, sb.length());
+								sb.append(",...");
+								break;
+							}
+						}
+						sb.append(']');
+
+						value = sb.toString();
+					}
 				}
 				return rendererDelegate.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 			}
 		});
+		tree.setModel(treeModel);
+
+		final DCPanel centerPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+		centerPanel.setBorder(WidgetUtils.BORDER_EMPTY);
+		centerPanel.setLayout(new BorderLayout());
+
+		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane.add(WidgetUtils.scrolleable(tree));
+		splitPane.add(WidgetUtils.scrolleable(centerPanel));
+		splitPane.setDividerLocation(180);
+		panel.add(splitPane, BorderLayout.CENTER);
 
 		tree.addMouseListener(new MouseAdapter() {
 			@Override
@@ -71,25 +101,17 @@ public class SimilarityResultSwingRenderer implements Renderer<SimilarityResult,
 				}
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 				Object userObject = node.getUserObject();
-				if (userObject instanceof SimilarValues) {
-					SimilarValues similarValues = (SimilarValues) userObject;
-					String[] values = similarValues.getValues();
-
-					TableModel tableModel = new DefaultTableModel(new String[] { "Value" }, values.length);
-					for (int i = 0; i < values.length; i++) {
-						tableModel.setValueAt(values[i], i, 0);
-					}
-
-					table.setModel(tableModel);
+				if (userObject instanceof SimilarityGroup) {
+					SimilarityGroup similarValues = (SimilarityGroup) userObject;
+					AnnotatedRowsResult annotatedRowsResult = similarValues.getAnnotatedRows();
+					AnnotatedRowsResultSwingRenderer renderer = new AnnotatedRowsResultSwingRenderer();
+					JPanel comp = renderer.render(annotatedRowsResult);
+					centerPanel.removeAll();
+					centerPanel.add(comp, BorderLayout.NORTH);
+					centerPanel.updateUI();
 				}
 			}
 		});
-
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.add(WidgetUtils.scrolleable(tree));
-		splitPane.add(table.toPanel());
-		splitPane.setDividerLocation(180);
-		panel.add(splitPane, BorderLayout.CENTER);
 
 		return panel;
 	}

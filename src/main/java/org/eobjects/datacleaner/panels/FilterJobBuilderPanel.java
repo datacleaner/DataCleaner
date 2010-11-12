@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
@@ -69,13 +70,20 @@ public class FilterJobBuilderPanel extends DCPanel {
 
 		int i = 0;
 		for (ConfiguredPropertyDescriptor propertyDescriptor : _descriptor.getConfiguredProperties()) {
-			JLabel label = new JLabel(propertyDescriptor.getName());
-			label.setOpaque(false);
-			WidgetUtils.addToGridBag(label, this, 0, i, 1, 1, GridBagConstraints.NORTHEAST, 4);
+			JLabel nameLabel = new JLabel(propertyDescriptor.getName());
+			WidgetUtils.addToGridBag(nameLabel, this, 0, i, 1, 1, GridBagConstraints.NORTHEAST, 4);
+
+			String description = propertyDescriptor.getDescription();
+			if (description != null) {
+				JLabel descLabel = new JLabel(description);
+				descLabel.setBorder(new EmptyBorder(0, 4, 4, 0));
+				descLabel.setFont(WidgetUtils.FONT_SMALL);
+				WidgetUtils.addToGridBag(descLabel, this, 0, i + 1, 1, 1, GridBagConstraints.NORTHEAST, 0);
+			}
 
 			PropertyWidget<?> propertyWidget = _propertyWidgetFactory.create(propertyDescriptor);
-			WidgetUtils.addToGridBag(propertyWidget.getWidget(), this, 1, i, 1, 1, GridBagConstraints.NORTHWEST, 4);
-			i++;
+			WidgetUtils.addToGridBag(propertyWidget.getWidget(), this, 1, i, 1, 2, GridBagConstraints.NORTHWEST, 4);
+			i = i + 2;
 		}
 
 		final DCPanel outcomePanel = new DCPanel();

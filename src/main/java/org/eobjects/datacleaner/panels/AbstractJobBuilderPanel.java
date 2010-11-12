@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -80,14 +81,21 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 			DCPanel panel = new DCPanel();
 			int i = 0;
 			for (ConfiguredPropertyDescriptor propertyDescriptor : properties) {
-				JLabel label = new JLabel(propertyDescriptor.getName());
-				label.setOpaque(false);
-				WidgetUtils.addToGridBag(label, panel, 0, i, 1, 1, GridBagConstraints.NORTHEAST, 4);
+				JLabel nameLabel = new JLabel(propertyDescriptor.getName());
+				WidgetUtils.addToGridBag(nameLabel, panel, 0, i, 1, 1, GridBagConstraints.NORTHEAST, 4);
+
+				String description = propertyDescriptor.getDescription();
+				if (description != null) {
+					JLabel descLabel = new JLabel(description);
+					descLabel.setFont(WidgetUtils.FONT_SMALL);
+					descLabel.setBorder(new EmptyBorder(0, 4, 4, 0));
+					WidgetUtils.addToGridBag(descLabel, panel, 0, i + 1, 1, 1, GridBagConstraints.NORTHEAST, 0);
+				}
 
 				PropertyWidget<?> propertyWidget = createPropertyWidget(_analysisJobBuilder, beanJobBuilder,
 						propertyDescriptor);
-				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 1, GridBagConstraints.NORTHWEST, 4);
-				i++;
+				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 2, GridBagConstraints.NORTHWEST, 4);
+				i = i + 2;
 			}
 			addTaskPane(icon, title, panel);
 		}
@@ -131,7 +139,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 			}
 		}
 	}
-	
+
 	public PropertyWidgetFactory getPropertyWidgetFactory() {
 		return _propertyWidgetFactory;
 	}

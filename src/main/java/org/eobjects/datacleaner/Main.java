@@ -6,7 +6,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.configuration.JaxbConfigurationFactory;
+import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
@@ -16,8 +16,8 @@ public final class Main {
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 
-		JaxbConfigurationFactory configurationFactory = new JaxbConfigurationFactory();
-		AnalyzerBeansConfiguration c = configurationFactory.create(new File("conf.xml"));
+		JaxbConfigurationReader configurationReader = new JaxbConfigurationReader();
+		AnalyzerBeansConfiguration c = configurationReader.create(new File("conf.xml"));
 
 		// make the configuration mutable
 		c = new AnalyzerBeansConfigurationImpl(new MutableDatastoreCatalog(c.getDatastoreCatalog()),

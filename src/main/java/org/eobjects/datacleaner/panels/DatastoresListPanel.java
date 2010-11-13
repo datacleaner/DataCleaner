@@ -44,9 +44,9 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
-		final JButton addDatastoreMenuItem = new JButton("Add datastore",
-				imageManager.getImageIcon("images/actions/create_datastore.png"));
-		addDatastoreMenuItem.setToolTipText("Add datastore");
+		final JButton addDatastoreMenuItem = new JButton("New datastore",
+				imageManager.getImageIcon("images/actions/new.png"));
+		addDatastoreMenuItem.setToolTipText("New datastore");
 		addDatastoreMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

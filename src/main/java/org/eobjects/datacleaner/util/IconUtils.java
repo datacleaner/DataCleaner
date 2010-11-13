@@ -79,23 +79,51 @@ public final class IconUtils {
 		}
 
 		String displayName = descriptor.getDisplayName().toLowerCase();
-		if (displayName.indexOf("string") != -1 || displayName.indexOf("word") != -1) {
+		if (displayName.indexOf("validat") != -1) {
+			imagePath = "images/component-types/type_validate.png";
+		}
+		if (displayName.indexOf("internet") != -1 || displayName.indexOf("url") != -1) {
+			imagePath = "images/component-types/type_internet.png";
+		}
+		if (displayName.indexOf("identity") != -1 || displayName.indexOf("name") != -1) {
+			imagePath = "images/component-types/type_identity.png";
+		}
+		if (displayName.indexOf("string") != -1 || displayName.indexOf("word") != -1 || displayName.indexOf("token") != -1
+				|| displayName.indexOf("whitespace") != -1) {
 			imagePath = "images/component-types/type_string.png";
 		}
-		if (displayName.indexOf("time") != -1 || descriptor.getDisplayName().indexOf("date") != -1) {
+		if (displayName.indexOf("time") != -1 || displayName.indexOf("date") != -1) {
 			imagePath = "images/component-types/type_time.png";
 		}
 		if (displayName.indexOf("number") != -1) {
 			imagePath = "images/component-types/type_number.png";
 		}
+		if (displayName.indexOf("email") != -1) {
+			imagePath = "images/component-types/type_email.png";
+		}
 		if (displayName.indexOf("compare") != -1) {
 			imagePath = "images/component-types/type_compare.png";
 		}
-		if (displayName.indexOf("pattern") != -1 || displayName.indexOf("expression") != -1) {
+		if (displayName.indexOf("sound") != -1 || displayName.indexOf("phonetic") != -1) {
+			imagePath = "images/component-types/type_sound.png";
+		}
+		if (displayName.indexOf("pattern") != -1 || displayName.indexOf("expression") != -1
+				|| displayName.indexOf("regex") != -1) {
 			imagePath = "images/component-types/type_expression.png";
 		}
-		if (displayName.indexOf("distribution") != -1) {
-			imagePath = "images/component-types/type_distribution.png";
+		if (displayName.indexOf("dictionary") != -1) {
+			imagePath = "images/component-types/type_dictionary.png";
+		}
+		if (displayName.indexOf("synonym") != -1) {
+			imagePath = "images/component-types/type_synonym.png";
+		}
+
+		// some individual icons
+		if (displayName.equals("pattern finder")) {
+			imagePath = "images/component-types/type_pattern_finder.png";
+		}
+		if (displayName.equals("value distribution")) {
+			imagePath = "images/component-types/type_value_distribution.png";
 		}
 		return imagePath;
 	}

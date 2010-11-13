@@ -25,6 +25,7 @@ import javax.swing.JComponent;
 import javax.swing.JTextArea;
 
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.FilterOutcome;
@@ -37,6 +38,7 @@ import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.jdesktop.swingx.JXTaskPane;
@@ -68,8 +70,11 @@ public class ResultListPanel extends DCPanel {
 		}
 		JXTaskPane taskPane = new JXTaskPane();
 
+		AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
+		taskPane.setIcon(IconUtils.getDescriptorIcon(descriptor));
+
 		StringBuilder sb = new StringBuilder();
-		sb.append(analyzerJob.getDescriptor().getDisplayName());
+		sb.append(descriptor.getDisplayName());
 
 		InputColumn<?>[] input = analyzerJob.getInput();
 		if (input.length > 0) {

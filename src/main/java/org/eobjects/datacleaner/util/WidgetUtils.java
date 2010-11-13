@@ -224,13 +224,13 @@ public final class WidgetUtils {
 
 	public static JXTextField createTextField(String promptText) {
 		JXTextField tf = new JXTextField(promptText);
-		tf.setColumns(18);
+		tf.setColumns(17);
 		return tf;
 	}
 
 	public static JXTextArea createTextArea(String promptText) {
 		JXTextArea ta = new JXTextArea(promptText);
-		ta.setColumns(18);
+		ta.setColumns(17);
 		return ta;
 	}
 

@@ -50,6 +50,17 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.4.0</version>
+				<configuration>
+					<header>HEADER.txt</header>
+					<includes>
+						<include>src/**/java/**</include>
+					</includes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>

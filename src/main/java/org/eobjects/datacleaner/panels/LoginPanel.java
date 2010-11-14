@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -37,11 +39,17 @@ public class LoginPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	public static enum LoginState {
+		NOT_LOGGED_IN, LOGGED_IN
+	}
+
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
-	private AuthenticationService _authenticationService;
+	private final List<ActionListener> _loginChangeListeners = new ArrayList<ActionListener>();
+	private final AuthenticationService _authenticationService;
 	private final int _alpha = 220;
 	private final Color _background = WidgetUtils.BG_COLOR_DARKEST;
 	private final Color _foreground = WidgetUtils.BG_COLOR_BRIGHTEST;
+	private volatile LoginState _state;
 
 	public LoginPanel() {
 		this(new DCAuthenticationService());
@@ -50,6 +58,13 @@ public class LoginPanel extends JPanel {
 	public LoginPanel(AuthenticationService authenticationService) {
 		super();
 		_authenticationService = authenticationService;
+
+		if (userPreferences.getUsername() == null) {
+			_state = LoginState.NOT_LOGGED_IN;
+		} else {
+			_state = LoginState.LOGGED_IN;
+		}
+
 		setOpaque(false);
 		setBorder(new EmptyBorder(30, 30, 30, 30));
 
@@ -59,16 +74,24 @@ public class LoginPanel extends JPanel {
 		setLocation(-340, 150);
 	}
 
+	public LoginState getLoginState() {
+		return _state;
+	}
+
 	public void moveIn() {
 		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, 10, 150, 40));
 		timer.setInitialDelay(500);
 		timer.start();
 	}
 
-	public void moveOut() {
+	public void moveOut(int delay) {
 		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -340, 150, 40));
-		timer.setInitialDelay(2500);
+		timer.setInitialDelay(delay);
 		timer.start();
+	}
+
+	public void addLoginChangeListener(ActionListener listener) {
+		_loginChangeListeners.add(listener);
 	}
 
 	@Override
@@ -113,20 +136,22 @@ public class LoginPanel extends JPanel {
 
 	private void updateContents() {
 		removeAll();
-		if (userPreferences.getUsername() != null) {
-			JLabel loggedInLabel = new JLabel("Logged in as: " + userPreferences.getUsername());
+		if (_state == LoginState.LOGGED_IN) {
+			final JLabel loggedInLabel = new JLabel("Logged in as: " + userPreferences.getUsername());
 			loggedInLabel.setForeground(getForeground());
-			
+
 			WidgetUtils.addToGridBag(loggedInLabel, this, 0, 0);
 
-			JButton logoutButton = WidgetFactory.createButton("Log out", "images/actions/logout.png");
+			final JButton logoutButton = WidgetFactory.createButton("Log out", "images/actions/logout.png");
 			logoutButton.setForeground(getForeground());
 			logoutButton.setBackground(getBackground());
 			logoutButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					userPreferences.setUsername(null);
+					_state = LoginState.NOT_LOGGED_IN;
 					updateContents();
+					notifyLoginChangeListeners();
 				}
 			});
 			WidgetUtils.addToGridBag(logoutButton, this, 0, 1);
@@ -150,11 +175,14 @@ public class LoginPanel extends JPanel {
 						boolean authenticated = _authenticationService.auth(username, password);
 						if (authenticated) {
 							userPreferences.setUsername(username);
+							_state = LoginState.LOGGED_IN;
 							updateContents();
-							moveOut();
+							notifyLoginChangeListeners();
+							moveOut(2000);
 						} else {
-							JOptionPane.showMessageDialog(LoginPanel.this, "The entered username and password was incorrect.",
-									"Invalid credentials", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(LoginPanel.this,
+									"The entered username and password was incorrect.", "Invalid credentials",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -172,18 +200,18 @@ public class LoginPanel extends JPanel {
 					+ "the DataCleaner development community a better sense of it's users and audience.\n\n"
 					+ "By logging in, you also accept transmitting very simple usage statistics to the DataCleaner "
 					+ "community, signaling which features you are using.\n";
-			MultiLineLabel loginInfoLabel = new MultiLineLabel(loginInfo);
+			final MultiLineLabel loginInfoLabel = new MultiLineLabel(loginInfo);
 			loginInfoLabel.setForeground(getForeground());
 			WidgetUtils.addToGridBag(loginInfoLabel, this, 0, y, 2, 1);
 
 			y++;
-			JLabel usernameLabel = new JLabel("Username:");
+			final JLabel usernameLabel = new JLabel("Username:");
 			usernameLabel.setForeground(getForeground());
 			WidgetUtils.addToGridBag(usernameLabel, this, 0, y);
 			WidgetUtils.addToGridBag(usernameTextField, this, 1, y);
 
 			y++;
-			JLabel passwordLabel = new JLabel("Password:");
+			final JLabel passwordLabel = new JLabel("Password:");
 			passwordLabel.setForeground(getForeground());
 			WidgetUtils.addToGridBag(passwordLabel, this, 0, y);
 			WidgetUtils.addToGridBag(passwordTextField, this, 1, y);
@@ -196,5 +224,12 @@ public class LoginPanel extends JPanel {
 			WidgetUtils.addToGridBag(buttonPanel, this, 0, y, 2, 1);
 		}
 		updateUI();
+	}
+
+	protected void notifyLoginChangeListeners() {
+		ActionEvent event = new ActionEvent(this, 0, _state.name());
+		for (ActionListener listener : _loginChangeListeners) {
+			listener.actionPerformed(event);
+		}
 	}
 }

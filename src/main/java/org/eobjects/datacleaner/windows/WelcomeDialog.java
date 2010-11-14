@@ -15,6 +15,7 @@ import javax.swing.JToolBar;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.LoginPanel;
+import org.eobjects.datacleaner.panels.LoginPanel.LoginState;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -26,15 +27,56 @@ public class WelcomeDialog extends AbstractWindow {
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
-	private final LoginPanel loginPanel = new LoginPanel();
-	
+	private final ActionListener _skipActionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			_showLoginPanel = false;
+			_loginPanel.moveOut(0);
+			updateNextStepButton(false);
+		}
+	};
+	private final ActionListener _closeActionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			WelcomeDialog.this.dispose();
+		}
+	};
+	private final LoginPanel _loginPanel = new LoginPanel();
+	private final JButton _nextStepButton;
+
+	private volatile boolean _showLoginPanel;
+
+	public WelcomeDialog() {
+		super();
+
+		_nextStepButton = new JButton();
+		_nextStepButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		updateNextStepButton(true);
+	}
+
+	private void updateNextStepButton(boolean checkLoginStatus) {
+		if (checkLoginStatus) {
+			if (_loginPanel.getLoginState() == LoginState.LOGGED_IN) {
+				_showLoginPanel = false;
+			} else {
+				_showLoginPanel = true;
+			}
+		}
+		if (_showLoginPanel) {
+			_nextStepButton.setText("Skip");
+			_nextStepButton.setIcon(imageManager.getImageIcon("images/actions/skip.png"));
+			_nextStepButton.removeActionListener(_closeActionListener);
+			_nextStepButton.addActionListener(_skipActionListener);
+		} else {
+			_nextStepButton.setText("Close");
+			_nextStepButton.setIcon(imageManager.getImageIcon("images/actions/skip.png"));
+			_nextStepButton.removeActionListener(_skipActionListener);
+			_nextStepButton.addActionListener(_closeActionListener);
+		}
+	}
+
 	@Override
 	protected JComponent getWindowContent() {
-		final Container glass = (Container) getGlassPane();
-		glass.setLayout(null);
-		glass.setVisible(true);
-		glass.add(loginPanel);
-
 		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 100, 80,
 				WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_DARK);
 		mainPanel.setLayout(new BorderLayout());
@@ -51,7 +93,17 @@ public class WelcomeDialog extends AbstractWindow {
 		outerPanel.add(toolBarPanel, BorderLayout.SOUTH);
 		outerPanel.setPreferredSize(550, 550);
 
-		loginPanel.moveIn();
+		final Container glass = (Container) getGlassPane();
+		glass.setLayout(null);
+		glass.setVisible(true);
+		glass.add(_loginPanel);
+		_loginPanel.addLoginChangeListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateNextStepButton(true);
+			}
+		});
+		_loginPanel.moveIn();
 
 		return outerPanel;
 	}
@@ -92,22 +144,13 @@ public class WelcomeDialog extends AbstractWindow {
 		linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
 		linkedInButton.setMargin(new Insets(0, 0, 0, 0));
 
-		final JButton skipButton = WidgetFactory.createButton("Skip", "images/actions/skip.png");
-		skipButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		skipButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				WelcomeDialog.this.dispose();
-			}
-		});
-
 		JToolBar toolBar = WidgetFactory.createToolBar();
 		toolBar.setOpaque(false);
 		toolBar.add(datacleanerButton);
 		toolBar.add(bloggerButton);
 		toolBar.add(linkedInButton);
 		toolBar.add(new JSeparator(JSeparator.VERTICAL));
-		toolBar.add(skipButton);
+		toolBar.add(_nextStepButton);
 
 		return toolBar;
 	}

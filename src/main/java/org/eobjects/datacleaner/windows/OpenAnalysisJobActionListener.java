@@ -35,29 +35,41 @@ import org.eobjects.datacleaner.util.FileFilters;
 public class OpenAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
+	private final File _file;
 
 	public OpenAnalysisJobActionListener(AnalyzerBeansConfiguration configuration) {
+		this(configuration, null);
+	}
+
+	public OpenAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, File file) {
 		_configuration = configuration;
+		_file = file;
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent event) {
 		UserPreferences userPreferences = UserPreferences.getInstance();
 
-		JFileChooser fileChooser = new JFileChooser(userPreferences.getAnalysisJobDirectory());
-		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
+		File file = _file;
+		if (file == null) {
+			JFileChooser fileChooser = new JFileChooser(userPreferences.getAnalysisJobDirectory());
+			fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
+			int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
 
-		int openFileResult = fileChooser.showOpenDialog((Component) e.getSource());
-		if (openFileResult == JFileChooser.APPROVE_OPTION) {
-			JaxbJobReader reader = new JaxbJobReader(_configuration);
-			File file = fileChooser.getSelectedFile();
-			AnalysisJobBuilder ajb = reader.create(file);
-
-			userPreferences.setAnalysisJobDirectory(file);
-
-			AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(_configuration, ajb, file.getName());
-			window.setVisible(true);
+			if (openFileResult == JFileChooser.APPROVE_OPTION) {
+				file = fileChooser.getSelectedFile();
+			} else {
+				return;
+			}
 		}
 
+		JaxbJobReader reader = new JaxbJobReader(_configuration);
+		AnalysisJobBuilder ajb = reader.create(_file);
+
+		userPreferences.setAnalysisJobDirectory(_file.getParentFile());
+		userPreferences.addRecentJobFile(_file);
+
+		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(_configuration, ajb, _file.getName());
+		window.setVisible(true);
 	}
 }

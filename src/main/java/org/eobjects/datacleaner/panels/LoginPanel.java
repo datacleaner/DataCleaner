@@ -24,6 +24,7 @@ import org.eobjects.datacleaner.actions.MoveComponentTimerActionListener;
 import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.DCAuthenticationService;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
@@ -78,9 +79,9 @@ public class LoginPanel extends JPanel {
 		return _state;
 	}
 
-	public void moveIn() {
+	public void moveIn(int delay) {
 		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, 10, 150, 40));
-		timer.setInitialDelay(500);
+		timer.setInitialDelay(delay);
 		timer.start();
 	}
 
@@ -140,25 +141,18 @@ public class LoginPanel extends JPanel {
 			final JLabel loggedInLabel = new JLabel("Logged in as: " + userPreferences.getUsername());
 			loggedInLabel.setForeground(getForeground());
 
-			WidgetUtils.addToGridBag(loggedInLabel, this, 0, 0);
-
-			final JButton logoutButton = WidgetFactory.createButton("Log out", "images/actions/logout.png");
-			logoutButton.setForeground(getForeground());
-			logoutButton.setBackground(getBackground());
-			logoutButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					userPreferences.setUsername(null);
-					_state = LoginState.NOT_LOGGED_IN;
-					updateContents();
-					notifyLoginChangeListeners();
-				}
-			});
-			WidgetUtils.addToGridBag(logoutButton, this, 0, 1);
+			WidgetUtils.addToGridBag(new JLabel(ImageManager.getInstance().getImageIcon("images/status/valid.png")), this,
+					0, 0);
+			WidgetUtils.addToGridBag(loggedInLabel, this, 0, 1);
 		} else {
 			final JXTextField usernameTextField = new JXTextField();
 			usernameTextField.setColumns(15);
 			final JPasswordField passwordTextField = new JPasswordField(15);
+
+			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/register.png");
+			registerButton.setBackground(getBackground());
+			registerButton.setForeground(getForeground());
+			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));
 
 			final JButton loginButton = WidgetFactory.createButton("Login", "images/actions/login.png");
 			loginButton.setBackground(getBackground());
@@ -178,7 +172,7 @@ public class LoginPanel extends JPanel {
 							_state = LoginState.LOGGED_IN;
 							updateContents();
 							notifyLoginChangeListeners();
-							moveOut(2000);
+							moveOut(1000);
 						} else {
 							JOptionPane.showMessageDialog(LoginPanel.this,
 									"The entered username and password was incorrect.", "Invalid credentials",
@@ -188,10 +182,6 @@ public class LoginPanel extends JPanel {
 				}
 			});
 
-			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/register.png");
-			registerButton.setBackground(getBackground());
-			registerButton.setForeground(getForeground());
-			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));
 
 			int y = 0;
 			final String loginInfo = "Thank you for using DataCleaner. We kindly ask you to identify yourself by "

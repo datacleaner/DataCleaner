@@ -46,7 +46,7 @@ public final class Main {
 		Thread.setDefaultUncaughtExceptionHandler(new DCUncaughtExceptionHandler());
 		LookAndFeelManager.getInstance().init();
 		
-		new WelcomeDialog().setVisible(true);
+		new WelcomeDialog(c).setVisible(true);
 
 		new MainWindow(c).setVisible(true);
 	}

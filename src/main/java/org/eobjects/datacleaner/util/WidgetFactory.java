@@ -105,14 +105,4 @@ public final class WidgetFactory {
 		ta.setColumns(17);
 		return ta;
 	}
-
-	public static JXTextArea createLabelTextArea(String text) {
-		JXTextArea textArea = new JXTextArea();
-		textArea.setEditable(false);
-		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(true);
-		textArea.setOpaque(false);
-		textArea.setText(text);
-		return textArea;
-	}
 }

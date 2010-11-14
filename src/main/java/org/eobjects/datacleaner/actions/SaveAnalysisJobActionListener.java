@@ -73,8 +73,6 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 				file = new File(file.getParentFile(), file.getName() + FileFilters.ANALYSIS_XML.getExtension());
 			}
 
-			userPreferences.setAnalysisJobDirectory(file.getParentFile());
-
 			if (file.exists()) {
 				int overwrite = JOptionPane.showConfirmDialog(_window, "Are you sure you want to overwrite the file '"
 						+ file.getName() + "'?", "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
@@ -82,6 +80,8 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 					return;
 				}
 			}
+			
+			userPreferences.setAnalysisJobDirectory(file.getParentFile());
 
 			JaxbJobWriter writer = new JaxbJobWriter();
 			BufferedOutputStream outputStream = null;
@@ -101,6 +101,8 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 					}
 				}
 			}
+			
+			userPreferences.addRecentJobFile(file);
 
 			_window.setJobFilename(file.getName());
 		}

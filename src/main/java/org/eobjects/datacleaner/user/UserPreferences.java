@@ -25,19 +25,23 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UserPreferences implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
+	
 	private static final File userPreferencesFile = new File("userpreferences.dat");
 	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
 
 	private static UserPreferences instance;
 
 	private String username;
+	private List<File> recentJobFiles = new ArrayList<File>();
 	private File datastoreDirectory = new File(".");
 	private File configuredFileDirectory = new File(".");
 	private File analysisJobDirectory = new File(".");
@@ -118,12 +122,23 @@ public class UserPreferences implements Serializable {
 	public void setAnalysisJobDirectory(File saveFileDirectory) {
 		this.analysisJobDirectory = saveFileDirectory;
 	}
-	
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	
+
 	public String getUsername() {
 		return username;
+	}
+
+	public void addRecentJobFile(File file) {
+		if (recentJobFiles.contains(file)) {
+			recentJobFiles.remove(file);
+		}
+		recentJobFiles.add(0, file);
+	}
+
+	public List<File> getRecentJobFiles() {
+		return recentJobFiles;
 	}
 }

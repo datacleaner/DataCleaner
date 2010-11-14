@@ -25,6 +25,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.reference.Function;
+import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.LoginPanel;
@@ -38,11 +40,19 @@ import org.jdesktop.swingx.JXList;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
+/**
+ * The dialog that welcomes the user when he/she first opens DataCleaner. The
+ * dialog contains a login form and a list of recent jobs.
+ * 
+ * @author Kasper Sørensen
+ * 
+ */
 public class WelcomeDialog extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
+	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final AnalyzerBeansConfiguration _configuration;
 
 	private final ActionListener _skipActionListener = new ActionListener() {
@@ -151,19 +161,28 @@ public class WelcomeDialog extends AbstractWindow {
 			_recentJobsPanel.add(newAnalysisDescriptionLabel);
 
 			_recentJobsPanel.add(Box.createVerticalStrut(10));
-			
+
 			final JLabel recentAnalysisLabel = new JLabel("Recent analysis jobs");
 			recentAnalysisLabel.setFont(WidgetUtils.FONT_HEADER);
 			recentAnalysisLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 			_recentJobsPanel.add(recentAnalysisLabel);
-			
+
 			MultiLineLabel recentAnalysisDescriptionLabel = new MultiLineLabel(
 					"<html>Below is a list of your recent analysis jobs for easy access. "
-							+ "Select a job and click the '<b>Open</b>' button to access a recent job or click the 'Open' button in the left-side window to browse the file system for saved jobs.</html>");
+							+ "Select a job and click the '<b>Open recent job</b>' button to access a recent job or click the '<b>Open</b>' button in the left-side window to browse the file system for saved jobs.</html>");
 			recentAnalysisDescriptionLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 			_recentJobsPanel.add(recentAnalysisDescriptionLabel);
 
-			final List<File> recentJobFiles = UserPreferences.getInstance().getRecentJobFiles();
+			final List<File> recentJobFiles = CollectionUtils.filter(userPreferences.getRecentJobFiles(),
+					new Function<File, Boolean>() {
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public Boolean run(File file) throws Exception {
+							return file.exists();
+						}
+					});
+
 			final DefaultListCellRenderer delegateCellRenderer = new DefaultListCellRenderer();
 			final JXList list = new JXList(recentJobFiles.toArray());
 			list.addHighlighter(WidgetUtils.LIBERELLO_HIGHLIGHTER);
@@ -184,9 +203,10 @@ public class WelcomeDialog extends AbstractWindow {
 			listScroll.setBorder(WidgetUtils.BORDER_THIN);
 			_recentJobsPanel.add(listScroll);
 
-			final JButton openButton = WidgetFactory.createButton("Open", "images/actions/open.png");
+			final JButton openButton = WidgetFactory.createButton("Open recent job", "images/actions/open.png");
 			openButton.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 			openButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+			openButton.setFocusPainted(false);
 			openButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -197,7 +217,7 @@ public class WelcomeDialog extends AbstractWindow {
 					}
 				}
 			});
-			
+
 			final DCPanel buttonPanel = new DCPanel();
 			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			buttonPanel.add(openButton);

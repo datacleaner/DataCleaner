@@ -152,11 +152,13 @@ public class LoginPanel extends JPanel {
 			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/register.png");
 			registerButton.setBackground(getBackground());
 			registerButton.setForeground(getForeground());
+			registerButton.setFocusPainted(false);
 			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));
 
 			final JButton loginButton = WidgetFactory.createButton("Login", "images/actions/login.png");
 			loginButton.setBackground(getBackground());
 			loginButton.setForeground(getForeground());
+			loginButton.setFocusPainted(false);
 			loginButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {

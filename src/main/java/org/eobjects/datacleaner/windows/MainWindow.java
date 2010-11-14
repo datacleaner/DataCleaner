@@ -25,9 +25,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -41,15 +38,12 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoresListPanel;
 import org.eobjects.datacleaner.panels.JobListPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
-import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 
 public class MainWindow extends AbstractWindow {
 
@@ -142,34 +136,7 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	private JPanel getHeaderPanel() {
-		final JButton visitWebsiteButton = new JButton(imageManager.getImageIcon("images/actions/website.png",
-				IconUtils.ICON_SIZE_SMALL));
-		visitWebsiteButton.setToolTipText("Visit the DataCleaner website");
-		visitWebsiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
-		visitWebsiteButton.setAlignmentY(BOTTOM_ALIGNMENT);
-		visitWebsiteButton.setBackground(WidgetUtils.BG_COLOR_DARK);
-		visitWebsiteButton.setFocusPainted(false);
-
-		final JButton optionsButton = new JButton(imageManager.getImageIcon("images/menu/options.png",
-				IconUtils.ICON_SIZE_SMALL));
-		optionsButton.setToolTipText("Options");
-		optionsButton.setEnabled(false);
-		optionsButton.setAlignmentY(BOTTOM_ALIGNMENT);
-		optionsButton.setBackground(WidgetUtils.BG_COLOR_DARK);
-		optionsButton.setFocusPainted(false);
-
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-		buttonPanel.add(Box.createHorizontalStrut(WidgetUtils.BORDER_WIDE_WIDTH));
-		buttonPanel.add(visitWebsiteButton);
-		buttonPanel.add(Box.createHorizontalStrut(WidgetUtils.BORDER_WIDE_WIDTH));
-		buttonPanel.add(optionsButton);
-
 		final DCBannerPanel headerPanel = new DCBannerPanel();
-		headerPanel.setLayout(new HorizontalLayout());
-		headerPanel.add(Box.createVerticalStrut(headerPanel.getHeight()));
-		headerPanel.add(buttonPanel);
-
 		return headerPanel;
 	}
 

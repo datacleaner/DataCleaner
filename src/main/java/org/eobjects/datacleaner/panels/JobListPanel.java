@@ -30,7 +30,7 @@ import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobActionListener;
 

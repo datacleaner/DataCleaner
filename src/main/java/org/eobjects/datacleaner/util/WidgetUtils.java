@@ -41,8 +41,6 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
 
 import org.jdesktop.swingx.JXErrorPane;
-import org.jdesktop.swingx.JXTextArea;
-import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.error.ErrorInfo;
@@ -217,21 +215,4 @@ public final class WidgetUtils {
 		scroll.getViewport().setOpaque(false);
 		return scroll;
 	}
-
-	public static JXTextField createTextField() {
-		return createTextField(null);
-	}
-
-	public static JXTextField createTextField(String promptText) {
-		JXTextField tf = new JXTextField(promptText);
-		tf.setColumns(17);
-		return tf;
-	}
-
-	public static JXTextArea createTextArea(String promptText) {
-		JXTextArea ta = new JXTextArea(promptText);
-		ta.setColumns(17);
-		return ta;
-	}
-
 }

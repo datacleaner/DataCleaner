@@ -43,8 +43,8 @@ import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.actions.InvokeResultProducerActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.LabelConstants;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 
 @RendererBean(SwingRenderingFormat.class)
@@ -144,7 +144,7 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 
 				sb.append(")]");
 
-				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png").toComponent();
+				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
 				button.setMargin(new Insets(0, 0, 0, 0));
 				button.addActionListener(new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer));
 				panel.add(button);

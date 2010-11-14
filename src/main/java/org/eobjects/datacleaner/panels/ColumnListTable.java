@@ -44,8 +44,8 @@ import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
@@ -114,7 +114,7 @@ public final class ColumnListTable extends DCPanel {
 		Icon icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
 		for (InputColumn<?> column : _columns) {
 			if (column instanceof MutableInputColumn<?>) {
-				final JXTextField textField = WidgetUtils.createTextField("Column name");
+				final JXTextField textField = WidgetFactory.createTextField("Column name");
 				textField.setText(column.getName());
 				final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
 				textField.getDocument().addDocumentListener(new DCDocumentListener() {
@@ -133,13 +133,12 @@ public final class ColumnListTable extends DCPanel {
 			}
 			model.setValueAt(column.getDataTypeFamily(), i, 1);
 
-			JButton transformButton = WidgetFactory.createSmallButton("images/component-types/transformer.png")
-					.toComponent();
+			JButton transformButton = WidgetFactory.createSmallButton("images/component-types/transformer.png");
 			transformButton.setToolTipText("Quick transformation");
 			transformButton.addActionListener(new AddQuickTransformationActionListener(transformButton, _configuration,
 					_analysisJobBuilder, column));
 
-			JButton filterButton = WidgetFactory.createSmallButton("images/component-types/filter.png").toComponent();
+			JButton filterButton = WidgetFactory.createSmallButton("images/component-types/filter.png");
 			filterButton.setToolTipText("Quick filter");
 			filterButton.addActionListener(new AddQuickFilterActionListener(filterButton, _configuration,
 					_analysisJobBuilder, column));

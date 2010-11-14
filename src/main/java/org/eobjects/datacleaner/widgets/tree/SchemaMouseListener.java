@@ -32,7 +32,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetFactory;
 
 import dk.eobjects.metamodel.schema.Schema;
 import dk.eobjects.metamodel.schema.Table;
@@ -63,7 +63,7 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 				JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(schema.getName());
 				JMenuItem addTableItem = WidgetFactory.createMenuItem("Add all schema tables to source",
-						"images/actions/toggle-source-table.png").toComponent();
+						"images/actions/toggle-source-table.png");
 				addTableItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {

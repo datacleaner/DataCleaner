@@ -50,6 +50,7 @@ import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXStatusBar;
@@ -101,9 +102,9 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	public OpenCsvFileDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
-		_datastoreNameField = WidgetUtils.createTextField("Datastore name");
+		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 
-		_filenameField = WidgetUtils.createTextField("Filename");
+		_filenameField = WidgetFactory.createTextField("Filename");
 		_filenameField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
@@ -174,9 +175,14 @@ public class OpenCsvFileDialog extends AbstractDialog {
 				}
 			}
 		});
-		
+
 		_addDatastoreButton = new JButton("Create datastore");
 		_addDatastoreButton.setEnabled(false);
+	}
+
+	@Override
+	protected String getBannerTitle() {
+		return "CSV file";
 	}
 
 	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote) {
@@ -262,7 +268,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 					doubleQuotes++;
 				}
 			}
-			
+
 			int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
 			if (detectedSeparator == 0 || detectedSeparator < newlines) {
 				warnings.add("Could not autodetect separator char");
@@ -278,7 +284,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 					_separatorCharField.setSelectedItem(SEPARATOR_PIPE);
 				}
 			}
-			
+
 			int detectedQuote = Math.max(singleQuotes, doubleQuotes);
 			if (detectedQuote == 0 || detectedQuote < newlines) {
 				warnings.add("Could not autodetect quote char");

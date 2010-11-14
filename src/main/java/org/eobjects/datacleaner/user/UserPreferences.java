@@ -37,6 +37,7 @@ public class UserPreferences implements Serializable {
 
 	private static UserPreferences instance;
 
+	private String username;
 	private File datastoreDirectory = new File(".");
 	private File configuredFileDirectory = new File(".");
 	private File analysisJobDirectory = new File(".");
@@ -116,5 +117,13 @@ public class UserPreferences implements Serializable {
 
 	public void setAnalysisJobDirectory(File saveFileDirectory) {
 		this.analysisJobDirectory = saveFileDirectory;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 }

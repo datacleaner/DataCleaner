@@ -26,6 +26,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.util.DCDocumentListener;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTextArea;
 
@@ -38,7 +39,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_textArea = WidgetUtils.createTextArea(propertyDescriptor.getName());
+		_textArea = WidgetFactory.createTextArea(propertyDescriptor.getName());
 		_textArea.setRows(3);
 
 		String[] currentValue = (String[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
@@ -80,10 +81,10 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			_textArea.setText("");
 			return;
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < value.length; i++) {
-			if (i!=0) {
+			if (i != 0) {
 				sb.append("\n");
 			}
 			sb.append(value[i]);

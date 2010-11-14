@@ -42,6 +42,7 @@ import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
@@ -62,9 +63,9 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 	public OpenExcelSpreadsheetDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
-		_datastoreNameField = WidgetUtils.createTextField("Datastore name");
+		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 
-		_filenameField = WidgetUtils.createTextField("Filename");
+		_filenameField = WidgetFactory.createTextField("Filename");
 		_filenameField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
@@ -106,6 +107,11 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 
 		_addDatastoreButton = new JButton("Create datastore");
 		_addDatastoreButton.setEnabled(false);
+	}
+
+	@Override
+	protected String getBannerTitle() {
+		return "MS Excel";
 	}
 
 	private void autoDetectQuoteAndSeparator() {
@@ -178,11 +184,6 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 		_outerPanel.add(statusBar, BorderLayout.SOUTH);
 
 		return _outerPanel;
-	}
-
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
 	}
 
 	@Override

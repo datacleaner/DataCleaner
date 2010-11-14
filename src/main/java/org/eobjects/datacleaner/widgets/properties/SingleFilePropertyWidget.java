@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTextField;
 
@@ -50,7 +51,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_textField = WidgetUtils.createTextField("Filename");
+		_textField = WidgetFactory.createTextField("Filename");
 
 		File currentValue = (File) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {

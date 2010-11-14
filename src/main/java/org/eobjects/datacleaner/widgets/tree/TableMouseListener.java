@@ -32,7 +32,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 
 import dk.eobjects.metamodel.DataContext;
@@ -89,7 +89,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 				if (enableAddTable) {
 					JMenuItem addTableItem = WidgetFactory.createMenuItem("Add table to source",
-							"images/actions/toggle-source-table.png").toComponent();
+							"images/actions/toggle-source-table.png");
 					addTableItem.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -101,7 +101,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 				if (enableRemoveTable) {
 					JMenuItem removeTableItem = WidgetFactory.createMenuItem("Remove table from source",
-							"images/actions/toggle-source-table.png").toComponent();
+							"images/actions/toggle-source-table.png");
 					removeTableItem.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -111,8 +111,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 					popup.add(removeTableItem);
 				}
 
-				JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table", "images/actions/preview_data.png")
-						.toComponent();
+				JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table", "images/actions/preview_data.png");
 				previewMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {

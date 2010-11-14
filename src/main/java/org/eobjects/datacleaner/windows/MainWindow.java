@@ -43,8 +43,8 @@ import org.eobjects.datacleaner.panels.JobListPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
@@ -190,13 +190,12 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	private JMenuBar getWindowMenuBar() {
-		JMenuBar menuBar = WidgetFactory.createMenuBar().toComponent();
+		JMenuBar menuBar = new JMenuBar();
 
-		JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job", "images/actions/open.png")
-				.toComponent();
+		JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job", "images/actions/open.png");
 		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
 
-		JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png").toComponent();
+		JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -204,20 +203,20 @@ public class MainWindow extends AbstractWindow {
 			}
 		});
 
-		JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png").toComponent();
+		JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png");
 		optionsMenuItem.setEnabled(false);
 
-		JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png").toComponent();
+		JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
 		aboutMenuItem.setEnabled(false);
 
-		JMenu fileMenu = WidgetFactory.createMenu("File", 'F').toComponent();
+		JMenu fileMenu = WidgetFactory.createMenu("File", 'F');
 		fileMenu.add(openJobMenuItem);
 		fileMenu.add(exitMenuItem);
 
-		JMenu editMenu = WidgetFactory.createMenu("Edit", 'E').toComponent();
+		JMenu editMenu = WidgetFactory.createMenu("Edit", 'E');
 		editMenu.add(optionsMenuItem);
 
-		JMenu helpMenu = WidgetFactory.createMenu("Help", 'H').toComponent();
+		JMenu helpMenu = WidgetFactory.createMenu("Help", 'H');
 		helpMenu.add(aboutMenuItem);
 
 		menuBar.add(fileMenu);

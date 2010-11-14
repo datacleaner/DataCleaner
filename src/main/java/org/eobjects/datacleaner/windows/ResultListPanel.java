@@ -39,8 +39,8 @@ import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 

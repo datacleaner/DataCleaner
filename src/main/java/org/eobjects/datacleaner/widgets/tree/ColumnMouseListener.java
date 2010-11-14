@@ -32,7 +32,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 
 import dk.eobjects.metamodel.DataContext;
@@ -68,8 +68,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				// right click = open popup menu
 				JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(column.getName());
-				JMenuItem toggleColumnItem = WidgetFactory.createMenuItem(null, "images/actions/toggle-source-column.png")
-						.toComponent();
+				JMenuItem toggleColumnItem = WidgetFactory.createMenuItem(null, "images/actions/toggle-source-column.png");
 				if (_analysisJobBuilder.containsSourceColumn(column)) {
 					toggleColumnItem.setText("Remove column from source");
 				} else {
@@ -84,7 +83,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				popup.add(toggleColumnItem);
 
 				JMenuItem previewMenuItem = WidgetFactory
-						.createMenuItem("Preview column", "images/actions/preview_data.png").toComponent();
+						.createMenuItem("Preview column", "images/actions/preview_data.png");
 				previewMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {

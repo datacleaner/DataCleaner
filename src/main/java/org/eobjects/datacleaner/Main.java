@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.MainWindow;
+import org.eobjects.datacleaner.windows.WelcomeDialog;
 
 public final class Main {
 
@@ -44,6 +45,8 @@ public final class Main {
 
 		Thread.setDefaultUncaughtExceptionHandler(new DCUncaughtExceptionHandler());
 		LookAndFeelManager.getInstance().init();
+		
+		new WelcomeDialog().setVisible(true);
 
 		new MainWindow(c).setVisible(true);
 	}

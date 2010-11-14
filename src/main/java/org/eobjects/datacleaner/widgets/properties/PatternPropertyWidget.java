@@ -29,7 +29,7 @@ import javax.swing.event.DocumentListener;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.util.DCDocumentListener;
-import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTextField;
 
 public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> implements DocumentListener {
@@ -41,7 +41,7 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 	public PatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
-		_textField = WidgetUtils.createTextField(propertyDescriptor.getName());
+		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());
 		_textField.getDocument().addDocumentListener(this);
 		String currentValue = (String) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {

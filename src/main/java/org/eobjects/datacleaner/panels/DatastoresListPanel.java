@@ -37,8 +37,8 @@ import org.eobjects.datacleaner.user.DatastoreListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.builder.WidgetFactory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAccessDatabaseDialog;
 import org.eobjects.datacleaner.windows.OpenCsvFileDialog;
@@ -153,11 +153,11 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 			}
 			JLabel dsLabel = new JLabel(name);
 
-			JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png").toComponent();
+			JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit datastore");
 			editButton.setEnabled(false);
 
-			JButton jobButton = WidgetFactory.createSmallButton("images/actions/new.png").toComponent();
+			JButton jobButton = WidgetFactory.createSmallButton("images/actions/new.png");
 			jobButton.setToolTipText("Create job");
 			jobButton.addActionListener(new ActionListener() {
 				@Override

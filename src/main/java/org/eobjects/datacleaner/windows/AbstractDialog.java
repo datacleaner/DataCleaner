@@ -32,6 +32,16 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 public abstract class AbstractDialog extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
+	
+	private final Image _bannerImage;
+	
+	public AbstractDialog() {
+		this(null);
+	}
+
+	public AbstractDialog(Image bannerImage) {
+		_bannerImage = bannerImage;
+	}
 
 	@Override
 	protected boolean isWindowResizable() {
@@ -52,7 +62,7 @@ public abstract class AbstractDialog extends AbstractWindow {
 	protected final JComponent getWindowContent() {
 		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
 		panel.setLayout(new BorderLayout());
-		DCBannerPanel bannerPanel = new DCBannerPanel();
+		DCBannerPanel bannerPanel = new DCBannerPanel(_bannerImage, getBannerTitle());
 		panel.add(bannerPanel, BorderLayout.NORTH);
 		JComponent dialogContent = getDialogContent();
 		panel.add(dialogContent, BorderLayout.CENTER);
@@ -61,6 +71,8 @@ public abstract class AbstractDialog extends AbstractWindow {
 
 		return panel;
 	}
+
+	protected abstract String getBannerTitle();
 
 	protected abstract int getDialogWidth();
 

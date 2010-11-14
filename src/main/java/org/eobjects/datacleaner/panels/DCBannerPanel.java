@@ -39,20 +39,34 @@ public class DCBannerPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final int BANNER_LOGO_WIDTH = 220;
 	private static final int BANNER_BG_WIDTH = 150;
 	private static final int BANNER_HEIGHT = 150;
-	private static final Image BANNER_LOGO_IMAGE = ImageManager.getInstance().getImage("images/window/banner-logo.png");
 	private static final Image BANNER_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
+	private final int _bannerImageWidth;
+	private final Image _bannerImage;
 
 	private final String _title;
 
 	public DCBannerPanel() {
-		this(null);
+		this(null, null);
 	}
 
 	public DCBannerPanel(String title) {
+		this(null, title);
+	}
+
+	public DCBannerPanel(Image bannerImage) {
+		this(bannerImage, null);
+	}
+
+	public DCBannerPanel(Image bannerImage, String title) {
 		super();
+		if (bannerImage == null) {
+			_bannerImage = ImageManager.getInstance().getImage("images/window/banner-logo.png");
+		} else {
+			_bannerImage = bannerImage;
+		}
+		_bannerImageWidth = _bannerImage.getWidth(null);
 		_title = title;
 		setOpaque(false);
 	}
@@ -74,9 +88,9 @@ public class DCBannerPanel extends JPanel {
 		final int y = getY();
 		final int w = getWidth();
 
-		g.drawImage(BANNER_LOGO_IMAGE, x, y, this);
+		g.drawImage(_bannerImage, x, y, this);
 
-		int offset = BANNER_LOGO_WIDTH;
+		int offset = _bannerImageWidth;
 		while (offset < w) {
 			g.drawImage(BANNER_BG_IMAGE, x + offset, y, this);
 			offset += BANNER_BG_WIDTH;
@@ -90,7 +104,7 @@ public class DCBannerPanel extends JPanel {
 			}
 			g.setFont(WidgetUtils.FONT_BANNER);
 			g.setColor(WidgetUtils.BG_COLOR_LESS_BRIGHT);
-			g.drawString(_title, 210, 60);
+			g.drawString(_title, _bannerImageWidth, 60);
 		}
 	}
 }

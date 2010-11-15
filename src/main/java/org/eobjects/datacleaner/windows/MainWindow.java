@@ -39,7 +39,9 @@ import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoresListPanel;
+import org.eobjects.datacleaner.panels.DictionaryListPanel;
 import org.eobjects.datacleaner.panels.JobListPanel;
+import org.eobjects.datacleaner.panels.SynonymCatalogListPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -110,12 +112,14 @@ public class MainWindow extends AbstractWindow {
 		dictionariesTaskPane.setTitle("Dictionaries");
 		dictionariesTaskPane.setIcon(imageManager.getImageIcon("images/model/dictionary.png"));
 		dictionariesTaskPane.setCollapsed(true);
+		dictionariesTaskPane.add(new DictionaryListPanel(_configuration));
 		taskPaneContainer.add(dictionariesTaskPane);
 
 		JXTaskPane synonymsTaskPane = new JXTaskPane();
 		synonymsTaskPane.setTitle("Synonyms");
 		synonymsTaskPane.setIcon(imageManager.getImageIcon("images/model/synonym.png"));
 		synonymsTaskPane.setCollapsed(true);
+		synonymsTaskPane.add(new SynonymCatalogListPanel(_configuration));
 		taskPaneContainer.add(synonymsTaskPane);
 
 		JXTaskPane expressionsTaskPane = new JXTaskPane();

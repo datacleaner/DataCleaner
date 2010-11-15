@@ -67,11 +67,11 @@ public class LoginPanel extends JPanel {
 		}
 
 		setOpaque(false);
-		setBorder(new EmptyBorder(30, 30, 30, 30));
+		setBorder(new EmptyBorder(30, 20, 20, 30));
 
 		updateContents();
 
-		setSize(340, 330);
+		setSize(330, 340);
 		setLocation(-340, 150);
 	}
 

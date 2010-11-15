@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
@@ -46,25 +47,30 @@ public class JobListPanel extends DCPanel {
 		setLayout(new BorderLayout());
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
-		final JButton addJobButton = new JButton("New", ImageManager.getInstance()
-				.getImageIcon("images/actions/new.png"));
+		final JButton addJobButton = new JButton("New", ImageManager.getInstance().getImageIcon("images/actions/new.png"));
 		addJobButton.setToolTipText("Add analysis job");
 		addJobButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popupMenu = new JPopupMenu();
 				String[] datastoreNames = _configuration.getDatastoreCatalog().getDatastoreNames();
-				for (final String datastoreName : datastoreNames) {
-					JMenuItem menuItem = new JMenuItem("Using " + datastoreName);
-					menuItem.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							new AnalysisJobBuilderWindow(_configuration, datastoreName).setVisible(true);
-						}
-					});
-					popupMenu.add(menuItem);
+				if (datastoreNames == null || datastoreNames.length == 0) {
+					JOptionPane.showMessageDialog(JobListPanel.this,
+							"Please create a new datastore before you create a job", "No datastore available",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					for (final String datastoreName : datastoreNames) {
+						JMenuItem menuItem = new JMenuItem("Using " + datastoreName);
+						menuItem.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								new AnalysisJobBuilderWindow(_configuration, datastoreName).setVisible(true);
+							}
+						});
+						popupMenu.add(menuItem);
+					}
+					popupMenu.show(addJobButton, 0, addJobButton.getHeight());
 				}
-				popupMenu.show(addJobButton, 0, addJobButton.getHeight());
 			}
 		});
 

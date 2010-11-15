@@ -129,7 +129,7 @@ public class WelcomeDialog extends AbstractWindow {
 		outerPanel.setLayout(new BorderLayout());
 		outerPanel.add(mainPanel, BorderLayout.CENTER);
 		outerPanel.add(toolBarPanel, BorderLayout.SOUTH);
-		outerPanel.setPreferredSize(550, 550);
+		outerPanel.setPreferredSize(550, 580);
 
 		final Container glass = (Container) getGlassPane();
 		glass.setLayout(null);

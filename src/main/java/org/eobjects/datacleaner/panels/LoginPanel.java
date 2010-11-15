@@ -72,7 +72,7 @@ public class LoginPanel extends JPanel {
 		updateContents();
 
 		setSize(330, 340);
-		setLocation(-340, 150);
+		setLocation(-340, 145);
 	}
 
 	public LoginState getLoginState() {
@@ -80,13 +80,13 @@ public class LoginPanel extends JPanel {
 	}
 
 	public void moveIn(int delay) {
-		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, 10, 150, 40));
+		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, 10, 145, 40));
 		timer.setInitialDelay(delay);
 		timer.start();
 	}
 
 	public void moveOut(int delay) {
-		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -340, 150, 40));
+		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -340, 145, 40));
 		timer.setInitialDelay(delay);
 		timer.start();
 	}

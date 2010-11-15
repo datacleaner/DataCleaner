@@ -23,14 +23,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.MainWindow;
+import org.eobjects.datacleaner.windows.WelcomeDialog;
 
 public final class WindowManager {
 
 	private static WindowManager instance = new WindowManager();
 
-	private List<AbstractWindow> windows = new ArrayList<AbstractWindow>();
+	private final List<AbstractWindow> windows = new ArrayList<AbstractWindow>();
+	private final UserPreferences userPreferences = UserPreferences.getInstance();
 
 	public static WindowManager getInstance() {
 		return instance;
@@ -54,9 +58,27 @@ public final class WindowManager {
 
 	public void onDispose(AbstractWindow window) {
 		windows.remove(window);
+
+		if (!(window instanceof WelcomeDialog)) {
+			if (isOnlyMainWindowShowing()) {
+				AnalyzerBeansConfiguration configuration = getMainWindow().getConfiguration();
+				if (userPreferences.isWelcomeDialogShownOnStartup()) {
+					new WelcomeDialog(configuration).setVisible(true);
+				}
+			}
+		}
 	}
 
 	public void onShow(AbstractWindow window) {
 		windows.add(window);
+	}
+
+	public boolean isOnlyMainWindowShowing() {
+		for (AbstractWindow window : windows) {
+			if (!(window instanceof MainWindow)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

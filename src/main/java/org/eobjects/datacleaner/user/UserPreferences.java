@@ -34,13 +34,14 @@ import org.slf4j.LoggerFactory;
 public class UserPreferences implements Serializable {
 
 	private static final long serialVersionUID = 2L;
-	
+
 	private static final File userPreferencesFile = new File("userpreferences.dat");
 	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
 
 	private static UserPreferences instance;
 
 	private String username;
+	private boolean welcomeDialogShownOnStartup = true;
 	private List<File> recentJobFiles = new ArrayList<File>();
 	private File datastoreDirectory = new File(".");
 	private File configuredFileDirectory = new File(".");
@@ -140,5 +141,13 @@ public class UserPreferences implements Serializable {
 
 	public List<File> getRecentJobFiles() {
 		return recentJobFiles;
+	}
+	
+	public boolean isWelcomeDialogShownOnStartup() {
+		return welcomeDialogShownOnStartup;
+	}
+	
+	public void setWelcomeDialogShownOnStartup(boolean welcomeDialogShownOnStartup) {
+		this.welcomeDialogShownOnStartup = welcomeDialogShownOnStartup;
 	}
 }

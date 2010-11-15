@@ -15,6 +15,7 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -54,6 +55,7 @@ public class WelcomeDialog extends AbstractWindow {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final AnalyzerBeansConfiguration _configuration;
+	private final JCheckBox _showOnStartupCheckBox;
 
 	private final ActionListener _skipActionListener = new ActionListener() {
 		@Override
@@ -66,6 +68,7 @@ public class WelcomeDialog extends AbstractWindow {
 	private final ActionListener _closeActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			userPreferences.setWelcomeDialogShownOnStartup(_showOnStartupCheckBox.isSelected());
 			WelcomeDialog.this.dispose();
 		}
 	};
@@ -78,6 +81,11 @@ public class WelcomeDialog extends AbstractWindow {
 	public WelcomeDialog(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
+		_showOnStartupCheckBox = new JCheckBox("Show this dialog on startup");
+		_showOnStartupCheckBox.setOpaque(false);
+		_showOnStartupCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_showOnStartupCheckBox.setVisible(false);
+		_showOnStartupCheckBox.setSelected(userPreferences.isWelcomeDialogShownOnStartup());
 		_nextStepButton = new JButton();
 		_nextStepButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		updateDialogState(true);
@@ -108,6 +116,7 @@ public class WelcomeDialog extends AbstractWindow {
 			_nextStepButton.setIcon(imageManager.getImageIcon("images/actions/skip.png"));
 			_nextStepButton.removeActionListener(_skipActionListener);
 			_nextStepButton.addActionListener(_closeActionListener);
+			_showOnStartupCheckBox.setVisible(true);
 		}
 		_recentJobsPanel.setVisible(!_showLoginPanel);
 	}
@@ -268,6 +277,7 @@ public class WelcomeDialog extends AbstractWindow {
 		toolBar.add(bloggerButton);
 		toolBar.add(linkedInButton);
 		toolBar.add(new JSeparator(JSeparator.VERTICAL));
+		toolBar.add(_showOnStartupCheckBox);
 		toolBar.add(_nextStepButton);
 
 		return toolBar;

@@ -43,7 +43,6 @@ public final class WidgetFactory {
 
 	public static JMenu createMenu(String text, char mnemonic) {
 		JMenu menu = new JMenu();
-		menu.setToolTipText(text);
 		menu.setText(text);
 		menu.setMnemonic(mnemonic);
 		return menu;

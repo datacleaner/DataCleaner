@@ -22,18 +22,22 @@ package org.eobjects.datacleaner.user;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.reference.Dictionary;
+import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UserPreferences implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 
 	private static final File userPreferencesFile = new File("userpreferences.dat");
 	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
@@ -46,6 +50,9 @@ public class UserPreferences implements Serializable {
 	private File datastoreDirectory = new File(".");
 	private File configuredFileDirectory = new File(".");
 	private File analysisJobDirectory = new File(".");
+	private List<Datastore> userDatastores = new ArrayList<Datastore>();
+	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
+	private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
 
 	public static UserPreferences getInstance() {
 		if (instance == null) {
@@ -56,6 +63,10 @@ public class UserPreferences implements Serializable {
 						try {
 							inputStream = new ObjectInputStream(new FileInputStream(userPreferencesFile));
 							instance = (UserPreferences) inputStream.readObject();
+						} catch (InvalidClassException e) {
+							logger.warn("User preferences file version does not match application version: {}",
+									e.getMessage());
+							instance = new UserPreferences();
 						} catch (Exception e) {
 							logger.warn("Could not read user preferences file", e);
 							instance = new UserPreferences();
@@ -142,12 +153,33 @@ public class UserPreferences implements Serializable {
 	public List<File> getRecentJobFiles() {
 		return recentJobFiles;
 	}
-	
+
 	public boolean isWelcomeDialogShownOnStartup() {
 		return welcomeDialogShownOnStartup;
 	}
-	
+
 	public void setWelcomeDialogShownOnStartup(boolean welcomeDialogShownOnStartup) {
 		this.welcomeDialogShownOnStartup = welcomeDialogShownOnStartup;
+	}
+
+	public List<Datastore> getUserDatastores() {
+		if (userDatastores == null) {
+			userDatastores = new ArrayList<Datastore>();
+		}
+		return userDatastores;
+	}
+
+	public List<Dictionary> getUserDictionaries() {
+		if (userDictionaries == null) {
+			userDictionaries = new ArrayList<Dictionary>();
+		}
+		return userDictionaries;
+	}
+
+	public List<SynonymCatalog> getUserSynonymCatalogs() {
+		if (userSynonymCatalogs == null) {
+			userSynonymCatalogs = new ArrayList<SynonymCatalog>();
+		}
+		return userSynonymCatalogs;
 	}
 }

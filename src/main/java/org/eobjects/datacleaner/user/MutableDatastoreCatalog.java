@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,14 +31,26 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<Datastore> _datastores = new ArrayList<Datastore>();
-	private List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
+	private final List<Datastore> _datastores;
+	private final List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
 
 	public MutableDatastoreCatalog(final DatastoreCatalog catalog) {
+		_datastores = UserPreferences.getInstance().getUserDatastores();
 		String[] datastoreNames = catalog.getDatastoreNames();
 		for (String name : datastoreNames) {
-			addDatastore(catalog.getDatastore(name));
+			if (!containsDatastore(name)) {
+				addDatastore(catalog.getDatastore(name));
+			}
 		}
+	}
+
+	public boolean containsDatastore(String name) {
+		for (Datastore datastore : _datastores) {
+			if (name.equals(datastore.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void removeDatastore(Datastore ds) {

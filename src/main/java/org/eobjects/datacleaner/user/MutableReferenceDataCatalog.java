@@ -1,3 +1,22 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.eobjects.datacleaner.user;
 
 import java.util.ArrayList;
@@ -12,20 +31,27 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	private static final long serialVersionUID = 1L;
 
-	private final List<Dictionary> _dictionaries = new ArrayList<Dictionary>();
+	private final List<Dictionary> _dictionaries;
 	private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<DictionaryChangeListener>();
-	private final List<SynonymCatalog> _synonymCatalogs = new ArrayList<SynonymCatalog>();
+	private final List<SynonymCatalog> _synonymCatalogs;
 	private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<SynonymCatalogChangeListener>();
 
 	public MutableReferenceDataCatalog(final ReferenceDataCatalog referenceDataCatalog) {
+		_dictionaries = UserPreferences.getInstance().getUserDictionaries();
+		_synonymCatalogs = UserPreferences.getInstance().getUserSynonymCatalogs();
+
 		String[] names = referenceDataCatalog.getDictionaryNames();
 		for (String name : names) {
-			addDictionary(referenceDataCatalog.getDictionary(name));
+			if (!containsDictionary(name)) {
+				addDictionary(referenceDataCatalog.getDictionary(name));
+			}
 		}
 
 		names = referenceDataCatalog.getSynonymCatalogNames();
 		for (String name : names) {
-			addSynonymCatalog(referenceDataCatalog.getSynonymCatalog(name));
+			if (!containsSynonymCatalog(name)) {
+				addSynonymCatalog(referenceDataCatalog.getSynonymCatalog(name));
+			}
 		}
 	}
 
@@ -36,6 +62,24 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 			result[i] = _dictionaries.get(i).getName();
 		}
 		return result;
+	}
+
+	public boolean containsDictionary(String name) {
+		for (Dictionary dictionary : _dictionaries) {
+			if (name.equals(dictionary.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean containsSynonymCatalog(String name) {
+		for (SynonymCatalog sc : _synonymCatalogs) {
+			if (name.equals(sc.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void addDictionary(Dictionary dict) {

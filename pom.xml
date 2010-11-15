@@ -30,6 +30,9 @@
 							<classpathPrefix>lib</classpathPrefix>
 							<mainClass>org.eobjects.datacleaner.Main</mainClass>
 						</manifest>
+						<manifestEntries>
+							<SplashScreen-Image>images/splash.png</SplashScreen-Image>
+						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>

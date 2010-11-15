@@ -19,28 +19,130 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.jdesktop.swingx.VerticalLayout;
+import org.eobjects.analyzer.reference.DatastoreDictionary;
+import org.eobjects.analyzer.reference.Dictionary;
+import org.eobjects.datacleaner.user.DictionaryChangeListener;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
 
-public class DictionaryListPanel extends DCPanel {
+public class DictionaryListPanel extends DCPanel implements DictionaryChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final AnalyzerBeansConfiguration _configuration;
+	private final MutableReferenceDataCatalog _catalog;
+	private final DCPanel _dictionariesPanel;
 
 	public DictionaryListPanel(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
-		
-		setLayout(new VerticalLayout(4));
+		_catalog = (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog();
+		_catalog.addDictionaryListener(this);
+		_dictionariesPanel = new DCPanel();
 
-		// TODO: This is just a very early implementation, simply displaying the
-		// dictionaries in the configuration
-		String[] names = _configuration.getReferenceDataCatalog().getDictionaryNames();
+		JToolBar toolBar = WidgetFactory.createToolBar();
+
+		final JButton addDictionaryMenuItem = new JButton("New dictionary",
+				imageManager.getImageIcon("images/actions/new.png"));
+		addDictionaryMenuItem.setToolTipText("New dictionary");
+		addDictionaryMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JPopupMenu popup = new JPopupMenu();
+
+				final JMenuItem datastoreDictionaryMenuItem = WidgetFactory.createMenuItem("Datastore-backed dictionary",
+						imageManager.getImageIcon("images/model/datastore.png", IconUtils.ICON_SIZE_SMALL));
+				datastoreDictionaryMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog()).setVisible(true);
+					}
+				});
+
+				final JMenuItem textFileDictionaryMenuItem = WidgetFactory.createMenuItem("Text-file dictionary",
+						imageManager.getImageIcon("images/datastore-types/csv.png", IconUtils.ICON_SIZE_SMALL));
+				textFileDictionaryMenuItem.setEnabled(false);
+
+				final JMenuItem simpleDictionaryMenuItem = WidgetFactory.createMenuItem("Simple dictionary",
+						imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL));
+				simpleDictionaryMenuItem.setEnabled(false);
+
+				popup.add(datastoreDictionaryMenuItem);
+				popup.add(textFileDictionaryMenuItem);
+				popup.add(simpleDictionaryMenuItem);
+
+				popup.show(addDictionaryMenuItem, 0, addDictionaryMenuItem.getHeight());
+			}
+		});
+		toolBar.add(addDictionaryMenuItem);
+
+		updateComponents();
+
+		setLayout(new BorderLayout());
+		add(toolBar, BorderLayout.NORTH);
+		add(_dictionariesPanel, BorderLayout.CENTER);
+	}
+
+	private void updateComponents() {
+		_dictionariesPanel.removeAll();
+
+		String[] names = _catalog.getDictionaryNames();
+		Arrays.sort(names);
+
+		int row = 0;
 		for (String name : names) {
-			add(new JLabel(name));
+
+			final Dictionary dictionary = _catalog.getDictionary(name);
+
+			JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+			editButton.setToolTipText("Edit dictionary");
+
+			if (dictionary instanceof DatastoreDictionary) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog((DatastoreDictionary) dictionary, _catalog, _configuration
+								.getDatastoreCatalog());
+						dialog.setVisible(true);
+					}
+				});
+			} else {
+				editButton.setEnabled(false);
+			}
+
+			WidgetUtils.addToGridBag(new JLabel(name), _dictionariesPanel, 0, row);
+			WidgetUtils.addToGridBag(editButton, _dictionariesPanel, 1, row);
+
+			row++;
 		}
+
+		updateUI();
+	}
+
+	@Override
+	public void onAdd(Dictionary dictionary) {
+		updateComponents();
+	}
+
+	@Override
+	public void onRemove(Dictionary dictionary) {
+		updateComponents();
 	}
 }

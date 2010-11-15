@@ -27,9 +27,10 @@ import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.MainWindow;
-import org.eobjects.datacleaner.windows.WelcomeDialog;
+import org.eobjects.datacleaner.windows.WelcomeWindow;
 
 /**
  * Singleton class that manages events related to opening and closing of windows
@@ -78,11 +79,13 @@ public final class WindowManager {
 	public void onDispose(AbstractWindow window) {
 		_windows.remove(window);
 
-		if (!(window instanceof WelcomeDialog)) {
+		// if the disposed window was not a dialog and if it's the last window
+		// (except the main window), then show the welcome window.
+		if (!(window instanceof AbstractDialog) && !(window instanceof WelcomeWindow)) {
 			if (isOnlyMainWindowShowing()) {
 				AnalyzerBeansConfiguration configuration = getMainWindow().getConfiguration();
 				if (_userPreferences.isWelcomeDialogShownOnStartup()) {
-					new WelcomeDialog(configuration).setVisible(true);
+					new WelcomeWindow(configuration).setVisible(true);
 				}
 			}
 		}

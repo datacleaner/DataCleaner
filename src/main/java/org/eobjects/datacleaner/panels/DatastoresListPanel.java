@@ -32,8 +32,7 @@ import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.datacleaner.user.DatastoreListener;
+import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -44,18 +43,18 @@ import org.eobjects.datacleaner.windows.OpenAccessDatabaseDialog;
 import org.eobjects.datacleaner.windows.OpenCsvFileDialog;
 import org.eobjects.datacleaner.windows.OpenExcelSpreadsheetDialog;
 
-public final class DatastoresListPanel extends DCPanel implements DatastoreListener {
+public final class DatastoresListPanel extends DCPanel implements DatastoreChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final AnalyzerBeansConfiguration _configuration;
+	private AnalyzerBeansConfiguration _configuration;
 	private final MutableDatastoreCatalog _catalog;
 	private final DCPanel _datastoresPanel;
 
 	public DatastoresListPanel(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
-		_catalog = (MutableDatastoreCatalog) _configuration.getDatastoreCatalog();
+		_catalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
 		_catalog.addListener(this);
 		_datastoresPanel = new DCPanel();
 
@@ -73,8 +72,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 
 				ImageManager imageManager = ImageManager.getInstance();
 
-				JMenuItem csvMenuItem = new JMenuItem("Comma-separated file", imageManager.getImageIcon(
-						IconUtils.CSV_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				JMenuItem csvMenuItem = WidgetFactory.createMenuItem("Comma-separated file",
+						imageManager.getImageIcon(IconUtils.CSV_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				csvMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -82,8 +81,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 					}
 				});
 
-				JMenuItem excelMenuItem = new JMenuItem("Microsoft Excel spreadsheet", imageManager.getImageIcon(
-						IconUtils.EXCEL_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				JMenuItem excelMenuItem = WidgetFactory.createMenuItem("Microsoft Excel spreadsheet",
+						imageManager.getImageIcon(IconUtils.EXCEL_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				excelMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -91,8 +90,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 					}
 				});
 
-				JMenuItem accessMenuItem = new JMenuItem("Microsoft Access database-file", imageManager.getImageIcon(
-						IconUtils.ACCESS_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				JMenuItem accessMenuItem = WidgetFactory.createMenuItem("Microsoft Access database-file",
+						imageManager.getImageIcon(IconUtils.ACCESS_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				accessMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -101,18 +100,18 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 				});
 
 				// TODO: Not yet functional
-				JMenuItem dbaseMenuItem = new JMenuItem("Dbase database-file", imageManager.getImageIcon(
-						IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("Dbase database-file",
+						imageManager.getImageIcon(IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				dbaseMenuItem.setEnabled(false);
 
 				// TODO: Not yet functional
-				JMenuItem odbMenuItem = new JMenuItem("OpenOffice.org database-file", imageManager.getImageIcon(
-						IconUtils.ODB_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				JMenuItem odbMenuItem = WidgetFactory.createMenuItem("OpenOffice.org database-file",
+						imageManager.getImageIcon(IconUtils.ODB_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				odbMenuItem.setEnabled(false);
 
 				// TODO: Not yet functional
-				JMenuItem jdbcMenuItem = new JMenuItem("Database connection", imageManager.getImageIcon(
-						IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				JMenuItem jdbcMenuItem = WidgetFactory.createMenuItem("Database connection",
+						imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				jdbcMenuItem.setEnabled(false);
 
 				popup.add(jdbcMenuItem);
@@ -138,12 +137,11 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreListe
 	private void updateComponents() {
 		_datastoresPanel.removeAll();
 
-		DatastoreCatalog datastoreCatalog = _configuration.getDatastoreCatalog();
-		String[] datastoreNames = datastoreCatalog.getDatastoreNames();
+		String[] datastoreNames = _catalog.getDatastoreNames();
 
 		for (int i = 0; i < datastoreNames.length; i++) {
 			String name = datastoreNames[i];
-			final Datastore datastore = datastoreCatalog.getDatastore(name);
+			final Datastore datastore = _catalog.getDatastore(name);
 
 			Icon icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
 			JLabel dsIcon = new JLabel(icon);

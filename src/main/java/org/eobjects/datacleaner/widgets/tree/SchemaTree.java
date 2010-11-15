@@ -61,26 +61,27 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	public static final String ROOT_NODE_STRING = "Schemas";
 
 	private final Datastore _datastore;
-	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final TreeCellRenderer _rendererDelegate;
+
+	public SchemaTree(Datastore datastore) {
+		this(datastore, null);
+	}
 
 	public SchemaTree(Datastore datastore, AnalysisJobBuilder analysisJobBuilder) {
 		super();
 		if (datastore == null) {
 			throw new IllegalArgumentException("Datastore cannot be null");
 		}
-		if (analysisJobBuilder == null) {
-			throw new IllegalArgumentException("AnalysisJobBuilder cannot be null");
-		}
 		_rendererDelegate = new DefaultTreeRenderer();
 		setCellRenderer(this);
 		_datastore = datastore;
-		_analysisJobBuilder = analysisJobBuilder;
 		setOpaque(false);
 		addTreeWillExpandListener(this);
-		addMouseListener(new SchemaMouseListener(this, _analysisJobBuilder));
-		addMouseListener(new TableMouseListener(this, _analysisJobBuilder));
-		addMouseListener(new ColumnMouseListener(this, _analysisJobBuilder));
+		if (analysisJobBuilder != null) {
+			addMouseListener(new SchemaMouseListener(this, analysisJobBuilder));
+			addMouseListener(new TableMouseListener(this, analysisJobBuilder));
+			addMouseListener(new ColumnMouseListener(this, analysisJobBuilder));
+		}
 		updateTree();
 	}
 

@@ -47,6 +47,7 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.Function;
 import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.LoginPanel;
@@ -61,13 +62,13 @@ import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
- * The dialog that welcomes the user when he/she first opens DataCleaner. The
- * dialog contains a login form and a list of recent jobs.
+ * The window that welcomes the user when he/she first opens DataCleaner. The
+ * window contains a login form and a list of recent jobs.
  * 
  * @author Kasper Sørensen
  * 
  */
-public class WelcomeDialog extends AbstractWindow {
+public class WelcomeWindow extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
 
@@ -88,7 +89,7 @@ public class WelcomeDialog extends AbstractWindow {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			userPreferences.setWelcomeDialogShownOnStartup(_showOnStartupCheckBox.isSelected());
-			WelcomeDialog.this.dispose();
+			WelcomeWindow.this.dispose();
 		}
 	};
 	private final LoginPanel _loginPanel = new LoginPanel();
@@ -97,7 +98,7 @@ public class WelcomeDialog extends AbstractWindow {
 
 	private volatile boolean _showLoginPanel;
 
-	public WelcomeDialog(AnalyzerBeansConfiguration configuration) {
+	public WelcomeWindow(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
 		_showOnStartupCheckBox = new JCheckBox("Show this dialog on startup");

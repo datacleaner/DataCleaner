@@ -27,31 +27,39 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.MainWindow;
-import org.eobjects.datacleaner.windows.WelcomeDialog;
+import org.eobjects.datacleaner.windows.WelcomeWindow;
 
 public final class Main {
 
 	public static final String VERSION = "2.0-SNAPSHOT";
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
+		// set up default error handling
+		Thread.setDefaultUncaughtExceptionHandler(new DCUncaughtExceptionHandler());
+
+		// load the configuration file
 		JaxbConfigurationReader configurationReader = new JaxbConfigurationReader();
 		AnalyzerBeansConfiguration c = configurationReader.create(new File("conf.xml"));
 
 		// make the configuration mutable
-		c = new AnalyzerBeansConfigurationImpl(new MutableDatastoreCatalog(c.getDatastoreCatalog()),
-				c.getReferenceDataCatalog(), c.getDescriptorProvider(), c.getTaskRunner(), c.getStorageProvider());
+		MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog());
+		MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(c.getReferenceDataCatalog());
+		c = new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog, c.getDescriptorProvider(),
+				c.getTaskRunner(), c.getStorageProvider());
 
-		Thread.setDefaultUncaughtExceptionHandler(new DCUncaughtExceptionHandler());
+		// init the look and feel
 		LookAndFeelManager.getInstance().init();
 
-		new WelcomeDialog(c).setVisible(true);
-
+		// show windows
+		new WelcomeWindow(c).setVisible(true);
 		new MainWindow(c).setVisible(true);
-		
+
+		// log usage
 		UsageLogger.getInstance().log("GUI: " + Main.VERSION);
 	}
 }

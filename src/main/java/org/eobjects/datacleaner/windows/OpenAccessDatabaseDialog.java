@@ -61,7 +61,7 @@ public class OpenAccessDatabaseDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		return "MS Access";
+		return "MS Access\ndatabase";
 	}
 
 	public OpenAccessDatabaseDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {

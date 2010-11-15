@@ -111,7 +111,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		return "MS Excel";
+		return "MS Excel\nspreadsheet";
 	}
 
 	private void autoDetectQuoteAndSeparator() {

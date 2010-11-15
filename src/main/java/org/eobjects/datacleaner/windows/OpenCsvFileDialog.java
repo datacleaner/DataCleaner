@@ -182,7 +182,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		return "CSV file";
+		return "Comma-separated\nfile";
 	}
 
 	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote) {
@@ -359,7 +359,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 
 	@Override
 	protected int getDialogWidth() {
-		return 400;
+		return 550;
 	}
 
 	@Override

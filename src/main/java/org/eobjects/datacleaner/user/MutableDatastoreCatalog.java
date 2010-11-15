@@ -33,9 +33,9 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private List<Datastore> _datastores = new ArrayList<Datastore>();
-	private List<DatastoreListener> _listeners = new LinkedList<DatastoreListener>();
+	private List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
 
-	public MutableDatastoreCatalog(DatastoreCatalog catalog) {
+	public MutableDatastoreCatalog(final DatastoreCatalog catalog) {
 		String[] datastoreNames = catalog.getDatastoreNames();
 		for (String name : datastoreNames) {
 			addDatastore(catalog.getDatastore(name));
@@ -44,7 +44,7 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 
 	public void removeDatastore(Datastore ds) {
 		_datastores.remove(ds);
-		for (DatastoreListener listener : _listeners) {
+		for (DatastoreChangeListener listener : _listeners) {
 			listener.onRemove(ds);
 		}
 	}
@@ -60,7 +60,7 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 			}
 		}
 		_datastores.add(ds);
-		for (DatastoreListener listener : _listeners) {
+		for (DatastoreChangeListener listener : _listeners) {
 			listener.onAdd(ds);
 		}
 	}
@@ -87,11 +87,11 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 		return null;
 	}
 
-	public void addListener(DatastoreListener listener) {
+	public void addListener(DatastoreChangeListener listener) {
 		_listeners.add(listener);
 	}
 
-	public void removeListener(DatastoreListener listener) {
+	public void removeListener(DatastoreChangeListener listener) {
 		_listeners.remove(listener);
 	}
 }

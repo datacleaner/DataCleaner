@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.windows;
+package org.eobjects.datacleaner.actions;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -32,6 +32,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public class OpenAnalysisJobActionListener implements ActionListener {
 

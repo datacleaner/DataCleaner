@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.user;
 
 import org.eobjects.analyzer.connection.Datastore;
 
-public interface DatastoreListener {
+public interface DatastoreChangeListener {
 
 	public void onAdd(Datastore datastore);
 	

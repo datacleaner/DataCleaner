@@ -20,21 +20,15 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.datacleaner.user.UsageLogger;
+import org.eobjects.datacleaner.actions.NewAnalysisJobActionListener;
+import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.eobjects.datacleaner.windows.OpenAnalysisJobActionListener;
 
 public class JobListPanel extends DCPanel {
 
@@ -49,32 +43,8 @@ public class JobListPanel extends DCPanel {
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 		final JButton addJobButton = new JButton("New", ImageManager.getInstance().getImageIcon("images/actions/new.png"));
-		addJobButton.setToolTipText("Add analysis job");
-		addJobButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JPopupMenu popupMenu = new JPopupMenu();
-				String[] datastoreNames = _configuration.getDatastoreCatalog().getDatastoreNames();
-				if (datastoreNames == null || datastoreNames.length == 0) {
-					JOptionPane.showMessageDialog(JobListPanel.this,
-							"Please create a new datastore before you create a job", "No datastore available",
-							JOptionPane.ERROR_MESSAGE);
-				} else {
-					for (final String datastoreName : datastoreNames) {
-						JMenuItem menuItem = new JMenuItem("Using " + datastoreName);
-						menuItem.addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								UsageLogger.getInstance().log("New analysis job");
-								new AnalysisJobBuilderWindow(_configuration, datastoreName).setVisible(true);
-							}
-						});
-						popupMenu.add(menuItem);
-					}
-					popupMenu.show(addJobButton, 0, addJobButton.getHeight());
-				}
-			}
-		});
+		addJobButton.setToolTipText("New analysis job");
+		addJobButton.addActionListener(new NewAnalysisJobActionListener(_configuration));
 
 		JButton openJobButton = new JButton("Open", ImageManager.getInstance().getImageIcon("images/actions/open.png"));
 		openJobButton.setToolTipText("Open analysis job");

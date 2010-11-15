@@ -52,7 +52,7 @@ public class MoveComponentTimerActionListener implements ActionListener {
 		int currentY = location.y;
 		if (currentX == x && currentY == y) {
 			timer.stop();
-		} else if (numSteps == 1) {
+		} else if (numSteps <= 1) {
 			component.setLocation(x, y);
 		} else {
 			int diffX = x-currentX;

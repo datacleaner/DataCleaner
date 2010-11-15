@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.util;
 import java.awt.Image;
 import java.awt.Insets;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -48,14 +49,22 @@ public final class WidgetFactory {
 		return menu;
 	}
 
-	public static JMenuItem createMenuItem(String text, String iconPath) {
+	public static JMenuItem createMenuItem(String text, Icon icon) {
 		JMenuItem menu = new JMenuItem();
 		menu.setToolTipText(text);
 		menu.setText(text);
-		if (iconPath != null) {
-			menu.setIcon(ImageManager.getInstance().getImageIcon(iconPath));
+		if (icon != null) {
+			menu.setIcon(icon);
 		}
 		return menu;
+	}
+
+	public static JMenuItem createMenuItem(String text, String iconPath) {
+		Icon icon = null;
+		if (iconPath != null) {
+			icon = ImageManager.getInstance().getImageIcon(iconPath);
+		}
+		return createMenuItem(text, icon);
 	}
 
 	public static JButton createButton(String text, String imagePath) {

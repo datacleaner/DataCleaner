@@ -24,7 +24,9 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -41,6 +43,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
@@ -157,12 +160,12 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	private JMenuBar getWindowMenuBar() {
-		JMenuBar menuBar = new JMenuBar();
+		final JMenuBar menuBar = new JMenuBar();
 
-		JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job", "images/actions/open.png");
+		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job", "images/actions/open.png");
 		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
 
-		JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
+		final JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -170,24 +173,46 @@ public class MainWindow extends AbstractWindow {
 			}
 		});
 
-		JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png");
+		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png");
 		optionsMenuItem.setEnabled(false);
 
-		JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
+		final JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
 		aboutMenuItem.setEnabled(false);
 
-		JMenu fileMenu = WidgetFactory.createMenu("File", 'F');
+		final JMenu fileMenu = WidgetFactory.createMenu("File", 'F');
 		fileMenu.add(openJobMenuItem);
 		fileMenu.add(exitMenuItem);
 
-		JMenu editMenu = WidgetFactory.createMenu("Edit", 'E');
+		final JMenu editMenu = WidgetFactory.createMenu("Edit", 'E');
 		editMenu.add(optionsMenuItem);
 
-		JMenu helpMenu = WidgetFactory.createMenu("Help", 'H');
+		final JMenu windowsMenu = WidgetFactory.createMenu("Windows", 'W');
+		WindowManager.getInstance().addListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				windowsMenu.removeAll();
+				List<AbstractWindow> windows = WindowManager.getInstance().getWindows();
+				for (final AbstractWindow window : windows) {
+					final Image windowIcon = window.getWindowIcon();
+					final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(32, 32, Image.SCALE_DEFAULT));
+					final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(window.getWindowTitle(), icon);
+					switchToWindowItem.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							window.toFront();
+						}
+					});
+					windowsMenu.add(switchToWindowItem);
+				}
+			}
+		});
+
+		final JMenu helpMenu = WidgetFactory.createMenu("Help", 'H');
 		helpMenu.add(aboutMenuItem);
 
 		menuBar.add(fileMenu);
 		menuBar.add(editMenu);
+		menuBar.add(windowsMenu);
 		menuBar.add(helpMenu);
 		return menuBar;
 	}

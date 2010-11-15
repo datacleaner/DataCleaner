@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,12 +31,21 @@ import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.MainWindow;
 import org.eobjects.datacleaner.windows.WelcomeDialog;
 
+/**
+ * Singleton class that manages events related to opening and closing of windows
+ * in DataCleaner.
+ * 
+ * @see AbstractWindow
+ * 
+ * @author Kasper Sørensen
+ */
 public final class WindowManager {
 
 	private static WindowManager instance = new WindowManager();
 
-	private final List<AbstractWindow> windows = new ArrayList<AbstractWindow>();
-	private final UserPreferences userPreferences = UserPreferences.getInstance();
+	private final List<AbstractWindow> _windows = new ArrayList<AbstractWindow>();
+	private final UserPreferences _userPreferences = UserPreferences.getInstance();
+	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();
 
 	public static WindowManager getInstance() {
 		return instance;
@@ -44,11 +55,19 @@ public final class WindowManager {
 	}
 
 	public List<AbstractWindow> getWindows() {
-		return Collections.unmodifiableList(windows);
+		return Collections.unmodifiableList(_windows);
+	}
+
+	public void addListener(ActionListener listener) {
+		_listeners.add(listener);
+	}
+
+	public void removeListener(ActionListener listener) {
+		_listeners.remove(listener);
 	}
 
 	public MainWindow getMainWindow() {
-		for (AbstractWindow window : windows) {
+		for (AbstractWindow window : _windows) {
 			if (window instanceof MainWindow) {
 				return (MainWindow) window;
 			}
@@ -57,24 +76,35 @@ public final class WindowManager {
 	}
 
 	public void onDispose(AbstractWindow window) {
-		windows.remove(window);
+		_windows.remove(window);
 
 		if (!(window instanceof WelcomeDialog)) {
 			if (isOnlyMainWindowShowing()) {
 				AnalyzerBeansConfiguration configuration = getMainWindow().getConfiguration();
-				if (userPreferences.isWelcomeDialogShownOnStartup()) {
+				if (_userPreferences.isWelcomeDialogShownOnStartup()) {
 					new WelcomeDialog(configuration).setVisible(true);
 				}
 			}
 		}
+
+		notifyListeners();
+	}
+
+	private void notifyListeners() {
+		ActionEvent event = new ActionEvent(this, _windows.size(), null);
+		for (ActionListener listener : _listeners) {
+			listener.actionPerformed(event);
+		}
 	}
 
 	public void onShow(AbstractWindow window) {
-		windows.add(window);
+		_windows.add(window);
+
+		notifyListeners();
 	}
 
 	public boolean isOnlyMainWindowShowing() {
-		for (AbstractWindow window : windows) {
+		for (AbstractWindow window : _windows) {
 			if (!(window instanceof MainWindow)) {
 				return false;
 			}

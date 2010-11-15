@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoresListPanel;
@@ -73,7 +74,7 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	protected String getWindowTitle() {
-		return "DataCleaner 2";
+		return "DataCleaner " + Main.VERSION;
 	}
 
 	@Override

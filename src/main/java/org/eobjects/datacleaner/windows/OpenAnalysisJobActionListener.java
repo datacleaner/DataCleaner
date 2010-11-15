@@ -29,6 +29,7 @@ import javax.swing.JFileChooser;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 
@@ -48,6 +49,8 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		UsageLogger.getInstance().log("Open analysis job");
+		
 		UserPreferences userPreferences = UserPreferences.getInstance();
 
 		File file = _file;

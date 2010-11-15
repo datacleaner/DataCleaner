@@ -27,6 +27,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.MainWindow;
@@ -34,8 +35,9 @@ import org.eobjects.datacleaner.windows.WelcomeDialog;
 
 public final class Main {
 
-	public static void main(String[] args) throws UnsupportedLookAndFeelException {
+	public static final String VERSION = "2.0-SNAPSHOT";
 
+	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 		JaxbConfigurationReader configurationReader = new JaxbConfigurationReader();
 		AnalyzerBeansConfiguration c = configurationReader.create(new File("conf.xml"));
 
@@ -45,9 +47,11 @@ public final class Main {
 
 		Thread.setDefaultUncaughtExceptionHandler(new DCUncaughtExceptionHandler());
 		LookAndFeelManager.getInstance().init();
-		
+
 		new WelcomeDialog(c).setVisible(true);
 
 		new MainWindow(c).setVisible(true);
+		
+		UsageLogger.getInstance().log("GUI: " + Main.VERSION);
 	}
 }

@@ -31,6 +31,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
 
@@ -57,6 +58,8 @@ public final class AddTransformerActionListener implements ActionListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					_analysisJobBuilder.addTransformer(descriptor);
+					
+					UsageLogger.getInstance().log("Add transformer: " + descriptor.getDisplayName());
 				}
 			});
 			popup.add(menuItem);

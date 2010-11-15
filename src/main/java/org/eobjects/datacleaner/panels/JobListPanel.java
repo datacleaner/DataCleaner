@@ -30,6 +30,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -64,6 +65,7 @@ public class JobListPanel extends DCPanel {
 						menuItem.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
+								UsageLogger.getInstance().log("New analysis job");
 								new AnalysisJobBuilderWindow(_configuration, datastoreName).setVisible(true);
 							}
 						});

@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 
@@ -68,6 +69,8 @@ public class SaveDataSetActionListener implements ActionListener {
 				String datastoreName = JOptionPane.showInputDialog("Datastore name");
 				OutputWriter writer = DatastoreOutputWriterFactory.getWriter(datastoreName, _inputColumns);
 				performWrite(writer);
+
+				UsageLogger.getInstance().log("Save DataSet as datastore");
 			}
 		});
 
@@ -88,6 +91,8 @@ public class SaveDataSetActionListener implements ActionListener {
 
 					File dir = selectedFile.getParentFile();
 					UserPreferences.getInstance().setAnalysisJobDirectory(dir);
+
+					UsageLogger.getInstance().log("Save DataSet as CSV file");
 				}
 			}
 		});

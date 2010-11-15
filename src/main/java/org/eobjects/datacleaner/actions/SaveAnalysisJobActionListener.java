@@ -32,6 +32,7 @@ import javax.swing.JOptionPane;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -49,6 +50,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		UsageLogger.getInstance().log("Save analysis job");
 
 		AnalysisJob analysisJob = null;
 		try {

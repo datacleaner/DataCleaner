@@ -34,6 +34,7 @@ import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
 
@@ -64,14 +65,17 @@ public final class AddAnalyzerActionListener implements ActionListener {
 						public void actionPerformed(ActionEvent e) {
 							Class<?> analyzerClass = descriptor.getBeanClass();
 							if (descriptor.isExploringAnalyzer()) {
-								_analysisJobBuilder.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
+								_analysisJobBuilder
+										.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
 							} else {
 								_analysisJobBuilder
-								.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
+										.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
 							}
+
+							UsageLogger.getInstance().log("Add analyzer: " + descriptor.getDisplayName());
 						}
 					});
-					
+
 					popup.add(menuItem);
 				}
 			}

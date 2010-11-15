@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
 public class RunAnalysisActionListener implements ActionListener {
@@ -40,6 +41,8 @@ public class RunAnalysisActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		UsageLogger.getInstance().log("Run analysis");
+		
 		AnalysisJob job = _analysisJobBuilder.toAnalysisJob();
 		ResultWindow window = new ResultWindow(_configuration, job);
 		window.setVisible(true);

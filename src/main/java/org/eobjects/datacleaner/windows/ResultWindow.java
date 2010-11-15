@@ -40,10 +40,6 @@ import org.eobjects.datacleaner.util.AnalysisRunnerSwingWorker;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
-import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dk.eobjects.metamodel.schema.Table;
 
@@ -52,7 +48,6 @@ public final class ResultWindow extends AbstractWindow {
 	private static final long serialVersionUID = 1L;
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
-	private static final Logger logger = LoggerFactory.getLogger(ResultWindow.class);
 
 	private final CloseableTabbedPane _tabbedPane = new CloseableTabbedPane();
 	private final Map<Table, ResultListPanel> _resultPanels = new HashMap<Table, ResultListPanel>();
@@ -71,12 +66,6 @@ public final class ResultWindow extends AbstractWindow {
 		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/result.png"),
 				_progressInformationPanel);
 		_tabbedPane.setUnclosableTab(0);
-		_tabbedPane.addTabCloseListener(new TabCloseListener() {
-			@Override
-			public void tabClosing(TabCloseEvent ev) {
-				logger.debug("close: {}", ev.getClosedTab());
-			}
-		});
 	}
 
 	public void startAnalysis() {

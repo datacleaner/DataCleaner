@@ -104,6 +104,9 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 			if (_pane.getUnclosables().contains(tabIndex)) {
 				return;
 			}
+			if (_pane.getSeparators().contains(tabIndex)) {
+				return;
+			}
 
 			Rectangle r = closeRectFor(tabIndex);
 			// Check for mouse being in close box
@@ -128,6 +131,10 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 			if (_pane.getUnclosables().contains(tabIndex)) {
 				return;
 			}
+			if (_pane.getSeparators().contains(tabIndex)) {
+				return;
+			}
+
 			Rectangle r = closeRectFor(tabIndex);
 			if (r.contains(new Point(e.getX(), e.getY()))) {
 				_closeIdx = tabIndex;
@@ -151,6 +158,9 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 				return;
 			}
 			if (_pane.getUnclosables().contains(tabIndex)) {
+				return;
+			}
+			if (_pane.getSeparators().contains(tabIndex)) {
 				return;
 			}
 

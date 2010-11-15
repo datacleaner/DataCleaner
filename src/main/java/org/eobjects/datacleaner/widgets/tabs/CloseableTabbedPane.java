@@ -43,7 +43,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = -411551524171347329L;
 	private static Logger _logger = LoggerFactory.getLogger(CloseableTabbedPane.class);
 
-	private final List<TabCloseListener> _closeListener = new LinkedList<TabCloseListener>();
+	private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
 	private final List<Integer> _unclosables = new LinkedList<Integer>();
 	private final List<Integer> _separators = new LinkedList<Integer>();
 
@@ -112,29 +112,37 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	 * for deleting the tab or otherwise reacting to the event.
 	 */
 	public void addTabCloseListener(TabCloseListener lis) {
-		_closeListener.add(lis);
+		_closeListeners.add(lis);
 	}
 
 	/** Remove a tab close listener */
 	public void removeTabCloseListener(TabCloseListener lis) {
-		_closeListener.remove(lis);
+		_closeListeners.remove(lis);
 	}
 
 	public void closeTab(int tab) {
-		if (_closeListener.size() == 0) {
-			return;
-		}
-
-		TabCloseEvent ev = new TabCloseEvent(this, tab);
-		for (TabCloseListener l : _closeListener) {
-			try {
-				l.tabClosing(ev);
-			} catch (Exception ex) {
-				_logger.error(ex.toString(), ex);
+		if (!_closeListeners.isEmpty()) {
+			TabCloseEvent ev = new TabCloseEvent(this, tab);
+			for (TabCloseListener l : _closeListeners) {
+				try {
+					l.tabClosing(ev);
+				} catch (Exception ex) {
+					_logger.error(ex.toString(), ex);
+				}
 			}
 		}
 
 		remove(tab);
+	}
+	
+	@Override
+	public void setSelectedIndex(int index) {
+		if (getSeparators().contains(index)) {
+			index--;
+			setSelectedIndex(index);
+		} else {
+			super.setSelectedIndex(index);
+		}
 	}
 
 	public void closeAllTabs() {
@@ -157,7 +165,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 		super.removeNotify();
 		closeAllTabs();
 	}
-	
+
 	@Override
 	public Color getForegroundAt(int index) {
 		if (getSelectedIndex() == index) {

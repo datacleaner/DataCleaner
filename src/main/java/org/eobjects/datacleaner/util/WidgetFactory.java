@@ -19,9 +19,11 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.Insets;
 
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -81,6 +83,10 @@ public final class WidgetFactory {
 		toolbar.setFloatable(false);
 		toolbar.setAlignmentY(JToolBar.LEFT_ALIGNMENT);
 		return toolbar;
+	}
+
+	public static Component createToolBarSeparator() {
+		return Box.createHorizontalGlue();
 	}
 
 	public static JButton createSmallButton(String imagePath) {

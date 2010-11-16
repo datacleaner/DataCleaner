@@ -39,7 +39,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
@@ -293,10 +292,11 @@ public class WelcomeWindow extends AbstractWindow {
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 		toolBar.setOpaque(false);
+		toolBar.setBorder(null);
 		toolBar.add(datacleanerButton);
 		toolBar.add(bloggerButton);
 		toolBar.add(linkedInButton);
-		toolBar.add(new JSeparator(JSeparator.VERTICAL));
+		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(_showOnStartupCheckBox);
 		toolBar.add(_nextStepButton);
 

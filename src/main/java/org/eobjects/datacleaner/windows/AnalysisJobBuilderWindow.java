@@ -36,7 +36,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -240,7 +239,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			}
 		});
 
-		final JToolBar toolBar = WidgetFactory.createToolBar();
 		saveButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		saveButton.setFocusPainted(false);
 		addTransformerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -249,13 +247,14 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		addAnalyzerButton.setFocusPainted(false);
 		runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		runButton.setFocusPainted(false);
+		final JToolBar toolBar = WidgetFactory.createToolBar();
 		toolBar.setOpaque(false);
 		toolBar.setBorder(null);
 		toolBar.add(saveButton);
-		toolBar.add(createToolBarSeparator());
+		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(addTransformerButton);
 		toolBar.add(addAnalyzerButton);
-		toolBar.add(createToolBarSeparator());
+		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(runButton);
 
 		final SchemaTree schemaTree = new SchemaTree(_datastore, _analysisJobBuilder);
@@ -386,13 +385,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				throw new IllegalStateException("Unknown analyzer type: " + ajb);
 			}
 		}
-	}
-
-	private JSeparator createToolBarSeparator() {
-		JSeparator sep = new JSeparator(JSeparator.VERTICAL);
-		sep.setForeground(WidgetUtils.BG_COLOR_LESS_DARK);
-		sep.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-		return sep;
 	}
 
 	@Override

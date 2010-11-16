@@ -153,8 +153,6 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 		mainPanel.add(descriptionLabel);
 		mainPanel.add(formPanel);
 
-		mainPanel.setPreferredSize(getDialogWidth(), 260);
-
 		return mainPanel;
 	}
 

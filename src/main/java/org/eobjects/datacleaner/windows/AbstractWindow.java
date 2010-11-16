@@ -43,7 +43,8 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 
 		JComponent content = getWindowContent();
 		getContentPane().add(content);
-		setPreferredSize(content.getPreferredSize());
+		
+		getContentPane().setPreferredSize(content.getPreferredSize());
 
 		pack();
 

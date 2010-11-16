@@ -49,7 +49,7 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class OpenExcelSpreadsheetDialog extends AbstractDialog {
+public class ExcelDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,7 +61,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
 
-	public OpenExcelSpreadsheetDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+	public ExcelDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
@@ -96,7 +96,7 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 
 		_statusLabel = new JLabel("Please select file");
 
-		_addDatastoreButton = new JButton("Create datastore");
+		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/excel.png");
 		_addDatastoreButton.setEnabled(false);
 	}
 
@@ -162,8 +162,6 @@ public class OpenExcelSpreadsheetDialog extends AbstractDialog {
 		centerPanel.setLayout(new VerticalLayout(4));
 		centerPanel.add(formPanel);
 		centerPanel.add(buttonPanel);
-
-		centerPanel.setPreferredSize(getDialogWidth(), 190);
 
 		JXStatusBar statusBar = new JXStatusBar();
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);

@@ -48,7 +48,7 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class OpenAccessDatabaseDialog extends AbstractDialog {
+public class AccessDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -65,7 +65,7 @@ public class OpenAccessDatabaseDialog extends AbstractDialog {
 		return "MS Access\ndatabase";
 	}
 
-	public OpenAccessDatabaseDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
@@ -95,7 +95,7 @@ public class OpenAccessDatabaseDialog extends AbstractDialog {
 			}
 		});
 
-		_addDatastoreButton = new JButton("Create datastore");
+		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/access.png");
 		_addDatastoreButton.setEnabled(false);
 	}
 
@@ -156,8 +156,6 @@ public class OpenAccessDatabaseDialog extends AbstractDialog {
 		centerPanel.setLayout(new VerticalLayout(4));
 		centerPanel.add(formPanel);
 		centerPanel.add(buttonPanel);
-
-		centerPanel.setPreferredSize(getDialogWidth(), 190);
 
 		JXStatusBar statusBar = new JXStatusBar();
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);

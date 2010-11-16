@@ -71,13 +71,13 @@ import dk.eobjects.metamodel.schema.Schema;
 import dk.eobjects.metamodel.schema.Table;
 import dk.eobjects.metamodel.util.FileHelper;
 
-public class OpenCsvFileDialog extends AbstractDialog {
+public class CsvDatastoreDialog extends AbstractDialog {
 
 	private static final int SAMPLE_BUFFER_SIZE = 2048;
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(OpenCsvFileDialog.class);
+	private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
 
 	private static final int PREVIEW_ROWS = 7;
 
@@ -101,7 +101,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
 
-	public OpenCsvFileDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
@@ -169,7 +169,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			}
 		});
 
-		_addDatastoreButton = new JButton("Create datastore");
+		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/csv.png");
 		_addDatastoreButton.setEnabled(false);
 	}
 
@@ -402,8 +402,6 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		centerPanel.add(formPanel);
 		centerPanel.add(_previewTable.toPanel());
 		centerPanel.add(buttonPanel);
-
-		centerPanel.setPreferredSize(getDialogWidth(), 380);
 
 		JXStatusBar statusBar = new JXStatusBar();
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);

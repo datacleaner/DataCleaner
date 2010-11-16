@@ -40,9 +40,9 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.eobjects.datacleaner.windows.OpenAccessDatabaseDialog;
-import org.eobjects.datacleaner.windows.OpenCsvFileDialog;
-import org.eobjects.datacleaner.windows.OpenExcelSpreadsheetDialog;
+import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
+import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
+import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 
 public final class DatastoresListPanel extends DCPanel implements DatastoreChangeListener {
 
@@ -78,7 +78,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				csvMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new OpenCsvFileDialog(_catalog).setVisible(true);
+						new CsvDatastoreDialog(_catalog).setVisible(true);
 					}
 				});
 
@@ -87,7 +87,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				excelMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new OpenExcelSpreadsheetDialog(_catalog).setVisible(true);
+						new ExcelDatastoreDialog(_catalog).setVisible(true);
 					}
 				});
 
@@ -96,7 +96,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				accessMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new OpenAccessDatabaseDialog(_catalog).setVisible(true);
+						new AccessDatastoreDialog(_catalog).setVisible(true);
 					}
 				});
 

@@ -27,6 +27,7 @@ import java.util.Arrays;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
@@ -121,7 +122,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		Arrays.sort(names);
 
 		int row = 0;
-		for (String name : names) {
+		for (final String name : names) {
 
 			final Dictionary dictionary = _catalog.getDictionary(name);
 
@@ -158,8 +159,23 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				editButton.setEnabled(false);
 			}
 
+			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			removeButton.setToolTipText("Remove dictionary");
+			removeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int result = JOptionPane.showConfirmDialog(DictionaryListPanel.this,
+							"Are you sure you wish to remove the dictionary '" + name + "'?", "Confirm remove",
+							JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						_catalog.removeDictionary(dictionary);
+					}
+				}
+			});
+
 			WidgetUtils.addToGridBag(new JLabel(name), _dictionariesPanel, 0, row);
 			WidgetUtils.addToGridBag(editButton, _dictionariesPanel, 1, row);
+			WidgetUtils.addToGridBag(removeButton, _dictionariesPanel, 2, row);
 
 			row++;
 		}

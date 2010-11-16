@@ -42,6 +42,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.Function;
@@ -143,13 +144,14 @@ public class WelcomeWindow extends AbstractWindow {
 	@Override
 	protected JComponent getWindowContent() {
 		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 100, 80,
-				WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_DARK);
+				WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_LESS_DARK);
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(new DCBannerPanel(imageManager.getImage("images/window/banner-welcome.png"), "Welcome"),
 				BorderLayout.NORTH);
 		mainPanel.add(getRecentJobsPanel(), BorderLayout.CENTER);
 
-		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_LESS_DARK);
+		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+		toolBarPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(getBottomToolBar(), BorderLayout.CENTER);
 

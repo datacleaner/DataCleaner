@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -36,7 +35,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.Timer;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.MoveComponentTimerActionListener;
@@ -67,8 +68,10 @@ public class LoginPanel extends JPanel {
 	private final List<ActionListener> _loginChangeListeners = new ArrayList<ActionListener>();
 	private final AuthenticationService _authenticationService;
 	private final int _alpha = 220;
+	private final int _margin = 0;
 	private final Color _background = WidgetUtils.BG_COLOR_DARKEST;
 	private final Color _foreground = WidgetUtils.BG_COLOR_BRIGHTEST;
+	private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 	private volatile LoginState _state;
 
 	public LoginPanel() {
@@ -86,12 +89,12 @@ public class LoginPanel extends JPanel {
 		}
 
 		setOpaque(false);
-		setBorder(new EmptyBorder(30, 20, 20, 30));
+		setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(30, 40, 20, 30)));
 
 		updateContents();
 
-		setSize(330, 340);
-		setLocation(-340, 145);
+		setSize(350, 340);
+		setLocation(-360, 145);
 	}
 
 	public LoginState getLoginState() {
@@ -99,13 +102,13 @@ public class LoginPanel extends JPanel {
 	}
 
 	public void moveIn(int delay) {
-		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, 10, 145, 40));
+		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -10, 145, 40));
 		timer.setInitialDelay(delay);
 		timer.start();
 	}
 
 	public void moveOut(int delay) {
-		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -340, 145, 40));
+		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -360, 145, 40));
 		timer.setInitialDelay(delay);
 		timer.start();
 	}
@@ -127,12 +130,11 @@ public class LoginPanel extends JPanel {
 	// renders this panel as a translucent black panel with rounded border.
 	@Override
 	protected void paintComponent(Graphics g) {
-		int margin = 0;
-		int x = margin;
-		int y = margin;
-		int w = getWidth() - (margin * 2);
-		int h = getHeight() - (margin * 2);
-		int arc = 30;
+		int x = _margin;
+		int y = _margin;
+		int w = getWidth() - (_margin * 2);
+		int h = getHeight() - (_margin * 2);
+		// int arc = 30;
 
 		Graphics2D g2 = (Graphics2D) g.create();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -141,11 +143,7 @@ public class LoginPanel extends JPanel {
 		Color bgWithAlpha = new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), getAlpha());
 
 		g2.setColor(bgWithAlpha);
-		g2.fillRoundRect(x, y, w, h, arc, arc);
-
-		g2.setStroke(new BasicStroke(3f));
-		g2.setColor(getForeground());
-		g2.drawRoundRect(x, y, w, h, arc, arc);
+		g2.fillRect(x, y, w, h);
 
 		g2.dispose();
 	}
@@ -202,7 +200,6 @@ public class LoginPanel extends JPanel {
 					}
 				}
 			});
-
 
 			int y = 0;
 			final String loginInfo = "Thank you for using DataCleaner. We kindly ask you to identify yourself by "

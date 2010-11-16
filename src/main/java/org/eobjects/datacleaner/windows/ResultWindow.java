@@ -117,9 +117,7 @@ public final class ResultWindow extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		DCPanel panel = new DCPanel();
-		panel.setOpaque(true);
-		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		panel.setLayout(new BorderLayout());
 		panel.add(new DCBannerPanel(getWindowTitle()), BorderLayout.NORTH);
 		panel.add(_tabbedPane, BorderLayout.CENTER);

@@ -87,7 +87,7 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	protected DCPanel getWindowContent() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_LESS_DARK);
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_LESS_DARK);
 		Dimension dimension = new Dimension(WINDOW_WIDTH, 650);
 		panel.setPreferredSize(dimension);
 		panel.setSize(dimension);

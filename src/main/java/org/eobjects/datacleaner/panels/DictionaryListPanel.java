@@ -125,8 +125,10 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		for (final String name : names) {
 
 			final Dictionary dictionary = _catalog.getDictionary(name);
+			
+			final JLabel dictLabel = new JLabel(name, JLabel.LEFT);
 
-			JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit dictionary");
 
 			if (dictionary instanceof DatastoreDictionary) {
@@ -159,7 +161,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				editButton.setEnabled(false);
 			}
 
-			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove dictionary");
 			removeButton.addActionListener(new ActionListener() {
 				@Override
@@ -173,7 +175,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				}
 			});
 
-			WidgetUtils.addToGridBag(new JLabel(name), _dictionariesPanel, 0, row);
+			WidgetUtils.addToGridBag(dictLabel, _dictionariesPanel, 0, row);
 			WidgetUtils.addToGridBag(editButton, _dictionariesPanel, 1, row);
 			WidgetUtils.addToGridBag(removeButton, _dictionariesPanel, 2, row);
 

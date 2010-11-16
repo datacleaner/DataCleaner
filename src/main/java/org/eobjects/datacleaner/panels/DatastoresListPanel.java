@@ -27,6 +27,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
@@ -137,25 +138,36 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 	private void updateComponents() {
 		_datastoresPanel.removeAll();
 
-		String[] datastoreNames = _catalog.getDatastoreNames();
+		final String[] datastoreNames = _catalog.getDatastoreNames();
 
 		for (int i = 0; i < datastoreNames.length; i++) {
-			String name = datastoreNames[i];
+			final String name = datastoreNames[i];
 			final Datastore datastore = _catalog.getDatastore(name);
 
-			Icon icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
-			JLabel dsIcon = new JLabel(icon);
+			final Icon icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
+			final JLabel dsIcon = new JLabel(icon);
 
-			if (name.length() > 15) {
-				name = name.substring(0, 12) + "...";
-			}
-			JLabel dsLabel = new JLabel(name);
+			final JLabel dsLabel = new JLabel(name, JLabel.LEFT);
 
-			JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit datastore");
 			editButton.setEnabled(false);
 
-			JButton jobButton = WidgetFactory.createSmallButton("images/actions/new.png");
+			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			removeButton.setToolTipText("Remove datastore");
+			removeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int result = JOptionPane.showConfirmDialog(DatastoresListPanel.this,
+							"Are you sure you wish to remove the datastore '" + name + "'?", "Confirm remove",
+							JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						_catalog.removeDatastore(datastore);
+					}
+				}
+			});
+
+			final JButton jobButton = WidgetFactory.createSmallButton("images/actions/new.png");
 			jobButton.setToolTipText("Create job");
 			jobButton.addActionListener(new ActionListener() {
 				@Override
@@ -169,6 +181,8 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 1, i);
 			WidgetUtils.addToGridBag(editButton, _datastoresPanel, 2, i);
 			WidgetUtils.addToGridBag(jobButton, _datastoresPanel, 3, i);
+			WidgetUtils.addToGridBag(removeButton, _datastoresPanel, 4, i);
+
 		}
 
 		_datastoresPanel.updateUI();

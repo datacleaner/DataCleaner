@@ -24,6 +24,7 @@ import java.awt.Insets;
 import java.text.NumberFormat;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -119,7 +120,7 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 		@Override
 		public void valueCell(Object value, final ResultProducer drillToDetailResultProducer) {
 			DCPanel panel = new DCPanel();
-			panel.setLayout(new FlowLayout(_alignment, 10, 0));
+			panel.setLayout(new FlowLayout(_alignment, 0, 0));
 			JLabel label = new JLabel();
 			if (value == null) {
 				label.setText(LabelConstants.NULL_LABEL);
@@ -147,6 +148,7 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
 				button.setMargin(new Insets(0, 0, 0, 0));
 				button.addActionListener(new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer));
+				panel.add(Box.createHorizontalStrut(4));
 				panel.add(button);
 			}
 			panel.setAlignmentX(_alignment);

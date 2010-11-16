@@ -35,7 +35,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
@@ -52,6 +51,9 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
+import org.eobjects.datacleaner.widgets.FileSelectionListener;
+import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
@@ -87,13 +89,13 @@ public class OpenCsvFileDialog extends AbstractDialog {
 	private static final String QUOTE_DOUBLE_QUOTE = "Double quote (\")";
 	private static final String QUOTE_SINGLE_QUOTE = "Single quote (')";
 
+	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
 	private final JXTextField _datastoreNameField;
-	private final JXTextField _filenameField;
+	private final FilenameTextField _filenameField;
 	private final JComboBox _separatorCharField;
 	private final JComboBox _quoteCharField;
 	private final JComboBox _encodingComboBox;
-	private final JButton _browseButton;
 	private final JLabel _statusLabel;
 	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, 10));
 	private final DCPanel _outerPanel = new DCPanel();
@@ -104,8 +106,8 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 
-		_filenameField = WidgetFactory.createTextField("Filename");
-		_filenameField.getDocument().addDocumentListener(new DCDocumentListener() {
+		_filenameField = new FilenameTextField(userPreferences.getDatastoreDirectory());
+		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
 				onSettingsUpdated(true);
@@ -131,8 +133,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 			}
 		});
 
-		_encodingComboBox = new JComboBox(new String[] { "UTF-8", "ASCII", "CP1252" });
-		_encodingComboBox.setEditable(true);
+		_encodingComboBox = new CharSetEncodingComboBox();
 		_encodingComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -142,36 +143,28 @@ public class OpenCsvFileDialog extends AbstractDialog {
 
 		_statusLabel = new JLabel("Please select file");
 
-		_browseButton = new JButton("Browse", ImageManager.getInstance().getImageIcon("images/actions/browse.png",
-				IconUtils.ICON_SIZE_SMALL));
-		_browseButton.addActionListener(new ActionListener() {
+		FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV,
+				FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
+		_filenameField.addChoosableFileFilter(combinedFilter);
+		_filenameField.addChoosableFileFilter(FileFilters.CSV);
+		_filenameField.addChoosableFileFilter(FileFilters.TSV);
+		_filenameField.addChoosableFileFilter(FileFilters.DAT);
+		_filenameField.addChoosableFileFilter(FileFilters.TXT);
+		_filenameField.addChoosableFileFilter(FileFilters.ALL);
+		_filenameField.setSelectedFileFilter(combinedFilter);
+		_filenameField.addFileSelectionListener(new FileSelectionListener() {
+
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getDatastoreDirectory());
-				FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)",
-						FileFilters.CSV, FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
-				fileChooser.addChoosableFileFilter(combinedFilter);
-				fileChooser.addChoosableFileFilter(FileFilters.CSV);
-				fileChooser.addChoosableFileFilter(FileFilters.TSV);
-				fileChooser.addChoosableFileFilter(FileFilters.DAT);
-				fileChooser.addChoosableFileFilter(FileFilters.TXT);
-				fileChooser.addChoosableFileFilter(FileFilters.ALL);
-				fileChooser.setFileFilter(combinedFilter);
-				WidgetUtils.centerOnScreen(fileChooser);
-				int result = fileChooser.showOpenDialog(OpenCsvFileDialog.this);
-				if (result == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = fileChooser.getSelectedFile();
-					File dir = selectedFile.getParentFile();
-					UserPreferences.getInstance().setDatastoreDirectory(dir);
-					_filenameField.setText(selectedFile.getAbsolutePath());
+			public void onSelected(FilenameTextField filenameTextField, File file) {
+				File dir = file.getParentFile();
+				userPreferences.setDatastoreDirectory(dir);
 
-					if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
-						_datastoreNameField.setText(selectedFile.getName());
-					}
+				if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
+					_datastoreNameField.setText(file.getName());
+				}
 
-					if (FileFilters.TSV.accept(selectedFile)) {
-						_separatorCharField.setSelectedItem(SEPARATOR_TAB);
-					}
+				if (FileFilters.TSV.accept(file)) {
+					_separatorCharField.setSelectedItem(SEPARATOR_TAB);
 				}
 			}
 		});
@@ -190,7 +183,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		boolean showPreview = true;
 		ImageManager imageManager = ImageManager.getInstance();
 
-		File file = new File(_filenameField.getText());
+		File file = new File(_filenameField.getFilename());
 		if (file.exists()) {
 			if (!file.isFile()) {
 				_statusLabel.setText("Not a valid file!");
@@ -334,7 +327,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 
 	private void updatePreviewTable() {
 		try {
-			File file = new File(_filenameField.getText());
+			File file = new File(_filenameField.getFilename());
 
 			char separatorChar = getSeparatorChar();
 			char quoteChar = getQuoteChar();
@@ -374,7 +367,6 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		row++;
 		WidgetUtils.addToGridBag(new JLabel("Filename:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
-		WidgetUtils.addToGridBag(_browseButton, formPanel, 2, row);
 
 		row++;
 		WidgetUtils.addToGridBag(new JLabel("Character encoding:"), formPanel, 0, row);
@@ -389,12 +381,12 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(_quoteCharField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(_previewTable.toPanel(), formPanel, 0, row, 3, 1);
+		WidgetUtils.addToGridBag(_previewTable.toPanel(), formPanel, 0, row, 2, 1);
 
 		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CsvDatastore datastore = new CsvDatastore(_datastoreNameField.getText(), _filenameField.getText(),
+				CsvDatastore datastore = new CsvDatastore(_datastoreNameField.getText(), _filenameField.getFilename(),
 						getQuoteChar(), getSeparatorChar(), getEncoding());
 				_mutableDatastoreCatalog.addDatastore(datastore);
 				dispose();
@@ -402,7 +394,7 @@ public class OpenCsvFileDialog extends AbstractDialog {
 		});
 
 		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		buttonPanel.add(_addDatastoreButton);
 
 		DCPanel centerPanel = new DCPanel();

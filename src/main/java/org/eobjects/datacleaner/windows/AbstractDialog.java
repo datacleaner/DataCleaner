@@ -32,9 +32,9 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 public abstract class AbstractDialog extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private final Image _bannerImage;
-	
+
 	public AbstractDialog() {
 		this(null);
 	}
@@ -67,7 +67,8 @@ public abstract class AbstractDialog extends AbstractWindow {
 		JComponent dialogContent = getDialogContent();
 		panel.add(dialogContent, BorderLayout.CENTER);
 
-		panel.setPreferredSize(getDialogWidth(), bannerPanel.getHeight() + dialogContent.getPreferredSize().height);
+		panel.setPreferredSize(getDialogWidth(), bannerPanel.getPreferredSize().height
+				+ dialogContent.getPreferredSize().height);
 
 		return panel;
 	}

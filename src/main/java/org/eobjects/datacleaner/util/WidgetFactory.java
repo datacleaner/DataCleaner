@@ -69,12 +69,16 @@ public final class WidgetFactory {
 		return createMenuItem(text, icon);
 	}
 
-	public static JButton createButton(String text, String imagePath) {
+	public static JButton createButton(String text, Icon icon) {
 		JButton b = new JButton(text);
-		if (imagePath != null) {
-			b.setIcon(ImageManager.getInstance().getImageIcon(imagePath));
+		if (icon != null) {
+			b.setIcon(icon);
 		}
 		return b;
+	}
+
+	public static JButton createButton(String text, String imagePath) {
+		return createButton(text, ImageManager.getInstance().getImageIcon(imagePath));
 	}
 
 	public static JToolBar createToolBar() {

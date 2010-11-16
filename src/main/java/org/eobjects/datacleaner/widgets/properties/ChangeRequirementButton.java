@@ -40,6 +40,7 @@ import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.job.builder.LazyFilterOutcome;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.slf4j.Logger;
@@ -153,9 +154,18 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 			setText(NO_FILTER_TEXT);
 		} else {
 			if (requirement instanceof FilterOutcome) {
-				Enum<?> category = ((FilterOutcome) requirement).getCategory();
-				FilterJob filterJob = ((FilterOutcome) requirement).getFilterJob();
-				setText(filterJob.getDescriptor().getDisplayName() + ": " + category);
+				FilterOutcome filterOutcome = (FilterOutcome) requirement;
+				Enum<?> category = filterOutcome.getCategory();
+				if (filterOutcome instanceof LazyFilterOutcome) {
+					// if possible, use the builder in stead of the job (getting
+					// the job may cause an exception if the builder is not
+					// correctly configured yet)
+					FilterJobBuilder<?, ?> fjb = ((LazyFilterOutcome) filterOutcome).getFilterJobBuilder();
+					setText(fjb.getDescriptor().getDisplayName() + ": " + category);
+				} else {
+					FilterJob filterJob = filterOutcome.getFilterJob();
+					setText(filterJob.getDescriptor().getDisplayName() + ": " + category);
+				}
 			} else {
 				// TODO: Other requirement types not yet supported
 				setText(requirement.toString());

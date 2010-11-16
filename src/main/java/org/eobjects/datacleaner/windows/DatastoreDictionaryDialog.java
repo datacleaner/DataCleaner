@@ -57,14 +57,15 @@ import dk.eobjects.metamodel.schema.Column;
 public class DatastoreDictionaryDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
+	private final DatastoreDictionary _originalDictionary;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final DatastoreCatalog _datastoreCatalog;
 	private final JXTextField _nameTextField;
 	private final JXTextField _columnTextField;
 	private final JComboBox _datastoreComboBox;
+	private final DCPanel _treePanel;
+	private final JSplitPane _splitPane;
 	private volatile boolean _nameAutomaticallySet = true;
-	private DCPanel _treePanel;
-	private JSplitPane _splitPane;
 
 	public DatastoreDictionaryDialog(MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog) {
 		this(null, referenceDataCatalog, datastoreCatalog);
@@ -72,6 +73,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 
 	public DatastoreDictionaryDialog(DatastoreDictionary dictionary, MutableReferenceDataCatalog referenceDataCatalog,
 			DatastoreCatalog datastoreCatalog) {
+		_originalDictionary = dictionary;
 		_referenceDataCatalog = referenceDataCatalog;
 		_datastoreCatalog = datastoreCatalog;
 
@@ -88,10 +90,10 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 
 		_datastoreComboBox = new JComboBox(comboBoxModel);
 		_datastoreComboBox.setEditable(false);
-		
+
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		_splitPane.setDividerLocation(320);
-		
+
 		_treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_treePanel.setLayout(new BorderLayout());
 		_datastoreComboBox.addActionListener(new ActionListener() {
@@ -128,7 +130,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 				}
 			}
 		});
-		
+
 		if (dictionary != null) {
 			_nameTextField.setText(dictionary.getName());
 			_columnTextField.setText(dictionary.getQualifiedColumnName());
@@ -174,7 +176,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(_columnTextField, formPanel, 1, row);
 
 		row++;
-		JButton createDictionaryButton = WidgetFactory.createButton("Create dictionary", "images/model/dictionary.png");
+		JButton createDictionaryButton = WidgetFactory.createButton("Save dictionary", "images/model/dictionary.png");
 		createDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -198,13 +200,16 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 				}
 
 				DatastoreDictionary dictionary = new DatastoreDictionary(name, _datastoreCatalog, datastoreName, columnPath);
+				if (_originalDictionary != null) {
+					_referenceDataCatalog.removeDictionary(_originalDictionary);
+				}
 				_referenceDataCatalog.addDictionary(dictionary);
 				DatastoreDictionaryDialog.this.dispose();
 			}
 		});
 
 		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		buttonPanel.add(createDictionaryButton);
 
 		WidgetUtils.addToGridBag(buttonPanel, formPanel, 0, row, 2, 1);

@@ -65,7 +65,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 				.addActionListener(new PreviewTransformedDataActionListener(analysisJobBuilder, _transformerJobBuilder));
 
 		DCPanel previewButtonPanel = new DCPanel();
-		previewButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		previewButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		previewButtonPanel.add(previewButton);
 		_outputColumnsTable.add(previewButtonPanel, BorderLayout.SOUTH);
 

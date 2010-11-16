@@ -226,7 +226,7 @@ public class LoginPanel extends JPanel {
 
 			y++;
 			final DCPanel buttonPanel = new DCPanel();
-			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
 			buttonPanel.add(registerButton);
 			buttonPanel.add(loginButton);
 			WidgetUtils.addToGridBag(buttonPanel, this, 0, y, 2, 1);

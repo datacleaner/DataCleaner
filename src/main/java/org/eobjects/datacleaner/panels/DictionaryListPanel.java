@@ -33,6 +33,8 @@ import javax.swing.JToolBar;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.analyzer.reference.Dictionary;
+import org.eobjects.analyzer.reference.SimpleDictionary;
+import org.eobjects.analyzer.reference.TextBasedDictionary;
 import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -40,6 +42,8 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
+import org.eobjects.datacleaner.windows.SimpleDictionaryDialog;
+import org.eobjects.datacleaner.windows.TextFileDictionaryDialog;
 
 public class DictionaryListPanel extends DCPanel implements DictionaryChangeListener {
 
@@ -67,7 +71,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popup = new JPopupMenu();
 
-				final JMenuItem datastoreDictionaryMenuItem = WidgetFactory.createMenuItem("Datastore-backed dictionary",
+				final JMenuItem datastoreDictionaryMenuItem = WidgetFactory.createMenuItem("Datastore dictionary",
 						imageManager.getImageIcon("images/model/datastore.png", IconUtils.ICON_SIZE_SMALL));
 				datastoreDictionaryMenuItem.addActionListener(new ActionListener() {
 					@Override
@@ -76,13 +80,23 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 					}
 				});
 
-				final JMenuItem textFileDictionaryMenuItem = WidgetFactory.createMenuItem("Text-file dictionary",
+				final JMenuItem textFileDictionaryMenuItem = WidgetFactory.createMenuItem("Text file dictionary",
 						imageManager.getImageIcon("images/datastore-types/csv.png", IconUtils.ICON_SIZE_SMALL));
-				textFileDictionaryMenuItem.setEnabled(false);
+				textFileDictionaryMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new TextFileDictionaryDialog(_catalog).setVisible(true);
+					}
+				});
 
 				final JMenuItem simpleDictionaryMenuItem = WidgetFactory.createMenuItem("Simple dictionary",
 						imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL));
-				simpleDictionaryMenuItem.setEnabled(false);
+				simpleDictionaryMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new SimpleDictionaryDialog(_catalog).setVisible(true);
+					}
+				});
 
 				popup.add(datastoreDictionaryMenuItem);
 				popup.add(textFileDictionaryMenuItem);
@@ -118,8 +132,25 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog((DatastoreDictionary) dictionary, _catalog, _configuration
-								.getDatastoreCatalog());
+						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog((DatastoreDictionary) dictionary,
+								_catalog, _configuration.getDatastoreCatalog());
+						dialog.setVisible(true);
+					}
+				});
+			} else if (dictionary instanceof TextBasedDictionary) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						TextFileDictionaryDialog dialog = new TextFileDictionaryDialog((TextBasedDictionary) dictionary,
+								_catalog);
+						dialog.setVisible(true);
+					}
+				});
+			} else if (dictionary instanceof SimpleDictionary) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						SimpleDictionaryDialog dialog = new SimpleDictionaryDialog((SimpleDictionary) dictionary, _catalog);
 						dialog.setVisible(true);
 					}
 				});

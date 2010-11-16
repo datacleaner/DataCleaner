@@ -249,7 +249,7 @@ public class WelcomeWindow extends AbstractWindow {
 			});
 
 			final DCPanel buttonPanel = new DCPanel();
-			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 			buttonPanel.add(openButton);
 			_recentJobsPanel.add(buttonPanel);
 		}

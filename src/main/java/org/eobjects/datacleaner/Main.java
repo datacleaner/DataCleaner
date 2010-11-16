@@ -29,6 +29,7 @@ import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.MainWindow;
@@ -56,7 +57,10 @@ public final class Main {
 		LookAndFeelManager.getInstance().init();
 
 		// show windows
-		new WelcomeWindow(c).setVisible(true);
+		UserPreferences userPreferences = UserPreferences.getInstance();
+		if (userPreferences.isWelcomeDialogShownOnStartup()) {
+			new WelcomeWindow(c).setVisible(true);
+		}
 		new MainWindow(c).setVisible(true);
 
 		// log usage

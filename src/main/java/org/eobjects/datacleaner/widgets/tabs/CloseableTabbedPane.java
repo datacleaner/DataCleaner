@@ -46,13 +46,15 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
 	private final List<Integer> _unclosables = new LinkedList<Integer>();
 	private final List<Integer> _separators = new LinkedList<Integer>();
+	private final CloseableTabbedPaneUI _ui;
 
 	/**
 	 * Create a tabbed pane
 	 */
 	public CloseableTabbedPane() {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		setUI(new CloseableTabbedPaneUI(this));
+		_ui = new CloseableTabbedPaneUI(this);
+		setUI(_ui);
 		setBorder(new LineBorder(WidgetUtils.BG_COLOR_DARK, 4));
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		setBackground(WidgetUtils.BG_COLOR_DARK);
@@ -134,7 +136,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
 		remove(tab);
 	}
-	
+
 	@Override
 	public void setSelectedIndex(int index) {
 		if (getSeparators().contains(index)) {
@@ -172,5 +174,10 @@ public final class CloseableTabbedPane extends JTabbedPane {
 			return WidgetUtils.BG_COLOR_DARKEST;
 		}
 		return super.getForegroundAt(index);
+	}
+
+	@Override
+	public void updateUI() {
+		repaint();
 	}
 }

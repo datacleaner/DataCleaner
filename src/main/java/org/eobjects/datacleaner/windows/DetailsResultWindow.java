@@ -91,6 +91,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 			}
 
 			JXTaskPane taskPane = new JXTaskPane();
+			taskPane.setFocusable(false);
 			taskPane.setTitle(analyzerResult.getClass().getSimpleName());
 			taskPane.add(component);
 

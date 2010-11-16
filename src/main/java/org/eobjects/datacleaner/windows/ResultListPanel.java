@@ -69,6 +69,7 @@ public class ResultListPanel extends DCPanel {
 			component = renderer.render(result);
 		}
 		JXTaskPane taskPane = new JXTaskPane();
+		taskPane.setFocusable(false);
 
 		AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
 		taskPane.setIcon(IconUtils.getDescriptorIcon(descriptor));

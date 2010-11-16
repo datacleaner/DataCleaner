@@ -96,6 +96,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	private JXTaskPane createTaskPane(final FilterJobBuilder<?, ?> fjb) {
 		final JXTaskPane taskPane = new JXTaskPane();
+		taskPane.setFocusable(false);
 
 		final FilterBeanDescriptor<?, ?> descriptor = fjb.getDescriptor();
 		taskPane.setTitle(descriptor.getDisplayName());

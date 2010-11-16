@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -228,6 +229,7 @@ public class LoginPanel extends JPanel {
 			final DCPanel buttonPanel = new DCPanel();
 			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
 			buttonPanel.add(registerButton);
+			buttonPanel.add(Box.createHorizontalStrut(4));
 			buttonPanel.add(loginButton);
 			WidgetUtils.addToGridBag(buttonPanel, this, 0, y, 2, 1);
 		}

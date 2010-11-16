@@ -98,18 +98,21 @@ public class MainWindow extends AbstractWindow {
 		JXTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 
 		JXTaskPane datastoresTaskPane = new JXTaskPane();
+		datastoresTaskPane.setFocusable(false);
 		datastoresTaskPane.setTitle("Datastores");
 		datastoresTaskPane.setIcon(imageManager.getImageIcon("images/model/datastore.png"));
 		datastoresTaskPane.add(new DatastoresListPanel(_configuration));
 		taskPaneContainer.add(datastoresTaskPane);
 
 		JXTaskPane analysisJobsTaskPane = new JXTaskPane();
+		analysisJobsTaskPane.setFocusable(false);
 		analysisJobsTaskPane.setTitle("Analysis jobs");
 		analysisJobsTaskPane.setIcon(imageManager.getImageIcon("images/model/job.png"));
 		analysisJobsTaskPane.add(new JobListPanel(_configuration));
 		taskPaneContainer.add(analysisJobsTaskPane);
 
 		JXTaskPane dictionariesTaskPane = new JXTaskPane();
+		dictionariesTaskPane.setFocusable(false);
 		dictionariesTaskPane.setTitle("Dictionaries");
 		dictionariesTaskPane.setIcon(imageManager.getImageIcon("images/model/dictionary.png"));
 		dictionariesTaskPane.setCollapsed(true);
@@ -117,6 +120,7 @@ public class MainWindow extends AbstractWindow {
 		taskPaneContainer.add(dictionariesTaskPane);
 
 		JXTaskPane synonymsTaskPane = new JXTaskPane();
+		synonymsTaskPane.setFocusable(false);
 		synonymsTaskPane.setTitle("Synonyms");
 		synonymsTaskPane.setIcon(imageManager.getImageIcon("images/model/synonym.png"));
 		synonymsTaskPane.setCollapsed(true);
@@ -124,6 +128,7 @@ public class MainWindow extends AbstractWindow {
 		taskPaneContainer.add(synonymsTaskPane);
 
 		JXTaskPane expressionsTaskPane = new JXTaskPane();
+		expressionsTaskPane.setFocusable(false);
 		expressionsTaskPane.setTitle("Expressions");
 		expressionsTaskPane.setIcon(imageManager.getImageIcon("images/model/expression.png"));
 		expressionsTaskPane.setCollapsed(true);

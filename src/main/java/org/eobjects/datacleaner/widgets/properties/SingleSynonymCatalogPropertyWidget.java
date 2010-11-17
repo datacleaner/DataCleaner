@@ -61,6 +61,8 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 				fireValueChanged();
 			}
 		});
+		
+		add(_comboBox);
 	}
 
 	@Override

@@ -61,6 +61,7 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 				fireValueChanged();
 			}
 		});
+		add(_comboBox);
 	}
 
 	@Override

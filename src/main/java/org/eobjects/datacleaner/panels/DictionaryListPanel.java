@@ -125,7 +125,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		for (final String name : names) {
 
 			final Dictionary dictionary = _catalog.getDictionary(name);
-			
+
 			final JLabel dictLabel = new JLabel(name, JLabel.LEFT);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
@@ -176,8 +176,11 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			});
 
 			WidgetUtils.addToGridBag(dictLabel, _dictionariesPanel, 0, row);
-			WidgetUtils.addToGridBag(editButton, _dictionariesPanel, 1, row);
-			WidgetUtils.addToGridBag(removeButton, _dictionariesPanel, 2, row);
+
+			if (_catalog.isDictionaryMutable(name)) {
+				WidgetUtils.addToGridBag(editButton, _dictionariesPanel, 1, row);
+				WidgetUtils.addToGridBag(removeButton, _dictionariesPanel, 2, row);
+			}
 
 			row++;
 		}

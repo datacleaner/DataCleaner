@@ -64,6 +64,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 			public void onSelected(FilenameTextField filenameTextField, File file) {
 				File dir = file.getParentFile();
 				UserPreferences.getInstance().setConfiguredFileDirectory(dir);
+				fireValueChanged();
 			}
 		});
 

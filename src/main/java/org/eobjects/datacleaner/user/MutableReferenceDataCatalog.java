@@ -35,23 +35,31 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<DictionaryChangeListener>();
 	private final List<SynonymCatalog> _synonymCatalogs;
 	private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<SynonymCatalogChangeListener>();
+	private final ReferenceDataCatalog _immutableDelegate;
 
-	public MutableReferenceDataCatalog(final ReferenceDataCatalog referenceDataCatalog) {
+	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate) {
+		_immutableDelegate = immutableDelegate;
 		_dictionaries = UserPreferences.getInstance().getUserDictionaries();
 		_synonymCatalogs = UserPreferences.getInstance().getUserSynonymCatalogs();
 
-		String[] names = referenceDataCatalog.getDictionaryNames();
+		String[] names = _immutableDelegate.getDictionaryNames();
 		for (String name : names) {
-			if (!containsDictionary(name)) {
-				addDictionary(referenceDataCatalog.getDictionary(name));
+			if (containsDictionary(name)) {
+				// remove any copies of the dictionary - the immutable (XML)
+				// version should always win
+				removeDictionary(getDictionary(name));
 			}
+			addDictionary(_immutableDelegate.getDictionary(name));
 		}
 
-		names = referenceDataCatalog.getSynonymCatalogNames();
+		names = _immutableDelegate.getSynonymCatalogNames();
 		for (String name : names) {
-			if (!containsSynonymCatalog(name)) {
-				addSynonymCatalog(referenceDataCatalog.getSynonymCatalog(name));
+			if (containsSynonymCatalog(name)) {
+				// remove any copies of the synonym catalog - the immutable
+				// (XML) version should always win
+				removeSynonymCatalog(getSynonymCatalog(name));
 			}
+			addSynonymCatalog(_immutableDelegate.getSynonymCatalog(name));
 		}
 	}
 
@@ -64,6 +72,10 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		return result;
 	}
 
+	public boolean isDictionaryMutable(String name) {
+		return _immutableDelegate.getDictionary(name) == null;
+	}
+
 	public boolean containsDictionary(String name) {
 		for (Dictionary dictionary : _dictionaries) {
 			if (name.equals(dictionary.getName())) {
@@ -71,6 +83,10 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 			}
 		}
 		return false;
+	}
+
+	public boolean isSynonymCatalogMutable(String name) {
+		return _immutableDelegate.getSynonymCatalog(name) == null;
 	}
 
 	public boolean containsSynonymCatalog(String name) {

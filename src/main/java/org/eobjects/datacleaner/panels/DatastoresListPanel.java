@@ -181,7 +181,10 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 1, i);
 			WidgetUtils.addToGridBag(editButton, _datastoresPanel, 2, i);
 			WidgetUtils.addToGridBag(jobButton, _datastoresPanel, 3, i);
-			WidgetUtils.addToGridBag(removeButton, _datastoresPanel, 4, i);
+			
+			if (_catalog.isDatastoreMutable(name)) {
+				WidgetUtils.addToGridBag(removeButton, _datastoresPanel, 4, i);
+			}
 
 		}
 

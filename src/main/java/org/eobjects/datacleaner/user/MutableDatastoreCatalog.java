@@ -31,17 +31,26 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private final DatastoreCatalog _immutableDelegate;
 	private final List<Datastore> _datastores;
 	private final List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
 
-	public MutableDatastoreCatalog(final DatastoreCatalog catalog) {
+	public MutableDatastoreCatalog(final DatastoreCatalog immutableDelegate) {
+		_immutableDelegate = immutableDelegate;
 		_datastores = UserPreferences.getInstance().getUserDatastores();
-		String[] datastoreNames = catalog.getDatastoreNames();
+		String[] datastoreNames = immutableDelegate.getDatastoreNames();
 		for (String name : datastoreNames) {
-			if (!containsDatastore(name)) {
-				addDatastore(catalog.getDatastore(name));
+			if (containsDatastore(name)) {
+				// remove any copies of the datastore - the immutable (XML)
+				// version should always win
+				removeDatastore(getDatastore(name));
 			}
+			addDatastore(immutableDelegate.getDatastore(name));
 		}
+	}
+
+	public boolean isDatastoreMutable(String name) {
+		return _immutableDelegate.getDatastore(name) == null;
 	}
 
 	public boolean containsDatastore(String name) {

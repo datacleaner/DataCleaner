@@ -98,6 +98,9 @@ public final class IconUtils {
 		}
 
 		String displayName = descriptor.getDisplayName().toLowerCase();
+		if (displayName.indexOf("boolean") != -1) {
+			imagePath = "images/component-types/type_boolean.png";
+		}
 		if (displayName.indexOf("validat") != -1) {
 			imagePath = "images/component-types/type_validate.png";
 		}

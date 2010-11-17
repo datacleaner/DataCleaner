@@ -67,7 +67,7 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 		private TableModel _tableModel;
 		private int _row = 0;
 		private int _col = 0;
-		private int _alignment = SwingConstants.LEFT;;
+		private int _alignment = SwingConstants.LEFT;
 
 		@Override
 		public void beginTable(Crosstab<?> crosstab, List<CrosstabDimension> horizontalDimensions,

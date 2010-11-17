@@ -31,15 +31,28 @@ public final class InvokeResultProducerActionListener implements ActionListener 
 
 	private final String _title;
 	private final ResultProducer _resultProducer;
+	private final AnalyzerResult _result;
 
 	public InvokeResultProducerActionListener(String title, ResultProducer resultProducer) {
 		_title = title;
 		_resultProducer = resultProducer;
+		_result = null;
+	}
+
+	public InvokeResultProducerActionListener(String title, AnalyzerResult result) {
+		_title = title;
+		_result = result;
+		_resultProducer = null;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		AnalyzerResult result = _resultProducer.getResult();
+		AnalyzerResult result;
+		if (_result == null) {
+			result = _resultProducer.getResult();
+		} else {
+			result = _result;
+		}
 		new DetailsResultWindow(_title, CollectionUtils.list(result)).setVisible(true);
 	}
 

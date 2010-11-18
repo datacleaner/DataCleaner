@@ -20,6 +20,8 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
@@ -30,7 +32,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.CompoundBorder;
-import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -42,7 +43,6 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.InputColumnComparator;
 import org.eobjects.datacleaner.actions.AddQuickFilterActionListener;
 import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
-import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -118,14 +118,16 @@ public final class ColumnListTable extends DCPanel {
 				final JXTextField textField = WidgetFactory.createTextField("Column name");
 				textField.setText(column.getName());
 				final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
-				textField.getDocument().addDocumentListener(new DCDocumentListener() {
+				textField.addFocusListener(new FocusAdapter() {
 					@Override
-					protected void onChange(DocumentEvent e) {
-						mutableInputColumn.setName(textField.getText());
+					public void focusLost(FocusEvent e) {
+						if (!mutableInputColumn.getName().equals(textField.getText())) {
+							mutableInputColumn.setName(textField.getText());
 
-						TransformerJobBuilder<?> tjb = _analysisJobBuilder.getOriginatingTransformer(mutableInputColumn);
-						if (tjb != null) {
-							tjb.onOutputChanged();
+							TransformerJobBuilder<?> tjb = _analysisJobBuilder.getOriginatingTransformer(mutableInputColumn);
+							if (tjb != null) {
+								tjb.onOutputChanged();
+							}
 						}
 					}
 				});

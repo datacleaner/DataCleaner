@@ -44,7 +44,6 @@ public class DCBannerPanel extends JPanel {
 	private static final Image BANNER_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
 	private final int _bannerImageWidth;
 	private final Image _bannerImage;
-
 	private final String _title;
 
 	public DCBannerPanel() {

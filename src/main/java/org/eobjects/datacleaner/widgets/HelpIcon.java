@@ -1,0 +1,56 @@
+package org.eobjects.datacleaner.widgets;
+
+import java.awt.BorderLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JToolTip;
+import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.widgets.tooltip.DCToolTip;
+
+public final class HelpIcon extends JLabel {
+
+	private static final long serialVersionUID = 1L;
+
+	private static final ImageManager imageManager = ImageManager.getInstance();
+	private final String _helpMessage;
+
+	public HelpIcon(String helpMessage) {
+		super(imageManager.getImageIcon("images/widgets/help.png", IconUtils.ICON_SIZE_SMALL));
+		_helpMessage = helpMessage;
+		ToolTipManager.sharedInstance().registerComponent(this);
+	}
+
+	@Override
+	public String getToolTipText() {
+		return _helpMessage;
+	}
+
+	@Override
+	public JToolTip createToolTip() {
+		DCPanel panel = new DCPanel();
+		panel.setOpaque(true);
+		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
+
+		panel.setLayout(new BorderLayout());
+		panel.add(new JLabel(imageManager.getImageIcon("images/widgets/help.png")), BorderLayout.WEST);
+
+		MultiLineLabel descriptionLabel = new MultiLineLabel(_helpMessage);
+		descriptionLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		panel.add(descriptionLabel, BorderLayout.CENTER);
+
+		Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
+		panel.setBorder(border);
+
+		panel.setPreferredSize(300, 130);
+
+		return new DCToolTip(this, panel);
+	}
+}

@@ -173,7 +173,7 @@ public class MainWindow extends AbstractWindow {
 	private JMenuBar getWindowMenuBar() {
 		final JMenuBar menuBar = new JMenuBar();
 
-		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job", "images/actions/open.png");
+		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job...", "images/actions/open.png");
 		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
 
 		final JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
@@ -184,8 +184,13 @@ public class MainWindow extends AbstractWindow {
 			}
 		});
 
-		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options ...", "images/menu/options.png");
-		optionsMenuItem.setEnabled(false);
+		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options...", "images/menu/options.png");
+		optionsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new OptionsDialog(_configuration).setVisible(true);
+			}
+		});
 
 		final JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
 		aboutMenuItem.setEnabled(false);

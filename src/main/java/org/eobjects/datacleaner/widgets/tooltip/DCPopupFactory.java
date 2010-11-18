@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.widgets.tooltip;
 
 import java.awt.Component;
+import java.awt.MouseInfo;
 
 import javax.swing.JComponent;
 import javax.swing.Popup;
@@ -32,6 +33,9 @@ public class DCPopupFactory extends PopupFactory {
 		if (contents instanceof DCToolTip) {
 			DCToolTip toolTip = (DCToolTip) contents;
 			JComponent tooltipComponent = toolTip.getTooltipComponent();
+			
+			x = MouseInfo.getPointerInfo().getLocation().x;
+
 			return super.getPopup(owner, tooltipComponent, x, y);
 		}
 		return super.getPopup(owner, contents, x, y);

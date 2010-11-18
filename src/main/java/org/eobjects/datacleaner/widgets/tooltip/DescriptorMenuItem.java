@@ -111,7 +111,6 @@ public class DescriptorMenuItem extends JMenuItem {
 		}
 
 		Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
-
 		panel.setBorder(border);
 
 		JToolTip toolTip = new DCToolTip(this, panel);

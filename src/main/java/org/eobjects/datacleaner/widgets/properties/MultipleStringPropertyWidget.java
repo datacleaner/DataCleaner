@@ -19,77 +19,114 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.JXTextArea;
+import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.VerticalLayout;
 
 public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[]> {
 
 	private static final long serialVersionUID = 1L;
-	private final JXTextArea _textArea;
+	private final DCPanel _textFieldPanel;
 
 	public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_textArea = WidgetFactory.createTextArea(propertyDescriptor.getName());
-		_textArea.setRows(3);
+		_textFieldPanel = new DCPanel();
+		_textFieldPanel.setLayout(new VerticalLayout(2));
 
 		String[] currentValue = (String[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue != null) {
-			StringBuilder sb = new StringBuilder();
-			for (String string : currentValue) {
-				if (sb.length() > 0) {
-					sb.append("\n");
-				}
-				sb.append(string);
-			}
-			_textArea.setText(sb.toString());
+		if (currentValue == null) {
+			currentValue = new String[2];
 		}
+		updateComponents(currentValue);
 
-		_textArea.getDocument().addDocumentListener(new DCDocumentListener() {
+		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
+		addButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addTextField("");
+				fireValueChanged();
+			}
+		});
+
+		final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		removeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int componentCount = _textFieldPanel.getComponentCount();
+				if (componentCount > 0) {
+					_textFieldPanel.remove(componentCount - 1);
+					_textFieldPanel.updateUI();
+					fireValueChanged();
+				}
+			}
+		});
+
+		final DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
+		buttonPanel.setLayout(new VerticalLayout(2));
+		buttonPanel.add(addButton);
+		buttonPanel.add(removeButton);
+
+		final DCPanel outerPanel = new DCPanel();
+		outerPanel.setLayout(new BorderLayout());
+
+		outerPanel.add(_textFieldPanel, BorderLayout.CENTER);
+		outerPanel.add(buttonPanel, BorderLayout.EAST);
+
+		add(outerPanel);
+	}
+
+	public void updateComponents(String[] values) {
+		_textFieldPanel.removeAll();
+		for (String value : values) {
+			addTextField(value);
+		}
+	}
+
+	private void addTextField(String value) {
+		JXTextField textField = WidgetFactory.createTextField();
+		if (value != null) {
+			textField.setText(value);
+		}
+		textField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
 				fireValueChanged();
 			}
 		});
-
-		JScrollPane scroll = WidgetUtils.scrolleable(_textArea);
-		scroll.setBorder(WidgetUtils.BORDER_THIN);
-		add(scroll);
+		_textFieldPanel.add(textField);
+		_textFieldPanel.updateUI();
 	}
 
 	@Override
 	public String[] getValue() {
-		String text = _textArea.getText();
-		if (StringUtils.isNullOrEmpty(text)) {
-			return null;
+		Component[] components = _textFieldPanel.getComponents();
+		String[] result = new String[components.length];
+		for (int i = 0; i < components.length; i++) {
+			JXTextField textField = (JXTextField) components[i];
+			result[i] = textField.getText();
 		}
-		return text.split("\n");
+		return result;
 	}
 
 	@Override
 	protected void setValue(String[] value) {
-		if (value == null) {
-			_textArea.setText("");
-			return;
-		}
-
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < value.length; i++) {
-			if (i != 0) {
-				sb.append("\n");
-			}
-			sb.append(value[i]);
-		}
-		_textArea.setText(sb.toString());
+		updateComponents(value);
 	}
 
 }

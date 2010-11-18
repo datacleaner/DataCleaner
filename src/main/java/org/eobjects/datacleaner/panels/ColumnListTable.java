@@ -38,6 +38,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.InputColumnComparator;
 import org.eobjects.datacleaner.actions.AddQuickFilterActionListener;
 import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
@@ -121,6 +122,11 @@ public final class ColumnListTable extends DCPanel {
 					@Override
 					protected void onChange(DocumentEvent e) {
 						mutableInputColumn.setName(textField.getText());
+
+						TransformerJobBuilder<?> tjb = _analysisJobBuilder.getOriginatingTransformer(mutableInputColumn);
+						if (tjb != null) {
+							tjb.onOutputChanged();
+						}
 					}
 				});
 				DCPanel panel = new DCPanel();

@@ -53,7 +53,11 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 
 	@Override
 	public DCTable render(CrosstabResult result) {
-		CrosstabRenderer renderer = new CrosstabRenderer(result.getCrosstab());
+		return render(result.getCrosstab());
+	}
+	
+	public DCTable render(Crosstab<?> crosstab) {
+		CrosstabRenderer renderer = new CrosstabRenderer(crosstab);
 		TableModel tableModel = renderer.render(new Callback());
 		DCTable table = new DCTable(tableModel);
 		table.setColumnControlVisible(false);

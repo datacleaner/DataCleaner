@@ -127,12 +127,12 @@ public class MainWindow extends AbstractWindow {
 		synonymsTaskPane.add(new SynonymCatalogListPanel(_configuration));
 		taskPaneContainer.add(synonymsTaskPane);
 
-		JXTaskPane expressionsTaskPane = new JXTaskPane();
-		expressionsTaskPane.setFocusable(false);
-		expressionsTaskPane.setTitle("Expressions");
-		expressionsTaskPane.setIcon(imageManager.getImageIcon("images/model/expression.png"));
-		expressionsTaskPane.setCollapsed(true);
-		taskPaneContainer.add(expressionsTaskPane);
+		JXTaskPane patternsTaskPane = new JXTaskPane();
+		patternsTaskPane.setFocusable(false);
+		patternsTaskPane.setTitle("Patterns");
+		patternsTaskPane.setIcon(imageManager.getImageIcon("images/model/pattern.png"));
+		patternsTaskPane.setCollapsed(true);
+		taskPaneContainer.add(patternsTaskPane);
 
 		JScrollPane scrollPane = WidgetUtils.scrolleable(taskPaneContainer);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

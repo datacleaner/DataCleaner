@@ -47,7 +47,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 			if (containsDictionary(name)) {
 				// remove any copies of the dictionary - the immutable (XML)
 				// version should always win
-				removeDictionary(getDictionary(name));
+				_dictionaries.remove(getDictionary(name));
 			}
 			addDictionary(_immutableDelegate.getDictionary(name));
 		}
@@ -57,7 +57,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 			if (containsSynonymCatalog(name)) {
 				// remove any copies of the synonym catalog - the immutable
 				// (XML) version should always win
-				removeSynonymCatalog(getSynonymCatalog(name));
+				_synonymCatalogs.remove(getSynonymCatalog(name));
 			}
 			addSynonymCatalog(_immutableDelegate.getSynonymCatalog(name));
 		}
@@ -115,6 +115,9 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	}
 
 	public void removeDictionary(Dictionary dict) {
+		if (!isDictionaryMutable(dict.getName())) {
+			throw new IllegalArgumentException("Dictionary '" + dict.getName() + " is not removeable");
+		}
 		if (_dictionaries.remove(dict)) {
 			for (DictionaryChangeListener listener : _dictionaryListeners) {
 				listener.onRemove(dict);
@@ -160,6 +163,9 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	}
 
 	public void removeSynonymCatalog(SynonymCatalog sc) {
+		if (!isSynonymCatalogMutable(sc.getName())) {
+			throw new IllegalArgumentException("Synonym catalog '" + sc.getName() + " is not removeable");
+		}
 		if (_synonymCatalogs.remove(sc)) {
 			for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
 				listener.onRemove(sc);

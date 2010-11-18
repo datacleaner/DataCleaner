@@ -145,9 +145,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 			final Datastore datastore = _catalog.getDatastore(name);
 
 			final Icon icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
-			final JLabel dsIcon = new JLabel(icon);
-
-			final JLabel dsLabel = new JLabel(name, JLabel.LEFT);
+			final JLabel dsLabel = new JLabel(name, icon, JLabel.LEFT);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit datastore");
@@ -177,13 +175,12 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				}
 			});
 
-			WidgetUtils.addToGridBag(dsIcon, _datastoresPanel, 0, i);
-			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 1, i);
-			WidgetUtils.addToGridBag(editButton, _datastoresPanel, 2, i);
-			WidgetUtils.addToGridBag(jobButton, _datastoresPanel, 3, i);
-			
+			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 0, i);
+			WidgetUtils.addToGridBag(editButton, _datastoresPanel, 1, i);
+			WidgetUtils.addToGridBag(jobButton, _datastoresPanel, 2, i);
+
 			if (_catalog.isDatastoreMutable(name)) {
-				WidgetUtils.addToGridBag(removeButton, _datastoresPanel, 4, i);
+				WidgetUtils.addToGridBag(removeButton, _datastoresPanel, 3, i);
 			}
 
 		}

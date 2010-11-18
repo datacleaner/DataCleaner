@@ -161,6 +161,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 		MultiLineLabel descriptionLabel = new MultiLineLabel(
 				"A datastore dictionary is a dictionary based on a column in one of your datastores. Please select a datastore in the form below and a tree of that datastore will appear. From here on you can select which column in the datastore to use for dictionary lookups.");
 		descriptionLabel.setBorder(new EmptyBorder(0, 0, 0, 20));
+		descriptionLabel.setPreferredSize(new Dimension(300, 100));
 		WidgetUtils.addToGridBag(descriptionLabel, formPanel, 0, row, 2, 1);
 
 		row++;

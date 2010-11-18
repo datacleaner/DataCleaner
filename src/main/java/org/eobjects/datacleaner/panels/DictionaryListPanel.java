@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -53,21 +54,21 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final AnalyzerBeansConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
-	private final DCPanel _dictionariesPanel;
+	private final DCPanel _listPanel;
 
 	public DictionaryListPanel(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
 		_catalog = (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog();
 		_catalog.addDictionaryListener(this);
-		_dictionariesPanel = new DCPanel();
+		_listPanel = new DCPanel();
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
-		final JButton addDictionaryMenuItem = new JButton("New dictionary",
+		final JButton addMenuItem = new JButton("New dictionary",
 				imageManager.getImageIcon("images/actions/new.png"));
-		addDictionaryMenuItem.setToolTipText("New dictionary");
-		addDictionaryMenuItem.addActionListener(new ActionListener() {
+		addMenuItem.setToolTipText("New dictionary");
+		addMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popup = new JPopupMenu();
@@ -103,30 +104,32 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				popup.add(textFileDictionaryMenuItem);
 				popup.add(simpleDictionaryMenuItem);
 
-				popup.show(addDictionaryMenuItem, 0, addDictionaryMenuItem.getHeight());
+				popup.show(addMenuItem, 0, addMenuItem.getHeight());
 			}
 		});
-		toolBar.add(addDictionaryMenuItem);
+		toolBar.add(addMenuItem);
 
 		updateComponents();
 
 		setLayout(new BorderLayout());
 		add(toolBar, BorderLayout.NORTH);
-		add(_dictionariesPanel, BorderLayout.CENTER);
+		add(_listPanel, BorderLayout.CENTER);
 	}
 
 	private void updateComponents() {
-		_dictionariesPanel.removeAll();
+		_listPanel.removeAll();
 
 		String[] names = _catalog.getDictionaryNames();
 		Arrays.sort(names);
+		
+		Icon icon = imageManager.getImageIcon("images/model/dictionary.png", IconUtils.ICON_SIZE_SMALL);
 
 		int row = 0;
 		for (final String name : names) {
 
 			final Dictionary dictionary = _catalog.getDictionary(name);
 
-			final JLabel dictLabel = new JLabel(name, JLabel.LEFT);
+			final JLabel dictLabel = new JLabel(name, icon, JLabel.LEFT);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit dictionary");
@@ -175,11 +178,11 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				}
 			});
 
-			WidgetUtils.addToGridBag(dictLabel, _dictionariesPanel, 0, row);
+			WidgetUtils.addToGridBag(dictLabel, _listPanel, 0, row);
 
 			if (_catalog.isDictionaryMutable(name)) {
-				WidgetUtils.addToGridBag(editButton, _dictionariesPanel, 1, row);
-				WidgetUtils.addToGridBag(removeButton, _dictionariesPanel, 2, row);
+				WidgetUtils.addToGridBag(editButton, _listPanel, 1, row);
+				WidgetUtils.addToGridBag(removeButton, _listPanel, 2, row);
 			}
 
 			row++;

@@ -19,28 +19,158 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+
+import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.jdesktop.swingx.VerticalLayout;
+import org.eobjects.analyzer.reference.SimpleSynonymCatalog;
+import org.eobjects.analyzer.reference.SynonymCatalog;
+import org.eobjects.analyzer.reference.TextBasedSynonymCatalog;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.TextFileSynonymCatalogDialog;
 
-public final class SynonymCatalogListPanel extends DCPanel {
+public final class SynonymCatalogListPanel extends DCPanel implements SynonymCatalogChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final AnalyzerBeansConfiguration _configuration;
+	private static final ImageManager imageManager = ImageManager.getInstance();
+	private final MutableReferenceDataCatalog _catalog;
+	private final DCPanel _listPanel;
 
 	public SynonymCatalogListPanel(AnalyzerBeansConfiguration configuration) {
 		super();
-		_configuration = configuration;
-		
-		setLayout(new VerticalLayout(4));
+		_catalog = (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog();
+		_catalog.addSynonymCatalogListener(this);
+		_listPanel = new DCPanel();
 
-		// TODO: This is just a very early implementation, simply displaying the
-		// synonym catalogs in the configuration
-		String[] names = _configuration.getReferenceDataCatalog().getSynonymCatalogNames();
-		for (String name : names) {
-			add(new JLabel(name));
+		JToolBar toolBar = WidgetFactory.createToolBar();
+
+		final JButton addMenuItem = new JButton("New synonym catalog", imageManager.getImageIcon("images/actions/new.png"));
+		addMenuItem.setToolTipText("New synonym catalog");
+		addMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JPopupMenu popup = new JPopupMenu();
+
+				final JMenuItem textFileSynonymCatalogMenuItem = WidgetFactory.createMenuItem("Text file synonym catalog",
+						imageManager.getImageIcon("images/datastore-types/csv.png", IconUtils.ICON_SIZE_SMALL));
+				textFileSynonymCatalogMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new TextFileSynonymCatalogDialog(_catalog).setVisible(true);
+					}
+				});
+
+				final JMenuItem simpleSynonymCatalogMenuItem = WidgetFactory.createMenuItem("Simple synonym catalog",
+						imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL));
+				simpleSynonymCatalogMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO
+					}
+				});
+				simpleSynonymCatalogMenuItem.setEnabled(false);
+
+				popup.add(textFileSynonymCatalogMenuItem);
+				popup.add(simpleSynonymCatalogMenuItem);
+
+				popup.show(addMenuItem, 0, addMenuItem.getHeight());
+			}
+		});
+		toolBar.add(addMenuItem);
+
+		updateComponents();
+
+		setLayout(new BorderLayout());
+		add(toolBar, BorderLayout.NORTH);
+		add(_listPanel, BorderLayout.CENTER);
+	}
+
+	private void updateComponents() {
+		_listPanel.removeAll();
+
+		String[] names = _catalog.getSynonymCatalogNames();
+		Arrays.sort(names);
+
+		Icon icon = imageManager.getImageIcon("images/model/synonym.png", IconUtils.ICON_SIZE_SMALL);
+
+		int row = 0;
+		for (final String name : names) {
+
+			final SynonymCatalog sc = _catalog.getSynonymCatalog(name);
+
+			final JLabel scLabel = new JLabel(name, icon, JLabel.LEFT);
+
+			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+			editButton.setToolTipText("Edit synonym catalog");
+
+			if (sc instanceof TextBasedSynonymCatalog) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new TextFileSynonymCatalogDialog((TextBasedSynonymCatalog) sc, _catalog).setVisible(true);
+					}
+				});
+			} else if (sc instanceof SimpleSynonymCatalog) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// TODO
+					}
+				});
+			} else {
+				editButton.setEnabled(false);
+			}
+
+			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			removeButton.setToolTipText("Remove synonym catalog");
+			removeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int result = JOptionPane.showConfirmDialog(SynonymCatalogListPanel.this,
+							"Are you sure you wish to remove the synonym catalog '" + name + "'?", "Confirm remove",
+							JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						_catalog.removeSynonymCatalog(sc);
+					}
+				}
+			});
+
+			WidgetUtils.addToGridBag(scLabel, _listPanel, 0, row);
+
+			if (_catalog.isSynonymCatalogMutable(name)) {
+				WidgetUtils.addToGridBag(editButton, _listPanel, 1, row);
+				WidgetUtils.addToGridBag(removeButton, _listPanel, 2, row);
+			}
+
+			row++;
 		}
+
+		updateUI();
+	}
+
+	@Override
+	public void onAdd(SynonymCatalog synonymCatalog) {
+		updateComponents();
+	}
+
+	@Override
+	public void onRemove(SynonymCatalog synonymCatalog) {
+		updateComponents();
 	}
 }

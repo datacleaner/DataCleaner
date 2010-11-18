@@ -43,6 +43,8 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
 public final class DetailsResultWindow extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
+
+	private final static ImageManager imageManager = ImageManager.getInstance();
 	private final List<AnalyzerResult> _results;
 	private final String _title;
 
@@ -69,7 +71,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 
 	@Override
 	protected Image getWindowIcon() {
-		return ImageManager.getInstance().getImage("images/model/result.png");
+		return imageManager.getImage("images/model/result.png");
 	}
 
 	@Override
@@ -91,6 +93,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 			}
 
 			JXTaskPane taskPane = new JXTaskPane();
+			taskPane.setIcon(imageManager.getImageIcon("images/actions/drill-to-detail.png"));
 			taskPane.setFocusable(false);
 			taskPane.setTitle(analyzerResult.getClass().getSimpleName());
 			taskPane.add(component);

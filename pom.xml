@@ -25,8 +25,10 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>true
+							</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true
+							</addDefaultSpecificationEntries>
 							<classpathPrefix>lib</classpathPrefix>
 							<mainClass>org.eobjects.datacleaner.Main</mainClass>
 						</manifest>
@@ -62,7 +64,21 @@
 					<includes>
 						<include>src/**/java/**</include>
 					</includes>
+					<excludes>
+						<exclude>src/main/java/org/eobjects/datacleaner/widgets/label/MultiLineLabel*.java
+						</exclude>
+					</excludes>
 				</configuration>
+				<executions>
+					<execution>
+						<id>verify-license-headers</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<inherited>false</inherited>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

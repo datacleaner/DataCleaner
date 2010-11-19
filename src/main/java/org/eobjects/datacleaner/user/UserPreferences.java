@@ -44,15 +44,17 @@ public class UserPreferences implements Serializable {
 
 	private static UserPreferences instance;
 
+	private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
+	private List<Datastore> userDatastores = new ArrayList<Datastore>();
+	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
+	private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
+
 	private String username;
 	private boolean welcomeDialogShownOnStartup = true;
 	private List<File> recentJobFiles = new ArrayList<File>();
 	private File datastoreDirectory = new File(".");
 	private File configuredFileDirectory = new File(".");
 	private File analysisJobDirectory = new File(".");
-	private List<Datastore> userDatastores = new ArrayList<Datastore>();
-	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
-	private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
 
 	public static UserPreferences getInstance() {
 		if (instance == null) {
@@ -181,5 +183,12 @@ public class UserPreferences implements Serializable {
 			userSynonymCatalogs = new ArrayList<SynonymCatalog>();
 		}
 		return userSynonymCatalogs;
+	}
+
+	public List<UserDatabaseDriver> getDatabaseDrivers() {
+		if (databaseDrivers == null) {
+			databaseDrivers = new ArrayList<UserDatabaseDriver>();
+		}
+		return databaseDrivers;
 	}
 }

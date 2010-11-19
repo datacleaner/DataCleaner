@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Collection;
@@ -93,7 +94,7 @@ public final class ColumnListTable extends DCPanel {
 
 		_columnTable = new DCTable(headers);
 		_columnTable.setColumnControlVisible(false);
-		_columnTable.setRowHeight(28);
+		_columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 
 		JPanel tablePanel = _columnTable.toPanel();
 		tablePanel.setBorder(WidgetUtils.BORDER_EMPTY);
@@ -152,6 +153,7 @@ public final class ColumnListTable extends DCPanel {
 					_analysisJobBuilder, column));
 
 			DCPanel buttonPanel = new DCPanel();
+			buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
 			buttonPanel.add(transformButton);
 			buttonPanel.add(filterButton);
 

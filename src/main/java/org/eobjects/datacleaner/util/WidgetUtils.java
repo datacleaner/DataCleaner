@@ -54,7 +54,7 @@ public final class WidgetUtils {
 	public static final Font FONT_NORMAL = new FontUIResource("SansSerif", Font.PLAIN, 12);
 	public static final Font FONT_SMALL = new FontUIResource("SansSerif", Font.PLAIN, 10);
 
-	// the three blue variants in the DataCleaner logo
+	// the three blue variants in the DataCleaner logo (#5594dd, #235da0, #023a7c)
 	public static final Color BG_COLOR_BLUE_BRIGHT = new ColorUIResource(85, 148, 221);
 	public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(35, 93, 160);
 	public static final Color BG_COLOR_BLUE_DARK = new ColorUIResource(2, 58, 124);

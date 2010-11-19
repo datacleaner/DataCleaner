@@ -93,8 +93,10 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 
 	public void updateComponents(String[] values) {
 		_textFieldPanel.removeAll();
-		for (String value : values) {
-			addTextField(value);
+		if (values != null) {
+			for (String value : values) {
+				addTextField(value);
+			}
 		}
 	}
 

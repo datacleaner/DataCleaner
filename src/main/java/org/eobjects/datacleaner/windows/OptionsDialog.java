@@ -14,6 +14,7 @@ import org.eobjects.analyzer.storage.SqlDatabaseStorageProvider;
 import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.HelpIcon;
@@ -34,7 +35,7 @@ public class OptionsDialog extends AbstractWindow {
 
 		_tabbedPane.addTab("General", imageManager.getImageIcon("images/menu/options.png"), getGeneralTab());
 		_tabbedPane.addTab("Database drivers", imageManager.getImageIcon("images/model/datastore.png"),
-				getDatabaseDriversTab());
+				new DatabaseDriversPanel(_configuration));
 		_tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
 		_tabbedPane.addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
 
@@ -45,28 +46,21 @@ public class OptionsDialog extends AbstractWindow {
 	}
 
 	private DCPanel getGeneralTab() {
-		DCPanel panel = new DCPanel();
-		// TODO
-		panel.add(new JLabel("TODO"));
-		return panel;
-	}
-
-	private DCPanel getDatabaseDriversTab() {
-		DCPanel panel = new DCPanel();
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		// TODO
 		panel.add(new JLabel("TODO"));
 		return panel;
 	}
 
 	private DCPanel getNetworkTab() {
-		DCPanel panel = new DCPanel();
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		// TODO
 		panel.add(new JLabel("TODO"));
 		return panel;
 	}
 
 	private DCPanel getPerformanceTab() {
-		DCPanel panel = new DCPanel();
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 
 		int row = 0;
 

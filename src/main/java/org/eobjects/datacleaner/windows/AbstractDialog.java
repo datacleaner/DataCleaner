@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Image;
 
 import javax.swing.JComponent;
@@ -34,6 +35,8 @@ public abstract class AbstractDialog extends AbstractWindow {
 	private static final long serialVersionUID = 1L;
 
 	private final Image _bannerImage;
+	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_BRIGHTEST;
+	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_BRIGHT;
 
 	public AbstractDialog() {
 		this(null);
@@ -41,6 +44,14 @@ public abstract class AbstractDialog extends AbstractWindow {
 
 	public AbstractDialog(Image bannerImage) {
 		_bannerImage = bannerImage;
+	}
+	
+	protected void setTopBackgroundColor(Color topBackgroundColor) {
+		_topBackgroundColor = topBackgroundColor;
+	}
+	
+	protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
+		_bottomBackgroundColor = bottomBackgroundColor;
 	}
 
 	@Override
@@ -60,7 +71,7 @@ public abstract class AbstractDialog extends AbstractWindow {
 
 	@Override
 	protected final JComponent getWindowContent() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHT);
+		DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
 		panel.setLayout(new BorderLayout());
 		DCBannerPanel bannerPanel = new DCBannerPanel(_bannerImage, getBannerTitle());
 		panel.add(bannerPanel, BorderLayout.NORTH);

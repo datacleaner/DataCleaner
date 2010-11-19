@@ -90,7 +90,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private static final String QUOTE_SINGLE_QUOTE = "Single quote (')";
 
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
-	private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
+	private final MutableDatastoreCatalog _mutableDatastoreCatalog;
 	private final JXTextField _datastoreNameField;
 	private final FilenameTextField _filenameField;
 	private final JComboBox _separatorCharField;
@@ -455,7 +455,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Open CSV file";
+		return "CSV file datastore";
 	}
 
 }

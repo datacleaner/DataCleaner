@@ -42,6 +42,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
+import org.eobjects.datacleaner.windows.DatabaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 
 public final class DatastoresListPanel extends DCPanel implements DatastoreChangeListener {
@@ -110,10 +111,14 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 						imageManager.getImageIcon(IconUtils.ODB_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				odbMenuItem.setEnabled(false);
 
-				// TODO: Not yet functional
 				JMenuItem jdbcMenuItem = WidgetFactory.createMenuItem("Database connection",
 						imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-				jdbcMenuItem.setEnabled(false);
+				jdbcMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new DatabaseDatastoreDialog(_configuration, _catalog).setVisible(true);
+					}
+				});
 
 				popup.add(jdbcMenuItem);
 				popup.add(csvMenuItem);

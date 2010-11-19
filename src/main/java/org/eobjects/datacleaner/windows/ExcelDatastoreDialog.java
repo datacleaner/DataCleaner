@@ -176,7 +176,7 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Open Excel spreadsheet";
+		return "Excel spreadsheet | Datastore";
 	}
 
 }

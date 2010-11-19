@@ -65,6 +65,12 @@ public class UserPreferences implements Serializable {
 						try {
 							inputStream = new ObjectInputStream(new FileInputStream(userPreferencesFile));
 							instance = (UserPreferences) inputStream.readObject();
+
+							List<UserDatabaseDriver> installedDatabaseDrivers = instance.getDatabaseDrivers();
+							for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
+								userDatabaseDriver.loadDriver();
+							}
+
 						} catch (InvalidClassException e) {
 							logger.warn("User preferences file version does not match application version: {}",
 									e.getMessage());

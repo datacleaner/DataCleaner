@@ -170,7 +170,7 @@ public class AccessDatastoreDialog extends AbstractDialog {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Open Access database";
+		return "Access database | Datastore";
 	}
 
 }

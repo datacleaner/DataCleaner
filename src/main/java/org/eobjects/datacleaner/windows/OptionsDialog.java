@@ -1,11 +1,35 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
@@ -16,6 +40,7 @@ import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
@@ -43,6 +68,10 @@ public class OptionsDialog extends AbstractWindow {
 		_tabbedPane.setUnclosableTab(1);
 		_tabbedPane.setUnclosableTab(2);
 		_tabbedPane.setUnclosableTab(3);
+	}
+
+	public void selectDatabaseDriversTab() {
+		_tabbedPane.setSelectedIndex(1);
 	}
 
 	private DCPanel getGeneralTab() {
@@ -117,6 +146,28 @@ public class OptionsDialog extends AbstractWindow {
 		panel.add(new DCBannerPanel("Options"), BorderLayout.NORTH);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 
+		final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
+		closeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		closeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				OptionsDialog.this.dispose();
+			}
+		});
+
+		final JToolBar toolBar = WidgetFactory.createToolBar();
+		toolBar.setOpaque(false);
+		toolBar.setBorder(null);
+		toolBar.add(WidgetFactory.createToolBarSeparator());
+		toolBar.add(closeButton);
+
+		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+		toolBarPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
+		toolBarPanel.setLayout(new BorderLayout());
+		toolBarPanel.add(toolBar, BorderLayout.CENTER);
+
+		panel.add(toolBarPanel, BorderLayout.SOUTH);
+
 		panel.setPreferredSize(500, 500);
 		return panel;
 	}
@@ -140,5 +191,4 @@ public class OptionsDialog extends AbstractWindow {
 	protected Image getWindowIcon() {
 		return imageManager.getImage("images/menu/options.png");
 	}
-
 }

@@ -1,3 +1,22 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
@@ -17,9 +36,9 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.JdbcDatastore;
-import org.eobjects.datacleaner.actions.DownloadFileActionListener;
+import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
-import org.eobjects.datacleaner.database.DatabaseDescriptorCatalog;
+import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.user.UserDatabaseDriver;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -45,7 +64,7 @@ public class DatabaseDriversPanel extends DCPanel {
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final Set<String> _usedDriverClassNames = new HashSet<String>();
-	private final DatabaseDescriptorCatalog _databaseDescriptorCatalog = new DatabaseDescriptorCatalog();
+	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
 
 	public DatabaseDriversPanel(AnalyzerBeansConfiguration configuration) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -82,24 +101,20 @@ public class DatabaseDriversPanel extends DCPanel {
 	}
 
 	private DCTable getDatabaseDriverTable() {
-		final List<DatabaseDriverDescriptor> descriptors = _databaseDescriptorCatalog.getDescriptors();
+		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getDatabaseDrivers();
 		final TableModel tableModel = new DefaultTableModel(new String[] { "", "Database", "Driver class", "Installed?",
-				"Used?" }, descriptors.size());
+				"Used?" }, databaseDrivers.size());
 
 		final DCTable table = new DCTable(tableModel);
 
 		final Icon validIcon = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 
 		int row = 0;
-		for (final DatabaseDriverDescriptor dd : descriptors) {
+		for (final DatabaseDriverDescriptor dd : databaseDrivers) {
 			String driverClassName = dd.getDriverClassName();
 			String displayName = dd.getDisplayName();
 
-			Icon driverIcon = imageManager.getImageIcon("images/model/datastore.png", IconUtils.ICON_SIZE_SMALL);
-
-			if (dd.getIconImagePath() != null) {
-				driverIcon = imageManager.getImageIcon(dd.getIconImagePath(), IconUtils.ICON_SIZE_SMALL);
-			}
+			Icon driverIcon = imageManager.getImageIcon(_databaseDriverCatalog.getIconImagePath(dd), IconUtils.ICON_SIZE_SMALL);
 
 			tableModel.setValueAt(driverIcon, row, 0);
 			tableModel.setValueAt(displayName, row, 1);
@@ -110,7 +125,7 @@ public class DatabaseDriversPanel extends DCPanel {
 			final int installedRow = row;
 			final int installedCol = 3;
 
-			if (isInstalled(driverClassName)) {
+			if (_databaseDriverCatalog.isInstalled(dd)) {
 				tableModel.setValueAt(validIcon, installedRow, installedCol);
 			} else {
 				String[] downloadUrl = dd.getDownloadUrls();
@@ -121,7 +136,7 @@ public class DatabaseDriversPanel extends DCPanel {
 					final JButton downloadButton = WidgetFactory.createSmallButton("images/actions/download.png");
 					downloadButton.setToolTipText("Download and install the driver for " + dd.getDisplayName());
 
-					downloadButton.addActionListener(new DownloadFileActionListener(dd.getDownloadUrls(),
+					downloadButton.addActionListener(new DownloadFilesActionListener(dd.getDownloadUrls(),
 							new FileDownloadListener() {
 								@Override
 								public void onFilesDownloaded(File[] files) {
@@ -160,21 +175,4 @@ public class DatabaseDriversPanel extends DCPanel {
 	private boolean isUsed(String driverClassName) {
 		return _usedDriverClassNames.contains(driverClassName);
 	}
-
-	private boolean isInstalled(String driverClassName) {
-		List<UserDatabaseDriver> drivers = userPreferences.getDatabaseDrivers();
-		for (UserDatabaseDriver userDatabaseDriver : drivers) {
-			if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
-				return true;
-			}
-		}
-		try {
-			Class.forName(driverClassName);
-			return true;
-		} catch (ClassNotFoundException e) {
-			// do nothing
-		}
-		return false;
-	}
-
 }

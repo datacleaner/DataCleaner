@@ -1,3 +1,22 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
@@ -27,9 +46,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-public class DownloadFileActionListener extends SwingWorker<File[], Task> implements ActionListener {
+public class DownloadFilesActionListener extends SwingWorker<File[], Task> implements ActionListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(DownloadFileActionListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(DownloadFilesActionListener.class);
 
 	private final String[] _urls;
 	private final File[] _files;
@@ -37,7 +56,7 @@ public class DownloadFileActionListener extends SwingWorker<File[], Task> implem
 	private final DownloadProgressWindow _downloadProgressWindow;
 	private volatile boolean _cancelled = false;
 
-	public DownloadFileActionListener(String[] urls, FileDownloadListener listener) {
+	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener) {
 		if (urls == null) {
 			throw new IllegalArgumentException("urls cannot be null");
 		}

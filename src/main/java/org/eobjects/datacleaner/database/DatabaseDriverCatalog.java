@@ -33,7 +33,7 @@ public class DatabaseDriverCatalog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private final List<DatabaseDriverDescriptor> _descriptors = new ArrayList<DatabaseDriverDescriptor>();
+	private final List<DatabaseDriverDescriptor> _databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
 
 	public DatabaseDriverCatalog() {
 		add("MySQL",
@@ -54,7 +54,7 @@ public class DatabaseDriverCatalog implements Serializable {
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/org/firebirdsql/jdbc/jaybird/2.1.6/jaybird-2.1.6.jar",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/geronimo-spec/geronimo-spec-j2ee/1.4-rc4/geronimo-spec-j2ee-1.4-rc4.jar" },
 				new String[] { "jdbc:firebirdsql:<hostname>:<path/to/database>.fdb" });
-		add("SAP DB", null, "com.sap.dbtech.jdbc.DriverSapDB", null, "jdbc:sapdb://<hostname>/<database>");
+		add("SAP DB", "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB", null, "jdbc:sapdb://<hostname>/<database>");
 		add("PostgreSQL",
 				"images/datastore-types/databases/postgresql.png",
 				"org.postgresql.Driver",
@@ -86,7 +86,7 @@ public class DatabaseDriverCatalog implements Serializable {
 		add("Hsqldb/HyperSQL", "images/datastore-types/databases/hsqldb.png", "org.hsqldb.jdbcDriver",
 				"http://mirrors.ibiblio.org/pub/mirrors/maven2/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar",
 				"jdbc:hsqldb:hsql://<hostname>:9001/<database>", "jdbc:hsqldb:file:<path/to/database>");
-		add("H2", null, "org.h2.Driver",
+		add("H2", "images/datastore-types/databases/h2.png", "org.h2.Driver",
 				"http://mirrors.ibiblio.org/pub/mirrors/maven2/com/h2database/h2/1.2.145/h2-1.2.145.jar",
 				"jdbc:h2:<path/to/database>");
 		add("Teradata", "images/datastore-types/databases/teradata.png", "com.teradata.jdbc.TeraDriver", null,
@@ -94,15 +94,15 @@ public class DatabaseDriverCatalog implements Serializable {
 		add("JDBC-ODBC bridge", "images/datastore-types/databases/odbc.png", "sun.jdbc.odbc.JdbcOdbcDriver", null,
 				"jdbc:odbc:<data-source-name>");
 
-		Collections.sort(_descriptors);
+		Collections.sort(_databaseDrivers);
 	}
 
 	public List<DatabaseDriverDescriptor> getDatabaseDrivers() {
-		return _descriptors;
+		return _databaseDrivers;
 	}
 
 	public List<DatabaseDriverDescriptor> getInstalledDatabaseDrivers() {
-		return CollectionUtils.filter(_descriptors, new Function<DatabaseDriverDescriptor, Boolean>() {
+		return CollectionUtils.filter(_databaseDrivers, new Function<DatabaseDriverDescriptor, Boolean>() {
 
 			private static final long serialVersionUID = 1L;
 
@@ -115,8 +115,8 @@ public class DatabaseDriverCatalog implements Serializable {
 
 	private void add(String databaseName, String iconImagePath, String driverClassName, String[] downloadUrls,
 			String[] urlTemplates) {
-		_descriptors
-				.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, downloadUrls, urlTemplates));
+		_databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, downloadUrls,
+				urlTemplates));
 	}
 
 	private void add(String databaseName, String iconImagePath, String driverClassName, String downloadUrl,
@@ -127,7 +127,7 @@ public class DatabaseDriverCatalog implements Serializable {
 		} else {
 			urls = new String[] { downloadUrl };
 		}
-		_descriptors.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, urls, urlTemplates));
+		_databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, urls, urlTemplates));
 	}
 
 	public boolean isInstalled(DatabaseDriverDescriptor databaseDescriptor) {
@@ -153,5 +153,14 @@ public class DatabaseDriverCatalog implements Serializable {
 			iconImagePath = "images/model/datastore.png";
 		}
 		return iconImagePath;
+	}
+
+	public DatabaseDriverDescriptor getDatabaseDriverByDriverClassName(String driverClass) {
+		for (DatabaseDriverDescriptor databaseDriver : _databaseDrivers) {
+			if (driverClass.equals(databaseDriver.getDriverClassName())) {
+				return databaseDriver;
+			}
+		}
+		return null;
 	}
 }

@@ -33,6 +33,7 @@ import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -42,7 +43,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
-import org.eobjects.datacleaner.windows.DatabaseDatastoreDialog;
+import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 
 public final class DatastoresListPanel extends DCPanel implements DatastoreChangeListener {
@@ -116,7 +117,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				jdbcMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new DatabaseDatastoreDialog(_configuration, _catalog).setVisible(true);
+						new JdbcDatastoreDialog(_configuration, _catalog).setVisible(true);
 					}
 				});
 
@@ -154,7 +155,18 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit datastore");
-			editButton.setEnabled(false);
+			if (datastore instanceof JdbcDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						JdbcDatastoreDialog dialog = new JdbcDatastoreDialog((JdbcDatastore) datastore, _configuration,
+								_catalog);
+						dialog.setVisible(true);
+					}
+				});
+			} else {
+				editButton.setEnabled(false);
+			}
 
 			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove datastore");
@@ -181,10 +193,10 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 			});
 
 			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 0, i);
-			WidgetUtils.addToGridBag(editButton, _datastoresPanel, 1, i);
 			WidgetUtils.addToGridBag(jobButton, _datastoresPanel, 2, i);
 
 			if (_catalog.isDatastoreMutable(name)) {
+				WidgetUtils.addToGridBag(editButton, _datastoresPanel, 1, i);
 				WidgetUtils.addToGridBag(removeButton, _datastoresPanel, 3, i);
 			}
 

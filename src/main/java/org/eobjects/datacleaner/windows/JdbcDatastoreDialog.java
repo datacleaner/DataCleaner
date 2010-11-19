@@ -36,6 +36,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPasswordField;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -50,12 +51,13 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTextField;
 
-public class DatabaseDatastoreDialog extends AbstractDialog {
+public class JdbcDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String MANAGE_DATABASE_DRIVERS = "Manage database drivers...";
+	private static final String MANAGE_DATABASE_DRIVERS = "... Manage database drivers...";
 
+	private final JdbcDatastore _originalDatastore;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
@@ -67,7 +69,13 @@ public class DatabaseDatastoreDialog extends AbstractDialog {
 	private final JPasswordField _passwordField;
 	private final JComboBox _databaseDriverComboBox;
 
-	public DatabaseDatastoreDialog(AnalyzerBeansConfiguration configuration, MutableDatastoreCatalog catalog) {
+	public JdbcDatastoreDialog(AnalyzerBeansConfiguration configuration, MutableDatastoreCatalog catalog) {
+		this(null, configuration, catalog);
+	}
+
+	public JdbcDatastoreDialog(JdbcDatastore datastore, AnalyzerBeansConfiguration configuration,
+			MutableDatastoreCatalog catalog) {
+		_originalDatastore = datastore;
 		_configuration = configuration;
 		_catalog = catalog;
 
@@ -78,13 +86,15 @@ public class DatabaseDatastoreDialog extends AbstractDialog {
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
 
 		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getInstalledDatabaseDrivers();
-		Object[] databaseNames = new Object[databaseDrivers.size() + 2];
+		final Object[] comboBoxModel = new Object[databaseDrivers.size() + 3];
+		comboBoxModel[0] = "";
 		for (int i = 0; i < databaseDrivers.size(); i++) {
-			databaseNames[i + 1] = databaseDrivers.get(i);
+			comboBoxModel[i + 1] = databaseDrivers.get(i);
 		}
-		databaseNames[databaseNames.length - 1] = MANAGE_DATABASE_DRIVERS;
+		comboBoxModel[comboBoxModel.length - 2] = new JSeparator(JSeparator.HORIZONTAL);
+		comboBoxModel[comboBoxModel.length - 1] = MANAGE_DATABASE_DRIVERS;
 
-		_databaseDriverComboBox = new JComboBox(databaseNames);
+		_databaseDriverComboBox = new JComboBox(comboBoxModel);
 		_databaseDriverComboBox.setRenderer(new DefaultListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
@@ -104,6 +114,8 @@ public class DatabaseDatastoreDialog extends AbstractDialog {
 					result.setIcon(driverIcon);
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
 					result.setIcon(imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL));
+				} else if (value instanceof Component) {
+					return (Component) value;
 				}
 
 				return result;
@@ -124,13 +136,24 @@ public class DatabaseDatastoreDialog extends AbstractDialog {
 					OptionsDialog optionsDialog = new OptionsDialog(_configuration);
 					optionsDialog.selectDatabaseDriversTab();
 					optionsDialog.setVisible(true);
-					DatabaseDatastoreDialog.this.dispose();
+					JdbcDatastoreDialog.this.dispose();
 				}
 			}
 		});
 
 		_usernameTextField = WidgetFactory.createTextField("Username");
 		_passwordField = new JPasswordField(17);
+
+		if (_originalDatastore != null) {
+			_datastoreNameTextField.setText(_originalDatastore.getName());
+			_connectionStringTextField.setText(_originalDatastore.getJdbcUrl());
+			DatabaseDriverDescriptor databaseDriver = _databaseDriverCatalog
+					.getDatabaseDriverByDriverClassName(_originalDatastore.getDriverClass());
+			_databaseDriverComboBox.setSelectedItem(databaseDriver);
+			_driverClassNameTextField.setText(_originalDatastore.getDriverClass());
+			_usernameTextField.setText(_originalDatastore.getUsername());
+			_passwordField.setText(_originalDatastore.getPassword());
+		}
 	}
 
 	@Override
@@ -175,7 +198,7 @@ public class DatabaseDatastoreDialog extends AbstractDialog {
 						_usernameTextField.requestFocus();
 					}
 				}
-				
+
 				_connectionStringTextField.getHorizontalVisibility().setValue(0);
 			}
 		};
@@ -196,7 +219,7 @@ public class DatabaseDatastoreDialog extends AbstractDialog {
 			_connectionStringTextField.setFocusTraversalKeysEnabled(false);
 			String url = connectionUrls[0];
 			_connectionStringTextField.setText(url);
-			
+
 			getNextTemplateItemAction().actionPerformed(null);
 		}
 	}
@@ -241,8 +264,11 @@ public class DatabaseDatastoreDialog extends AbstractDialog {
 				JdbcDatastore datastore = new JdbcDatastore(datastoreName, _connectionStringTextField.getText(),
 						driverClass, _usernameTextField.getText(), new String(_passwordField.getPassword()));
 
+				if (_originalDatastore != null) {
+					_catalog.removeDatastore(_originalDatastore);
+				}
 				_catalog.addDatastore(datastore);
-				DatabaseDatastoreDialog.this.dispose();
+				JdbcDatastoreDialog.this.dispose();
 			}
 		});
 

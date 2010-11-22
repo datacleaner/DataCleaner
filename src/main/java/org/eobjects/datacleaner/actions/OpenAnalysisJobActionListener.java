@@ -51,7 +51,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		UsageLogger.getInstance().log("Open analysis job");
-		
+
 		UserPreferences userPreferences = UserPreferences.getInstance();
 
 		File file = _file;
@@ -68,12 +68,12 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		}
 
 		JaxbJobReader reader = new JaxbJobReader(_configuration);
-		AnalysisJobBuilder ajb = reader.create(_file);
+		AnalysisJobBuilder ajb = reader.create(file);
 
-		userPreferences.setAnalysisJobDirectory(_file.getParentFile());
-		userPreferences.addRecentJobFile(_file);
+		userPreferences.setAnalysisJobDirectory(file.getParentFile());
+		userPreferences.addRecentJobFile(file);
 
-		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(_configuration, ajb, _file.getName());
+		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(_configuration, ajb, file.getName());
 		window.setVisible(true);
 	}
 }

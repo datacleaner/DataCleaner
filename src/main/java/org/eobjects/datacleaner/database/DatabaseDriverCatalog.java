@@ -63,9 +63,9 @@ public class DatabaseDriverCatalog implements Serializable {
 		add("JTDS (Microsoft SQL Server & Sybase)", "images/datastore-types/databases/jtds.png",
 				"net.sourceforge.jtds.jdbc.Driver",
 				"http://mirrors.ibiblio.org/pub/mirrors/maven2/net/sourceforge/jtds/jtds/1.2.4/jtds-1.2.4.jar",
-				"jdbc:jtds:sqlserver://<hostname>:1434;useUnicode=true;characterEncoding=UTF-8",
-				"jdbc:jtds:sqlserver://<hostname>:1434/<database>;useUnicode=true;characterEncoding=UTF-8",
-				"jdbc:jtds:sybase://<hostname>:7100/<database>");
+				"jdbc:jtds:sqlserver://<hostname>;useUnicode=true;characterEncoding=UTF-8",
+				"jdbc:jtds:sqlserver://<hostname>/<database>;useUnicode=true;characterEncoding=UTF-8",
+				"jdbc:jtds:sybase://<hostname>/<database>");
 		add("SQLite", "images/datastore-types/databases/sqlite.png", "org.sqlite.JDBC",
 				"http://mirrors.ibiblio.org/pub/mirrors/maven2/org/xerial/sqlite-jdbc/3.6.20/sqlite-jdbc-3.6.20.jar",
 				"jdbc:sqlite:<path/to/database>.db");

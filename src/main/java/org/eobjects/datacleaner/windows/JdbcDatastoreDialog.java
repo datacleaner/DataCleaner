@@ -145,11 +145,14 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_passwordField = new JPasswordField(17);
 
 		if (_originalDatastore != null) {
-			_datastoreNameTextField.setText(_originalDatastore.getName());
-			_connectionStringTextField.setText(_originalDatastore.getJdbcUrl());
+			// the database driver has to be set as the first thing, because the
+			// combobox's action listener will set other field's values as well.
 			DatabaseDriverDescriptor databaseDriver = _databaseDriverCatalog
 					.getDatabaseDriverByDriverClassName(_originalDatastore.getDriverClass());
 			_databaseDriverComboBox.setSelectedItem(databaseDriver);
+
+			_datastoreNameTextField.setText(_originalDatastore.getName());
+			_connectionStringTextField.setText(_originalDatastore.getJdbcUrl());
 			_driverClassNameTextField.setText(_originalDatastore.getDriverClass());
 			_usernameTextField.setText(_originalDatastore.getUsername());
 			_passwordField.setText(_originalDatastore.getPassword());

@@ -107,6 +107,10 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 	
 	@Override
 	protected void setValue(Pattern value) {
-		_textField.setText(value.pattern());
+		if (value == null) {
+			_textField.setText("");
+		} else {
+			_textField.setText(value.pattern());
+		}
 	}
 }

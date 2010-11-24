@@ -85,7 +85,12 @@ public class FilterJobBuilderPanel extends DCPanel {
 		buttonPanel.add(_requirementButton);
 		buttonPanel.add(removeButton);
 
-		WidgetUtils.addToGridBag(buttonPanel, this, 2, 0, 1, 1, GridBagConstraints.NORTHEAST, 4);
+		int buttonPanelHeight = _descriptor.getConfiguredProperties().size();
+		if (buttonPanelHeight == 0) {
+			buttonPanelHeight = 1;
+		}
+
+		WidgetUtils.addToGridBag(buttonPanel, this, 2, 0, 1, buttonPanelHeight, GridBagConstraints.NORTHEAST, 4);
 
 		int i = 0;
 		for (ConfiguredPropertyDescriptor propertyDescriptor : _descriptor.getConfiguredProperties()) {

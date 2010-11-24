@@ -51,7 +51,9 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 		_comboBox.setEditable(false);
 
 		Dictionary currentValue = (Dictionary) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue != null) {
+		if (currentValue == null) {
+			_comboBox.setSelectedItem(null);
+		} else {
 			_comboBox.setSelectedItem(currentValue.getName());
 		}
 
@@ -76,7 +78,7 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 			_comboBox.setSelectedItem(null);
 			return;
 		}
-		
+
 		_comboBox.setSelectedItem(value.getName());
 	}
 }

@@ -97,22 +97,34 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 			if (e.getButton() != 1) {
 				return;
 			}
-			int tabIndex = tabForCoordinate(_pane, e.getX(), e.getY());
-			if (tabIndex == -1) {
-				return;
-			}
-			if (_pane.getUnclosables().contains(tabIndex)) {
-				return;
-			}
-			if (_pane.getSeparators().contains(tabIndex)) {
+			
+			
+			int clickedTabIndex = tabForCoordinate(_pane, e.getX(), e.getY());
+
+			if (clickedTabIndex == -1) {
 				return;
 			}
 
-			Rectangle r = closeRectFor(tabIndex);
+			// only allow closing windows on the same run (row of tabs) as the selected tab
+			int selectedIndex = _pane.getSelectedIndex();
+			int runIndexOfSelectedTab = getRunForTab(_pane.getTabCount(), selectedIndex);
+			int runIndexOfClickedTab = getRunForTab(_pane.getTabCount(), clickedTabIndex);
+			if (runIndexOfClickedTab != runIndexOfSelectedTab) {
+				return;
+			}
+
+			if (_pane.getUnclosables().contains(clickedTabIndex)) {
+				return;
+			}
+			if (_pane.getSeparators().contains(clickedTabIndex)) {
+				return;
+			}
+
+			Rectangle r = closeRectFor(clickedTabIndex);
 			// Check for mouse being in close box
 			if (r.contains(new Point(e.getX(), e.getY()))) {
 				// Send tab closed message
-				_pane.closeTab(tabIndex);
+				_pane.closeTab(clickedTabIndex);
 			}
 		}
 
@@ -125,6 +137,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 				return;
 			}
 			int tabIndex = tabForCoordinate(_pane, e.getX(), e.getY());
+
 			if (tabIndex == -1) {
 				return;
 			}

@@ -51,7 +51,9 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 		_comboBox.setEditable(false);
 
 		SynonymCatalog currentValue = (SynonymCatalog) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue != null) {
+		if (currentValue == null) {
+			_comboBox.setSelectedItem(null);
+		} else {
 			_comboBox.setSelectedItem(currentValue.getName());
 		}
 
@@ -61,7 +63,7 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 				fireValueChanged();
 			}
 		});
-		
+
 		add(_comboBox);
 	}
 

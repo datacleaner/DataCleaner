@@ -33,6 +33,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 
 	private static final long serialVersionUID = 1L;
 
+	private final boolean _primitive;
 	private final JTextField _textField;
 
 	public SingleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
@@ -40,6 +41,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 		super(beanJobBuilder, propertyDescriptor);
 		_textField = new JTextField(5);
 		_textField.setDocument(new NumberDocument());
+		_primitive = propertyDescriptor.getType().isPrimitive();
 		Number currentValue = (Number) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
 			_textField.setText(currentValue.toString());
@@ -63,7 +65,11 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 	public Number getValue() {
 		String text = _textField.getText();
 		if (text == null || text.length() == 0) {
-			return null;
+			if (_primitive) {
+				text = "0";
+			} else {
+				return null;
+			}
 		}
 		Class<?> type = getPropertyDescriptor().getType();
 		if (ReflectionUtils.isInteger(type)) {

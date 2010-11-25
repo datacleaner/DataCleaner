@@ -32,6 +32,7 @@ public class RunAnalysisActionListener implements ActionListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
+	private long lastClickTime = 0;
 
 	public RunAnalysisActionListener(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration) {
 		super();
@@ -41,8 +42,15 @@ public class RunAnalysisActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		long thisClickTime = System.currentTimeMillis();
+		if (thisClickTime - lastClickTime < 1000) {
+			// prevent that double clicks fire two analysis runs!
+			return;
+		}
+		lastClickTime = thisClickTime;
+
 		UsageLogger.getInstance().log("Run analysis");
-		
+
 		AnalysisJob job = _analysisJobBuilder.toAnalysisJob();
 		ResultWindow window = new ResultWindow(_configuration, job);
 		window.setVisible(true);

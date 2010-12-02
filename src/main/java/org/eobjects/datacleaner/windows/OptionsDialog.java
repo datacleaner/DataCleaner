@@ -34,7 +34,6 @@ import javax.swing.border.MatteBorder;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
-import org.eobjects.analyzer.storage.SqlDatabaseStorageProvider;
 import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -121,13 +120,6 @@ public class OptionsDialog extends AbstractWindow {
 						new HelpIcon(
 								"The storage provider is used for staging data during and after analysis, typically to store the results on disk in stead of holding everything in memory."),
 						panel, 2, row);
-
-		if (storageProvider instanceof SqlDatabaseStorageProvider) {
-			int inMemoryThreshold = ((SqlDatabaseStorageProvider) storageProvider).getInMemoryThreshold();
-			row++;
-			WidgetUtils.addToGridBag(new JLabel("Max rows kept in memory:"), panel, 0, row);
-			WidgetUtils.addToGridBag(new JLabel("" + inMemoryThreshold), panel, 1, row);
-		}
 
 		row++;
 		MultiLineLabel descriptionLabel = new MultiLineLabel(

@@ -42,6 +42,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoresListPanel;
 import org.eobjects.datacleaner.panels.DictionaryListPanel;
 import org.eobjects.datacleaner.panels.JobListPanel;
+import org.eobjects.datacleaner.panels.StringPatternListPanel;
 import org.eobjects.datacleaner.panels.SynonymCatalogListPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -129,9 +130,10 @@ public class MainWindow extends AbstractWindow {
 
 		JXTaskPane patternsTaskPane = new JXTaskPane();
 		patternsTaskPane.setFocusable(false);
-		patternsTaskPane.setTitle("Patterns");
+		patternsTaskPane.setTitle("String patterns");
 		patternsTaskPane.setIcon(imageManager.getImageIcon("images/model/pattern.png"));
 		patternsTaskPane.setCollapsed(true);
+		patternsTaskPane.add(new StringPatternListPanel(_configuration));
 		taskPaneContainer.add(patternsTaskPane);
 
 		JScrollPane scrollPane = WidgetUtils.scrolleable(taskPaneContainer);
@@ -162,11 +164,11 @@ public class MainWindow extends AbstractWindow {
 	@Override
 	public void dispose() {
 		UserPreferences.getInstance().save();
-		
+
 		// garbage collect and clean up
 		System.gc();
 		System.runFinalization();
-		
+
 		System.exit(0);
 	}
 

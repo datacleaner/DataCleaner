@@ -59,7 +59,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	public DictionaryListPanel(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
-		_catalog = (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog();
+		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addDictionaryListener(this);
 		_listPanel = new DCPanel();
 

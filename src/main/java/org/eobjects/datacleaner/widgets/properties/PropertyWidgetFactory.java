@@ -76,6 +76,8 @@ public final class PropertyWidgetFactory {
 				result = new MultipleDictionariesPropertyWidget(_beanJobBuilder, propertyDescriptor);
 			} else if (type == SynonymCatalog.class) {
 				result = new MultipleSynonymCatalogsPropertyWidget(_beanJobBuilder, propertyDescriptor);
+			} else if (type == Dictionary.class) {
+				result = new MultipleStringPatternPropertyWidget(_beanJobBuilder, propertyDescriptor);
 			} else {
 				// not yet implemented
 				result = new DummyPropertyWidget(propertyDescriptor);
@@ -97,6 +99,8 @@ public final class PropertyWidgetFactory {
 				result = new SingleDictionaryPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type == SynonymCatalog.class) {
 				result = new SingleSynonymCatalogPropertyWidget(propertyDescriptor, _beanJobBuilder);
+			} else if (type == SynonymCatalog.class) {
+				result = new SingleStringPatternPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type.isEnum()) {
 				result = new SingleEnumPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type == File.class) {

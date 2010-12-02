@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
+import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.StringUtils;
 
@@ -199,5 +200,15 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	public void removeSynonymCatalogListener(SynonymCatalogChangeListener listener) {
 		_synonymCatalogListeners.remove(listener);
+	}
+
+	@Override
+	public String[] getStringPatternNames() {
+		return _immutableDelegate.getStringPatternNames();
+	}
+
+	@Override
+	public StringPattern getStringPattern(String name) {
+		return _immutableDelegate.getStringPattern(name);
 	}
 }

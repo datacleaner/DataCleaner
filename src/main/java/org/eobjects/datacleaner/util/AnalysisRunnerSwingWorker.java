@@ -37,11 +37,14 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.windows.ResultWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.eobjects.metamodel.schema.Table;
 
-public class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultFuture, Task> implements AnalysisListener {
+public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultFuture, Task> implements AnalysisListener {
 
+	private static final Logger logger = LoggerFactory.getLogger(AnalysisRunnerSwingWorker.class);
 	private final AnalysisRunner _analysisRunner;
 	private final AnalysisJob _job;
 	private final ResultWindow _resultWindow;
@@ -57,9 +60,15 @@ public class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultFuture,
 
 	@Override
 	protected AnalysisResultFuture doInBackground() throws Exception {
-		return _analysisRunner.run(_job);
+		try {
+			return _analysisRunner.run(_job);
+		} catch (final Exception e) {
+			logger.error("Unexpected error occurred when invoking run(...) on AnalysisRunner", e);
+			errorUknown(_job, e);
+			throw e;
+		}
 	}
-
+	
 	@Override
 	protected void process(List<Task> chunks) {
 		for (Task task : chunks) {

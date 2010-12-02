@@ -162,6 +162,11 @@ public class MainWindow extends AbstractWindow {
 	@Override
 	public void dispose() {
 		UserPreferences.getInstance().save();
+		
+		// garbage collect and clean up
+		System.gc();
+		System.runFinalization();
+		
 		System.exit(0);
 	}
 

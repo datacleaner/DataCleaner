@@ -220,6 +220,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		// Run analysis
 		final JButton runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
+		final RunAnalysisActionListener runAnalysisActionListener = new RunAnalysisActionListener(_analysisJobBuilder,
+				_configuration);
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -235,7 +237,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 				// TODO: Also support exploring analyzers
 
-				new RunAnalysisActionListener(_analysisJobBuilder, _configuration).actionPerformed(e);
+				runAnalysisActionListener.actionPerformed(e);
 			}
 		});
 

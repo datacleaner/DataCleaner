@@ -42,12 +42,14 @@ public class RunAnalysisActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		long thisClickTime = System.currentTimeMillis();
-		if (thisClickTime - lastClickTime < 1000) {
-			// prevent that double clicks fire two analysis runs!
-			return;
+		synchronized (RunAnalysisActionListener.class) {
+			long thisClickTime = System.currentTimeMillis();
+			if (thisClickTime - lastClickTime < 1000) {
+				// prevent that double clicks fire two analysis runs!
+				return;
+			}
+			lastClickTime = thisClickTime;
 		}
-		lastClickTime = thisClickTime;
 
 		UsageLogger.getInstance().log("Run analysis");
 

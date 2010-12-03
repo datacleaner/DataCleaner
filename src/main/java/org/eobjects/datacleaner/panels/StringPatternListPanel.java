@@ -28,6 +28,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
@@ -98,12 +99,31 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 		for (int i = 0; i < names.length; i++) {
 
-			String name = names[i];
+			final String name = names[i];
+
+			final StringPattern sp = _catalog.getStringPattern(name);
 
 			final JLabel patternLabel = new JLabel(name, icon, JLabel.LEFT);
-
 			WidgetUtils.addToGridBag(patternLabel, _listPanel, 0, i);
+
+			if (_catalog.isStringPatternMutable(name)) {
+				final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+				removeButton.setToolTipText("Remove string pattern");
+				removeButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
+								"Are you sure you wish to remove the string pattern '" + name + "'?", "Confirm remove",
+								JOptionPane.YES_NO_OPTION);
+						if (result == JOptionPane.YES_OPTION) {
+							_catalog.removeStringPattern(sp);
+						}
+					}
+				});
+				WidgetUtils.addToGridBag(removeButton, _listPanel, 1, i);
+			}
 		}
+		updateUI();
 	}
 
 	@Override

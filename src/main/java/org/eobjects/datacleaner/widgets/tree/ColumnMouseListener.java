@@ -31,9 +31,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
 
 import dk.eobjects.metamodel.schema.Column;
 
@@ -79,6 +85,25 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 					}
 				});
 				popup.add(toggleColumnItem);
+
+				JMenuItem createDictionaryItem = WidgetFactory.createMenuItem("Create dictionary from column",
+						"images/model/dictionary.png");
+				createDictionaryItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						AnalyzerBeansConfiguration conf = WindowManager.getInstance().getMainWindow().getConfiguration();
+						MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) conf
+								.getReferenceDataCatalog();
+						DatastoreCatalog datastoreCatalog = conf.getDatastoreCatalog();
+						String datastoreName = _analysisJobBuilder.getDataContextProvider().getDatastore().getName();
+						DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreCatalog,
+								datastoreName, column.getQualifiedLabel());
+						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog(dictionary, referenceDataCatalog,
+								datastoreCatalog);
+						dialog.setVisible(true);
+					}
+				});
+				popup.add(createDictionaryItem);
 
 				JMenuItem previewMenuItem = WidgetFactory
 						.createMenuItem("Preview column", "images/actions/preview_data.png");

@@ -36,12 +36,15 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<DictionaryChangeListener>();
 	private final List<SynonymCatalog> _synonymCatalogs;
 	private final List<SynonymCatalogChangeListener> _synonymCatalogListeners = new ArrayList<SynonymCatalogChangeListener>();
+	private final List<StringPattern> _stringPatterns;
+	private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<StringPatternChangeListener>();
 	private final ReferenceDataCatalog _immutableDelegate;
 
 	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate) {
 		_immutableDelegate = immutableDelegate;
 		_dictionaries = UserPreferences.getInstance().getUserDictionaries();
 		_synonymCatalogs = UserPreferences.getInstance().getUserSynonymCatalogs();
+		_stringPatterns = UserPreferences.getInstance().getUserStringPatterns();
 
 		String[] names = _immutableDelegate.getDictionaryNames();
 		for (String name : names) {
@@ -61,6 +64,14 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 				_synonymCatalogs.remove(getSynonymCatalog(name));
 			}
 			addSynonymCatalog(_immutableDelegate.getSynonymCatalog(name));
+		}
+
+		names = _immutableDelegate.getStringPatternNames();
+		for (String name : names) {
+			if (containsStringPattern(name)) {
+				_stringPatterns.remove(getStringPattern(name));
+			}
+			addStringPattern(_immutableDelegate.getStringPattern(name));
 		}
 	}
 
@@ -90,9 +101,22 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		return _immutableDelegate.getSynonymCatalog(name) == null;
 	}
 
+	public boolean isStringPatternMutable(String name) {
+		return _immutableDelegate.getStringPattern(name) == null;
+	}
+
 	public boolean containsSynonymCatalog(String name) {
 		for (SynonymCatalog sc : _synonymCatalogs) {
 			if (name.equals(sc.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean containsStringPattern(String name) {
+		for (StringPattern sp : _stringPatterns) {
+			if (name.equals(sp.getName())) {
 				return true;
 			}
 		}
@@ -122,6 +146,33 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		if (_dictionaries.remove(dict)) {
 			for (DictionaryChangeListener listener : _dictionaryListeners) {
 				listener.onRemove(dict);
+			}
+		}
+	}
+
+	public void addStringPattern(StringPattern sp) {
+		String name = sp.getName();
+		if (StringUtils.isNullOrEmpty(name)) {
+			throw new IllegalArgumentException("StringPattern has no name!");
+		}
+		for (StringPattern stringPattern : _stringPatterns) {
+			if (name.equals(stringPattern.getName())) {
+				throw new IllegalArgumentException("StringPattern name '" + name + "' is not unique!");
+			}
+		}
+		_stringPatterns.add(sp);
+		for (StringPatternChangeListener listener : _stringPatternListeners) {
+			listener.onAdd(sp);
+		}
+	}
+
+	public void removeStringPattern(StringPattern sp) {
+		if (!isStringPatternMutable(sp.getName())) {
+			throw new IllegalArgumentException("StringPattern '" + sp.getName() + " is not removeable");
+		}
+		if (_stringPatterns.remove(sp)) {
+			for (StringPatternChangeListener listener : _stringPatternListeners) {
+				listener.onRemove(sp);
 			}
 		}
 	}
@@ -186,6 +237,27 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		return null;
 	}
 
+	@Override
+	public String[] getStringPatternNames() {
+		String[] names = new String[_stringPatterns.size()];
+		for (int i = 0; i < names.length; i++) {
+			names[i] = _stringPatterns.get(i).getName();
+		}
+		return names;
+	}
+
+	@Override
+	public StringPattern getStringPattern(String name) {
+		if (name != null) {
+			for (StringPattern sp : _stringPatterns) {
+				if (name.equals(sp.getName())) {
+					return sp;
+				}
+			}
+		}
+		return null;
+	}
+
 	public void addDictionaryListener(DictionaryChangeListener listener) {
 		_dictionaryListeners.add(listener);
 	}
@@ -202,13 +274,11 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 		_synonymCatalogListeners.remove(listener);
 	}
 
-	@Override
-	public String[] getStringPatternNames() {
-		return _immutableDelegate.getStringPatternNames();
+	public void addStringPatternListener(StringPatternChangeListener listener) {
+		_stringPatternListeners.add(listener);
 	}
 
-	@Override
-	public StringPattern getStringPattern(String name) {
-		return _immutableDelegate.getStringPattern(name);
+	public void removeStringPatternListener(StringPatternChangeListener listener) {
+		_stringPatternListeners.remove(listener);
 	}
 }

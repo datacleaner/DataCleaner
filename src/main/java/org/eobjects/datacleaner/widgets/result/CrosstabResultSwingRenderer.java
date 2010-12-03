@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.FlowLayout;
-import java.awt.Insets;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 	public DCTable render(CrosstabResult result) {
 		return render(result.getCrosstab());
 	}
-	
+
 	public DCTable render(Crosstab<?> crosstab) {
 		CrosstabRenderer renderer = new CrosstabRenderer(crosstab);
 		TableModel tableModel = renderer.render(new Callback());
@@ -150,7 +149,6 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 				sb.append(")]");
 
 				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
-				button.setMargin(new Insets(0, 0, 0, 0));
 				button.addActionListener(new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer));
 				panel.add(Box.createHorizontalStrut(4));
 				panel.add(button);

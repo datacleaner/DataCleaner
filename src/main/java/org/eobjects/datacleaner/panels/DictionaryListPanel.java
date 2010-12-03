@@ -65,10 +65,10 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
-		final JButton addMenuItem = new JButton("New dictionary",
+		final JButton addButton = new JButton("New dictionary",
 				imageManager.getImageIcon("images/actions/new.png"));
-		addMenuItem.setToolTipText("New dictionary");
-		addMenuItem.addActionListener(new ActionListener() {
+		addButton.setToolTipText("New dictionary");
+		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popup = new JPopupMenu();
@@ -104,10 +104,10 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				popup.add(textFileDictionaryMenuItem);
 				popup.add(simpleDictionaryMenuItem);
 
-				popup.show(addMenuItem, 0, addMenuItem.getHeight());
+				popup.show(addButton, 0, addButton.getHeight());
 			}
 		});
-		toolBar.add(addMenuItem);
+		toolBar.add(addButton);
 
 		updateComponents();
 

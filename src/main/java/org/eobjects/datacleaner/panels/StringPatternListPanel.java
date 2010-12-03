@@ -20,21 +20,27 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.user.StringPatternChangeListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 
-public class StringPatternListPanel extends DCPanel {
+public class StringPatternListPanel extends DCPanel implements StringPatternChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,14 +53,33 @@ public class StringPatternListPanel extends DCPanel {
 		super();
 		_configuration = configuration;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
+		_catalog.addStringPatternListener(this);
 		_listPanel = new DCPanel();
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
-		final JButton addMenuItem = new JButton("New pattern", imageManager.getImageIcon("images/actions/new.png"));
-		addMenuItem.setToolTipText("New pattern");
-		addMenuItem.setEnabled(false);
-		toolBar.add(addMenuItem);
+		final JButton addButton = new JButton("New string pattern", imageManager.getImageIcon("images/actions/new.png"));
+		addButton.setToolTipText("New string pattern");
+		addButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JPopupMenu popup = new JPopupMenu();
+
+				JMenuItem regexStringPatternMenuItem = WidgetFactory.createMenuItem("Regular expression pattern",
+						imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
+				regexStringPatternMenuItem.setEnabled(false);
+
+				JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern",
+						imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
+				simpleStringPatternMenuItem.setEnabled(false);
+
+				popup.add(regexStringPatternMenuItem);
+				popup.add(simpleStringPatternMenuItem);
+
+				popup.show(addButton, 0, addButton.getHeight());
+			}
+		});
+		toolBar.add(addButton);
 
 		updateComponents();
 
@@ -79,6 +104,16 @@ public class StringPatternListPanel extends DCPanel {
 
 			WidgetUtils.addToGridBag(patternLabel, _listPanel, 0, i);
 		}
+	}
+
+	@Override
+	public void onAdd(StringPattern stringPattern) {
+		updateComponents();
+	}
+
+	@Override
+	public void onRemove(StringPattern stringPattern) {
+		updateComponents();
 	}
 
 }

@@ -60,9 +60,9 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
-		final JButton addMenuItem = new JButton("New synonym catalog", imageManager.getImageIcon("images/actions/new.png"));
-		addMenuItem.setToolTipText("New synonym catalog");
-		addMenuItem.addActionListener(new ActionListener() {
+		final JButton addButton = new JButton("New synonym catalog", imageManager.getImageIcon("images/actions/new.png"));
+		addButton.setToolTipText("New synonym catalog");
+		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JPopupMenu popup = new JPopupMenu();
@@ -89,10 +89,10 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				popup.add(textFileSynonymCatalogMenuItem);
 				popup.add(simpleSynonymCatalogMenuItem);
 
-				popup.show(addMenuItem, 0, addMenuItem.getHeight());
+				popup.show(addButton, 0, addButton.getHeight());
 			}
 		});
-		toolBar.add(addMenuItem);
+		toolBar.add(addButton);
 
 		updateComponents();
 

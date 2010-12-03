@@ -31,13 +31,14 @@ import java.util.List;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
+import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UserPreferences implements Serializable {
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
 	private static final File userPreferencesFile = new File("userpreferences.dat");
 	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
@@ -47,6 +48,7 @@ public class UserPreferences implements Serializable {
 	private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
 	private List<Datastore> userDatastores = new ArrayList<Datastore>();
 	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
+	private List<StringPattern> userStringPatterns = new ArrayList<StringPattern>();
 	private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
 
 	private String username;
@@ -196,5 +198,12 @@ public class UserPreferences implements Serializable {
 			databaseDrivers = new ArrayList<UserDatabaseDriver>();
 		}
 		return databaseDrivers;
+	}
+
+	public List<StringPattern> getUserStringPatterns() {
+		if (userStringPatterns == null) {
+			userStringPatterns = new ArrayList<StringPattern>();
+		}
+		return userStringPatterns;
 	}
 }

@@ -44,7 +44,7 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Configured
 	File file;
-	
+
 	@Override
 	public void configureForOutcome(FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
 		file = new File("output-" + descriptor.getDisplayName() + "-" + categoryName + ".csv");
@@ -54,12 +54,12 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	public OutputWriter getOutputWriter() {
 		if (_outputWriter == null) {
 			synchronized (this) {
-				String[] headers = new String[columns.length];
-				for (int i = 0; i < headers.length; i++) {
-					headers[i] = columns[i].getName();
-				}
-
 				if (_outputWriter == null) {
+					String[] headers = new String[columns.length];
+					for (int i = 0; i < headers.length; i++) {
+						headers[i] = columns[i].getName();
+					}
+
 					_outputWriter = CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar,
 							columns);
 				}

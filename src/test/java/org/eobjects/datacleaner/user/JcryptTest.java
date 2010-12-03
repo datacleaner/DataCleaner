@@ -17,20 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.util;
+package org.eobjects.datacleaner.user;
 
-import java.io.Serializable;
-import java.util.Comparator;
+import junit.framework.TestCase;
 
-import org.eobjects.analyzer.descriptors.BeanDescriptor;
+public class JcryptTest extends TestCase {
 
-public class DisplayNameComparator implements Comparator<BeanDescriptor<?>>, Serializable {
-
-	private static final long serialVersionUID = 1L;
-
-	@Override
-	public int compare(BeanDescriptor<?> o1, BeanDescriptor<?> o2) {
-		return o1.getDisplayName().compareTo(o2.getDisplayName());
+	// just some examples of crypts to make sure that refactorings etc. to the
+	// Jcrypt algorhitm are non-destructive
+	public void testCrypt() throws Exception {
+		assertEquals("henl.jovt9g8U", Jcrypt.crypt("hello", "world"));
+		assertEquals("hiWZrYCQu7uAQ", Jcrypt.crypt("hi", "world"));
+		assertEquals("he/1NK2XEqfVo", Jcrypt.crypt("hello", "there"));
+		assertEquals("hi89qWRBmF6qs", Jcrypt.crypt("hi", "there"));
+		assertEquals("HE2G1BmcTTZTA", Jcrypt.crypt("HELLO", "there"));
+		assertEquals("so.Aionqu/AZQ", Jcrypt.crypt("some_password", "_!$@&mrrrh\"()"));
+		assertEquals("thggyIaR6Y8NY", Jcrypt.crypt("there", "there"));
 	}
-
 }

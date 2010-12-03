@@ -116,8 +116,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
 			_inputColumns.removeAll(outputColumns);
 		}
-
-		_checkBoxes = new JCheckBox[_inputColumns.size()];
+		
 		if (_inputColumns.isEmpty()) {
 			_checkBoxes = new JCheckBox[1];
 			_checkBoxes[0] = new JCheckBox("- no columns available -");
@@ -125,6 +124,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			_checkBoxes[0].setEnabled(false);
 			add(_checkBoxes[0]);
 		} else {
+			_checkBoxes = new JCheckBox[_inputColumns.size()];
 			int i = 0;
 			for (InputColumn<?> inputColumn : _inputColumns) {
 				JCheckBox checkBox = new JCheckBox(inputColumn.getName(), isEnabled(inputColumn, currentValue));
@@ -201,7 +201,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		// we need to save the current value before we update the components
 		// here. Otherwise any previous selections will be lost.
 		getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), getValue());
-		
+
 		updateComponents();
 		updateUI();
 	}

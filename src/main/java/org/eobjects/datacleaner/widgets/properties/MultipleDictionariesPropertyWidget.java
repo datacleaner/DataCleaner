@@ -165,7 +165,7 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 			String text = checkBox.getText();
 			boolean enabled = false;
 			for (Dictionary dictionary : value) {
-				if (text.equals(dictionary)) {
+				if (text.equals(dictionary.getName())) {
 					enabled = true;
 					break;
 				}

@@ -19,7 +19,11 @@
  */
 package org.eobjects.datacleaner.database;
 
-final class DatabaseDescriptorImpl implements DatabaseDriverDescriptor {
+import java.util.List;
+
+import dk.eobjects.metamodel.util.BaseObject;
+
+final class DatabaseDescriptorImpl extends BaseObject implements DatabaseDriverDescriptor {
 
 	private static final long serialVersionUID = 1L;
 	private final String _displayName;
@@ -75,5 +79,14 @@ final class DatabaseDescriptorImpl implements DatabaseDriverDescriptor {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	protected void decorateIdentity(List<Object> identifiers) {
+		identifiers.add(_displayName);
+		identifiers.add(_iconImagePath);
+		identifiers.add(_driverClassName);
+		identifiers.add(_downloadUrls);
+		identifiers.add(_connectionUrlTemplates);
 	}
 }

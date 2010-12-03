@@ -29,7 +29,7 @@ import java.awt.Insets;
  * This is a slightly rewritten/modified version of swingutil's
  * ClosableTabbedPane
  */
-final class Packer extends GridBagLayout {
+final class Packer extends GridBagLayout implements Cloneable {
 
 	private static final long serialVersionUID = 5315740263318700891L;
 
@@ -79,8 +79,13 @@ final class Packer extends GridBagLayout {
 	 *                if strange clone errors occur
 	 */
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public Packer clone() {
+		try {
+			return (Packer) super.clone();
+		} catch (CloneNotSupportedException e) {
+			// should never happen
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -94,12 +99,8 @@ final class Packer extends GridBagLayout {
 	 */
 	public Packer setContainer(Container cont) throws IllegalAccessException {
 		if (container != null) {
-			try {
-				Packer p = (Packer) clone();
-				container.setLayout(p);
-			} catch (CloneNotSupportedException e) {
-				throw new IllegalAccessException();
-			}
+			Packer p = (Packer) clone();
+			container.setLayout(p);
 		}
 		container = cont;
 		cont.setLayout(this);
@@ -126,8 +127,7 @@ final class Packer extends GridBagLayout {
 		// Get a copy of the components constraints
 		gc = getConstraints(comp);
 		if (gc == null)
-			throw new IllegalArgumentException(comp
-					+ " has no existing constraints");
+			throw new IllegalArgumentException(comp + " has no existing constraints");
 		setConstraints(comp, gc);
 		return this;
 	}
@@ -140,8 +140,7 @@ final class Packer extends GridBagLayout {
 	public void setInitialConstraintsFrom(Component comp) {
 		gc = getConstraints(comp);
 		if (gc == null)
-			throw new IllegalArgumentException(comp
-					+ " has no existing constraints");
+			throw new IllegalArgumentException(comp + " has no existing constraints");
 		setConstraints(comp, gc);
 	}
 

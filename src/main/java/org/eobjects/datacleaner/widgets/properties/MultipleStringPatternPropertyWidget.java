@@ -165,7 +165,7 @@ public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<
 			String text = checkBox.getText();
 			boolean enabled = false;
 			for (StringPattern stringPattern : value) {
-				if (text.equals(stringPattern)) {
+				if (text.equals(stringPattern.getName())) {
 					enabled = true;
 					break;
 				}

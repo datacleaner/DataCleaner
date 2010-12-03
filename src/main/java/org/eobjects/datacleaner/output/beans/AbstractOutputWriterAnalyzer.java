@@ -30,7 +30,6 @@ import org.eobjects.datacleaner.output.OutputWriter;
 public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnalyzer<OutputAnalyzerResult> {
 
 	@Configured
-	protected
 	InputColumn<?>[] columns;
 
 	@Override

@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -65,14 +67,19 @@ public final class UserDatabaseDriver implements Serializable {
 
 	public UserDatabaseDriver loadDriver() throws IllegalStateException {
 		try {
-			URL[] urls = new URL[_files.length];
+			final URL[] urls = new URL[_files.length];
 			for (int i = 0; i < urls.length; i++) {
 				URL url = _files[i].toURI().toURL();
 				logger.debug("Using URL: {}", url);
 				urls[i] = url;
 			}
 
-			URLClassLoader classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+			URLClassLoader classLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+				@Override
+				public URLClassLoader run() {
+					return new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+				}
+			});
 
 			Class<?> loadedClass = Class.forName(_driverClassName, true, classLoader);
 			logger.info("Loaded class: {}", loadedClass.getName());

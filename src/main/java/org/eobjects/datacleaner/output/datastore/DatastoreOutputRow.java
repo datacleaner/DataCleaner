@@ -26,8 +26,12 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.datacleaner.output.OutputRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class DatastoreOutputRow implements OutputRow {
+
+	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputRow.class);
 
 	private final PreparedStatement _st;
 	private final InputColumn<?>[] _columns;
@@ -59,12 +63,14 @@ final class DatastoreOutputRow implements OutputRow {
 
 	@Override
 	public void write() {
+		logger.info("Writing row based on statement: {}", _st);
 		try {
 			_st.executeUpdate();
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
+		} finally {
+			SqlDatabaseUtils.safeClose(null, _st);
 		}
-		SqlDatabaseUtils.safeClose(null, _st);
 	}
 
 	@Override

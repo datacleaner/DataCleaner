@@ -95,7 +95,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 			JXTaskPane taskPane = new JXTaskPane();
 			taskPane.setIcon(imageManager.getImageIcon("images/actions/drill-to-detail.png"));
 			taskPane.setFocusable(false);
-			taskPane.setTitle(analyzerResult.getClass().getSimpleName());
+			taskPane.setTitle("Detailed result");
 			taskPane.add(component);
 
 			taskPaneContainer.add(taskPane);

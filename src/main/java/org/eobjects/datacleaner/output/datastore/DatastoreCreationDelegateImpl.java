@@ -23,6 +23,8 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.WindowManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of the DatastoreCreationDelegate.
@@ -31,10 +33,17 @@ import org.eobjects.datacleaner.util.WindowManager;
  */
 public class DatastoreCreationDelegateImpl implements DatastoreCreationDelegate {
 
+	private static final Logger logger = LoggerFactory.getLogger(DatastoreCreationDelegateImpl.class);
+
 	@Override
 	public void createDatastore(Datastore datastore) {
-		AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
-		MutableDatastoreCatalog datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
-		datastoreCatalog.addDatastore(datastore);
+		final AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+		final MutableDatastoreCatalog datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
+		final String name = datastore.getName();
+		if (datastoreCatalog.containsDatastore(name)) {
+			logger.warn("Datastore '{}' already exists. No new datastore will be created!", name);
+		} else {
+			datastoreCatalog.addDatastore(datastore);
+		}
 	}
 }

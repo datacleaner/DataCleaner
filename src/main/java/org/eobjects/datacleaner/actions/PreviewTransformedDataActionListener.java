@@ -51,6 +51,8 @@ import dk.eobjects.metamodel.schema.Table;
 
 public final class PreviewTransformedDataActionListener implements ActionListener {
 
+	private static final int DEFAULT_PREVIEW_ROWS = 400;
+
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 
@@ -92,7 +94,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 		DataContext dc = _analysisJobBuilder.getDataContextProvider().getDataContext();
 		Query q = dc.query().from(table).select(physicalColumns.toArray(new Column[physicalColumns.size()])).toQuery();
-		q.setMaxRows(400);
+		q.setMaxRows(DEFAULT_PREVIEW_ROWS);
 
 		List<InputRow> result = new ArrayList<InputRow>();
 

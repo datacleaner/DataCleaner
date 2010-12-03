@@ -34,7 +34,7 @@ public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnaly
 	InputColumn<?>[] columns;
 
 	@Override
-	public OutputAnalyzerResult getResult() {
+	public final OutputAnalyzerResult getResult() {
 		getOutputWriter().close();
 		return new OutputAnalyzerResult();
 	}

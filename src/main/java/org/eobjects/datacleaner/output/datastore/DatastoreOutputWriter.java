@@ -31,8 +31,12 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class DatastoreOutputWriter implements OutputWriter {
+
+	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriter.class);
 
 	private final String _datastoreName;
 	private final File _outputFile;
@@ -59,6 +63,8 @@ final class DatastoreOutputWriter implements OutputWriter {
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
 		}
+
+		SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE DATASET IF EXISTS");
 
 		// create a CREATE TABLE statement and execute it
 		StringBuilder sb = new StringBuilder();
@@ -101,8 +107,10 @@ final class DatastoreOutputWriter implements OutputWriter {
 	@Override
 	public void close() {
 		try {
+			logger.info("Closing connection: {}", _connection);
 			_connection.close();
 		} catch (SQLException e) {
+			logger.error("Could not close connection", e);
 			throw new IllegalStateException(e);
 		}
 		String url = DatastoreOutputUtils.getReadOnlyJdbcUrl(_outputFile);

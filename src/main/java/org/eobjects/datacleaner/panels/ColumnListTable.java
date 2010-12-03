@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Collection;
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -44,6 +47,7 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.InputColumnComparator;
 import org.eobjects.datacleaner.actions.AddQuickFilterActionListener;
 import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
+import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -85,11 +89,22 @@ public final class ColumnListTable extends DCPanel {
 		setLayout(new BorderLayout());
 
 		if (table != null) {
+			DCPanel headerPanel = new DCPanel();
+			headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 			JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(), imageManager.getImageIcon(
 					"images/model/column.png", IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
 			tableNameLabel.setOpaque(false);
 			tableNameLabel.setFont(WidgetUtils.FONT_HEADER);
-			add(tableNameLabel, BorderLayout.NORTH);
+
+			JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
+			previewButton.setToolTipText("Preview table rows");
+			previewButton.addActionListener(new PreviewSourceDataActionListener(
+					_analysisJobBuilder.getDataContextProvider(), _columns));
+
+			headerPanel.add(tableNameLabel);
+			headerPanel.add(Box.createHorizontalStrut(4));
+			headerPanel.add(previewButton);
+			add(headerPanel, BorderLayout.NORTH);
 		}
 
 		_columnTable = new DCTable(headers);
@@ -114,7 +129,7 @@ public final class ColumnListTable extends DCPanel {
 		TableModel model = new DefaultTableModel(headers, _columns.size());
 		int i = 0;
 		Icon icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
-		for (InputColumn<?> column : _columns) {
+		for (final InputColumn<?> column : _columns) {
 			if (column instanceof MutableInputColumn<?>) {
 				final JXTextField textField = WidgetFactory.createTextField("Column name");
 				textField.setText(column.getName());
@@ -152,10 +167,22 @@ public final class ColumnListTable extends DCPanel {
 			filterButton.addActionListener(new AddQuickFilterActionListener(filterButton, _configuration,
 					_analysisJobBuilder, column));
 
+			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			removeButton.setToolTipText("Remove column from source");
+			removeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					_analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn());
+				}
+			});
+
 			DCPanel buttonPanel = new DCPanel();
 			buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
 			buttonPanel.add(transformButton);
 			buttonPanel.add(filterButton);
+			if (column.isPhysicalColumn()) {
+				buttonPanel.add(removeButton);
+			}
 
 			model.setValueAt(buttonPanel, i, 2);
 			i++;

@@ -47,7 +47,7 @@
 
 	<multithreaded-taskrunner max-threads="20" />
 
-	<in-memory-storage-provider/>
+	<in-memory-storage-provider max-rows-threshold="1000" />
 
 	<classpath-scanner>
 		<package recursive="true">org.eobjects.analyzer.beans</package>

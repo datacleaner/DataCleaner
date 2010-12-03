@@ -106,7 +106,9 @@ public final class DetailsResultWindow extends AbstractWindow {
 		panel.add(WidgetUtils.scrolleable(taskPaneContainer), BorderLayout.CENTER);
 
 		Dimension preferredSize = panel.getPreferredSize();
-		panel.setPreferredSize(preferredSize.width, preferredSize.height + 100);
+		int height = preferredSize.height < 400 ? preferredSize.height + 100 : preferredSize.height;
+		int width = preferredSize.width < 500 ? 500 : preferredSize.width;
+		panel.setPreferredSize(width, height);
 
 		return panel;
 	}

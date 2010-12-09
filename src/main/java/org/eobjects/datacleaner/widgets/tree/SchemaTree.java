@@ -35,6 +35,7 @@ import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
+import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -60,7 +61,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
 	public static final String ROOT_NODE_STRING = "Schemas";
 
-	private final Datastore _datastore;
+	private final DataContextProvider _dataContextProvider;
 	private final TreeCellRenderer _rendererDelegate;
 
 	public SchemaTree(Datastore datastore) {
@@ -74,7 +75,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		}
 		_rendererDelegate = new DefaultTreeRenderer();
 		setCellRenderer(this);
-		_datastore = datastore;
+		_dataContextProvider = datastore.getDataContextProvider();
 		setOpaque(false);
 		addTreeWillExpandListener(this);
 		if (analysisJobBuilder != null) {
@@ -84,11 +85,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		}
 		updateTree();
 	}
-
+	
 	private void updateTree() {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		rootNode.setUserObject(_datastore);
-		Schema[] schemas = _datastore.getDataContextProvider().getDataContext().getSchemas();
+		rootNode.setUserObject(_dataContextProvider.getDatastore());
+		Schema[] schemas = _dataContextProvider.getSchemaNavigator().getSchemas();
 
 		// make sure that information schemas are arranged at the top
 		Arrays.sort(schemas, new Comparator<Schema>() {
@@ -186,6 +187,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		for (MouseListener mouseListener : mouseListeners) {
 			removeMouseListener(mouseListener);
 		}
+		_dataContextProvider.close();
 	}
 
 	@Override

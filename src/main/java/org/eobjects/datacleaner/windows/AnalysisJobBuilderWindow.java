@@ -42,6 +42,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -94,6 +95,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final Datastore _datastore;
+	private final DataContextProvider _dataContextProvider;
 	private final CloseableTabbedPane _tabbedPane;
 	private final FilterListPanel _filterListPanel;
 	private final JLabel _statusLabel = new JLabel();
@@ -120,6 +122,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb, Datastore datastore) {
 		_configuration = configuration;
 		_datastore = datastore;
+		_dataContextProvider = _datastore.getDataContextProvider();
 		_analysisJobBuilder = ajb;
 		_analysisJobBuilder.setDatastore(datastore);
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
@@ -174,6 +177,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		if (windowClosing) {
 			_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
 			_analysisJobBuilder.getTransformerChangeListeners().remove(this);
+			_analysisJobBuilder.close();
+			_dataContextProvider.close();
 		}
 		return windowClosing;
 	}

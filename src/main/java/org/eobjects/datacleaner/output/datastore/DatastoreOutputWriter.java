@@ -113,7 +113,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 			logger.error("Could not close connection", e);
 			throw new IllegalStateException(e);
 		}
-		String url = DatastoreOutputUtils.getReadOnlyJdbcUrl(_outputFile);
+		String url = DatastoreOutputUtils.getJdbcUrl(_outputFile);
 
 		Datastore datastore = new JdbcDatastore(_datastoreName, url, "org.hsqldb.jdbcDriver", "SA", "");
 

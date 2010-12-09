@@ -74,6 +74,14 @@ final class DatastoreOutputRow implements OutputRow {
 	}
 
 	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		if (!_st.isClosed()) {
+			_st.cancel();
+		}
+	}
+
+	@Override
 	public OutputRow setValues(InputRow row) {
 		for (InputColumn<?> column : _columns) {
 			Object value = row.getValue(column);

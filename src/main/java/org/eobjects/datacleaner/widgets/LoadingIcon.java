@@ -17,14 +17,28 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.util;
+package org.eobjects.datacleaner.widgets;
 
-public final class LabelConstants {
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
-	public static final String NULL_LABEL = "<null>";
+import org.eobjects.datacleaner.util.ImageManager;
 
-	public static final String UNIQUE_LABEL = "<unique>";
+public class LoadingIcon extends JLabel {
 
-	public static final String COUNT_LABEL = "COUNT(*)";
+	private static final long serialVersionUID = 1L;
 
+	private final ImageIcon icon = ImageManager.getInstance().getImageIcon("images/status/loading.gif");
+
+	public LoadingIcon() {
+		super();
+		setIcon(icon);
+		icon.setImageObserver(this);
+	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		icon.setImageObserver(null);
+	}
 }

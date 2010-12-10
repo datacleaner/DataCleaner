@@ -48,6 +48,11 @@ public final class ImageManager {
 	}
 
 	public ImageIcon getImageIcon(String imagePath) {
+		if (imagePath.endsWith(".gif")) {
+			// animated gif's will loose their animations if loaded as images
+			URL url = ResourceManager.getInstance().getUrl(imagePath);
+			return new ImageIcon(url);
+		}
 		return new ImageIcon(getImage(imagePath));
 	}
 

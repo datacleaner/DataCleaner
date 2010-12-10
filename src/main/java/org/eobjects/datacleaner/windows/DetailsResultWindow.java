@@ -47,11 +47,14 @@ public final class DetailsResultWindow extends AbstractWindow {
 	private final static ImageManager imageManager = ImageManager.getInstance();
 	private final List<AnalyzerResult> _results;
 	private final String _title;
+	private final JXTaskPaneContainer _taskPaneContainer;
 
 	public DetailsResultWindow(String title, List<AnalyzerResult> results) {
 		super();
 		_title = title;
 		_results = results;
+		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+		_taskPaneContainer.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
 	}
 
 	@Override
@@ -76,34 +79,27 @@ public final class DetailsResultWindow extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
-		RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider());
-
-		JXTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
-		taskPaneContainer.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
-
-		for (AnalyzerResult analyzerResult : _results) {
-			Renderer<? super AnalyzerResult, ? extends JComponent> renderer = renderFactory.getRenderer(analyzerResult,
-					SwingRenderingFormat.class);
-			JComponent component;
-			if (renderer == null) {
-				component = new JTextArea(analyzerResult.toString());
-			} else {
-				component = renderer.render(analyzerResult);
+		if (!_results.isEmpty()) {
+			AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider());
+			
+			for (AnalyzerResult analyzerResult : _results) {
+				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = renderFactory.getRenderer(analyzerResult,
+						SwingRenderingFormat.class);
+				JComponent component;
+				if (renderer == null) {
+					component = new JTextArea(analyzerResult.toString());
+				} else {
+					component = renderer.render(analyzerResult);
+				}
+				
+				addRenderedResult(component);
 			}
-
-			JXTaskPane taskPane = new JXTaskPane();
-			taskPane.setIcon(imageManager.getImageIcon("images/actions/drill-to-detail.png"));
-			taskPane.setFocusable(false);
-			taskPane.setTitle("Detailed result");
-			taskPane.add(component);
-
-			taskPaneContainer.add(taskPane);
 		}
 
 		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_LESS_DARK);
 		panel.setLayout(new BorderLayout());
-		panel.add(WidgetUtils.scrolleable(taskPaneContainer), BorderLayout.CENTER);
+		panel.add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 
 		Dimension preferredSize = panel.getPreferredSize();
 		int height = preferredSize.height < 400 ? preferredSize.height + 100 : preferredSize.height;
@@ -111,6 +107,16 @@ public final class DetailsResultWindow extends AbstractWindow {
 		panel.setPreferredSize(width, height);
 
 		return panel;
+	}
+
+	public void addRenderedResult(JComponent component) {
+		JXTaskPane taskPane = new JXTaskPane();
+		taskPane.setIcon(imageManager.getImageIcon("images/actions/drill-to-detail.png"));
+		taskPane.setFocusable(false);
+		taskPane.setTitle("Detailed result");
+		taskPane.add(component);
+
+		_taskPaneContainer.add(taskPane);
 	}
 
 }

@@ -22,7 +22,8 @@ package org.eobjects.datacleaner.windows;
 import java.awt.BorderLayout;
 
 import javax.swing.JComponent;
-import javax.swing.JTextArea;
+import javax.swing.JLabel;
+import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
@@ -33,42 +34,48 @@ import org.eobjects.analyzer.job.MergeInput;
 import org.eobjects.analyzer.job.MergedOutcome;
 import org.eobjects.analyzer.job.MergedOutcomeJob;
 import org.eobjects.analyzer.job.Outcome;
+import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Panel that displays a collection of results in task panes.
+ * 
+ * @author Kasper Sørensen
+ */
 public class ResultListPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final Logger logger = LoggerFactory.getLogger(ResultListPanel.class);
+
 	private final RendererFactory _rendererFactory;
 	private final JXTaskPaneContainer _taskPaneContainer;
+	private final ProgressInformationPanel _progressInformationPanel;
 
-	public ResultListPanel(RendererFactory rendererFactory) {
+	public ResultListPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_rendererFactory = rendererFactory;
 		setLayout(new BorderLayout());
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+		_progressInformationPanel = progressInformationPanel;
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
 
-	public void addResult(AnalyzerJob analyzerJob, AnalyzerResult result) {
-		Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result,
-				SwingRenderingFormat.class);
-		JComponent component;
-		if (renderer == null) {
-			component = new JTextArea(result.toString());
-		} else {
-			component = renderer.render(result);
-		}
-		JXTaskPane taskPane = new JXTaskPane();
+	public void addResult(final AnalyzerJob analyzerJob, final AnalyzerResult result) {
+		final JXTaskPane taskPane = new JXTaskPane();
 		taskPane.setFocusable(false);
 
 		AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
@@ -101,12 +108,45 @@ public class ResultListPanel extends DCPanel {
 			sb.append(")");
 		}
 
-		taskPane.setTitle(sb.toString());
-		taskPane.add(component);
+		final String resultLabel = sb.toString();
+		taskPane.setTitle(resultLabel);
+		taskPane.add(new LoadingIcon());
+		_progressInformationPanel.addUserLog("Rendering result for " + resultLabel);
 
 		synchronized (this) {
 			_taskPaneContainer.add(taskPane);
 		}
+
+		// use a swing worker to run the rendering in the background
+		new SwingWorker<JComponent, Task>() {
+
+			@Override
+			protected JComponent doInBackground() throws Exception {
+				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result,
+						SwingRenderingFormat.class);
+				if (renderer == null) {
+					throw new IllegalStateException("No renderer found for result type " + result.getClass().getName());
+				}
+				JComponent component = renderer.render(result);
+				return component;
+			}
+
+			protected void done() {
+				taskPane.removeAll();
+				JComponent component;
+				try {
+					component = get();
+					taskPane.add(component);
+					_progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
+				} catch (Exception e) {
+					logger.error("Error occurred while rendering result", e);
+					_progressInformationPanel.addUserLog("Error occurred while rendering result", e);
+					taskPane.add(new JLabel("An error occurred while rendering result, check the status tab"));
+				}
+				taskPane.updateUI();
+			};
+
+		}.execute();
 	}
 
 	private void appendRequirement(StringBuilder sb, Outcome req) {

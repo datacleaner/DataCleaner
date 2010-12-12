@@ -126,11 +126,15 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 				}
 
 				createGroups(valueCounts);
+				
+				for (PieSliceGroup group : _groups.values()) {
+					_dataset.setValue(group.getName(), group.getTotalCount());
+				}
+				
+				for (ValueCount valueCount : valueCounts) {
+					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
+				}
 			}
-		}
-
-		for (PieSliceGroup group : _groups.values()) {
-			_dataset.setValue(group.getName(), group.getTotalCount());
 		}
 
 		logger.info("Rendering with {} slices", _dataset.getItemCount());
@@ -221,6 +225,11 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 					// frequency, none can be lower
 					break;
 				}
+			}
+			
+			if (groupFrequency < previousGroupFrequency) {
+				// could not find next group frequency - stop searching
+				break;
 			}
 
 			final String groupName = "<count=" + groupFrequency + ">";

@@ -54,7 +54,8 @@ public final class WidgetUtils {
 	public static final Font FONT_NORMAL = new FontUIResource("SansSerif", Font.PLAIN, 12);
 	public static final Font FONT_SMALL = new FontUIResource("SansSerif", Font.PLAIN, 10);
 
-	// the three blue variants in the DataCleaner logo (#5594dd, #235da0, #023a7c)
+	// the three blue variants in the DataCleaner logo (#5594dd, #235da0,
+	// #023a7c)
 	public static final Color BG_COLOR_BLUE_BRIGHT = new ColorUIResource(85, 148, 221);
 	public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(35, 93, 160);
 	public static final Color BG_COLOR_BLUE_DARK = new ColorUIResource(2, 58, 124);
@@ -96,6 +97,11 @@ public final class WidgetUtils {
 	 */
 	public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory.createAlternateStriping(BG_COLOR_BRIGHT,
 			BG_COLOR_BRIGHTEST);
+
+	/**
+	 * Slightly moderated version of COLOR.FACTOR
+	 */
+	private static final double COLOR_SCALE_FACTOR = 0.9;
 
 	private WidgetUtils() {
 		// prevent instantiation
@@ -214,5 +220,48 @@ public final class WidgetUtils {
 		scroll.setOpaque(false);
 		scroll.getViewport().setOpaque(false);
 		return scroll;
+	}
+
+	/**
+	 * Moderated version of Color.darker()
+	 * 
+	 * @param color
+	 * @return
+	 */
+	public static Color slightlyDarker(Color color) {
+		return new Color(Math.max((int) (color.getRed() * COLOR_SCALE_FACTOR), 0), Math.max(
+				(int) (color.getGreen() * COLOR_SCALE_FACTOR), 0), Math.max((int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
+	}
+
+	/**
+	 * Moderated version of Color.brighter()
+	 * 
+	 * @param color
+	 * @return
+	 */
+	public static Color slightlyBrighter(Color color) {
+		int r = color.getRed();
+		int g = color.getGreen();
+		int b = color.getBlue();
+
+		/*
+		 * From 2D group: 1. black.brighter() should return grey 2. applying
+		 * brighter to blue will always return blue, brighter 3. non pure color
+		 * (non zero rgb) will eventually return white
+		 */
+		int i = (int) (1.0 / (1.0 - COLOR_SCALE_FACTOR));
+		if (r == 0 && g == 0 && b == 0) {
+			return new Color(i, i, i);
+		}
+		
+		if (r > 0 && r < i)
+			r = i;
+		if (g > 0 && g < i)
+			g = i;
+		if (b > 0 && b < i)
+			b = i;
+
+		return new Color(Math.min((int) (r / COLOR_SCALE_FACTOR), 255), Math.min((int) (g / COLOR_SCALE_FACTOR), 255),
+				Math.min((int) (b / COLOR_SCALE_FACTOR), 255));
 	}
 }

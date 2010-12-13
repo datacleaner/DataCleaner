@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.io.File;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.util.LabelConstants;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
 import org.jfree.chart.ChartFactory;
@@ -62,6 +64,8 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.PieSectionEntity;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.title.TextTitle;
 import org.jfree.data.general.DefaultPieDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +113,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		if (uniqueValues != null && !uniqueValues.isEmpty()) {
 			PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelConstants.UNIQUE_LABEL, uniqueValues, 1);
 			_groups.put(pieSliceGroup.getName(), pieSliceGroup);
+		} else {
+			_dataset.setValue(LabelConstants.UNIQUE_LABEL, result.getUniqueCount());
 		}
 
 		// create a special slice for null values
@@ -162,10 +168,48 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		// table for drill-to-detail information
 		final DCTable drillableValuesTable = new DCTable("Value", LabelConstants.COUNT_LABEL);
+		{
+			final TableModel model = new DefaultTableModel(new String[] { "Value", LabelConstants.COUNT_LABEL },
+					_dataset.getItemCount());
+			for (int i = 0; i < _dataset.getItemCount(); i++) {
+				final String key = (String) _dataset.getKey(i);
+				final int count = _dataset.getValue(i).intValue();
+				model.setValueAt(key, i, 0);
+				model.setValueAt(count, i, 1);
+			}
+			drillableValuesTable.setModel(model);
+		}
 
 		// chart for display of the dataset
 		final JFreeChart chart = ChartFactory.createPieChart3D(columnName, _dataset, false, true, false);
-		chart.setTextAntiAlias(true);
+
+		// code-block for tweaking style and coloring of chart
+		{
+			chart.setTextAntiAlias(true);
+			chart.setTitle(new TextTitle(columnName, WidgetUtils.FONT_HEADER));
+			final PiePlot plot = (PiePlot) chart.getPlot();
+			plot.setLabelFont(WidgetUtils.FONT_SMALL);
+			plot.setSectionOutlinesVisible(false);
+			Color nextGroupColor = WidgetUtils.BG_COLOR_MEDIUM;
+			Color nextSingleItemColor = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
+			for (int i = 0; i < _dataset.getItemCount(); i++) {
+				final String key = (String) _dataset.getKey(i);
+				if (!LabelConstants.UNIQUE_LABEL.equals(key) && !LabelConstants.NULL_LABEL.equals(key)) {
+					final Color color;
+					if (i % 2 == 1) {
+						color = nextGroupColor;
+						nextGroupColor = WidgetUtils.slightlyDarker(nextGroupColor);
+					} else {
+						color = nextSingleItemColor;
+						nextSingleItemColor = WidgetUtils.slightlyDarker(nextSingleItemColor);
+					}
+					plot.setSectionPaint(key, color);
+				}
+			}
+			plot.setSectionPaint(LabelConstants.UNIQUE_LABEL, WidgetUtils.BG_COLOR_ORANGE_BRIGHT);
+			plot.setSectionPaint(LabelConstants.NULL_LABEL, WidgetUtils.BG_COLOR_ORANGE_DARK);
+		}
+
 		final ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.addChartMouseListener(new ChartMouseListener() {
 
@@ -382,10 +426,11 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.PAYMENTS");
+		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.TRIAL_BALANCE");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getColumns());
-		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns());
+		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())
+				.getConfigurableBean().setRecordUniqueValues(false);
 		AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
 		List<AnalyzerResult> list = Collections.emptyList();

@@ -73,11 +73,32 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 	private static final Logger logger = LoggerFactory.getLogger(ValueDistributionResultSwingRenderer.class);
 
-	private static final int PREFERRED_SLICES = 42;
-	private static final int MAX_SLICES = 50;
+	private static final int DEFAULT_PREFERRED_SLICES = 32;
+	private static final int DEFAULT_MAX_SLICES = 40;
 
 	private final Map<String, PieSliceGroup> _groups = new HashMap<String, PieSliceGroup>();
 	private final DefaultPieDataset _dataset = new DefaultPieDataset();
+	private final int _preferredSlices;
+	private final int _maxSlices;
+
+	/**
+	 * Default constructor
+	 */
+	public ValueDistributionResultSwingRenderer() {
+		this(DEFAULT_PREFERRED_SLICES, DEFAULT_MAX_SLICES);
+	}
+
+	/**
+	 * Alternative constructor (primarily used for testing) with customizable
+	 * slice count
+	 * 
+	 * @param preferredSlices
+	 * @param maxSlices
+	 */
+	public ValueDistributionResultSwingRenderer(int preferredSlices, int maxSlices) {
+		_preferredSlices = preferredSlices;
+		_maxSlices = maxSlices;
+	}
 
 	@Override
 	public JComponent render(ValueDistributionResult result) {
@@ -109,7 +130,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			// graph correspondingly without any grouping
 			boolean userSpecifiedGroups = !topValueCounts.isEmpty() && !bottomValueCounts.isEmpty();
 
-			if (userSpecifiedGroups && topValueCounts.size() + bottomValueCounts.size() < MAX_SLICES) {
+			if (userSpecifiedGroups && topValueCounts.size() + bottomValueCounts.size() < _maxSlices) {
 				// vanilla scenario for cleanly distributed datasets
 				for (ValueCount valueCount : topValueCounts) {
 					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
@@ -126,11 +147,11 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 				}
 
 				createGroups(valueCounts);
-				
+
 				for (PieSliceGroup group : _groups.values()) {
 					_dataset.setValue(group.getName(), group.getTotalCount());
 				}
-				
+
 				for (ValueCount valueCount : valueCounts) {
 					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
 				}
@@ -197,8 +218,16 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		return split;
 	}
+	
+	public Map<String, PieSliceGroup> getGroups() {
+		return _groups;
+	}
+	
+	public DefaultPieDataset getDataset() {
+		return _dataset;
+	}
 
-	private void createGroups(List<ValueCount> valueCounts) {
+	protected void createGroups(List<ValueCount> valueCounts) {
 		// this map will contain frequency counts that are not groupable in
 		// this block because there is only one occurrence
 		final Set<Integer> skipCounts = new HashSet<Integer>();
@@ -206,8 +235,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		int previousGroupFrequency = 1;
 
 		int datasetItemCount = _dataset.getItemCount();
-		while (datasetItemCount + _groups.size() + valueCounts.size() > PREFERRED_SLICES
-				&& _groups.size() <= PREFERRED_SLICES) {
+		while (datasetItemCount + _groups.size() + valueCounts.size() > _preferredSlices
+				&& _groups.size() < _preferredSlices) {
 			int groupFrequency = -1;
 
 			for (ValueCount vc : valueCounts) {
@@ -226,7 +255,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 					break;
 				}
 			}
-			
+
 			if (groupFrequency < previousGroupFrequency) {
 				// could not find next group frequency - stop searching
 				break;
@@ -269,8 +298,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		// code block for creating aggregated groups if slice count is still too
 		// high
 		{
-			if (datasetItemCount + _groups.size() + valueCounts.size() > MAX_SLICES) {
-				final int aggregatedGroupCount = MAX_SLICES - _groups.size();
+			if (datasetItemCount + _groups.size() + valueCounts.size() > _maxSlices) {
+				final int aggregatedGroupCount = _maxSlices - _groups.size();
 				logger.info("Amount of groups outgrowed the preferred count, creating {} aggregated groups",
 						aggregatedGroupCount);
 

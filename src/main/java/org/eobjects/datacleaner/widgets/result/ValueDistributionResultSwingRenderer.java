@@ -114,7 +114,10 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelConstants.UNIQUE_LABEL, uniqueValues, 1);
 			_groups.put(pieSliceGroup.getName(), pieSliceGroup);
 		} else {
-			_dataset.setValue(LabelConstants.UNIQUE_LABEL, result.getUniqueCount());
+			int uniqueCount = result.getUniqueCount();
+			if (uniqueCount > 0) {
+				_dataset.setValue(LabelConstants.UNIQUE_LABEL, uniqueCount);
+			}
 		}
 
 		// create a special slice for null values

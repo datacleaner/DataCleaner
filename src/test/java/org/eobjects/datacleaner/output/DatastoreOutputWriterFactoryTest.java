@@ -23,6 +23,7 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegate;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
@@ -47,13 +48,16 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 				_datastoreCreated = true;
 				assertEquals("my datastore", datastore.getName());
 
-				DataContext dc = datastore.getDataContextProvider().getDataContext();
+				DataContextProvider dcp = datastore.getDataContextProvider();
+				DataContext dc = dcp.getDataContext();
 
 				Table table = dc.getDefaultSchema().getTables()[0];
 				Query q = dc.query().from(table).select(table.getColumns()).toQuery();
 				DataSet dataSet = dc.executeQuery(q);
 
 				scenarioHelper.performAssertions(dataSet, true);
+				
+				dcp.close();
 			}
 		});
 		OutputWriter writer = DatastoreOutputWriterFactory.getWriter("my datastore", scenarioHelper.getColumns());

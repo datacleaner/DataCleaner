@@ -218,11 +218,11 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		return split;
 	}
-	
+
 	public Map<String, PieSliceGroup> getGroups() {
 		return _groups;
 	}
-	
+
 	public DefaultPieDataset getDataset() {
 		return _dataset;
 	}
@@ -264,7 +264,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			final String groupName = "<count=" + groupFrequency + ">";
 			final List<ValueCount> groupContent = new ArrayList<ValueCount>();
 
-			logger.info("Lowest repeated frequency above {} found: {}. Fetching from {} ungrouped values", new Object[] {
+			logger.debug("Lowest repeated frequency above {} found: {}. Fetching from {} ungrouped values", new Object[] {
 					previousGroupFrequency, groupFrequency, valueCounts.size() });
 
 			for (Iterator<ValueCount> it = valueCounts.iterator(); it.hasNext();) {
@@ -282,7 +282,6 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 				valueCounts.add(groupContent.get(0));
 			} else {
 				logger.info("Grouping {} values to group: {}", groupContent.size(), groupName);
-				logger.debug("Values removed from ungrouped values");
 				Collection<String> groupContentValues = new ArrayList<String>(groupContent.size());
 				for (ValueCount valueCount : groupContent) {
 					groupContentValues.add(valueCount.getValue());

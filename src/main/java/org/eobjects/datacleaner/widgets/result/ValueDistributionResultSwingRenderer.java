@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -156,7 +157,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			// graph correspondingly without any grouping
 			boolean userSpecifiedGroups = !topValueCounts.isEmpty() && !bottomValueCounts.isEmpty();
 
-			if (userSpecifiedGroups && topValueCounts.size() + bottomValueCounts.size() < _maxSlices) {
+			if (userSpecifiedGroups || topValueCounts.size() + bottomValueCounts.size() < _preferredSlices) {
 				// vanilla scenario for cleanly distributed datasets
 				for (ValueCount valueCount : topValueCounts) {
 					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
@@ -174,13 +175,13 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 				createGroups(valueCounts);
 
-				for (PieSliceGroup group : _groups.values()) {
-					_dataset.setValue(group.getName(), group.getTotalCount());
-				}
-
 				for (ValueCount valueCount : valueCounts) {
 					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
 				}
+			}
+			
+			for (PieSliceGroup group : _groups.values()) {
+				_dataset.setValue(group.getName(), group.getTotalCount());
 			}
 		}
 
@@ -216,7 +217,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 					Color color = SLICE_COLORS[colorIndex];
 					int darkAmount = i / SLICE_COLORS.length;
 					for (int j = 0; j < darkAmount; j++) {
-						color = color.darker();
+						color = WidgetUtils.slightlyDarker(color);
 					}
 
 					plot.setSectionPaint(key, color);
@@ -265,7 +266,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-		DCPanel leftPanel = new DCPanel();
+		DCPanel leftPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHTEST);
 		leftPanel.add(chartPanel);
 
 		DCPanel rightPanel = new DCPanel();
@@ -353,7 +354,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		int previousGroupFrequency = 1;
 
-		int datasetItemCount = _dataset.getItemCount();
+		final int datasetItemCount = _dataset.getItemCount();
 		while (datasetItemCount + _groups.size() < _preferredSlices) {
 
 			if (skipCounts.size() == valueCounts.size()) {
@@ -426,72 +427,46 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 				logger.info("Amount of groups outgrowed the preferred count, creating {} aggregated groups",
 						aggregatedGroupCount);
 
-				int maxFrequency = -1;
-				int minFrequency = -1;
+				//
+				//
+				// final int diffFrequency = maxFrequency - minFrequency;
+				final int aggregatedGroupSize = valueCounts.size() / aggregatedGroupCount;
 
-				for (ValueCount vc : valueCounts) {
-					final int count = vc.getCount();
-					if (maxFrequency == -1) {
-						maxFrequency = count;
-						minFrequency = count;
-					} else {
-						maxFrequency = Math.max(count, maxFrequency);
-						minFrequency = Math.min(count, minFrequency);
-					}
-				}
+				logger.info("Creating {} range groups", aggregatedGroupCount);
 
-				final int diffFrequency = maxFrequency - minFrequency;
-
-				logger.info("Creating {} groups for counts between {} and {}", new Object[] { aggregatedGroupCount,
-						minFrequency, maxFrequency });
-
-				final PieSliceGroup[] aggregatedGroups = new PieSliceGroup[aggregatedGroupCount];
-				final int[] minCounts = new int[aggregatedGroupCount];
-				final int[] maxCounts = new int[aggregatedGroupCount];
 				for (int i = 0; i < aggregatedGroupCount; i++) {
-					// set the interval of counts that this group will contain
-					// values for
-					minCounts[i] = minFrequency + (i * diffFrequency / aggregatedGroupCount);
-					maxCounts[i] = minFrequency + ((i + 1) * diffFrequency / aggregatedGroupCount) - 1;
-					if (i + 1 == aggregatedGroupCount) {
-						maxCounts[i]++;
-					}
+					final LinkedList<ValueCount> groupContent = new LinkedList<ValueCount>();
 
-					logger.info("Building group({}) for counts between {} and {}", new Object[] { i, minCounts[i],
-							maxCounts[i] });
-					String groupName = "<count=[" + minCounts[i] + "-" + maxCounts[i] + "]>";
+					while (groupContent.size() < aggregatedGroupSize && !valueCounts.isEmpty()) {
+						int minFrequency = -1;
 
-					aggregatedGroups[i] = new PieSliceGroup(groupName, new ArrayList<ValueCount>());
+						for (ValueCount vc : valueCounts) {
+							final int count = vc.getCount();
+							if (minFrequency == -1) {
+								minFrequency = count;
+							} else {
+								minFrequency = Math.min(count, minFrequency);
+							}
+						}
 
-					_groups.put(groupName, aggregatedGroups[i]);
-				}
-
-				for (Iterator<ValueCount> it = valueCounts.iterator(); it.hasNext();) {
-					ValueCount vc = it.next();
-
-					boolean found = false;
-					int count = vc.getCount();
-					for (int i = 0; i < aggregatedGroupCount; i++) {
-						if (count >= minCounts[i] && count <= maxCounts[i]) {
-
-							PieSliceGroup group = aggregatedGroups[i];
-							group.addValueCount(vc);
-
-							found = true;
-							break;
+						logger.debug("Adding values with count={} to range group {}.", minFrequency, i + 1);
+						for (Iterator<ValueCount> it = valueCounts.iterator(); it.hasNext();) {
+							ValueCount vc = it.next();
+							if (vc.getCount() == minFrequency) {
+								groupContent.add(vc);
+								it.remove();
+							}
 						}
 					}
 
-					if (found) {
-						it.remove();
+					if (groupContent.isEmpty()) {
+						break;
 					}
-				}
 
-				for (int i = 0; i < aggregatedGroupCount; i++) {
-					if (aggregatedGroups[i].getTotalCount() == 0) {
-						// remove empty groups
-						_groups.remove(aggregatedGroups[i].getName());
-					}
+					String groupName = "<count=[" + groupContent.getFirst().getCount() + "-"
+							+ groupContent.getLast().getCount() + "]>";
+					PieSliceGroup group = new PieSliceGroup(groupName, groupContent);
+					_groups.put(groupName, group);
 				}
 			}
 		}
@@ -512,7 +487,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.ORDERDETAILS");
+		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.TRIAL_BALANCE");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getColumns());
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())

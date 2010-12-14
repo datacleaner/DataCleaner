@@ -131,24 +131,34 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 	public void testMaxSizeGrouping() throws Exception {
 		ValueCountListImpl topValueCount = ValueCountListImpl.createFullList();
 		for (int i = 0; i < 5000; i++) {
-			// 5000 values with 40 different counts
-			topValueCount.register(new ValueCount("v" + i, (int) (Math.random() * 40)));
+			// 5000 values with 10 different counts
+			topValueCount.register(new ValueCount("v" + i, 2 + (int) (Math.random() * 10)));
 		}
 
-		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(16, 20);
+		// 10 additional values that will be grouped in 3 range-groups
+		topValueCount.register(new ValueCount("r1", 100));
+		topValueCount.register(new ValueCount("r2", 110));
+		topValueCount.register(new ValueCount("r3", 130));
+		topValueCount.register(new ValueCount("r4", 160));
+		topValueCount.register(new ValueCount("r5", 210));
+		topValueCount.register(new ValueCount("r6", 340));
+		topValueCount.register(new ValueCount("r7", 520));
+		topValueCount.register(new ValueCount("r8", 525));
+		topValueCount.register(new ValueCount("r9", 530));
+
+		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(10, 13);
 		r.render(new ValueDistributionResult(column, topValueCount, null, 0, 0));
 
-		assertEquals(20, r.getDataset().getItemCount());
+		assertEquals(13, r.getDataset().getItemCount());
 
 		Map<String, PieSliceGroup> groups = r.getGroups();
-		assertEquals(20, groups.size());
+		assertEquals(13, groups.size());
 		for (String groupName : groups.keySet()) {
 			assertTrue(groupName.startsWith("<count="));
 		}
-
-		assertNotNull(groups.get("<count=[0-8]>"));
-		assertNotNull(groups.get("<count=[9-18]>"));
-		assertNotNull(groups.get("<count=[19-28]>"));
-		assertNotNull(groups.get("<count=[29-39]>"));
+		
+		assertTrue(groups.containsKey("<count=[100-130]>"));
+		assertTrue(groups.containsKey("<count=[160-340]>"));
+		assertTrue(groups.containsKey("<count=[520-530]>"));
 	}
 }

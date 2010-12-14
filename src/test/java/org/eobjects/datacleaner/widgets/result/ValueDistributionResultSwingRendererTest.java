@@ -28,6 +28,7 @@ import org.eobjects.analyzer.beans.valuedist.ValueCountListImpl;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MockInputColumn;
 import org.eobjects.analyzer.result.ValueDistributionResult;
+import org.jfree.data.general.DefaultPieDataset;
 
 public class ValueDistributionResultSwingRendererTest extends TestCase {
 
@@ -45,6 +46,63 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 
 		assertTrue(r.getGroups().isEmpty());
 		assertEquals(40, r.getDataset().getItemCount());
+	}
+
+	public void testGroupEverythingOrNothing() throws Exception {
+		ValueCountListImpl topValueCount = ValueCountListImpl.createFullList();
+
+		topValueCount.register(new ValueCount("a", 2));
+		topValueCount.register(new ValueCount("b", 2));
+		topValueCount.register(new ValueCount("c", 2));
+		topValueCount.register(new ValueCount("d", 2));
+		topValueCount.register(new ValueCount("e", 2));
+		topValueCount.register(new ValueCount("f", 3));
+		topValueCount.register(new ValueCount("g", 3));
+		topValueCount.register(new ValueCount("h", 3));
+		topValueCount.register(new ValueCount("i", 4));
+		topValueCount.register(new ValueCount("j", 4));
+		topValueCount.register(new ValueCount("k", 4));
+		topValueCount.register(new ValueCount("l", 4));
+		topValueCount.register(new ValueCount("m", 5));
+		topValueCount.register(new ValueCount("n", 5));
+		topValueCount.register(new ValueCount("o", 6));
+		topValueCount.register(new ValueCount("p", 6));
+		topValueCount.register(new ValueCount("q", 7));
+		topValueCount.register(new ValueCount("r", 7));
+		topValueCount.register(new ValueCount("s", 8));
+		topValueCount.register(new ValueCount("t", 8));
+		topValueCount.register(new ValueCount("u", 9));
+		topValueCount.register(new ValueCount("v", 9));
+
+		// even though it is not nescesary for the slice threshold to group
+		// these 4 values, we do so for the sake of "grouping consistency"
+		// (because they all have count=9).
+		topValueCount.register(new ValueCount("hi", 10));
+		topValueCount.register(new ValueCount("hello", 10));
+		topValueCount.register(new ValueCount("howdy", 10));
+		topValueCount.register(new ValueCount("mjellow", 10));
+
+		// preferred size is 13, which would earlier on mean that all the 4
+		// values above could be individually included in the dataset.
+		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(13, 100);
+		r.render(new ValueDistributionResult(column, topValueCount, null, 0, 10));
+
+		Map<String, PieSliceGroup> groups = r.getGroups();
+		DefaultPieDataset dataset = r.getDataset();
+		assertEquals(10, dataset.getItemCount());
+		assertEquals(9, groups.size());
+		
+		assertEquals(10, dataset.getValue("<unique>").intValue());
+		
+		assertTrue(groups.containsKey("<count=2>"));
+		assertTrue(groups.containsKey("<count=3>"));
+		assertTrue(groups.containsKey("<count=4>"));
+		assertTrue(groups.containsKey("<count=5>"));
+		assertTrue(groups.containsKey("<count=6>"));
+		assertTrue(groups.containsKey("<count=7>"));
+		assertTrue(groups.containsKey("<count=8>"));
+		assertTrue(groups.containsKey("<count=9>"));
+		assertTrue(groups.containsKey("<count=10>"));
 	}
 
 	public void testPreferredSizeGrouping() throws Exception {

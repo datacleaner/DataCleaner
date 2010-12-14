@@ -21,6 +21,10 @@ package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,8 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -52,11 +60,15 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelConstants;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
+import org.jdesktop.swingx.VerticalLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -82,6 +94,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 	private final Map<String, PieSliceGroup> _groups = new HashMap<String, PieSliceGroup>();
 	private final DefaultPieDataset _dataset = new DefaultPieDataset();
+	private final JButton _backButton = WidgetFactory.createButton("Back",
+			ImageManager.getInstance().getImageIcon("images/actions/back.png"));
 	private final int _preferredSlices;
 	private final int _maxSlices;
 
@@ -171,17 +185,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		// table for drill-to-detail information
 		final DCTable drillableValuesTable = new DCTable("Value", LabelConstants.COUNT_LABEL);
-		{
-			final TableModel model = new DefaultTableModel(new String[] { "Value", LabelConstants.COUNT_LABEL },
-					_dataset.getItemCount());
-			for (int i = 0; i < _dataset.getItemCount(); i++) {
-				final String key = (String) _dataset.getKey(i);
-				final int count = _dataset.getValue(i).intValue();
-				model.setValueAt(key, i, 0);
-				model.setValueAt(count, i, 1);
-			}
-			drillableValuesTable.setModel(model);
-		}
+		drillableValuesTable.setRowHeight(22);
+		drillToOverview(drillableValuesTable);
 
 		// chart for display of the dataset
 		final JFreeChart chart = ChartFactory.createPieChart3D(columnName, _dataset, false, true, false);
@@ -239,19 +244,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 					PieSectionEntity pieSectionEntity = (PieSectionEntity) entity;
 					String sectionKey = (String) pieSectionEntity.getSectionKey();
 					if (_groups.containsKey(sectionKey)) {
-						final PieSliceGroup group = _groups.get(sectionKey);
-						final TableModel model = new DefaultTableModel(new String[] { sectionKey + " value",
-								LabelConstants.COUNT_LABEL }, group.size());
-
-						final Iterator<ValueCount> valueCounts = group.getValueCounts();
-						int i = 0;
-						while (valueCounts.hasNext()) {
-							ValueCount vc = valueCounts.next();
-							model.setValueAt(vc.getValue(), i, 0);
-							model.setValueAt(vc.getCount(), i, 1);
-							i++;
-						}
-						drillableValuesTable.setModel(model);
+						drillToGroup(sectionKey, drillableValuesTable);
 					}
 				}
 			}
@@ -259,8 +252,23 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-		split.add(chartPanel);
-		split.add(drillableValuesTable.toPanel());
+		DCPanel leftPanel = new DCPanel();
+		leftPanel.add(chartPanel);
+
+		DCPanel rightPanel = new DCPanel();
+		rightPanel.setLayout(new VerticalLayout(2));
+		_backButton.setMargin(new Insets(0, 0, 0, 0));
+		_backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				drillToOverview(drillableValuesTable);
+			}
+		});
+		rightPanel.add(_backButton);
+		rightPanel.add(drillableValuesTable.toPanel());
+
+		split.add(leftPanel);
+		split.add(rightPanel);
 		split.setDividerLocation(550);
 
 		return split;
@@ -274,6 +282,57 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		return _dataset;
 	}
 
+	private void drillToOverview(final JTable table) {
+		final TableModel model = new DefaultTableModel(new String[] { "Value", LabelConstants.COUNT_LABEL },
+				_dataset.getItemCount());
+		for (int i = 0; i < _dataset.getItemCount(); i++) {
+			final String key = (String) _dataset.getKey(i);
+			final int count = _dataset.getValue(i).intValue();
+			model.setValueAt(key, i, 0);
+
+			if (_groups.containsKey(key)) {
+				DCPanel panel = new DCPanel();
+				panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+				JLabel label = new JLabel(count + "");
+				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
+				button.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						drillToGroup(key, table);
+					}
+				});
+
+				panel.add(label);
+				panel.add(Box.createHorizontalStrut(4));
+				panel.add(button);
+
+				model.setValueAt(panel, i, 1);
+			} else {
+				model.setValueAt(count, i, 1);
+			}
+		}
+		table.setModel(model);
+		_backButton.setVisible(false);
+	}
+
+	private void drillToGroup(String groupName, JTable table) {
+		final PieSliceGroup group = _groups.get(groupName);
+		final TableModel model = new DefaultTableModel(new String[] { groupName + " value", LabelConstants.COUNT_LABEL },
+				group.size());
+
+		final Iterator<ValueCount> valueCounts = group.getValueCounts();
+		int i = 0;
+		while (valueCounts.hasNext()) {
+			ValueCount vc = valueCounts.next();
+			model.setValueAt(vc.getValue(), i, 0);
+			model.setValueAt(vc.getCount(), i, 1);
+			i++;
+		}
+		table.setModel(model);
+		_backButton.setVisible(true);
+	}
+
 	protected void createGroups(List<ValueCount> valueCounts) {
 		// this map will contain frequency counts that are not groupable in
 		// this block because there is only one occurrence
@@ -282,8 +341,13 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		int previousGroupFrequency = 1;
 
 		int datasetItemCount = _dataset.getItemCount();
-		while (datasetItemCount + _groups.size() + valueCounts.size() > _preferredSlices
-				&& _groups.size() < _preferredSlices) {
+		while (datasetItemCount + _groups.size() < _preferredSlices) {
+			
+			if (skipCounts.size() == valueCounts.size()) {
+				// only individual counted values remain
+				break;
+			}
+			
 			int groupFrequency = -1;
 
 			for (ValueCount vc : valueCounts) {
@@ -429,11 +493,11 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.TRIAL_BALANCE");
+		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.ORDERS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getColumns());
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())
-				.getConfigurableBean().setRecordUniqueValues(false);
+				.getConfigurableBean().setRecordUniqueValues(true);
 		AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
 		List<AnalyzerResult> list = Collections.emptyList();

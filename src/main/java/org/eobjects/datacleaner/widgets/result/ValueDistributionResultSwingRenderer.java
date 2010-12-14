@@ -19,8 +19,10 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -179,7 +181,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
 				}
 			}
-			
+
 			for (PieSliceGroup group : _groups.values()) {
 				_dataset.setValue(group.getName(), group.getTotalCount());
 			}
@@ -233,6 +235,14 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		}
 
 		final ChartPanel chartPanel = new ChartPanel(chart);
+		int chartHeight = 450;
+		if (_dataset.getItemCount() > 32) {
+			chartHeight += 200;
+		} else if (_dataset.getItemCount() > 25) {
+			chartHeight += 100;
+		}
+
+		chartPanel.setPreferredSize(new Dimension(0, chartHeight));
 		chartPanel.addChartMouseListener(new ChartMouseListener() {
 
 			@Override
@@ -267,7 +277,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 		DCPanel leftPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHTEST);
-		leftPanel.add(chartPanel);
+		leftPanel.setLayout(new BorderLayout());
+		leftPanel.add(chartPanel, BorderLayout.NORTH);
 
 		DCPanel rightPanel = new DCPanel();
 		rightPanel.setLayout(new VerticalLayout(2));

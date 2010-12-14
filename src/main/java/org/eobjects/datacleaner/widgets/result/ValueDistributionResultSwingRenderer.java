@@ -342,12 +342,12 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		int datasetItemCount = _dataset.getItemCount();
 		while (datasetItemCount + _groups.size() < _preferredSlices) {
-			
+
 			if (skipCounts.size() == valueCounts.size()) {
 				// only individual counted values remain
 				break;
 			}
-			
+
 			int groupFrequency = -1;
 
 			for (ValueCount vc : valueCounts) {
@@ -474,6 +474,12 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 					}
 				}
 
+				for (int i = 0; i < aggregatedGroupCount; i++) {
+					if (aggregatedGroups[i].getTotalCount() == 0) {
+						// remove empty groups
+						_groups.remove(aggregatedGroups[i].getName());
+					}
+				}
 			}
 		}
 	}

@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.util.Map;
+import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
@@ -91,9 +92,9 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 		DefaultPieDataset dataset = r.getDataset();
 		assertEquals(10, dataset.getItemCount());
 		assertEquals(9, groups.size());
-		
+
 		assertEquals(10, dataset.getValue("<unique>").intValue());
-		
+
 		assertTrue(groups.containsKey("<count=2>"));
 		assertTrue(groups.containsKey("<count=3>"));
 		assertTrue(groups.containsKey("<count=4>"));
@@ -107,16 +108,18 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 
 	public void testPreferredSizeGrouping() throws Exception {
 		ValueCountListImpl topValueCount = ValueCountListImpl.createFullList();
-		for (int i = 0; i < 1000; i++) {
-			// 1000 values but with only 10 different counts - should yield 10
+		for (int i = 0; i < 2000; i++) {
+			// 2000 values but with only 10 different counts - should yield 10
 			// groups
-			topValueCount.register(new ValueCount("v" + i, (int) (Math.random() * 10)));
+			topValueCount.register(new ValueCount("v" + i, 2 + (int) (Math.random() * 10)));
 		}
 
 		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(17, 20);
 		r.render(new ValueDistributionResult(column, topValueCount, null, 0, 0));
 
-		assertEquals(10, r.getDataset().getItemCount());
+		assertEquals(
+				"[<count=10>, <count=11>, <count=2>, <count=3>, <count=4>, <count=5>, <count=6>, <count=7>, <count=8>, <count=9>]",
+				new TreeSet<String>(r.getGroups().keySet()).toString());
 
 		Map<String, PieSliceGroup> groups = r.getGroups();
 		assertEquals(10, groups.size());

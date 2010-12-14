@@ -85,6 +85,11 @@ public final class WidgetUtils {
 	// #2a323a (more brownish dark gray)
 	public static final Color BG_COLOR_DARKEST = new ColorUIResource(42, 50, 58);
 
+	// additional colors, only intended for special widget coloring such as
+	// charts etc.
+	public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new ColorUIResource(175, 229, 123);
+	public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(221, 84, 84);
+
 	public static final int BORDER_WIDE_WIDTH = 4;
 
 	public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
@@ -253,7 +258,7 @@ public final class WidgetUtils {
 		if (r == 0 && g == 0 && b == 0) {
 			return new Color(i, i, i);
 		}
-		
+
 		if (r > 0 && r < i)
 			r = i;
 		if (g > 0 && g < i)

@@ -89,6 +89,9 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 	private static final Logger logger = LoggerFactory.getLogger(ValueDistributionResultSwingRenderer.class);
 
+	private static final Color[] SLICE_COLORS = new Color[] { WidgetUtils.BG_COLOR_BLUE_BRIGHT,
+			WidgetUtils.ADDITIONAL_COLOR_GREEN_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_MEDIUM };
+
 	private static final int DEFAULT_PREFERRED_SLICES = 32;
 	private static final int DEFAULT_MAX_SLICES = 40;
 
@@ -198,20 +201,30 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			final PiePlot plot = (PiePlot) chart.getPlot();
 			plot.setLabelFont(WidgetUtils.FONT_SMALL);
 			plot.setSectionOutlinesVisible(false);
-			Color nextColor1 = WidgetUtils.BG_COLOR_MEDIUM;
-			Color nextColor2 = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
+
+			int colorIndex = 0;
 			for (int i = 0; i < _dataset.getItemCount(); i++) {
 				final String key = (String) _dataset.getKey(i);
 				if (!LabelConstants.UNIQUE_LABEL.equals(key) && !LabelConstants.NULL_LABEL.equals(key)) {
-					final Color color;
-					if (Math.abs(i) % 2 == 1) {
-						color = nextColor1;
-						nextColor1 = WidgetUtils.slightlyDarker(nextColor1);
-					} else {
-						color = nextColor2;
-						nextColor2 = WidgetUtils.slightlyDarker(nextColor2);
+					if (i == _dataset.getItemCount() - 1) {
+						// the last color should not be the same as the first
+						if (colorIndex == 0) {
+							colorIndex++;
+						}
 					}
+
+					Color color = SLICE_COLORS[colorIndex];
+					int darkAmount = i / SLICE_COLORS.length;
+					for (int j = 0; j < darkAmount; j++) {
+						color = color.darker();
+					}
+
 					plot.setSectionPaint(key, color);
+
+					colorIndex++;
+					if (colorIndex >= SLICE_COLORS.length) {
+						colorIndex = 0;
+					}
 				}
 			}
 			plot.setSectionPaint(LabelConstants.UNIQUE_LABEL, WidgetUtils.BG_COLOR_ORANGE_BRIGHT);
@@ -499,7 +512,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.ORDERS");
+		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.ORDERDETAILS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getColumns());
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())

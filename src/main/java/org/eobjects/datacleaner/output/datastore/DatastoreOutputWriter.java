@@ -69,7 +69,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 		Statement st = null;
 		try {
 			st = _connection.createStatement();
-			st.execute("SET WRITE_DELAY FALSE");
+			st.execute("SET WRITE_DELAY 200 MILLIS");
 			logger.info("Write delay removed");
 		} catch (Exception e) {
 			logger.error("Could not remove write delay", e);

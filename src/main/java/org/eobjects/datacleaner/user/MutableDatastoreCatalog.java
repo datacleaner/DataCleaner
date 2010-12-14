@@ -62,14 +62,14 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 		return false;
 	}
 
-	public void removeDatastore(Datastore ds) {
+	public synchronized void removeDatastore(Datastore ds) {
 		_datastores.remove(ds);
 		for (DatastoreChangeListener listener : _listeners) {
 			listener.onRemove(ds);
 		}
 	}
 
-	public void addDatastore(Datastore ds) {
+	public synchronized void addDatastore(Datastore ds) {
 		String name = ds.getName();
 		if (StringUtils.isNullOrEmpty(name)) {
 			throw new IllegalArgumentException("Datastore has no name!");

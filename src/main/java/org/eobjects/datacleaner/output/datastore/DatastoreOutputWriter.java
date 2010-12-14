@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
@@ -62,6 +63,18 @@ final class DatastoreOutputWriter implements OutputWriter {
 			_connection = DriverManager.getConnection(DatastoreOutputUtils.getCreateJdbcUrl(outputFile), "SA", "");
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
+		}
+
+		// remove write delay (Ticket #494)
+		Statement st = null;
+		try {
+			st = _connection.createStatement();
+			st.execute("SET WRITE_DELAY FALSE");
+			logger.info("Write delay removed");
+		} catch (Exception e) {
+			logger.error("Could not remove write delay", e);
+		} finally {
+			SqlDatabaseUtils.safeClose(null, st);
 		}
 
 		SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE DATASET IF EXISTS");
@@ -106,6 +119,16 @@ final class DatastoreOutputWriter implements OutputWriter {
 
 	@Override
 	public void close() {
+		Statement st = null;
+		try {
+			st = _connection.createStatement();
+			st.execute("SHUTDOWN");
+		} catch (SQLException e) {
+			logger.error("Could not invoke SHUTDOWN", e);
+		} finally {
+			SqlDatabaseUtils.safeClose(null, st);
+		}
+
 		try {
 			logger.info("Closing connection: {}", _connection);
 			_connection.close();

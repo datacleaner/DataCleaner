@@ -31,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.SimpleSynonymCatalog;
@@ -166,11 +167,21 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 	@Override
 	public void onAdd(SynonymCatalog synonymCatalog) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 
 	@Override
 	public void onRemove(SynonymCatalog synonymCatalog) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 }

@@ -25,19 +25,29 @@ import java.util.List;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.OutputWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DatastoreOutputWriterFactory {
+
+	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
 	private static File outputDirectory = new File("temp");
 	private static DatastoreCreationDelegate datastoreCreationDelegate = new DatastoreCreationDelegateImpl();
 
 	public static OutputWriter getWriter(String datastoreName, InputColumn<?>... columns) {
 		if (!outputDirectory.exists()) {
-			outputDirectory.mkdirs();
+			if (!outputDirectory.mkdirs()) {
+				logger.error("Failed to create directory for datastores: {}", outputDirectory);
+			}
 		}
 
-		cleanFiles(datastoreName);
-		final File outputFile = new File(outputDirectory, datastoreName + ".script");
+		final File outputFile;
+
+		synchronized (DatastoreOutputWriterFactory.class) {
+			cleanFiles(datastoreName);
+			outputFile = new File(outputDirectory, datastoreName + System.currentTimeMillis() + ".script");
+		}
 
 		return new DatastoreOutputWriter(datastoreName, outputFile, columns, datastoreCreationDelegate);
 	}
@@ -50,7 +60,9 @@ public final class DatastoreOutputWriterFactory {
 			}
 		});
 		for (File file : files) {
-			file.delete();
+			if (!file.delete()) {
+				logger.error("Failed to clean up (delete) file: {}", file);
+			}
 		}
 	}
 

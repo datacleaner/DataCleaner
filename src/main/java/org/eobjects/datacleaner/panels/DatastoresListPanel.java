@@ -30,6 +30,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -213,11 +214,21 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 
 	@Override
 	public void onAdd(Datastore datastore) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 
 	@Override
 	public void onRemove(Datastore datastore) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 }

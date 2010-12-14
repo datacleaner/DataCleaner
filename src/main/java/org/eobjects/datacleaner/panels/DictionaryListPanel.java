@@ -31,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
@@ -193,11 +194,21 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 
 	@Override
 	public void onAdd(Dictionary dictionary) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 
 	@Override
 	public void onRemove(Dictionary dictionary) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 }

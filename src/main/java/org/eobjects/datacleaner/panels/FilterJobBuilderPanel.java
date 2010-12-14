@@ -40,8 +40,10 @@ import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
+import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -123,6 +125,8 @@ public class FilterJobBuilderPanel extends DCPanel {
 
 					Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
 							.getAnalyzerBeanDescriptors();
+					descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
+					
 					for (final AnalyzerBeanDescriptor<?> descriptor : descriptors) {
 						if (descriptor.isRowProcessingAnalyzer()
 								&& descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {

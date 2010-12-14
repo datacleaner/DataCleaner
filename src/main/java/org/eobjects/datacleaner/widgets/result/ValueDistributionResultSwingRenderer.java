@@ -193,18 +193,18 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			final PiePlot plot = (PiePlot) chart.getPlot();
 			plot.setLabelFont(WidgetUtils.FONT_SMALL);
 			plot.setSectionOutlinesVisible(false);
-			Color nextGroupColor = WidgetUtils.BG_COLOR_MEDIUM;
-			Color nextSingleItemColor = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
+			Color nextColor1 = WidgetUtils.BG_COLOR_MEDIUM;
+			Color nextColor2 = WidgetUtils.BG_COLOR_BLUE_BRIGHT;
 			for (int i = 0; i < _dataset.getItemCount(); i++) {
 				final String key = (String) _dataset.getKey(i);
 				if (!LabelConstants.UNIQUE_LABEL.equals(key) && !LabelConstants.NULL_LABEL.equals(key)) {
 					final Color color;
-					if (i % 2 == 1) {
-						color = nextGroupColor;
-						nextGroupColor = WidgetUtils.slightlyDarker(nextGroupColor);
+					if (Math.abs(i) % 2 == 1) {
+						color = nextColor1;
+						nextColor1 = WidgetUtils.slightlyDarker(nextColor1);
 					} else {
-						color = nextSingleItemColor;
-						nextSingleItemColor = WidgetUtils.slightlyDarker(nextSingleItemColor);
+						color = nextColor2;
+						nextColor2 = WidgetUtils.slightlyDarker(nextColor2);
 					}
 					plot.setSectionPaint(key, color);
 				}

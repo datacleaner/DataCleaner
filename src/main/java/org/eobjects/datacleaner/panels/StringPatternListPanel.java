@@ -31,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.StringPattern;
@@ -128,12 +129,22 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 	@Override
 	public void onAdd(StringPattern stringPattern) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 
 	@Override
 	public void onRemove(StringPattern stringPattern) {
-		updateComponents();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateComponents();
+			}
+		});
 	}
 
 }

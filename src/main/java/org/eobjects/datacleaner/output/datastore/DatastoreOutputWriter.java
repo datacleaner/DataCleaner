@@ -60,7 +60,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 		}
 
 		try {
-			_connection = DriverManager.getConnection(DatastoreOutputUtils.getCreateJdbcUrl(outputFile), "SA", "");
+			_connection = DriverManager.getConnection(DatastoreOutputUtils.getJdbcUrl(outputFile), "SA", "");
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
 		}
@@ -70,9 +70,9 @@ final class DatastoreOutputWriter implements OutputWriter {
 		try {
 			st = _connection.createStatement();
 			st.execute("SET WRITE_DELAY 200 MILLIS");
-			logger.info("Write delay removed");
+			logger.info("Write delay set to 200");
 		} catch (Exception e) {
-			logger.error("Could not remove write delay", e);
+			logger.error("Could not set write delay to 200", e);
 		} finally {
 			SqlDatabaseUtils.safeClose(null, st);
 		}
@@ -120,6 +120,16 @@ final class DatastoreOutputWriter implements OutputWriter {
 	@Override
 	public void close() {
 		Statement st = null;
+
+		try {
+			st = _connection.createStatement();
+			st.execute("SET WRITE_DELAY FALSE");
+		} catch (SQLException e) {
+			logger.error("Could not remove write delay", e);
+		} finally {
+			SqlDatabaseUtils.safeClose(null, st);
+		}
+
 		try {
 			st = _connection.createStatement();
 			st.execute("SHUTDOWN");
@@ -136,6 +146,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 			logger.error("Could not close connection", e);
 			throw new IllegalStateException(e);
 		}
+
 		String url = DatastoreOutputUtils.getJdbcUrl(_outputFile);
 
 		Datastore datastore = new JdbcDatastore(_datastoreName, url, "org.hsqldb.jdbcDriver", "SA", "");

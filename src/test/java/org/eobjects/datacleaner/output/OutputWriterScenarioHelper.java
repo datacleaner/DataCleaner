@@ -74,7 +74,7 @@ public class OutputWriterScenarioHelper {
 
 	public void writeExampleData(OutputWriter writer) {
 		// write just two columns in a row (the rest should be null
-		writer.createRow().setValue(col1, "hello, world").setValue(col3, getExampleDate()).write();
+		writer.createRow().setValue(col1, "hello, world").setValue(col2, null).setValue(col3, getExampleDate()).setValue(col4, null).write();
 
 		writer.createRow().setValue(col1, null).setValue(col2, -20).setValue(col3, null).setValue(col4, 3.14f).write();
 

@@ -33,10 +33,8 @@ final class DatastoreOutputUtils {
 		return str;
 	}
 
-	public static String getJdbcUrl(File outputFile) {
-		String dbName = outputFile.getPath();
-		int lastIndexOf = dbName.lastIndexOf(".script");
-		dbName = dbName.substring(0, lastIndexOf);
-		return "jdbc:hsqldb:file:" + dbName + ";shutdown=true";
+	public static String getJdbcUrl(File directory, String dbName) {
+		final String urlSuffix = directory.getPath() + '/' + dbName;
+		return "jdbc:h2:" + urlSuffix;
 	}
 }

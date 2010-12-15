@@ -29,6 +29,7 @@ import java.sql.Statement;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.storage.H2StorageProvider;
 import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
@@ -39,42 +40,32 @@ final class DatastoreOutputWriter implements OutputWriter {
 
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriter.class);
 
+	private static final String DRIVER_CLASS_NAME = H2StorageProvider.DRIVER_CLASS_NAME;
+
 	private final String _datastoreName;
-	private final File _outputFile;
+	private final String _jdbcUrl;
 	private final Connection _connection;
 	private final InputColumn<?>[] _columns;
 	private final String _insertStatement;
 	private final DatastoreCreationDelegate _datastoreCreationDelegate;
 
-	public DatastoreOutputWriter(String datastoreName, File outputFile, InputColumn<?>[] columns,
+	public DatastoreOutputWriter(String datastoreName, File directory, InputColumn<?>[] columns,
 			DatastoreCreationDelegate datastoreCreationDelegate) {
 		_datastoreName = datastoreName;
-		_outputFile = outputFile;
+		_jdbcUrl = DatastoreOutputUtils.getJdbcUrl(directory, _datastoreName);
 		_columns = columns;
 		_datastoreCreationDelegate = datastoreCreationDelegate;
 
 		try {
-			Class.forName("org.hsqldb.jdbcDriver");
+			Class.forName(DRIVER_CLASS_NAME);
 		} catch (ClassNotFoundException e) {
 			throw new IllegalStateException(e);
 		}
 
 		try {
-			_connection = DriverManager.getConnection(DatastoreOutputUtils.getJdbcUrl(outputFile), "SA", "");
+			_connection = DriverManager.getConnection(_jdbcUrl, "SA", "");
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
-		}
-
-		// remove write delay (Ticket #494)
-		Statement st = null;
-		try {
-			st = _connection.createStatement();
-			st.execute("SET WRITE_DELAY 200 MILLIS");
-			logger.info("Write delay set to 200");
-		} catch (Exception e) {
-			logger.error("Could not set write delay to 200", e);
-		} finally {
-			SqlDatabaseUtils.safeClose(null, st);
 		}
 
 		SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE DATASET IF EXISTS");
@@ -123,15 +114,6 @@ final class DatastoreOutputWriter implements OutputWriter {
 
 		try {
 			st = _connection.createStatement();
-			st.execute("SET WRITE_DELAY FALSE");
-		} catch (SQLException e) {
-			logger.error("Could not remove write delay", e);
-		} finally {
-			SqlDatabaseUtils.safeClose(null, st);
-		}
-
-		try {
-			st = _connection.createStatement();
 			st.execute("SHUTDOWN");
 		} catch (SQLException e) {
 			logger.error("Could not invoke SHUTDOWN", e);
@@ -147,9 +129,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 			throw new IllegalStateException(e);
 		}
 
-		String url = DatastoreOutputUtils.getJdbcUrl(_outputFile);
-
-		Datastore datastore = new JdbcDatastore(_datastoreName, url, "org.hsqldb.jdbcDriver", "SA", "");
+		Datastore datastore = new JdbcDatastore(_datastoreName, _jdbcUrl, DRIVER_CLASS_NAME, "SA", "");
 
 		_datastoreCreationDelegate.createDatastore(datastore);
 	}

@@ -42,14 +42,11 @@ public final class DatastoreOutputWriterFactory {
 			}
 		}
 
-		final File outputFile;
-
 		synchronized (DatastoreOutputWriterFactory.class) {
 			cleanFiles(datastoreName);
-			outputFile = new File(outputDirectory, datastoreName + System.currentTimeMillis() + ".script");
 		}
 
-		return new DatastoreOutputWriter(datastoreName, outputFile, columns, datastoreCreationDelegate);
+		return new DatastoreOutputWriter(datastoreName, outputDirectory, columns, datastoreCreationDelegate);
 	}
 
 	private static void cleanFiles(final String datastoreName) {

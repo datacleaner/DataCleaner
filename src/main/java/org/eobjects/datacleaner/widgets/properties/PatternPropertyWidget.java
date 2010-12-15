@@ -28,7 +28,6 @@ import javax.swing.event.DocumentListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTextField;
 
@@ -47,12 +46,6 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 		if (currentValue != null) {
 			_textField.setText(currentValue);
 		}
-		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent e) {
-				fireValueChanged();
-			}
-		});
 		updateColor();
 		add(_textField);
 	}
@@ -85,6 +78,7 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 			_textField.setBackground(Color.white);
 		} else if (isValidPattern()) {
 			_textField.setBackground(Color.green);
+			fireValueChanged();
 		} else {
 			_textField.setBackground(Color.red);
 		}
@@ -104,13 +98,14 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 	public void removeUpdate(DocumentEvent e) {
 		updateColor();
 	}
-	
+
 	@Override
 	protected void setValue(Pattern value) {
-		if (value == null) {
-			_textField.setText("");
-		} else {
-			_textField.setText(value.pattern());
+		if (value != null) {
+			String pattern = value.pattern();
+			if (!pattern.equals(_textField.getText())) {
+				_textField.setText(pattern);
+			}
 		}
 	}
 }

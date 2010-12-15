@@ -66,8 +66,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
-		final JButton addButton = new JButton("New dictionary",
-				imageManager.getImageIcon("images/actions/new.png"));
+		final JButton addButton = new JButton("New dictionary", imageManager.getImageIcon("images/actions/new.png"));
 		addButton.setToolTipText("New dictionary");
 		addButton.addActionListener(new ActionListener() {
 			@Override
@@ -122,7 +121,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 
 		String[] names = _catalog.getDictionaryNames();
 		Arrays.sort(names);
-		
+
 		Icon icon = imageManager.getImageIcon("images/model/dictionary.png", IconUtils.ICON_SIZE_SMALL);
 
 		int row = 0;
@@ -179,7 +178,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				}
 			});
 
-			WidgetUtils.addToGridBag(dictLabel, _listPanel, 0, row);
+			WidgetUtils.addToGridBag(dictLabel, _listPanel, 0, row, 1.0, 0.0);
 
 			if (_catalog.isDictionaryMutable(name)) {
 				WidgetUtils.addToGridBag(editButton, _listPanel, 1, row);

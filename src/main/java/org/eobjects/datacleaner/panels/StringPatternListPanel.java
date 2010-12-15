@@ -105,7 +105,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			final StringPattern sp = _catalog.getStringPattern(name);
 
 			final JLabel patternLabel = new JLabel(name, icon, JLabel.LEFT);
-			WidgetUtils.addToGridBag(patternLabel, _listPanel, 0, i);
+			WidgetUtils.addToGridBag(patternLabel, _listPanel, 0, i, 1.0, 0.0);
 
 			if (_catalog.isStringPatternMutable(name)) {
 				final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");

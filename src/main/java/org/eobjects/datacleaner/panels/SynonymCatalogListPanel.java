@@ -152,7 +152,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				}
 			});
 
-			WidgetUtils.addToGridBag(scLabel, _listPanel, 0, row);
+			WidgetUtils.addToGridBag(scLabel, _listPanel, 0, row, 1.0, 0.0);
 
 			if (_catalog.isSynonymCatalogMutable(name)) {
 				WidgetUtils.addToGridBag(editButton, _listPanel, 1, row);

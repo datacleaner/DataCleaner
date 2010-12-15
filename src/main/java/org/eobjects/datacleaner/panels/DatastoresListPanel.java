@@ -41,11 +41,11 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
-import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
+import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 
 public final class DatastoresListPanel extends DCPanel implements DatastoreChangeListener {
 
@@ -192,8 +192,9 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					window.setVisible(true);
 				}
 			});
-
-			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 0, i);
+			
+			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 0, i, 1.0, 0.0);
+			
 			WidgetUtils.addToGridBag(jobButton, _datastoresPanel, 2, i);
 
 			if (_catalog.isDatastoreMutable(name)) {

@@ -108,6 +108,10 @@ public final class WidgetUtils {
 	 */
 	private static final double COLOR_SCALE_FACTOR = 0.9;
 
+	// grid bag contraint defaults
+	public static final int DEFAULT_PADDING = 2;
+	public static final int DEFAULT_ANCHOR = GridBagConstraints.NORTHWEST;
+
 	private WidgetUtils() {
 		// prevent instantiation
 	}
@@ -130,7 +134,12 @@ public final class WidgetUtils {
 	 * @param anchor
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor) {
-		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, 2);
+		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, DEFAULT_PADDING);
+	}
+
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
+			int padding) {
+		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, 0.0, 0.0);
 	}
 
 	/**
@@ -146,7 +155,7 @@ public final class WidgetUtils {
 	 * @param padding
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
-			int padding) {
+			int padding, double weightx, double weighty) {
 		LayoutManager layout = panel.getLayout();
 		if (!(layout instanceof GridBagLayout)) {
 			layout = new GridBagLayout();
@@ -158,6 +167,8 @@ public final class WidgetUtils {
 		constraints.gridy = gridy;
 		constraints.gridwidth = width;
 		constraints.gridheight = height;
+		constraints.weightx = weightx;
+		constraints.weighty = weighty;
 		constraints.anchor = anchor;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		constraints.insets = new Insets(padding, padding, padding, padding);
@@ -176,7 +187,7 @@ public final class WidgetUtils {
 	 * @param height
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height) {
-		addToGridBag(comp, panel, gridx, gridy, width, height, GridBagConstraints.NORTHWEST);
+		addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
 	}
 
 	/**
@@ -184,11 +195,15 @@ public final class WidgetUtils {
 	 * 
 	 * @param comp
 	 * @param panel
-	 * @param gridx
+	 * @param gridxs
 	 * @param gridy
 	 */
 	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy) {
 		addToGridBag(comp, panel, gridx, gridy, 1, 1);
+	}
+
+	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, double weightx, double weighty) {
+		addToGridBag(comp, panel, gridx, gridy, 1, 1, DEFAULT_ANCHOR, DEFAULT_PADDING, weightx, weighty);
 	}
 
 	/**

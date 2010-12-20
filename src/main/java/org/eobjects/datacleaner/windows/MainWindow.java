@@ -166,6 +166,7 @@ public class MainWindow extends AbstractWindow {
 		UserPreferences.getInstance().save();
 
 		// garbage collect and clean up
+		// TODO: Don't do this :) But offer a panel in the options to monitor memory and do a GC.
 		System.gc();
 		System.runFinalization();
 

@@ -30,7 +30,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.SynonymCatalog;
@@ -121,14 +120,6 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidge
 	}
 
 	private boolean isEnabled(String synonymCatalogName, SynonymCatalog[] currentValue) {
-		if (currentValue == null || currentValue.length == 0) {
-			// set all to true if this is the only inputcolumn property
-			BeanDescriptor<?> beanDescriptor = getPropertyDescriptor().getBeanDescriptor();
-			if (beanDescriptor.getConfiguredPropertiesForInput().size() == 1) {
-				return true;
-			}
-			return false;
-		}
 		for (SynonymCatalog syn : currentValue) {
 			if (synonymCatalogName.equals(syn.getName())) {
 				return true;

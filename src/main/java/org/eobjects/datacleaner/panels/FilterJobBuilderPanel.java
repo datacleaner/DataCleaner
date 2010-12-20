@@ -137,7 +137,7 @@ public class FilterJobBuilderPanel extends DCPanel {
 								@Override
 								public void actionPerformed(ActionEvent e) {
 									Class<? extends RowProcessingAnalyzer<?>> beanClass = (Class<? extends RowProcessingAnalyzer<?>>) descriptor
-											.getBeanClass();
+											.getComponentClass();
 
 									RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> ajb = _analysisJobBuilder
 											.addRowProcessingAnalyzer(beanClass);

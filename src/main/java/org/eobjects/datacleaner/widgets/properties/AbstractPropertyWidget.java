@@ -47,7 +47,7 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 	public final ConfiguredPropertyDescriptor getPropertyDescriptor() {
 		return _propertyDescriptor;
 	}
-	
+
 	public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
 		return _beanJobBuilder;
 	}

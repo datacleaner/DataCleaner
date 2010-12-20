@@ -33,6 +33,7 @@ import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -116,7 +117,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
 			_inputColumns.removeAll(outputColumns);
 		}
-		
+
 		if (_inputColumns.isEmpty()) {
 			_checkBoxes = new JCheckBox[1];
 			_checkBoxes[0] = new JCheckBox("- no columns available -");
@@ -141,9 +142,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	private boolean isEnabled(InputColumn<?> inputColumn, InputColumn<?>[] currentValue) {
 		if (currentValue == null || currentValue.length == 0) {
 			// set all to true if this is the only inputcolumn property
-			BeanDescriptor<?> beanDescriptor = getPropertyDescriptor().getBeanDescriptor();
-			if (beanDescriptor.getConfiguredPropertiesForInput().size() == 1) {
-				return true;
+			ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
+			if (componentDescriptor instanceof BeanDescriptor<?>) {
+				if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput().size() == 1) {
+					return true;
+				}
 			}
 			return false;
 		}

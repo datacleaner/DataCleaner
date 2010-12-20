@@ -79,7 +79,7 @@ public final class IconUtils {
 	}
 
 	protected static String getDescriptorImagePath(BeanDescriptor<?> descriptor) {
-		if (!descriptor.getBeanClass().getPackage().getName().startsWith("org.eobjects")) {
+		if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
 			// plugins get a special icon
 			return "images/component-types/plugin.png";
 		}

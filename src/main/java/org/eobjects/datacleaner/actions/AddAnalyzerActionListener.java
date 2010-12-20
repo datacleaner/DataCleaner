@@ -63,7 +63,7 @@ public final class AddAnalyzerActionListener implements ActionListener {
 						@SuppressWarnings("unchecked")
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							Class<?> analyzerClass = descriptor.getBeanClass();
+							Class<?> analyzerClass = descriptor.getComponentClass();
 							if (descriptor.isExploringAnalyzer()) {
 								_analysisJobBuilder
 										.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);

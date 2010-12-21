@@ -24,7 +24,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -33,12 +36,16 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
+import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.eobjects.metamodel.util.ImmutableDate;
 
@@ -51,6 +58,8 @@ import dk.eobjects.metamodel.util.ImmutableDate;
 public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements PropertyChangeListener {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCFileChooser _fileChooser;
 	private final DCPanel _panel;
@@ -120,11 +129,26 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 
 		_panel.removeAll();
 
-		_panel.add(new JLabel("Filename:"));
-		_panel.add(new JLabel(file.getName()));
-		_panel.add(Box.createVerticalStrut(10));
-		_panel.add(new JLabel("Last modified:"));
-		_panel.add(new JLabel(new ImmutableDate(file.lastModified()).toString()));
+		try {
+			JaxbJobReader reader = new JaxbJobReader(_configuration);
+			AnalysisJobMetadata metadata = reader.readMetadata(new BufferedInputStream(new FileInputStream(file)));
+			_panel.add(new JLabel("Datastore:"));
+			_panel.add(new JLabel(metadata.getDatastoreName()));
+			_panel.add(Box.createVerticalStrut(10));
+			_panel.add(new JLabel("Source columns:"));
+			List<String> paths = metadata.getSourceColumnPaths();
+			for (String path : paths) {
+				_panel.add(new JLabel(path));
+			}
+		} catch (Exception ex) {
+			logger.warn("Exception occurred while reading job metadata", ex);
+			_panel.add(new JLabel("Filename:"));
+			_panel.add(new JLabel(file.getName()));
+			_panel.add(Box.createVerticalStrut(10));
+			_panel.add(new JLabel("Last modified:"));
+			_panel.add(new JLabel(new ImmutableDate(file.lastModified()).toString()));
+		}
+
 		_panel.add(Box.createVerticalStrut(20));
 		_panel.add(openJobButton);
 		_panel.add(Box.createVerticalStrut(4));

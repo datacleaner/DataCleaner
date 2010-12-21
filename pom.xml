@@ -8,6 +8,26 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<developers>
+		<developer>
+			<name>Kasper Sørensen</name>
+			<email>kasper@eobjects.dk</email>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Stefan Janssen</name>
+			<email>stefan.janssen@humaninference.com</email>
+		</contributor>
+		<contributor>
+			<name>Nancy Sharma</name>
+			<email>nsharma@xebia.com</email>
+		</contributor>
+		<contributor>
+			<name>Paritosh Ranjan</name>
+			<email>pranjan@xebia.com</email>
+		</contributor>
+	</contributors>
 	<build>
 		<plugins>
 			<plugin>

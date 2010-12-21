@@ -46,6 +46,7 @@ public final class LookAndFeelManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(LookAndFeelManager.class);
 	private static final LookAndFeelManager instance = new LookAndFeelManager();
+	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	public static LookAndFeelManager getInstance() {
 		return instance;
@@ -63,13 +64,13 @@ public final class LookAndFeelManager {
 		} catch (UnsupportedLookAndFeelException e) {
 			throw new IllegalStateException(e);
 		}
-		
+
 		Set<Object> propertyKeys = UIManager.getLookAndFeelDefaults().keySet();
 
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-				
+
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
@@ -79,7 +80,7 @@ public final class LookAndFeelManager {
 				}
 			}
 		}
-		
+
 		ToolTipManager.sharedInstance().setInitialDelay(500);
 		PopupFactory.setSharedInstance(new DCPopupFactory());
 
@@ -89,10 +90,10 @@ public final class LookAndFeelManager {
 		UIManager.put("Menu.border", borderDarkest3);
 		UIManager.put("Menu.background", WidgetUtils.BG_COLOR_DARKEST);
 		UIManager.put("Menu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-		
+
 		UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
-		
+
 		UIManager.put("PopupMenu.border", emptyBorder);
 		UIManager.put("PopupMenu.background", WidgetUtils.BG_COLOR_DARKEST);
 		UIManager.put("PopupMenu.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -138,5 +139,12 @@ public final class LookAndFeelManager {
 
 		// progressbar color
 		UIManager.put("ProgressBar.foreground", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+
+		// file chooser
+		UIManager.put("FileChooser.detailsViewIcon", imageManager.getImageIcon("images/filetypes/view-details.png"));
+		UIManager.put("FileChooser.listViewIcon", imageManager.getImageIcon("images/filetypes/view-list.png"));
+		UIManager.put("FileChooser.homeFolderIcon", imageManager.getImageIcon("images/filetypes/home-folder.png"));
+		UIManager.put("FileChooser.newFolderIcon", imageManager.getImageIcon("images/filetypes/new-folder.png"));
+		UIManager.put("FileChooser.upFolderIcon", imageManager.getImageIcon("images/filetypes/parent-folder.png"));
 	}
 }

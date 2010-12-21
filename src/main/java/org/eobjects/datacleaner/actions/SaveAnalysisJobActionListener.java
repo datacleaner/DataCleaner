@@ -36,6 +36,7 @@ import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public final class SaveAnalysisJobActionListener implements ActionListener {
@@ -64,7 +65,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 
 		UserPreferences userPreferences = UserPreferences.getInstance();
 
-		JFileChooser fileChooser = new JFileChooser(userPreferences.getAnalysisJobDirectory());
+		DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
 		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
 
 		int result = fileChooser.showSaveDialog(_window);

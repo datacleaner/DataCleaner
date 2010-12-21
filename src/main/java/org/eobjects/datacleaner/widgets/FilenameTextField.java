@@ -67,11 +67,11 @@ public final class FilenameTextField extends DCPanel {
 		_browseButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				final JFileChooser fileChooser;
+				final DCFileChooser fileChooser;
 				if (_directory == null) {
-					fileChooser = new JFileChooser();
+					fileChooser = new DCFileChooser();
 				} else {
-					fileChooser = new JFileChooser(_directory);
+					fileChooser = new DCFileChooser(_directory);
 				}
 
 				WidgetUtils.centerOnScreen(fileChooser);

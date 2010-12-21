@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.datacleaner.widgets.DCFileChooser;
 
 public class SaveDataSetActionListener implements ActionListener {
 
@@ -78,7 +79,7 @@ public class SaveDataSetActionListener implements ActionListener {
 		saveAsCsvItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser(UserPreferences.getInstance().getAnalysisJobDirectory());
+				DCFileChooser fileChooser = new DCFileChooser(UserPreferences.getInstance().getAnalysisJobDirectory());
 				fileChooser.addChoosableFileFilter(FileFilters.CSV);
 				if (fileChooser.showSaveDialog((Component) event.getSource()) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();

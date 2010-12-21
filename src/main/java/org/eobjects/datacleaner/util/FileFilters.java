@@ -68,6 +68,8 @@ public final class FileFilters {
 	public static final ExtensionFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
 	public static final ExtensionFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
 	public static final ExtensionFilter MDB = new ExtensionFilter("Access database (.mdb)", ".mdb");
+	public static final ExtensionFilter DBF = new ExtensionFilter("Dbase database (.dbf)", ".dbf");
+	public static final ExtensionFilter ODB = new ExtensionFilter("OpenOffice.org database (.odb)", ".odb");
 
 	public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)", ".analysis.xml");
 

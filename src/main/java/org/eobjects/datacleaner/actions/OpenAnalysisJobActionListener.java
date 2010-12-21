@@ -33,6 +33,7 @@ import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
+import org.eobjects.datacleaner.widgets.OpenAnalysisJobFileChooserAccessory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public class OpenAnalysisJobActionListener implements ActionListener {
@@ -53,12 +54,12 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		UsageLogger.getInstance().log("Open analysis job");
 
-		UserPreferences userPreferences = UserPreferences.getInstance();
-
 		File file = _file;
 		if (file == null) {
+			UserPreferences userPreferences = UserPreferences.getInstance();
 			DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
-			
+			fileChooser.setAccessory(new OpenAnalysisJobFileChooserAccessory(_configuration, fileChooser));
+
 			fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
 			int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
 
@@ -69,13 +70,19 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 			}
 		}
 
-		JaxbJobReader reader = new JaxbJobReader(_configuration);
+		openFile(file, _configuration);
+	}
+
+	public static void openFile(File file, AnalyzerBeansConfiguration configuration) {
+		UserPreferences userPreferences = UserPreferences.getInstance();
+
+		JaxbJobReader reader = new JaxbJobReader(configuration);
 		AnalysisJobBuilder ajb = reader.create(file);
 
 		userPreferences.setAnalysisJobDirectory(file.getParentFile());
 		userPreferences.addRecentJobFile(file);
 
-		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(_configuration, ajb, file.getName());
+		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, ajb, file.getName());
 		window.setVisible(true);
 	}
 }

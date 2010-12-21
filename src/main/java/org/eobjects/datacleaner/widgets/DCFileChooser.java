@@ -29,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
@@ -56,7 +57,6 @@ public class DCFileChooser extends JFileChooser {
 		super(dir);
 		setPreferredSize(new Dimension(400, 550));
 		setFilePaneBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		WidgetUtils.centerOnScreen(this);
 	}
 
 	public void setFilePaneBackground(Color bg) {
@@ -107,20 +107,21 @@ public class DCFileChooser extends JFileChooser {
 			return imageManager.getImageIcon("images/filetypes/folder.png");
 		}
 		String name = f.getName().toLowerCase();
-		if (name.endsWith(".csv") || name.endsWith(".tsv") || name.endsWith(".dat") || name.endsWith(".txt")) {
+		if (name.endsWith(FileFilters.CSV.getExtension()) || name.endsWith(FileFilters.TSV.getExtension())
+				|| name.endsWith(FileFilters.DAT.getExtension()) || name.endsWith(FileFilters.TXT.getExtension())) {
 			return imageManager.getImageIcon(IconUtils.CSV_IMAGEPATH);
 		}
-		if (name.endsWith(".mdb")) {
+		if (name.endsWith(FileFilters.MDB.getExtension())) {
 			return imageManager.getImageIcon(IconUtils.ACCESS_IMAGEPATH);
 		}
-		if (name.endsWith(".dbf")) {
+		if (name.endsWith(FileFilters.DBF.getExtension())) {
 			return imageManager.getImageIcon(IconUtils.DBASE_IMAGEPATH);
 		}
-		if (name.endsWith(".xls") || name.endsWith(".xlsx")) {
+		if (name.endsWith(FileFilters.XLS.getExtension()) || name.endsWith(FileFilters.XLSX.getExtension())) {
 			return imageManager.getImageIcon(IconUtils.EXCEL_IMAGEPATH);
 		}
-		if (name.endsWith(".odb")) {
-			return imageManager.getImageIcon(IconUtils.EXCEL_IMAGEPATH);
+		if (name.endsWith(FileFilters.ODB.getExtension())) {
+			return imageManager.getImageIcon(IconUtils.ODB_IMAGEPATH);
 		}
 		if (name.endsWith(".zip") || name.endsWith(".tar") || name.endsWith(".gz") || name.endsWith(".jar")
 				|| name.endsWith(".war") || name.endsWith(".ear")) {

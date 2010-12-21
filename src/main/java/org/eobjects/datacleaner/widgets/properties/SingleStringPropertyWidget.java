@@ -20,23 +20,26 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import javax.swing.event.DocumentEvent;
+import javax.swing.text.JTextComponent;
 
+import org.eobjects.analyzer.beans.api.StringProperty;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.jdesktop.swingx.JXTextField;
 
 public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JXTextField _textField;
+	private final JTextComponent _textField;
 
 	public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
-		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());
+
+		StringProperty stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
+		_textField = getTextField(propertyDescriptor, stringPropertyAnnotation);
 		String currentValue = (String) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
 			_textField.setText(currentValue);
@@ -48,6 +51,17 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 			}
 		});
 		add(_textField);
+	}
+
+	private JTextComponent getTextField(ConfiguredPropertyDescriptor propertyDescriptor,
+			StringProperty stringPropertyAnnotation) {
+		JTextComponent textField;
+		if (stringPropertyAnnotation != null && stringPropertyAnnotation.multiline()) {
+			textField = WidgetFactory.createTextArea(propertyDescriptor.getName());
+		} else {
+			textField = WidgetFactory.createTextField(propertyDescriptor.getName());
+		}
+		return textField;
 	}
 
 	@Override

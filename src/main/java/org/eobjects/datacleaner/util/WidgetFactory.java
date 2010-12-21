@@ -121,6 +121,7 @@ public final class WidgetFactory {
 	public static JXTextArea createTextArea(String promptText) {
 		JXTextArea ta = new JXTextArea(promptText);
 		ta.setColumns(17);
+		ta.setRows(6);
 		return ta;
 	}
 }

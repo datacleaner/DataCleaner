@@ -77,7 +77,7 @@ public final class UserDatabaseDriver implements Serializable {
 			URLClassLoader classLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
 				@Override
 				public URLClassLoader run() {
-					return new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+					return new URLClassLoader(urls, UserDatabaseDriver.class.getClassLoader());
 				}
 			});
 

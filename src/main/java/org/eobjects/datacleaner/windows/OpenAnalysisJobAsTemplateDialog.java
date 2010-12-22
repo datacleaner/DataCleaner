@@ -113,6 +113,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 			final String tablePath = columnPath.substring(0, columnDelim);
 
 			final SourceColumnComboBox comboBox = new SourceColumnComboBox();
+			comboBox.setEnabled(false);
 			comboBox.setName(columnPath);
 			comboBox.addActionListener(new ActionListener() {
 				@Override
@@ -164,6 +165,12 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 				for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
 					for (SourceColumnComboBox comboBox : comboBoxes) {
 						comboBox.setModel(_datastore);
+						if (_datastore == null) {
+							// no datastore selected
+							comboBox.setEnabled(false);
+						} else {
+							comboBox.setEnabled(true);
+						}
 					}
 				}
 			}
@@ -187,6 +194,11 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 	@Override
 	protected int getDialogWidth() {
 		return 600;
+	}
+
+	@Override
+	protected boolean isWindowResizable() {
+		return true;
 	}
 
 	@Override
@@ -239,7 +251,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 		openButtonPanel.add(_openButton);
 		WidgetUtils.addToGridBag(openButtonPanel, panel, 2, row, GridBagConstraints.EAST);
 
-		return panel;
+		return WidgetUtils.scrolleable(panel);
 	}
 
 	@Override

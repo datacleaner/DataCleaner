@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.widgets.tree;
 import java.awt.Component;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
-import java.util.Comparator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -40,6 +39,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.SchemaComparator;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
@@ -92,20 +92,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		Schema[] schemas = _dataContextProvider.getSchemaNavigator().getSchemas();
 
 		// make sure that information schemas are arranged at the top
-		Arrays.sort(schemas, new Comparator<Schema>() {
-			@Override
-			public int compare(Schema o1, Schema o2) {
-				String name1 = o1.getName();
-				if ("information_schema".equals(name1.toLowerCase())) {
-					return -1;
-				}
-				String name2 = o2.getName();
-				if ("information_schema".equals(name2.toLowerCase())) {
-					return 1;
-				}
-				return name1.compareTo(name2);
-			}
-		});
+		Arrays.sort(schemas, new SchemaComparator());
 
 		for (Schema schema : schemas) {
 			DefaultMutableTreeNode schemaNode = new DefaultMutableTreeNode(schema);
@@ -206,11 +193,12 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 					expanded, leaf, row, hasFocus);
 			icon = IconUtils.getDatastoreIcon((Datastore) value, IconUtils.ICON_SIZE_SMALL);
 		} else if (value instanceof Schema) {
-			String schemaName = ((Schema) value).getName();
+			Schema schema = ((Schema) value);
+			String schemaName = schema.getName();
 			component = _rendererDelegate.getTreeCellRendererComponent(tree, schemaName, selected, expanded, leaf, row,
 					hasFocus);
 			icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
-			if ("information_schema".equalsIgnoreCase(schemaName)) {
+			if (SchemaComparator.isInformationSchema(schema)) {
 				icon = imageManager.getImageIcon("images/model/schema_information.png", IconUtils.ICON_SIZE_SMALL);
 			}
 		} else if (value instanceof Table) {

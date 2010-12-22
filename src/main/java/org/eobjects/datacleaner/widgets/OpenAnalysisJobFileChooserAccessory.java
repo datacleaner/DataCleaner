@@ -27,7 +27,7 @@ import java.beans.PropertyChangeListener;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +48,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
+	private static final ImageManager imageManager = ImageManager.getInstance();
+	
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCFileChooser _fileChooser;
 	private final DCPanel _centerPanel;
@@ -129,8 +132,9 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		openAsTemplateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO: Use the JobReader.readColumnMapping method and present
-				// alternatives.
+				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_configuration, _file,
+						_metadata);
+				dialog.setVisible(true);
 				_fileChooser.cancelSelection();
 			}
 		});
@@ -157,8 +161,12 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 			fis = new FileInputStream(_file);
 			BufferedInputStream bis = new BufferedInputStream(fis);
 			_metadata = reader.readMetadata(bis);
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException(e);
+		} catch (Exception e) {
+			// metadata could not be produced so we cannot display the file
+			// information
+			logger.warn("An unexpected error occurred reading metadata from file", e);
+			setVisible(false);
+			return;
 		} finally {
 			try {
 				fis.close();
@@ -168,6 +176,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		}
 
 		_centerPanel.removeAll();
+
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		final int separatorHeight = 6;
 
@@ -198,13 +208,13 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		final Date createdDate = _metadata.getCreatedDate();
 		if (createdDate != null) {
 			_centerPanel.add(new JLabel("<html><b>Created:</b></html>"));
-			_centerPanel.add(new JLabel(createdDate.toString()));
+			_centerPanel.add(new JLabel(dateFormat.format(createdDate)));
 			_centerPanel.add(Box.createVerticalStrut(separatorHeight));
 		}
 		final Date updatedDate = _metadata.getUpdatedDate();
 		if (updatedDate != null) {
 			_centerPanel.add(new JLabel("<html><b>Updated:</b></html>"));
-			_centerPanel.add(new JLabel(updatedDate.toString()));
+			_centerPanel.add(new JLabel(dateFormat.format(updatedDate)));
 			_centerPanel.add(Box.createVerticalStrut(separatorHeight));
 		}
 
@@ -216,7 +226,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
 		if (datastore == null) {
 			_openJobButton.setEnabled(false);
-			datastoreLabel.setIcon(ImageManager.getInstance().getImageIcon("images/status/warning.png",
+			datastoreLabel.setIcon(imageManager.getImageIcon("images/status/warning.png",
 					IconUtils.ICON_SIZE_SMALL));
 			datastoreLabel.setToolTipText("No such datastore: " + datastoreName);
 		} else {
@@ -231,7 +241,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		List<String> paths = _metadata.getSourceColumnPaths();
 		for (String path : paths) {
 			JLabel columnLabel = new JLabel(path);
-			columnLabel.setIcon(ImageManager.getInstance()
+			columnLabel.setIcon(imageManager
 					.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL));
 			_centerPanel.add(columnLabel);
 		}

@@ -74,11 +74,14 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	}
 
 	public static void openFile(File file, AnalyzerBeansConfiguration configuration) {
-		UserPreferences userPreferences = UserPreferences.getInstance();
-
 		JaxbJobReader reader = new JaxbJobReader(configuration);
 		AnalysisJobBuilder ajb = reader.create(file);
 
+		openJob(file, configuration, ajb);
+	}
+
+	public static void openJob(File file, AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb) {
+		UserPreferences userPreferences = UserPreferences.getInstance();
 		userPreferences.setAnalysisJobDirectory(file.getParentFile());
 		userPreferences.addRecentJobFile(file);
 

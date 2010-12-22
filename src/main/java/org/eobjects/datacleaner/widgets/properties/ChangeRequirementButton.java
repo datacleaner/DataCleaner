@@ -69,6 +69,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 		_analysisJobBuilder = analysisJobBuilder;
 		_jobBuilder = jobBuilder;
 		addActionListener(this);
+		updateText();
 	}
 
 	@Override

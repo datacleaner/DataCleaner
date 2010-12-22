@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,6 +78,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_taskPaneContainer.setOpaque(false);
+
 		add(_taskPaneContainer, BorderLayout.CENTER);
 	}
 
@@ -142,6 +144,13 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		FilterJobBuilderPanel panel = _panels.get(filterJobBuilder);
 		if (panel != null) {
 			panel.onRequirementChanged();
+		}
+	}
+
+	public void initializeExistingComponents() {
+		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
+		for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
+			onAdd(filterJobBuilder);
 		}
 	}
 }

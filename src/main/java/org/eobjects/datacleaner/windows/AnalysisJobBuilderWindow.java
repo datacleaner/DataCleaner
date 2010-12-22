@@ -366,10 +366,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	 * will only happen when opening a saved job.
 	 */
 	private void initializeExistingComponents() {
-		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
-		for (FilterJobBuilder<?, ?> fjb : filterJobBuilders) {
-			onAdd(fjb);
-		}
+		_filterListPanel.initializeExistingComponents();
 
 		List<TransformerJobBuilder<?>> transformerJobBuilders = _analysisJobBuilder.getTransformerJobBuilders();
 		for (TransformerJobBuilder<?> tjb : transformerJobBuilders) {

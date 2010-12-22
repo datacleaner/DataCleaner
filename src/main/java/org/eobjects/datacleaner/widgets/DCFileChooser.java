@@ -55,7 +55,7 @@ public class DCFileChooser extends JFileChooser {
 
 	public DCFileChooser(File dir) {
 		super(dir);
-		setPreferredSize(new Dimension(400, 550));
+		setPreferredSize(new Dimension(600, 550));
 		setFilePaneBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
 	}
 

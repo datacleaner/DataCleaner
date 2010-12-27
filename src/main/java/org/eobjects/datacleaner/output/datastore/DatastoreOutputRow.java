@@ -42,7 +42,7 @@ final class DatastoreOutputRow implements OutputRow {
 	}
 
 	@Override
-	public <E> OutputRow setValue(InputColumn<E> inputColumn, E value) {
+	public <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value) {
 		int index = -1;
 		for (int i = 0; i < _columns.length; i++) {
 			if (inputColumn.equals(_columns[i])) {

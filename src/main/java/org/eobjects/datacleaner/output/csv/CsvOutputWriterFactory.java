@@ -47,11 +47,15 @@ public final class CsvOutputWriterFactory {
 	}
 
 	public static OutputWriter getWriter(String filename, InputColumn<?>... columns) {
+		return getWriter(filename, ',', '"', columns);
+	}
+
+	public static OutputWriter getWriter(String filename, char separatorChar, char quoteChar, InputColumn<?>... columns) {
 		String[] headers = new String[columns.length];
 		for (int i = 0; i < headers.length; i++) {
 			headers[i] = columns[i].getName();
 		}
-		return getWriter(filename, headers, ',', '"', columns);
+		return getWriter(filename, headers, separatorChar, quoteChar, columns);
 	}
 
 	public static OutputWriter getWriter(String filename, String[] headers, char separatorChar, char quoteChar,

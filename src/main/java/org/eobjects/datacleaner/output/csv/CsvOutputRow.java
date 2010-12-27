@@ -42,7 +42,7 @@ final class CsvOutputRow implements OutputRow {
 	}
 
 	@Override
-	public <E> OutputRow setValue(InputColumn<E> inputColumn, E value) {
+	public <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value) {
 		_values.put(inputColumn, value);
 		return this;
 	}

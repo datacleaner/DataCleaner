@@ -40,8 +40,8 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 	public void testFullScenario() throws Exception {
 		final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
 
-		DatastoreOutputWriterFactory.setOutputDirectory(new File("target/test-output"));
-		DatastoreOutputWriterFactory.setDatastoreCreationDelegate(new DatastoreCreationDelegate() {
+		File outputDir = new File("target/test-output");
+		DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
 
 			@Override
 			public void createDatastore(Datastore datastore) {
@@ -56,11 +56,12 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 				DataSet dataSet = dc.executeQuery(q);
 
 				scenarioHelper.performAssertions(dataSet, true);
-				
+
 				dcp.close();
 			}
-		});
-		OutputWriter writer = DatastoreOutputWriterFactory.getWriter("my datastore", scenarioHelper.getColumns());
+		};
+		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore",
+				scenarioHelper.getColumns());
 
 		scenarioHelper.writeExampleData(writer);
 		writer.close();

@@ -21,6 +21,19 @@ package org.eobjects.datacleaner.output.datastore;
 
 import org.eobjects.analyzer.connection.Datastore;
 
+/**
+ * Delegate/callback interface for picking up the event that a datastore has
+ * been created. Typically the UI layer will implement this interface in order
+ * to put the datastore into a list or a catalog of datastores.
+ * 
+ * If using the DatastoreOutputWriterFactory for other purposes this interface
+ * can also be implemented to handle the datastore produced when the
+ * outputwriter is being closed.
+ * 
+ * @see DatastoreOutputWriterFactory
+ * 
+ * @author Kasper Sørensen
+ */
 public interface DatastoreCreationDelegate {
 
 	public void createDatastore(Datastore datastore);

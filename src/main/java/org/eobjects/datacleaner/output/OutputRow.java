@@ -29,7 +29,7 @@ import org.eobjects.analyzer.data.InputRow;
  */
 public interface OutputRow {
 
-	public <E> OutputRow setValue(InputColumn<E> inputColumn, E value);
+	public <E> OutputRow setValue(InputColumn<? super E> inputColumn, E value);
 
 	public OutputRow setValues(InputRow row);
 

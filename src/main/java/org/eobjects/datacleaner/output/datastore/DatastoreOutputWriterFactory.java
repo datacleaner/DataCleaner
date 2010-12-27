@@ -28,29 +28,60 @@ import org.eobjects.datacleaner.output.OutputWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Factory for output writers that write new datastores.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class DatastoreOutputWriterFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
-	private static File outputDirectory = new File("temp");
-	private static DatastoreCreationDelegate datastoreCreationDelegate = new DatastoreCreationDelegateImpl();
+	private static final File DEFAULT_OUTPUT_DIRECTORY = new File("temp");
+	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 
 	public static OutputWriter getWriter(String datastoreName, InputColumn<?>... columns) {
-		if (!outputDirectory.exists()) {
-			if (!outputDirectory.mkdirs()) {
-				logger.error("Failed to create directory for datastores: {}", outputDirectory);
+		return getWriter(DEFAULT_OUTPUT_DIRECTORY, DEFAULT_CREATION_DELEGATE, datastoreName, columns);
+	}
+
+	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName,
+			InputColumn<?>... columns) {
+		return getWriter(DEFAULT_OUTPUT_DIRECTORY, creationDelegate, datastoreName, columns);
+	}
+
+	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
+			List<InputColumn<?>> columns) {
+		return getWriter(directory, creationDelegate, datastoreName, columns.toArray(new InputColumn<?>[columns.size()]));
+	}
+
+	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName,
+			List<InputColumn<?>> columns) {
+		return getWriter(DEFAULT_OUTPUT_DIRECTORY, creationDelegate, datastoreName,
+				columns.toArray(new InputColumn<?>[columns.size()]));
+	}
+
+	public static OutputWriter getWriter(String datastoreName, List<InputColumn<?>> columns) {
+		return getWriter(DEFAULT_OUTPUT_DIRECTORY, DEFAULT_CREATION_DELEGATE, datastoreName,
+				columns.toArray(new InputColumn<?>[columns.size()]));
+	}
+
+	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
+			InputColumn<?>... columns) {
+		if (!directory.exists()) {
+			if (!directory.mkdirs()) {
+				logger.error("Failed to create directory for datastores: {}", directory);
 			}
 		}
 
 		synchronized (DatastoreOutputWriterFactory.class) {
-			cleanFiles(datastoreName);
+			cleanFiles(directory, datastoreName);
 		}
 
-		return new DatastoreOutputWriter(datastoreName, outputDirectory, columns, datastoreCreationDelegate);
+		return new DatastoreOutputWriter(datastoreName, directory, columns, creationDelegate);
 	}
 
-	private static void cleanFiles(final String datastoreName) {
-		File[] files = outputDirectory.listFiles(new FilenameFilter() {
+	private static void cleanFiles(final File directory, final String datastoreName) {
+		File[] files = directory.listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.startsWith(datastoreName);
@@ -61,17 +92,5 @@ public final class DatastoreOutputWriterFactory {
 				logger.error("Failed to clean up (delete) file: {}", file);
 			}
 		}
-	}
-
-	public static OutputWriter getWriter(String datastoreName, List<InputColumn<?>> columns) {
-		return getWriter(datastoreName, columns.toArray(new InputColumn<?>[columns.size()]));
-	}
-
-	public static void setDatastoreCreationDelegate(DatastoreCreationDelegate datastoreCreationDelegate) {
-		DatastoreOutputWriterFactory.datastoreCreationDelegate = datastoreCreationDelegate;
-	}
-
-	public static void setOutputDirectory(File outputDirectory) {
-		DatastoreOutputWriterFactory.outputDirectory = outputDirectory;
 	}
 }

@@ -33,6 +33,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
@@ -165,6 +166,14 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 						dialog.setVisible(true);
 					}
 				});
+			} else if (datastore instanceof CsvDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						CsvDatastoreDialog dialog = new CsvDatastoreDialog((CsvDatastore) datastore, _catalog);
+						dialog.setVisible(true);
+					}
+				});
 			} else {
 				editButton.setEnabled(false);
 			}
@@ -192,9 +201,9 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					window.setVisible(true);
 				}
 			});
-			
+
 			WidgetUtils.addToGridBag(dsLabel, _datastoresPanel, 0, i, 1.0, 0.0);
-			
+
 			WidgetUtils.addToGridBag(jobButton, _datastoresPanel, 2, i);
 
 			if (_catalog.isDatastoreMutable(name)) {

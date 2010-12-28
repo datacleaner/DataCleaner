@@ -100,9 +100,15 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, 10));
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
+	private final CsvDatastore _originalDatastore;
 
 	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+		this(null, mutableDatastoreCatalog);
+	}
+
+	public CsvDatastoreDialog(CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
+		_originalDatastore = datastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 
@@ -171,6 +177,42 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/csv.png");
 		_addDatastoreButton.setEnabled(false);
+
+		if (_originalDatastore != null) {
+			_datastoreNameField.setText(_originalDatastore.getName());
+			_filenameField.setFilename(_originalDatastore.getFilename());
+			_encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
+
+			Character separatorChar = _originalDatastore.getSeparatorChar();
+			String separator = null;
+			if (separatorChar != null) {
+				if (separatorChar.charValue() == ',') {
+					separator = SEPARATOR_COMMA;
+				} else if (separatorChar.charValue() == ';') {
+					separator = SEPARATOR_SEMICOLON;
+				} else if (separatorChar.charValue() == '|') {
+					separator = SEPARATOR_PIPE;
+				} else if (separatorChar.charValue() == '\t') {
+					separator = SEPARATOR_TAB;
+				} else {
+					separator = separatorChar.toString();
+				}
+			}
+			_separatorCharField.setSelectedItem(separator);
+
+			Character quoteChar = _originalDatastore.getQuoteChar();
+			String quote = null;
+			if (quoteChar != null) {
+				if (quoteChar.charValue() == '"') {
+					quote = QUOTE_DOUBLE_QUOTE;
+				} else if (quoteChar.charValue() == '\'') {
+					quote = QUOTE_SINGLE_QUOTE;
+				} else {
+					quote = quoteChar.toString();
+				}
+			}
+			_quoteCharField.setSelectedItem(quote);
+		}
 	}
 
 	@Override
@@ -386,6 +428,9 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (_originalDatastore != null) {
+					_mutableDatastoreCatalog.removeDatastore(_originalDatastore);
+				}
 				CsvDatastore datastore = new CsvDatastore(_datastoreNameField.getText(), _filenameField.getFilename(),
 						getQuoteChar(), getSeparatorChar(), getEncoding());
 				_mutableDatastoreCatalog.addDatastore(datastore);

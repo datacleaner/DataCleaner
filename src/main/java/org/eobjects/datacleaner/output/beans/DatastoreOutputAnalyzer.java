@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.output.beans;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 
@@ -35,8 +36,9 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	String datastoreName;
 
 	@Override
-	public void configureForOutcome(FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
-		datastoreName = "output-" + descriptor.getDisplayName() + "-" + categoryName;
+	public void configureForOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
+		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
+		datastoreName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
 	}
 
 	@Override

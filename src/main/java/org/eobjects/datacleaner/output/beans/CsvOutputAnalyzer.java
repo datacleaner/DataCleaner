@@ -26,6 +26,7 @@ import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
@@ -46,8 +47,9 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	File file;
 
 	@Override
-	public void configureForOutcome(FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
-		file = new File("output-" + descriptor.getDisplayName() + "-" + categoryName + ".csv");
+	public void configureForOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
+		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
+		file = new File("output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName + ".csv");
 	}
 
 	@Override

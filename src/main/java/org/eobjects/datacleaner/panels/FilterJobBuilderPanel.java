@@ -128,7 +128,7 @@ public class FilterJobBuilderPanel extends DCPanel {
 					Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
 							.getAnalyzerBeanDescriptors();
 					descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
-					
+
 					for (final AnalyzerBeanDescriptor<?> descriptor : descriptors) {
 						if (descriptor.isRowProcessingAnalyzer()
 								&& descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {
@@ -146,8 +146,8 @@ public class FilterJobBuilderPanel extends DCPanel {
 
 									RowProcessingAnalyzer<?> configurableBean = ajb.getConfigurableBean();
 									if (configurableBean instanceof AbstractOutputWriterAnalyzer) {
-										((AbstractOutputWriterAnalyzer) configurableBean).configureForOutcome(_descriptor,
-												categoryName);
+										((AbstractOutputWriterAnalyzer) configurableBean).configureForOutcome(
+												_analysisJobBuilder, _descriptor, categoryName);
 									}
 
 									ajb.setRequirement(_filterJobBuilder, categoryName);

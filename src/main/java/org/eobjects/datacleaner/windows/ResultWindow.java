@@ -29,10 +29,12 @@ import java.util.Map;
 import javax.swing.JComponent;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
@@ -55,11 +57,13 @@ public final class ResultWindow extends AbstractWindow {
 	private final AnalyzerBeansConfiguration _configuration;
 	private final ProgressInformationPanel _progressInformationPanel;
 	private final RendererFactory _rendererFactory;
+	private final String _jobFilename;
 
-	public ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
+	public ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job, String jobFilename) {
 		super();
 		_configuration = configuration;
 		_job = job;
+		_jobFilename = jobFilename;
 		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider());
 
 		_progressInformationPanel = new ProgressInformationPanel();
@@ -107,7 +111,30 @@ public final class ResultWindow extends AbstractWindow {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Analysis results";
+		String title = "Analysis results";
+
+		String datastoreName = getDatastoreName();
+		if (!StringUtils.isNullOrEmpty(datastoreName)) {
+			title = datastoreName + " | " + title;
+		}
+
+		if (!StringUtils.isNullOrEmpty(_jobFilename)) {
+			title = _jobFilename + " | " + title;
+		}
+		return title;
+	}
+
+	private String getDatastoreName() {
+		if (_job != null) {
+			Datastore datastore = _job.getDatastore();
+			if (datastore != null) {
+				String datastoreName = datastore.getName();
+				if (!StringUtils.isNullOrEmpty(datastoreName)) {
+					return datastoreName;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -119,7 +146,18 @@ public final class ResultWindow extends AbstractWindow {
 	protected JComponent getWindowContent() {
 		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		panel.setLayout(new BorderLayout());
-		panel.add(new DCBannerPanel(getWindowTitle()), BorderLayout.NORTH);
+
+		String bannerTitle = "Analysis results";
+		String datastoreName = getDatastoreName();
+		if (!StringUtils.isNullOrEmpty(datastoreName)) {
+			bannerTitle = bannerTitle + "\n" + datastoreName;
+
+			if (!StringUtils.isNullOrEmpty(_jobFilename)) {
+				bannerTitle = bannerTitle + " | " + _jobFilename;
+			}
+		}
+
+		panel.add(new DCBannerPanel(bannerTitle), BorderLayout.NORTH);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

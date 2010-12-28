@@ -55,6 +55,7 @@ import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
@@ -190,10 +191,17 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	protected String getWindowTitle() {
-		if (_jobFilename == null) {
-			return "Analysis job";
+		String title = "Analysis job";
+		if (_datastore != null) {
+			String datastoreName = _datastore.getName();
+			if (!StringUtils.isNullOrEmpty(datastoreName)) {
+				title = datastoreName + " | " + title;
+			}
 		}
-		return _jobFilename + " | Analysis job";
+		if (!StringUtils.isNullOrEmpty(_jobFilename)) {
+			title = _jobFilename + " | " + title;
+		}
+		return title;
 	}
 
 	@Override
@@ -226,7 +234,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		// Run analysis
 		final JButton runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 		final RunAnalysisActionListener runAnalysisActionListener = new RunAnalysisActionListener(_analysisJobBuilder,
-				_configuration);
+				_configuration, _jobFilename);
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

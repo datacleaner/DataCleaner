@@ -32,12 +32,15 @@ public class RunAnalysisActionListener implements ActionListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
+	private final String _jobFilename;
 	private long lastClickTime = 0;
 
-	public RunAnalysisActionListener(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration) {
+	public RunAnalysisActionListener(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration,
+			String jobFilename) {
 		super();
 		_analysisJobBuilder = analysisJobBuilder;
 		_configuration = configuration;
+		_jobFilename = jobFilename;
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class RunAnalysisActionListener implements ActionListener {
 		UsageLogger.getInstance().log("Run analysis");
 
 		AnalysisJob job = _analysisJobBuilder.toAnalysisJob();
-		ResultWindow window = new ResultWindow(_configuration, job);
+		ResultWindow window = new ResultWindow(_configuration, job, _jobFilename);
 		window.setVisible(true);
 		window.startAnalysis();
 	}

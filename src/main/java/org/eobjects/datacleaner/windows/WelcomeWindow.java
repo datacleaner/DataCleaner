@@ -243,7 +243,7 @@ public class WelcomeWindow extends AbstractWindow {
 					int jobIndex = list.getSelectedIndex();
 					if (jobIndex != -1) {
 						File file = recentJobFiles.get(jobIndex);
-						new OpenAnalysisJobActionListener(_configuration, file).actionPerformed(null);
+						OpenAnalysisJobActionListener.openFile(file, _configuration);
 					}
 				}
 			});

@@ -25,9 +25,12 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
+import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -35,49 +38,58 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.widgets.OpenAnalysisJobFileChooserAccessory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 
+/**
+ * ActionListener that will display an "Open file" dialog which allows the user
+ * to select a job file.
+ * 
+ * The class also contains a few reusable static methods for opening job files
+ * without showing the dialog.
+ * 
+ * @author Kasper Sørensen
+ */
 public class OpenAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
-	private final File _file;
 
 	public OpenAnalysisJobActionListener(AnalyzerBeansConfiguration configuration) {
-		this(configuration, null);
-	}
-
-	public OpenAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, File file) {
 		_configuration = configuration;
-		_file = file;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		UsageLogger.getInstance().log("Open analysis job");
 
-		File file = _file;
-		if (file == null) {
-			UserPreferences userPreferences = UserPreferences.getInstance();
-			DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
-			fileChooser.setAccessory(new OpenAnalysisJobFileChooserAccessory(_configuration, fileChooser));
+		UserPreferences userPreferences = UserPreferences.getInstance();
+		DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
+		fileChooser.setAccessory(new OpenAnalysisJobFileChooserAccessory(_configuration, fileChooser));
 
-			fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
-			int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
+		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
+		int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
 
-			if (openFileResult == JFileChooser.APPROVE_OPTION) {
-				file = fileChooser.getSelectedFile();
-			} else {
-				return;
-			}
+		if (openFileResult == JFileChooser.APPROVE_OPTION) {
+			File file = fileChooser.getSelectedFile();
+			openFile(file, _configuration);
 		}
-
-		openFile(file, _configuration);
 	}
 
 	public static void openFile(File file, AnalyzerBeansConfiguration configuration) {
 		JaxbJobReader reader = new JaxbJobReader(configuration);
-		AnalysisJobBuilder ajb = reader.create(file);
+		try {
+			AnalysisJobBuilder ajb = reader.create(file);
 
-		openJob(file, configuration, ajb);
+			openJob(file, configuration, ajb);
+		} catch (NoSuchDatastoreException e) {
+			AnalysisJobMetadata metadata = reader.readMetadata(file);
+			int result = JOptionPane.showConfirmDialog(null, e.getMessage()
+					+ "\n\nDo you wish to open this job as a template?", "Error: " + e.getMessage(),
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+			if (result == JOptionPane.OK_OPTION) {
+				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(configuration, file, metadata);
+				dialog.setVisible(true);
+			}
+		}
 	}
 
 	public static void openJob(File file, AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb) {

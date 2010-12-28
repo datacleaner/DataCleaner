@@ -227,10 +227,11 @@ public final class WidgetUtils {
 
 	public static void showErrorMessage(String shortMessage, String detailedMessage, Throwable exception) {
 		JXErrorPane.setDefaultLocale(Locale.ENGLISH);
-		JXErrorPane errorPane = new JXErrorPane();
-		ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception, ErrorLevel.SEVERE, null);
+		final JXErrorPane errorPane = new JXErrorPane();
+		final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception, ErrorLevel.SEVERE,
+				null);
 		errorPane.setErrorInfo(info);
-		JDialog dialog = JXErrorPane.createDialog(WindowManager.getInstance().getMainWindow(), errorPane);
+		final JDialog dialog = JXErrorPane.createDialog(WindowManager.getInstance().getMainWindow(), errorPane);
 		dialog.setTitle(shortMessage);
 		dialog.setVisible(true);
 	}

@@ -27,10 +27,28 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.CompareUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Abstract implementation of the PropertyWidget interface. An implementing
+ * class should preferably:
+ * 
+ * <ul>
+ * <li>add(...) a single widget in the constructor.</li>
+ * <li>call fireValueChanged() each time the contents/value of the widget has
+ * changed.</li>
+ * </ul>
+ * 
+ * @author Kasper Sørensen
+ * 
+ * @param <E>
+ */
 public abstract class AbstractPropertyWidget<E> extends DCPanel implements PropertyWidget<E> {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = LoggerFactory.getLogger(AbstractPropertyWidget.class);
 
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
@@ -67,7 +85,16 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 	}
 
 	protected final void fireValueChanged(Object newValue) {
-		_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
+		try {
+			_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
+		} catch (Exception e) {
+			// an exception will be thrown here if setting an invalid property
+			// value (which may just be work in progress, so we don't make a
+			// fuzz about it)
+			if (logger.isWarnEnabled()) {
+				logger.warn("Exception thrown when setting configured property " + _propertyDescriptor, e);
+			}
+		}
 	}
 
 	@Override

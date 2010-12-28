@@ -27,55 +27,78 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
 
 public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JTextComponent _textField;
+	private static final String[] MONOSPACE_MIME_TYPES = { "text/x-java-source", "application/x-javascript",
+			"text/javascript" };
+
+	private final JTextComponent _textComponent;
 
 	public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
 		StringProperty stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
-		_textField = getTextField(propertyDescriptor, stringPropertyAnnotation);
+		_textComponent = getTextComponent(propertyDescriptor, stringPropertyAnnotation);
 		String currentValue = (String) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
-			_textField.setText(currentValue);
+			_textComponent.setText(currentValue);
 		}
-		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
+		add(_textComponent);
+	}
+
+	private JTextComponent getTextComponent(ConfiguredPropertyDescriptor propertyDescriptor,
+			StringProperty stringPropertyAnnotation) {
+		JTextComponent textComponent;
+		if (stringPropertyAnnotation != null && stringPropertyAnnotation.multiline()) {
+			textComponent = WidgetFactory.createTextArea(propertyDescriptor.getName());
+		} else {
+			textComponent = WidgetFactory.createTextField(propertyDescriptor.getName());
+		}
+
+		textComponent.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
 				fireValueChanged();
 			}
 		});
-		add(_textField);
-	}
 
-	private JTextComponent getTextField(ConfiguredPropertyDescriptor propertyDescriptor,
-			StringProperty stringPropertyAnnotation) {
-		JTextComponent textField;
-		if (stringPropertyAnnotation != null && stringPropertyAnnotation.multiline()) {
-			textField = WidgetFactory.createTextArea(propertyDescriptor.getName());
-		} else {
-			textField = WidgetFactory.createTextField(propertyDescriptor.getName());
+		if (stringPropertyAnnotation != null) {
+			boolean monospace = false;
+			String[] mimeTypes = stringPropertyAnnotation.mimeType();
+			for (String mt1 : mimeTypes) {
+				for (String mt2 : MONOSPACE_MIME_TYPES) {
+					if (mt1.equalsIgnoreCase(mt2)) {
+						monospace = true;
+						break;
+					}
+				}
+			}
+
+			if (monospace) {
+				textComponent.setFont(WidgetUtils.FONT_MONOSPACE);
+			}
 		}
-		return textField;
+
+		return textComponent;
 	}
 
 	@Override
 	public boolean isSet() {
-		return _textField.getText() != null && _textField.getText().length() > 0;
+		return _textComponent.getText() != null && _textComponent.getText().length() > 0;
 	}
 
 	@Override
 	public String getValue() {
-		return _textField.getText();
+		return _textComponent.getText();
 	}
 
 	@Override
 	protected void setValue(String value) {
-		_textField.setText(value);
+		_textComponent.setText(value);
 	}
 }

@@ -105,6 +105,8 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 
 				String description = propertyDescriptor.getDescription();
 				if (description != null) {
+					description = description.replaceAll("\n", "</p><p>");
+					description = "<html><p>" + description + "</p></html>";
 					JLabel descLabel = new JLabel(description);
 					descLabel.setFont(WidgetUtils.FONT_SMALL);
 					descLabel.setBorder(new EmptyBorder(0, 4, 4, 0));

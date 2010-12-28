@@ -44,8 +44,16 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
+/**
+ * Property widget for multiple input columns. Displays these as checkboxes.
+ * 
+ * @author Kasper Sørensen
+ * 
+ */
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
 		SourceColumnChangeListener, TransformerChangeListener {
+
+	private static final long serialVersionUID = 1L;
 
 	private final ChangeListener CHANGE_LISTENER = new ChangeListener() {
 		@Override
@@ -71,8 +79,6 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			}
 		}
 	};
-
-	private static final long serialVersionUID = 1L;
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;

@@ -30,6 +30,8 @@ import javax.swing.JButton;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.JXTextArea;
@@ -122,6 +124,7 @@ public final class WidgetFactory {
 		JXTextArea ta = new JXTextArea(promptText);
 		ta.setColumns(17);
 		ta.setRows(6);
+		ta.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(2, 2, 2, 2)));
 		return ta;
 	}
 }

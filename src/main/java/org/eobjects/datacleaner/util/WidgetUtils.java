@@ -95,7 +95,7 @@ public final class WidgetUtils {
 	public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
 	public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH,
 			WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
-	public static final Border BORDER_THIN = new LineBorder(BG_COLOR_DARK);
+	public static final Border BORDER_THIN = new LineBorder(BG_COLOR_MEDIUM);
 
 	/**
 	 * A highlighter for coloring odd/even rows in a table

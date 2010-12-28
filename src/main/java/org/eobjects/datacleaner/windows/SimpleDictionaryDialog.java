@@ -63,7 +63,6 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 		_nameTextField = WidgetFactory.createTextField("Dictionary name");
 		_valuesTextArea = WidgetFactory.createTextArea("Values");
 		_valuesTextArea.setRows(3);
-		_valuesTextArea.setBorder(WidgetUtils.BORDER_THIN);
 
 		if (dictionary != null) {
 			_nameTextField.setText(dictionary.getName());

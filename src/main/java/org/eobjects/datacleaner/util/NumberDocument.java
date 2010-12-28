@@ -36,9 +36,11 @@ public class NumberDocument extends PlainDocument {
 		while (it.hasNext() && number) {
 			it.next();
 			if (!it.isDigit()) {
-				if (!it.is('.')) {
-					if (!it.is('%')) {
-						number = false;
+				if (!it.is('-')) {
+					if (!it.is('.')) {
+						if (!it.is('%')) {
+							number = false;
+						}
 					}
 				}
 			}

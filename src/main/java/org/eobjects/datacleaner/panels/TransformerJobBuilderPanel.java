@@ -53,11 +53,10 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 		_transformerJobBuilder = transformerJobBuilder;
 		_configuration = configuration;
 
-		List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
-
-		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, analysisJobBuilder);
-
 		init();
+
+		List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
+		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, analysisJobBuilder);
 
 		JButton previewButton = new JButton("Preview transformed data",
 				imageManager.getImageIcon("images/actions/preview_data.png"));

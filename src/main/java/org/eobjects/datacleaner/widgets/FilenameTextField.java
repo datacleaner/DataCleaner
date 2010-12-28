@@ -56,7 +56,14 @@ public final class FilenameTextField extends DCPanel {
 	private volatile FileFilter _selectedFileFilter;
 	private volatile File _directory;
 
-	public FilenameTextField(File directory) {
+	/**
+	 * 
+	 * @param directory
+	 * @param fileOpenDialog
+	 *            true if browse dialog should be an "open file" dialog or false
+	 *            if it should be a "save file" dialog.
+	 */
+	public FilenameTextField(File directory, final boolean fileOpenDialog) {
 		super();
 		_directory = directory;
 		setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -81,10 +88,18 @@ public final class FilenameTextField extends DCPanel {
 				}
 
 				if (_selectedFileFilter != null) {
+					if (!_chooseableFileFilters.contains(_selectedFileFilter)) {
+						_chooseableFileFilters.add(_selectedFileFilter);
+					}
 					fileChooser.setFileFilter(_selectedFileFilter);
 				}
 
-				int result = fileChooser.showOpenDialog(FilenameTextField.this);
+				int result;
+				if (fileOpenDialog) {
+					result = fileChooser.showOpenDialog(FilenameTextField.this);
+				} else {
+					result = fileChooser.showSaveDialog(FilenameTextField.this);
+				}
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
 					if (file.exists() && file.isFile()) {

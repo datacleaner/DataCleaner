@@ -23,6 +23,8 @@ import java.io.File;
 
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.FileProperty;
+import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
@@ -44,6 +46,7 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	char quoteChar = '"';
 
 	@Configured
+	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
 	File file;
 
 	@Override

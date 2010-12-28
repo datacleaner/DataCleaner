@@ -71,7 +71,7 @@ public class AccessDatastoreDialog extends AbstractDialog {
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 		_statusLabel = new JLabel("Please select file");
 
-		_filenameField = new FilenameTextField(userPreferences.getDatastoreDirectory());
+		_filenameField = new FilenameTextField(userPreferences.getDatastoreDirectory(), true);
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {

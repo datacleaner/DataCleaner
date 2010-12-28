@@ -76,7 +76,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 			}
 		});
 
-		_filenameTextField = new FilenameTextField(_userPreferences.getDatastoreDirectory());
+		_filenameTextField = new FilenameTextField(_userPreferences.getDatastoreDirectory(), true);
 		_filenameTextField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {

@@ -20,14 +20,20 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.event.DocumentEvent;
+import javax.swing.filechooser.FileFilter;
 
+import org.eobjects.analyzer.beans.api.FileProperty;
+import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
+import org.eobjects.datacleaner.util.ExtensionFilter;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
@@ -41,8 +47,36 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 	public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
-		
-		_filenameField = new FilenameTextField(UserPreferences.getInstance().getConfiguredFileDirectory());
+
+		boolean openFileDialog = true;
+		String[] extensions = null;
+
+		FileProperty fileProperty = propertyDescriptor.getAnnotation(FileProperty.class);
+		if (fileProperty != null) {
+			openFileDialog = fileProperty.accessMode() == FileAccessMode.OPEN;
+
+			extensions = fileProperty.extension();
+		}
+
+		_filenameField = new FilenameTextField(UserPreferences.getInstance().getConfiguredFileDirectory(), openFileDialog);
+
+		if (extensions != null && extensions.length > 0) {
+			List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
+			for (String extension : extensions) {
+				FileFilter filter = new ExtensionFilter(extension.toUpperCase() + " file", "." + extension);
+				filters.add(filter);
+				_filenameField.addChoosableFileFilter(filter);
+			}
+			if (filters.size() == 1) {
+				_filenameField.setSelectedFileFilter(filters.get(0));
+			} else {
+				FileFilter filter = FileFilters.combined("All suggested file formats",
+						filters.toArray(new FileFilter[filters.size()]));
+				_filenameField.setSelectedFileFilter(filter);
+			}
+		} else {
+			_filenameField.setSelectedFileFilter(FileFilters.ALL);
+		}
 
 		File currentValue = (File) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
@@ -56,9 +90,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 				fireValueChanged();
 			}
 		});
-		
-		_filenameField.addChoosableFileFilter(FileFilters.ALL);
-		_filenameField.setSelectedFileFilter(FileFilters.ALL);
+
 		_filenameField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {

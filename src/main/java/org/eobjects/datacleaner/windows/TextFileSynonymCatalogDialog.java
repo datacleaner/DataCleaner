@@ -78,7 +78,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 			}
 		});
 
-		_filenameTextField = new FilenameTextField(_userPreferences.getDatastoreDirectory());
+		_filenameTextField = new FilenameTextField(_userPreferences.getDatastoreDirectory(), true);
 		_filenameTextField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {
@@ -184,7 +184,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 		mainPanel.setLayout(new VerticalLayout(4));
 		mainPanel.add(descriptionLabel);
 		mainPanel.add(formPanel);
-		
+
 		return mainPanel;
 	}
 

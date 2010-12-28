@@ -112,7 +112,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 
-		_filenameField = new FilenameTextField(userPreferences.getDatastoreDirectory());
+		_filenameField = new FilenameTextField(userPreferences.getDatastoreDirectory(), true);
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {

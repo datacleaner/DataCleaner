@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -50,6 +51,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
+import org.jdesktop.swingx.HorizontalLayout;
 
 import dk.eobjects.metamodel.schema.Column;
 
@@ -76,6 +78,8 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 	private final JButton _openButton;
 
 	private volatile Datastore _datastore;
+
+	private JButton _autoMapButton;
 
 	public OpenAnalysisJobAsTemplateDialog(AnalyzerBeansConfiguration configuration, File file, AnalysisJobMetadata metadata) {
 		_configuration = configuration;
@@ -127,7 +131,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 							sameTableComboBox.setModel(_datastore, col.getTable());
 						}
 					}
-
+					refreshOpenButtonVisibility();
 				}
 			});
 
@@ -153,14 +157,9 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 				final String datastoreName = (String) _datastoreCombobox.getSelectedItem();
 				_datastore = _datastoreCatalog.getDatastore(datastoreName);
 
-				if (_datastore == null) {
-					// no datastore selected
-					_openButton.setEnabled(false);
-				} else {
-					_openButton.setEnabled(true);
-				}
-
 				_sourceColumnMapping.setDatastore(_datastore);
+
+				refreshOpenButtonVisibility();
 
 				for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
 					for (SourceColumnComboBox comboBox : comboBoxes) {
@@ -173,8 +172,53 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 						}
 					}
 				}
+
+				if (_datastore == null) {
+					_autoMapButton.setVisible(false);
+				} else {
+					_autoMapButton.setVisible(true);
+				}
 			}
 		});
+
+		_autoMapButton = new JButton("Map automatically");
+		_autoMapButton.setVisible(false);
+		_autoMapButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_sourceColumnMapping.autoMap(_datastore);
+				Set<String> paths = _sourceColumnMapping.getPaths();
+				for (String path : paths) {
+					for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
+						for (SourceColumnComboBox comboBox : comboBoxes) {
+							if (path.equals(comboBox.getName())) {
+								comboBox.setSelectedItem(_sourceColumnMapping.getColumn(path));
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
+	public void refreshOpenButtonVisibility() {
+		if (_datastore == null) {
+			// no datastore selected
+			_openButton.setEnabled(false);
+			return;
+		}
+
+		for (List<SourceColumnComboBox> comboBoxes : _sourceColumnComboBoxes.values()) {
+			for (SourceColumnComboBox comboBox : comboBoxes) {
+				if (comboBox.getSelectedItem() == null) {
+					// not all columns selected
+					_openButton.setEnabled(false);
+					return;
+				}
+			}
+		}
+
+		_openButton.setEnabled(true);
 	}
 
 	public SourceColumnMapping getSourceColumnMapping() {
@@ -212,7 +256,14 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 		row++;
 		WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon("images/model/datastore.png")), panel, 0, row);
 		WidgetUtils.addToGridBag(new JLabel(_metadata.getDatastoreName()), panel, 1, row, GridBagConstraints.WEST);
-		WidgetUtils.addToGridBag(_datastoreCombobox, panel, 2, row, GridBagConstraints.WEST);
+
+		DCPanel datastoreButtonPanel = new DCPanel();
+		datastoreButtonPanel.setLayout(new HorizontalLayout(0));
+		datastoreButtonPanel.add(_datastoreCombobox);
+		datastoreButtonPanel.add(Box.createHorizontalStrut(4));
+		datastoreButtonPanel.add(_autoMapButton);
+
+		WidgetUtils.addToGridBag(datastoreButtonPanel, panel, 2, row, GridBagConstraints.WEST);
 
 		Set<String> tableNames = _sourceColumnComboBoxes.keySet();
 		for (final String tableName : tableNames) {

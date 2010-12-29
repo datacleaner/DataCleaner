@@ -24,6 +24,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.util.Collections;
 import java.util.Date;
@@ -212,18 +214,6 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 
 		chartPanel.setPreferredSize(new Dimension(0, visibleLines * 50 + 200));
 
-		JScrollBar scroll = new JScrollBar(JScrollBar.VERTICAL);
-		scroll.setMinimum(0);
-		scroll.setMaximum(groupNames.size());
-		scroll.addAdjustmentListener(new AdjustmentListener() {
-
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				int value = e.getAdjustable().getValue();
-				slidingDataset.setFirstCategoryIndex(value);
-			}
-		});
-
 		final JComponent decoratedChartPanel;
 
 		StringBuilder chartDescription = new StringBuilder();
@@ -231,15 +221,40 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 		chartDescription
 				.append("The <b>red items</b> represent gaps in the timeline and the <b>green items</b> represent points in the timeline where more than one record show activity.<br/><br/>");
 		chartDescription
-				.append("You can <b>zoom in</b> by clicking and dragging the area that you want to examine in further detail. Right click to <b>zoom out</b>.");
+				.append("You can <b>zoom in</b> by clicking and dragging the area that you want to examine in further detail.");
 
 		if (groupNames.size() > GROUPS_VISIBLE) {
+			final JScrollBar scroll = new JScrollBar(JScrollBar.VERTICAL);
+			scroll.setMinimum(0);
+			scroll.setMaximum(groupNames.size());
+			scroll.addAdjustmentListener(new AdjustmentListener() {
+
+				@Override
+				public void adjustmentValueChanged(AdjustmentEvent e) {
+					int value = e.getAdjustable().getValue();
+					slidingDataset.setFirstCategoryIndex(value);
+				}
+			});
+
+			chartPanel.addMouseWheelListener(new MouseWheelListener() {
+
+				@Override
+				public void mouseWheelMoved(MouseWheelEvent e) {
+					int scrollType = e.getScrollType();
+					if (scrollType == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
+						int wheelRotation = e.getWheelRotation();
+						scroll.setValue(scroll.getValue() + wheelRotation);
+					}
+				}
+			});
+
 			final DCPanel outerPanel = new DCPanel();
 			outerPanel.setLayout(new BorderLayout());
 			outerPanel.add(chartPanel, BorderLayout.CENTER);
 			outerPanel.add(scroll, BorderLayout.EAST);
 			chartDescription.append("<br/><br/>Use the right <b>scrollbar</b> to scroll up and down on the chart.");
 			decoratedChartPanel = outerPanel;
+
 		} else {
 			decoratedChartPanel = chartPanel;
 		}

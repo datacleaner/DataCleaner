@@ -31,6 +31,8 @@ import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.MainWindow;
 import org.eobjects.datacleaner.windows.WelcomeWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Singleton class that manages events related to opening and closing of windows
@@ -42,7 +44,9 @@ import org.eobjects.datacleaner.windows.WelcomeWindow;
  */
 public final class WindowManager {
 
-	private static WindowManager instance = new WindowManager();
+	private static final Logger logger = LoggerFactory.getLogger(WindowManager.class);
+
+	private static final WindowManager instance = new WindowManager();
 
 	private final List<AbstractWindow> _windows = new ArrayList<AbstractWindow>();
 	private final UserPreferences _userPreferences = UserPreferences.getInstance();
@@ -83,9 +87,14 @@ public final class WindowManager {
 		// (except the main window), then show the welcome window.
 		if (!(window instanceof AbstractDialog) && !(window instanceof WelcomeWindow)) {
 			if (isOnlyMainWindowShowing()) {
-				AnalyzerBeansConfiguration configuration = getMainWindow().getConfiguration();
-				if (_userPreferences.isWelcomeDialogShownOnStartup()) {
-					new WelcomeWindow(configuration).setVisible(true);
+				try {
+					AnalyzerBeansConfiguration configuration = getMainWindow().getConfiguration();
+					if (_userPreferences.isWelcomeDialogShownOnStartup()) {
+						new WelcomeWindow(configuration).setVisible(true);
+					}
+				} catch (IllegalStateException e) {
+					// this will only happen during test and mock window runs
+					logger.warn("Could not determine if welcome window should be shown", e);
 				}
 			}
 		}

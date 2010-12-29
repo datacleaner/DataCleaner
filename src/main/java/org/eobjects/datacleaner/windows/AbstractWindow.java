@@ -33,13 +33,16 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 
 	private static final long serialVersionUID = 1L;
 	private volatile boolean initialized = false;
+	
+	public AbstractWindow() {
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
+	}
 
 	protected void initialize() {
 		updateWindowTitle();
 		setIconImage(getWindowIcon());
-		addWindowListener(this);
 		setResizable(isWindowResizable());
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		JComponent content = getWindowContent();
 		getContentPane().add(content);
@@ -47,7 +50,7 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 		getContentPane().setPreferredSize(content.getPreferredSize());
 
 		pack();
-
+		
 		if (isCentered()) {
 			centerOnScreen();
 		}

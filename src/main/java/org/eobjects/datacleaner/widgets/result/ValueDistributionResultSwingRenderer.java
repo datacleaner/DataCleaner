@@ -42,6 +42,7 @@ import java.util.Set;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -80,7 +81,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.PieSectionEntity;
 import org.jfree.chart.plot.PiePlot;
-import org.jfree.chart.title.TextTitle;
 import org.jfree.data.general.DefaultPieDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,8 +92,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 	private static final Logger logger = LoggerFactory.getLogger(ValueDistributionResultSwingRenderer.class);
 
-	private static final Color[] SLICE_COLORS = new Color[] { WidgetUtils.BG_COLOR_BLUE_BRIGHT,
-			WidgetUtils.ADDITIONAL_COLOR_GREEN_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_MEDIUM };
+	private static final Color[] SLICE_COLORS = DCDrawingSupplier.DEFAULT_FILL_COLORS;
 
 	private static final int DEFAULT_PREFERRED_SLICES = 32;
 	private static final int DEFAULT_MAX_SLICES = 40;
@@ -195,12 +194,12 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		drillToOverview(drillableValuesTable);
 
 		// chart for display of the dataset
-		final JFreeChart chart = ChartFactory.createPieChart3D(columnName, _dataset, false, true, false);
+		final JFreeChart chart = ChartFactory.createPieChart3D("Value distribution of " + columnName, _dataset, false, true, false);
 
 		// code-block for tweaking style and coloring of chart
 		{
-			chart.setTextAntiAlias(true);
-			chart.setTitle(new TextTitle(columnName, WidgetUtils.FONT_HEADER));
+			chart.getTitle().setFont(WidgetUtils.FONT_HEADER);
+
 			final PiePlot plot = (PiePlot) chart.getPlot();
 			plot.setLabelFont(WidgetUtils.FONT_SMALL);
 			plot.setSectionOutlinesVisible(false);
@@ -507,6 +506,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		List<AnalyzerResult> list = Collections.emptyList();
 		DetailsResultWindow window = new DetailsResultWindow("Example", list);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		List<AnalyzerResult> results = resultFuture.getResults();
 		for (AnalyzerResult analyzerResult : results) {

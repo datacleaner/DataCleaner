@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -32,7 +33,10 @@ import java.util.SortedSet;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JScrollBar;
+import javax.swing.JSplitPane;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.DateGapAnalyzer;
 import org.eobjects.analyzer.beans.api.RendererBean;
@@ -58,11 +62,15 @@ import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAnchor;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.gantt.SlidingGanttCategoryDataset;
 import org.jfree.data.gantt.Task;
@@ -76,6 +84,9 @@ import dk.eobjects.metamodel.schema.Table;
 @RendererBean(SwingRenderingFormat.class)
 public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnalyzerResult, JComponent> {
 
+	private static final String LABEL_OVERLAPS = "Overlaps";
+	private static final String LABEL_GAPS = "Gaps";
+	private static final String LABEL_COMPLETE_DURATION = "Complete duration";
 	private static final int GROUPS_VISIBLE = 6;
 
 	@Override
@@ -83,9 +94,9 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 
 		final TaskSeriesCollection dataset = new TaskSeriesCollection();
 		final Set<String> groupNames = result.getGroupNames();
-		final TaskSeries completeDurationTaskSeries = new TaskSeries("Complete duration");
-		final TaskSeries gapsTaskSeries = new TaskSeries("Gaps");
-		final TaskSeries overlapsTaskSeries = new TaskSeries("Overlaps");
+		final TaskSeries completeDurationTaskSeries = new TaskSeries(LABEL_COMPLETE_DURATION);
+		final TaskSeries gapsTaskSeries = new TaskSeries(LABEL_GAPS);
+		final TaskSeries overlapsTaskSeries = new TaskSeries(LABEL_OVERLAPS);
 		for (final String groupName : groupNames) {
 			final String groupDisplayName;
 
@@ -104,20 +115,46 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 					completeDuration.getTo()));
 			completeDurationTaskSeries.add(completeDurationTask);
 
-			final SortedSet<TimeInterval> gaps = result.getGaps(groupName);
+			// plot gaps
+			{
+				final SortedSet<TimeInterval> gaps = result.getGaps(groupName);
 
-			for (TimeInterval interval : gaps) {
-				final TimePeriod timePeriod = new SimpleTimePeriod(interval.getFrom(), interval.getTo());
-				Task task = new Task(groupDisplayName, timePeriod);
-				gapsTaskSeries.add(task);
+				int i = 1;
+				Task rootTask = null;
+				for (TimeInterval interval : gaps) {
+					final TimePeriod timePeriod = new SimpleTimePeriod(interval.getFrom(), interval.getTo());
+
+					if (rootTask == null) {
+						rootTask = new Task(groupDisplayName, timePeriod);
+						gapsTaskSeries.add(rootTask);
+					} else {
+						Task task = new Task(groupDisplayName + " gap" + i, timePeriod);
+						rootTask.addSubtask(task);
+					}
+
+					i++;
+				}
 			}
 
-			final SortedSet<TimeInterval> overlaps = result.getOverlaps(groupName);
+			// plot overlaps
+			{
+				final SortedSet<TimeInterval> overlaps = result.getOverlaps(groupName);
 
-			for (TimeInterval interval : overlaps) {
-				final TimePeriod timePeriod = new SimpleTimePeriod(interval.getFrom(), interval.getTo());
-				Task task = new Task(groupDisplayName, timePeriod);
-				overlapsTaskSeries.add(task);
+				int i = 1;
+				Task rootTask = null;
+				for (TimeInterval interval : overlaps) {
+					final TimePeriod timePeriod = new SimpleTimePeriod(interval.getFrom(), interval.getTo());
+
+					if (rootTask == null) {
+						rootTask = new Task(groupDisplayName, timePeriod);
+						overlapsTaskSeries.add(rootTask);
+					} else {
+						Task task = new Task(groupDisplayName + " overlap" + i, timePeriod);
+						rootTask.addSubtask(task);
+					}
+
+					i++;
+				}
 			}
 		}
 		dataset.add(overlapsTaskSeries);
@@ -127,7 +164,7 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 		final SlidingGanttCategoryDataset slidingDataset = new SlidingGanttCategoryDataset(dataset, 0, GROUPS_VISIBLE);
 
 		final JFreeChart chart = ChartFactory.createGanttChart("Date gaps and overlaps in " + result.getFromColumnName()
-				+ " / " + result.getToColumnName(), result.getGroupColumnName(), "Time", slidingDataset, true, true, true);
+				+ " / " + result.getToColumnName(), result.getGroupColumnName(), "Time", slidingDataset, true, true, false);
 
 		// tweaks of the look and feel of the graph
 		{
@@ -154,6 +191,23 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 
 		final ChartPanel chartPanel = new ChartPanel(chart);
 
+		chartPanel.addChartMouseListener(new ChartMouseListener() {
+			@Override
+			public void chartMouseMoved(ChartMouseEvent event) {
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+				ChartEntity entity = event.getEntity();
+				if (entity instanceof PlotEntity) {
+					cursor = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
+				}
+				chartPanel.setCursor(cursor);
+			}
+
+			@Override
+			public void chartMouseClicked(ChartMouseEvent event) {
+				// do nothing
+			}
+		});
+
 		final int visibleLines = Math.min(GROUPS_VISIBLE, groupNames.size());
 
 		chartPanel.setPreferredSize(new Dimension(0, visibleLines * 50 + 200));
@@ -170,19 +224,38 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 			}
 		});
 
-		final JComponent renderedComponent;
+		final JComponent decoratedChartPanel;
+
+		StringBuilder chartDescription = new StringBuilder();
+		chartDescription.append("<html><p>The chart displays the recorded timeline based on FROM and TO dates.<br/><br/>");
+		chartDescription
+				.append("The <b>red items</b> represent gaps in the timeline and the <b>green items</b> represent points in the timeline where more than one record show activity.<br/><br/>");
+		chartDescription
+				.append("You can <b>zoom in</b> by clicking and dragging the area that you want to examine in further detail. Right click to <b>zoom out</b>.");
 
 		if (groupNames.size() > GROUPS_VISIBLE) {
 			final DCPanel outerPanel = new DCPanel();
 			outerPanel.setLayout(new BorderLayout());
 			outerPanel.add(chartPanel, BorderLayout.CENTER);
 			outerPanel.add(scroll, BorderLayout.EAST);
-			renderedComponent = outerPanel;
+			chartDescription.append("<br/><br/>Use the right <b>scrollbar</b> to scroll up and down on the chart.");
+			decoratedChartPanel = outerPanel;
 		} else {
-			renderedComponent = chartPanel;
+			decoratedChartPanel = chartPanel;
 		}
 
-		return renderedComponent;
+		chartDescription.append("</p></html>");
+
+		final JLabel chartDescriptionLabel = new JLabel(chartDescription.toString());
+
+		chartDescriptionLabel.setBorder(new EmptyBorder(4, 10, 4, 10));
+
+		final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		split.add(decoratedChartPanel);
+		split.add(chartDescriptionLabel);
+		split.setDividerLocation(550);
+
+		return split;
 	}
 
 	/**
@@ -241,8 +314,10 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 			JComponent renderedResult = new DateGapAnalyzerResultSwingRenderer()
 					.render((DateGapAnalyzerResult) analyzerResult);
 			window.addRenderedResult(renderedResult);
-			window.repaint();
 		}
+		window.repaint();
+
+		window.setPreferredSize(new Dimension(800, 600));
 
 		window.setVisible(true);
 	}

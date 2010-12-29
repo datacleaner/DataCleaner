@@ -273,13 +273,12 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			}
 		});
 
-		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
-		DCPanel leftPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHTEST);
+		final DCPanel leftPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHTEST);
 		leftPanel.setLayout(new BorderLayout());
 		leftPanel.add(chartPanel, BorderLayout.NORTH);
 
-		DCPanel rightPanel = new DCPanel();
+		final DCPanel rightPanel = new DCPanel();
 		rightPanel.setLayout(new VerticalLayout(2));
 		_backButton.setMargin(new Insets(0, 0, 0, 0));
 		_backButton.addActionListener(new ActionListener() {
@@ -291,6 +290,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		rightPanel.add(_backButton);
 		rightPanel.add(drillableValuesTable.toPanel());
 
+		final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		split.add(leftPanel);
 		split.add(rightPanel);
 		split.setDividerLocation(550);
@@ -513,8 +513,10 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			JComponent renderedResult = new ValueDistributionResultSwingRenderer()
 					.render((ValueDistributionResult) analyzerResult);
 			window.addRenderedResult(renderedResult);
-			window.repaint();
 		}
+		window.repaint();
+		
+		window.setPreferredSize(new Dimension(800, 600));
 
 		window.setVisible(true);
 	}

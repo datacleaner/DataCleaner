@@ -19,10 +19,13 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -31,6 +34,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -44,6 +49,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -62,6 +68,8 @@ public final class DataStoreSynonymCatalogDialog extends AbstractDialog {
 	private final JCheckBox _caseSensitiveCheckBox;
 	private final DatastoreCatalog _dataStoreCatalog;
 	private Datastore _datastore;
+	private final DCPanel _treePanel;
+	private volatile boolean _nameAutomaticallySet = true;
 
 	public DataStoreSynonymCatalogDialog(MutableReferenceDataCatalog catalog, DatastoreCatalog datastoreCatalog) {
 		this(null, catalog, datastoreCatalog);
@@ -78,12 +86,41 @@ public final class DataStoreSynonymCatalogDialog extends AbstractDialog {
 		_datastoreComboBox = new JComboBox(comboBoxModel);
 		_sourceColumnComboBox = new SourceColumnComboBox();
 		_datastoreComboBox.setEditable(false);
-
+		_treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		_treePanel.setLayout(new BorderLayout());
 
 		_datastoreComboBox.addActionListener(new ActionListener() {
 
             @Override
 			public void actionPerformed(ActionEvent e) {
+            	String datastoreName = (String) _datastoreComboBox.getSelectedItem();
+				if (datastoreName != null) {
+					_datastore = _dataStoreCatalog.getDatastore(datastoreName);
+					_sourceColumnComboBox.setModel(_datastore);
+					if (_datastore != null) {
+						_treePanel.removeAll();
+						final SchemaTree schemaTree = new SchemaTree(_datastore);
+						schemaTree.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								TreePath path = schemaTree.getSelectionPath();
+								if (path == null) {
+									return;
+								}
+								DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+								if (node.getUserObject() instanceof Column) {
+									Column column = (Column) node.getUserObject();
+
+									if (_nameAutomaticallySet || StringUtils.isNullOrEmpty(_nameTextField.getText())) {
+										_nameTextField.setText(column.getName());
+										_nameAutomaticallySet = true;
+									}
+
+								}
+							};
+						});
+					}
+				}
 			}
 		});
 		_caseSensitiveCheckBox = new JCheckBox();

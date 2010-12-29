@@ -31,6 +31,12 @@ import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 
+/**
+ * Contains utility methods concerned with icons, primarily datastore and
+ * component icons.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class IconUtils {
 
 	public static int ICON_SIZE_LARGE = 32;
@@ -138,6 +144,12 @@ public final class IconUtils {
 		}
 		if (displayName.indexOf("synonym") != -1) {
 			imagePath = "images/component-types/type_synonym.png";
+		}
+		if (displayName.indexOf("coalesce") != -1) {
+			imagePath = "images/component-types/type_coalesce.png";
+		}
+		if (displayName.indexOf("javascript") != -1) {
+			imagePath = "images/component-types/type_javascript.png";
 		}
 
 		// some individual icons

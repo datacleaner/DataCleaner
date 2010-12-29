@@ -73,12 +73,18 @@ import dk.eobjects.metamodel.util.FileHelper;
 
 public class CsvDatastoreDialog extends AbstractDialog {
 
-	private static final int SAMPLE_BUFFER_SIZE = 2048;
-
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
-
+	
+	/**
+	 * Amount of bytes to read for autodetection of separator and quotes
+	 */
+	private static final int SAMPLE_BUFFER_SIZE = 2048;
+	
+	/**
+	 * Amount of rows to display in the preview table
+	 */
 	private static final int PREVIEW_ROWS = 7;
 
 	private static final String SEPARATOR_TAB = "Tab (\\t)";
@@ -88,6 +94,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 	private static final String QUOTE_DOUBLE_QUOTE = "Double quote (\")";
 	private static final String QUOTE_SINGLE_QUOTE = "Single quote (')";
+	private static final String QUOTE_NONE = "(None)";
 
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final MutableDatastoreCatalog _mutableDatastoreCatalog;
@@ -130,7 +137,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		_quoteCharField = new JComboBox(new String[] { QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
+		_quoteCharField = new JComboBox(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
 		_quoteCharField.setEditable(true);
 		_quoteCharField.addItemListener(new ItemListener() {
 			@Override
@@ -201,9 +208,13 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			_separatorCharField.setSelectedItem(separator);
 
 			Character quoteChar = _originalDatastore.getQuoteChar();
-			String quote = null;
-			if (quoteChar != null) {
-				if (quoteChar.charValue() == '"') {
+			final String quote;
+			if (quoteChar == null) {
+				quote = QUOTE_NONE;
+			} else {
+				if (quoteChar.charValue() == CsvDatastore.NOT_A_CHAR) {
+					quote = QUOTE_NONE;
+				} else if (quoteChar.charValue() == '"') {
 					quote = QUOTE_DOUBLE_QUOTE;
 				} else if (quoteChar.charValue() == '\'') {
 					quote = QUOTE_SINGLE_QUOTE;
@@ -322,7 +333,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 			int detectedQuote = Math.max(singleQuotes, doubleQuotes);
 			if (detectedQuote == 0 || detectedQuote < newlines) {
-				warnings.add("Could not autodetect quote char");
+				_quoteCharField.setSelectedItem(QUOTE_NONE);
 			} else {
 				// set the quote
 				if (detectedQuote == singleQuotes) {
@@ -484,7 +495,9 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 	public Character getQuoteChar() {
 		Object quoteItem = _quoteCharField.getSelectedItem();
-		if (QUOTE_DOUBLE_QUOTE.equals(quoteItem)) {
+		if (QUOTE_NONE.equals(quoteItem)) {
+			return CsvDatastore.NOT_A_CHAR;
+		} else if (QUOTE_DOUBLE_QUOTE.equals(quoteItem)) {
 			return '"';
 		} else if (QUOTE_SINGLE_QUOTE.equals(quoteItem)) {
 			return '\'';

@@ -65,7 +65,6 @@ public final class DataStoreSynonymCatalogDialog extends AbstractDialog {
 	private final JComboBox _datastoreComboBox;
 	private SourceColumnComboBox _sourceColumnComboBox;	
 	private final JXTextField _nameTextField;
-	private final JCheckBox _caseSensitiveCheckBox;
 	private final DatastoreCatalog _dataStoreCatalog;
 	private Datastore _datastore;
 	private final DCPanel _treePanel;
@@ -123,12 +122,6 @@ public final class DataStoreSynonymCatalogDialog extends AbstractDialog {
 				}
 			}
 		});
-		_caseSensitiveCheckBox = new JCheckBox();
-		_caseSensitiveCheckBox.setSelected(false);
-
-		if (synonymCatalog != null) {
-			_caseSensitiveCheckBox.setSelected(synonymCatalog.isCaseSensitive());
-		}
 	}
 
 	@Override
@@ -157,9 +150,6 @@ public final class DataStoreSynonymCatalogDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(new JLabel("Datastore:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreComboBox, formPanel, 1, row);
 		row++;		
-		WidgetUtils.addToGridBag(new JLabel("Case Sensitive Matches:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_caseSensitiveCheckBox, formPanel, 1, row);
-		row++;
 		WidgetUtils.addToGridBag(new JLabel("Source Column:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_sourceColumnComboBox, formPanel, 1, row);
 		row++;
@@ -184,7 +174,7 @@ public final class DataStoreSynonymCatalogDialog extends AbstractDialog {
 
 				Column selectedItem = _sourceColumnComboBox.getSelectedItem();
                                 DataStoreBasedSynonymCatalog dataStoreBasedSynonymCatalog = new DataStoreBasedSynonymCatalog(name,
-				        selectedItem, _caseSensitiveCheckBox.isSelected(), datastore);
+				        selectedItem, datastore);
 
 				if (_originalsynonymCatalog != null) {
 					_mutableReferenceCatalog.removeSynonymCatalog(_originalsynonymCatalog);

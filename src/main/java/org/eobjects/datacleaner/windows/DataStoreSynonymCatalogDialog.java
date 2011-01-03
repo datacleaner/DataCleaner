@@ -28,7 +28,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -44,7 +43,6 @@ import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
-import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
@@ -59,7 +57,6 @@ public final class DataStoreSynonymCatalogDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private final UserPreferences _userPreferences = UserPreferences.getInstance();
 	private final DataStoreBasedSynonymCatalog _originalsynonymCatalog;
 	private final MutableReferenceDataCatalog _mutableReferenceCatalog;
 	private final JComboBox _datastoreComboBox;

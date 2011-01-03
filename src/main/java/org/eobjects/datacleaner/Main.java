@@ -49,7 +49,8 @@ public final class Main {
 
 		// make the configuration mutable
 		MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog());
-		MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(c.getReferenceDataCatalog());
+		MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(c.getReferenceDataCatalog(),
+				datastoreCatalog);
 		c = new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog, c.getDescriptorProvider(),
 				c.getTaskRunner(), c.getStorageProvider());
 

@@ -22,6 +22,9 @@ package org.eobjects.datacleaner.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.reference.DatastoreDictionary;
+import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.StringPattern;
@@ -32,6 +35,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	private static final long serialVersionUID = 1L;
 
+	private final DatastoreCatalog _datastoreCatalog;
 	private final List<Dictionary> _dictionaries;
 	private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<DictionaryChangeListener>();
 	private final List<SynonymCatalog> _synonymCatalogs;
@@ -40,8 +44,9 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<StringPatternChangeListener>();
 	private final ReferenceDataCatalog _immutableDelegate;
 
-	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate) {
+	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, DatastoreCatalog datastoreCatalog) {
 		_immutableDelegate = immutableDelegate;
+		_datastoreCatalog = datastoreCatalog;
 		_dictionaries = UserPreferences.getInstance().getUserDictionaries();
 		_synonymCatalogs = UserPreferences.getInstance().getUserSynonymCatalogs();
 		_stringPatterns = UserPreferences.getInstance().getUserStringPatterns();
@@ -133,6 +138,13 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 				throw new IllegalArgumentException("Dictionary name '" + name + "' is not unique!");
 			}
 		}
+
+		if (dict instanceof DatastoreDictionary) {
+			// deserialization of datastore dictionaries is insufficient, it
+			// requires also a reference to the datastore catalog
+			((DatastoreDictionary) dict).setDatastoreCatalog(_datastoreCatalog);
+		}
+
 		_dictionaries.add(dict);
 		for (DictionaryChangeListener listener : _dictionaryListeners) {
 			listener.onAdd(dict);
@@ -208,6 +220,11 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 				throw new IllegalArgumentException("SynonymCatalog name '" + name + "' is not unique!");
 			}
 		}
+
+		if (sc instanceof DatastoreSynonymCatalog) {
+			((DatastoreSynonymCatalog) sc).setDatastoreCatalog(_datastoreCatalog);
+		}
+
 		_synonymCatalogs.add(sc);
 		for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
 			listener.onAdd(sc);

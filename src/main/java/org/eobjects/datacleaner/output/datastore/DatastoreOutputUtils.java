@@ -29,7 +29,7 @@ final class DatastoreOutputUtils {
 
 	public static String safeName(String str) {
 		// replaces whitespaces, commas and parentheses with underscore
-		str = str.replaceAll("[\\ \\,\\(\\)]+", "_");
+		str = str.replaceAll("[\\ \\,\\(\\)\\.]+", "_");
 		return str;
 	}
 

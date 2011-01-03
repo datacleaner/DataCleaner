@@ -44,7 +44,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.windows.DataStoreSynonymCatalogDialog;
+import org.eobjects.datacleaner.windows.DatastoreSynonymCatalogDialog;
 import org.eobjects.datacleaner.windows.TextFileSynonymCatalogDialog;
 
 public final class SynonymCatalogListPanel extends DCPanel implements SynonymCatalogChangeListener {
@@ -86,7 +86,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				dataStoreSynonymCatalogMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new DataStoreSynonymCatalogDialog(_catalog, _datastoreCatalog).setVisible(true);
+						new DatastoreSynonymCatalogDialog(_catalog, _datastoreCatalog).setVisible(true);
 						// new
 						// TextFileSynonymCatalogDialog(_catalog).setVisible(true);
 						// ToDO.. create a new dailog for data store

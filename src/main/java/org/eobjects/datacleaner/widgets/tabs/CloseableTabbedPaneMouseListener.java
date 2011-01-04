@@ -21,95 +21,116 @@ package org.eobjects.datacleaner.widgets.tabs;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-public class CloseableTabbedPaneMouseListener extends MouseAdapter implements MouseMotionListener {
-	/**
-	 * 
-	 */
-	private final CloseableTabbedPaneUI _closeableTabbedPaneUI;
+class CloseableTabbedPaneMouseListener extends MouseAdapter implements MouseMotionListener {
+
+	private final CloseableTabbedPaneUI _tabbedPaneUI;
+	private final CloseableTabbedPane _pane;
+	private volatile int _closedIndex = -1;
 
 	/**
 	 * @param closeableTabbedPaneUI
 	 */
-	CloseableTabbedPaneMouseListener(CloseableTabbedPaneUI closeableTabbedPaneUI) {
-		_closeableTabbedPaneUI = closeableTabbedPaneUI;
+	public CloseableTabbedPaneMouseListener(CloseableTabbedPaneUI closeableTabbedPaneUI, CloseableTabbedPane pane) {
+		_tabbedPaneUI = closeableTabbedPaneUI;
+		_pane = pane;
+	}
+
+	public int getClosedIndex() {
+		return _closedIndex;
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		_closeableTabbedPaneUI._closeIdx = -1;
-		_closeableTabbedPaneUI._pane.repaint();
+		_closedIndex = -1;
+		_pane.repaint();
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (!_closeableTabbedPaneUI._pane.isEnabled()) {
+		final int button = e.getButton();
+		if (button == MouseEvent.NOBUTTON) {
 			return;
 		}
-		if (e.getButton() != 1) {
+
+		if (!_pane.isEnabled()) {
 			return;
 		}
-		
-		
-		int clickedTabIndex = _closeableTabbedPaneUI.tabForCoordinate(_closeableTabbedPaneUI._pane, e.getX(), e.getY());
+
+		int clickedTabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
 
 		if (clickedTabIndex == -1) {
 			return;
 		}
 
-		// only allow closing windows on the same run (row of tabs) as the selected tab
-		int selectedIndex = _closeableTabbedPaneUI._pane.getSelectedIndex();
-		int runIndexOfSelectedTab = _closeableTabbedPaneUI.getRunForTab(_closeableTabbedPaneUI._pane.getTabCount(), selectedIndex);
-		int runIndexOfClickedTab = _closeableTabbedPaneUI.getRunForTab(_closeableTabbedPaneUI._pane.getTabCount(), clickedTabIndex);
-		if (runIndexOfClickedTab != runIndexOfSelectedTab) {
-			return;
+		// regular left click
+		if (button == MouseEvent.BUTTON1) {
+
+			// only allow closing windows on the same run (row of tabs) as the
+			// selected tab
+			int selectedIndex = _pane.getSelectedIndex();
+			int runIndexOfSelectedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), selectedIndex);
+			int runIndexOfClickedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), clickedTabIndex);
+			if (runIndexOfClickedTab != runIndexOfSelectedTab) {
+				return;
+			}
+
+			if (_pane.getUnclosables().contains(clickedTabIndex)) {
+				return;
+			}
+			if (_pane.getSeparators().contains(clickedTabIndex)) {
+				return;
+			}
+
+			Rectangle r = _tabbedPaneUI.closeRectFor(clickedTabIndex);
+			// Check for mouse being in close box
+			if (r.contains(new Point(e.getX(), e.getY()))) {
+				// Send tab closed message
+				_pane.closeTab(clickedTabIndex);
+			}
 		}
 
-		if (_closeableTabbedPaneUI._pane.getUnclosables().contains(clickedTabIndex)) {
-			return;
-		}
-		if (_closeableTabbedPaneUI._pane.getSeparators().contains(clickedTabIndex)) {
-			return;
-		}
-
-		Rectangle r = _closeableTabbedPaneUI.closeRectFor(clickedTabIndex);
-		// Check for mouse being in close box
-		if (r.contains(new Point(e.getX(), e.getY()))) {
-			// Send tab closed message
-			_closeableTabbedPaneUI._pane.closeTab(clickedTabIndex);
+		// right click
+		if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+			ActionListener actionListener = _pane.getRightClickActionListener(clickedTabIndex);
+			if (actionListener != null) {
+				actionListener.actionPerformed(new ActionEvent(_pane, clickedTabIndex, "right-click"));
+			}
 		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (!_closeableTabbedPaneUI._pane.isEnabled()) {
+		if (!_pane.isEnabled()) {
 			return;
 		}
 		if (e.getButton() != 1) {
 			return;
 		}
-		int tabIndex = _closeableTabbedPaneUI.tabForCoordinate(_closeableTabbedPaneUI._pane, e.getX(), e.getY());
+		int tabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
 
 		if (tabIndex == -1) {
 			return;
 		}
-		if (_closeableTabbedPaneUI._pane.getUnclosables().contains(tabIndex)) {
+		if (_pane.getUnclosables().contains(tabIndex)) {
 			return;
 		}
-		if (_closeableTabbedPaneUI._pane.getSeparators().contains(tabIndex)) {
+		if (_pane.getSeparators().contains(tabIndex)) {
 			return;
 		}
 
-		Rectangle r = _closeableTabbedPaneUI.closeRectFor(tabIndex);
+		Rectangle r = _tabbedPaneUI.closeRectFor(tabIndex);
 		if (r.contains(new Point(e.getX(), e.getY()))) {
-			_closeableTabbedPaneUI._closeIdx = tabIndex;
+			_closedIndex = tabIndex;
 		} else {
-			_closeableTabbedPaneUI._closeIdx = -1;
+			_closedIndex = -1;
 		}
-		_closeableTabbedPaneUI._pane.repaint();
+		_pane.repaint();
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -118,27 +139,27 @@ public class CloseableTabbedPaneMouseListener extends MouseAdapter implements Mo
 	}
 
 	public void mouseMoved(MouseEvent e) {
-		if (_closeableTabbedPaneUI._pane == null || !_closeableTabbedPaneUI._pane.isEnabled()) {
+		if (_pane == null || !_pane.isEnabled()) {
 			return;
 		}
-		int tabIndex = _closeableTabbedPaneUI.tabForCoordinate(_closeableTabbedPaneUI._pane, e.getX(), e.getY());
+		int tabIndex = _tabbedPaneUI.tabForCoordinate(_pane, e.getX(), e.getY());
 		if (tabIndex == -1) {
 			return;
 		}
-		if (_closeableTabbedPaneUI._pane.getUnclosables().contains(tabIndex)) {
+		if (_pane.getUnclosables().contains(tabIndex)) {
 			return;
 		}
-		if (_closeableTabbedPaneUI._pane.getSeparators().contains(tabIndex)) {
+		if (_pane.getSeparators().contains(tabIndex)) {
 			return;
 		}
 
-		Rectangle r = _closeableTabbedPaneUI.closeRectFor(tabIndex);
+		Rectangle r = _tabbedPaneUI.closeRectFor(tabIndex);
 		if (r.contains(new Point(e.getX(), e.getY()))) {
-			_closeableTabbedPaneUI._closeIdx = tabIndex;
+			_closedIndex = tabIndex;
 		} else {
-			_closeableTabbedPaneUI._closeIdx = -1;
+			_closedIndex = -1;
 		}
 
-		_closeableTabbedPaneUI._pane.repaint();
+		_pane.repaint();
 	}
 }

@@ -65,12 +65,17 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	// the width of a separator
 	private static final int SEPARATOR_WIDTH = 10;
 
-	final CloseableTabbedPane _pane;
-	volatile int _closeIdx = -1;
+	private final CloseableTabbedPaneMouseListener _mouseListener;
+	private final CloseableTabbedPane _pane;
 
 	public CloseableTabbedPaneUI(CloseableTabbedPane pane) {
 		super();
 		_pane = pane;
+		_mouseListener = new CloseableTabbedPaneMouseListener(this, pane);
+	}
+
+	public CloseableTabbedPane getPane() {
+		return _pane;
 	}
 
 	@Override
@@ -191,7 +196,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		}
 
 		if (!_pane.getUnclosables().contains(tabIndex)) {
-			Image image = _closeIdx != tabIndex ? CLOSE_IMAGE : CLOSE_IMAGE_HOVER;
+			Image image = _mouseListener.getClosedIndex() != tabIndex ? CLOSE_IMAGE : CLOSE_IMAGE_HOVER;
 			int imageX = x + w - CLOSE_ICON_WIDTH - CLOSE_ICON_RIGHT_MARGIN;
 			int imageY = y + CLOSE_ICON_TOP_MARGIN;
 			g.drawImage(image, imageX, imageY, _pane);
@@ -223,9 +228,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	@Override
 	protected void installListeners() {
 		super.installListeners();
-		CloseableTabbedPaneMouseListener mlis = new CloseableTabbedPaneMouseListener(this);
-		_pane.addMouseListener(mlis);
-		_pane.addMouseMotionListener(mlis);
+		_pane.addMouseListener(_mouseListener);
+		_pane.addMouseMotionListener(_mouseListener);
 	}
 
 	@Override

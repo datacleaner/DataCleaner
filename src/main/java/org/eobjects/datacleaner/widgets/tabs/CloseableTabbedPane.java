@@ -21,9 +21,12 @@ package org.eobjects.datacleaner.widgets.tabs;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -46,6 +49,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
 	private final List<Integer> _unclosables = new LinkedList<Integer>();
 	private final List<Integer> _separators = new LinkedList<Integer>();
+	private final Map<Integer, ActionListener> _rightClickActionListeners = new HashMap<Integer, ActionListener>();
 	private final CloseableTabbedPaneUI _ui;
 
 	/**
@@ -160,6 +164,14 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
 	protected List<Integer> getSeparators() {
 		return _separators;
+	}
+
+	public void setRightClickActionListener(int index, ActionListener actionListener) {
+		_rightClickActionListeners.put(index, actionListener);
+	}
+
+	public ActionListener getRightClickActionListener(int index) {
+		return _rightClickActionListeners.get(index);
 	}
 
 	@Override

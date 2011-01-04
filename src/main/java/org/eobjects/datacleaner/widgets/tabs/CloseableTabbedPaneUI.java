@@ -27,11 +27,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 
 import javax.swing.Icon;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -69,8 +65,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	// the width of a separator
 	private static final int SEPARATOR_WIDTH = 10;
 
-	private final CloseableTabbedPane _pane;
-	private volatile int _closeIdx = -1;
+	final CloseableTabbedPane _pane;
+	volatile int _closeIdx = -1;
 
 	public CloseableTabbedPaneUI(CloseableTabbedPane pane) {
 		super();
@@ -82,111 +78,10 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		return TAB_INSETS;
 	}
 
-	public class CloseableTabbedPaneMouseListener extends MouseAdapter implements MouseMotionListener {
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			_closeIdx = -1;
-			_pane.repaint();
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			if (!_pane.isEnabled()) {
-				return;
-			}
-			if (e.getButton() != 1) {
-				return;
-			}
-			
-			
-			int clickedTabIndex = tabForCoordinate(_pane, e.getX(), e.getY());
-
-			if (clickedTabIndex == -1) {
-				return;
-			}
-
-			// only allow closing windows on the same run (row of tabs) as the selected tab
-			int selectedIndex = _pane.getSelectedIndex();
-			int runIndexOfSelectedTab = getRunForTab(_pane.getTabCount(), selectedIndex);
-			int runIndexOfClickedTab = getRunForTab(_pane.getTabCount(), clickedTabIndex);
-			if (runIndexOfClickedTab != runIndexOfSelectedTab) {
-				return;
-			}
-
-			if (_pane.getUnclosables().contains(clickedTabIndex)) {
-				return;
-			}
-			if (_pane.getSeparators().contains(clickedTabIndex)) {
-				return;
-			}
-
-			Rectangle r = closeRectFor(clickedTabIndex);
-			// Check for mouse being in close box
-			if (r.contains(new Point(e.getX(), e.getY()))) {
-				// Send tab closed message
-				_pane.closeTab(clickedTabIndex);
-			}
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (!_pane.isEnabled()) {
-				return;
-			}
-			if (e.getButton() != 1) {
-				return;
-			}
-			int tabIndex = tabForCoordinate(_pane, e.getX(), e.getY());
-
-			if (tabIndex == -1) {
-				return;
-			}
-			if (_pane.getUnclosables().contains(tabIndex)) {
-				return;
-			}
-			if (_pane.getSeparators().contains(tabIndex)) {
-				return;
-			}
-
-			Rectangle r = closeRectFor(tabIndex);
-			if (r.contains(new Point(e.getX(), e.getY()))) {
-				_closeIdx = tabIndex;
-			} else {
-				_closeIdx = -1;
-			}
-			_pane.repaint();
-		}
-
-		public void mouseDragged(MouseEvent e) {
-			mouseMoved(e);
-			mousePressed(e);
-		}
-
-		public void mouseMoved(MouseEvent e) {
-			if (_pane == null || !_pane.isEnabled()) {
-				return;
-			}
-			int tabIndex = tabForCoordinate(_pane, e.getX(), e.getY());
-			if (tabIndex == -1) {
-				return;
-			}
-			if (_pane.getUnclosables().contains(tabIndex)) {
-				return;
-			}
-			if (_pane.getSeparators().contains(tabIndex)) {
-				return;
-			}
-
-			Rectangle r = closeRectFor(tabIndex);
-			if (r.contains(new Point(e.getX(), e.getY()))) {
-				_closeIdx = tabIndex;
-			} else {
-				_closeIdx = -1;
-			}
-
-			_pane.repaint();
-		}
-	}
+	// increases the visibility of the getRunForTab(...) method
+	public int getRunForTab(int tabCount, int tabIndex) {
+		return super.getRunForTab(tabCount, tabIndex);
+	};
 
 	/**
 	 * Helper-method to get a rectangle definition for the close-icon
@@ -194,7 +89,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	 * @param tabIndex
 	 * @return
 	 */
-	private Rectangle closeRectFor(int tabIndex) {
+	Rectangle closeRectFor(int tabIndex) {
 		Rectangle rect = rects[tabIndex];
 		final int x = rect.x + rect.width - CLOSE_ICON_WIDTH - CLOSE_ICON_RIGHT_MARGIN;
 		final int y = rect.y + CLOSE_ICON_TOP_MARGIN;
@@ -328,7 +223,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	@Override
 	protected void installListeners() {
 		super.installListeners();
-		CloseableTabbedPaneMouseListener mlis = new CloseableTabbedPaneMouseListener();
+		CloseableTabbedPaneMouseListener mlis = new CloseableTabbedPaneMouseListener(this);
 		_pane.addMouseListener(mlis);
 		_pane.addMouseMotionListener(mlis);
 	}

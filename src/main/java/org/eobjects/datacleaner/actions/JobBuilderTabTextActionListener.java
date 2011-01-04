@@ -61,7 +61,7 @@ public class JobBuilderTabTextActionListener implements ActionListener {
 				final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
 				if (!originalValue.equals(newValue)) {
 					_jobBuilder.setName(newValue);
-					_tabbedPane.setTitleAt(_tabIndex, newValue);
+					_tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(_jobBuilder));
 				}
 			}
 		});

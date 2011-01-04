@@ -62,7 +62,7 @@ public class JobBuilderTaskPaneTextMouseListener extends MouseAdapter {
 					final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
 					if (!originalValue.equals(newValue)) {
 						_jobBuilder.setName(newValue);
-						_taskPane.setTitle(newValue);
+						_taskPane.setTitle(LabelUtils.getLabel(_jobBuilder));
 					}
 				}
 			});

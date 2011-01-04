@@ -56,6 +56,7 @@ import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 
+import dk.eobjects.metamodel.schema.Column;
 import dk.eobjects.metamodel.schema.Table;
 
 public final class ColumnListTable extends DCPanel {
@@ -100,10 +101,24 @@ public final class ColumnListTable extends DCPanel {
 			previewButton.setToolTipText("Preview table rows");
 			previewButton.addActionListener(new PreviewSourceDataActionListener(
 					_analysisJobBuilder.getDataContextProvider(), _columns));
+			
+			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			removeButton.setToolTipText("Remove table from source");
+			removeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Column[] cols = _table.getColumns();
+					for (Column col : cols) {
+						_analysisJobBuilder.removeSourceColumn(col);
+					}
+				}
+			});
 
 			headerPanel.add(tableNameLabel);
 			headerPanel.add(Box.createHorizontalStrut(4));
 			headerPanel.add(previewButton);
+			headerPanel.add(Box.createHorizontalStrut(4));
+			headerPanel.add(removeButton);
 			add(headerPanel, BorderLayout.NORTH);
 		}
 

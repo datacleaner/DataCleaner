@@ -42,7 +42,7 @@ import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.actions.InvokeResultProducerActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.util.LabelConstants;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
@@ -126,7 +126,7 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 			panel.setLayout(new FlowLayout(_alignment, 0, 0));
 			JLabel label = new JLabel();
 			if (value == null) {
-				label.setText(LabelConstants.NULL_LABEL);
+				label.setText(LabelUtils.NULL_LABEL);
 			} else if (value instanceof Double || value instanceof Float) {
 				label.setText(NumberFormat.getInstance().format(value));
 			} else {

@@ -31,13 +31,14 @@ import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.datacleaner.actions.AddFilterActionListener;
+import org.eobjects.datacleaner.actions.JobBuilderTaskPaneTextMouseListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
@@ -100,8 +101,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		final JXTaskPane taskPane = new JXTaskPane();
 		taskPane.setFocusable(false);
 
-		final FilterBeanDescriptor<?, ?> descriptor = fjb.getDescriptor();
-		taskPane.setTitle(descriptor.getDisplayName());
+		taskPane.setTitle(LabelUtils.getLabel(fjb));
 		taskPane.setIcon(IconUtils.getDescriptorIcon(fjb.getDescriptor(), IconUtils.ICON_SIZE_SMALL));
 
 		taskPane.add(_panels.get(fjb));
@@ -118,7 +118,8 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 	public void onAdd(FilterJobBuilder<?, ?> fjb) {
 		final FilterJobBuilderPanel panel = new FilterJobBuilderPanel(_configuration, _analysisJobBuilder, fjb);
 		_panels.put(fjb, panel);
-		JXTaskPane taskPane = createTaskPane(fjb);
+		final JXTaskPane taskPane = createTaskPane(fjb);
+		taskPane.addMouseListener(new JobBuilderTaskPaneTextMouseListener(fjb, taskPane));
 		_taskPanes.put(fjb, taskPane);
 		_taskPaneContainer.add(taskPane);
 	}

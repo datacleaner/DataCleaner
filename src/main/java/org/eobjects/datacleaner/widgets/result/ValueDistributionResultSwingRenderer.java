@@ -66,7 +66,7 @@ import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.LabelConstants;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -130,19 +130,19 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		// create a special group for the unique values
 		final Collection<String> uniqueValues = result.getUniqueValues();
 		if (uniqueValues != null && !uniqueValues.isEmpty()) {
-			PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelConstants.UNIQUE_LABEL, uniqueValues, 1);
+			PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelUtils.UNIQUE_LABEL, uniqueValues, 1);
 			_groups.put(pieSliceGroup.getName(), pieSliceGroup);
 		} else {
 			int uniqueCount = result.getUniqueCount();
 			if (uniqueCount > 0) {
-				_dataset.setValue(LabelConstants.UNIQUE_LABEL, uniqueCount);
+				_dataset.setValue(LabelUtils.UNIQUE_LABEL, uniqueCount);
 			}
 		}
 
 		// create a special slice for null values
 		final int nullCount = result.getNullCount();
 		if (nullCount > 0) {
-			_dataset.setValue(LabelConstants.NULL_LABEL, nullCount);
+			_dataset.setValue(LabelUtils.NULL_LABEL, nullCount);
 		}
 
 		// create the remaining "normal" slices, either individually or in
@@ -189,7 +189,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		logger.info("Rendering with {} slices", _dataset.getItemCount());
 
 		// table for drill-to-detail information
-		final DCTable drillableValuesTable = new DCTable("Value", LabelConstants.COUNT_LABEL);
+		final DCTable drillableValuesTable = new DCTable("Value", LabelUtils.COUNT_LABEL);
 		drillableValuesTable.setRowHeight(22);
 		drillToOverview(drillableValuesTable);
 
@@ -207,7 +207,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			int colorIndex = 0;
 			for (int i = 0; i < _dataset.getItemCount(); i++) {
 				final String key = (String) _dataset.getKey(i);
-				if (!LabelConstants.UNIQUE_LABEL.equals(key) && !LabelConstants.NULL_LABEL.equals(key)) {
+				if (!LabelUtils.UNIQUE_LABEL.equals(key) && !LabelUtils.NULL_LABEL.equals(key)) {
 					if (i == _dataset.getItemCount() - 1) {
 						// the last color should not be the same as the first
 						if (colorIndex == 0) {
@@ -229,8 +229,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 					}
 				}
 			}
-			plot.setSectionPaint(LabelConstants.UNIQUE_LABEL, WidgetUtils.BG_COLOR_ORANGE_BRIGHT);
-			plot.setSectionPaint(LabelConstants.NULL_LABEL, WidgetUtils.BG_COLOR_ORANGE_DARK);
+			plot.setSectionPaint(LabelUtils.UNIQUE_LABEL, WidgetUtils.BG_COLOR_ORANGE_BRIGHT);
+			plot.setSectionPaint(LabelUtils.NULL_LABEL, WidgetUtils.BG_COLOR_ORANGE_DARK);
 		}
 
 		final ChartPanel chartPanel = new ChartPanel(chart);
@@ -307,7 +307,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 	}
 
 	private void drillToOverview(final JTable table) {
-		final TableModel model = new DefaultTableModel(new String[] { "Value", LabelConstants.COUNT_LABEL },
+		final TableModel model = new DefaultTableModel(new String[] { "Value", LabelUtils.COUNT_LABEL },
 				_dataset.getItemCount());
 		for (int i = 0; i < _dataset.getItemCount(); i++) {
 			final String key = (String) _dataset.getKey(i);
@@ -342,7 +342,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 	private void drillToGroup(String groupName, JTable table) {
 		final PieSliceGroup group = _groups.get(groupName);
-		final TableModel model = new DefaultTableModel(new String[] { groupName + " value", LabelConstants.COUNT_LABEL },
+		final TableModel model = new DefaultTableModel(new String[] { groupName + " value", LabelUtils.COUNT_LABEL },
 				group.size());
 
 		final Iterator<ValueCount> valueCounts = group.getValueCounts();

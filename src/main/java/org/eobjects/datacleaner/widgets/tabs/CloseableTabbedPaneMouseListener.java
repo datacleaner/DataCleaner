@@ -99,7 +99,7 @@ class CloseableTabbedPaneMouseListener extends MouseAdapter implements MouseMoti
 		if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
 			ActionListener actionListener = _pane.getRightClickActionListener(clickedTabIndex);
 			if (actionListener != null) {
-				actionListener.actionPerformed(new ActionEvent(_pane, clickedTabIndex, "right-click"));
+				actionListener.actionPerformed(new ActionEvent(e, clickedTabIndex, "right-click"));
 			}
 		}
 	}

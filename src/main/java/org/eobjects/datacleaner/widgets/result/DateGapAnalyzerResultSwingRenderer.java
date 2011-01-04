@@ -59,7 +59,7 @@ import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.TimeInterval;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.util.LabelConstants;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
@@ -106,7 +106,7 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 				if (groupNames.size() == 1) {
 					groupDisplayName = "All";
 				} else {
-					groupDisplayName = LabelConstants.NULL_LABEL;
+					groupDisplayName = LabelUtils.NULL_LABEL;
 				}
 			} else {
 				groupDisplayName = groupName;

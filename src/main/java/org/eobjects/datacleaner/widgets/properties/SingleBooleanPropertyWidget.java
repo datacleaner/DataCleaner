@@ -29,7 +29,7 @@ import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.datacleaner.util.LabelConstants;
+import org.eobjects.datacleaner.util.LabelUtils;
 
 public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean> {
 
@@ -60,10 +60,10 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 			add(_checkBox);
 		} else {
 			_checkBox = null;
-			_comboBox = new JComboBox(new String[] { "true", "false", LabelConstants.NULL_LABEL });
+			_comboBox = new JComboBox(new String[] { "true", "false", LabelUtils.NULL_LABEL });
 
 			if (currentValue == null) {
-				_comboBox.setSelectedItem(LabelConstants.NULL_LABEL);
+				_comboBox.setSelectedItem(LabelUtils.NULL_LABEL);
 			} else {
 				_comboBox.setSelectedItem(currentValue.toString());
 			}
@@ -83,7 +83,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 	public boolean isSet() {
 		if (_comboBox != null) {
 			String selectedItem = (String) _comboBox.getSelectedItem();
-			if (LabelConstants.NULL_LABEL.equals(selectedItem)) {
+			if (LabelUtils.NULL_LABEL.equals(selectedItem)) {
 				return false;
 			}
 		}
@@ -94,7 +94,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 	public Boolean getValue() {
 		if (_checkBox == null) {
 			String selectedItem = (String) _comboBox.getSelectedItem();
-			if (LabelConstants.NULL_LABEL.equals(selectedItem)) {
+			if (LabelUtils.NULL_LABEL.equals(selectedItem)) {
 				return null;
 			} else {
 				return Boolean.parseBoolean(selectedItem);
@@ -108,7 +108,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 	protected void setValue(Boolean value) {
 		if (_checkBox == null) {
 			if (value == null) {
-				_comboBox.setSelectedItem(LabelConstants.NULL_LABEL);
+				_comboBox.setSelectedItem(LabelUtils.NULL_LABEL);
 			} else {
 				if (value.booleanValue()) {
 					_comboBox.setSelectedItem("true");

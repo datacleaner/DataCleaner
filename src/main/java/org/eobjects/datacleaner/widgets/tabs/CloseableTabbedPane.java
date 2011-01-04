@@ -23,10 +23,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -139,6 +142,24 @@ public final class CloseableTabbedPane extends JTabbedPane {
 		}
 
 		remove(tab);
+	}
+
+	@Override
+	public void remove(int removedIndex) {
+		super.remove(removedIndex);
+		_rightClickActionListeners.remove(removedIndex);
+
+		// move all right click listeners for tabs above this index down
+		Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
+		keySet.addAll(_rightClickActionListeners.keySet());
+		for (Integer key : keySet) {
+			int curIndex = key.intValue();
+			if (curIndex > removedIndex) {
+				ActionListener actionListener = _rightClickActionListeners.get(curIndex);
+				_rightClickActionListeners.remove(curIndex);
+				_rightClickActionListeners.put(curIndex - 1, actionListener);
+			}
+		}
 	}
 
 	@Override

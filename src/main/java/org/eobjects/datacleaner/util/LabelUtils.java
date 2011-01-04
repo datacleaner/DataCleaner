@@ -19,7 +19,16 @@
  */
 package org.eobjects.datacleaner.util;
 
-public final class LabelConstants {
+import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.util.StringUtils;
+
+/**
+ * Utility class for reusable methods and constants that represent user readable
+ * labels
+ * 
+ * @author Kasper Sørensen
+ */
+public final class LabelUtils {
 
 	public static final String NULL_LABEL = "<null>";
 
@@ -27,4 +36,15 @@ public final class LabelConstants {
 
 	public static final String COUNT_LABEL = "COUNT(*)";
 
+	private LabelUtils() {
+		// prevent instantiation
+	}
+
+	public static String getLabel(AbstractBeanJobBuilder<?, ?, ?> builder) {
+		String label = builder.getName();
+		if (StringUtils.isNullOrEmpty(label)) {
+			label = builder.getDescriptor().getDisplayName();
+		}
+		return label;
+	}
 }

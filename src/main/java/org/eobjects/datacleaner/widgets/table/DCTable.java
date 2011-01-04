@@ -46,7 +46,7 @@ import javax.swing.table.TableModel;
 
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.LabelConstants;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXTable;
 import org.slf4j.Logger;
@@ -286,7 +286,7 @@ public class DCTable extends JXTable implements MouseListener {
 	public Object getValueAt(int row, int column) {
 		Object value = super.getValueAt(row, column);
 		if (value == null) {
-			value = LabelConstants.NULL_LABEL;
+			value = LabelUtils.NULL_LABEL;
 		}
 		return value;
 	}

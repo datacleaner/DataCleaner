@@ -73,7 +73,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 
 		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, transformerJobBuilder);
 		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		buttonPanel.add(_requirementButton);
 		add(buttonPanel, BorderLayout.NORTH);
 	}

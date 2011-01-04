@@ -58,6 +58,8 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
+import org.eobjects.datacleaner.actions.HideTabTextActionListener;
+import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
@@ -68,6 +70,7 @@ import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
@@ -289,10 +292,13 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
 				WidgetUtils.scrolleable(sourceColumnsPanel));
+		_tabbedPane.setRightClickActionListener(0, new HideTabTextActionListener(_tabbedPane, 0));
 		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"),
 				WidgetUtils.scrolleable(metadataPanel));
+		_tabbedPane.setRightClickActionListener(1, new HideTabTextActionListener(_tabbedPane, 1));
 		_tabbedPane.addTab("Filters", imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH),
 				WidgetUtils.scrolleable(_filterListPanel));
+		_tabbedPane.setRightClickActionListener(2, new HideTabTextActionListener(_tabbedPane, 2));
 
 		_tabbedPane.setUnclosableTab(SOURCE_TAB);
 		_tabbedPane.setUnclosableTab(METADATA_TAB);
@@ -437,7 +443,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(ExploringAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		_tabbedPane.addTab(analyzerJobBuilder.getDescriptor().getDisplayName(), new JLabel("TODO: Exploring analyzer"));
+		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder), new JLabel("TODO: Exploring analyzer"));
 		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
 		updateStatusLabel();
 	}
@@ -447,9 +453,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(_analysisJobBuilder,
 				analyzerJobBuilder);
 		_rowProcessingTabPanels.put(analyzerJobBuilder, panel);
-		_tabbedPane.addTab(analyzerJobBuilder.getDescriptor().getDisplayName(),
+		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),
 				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), panel);
-		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
+		final int tabIndex = _tabbedPane.getTabCount() - 1;
+		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(analyzerJobBuilder, tabIndex,
+				_tabbedPane));
+		_tabbedPane.setSelectedIndex(tabIndex);
 		updateStatusLabel();
 	}
 
@@ -467,12 +476,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
-		TransformerJobBuilderPanel panel = new TransformerJobBuilderPanel(_analysisJobBuilder, transformerJobBuilder,
+		final TransformerJobBuilderPanel panel = new TransformerJobBuilderPanel(_analysisJobBuilder, transformerJobBuilder,
 				_configuration);
 		_transformerTabPanels.put(transformerJobBuilder, panel);
-		_tabbedPane.addTab(transformerJobBuilder.getDescriptor().getDisplayName(),
+		_tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
 				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), panel);
-		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
+		final int tabIndex = _tabbedPane.getTabCount() - 1;
+		_tabbedPane.setSelectedIndex(tabIndex);
+		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(transformerJobBuilder, tabIndex,
+				_tabbedPane));
 		updateStatusLabel();
 	}
 

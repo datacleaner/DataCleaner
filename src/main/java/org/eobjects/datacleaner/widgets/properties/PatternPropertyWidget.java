@@ -42,10 +42,8 @@ public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> imple
 		super(beanJobBuilder, propertyDescriptor);
 		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());
 		_textField.getDocument().addDocumentListener(this);
-		String currentValue = (String) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue != null) {
-			_textField.setText(currentValue);
-		}
+		Pattern currentValue = (Pattern) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		setValue(currentValue);
 		updateColor();
 		add(_textField);
 	}

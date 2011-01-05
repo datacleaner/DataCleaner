@@ -23,11 +23,13 @@ import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
@@ -52,6 +54,7 @@ public class OptionsDialog extends AbstractWindow {
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final CloseableTabbedPane _tabbedPane;
 	private final AnalyzerBeansConfiguration _configuration;
+	private Timer _updateMemoryTimer;
 
 	public OptionsDialog(AnalyzerBeansConfiguration configuration) {
 		_configuration = configuration;
@@ -62,6 +65,7 @@ public class OptionsDialog extends AbstractWindow {
 				new DatabaseDriversPanel(_configuration));
 		_tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
 		_tabbedPane.addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
+		_tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());
 
 		_tabbedPane.setUnclosableTab(0);
 		_tabbedPane.setUnclosableTab(1);
@@ -129,6 +133,72 @@ public class OptionsDialog extends AbstractWindow {
 		descriptionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
 		WidgetUtils.addToGridBag(descriptionLabel, panel, 0, row, 2, 1);
 		return panel;
+	}
+
+	private DCPanel getMemoryTab() {
+		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+
+		final JLabel maxMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
+		final JLabel totalMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
+		final JLabel usedMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
+		final JLabel freeMemoryLabel = new JLabel("? kb", JLabel.RIGHT);
+
+		WidgetUtils.addToGridBag(new JLabel("Max available memory:"), panel, 0, 0);
+		WidgetUtils.addToGridBag(maxMemoryLabel, panel, 1, 0);
+		WidgetUtils.addToGridBag(new JLabel("Allocated memory:"), panel, 0, 1);
+		WidgetUtils.addToGridBag(totalMemoryLabel, panel, 1, 1);
+		WidgetUtils.addToGridBag(new JLabel("Used memory:"), panel, 0, 2);
+		WidgetUtils.addToGridBag(usedMemoryLabel, panel, 1, 2);
+		WidgetUtils.addToGridBag(new JLabel("Free memory:"), panel, 0, 3);
+		WidgetUtils.addToGridBag(freeMemoryLabel, panel, 1, 3);
+
+		_updateMemoryTimer = new Timer(1000, new ActionListener() {
+			private final Runtime runtime = Runtime.getRuntime();
+			private final NumberFormat nf = NumberFormat.getIntegerInstance();
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				long totalMemory = runtime.totalMemory();
+				long freeMemory = runtime.freeMemory();
+				long maxMemory = runtime.maxMemory();
+				long usedMemory = totalMemory - freeMemory;
+
+				if (maxMemory == Long.MAX_VALUE) {
+					maxMemoryLabel.setText("(no limit)");
+				} else {
+					maxMemoryLabel.setText(nf.format(maxMemory / 1024) + " kb");
+				}
+				totalMemoryLabel.setText(nf.format(totalMemory / 1024) + " kb");
+				usedMemoryLabel.setText(nf.format(usedMemory / 1024) + " kb");
+				freeMemoryLabel.setText(nf.format(freeMemory / 1024) + " kb");
+			}
+		});
+		_updateMemoryTimer.setInitialDelay(0);
+		_updateMemoryTimer.start();
+
+		JButton button = new JButton("Perform garbage collection");
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.gc();
+				System.runFinalization();
+			}
+		});
+		WidgetUtils.addToGridBag(button, panel, 1, 4);
+
+		return panel;
+	}
+
+	@Override
+	protected boolean onWindowClosing() {
+		boolean closing = super.onWindowClosing();
+		if (closing) {
+			if (_updateMemoryTimer != null) {
+				_updateMemoryTimer.stop();
+			}
+		}
+		return closing;
 	}
 
 	@Override

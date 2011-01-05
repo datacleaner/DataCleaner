@@ -43,6 +43,7 @@ import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.LazyFilterOutcome;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +100,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 		}
 
 		for (final FilterJobBuilder<?, ?> fjb : fjbs) {
-			JMenu filterMenuItem = new JMenu(fjb.getDescriptor().getDisplayName());
+			JMenu filterMenuItem = new JMenu(LabelUtils.getLabel(fjb));
 
 			if (!fjb.isConfigured()) {
 				filterMenuItem.setIcon(unconfiguredFilterIcon);
@@ -162,7 +163,10 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 					// the job may cause an exception if the builder is not
 					// correctly configured yet)
 					FilterJobBuilder<?, ?> fjb = ((LazyFilterOutcome) filterOutcome).getFilterJobBuilder();
-					setText(fjb.getDescriptor().getDisplayName() + ": " + category);
+
+					String filterLabel = LabelUtils.getLabel(fjb);
+
+					setText(filterLabel + ": " + category);
 				} else {
 					FilterJob filterJob = filterOutcome.getFilterJob();
 					setText(filterJob.getDescriptor().getDisplayName() + ": " + category);

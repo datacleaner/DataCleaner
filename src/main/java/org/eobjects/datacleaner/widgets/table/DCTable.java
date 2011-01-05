@@ -75,7 +75,7 @@ public class DCTable extends JXTable implements MouseListener {
 		setColumnSelectionAllowed(true);
 		setColumnControlVisible(true);
 		setSortable(true);
-		
+
 		// currently (because of the implementation of the editor) the enabled
 		// "editable" property is only to enable clicking on buttons etc. in
 		// tables.
@@ -269,6 +269,8 @@ public class DCTable extends JXTable implements MouseListener {
 				Object value = getValueAt(row, col);
 				if (value == null) {
 					value = "";
+				} else if (value instanceof JComponent) {
+					value = WidgetUtils.extractText((JComponent) value);
 				}
 				sb.append(value);
 				sb.append("\t");

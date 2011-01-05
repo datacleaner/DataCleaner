@@ -32,6 +32,7 @@ import java.util.Locale;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
@@ -39,14 +40,20 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.FontUIResource;
+import javax.swing.text.JTextComponent;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.error.ErrorInfo;
 import org.jdesktop.swingx.error.ErrorLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class WidgetUtils {
+
+	private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
 
 	public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 25);
 	public static final Font FONT_HEADER = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
@@ -284,5 +291,29 @@ public final class WidgetUtils {
 
 		return new Color(Math.min((int) (r / COLOR_SCALE_FACTOR), 255), Math.min((int) (g / COLOR_SCALE_FACTOR), 255),
 				Math.min((int) (b / COLOR_SCALE_FACTOR), 255));
+	}
+
+	public static String extractText(Component comp) {
+		if (comp instanceof JLabel) {
+			return ((JLabel) comp).getText();
+		} else if (comp instanceof JTextComponent) {
+			return ((JTextComponent) comp).getText();
+		} else if (comp instanceof Container) {
+			Component[] children = ((Container) comp).getComponents();
+			StringBuilder sb = new StringBuilder();
+			for (Component child : children) {
+				String text = extractText(child);
+				if (!StringUtils.isNullOrEmpty(text)) {
+					if (sb.length() > 0) {
+						sb.append(' ');
+					}
+					sb.append(text);
+				}
+			}
+			return sb.toString();
+		}
+
+		logger.warn("Could not extract text from component: {}", comp);
+		return "";
 	}
 }

@@ -23,13 +23,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.LabelUtils;
-import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 /**
@@ -38,38 +34,31 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
  * 
  * @author Kasper Sørensen
  */
-public class JobBuilderTabTextActionListener implements ActionListener {
+public class JobBuilderTabTextActionListener extends AbstractJobBuilderPopupListener implements ActionListener {
 
-	private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
 	private final CloseableTabbedPane _tabbedPane;
 	private final int _tabIndex;
 
-	public JobBuilderTabTextActionListener(AbstractBeanJobBuilder<?, ?, ?> jobBuilder, int tabIndex,
-			CloseableTabbedPane tabbedPane) {
-		_jobBuilder = jobBuilder;
+	public JobBuilderTabTextActionListener(AnalysisJobBuilder analysisJobBuilder,
+			AbstractBeanJobBuilder<?, ?, ?> jobBuilder, int tabIndex, CloseableTabbedPane tabbedPane) {
+		super(jobBuilder, analysisJobBuilder);
 		_tabIndex = tabIndex;
 		_tabbedPane = tabbedPane;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", "images/actions/rename.png");
-		renameMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final String originalValue = LabelUtils.getLabel(_jobBuilder);
-				final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
-				if (!originalValue.equals(newValue)) {
-					_jobBuilder.setName(newValue);
-					_tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(_jobBuilder));
-				}
-			}
-		});
-
 		MouseEvent mouseEvent = (MouseEvent) e.getSource();
+		showPopup(_tabbedPane, mouseEvent.getX(), mouseEvent.getY());
+	}
 
-		JPopupMenu popup = new JPopupMenu();
-		popup.add(renameMenuItem);
-		popup.show(_tabbedPane, mouseEvent.getX(), mouseEvent.getY());
+	@Override
+	protected void onNameChanged() {
+		_tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(getJobBuilder()));
+	}
+
+	@Override
+	protected void onRemoved() {
+		_tabbedPane.remove(_tabIndex);
 	}
 }

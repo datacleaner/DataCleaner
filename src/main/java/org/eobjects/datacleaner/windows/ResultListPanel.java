@@ -39,6 +39,7 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -82,7 +83,16 @@ public class ResultListPanel extends DCPanel {
 		taskPane.setIcon(IconUtils.getDescriptorIcon(descriptor));
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(descriptor.getDisplayName());
+
+		String jobName = analyzerJob.getName();
+		if (StringUtils.isNullOrEmpty(jobName)) {
+			sb.append(descriptor.getDisplayName());
+		} else {
+			sb.append(jobName);
+			sb.append(" (");
+			sb.append(descriptor.getDisplayName());
+			sb.append(')');
+		}
 
 		InputColumn<?>[] input = analyzerJob.getInput();
 		if (input.length > 0) {

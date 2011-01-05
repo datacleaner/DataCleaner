@@ -456,8 +456,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),
 				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), panel);
 		final int tabIndex = _tabbedPane.getTabCount() - 1;
-		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(analyzerJobBuilder, tabIndex,
-				_tabbedPane));
+		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
+				analyzerJobBuilder, tabIndex, _tabbedPane));
 		_tabbedPane.setSelectedIndex(tabIndex);
 		updateStatusLabel();
 	}
@@ -483,8 +483,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), panel);
 		final int tabIndex = _tabbedPane.getTabCount() - 1;
 		_tabbedPane.setSelectedIndex(tabIndex);
-		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(transformerJobBuilder, tabIndex,
-				_tabbedPane));
+		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
+				transformerJobBuilder, tabIndex, _tabbedPane));
 		updateStatusLabel();
 	}
 

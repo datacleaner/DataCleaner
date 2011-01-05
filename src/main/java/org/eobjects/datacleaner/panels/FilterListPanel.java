@@ -119,7 +119,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		final FilterJobBuilderPanel panel = new FilterJobBuilderPanel(_configuration, _analysisJobBuilder, fjb);
 		_panels.put(fjb, panel);
 		final JXTaskPane taskPane = createTaskPane(fjb);
-		taskPane.addMouseListener(new JobBuilderTaskPaneTextMouseListener(fjb, taskPane));
+		taskPane.addMouseListener(new JobBuilderTaskPaneTextMouseListener(_analysisJobBuilder, fjb, taskPane));
 		_taskPanes.put(fjb, taskPane);
 		_taskPaneContainer.add(taskPane);
 	}

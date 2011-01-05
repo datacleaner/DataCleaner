@@ -19,18 +19,12 @@
  */
 package org.eobjects.datacleaner.actions;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import java.awt.event.MouseListener;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.LabelUtils;
-import org.eobjects.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTaskPane;
 
 /**
@@ -39,13 +33,13 @@ import org.jdesktop.swingx.JXTaskPane;
  * 
  * @author Kasper Sørensen
  */
-public class JobBuilderTaskPaneTextMouseListener extends MouseAdapter {
+public class JobBuilderTaskPaneTextMouseListener extends AbstractJobBuilderPopupListener implements MouseListener {
 
-	private final AbstractBeanJobBuilder<?, ?, ?> _jobBuilder;
 	private final JXTaskPane _taskPane;
 
-	public JobBuilderTaskPaneTextMouseListener(AbstractBeanJobBuilder<?, ?, ?> jobBuilder, JXTaskPane taskPane) {
-		_jobBuilder = jobBuilder;
+	public JobBuilderTaskPaneTextMouseListener(AnalysisJobBuilder analysisJobBuilder,
+			AbstractBeanJobBuilder<?, ?, ?> jobBuilder, JXTaskPane taskPane) {
+		super(jobBuilder, analysisJobBuilder);
 		_taskPane = taskPane;
 	}
 
@@ -54,22 +48,32 @@ public class JobBuilderTaskPaneTextMouseListener extends MouseAdapter {
 		int button = e.getButton();
 
 		if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-			JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", "images/actions/rename.png");
-			renameMenuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					final String originalValue = LabelUtils.getLabel(_jobBuilder);
-					final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
-					if (!originalValue.equals(newValue)) {
-						_jobBuilder.setName(newValue);
-						_taskPane.setTitle(LabelUtils.getLabel(_jobBuilder));
-					}
-				}
-			});
-
-			JPopupMenu popup = new JPopupMenu();
-			popup.add(renameMenuItem);
-			popup.show(_taskPane, e.getX(), e.getY());
+			showPopup(_taskPane, e.getX(), e.getY());
 		}
+	}
+
+	@Override
+	protected void onNameChanged() {
+		_taskPane.setTitle(LabelUtils.getLabel(getJobBuilder()));
+	}
+
+	@Override
+	protected void onRemoved() {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
 	}
 }

@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -69,9 +68,9 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private StringPattern _simpleStringPattern;
 
-	private static final Icon ICON_ERROR = imageManager.getImageIcon("images/status/error.png",IconUtils.ICON_SIZE_SMALL);
-	
-	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png",IconUtils.ICON_SIZE_SMALL);
+	private static final Icon ICON_ERROR = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
+
+	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 
 	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog) {
 		_catalog = catalog;
@@ -87,7 +86,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		_expressionNameString = expressionName;
 		_expressionNameField.setText(expressionName);
 		_expressionField.setText(expression);
-		if(!_catalog.isStringPatternMutable(_expressionNameString)){
+		if (!_catalog.isStringPatternMutable(_expressionNameString)) {
 			_expressionField.setEnabled(false);
 			_expressionNameField.setEnabled(false);
 			_resetButton.setEnabled(false);
@@ -139,7 +138,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(_resetButton, formPanel, 2, row);
 
 		row++;
-		
+
 		_saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -174,7 +173,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		testitPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
 		_errorLabel = new JLabel("");
-        WidgetUtils.addToGridBag(_errorLabel, testitPanel, 0, row);
+		WidgetUtils.addToGridBag(_errorLabel, testitPanel, 0, row);
 
 		row++;
 		JLabel testInputLabel = new JLabel("Test input");
@@ -182,36 +181,33 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
 
 		_inputFields = new ArrayList<JTextField>(NUM_TEST_FIELDS);
-        _statusLabels = new ArrayList<JLabel>(NUM_TEST_FIELDS);
-        for (int i = 0; i < NUM_TEST_FIELDS; i++) {
-                final int index = i;
-                JTextField inputField = WidgetFactory.createTextField("Test Input");
-                inputField.getDocument().addDocumentListener(
-                                new DocumentListener() {
-                                        public void changedUpdate(DocumentEvent e) {
-                                                checkInputField(index);
-                                        }
+		_statusLabels = new ArrayList<JLabel>(NUM_TEST_FIELDS);
+		for (int i = 0; i < NUM_TEST_FIELDS; i++) {
+			final int index = i;
+			JTextField inputField = WidgetFactory.createTextField("Test Input");
+			inputField.getDocument().addDocumentListener(new DocumentListener() {
+				public void changedUpdate(DocumentEvent e) {
+					checkInputField(index);
+				}
 
-                                        public void insertUpdate(DocumentEvent e) {
-                                                checkInputField(index);
-                                        }
+				public void insertUpdate(DocumentEvent e) {
+					checkInputField(index);
+				}
 
-                                        public void removeUpdate(DocumentEvent e) {
-                                                checkInputField(index);
-                                        }
-                                });
-                //inputField.setPreferredSize(d);
-                WidgetUtils.addToGridBag(inputField, testitPanel, 0, 4 + i);
+				public void removeUpdate(DocumentEvent e) {
+					checkInputField(index);
+				}
+			});
+			// inputField.setPreferredSize(d);
+			WidgetUtils.addToGridBag(inputField, testitPanel, 0, 4 + i);
 
-                JLabel statusLabel = new JLabel();
-                WidgetUtils.addToGridBag(statusLabel, testitPanel, 1, 4 + i);
+			JLabel statusLabel = new JLabel();
+			WidgetUtils.addToGridBag(statusLabel, testitPanel, 1, 4 + i);
 
-                _inputFields.add(inputField);
-                _statusLabels.add(statusLabel);
-        }
+			_inputFields.add(inputField);
+			_statusLabels.add(statusLabel);
+		}
 
-		
-		
 		final MultiLineLabel descriptionLabel = new MultiLineLabel(
 				"A string expression is a concise and flexible means for identifying strings of text of interest, such as particular characters, words, or patterns of characters. The registered regexes can be used to identify certain types of strings and validate their pattern-correctness.");
 		descriptionLabel.setBorder(new EmptyBorder(10, 10, 10, 20));
@@ -237,13 +233,9 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	}
 
 	private void checkInputFields() {
-		try {
-			_errorLabel.setText("");
-			for (int i = 0; i < NUM_TEST_FIELDS; i++) {
-				checkInputField(i);
-			}
-		} catch (PatternSyntaxException e) {
-			_errorLabel.setText(e.getMessage());
+		_errorLabel.setText("");
+		for (int i = 0; i < NUM_TEST_FIELDS; i++) {
+			checkInputField(i);
 		}
 
 	}
@@ -254,7 +246,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		if ("".equals(text)) {
 			label.setIcon(null);
 		} else {
-			if(_simpleStringPattern == null){
+			if (_simpleStringPattern == null) {
 				_simpleStringPattern = new SimpleStringPattern(_expressionNameField.getText(), _expressionField.getText());
 			}
 			if (_simpleStringPattern.matches(text)) {

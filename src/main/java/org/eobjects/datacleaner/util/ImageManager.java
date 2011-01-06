@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public final class ImageManager {
 		return new ImageIcon(getImage(imagePath));
 	}
 
-	public Icon getImageIcon(String imagePath, int newWidth) {
+	public ImageIcon getImageIcon(String imagePath, int newWidth) {
 		return new ImageIcon(getImage(imagePath, newWidth));
 	}
 

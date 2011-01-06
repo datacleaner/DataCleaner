@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -165,7 +164,7 @@ public class DCTable extends JXTable implements MouseListener {
 	}
 
 	protected List<JMenuItem> getCopyMenuItems() {
-		ImageIcon icon = ImageManager.getInstance().getImageIcon("images/actions/copy.png");
+		Icon icon = ImageManager.getInstance().getImageIcon("images/actions/copy.png");
 		List<JMenuItem> result = new ArrayList<JMenuItem>();
 
 		// JMenuItem for "Copy selected cells to clipboard"

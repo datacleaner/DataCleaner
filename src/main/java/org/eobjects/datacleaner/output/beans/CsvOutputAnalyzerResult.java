@@ -19,27 +19,38 @@
  */
 package org.eobjects.datacleaner.output.beans;
 
+import java.io.File;
+
+import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.result.AnalyzerResult;
 
-/**
- * Represents the output of an output analyzer, which is an analyzer that writes
- * data to a target destination.
- * 
- * @author Kasper Sørensen
- */
-public interface OutputAnalyzerResult extends AnalyzerResult {
+import dk.eobjects.metamodel.util.FileHelper;
 
-	/**
-	 * @return the amount of rows that was written
-	 */
-	public int getWrittenRowCount();
+public class CsvOutputAnalyzerResult implements OutputAnalyzerResult {
 
-	/**
-	 * @return a datastore that can be used to access the target destination, or
-	 *         null of it is not available (eg. destination not reachable or no
-	 *         rows written).
-	 */
-	public Datastore getDatastore(DatastoreCatalog datastoreCatalog);
+	private static final long serialVersionUID = 1L;
+	private final int _rowCount;
+	private File _file;
+	private char _separatorChar;
+	private char _quoteChar;
+
+	public CsvOutputAnalyzerResult(File file, char separatorChar, char quoteChar, int rowCount) {
+		_file = file;
+		_separatorChar = separatorChar;
+		_quoteChar = quoteChar;
+		_rowCount = rowCount;
+	}
+
+	@Override
+	public int getWrittenRowCount() {
+		return _rowCount;
+	}
+
+	@Override
+	public Datastore getDatastore(DatastoreCatalog datastoreCatalog) {
+		return new CsvDatastore(_file.getName(), _file.getAbsolutePath(), _quoteChar, _separatorChar,
+				FileHelper.DEFAULT_ENCODING);
+	}
+
 }

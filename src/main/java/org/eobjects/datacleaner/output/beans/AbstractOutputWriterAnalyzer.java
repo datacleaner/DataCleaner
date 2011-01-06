@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.output.beans;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
@@ -30,14 +32,18 @@ import org.eobjects.datacleaner.output.OutputWriter;
 
 public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnalyzer<OutputAnalyzerResult> {
 
+	private final AtomicInteger rowCount = new AtomicInteger(0);
+	
 	@Configured
 	InputColumn<?>[] columns;
 
 	@Override
 	public final OutputAnalyzerResult getResult() {
 		getOutputWriter().close();
-		return new OutputAnalyzerResult();
+		return getResultInternal(rowCount.get());
 	}
+	
+	protected abstract OutputAnalyzerResult getResultInternal(int rowCount);
 
 	public abstract OutputWriter getOutputWriter();
 
@@ -66,6 +72,7 @@ public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnaly
 			outputRow.setValue(objectCol, row.getValue(col));
 		}
 		outputRow.write();
+		rowCount.incrementAndGet();
 	}
 
 	public void setColumns(InputColumn<?>[] columns) {

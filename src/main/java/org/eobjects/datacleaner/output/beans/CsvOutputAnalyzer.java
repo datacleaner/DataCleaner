@@ -84,6 +84,12 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 		outputRow.write();
 	}
 
+	@Override
+	protected OutputAnalyzerResult getResultInternal(int rowCount) {
+		CsvOutputAnalyzerResult result = new CsvOutputAnalyzerResult(file, separatorChar, quoteChar, rowCount);
+		return result;
+	}
+
 	public void setFile(File file) {
 		this.file = file;
 	}

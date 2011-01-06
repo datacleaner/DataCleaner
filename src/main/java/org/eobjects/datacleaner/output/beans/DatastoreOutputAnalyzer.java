@@ -58,6 +58,11 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 		return _outputWriter;
 	}
 
+	@Override
+	protected OutputAnalyzerResult getResultInternal(int rowCount) {
+		return new DatastoreOutputAnalyzerResult(rowCount, datastoreName);
+	}
+
 	public void setOutputWriter(OutputWriter outputWriter) {
 		_outputWriter = outputWriter;
 	}

@@ -32,7 +32,11 @@ public class OutputAnalyzerResultRenderer implements Renderer<OutputAnalyzerResu
 
 	@Override
 	public JComponent render(OutputAnalyzerResult result) {
-		return new JLabel("Output written");
+		int rowCount = result.getWrittenRowCount();
+		if (rowCount == 0) {
+			return new JLabel("No rows written!");
+		} else {
+			return new JLabel(rowCount + " rows written!");
+		}
 	}
-
 }

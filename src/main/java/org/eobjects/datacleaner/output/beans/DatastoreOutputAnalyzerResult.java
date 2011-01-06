@@ -17,24 +17,30 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output.datastore;
+package org.eobjects.datacleaner.output.beans;
 
-import java.io.File;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 
-final class DatastoreOutputUtils {
+public class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
 
-	private DatastoreOutputUtils() {
-		// prevent instantiation
+	private static final long serialVersionUID = 1L;
+	private final int _rowCount;
+	private final String _datastoreName;
+
+	public DatastoreOutputAnalyzerResult(int rowCount, String datastoreName) {
+		_rowCount = rowCount;
+		_datastoreName = datastoreName;
 	}
 
-	public static String safeName(String str) {
-		// replaces special chars with underscore
-		str = str.replaceAll("[\\ \\,\\(\\)\\.\\:\\;]+", "_");
-		return str;
+	@Override
+	public int getWrittenRowCount() {
+		return _rowCount;
 	}
 
-	public static String getJdbcUrl(File directory, String dbName) {
-		final String urlSuffix = directory.getPath() + '/' + safeName(dbName);
-		return "jdbc:h2:" + urlSuffix;
+	@Override
+	public Datastore getDatastore(DatastoreCatalog datastoreCatalog) {
+		return datastoreCatalog.getDatastore(_datastoreName);
 	}
+
 }

@@ -140,7 +140,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		return "Data Store Synonym Catalog";
+		return "Datastore Synonym Catalog";
 	}
 
 	@Override

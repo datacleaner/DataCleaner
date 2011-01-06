@@ -38,6 +38,7 @@ import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
 import dk.eobjects.metamodel.schema.Column;
+import dk.eobjects.metamodel.schema.Table;
 
 public class MultiSourceColumnComboBoxPanel extends DCPanel {
 
@@ -47,10 +48,20 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 	private DCPanel _sourceComboBoxPanel;
 	private DCPanel _parentPanel;
 	private DCPanel _buttonPanel;
+	private List<SourceColumnComboBox> _sourceColumnComboBoxes;
+	private Table _table;
 
 	public MultiSourceColumnComboBoxPanel() {
-		_sourceColumnComboBox = new SourceColumnComboBox();
+		_sourceColumnComboBoxes = new ArrayList<SourceColumnComboBox>();
+		_sourceColumnComboBox = getNewSourceColumnComboBox();
 		initializePanels();
+	}
+
+	private SourceColumnComboBox getNewSourceColumnComboBox() {
+		SourceColumnComboBox sourceColumnComboBox = (_table == null) ? new SourceColumnComboBox(_datastore)
+				: new SourceColumnComboBox(_datastore, _table);
+		_sourceColumnComboBoxes.add(sourceColumnComboBox);
+		return sourceColumnComboBox;
 	}
 
 	private void initializePanels() {
@@ -60,7 +71,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 	}
 
 	private void initializeButtonPanel() {
-		
+
 		_buttonPanel = new DCPanel();
 
 		JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
@@ -75,7 +86,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SourceColumnComboBox sourceColumnComboBox = new SourceColumnComboBox(_datastore);
+				SourceColumnComboBox sourceColumnComboBox = getNewSourceColumnComboBox();
 				_sourceComboBoxPanel.add(sourceColumnComboBox);
 				_sourceComboBoxPanel.updateUI();
 			}
@@ -110,6 +121,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 
 	/**
 	 * Creates a panel containing ButtonPanel and SourceComboboxPanel
+	 * 
 	 * @return DCPanel
 	 */
 	public DCPanel createPanel() {
@@ -123,7 +135,6 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 		_datastore = datastore;
 		_sourceColumnComboBox.setModel(_datastore);
 	}
-
 
 	/**
 	 * Returns the column names selected as String[].
@@ -154,6 +165,17 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 			}
 		}
 		return columns;
+	}
+
+	/**
+	 * updates the SourceColumnComboBoxes with the provided datastore and table 
+	 */
+	public void updateSourceComboBoxes(Datastore datastore, Table table) {
+		_datastore = datastore;
+		_table = table;
+		for (SourceColumnComboBox sourceColComboBox : _sourceColumnComboBoxes) {
+			sourceColComboBox.setModel(datastore, table);
+		}
 	}
 
 }

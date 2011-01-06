@@ -24,6 +24,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -52,6 +54,7 @@ import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 import dk.eobjects.metamodel.schema.Column;
+import dk.eobjects.metamodel.schema.Table;
 
 public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
@@ -60,7 +63,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 	private final DatastoreSynonymCatalog _originalsynonymCatalog;
 	private final MutableReferenceDataCatalog _mutableReferenceCatalog;
 	private final JComboBox _datastoreComboBox;
-	private SourceColumnComboBox _sourceColumnComboBox;
+	private SourceColumnComboBox _masterSourceColumnComboBox;
 	private final JXTextField _nameTextField;
 	private final DatastoreCatalog _datastoreCatalog;
 	private Datastore _datastore;
@@ -81,7 +84,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 		String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
 		_datastoreComboBox = new JComboBox(comboBoxModel);
-		_sourceColumnComboBox = new SourceColumnComboBox();
+		_masterSourceColumnComboBox = new SourceColumnComboBox();
 		_multiSourceColumnComboBoxPanel = new MultiSourceColumnComboBoxPanel();
 		_datastoreComboBox.setEditable(false);
 		_treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -94,7 +97,19 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 				String datastoreName = (String) _datastoreComboBox.getSelectedItem();
 				if (datastoreName != null) {
 					_datastore = _datastoreCatalog.getDatastore(datastoreName);
-					_sourceColumnComboBox.setModel(_datastore);
+					_masterSourceColumnComboBox.setModel(_datastore);
+					_masterSourceColumnComboBox.addItemListener(new ItemListener() {
+
+						@Override
+						public void itemStateChanged(ItemEvent itemEvent) {
+							Table table = _masterSourceColumnComboBox.getSelectedItem().getTable();
+							System.out.println(_masterSourceColumnComboBox.getSelectedItem());
+							_multiSourceColumnComboBoxPanel.updateSourceComboBoxes(_datastore, table);
+							_multiSourceColumnComboBoxPanel.updateUI();
+
+						}
+					});
+
 					_multiSourceColumnComboBoxPanel.setModel(_datastore);
 					if (_datastore != null) {
 						_treePanel.removeAll();
@@ -151,7 +166,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(_datastoreComboBox, formPanel, 1, row);
 		row++;
 		WidgetUtils.addToGridBag(new JLabel("Source Column:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_sourceColumnComboBox, formPanel, 1, row);
+		WidgetUtils.addToGridBag(_masterSourceColumnComboBox, formPanel, 1, row);
 		row++;
 		WidgetUtils.addToGridBag(new JLabel("Synonym Columns:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_multiSourceColumnComboBoxPanel.createPanel(), formPanel, 1, row);
@@ -173,7 +188,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 					return;
 				}
 
-				Column selectedItem = _sourceColumnComboBox.getSelectedItem();
+				Column selectedItem = _masterSourceColumnComboBox.getSelectedItem();
 				String[] synonymColumnNames = _multiSourceColumnComboBoxPanel.getColumnNames();
 
 				DatastoreSynonymCatalog dataStoreBasedSynonymCatalog = new DatastoreSynonymCatalog(name, _datastoreCatalog,

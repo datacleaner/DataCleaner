@@ -19,6 +19,11 @@
  */
 package org.eobjects.datacleaner.util;
 
+import org.eobjects.analyzer.descriptors.BeanDescriptor;
+import org.eobjects.analyzer.job.ComponentJob;
+import org.eobjects.analyzer.job.ConfigurableBeanJob;
+import org.eobjects.analyzer.job.MergeInput;
+import org.eobjects.analyzer.job.MergedOutcomeJob;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 
@@ -44,6 +49,25 @@ public final class LabelUtils {
 		String label = builder.getName();
 		if (StringUtils.isNullOrEmpty(label)) {
 			label = builder.getDescriptor().getDisplayName();
+		}
+		return label;
+	}
+
+	public static String getLabel(ComponentJob job) {
+		String label = job.getName();
+		if (StringUtils.isNullOrEmpty(label)) {
+			if (job instanceof ConfigurableBeanJob) {
+				BeanDescriptor<?> descriptor = ((ConfigurableBeanJob<?>) job).getDescriptor();
+				label = descriptor.getDisplayName();
+			} else if (job instanceof MergedOutcomeJob) {
+				MergeInput[] inputs = ((MergedOutcomeJob) job).getMergeInputs();
+				StringBuilder sb = new StringBuilder();
+				sb.append("MergedOutcome[");
+				sb.append(inputs.length);
+				sb.append(']');
+			} else {
+				label = job.toString();
+			}
 		}
 		return label;
 	}

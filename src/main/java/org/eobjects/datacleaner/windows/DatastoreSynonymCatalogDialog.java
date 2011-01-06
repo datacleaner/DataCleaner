@@ -103,7 +103,6 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 						@Override
 						public void itemStateChanged(ItemEvent itemEvent) {
 							Table table = _masterSourceColumnComboBox.getSelectedItem().getTable();
-							System.out.println(_masterSourceColumnComboBox.getSelectedItem());
 							_multiSourceColumnComboBoxPanel.updateSourceComboBoxes(_datastore, table);
 							_multiSourceColumnComboBoxPanel.updateUI();
 

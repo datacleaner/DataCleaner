@@ -24,9 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -34,13 +33,16 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.reference.RegexStringPattern;
+import org.eobjects.analyzer.reference.SimpleStringPattern;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.StringPatternChangeListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.RegexPatternDialog;
+import org.eobjects.datacleaner.windows.SimpleStringPatternDialog;
 
 public class StringPatternListPanel extends DCPanel implements StringPatternChangeListener {
 
@@ -49,17 +51,73 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final AnalyzerBeansConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
-	private final DCPanel _listPanel;
+
+	private JComboBox stringPatternsCombo;
+	private StringPattern selectedStringPattern;
+	private final DCPanel _stringPatternListPanel;
+	private final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+	private final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 
 	public StringPatternListPanel(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addStringPatternListener(this);
-		_listPanel = new DCPanel();
+		_stringPatternListPanel = new DCPanel();
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
+		String[] stringPatternNames = _configuration.getReferenceDataCatalog().getStringPatternNames();
+		stringPatternsCombo = new JComboBox(stringPatternNames);
+		stringPatternsCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String selectedStringPatternName = (String) stringPatternsCombo.getSelectedItem();
+				selectedStringPattern = _catalog.getStringPattern(selectedStringPatternName);
+				if(_catalog.isStringPatternMutable(selectedStringPatternName)){
+					editButton.setIcon(imageManager.getImageIcon("images/actions/edit.png", 16));
+					removeButton.setEnabled(true);
+				} else{
+					editButton.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png", 16));
+					removeButton.setEnabled(false);
+				}
+			}
+		});
+
+		_stringPatternListPanel.add(stringPatternsCombo);
+
+		editButton.setToolTipText("Edit pattern");
+		editButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedStringPattern instanceof RegexStringPattern) {
+					new RegexPatternDialog(selectedStringPattern.getName(), ((RegexStringPattern) selectedStringPattern)
+							.getExpression(), _catalog).setVisible(true);
+				} else if (selectedStringPattern instanceof SimpleStringPattern) {
+					new SimpleStringPatternDialog(selectedStringPattern.getName(),
+							((SimpleStringPattern) selectedStringPattern).getExpression(), _catalog).setVisible(true);
+				}
+			}
+		});
+		_stringPatternListPanel.add(editButton);
+
+		removeButton.setToolTipText("Remove pattern");
+		removeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (_catalog.isStringPatternMutable(selectedStringPattern.getName())) {
+					int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
+							"Are you sure you wish to remove the string pattern '" + "" + "'?", "Confirm remove",
+							JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						_catalog.removeStringPattern(selectedStringPattern);
+					}
+				} else {
+					JOptionPane.showMessageDialog(StringPatternListPanel.this, "This string pattern cannot be deleted.");
+				}
+			}
+		});
+		_stringPatternListPanel.add(removeButton);
+		// toolBar.add(_stringPatternListPanel);
 		final JButton addButton = new JButton("New string pattern", imageManager.getImageIcon("images/actions/new.png"));
 		addButton.setToolTipText("New string pattern");
 		addButton.addActionListener(new ActionListener() {
@@ -69,11 +127,23 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 				JMenuItem regexStringPatternMenuItem = WidgetFactory.createMenuItem("Regular expression pattern",
 						imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
-				regexStringPatternMenuItem.setEnabled(false);
+				regexStringPatternMenuItem.setEnabled(true);
+				regexStringPatternMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new RegexPatternDialog(_catalog).setVisible(true);
+					}
+				});
 
-				JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern",
-						imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
-				simpleStringPatternMenuItem.setEnabled(false);
+				JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern", imageManager
+						.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
+				simpleStringPatternMenuItem.setEnabled(true);
+				simpleStringPatternMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new SimpleStringPatternDialog(_catalog).setVisible(true);
+					}
+				});
 
 				popup.add(regexStringPatternMenuItem);
 				popup.add(simpleStringPatternMenuItem);
@@ -86,43 +156,19 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		updateComponents();
 
 		setLayout(new BorderLayout());
+		add(_stringPatternListPanel, BorderLayout.CENTER);
 		add(toolBar, BorderLayout.NORTH);
-		add(_listPanel, BorderLayout.CENTER);
+
 	}
 
 	private void updateComponents() {
-		_listPanel.removeAll();
+		stringPatternsCombo.removeAllItems();
 
 		String[] names = _catalog.getStringPatternNames();
 		Arrays.sort(names);
-
-		Icon icon = imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL);
-
 		for (int i = 0; i < names.length; i++) {
-
 			final String name = names[i];
-
-			final StringPattern sp = _catalog.getStringPattern(name);
-
-			final JLabel patternLabel = new JLabel(name, icon, JLabel.LEFT);
-			WidgetUtils.addToGridBag(patternLabel, _listPanel, 0, i, 1.0, 0.0);
-
-			if (_catalog.isStringPatternMutable(name)) {
-				final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
-				removeButton.setToolTipText("Remove string pattern");
-				removeButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
-								"Are you sure you wish to remove the string pattern '" + name + "'?", "Confirm remove",
-								JOptionPane.YES_NO_OPTION);
-						if (result == JOptionPane.YES_OPTION) {
-							_catalog.removeStringPattern(sp);
-						}
-					}
-				});
-				WidgetUtils.addToGridBag(removeButton, _listPanel, 1, i);
-			}
+			stringPatternsCombo.addItem(name);
 		}
 		updateUI();
 	}

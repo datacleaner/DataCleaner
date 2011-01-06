@@ -10,11 +10,11 @@
 	</appender>
 
 	<logger name="dk.eobjects.metamodel">
-		<level value="warn" />
+		<level value="info" />
 	</logger>
 
 	<logger name="org.eobjects.analyzer">
-		<level value="warn" />
+		<level value="info" />
 	</logger>
 
 	<logger name="org.eobjects.analyzer.job.runner">
@@ -35,7 +35,7 @@
 	</logger>
 
 	<root>
-		<priority value="warn" />
+		<priority value="info" />
 		<appender-ref ref="consoleAppender" />
 	</root>
 

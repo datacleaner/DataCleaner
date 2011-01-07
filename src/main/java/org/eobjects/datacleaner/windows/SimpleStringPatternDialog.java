@@ -209,7 +209,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		}
 
 		final MultiLineLabel descriptionLabel = new MultiLineLabel(
-				"A string expression is a concise and flexible means for identifying strings of text of interest, such as particular characters, words, or patterns of characters. The registered regexes can be used to identify certain types of strings and validate their pattern-correctness.");
+				"Simple string patterns are tokenized patterns made up of these elements." +"\n* A = upper case letters\n* a = lower case letters\n* 9 = digits");
 		descriptionLabel.setBorder(new EmptyBorder(10, 10, 10, 20));
 		descriptionLabel.setPreferredSize(new Dimension(300, 100));
 

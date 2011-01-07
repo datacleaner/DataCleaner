@@ -111,10 +111,15 @@ public class ResultListPanel extends DCPanel {
 			sb.append(")");
 		}
 
-		Outcome req = analyzerJob.getRequirement();
-		if (req != null) {
+		Outcome[] requirements = analyzerJob.getRequirements();
+		if (requirements != null && requirements.length != 0) {
 			sb.append(" (");
-			appendRequirement(sb, req);
+			for (int i = 0; i < requirements.length; i++) {
+				if (i != 0) {
+					sb.append(" ,");
+				}
+				appendRequirement(sb, requirements[i]);
+			}
 			sb.append(")");
 		}
 

@@ -74,8 +74,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
 	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog) {
 		_catalog = catalog;
-		_expressionNameField = WidgetFactory.createTextField("String Pattern Name");
-		_expressionField = WidgetFactory.createTextField("String Pattern");
+		_expressionNameField = WidgetFactory.createTextField("String pattern name");
+		_expressionField = WidgetFactory.createTextField("Expression");
 		_resetButton = new JButton("Reset");
 		_saveButton = WidgetFactory.createButton("Save Pattern", "images/model/pattern.png");
 	}
@@ -97,7 +97,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		return "String Pattern";
+		return "Simple string pattern";
 	}
 
 	@Override
@@ -109,11 +109,11 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	protected JComponent getDialogContent() {
 		final DCPanel formPanel = new DCPanel();
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("String Pattern Name"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("String pattern name"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_expressionNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("String Pattern:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("Expression"), formPanel, 0, row);
 
 		_expressionField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -229,7 +229,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Simple String Pattern";
+		return "Simple string pattern";
 	}
 
 	private void checkInputFields() {

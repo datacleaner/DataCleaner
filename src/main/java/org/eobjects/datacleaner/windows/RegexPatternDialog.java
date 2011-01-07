@@ -76,8 +76,8 @@ public final class RegexPatternDialog extends AbstractDialog {
 
 	public RegexPatternDialog(MutableReferenceDataCatalog catalog) {
 		_catalog = catalog;
-		_expressionNameField = WidgetFactory.createTextField("Regular Expression Name");
-		_expressionField = WidgetFactory.createTextField("Regular Expression");
+		_expressionNameField = WidgetFactory.createTextField("String pattern name");
+		_expressionField = WidgetFactory.createTextField("Expression");
 		_resetButton = new JButton("Reset");
 		_saveButton = WidgetFactory.createButton("Save expression", "images/model/pattern.png");
 	}
@@ -100,8 +100,7 @@ public final class RegexPatternDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		
-		return "Regular Expression";
+		return "Regular expression pattern";
 	}
 
 	@Override
@@ -114,11 +113,11 @@ public final class RegexPatternDialog extends AbstractDialog {
 		final DCPanel formPanel = new DCPanel();
 
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Regular Expression Name"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("String pattern name"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_expressionNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Regular Expression:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(new JLabel("Expression:"), formPanel, 0, row);
 
 		_expressionField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -236,7 +235,7 @@ public final class RegexPatternDialog extends AbstractDialog {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Regular Expression Pattern";
+		return "Regular expression pattern";
 	}
 
 	private void checkInputFields() {

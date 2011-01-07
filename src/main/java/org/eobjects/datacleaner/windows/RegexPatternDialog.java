@@ -242,12 +242,14 @@ public final class RegexPatternDialog extends AbstractDialog {
 	private void checkInputFields() {
 		try {
 			_pattern = Pattern.compile(_expressionField.getText());
+			_saveButton.setEnabled(true);
 			_errorLabel.setText("");
 			for (int i = 0; i < NUM_TEST_FIELDS; i++) {
 				checkInputField(i);
 			}
 		} catch (PatternSyntaxException e) {
 			_errorLabel.setText(e.getMessage());
+			_saveButton.setEnabled(false);
 		}
 
 	}

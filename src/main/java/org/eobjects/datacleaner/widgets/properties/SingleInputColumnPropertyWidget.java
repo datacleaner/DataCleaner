@@ -76,8 +76,10 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 		}
 
 		InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
-		if (!_inputColumns.contains(currentValue)) {
-			_inputColumns.add(currentValue);
+		if (currentValue != null) {
+			if (!_inputColumns.contains(currentValue)) {
+				_inputColumns.add(currentValue);
+			}
 		}
 
 		if (_propertyDescriptor.isRequired()) {

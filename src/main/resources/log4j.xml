@@ -9,7 +9,7 @@
 		</layout>
 	</appender>
 
-	<logger name="dk.eobjects.metamodel">
+	<logger name="org.eobjects.metamodel">
 		<level value="info" />
 	</logger>
 

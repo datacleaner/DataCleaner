@@ -25,7 +25,7 @@ import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 
-import dk.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.FileHelper;
 
 public class CsvOutputAnalyzerResult implements OutputAnalyzerResult {
 

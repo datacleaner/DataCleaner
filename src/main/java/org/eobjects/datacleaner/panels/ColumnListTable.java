@@ -56,8 +56,8 @@ import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 
-import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Table;
 
 public final class ColumnListTable extends DCPanel {
 

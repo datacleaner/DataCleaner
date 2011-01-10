@@ -41,13 +41,13 @@ import org.eobjects.analyzer.lifecycle.InitializeCallback;
 import org.eobjects.analyzer.lifecycle.LifeCycleState;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 
-import dk.eobjects.metamodel.DataContext;
-import dk.eobjects.metamodel.MetaModelHelper;
-import dk.eobjects.metamodel.data.DataSet;
-import dk.eobjects.metamodel.data.Row;
-import dk.eobjects.metamodel.query.Query;
-import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.MetaModelHelper;
+import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.data.Row;
+import org.eobjects.metamodel.query.Query;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Table;
 
 public final class PreviewTransformedDataActionListener implements ActionListener {
 

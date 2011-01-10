@@ -52,7 +52,7 @@ import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
 
-import dk.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Column;
 
 public class DatastoreDictionaryDialog extends AbstractDialog {
 

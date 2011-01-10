@@ -31,8 +31,8 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.VerticalLayout;
 
-import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Table;
 
 public final class SourceColumnsPanel extends DCPanel implements SourceColumnChangeListener {
 

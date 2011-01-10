@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.util;
 
 import java.util.Comparator;
 
-import dk.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.schema.Schema;
 
 /**
  * Comparator of schemas that will put information schemas in the top

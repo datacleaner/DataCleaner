@@ -43,7 +43,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Table;
 
 public final class ResultWindow extends AbstractWindow {
 

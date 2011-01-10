@@ -28,10 +28,10 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegate;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 
-import dk.eobjects.metamodel.DataContext;
-import dk.eobjects.metamodel.data.DataSet;
-import dk.eobjects.metamodel.query.Query;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.query.Query;
+import org.eobjects.metamodel.schema.Table;
 
 public class DatastoreOutputWriterFactoryTest extends TestCase {
 

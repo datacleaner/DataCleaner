@@ -40,7 +40,7 @@ import org.eobjects.datacleaner.windows.ResultWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Table;
 
 public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultFuture, Task> implements AnalysisListener {
 

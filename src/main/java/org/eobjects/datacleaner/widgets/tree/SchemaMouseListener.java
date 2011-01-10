@@ -34,8 +34,8 @@ import javax.swing.tree.TreePath;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.WidgetFactory;
 
-import dk.eobjects.metamodel.schema.Schema;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.schema.Table;
 
 final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 

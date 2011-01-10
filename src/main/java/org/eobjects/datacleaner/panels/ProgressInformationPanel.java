@@ -36,7 +36,7 @@ import javax.swing.JTextArea;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.VerticalLayout;
 
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Table;
 
 public class ProgressInformationPanel extends DCPanel {
 

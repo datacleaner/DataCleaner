@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 
-import dk.eobjects.metamodel.util.BaseObject;
+import org.eobjects.metamodel.util.BaseObject;
 
 /**
  * Represents a set of values that has been grouped together for the purpose of

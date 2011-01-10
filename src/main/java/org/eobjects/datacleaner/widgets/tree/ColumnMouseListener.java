@@ -41,7 +41,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
 
-import dk.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Column;
 
 final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 

@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.database;
 
 import java.util.List;
 
-import dk.eobjects.metamodel.util.BaseObject;
+import org.eobjects.metamodel.util.BaseObject;
 
 final class DatabaseDescriptorImpl extends BaseObject implements DatabaseDriverDescriptor {
 

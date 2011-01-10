@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import dk.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.FileHelper;
 
 public final class CsvOutputWriterFactory {
 

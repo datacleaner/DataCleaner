@@ -81,7 +81,7 @@ import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriod;
 
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Table;
 
 @RendererBean(SwingRenderingFormat.class)
 public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnalyzerResult, JComponent> {

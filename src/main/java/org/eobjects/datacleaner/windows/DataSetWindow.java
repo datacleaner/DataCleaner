@@ -28,9 +28,9 @@ import javax.swing.table.TableModel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 
-import dk.eobjects.metamodel.DataContext;
-import dk.eobjects.metamodel.data.DataSet;
-import dk.eobjects.metamodel.query.Query;
+import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.query.Query;
 
 public class DataSetWindow extends AbstractWindow {
 

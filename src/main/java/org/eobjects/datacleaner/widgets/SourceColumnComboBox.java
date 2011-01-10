@@ -40,10 +40,10 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
-import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.schema.NamedStructure;
-import dk.eobjects.metamodel.schema.Schema;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.NamedStructure;
+import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.schema.Table;
 
 /**
  * A combobox that makes it easy to display and select source coumns from a

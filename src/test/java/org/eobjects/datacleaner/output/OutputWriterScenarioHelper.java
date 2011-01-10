@@ -27,9 +27,9 @@ import org.eobjects.analyzer.data.MockInputColumn;
 import org.junit.Assert;
 import org.junit.Ignore;
 
-import dk.eobjects.metamodel.data.DataSet;
-import dk.eobjects.metamodel.util.DateUtils;
-import dk.eobjects.metamodel.util.Month;
+import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.util.DateUtils;
+import org.eobjects.metamodel.util.Month;
 
 /**
  * Helper class for reuse by test cases that want to test an OutputWriters

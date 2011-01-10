@@ -85,7 +85,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Table;
 
 @RendererBean(SwingRenderingFormat.class)
 public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistributionResult, JComponent> {

@@ -53,7 +53,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.jdesktop.swingx.HorizontalLayout;
 
-import dk.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Column;
 
 /**
  * Dialog for opening a job as a template. This feature allows the user to reuse

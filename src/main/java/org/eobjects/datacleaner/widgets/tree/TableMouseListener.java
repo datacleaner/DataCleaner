@@ -35,8 +35,8 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
 
-import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Table;
 
 final class TableMouseListener extends MouseAdapter implements MouseListener {
 

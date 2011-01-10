@@ -25,11 +25,11 @@ import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 
-import dk.eobjects.metamodel.DataContext;
-import dk.eobjects.metamodel.DataContextFactory;
-import dk.eobjects.metamodel.data.DataSet;
-import dk.eobjects.metamodel.query.Query;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.DataContextFactory;
+import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.query.Query;
+import org.eobjects.metamodel.schema.Table;
 
 public class CsvOutputWriterFactoryTest extends TestCase {
 

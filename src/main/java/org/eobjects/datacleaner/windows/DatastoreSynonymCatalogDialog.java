@@ -53,8 +53,8 @@ import org.eobjects.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Table;
 
 public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 

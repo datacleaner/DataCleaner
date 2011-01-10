@@ -29,10 +29,10 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 
-import dk.eobjects.metamodel.DataContext;
-import dk.eobjects.metamodel.query.Query;
-import dk.eobjects.metamodel.schema.Column;
-import dk.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.query.Query;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Table;
 
 public class PreviewSourceDataActionListener implements ActionListener {
 

@@ -75,6 +75,11 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 			_inputColumns.removeAll(outputColumns);
 		}
 
+		InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		if (!_inputColumns.contains(currentValue)) {
+			_inputColumns.add(currentValue);
+		}
+
 		if (_propertyDescriptor.isRequired()) {
 			_radioButtons = new JRadioButton[_inputColumns.size()];
 		} else {
@@ -87,8 +92,6 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 			radioButton.setEnabled(false);
 			_radioButtons[0] = radioButton;
 		} else {
-			InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
-
 			for (int i = 0; i < _inputColumns.size(); i++) {
 				InputColumn<?> inputColumn = _inputColumns.get(i);
 				JRadioButton radioButton = new JRadioButton(inputColumn.getName());
@@ -177,7 +180,7 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 	@Override
 	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
 	}
-	
+
 	@Override
 	protected void setValue(InputColumn<?> value) {
 		updateComponents();

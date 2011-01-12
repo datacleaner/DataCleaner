@@ -246,9 +246,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		if ("".equals(text)) {
 			label.setIcon(null);
 		} else {
-			if (_simpleStringPattern == null) {
-				_simpleStringPattern = new SimpleStringPattern(_expressionNameField.getText(), _expressionField.getText());
-			}
+			_simpleStringPattern = new SimpleStringPattern(_expressionNameField.getText(), _expressionField.getText());
 			if (_simpleStringPattern.matches(text)) {
 				label.setIcon(ICON_SUCCESS);
 			} else {

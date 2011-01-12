@@ -154,8 +154,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 					JOptionPane.showMessageDialog(SimpleStringPatternDialog.this, "Please fill out the string expression");
 					return;
 				}
-				if (_catalog.containsStringPattern(expressionName)) {
-					_catalog.removeStringPattern(_catalog.getStringPattern(expressionName));
+				if (_simpleStringPattern!=null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
+					_catalog.removeStringPattern(_catalog.getStringPattern(_simpleStringPattern.getName()));
 				}
 				SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
 				_simpleStringPattern = simpleStringPattern;

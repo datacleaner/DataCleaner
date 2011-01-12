@@ -40,6 +40,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.eobjects.analyzer.reference.RegexStringPattern;
+import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -69,6 +70,7 @@ public final class RegexPatternDialog extends AbstractDialog {
 	private JButton _resetButton;
 	final JButton _saveButton;
 	private static final ImageManager imageManager = ImageManager.getInstance();
+	private StringPattern _regexStringPattern;
 
 	private static final Icon ICON_ERROR = imageManager.getImageIcon("images/status/error.png",IconUtils.ICON_SIZE_SMALL);
 	
@@ -94,6 +96,7 @@ public final class RegexPatternDialog extends AbstractDialog {
 			_resetButton.setEnabled(false);
 			_saveButton.setEnabled(false);
 		}
+		_regexStringPattern = _catalog.getStringPattern(_expressionNameString);
 		_pattern = Pattern.compile(expression);
 
 	}
@@ -158,10 +161,11 @@ public final class RegexPatternDialog extends AbstractDialog {
 					JOptionPane.showMessageDialog(RegexPatternDialog.this, "Please fill out the regular expression");
 					return;
 				}
-				if (_catalog.containsStringPattern(expressionName)) {
-					_catalog.removeStringPattern(_catalog.getStringPattern(expressionName));
+				if (_regexStringPattern!=null && _catalog.containsStringPattern(_regexStringPattern.getName())) {
+					_catalog.removeStringPattern(_catalog.getStringPattern(_regexStringPattern.getName()));
 				}
 				RegexStringPattern regexStringPattern = new RegexStringPattern(expressionName, expression, true);
+				_regexStringPattern = regexStringPattern;
 				_catalog.addStringPattern(regexStringPattern);
 				RegexPatternDialog.this.dispose();
 			}

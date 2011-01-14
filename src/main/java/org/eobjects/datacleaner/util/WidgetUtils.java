@@ -58,8 +58,8 @@ public final class WidgetUtils {
 	public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 25);
 	public static final Font FONT_HEADER = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
 	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
-	public static final Font FONT_NORMAL = new FontUIResource("SansSerif", Font.PLAIN, 12);
-	public static final Font FONT_SMALL = new FontUIResource("SansSerif", Font.PLAIN, 10);
+	public static final Font FONT_NORMAL = new FontUIResource("LucidaSans", Font.PLAIN, 12);
+	public static final Font FONT_SMALL = new FontUIResource("LucidaSans", Font.PLAIN, 10);
 
 	// the three blue variants in the DataCleaner logo (#5594dd, #235da0,
 	// #023a7c)

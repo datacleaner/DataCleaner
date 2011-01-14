@@ -25,8 +25,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,12 +58,6 @@ import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.jdesktop.swingx.JXStatusBar;
-import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.eobjects.metamodel.CsvDataContextStrategy;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.DefaultDataContext;
@@ -70,18 +67,27 @@ import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.FileHelper;
+import org.jdesktop.swingx.JXStatusBar;
+import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
 
 public class CsvDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
-	
+
 	/**
-	 * Amount of bytes to read for autodetection of separator and quotes
+	 * Amount of bytes to read for autodetection of encoding, separator and
+	 * quotes
 	 */
 	private static final int SAMPLE_BUFFER_SIZE = 2048;
-	
+
 	/**
 	 * Amount of rows to display in the preview table
 	 */
@@ -123,7 +129,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
-				onSettingsUpdated(true);
+				onSettingsUpdated(true, true);
 			}
 		});
 
@@ -133,7 +139,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_separatorCharField.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(false);
+				onSettingsUpdated(false, false);
 			}
 		});
 
@@ -142,7 +148,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_quoteCharField.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(false);
+				onSettingsUpdated(false, false);
 			}
 		});
 
@@ -150,7 +156,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_encodingComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(true);
+				onSettingsUpdated(true, false);
 			}
 		});
 
@@ -231,7 +237,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		return "Comma-separated\nfile";
 	}
 
-	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote) {
+	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote, boolean autoDetectEncoding) {
 		List<String> warnings = new ArrayList<String>();
 		boolean showPreview = true;
 		ImageManager imageManager = ImageManager.getInstance();
@@ -252,14 +258,50 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		}
 		_addDatastoreButton.setEnabled(true);
 
-		char[] buffer;
+		byte[] bytes = new byte[SAMPLE_BUFFER_SIZE];
 
+		FileInputStream fileInputStream = null;
+		try {
+			fileInputStream = new FileInputStream(file);
+			int bufferSize = fileInputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
+			if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
+				bytes = Arrays.copyOf(bytes, bufferSize);
+			}
+		} catch (Exception e) {
+			if (logger.isWarnEnabled()) {
+				logger.warn("Error reading from file: " + e.getMessage(), e);
+			}
+			_statusLabel.setText("Error reading from file: " + e.getMessage());
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			return;
+		} finally {
+			if (fileInputStream != null) {
+				try {
+					fileInputStream.close();
+				} catch (IOException ioe) {
+					logger.debug("Could not close reader", ioe);
+				}
+			}
+		}
+
+		final String charSet;
+		if (autoDetectEncoding) {
+			CharsetDetector cd = new CharsetDetector();
+			cd.setText(bytes);
+			CharsetMatch charsetMatch = cd.detect();
+			charSet = charsetMatch.getName();
+			logger.info("CharsetMatch: {} ({}% confidence)", charSet, charsetMatch.getConfidence());
+			_encodingComboBox.setSelectedItem(charSet);
+		} else {
+			charSet = _encodingComboBox.getSelectedItem().toString();
+		}
+
+		char[] buffer = new char[SAMPLE_BUFFER_SIZE];
 		Reader reader = null;
 		try {
-			reader = FileHelper.getReader(file, _encodingComboBox.getSelectedItem().toString());
+			reader = new InputStreamReader(new ByteArrayInputStream(bytes), charSet);
 
 			// read a sample of the file auto-detect quotes and separators
-			buffer = new char[SAMPLE_BUFFER_SIZE];
 			int bufferSize = reader.read(buffer);
 			if (bufferSize != -1) {
 				buffer = Arrays.copyOf(buffer, bufferSize);

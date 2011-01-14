@@ -31,7 +31,7 @@ public class CharSetEncodingComboBox extends JComboBox {
 	private static final long serialVersionUID = 1L;
 
 	public CharSetEncodingComboBox() {
-		super(new String[] { "UTF-8", "ASCII", "CP1252" });
+		super(new String[] { "UTF-8", "ISO-8859-1", "ASCII", "windows-1252" });
 		setEditable(true);
 	}
 }

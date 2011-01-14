@@ -59,6 +59,7 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 			if (propertyDescriptor.isInputColumn()) {
 				MultipleInputColumnsPropertyWidget propertyWidget = new MultipleInputColumnsPropertyWidget(
 						analysisJobBuilder, beanJobBuilder, propertyDescriptor);
+				getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
 				return propertyWidget;
 			}
 		}

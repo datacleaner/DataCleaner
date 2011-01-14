@@ -33,6 +33,7 @@ import org.eobjects.analyzer.job.builder.ExploringAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 
@@ -67,9 +68,11 @@ public abstract class AbstractJobBuilderPopupListener {
 			public void actionPerformed(ActionEvent e) {
 				final String originalValue = LabelUtils.getLabel(_jobBuilder);
 				final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
-				if (!originalValue.equals(newValue)) {
-					_jobBuilder.setName(newValue);
-					onNameChanged();
+				if (!StringUtils.isNullOrEmpty(newValue)) {
+					if (!originalValue.equals(newValue)) {
+						_jobBuilder.setName(newValue);
+						onNameChanged();
+					}
 				}
 			}
 		});

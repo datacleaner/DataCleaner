@@ -63,6 +63,13 @@ public final class PropertyWidgetFactory {
 		return _beanJobBuilder;
 	}
 
+	/**
+	 * Creates (and registers) a widget that fits the specified configured
+	 * property.
+	 * 
+	 * @param propertyDescriptor
+	 * @return
+	 */
 	public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor) {
 		final PropertyWidget<?> result;
 		final Class<?> type = propertyDescriptor.getBaseType();
@@ -113,8 +120,21 @@ public final class PropertyWidgetFactory {
 			}
 		}
 
-		_widgets.put(propertyDescriptor, result);
+		registerWidget(propertyDescriptor, result);
 		return result;
+	}
+
+	/**
+	 * Registers a widget in this factory in rare cases when the factory is not
+	 * used to actually instantiate the widget, but it is still needed to
+	 * register the widget for compliancy with eg. the onConfigurationChanged()
+	 * behaviour.
+	 * 
+	 * @param propertyDescriptor
+	 * @param widget
+	 */
+	public void registerWidget(ConfiguredPropertyDescriptor propertyDescriptor, PropertyWidget<?> widget) {
+		_widgets.put(propertyDescriptor, widget);
 	}
 
 	public void onConfigurationChanged() {

@@ -48,6 +48,7 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private volatile JRadioButton[] _radioButtons;
 	private volatile List<InputColumn<?>> _inputColumns;
+	private final ExpressionBasedInputColumnOptionsMouseListener _expressionColumnMouseListener;
 
 	public SingleInputColumnPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
@@ -60,8 +61,17 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 		_beanJobBuilder = beanJobBuilder;
 		_propertyDescriptor = propertyDescriptor;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
+
+		if (_dataTypeFamily == DataTypeFamily.STRING || _dataTypeFamily == DataTypeFamily.UNDEFINED) {
+			_expressionColumnMouseListener = new ExpressionBasedInputColumnOptionsMouseListener(_propertyDescriptor,
+					_beanJobBuilder, this);
+		} else {
+			_expressionColumnMouseListener = null;
+		}
+
 		updateComponents();
 		add(_radioGroup);
+
 	}
 
 	private void updateComponents() {
@@ -115,12 +125,18 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 		}
 
 		for (int i = 0; i < _radioButtons.length; i++) {
-			_radioButtons[i].addChangeListener(new ChangeListener() {
+			JRadioButton rb = _radioButtons[i];
+
+			rb.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
 					fireValueChanged();
 				}
 			});
+
+			if (_expressionColumnMouseListener != null) {
+				_expressionColumnMouseListener.registerListComponent(rb, null);
+			}
 		}
 
 		_radioGroup.setValues(_radioButtons);

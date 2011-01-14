@@ -26,8 +26,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
@@ -55,9 +53,10 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private static final long serialVersionUID = 1L;
 
-	private final ChangeListener CHANGE_LISTENER = new ChangeListener() {
+	private final ActionListener checkBoxActionListener = new ActionListener() {
+
 		@Override
-		public void stateChanged(ChangeEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			fireValueChanged();
 		}
 	};
@@ -86,6 +85,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	private volatile List<InputColumn<?>> _inputColumns;
 	private volatile JCheckBox[] _checkBoxes;
 
+	private final ExpressionBasedInputColumnOptionsMouseListener _expressionColumnMouseListener;
+
 	public MultipleInputColumnsPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
@@ -94,6 +95,22 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
 		setLayout(new VerticalLayout(2));
+
+		if (propertyDescriptor.isArray()) {
+			if (_dataTypeFamily == DataTypeFamily.STRING || _dataTypeFamily == DataTypeFamily.UNDEFINED) {
+				_expressionColumnMouseListener = new ExpressionBasedInputColumnOptionsMouseListener(propertyDescriptor,
+						beanJobBuilder, this);
+			} else {
+				_expressionColumnMouseListener = null;
+			}
+		} else {
+			// actually this widget is also used for analyzers such as the
+			// Pattern Finder and the Value Distribution which only accepts
+			// single columns but automatically generate several components
+			// behind the scenes.
+			_expressionColumnMouseListener = null;
+		}
+
 		updateComponents();
 	}
 
@@ -137,18 +154,27 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			_checkBoxes[0].setOpaque(false);
 			_checkBoxes[0].setEnabled(false);
 			add(_checkBoxes[0]);
+
+			if (_expressionColumnMouseListener != null) {
+				_expressionColumnMouseListener.registerListComponent(_checkBoxes[0], null);
+			}
 		} else {
 			_checkBoxes = new JCheckBox[_inputColumns.size()];
 			int i = 0;
 			for (InputColumn<?> inputColumn : _inputColumns) {
 				JCheckBox checkBox = new JCheckBox(inputColumn.getName(), isEnabled(inputColumn, currentValue));
 				checkBox.setOpaque(false);
-				checkBox.addChangeListener(CHANGE_LISTENER);
+				checkBox.addActionListener(checkBoxActionListener);
 				_checkBoxes[i] = checkBox;
 				add(checkBox);
 				i++;
+
+				if (_expressionColumnMouseListener != null) {
+					_expressionColumnMouseListener.registerListComponent(checkBox, inputColumn);
+				}
 			}
 		}
+
 		fireValueChanged();
 	}
 
@@ -243,5 +269,6 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	@Override
 	protected void setValue(InputColumn<?>[] value) {
 		updateComponents();
+		updateUI();
 	}
 }

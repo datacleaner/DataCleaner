@@ -80,12 +80,14 @@ public class ExpressionBasedInputColumnOptionsMouseListener implements ActionLis
 		_parent = parent;
 
 		_popup = new JPopupMenu();
+		_popup.setInvoker(_parent);
 		_popup.add(_button);
 
 		_parent.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				_hoveringParent = true;
+				showPopup(null);
 			}
 
 			@Override
@@ -96,6 +98,22 @@ public class ExpressionBasedInputColumnOptionsMouseListener implements ActionLis
 		});
 	}
 
+	private void showPopup(final JComponent component) {
+		int x = _parent.getLocationOnScreen().x + _parent.getWidth();
+		int y;
+		if (_hoveringInputColumn instanceof ExpressionBasedInputColumn) {
+			if (component == null) {
+				return;
+			} else {
+				y = component.getLocationOnScreen().y;
+			}
+		} else {
+			y = _parent.getLocationOnScreen().y;
+		}
+		_popup.setLocation(x, y);
+		_popup.setVisible(true);
+	}
+
 	public void registerListComponent(final JComponent component, final InputColumn<?> inputColumn) {
 		component.addMouseListener(new MouseAdapter() {
 			@Override
@@ -103,11 +121,7 @@ public class ExpressionBasedInputColumnOptionsMouseListener implements ActionLis
 				_hoveringChild = true;
 				_hoveringInputColumn = inputColumn;
 
-				int x = _parent.getLocationOnScreen().x + _parent.getWidth();
-				int y = component.getLocationOnScreen().y;
-				_popup.setLocation(x, y);
-				_popup.setInvoker(component);
-				_popup.setVisible(true);
+				showPopup(component);
 			}
 
 			@Override

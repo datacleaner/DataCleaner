@@ -29,6 +29,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
+import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ReflectionUtils;
 
@@ -83,7 +84,7 @@ public final class PropertyWidgetFactory {
 				result = new MultipleDictionariesPropertyWidget(_beanJobBuilder, propertyDescriptor);
 			} else if (type == SynonymCatalog.class) {
 				result = new MultipleSynonymCatalogsPropertyWidget(_beanJobBuilder, propertyDescriptor);
-			} else if (type == Dictionary.class) {
+			} else if (type == StringPattern.class) {
 				result = new MultipleStringPatternPropertyWidget(_beanJobBuilder, propertyDescriptor);
 			} else {
 				// not yet implemented
@@ -106,7 +107,7 @@ public final class PropertyWidgetFactory {
 				result = new SingleDictionaryPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type == SynonymCatalog.class) {
 				result = new SingleSynonymCatalogPropertyWidget(propertyDescriptor, _beanJobBuilder);
-			} else if (type == SynonymCatalog.class) {
+			} else if (type == StringPattern.class) {
 				result = new SingleStringPatternPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type.isEnum()) {
 				result = new SingleEnumPropertyWidget(propertyDescriptor, _beanJobBuilder);

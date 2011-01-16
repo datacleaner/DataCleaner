@@ -44,6 +44,7 @@ public class DCBannerPanel extends JPanel {
 	private static final Image BANNER_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
 	private final int _bannerImageWidth;
 	private final Image _bannerImage;
+	private final Image _betaTagImage;
 	private final String _title;
 
 	public DCBannerPanel() {
@@ -66,6 +67,7 @@ public class DCBannerPanel extends JPanel {
 			_bannerImage = bannerImage;
 		}
 		_bannerImageWidth = _bannerImage.getWidth(null);
+		_betaTagImage = ImageManager.getInstance().getImage("images/beta-tag.png");
 		_title = title;
 		setOpaque(false);
 	}
@@ -114,5 +116,8 @@ public class DCBannerPanel extends JPanel {
 				titleY += 30;
 			}
 		}
+
+		// temporary beta tag
+		g.drawImage(_betaTagImage, x + w - 59, y, this);
 	}
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
@@ -98,12 +99,9 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 	}
 
 	private JXTaskPane createTaskPane(final FilterJobBuilder<?, ?> fjb) {
-		final JXTaskPane taskPane = new JXTaskPane();
-		taskPane.setFocusable(false);
-
-		taskPane.setTitle(LabelUtils.getLabel(fjb));
-		taskPane.setIcon(IconUtils.getDescriptorIcon(fjb.getDescriptor(), IconUtils.ICON_SIZE_SMALL));
-
+		String title = LabelUtils.getLabel(fjb);
+		Icon icon = IconUtils.getDescriptorIcon(fjb.getDescriptor(), IconUtils.ICON_SIZE_SMALL);
+		final JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
 		taskPane.add(_panels.get(fjb));
 		return taskPane;
 	}

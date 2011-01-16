@@ -48,19 +48,19 @@ public class ProgressInformationPanel extends DCPanel {
 	private final JScrollPane _textAreaScroll;
 
 	public ProgressInformationPanel() {
-		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		super();
 		setLayout(new BorderLayout());
 		_textArea.setText("--- DataCleaner progress information user-log ---");
 		_textAreaScroll = WidgetUtils.scrolleable(_textArea);
 		_textAreaScroll.setBorder(WidgetUtils.BORDER_THIN);
 
-		_progressBarPanel = new DCPanel(WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_LESS_DARK);
+		_progressBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		_progressBarPanel.setLayout(new VerticalLayout(4));
 		_progressBarPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setDividerLocation(190);
-
+		splitPane.setBorder(null);
 		splitPane.add(WidgetUtils.scrolleable(_progressBarPanel));
 		splitPane.add(_textAreaScroll);
 

@@ -29,6 +29,7 @@ import org.eobjects.datacleaner.actions.NewAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
 
 public class JobListPanel extends DCPanel {
 
@@ -36,7 +37,7 @@ public class JobListPanel extends DCPanel {
 	private final AnalyzerBeansConfiguration _configuration;
 
 	public JobListPanel(AnalyzerBeansConfiguration configuration) {
-		super();
+		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_configuration = configuration;
 
 		setLayout(new BorderLayout());

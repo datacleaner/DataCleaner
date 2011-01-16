@@ -73,6 +73,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
@@ -102,7 +103,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final DataContextProvider _dataContextProvider;
 	private final CloseableTabbedPane _tabbedPane;
 	private final FilterListPanel _filterListPanel;
-	private final JLabel _statusLabel = new JLabel();
+	private final DCLabel _statusLabel = DCLabel.bright("");
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
 	private String _jobFilename;
@@ -266,8 +267,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		runButton.setFocusPainted(false);
 		final JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.setOpaque(false);
-		toolBar.setBorder(null);
 		toolBar.add(saveButton);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(addTransformerButton);
@@ -349,6 +348,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		});
 
 		final JXStatusBar statusBar = new JXStatusBar();
+		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 		final JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
 		statusBar.add(_statusLabel, c1);
 

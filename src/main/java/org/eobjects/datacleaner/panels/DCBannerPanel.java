@@ -100,17 +100,17 @@ public class DCBannerPanel extends JPanel {
 		super.paint(g);
 
 		if (_title != null) {
-			int titleY = 60;
+			int titleY = 80;
 			String[] titleLines = _title.split("\n");
 			if (titleLines.length > 1) {
-				titleY = 45;
+				titleY = 60;
 			}
 
 			if (g instanceof Graphics2D) {
 				((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			}
 			g.setFont(WidgetUtils.FONT_BANNER);
-			g.setColor(WidgetUtils.BG_COLOR_LESS_BRIGHT);
+			g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 			for (int i = 0; i < titleLines.length; i++) {
 				g.drawString(titleLines[i], _bannerImageWidth, titleY);
 				titleY += 30;

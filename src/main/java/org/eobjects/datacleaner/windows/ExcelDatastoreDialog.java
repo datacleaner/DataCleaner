@@ -27,7 +27,6 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
@@ -43,6 +42,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXStatusBar;
@@ -57,7 +57,7 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 	private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
 	private final JXTextField _datastoreNameField;
 	private final FilenameTextField _filenameField;
-	private final JLabel _statusLabel;
+	private final DCLabel _statusLabel;
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
 
@@ -94,7 +94,7 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		_statusLabel = new JLabel("Please select file");
+		_statusLabel = DCLabel.bright("Please select file");
 
 		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/excel.png");
 		_addDatastoreButton.setEnabled(false);
@@ -138,11 +138,11 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 
 		// temporary variable to make it easier to refactor the layout
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Datastore name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Filename:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Filename:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
 
 		_addDatastoreButton.addActionListener(new ActionListener() {
@@ -164,6 +164,7 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 		centerPanel.add(buttonPanel);
 
 		JXStatusBar statusBar = new JXStatusBar();
+		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
 		statusBar.add(_statusLabel, c1);
 

@@ -32,7 +32,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -47,14 +46,13 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
-import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
-
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
+import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.VerticalLayout;
 
 public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
@@ -140,7 +138,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		return "Datastore Synonym Catalog";
+		return "Datastore\nsynonym catalog";
 	}
 
 	@Override
@@ -154,20 +152,20 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 		final DCPanel formPanel = new DCPanel();
 
 		int row = 0;
-		final MultiLineLabel descriptionLabel = new MultiLineLabel(
-				"A datastore synonym catalog is based on a datastore containing columns. The Source Column represents the user selected master term. Synonyms Column are user selected synonymical representation.");
+		final DCLabel descriptionLabel = DCLabel
+				.brightMultiLine("A datastore synonym catalog is based on a datastore and columns within it. The layout of the datastore is flexible: There should be a master term column and either a single or multiple synonym columns.");
 		descriptionLabel.setBorder(new EmptyBorder(10, 10, 10, 20));
 		descriptionLabel.setPreferredSize(new Dimension(300, 100));
-		WidgetUtils.addToGridBag(new JLabel("Synonym Catalog Name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Synonym catalog name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_nameTextField, formPanel, 1, row);
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Datastore:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreComboBox, formPanel, 1, row);
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Source Column:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Master term column:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_masterSourceColumnComboBox, formPanel, 1, row);
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Synonym Columns:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Synonym columns:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_multiSourceColumnComboBoxPanel.createPanel(), formPanel, 1, row);
 		row++;
 		final JButton saveButton = WidgetFactory.createButton("Save Synonym Catalog", "images/model/synonym.png");
@@ -222,7 +220,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Data Store Synonym Catalog";
+		return "Datastore synonym catalog";
 	}
 
 }

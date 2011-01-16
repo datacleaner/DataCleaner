@@ -57,7 +57,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	private final DCPanel _listPanel;
 
 	public SynonymCatalogListPanel(AnalyzerBeansConfiguration configuration) {
-		super();
+		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_catalog = (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog();
 		_catalog.addSynonymCatalogListener(this);
 		_listPanel = new DCPanel();

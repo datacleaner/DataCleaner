@@ -31,7 +31,6 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
 import org.eobjects.datacleaner.widgets.tooltip.DCToolTip;
 
 public final class HelpIcon extends JLabel {
@@ -61,8 +60,7 @@ public final class HelpIcon extends JLabel {
 		panel.setLayout(new BorderLayout());
 		panel.add(new JLabel(imageManager.getImageIcon("images/widgets/help.png")), BorderLayout.WEST);
 
-		MultiLineLabel descriptionLabel = new MultiLineLabel(_helpMessage);
-		descriptionLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		DCLabel descriptionLabel = DCLabel.brightMultiLine(_helpMessage);
 		panel.add(descriptionLabel, BorderLayout.CENTER);
 
 		Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);

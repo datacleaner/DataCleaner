@@ -50,6 +50,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.jdesktop.swingx.HorizontalLayout;
 
@@ -250,12 +251,12 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 		final DCPanel panel = new DCPanel();
 
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("<html><b>Original value:</b></html>"), panel, 1, row);
-		WidgetUtils.addToGridBag(new JLabel("<html><b>New/mapped value:</b></html>"), panel, 2, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("<html><b>Original value:</b></html>"), panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("<html><b>New/mapped value:</b></html>"), panel, 2, row);
 
 		row++;
 		WidgetUtils.addToGridBag(new JLabel(imageManager.getImageIcon("images/model/datastore.png")), panel, 0, row);
-		WidgetUtils.addToGridBag(new JLabel(_metadata.getDatastoreName()), panel, 1, row, GridBagConstraints.WEST);
+		WidgetUtils.addToGridBag(DCLabel.bright(_metadata.getDatastoreName()), panel, 1, row, GridBagConstraints.WEST);
 
 		DCPanel datastoreButtonPanel = new DCPanel();
 		datastoreButtonPanel.setLayout(new HorizontalLayout(0));
@@ -268,7 +269,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 		Set<String> tableNames = _sourceColumnComboBoxes.keySet();
 		for (final String tableName : tableNames) {
 			row++;
-			final JLabel tableLabel = new JLabel("<html><b>" + tableName + "</b></html>");
+			final JLabel tableLabel = DCLabel.bright("<html><b>" + tableName + "</b></html>");
 			tableLabel.setIcon(imageManager.getImageIcon("images/model/table.png", IconUtils.ICON_SIZE_SMALL));
 			WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
 
@@ -292,7 +293,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 				WidgetUtils.addToGridBag(
 						new JLabel(imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL)), panel,
 						0, row);
-				WidgetUtils.addToGridBag(new JLabel(comboBox.getName()), panel, 1, row, GridBagConstraints.WEST);
+				WidgetUtils.addToGridBag(DCLabel.bright(comboBox.getName()), panel, 1, row, GridBagConstraints.WEST);
 				WidgetUtils.addToGridBag(comboBox, panel, 2, row, GridBagConstraints.WEST);
 			}
 		}

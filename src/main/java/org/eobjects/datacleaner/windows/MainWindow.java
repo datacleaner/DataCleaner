@@ -24,10 +24,11 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -49,6 +50,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
@@ -57,8 +59,9 @@ public class MainWindow extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final int WINDOW_WIDTH = 250;
+	private static final int WINDOW_WIDTH = 300;
 	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final UserPreferences userPreferences = UserPreferences.getInstance();
 
 	private final AnalyzerBeansConfiguration _configuration;
 
@@ -88,7 +91,7 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	protected DCPanel getWindowContent() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_LESS_DARK);
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		Dimension dimension = new Dimension(WINDOW_WIDTH, 650);
 		panel.setPreferredSize(dimension);
 		panel.setSize(dimension);
@@ -96,44 +99,69 @@ public class MainWindow extends AbstractWindow {
 
 		panel.add(getHeaderPanel(), BorderLayout.NORTH);
 
-		JXTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
+		final JXTaskPaneContainer taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 
-		JXTaskPane datastoresTaskPane = new JXTaskPane();
-		datastoresTaskPane.setFocusable(false);
-		datastoresTaskPane.setTitle("Datastores");
-		datastoresTaskPane.setIcon(imageManager.getImageIcon("images/model/datastore.png"));
+		final JXTaskPane datastoresTaskPane = WidgetFactory.createTaskPane("Datastores",
+				imageManager.getImageIcon("images/model/datastore.png"));
 		datastoresTaskPane.add(new DatastoresListPanel(_configuration));
+		datastoresTaskPane.setCollapsed(!userPreferences.isDisplayDatastoresTaskPane());
+		datastoresTaskPane.addPropertyChangeListener("collapsed", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				userPreferences.setDisplayDatastoresTaskPane(!datastoresTaskPane.isCollapsed());
+			}
+		});
 		taskPaneContainer.add(datastoresTaskPane);
 
-		JXTaskPane analysisJobsTaskPane = new JXTaskPane();
-		analysisJobsTaskPane.setFocusable(false);
-		analysisJobsTaskPane.setTitle("Analysis jobs");
-		analysisJobsTaskPane.setIcon(imageManager.getImageIcon("images/model/job.png"));
+		final JXTaskPane analysisJobsTaskPane = WidgetFactory.createTaskPane("Analysis jobs",
+				imageManager.getImageIcon("images/model/job.png"));
 		analysisJobsTaskPane.add(new JobListPanel(_configuration));
+		analysisJobsTaskPane.setCollapsed(!userPreferences.isDisplayJobsTaskPane());
+		analysisJobsTaskPane.addPropertyChangeListener("collapsed", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				userPreferences.setDisplayJobsTaskPane(!analysisJobsTaskPane.isCollapsed());
+			}
+		});
 		taskPaneContainer.add(analysisJobsTaskPane);
 
-		JXTaskPane dictionariesTaskPane = new JXTaskPane();
-		dictionariesTaskPane.setFocusable(false);
-		dictionariesTaskPane.setTitle("Dictionaries");
-		dictionariesTaskPane.setIcon(imageManager.getImageIcon("images/model/dictionary.png"));
+		final JXTaskPane dictionariesTaskPane = WidgetFactory.createTaskPane("Dictionaries",
+				imageManager.getImageIcon("images/model/dictionary.png"));
 		dictionariesTaskPane.setCollapsed(true);
 		dictionariesTaskPane.add(new DictionaryListPanel(_configuration));
+		dictionariesTaskPane.setCollapsed(!userPreferences.isDisplayDictionariesTaskPane());
+		dictionariesTaskPane.addPropertyChangeListener("collapsed", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				userPreferences.setDisplayDictionariesTaskPane(!dictionariesTaskPane.isCollapsed());
+			}
+		});
 		taskPaneContainer.add(dictionariesTaskPane);
 
-		JXTaskPane synonymsTaskPane = new JXTaskPane();
-		synonymsTaskPane.setFocusable(false);
-		synonymsTaskPane.setTitle("Synonyms");
-		synonymsTaskPane.setIcon(imageManager.getImageIcon("images/model/synonym.png"));
+		final JXTaskPane synonymsTaskPane = WidgetFactory.createTaskPane("Synonyms",
+				imageManager.getImageIcon("images/model/synonym.png"));
 		synonymsTaskPane.setCollapsed(true);
 		synonymsTaskPane.add(new SynonymCatalogListPanel(_configuration));
+		synonymsTaskPane.setCollapsed(!userPreferences.isDisplaySynonymCatalogsTaskPane());
+		synonymsTaskPane.addPropertyChangeListener("collapsed", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				userPreferences.setDisplaySynonymCatalogsTaskPane(!synonymsTaskPane.isCollapsed());
+			}
+		});
 		taskPaneContainer.add(synonymsTaskPane);
 
-		JXTaskPane patternsTaskPane = new JXTaskPane();
-		patternsTaskPane.setFocusable(false);
-		patternsTaskPane.setTitle("String patterns");
-		patternsTaskPane.setIcon(imageManager.getImageIcon("images/model/pattern.png"));
+		final JXTaskPane patternsTaskPane = WidgetFactory.createTaskPane("String patterns",
+				imageManager.getImageIcon("images/model/pattern.png"));
 		patternsTaskPane.setCollapsed(true);
 		patternsTaskPane.add(new StringPatternListPanel(_configuration));
+		patternsTaskPane.setCollapsed(!userPreferences.isDisplayStringPatternsTaskPane());
+		patternsTaskPane.addPropertyChangeListener("collapsed", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				userPreferences.setDisplayStringPatternsTaskPane(!patternsTaskPane.isCollapsed());
+			}
+		});
 		taskPaneContainer.add(patternsTaskPane);
 
 		JScrollPane scrollPane = WidgetUtils.scrolleable(taskPaneContainer);
@@ -143,8 +171,9 @@ public class MainWindow extends AbstractWindow {
 		panel.add(scrollPane, BorderLayout.CENTER);
 
 		JXStatusBar statusBar = new JXStatusBar();
+		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
-		statusBar.add(new JLabel(getWindowTitle()), c1);
+		statusBar.add(DCLabel.bright(getWindowTitle()), c1);
 
 		panel.add(statusBar, BorderLayout.SOUTH);
 
@@ -152,7 +181,7 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	private JPanel getHeaderPanel() {
-		final DCBannerPanel headerPanel = new DCBannerPanel();
+		final DCBannerPanel headerPanel = new DCBannerPanel(imageManager.getImage("images/window/banner-main-window.png"));
 		return headerPanel;
 	}
 
@@ -166,7 +195,8 @@ public class MainWindow extends AbstractWindow {
 		UserPreferences.getInstance().save();
 
 		// garbage collect and clean up
-		// TODO: Don't do this :) But offer a panel in the options to monitor memory and do a GC.
+		// TODO: Don't do this :) But offer a panel in the options to monitor
+		// memory and do a GC.
 		System.gc();
 		System.runFinalization();
 

@@ -129,11 +129,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 	}
 
 	protected void addTaskPane(Icon icon, String title, JComponent content) {
-		JXTaskPane taskPane = new JXTaskPane();
-		if (icon != null) {
-			taskPane.setIcon(icon);
-		}
-		taskPane.setTitle(title);
+		JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
 		taskPane.add(content);
 		_taskPaneContainer.add(taskPane);
 	}

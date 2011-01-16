@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 
@@ -82,7 +83,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 		if (!_results.isEmpty()) {
 			AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
 			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider());
-			
+
 			for (AnalyzerResult analyzerResult : _results) {
 				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = renderFactory.getRenderer(analyzerResult,
 						SwingRenderingFormat.class);
@@ -92,7 +93,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 				} else {
 					component = renderer.render(analyzerResult);
 				}
-				
+
 				addRenderedResult(component);
 			}
 		}
@@ -110,10 +111,8 @@ public final class DetailsResultWindow extends AbstractWindow {
 	}
 
 	public void addRenderedResult(JComponent component) {
-		JXTaskPane taskPane = new JXTaskPane();
-		taskPane.setIcon(imageManager.getImageIcon("images/actions/drill-to-detail.png"));
-		taskPane.setFocusable(false);
-		taskPane.setTitle("Detailed result");
+		ImageIcon icon = imageManager.getImageIcon("images/actions/drill-to-detail.png");
+		JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
 		taskPane.add(component);
 
 		_taskPaneContainer.add(taskPane);

@@ -42,7 +42,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.Function;
@@ -56,7 +55,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXList;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
@@ -106,8 +105,7 @@ public class WelcomeWindow extends AbstractWindow {
 		_showOnStartupCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		_showOnStartupCheckBox.setVisible(false);
 		_showOnStartupCheckBox.setSelected(userPreferences.isWelcomeDialogShownOnStartup());
-		_nextStepButton = new JButton();
-		_nextStepButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_nextStepButton = WidgetFactory.createButton(null);
 		updateDialogState(true);
 	}
 
@@ -144,14 +142,14 @@ public class WelcomeWindow extends AbstractWindow {
 	@Override
 	protected JComponent getWindowContent() {
 		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 100, 80,
-				WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_LESS_DARK);
+				WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.add(new DCBannerPanel(imageManager.getImage("images/window/banner-welcome.png"), "Welcome"),
+		mainPanel.add(
+				new DCBannerPanel(imageManager.getImage("images/window/banner-welcome.png"), "Welcome to DataCleaner"),
 				BorderLayout.NORTH);
 		mainPanel.add(getRecentJobsPanel(), BorderLayout.CENTER);
 
 		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
-		toolBarPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(getBottomToolBar(), BorderLayout.CENTER);
 
@@ -184,9 +182,9 @@ public class WelcomeWindow extends AbstractWindow {
 			newAnalysisLabel.setFont(WidgetUtils.FONT_HEADER);
 			newAnalysisLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 			_recentJobsPanel.add(newAnalysisLabel);
-			MultiLineLabel newAnalysisDescriptionLabel = new MultiLineLabel(
-					"<htmL>DataCleaner is all about data analysis, profiling and cleansing. "
-							+ "Begin a new analysis job by clicking the '<b>New</b>' button in the left-side window.</html>");
+			DCLabel newAnalysisDescriptionLabel = DCLabel
+					.brightMultiLine("DataCleaner is all about data analysis, profiling and cleansing. "
+							+ "Begin a new analysis job by clicking the '<b>New</b>' button in the left-side window.");
 			newAnalysisDescriptionLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 			_recentJobsPanel.add(newAnalysisDescriptionLabel);
 
@@ -197,9 +195,9 @@ public class WelcomeWindow extends AbstractWindow {
 			recentAnalysisLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 			_recentJobsPanel.add(recentAnalysisLabel);
 
-			MultiLineLabel recentAnalysisDescriptionLabel = new MultiLineLabel(
-					"<html>Below is a list of your recent analysis jobs for easy access. "
-							+ "Select a job and click the '<b>Open recent job</b>' button to access a recent job or click the '<b>Open</b>' button in the left-side window to browse the file system for saved jobs.</html>");
+			DCLabel recentAnalysisDescriptionLabel = DCLabel
+					.brightMultiLine("Below is a list of your recent analysis jobs for easy access. "
+							+ "Select a job and click the '<b>Open recent job</b>' button to access a recent job or click the '<b>Open</b>' button in the left-side window to browse the file system for saved jobs.");
 			recentAnalysisDescriptionLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 			_recentJobsPanel.add(recentAnalysisDescriptionLabel);
 
@@ -234,9 +232,6 @@ public class WelcomeWindow extends AbstractWindow {
 			_recentJobsPanel.add(listScroll);
 
 			final JButton openButton = WidgetFactory.createButton("Open recent job", "images/actions/open.png");
-			openButton.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-			openButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-			openButton.setFocusPainted(false);
 			openButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -293,8 +288,6 @@ public class WelcomeWindow extends AbstractWindow {
 		linkedInButton.setMargin(new Insets(0, 0, 0, 0));
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.setOpaque(false);
-		toolBar.setBorder(null);
 		toolBar.add(datacleanerButton);
 		toolBar.add(bloggerButton);
 		toolBar.add(linkedInButton);

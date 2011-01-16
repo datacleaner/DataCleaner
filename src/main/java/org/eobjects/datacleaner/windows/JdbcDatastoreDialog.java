@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
 
 public class JdbcDatastoreDialog extends AbstractDialog {
@@ -232,27 +233,27 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		DCPanel panel = new DCPanel();
 
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Datastore name:"), panel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreNameTextField, panel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Database:"), panel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Database:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_databaseDriverComboBox, panel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Driver class name:"), panel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Driver class name:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_driverClassNameTextField, panel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Connection string:"), panel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Connection string:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_connectionStringTextField, panel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Username:"), panel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Password:"), panel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Password:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_passwordField, panel, 1, row);
 
 		row++;

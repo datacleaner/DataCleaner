@@ -20,9 +20,11 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,7 +50,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
@@ -90,7 +92,7 @@ public class LoginPanel extends JPanel {
 		}
 
 		setOpaque(false);
-		setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(30, 40, 20, 30)));
+		setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 40, 20, 30)));
 
 		updateContents();
 
@@ -168,15 +170,9 @@ public class LoginPanel extends JPanel {
 			final JPasswordField passwordTextField = new JPasswordField(15);
 
 			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/register.png");
-			registerButton.setBackground(getBackground());
-			registerButton.setForeground(getForeground());
-			registerButton.setFocusPainted(false);
 			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));
 
 			final JButton loginButton = WidgetFactory.createButton("Login", "images/actions/login.png");
-			loginButton.setBackground(getBackground());
-			loginButton.setForeground(getForeground());
-			loginButton.setFocusPainted(false);
 			loginButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -204,15 +200,19 @@ public class LoginPanel extends JPanel {
 
 			int y = 0;
 			final String loginInfo = "Thank you for using DataCleaner. We kindly ask you to identify yourself by "
-					+ "providing us with your eobjects.org user credentials.\n\n"
+					+ "providing us with your eobjects.org user credentials.<br><br>"
 					+ "If you are not registered yet, we hope that you will do so now, giving "
-					+ "the DataCleaner development community a better sense of it's users and audience.\n\n"
+					+ "the DataCleaner development community a better sense of it's users and audience.<br><br>"
 					+ "By logging in, you also accept transmitting very simple usage statistics to the DataCleaner "
-					+ "community, signaling which features you are using.\n";
-			final MultiLineLabel loginInfoLabel = new MultiLineLabel(loginInfo);
-			loginInfoLabel.setForeground(getForeground());
-			WidgetUtils.addToGridBag(loginInfoLabel, this, 0, y, 2, 1);
+					+ "community, signaling which features you are using.";
+			final DCLabel loginInfoLabel = DCLabel.brightMultiLine(loginInfo);
+			loginInfoLabel.setSize(300, 250);
+			loginInfoLabel.setPreferredSize(new Dimension(300, 250));
+			WidgetUtils.addToGridBag(loginInfoLabel, this, 0, y, 2, 1, GridBagConstraints.CENTER, 0, 1.0, 1.0);
 
+			y++;
+			WidgetUtils.addToGridBag(Box.createVerticalStrut(4), this, 0, y, 2, 1);
+			
 			y++;
 			final JLabel usernameLabel = new JLabel("Username:");
 			usernameLabel.setForeground(getForeground());
@@ -227,7 +227,7 @@ public class LoginPanel extends JPanel {
 
 			y++;
 			final DCPanel buttonPanel = new DCPanel();
-			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0 ,0));
+			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 			buttonPanel.add(registerButton);
 			buttonPanel.add(Box.createHorizontalStrut(4));
 			buttonPanel.add(loginButton);

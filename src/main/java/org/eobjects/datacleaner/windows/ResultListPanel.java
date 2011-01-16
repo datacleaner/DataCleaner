@@ -21,9 +21,11 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
@@ -76,11 +78,8 @@ public class ResultListPanel extends DCPanel {
 	}
 
 	public void addResult(final AnalyzerJob analyzerJob, final AnalyzerResult result) {
-		final JXTaskPane taskPane = new JXTaskPane();
-		taskPane.setFocusable(false);
-
 		AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
-		taskPane.setIcon(IconUtils.getDescriptorIcon(descriptor));
+		Icon icon = IconUtils.getDescriptorIcon(descriptor);
 
 		StringBuilder sb = new StringBuilder();
 
@@ -124,8 +123,15 @@ public class ResultListPanel extends DCPanel {
 		}
 
 		final String resultLabel = sb.toString();
-		taskPane.setTitle(resultLabel);
-		taskPane.add(new LoadingIcon());
+
+		final JXTaskPane taskPane = WidgetFactory.createTaskPane(resultLabel, icon);
+
+		final DCPanel taskPanePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));
+		taskPanePanel.setLayout(new BorderLayout());
+		taskPane.add(taskPanePanel);
+
+		taskPanePanel.add(new LoadingIcon());
 		_progressInformationPanel.addUserLog("Rendering result for " + resultLabel);
 
 		synchronized (this) {
@@ -147,18 +153,19 @@ public class ResultListPanel extends DCPanel {
 			}
 
 			protected void done() {
-				taskPane.removeAll();
+				taskPanePanel.removeAll();
 				JComponent component;
 				try {
 					component = get();
-					taskPane.add(component);
+					taskPanePanel.add(component);
 					_progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
 				} catch (Exception e) {
 					logger.error("Error occurred while rendering result", e);
 					_progressInformationPanel.addUserLog("Error occurred while rendering result", e);
-					taskPane.add(new JLabel("An error occurred while rendering result, check the status tab"));
+					taskPanePanel.add(new JLabel("An error occurred while rendering result, check the status tab"));
 				}
-				taskPane.updateUI();
+
+				taskPanePanel.updateUI();
 			};
 
 		}.execute();

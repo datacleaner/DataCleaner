@@ -27,7 +27,6 @@ import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -38,7 +37,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -96,11 +95,11 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 		final DCPanel formPanel = new DCPanel();
 
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Dictionary name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Dictionary name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_nameTextField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Values:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Values:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_valuesTextArea, formPanel, 1, row);
 
 		row++;
@@ -135,8 +134,8 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 		buttonPanel.add(createDictionaryButton);
 		WidgetUtils.addToGridBag(buttonPanel, formPanel, 0, row, 2, 1);
 
-		final MultiLineLabel descriptionLabel = new MultiLineLabel(
-				"A simple dictionary is a dictionary that you enter directly in DataCleaner. In the 'Values' field you can enter each value of the dictionary on a separate line.");
+		final DCLabel descriptionLabel = DCLabel
+				.brightMultiLine("A simple dictionary is a dictionary that you enter directly in DataCleaner. In the 'Values' field you can enter each value of the dictionary on a separate line.");
 		descriptionLabel.setBorder(new EmptyBorder(10, 10, 10, 20));
 		descriptionLabel.setPreferredSize(new Dimension(300, 100));
 
@@ -145,7 +144,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 		mainPanel.add(descriptionLabel);
 		mainPanel.add(formPanel);
 
-		JScrollPane scroll = WidgetUtils.scrolleable(mainPanel);
+		final JScrollPane scroll = WidgetUtils.scrolleable(mainPanel);
 		return scroll;
 	}
 

@@ -47,7 +47,6 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
@@ -190,7 +189,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		final String jobDescription = _metadata.getJobDescription();
 		if (jobDescription != null) {
 			_centerPanel.add(new JLabel("<html><b>Job description:</b></html>"));
-			_centerPanel.add(new MultiLineLabel(jobDescription));
+			_centerPanel.add(DCLabel.darkMultiLine(jobDescription));
 			_centerPanel.add(Box.createVerticalStrut(separatorHeight));
 		}
 		final String jobVersion = _metadata.getJobVersion();

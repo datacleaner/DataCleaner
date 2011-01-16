@@ -114,7 +114,8 @@ public class DatabaseDriversPanel extends DCPanel {
 			String driverClassName = dd.getDriverClassName();
 			String displayName = dd.getDisplayName();
 
-			Icon driverIcon = imageManager.getImageIcon(_databaseDriverCatalog.getIconImagePath(dd), IconUtils.ICON_SIZE_SMALL);
+			Icon driverIcon = imageManager.getImageIcon(_databaseDriverCatalog.getIconImagePath(dd),
+					IconUtils.ICON_SIZE_SMALL);
 
 			tableModel.setValueAt(driverIcon, row, 0);
 			tableModel.setValueAt(displayName, row, 1);

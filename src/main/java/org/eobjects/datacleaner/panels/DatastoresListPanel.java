@@ -57,7 +57,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 	private final DCPanel _datastoresPanel;
 
 	public DatastoresListPanel(AnalyzerBeansConfiguration configuration) {
-		super();
+		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_configuration = configuration;
 		_catalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
 		_catalog.addListener(this);

@@ -38,7 +38,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
@@ -55,6 +55,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.table.DCTable;
@@ -109,7 +110,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private final JComboBox _separatorCharField;
 	private final JComboBox _quoteCharField;
 	private final JComboBox _encodingComboBox;
-	private final JLabel _statusLabel;
+	private final DCLabel _statusLabel;
 	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, 10));
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
@@ -160,7 +161,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		_statusLabel = new JLabel("Please select file");
+		_statusLabel = DCLabel.bright("Please select file");
 
 		FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV,
 				FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
@@ -456,27 +457,29 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 		// temporary variable to make it easier to refactor the layout
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Datastore name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Filename:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Filename:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Character encoding:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Character encoding:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_encodingComboBox, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Separator:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Separator:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_separatorCharField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Quote char:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Quote char:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_quoteCharField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(_previewTable.toPanel(), formPanel, 0, row, 2, 1);
+		DCPanel previewTablePanel = _previewTable.toPanel();
+		previewTablePanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+		WidgetUtils.addToGridBag(previewTablePanel, formPanel, 0, row, 2, 1);
 
 		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override
@@ -493,15 +496,17 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 		DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		buttonPanel.setBorder(new EmptyBorder(4, 4, 10, 10));
 		buttonPanel.add(_addDatastoreButton);
 
 		DCPanel centerPanel = new DCPanel();
 		centerPanel.setLayout(new VerticalLayout(4));
 		centerPanel.add(formPanel);
-		centerPanel.add(_previewTable.toPanel());
+		centerPanel.add(previewTablePanel);
 		centerPanel.add(buttonPanel);
 
 		JXStatusBar statusBar = new JXStatusBar();
+		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
 		statusBar.add(_statusLabel, c1);
 

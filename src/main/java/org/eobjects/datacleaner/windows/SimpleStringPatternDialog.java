@@ -45,7 +45,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -109,11 +109,11 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	protected JComponent getDialogContent() {
 		final DCPanel formPanel = new DCPanel();
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("String pattern name"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("String pattern name"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_expressionNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Expression"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Expression"), formPanel, 0, row);
 
 		_expressionField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -154,7 +154,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 					JOptionPane.showMessageDialog(SimpleStringPatternDialog.this, "Please fill out the string expression");
 					return;
 				}
-				if (_simpleStringPattern!=null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
+				if (_simpleStringPattern != null && _catalog.containsStringPattern(_simpleStringPattern.getName())) {
 					_catalog.removeStringPattern(_catalog.getStringPattern(_simpleStringPattern.getName()));
 				}
 				SimpleStringPattern simpleStringPattern = new SimpleStringPattern(expressionName, expression);
@@ -172,11 +172,11 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		final DCPanel testitPanel = new DCPanel();
 		testitPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
-		_errorLabel = new JLabel("");
+		_errorLabel = DCLabel.bright("");
 		WidgetUtils.addToGridBag(_errorLabel, testitPanel, 0, row);
 
 		row++;
-		JLabel testInputLabel = new JLabel("Test input");
+		JLabel testInputLabel = DCLabel.bright("Test input");
 		testInputLabel.setFont(WidgetUtils.FONT_HEADER);
 		WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
 
@@ -208,8 +208,9 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 			_statusLabels.add(statusLabel);
 		}
 
-		final MultiLineLabel descriptionLabel = new MultiLineLabel(
-				"Simple string patterns are tokenized patterns made up of these elements." +"\n* A = upper case letters\n* a = lower case letters\n* 9 = digits");
+		final DCLabel descriptionLabel = DCLabel
+				.brightMultiLine("<p>Simple string patterns are tokenized patterns made up of these elements.</p>"
+						+ "<p>* A = upper case letters<br>* a = lower case letters<br>* 9 = digits</p>");
 		descriptionLabel.setBorder(new EmptyBorder(10, 10, 10, 20));
 		descriptionLabel.setPreferredSize(new Dimension(300, 100));
 

@@ -35,8 +35,8 @@ public abstract class AbstractDialog extends AbstractWindow {
 	private static final long serialVersionUID = 1L;
 
 	private final Image _bannerImage;
-	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_BRIGHTEST;
-	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_BRIGHT;
+	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
+	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 
 	public AbstractDialog() {
 		this(null);

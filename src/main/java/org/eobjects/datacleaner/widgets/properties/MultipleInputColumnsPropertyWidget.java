@@ -121,9 +121,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		InputColumn<?>[] currentValue = (InputColumn<?>[]) getBeanJobBuilder()
 				.getConfiguredProperty(getPropertyDescriptor());
 
-		for (InputColumn<?> inputColumn : currentValue) {
-			if (!_inputColumns.contains(inputColumn)) {
-				_inputColumns.add(inputColumn);
+		if (currentValue != null) {
+			for (InputColumn<?> inputColumn : currentValue) {
+				if (!_inputColumns.contains(inputColumn)) {
+					_inputColumns.add(inputColumn);
+				}
 			}
 		}
 

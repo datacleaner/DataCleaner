@@ -58,7 +58,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	private final DCPanel _listPanel;
 
 	public DictionaryListPanel(AnalyzerBeansConfiguration configuration) {
-		super();
+		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_configuration = configuration;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addDictionaryListener(this);

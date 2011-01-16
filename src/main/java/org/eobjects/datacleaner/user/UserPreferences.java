@@ -53,6 +53,12 @@ public class UserPreferences implements Serializable {
 
 	private String username;
 	private boolean welcomeDialogShownOnStartup = true;
+	private boolean displayDatastoresTaskPane = true;
+	private boolean displayJobsTaskPane = true;
+	private boolean displayDictionariesTaskPane = true;
+	private boolean displaySynonymCatalogsTaskPane = true;
+	private boolean displayStringPatternsTaskPane = true;
+	
 	private List<File> recentJobFiles = new ArrayList<File>();
 	private File datastoreDirectory = new File(".");
 	private File configuredFileDirectory = new File(".");
@@ -205,5 +211,45 @@ public class UserPreferences implements Serializable {
 			userStringPatterns = new ArrayList<StringPattern>();
 		}
 		return userStringPatterns;
+	}
+
+	public boolean isDisplayDatastoresTaskPane() {
+		return displayDatastoresTaskPane;
+	}
+
+	public void setDisplayDatastoresTaskPane(boolean displayDatastoresTaskPane) {
+		this.displayDatastoresTaskPane = displayDatastoresTaskPane;
+	}
+
+	public boolean isDisplayJobsTaskPane() {
+		return displayJobsTaskPane;
+	}
+
+	public void setDisplayJobsTaskPane(boolean displayJobsTaskPane) {
+		this.displayJobsTaskPane = displayJobsTaskPane;
+	}
+
+	public boolean isDisplayDictionariesTaskPane() {
+		return displayDictionariesTaskPane;
+	}
+
+	public void setDisplayDictionariesTaskPane(boolean displayDictionariesTaskPane) {
+		this.displayDictionariesTaskPane = displayDictionariesTaskPane;
+	}
+
+	public boolean isDisplaySynonymCatalogsTaskPane() {
+		return displaySynonymCatalogsTaskPane;
+	}
+
+	public void setDisplaySynonymCatalogsTaskPane(boolean displaySynonymCatalogsTaskPane) {
+		this.displaySynonymCatalogsTaskPane = displaySynonymCatalogsTaskPane;
+	}
+
+	public boolean isDisplayStringPatternsTaskPane() {
+		return displayStringPatternsTaskPane;
+	}
+
+	public void setDisplayStringPatternsTaskPane(boolean displayStringPatternsTaskPane) {
+		this.displayStringPatternsTaskPane = displayStringPatternsTaskPane;
 	}
 }

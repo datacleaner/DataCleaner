@@ -31,7 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
@@ -43,8 +42,8 @@ import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.HelpIcon;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 public class OptionsDialog extends AbstractWindow {
@@ -126,10 +125,10 @@ public class OptionsDialog extends AbstractWindow {
 						panel, 2, row);
 
 		row++;
-		MultiLineLabel descriptionLabel = new MultiLineLabel(
-				"<html>Performance options are currently not configurable while you're running the application. "
+		DCLabel descriptionLabel = DCLabel
+				.darkMultiLine("Performance options are currently not configurable while you're running the application. "
 						+ "You need to edit the applications configuration file for this. The configuration file is named "
-						+ "<b>conf.xml</b> and is located in the root of the folder where you've installed DataCleaner.</html>");
+						+ "<b>conf.xml</b> and is located in the root of the folder where you've installed DataCleaner.");
 		descriptionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
 		WidgetUtils.addToGridBag(descriptionLabel, panel, 0, row, 2, 1);
 		return panel;
@@ -218,13 +217,10 @@ public class OptionsDialog extends AbstractWindow {
 		});
 
 		final JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.setOpaque(false);
-		toolBar.setBorder(null);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(closeButton);
 
 		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
-		toolBarPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(toolBar, BorderLayout.CENTER);
 

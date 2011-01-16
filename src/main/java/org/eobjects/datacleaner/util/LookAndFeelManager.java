@@ -70,7 +70,7 @@ public final class LookAndFeelManager {
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-
+				
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
@@ -127,9 +127,9 @@ public final class LookAndFeelManager {
 		// task pane colors
 		UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TaskPane.titleForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
-		UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.BG_COLOR_DARK);
-		UIManager.put("TaskPane.titleBackgroundGradientEnd", WidgetUtils.BG_COLOR_DARK);
-		UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.BG_COLOR_DARKEST);
+		UIManager.put("TaskPane.titleBackgroundGradientEnd", WidgetUtils.BG_COLOR_DARKEST);
+		UIManager.put("TaskPane.borderColor", WidgetUtils.BG_COLOR_DARKEST);
 		UIManager.put("TaskPane.background", WidgetUtils.BG_COLOR_BRIGHT);
 
 		// scrollbar color

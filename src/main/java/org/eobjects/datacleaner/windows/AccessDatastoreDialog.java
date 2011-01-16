@@ -42,6 +42,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXStatusBar;
@@ -132,11 +133,11 @@ public class AccessDatastoreDialog extends AbstractDialog {
 
 		// temporary variable to make it easier to refactor the layout
 		int row = 0;
-		WidgetUtils.addToGridBag(new JLabel("Datastore name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Filename:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Filename:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
 
 		_addDatastoreButton.addActionListener(new ActionListener() {

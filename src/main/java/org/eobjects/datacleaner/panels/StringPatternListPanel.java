@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.user.StringPatternChangeListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.RegexPatternDialog;
 import org.eobjects.datacleaner.windows.SimpleStringPatternDialog;
 
@@ -59,7 +60,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 
 	public StringPatternListPanel(AnalyzerBeansConfiguration configuration) {
-		super();
+		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_configuration = configuration;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addStringPatternListener(this);

@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.util;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Image;
 import java.awt.Insets;
 
@@ -27,12 +28,16 @@ import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.plaf.metal.MetalButtonUI;
 
+import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
@@ -72,10 +77,19 @@ public final class WidgetFactory {
 	}
 
 	public static JButton createButton(String text, Icon icon) {
-		JButton b = new JButton(text);
+		final JButton b = new JButton();
+		if (text != null) {
+			b.setText(text);
+		}
 		if (icon != null) {
 			b.setIcon(icon);
 		}
+		b.setUI(new MetalButtonUI());
+		b.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+		b.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		final MatteBorder outerBorder = new MatteBorder(1, 1, 1, 1, WidgetUtils.BG_COLOR_LESS_DARK);
+		b.setBorder(new CompoundBorder(outerBorder, new EmptyBorder(2, 4, 2, 4)));
+		b.setFocusPainted(false);
 		return b;
 	}
 
@@ -84,11 +98,13 @@ public final class WidgetFactory {
 	}
 
 	public static JToolBar createToolBar() {
-		JToolBar toolbar = new JToolBar(JToolBar.HORIZONTAL);
-		toolbar.setRollover(true);
-		toolbar.setFloatable(false);
-		toolbar.setAlignmentY(JToolBar.LEFT_ALIGNMENT);
-		return toolbar;
+		JToolBar toolBar = new JToolBar(JToolBar.HORIZONTAL);
+		toolBar.setOpaque(false);
+		toolBar.setBorder(null);
+		toolBar.setRollover(true);
+		toolBar.setFloatable(false);
+		toolBar.setAlignmentY(JToolBar.LEFT_ALIGNMENT);
+		return toolBar;
 	}
 
 	public static Component createToolBarSeparator() {
@@ -110,6 +126,18 @@ public final class WidgetFactory {
 		return taskPaneContainer;
 	}
 
+	public static JXTaskPane createTaskPane(String title, Icon icon) {
+		JXTaskPane taskPane = new JXTaskPane();
+		Container cp = taskPane.getContentPane();
+		((JComponent) cp).setBorder(new MatteBorder(0, 1, 1, 1, WidgetUtils.BG_COLOR_DARKEST));
+		taskPane.setFocusable(false);
+		taskPane.setTitle(title);
+		if (icon != null) {
+			taskPane.setIcon(icon);
+		}
+		return taskPane;
+	}
+
 	public static JXTextField createTextField() {
 		return createTextField(null);
 	}
@@ -126,5 +154,9 @@ public final class WidgetFactory {
 		ta.setRows(6);
 		ta.setBorder(new CompoundBorder(WidgetUtils.BORDER_THIN, new EmptyBorder(2, 2, 2, 2)));
 		return ta;
+	}
+
+	public static JButton createButton(String text) {
+		return createButton(text, (Icon) null);
 	}
 }

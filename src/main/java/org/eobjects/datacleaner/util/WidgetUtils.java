@@ -81,16 +81,13 @@ public final class WidgetUtils {
 	// white
 	public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
-	// #353f48 (brownish dark gray)
-	public static final Color BG_COLOR_DARK = new ColorUIResource(53, 63, 72);
-
 	public static final Color BG_COLOR_MEDIUM = new ColorUIResource(150, 150, 150);
 
-	// #5d656d (less brownish dark gray)
-	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(93, 101, 109);
+	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(80, 80, 80);
 
-	// #2a323a (more brownish dark gray)
-	public static final Color BG_COLOR_DARKEST = new ColorUIResource(42, 50, 58);
+	public static final Color BG_COLOR_DARK = new ColorUIResource(65, 65, 65);
+
+	public static final Color BG_COLOR_DARKEST = new ColorUIResource(40, 40, 40);
 
 	// additional colors, only intended for special widget coloring such as
 	// charts etc.
@@ -140,11 +137,11 @@ public final class WidgetUtils {
 	 * @param height
 	 * @param anchor
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor) {
 		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, DEFAULT_PADDING);
 	}
 
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
 			int padding) {
 		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, 0.0, 0.0);
 	}
@@ -161,7 +158,7 @@ public final class WidgetUtils {
 	 * @param anchor
 	 * @param padding
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
 			int padding, double weightx, double weighty) {
 		LayoutManager layout = panel.getLayout();
 		if (!(layout instanceof GridBagLayout)) {
@@ -193,7 +190,7 @@ public final class WidgetUtils {
 	 * @param width
 	 * @param height
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int width, int height) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height) {
 		addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
 	}
 
@@ -205,11 +202,11 @@ public final class WidgetUtils {
 	 * @param gridxs
 	 * @param gridy
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy) {
 		addToGridBag(comp, panel, gridx, gridy, 1, 1);
 	}
 
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, double weightx, double weighty) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, double weightx, double weighty) {
 		addToGridBag(comp, panel, gridx, gridy, 1, 1, DEFAULT_ANCHOR, DEFAULT_PADDING, weightx, weighty);
 	}
 
@@ -222,7 +219,7 @@ public final class WidgetUtils {
 	 * @param gridy
 	 * @param anchor
 	 */
-	public static void addToGridBag(JComponent comp, JPanel panel, int gridx, int gridy, int anchor) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int anchor) {
 		addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor);
 	}
 

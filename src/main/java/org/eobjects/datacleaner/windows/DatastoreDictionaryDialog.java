@@ -30,7 +30,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
@@ -48,11 +47,10 @@ import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.label.MultiLineLabel;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
-import org.jdesktop.swingx.JXTextField;
-
 import org.eobjects.metamodel.schema.Column;
+import org.jdesktop.swingx.JXTextField;
 
 public class DatastoreDictionaryDialog extends AbstractDialog {
 
@@ -92,6 +90,8 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 		_datastoreComboBox.setEditable(false);
 
 		_splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		_splitPane.setBackground(WidgetUtils.BG_COLOR_DARK);
+		_splitPane.setBorder(null);
 		_splitPane.setDividerLocation(320);
 
 		_treePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -125,7 +125,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 							};
 						});
 						_treePanel.add(WidgetUtils.scrolleable(schemaTree), BorderLayout.CENTER);
-						_splitPane.updateUI();
+						_treePanel.updateUI();
 					}
 				}
 			}
@@ -158,22 +158,22 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 		DCPanel formPanel = new DCPanel();
 
 		int row = 0;
-		MultiLineLabel descriptionLabel = new MultiLineLabel(
+		DCLabel descriptionLabel = DCLabel.brightMultiLine(
 				"A datastore dictionary is a dictionary based on a column in one of your datastores. Please select a datastore in the form below and a tree of that datastore will appear. From here on you can select which column in the datastore to use for dictionary lookups.");
 		descriptionLabel.setBorder(new EmptyBorder(0, 0, 0, 20));
 		descriptionLabel.setPreferredSize(new Dimension(300, 100));
 		WidgetUtils.addToGridBag(descriptionLabel, formPanel, 0, row, 2, 1);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Dictionary name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Dictionary name:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_nameTextField, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Datastore:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_datastoreComboBox, formPanel, 1, row);
 
 		row++;
-		WidgetUtils.addToGridBag(new JLabel("Lookup column:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Lookup column:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_columnTextField, formPanel, 1, row);
 
 		row++;

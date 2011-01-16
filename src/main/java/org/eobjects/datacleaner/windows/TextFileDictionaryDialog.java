@@ -38,6 +38,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
@@ -64,6 +65,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 	}
 
 	public TextFileDictionaryDialog(TextBasedDictionary dictionary, MutableReferenceDataCatalog catalog) {
+		super(ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_catalog = catalog;
 

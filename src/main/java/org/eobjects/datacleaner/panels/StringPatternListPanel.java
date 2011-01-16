@@ -42,7 +42,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.windows.RegexPatternDialog;
+import org.eobjects.datacleaner.windows.RegexStringPatternDialog;
 import org.eobjects.datacleaner.windows.SimpleStringPatternDialog;
 
 public class StringPatternListPanel extends DCPanel implements StringPatternChangeListener {
@@ -93,7 +93,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (selectedStringPattern instanceof RegexStringPattern) {
-					new RegexPatternDialog(selectedStringPattern.getName(), ((RegexStringPattern) selectedStringPattern)
+					new RegexStringPatternDialog(selectedStringPattern.getName(), ((RegexStringPattern) selectedStringPattern)
 							.getExpression(), _catalog).setVisible(true);
 				} else if (selectedStringPattern instanceof SimpleStringPattern) {
 					new SimpleStringPatternDialog(selectedStringPattern.getName(),
@@ -134,7 +134,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				regexStringPatternMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new RegexPatternDialog(_catalog).setVisible(true);
+						new RegexStringPatternDialog(_catalog).setVisible(true);
 					}
 				});
 

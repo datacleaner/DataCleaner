@@ -73,10 +73,11 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 
 	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog) {
+		super(ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
 		_catalog = catalog;
 		_expressionNameField = WidgetFactory.createTextField("String pattern name");
 		_expressionField = WidgetFactory.createTextField("Expression");
-		_resetButton = new JButton("Reset");
+		_resetButton = WidgetFactory.createButton("Reset");
 		_saveButton = WidgetFactory.createButton("Save Pattern", "images/model/pattern.png");
 	}
 
@@ -177,6 +178,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
 		row++;
 		JLabel testInputLabel = DCLabel.bright("Test input");
+		testInputLabel.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png"));
 		testInputLabel.setFont(WidgetUtils.FONT_HEADER);
 		WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
 

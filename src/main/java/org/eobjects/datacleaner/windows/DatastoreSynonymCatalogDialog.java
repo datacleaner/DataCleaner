@@ -44,6 +44,7 @@ import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
@@ -75,6 +76,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
 	public DatastoreSynonymCatalogDialog(DatastoreSynonymCatalog synonymCatalog,
 			MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog) {
+		super(ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_datastoreCatalog = datastoreCatalog;
 		_mutableReferenceCatalog = mutableReferenceCatalog;

@@ -39,6 +39,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
@@ -66,6 +67,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 	}
 
 	public TextFileSynonymCatalogDialog(TextBasedSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog) {
+		super(ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_catalog = catalog;
 

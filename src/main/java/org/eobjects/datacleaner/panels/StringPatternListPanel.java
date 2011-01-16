@@ -75,9 +75,11 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				selectedStringPattern = _catalog.getStringPattern(selectedStringPatternName);
 				if(_catalog.isStringPatternMutable(selectedStringPatternName)){
 					editButton.setIcon(imageManager.getImageIcon("images/actions/edit.png", 16));
+					editButton.setToolTipText("Edit or test pattern");
 					removeButton.setEnabled(true);
 				} else{
 					editButton.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png", 16));
+					editButton.setToolTipText("Test pattern");
 					removeButton.setEnabled(false);
 				}
 			}
@@ -85,7 +87,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 		_stringPatternListPanel.add(stringPatternsCombo);
 
-		editButton.setToolTipText("Edit pattern");
+		editButton.setToolTipText("Edit or test pattern");
 		editButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

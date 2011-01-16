@@ -34,6 +34,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCProgressBar;
 import org.jdesktop.swingx.VerticalLayout;
 
 import org.eobjects.metamodel.schema.Table;
@@ -44,7 +45,7 @@ public class ProgressInformationPanel extends DCPanel {
 
 	private final JTextArea _textArea = new JTextArea();
 	private final DCPanel _progressBarPanel;
-	private final Map<Table, JProgressBar> _progressBars = new IdentityHashMap<Table, JProgressBar>();
+	private final Map<Table, DCProgressBar> _progressBars = new IdentityHashMap<Table, DCProgressBar>();
 	private final JScrollPane _textAreaScroll;
 
 	public ProgressInformationPanel() {
@@ -91,12 +92,12 @@ public class ProgressInformationPanel extends DCPanel {
 	public void setExpectedRows(Table table, int expectedRows) {
 		boolean firstTable = _progressBars.isEmpty();
 
-		JProgressBar progressBar = new JProgressBar(0, expectedRows);
+		DCProgressBar progressBar = new DCProgressBar(0, expectedRows);
 		_progressBars.put(table, progressBar);
 
 		JLabel tableLabel = new JLabel(table.getName());
 		tableLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		
+
 		JLabel rowsLabel = new JLabel(expectedRows + " rows");
 		rowsLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		rowsLabel.setFont(WidgetUtils.FONT_SMALL);
@@ -104,7 +105,7 @@ public class ProgressInformationPanel extends DCPanel {
 		if (!firstTable) {
 			_progressBarPanel.add(Box.createVerticalStrut(10));
 		}
-		
+
 		_progressBarPanel.add(tableLabel);
 		_progressBarPanel.add(rowsLabel);
 		_progressBarPanel.add(progressBar);

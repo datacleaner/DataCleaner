@@ -28,13 +28,13 @@ import java.text.DecimalFormat;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCProgressBar;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -53,7 +53,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 	private final DownloadFilesActionListener _downloadFilesActionListener;
 	private final JLabel[] _currentBytesLabels;
 	private final JLabel[] _expectedBytesLabels;
-	private final JProgressBar[] _progressIndicators;
+	private final DCProgressBar[] _progressIndicators;
 	private final JLabel[] _infoLabels;
 	private final File[] _files;
 
@@ -64,7 +64,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 
 		_files = downloadFilesActionListener.getFiles();
 
-		_progressIndicators = new JProgressBar[_files.length];
+		_progressIndicators = new DCProgressBar[_files.length];
 		_infoLabels = new JLabel[_files.length];
 		_currentBytesLabels = new JLabel[_files.length];
 		_expectedBytesLabels = new JLabel[_files.length];
@@ -79,9 +79,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 			_expectedBytesLabels[i] = new JLabel("??? bytes");
 			_expectedBytesLabels[i].setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-			_progressIndicators[i] = new JProgressBar(JProgressBar.HORIZONTAL);
-			_progressIndicators[i].setMinimum(0);
-			_progressIndicators[i].setMaximum(100);
+			_progressIndicators[i] = new DCProgressBar(0, 100);
 			_progressIndicators[i].setValue(0);
 
 			_infoLabels[i] = new JLabel("Downloading file '" + file.getName() + "'", JLabel.CENTER);

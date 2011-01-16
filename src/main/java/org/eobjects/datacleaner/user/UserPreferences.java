@@ -55,9 +55,9 @@ public class UserPreferences implements Serializable {
 	private boolean welcomeDialogShownOnStartup = true;
 	private boolean displayDatastoresTaskPane = true;
 	private boolean displayJobsTaskPane = true;
-	private boolean displayDictionariesTaskPane = true;
-	private boolean displaySynonymCatalogsTaskPane = true;
-	private boolean displayStringPatternsTaskPane = true;
+	private boolean displayDictionariesTaskPane = false;
+	private boolean displaySynonymCatalogsTaskPane = false;
+	private boolean displayStringPatternsTaskPane = false;
 	
 	private List<File> recentJobFiles = new ArrayList<File>();
 	private File datastoreDirectory = new File(".");

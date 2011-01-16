@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.result.AnalyzerResult;
@@ -98,7 +99,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 			}
 		}
 
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_MEDIUM, WidgetUtils.BG_COLOR_LESS_DARK);
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
 		panel.setLayout(new BorderLayout());
 		panel.add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 
@@ -113,7 +114,13 @@ public final class DetailsResultWindow extends AbstractWindow {
 	public void addRenderedResult(JComponent component) {
 		ImageIcon icon = imageManager.getImageIcon("images/actions/drill-to-detail.png");
 		JXTaskPane taskPane = WidgetFactory.createTaskPane("Detailed results", icon);
-		taskPane.add(component);
+
+		final DCPanel taskPanePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));
+		taskPanePanel.setLayout(new BorderLayout());
+		taskPanePanel.add(component);
+
+		taskPane.add(taskPanePanel);
 
 		_taskPaneContainer.add(taskPane);
 	}

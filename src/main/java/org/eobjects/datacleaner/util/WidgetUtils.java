@@ -83,9 +83,9 @@ public final class WidgetUtils {
 
 	public static final Color BG_COLOR_MEDIUM = new ColorUIResource(150, 150, 150);
 
-	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(80, 80, 80);
+	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(95, 95, 95);
 
-	public static final Color BG_COLOR_DARK = new ColorUIResource(65, 65, 65);
+	public static final Color BG_COLOR_DARK = new ColorUIResource(70, 70, 70);
 
 	public static final Color BG_COLOR_DARKEST = new ColorUIResource(40, 40, 40);
 

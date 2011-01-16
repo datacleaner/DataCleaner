@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
@@ -39,18 +40,21 @@ import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
+import org.jdesktop.swingx.VerticalLayout;
 
 public class OptionsDialog extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
 
 	private final ImageManager imageManager = ImageManager.getInstance();
+	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final CloseableTabbedPane _tabbedPane;
 	private final AnalyzerBeansConfiguration _configuration;
 	private Timer _updateMemoryTimer;
@@ -78,8 +82,19 @@ public class OptionsDialog extends AbstractWindow {
 
 	private DCPanel getGeneralTab() {
 		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		// TODO
-		panel.add(new JLabel("TODO"));
+		panel.setLayout(new VerticalLayout(4));
+
+		final JCheckBox welcomeDialogShownOnStartupCheckBox = new JCheckBox("Display welcome dialog on start-up?");
+		welcomeDialogShownOnStartupCheckBox.setSelected(userPreferences.isWelcomeDialogShownOnStartup());
+		welcomeDialogShownOnStartupCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userPreferences.setWelcomeDialogShownOnStartup(welcomeDialogShownOnStartupCheckBox.isSelected());
+			}
+		});
+
+		panel.add(welcomeDialogShownOnStartupCheckBox);
+
 		return panel;
 	}
 

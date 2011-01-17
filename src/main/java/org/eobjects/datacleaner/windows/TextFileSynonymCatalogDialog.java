@@ -93,6 +93,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 		});
 
 		_caseSensitiveCheckBox = new JCheckBox();
+		_caseSensitiveCheckBox.setOpaque(false);
 		_caseSensitiveCheckBox.setSelected(false);
 
 		_encodingComboBox = new CharSetEncodingComboBox();

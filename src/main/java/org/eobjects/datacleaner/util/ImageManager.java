@@ -23,11 +23,11 @@ import java.awt.Image;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import org.h2.util.SoftHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public final class ImageManager {
 
 	private static ImageManager instance = new ImageManager();
 
-	private final Map<String, Image> _cachedImageIcons = new WeakHashMap<String, Image>();
+	private final Map<String, Image> _cachedImageIcons = new SoftHashMap<String, Image>();
 
 	public static ImageManager getInstance() {
 		return instance;

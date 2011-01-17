@@ -293,8 +293,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
 				WidgetUtils.scrolleable(sourceColumnsPanel));
 		_tabbedPane.setRightClickActionListener(0, new HideTabTextActionListener(_tabbedPane, 0));
-		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"),
-				WidgetUtils.scrolleable(metadataPanel));
+		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"), metadataPanel);
 		_tabbedPane.setRightClickActionListener(1, new HideTabTextActionListener(_tabbedPane, 1));
 		_tabbedPane.addTab("Filters", imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH),
 				WidgetUtils.scrolleable(_filterListPanel));

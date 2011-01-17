@@ -347,10 +347,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			}
 		});
 
-		final JXStatusBar statusBar = new JXStatusBar();
-		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-		final JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
-		statusBar.add(_statusLabel, c1);
+		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
 		final Dimension windowSize = new Dimension(780, 630);
 

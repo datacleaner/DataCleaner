@@ -37,10 +37,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalButtonUI;
 
+import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
 
 /**
  * Factory class for various commonly used widgets in DataCleaner. Typically the
@@ -95,6 +97,15 @@ public final class WidgetFactory {
 
 	public static JButton createButton(String text, String imagePath) {
 		return createButton(text, ImageManager.getInstance().getImageIcon(imagePath));
+	}
+
+	public static JXStatusBar createStatusBar(JComponent comp) {
+		JXStatusBar statusBar = new JXStatusBar();
+		statusBar.setUI(new MetalStatusBarUI());
+		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
+		statusBar.add(comp, c1);
+		return statusBar;
 	}
 
 	public static JToolBar createToolBar() {

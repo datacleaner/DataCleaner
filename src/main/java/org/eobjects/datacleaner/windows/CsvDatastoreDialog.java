@@ -505,10 +505,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		centerPanel.add(previewTablePanel);
 		centerPanel.add(buttonPanel);
 
-		JXStatusBar statusBar = new JXStatusBar();
-		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
-		statusBar.add(_statusLabel, c1);
+		JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
 		_outerPanel.setLayout(new BorderLayout());
 		_outerPanel.add(centerPanel, BorderLayout.CENTER);

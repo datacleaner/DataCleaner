@@ -170,10 +170,7 @@ public class MainWindow extends AbstractWindow {
 
 		panel.add(scrollPane, BorderLayout.CENTER);
 
-		JXStatusBar statusBar = new JXStatusBar();
-		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
-		statusBar.add(DCLabel.bright(getWindowTitle()), c1);
+		JXStatusBar statusBar = WidgetFactory.createStatusBar(DCLabel.bright(getWindowTitle()));
 
 		panel.add(statusBar, BorderLayout.SOUTH);
 

@@ -158,9 +158,7 @@ public class AccessDatastoreDialog extends AbstractDialog {
 		centerPanel.add(formPanel);
 		centerPanel.add(buttonPanel);
 
-		JXStatusBar statusBar = new JXStatusBar();
-		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
-		statusBar.add(_statusLabel, c1);
+		JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
 		_outerPanel.setLayout(new BorderLayout());
 		_outerPanel.add(centerPanel, BorderLayout.CENTER);

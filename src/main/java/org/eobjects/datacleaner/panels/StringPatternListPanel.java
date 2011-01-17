@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
@@ -42,6 +43,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.RegexStringPatternDialog;
 import org.eobjects.datacleaner.windows.SimpleStringPatternDialog;
 
@@ -74,11 +76,11 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			public void actionPerformed(ActionEvent e) {
 				String selectedStringPatternName = (String) stringPatternsCombo.getSelectedItem();
 				selectedStringPattern = _catalog.getStringPattern(selectedStringPatternName);
-				if(_catalog.isStringPatternMutable(selectedStringPatternName)){
+				if (_catalog.isStringPatternMutable(selectedStringPatternName)) {
 					editButton.setIcon(imageManager.getImageIcon("images/actions/edit.png", 16));
 					editButton.setToolTipText("Edit or test pattern");
 					removeButton.setEnabled(true);
-				} else{
+				} else {
 					editButton.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png", 16));
 					editButton.setToolTipText("Test pattern");
 					removeButton.setEnabled(false);
@@ -93,8 +95,8 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (selectedStringPattern instanceof RegexStringPattern) {
-					new RegexStringPatternDialog(selectedStringPattern.getName(), ((RegexStringPattern) selectedStringPattern)
-							.getExpression(), _catalog).setVisible(true);
+					new RegexStringPatternDialog(selectedStringPattern.getName(),
+							((RegexStringPattern) selectedStringPattern).getExpression(), _catalog).setVisible(true);
 				} else if (selectedStringPattern instanceof SimpleStringPattern) {
 					new SimpleStringPatternDialog(selectedStringPattern.getName(),
 							((SimpleStringPattern) selectedStringPattern).getExpression(), _catalog).setVisible(true);
@@ -138,8 +140,8 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 					}
 				});
 
-				JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern", imageManager
-						.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
+				JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern",
+						imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
 				simpleStringPatternMenuItem.setEnabled(true);
 				simpleStringPatternMenuItem.addActionListener(new ActionListener() {
 					@Override
@@ -155,6 +157,12 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			}
 		});
 		toolBar.add(addButton);
+		toolBar.add(Box.createHorizontalGlue());
+		toolBar.add(new HelpIcon(
+				"<b>String patterns</b><br>"
+						+ "String patterns are used for matching strings against representational patterns that describe the structure of a string.<br>"
+						+ "String patterns can be used throughout DataCleaner for matching, discovery and categorization."));
+		toolBar.add(Box.createHorizontalStrut(4));
 
 		updateComponents();
 

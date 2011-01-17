@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -44,6 +45,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.DatastoreSynonymCatalogDialog;
 import org.eobjects.datacleaner.windows.TextFileSynonymCatalogDialog;
 
@@ -110,6 +112,12 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			}
 		});
 		toolBar.add(addButton);
+		toolBar.add(Box.createHorizontalGlue());
+		toolBar.add(new HelpIcon("<b>Synonyms (Synonym catalogs)</b><br>"
+				+ "A synonym catalog is reference data used for replacing odd values with correct ones. "
+				+ "A synonym in this sense can also be eg. a standardized value or a code for a given entity.<br>"
+				+ "Synonyms can be used throughout DataCleaner for matching, replacing values and more."));
+		toolBar.add(Box.createHorizontalStrut(4));
 
 		updateComponents();
 

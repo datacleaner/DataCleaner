@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -44,6 +45,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
 import org.eobjects.datacleaner.windows.SimpleDictionaryDialog;
 import org.eobjects.datacleaner.windows.TextFileDictionaryDialog;
@@ -108,6 +110,13 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			}
 		});
 		toolBar.add(addButton);
+
+		toolBar.add(Box.createHorizontalGlue());
+		toolBar.add(new HelpIcon("<b>Dictionaries</b><br>"
+				+ "A dictionary is a set of values that grouped together represent a named set of values,"
+				+ "for example valid values or blacklisted values for a given type of data.<br>"
+				+ "Dictionaries can be used throughout DataCleaner for filtering, matching and more."));
+		toolBar.add(Box.createHorizontalStrut(4));
 
 		updateComponents();
 

@@ -65,6 +65,7 @@ import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.FilterListPanel;
+import org.eobjects.datacleaner.panels.MetadataPanel;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
@@ -287,7 +288,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		schemaTreePanel.add(schemaTreeScroll, BorderLayout.CENTER);
 
 		final SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
-		final DCPanel metadataPanel = new DCPanel(imageManager.getImage("images/window/metadata-tab-background.png"), 95, 95);
+		final MetadataPanel metadataPanel = new MetadataPanel(_analysisJobBuilder);
 
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
 				WidgetUtils.scrolleable(sourceColumnsPanel));

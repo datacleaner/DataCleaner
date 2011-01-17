@@ -59,6 +59,7 @@ import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.TimeInterval;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -284,7 +285,7 @@ public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnaly
 		LookAndFeelManager.getInstance().init();
 
 		// run a small job
-		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File("conf.xml"));
+		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
 		AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 

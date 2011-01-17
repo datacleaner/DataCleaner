@@ -26,6 +26,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
@@ -45,7 +46,7 @@ public final class Main {
 
 		// load the configuration file
 		JaxbConfigurationReader configurationReader = new JaxbConfigurationReader();
-		AnalyzerBeansConfiguration c = configurationReader.create(new File("conf.xml"));
+		AnalyzerBeansConfiguration c = configurationReader.create(new File(DataCleanerHome.get(), "conf.xml"));
 
 		// make the configuration mutable
 		MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog());

@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.OutputWriter;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public final class DatastoreOutputWriterFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
-	private static final File DEFAULT_OUTPUT_DIRECTORY = new File("temp");
+	private static final File DEFAULT_OUTPUT_DIRECTORY = new File(DataCleanerHome.get(), "temp");
 	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 
 	public static OutputWriter getWriter(String datastoreName, InputColumn<?>... columns) {

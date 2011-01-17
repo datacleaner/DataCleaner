@@ -65,6 +65,7 @@ import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
@@ -194,7 +195,8 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		drillToOverview(drillableValuesTable);
 
 		// chart for display of the dataset
-		final JFreeChart chart = ChartFactory.createPieChart3D("Value distribution of " + columnName, _dataset, false, true, false);
+		final JFreeChart chart = ChartFactory.createPieChart3D("Value distribution of " + columnName, _dataset, false, true,
+				false);
 
 		// code-block for tweaking style and coloring of chart
 		{
@@ -272,7 +274,6 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 				}
 			}
 		});
-
 
 		final DCPanel leftPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHTEST);
 		leftPanel.setLayout(new BorderLayout());
@@ -492,7 +493,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		LookAndFeelManager.getInstance().init();
 
 		// run a small job
-		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File("conf.xml"));
+		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
 		AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
@@ -515,7 +516,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			window.addRenderedResult(renderedResult);
 		}
 		window.repaint();
-		
+
 		window.setPreferredSize(new Dimension(800, 600));
 
 		window.setVisible(true);

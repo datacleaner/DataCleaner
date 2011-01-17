@@ -5,9 +5,20 @@
 	<artifactId>DataCleaner</artifactId>
 	<version>2.0-SNAPSHOT</version>
 	<name>DataCleaner</name>
+	<url>http://datacleaner.eobjects.org</url>
+	<description>
+		DataCleaner is the premier open source data profiling application. Use it to
+		discover, analyze and diagnose the state of your data. DataCleaner works with
+		almost any kind of data, eg. CSV files, databases, Excel spreadsheets and more.
+	</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<mainClass>org.eobjects.datacleaner.Main</mainClass>
 	</properties>
+	<organization>
+		<name>eobjects.org</name>
+		<url>http://eobjects.org</url>
+	</organization>
 	<developers>
 		<developer>
 			<name>Kasper Sørensen</name>
@@ -50,7 +61,7 @@
 							<addDefaultSpecificationEntries>true
 							</addDefaultSpecificationEntries>
 							<classpathPrefix>lib</classpathPrefix>
-							<mainClass>org.eobjects.datacleaner.Main</mainClass>
+							<mainClass>${mainClass}</mainClass>
 						</manifest>
 						<manifestEntries>
 							<SplashScreen-Image>images/splash.png</SplashScreen-Image>
@@ -100,6 +111,20 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo.webstart</groupId>
+				<artifactId>webstart-maven-plugin</artifactId>
+				<version>1.0-beta-1</version>
+				<configuration>
+					<templateFilename>clientTemplate.vm</templateFilename>
+					<jnlp>
+						<outputFile>DataCleaner.jnlp</outputFile>
+						<mainClass>${mainClass}</mainClass>
+					</jnlp>
+					<outputJarVersions>false</outputJarVersions>
+					<verbose>true</verbose>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -117,6 +142,21 @@
 			<groupId>org.swinglabs</groupId>
 			<artifactId>swingx</artifactId>
 			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-visualization</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-graph-impl</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jung</groupId>
+			<artifactId>jung-io</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.ibm.icu</groupId>

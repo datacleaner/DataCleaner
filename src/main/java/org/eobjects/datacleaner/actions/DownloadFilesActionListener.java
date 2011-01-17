@@ -35,6 +35,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.HttpUtils;
 import org.eobjects.datacleaner.windows.DownloadProgressWindow;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 				throw new IllegalArgumentException("urls[" + i + "] cannot be null");
 			}
 			String filename = url.substring(url.lastIndexOf('/') + 1);
-			_files[i] = new File(filename);
+			_files[i] = new File(DataCleanerHome.get(), filename);
 		}
 		_downloadProgressWindow = new DownloadProgressWindow(this);
 	}

@@ -40,7 +40,7 @@ public class UserPreferences implements Serializable {
 
 	private static final long serialVersionUID = 4L;
 
-	private static final File userPreferencesFile = new File("userpreferences.dat");
+	private static final File userPreferencesFile = new File(DataCleanerHome.get(), "userpreferences.dat");
 	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
 
 	private static UserPreferences instance;
@@ -58,11 +58,11 @@ public class UserPreferences implements Serializable {
 	private boolean displayDictionariesTaskPane = false;
 	private boolean displaySynonymCatalogsTaskPane = false;
 	private boolean displayStringPatternsTaskPane = false;
-	
+
 	private List<File> recentJobFiles = new ArrayList<File>();
-	private File datastoreDirectory = new File(".");
-	private File configuredFileDirectory = new File(".");
-	private File analysisJobDirectory = new File(".");
+	private File datastoreDirectory = DataCleanerHome.get();
+	private File configuredFileDirectory = DataCleanerHome.get();
+	private File analysisJobDirectory = DataCleanerHome.get();
 
 	public static UserPreferences getInstance() {
 		if (instance == null) {

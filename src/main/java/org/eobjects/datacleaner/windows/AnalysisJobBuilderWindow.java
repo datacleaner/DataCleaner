@@ -32,8 +32,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -69,6 +71,7 @@ import org.eobjects.datacleaner.panels.MetadataPanel;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
+import org.eobjects.datacleaner.panels.VisualizeExecutionFlowPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -267,8 +270,32 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		addAnalyzerButton.setFocusPainted(false);
 		runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		runButton.setFocusPainted(false);
+
+		final Image visualizeImage = imageManager.getImage("images/actions/visualize.png");
+		final ImageIcon visualizeIcon = new ImageIcon(visualizeImage);
+		final JButton visualizeButton = new JButton(visualizeIcon);
+		visualizeButton.setFocusPainted(false);
+		visualizeButton.setToolTipText("Visualize execution flow");
+		visualizeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VisualizeExecutionFlowPanel visualization = new VisualizeExecutionFlowPanel(_analysisJobBuilder);
+
+				JFrame frame = new JFrame();
+				frame.setTitle("Execution flow | DataCleaner");
+				frame.setIconImage(visualizeImage);
+				frame.getContentPane().add(visualization);
+				frame.setSize(750, 400);
+				frame.pack();
+				WidgetUtils.centerOnScreen(frame);
+
+				frame.setVisible(true);
+			}
+		});
+
 		final JToolBar toolBar = WidgetFactory.createToolBar();
 		toolBar.add(saveButton);
+		toolBar.add(visualizeButton);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(addTransformerButton);
 		toolBar.add(addAnalyzerButton);

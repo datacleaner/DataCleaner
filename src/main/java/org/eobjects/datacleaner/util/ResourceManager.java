@@ -50,22 +50,13 @@ public final class ResourceManager {
 		}
 
 		try {
-			Enumeration<URL> resources = ClassLoader.getSystemResources(path);
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			Enumeration<URL> resources = classLoader.getResources(path);
 			while (resources.hasMoreElements()) {
 				result.add(resources.nextElement());
 			}
 		} catch (IOException e) {
-			logger.error("IOException when investigating system resources", e);
-		}
-
-		// in Java Web Start mode the getSystemResource will return null
-		try {
-			Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(path);
-			while (resources.hasMoreElements()) {
-				result.add(resources.nextElement());
-			}
-		} catch (IOException e) {
-			logger.error("IOException when investigating context classloader resources", e);
+			logger.error("IOException when investigating classloader resources", e);
 		}
 
 		// when running in eclipse this file-based hack is nescesary

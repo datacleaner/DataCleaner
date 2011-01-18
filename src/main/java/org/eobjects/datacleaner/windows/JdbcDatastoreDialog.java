@@ -86,7 +86,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
 
-		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getInstalledDatabaseDrivers();
+		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getInstalledWorkingDatabaseDrivers();
 		final Object[] comboBoxModel = new Object[databaseDrivers.size() + 3];
 		comboBoxModel[0] = "";
 		for (int i = 0; i < databaseDrivers.size(); i++) {

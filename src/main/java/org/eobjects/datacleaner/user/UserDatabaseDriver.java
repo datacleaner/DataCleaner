@@ -30,6 +30,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.datacleaner.database.DatabaseDriverState;
 import org.eobjects.datacleaner.database.DriverWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,24 +75,31 @@ public final class UserDatabaseDriver implements Serializable {
 				urls[i] = url;
 			}
 
-			URLClassLoader classLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+			final ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
+
+			// removing the security manager is nescesary for classes in
+			// external jar files to have privileges to do eg. system property
+			// lookups etc.
+			System.setSecurityManager(null);
+
+			final URLClassLoader driverClassLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
 				@Override
 				public URLClassLoader run() {
-					return new URLClassLoader(urls, UserDatabaseDriver.class.getClassLoader());
+					return new URLClassLoader(urls, parentClassLoader);
 				}
 			});
 
-			Class<?> loadedClass = Class.forName(_driverClassName, true, classLoader);
+			Class<?> loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
 			logger.info("Loaded class: {}", loadedClass.getName());
 
 			if (ReflectionUtils.is(loadedClass, Driver.class)) {
 				_driverInstance = (Driver) loadedClass.newInstance();
 				_registeredDriver = new DriverWrapper(_driverInstance);
 				DriverManager.registerDriver(_registeredDriver);
-				_loaded = true;
 			} else {
 				throw new IllegalStateException("Class is not a Driver class: " + _driverClassName);
 			}
+			_loaded = true;
 			return this;
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
@@ -111,5 +119,12 @@ public final class UserDatabaseDriver implements Serializable {
 
 	public boolean isLoaded() {
 		return _loaded;
+	}
+
+	public DatabaseDriverState getState() {
+		if (_loaded) {
+			return DatabaseDriverState.INSTALLED_WORKING;
+		}
+		return DatabaseDriverState.INSTALLED_NOT_WORKING;
 	}
 }

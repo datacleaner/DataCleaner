@@ -54,7 +54,8 @@ public class DatabaseDriverCatalog implements Serializable {
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/org/firebirdsql/jdbc/jaybird/2.1.6/jaybird-2.1.6.jar",
 						"http://mirrors.ibiblio.org/pub/mirrors/maven2/geronimo-spec/geronimo-spec-j2ee/1.4-rc4/geronimo-spec-j2ee-1.4-rc4.jar" },
 				new String[] { "jdbc:firebirdsql:<hostname>:<path/to/database>.fdb" });
-		add("SAP DB", "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB", null, "jdbc:sapdb://<hostname>/<database>");
+		add("SAP DB", "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB", null,
+				"jdbc:sapdb://<hostname>/<database>");
 		add("PostgreSQL",
 				"images/datastore-types/databases/postgresql.png",
 				"org.postgresql.Driver",
@@ -101,14 +102,17 @@ public class DatabaseDriverCatalog implements Serializable {
 		return _databaseDrivers;
 	}
 
-	public List<DatabaseDriverDescriptor> getInstalledDatabaseDrivers() {
+	public List<DatabaseDriverDescriptor> getInstalledWorkingDatabaseDrivers() {
 		return CollectionUtils.filter(_databaseDrivers, new Function<DatabaseDriverDescriptor, Boolean>() {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public Boolean run(DatabaseDriverDescriptor input) throws Exception {
-				return isInstalled(input);
+				if (getState(input) == DatabaseDriverState.INSTALLED_WORKING) {
+					return true;
+				}
+				return false;
 			}
 		});
 	}
@@ -130,21 +134,22 @@ public class DatabaseDriverCatalog implements Serializable {
 		_databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, urls, urlTemplates));
 	}
 
-	public boolean isInstalled(DatabaseDriverDescriptor databaseDescriptor) {
+	public DatabaseDriverState getState(DatabaseDriverDescriptor databaseDescriptor) {
 		String driverClassName = databaseDescriptor.getDriverClassName();
 		List<UserDatabaseDriver> drivers = UserPreferences.getInstance().getDatabaseDrivers();
 		for (UserDatabaseDriver userDatabaseDriver : drivers) {
 			if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
-				return true;
+				return userDatabaseDriver.getState();
 			}
 		}
 		try {
 			Class.forName(driverClassName);
-			return true;
+			return DatabaseDriverState.INSTALLED_WORKING;
 		} catch (ClassNotFoundException e) {
-			// do nothing
+			return DatabaseDriverState.NOT_INSTALLED;
+		} catch (Exception e) {
+			return DatabaseDriverState.INSTALLED_NOT_WORKING;
 		}
-		return false;
 	}
 
 	public String getIconImagePath(DatabaseDriverDescriptor dd) {

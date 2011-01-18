@@ -76,7 +76,11 @@ public class UserPreferences implements Serializable {
 
 							List<UserDatabaseDriver> installedDatabaseDrivers = instance.getDatabaseDrivers();
 							for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
-								userDatabaseDriver.loadDriver();
+								try {
+									userDatabaseDriver.loadDriver();
+								} catch (IllegalStateException e) {
+									logger.error("Could not load database driver", e);
+								}
 							}
 
 						} catch (InvalidClassException e) {

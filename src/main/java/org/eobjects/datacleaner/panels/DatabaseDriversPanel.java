@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
+import org.eobjects.datacleaner.database.DatabaseDriverState;
 import org.eobjects.datacleaner.user.UserDatabaseDriver;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -108,13 +109,14 @@ public class DatabaseDriversPanel extends DCPanel {
 		final DCTable table = new DCTable(tableModel);
 
 		final Icon validIcon = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
+		final Icon invalidIcon = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
 
 		int row = 0;
 		for (final DatabaseDriverDescriptor dd : databaseDrivers) {
-			String driverClassName = dd.getDriverClassName();
-			String displayName = dd.getDisplayName();
+			final String driverClassName = dd.getDriverClassName();
+			final String displayName = dd.getDisplayName();
 
-			Icon driverIcon = imageManager.getImageIcon(_databaseDriverCatalog.getIconImagePath(dd),
+			final Icon driverIcon = imageManager.getImageIcon(_databaseDriverCatalog.getIconImagePath(dd),
 					IconUtils.ICON_SIZE_SMALL);
 
 			tableModel.setValueAt(driverIcon, row, 0);
@@ -123,14 +125,16 @@ public class DatabaseDriversPanel extends DCPanel {
 			tableModel.setValueAt("", row, 3);
 			tableModel.setValueAt("", row, 4);
 
-			final int installedRow = row;
 			final int installedCol = 3;
 
-			if (_databaseDriverCatalog.isInstalled(dd)) {
-				tableModel.setValueAt(validIcon, installedRow, installedCol);
-			} else {
-				String[] downloadUrl = dd.getDownloadUrls();
-				if (downloadUrl != null) {
+			final DatabaseDriverState state = _databaseDriverCatalog.getState(dd);
+			if (state == DatabaseDriverState.INSTALLED_WORKING) {
+				tableModel.setValueAt(validIcon, row, installedCol);
+			} else if (state == DatabaseDriverState.INSTALLED_NOT_WORKING) {
+				tableModel.setValueAt(invalidIcon, row, installedCol);
+			} else if (state == DatabaseDriverState.NOT_INSTALLED) {
+				final String[] downloadUrls = dd.getDownloadUrls();
+				if (downloadUrls != null) {
 					final DCPanel buttonPanel = new DCPanel();
 					buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
 
@@ -145,16 +149,22 @@ public class DatabaseDriversPanel extends DCPanel {
 
 									logger.info("Registering and loading driver '{}' in files '{}'", driverClassName, files);
 
-									UserDatabaseDriver userDatabaseDriver = new UserDatabaseDriver(files, driverClassName);
+									final UserDatabaseDriver userDatabaseDriver = new UserDatabaseDriver(files,
+											driverClassName);
 									userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
 
-									userDatabaseDriver.loadDriver();
+									try {
+										userDatabaseDriver.loadDriver();
+									} catch (IllegalStateException e) {
+										WidgetUtils.showErrorMessage("Error while loading driver",
+												"Error message: " + e.getMessage(), e);
+									}
 									updateComponents();
 								}
 							}));
 					buttonPanel.add(downloadButton);
 
-					tableModel.setValueAt(buttonPanel, installedRow, installedCol);
+					tableModel.setValueAt(buttonPanel, row, installedCol);
 				}
 			}
 

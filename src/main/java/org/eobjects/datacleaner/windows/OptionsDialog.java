@@ -74,6 +74,7 @@ public class OptionsDialog extends AbstractWindow {
 		_tabbedPane.setUnclosableTab(1);
 		_tabbedPane.setUnclosableTab(2);
 		_tabbedPane.setUnclosableTab(3);
+		_tabbedPane.setUnclosableTab(4);
 	}
 
 	public void selectDatabaseDriversTab() {

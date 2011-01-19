@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -190,20 +191,22 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	public void dispose() {
-		UserPreferences.getInstance().save();
-
-		// garbage collect and clean up
-		// TODO: Don't do this :) But offer a panel in the options to monitor
-		// memory and do a GC.
-		System.gc();
-		System.runFinalization();
-
-		System.exit(0);
+		showExitDialog();
 	}
 
 	@Override
 	protected boolean isWindowResizable() {
 		return true;
+	}
+
+	public static void showExitDialog() {
+		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
+				JOptionPane.OK_CANCEL_OPTION);
+		
+		if (confirmation == JOptionPane.OK_OPTION) {
+			UserPreferences.getInstance().save();
+			System.exit(0);
+		}
 	}
 
 	private JMenuBar getWindowMenuBar() {
@@ -214,7 +217,7 @@ public class MainWindow extends AbstractWindow {
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				windowClosing(null);
+				showExitDialog();
 			}
 		});
 

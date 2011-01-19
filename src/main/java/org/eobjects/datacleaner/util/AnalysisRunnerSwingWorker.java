@@ -37,10 +37,11 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.windows.ResultWindow;
+import org.eobjects.metamodel.schema.Table;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.eobjects.metamodel.schema.Table;
 
 public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultFuture, Task> implements AnalysisListener {
 
@@ -68,7 +69,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 			throw e;
 		}
 	}
-	
+
 	@Override
 	protected void process(List<Task> chunks) {
 		for (Task task : chunks) {
@@ -86,7 +87,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 		publish(new Task() {
 			@Override
 			public void execute() throws Exception {
-				_progressInformationPanel.addUserLog("Job begin");
+				String now = new DateTime().toString(DateTimeFormat.fullTime());
+				_progressInformationPanel.addUserLog("Job begin (" + now + ")");
 			}
 		});
 	}
@@ -96,7 +98,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 		publish(new Task() {
 			@Override
 			public void execute() throws Exception {
-				_progressInformationPanel.addUserLog("Job success");
+				String now = new DateTime().toString(DateTimeFormat.fullTime());
+				_progressInformationPanel.addUserLog("Job success (" + now + ")");
 			}
 		});
 	}

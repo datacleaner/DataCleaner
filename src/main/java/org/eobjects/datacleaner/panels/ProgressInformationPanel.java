@@ -20,12 +20,15 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
@@ -47,6 +50,8 @@ public class ProgressInformationPanel extends DCPanel {
 	private final DCPanel _progressBarPanel;
 	private final Map<Table, DCProgressBar> _progressBars = new IdentityHashMap<Table, DCProgressBar>();
 	private final JScrollPane _textAreaScroll;
+	private volatile boolean _verboseLogging = false;
+	private final Map<Table, Integer> _verboseCounter = new IdentityHashMap<Table, Integer>();
 
 	public ProgressInformationPanel() {
 		super();
@@ -65,7 +70,16 @@ public class ProgressInformationPanel extends DCPanel {
 		splitPane.add(WidgetUtils.scrolleable(_progressBarPanel));
 		splitPane.add(_textAreaScroll);
 
+		final JCheckBox verboseCheckBox = new JCheckBox("Verbose logging?");
+		verboseCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_verboseLogging = verboseCheckBox.isSelected();
+			}
+		});
+
 		add(splitPane, BorderLayout.CENTER);
+		add(verboseCheckBox, BorderLayout.SOUTH);
 	}
 
 	public void addUserLog(String string) {
@@ -116,6 +130,23 @@ public class ProgressInformationPanel extends DCPanel {
 		JProgressBar progressBar = _progressBars.get(table);
 		if (progressBar.getValue() < currentRow) {
 			progressBar.setValue(currentRow);
+		}
+
+		if (_verboseLogging) {
+			boolean log = false;
+			synchronized (_verboseCounter) {
+				Integer previousCount = _verboseCounter.get(table);
+				if (previousCount == null) {
+					previousCount = 0;
+				}
+				if (currentRow - previousCount > 1000) {
+					_verboseCounter.put(table, currentRow);
+					log = true;
+				}
+			}
+			if (log) {
+				addUserLog("Progress for table '" + table.getName() + "': Row no. " + currentRow);
+			}
 		}
 	}
 }

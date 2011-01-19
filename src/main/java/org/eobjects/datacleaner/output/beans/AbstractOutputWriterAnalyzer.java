@@ -64,7 +64,12 @@ public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnaly
 			String categoryName);
 
 	@Override
-	public void run(InputRow row, int distinctCount) {
+	public final void run(InputRow row, int distinctCount) {
+		writeRow(row, distinctCount);
+		rowCount.incrementAndGet();
+	}
+	
+	protected void writeRow(InputRow row, int distinctCount) {
 		OutputRow outputRow = getOutputWriter().createRow();
 		for (InputColumn<?> col : columns) {
 			@SuppressWarnings("unchecked")
@@ -72,7 +77,6 @@ public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnaly
 			outputRow.setValue(objectCol, row.getValue(col));
 		}
 		outputRow.write();
-		rowCount.incrementAndGet();
 	}
 
 	public void setColumns(InputColumn<?>[] columns) {

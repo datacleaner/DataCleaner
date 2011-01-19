@@ -24,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.Connection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -35,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
@@ -258,15 +260,28 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 		row++;
 
-		JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
+		final JButton testButton = WidgetFactory.createButton("Test connection", "images/actions/refresh.png");
+		testButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JdbcDatastore datastore = createDatastore();
+				try {
+					Connection connection = datastore.createConnection();
+					connection.close();
+					JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
+				} catch (Exception e) {
+					WidgetUtils.showErrorMessage("Could not establish connection",
+							"An error occurred while creating connection:\n" + e.getMessage(), e);
+				}
+			}
+		});
+
+		final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String datastoreName = _datastoreNameTextField.getText();
-				String driverClass = _driverClassNameTextField.getText();
-
-				JdbcDatastore datastore = new JdbcDatastore(datastoreName, _connectionStringTextField.getText(),
-						driverClass, _usernameTextField.getText(), new String(_passwordField.getPassword()));
+				JdbcDatastore datastore = createDatastore();
 
 				if (_originalDatastore != null) {
 					_catalog.removeDatastore(_originalDatastore);
@@ -277,12 +292,23 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		});
 
 		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
+		buttonPanel.add(testButton);
 		buttonPanel.add(saveButton);
 
 		WidgetUtils.addToGridBag(buttonPanel, panel, 1, row, 2, 1);
 
 		return panel;
+	}
+
+	private JdbcDatastore createDatastore() {
+		final String datastoreName = _datastoreNameTextField.getText();
+		final String driverClass = _driverClassNameTextField.getText();
+
+		JdbcDatastore datastore = new JdbcDatastore(datastoreName, _connectionStringTextField.getText(), driverClass,
+				_usernameTextField.getText(), new String(_passwordField.getPassword()));
+
+		return datastore;
 	}
 
 	@Override

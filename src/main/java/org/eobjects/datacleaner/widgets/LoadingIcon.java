@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.widgets;
 
+import java.awt.Dimension;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -34,11 +36,17 @@ public class LoadingIcon extends JLabel {
 		super();
 		setIcon(icon);
 		icon.setImageObserver(this);
+		setHorizontalAlignment(JLabel.CENTER);
 	}
 
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
 		icon.setImageObserver(null);
+	}
+
+	public LoadingIcon setPreferredSize(int w, int h) {
+		setPreferredSize(new Dimension(w, h));
+		return this;
 	}
 }

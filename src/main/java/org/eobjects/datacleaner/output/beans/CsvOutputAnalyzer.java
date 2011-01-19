@@ -25,11 +25,8 @@ import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.FileProperty;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.eobjects.datacleaner.user.DataCleanerHome;
@@ -73,17 +70,6 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 			}
 		}
 		return _outputWriter;
-	}
-
-	@Override
-	public void run(InputRow row, int distinctCount) {
-		OutputRow outputRow = getOutputWriter().createRow();
-		for (InputColumn<?> col : columns) {
-			@SuppressWarnings("unchecked")
-			InputColumn<Object> objectCol = (InputColumn<Object>) col;
-			outputRow.setValue(objectCol, row.getValue(col));
-		}
-		outputRow.write();
 	}
 
 	@Override

@@ -39,6 +39,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -78,6 +79,7 @@ import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
@@ -108,6 +110,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final CloseableTabbedPane _tabbedPane;
 	private final FilterListPanel _filterListPanel;
 	private final DCLabel _statusLabel = DCLabel.bright("");
+	private final DCPanel _leftPanel = new DCPanel();
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
 	private String _jobFilename;
@@ -302,17 +305,41 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(runButton);
 
-		final SchemaTree schemaTree = new SchemaTree(_datastore, _analysisJobBuilder);
-
 		final Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
-		final JScrollPane schemaTreeScroll = WidgetUtils.scrolleable(schemaTree);
-		schemaTreeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
 		final DCPanel schemaTreePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
 				WidgetUtils.BG_COLOR_BRIGHT);
 		schemaTreePanel.setLayout(new BorderLayout());
 		schemaTreePanel.setBorder(WidgetUtils.BORDER_WIDE);
-		schemaTreePanel.add(schemaTreeScroll, BorderLayout.CENTER);
+		schemaTreePanel.add(new LoadingIcon().setPreferredSize(150, 150), BorderLayout.CENTER);
+
+		// load the schema tree in the background because it will retrieve
+		// metadata about the datastore (might take several seconds)
+		new SwingWorker<SchemaTree, Integer>() {
+			@Override
+			protected SchemaTree doInBackground() throws Exception {
+				return new SchemaTree(_datastore, _analysisJobBuilder);
+			}
+
+			protected void done() {
+				try {
+					SchemaTree schemaTree = get();
+					final JScrollPane schemaTreeScroll = WidgetUtils.scrolleable(schemaTree);
+					schemaTreeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+					schemaTree.addComponentListener(new ComponentAdapter() {
+						@Override
+						public void componentResized(ComponentEvent e) {
+							_leftPanel.updateUI();
+						}
+					});
+					schemaTreePanel.removeAll();
+					schemaTreePanel.add(schemaTreeScroll, BorderLayout.CENTER);
+					_leftPanel.updateUI();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			};
+
+		}.execute();
 
 		final SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
 		final MetadataPanel metadataPanel = new MetadataPanel(_analysisJobBuilder);
@@ -362,17 +389,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		collapseButtonPanel.setBorder(null);
 		collapseButtonPanel.add(toggleTreeViewButton);
 
-		final DCPanel leftPanel = new DCPanel();
-		leftPanel.setLayout(new BorderLayout());
-		leftPanel.add(collapsibleTreePane, BorderLayout.CENTER);
-		leftPanel.add(collapseButtonPanel, BorderLayout.EAST);
-
-		schemaTree.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				leftPanel.updateUI();
-			}
-		});
+		_leftPanel.setLayout(new BorderLayout());
+		_leftPanel.add(collapsibleTreePane, BorderLayout.CENTER);
+		_leftPanel.add(collapseButtonPanel, BorderLayout.EAST);
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
@@ -387,7 +406,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		panel.setSize(windowSize);
 		panel.setPreferredSize(windowSize);
 		panel.add(toolBarPanel, BorderLayout.NORTH);
-		panel.add(leftPanel, BorderLayout.WEST);
+		panel.add(_leftPanel, BorderLayout.WEST);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 		panel.add(statusBar, BorderLayout.SOUTH);
 

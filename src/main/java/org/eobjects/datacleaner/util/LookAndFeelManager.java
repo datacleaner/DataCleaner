@@ -70,7 +70,7 @@ public final class LookAndFeelManager {
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-				
+
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
@@ -119,6 +119,10 @@ public final class LookAndFeelManager {
 		UIManager.put("TableHeader.focusCellBackground", WidgetUtils.BG_COLOR_LESS_DARK);
 		UIManager.put("TableHeader.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TableHeader.cellBorder", new LineBorder(WidgetUtils.BG_COLOR_LESS_DARK));
+
+		// titled borders
+		UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER);
+		UIManager.put("TitledBorder.titleColor", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 
 		// tool tip colors
 		UIManager.put("ToolTip.background", WidgetUtils.BG_COLOR_DARK);

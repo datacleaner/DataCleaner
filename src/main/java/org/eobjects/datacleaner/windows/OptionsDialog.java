@@ -52,6 +52,8 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
+import org.h2.util.StringUtils;
+import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class OptionsDialog extends AbstractWindow {
@@ -87,8 +89,6 @@ public class OptionsDialog extends AbstractWindow {
 	}
 
 	private DCPanel getGeneralTab() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		panel.setLayout(new VerticalLayout(4));
 
 		final JCheckBox welcomeDialogShownOnStartupCheckBox = new JCheckBox("Display welcome dialog on start-up?");
 		welcomeDialogShownOnStartupCheckBox.setSelected(userPreferences.isWelcomeDialogShownOnStartup());
@@ -99,7 +99,35 @@ public class OptionsDialog extends AbstractWindow {
 			}
 		});
 
-		panel.add(welcomeDialogShownOnStartupCheckBox);
+		final DCPanel userInterfacePanel = new DCPanel().setTitledBorder("User interface");
+		userInterfacePanel.add(welcomeDialogShownOnStartupCheckBox);
+
+		final String username = userPreferences.getUsername();
+
+		final JXTextField usernameTextField = WidgetFactory.createTextField();
+		usernameTextField.setText(username);
+		usernameTextField.setEnabled(false);
+
+		final JButton logoutButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		logoutButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userPreferences.setUsername(null);
+				usernameTextField.setText("");
+				logoutButton.setEnabled(false);
+			}
+		});
+		logoutButton.setEnabled(!StringUtils.isNullOrEmpty(username));
+
+		final DCPanel userRegistrationPanel = new DCPanel().setTitledBorder("User registration");
+		userRegistrationPanel.add(DCLabel.dark("Logged in as:"));
+		userRegistrationPanel.add(usernameTextField);
+		userRegistrationPanel.add(logoutButton);
+
+		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		panel.setLayout(new VerticalLayout(4));
+		panel.add(userInterfacePanel);
+		panel.add(userRegistrationPanel);
 
 		return panel;
 	}

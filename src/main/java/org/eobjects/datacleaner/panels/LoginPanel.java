@@ -85,7 +85,7 @@ public class LoginPanel extends JPanel {
 		super();
 		_authenticationService = authenticationService;
 
-		if (userPreferences.getUsername() == null) {
+		if (StringUtils.isNullOrEmpty(userPreferences.getUsername())) {
 			_state = LoginState.NOT_LOGGED_IN;
 		} else {
 			_state = LoginState.LOGGED_IN;
@@ -96,7 +96,7 @@ public class LoginPanel extends JPanel {
 
 		updateContents();
 
-		setSize(350, 340);
+		setSize(350, 370);
 		setLocation(-360, 145);
 	}
 
@@ -212,7 +212,7 @@ public class LoginPanel extends JPanel {
 
 			y++;
 			WidgetUtils.addToGridBag(Box.createVerticalStrut(4), this, 0, y, 2, 1);
-			
+
 			y++;
 			final JLabel usernameLabel = new JLabel("Username:");
 			usernameLabel.setForeground(getForeground());

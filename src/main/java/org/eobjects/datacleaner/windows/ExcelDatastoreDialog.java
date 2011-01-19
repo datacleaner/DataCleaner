@@ -53,6 +53,7 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
+	private final ImageManager imageManager = ImageManager.getInstance();
 	private final UserPreferences _userPreferences = UserPreferences.getInstance();
 	private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
 	private final JXTextField _datastoreNameField;
@@ -60,10 +61,16 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 	private final DCLabel _statusLabel;
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
+	private final ExcelDatastore _originalDatastore;
 
 	public ExcelDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+		this(null, mutableDatastoreCatalog);
+	}
+
+	public ExcelDatastoreDialog(ExcelDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
+		_originalDatastore = originalDatastore;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 
 		_filenameField = new FilenameTextField(_userPreferences.getDatastoreDirectory(), true);
@@ -97,7 +104,14 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 		_statusLabel = DCLabel.bright("Please select file");
 
 		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/excel.png");
-		_addDatastoreButton.setEnabled(false);
+
+		if (_originalDatastore != null) {
+			_datastoreNameField.setText(_originalDatastore.getName());
+			_datastoreNameField.setEnabled(false);
+			_filenameField.setFilename(_originalDatastore.getFilename());
+		}
+
+		updateStatus();
 	}
 
 	@Override
@@ -106,24 +120,37 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 	}
 
 	private void updateStatus() {
-		ImageManager imageManager = ImageManager.getInstance();
+		final String filename = _filenameField.getFilename();
+		if (StringUtils.isNullOrEmpty(filename)) {
+			_statusLabel.setText("Please enter or select a filename");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
+			return;
+		}
 
-		File file = new File(_filenameField.getFilename());
-		if (file.exists()) {
-			if (file.isFile()) {
-				_statusLabel.setText("Excel spreadsheet ready");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
-				_addDatastoreButton.setEnabled(true);
-			} else {
-				_statusLabel.setText("Not a valid file!");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-				_addDatastoreButton.setEnabled(false);
-			}
-		} else {
+		final String datastoreName = _datastoreNameField.getText();
+		if (StringUtils.isNullOrEmpty(datastoreName)) {
+			_statusLabel.setText("Please enter a datastore name");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
+			return;
+		}
+
+		final File file = new File(filename);
+		if (!file.exists()) {
 			_statusLabel.setText("The file does not exist!");
 			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
 			_addDatastoreButton.setEnabled(false);
 		}
+		if (!file.isFile()) {
+			_statusLabel.setText("Not a valid file!");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
+		}
+
+		_statusLabel.setText("Excel spreadsheet ready");
+		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+		_addDatastoreButton.setEnabled(true);
 
 	}
 
@@ -149,6 +176,11 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Datastore datastore = new ExcelDatastore(_datastoreNameField.getText(), _filenameField.getFilename());
+
+				if (_originalDatastore != null) {
+					_mutableDatastoreCatalog.removeDatastore(_originalDatastore);
+				}
+
 				_mutableDatastoreCatalog.addDatastore(datastore);
 				dispose();
 			}

@@ -53,6 +53,7 @@ public class AccessDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
+	private final ImageManager imageManager = ImageManager.getInstance();
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
 	private final JXTextField _datastoreNameField;
@@ -60,6 +61,7 @@ public class AccessDatastoreDialog extends AbstractDialog {
 	private final JLabel _statusLabel;
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
+	private final AccessDatastore _originalDatastore;
 
 	@Override
 	protected String getBannerTitle() {
@@ -67,10 +69,15 @@ public class AccessDatastoreDialog extends AbstractDialog {
 	}
 
 	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+		this(null, mutableDatastoreCatalog);
+	}
+
+	public AccessDatastoreDialog(AccessDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super();
+		_originalDatastore = originalDatastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
-		_statusLabel = new JLabel("Please select file");
+		_statusLabel = DCLabel.bright("Please select file");
 
 		_filenameField = new FilenameTextField(userPreferences.getDatastoreDirectory(), true);
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
@@ -97,29 +104,48 @@ public class AccessDatastoreDialog extends AbstractDialog {
 		});
 
 		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/access.png");
-		_addDatastoreButton.setEnabled(false);
+
+		if (_originalDatastore != null) {
+			_datastoreNameField.setText(_originalDatastore.getName());
+			_datastoreNameField.setEnabled(false);
+			_filenameField.setFilename(_originalDatastore.getFilename());
+		}
+
+		updateStatus();
 	}
 
 	private void updateStatus() {
-		ImageManager imageManager = ImageManager.getInstance();
+		final String filename = _filenameField.getFilename();
+		if (StringUtils.isNullOrEmpty(filename)) {
+			_statusLabel.setText("Please enter or select a filename");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
+			return;
+		}
 
-		File file = new File(_filenameField.getFilename());
-		if (file.exists()) {
-			if (file.isFile()) {
-				_statusLabel.setText("Access database ready");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
-				_addDatastoreButton.setEnabled(true);
-			} else {
-				_statusLabel.setText("Not a valid file!");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-				_addDatastoreButton.setEnabled(false);
-			}
-		} else {
+		final String datastoreName = _datastoreNameField.getText();
+		if (StringUtils.isNullOrEmpty(datastoreName)) {
+			_statusLabel.setText("Please enter a datastore name");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
+			return;
+		}
+
+		final File file = new File(filename);
+		if (!file.exists()) {
 			_statusLabel.setText("The file does not exist!");
 			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
 			_addDatastoreButton.setEnabled(false);
 		}
+		if (!file.isFile()) {
+			_statusLabel.setText("Not a valid file!");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_addDatastoreButton.setEnabled(false);
+		}
 
+		_statusLabel.setText("Access database ready");
+		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+		_addDatastoreButton.setEnabled(true);
 	}
 
 	@Override
@@ -143,7 +169,12 @@ public class AccessDatastoreDialog extends AbstractDialog {
 		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Datastore datastore = new AccessDatastore(_datastoreNameField.getText(), _filenameField.getFilename());
+				final Datastore datastore = new AccessDatastore(_datastoreNameField.getText(), _filenameField.getFilename());
+
+				if (_originalDatastore != null) {
+					_mutableDatastoreCatalog.removeDatastore(_originalDatastore);
+				}
+
 				_mutableDatastoreCatalog.addDatastore(datastore);
 				dispose();
 			}

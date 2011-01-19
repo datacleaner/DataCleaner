@@ -202,7 +202,7 @@ public class MainWindow extends AbstractWindow {
 	public static void showExitDialog() {
 		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
 				JOptionPane.OK_CANCEL_OPTION);
-		
+
 		if (confirmation == JOptionPane.OK_OPTION) {
 			UserPreferences.getInstance().save();
 			System.exit(0);

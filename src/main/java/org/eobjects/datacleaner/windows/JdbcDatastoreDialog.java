@@ -155,6 +155,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			_databaseDriverComboBox.setSelectedItem(databaseDriver);
 
 			_datastoreNameTextField.setText(_originalDatastore.getName());
+			_datastoreNameTextField.setEnabled(false);
 			_connectionStringTextField.setText(_originalDatastore.getJdbcUrl());
 			_driverClassNameTextField.setText(_originalDatastore.getDriverClass());
 			_usernameTextField.setText(_originalDatastore.getUsername());

@@ -194,6 +194,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 		if (_originalDatastore != null) {
 			_datastoreNameField.setText(_originalDatastore.getName());
+			_datastoreNameField.setEnabled(false);
 			_filenameField.setFilename(_originalDatastore.getFilename());
 			_encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
 

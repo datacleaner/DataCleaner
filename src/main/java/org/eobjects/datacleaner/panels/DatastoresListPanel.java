@@ -33,8 +33,11 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.AccessDatastore;
+import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
@@ -44,6 +47,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
@@ -104,6 +108,15 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					}
 				});
 
+				JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
+						imageManager.getImageIcon(IconUtils.COMPOSITE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				compositeMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new CompositeDatastoreDialog(_catalog).setVisible(true);
+					}
+				});
+
 				// TODO: Not yet functional
 				JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("Dbase database-file",
 						imageManager.getImageIcon(IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
@@ -129,6 +142,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				popup.add(accessMenuItem);
 				popup.add(dbaseMenuItem);
 				popup.add(odbMenuItem);
+				popup.add(compositeMenuItem);
 
 				popup.show(addDatastoreMenuItem, 0, addDatastoreMenuItem.getHeight());
 			}
@@ -171,6 +185,31 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						CsvDatastoreDialog dialog = new CsvDatastoreDialog((CsvDatastore) datastore, _catalog);
+						dialog.setVisible(true);
+					}
+				});
+			} else if (datastore instanceof AccessDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						AccessDatastoreDialog dialog = new AccessDatastoreDialog((AccessDatastore) datastore, _catalog);
+						dialog.setVisible(true);
+					}
+				});
+			} else if (datastore instanceof ExcelDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						ExcelDatastoreDialog dialog = new ExcelDatastoreDialog((ExcelDatastore) datastore, _catalog);
+						dialog.setVisible(true);
+					}
+				});
+			} else if (datastore instanceof CompositeDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
+								_catalog);
 						dialog.setVisible(true);
 					}
 				});

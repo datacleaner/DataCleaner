@@ -54,6 +54,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
+import org.jdesktop.swingx.action.OpenBrowserAction;
 
 public class MainWindow extends AbstractWindow {
 
@@ -206,8 +207,6 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	private JMenuBar getWindowMenuBar() {
-		final JMenuBar menuBar = new JMenuBar();
-
 		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job...", "images/actions/open.png");
 		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
 
@@ -227,6 +226,12 @@ public class MainWindow extends AbstractWindow {
 			}
 		});
 
+		final JMenuItem helpContents = WidgetFactory.createMenuItem("Help contents", "images/widgets/help.png");
+		helpContents.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/docs"));
+
+		final JMenuItem askAtTheForumsMenuItem = WidgetFactory.createMenuItem("Ask at the forums", "images/menu/forums.png");
+		askAtTheForumsMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/forum/1"));
+
 		final JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
 		aboutMenuItem.setEnabled(false);
 
@@ -234,15 +239,20 @@ public class MainWindow extends AbstractWindow {
 		fileMenu.add(openJobMenuItem);
 		fileMenu.add(exitMenuItem);
 
-		final JMenu editMenu = WidgetFactory.createMenu("Edit", 'E');
-		editMenu.add(optionsMenuItem);
+		final JMenu windowMenu = WidgetFactory.createMenu("Window", 'W');
+		windowMenu.add(optionsMenuItem);
+		windowMenu.addSeparator();
 
-		final JMenu windowsMenu = WidgetFactory.createMenu("Windows", 'W');
+		final int minimumSize = windowMenu.getMenuComponentCount();
+
 		WindowManager.getInstance().addListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				windowsMenu.removeAll();
-				List<AbstractWindow> windows = WindowManager.getInstance().getWindows();
+				final int currentSize = windowMenu.getMenuComponentCount();
+				for (int i = currentSize; i > minimumSize; i--) {
+					windowMenu.remove(i - 1);
+				}
+				final List<AbstractWindow> windows = WindowManager.getInstance().getWindows();
 				for (final AbstractWindow window : windows) {
 					final Image windowIcon = window.getWindowIcon();
 					final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(32, 32, Image.SCALE_DEFAULT));
@@ -253,17 +263,19 @@ public class MainWindow extends AbstractWindow {
 							window.toFront();
 						}
 					});
-					windowsMenu.add(switchToWindowItem);
+					windowMenu.add(switchToWindowItem);
 				}
 			}
 		});
 
 		final JMenu helpMenu = WidgetFactory.createMenu("Help", 'H');
+		helpMenu.add(askAtTheForumsMenuItem);
+		helpMenu.add(helpContents);
 		helpMenu.add(aboutMenuItem);
 
+		final JMenuBar menuBar = new JMenuBar();
 		menuBar.add(fileMenu);
-		menuBar.add(editMenu);
-		menuBar.add(windowsMenu);
+		menuBar.add(windowMenu);
 		menuBar.add(helpMenu);
 		return menuBar;
 	}

@@ -29,9 +29,12 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
@@ -41,7 +44,9 @@ import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
@@ -100,10 +105,102 @@ public class OptionsDialog extends AbstractWindow {
 	}
 
 	private DCPanel getNetworkTab() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		// TODO
-		panel.add(new JLabel("TODO"));
-		return panel;
+		final DCPanel networkTabPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+
+		final JCheckBox proxyCheckBox = new JCheckBox("Enable HTTP proxy?", userPreferences.isProxyEnabled());
+		proxyCheckBox.setOpaque(false);
+		proxyCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userPreferences.setProxyEnabled(proxyCheckBox.isSelected());
+			}
+		});
+
+		final DCPanel proxyPanel = new DCPanel().setTitledBorder("Proxy settings");
+
+		final JTextField proxyHostField = WidgetFactory.createTextField("Proxy host");
+		proxyHostField.setText(userPreferences.getProxyHostname());
+		proxyHostField.getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent e) {
+				userPreferences.setProxyHostname(proxyHostField.getText());
+			}
+		});
+		WidgetUtils.addToGridBag(new JLabel("Proxy host"), proxyPanel, 0, 0);
+		WidgetUtils.addToGridBag(proxyHostField, proxyPanel, 1, 0);
+
+		final JTextField proxyPortField = WidgetFactory.createTextField("Proxy port");
+		proxyPortField.setDocument(new NumberDocument());
+		proxyPortField.getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent event) {
+				int port;
+				try {
+					port = Integer.parseInt(proxyPortField.getText());
+				} catch (Exception e) {
+					port = 8080;
+				}
+				userPreferences.setProxyPort(port);
+			}
+		});
+		proxyPortField.setText("" + userPreferences.getProxyPort());
+		WidgetUtils.addToGridBag(new JLabel("Proxy port"), proxyPanel, 0, 1);
+		WidgetUtils.addToGridBag(proxyPortField, proxyPanel, 1, 1);
+
+		final JCheckBox proxyAuthCheckBox = new JCheckBox("Enable authentication?",
+				userPreferences.isProxyAuthenticationEnabled());
+		proxyAuthCheckBox.setOpaque(false);
+		proxyAuthCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				userPreferences.setProxyAuthenticationEnabled(proxyAuthCheckBox.isSelected());
+			}
+		});
+
+		final DCPanel proxyAuthPanel = new DCPanel().setTitledBorder("Proxy authentication");
+		final JTextField proxyUsernameField = WidgetFactory.createTextField("Username");
+		proxyUsernameField.setText(userPreferences.getProxyUsername());
+		proxyUsernameField.getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent event) {
+				userPreferences.setProxyUsername(proxyUsernameField.getText());
+			}
+		});
+		WidgetUtils.addToGridBag(new JLabel("Username"), proxyAuthPanel, 0, 0);
+		WidgetUtils.addToGridBag(proxyUsernameField, proxyAuthPanel, 1, 0);
+
+		final JPasswordField proxyPasswordField = new JPasswordField(userPreferences.getProxyPassword());
+		proxyPasswordField.getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent event) {
+				userPreferences.setProxyPassword(String.valueOf(proxyPasswordField.getPassword()));
+			}
+		});
+		WidgetUtils.addToGridBag(new JLabel("Password"), proxyAuthPanel, 0, 1);
+		WidgetUtils.addToGridBag(proxyPasswordField, proxyAuthPanel, 1, 1);
+
+		WidgetUtils.addToGridBag(proxyAuthCheckBox, proxyPanel, 0, 2, 2, 1);
+		WidgetUtils.addToGridBag(proxyAuthPanel, proxyPanel, 0, 3, 2, 1);
+
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				proxyHostField.setEnabled(proxyCheckBox.isSelected());
+				proxyPortField.setEnabled(proxyCheckBox.isSelected());
+				proxyAuthCheckBox.setEnabled(proxyCheckBox.isSelected());
+				proxyUsernameField.setEnabled(proxyAuthCheckBox.isSelected() && proxyCheckBox.isSelected());
+				proxyPasswordField.setEnabled(proxyAuthCheckBox.isSelected() && proxyCheckBox.isSelected());
+			}
+		};
+		proxyCheckBox.addActionListener(actionListener);
+		proxyAuthCheckBox.addActionListener(actionListener);
+
+		// use ActionListener to initialize components
+		actionListener.actionPerformed(null);
+
+		WidgetUtils.addToGridBag(proxyCheckBox, networkTabPanel, 0, 0);
+		WidgetUtils.addToGridBag(proxyPanel, networkTabPanel, 0, 1);
+
+		return networkTabPanel;
 	}
 
 	private DCPanel getPerformanceTab() {
@@ -224,7 +321,6 @@ public class OptionsDialog extends AbstractWindow {
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 
 		final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
-		closeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		closeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

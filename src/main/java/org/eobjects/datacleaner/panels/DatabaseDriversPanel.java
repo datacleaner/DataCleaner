@@ -91,9 +91,7 @@ public class DatabaseDriversPanel extends DCPanel {
 		JToolBar toolBar = WidgetFactory.createToolBar();
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 
-		JButton addDriverButton = WidgetFactory.createButton("Add database driver",
-				imageManager.getImageIcon("images/actions/add.png"));
-
+		JButton addDriverButton = new JButton("Add database driver", imageManager.getImageIcon("images/actions/add.png"));
 		toolBar.add(addDriverButton);
 
 		DCTable table = getDatabaseDriverTable();

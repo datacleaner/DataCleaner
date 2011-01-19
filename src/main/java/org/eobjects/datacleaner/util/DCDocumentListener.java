@@ -46,5 +46,5 @@ public abstract class DCDocumentListener implements DocumentListener {
 		onChange(e);
 	}
 
-	protected abstract void onChange(DocumentEvent e);
+	protected abstract void onChange(DocumentEvent event);
 }

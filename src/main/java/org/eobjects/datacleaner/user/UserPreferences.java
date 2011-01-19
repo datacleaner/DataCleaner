@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class UserPreferences implements Serializable {
 
-	private static final long serialVersionUID = 4L;
+	private static final long serialVersionUID = 5L;
 
 	private static final File userPreferencesFile = new File(DataCleanerHome.get(), "userpreferences.dat");
 	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
@@ -52,6 +52,14 @@ public class UserPreferences implements Serializable {
 	private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
 
 	private String username;
+
+	private boolean proxyEnabled = false;
+	private boolean proxyAuthenticationEnabled = false;
+	private String proxyHostname;
+	private int proxyPort = 8080;
+	private String proxyUsername;
+	private String proxyPassword;
+
 	private boolean welcomeDialogShownOnStartup = true;
 	private boolean displayDatastoresTaskPane = true;
 	private boolean displayJobsTaskPane = true;
@@ -255,5 +263,53 @@ public class UserPreferences implements Serializable {
 
 	public void setDisplayStringPatternsTaskPane(boolean displayStringPatternsTaskPane) {
 		this.displayStringPatternsTaskPane = displayStringPatternsTaskPane;
+	}
+
+	public boolean isProxyEnabled() {
+		return proxyEnabled;
+	}
+
+	public void setProxyEnabled(boolean proxyEnabled) {
+		this.proxyEnabled = proxyEnabled;
+	}
+
+	public String getProxyHostname() {
+		return proxyHostname;
+	}
+
+	public void setProxyHostname(String proxyHostname) {
+		this.proxyHostname = proxyHostname;
+	}
+
+	public int getProxyPort() {
+		return proxyPort;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
+	}
+
+	public String getProxyUsername() {
+		return proxyUsername;
+	}
+
+	public void setProxyUsername(String proxyUsername) {
+		this.proxyUsername = proxyUsername;
+	}
+
+	public String getProxyPassword() {
+		return proxyPassword;
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		this.proxyPassword = proxyPassword;
+	}
+
+	public boolean isProxyAuthenticationEnabled() {
+		return proxyAuthenticationEnabled;
+	}
+
+	public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled) {
+		this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
 	}
 }

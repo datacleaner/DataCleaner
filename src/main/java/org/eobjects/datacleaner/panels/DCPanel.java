@@ -28,6 +28,7 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 public class DCPanel extends JPanel {
 
@@ -119,6 +120,11 @@ public class DCPanel extends JPanel {
 
 	public void setPreferredSize(int width, int height) {
 		setPreferredSize(new Dimension(width, height));
+	}
+
+	public DCPanel setTitledBorder(String title) {
+		setBorder(new TitledBorder(title));
+		return this;
 	}
 
 }

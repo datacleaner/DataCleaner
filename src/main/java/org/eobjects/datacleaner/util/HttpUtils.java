@@ -25,14 +25,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.eobjects.datacleaner.user.UserPreferences;
 
 public final class HttpUtils {
 
@@ -50,7 +55,24 @@ public final class HttpUtils {
 
 	public static HttpClient getHttpClient() {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		// TODO: Optionally configure proxy
+
+		final UserPreferences userPreferences = UserPreferences.getInstance();
+		if (userPreferences.isProxyEnabled()) {
+			// set up HTTP proxy
+			final String proxyHostname = userPreferences.getProxyHostname();
+			final int proxyPort = userPreferences.getProxyPort();
+
+			final HttpHost proxy = new HttpHost(proxyHostname, proxyPort);
+			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+			if (userPreferences.isProxyAuthenticationEnabled()) {
+				final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
+				final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+						userPreferences.getProxyUsername(), userPreferences.getProxyPassword());
+				httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+			}
+		}
+
 		return httpClient;
 	}
 }

@@ -287,8 +287,4 @@ public class MainWindow extends AbstractWindow {
 	protected boolean isCentered() {
 		return false;
 	}
-
-	public AnalyzerBeansConfiguration getConfiguration() {
-		return _configuration;
-	}
 }

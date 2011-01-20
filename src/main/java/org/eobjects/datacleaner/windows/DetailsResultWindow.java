@@ -35,10 +35,10 @@ import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
@@ -82,7 +82,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 	@Override
 	protected JComponent getWindowContent() {
 		if (!_results.isEmpty()) {
-			AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+			AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider());
 
 			for (AnalyzerResult analyzerResult : _results) {

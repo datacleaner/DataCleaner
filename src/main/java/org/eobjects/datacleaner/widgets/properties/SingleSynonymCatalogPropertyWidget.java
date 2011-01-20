@@ -29,7 +29,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.user.DCConfiguration;
 
 public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> {
 
@@ -41,7 +41,7 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+		_configuration = DCConfiguration.get();
 		String[] synonymCatalogNames = _configuration.getReferenceDataCatalog().getSynonymCatalogNames();
 
 		if (!propertyDescriptor.isRequired()) {

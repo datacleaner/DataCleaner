@@ -21,8 +21,8 @@ package org.eobjects.datacleaner.output.datastore;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class DatastoreCreationDelegateImpl implements DatastoreCreationDelegate 
 
 	@Override
 	public void createDatastore(Datastore datastore) {
-		final AnalyzerBeansConfiguration configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 		final MutableDatastoreCatalog datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
 		final String name = datastore.getName();
 		if (datastoreCatalog.containsDatastore(name)) {

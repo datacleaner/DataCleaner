@@ -34,7 +34,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -75,7 +75,7 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
 		_beanJobBuilder = beanJobBuilder;
-		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+		_configuration = DCConfiguration.get();
 		setLayout(new VerticalLayout(2));
 		updateComponents();
 	}

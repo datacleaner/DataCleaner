@@ -36,11 +36,10 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
-
 import org.eobjects.metamodel.schema.Column;
 
 final class ColumnMouseListener extends MouseAdapter implements MouseListener {
@@ -91,7 +90,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				createDictionaryItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						AnalyzerBeansConfiguration conf = WindowManager.getInstance().getMainWindow().getConfiguration();
+						AnalyzerBeansConfiguration conf = DCConfiguration.get();
 						MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) conf
 								.getReferenceDataCatalog();
 						DatastoreCatalog datastoreCatalog = conf.getDatastoreCatalog();

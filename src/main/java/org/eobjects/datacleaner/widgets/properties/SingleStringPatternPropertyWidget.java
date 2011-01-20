@@ -29,7 +29,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.user.DCConfiguration;
 
 public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> {
 
@@ -41,7 +41,7 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+		_configuration = DCConfiguration.get();
 		String[] stringPatternNames = _configuration.getReferenceDataCatalog().getStringPatternNames();
 
 		if (!propertyDescriptor.isRequired()) {

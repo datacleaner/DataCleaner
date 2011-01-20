@@ -29,7 +29,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.user.DCConfiguration;
 
 public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dictionary> {
 
@@ -41,7 +41,7 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_configuration = WindowManager.getInstance().getMainWindow().getConfiguration();
+		_configuration = DCConfiguration.get();
 		String[] dictionaryNames = _configuration.getReferenceDataCatalog().getDictionaryNames();
 
 		if (!propertyDescriptor.isRequired()) {

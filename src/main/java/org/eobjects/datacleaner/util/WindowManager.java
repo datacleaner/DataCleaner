@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
@@ -88,7 +89,7 @@ public final class WindowManager {
 		if (!(window instanceof AbstractDialog) && !(window instanceof WelcomeWindow)) {
 			if (isOnlyMainWindowShowing()) {
 				try {
-					AnalyzerBeansConfiguration configuration = getMainWindow().getConfiguration();
+					AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 					if (_userPreferences.isWelcomeDialogShownOnStartup()) {
 						new WelcomeWindow(configuration).setVisible(true);
 					}

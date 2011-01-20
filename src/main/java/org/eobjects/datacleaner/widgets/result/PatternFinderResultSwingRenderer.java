@@ -34,16 +34,16 @@ import org.eobjects.analyzer.result.PatternFinderResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 
 @RendererBean(SwingRenderingFormat.class)
 public class PatternFinderResultSwingRenderer implements Renderer<PatternFinderResult, JComponent> {
 
-	private final MutableReferenceDataCatalog _catalog = (MutableReferenceDataCatalog) WindowManager.getInstance()
-			.getMainWindow().getConfiguration().getReferenceDataCatalog();
+	private final MutableReferenceDataCatalog _catalog = (MutableReferenceDataCatalog) DCConfiguration.get()
+			.getReferenceDataCatalog();
 
 	@Override
 	public JComponent render(PatternFinderResult result) {

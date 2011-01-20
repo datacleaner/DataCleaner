@@ -53,7 +53,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 	private final DownloadFilesActionListener _downloadFilesActionListener;
 	private final JLabel[] _currentBytesLabels;
 	private final JLabel[] _expectedBytesLabels;
-	private final DCProgressBar[] _progressIndicators;
+	private final DCProgressBar[] _progressBars;
 	private final JLabel[] _infoLabels;
 	private final File[] _files;
 
@@ -64,7 +64,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 
 		_files = downloadFilesActionListener.getFiles();
 
-		_progressIndicators = new DCProgressBar[_files.length];
+		_progressBars = new DCProgressBar[_files.length];
 		_infoLabels = new JLabel[_files.length];
 		_currentBytesLabels = new JLabel[_files.length];
 		_expectedBytesLabels = new JLabel[_files.length];
@@ -79,8 +79,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 			_expectedBytesLabels[i] = new JLabel("??? bytes");
 			_expectedBytesLabels[i].setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-			_progressIndicators[i] = new DCProgressBar(0, 100);
-			_progressIndicators[i].setValue(0);
+			_progressBars[i] = new DCProgressBar(0, 100);
 
 			_infoLabels[i] = new JLabel("Downloading file '" + file.getName() + "'", JLabel.CENTER);
 			_infoLabels[i].setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -121,7 +120,11 @@ public class DownloadProgressWindow extends AbstractDialog {
 
 		DecimalFormat formatter = new DecimalFormat("###,###");
 		_currentBytesLabels[index].setText(formatter.format(bytes));
-		_progressIndicators[index].setValue((int) (bytes / 100));
+		DCProgressBar progressBar = _progressBars[index];
+		boolean update = progressBar.setValueIfHigherAndSignificant((int) (bytes / 100));
+		if (update) {
+			progressBar.updateUI();
+		}
 	}
 
 	public void setExpectedSize(File file, Long bytes) {
@@ -129,7 +132,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 
 		DecimalFormat formatter = new DecimalFormat("###,###");
 		_expectedBytesLabels[index].setText(formatter.format(bytes) + " bytes");
-		_progressIndicators[index].setMaximum((int) (bytes / 100));
+		_progressBars[index].setMaximum((int) (bytes / 100));
 	}
 
 	@Override
@@ -150,7 +153,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 			textPanel.add(_expectedBytesLabels[i]);
 
 			centerPanel.add(_infoLabels[i]);
-			centerPanel.add(_progressIndicators[i]);
+			centerPanel.add(_progressBars[i]);
 			centerPanel.add(textPanel);
 		}
 

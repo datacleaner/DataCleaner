@@ -29,16 +29,29 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 public class DCProgressBar extends JProgressBar {
 
 	private static final long serialVersionUID = 1L;
+	
+	private volatile int _value;
 
 	public DCProgressBar(int min, int max) {
 		super(min, max);
 		setMinimumSize(new Dimension(10, 30));
 		setMaximumSize(new Dimension(1000, 30));
 		setOpaque(false);
+		_value = min;
 	}
 
 	public DCProgressBar() {
 		this(0, 100);
+	}
+	
+	@Override
+	public int getValue() {
+		return _value;
+	}
+	
+	@Override
+	public void setValue(int value) {
+		_value = value;
 	}
 
 	/**
@@ -48,13 +61,18 @@ public class DCProgressBar extends JProgressBar {
 	 *         and if it will introduce a visual change to the progress bar
 	 *         (assumed that the progress bar width is not changed)
 	 */
-	public boolean isValueHigherAndSignificant(final int newValue) {
-		final int currentValue = getValue();
-		if (newValue > currentValue) {
-			final int currentBarWidth = getBarWidth(currentValue);
-			final int newBarWidth = getBarWidth(newValue);
-			if (newBarWidth > currentBarWidth) {
-				return true;
+	public boolean setValueIfHigherAndSignificant(int newValue) {
+		final int maximum = getMaximum();
+		final int checkedValue = Math.min(maximum, newValue);
+		synchronized (this) {
+			final int currentValue = getValue();
+			if (checkedValue > currentValue) {
+				setValue(checkedValue);
+				int currentBarWidth = getBarWidth(currentValue);
+				int newBarWidth = getBarWidth(checkedValue);
+				if (newBarWidth > currentBarWidth) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -64,7 +82,11 @@ public class DCProgressBar extends JProgressBar {
 		final int minimum = getMinimum();
 		final int adjustedMax = getMaximum() - minimum;
 		final int adjustedValue = value - minimum;
-		final int barWidth = (int) (getWidth() * adjustedValue * 1.0 / adjustedMax);
+		final int width = getWidth();
+		if (adjustedValue > adjustedMax) {
+			return width;
+		}
+		final int barWidth = (int) (width * adjustedValue * 1.0 / adjustedMax);
 		return barWidth;
 	}
 

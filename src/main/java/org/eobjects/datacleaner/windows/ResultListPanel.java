@@ -24,6 +24,7 @@ import java.awt.BorderLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
@@ -77,10 +78,10 @@ public class ResultListPanel extends DCPanel {
 	}
 
 	public void addResult(final AnalyzerJob analyzerJob, final AnalyzerResult result) {
-		AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
-		Icon icon = IconUtils.getDescriptorIcon(descriptor);
+		final AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
+		final Icon icon = IconUtils.getDescriptorIcon(descriptor);
 
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 
 		String jobName = analyzerJob.getName();
 		if (StringUtils.isNullOrEmpty(jobName)) {
@@ -92,7 +93,7 @@ public class ResultListPanel extends DCPanel {
 			sb.append(')');
 		}
 
-		InputColumn<?>[] input = analyzerJob.getInput();
+		final InputColumn<?>[] input = analyzerJob.getInput();
 		if (input.length > 0) {
 			sb.append(" (");
 			if (input.length < 4) {
@@ -109,7 +110,7 @@ public class ResultListPanel extends DCPanel {
 			sb.append(")");
 		}
 
-		Outcome[] requirements = analyzerJob.getRequirements();
+		final Outcome[] requirements = analyzerJob.getRequirements();
 		if (requirements != null && requirements.length != 0) {
 			sb.append(" (");
 			for (int i = 0; i < requirements.length; i++) {
@@ -133,9 +134,12 @@ public class ResultListPanel extends DCPanel {
 		taskPanePanel.add(new LoadingIcon());
 		_progressInformationPanel.addUserLog("Rendering result for " + resultLabel);
 
-		synchronized (this) {
-			_taskPaneContainer.add(taskPane);
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				_taskPaneContainer.add(taskPane);
+			}
+		});
 
 		// use a swing worker to run the rendering in the background
 		new SwingWorker<JComponent, Void>() {

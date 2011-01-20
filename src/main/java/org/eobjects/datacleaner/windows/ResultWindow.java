@@ -26,7 +26,9 @@ import java.awt.Toolkit;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -78,24 +80,36 @@ public final class ResultWindow extends AbstractWindow {
 		worker.execute();
 	}
 
-	private void addTableResultPanel(Table table) {
-		ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
+	private void addTableResultPanel(final Table table) {
+		final String tableName = table.getName();
+		final ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
+		final ImageIcon tableIcon = imageManager.getImageIcon("images/model/table.png");
 		_resultPanels.put(table, panel);
-		_tabbedPane.addTab(table.getName(), imageManager.getImageIcon("images/model/table.png"), panel);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				_tabbedPane.addTab(tableName, tableIcon, panel);
+			}
+		});
 	}
 
 	private ResultListPanel getTableResultPanel(Table table) {
-		if (!_resultPanels.containsKey(table)) {
-			addTableResultPanel(table);
+		synchronized (_resultPanels) {
+			if (!_resultPanels.containsKey(table)) {
+				addTableResultPanel(table);
+			}
+			return _resultPanels.get(table);
 		}
-		return _resultPanels.get(table);
 	}
 
 	public void addResult(Table table, AnalyzerJob analyzerJob, AnalyzerResult result) {
-		getTableResultPanel(table).addResult(analyzerJob, result);
-		if (_tabbedPane.getTabCount() == 2) {
-			// switch to the first available result panel
-			_tabbedPane.setSelectedIndex(1);
+		ResultListPanel resultListPanel = getTableResultPanel(table);
+		resultListPanel.addResult(analyzerJob, result);
+		synchronized (_tabbedPane) {
+			if (_tabbedPane.getTabCount() == 2) {
+				// switch to the first available result panel
+				_tabbedPane.setSelectedIndex(1);
+			}
 		}
 	}
 

@@ -29,7 +29,6 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -113,44 +112,59 @@ public class ProgressInformationPanel extends DCPanel {
 	}
 
 	public void setExpectedRows(final Table table, final int expectedRows) {
+		final DCProgressBar progressBar = getProgressBar(table, expectedRows);
+		final DCLabel tableLabel = DCLabel.bright(table.getName());
+		final DCLabel rowsLabel = DCLabel.bright("Approx. " + expectedRows + " rows");
+		rowsLabel.setFont(WidgetUtils.FONT_SMALL);
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				final boolean firstTable = _progressBars.isEmpty();
+				synchronized (_progressBarPanel) {
+					if (_progressBarPanel.getComponentCount() == 0) {
+						_progressBarPanel.add(Box.createVerticalStrut(10));
+					}
 
-				final DCProgressBar progressBar = new DCProgressBar(0, expectedRows);
-				_progressBars.put(table, progressBar);
-
-				final JLabel tableLabel = new JLabel(table.getName());
-				tableLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-
-				final JLabel rowsLabel = new JLabel(expectedRows + " rows");
-				rowsLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-				rowsLabel.setFont(WidgetUtils.FONT_SMALL);
-				if (firstTable) {
-					_progressBarPanel.removeAll();
-				} else {
-					_progressBarPanel.add(Box.createVerticalStrut(10));
+					_progressBarPanel.add(tableLabel);
+					_progressBarPanel.add(rowsLabel);
+					_progressBarPanel.add(progressBar);
+					_progressBarPanel.updateUI();
 				}
-
-				_progressBarPanel.add(tableLabel);
-				_progressBarPanel.add(rowsLabel);
-				_progressBarPanel.add(progressBar);
-				updateUI();
 			}
 		});
 	}
 
-	public void updateProgress(final Table table, final int currentRow) {
-		final DCProgressBar progressBar = _progressBars.get(table);
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				if (progressBar.isValueHigherAndSignificant(currentRow)) {
-					progressBar.setValue(currentRow);
+	private DCProgressBar getProgressBar(Table table, int expectedRows) {
+		synchronized (_progressBars) {
+			DCProgressBar progressBar = _progressBars.get(table);
+			if (progressBar == null) {
+				progressBar = new DCProgressBar(0, expectedRows);
+				if (expectedRows != -1) {
+					expectedRows = Integer.MAX_VALUE;
+				}
+				if (_progressBars.isEmpty()) {
+					_progressBarPanel.removeAll();
+				}
+				_progressBars.put(table, progressBar);
+			} else {
+				if (expectedRows != -1) {
+					progressBar.setMaximum(expectedRows);
 				}
 			}
-		});
+			return progressBar;
+		}
+	}
+
+	public void updateProgress(final Table table, final int currentRow) {
+		final DCProgressBar progressBar = getProgressBar(table, -1);
+		if (progressBar.setValueIfHigherAndSignificant(currentRow)) {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					progressBar.updateUI();
+				}
+			});
+		}
 
 		if (_verboseLogging) {
 			boolean log = false;

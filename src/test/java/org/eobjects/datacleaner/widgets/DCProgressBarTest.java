@@ -23,10 +23,26 @@ import junit.framework.TestCase;
 
 public class DCProgressBarTest extends TestCase {
 
-	public void testIsHigherAndSignificant() throws Exception {
-		DCProgressBar pb = new DCProgressBar(0, 100);
+	public void testIsHigherAndSignificantBigMax() throws Exception {
+		final DCProgressBar pb = new DCProgressBar(0, 1000);
 		pb.setSize(100, 10);
 		assertEquals(100, pb.getWidth());
-		assertTrue(pb.isValueHigherAndSignificant(5));
+		assertFalse(pb.setValueIfHigherAndSignificant(5));
+		assertFalse(pb.setValueIfHigherAndSignificant(9));
+		assertTrue(pb.setValueIfHigherAndSignificant(10));
+		assertTrue(pb.setValueIfHigherAndSignificant(999));
+		assertTrue(pb.setValueIfHigherAndSignificant(1000));
+		assertFalse(pb.setValueIfHigherAndSignificant(1001));
+		assertFalse(pb.setValueIfHigherAndSignificant(2001));
+	}
+
+	public void testIsHigherAndSignificantSmallMax() throws Exception {
+		final DCProgressBar pb = new DCProgressBar(0, 7);
+		pb.setSize(100, 10);
+		assertEquals(100, pb.getWidth());
+		assertFalse(pb.setValueIfHigherAndSignificant(0));
+		assertTrue(pb.setValueIfHigherAndSignificant(1));
+		assertTrue(pb.setValueIfHigherAndSignificant(7));
+		assertFalse(pb.setValueIfHigherAndSignificant(9));
 	}
 }

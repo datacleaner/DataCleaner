@@ -4,6 +4,7 @@
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<version>2.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>DataCleaner</name>
 	<url>http://datacleaner.eobjects.org</url>
 	<description>
@@ -31,6 +32,10 @@
 			<email>stefan.janssen@humaninference.com</email>
 		</contributor>
 		<contributor>
+			<name>Ankit Kumar</name>
+			<email>ankitk@xebia.com</email>
+		</contributor>
+		<contributor>
 			<name>Nancy Sharma</name>
 			<email>nsharma@xebia.com</email>
 		</contributor>
@@ -38,10 +43,39 @@
 			<name>Paritosh Ranjan</name>
 			<email>pranjan@xebia.com</email>
 		</contributor>
+		<contributor>
+			<name>Rajneesh Namta</name>
+			<email>rnamta@xebia.com</email>
+			<roles>
+				<role>Testing</role>
+			</roles>
+		</contributor>
 	</contributors>
+	<issueManagement>
+		<system>trac</system>
+		<url>http://eobjects.org/trac</url>
+	</issueManagement>
+	<licenses>
+		<license>
+			<name>Lesser General Public License</name>
+			<url>http://www.gnu.org/licenses/lgpl.txt</url>
+		</license>
+	</licenses>
+	<scm>
+		<connection>
+			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
+		</connection>
+		<developerConnection>
+			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
+		</developerConnection>
+		<url>
+			http://eobjects.org/svn/DataCleaner/trunk/ 
+		</url>
+	</scm>
 	<build>
 		<plugins>
 			<plugin>
+				<!-- Ensures java 6 compatibility -->
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<source>1.6</source>
@@ -50,6 +84,8 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<!-- make the jar file executable when dependencies are available in 
+					lib/ folder -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
@@ -69,7 +105,9 @@
 					</archive>
 				</configuration>
 			</plugin>
+
 			<plugin>
+				<!-- Copy dependencies to lib/ folder -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -86,7 +124,9 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
+				<!-- Ensure inclusion of license header in all main java files -->
 				<groupId>com.google.code.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
 				<version>1.4.0</version>
@@ -111,7 +151,9 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
+				<!-- Java Web start JNLP file generation -->
 				<groupId>org.codehaus.mojo.webstart</groupId>
 				<artifactId>webstart-maven-plugin</artifactId>
 				<version>1.0-beta-1</version>
@@ -125,13 +167,70 @@
 					<verbose>true</verbose>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<!-- Cobertura code coverage -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<instrumentation>
+						<excludes>
+							<exclude>org/eobjects/analyzer/**/jaxb/**/*.class</exclude>
+						</excludes>
+					</instrumentation>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
+					<docletArtifact>
+						<groupId>org.umlgraph</groupId>
+						<artifactId>doclet</artifactId>
+						<version>5.1</version>
+					</docletArtifact>
+					<additionalparam>-views</additionalparam>
+					<useStandardDocletOptions>true</useStandardDocletOptions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<sourceEncoding>utf-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<targetJdk>1.6</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<xmlOutput>true</xmlOutput>
+					<effort>Max</effort>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans</artifactId>
 			<version>1.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>args4j</artifactId>
+					<groupId>args4j</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.jgoodies</groupId>
@@ -142,6 +241,12 @@
 			<groupId>org.swinglabs</groupId>
 			<artifactId>swingx</artifactId>
 			<version>1.6.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>swing-worker</artifactId>
+					<groupId>org.swinglabs</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jung</groupId>

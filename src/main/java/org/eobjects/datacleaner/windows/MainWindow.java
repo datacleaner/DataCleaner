@@ -236,7 +236,12 @@ public class MainWindow extends AbstractWindow {
 		askAtTheForumsMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/forum/1"));
 
 		final JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
-		aboutMenuItem.setEnabled(false);
+		aboutMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new AboutDialog().setVisible(true);
+			}
+		});
 
 		final JMenu fileMenu = WidgetFactory.createMenu("File", 'F');
 		fileMenu.add(openJobMenuItem);

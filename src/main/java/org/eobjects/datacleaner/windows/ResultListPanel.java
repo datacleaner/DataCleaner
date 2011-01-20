@@ -36,7 +36,6 @@ import org.eobjects.analyzer.job.MergeInput;
 import org.eobjects.analyzer.job.MergedOutcome;
 import org.eobjects.analyzer.job.MergedOutcomeJob;
 import org.eobjects.analyzer.job.Outcome;
-import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
@@ -139,7 +138,7 @@ public class ResultListPanel extends DCPanel {
 		}
 
 		// use a swing worker to run the rendering in the background
-		new SwingWorker<JComponent, Task>() {
+		new SwingWorker<JComponent, Void>() {
 
 			@Override
 			protected JComponent doInBackground() throws Exception {

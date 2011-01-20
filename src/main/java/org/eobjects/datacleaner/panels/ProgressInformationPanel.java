@@ -30,17 +30,18 @@ import java.util.Map;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCProgressBar;
-import org.jdesktop.swingx.VerticalLayout;
-
+import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.metamodel.schema.Table;
+import org.jdesktop.swingx.VerticalLayout;
 
 public class ProgressInformationPanel extends DCPanel {
 
@@ -64,7 +65,10 @@ public class ProgressInformationPanel extends DCPanel {
 		_progressBarPanel.setLayout(new VerticalLayout(4));
 		_progressBarPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		_progressBarPanel.add(new LoadingIcon());
+		_progressBarPanel.add(DCLabel.bright("Preparing..."));
+
+		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setDividerLocation(190);
 		splitPane.setBorder(null);
 		splitPane.add(WidgetUtils.scrolleable(_progressBarPanel));
@@ -95,42 +99,58 @@ public class ProgressInformationPanel extends DCPanel {
 		appendMessage(stringWriter.toString());
 	}
 
-	private void appendMessage(String message) {
-		_textArea.append(message);
+	private void appendMessage(final String message) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				_textArea.append(message);
 
-		// moves the vertical scroll to the bottom
-		JScrollBar verticalScrollBar = _textAreaScroll.getVerticalScrollBar();
-		verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+				// moves the vertical scroll to the bottom
+				JScrollBar verticalScrollBar = _textAreaScroll.getVerticalScrollBar();
+				verticalScrollBar.setValue(verticalScrollBar.getMaximum());
+			}
+		});
 	}
 
-	public void setExpectedRows(Table table, int expectedRows) {
-		boolean firstTable = _progressBars.isEmpty();
+	public void setExpectedRows(final Table table, final int expectedRows) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				final boolean firstTable = _progressBars.isEmpty();
 
-		DCProgressBar progressBar = new DCProgressBar(0, expectedRows);
-		_progressBars.put(table, progressBar);
+				final DCProgressBar progressBar = new DCProgressBar(0, expectedRows);
+				_progressBars.put(table, progressBar);
 
-		JLabel tableLabel = new JLabel(table.getName());
-		tableLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+				final JLabel tableLabel = new JLabel(table.getName());
+				tableLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-		JLabel rowsLabel = new JLabel(expectedRows + " rows");
-		rowsLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		rowsLabel.setFont(WidgetUtils.FONT_SMALL);
+				final JLabel rowsLabel = new JLabel(expectedRows + " rows");
+				rowsLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+				rowsLabel.setFont(WidgetUtils.FONT_SMALL);
+				if (firstTable) {
+					_progressBarPanel.removeAll();
+				} else {
+					_progressBarPanel.add(Box.createVerticalStrut(10));
+				}
 
-		if (!firstTable) {
-			_progressBarPanel.add(Box.createVerticalStrut(10));
-		}
-
-		_progressBarPanel.add(tableLabel);
-		_progressBarPanel.add(rowsLabel);
-		_progressBarPanel.add(progressBar);
-		updateUI();
+				_progressBarPanel.add(tableLabel);
+				_progressBarPanel.add(rowsLabel);
+				_progressBarPanel.add(progressBar);
+				updateUI();
+			}
+		});
 	}
 
-	public void updateProgress(Table table, int currentRow) {
-		JProgressBar progressBar = _progressBars.get(table);
-		if (progressBar.getValue() < currentRow) {
-			progressBar.setValue(currentRow);
-		}
+	public void updateProgress(final Table table, final int currentRow) {
+		final DCProgressBar progressBar = _progressBars.get(table);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (progressBar.isValueHigherAndSignificant(currentRow)) {
+					progressBar.setValue(currentRow);
+				}
+			}
+		});
 
 		if (_verboseLogging) {
 			boolean log = false;

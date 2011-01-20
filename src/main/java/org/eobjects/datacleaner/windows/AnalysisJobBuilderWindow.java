@@ -314,7 +314,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		// load the schema tree in the background because it will retrieve
 		// metadata about the datastore (might take several seconds)
-		new SwingWorker<SchemaTree, Integer>() {
+		new SwingWorker<SchemaTree, Void>() {
 			@Override
 			protected SchemaTree doInBackground() throws Exception {
 				return new SchemaTree(_datastore, _analysisJobBuilder);

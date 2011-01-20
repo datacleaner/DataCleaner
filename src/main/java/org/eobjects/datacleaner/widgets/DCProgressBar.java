@@ -41,8 +41,35 @@ public class DCProgressBar extends JProgressBar {
 		this(0, 100);
 	}
 
+	/**
+	 * 
+	 * @param currentRow
+	 * @return whether the new (proposed) value is higher than the current value
+	 *         and if it will introduce a visual change to the progress bar
+	 *         (assumed that the progress bar width is not changed)
+	 */
+	public boolean isValueHigherAndSignificant(final int newValue) {
+		final int currentValue = getValue();
+		if (newValue > currentValue) {
+			final int currentBarWidth = getBarWidth(currentValue);
+			final int newBarWidth = getBarWidth(newValue);
+			if (newBarWidth > currentBarWidth) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private int getBarWidth(final int value) {
+		final int minimum = getMinimum();
+		final int adjustedMax = getMaximum() - minimum;
+		final int adjustedValue = value - minimum;
+		final int barWidth = (int) (getWidth() * adjustedValue * 1.0 / adjustedMax);
+		return barWidth;
+	}
+
 	@Override
-	public void paint(Graphics g) {
+	protected void paintComponent(Graphics g) {
 		final int width = getWidth();
 		final int height = getHeight();
 
@@ -51,11 +78,7 @@ public class DCProgressBar extends JProgressBar {
 			g.fillRect(0, 0, width, height);
 		}
 
-		final int minimum = getMinimum();
-		final int adjustedMax = getMaximum() - minimum;
-		final int adjustedValue = getValue() - minimum;
-
-		final int barWidth = (int) (width * adjustedValue * 1.0 / adjustedMax);
+		final int barWidth = getBarWidth(getValue());
 
 		if (barWidth > 0) {
 			g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);

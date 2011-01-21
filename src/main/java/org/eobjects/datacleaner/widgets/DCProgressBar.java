@@ -66,15 +66,22 @@ public class DCProgressBar extends JProgressBar {
 		}
 	}
 
-	private int getBarWidth(final int value) {
+	protected int getBarWidth(final int value) {
 		final int minimum = getMinimum();
-		final int adjustedMax = getMaximum() - minimum;
-		final int adjustedValue = value - minimum;
+		if (minimum > value) {
+			return 0;
+		}
+
 		final int width = getWidth();
-		if (adjustedValue > adjustedMax) {
+		final int maximum = getMaximum();
+		if (value > maximum) {
 			return width;
 		}
-		final int barWidth = (int) (width * adjustedValue * 1.0 / adjustedMax);
+
+		final int adjustedMax = maximum - minimum;
+		final int adjustedValue = value - minimum;
+		final double completenessRatio = 1.0 * adjustedValue / adjustedMax;
+		final int barWidth = (int) (width * completenessRatio);
 		return barWidth;
 	}
 

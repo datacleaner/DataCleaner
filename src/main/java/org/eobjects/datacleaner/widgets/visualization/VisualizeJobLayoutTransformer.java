@@ -54,7 +54,7 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 				sourceColumns++;
 			}
 		}
-		_nonPhysicalSourceColumnsExtraXSteps = (sourceColumns / Y_MAX);
+		_nonPhysicalSourceColumnsExtraXSteps = (sourceColumns / Y_MAX) + 1;
 
 		for (Object obj : vertices) {
 			// eager load all points to be able to deliver preferred size

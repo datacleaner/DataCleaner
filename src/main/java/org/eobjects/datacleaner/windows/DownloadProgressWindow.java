@@ -121,10 +121,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 		DecimalFormat formatter = new DecimalFormat("###,###");
 		_currentBytesLabels[index].setText(formatter.format(bytes));
 		DCProgressBar progressBar = _progressBars[index];
-		boolean update = progressBar.setValueIfHigherAndSignificant((int) (bytes / 100));
-		if (update) {
-			progressBar.updateUI();
-		}
+		progressBar.setValueIfHigherAndSignificant((int) (bytes / 100));
 	}
 
 	public void setExpectedSize(File file, Long bytes) {

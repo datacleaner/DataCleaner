@@ -23,35 +23,23 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.util.WidgetUtils;
 
 public class DCProgressBar extends JProgressBar {
 
 	private static final long serialVersionUID = 1L;
-	
-	private volatile int _value;
 
 	public DCProgressBar(int min, int max) {
 		super(min, max);
 		setMinimumSize(new Dimension(10, 30));
 		setMaximumSize(new Dimension(1000, 30));
 		setOpaque(false);
-		_value = min;
 	}
 
 	public DCProgressBar() {
 		this(0, 100);
-	}
-	
-	@Override
-	public int getValue() {
-		return _value;
-	}
-	
-	@Override
-	public void setValue(int value) {
-		_value = value;
 	}
 
 	/**
@@ -61,21 +49,21 @@ public class DCProgressBar extends JProgressBar {
 	 *         and if it will introduce a visual change to the progress bar
 	 *         (assumed that the progress bar width is not changed)
 	 */
-	public boolean setValueIfHigherAndSignificant(int newValue) {
-		final int maximum = getMaximum();
-		final int checkedValue = Math.min(maximum, newValue);
-		synchronized (this) {
-			final int currentValue = getValue();
-			if (checkedValue > currentValue) {
-				setValue(checkedValue);
-				int currentBarWidth = getBarWidth(currentValue);
-				int newBarWidth = getBarWidth(checkedValue);
-				if (newBarWidth > currentBarWidth) {
-					return true;
+	public void setValueIfHigherAndSignificant(final int newValue) {
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				final int currentValue = getValue();
+				if (newValue > currentValue) {
+					setValue(newValue);
 				}
 			}
+		};
+		if (SwingUtilities.isEventDispatchThread()) {
+			runnable.run();
+		} else {
+			SwingUtilities.invokeLater(runnable);
 		}
-		return false;
 	}
 
 	private int getBarWidth(final int value) {

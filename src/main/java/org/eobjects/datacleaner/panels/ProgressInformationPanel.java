@@ -157,14 +157,7 @@ public class ProgressInformationPanel extends DCPanel {
 
 	public void updateProgress(final Table table, final int currentRow) {
 		final DCProgressBar progressBar = getProgressBar(table, -1);
-		if (progressBar.setValueIfHigherAndSignificant(currentRow)) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					progressBar.updateUI();
-				}
-			});
-		}
+		progressBar.setValueIfHigherAndSignificant(currentRow);
 
 		if (_verboseLogging) {
 			boolean log = false;

@@ -138,10 +138,10 @@ public class ProgressInformationPanel extends DCPanel {
 		synchronized (_progressBars) {
 			DCProgressBar progressBar = _progressBars.get(table);
 			if (progressBar == null) {
-				progressBar = new DCProgressBar(0, expectedRows);
-				if (expectedRows != -1) {
+				if (expectedRows == -1) {
 					expectedRows = Integer.MAX_VALUE;
 				}
+				progressBar = new DCProgressBar(0, expectedRows);
 				if (_progressBars.isEmpty()) {
 					_progressBarPanel.removeAll();
 				}

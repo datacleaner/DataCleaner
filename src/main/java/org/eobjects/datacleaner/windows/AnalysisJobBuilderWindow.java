@@ -35,7 +35,6 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -72,7 +71,6 @@ import org.eobjects.datacleaner.panels.MetadataPanel;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
-import org.eobjects.datacleaner.panels.VisualizeExecutionFlowPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -282,17 +280,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		visualizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				VisualizeExecutionFlowPanel visualization = new VisualizeExecutionFlowPanel(_analysisJobBuilder);
-
-				JFrame frame = new JFrame();
-				frame.setTitle("Execution flow | DataCleaner");
-				frame.setIconImage(visualizeImage);
-				frame.getContentPane().add(visualization);
-				frame.setSize(750, 400);
-				frame.pack();
-				WidgetUtils.centerOnScreen(frame);
-
-				frame.setVisible(true);
+				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder);
+				window.setVisible(true);
 			}
 		});
 

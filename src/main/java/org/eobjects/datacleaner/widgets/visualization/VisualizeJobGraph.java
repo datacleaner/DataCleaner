@@ -17,14 +17,17 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.panels;
+package org.eobjects.datacleaner.widgets.visualization;
 
-import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.List;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 
+import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+import org.apache.commons.collections15.functors.TruePredicate;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.InputColumnSinkJob;
 import org.eobjects.analyzer.job.InputColumnSourceJob;
@@ -35,6 +38,7 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.SourceColumnFinder;
@@ -42,24 +46,29 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 
-import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.algorithms.layout.StaticLayout;
+import edu.uci.ics.jung.graph.DirectedGraph;
+import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseMultigraph;
+import edu.uci.ics.jung.graph.util.Context;
+import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 
-public class VisualizeExecutionFlowPanel extends DCPanel {
+public final class VisualizeJobGraph {
 
 	private static final long serialVersionUID = 1L;
+	private static final ImageManager imageManager = ImageManager.getInstance();
 
-	private int edgeNumber = 0;
+	private VisualizeJobGraph() {
+		// prevent instantiation
+	}
 
-	public VisualizeExecutionFlowPanel(AnalysisJobBuilder analysisJobBuilder) {
-		super();
-		final Graph<Object, Integer> g = new SparseMultigraph<Object, Integer>();
+	public static JComponent create(AnalysisJobBuilder analysisJobBuilder) {
+		final DirectedGraph<Object, VisualizeJobLink> g = new DirectedSparseGraph<Object, VisualizeJobLink>();
 
 		final SourceColumnFinder scf = new SourceColumnFinder();
 		scf.addSources(analysisJobBuilder);
@@ -79,7 +88,7 @@ public class VisualizeExecutionFlowPanel extends DCPanel {
 			}
 		}
 
-		List<FilterJobBuilder<?, ?>> fjbs = analysisJobBuilder.getFilterJobBuilders();
+		final List<FilterJobBuilder<?, ?>> fjbs = analysisJobBuilder.getFilterJobBuilders();
 		for (FilterJobBuilder<?, ?> fjb : fjbs) {
 			addGraphNodes(g, scf, fjb);
 		}
@@ -88,11 +97,14 @@ public class VisualizeExecutionFlowPanel extends DCPanel {
 			g.addVertex("No components in job");
 		}
 
-		final Layout<Object, Integer> layout = new ISOMLayout<Object, Integer>(g);
+		final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(g);
+		final Layout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(g, layoutTransformer);
 
-		final VisualizationViewer<Object, Integer> bvs = new VisualizationViewer<Object, Integer>(layout);
+		final Dimension preferredSize = layoutTransformer.getPreferredSize();
+		final VisualizationViewer<Object, VisualizeJobLink> bvs = new VisualizationViewer<Object, VisualizeJobLink>(layout,
+				preferredSize);
 
-		final RenderContext<Object, Integer> renderContext = bvs.getRenderContext();
+		final RenderContext<Object, VisualizeJobLink> renderContext = bvs.getRenderContext();
 
 		final DefaultModalGraphMouse<Object, Integer> gm = new DefaultModalGraphMouse<Object, Integer>();
 		gm.setMode(ModalGraphMouse.Mode.PICKING);
@@ -108,9 +120,17 @@ public class VisualizeExecutionFlowPanel extends DCPanel {
 				if (obj instanceof AbstractBeanJobBuilder) {
 					return LabelUtils.getLabel((AbstractBeanJobBuilder<?, ?, ?>) obj);
 				}
+				if (obj instanceof MergedOutcomeJobBuilder) {
+					return LabelUtils.getLabel((MergedOutcomeJobBuilder) obj);
+				}
 				return obj.toString();
 			}
 		});
+
+		// render arrows
+		final Predicate<Context<Graph<Object, VisualizeJobLink>, VisualizeJobLink>> edgeArrowPredicate = TruePredicate
+				.getInstance();
+		renderContext.setEdgeArrowPredicate(edgeArrowPredicate);
 
 		// render icons
 		renderContext.setVertexIconTransformer(new Transformer<Object, Icon>() {
@@ -118,27 +138,29 @@ public class VisualizeExecutionFlowPanel extends DCPanel {
 			@Override
 			public Icon transform(Object obj) {
 				if (obj instanceof InputColumn) {
-					return ImageManager.getInstance().getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
+					return imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
 				}
 				if (obj instanceof AbstractBeanJobBuilder) {
 					return IconUtils.getDescriptorIcon(((AbstractBeanJobBuilder<?, ?, ?>) obj).getDescriptor());
 				}
-				return ImageManager.getInstance().getImageIcon("images/status/error.png");
+				if (obj instanceof MergedOutcomeJobBuilder) {
+					return imageManager.getImageIcon("images/component-types/merged-outcome.png");
+				}
+				return imageManager.getImageIcon("images/status/error.png");
 			}
 		});
 
-		setLayout(new BorderLayout());
-		add(bvs, BorderLayout.CENTER);
+		return bvs;
 	}
 
-	private void addGraphNodes(Graph<Object, Integer> g, SourceColumnFinder scf, Object item) {
+	private static void addGraphNodes(Graph<Object, VisualizeJobLink> g, SourceColumnFinder scf, Object item) {
 		if (!g.containsVertex(item)) {
 			g.addVertex(item);
 			if (item instanceof InputColumnSinkJob) {
 				InputColumn<?>[] inputColumns = ((InputColumnSinkJob) item).getInput();
 				for (InputColumn<?> inputColumn : inputColumns) {
 					addGraphNodes(g, scf, inputColumn);
-					g.addEdge(++edgeNumber, inputColumn, item);
+					addEdge(g, inputColumn, item);
 				}
 			}
 
@@ -149,7 +171,7 @@ public class VisualizeExecutionFlowPanel extends DCPanel {
 						OutcomeSourceJob source = scf.findOutcomeSource(req);
 						if (source != null) {
 							addGraphNodes(g, scf, source);
-							g.addEdge(++edgeNumber, source, item);
+							addEdge(g, source, item);
 						}
 					}
 				}
@@ -161,10 +183,17 @@ public class VisualizeExecutionFlowPanel extends DCPanel {
 					InputColumnSourceJob source = scf.findInputColumnSource(inputColumn);
 					if (source != null) {
 						addGraphNodes(g, scf, source);
-						g.addEdge(++edgeNumber, source, item);
+						addEdge(g, source, item);
 					}
 				}
 			}
+		}
+	}
+
+	private static void addEdge(Graph<Object, VisualizeJobLink> g, Object from, Object to) {
+		VisualizeJobLink link = new VisualizeJobLink(from, to);
+		if (!g.containsEdge(link)) {
+			g.addEdge(link, from, to, EdgeType.DIRECTED);
 		}
 	}
 }

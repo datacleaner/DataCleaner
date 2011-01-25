@@ -68,6 +68,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			for (JCheckBox cb : _checkBoxes) {
 				cb.setSelected(true);
 			}
+			fireValueChanged();
 		}
 	};
 
@@ -77,6 +78,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			for (JCheckBox cb : _checkBoxes) {
 				cb.setSelected(false);
 			}
+			fireValueChanged();
 		}
 	};
 

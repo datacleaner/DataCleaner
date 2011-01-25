@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -46,6 +47,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 	private final AnalyzerBeansConfiguration _configuration;
 	private final ColumnListTable _outputColumnsTable;
 	private final ChangeRequirementButton _requirementButton;
+	private final JButton _previewButton;
 
 	public TransformerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder,
 			AnalyzerBeansConfiguration configuration) {
@@ -55,24 +57,30 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 
 		init();
 
-		List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
+		final List<MutableInputColumn<?>> outputColumns;
+		if (_transformerJobBuilder.isConfigured()) {
+			outputColumns = _transformerJobBuilder.getOutputColumns();
+		} else {
+			outputColumns = new ArrayList<MutableInputColumn<?>>(0);
+		}
 		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, analysisJobBuilder);
 
-		JButton previewButton = new JButton("Preview transformed data",
+		_previewButton = new JButton("Preview transformed data",
 				imageManager.getImageIcon("images/actions/preview_data.png"));
-		previewButton
+		_previewButton
 				.addActionListener(new PreviewTransformedDataActionListener(analysisJobBuilder, _transformerJobBuilder));
 
-		DCPanel previewButtonPanel = new DCPanel();
+		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, transformerJobBuilder);
+
+		final DCPanel previewButtonPanel = new DCPanel();
 		previewButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		previewButtonPanel.add(previewButton);
+		previewButtonPanel.add(_previewButton);
 		_outputColumnsTable.add(previewButtonPanel, BorderLayout.SOUTH);
 
 		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
 				_outputColumnsTable);
 
-		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, transformerJobBuilder);
-		DCPanel buttonPanel = new DCPanel();
+		final DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		buttonPanel.add(_requirementButton);
 		add(buttonPanel, BorderLayout.NORTH);
@@ -82,7 +90,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 	protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
 		_transformerJobBuilder.setConfiguredProperty(propertyDescriptor, value);
 	}
-
+	
 	public void setOutputColumns(List<? extends InputColumn<?>> outputColumns) {
 		_outputColumnsTable.setColumns(outputColumns);
 	}
@@ -100,7 +108,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns) {
 		_outputColumnsTable.setColumns(outputColumns);
 	}
-
+	
 	public void onRequirementChanged() {
 		_requirementButton.updateText();
 	}

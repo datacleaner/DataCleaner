@@ -154,6 +154,12 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 	@Override
 	public void onRemove(InputColumn<?> sourceColumn) {
 		if (_dataTypeFamily == DataTypeFamily.UNDEFINED || _dataTypeFamily == sourceColumn.getDataTypeFamily()) {
+			InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+			if (currentValue != null) {
+				if (currentValue.equals(sourceColumn)) {
+					_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, null);
+				}
+			}
 			updateComponents();
 			updateUI();
 		}

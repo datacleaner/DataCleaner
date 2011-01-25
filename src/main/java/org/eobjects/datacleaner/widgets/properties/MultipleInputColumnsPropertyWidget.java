@@ -38,6 +38,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
@@ -231,6 +232,12 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	@Override
 	public void onRemove(InputColumn<?> sourceColumn) {
 		if (_dataTypeFamily == DataTypeFamily.UNDEFINED || _dataTypeFamily == sourceColumn.getDataTypeFamily()) {
+			InputColumn<?>[] currentValue = (InputColumn<?>[]) getBeanJobBuilder().getConfiguredProperty(
+					getPropertyDescriptor());
+			if (currentValue != null) {
+				currentValue = CollectionUtils.arrayRemove(currentValue, sourceColumn);
+				getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), currentValue);
+			}
 			updateComponents();
 			updateUI();
 		}

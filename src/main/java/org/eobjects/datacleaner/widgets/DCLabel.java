@@ -39,11 +39,21 @@ public class DCLabel extends JLabel {
 	}
 
 	public static DCLabel brightMultiLine(String text) {
-		return bright("<html>" + text + "</html>");
+		return bright("<html>" + prepareMultiline(text) + "</html>");
 	}
 
 	public static DCLabel darkMultiLine(String text) {
-		return dark("<html><p>" + text + "</p></html>");
+		return dark("<html>" + prepareMultiline(text) + "</html>");
+	}
+
+	private static String prepareMultiline(String text) {
+		if (text == null) {
+			return "";
+		}
+		if (text.indexOf("<br") == -1) {
+			return text.replaceAll("\n", "<br>");
+		}
+		return text;
 	}
 
 	public DCLabel(String text, Color textColor, Icon icon) {

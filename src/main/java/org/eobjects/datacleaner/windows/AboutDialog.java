@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,8 +31,13 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.ResourceManager;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.DataContextFactory;
 import org.eobjects.metamodel.data.DataSet;
@@ -52,6 +58,7 @@ public class AboutDialog extends AbstractDialog {
 	}
 
 	private final ResourceManager resourceManager = ResourceManager.getInstance();
+	private final ImageManager imageManager = ImageManager.getInstance();
 	private final Map<String, String> _licenses = new HashMap<String, String>();
 
 	@Override
@@ -65,8 +72,48 @@ public class AboutDialog extends AbstractDialog {
 	}
 
 	@Override
+	protected boolean isWindowResizable() {
+		return true;
+	}
+
+	@Override
 	protected JComponent getDialogContent() {
-		return DCLabel.bright("TODO");
+		CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
+
+		tabbedPane.addTab("", imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE),
+				getAboutPanel(), "About DataCleaner");
+		tabbedPane.setUnclosableTab(0);
+
+		tabbedPane.addTab("", imageManager.getImageIcon("images/menu/license.png"), getLicensePanel(), "License");
+		tabbedPane.setUnclosableTab(1);
+
+		tabbedPane.addTab("", imageManager.getImageIcon("images/menu/users.png"), getCommunityPanel(), "Community");
+		tabbedPane.setUnclosableTab(2);
+
+		tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 500));
+
+		return tabbedPane;
+	}
+
+	private JComponent getCommunityPanel() {
+		return DCLabel.dark("TODO");
+	}
+
+	private JComponent getLicensePanel() {
+		DCPanel panel = new DCPanel();
+		
+		WidgetUtils.addToGridBag(DCLabel.dark("DataCleaners license:"), panel, 0, 0);
+
+		WidgetUtils.addToGridBag(DCLabel.dark("LGPL"), panel, 1, 0, 1.0, 0.0);
+		String license = getLicense("lgpl");
+		DCLabel licenseLabel = DCLabel.darkMultiLine(license);
+		WidgetUtils.addToGridBag(licenseLabel, panel, 0, 1, 2, 1);
+
+		return WidgetUtils.scrolleable(panel);
+	}
+
+	private JComponent getAboutPanel() {
+		return DCLabel.dark("TODO");
 	}
 
 	@Override

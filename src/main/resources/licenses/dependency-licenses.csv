@@ -1,6 +1,6 @@
 Project,Website,License
-AnalyzerBeans,http://analyzerbeans.eobjects.org,lgpl2
-MetaModel,http://metamodel.eobjects.org,lgpl2
+AnalyzerBeans,http://analyzerbeans.eobjects.org,lgpl
+MetaModel,http://metamodel.eobjects.org,lgpl
 Colt,http://acs.lbl.gov/software/colt,colt
 ICU4J,http://site.icu-project.org,icu
 JUNG,http://jung.sourceforge.net,bsd
@@ -11,9 +11,9 @@ H2 database,http://www.h2database.com/,eclipse
 Rhino,http://www.mozilla.org/rhino,mozilla
 opencsv,http://opencsv.sourceforge.net,apache2
 JGoodies Looks,http://www.jgoodies.com/freeware/looks/,bsd
-Jackcess,http://jackcess.sourceforge.net/,lgpl2
-SwingX,https://swingx.dev.java.net/,lgpl2
-JFreeChart,http://www.jfree.org/jfreechart/,lgpl2
+Jackcess,http://jackcess.sourceforge.net/,lgpl
+SwingX,https://swingx.dev.java.net/,lgpl
+JFreeChart,http://www.jfree.org/jfreechart/,lgpl
 Apache HttpComponents,http://hc.apache.org/,apache2
 Larvalabs collections,http://larvalabs.com/collections/,apache2
 SLF4J,http://www.slf4j.org/,mit

@@ -169,7 +169,7 @@ public class LoginPanel extends JPanel {
 			usernameTextField.setColumns(15);
 			final JPasswordField passwordTextField = new JPasswordField(15);
 
-			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/register.png");
+			final JButton registerButton = WidgetFactory.createButton("Register", "images/menu/users.png");
 			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));
 
 			final JButton loginButton = WidgetFactory.createButton("Login", "images/actions/login.png");

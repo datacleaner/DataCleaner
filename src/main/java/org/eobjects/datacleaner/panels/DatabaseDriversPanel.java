@@ -110,7 +110,7 @@ public class DatabaseDriversPanel extends DCPanel {
 				for (DatabaseDriverDescriptor dd : drivers) {
 					final String[] urls = dd.getDownloadUrls();
 					if (urls != null && _databaseDriverCatalog.getState(dd) == DatabaseDriverState.NOT_INSTALLED) {
-						final JMenuItem downloadAndInstallMenuItem = WidgetFactory.createMenuItem(dd.getDriverClassName(),
+						final JMenuItem downloadAndInstallMenuItem = WidgetFactory.createMenuItem(dd.getDisplayName(),
 								dd.getIconImagePath());
 						downloadAndInstallMenuItem.addActionListener(createDownloadActionListener(dd));
 						menu.add(downloadAndInstallMenuItem);

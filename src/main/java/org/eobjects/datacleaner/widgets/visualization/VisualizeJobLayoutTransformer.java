@@ -42,11 +42,14 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 	private final DirectedGraph<Object, VisualizeJobLink> _graph;
 	private final Map<Object, Point> _points = new IdentityHashMap<Object, Point>();
 	private final Map<Integer, Integer> _yCount = new HashMap<Integer, Integer>();
-	private final int _nonPhysicalSourceColumnsExtraXSteps;
 	private int addedXSteps = 0;
 
 	public VisualizeJobLayoutTransformer(DirectedGraph<Object, VisualizeJobLink> graph) {
 		_graph = graph;
+		createPoints();
+	}
+	
+	private void createPoints() {
 		final Collection<Object> vertices = _graph.getVertices();
 		int sourceColumns = 0;
 		for (Object obj : vertices) {
@@ -54,12 +57,36 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 				sourceColumns++;
 			}
 		}
-		_nonPhysicalSourceColumnsExtraXSteps = (sourceColumns / Y_MAX) + 1;
+
+		final int nonPhysicalSourceColumnsExtraXSteps = (sourceColumns / Y_MAX) + 1;
 
 		for (Object obj : vertices) {
 			// eager load all points to be able to deliver preferred size
-			transform(obj);
+			createPoint(obj, nonPhysicalSourceColumnsExtraXSteps);
 		}
+	}
+
+	private void createPoint(Object obj, int nonPhysicalSourceColumnsExtraXSteps) {
+		int inboundEdgeCount = getInboundEdgeCount(obj);
+		int x = inboundEdgeCount + addedXSteps;
+		if (!isPhysicalSourceColumn(obj)) {
+			x += nonPhysicalSourceColumnsExtraXSteps;
+		}
+
+		Integer y = _yCount.get(x);
+		if (y == null) {
+			y = 0;
+		}
+		if (y >= Y_MAX) {
+			addedXSteps++;
+		}
+
+		y++;
+		_yCount.put(x, y);
+
+		final Point point = new Point(x * X_STEP + X_OFFSET, y * Y_STEP);
+
+		_points.put(obj, point);
 	}
 
 	public Dimension getPreferredSize() {
@@ -83,29 +110,7 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 
 	@Override
 	public Point2D transform(Object obj) {
-		Point point = _points.get(obj);
-		if (point == null) {
-			int inboundEdgeCount = getInboundEdgeCount(obj);
-			int x = inboundEdgeCount + addedXSteps;
-			if (!isPhysicalSourceColumn(obj)) {
-				x += _nonPhysicalSourceColumnsExtraXSteps;
-			}
-
-			Integer y = _yCount.get(x);
-			if (y == null) {
-				y = 0;
-			}
-			if (y >= Y_MAX) {
-				addedXSteps++;
-			}
-
-			y++;
-			_yCount.put(x, y);
-			point = new Point(x * X_STEP + X_OFFSET, y * Y_STEP);
-
-			_points.put(obj, point);
-		}
-		return point;
+		return _points.get(obj);
 	}
 
 	private int getInboundEdgeCount(Object obj) {

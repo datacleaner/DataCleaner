@@ -22,98 +22,158 @@ package org.eobjects.datacleaner.widgets.visualization;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.commons.collections15.Transformer;
-import org.eobjects.analyzer.data.InputColumn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.jung.graph.DirectedGraph;
 
 public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2D> {
 
+	private static final Logger logger = LoggerFactory.getLogger(VisualizeJobLayoutTransformer.class);
+
+	private final Comparator<Object> longestTrailComparator = new Comparator<Object>() {
+		@Override
+		public int compare(Object o1, Object o2) {
+			final int prerequisiteCount1 = getAccumulatedPrerequisiteCount(o1);
+			final int prerequisiteCount2 = getAccumulatedPrerequisiteCount(o2);
+			return prerequisiteCount2 - prerequisiteCount1;
+		}
+	};
+
 	private static final int X_STEP = 180;
-	private static final int X_OFFSET = 60;
-	private static final int Y_STEP = 60;
-	private static final int Y_MAX = 6;
+	private static final int X_OFFSET = 40;
+	private static final int Y_STEP = 80;
+	private static final int Y_OFFSET = 40;
 	private final DirectedGraph<Object, VisualizeJobLink> _graph;
 	private final Map<Object, Point> _points = new IdentityHashMap<Object, Point>();
 	private final Map<Integer, Integer> _yCount = new HashMap<Integer, Integer>();
-	private int addedXSteps = 0;
 
 	public VisualizeJobLayoutTransformer(DirectedGraph<Object, VisualizeJobLink> graph) {
 		_graph = graph;
 		createPoints();
 	}
-	
+
 	private void createPoints() {
-		final Collection<Object> vertices = _graph.getVertices();
-		int sourceColumns = 0;
-		for (Object obj : vertices) {
-			if (isPhysicalSourceColumn(obj)) {
-				sourceColumns++;
-			}
+		final List<Object> vertices = getEndpointVertices();
+		if (vertices.isEmpty()) {
+			return;
 		}
 
-		final int nonPhysicalSourceColumnsExtraXSteps = (sourceColumns / Y_MAX) + 1;
+		// sort so that the longest trails will be plotted first
+		Collections.sort(vertices, longestTrailComparator);
 
-		for (Object obj : vertices) {
-			// eager load all points to be able to deliver preferred size
-			createPoint(obj, nonPhysicalSourceColumnsExtraXSteps);
+		final int maxPrerequisiteCount = getAccumulatedPrerequisiteCount(vertices.get(0));
+		logger.info("Maximum prerequisite count: {}", maxPrerequisiteCount);
+
+		final int x = maxPrerequisiteCount;
+		for (Object vertex : vertices) {
+			final Point point = createPoint(vertex, x);
+			_points.put(vertex, point);
+
+			createPrerequisitePoints(vertex, x);
 		}
 	}
 
-	private void createPoint(Object obj, int nonPhysicalSourceColumnsExtraXSteps) {
-		int inboundEdgeCount = getInboundEdgeCount(obj);
-		int x = inboundEdgeCount + addedXSteps;
-		if (!isPhysicalSourceColumn(obj)) {
-			x += nonPhysicalSourceColumnsExtraXSteps;
-		}
+	private void createPrerequisitePoints(final Object vertex, final int vertexX) {
+		List<Object> prerequisites = getPrerequisites(vertex);
 
+		// sort so that the longest trails will be plotted first
+		Collections.sort(prerequisites, longestTrailComparator);
+
+		for (Object prerequisiteVertex : prerequisites) {
+			if (!_points.containsKey(prerequisiteVertex)) {
+				final int x = vertexX - 1;
+				final Point point = createPoint(prerequisiteVertex, x);
+				_points.put(prerequisiteVertex, point);
+
+				createPrerequisitePoints(prerequisiteVertex, x);
+			}
+		}
+	}
+
+	private List<Object> getEndpointVertices() {
+		List<Object> result = new ArrayList<Object>();
+		for (Object vertex : _graph.getVertices()) {
+			Collection<VisualizeJobLink> outEdges = _graph.getOutEdges(vertex);
+			if (outEdges == null || outEdges.isEmpty()) {
+				result.add(vertex);
+			}
+		}
+		return result;
+	}
+
+	private Point createPoint(final Object vertex, final int x) {
 		Integer y = _yCount.get(x);
 		if (y == null) {
 			y = 0;
+		} else {
+			y++;
 		}
-		if (y >= Y_MAX) {
-			addedXSteps++;
-		}
-
-		y++;
 		_yCount.put(x, y);
 
-		final Point point = new Point(x * X_STEP + X_OFFSET, y * Y_STEP);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Assigning coordinate ({},{}) to vertex {}", new Object[] { x, y, vertex });
+		}
 
-		_points.put(obj, point);
+		return createPoint(x, y.intValue());
+	}
+
+	private Point createPoint(final int x, final int y) {
+		if (x < 0 || y < 0) {
+			throw new IllegalArgumentException("Negative coordinates are not allowed: x=" + x + ",y=" + y);
+		}
+		return new Point(x * X_STEP + X_OFFSET, y * Y_STEP + Y_OFFSET);
 	}
 
 	public Dimension getPreferredSize() {
-		int w = 0;
-		if (!_yCount.isEmpty()) {
-			Integer x = new TreeSet<Integer>(_yCount.keySet()).last();
-			w = X_OFFSET + (x + 1) * X_STEP;
+		final int x;
+		final int y;
+		if (_yCount.isEmpty()) {
+			x = 1;
+			y = 1;
+		} else {
+			x = new TreeSet<Integer>(_yCount.keySet()).last();
+			y = new TreeSet<Integer>(_yCount.values()).last();
 		}
-		int h = (Y_MAX + 1) * Y_STEP;
+		final int w = X_OFFSET + (x + 1) * X_STEP;
+		final int h = Y_OFFSET + (y + 1) * Y_STEP;
 		return new Dimension(w, h);
 	}
 
-	private boolean isPhysicalSourceColumn(Object obj) {
-		if (obj instanceof InputColumn) {
-			if (((InputColumn<?>) obj).isPhysicalColumn()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	@Override
-	public Point2D transform(Object obj) {
-		return _points.get(obj);
+	public Point2D transform(Object vertex) {
+		Point point = _points.get(vertex);
+		if (point == null) {
+			logger.warn("Vertex {} has no assigned coordinate!", vertex);
+			return new Point(0, 0);
+		}
+		return point;
 	}
 
-	private int getInboundEdgeCount(Object obj) {
+	private List<Object> getPrerequisites(Object vertex) {
+		Collection<VisualizeJobLink> edges = _graph.getInEdges(vertex);
+		if (edges == null || edges.isEmpty()) {
+			return Collections.emptyList();
+		}
+		List<Object> result = new ArrayList<Object>();
+		for (VisualizeJobLink edge : edges) {
+			result.add(edge.getFrom());
+		}
+		return result;
+	}
+
+	private int getAccumulatedPrerequisiteCount(Object obj) {
 		Collection<VisualizeJobLink> edges = _graph.getInEdges(obj);
 		if (edges == null || edges.isEmpty()) {
 			return 0;
@@ -122,7 +182,7 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 		for (VisualizeJobLink edge : edges) {
 			assert edge.getTo() == obj;
 			Object from = edge.getFrom();
-			int count = getInboundEdgeCount(from) + 1;
+			int count = getAccumulatedPrerequisiteCount(from) + 1;
 			max = Math.max(max, count);
 		}
 		return max;

@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -38,6 +39,12 @@ public class VisualizeJobWindow extends AbstractWindow {
 
 	public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder) {
 		_analysisJobBuilder = analysisJobBuilder;
+	}
+
+	@Override
+	protected void initialize() {
+		super.initialize();
+		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 	}
 
 	@Override

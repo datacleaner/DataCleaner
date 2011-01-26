@@ -73,11 +73,15 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 			Boolean nullable = column.isNullable();
 			if (nullable != null && nullable.booleanValue()) {
 				model.setValueAt(validIcon, i, 5);
+			} else {
+				model.setValueAt("", i, 5);
 			}
 
 			boolean indexed = column.isIndexed();
 			if (indexed) {
 				model.setValueAt(validIcon, i, 6);
+			} else {
+				model.setValueAt("", i, 6);
 			}
 
 			i++;

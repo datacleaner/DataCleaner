@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.windows.DataSetWindow;
@@ -33,11 +35,14 @@ import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PreviewSourceDataActionListener implements ActionListener {
 
-	private static final int DEFAULT_PREVIEW_ROWS = 400;
+	private static final Logger logger = LoggerFactory.getLogger(PreviewSourceDataActionListener.class);
 
+	private static final int DEFAULT_PREVIEW_ROWS = 400;
 	private final DataContextProvider _dataContextProvider;
 	private final Column[] _columns;
 	private final Collection<? extends InputColumn<?>> _inputColumns;
@@ -73,7 +78,17 @@ public class PreviewSourceDataActionListener implements ActionListener {
 		}
 		DataContext dc = _dataContextProvider.getDataContext();
 		Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
-		DataSetWindow window = new DataSetWindow(q, dc, DEFAULT_PREVIEW_ROWS);
+
+		String previewRowsString = JOptionPane.showInputDialog("Max number of records?", DEFAULT_PREVIEW_ROWS);
+		int previewRows;
+		try {
+			previewRows = Integer.parseInt(previewRowsString);
+		} catch (NumberFormatException ex) {
+			logger.warn("Entered value could not be parsed as an int: " + previewRowsString, ex);
+			previewRows = DEFAULT_PREVIEW_ROWS;
+		}
+
+		DataSetWindow window = new DataSetWindow(q, dc, previewRows);
 		window.setVisible(true);
 	}
 }

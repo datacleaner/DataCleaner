@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import org.h2.util.SoftHashMap;
+import org.eobjects.analyzer.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public final class ImageManager {
 
 	private static ImageManager instance = new ImageManager();
 
-	private final Map<String, Image> _cachedImageIcons = new SoftHashMap<String, Image>();
+	private final Map<String, Image> _cachedImageIcons = CollectionUtils.createCacheMap();
 
 	public static ImageManager getInstance() {
 		return instance;

@@ -47,13 +47,34 @@ public class QuickAnalysisActionListener implements ActionListener {
 
 	private final Datastore _datastore;
 	private final Table _table;
+	private final Column[] _columns;
 
-	public QuickAnalysisActionListener(Datastore datastore, Table table) {
-		if (table == null) {
-			throw new IllegalArgumentException("Table cannot be null");
-		}
+	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns) {
 		_datastore = datastore;
 		_table = table;
+		_columns = columns;
+	}
+
+	public QuickAnalysisActionListener(Datastore datastore, Table table) {
+		this(datastore, table, null);
+	}
+
+	public QuickAnalysisActionListener(Datastore datastore, Column column) {
+		this(datastore, null, new Column[] { column });
+	}
+
+	public Column[] getColumns() {
+		if (_columns == null) {
+			return _table.getColumns();
+		}
+		return _columns;
+	}
+
+	public Table getTable() {
+		if (_table == null) {
+			return _columns[0].getTable();
+		}
+		return _table;
 	}
 
 	@Override
@@ -62,14 +83,13 @@ public class QuickAnalysisActionListener implements ActionListener {
 
 		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
 		ajb.setDatastore(_datastore);
-		final Column[] columns = _table.getColumns();
 
 		final List<InputColumn<?>> booleanColumns = new ArrayList<InputColumn<?>>();
 		final List<InputColumn<?>> stringColumns = new ArrayList<InputColumn<?>>();
 		final List<InputColumn<?>> numberColumns = new ArrayList<InputColumn<?>>();
 		final List<InputColumn<?>> dateTimeColumns = new ArrayList<InputColumn<?>>();
 
-		for (Column column : columns) {
+		for (Column column : getColumns()) {
 			ajb.addSourceColumn(column);
 			InputColumn<?> inputColumn = ajb.getSourceColumnByName(column.getName());
 			DataTypeFamily dataTypeFamily = inputColumn.getDataTypeFamily();
@@ -107,7 +127,8 @@ public class QuickAnalysisActionListener implements ActionListener {
 				throw new IllegalStateException("Unknown job configuration issue!");
 			}
 
-			RunAnalysisActionListener actionListener = new RunAnalysisActionListener(ajb, configuration, "Quick analysis: " + _table.getName());
+			RunAnalysisActionListener actionListener = new RunAnalysisActionListener(ajb, configuration, "Quick analysis: "
+					+ getTable().getName());
 			actionListener.actionPerformed(event);
 		} catch (Exception e) {
 			WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);

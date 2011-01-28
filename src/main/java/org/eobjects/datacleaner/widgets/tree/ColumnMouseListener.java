@@ -32,10 +32,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
+import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -46,20 +48,22 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final SchemaTree _schemaTree;
+	private final Datastore _datastore;
 
-	public ColumnMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder) {
+	public ColumnMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder) {
 		_schemaTree = schemaTree;
+		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
+		final TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
 		if (path == null) {
 			return;
 		}
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-		Object userObject = node.getUserObject();
+		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+		final Object userObject = node.getUserObject();
 		if (userObject instanceof Column) {
 			final Column column = (Column) userObject;
 			int button = e.getButton();
@@ -69,9 +73,8 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				toggleColumn(column);
 			} else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
 				// right click = open popup menu
-				JPopupMenu popup = new JPopupMenu();
-				popup.setLabel(column.getName());
-				JMenuItem toggleColumnItem = WidgetFactory.createMenuItem(null, "images/actions/toggle-source-column.png");
+				final JMenuItem toggleColumnItem = WidgetFactory.createMenuItem(null,
+						"images/actions/toggle-source-column.png");
 				if (_analysisJobBuilder.containsSourceColumn(column)) {
 					toggleColumnItem.setText("Remove column from source");
 				} else {
@@ -83,9 +86,8 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 						toggleColumn(column);
 					}
 				});
-				popup.add(toggleColumnItem);
 
-				JMenuItem createDictionaryItem = WidgetFactory.createMenuItem("Create dictionary from column",
+				final JMenuItem createDictionaryItem = WidgetFactory.createMenuItem("Create dictionary from column",
 						"images/model/dictionary.png");
 				createDictionaryItem.addActionListener(new ActionListener() {
 					@Override
@@ -102,14 +104,22 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 						dialog.setVisible(true);
 					}
 				});
-				popup.add(createDictionaryItem);
 
-				JMenuItem previewMenuItem = WidgetFactory
-						.createMenuItem("Preview column", "images/actions/preview_data.png");
+				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
+						"images/component-types/analyzer.png");
+				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, column));
+
+				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
+						"images/actions/preview_data.png");
 				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_analysisJobBuilder
 						.getDataContextProvider(), column));
-				popup.add(previewMenuItem);
 
+				final JPopupMenu popup = new JPopupMenu();
+				popup.setLabel(column.getName());
+				popup.add(toggleColumnItem);
+				popup.add(createDictionaryItem);
+				popup.add(quickAnalysisMenuItem);
+				popup.add(previewMenuItem);
 				popup.show((Component) e.getSource(), e.getX(), e.getY());
 			}
 		}

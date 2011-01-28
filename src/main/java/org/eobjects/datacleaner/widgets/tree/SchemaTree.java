@@ -83,7 +83,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		if (analysisJobBuilder != null) {
 			addMouseListener(new SchemaMouseListener(this, _datastore, analysisJobBuilder));
 			addMouseListener(new TableMouseListener(this, _datastore, analysisJobBuilder));
-			addMouseListener(new ColumnMouseListener(this, analysisJobBuilder));
+			addMouseListener(new ColumnMouseListener(this, _datastore, analysisJobBuilder));
 		}
 		updateTree();
 	}

@@ -31,6 +31,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.WidgetFactory;
 
@@ -40,10 +41,12 @@ import org.eobjects.metamodel.schema.Table;
 final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 
 	private final SchemaTree _schemaTree;
+	private final Datastore _datastore;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 
-	public SchemaMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder) {
+	public SchemaMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder) {
 		_schemaTree = schemaTree;
+		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
 	}
 
@@ -67,7 +70,8 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 				addTableItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						TableMouseListener tableMouseListener = new TableMouseListener(_schemaTree, _analysisJobBuilder);
+						TableMouseListener tableMouseListener = new TableMouseListener(_schemaTree, _datastore,
+								_analysisJobBuilder);
 						Table[] tables = schema.getTables();
 						for (Table table : tables) {
 							tableMouseListener.addTable(table);

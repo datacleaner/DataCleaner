@@ -31,10 +31,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
+import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
-
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 
@@ -42,9 +43,11 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final SchemaTree _schemaTree;
+	private final Datastore _datastore;
 
-	public TableMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder) {
+	public TableMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder) {
 		_schemaTree = schemaTree;
+		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
 	}
 
@@ -82,11 +85,11 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 					}
 				}
 
-				JPopupMenu popup = new JPopupMenu();
+				final JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(table.getName());
 
 				if (enableAddTable) {
-					JMenuItem addTableItem = WidgetFactory.createMenuItem("Add table to source",
+					final JMenuItem addTableItem = WidgetFactory.createMenuItem("Add table to source",
 							"images/actions/toggle-source-table.png");
 					addTableItem.addActionListener(new ActionListener() {
 						@Override
@@ -98,7 +101,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 				}
 
 				if (enableRemoveTable) {
-					JMenuItem removeTableItem = WidgetFactory.createMenuItem("Remove table from source",
+					final JMenuItem removeTableItem = WidgetFactory.createMenuItem("Remove table from source",
 							"images/actions/toggle-source-table.png");
 					removeTableItem.addActionListener(new ActionListener() {
 						@Override
@@ -109,7 +112,13 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 					popup.add(removeTableItem);
 				}
 
-				JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table", "images/actions/preview_data.png");
+				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
+						"images/component-types/analyzer.png");
+				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, table));
+				popup.add(quickAnalysisMenuItem);
+
+				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",
+						"images/actions/preview_data.png");
 				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_analysisJobBuilder
 						.getDataContextProvider(), columns));
 				popup.add(previewMenuItem);

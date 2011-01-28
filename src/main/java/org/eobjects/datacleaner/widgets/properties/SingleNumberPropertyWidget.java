@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.widgets.properties;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
+import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.Percentage;
@@ -95,13 +96,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 		}
 		if (ReflectionUtils.isNumber(type)) {
 			// type is simple "number" - ie. any number
-			if (text.indexOf('%') != -1) {
-				return Percentage.parsePercentage(text);
-			} else if (text.indexOf('.') != -1) {
-				return Double.parseDouble(text);
-			} else {
-				return Integer.parseInt(text);
-			}
+			return ConvertToNumberTransformer.transformValue(text);
 		}
 		throw new IllegalStateException("Unsupported number-property type: " + type);
 	}

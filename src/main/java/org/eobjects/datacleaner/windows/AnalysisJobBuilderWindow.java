@@ -32,7 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -230,6 +229,16 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		final JButton saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
 		saveButton.addActionListener(new SaveAnalysisJobActionListener(this, _analysisJobBuilder));
 
+		final JButton visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
+		visualizeButton.setToolTipText("Visualize execution flow");
+		visualizeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder);
+				window.setVisible(true);
+			}
+		});
+
 		// Add transformer
 		final JButton addTransformerButton = new JButton("Add transformer",
 				imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
@@ -265,25 +274,14 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		saveButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		saveButton.setFocusPainted(false);
+		visualizeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		visualizeButton.setFocusPainted(false);
 		addTransformerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		addTransformerButton.setFocusPainted(false);
 		addAnalyzerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		addAnalyzerButton.setFocusPainted(false);
 		runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		runButton.setFocusPainted(false);
-
-		final Image visualizeImage = imageManager.getImage("images/actions/visualize.png");
-		final ImageIcon visualizeIcon = new ImageIcon(visualizeImage);
-		final JButton visualizeButton = new JButton(visualizeIcon);
-		visualizeButton.setFocusPainted(false);
-		visualizeButton.setToolTipText("Visualize execution flow");
-		visualizeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder);
-				window.setVisible(true);
-			}
-		});
 
 		final JToolBar toolBar = WidgetFactory.createToolBar();
 		toolBar.add(saveButton);

@@ -147,6 +147,9 @@ public final class IconUtils {
 		if (displayName.indexOf("synonym") != -1) {
 			imagePath = "images/component-types/type_synonym.png";
 		}
+		if (displayName.indexOf("match") != -1) {
+			imagePath = "images/component-types/type_match.png";
+		}
 		if (displayName.indexOf("coalesce") != -1) {
 			imagePath = "images/component-types/type_coalesce.png";
 		}

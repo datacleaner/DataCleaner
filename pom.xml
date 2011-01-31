@@ -47,7 +47,14 @@
 			<name>Rajneesh Namta</name>
 			<email>rnamta@xebia.com</email>
 			<roles>
-				<role>Testing</role>
+				<role>Tester</role>
+			</roles>
+		</contributor>
+		<contributor>
+			<name>Jyoti Thakur</name>
+			<email>jthakur@xebia.com</email>
+			<roles>
+				<role>Visuals artist</role>
 			</roles>
 		</contributor>
 	</contributors>

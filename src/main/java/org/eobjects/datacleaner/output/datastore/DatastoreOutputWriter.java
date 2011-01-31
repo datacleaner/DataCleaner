@@ -33,6 +33,8 @@ import org.eobjects.analyzer.storage.H2StorageProvider;
 import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
+import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.DataContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,12 +47,18 @@ final class DatastoreOutputWriter implements OutputWriter {
 	private final String _datastoreName;
 	private final String _jdbcUrl;
 	private final Connection _connection;
+	private final String _tableName;
 	private final InputColumn<?>[] _columns;
 	private final String _insertStatement;
 	private final DatastoreCreationDelegate _datastoreCreationDelegate;
 
 	public DatastoreOutputWriter(String datastoreName, File directory, InputColumn<?>[] columns,
 			DatastoreCreationDelegate datastoreCreationDelegate) {
+		this(datastoreName, directory, columns, datastoreCreationDelegate, true);
+	}
+
+	public DatastoreOutputWriter(String datastoreName, File directory, InputColumn<?>[] columns,
+			DatastoreCreationDelegate datastoreCreationDelegate, boolean truncateExisting) {
 		_datastoreName = datastoreName;
 		_jdbcUrl = DatastoreOutputUtils.getJdbcUrl(directory, _datastoreName);
 		_columns = columns;
@@ -68,11 +76,40 @@ final class DatastoreOutputWriter implements OutputWriter {
 			throw new IllegalStateException(e);
 		}
 
-		SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE DATASET IF EXISTS");
+		synchronized (_jdbcUrl) {
+			final DataContext dc = DataContextFactory.createJdbcDataContext(_connection);
+			final String[] tableNames = dc.getDefaultSchema().getTableNames();
+			
+			if (truncateExisting) {
+				_tableName = "DATASET";
+				
+				for (String existingTableName : tableNames) {
+					SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE " + existingTableName);
+				}
+			} else {
+				int tableNumber = 0;
+				boolean accepted = false;
+				String proposalName = null;
+				while (!accepted) {
+					tableNumber++;
+					proposalName = "DATASET_" + tableNumber;
+					accepted = true;
+					for (String existingTableName : tableNames) {
+						if (existingTableName.equals(proposalName)) {
+							accepted = false;
+							break;
+						}
+					}
+				}
+				_tableName = proposalName;
+			}
+		}
 
 		// create a CREATE TABLE statement and execute it
 		StringBuilder sb = new StringBuilder();
-		sb.append("CREATE TABLE DATASET (");
+		sb.append("CREATE TABLE ");
+		sb.append(_tableName);
+		sb.append(" (");
 		for (int i = 0; i < columns.length; i++) {
 			if (i != 0) {
 				sb.append(',');
@@ -87,7 +124,9 @@ final class DatastoreOutputWriter implements OutputWriter {
 
 		// create a reusable INSERT statement
 		sb = new StringBuilder();
-		sb.append("INSERT INTO DATASET VALUES (");
+		sb.append("INSERT INTO ");
+		sb.append(_tableName);
+		sb.append(" VALUES (");
 		for (int i = 0; i < _columns.length; i++) {
 			if (i != 0) {
 				sb.append(',');

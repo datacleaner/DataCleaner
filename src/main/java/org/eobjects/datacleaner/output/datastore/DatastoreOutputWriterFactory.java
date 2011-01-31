@@ -42,7 +42,11 @@ public final class DatastoreOutputWriterFactory {
 	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 
 	public static OutputWriter getWriter(String datastoreName, InputColumn<?>... columns) {
-		return getWriter(DEFAULT_OUTPUT_DIRECTORY, DEFAULT_CREATION_DELEGATE, datastoreName, columns);
+		return getWriter(datastoreName, true, columns);
+	}
+	
+	public static OutputWriter getWriter(String datastoreName, boolean truncate, InputColumn<?>... columns) {
+		return getWriter(DEFAULT_OUTPUT_DIRECTORY, DEFAULT_CREATION_DELEGATE, datastoreName, truncate, columns);
 	}
 
 	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName,
@@ -68,17 +72,24 @@ public final class DatastoreOutputWriterFactory {
 
 	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
 			InputColumn<?>... columns) {
+		return getWriter(directory, creationDelegate, datastoreName, true, columns);
+	}
+
+	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
+			boolean truncate, InputColumn<?>... columns) {
 		if (!directory.exists()) {
 			if (!directory.mkdirs()) {
 				logger.error("Failed to create directory for datastores: {}", directory);
 			}
 		}
 
-		synchronized (DatastoreOutputWriterFactory.class) {
-			cleanFiles(directory, datastoreName);
+		if (truncate) {
+			synchronized (DatastoreOutputWriterFactory.class) {
+				cleanFiles(directory, datastoreName);
+			}
 		}
 
-		return new DatastoreOutputWriter(datastoreName, directory, columns, creationDelegate);
+		return new DatastoreOutputWriter(datastoreName, directory, columns, creationDelegate, truncate);
 	}
 
 	private static void cleanFiles(final File directory, final String datastoreName) {

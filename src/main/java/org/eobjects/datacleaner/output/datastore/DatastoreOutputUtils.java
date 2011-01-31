@@ -21,6 +21,9 @@ package org.eobjects.datacleaner.output.datastore;
 
 import java.io.File;
 
+import org.eobjects.analyzer.util.CharIterator;
+import org.eobjects.analyzer.util.StringUtils;
+
 final class DatastoreOutputUtils {
 
 	private DatastoreOutputUtils() {
@@ -28,8 +31,23 @@ final class DatastoreOutputUtils {
 	}
 
 	public static String safeName(String str) {
-		// replaces special chars with underscore
-		str = str.replaceAll("[\\ \\,\\(\\)\\.\\:\\;]+", "_");
+		if (StringUtils.isNullOrEmpty(str)) {
+			throw new IllegalArgumentException("Cannot create safe name from empty/null string: " + str);
+		}
+		
+		CharIterator ci = new CharIterator(str);
+		while (ci.hasNext()) {
+			ci.next();
+			if (!ci.isLetter() && !ci.isDigit()) {
+				// replaces unexpected chars with underscore
+				ci.set('_');
+			}
+		}
+		
+		str = ci.toString();
+		if (!Character.isLetter(str.charAt(0))) {
+			str = "db" + str;
+		}
 		return str;
 	}
 

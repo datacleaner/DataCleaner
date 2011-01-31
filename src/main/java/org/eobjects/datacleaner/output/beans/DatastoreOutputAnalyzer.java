@@ -30,10 +30,22 @@ import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 @OutputWriterAnalyzer
 public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
+	/**
+	 * Write mode for the datastore output analyzer. Determines if the datastore
+	 * will be truncated before writing data or if a new/separate table should
+	 * be created for this output.
+	 */
+	public static enum WriteMode {
+		TRUNCATE, NEW_TABLE
+	}
+
 	private OutputWriter _outputWriter;
 
 	@Configured
 	String datastoreName;
+
+	@Configured
+	WriteMode writeMode = WriteMode.TRUNCATE;
 
 	@Override
 	public void configureForOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
@@ -51,7 +63,8 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 				}
 
 				if (_outputWriter == null) {
-					_outputWriter = DatastoreOutputWriterFactory.getWriter(datastoreName, columns);
+					boolean truncate = (writeMode == WriteMode.TRUNCATE);
+					_outputWriter = DatastoreOutputWriterFactory.getWriter(datastoreName, truncate, columns);
 				}
 			}
 		}

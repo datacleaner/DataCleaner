@@ -133,7 +133,6 @@ public class OptionsDialog extends AbstractWindow {
 	}
 
 	private DCPanel getNetworkTab() {
-		final DCPanel networkTabPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 
 		final JCheckBox proxyCheckBox = new JCheckBox("Enable HTTP proxy?", userPreferences.isProxyEnabled());
 		proxyCheckBox.setOpaque(false);
@@ -225,8 +224,10 @@ public class OptionsDialog extends AbstractWindow {
 		// use ActionListener to initialize components
 		actionListener.actionPerformed(null);
 
-		WidgetUtils.addToGridBag(proxyCheckBox, networkTabPanel, 0, 0);
-		WidgetUtils.addToGridBag(proxyPanel, networkTabPanel, 0, 1);
+		final DCPanel networkTabPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		networkTabPanel.setLayout(new BorderLayout());
+		networkTabPanel.add(proxyCheckBox, BorderLayout.NORTH);
+		networkTabPanel.add(proxyPanel, BorderLayout.CENTER);
 
 		return networkTabPanel;
 	}

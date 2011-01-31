@@ -153,6 +153,9 @@ public final class IconUtils {
 		if (displayName.indexOf("coalesce") != -1) {
 			imagePath = "images/component-types/type_coalesce.png";
 		}
+		if (displayName.indexOf("expression language") != -1) {
+			imagePath = "images/model/column_expression.png";
+		}
 		if (displayName.indexOf("javascript") != -1) {
 			imagePath = "images/component-types/type_javascript.png";
 		}

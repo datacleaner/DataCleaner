@@ -37,8 +37,10 @@ import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -49,8 +51,10 @@ import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
+import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
+import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 
 public final class DatastoresListPanel extends DCPanel implements DatastoreChangeListener {
 
@@ -117,15 +121,23 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					}
 				});
 
-				// TODO: Not yet functional
 				JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("Dbase database-file",
 						imageManager.getImageIcon(IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-				dbaseMenuItem.setEnabled(false);
+				dbaseMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new DbaseDatastoreDialog(_catalog).setVisible(true);
+					}
+				});
 
-				// TODO: Not yet functional
 				JMenuItem odbMenuItem = WidgetFactory.createMenuItem("OpenOffice.org database-file",
 						imageManager.getImageIcon(IconUtils.ODB_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
-				odbMenuItem.setEnabled(false);
+				odbMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new OdbDatastoreDialog(_catalog).setVisible(true);
+					}
+				});
 
 				JMenuItem jdbcMenuItem = WidgetFactory.createMenuItem("Database connection",
 						imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
@@ -201,6 +213,22 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						ExcelDatastoreDialog dialog = new ExcelDatastoreDialog((ExcelDatastore) datastore, _catalog);
+						dialog.setVisible(true);
+					}
+				});
+			} else if (datastore instanceof OdbDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						OdbDatastoreDialog dialog = new OdbDatastoreDialog((OdbDatastore) datastore, _catalog);
+						dialog.setVisible(true);
+					}
+				});
+			} else if (datastore instanceof DbaseDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						DbaseDatastoreDialog dialog = new DbaseDatastoreDialog((DbaseDatastore) datastore, _catalog);
 						dialog.setVisible(true);
 					}
 				});

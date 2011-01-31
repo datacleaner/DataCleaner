@@ -19,99 +19,35 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
-import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
-import org.eobjects.datacleaner.user.UserPreferences;
-import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
-import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.DCLabel;
-import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
-import org.jdesktop.swingx.JXStatusBar;
-import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 
-public class ExcelDatastoreDialog extends AbstractDialog {
+public class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<ExcelDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	private final ImageManager imageManager = ImageManager.getInstance();
-	private final UserPreferences _userPreferences = UserPreferences.getInstance();
-	private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
-	private final JXTextField _datastoreNameField;
-	private final FilenameTextField _filenameField;
-	private final DCLabel _statusLabel;
-	private final DCPanel _outerPanel = new DCPanel();
-	private final JButton _addDatastoreButton;
-	private final ExcelDatastore _originalDatastore;
-
 	public ExcelDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		this(null, mutableDatastoreCatalog);
+		super(mutableDatastoreCatalog);
 	}
 
 	public ExcelDatastoreDialog(ExcelDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super();
-		_mutableDatastoreCatalog = mutableDatastoreCatalog;
-		_originalDatastore = originalDatastore;
-		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
+		super(originalDatastore, mutableDatastoreCatalog);
+	}
 
-		_filenameField = new FilenameTextField(_userPreferences.getDatastoreDirectory(), true);
-		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent e) {
-				updateStatus();
-			}
-		});
+	@Override
+	protected void setFileFilters(FilenameTextField filenameField) {
 		FileFilter combinedFilter = FileFilters.combined("Any Excel Spreadsheet (.xls, .xlsx)", FileFilters.XLS,
 				FileFilters.XLSX);
-		_filenameField.addChoosableFileFilter(combinedFilter);
-		_filenameField.addChoosableFileFilter(FileFilters.XLS);
-		_filenameField.addChoosableFileFilter(FileFilters.XLSX);
-		_filenameField.addChoosableFileFilter(FileFilters.ALL);
-		_filenameField.setSelectedFileFilter(combinedFilter);
-		_filenameField.addFileSelectionListener(new FileSelectionListener() {
-			@Override
-			public void onSelected(FilenameTextField filenameTextField, File file) {
-				File dir = file.getParentFile();
-				_userPreferences.setDatastoreDirectory(dir);
-
-				if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
-					_datastoreNameField.setText(file.getName());
-				}
-
-				updateStatus();
-			}
-		});
-
-		_statusLabel = DCLabel.bright("Please select file");
-
-		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/excel.png");
-
-		if (_originalDatastore != null) {
-			_datastoreNameField.setText(_originalDatastore.getName());
-			_datastoreNameField.setEnabled(false);
-			_filenameField.setFilename(_originalDatastore.getFilename());
-		}
-
-		updateStatus();
+		filenameField.addChoosableFileFilter(combinedFilter);
+		filenameField.addChoosableFileFilter(FileFilters.XLS);
+		filenameField.addChoosableFileFilter(FileFilters.XLSX);
+		filenameField.addChoosableFileFilter(FileFilters.ALL);
+		filenameField.setSelectedFileFilter(combinedFilter);
 	}
 
 	@Override
@@ -119,94 +55,24 @@ public class ExcelDatastoreDialog extends AbstractDialog {
 		return "MS Excel\nspreadsheet";
 	}
 
-	private void updateStatus() {
-		final String filename = _filenameField.getFilename();
-		if (StringUtils.isNullOrEmpty(filename)) {
-			_statusLabel.setText("Please enter or select a filename");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			_addDatastoreButton.setEnabled(false);
-			return;
-		}
-
-		final String datastoreName = _datastoreNameField.getText();
-		if (StringUtils.isNullOrEmpty(datastoreName)) {
-			_statusLabel.setText("Please enter a datastore name");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			_addDatastoreButton.setEnabled(false);
-			return;
-		}
-
-		final File file = new File(filename);
-		if (!file.exists()) {
-			_statusLabel.setText("The file does not exist!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			_addDatastoreButton.setEnabled(false);
-		}
-		if (!file.isFile()) {
-			_statusLabel.setText("Not a valid file!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			_addDatastoreButton.setEnabled(false);
-		}
-
-		_statusLabel.setText("Excel spreadsheet ready");
-		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
-		_addDatastoreButton.setEnabled(true);
-
-	}
-
-	@Override
-	protected int getDialogWidth() {
-		return 400;
-	}
-
-	@Override
-	protected JComponent getDialogContent() {
-		DCPanel formPanel = new DCPanel();
-
-		// temporary variable to make it easier to refactor the layout
-		int row = 0;
-		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Filename:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
-
-		_addDatastoreButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Datastore datastore = new ExcelDatastore(_datastoreNameField.getText(), _filenameField.getFilename());
-
-				if (_originalDatastore != null) {
-					_mutableDatastoreCatalog.removeDatastore(_originalDatastore);
-				}
-
-				_mutableDatastoreCatalog.addDatastore(datastore);
-				dispose();
-			}
-		});
-
-		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		buttonPanel.add(_addDatastoreButton);
-
-		DCPanel centerPanel = new DCPanel();
-		centerPanel.setLayout(new VerticalLayout(4));
-		centerPanel.add(formPanel);
-		centerPanel.add(buttonPanel);
-
-		JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-
-		_outerPanel.setLayout(new BorderLayout());
-		_outerPanel.add(centerPanel, BorderLayout.CENTER);
-		_outerPanel.add(statusBar, BorderLayout.SOUTH);
-
-		return _outerPanel;
-	}
-
 	@Override
 	protected String getWindowTitle() {
 		return "Excel spreadsheet | Datastore";
+	}
+
+	@Override
+	protected String getFilename(ExcelDatastore datastore) {
+		return datastore.getFilename();
+	}
+
+	@Override
+	protected ExcelDatastore createDatastore(String name, String filename) {
+		return new ExcelDatastore(name, filename);
+	}
+
+	@Override
+	protected String getDatastoreIconPath() {
+		return IconUtils.EXCEL_IMAGEPATH;
 	}
 
 }

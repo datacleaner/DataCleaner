@@ -19,53 +19,53 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import org.eobjects.analyzer.connection.AccessDatastore;
+import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
-public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<AccessDatastore> {
+public class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog<DbaseDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public AccessDatastoreDialog(AccessDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
+	public DbaseDatastoreDialog(DbaseDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super(originalDatastore, mutableDatastoreCatalog);
 	}
 
-	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+	public DbaseDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super(mutableDatastoreCatalog);
 	}
 
 	@Override
 	protected String getBannerTitle() {
-		return "MS Access\ndatabase";
+		return "dBase\ndatabase";
 	}
 
 	@Override
 	protected String getWindowTitle() {
-		return "MS Access database | Datastore";
+		return "dBase database | Datastore";
 	}
 
 	@Override
-	protected String getFilename(AccessDatastore datastore) {
+	protected String getFilename(DbaseDatastore datastore) {
 		return datastore.getFilename();
 	}
 
 	@Override
-	protected AccessDatastore createDatastore(String name, String filename) {
-		return new AccessDatastore(name, filename);
+	protected DbaseDatastore createDatastore(String name, String filename) {
+		return new DbaseDatastore(name, filename);
 	}
 
 	@Override
 	protected String getDatastoreIconPath() {
-		return IconUtils.ACCESS_IMAGEPATH;
+		return IconUtils.DBASE_IMAGEPATH;
 	}
 
 	@Override
 	protected void setFileFilters(FilenameTextField filenameField) {
-		filenameField.addChoosableFileFilter(FileFilters.MDB);
+		filenameField.addChoosableFileFilter(FileFilters.DBF);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(FileFilters.MDB);
+		filenameField.setSelectedFileFilter(FileFilters.DBF);
 	}
 }

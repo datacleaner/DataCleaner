@@ -19,53 +19,53 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import org.eobjects.analyzer.connection.AccessDatastore;
+import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
-public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<AccessDatastore> {
+public class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<OdbDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public AccessDatastoreDialog(AccessDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
+	public OdbDatastoreDialog(OdbDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super(originalDatastore, mutableDatastoreCatalog);
 	}
 
-	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
+	public OdbDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		super(mutableDatastoreCatalog);
 	}
 
 	@Override
 	protected String getBannerTitle() {
-		return "MS Access\ndatabase";
+		return "OpenOffice.org\ndatabase";
 	}
 
 	@Override
 	protected String getWindowTitle() {
-		return "MS Access database | Datastore";
+		return "OpenOffice.org database | Datastore";
 	}
 
 	@Override
-	protected String getFilename(AccessDatastore datastore) {
+	protected String getFilename(OdbDatastore datastore) {
 		return datastore.getFilename();
 	}
 
 	@Override
-	protected AccessDatastore createDatastore(String name, String filename) {
-		return new AccessDatastore(name, filename);
+	protected OdbDatastore createDatastore(String name, String filename) {
+		return new OdbDatastore(name, filename);
 	}
 
 	@Override
 	protected String getDatastoreIconPath() {
-		return IconUtils.ACCESS_IMAGEPATH;
+		return IconUtils.ODB_IMAGEPATH;
 	}
 
 	@Override
 	protected void setFileFilters(FilenameTextField filenameField) {
-		filenameField.addChoosableFileFilter(FileFilters.MDB);
+		filenameField.addChoosableFileFilter(FileFilters.ODB);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(FileFilters.MDB);
+		filenameField.setSelectedFileFilter(FileFilters.ODB);
 	}
 }

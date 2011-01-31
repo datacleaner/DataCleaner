@@ -25,7 +25,9 @@ import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
+import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
@@ -170,6 +172,10 @@ public final class IconUtils {
 			imagePath = EXCEL_IMAGEPATH;
 		} else if (datastore instanceof AccessDatastore) {
 			imagePath = ACCESS_IMAGEPATH;
+		} else if (datastore instanceof OdbDatastore) {
+			imagePath = ODB_IMAGEPATH;
+		} else if (datastore instanceof DbaseDatastore) {
+			imagePath = DBASE_IMAGEPATH;
 		} else if (datastore instanceof CompositeDatastore) {
 			imagePath = COMPOSITE_IMAGEPATH;
 		}

@@ -70,7 +70,7 @@ public final class LookAndFeelManager {
 		for (Object propertyKey : propertyKeys) {
 			if (propertyKey instanceof String) {
 				String str = (String) propertyKey;
-
+				
 				if (str.endsWith(".font")) {
 					// set default font
 					UIManager.put(propertyKey, WidgetUtils.FONT_NORMAL);
@@ -127,6 +127,7 @@ public final class LookAndFeelManager {
 		// tool tip colors
 		UIManager.put("ToolTip.background", WidgetUtils.BG_COLOR_DARK);
 		UIManager.put("ToolTip.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("ToolTip.border", WidgetUtils.BORDER_THIN);
 
 		// task pane colors
 		UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);

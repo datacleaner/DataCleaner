@@ -283,6 +283,11 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.0.3</version>
 		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.3.04</version>
+		</dependency>
 
 		<!-- Test dependencies -->
 		<dependency>

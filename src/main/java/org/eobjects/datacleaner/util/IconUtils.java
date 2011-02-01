@@ -128,6 +128,12 @@ public final class IconUtils {
 		if (displayName.indexOf("number") != -1) {
 			imagePath = "images/component-types/type_number.png";
 		}
+		if (displayName.indexOf("convert") != -1) {
+			imagePath = "images/component-types/type_convert.png";
+		}
+		if (displayName.indexOf("length") != -1) {
+			imagePath = "images/component-types/type_length.png";
+		}
 		if (displayName.indexOf("email") != -1) {
 			imagePath = "images/component-types/type_email.png";
 		}

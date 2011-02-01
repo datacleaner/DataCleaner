@@ -171,7 +171,8 @@ public final class ResultWindow extends AbstractWindow {
 			}
 		}
 
-		panel.add(new DCBannerPanel(bannerTitle), BorderLayout.NORTH);
+		panel.add(new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"), bannerTitle),
+				BorderLayout.NORTH);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

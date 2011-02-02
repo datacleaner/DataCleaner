@@ -40,10 +40,12 @@ public class DatastoreCreationDelegateImpl implements DatastoreCreationDelegate 
 		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 		final MutableDatastoreCatalog datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
 		final String name = datastore.getName();
-		if (datastoreCatalog.containsDatastore(name)) {
-			logger.warn("Datastore '{}' already exists. No new datastore will be created!", name);
-		} else {
-			datastoreCatalog.addDatastore(datastore);
+		synchronized (datastoreCatalog) {
+			if (datastoreCatalog.containsDatastore(name)) {
+				logger.warn("Datastore '{}' already exists. No new datastore will be created!", name);
+			} else {
+				datastoreCatalog.addDatastore(datastore);
+			}
 		}
 	}
 }

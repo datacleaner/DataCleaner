@@ -170,6 +170,12 @@ public final class IconUtils {
 		if (displayName.equals("pattern finder")) {
 			imagePath = "images/component-types/type_pattern_finder.png";
 		}
+		if (displayName.equals("string analyzer")) {
+			imagePath = "images/component-types/type_string_analyzer.png";
+		}
+		if (displayName.equals("whitespace trimmer")) {
+			imagePath = "images/component-types/type_whitespace_trimmer.png";
+		}
 		if (displayName.equals("value distribution")) {
 			imagePath = "images/component-types/type_value_distribution.png";
 		}

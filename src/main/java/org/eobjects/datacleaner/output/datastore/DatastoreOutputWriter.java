@@ -49,7 +49,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 	private final Connection _connection;
 	private final String _tableName;
 	private final InputColumn<?>[] _columns;
-	private final String _insertStatement;
+	private final PreparedStatement _insertStatement;
 	private final DatastoreCreationDelegate _datastoreCreationDelegate;
 
 	public DatastoreOutputWriter(String datastoreName, File directory, InputColumn<?>[] columns,
@@ -79,10 +79,10 @@ final class DatastoreOutputWriter implements OutputWriter {
 		synchronized (_jdbcUrl) {
 			final DataContext dc = DataContextFactory.createJdbcDataContext(_connection);
 			final String[] tableNames = dc.getDefaultSchema().getTableNames();
-			
+
 			if (truncateExisting) {
 				_tableName = "DATASET";
-				
+
 				for (String existingTableName : tableNames) {
 					SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE " + existingTableName);
 				}
@@ -134,21 +134,23 @@ final class DatastoreOutputWriter implements OutputWriter {
 			sb.append('?');
 		}
 		sb.append(')');
-		_insertStatement = sb.toString();
-	}
-
-	@Override
-	public OutputRow createRow() {
+		String sql = sb.toString();
 		try {
-			PreparedStatement st = _connection.prepareStatement(_insertStatement);
-			return new DatastoreOutputRow(st, _columns);
+			_insertStatement = _connection.prepareStatement(sql);
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
 		}
 	}
 
 	@Override
+	public OutputRow createRow() {
+		return new DatastoreOutputRow(_insertStatement, _columns);
+	}
+
+	@Override
 	public void close() {
+		SqlDatabaseUtils.safeClose(null, _insertStatement);
+
 		Statement st = null;
 
 		try {

@@ -21,10 +21,13 @@ package org.eobjects.datacleaner.output.datastore;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +36,14 @@ final class DatastoreOutputRow implements OutputRow {
 
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputRow.class);
 
-	private final PreparedStatement _st;
+	private final PreparedStatement _insertStatement;
 	private final InputColumn<?>[] _columns;
+	private final Map<Integer, Object> _parameters;
 
-	public DatastoreOutputRow(PreparedStatement st, InputColumn<?>[] columns) {
-		_st = st;
+	public DatastoreOutputRow(PreparedStatement insertStatement, InputColumn<?>[] columns) {
+		_insertStatement = insertStatement;
 		_columns = columns;
+		_parameters = new HashMap<Integer, Object>();
 	}
 
 	@Override
@@ -53,31 +58,24 @@ final class DatastoreOutputRow implements OutputRow {
 			throw new IllegalArgumentException("Column '" + inputColumn + "' is not being written");
 		}
 
-		try {
-			_st.setObject(index + 1, value);
-		} catch (SQLException e) {
-			throw new IllegalStateException(e);
-		}
+		_parameters.put(index + 1, value);
 		return this;
 	}
 
 	@Override
 	public void write() {
-		logger.info("Writing row based on statement: {}", _st);
-		try {
-			_st.executeUpdate();
-		} catch (SQLException e) {
-			throw new IllegalStateException(e);
-		} finally {
-			SqlDatabaseUtils.safeClose(null, _st);
-		}
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		if (!_st.isClosed()) {
-			_st.cancel();
+		synchronized (_insertStatement) {
+			final Set<Entry<Integer, Object>> entries = _parameters.entrySet();
+			try {
+				for (Entry<Integer, Object> entry : entries) {
+					_insertStatement.setObject(entry.getKey(), entry.getValue());
+				}
+				logger.debug("Writing row based on statement: {}", _insertStatement);
+				_insertStatement.executeUpdate();
+			} catch (SQLException e) {
+				logger.error("Exception occurred while executing statement with parameters: {}", _parameters);
+				throw new IllegalStateException(e);
+			}
 		}
 	}
 

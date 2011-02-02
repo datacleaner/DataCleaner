@@ -124,6 +124,12 @@ public class DCFileChooser extends JFileChooser {
 		if (name.endsWith(FileFilters.ODB.getExtension())) {
 			return imageManager.getImageIcon(IconUtils.ODB_IMAGEPATH);
 		}
+		if (name.endsWith(FileFilters.ANALYSIS_XML.getExtension())) {
+			return imageManager.getImageIcon("images/filetypes/analysis_job.png");
+		}
+		if (name.endsWith(FileFilters.XML.getExtension())) {
+			return imageManager.getImageIcon(IconUtils.XML_IMAGEPATH);
+		}
 		if (name.endsWith(".zip") || name.endsWith(".tar") || name.endsWith(".gz") || name.endsWith(".jar")
 				|| name.endsWith(".war") || name.endsWith(".ear")) {
 			return imageManager.getImageIcon("images/filetypes/archive.png");

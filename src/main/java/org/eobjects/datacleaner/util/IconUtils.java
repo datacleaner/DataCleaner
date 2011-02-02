@@ -43,9 +43,10 @@ public final class IconUtils {
 
 	public static int ICON_SIZE_LARGE = 32;
 	public static int ICON_SIZE_SMALL = 20;
-
+	
 	public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
 	public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
+	public static final String XML_IMAGEPATH = "images/datastore-types/xml.png";
 	public static final String EXCEL_IMAGEPATH = "images/datastore-types/excel.png";
 	public static final String ACCESS_IMAGEPATH = "images/datastore-types/access.png";
 	public static final String DBASE_IMAGEPATH = "images/datastore-types/dbase.png";

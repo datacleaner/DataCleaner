@@ -43,7 +43,8 @@ public class JobListPanel extends DCPanel {
 		setLayout(new BorderLayout());
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
-		final JButton addJobButton = new JButton("New", ImageManager.getInstance().getImageIcon("images/actions/new.png"));
+		final JButton addJobButton = new JButton("New", ImageManager.getInstance().getImageIcon(
+				"images/actions/new_analysis_job.png"));
 		addJobButton.setToolTipText("New analysis job");
 		addJobButton.addActionListener(new NewAnalysisJobActionListener(_configuration));
 

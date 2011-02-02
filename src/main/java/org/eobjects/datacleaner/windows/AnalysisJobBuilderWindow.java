@@ -214,7 +214,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	protected Image getWindowIcon() {
-		return ImageManager.getInstance().getImage("images/model/job.png");
+		return ImageManager.getInstance().getImage("images/filetypes/analysis_job.png");
 	}
 
 	@Override

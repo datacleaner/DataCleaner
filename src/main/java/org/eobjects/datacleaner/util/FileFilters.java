@@ -70,6 +70,7 @@ public final class FileFilters {
 	public static final ExtensionFilter MDB = new ExtensionFilter("Access database (.mdb)", ".mdb");
 	public static final ExtensionFilter DBF = new ExtensionFilter("Dbase database (.dbf)", ".dbf");
 	public static final ExtensionFilter ODB = new ExtensionFilter("OpenOffice.org database (.odb)", ".odb");
+	public static final ExtensionFilter XML = new ExtensionFilter("Extensible Markup Language (.xml)", ".xml");
 
 	public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)", ".analysis.xml");
 

@@ -41,6 +41,7 @@ import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
+import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -55,6 +56,7 @@ import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
+import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 
 public final class DatastoresListPanel extends DCPanel implements DatastoreChangeListener {
 
@@ -76,7 +78,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
 		final JButton addDatastoreMenuItem = new JButton("New datastore",
-				imageManager.getImageIcon("images/actions/new.png"));
+				imageManager.getImageIcon("images/actions/new_datastore.png"));
 		addDatastoreMenuItem.setToolTipText("New datastore");
 		addDatastoreMenuItem.addActionListener(new ActionListener() {
 			@Override
@@ -103,7 +105,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					}
 				});
 
-				JMenuItem accessMenuItem = WidgetFactory.createMenuItem("Microsoft Access database-file",
+				JMenuItem accessMenuItem = WidgetFactory.createMenuItem("Microsoft Access database file",
 						imageManager.getImageIcon(IconUtils.ACCESS_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				accessMenuItem.addActionListener(new ActionListener() {
 					@Override
@@ -121,7 +123,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					}
 				});
 
-				JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("Dbase database-file",
+				JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("Dbase database file",
 						imageManager.getImageIcon(IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				dbaseMenuItem.addActionListener(new ActionListener() {
 					@Override
@@ -130,7 +132,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					}
 				});
 
-				JMenuItem odbMenuItem = WidgetFactory.createMenuItem("OpenOffice.org database-file",
+				JMenuItem odbMenuItem = WidgetFactory.createMenuItem("OpenOffice.org database file",
 						imageManager.getImageIcon(IconUtils.ODB_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				odbMenuItem.addActionListener(new ActionListener() {
 					@Override
@@ -148,9 +150,19 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					}
 				});
 
+				JMenuItem xmlMenuItem = WidgetFactory.createMenuItem("XML file",
+						imageManager.getImageIcon(IconUtils.XML_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				xmlMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new XmlDatastoreDialog(_catalog).setVisible(true);
+					}
+				});
+
 				popup.add(jdbcMenuItem);
 				popup.add(csvMenuItem);
 				popup.add(excelMenuItem);
+				popup.add(xmlMenuItem);
 				popup.add(accessMenuItem);
 				popup.add(dbaseMenuItem);
 				popup.add(odbMenuItem);
@@ -216,6 +228,14 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 						dialog.setVisible(true);
 					}
 				});
+			} else if (datastore instanceof XmlDatastore) {
+				editButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						XmlDatastoreDialog dialog = new XmlDatastoreDialog((XmlDatastore) datastore, _catalog);
+						dialog.setVisible(true);
+					}
+				});
 			} else if (datastore instanceof OdbDatastore) {
 				editButton.addActionListener(new ActionListener() {
 					@Override
@@ -259,7 +279,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				}
 			});
 
-			final JButton jobButton = WidgetFactory.createSmallButton("images/actions/new.png");
+			final JButton jobButton = WidgetFactory.createSmallButton("images/actions/new_analysis_job.png");
 			jobButton.setToolTipText("Create job");
 			jobButton.addActionListener(new ActionListener() {
 				@Override

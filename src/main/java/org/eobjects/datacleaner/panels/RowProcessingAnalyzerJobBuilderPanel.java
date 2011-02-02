@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.panels;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.JComponent;
+
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -36,9 +38,15 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 
 	private final RowProcessingAnalyzerJobBuilder<?> _analyzerJobBuilder;
 	private final ChangeRequirementButton _requirementButton;
+	private final DCPanel _buttonPanel;
 
 	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder,
 			RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+		this(analysisJobBuilder, analyzerJobBuilder, true);
+	}
+
+	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder,
+			RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder, boolean displayRequirementButton) {
 		super("images/window/analyzer-tab-background.png", analysisJobBuilder, analyzerJobBuilder);
 		_analyzerJobBuilder = analyzerJobBuilder;
 
@@ -46,10 +54,16 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 
 		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, analyzerJobBuilder);
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		buttonPanel.add(_requirementButton);
-		add(buttonPanel, BorderLayout.NORTH);
+		_buttonPanel = new DCPanel();
+		_buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		if (displayRequirementButton) {
+			addToButtonPanel(_requirementButton);
+		}
+		add(_buttonPanel, BorderLayout.NORTH);
+	}
+	
+	public void addToButtonPanel(JComponent component) {
+		_buttonPanel.add(component);
 	}
 
 	@Override

@@ -35,6 +35,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
+import org.eobjects.datacleaner.actions.SaveTableAsCsvFileActionListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -116,6 +117,11 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 						"images/component-types/analyzer.png");
 				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, table));
 				popup.add(quickAnalysisMenuItem);
+
+				final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
+						"images/component-types/type_output_writer.png");
+				saveAsCsvFileMenuItem.addActionListener(new SaveTableAsCsvFileActionListener(_datastore, table));
+				popup.add(saveAsCsvFileMenuItem);
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",
 						"images/actions/preview_data.png");

@@ -67,8 +67,8 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 
 		_previewButton = new JButton("Preview transformed data",
 				imageManager.getImageIcon("images/actions/preview_data.png"));
-		_previewButton
-				.addActionListener(new PreviewTransformedDataActionListener(analysisJobBuilder, _transformerJobBuilder));
+		_previewButton.addActionListener(new PreviewTransformedDataActionListener(this, analysisJobBuilder,
+				_transformerJobBuilder));
 
 		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, transformerJobBuilder);
 
@@ -90,7 +90,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 	protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
 		_transformerJobBuilder.setConfiguredProperty(propertyDescriptor, value);
 	}
-	
+
 	public void setOutputColumns(List<? extends InputColumn<?>> outputColumns) {
 		_outputColumnsTable.setColumns(outputColumns);
 	}
@@ -108,7 +108,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns) {
 		_outputColumnsTable.setColumns(outputColumns);
 	}
-	
+
 	public void onRequirementChanged() {
 		_requirementButton.updateText();
 	}

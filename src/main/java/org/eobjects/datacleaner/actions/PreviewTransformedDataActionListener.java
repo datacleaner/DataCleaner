@@ -24,11 +24,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
+import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.data.MetaModelInputRow;
@@ -39,8 +41,8 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.lifecycle.CloseCallback;
 import org.eobjects.analyzer.lifecycle.InitializeCallback;
 import org.eobjects.analyzer.lifecycle.LifeCycleState;
+import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.windows.DataSetWindow;
-
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.MetaModelHelper;
 import org.eobjects.metamodel.data.DataSet;
@@ -53,11 +55,13 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 	private static final int DEFAULT_PREVIEW_ROWS = 400;
 
+	private final TransformerJobBuilderPanel _transformerJobBuilderPanel;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 
-	public PreviewTransformedDataActionListener(AnalysisJobBuilder analysisJobBuilder,
-			TransformerJobBuilder<?> transformerJobBuilder) {
+	public PreviewTransformedDataActionListener(TransformerJobBuilderPanel transformerJobBuilderPanel,
+			AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder) {
+		_transformerJobBuilderPanel = transformerJobBuilderPanel;
 		_analysisJobBuilder = analysisJobBuilder;
 		_transformerJobBuilder = transformerJobBuilder;
 	}
@@ -68,10 +72,12 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 	// RowProcessingPublisher :)
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		List<TransformerJobBuilder<?>> transformerJobs = new ArrayList<TransformerJobBuilder<?>>();
+		_transformerJobBuilderPanel.applyPropertyValues(true);
+
+		final List<TransformerJobBuilder<?>> transformerJobs = new ArrayList<TransformerJobBuilder<?>>();
 		transformerJobs.add(_transformerJobBuilder);
 
-		List<Column> physicalColumns = new ArrayList<Column>();
+		final List<Column> physicalColumns = new ArrayList<Column>();
 
 		for (InputColumn<?> inputColumn : _transformerJobBuilder.getInputColumns()) {
 			buildInputChain(inputColumn, physicalColumns, transformerJobs);
@@ -83,41 +89,48 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		// order
 		Collections.reverse(transformerJobs);
 
-		Table[] tables = MetaModelHelper.getTables(physicalColumns);
+		final Table[] tables = MetaModelHelper.getTables(physicalColumns);
 
 		if (tables.length != 1) {
 			throw new IllegalStateException("Transformer is expected to contain columns originating from 1 table, found "
 					+ tables.length);
 		}
 
-		Table table = tables[0];
+		final Table table = tables[0];
 
-		DataContext dc = _analysisJobBuilder.getDataContextProvider().getDataContext();
-		Query q = dc.query().from(table).select(physicalColumns.toArray(new Column[physicalColumns.size()])).toQuery();
+		final DataContextProvider dataContextProvider = _analysisJobBuilder.getDataContextProvider();
+		final DataContext dc = dataContextProvider.getDataContext();
+		final Query q = dc.query().from(table).select(physicalColumns.toArray(new Column[physicalColumns.size()])).toQuery();
 		q.setMaxRows(DEFAULT_PREVIEW_ROWS);
 
-		List<InputRow> result = new ArrayList<InputRow>();
-
-		// initialize
 		for (TransformerJobBuilder<?> tjb : transformerJobs) {
 			new InitializeCallback().onEvent(LifeCycleState.INITIALIZE, tjb.getConfigurableBean(), tjb.getDescriptor());
 		}
 
-		DataSet dataSet = dc.executeQuery(q);
+		// getting the output columns can be an expensive call, so we do it
+		// upfront in stead of for each row.
+		final Map<TransformerJobBuilder<?>, List<MutableInputColumn<?>>> outputColumns = new LinkedHashMap<TransformerJobBuilder<?>, List<MutableInputColumn<?>>>();
+		for (TransformerJobBuilder<?> tjb : transformerJobs) {
+			List<MutableInputColumn<?>> cols = tjb.getOutputColumns();
+			outputColumns.put(tjb, cols);
+		}
+
+		final List<InputRow> result = new ArrayList<InputRow>();
+		final DataSet dataSet = dc.executeQuery(q);
 		int rowNumber = 0;
 		while (dataSet.next()) {
 			Row row = dataSet.getRow();
 			InputRow inputRow = new MetaModelInputRow(rowNumber, row);
 
 			for (TransformerJobBuilder<?> tjb : transformerJobs) {
-				List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
+				List<MutableInputColumn<?>> cols = outputColumns.get(tjb);
 				Object[] output = tjb.getConfigurableBean().transform(inputRow);
 
-				assert outputColumns.size() == output.length;
+				assert cols.size() == output.length;
 
 				Map<InputColumn<?>, Object> newValues = new HashMap<InputColumn<?>, Object>();
 				for (int i = 0; i < output.length; i++) {
-					newValues.put(outputColumns.get(i), output[i]);
+					newValues.put(cols.get(i), output[i]);
 				}
 				inputRow = new TransformedInputRow(inputRow, newValues);
 			}
@@ -126,19 +139,21 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 			rowNumber++;
 		}
 
+		dataContextProvider.close();
+
 		// close
 		for (TransformerJobBuilder<?> tjb : transformerJobs) {
 			new CloseCallback().onEvent(LifeCycleState.CLOSE, tjb.getConfigurableBean(), tjb.getDescriptor());
 		}
 
-		String[] columnNames = new String[_transformerJobBuilder.getInputColumns().size()
-				+ _transformerJobBuilder.getOutputColumns().size()];
+		List<MutableInputColumn<?>> ownOutputColumns = outputColumns.get(_transformerJobBuilder);
+		String[] columnNames = new String[_transformerJobBuilder.getInputColumns().size() + ownOutputColumns.size()];
 		int column = 0;
 		for (InputColumn<?> col : _transformerJobBuilder.getInputColumns()) {
 			columnNames[column] = col.getName();
 			column++;
 		}
-		for (InputColumn<?> col : _transformerJobBuilder.getOutputColumns()) {
+		for (InputColumn<?> col : outputColumns.get(_transformerJobBuilder)) {
 			columnNames[column] = col.getName();
 			column++;
 		}
@@ -151,7 +166,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 				tableModel.setValueAt(inputRow.getValue(col), row, column);
 				column++;
 			}
-			for (InputColumn<?> col : _transformerJobBuilder.getOutputColumns()) {
+			for (InputColumn<?> col : ownOutputColumns) {
 				tableModel.setValueAt(inputRow.getValue(col), row, column);
 				column++;
 			}

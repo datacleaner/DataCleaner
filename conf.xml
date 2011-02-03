@@ -37,7 +37,7 @@
 				<value>Kato</value>
 			</value-list-dictionary>
 		</dictionaries>
-		
+
 		<string-patterns>
 			<simple-pattern name="Capitalized word">
 				<expression>Aaaaaa</expression>
@@ -47,7 +47,18 @@
 
 	<multithreaded-taskrunner max-threads="20" />
 
-	<in-memory-storage-provider max-rows-threshold="1000" />
+	<storage-provider>
+		<combined>
+			<collections-storage>
+				<h2-database>
+					<temp-directory>target/temp</temp-directory>
+				</h2-database>
+			</collections-storage>
+			<row-annotation-storage>
+				<in-memory />
+			</row-annotation-storage>
+		</combined>
+	</storage-provider>
 
 	<classpath-scanner>
 		<package recursive="true">org.eobjects.analyzer.beans</package>

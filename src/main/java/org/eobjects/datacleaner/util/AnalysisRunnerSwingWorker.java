@@ -97,7 +97,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 
 	@Override
 	public void rowProcessingSuccess(AnalysisJob job, final Table table) {
-		_progressInformationPanel.addUserLog("Row processing for " + table.getQualifiedLabel() + " finished");
+		String now = new DateTime().toString(DateTimeFormat.fullTime());
+		_progressInformationPanel.addUserLog("Row processing for " + table.getQualifiedLabel() + " finished (" + now + "). Generating results ...");
 	}
 
 	@Override

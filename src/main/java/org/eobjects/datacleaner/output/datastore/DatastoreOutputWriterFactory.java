@@ -38,7 +38,7 @@ public final class DatastoreOutputWriterFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
-	private static final File DEFAULT_OUTPUT_DIRECTORY = new File(DataCleanerHome.get(), "temp");
+	private static final File DEFAULT_OUTPUT_DIRECTORY = new File(DataCleanerHome.get(), "datastores");
 	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 
 	public static OutputWriter getWriter(String datastoreName, InputColumn<?>... columns) {

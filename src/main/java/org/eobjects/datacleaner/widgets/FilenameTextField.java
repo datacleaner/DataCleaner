@@ -102,7 +102,13 @@ public final class FilenameTextField extends DCPanel {
 				}
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					if (file.exists() && file.isFile()) {
+					
+					boolean accepted = true;
+					if (fileOpenDialog) {
+						accepted = file.exists() && file.isFile();
+					}
+					
+					if (accepted) {
 						_textField.setText(file.getAbsolutePath());
 						_directory = file.getParentFile();
 						for (FileSelectionListener listener : _listeners) {

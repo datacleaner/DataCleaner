@@ -45,7 +45,7 @@
 		</string-patterns>
 	</reference-data-catalog>
 
-	<multithreaded-taskrunner max-threads="20" />
+	<multithreaded-taskrunner max-threads="30" />
 
 	<storage-provider>
 		<combined>

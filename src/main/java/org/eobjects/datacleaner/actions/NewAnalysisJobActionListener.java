@@ -23,12 +23,16 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Icon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.user.UsageLogger;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public final class NewAnalysisJobActionListener implements ActionListener {
@@ -45,13 +49,16 @@ public final class NewAnalysisJobActionListener implements ActionListener {
 
 		final JPopupMenu popupMenu = new JPopupMenu();
 		final String[] datastoreNames = _configuration.getDatastoreCatalog().getDatastoreNames();
-		
+
 		if (datastoreNames == null || datastoreNames.length == 0) {
 			JOptionPane.showMessageDialog(comp, "Please create a new datastore before you create a job",
 					"No datastore available", JOptionPane.ERROR_MESSAGE);
 		} else {
+			Icon icon = ImageManager.getInstance().getImageIcon("images/filetypes/analysis_job.png",
+					IconUtils.ICON_SIZE_SMALL);
 			for (final String datastoreName : datastoreNames) {
-				final JMenuItem menuItem = new JMenuItem("Using " + datastoreName);
+				final JMenuItem menuItem = WidgetFactory.createMenuItem("Using " + datastoreName, icon);
+				menuItem.setToolTipText("New analysis job using " + datastoreName);
 				menuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {

@@ -19,12 +19,12 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JRadioButton;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
@@ -127,10 +127,11 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 		for (int i = 0; i < _radioButtons.length; i++) {
 			JRadioButton rb = _radioButtons[i];
 
-			rb.addChangeListener(new ChangeListener() {
+			rb.addItemListener(new ItemListener() {
 				@Override
-				public void stateChanged(ChangeEvent e) {
+				public void itemStateChanged(ItemEvent e) {
 					fireValueChanged();
+
 				}
 			});
 

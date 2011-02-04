@@ -38,7 +38,6 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -75,15 +74,14 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
-import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXStatusBar;
-import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +91,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
+	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private static final int SOURCE_TAB = 0;
 	private static final int METADATA_TAB = 1;
@@ -107,10 +106,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final CloseableTabbedPane _tabbedPane;
 	private final FilterListPanel _filterListPanel;
 	private final DCLabel _statusLabel = DCLabel.bright("");
-	private final DCPanel _leftPanel = new DCPanel();
+	private final CollapsibleTreePanel _leftPanel;
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
 	private String _jobFilename;
+
+	private DCPanel _schemaTreePanel;
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
 			String jobFilename) {
@@ -139,6 +140,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_tabbedPane = new CloseableTabbedPane();
+
+		final Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
+		_schemaTreePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
+				WidgetUtils.BG_COLOR_BRIGHT);
+		_schemaTreePanel.setLayout(new BorderLayout());
+		_schemaTreePanel.setBorder(WidgetUtils.BORDER_WIDE);
+		_schemaTreePanel.add(new LoadingIcon().setPreferredSize(150, 150), BorderLayout.CENTER);
+
+		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
 
 		_tabbedPane.addTabCloseListener(this);
 		_tabbedPane.addChangeListener(new ChangeListener() {
@@ -292,13 +302,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(runButton);
 
-		final Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
-		final DCPanel schemaTreePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
-				WidgetUtils.BG_COLOR_BRIGHT);
-		schemaTreePanel.setLayout(new BorderLayout());
-		schemaTreePanel.setBorder(WidgetUtils.BORDER_WIDE);
-		schemaTreePanel.add(new LoadingIcon().setPreferredSize(150, 150), BorderLayout.CENTER);
-
 		// load the schema tree in the background because it will retrieve
 		// metadata about the datastore (might take several seconds)
 		new SwingWorker<SchemaTree, Void>() {
@@ -318,8 +321,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 							_leftPanel.updateUI();
 						}
 					});
-					schemaTreePanel.removeAll();
-					schemaTreePanel.add(schemaTreeScroll, BorderLayout.CENTER);
+					_schemaTreePanel.removeAll();
+					_schemaTreePanel.add(schemaTreeScroll, BorderLayout.CENTER);
 					_leftPanel.updateUI();
 				} catch (Exception e) {
 					throw new RuntimeException(e);
@@ -345,40 +348,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_tabbedPane.setUnclosableTab(FILTERS_TAB);
 
 		_tabbedPane.addSeparator();
-
-		final JXCollapsiblePane collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
-		collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
-		collapsibleTreePane.add(schemaTreePanel);
-
-		final JButton toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
-		toggleTreeViewButton.setBorder(null);
-		toggleTreeViewButton.setOpaque(false);
-		toggleTreeViewButton.setContentAreaFilled(false);
-		toggleTreeViewButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				boolean collapsed = collapsibleTreePane.isCollapsed();
-				if (collapsed) {
-					toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
-					toggleTreeViewButton.setBorder(null);
-				} else {
-					toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
-					toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
-				}
-				collapsibleTreePane.setCollapsed(!collapsed);
-			}
-		});
-
-		final DCPanel collapseButtonPanel = new DCPanel();
-		collapseButtonPanel.setOpaque(true);
-		collapseButtonPanel.setBackground(WidgetUtils.BG_COLOR_DARK);
-		collapseButtonPanel.setLayout(new VerticalLayout(4));
-		collapseButtonPanel.setBorder(null);
-		collapseButtonPanel.add(toggleTreeViewButton);
-
-		_leftPanel.setLayout(new BorderLayout());
-		_leftPanel.add(collapsibleTreePane, BorderLayout.CENTER);
-		_leftPanel.add(collapseButtonPanel, BorderLayout.EAST);
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
@@ -494,7 +463,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onRemove(ExploringAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		// TODO Auto-generated method stub
+		// TODO
 		updateStatusLabel();
 	}
 

@@ -229,7 +229,7 @@ public class DCTable extends JXTable implements MouseListener {
 		}
 
 		if (row == -1 || col == -1) {
-			logger.info("Disregarding mouse event at {},{} (row={},col={})", new Object[] { x, y, row, col });
+			logger.debug("Disregarding mouse event at {},{} (row={},col={})", new Object[] { x, y, row, col });
 			return false;
 		}
 

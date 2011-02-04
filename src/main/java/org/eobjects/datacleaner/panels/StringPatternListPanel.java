@@ -37,6 +37,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.RegexStringPattern;
 import org.eobjects.analyzer.reference.SimpleStringPattern;
 import org.eobjects.analyzer.reference.StringPattern;
+import org.eobjects.datacleaner.regexswap.RegexSwapDialog;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.StringPatternChangeListener;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -135,9 +136,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JPopupMenu popup = new JPopupMenu();
-
-				JMenuItem regexStringPatternMenuItem = WidgetFactory.createMenuItem("Regular expression pattern",
+				final JMenuItem regexStringPatternMenuItem = WidgetFactory.createMenuItem("Regular expression pattern",
 						imageManager.getImageIcon("images/model/stringpattern_regex.png", IconUtils.ICON_SIZE_SMALL));
 				regexStringPatternMenuItem.setEnabled(true);
 				regexStringPatternMenuItem.addActionListener(new ActionListener() {
@@ -147,7 +146,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 					}
 				});
 
-				JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern",
+				final JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern",
 						imageManager.getImageIcon("images/model/stringpattern_simple.png", IconUtils.ICON_SIZE_SMALL));
 				simpleStringPatternMenuItem.setEnabled(true);
 				simpleStringPatternMenuItem.addActionListener(new ActionListener() {
@@ -157,9 +156,20 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 					}
 				});
 
+				final JMenuItem regexSwapMenuItem = WidgetFactory.createMenuItem("Import from the RegexSwap",
+						imageManager.getImageIcon("images/model/stringpattern_regexswap.png", IconUtils.ICON_SIZE_SMALL));
+				regexSwapMenuItem.setEnabled(true);
+				regexSwapMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new RegexSwapDialog(_catalog).setVisible(true);
+					}
+				});
+
+				final JPopupMenu popup = new JPopupMenu();
 				popup.add(regexStringPatternMenuItem);
 				popup.add(simpleStringPatternMenuItem);
-
+				popup.add(regexSwapMenuItem);
 				popup.show(addButton, 0, addButton.getHeight());
 			}
 		});

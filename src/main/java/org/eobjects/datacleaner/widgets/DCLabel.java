@@ -30,34 +30,27 @@ public class DCLabel extends JLabel {
 
 	private static final long serialVersionUID = 1L;
 
+	private final boolean _multiline;
+
 	public static DCLabel bright(String text) {
-		return new DCLabel(text, WidgetUtils.BG_COLOR_BRIGHTEST, null);
+		return new DCLabel(false, text, WidgetUtils.BG_COLOR_BRIGHTEST, null);
 	}
 
 	public static DCLabel dark(String text) {
-		return new DCLabel(text, WidgetUtils.BG_COLOR_DARKEST, null);
+		return new DCLabel(false, text, WidgetUtils.BG_COLOR_DARKEST, null);
 	}
 
 	public static DCLabel brightMultiLine(String text) {
-		return bright("<html>" + prepareMultiline(text) + "</html>");
+		return new DCLabel(true, text, WidgetUtils.BG_COLOR_BRIGHTEST, null);
 	}
 
 	public static DCLabel darkMultiLine(String text) {
-		return dark("<html>" + prepareMultiline(text) + "</html>");
+		return new DCLabel(true, text, WidgetUtils.BG_COLOR_DARKEST, null);
 	}
 
-	private static String prepareMultiline(String text) {
-		if (text == null) {
-			return "";
-		}
-		if (text.indexOf("<br") == -1) {
-			return text.replaceAll("\n", "<br>");
-		}
-		return text;
-	}
-
-	public DCLabel(String text, Color textColor, Icon icon) {
+	public DCLabel(boolean multiline, String text, Color textColor, Icon icon) {
 		super();
+		_multiline = multiline;
 		if (text != null) {
 			setText(text);
 		}
@@ -67,5 +60,24 @@ public class DCLabel extends JLabel {
 		if (icon != null) {
 			setIcon(icon);
 		}
+	}
+
+	@Override
+	public void setText(String text) {
+		if (text == null) {
+			text = "";
+		}
+		if (_multiline) {
+			if (text.indexOf("</p>") == -1) {
+				text = "<p>" + text + "</p>";
+			}
+			if (text.indexOf("<html>") == -1) {
+				text = "<html>" + text + "</html>";
+			}
+			if (text.indexOf("<br") == -1) {
+				text = text.replaceAll("\n", "<br>");
+			}
+		}
+		super.setText(text);
 	}
 }

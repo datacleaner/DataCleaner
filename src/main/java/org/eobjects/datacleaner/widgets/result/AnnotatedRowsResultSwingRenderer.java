@@ -44,7 +44,7 @@ import org.jdesktop.swingx.decorator.Highlighter;
 @RendererBean(SwingRenderingFormat.class)
 public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsResult, DCPanel> {
 
-	private static final String[] VIEWS = new String[] { "View detailed rows", "View distinct values & counts" };
+	private static final String[] VIEWS = new String[] { "View detailed rows", "View distinct values" };
 
 	@Override
 	public DCPanel render(final AnnotatedRowsResult result) {

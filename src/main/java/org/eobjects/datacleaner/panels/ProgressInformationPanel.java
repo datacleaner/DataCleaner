@@ -57,6 +57,7 @@ public class ProgressInformationPanel extends DCPanel {
 		super();
 		setLayout(new BorderLayout());
 		_textArea.setText("--- DataCleaner progress information user-log ---");
+		_textArea.setEditable(false);
 		_textAreaScroll = WidgetUtils.scrolleable(_textArea);
 		_textAreaScroll.setBorder(WidgetUtils.BORDER_THIN);
 

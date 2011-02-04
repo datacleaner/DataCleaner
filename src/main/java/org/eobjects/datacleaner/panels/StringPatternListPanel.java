@@ -55,11 +55,11 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private final AnalyzerBeansConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
 
-	private JComboBox stringPatternsCombo;
-	private StringPattern selectedStringPattern;
+	private final JComboBox stringPatternsCombo;
 	private final DCPanel _stringPatternListPanel;
-	private final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
-	private final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+	private final JButton _editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+	private final JButton _removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+	private volatile StringPattern selectedStringPattern;
 
 	public StringPatternListPanel(AnalyzerBeansConfiguration configuration) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -68,30 +68,37 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		_catalog.addStringPatternListener(this);
 		_stringPatternListPanel = new DCPanel();
 
-		JToolBar toolBar = WidgetFactory.createToolBar();
+		final JToolBar toolBar = WidgetFactory.createToolBar();
 
-		String[] stringPatternNames = _configuration.getReferenceDataCatalog().getStringPatternNames();
+		final String[] stringPatternNames = _configuration.getReferenceDataCatalog().getStringPatternNames();
 		stringPatternsCombo = new JComboBox(stringPatternNames);
 		stringPatternsCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String selectedStringPatternName = (String) stringPatternsCombo.getSelectedItem();
 				selectedStringPattern = _catalog.getStringPattern(selectedStringPatternName);
 				if (_catalog.isStringPatternMutable(selectedStringPatternName)) {
-					editButton.setIcon(imageManager.getImageIcon("images/actions/edit.png", 16));
-					editButton.setToolTipText("Edit or test pattern");
-					removeButton.setEnabled(true);
+					_editButton.setIcon(imageManager.getImageIcon("images/actions/edit.png", 16));
+					_editButton.setToolTipText("Edit or test pattern");
+					_removeButton.setEnabled(true);
 				} else {
-					editButton.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png", 16));
-					editButton.setToolTipText("Test pattern");
-					removeButton.setEnabled(false);
+					_editButton.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png", 16));
+					_editButton.setToolTipText("Test pattern");
+					_removeButton.setEnabled(false);
+				}
+
+				if (selectedStringPattern instanceof SimpleStringPattern
+						|| selectedStringPattern instanceof RegexStringPattern) {
+					_editButton.setVisible(true);
+				} else {
+					_editButton.setVisible(false);
 				}
 			}
 		});
 
 		_stringPatternListPanel.add(stringPatternsCombo);
 
-		editButton.setToolTipText("Edit or test pattern");
-		editButton.addActionListener(new ActionListener() {
+		_editButton.setToolTipText("Edit or test pattern");
+		_editButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (selectedStringPattern instanceof RegexStringPattern) {
@@ -103,10 +110,10 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				}
 			}
 		});
-		_stringPatternListPanel.add(editButton);
+		_stringPatternListPanel.add(_editButton);
 
-		removeButton.setToolTipText("Remove pattern");
-		removeButton.addActionListener(new ActionListener() {
+		_removeButton.setToolTipText("Remove pattern");
+		_removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (_catalog.isStringPatternMutable(selectedStringPattern.getName())) {
@@ -121,7 +128,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				}
 			}
 		});
-		_stringPatternListPanel.add(removeButton);
+		_stringPatternListPanel.add(_removeButton);
 		// toolBar.add(_stringPatternListPanel);
 		final JButton addButton = new JButton("New string pattern", imageManager.getImageIcon("images/actions/new.png"));
 		addButton.setToolTipText("New string pattern");
@@ -131,7 +138,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				JPopupMenu popup = new JPopupMenu();
 
 				JMenuItem regexStringPatternMenuItem = WidgetFactory.createMenuItem("Regular expression pattern",
-						imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
+						imageManager.getImageIcon("images/model/stringpattern_regex.png", IconUtils.ICON_SIZE_SMALL));
 				regexStringPatternMenuItem.setEnabled(true);
 				regexStringPatternMenuItem.addActionListener(new ActionListener() {
 					@Override
@@ -141,7 +148,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				});
 
 				JMenuItem simpleStringPatternMenuItem = WidgetFactory.createMenuItem("Simple string pattern",
-						imageManager.getImageIcon("images/model/pattern.png", IconUtils.ICON_SIZE_SMALL));
+						imageManager.getImageIcon("images/model/stringpattern_simple.png", IconUtils.ICON_SIZE_SMALL));
 				simpleStringPatternMenuItem.setEnabled(true);
 				simpleStringPatternMenuItem.addActionListener(new ActionListener() {
 					@Override

@@ -59,7 +59,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
 	private static final long serialVersionUID = 1L;
 
-	protected final ImageManager imageManager = ImageManager.getInstance();
+	protected static final ImageManager imageManager = ImageManager.getInstance();
 	protected final UserPreferences userPreferences = UserPreferences.getInstance();
 	protected final MutableDatastoreCatalog _mutableDatastoreCatalog;;
 	protected final JXTextField _datastoreNameField;
@@ -75,7 +75,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	}
 
 	public AbstractFileBasedDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super();
+		super(imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = originalDatastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");

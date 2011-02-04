@@ -154,7 +154,7 @@ public class MainWindow extends AbstractWindow {
 		taskPaneContainer.add(synonymsTaskPane);
 
 		final JXTaskPane patternsTaskPane = WidgetFactory.createTaskPane("String patterns",
-				imageManager.getImageIcon("images/model/pattern.png"));
+				imageManager.getImageIcon("images/model/stringpattern.png"));
 		patternsTaskPane.setCollapsed(true);
 		patternsTaskPane.add(new StringPatternListPanel(_configuration));
 		patternsTaskPane.setCollapsed(!userPreferences.isDisplayStringPatternsTaskPane());

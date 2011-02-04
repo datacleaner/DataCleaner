@@ -59,10 +59,10 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static final String MANAGE_DATABASE_DRIVERS = "... Manage database drivers...";
+	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final JdbcDatastore _originalDatastore;
 	private final AnalyzerBeansConfiguration _configuration;
-	private final ImageManager imageManager = ImageManager.getInstance();
 	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
 	private final MutableDatastoreCatalog _catalog;
 	private final JXTextField _datastoreNameTextField;
@@ -78,6 +78,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 	public JdbcDatastoreDialog(JdbcDatastore datastore, AnalyzerBeansConfiguration configuration,
 			MutableDatastoreCatalog catalog) {
+		super(imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = datastore;
 		_configuration = configuration;
 		_catalog = catalog;

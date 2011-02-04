@@ -82,6 +82,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
+	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	/**
 	 * Amount of bytes to read for autodetection of encoding, separator and
@@ -121,7 +122,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	}
 
 	public CsvDatastoreDialog(CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super();
+		super(imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = datastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
@@ -242,7 +243,6 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote, boolean autoDetectEncoding) {
 		List<String> warnings = new ArrayList<String>();
 		boolean showPreview = true;
-		ImageManager imageManager = ImageManager.getInstance();
 
 		File file = new File(_filenameField.getFilename());
 		if (file.exists()) {

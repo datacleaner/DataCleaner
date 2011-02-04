@@ -123,7 +123,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 					}
 				});
 
-				JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("Dbase database file",
+				JMenuItem dbaseMenuItem = WidgetFactory.createMenuItem("dBase database file",
 						imageManager.getImageIcon(IconUtils.DBASE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				dbaseMenuItem.addActionListener(new ActionListener() {
 					@Override

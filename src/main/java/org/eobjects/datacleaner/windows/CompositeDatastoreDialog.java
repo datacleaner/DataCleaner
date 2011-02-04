@@ -53,7 +53,8 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.getInstance();
+
 	private final MutableDatastoreCatalog _mutableDatastoreCatalog;;
 	private final List<JCheckBox> _checkBoxes;
 	private final JXTextField _datastoreNameField;
@@ -72,7 +73,7 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 	}
 
 	public CompositeDatastoreDialog(CompositeDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super();
+		super(imageManager.getImage("images/window/banner-datastores.png"));
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_originalDatastore = originalDatastore;
 		_statusLabel = DCLabel.bright("");

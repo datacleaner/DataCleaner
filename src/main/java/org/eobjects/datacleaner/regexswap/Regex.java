@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner.regexswap;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.eobjects.metamodel.util.BaseObject;
 
-public final class Regex extends BaseObject {
+public final class Regex extends BaseObject implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private final String _name;
 	private final String _description;
 	private final String _expression;
@@ -99,5 +101,10 @@ public final class Regex extends BaseObject {
 
 	public boolean containsCategory(Category category) {
 		return _categories.contains(category);
+	}
+
+	@Override
+	public String toString() {
+		return "Regex[name=" + _name + ",expression=" + _expression + "]";
 	}
 }

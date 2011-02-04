@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner.regexswap;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.eobjects.metamodel.util.BaseObject;
 
-public final class Category extends BaseObject {
+public final class Category extends BaseObject implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private final String _name;
 	private final String _description;
 	private final String _detailsUrl;

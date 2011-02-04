@@ -22,7 +22,9 @@ package org.eobjects.datacleaner;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
@@ -41,10 +43,13 @@ public final class Main {
 		// init the look and feel
 		LookAndFeelManager.getInstance().init();
 
-		AnalyzerBeansConfiguration configuration = DCConfiguration.get();
+		// loads static configuration
+		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
+
+		// loads dynamic user preferences
+		final UserPreferences userPreferences = UserPreferences.getInstance();
 
 		// show windows
-		UserPreferences userPreferences = UserPreferences.getInstance();
 		if (userPreferences.isWelcomeDialogShownOnStartup()) {
 			new WelcomeWindow(configuration).setVisible(true);
 		}
@@ -52,5 +57,12 @@ public final class Main {
 
 		// log usage
 		UsageLogger.getInstance().log("GUI: " + Main.VERSION);
+
+		// load regex swap regexes if nescesary
+		final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
+				(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
+		if (!regexSwapHandler.isLoaded()) {
+			regexSwapHandler.loadInitialRegexes();
+		}
 	}
 }

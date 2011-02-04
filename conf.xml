@@ -3,7 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<configuration-metadata>
-		<configuration-name>Example configuration</configuration-name>
+		<configuration-name>DataCleaner configuration</configuration-name>
+		<configuration-description>Configures DataCleaner's initial environment.
+			This includes an example datastore and some example reference data.</configuration-description>
+		<configuration-version>2.0</configuration-version>
+		<author>eobjects.org</author>
 	</configuration-metadata>
 
 	<datastore-catalog>
@@ -17,7 +21,7 @@
 
 	<reference-data-catalog>
 		<dictionaries>
-			<value-list-dictionary name="English lastnames">
+			<value-list-dictionary name="english lastnames">
 				<value>Murphy</value>
 				<value>Patterson</value>
 				<value>Patterson</value>
@@ -27,11 +31,11 @@
 				<value>Jones</value>
 				<value>King</value>
 			</value-list-dictionary>
-			<value-list-dictionary name="Spanish lastnames">
+			<value-list-dictionary name="spanish lastnames">
 				<value>Firrelli</value>
 				<value>Hernandez</value>
 			</value-list-dictionary>
-			<value-list-dictionary name="Eastern lastnames">
+			<value-list-dictionary name="eastern lastnames">
 				<value>Tseng</value>
 				<value>Nishi</value>
 				<value>Kato</value>
@@ -51,7 +55,7 @@
 		<combined>
 			<collections-storage>
 				<h2-database>
-					<temp-directory>target/temp</temp-directory>
+					<temp-directory>temp</temp-directory>
 				</h2-database>
 			</collections-storage>
 			<row-annotation-storage>

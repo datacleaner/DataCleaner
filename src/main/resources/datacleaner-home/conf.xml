@@ -3,7 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<configuration-metadata>
-		<configuration-name>Example configuration</configuration-name>
+		<configuration-name>DataCleaner configuration</configuration-name>
+		<configuration-description>Configures DataCleaner's initial environment.
+			This includes an example datastore and some example reference data.</configuration-description>
+		<configuration-version>2.0</configuration-version>
+		<author>eobjects.org</author>
 	</configuration-metadata>
 
 	<datastore-catalog>

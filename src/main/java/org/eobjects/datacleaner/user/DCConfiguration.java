@@ -24,6 +24,14 @@ import java.io.File;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
+import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
+import org.eobjects.analyzer.descriptors.SimpleDescriptorProvider;
+import org.eobjects.analyzer.job.concurrent.SingleThreadedTaskRunner;
+import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
+import org.eobjects.analyzer.storage.InMemoryStorageProvider;
+import org.eobjects.datacleaner.util.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Single point of reference for the AnalyzerBeans configuration used in
@@ -33,10 +41,29 @@ import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
  */
 public final class DCConfiguration {
 
+	private static final Logger logger = LoggerFactory.getLogger(DCConfiguration.class);
+
 	static {
 		// load the configuration file
 		JaxbConfigurationReader configurationReader = new JaxbConfigurationReader();
-		AnalyzerBeansConfiguration c = configurationReader.create(new File(DataCleanerHome.get(), "conf.xml"));
+
+		AnalyzerBeansConfiguration c;
+		try {
+			File file = new File(DataCleanerHome.get(), "conf.xml");
+			c = configurationReader.create(file);
+			logger.info("Succesfully read configuration from {}", file.getAbsolutePath());
+		} catch (Exception ex1) {
+			logger.warn("Unexpected error while reading conf.xml from DataCleanerHome!", ex1);
+			try {
+				c = configurationReader.create(ResourceManager.getInstance().getUrl("datacleaner-home/conf.xml")
+						.openStream());
+			} catch (Exception ex2) {
+				logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
+				logger.warn("Creating a bare-minimum configuration because of previous errors!");
+				c = new AnalyzerBeansConfigurationImpl(new DatastoreCatalogImpl(), new ReferenceDataCatalogImpl(),
+						new SimpleDescriptorProvider(), new SingleThreadedTaskRunner(), new InMemoryStorageProvider());
+			}
+		}
 
 		// make the configuration mutable
 		MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog());
@@ -53,6 +80,7 @@ public final class DCConfiguration {
 	}
 
 	public static AnalyzerBeansConfiguration get() {
+		logger.debug("get()");
 		return configuration;
 	}
 }

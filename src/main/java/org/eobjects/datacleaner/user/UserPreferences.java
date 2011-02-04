@@ -121,12 +121,14 @@ public class UserPreferences implements Serializable {
 	}
 
 	public void save() {
+		logger.info("Saving user preferences to {}", userPreferencesFile.getAbsolutePath());
 		ObjectOutputStream outputStream = null;
 		try {
 			outputStream = new ObjectOutputStream(new FileOutputStream(userPreferencesFile));
 			outputStream.writeObject(this);
 			outputStream.flush();
 		} catch (Exception e) {
+			logger.warn("Unexpected error while saving user preferences", e);
 			throw new IllegalStateException(e);
 		} finally {
 			if (outputStream != null) {

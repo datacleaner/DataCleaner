@@ -80,7 +80,7 @@ public final class DataCleanerHome {
 				throw new IllegalStateException("Could not create DataCleaner home directory: " + candidate.getPath());
 			}
 
-			copyIfNonExisting("datacleaner-home/conf.xml", candidate, "conf.xml");
+			copyIfNonExisting(candidate, "conf.xml");
 		}
 
 		_dataCleanerHome = candidate;
@@ -93,8 +93,8 @@ public final class DataCleanerHome {
 		return _dataCleanerHome;
 	}
 
-	private static void copyIfNonExisting(String string, File directory, String filename) {
-		File file = new File(directory, "conf.xml");
+	private static void copyIfNonExisting(File directory, String filename) {
+		File file = new File(directory, filename);
 		if (file.exists()) {
 			return;
 		}

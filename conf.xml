@@ -21,7 +21,7 @@
 
 	<reference-data-catalog>
 		<dictionaries>
-			<value-list-dictionary name="english lastnames">
+			<value-list-dictionary name="English lastnames">
 				<value>Murphy</value>
 				<value>Patterson</value>
 				<value>Patterson</value>
@@ -31,11 +31,11 @@
 				<value>Jones</value>
 				<value>King</value>
 			</value-list-dictionary>
-			<value-list-dictionary name="spanish lastnames">
+			<value-list-dictionary name="Spanish lastnames">
 				<value>Firrelli</value>
 				<value>Hernandez</value>
 			</value-list-dictionary>
-			<value-list-dictionary name="eastern lastnames">
+			<value-list-dictionary name="Eastern lastnames">
 				<value>Tseng</value>
 				<value>Nishi</value>
 				<value>Kato</value>

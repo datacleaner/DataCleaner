@@ -42,7 +42,7 @@ import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 public final class IconUtils {
 
 	public static int ICON_SIZE_LARGE = 32;
-	public static int ICON_SIZE_SMALL = 20;
+	public static int ICON_SIZE_SMALL = 16;
 	
 	public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
 	public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";

@@ -103,6 +103,11 @@ public final class Regex extends BaseObject implements Serializable {
 		return _categories.contains(category);
 	}
 
+	public String createWebsiteUrl() {
+		String url = "http://datacleaner.eobjects.org/regex/" + getName().replaceAll(" ", "%20");
+		return url;
+	}
+
 	@Override
 	public String toString() {
 		return "Regex[name=" + _name + ",expression=" + _expression + "]";

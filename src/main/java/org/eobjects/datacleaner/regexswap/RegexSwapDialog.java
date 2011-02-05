@@ -111,8 +111,7 @@ public class RegexSwapDialog extends AbstractDialog {
 		_viewOnlineButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
-				String url = "http://datacleaner.eobjects.org/regex/" + _selectedRegex.getName().replaceAll(" ", "%20");
-				OpenBrowserAction actionListener = new OpenBrowserAction(url);
+				OpenBrowserAction actionListener = new OpenBrowserAction(_selectedRegex.createWebsiteUrl());
 				actionListener.actionPerformed(event);
 			}
 

@@ -41,12 +41,6 @@
 				<value>Kato</value>
 			</value-list-dictionary>
 		</dictionaries>
-
-		<string-patterns>
-			<simple-pattern name="Capitalized word">
-				<expression>Aaaaaa</expression>
-			</simple-pattern>
-		</string-patterns>
 	</reference-data-catalog>
 
 	<multithreaded-taskrunner max-threads="30" />

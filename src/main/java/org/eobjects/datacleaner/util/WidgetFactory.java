@@ -123,7 +123,7 @@ public final class WidgetFactory {
 	}
 
 	public static JButton createSmallButton(String imagePath) {
-		Image image = ImageManager.getInstance().getImage(imagePath, 16);
+		Image image = ImageManager.getInstance().getImage(imagePath, IconUtils.ICON_SIZE_SMALL);
 		ImageIcon imageIcon = new ImageIcon(image);
 		JButton button = new JButton(imageIcon);
 		button.setMargin(new Insets(0, 0, 0, 0));

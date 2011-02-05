@@ -30,8 +30,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.job.JaxbJobMetadataFactoryImpl;
 import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -83,10 +85,17 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 					return;
 				}
 			}
-			
+
 			userPreferences.setAnalysisJobDirectory(file.getParentFile());
 
-			JaxbJobWriter writer = new JaxbJobWriter();
+			String author = userPreferences.getUsername();
+			String jobName = null;
+			String jobDescription = "Created with DataCleaner " + Main.VERSION;
+			String jobVersion = null;
+
+			final JaxbJobWriter writer = new JaxbJobWriter(new JaxbJobMetadataFactoryImpl(author, jobName, jobDescription,
+					jobVersion));
+
 			BufferedOutputStream outputStream = null;
 			try {
 				outputStream = new BufferedOutputStream(new FileOutputStream(file));
@@ -104,7 +113,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 					}
 				}
 			}
-			
+
 			userPreferences.addRecentJobFile(file);
 
 			_window.setJobFilename(file.getName());

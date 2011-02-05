@@ -129,12 +129,12 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		final String columnName = result.getColumnName();
 
 		// create a special group for the unique values
+		final int uniqueCount = result.getUniqueCount();
 		final Collection<String> uniqueValues = result.getUniqueValues();
 		if (uniqueValues != null && !uniqueValues.isEmpty()) {
-			PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelUtils.UNIQUE_LABEL, uniqueValues, 1);
+			PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelUtils.UNIQUE_LABEL, uniqueCount, uniqueValues, 1);
 			_groups.put(pieSliceGroup.getName(), pieSliceGroup);
 		} else {
-			int uniqueCount = result.getUniqueCount();
 			if (uniqueCount > 0) {
 				_dataset.setValue(LabelUtils.UNIQUE_LABEL, uniqueCount);
 			}

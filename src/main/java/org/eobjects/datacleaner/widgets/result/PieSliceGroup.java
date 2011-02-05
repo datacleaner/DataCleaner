@@ -36,12 +36,18 @@ import org.eobjects.metamodel.util.BaseObject;
 public class PieSliceGroup extends BaseObject {
 
 	private final String _name;
+	private final int _totalSize;
 	private final Collection<String> _values;
 	private final int _fixedValueCount;
 	private final List<ValueCount> _valueCounts;
 
 	public PieSliceGroup(String name, Collection<String> values, int fixedValueCount) {
+		this(name, -1, values, fixedValueCount);
+	}
+
+	public PieSliceGroup(String name, int totalSize, Collection<String> values, int fixedValueCount) {
 		_name = name;
+		_totalSize = totalSize;
 		_values = values;
 		_fixedValueCount = fixedValueCount;
 		_valueCounts = null;
@@ -49,6 +55,7 @@ public class PieSliceGroup extends BaseObject {
 
 	public PieSliceGroup(String name, List<ValueCount> valueCounts) {
 		_name = name;
+		_totalSize = -1;
 		_values = null;
 		_fixedValueCount = -1;
 		_valueCounts = valueCounts;
@@ -91,6 +98,9 @@ public class PieSliceGroup extends BaseObject {
 	}
 
 	public int getTotalCount() {
+		if (_totalSize != -1) {
+			return _totalSize;
+		}
 		if (_valueCounts != null) {
 			int result = 0;
 			for (ValueCount vc : _valueCounts) {

@@ -20,16 +20,16 @@
 package org.eobjects.datacleaner.output.datastore;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.OutputWriterScenarioHelper;
-import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegate;
-import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
-
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.data.DataSet;
 import org.eobjects.metamodel.query.Query;
@@ -37,12 +37,80 @@ import org.eobjects.metamodel.schema.Table;
 
 public class DatastoreOutputWriterFactoryTest extends TestCase {
 
+	private static final File outputDir = new File("target/test-output");
 	private boolean _datastoreCreated = false;
+	private Datastore _datastore;
+	private Exception _exception;
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		if (outputDir.exists()) {
+			File[] files = outputDir.listFiles();
+			for (File file : files) {
+				file.delete();
+			}
+		}
+	}
+
+	public void testMultiThreadedWriting() throws Exception {
+		final AtomicInteger datastoreCount = new AtomicInteger();
+		final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
+
+		final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
+
+			@Override
+			public synchronized void createDatastore(Datastore datastore) {
+				if (_datastore != null) {
+					assertEquals(_datastore, datastore);
+				}
+				_datastore = datastore;
+				datastoreCount.incrementAndGet();
+			}
+		};
+
+		final InputColumn<?>[] columns = scenarioHelper.getColumns().toArray(new InputColumn[0]);
+
+		// creating 9 similar writers that all write at the same time
+		Thread[] threads = new Thread[9];
+		for (int i = 0; i < threads.length; i++) {
+			threads[i] = new Thread() {
+				public void run() {
+					try {
+						OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "ds",
+								"tab", false, columns);
+						scenarioHelper.writeExampleData(writer);
+					} catch (Exception e) {
+						_exception = e;
+					}
+				};
+			};
+		}
+		for (int i = 0; i < threads.length; i++) {
+			threads[i].start();
+		}
+		for (int i = 0; i < threads.length; i++) {
+			threads[i].join();
+		}
+
+		if (_exception != null) {
+			throw _exception;
+		}
+		assertEquals(9, datastoreCount.get());
+
+		assertNotNull(_datastore);
+		DataContextProvider dataContextProvider = _datastore.getDataContextProvider();
+		DataContext dc = dataContextProvider.getDataContext();
+		dc.refreshSchemas();
+		String[] tableNames = dc.getDefaultSchema().getTableNames();
+		Arrays.sort(tableNames);
+
+		assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]", Arrays.toString(tableNames));
+	}
 
 	public void testFullScenario() throws Exception {
 		final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
 
-		File outputDir = new File("target/test-output");
 		DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
 
 			@Override
@@ -66,7 +134,6 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 				scenarioHelper.getColumns());
 
 		scenarioHelper.writeExampleData(writer);
-		writer.close();
 
 		assertTrue(_datastoreCreated);
 	}

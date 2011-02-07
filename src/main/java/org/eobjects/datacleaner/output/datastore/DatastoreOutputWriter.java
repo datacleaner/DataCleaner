@@ -24,7 +24,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
@@ -35,12 +34,8 @@ import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.DataContextFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class DatastoreOutputWriter implements OutputWriter {
-
-	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriter.class);
 
 	private static final String DRIVER_CLASS_NAME = H2StorageProvider.DRIVER_CLASS_NAME;
 
@@ -79,8 +74,9 @@ final class DatastoreOutputWriter implements OutputWriter {
 		// make table name safe
 		tableName = DatastoreOutputUtils.safeName(tableName);
 
-		synchronized (_jdbcUrl) {
+		synchronized (DatastoreOutputWriter.class) {
 			final DataContext dc = DataContextFactory.createJdbcDataContext(_connection);
+			dc.refreshSchemas();
 			final String[] tableNames = dc.getDefaultSchema().getTableNames();
 
 			if (truncateExisting) {
@@ -98,7 +94,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 					proposalName = tableName + '_' + tableNumber;
 					accepted = true;
 					for (String existingTableName : tableNames) {
-						if (existingTableName.equals(proposalName)) {
+						if (existingTableName.equalsIgnoreCase(proposalName)) {
 							accepted = false;
 							break;
 						}
@@ -106,40 +102,40 @@ final class DatastoreOutputWriter implements OutputWriter {
 				}
 				_tableName = proposalName;
 			}
-		}
 
-		// create a CREATE TABLE statement and execute it
-		StringBuilder sb = new StringBuilder();
-		sb.append("CREATE TABLE ");
-		sb.append(_tableName);
-		sb.append(" (");
-		for (int i = 0; i < columns.length; i++) {
-			if (i != 0) {
-				sb.append(',');
+			// create a CREATE TABLE statement and execute it
+			final StringBuilder createStatementBuilder = new StringBuilder();
+			createStatementBuilder.append("CREATE TABLE ");
+			createStatementBuilder.append(_tableName);
+			createStatementBuilder.append(" (");
+			for (int i = 0; i < columns.length; i++) {
+				if (i != 0) {
+					createStatementBuilder.append(',');
+				}
+				InputColumn<?> column = columns[i];
+				createStatementBuilder.append(DatastoreOutputUtils.safeName(column.getName()));
+				createStatementBuilder.append(' ');
+				createStatementBuilder.append(SqlDatabaseUtils.getSqlType(column.getDataType()));
 			}
-			InputColumn<?> column = columns[i];
-			sb.append(DatastoreOutputUtils.safeName(column.getName()));
-			sb.append(' ');
-			sb.append(SqlDatabaseUtils.getSqlType(column.getDataType()));
+			createStatementBuilder.append(')');
+			SqlDatabaseUtils.performUpdate(_connection, createStatementBuilder.toString());
 		}
-		sb.append(')');
-		SqlDatabaseUtils.performUpdate(_connection, sb.toString());
 
 		// create a reusable INSERT statement
-		sb = new StringBuilder();
-		sb.append("INSERT INTO ");
-		sb.append(_tableName);
-		sb.append(" VALUES (");
+		final StringBuilder insertStatementBuilder = new StringBuilder();
+		insertStatementBuilder.append("INSERT INTO ");
+		insertStatementBuilder.append(_tableName);
+		insertStatementBuilder.append(" VALUES (");
 		for (int i = 0; i < _columns.length; i++) {
 			if (i != 0) {
-				sb.append(',');
+				insertStatementBuilder.append(',');
 			}
-			sb.append('?');
+			insertStatementBuilder.append('?');
 		}
-		sb.append(')');
-		String sql = sb.toString();
+		insertStatementBuilder.append(')');
+
 		try {
-			_insertStatement = _connection.prepareStatement(sql);
+			_insertStatement = _connection.prepareStatement(insertStatementBuilder.toString());
 		} catch (SQLException e) {
 			throw new IllegalStateException(e);
 		}
@@ -154,28 +150,17 @@ final class DatastoreOutputWriter implements OutputWriter {
 	public void close() {
 		SqlDatabaseUtils.safeClose(null, _insertStatement);
 
-		Statement st = null;
-
-		try {
-			st = _connection.createStatement();
-			st.execute("SHUTDOWN");
-		} catch (SQLException e) {
-			logger.error("Could not invoke SHUTDOWN", e);
-		} finally {
-			SqlDatabaseUtils.safeClose(null, st);
-		}
-
-		try {
-			logger.info("Closing connection: {}", _connection);
-			_connection.close();
-		} catch (SQLException e) {
-			logger.error("Could not close connection", e);
-			throw new IllegalStateException(e);
-		}
+		DatastoreOutputWriterFactory.release(this);
 
 		Datastore datastore = new JdbcDatastore(_datastoreName, _jdbcUrl, DRIVER_CLASS_NAME, "SA", "");
-
 		_datastoreCreationDelegate.createDatastore(datastore);
 	}
 
+	public String getJdbcUrl() {
+		return _jdbcUrl;
+	}
+	
+	public Connection getConnection() {
+		return _connection;
+	}
 }

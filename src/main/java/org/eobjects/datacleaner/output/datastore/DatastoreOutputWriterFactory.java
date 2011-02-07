@@ -21,9 +21,16 @@ package org.eobjects.datacleaner.output.datastore;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
@@ -39,6 +46,7 @@ public final class DatastoreOutputWriterFactory {
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
 	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
+	private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
 
 	public static OutputWriter getWriter(String datastoreName, String tableName, InputColumn<?>... columns) {
 		return getWriter(datastoreName, tableName, true, columns);
@@ -89,7 +97,19 @@ public final class DatastoreOutputWriterFactory {
 			}
 		}
 
-		return new DatastoreOutputWriter(datastoreName, tableName, directory, columns, creationDelegate, truncate);
+		synchronized (counters) {
+			final DatastoreOutputWriter outputWriter = new DatastoreOutputWriter(datastoreName, tableName, directory,
+					columns, creationDelegate, truncate);
+
+			AtomicInteger counter = counters.get(outputWriter.getJdbcUrl());
+			if (counter == null) {
+				counter = new AtomicInteger();
+				counters.put(outputWriter.getJdbcUrl(), counter);
+			}
+			counter.incrementAndGet();
+
+			return outputWriter;
+		}
 	}
 
 	private static void cleanFiles(final File directory, final String datastoreName) {
@@ -108,5 +128,34 @@ public final class DatastoreOutputWriterFactory {
 
 	private static File getDefaultOutputDirectory() {
 		return UserPreferences.getInstance().getSaveDatastoreDirectory();
+	}
+
+	protected static void release(DatastoreOutputWriter writer) {
+		synchronized (counters) {
+			int count = counters.get(writer.getJdbcUrl()).decrementAndGet();
+			if (count == 0) {
+				counters.remove(writer.getJdbcUrl());
+
+				Connection connection = writer.getConnection();
+				Statement st = null;
+
+				try {
+					st = connection.createStatement();
+					st.execute("SHUTDOWN");
+				} catch (SQLException e) {
+					logger.error("Could not invoke SHUTDOWN", e);
+				} finally {
+					SqlDatabaseUtils.safeClose(null, st);
+				}
+
+				try {
+					logger.info("Closing connection: {}", connection);
+					connection.close();
+				} catch (SQLException e) {
+					logger.error("Could not close connection", e);
+					throw new IllegalStateException(e);
+				}
+			}
+		}
 	}
 }

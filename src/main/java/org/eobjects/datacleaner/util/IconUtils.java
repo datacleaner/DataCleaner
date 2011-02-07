@@ -171,8 +171,20 @@ public final class IconUtils {
 		}
 
 		// some individual icons
+		if (displayName.equals("convert to string")) {
+			imagePath = "images/component-types/type_convert_to_string.png";
+		}
+		if (displayName.equals("date gap analyzer")) {
+			imagePath = "images/component-types/type_date_gap_analyzer.png";
+		}
+		if (displayName.equals("single word")) {
+			imagePath = "images/component-types/type_single_word.png";
+		}
 		if (displayName.equals("pattern finder")) {
 			imagePath = "images/component-types/type_pattern_finder.png";
+		}
+		if (displayName.equals("weekday distribution")) {
+			imagePath = "images/component-types/type_weekday_distribution.png";
 		}
 		if (displayName.equals("string analyzer")) {
 			imagePath = "images/component-types/type_string_analyzer.png";

@@ -186,6 +186,15 @@ public final class IconUtils {
 		if (displayName.equals("number range")) {
 			imagePath = "images/component-types/type_number_range.png";
 		}
+		if (displayName.equals("equals")) {
+			imagePath = "images/component-types/type_equals.png";
+		}
+		if (displayName.equals("max rows")) {
+			imagePath = "images/component-types/type_max_rows.png";
+		}
+		if (displayName.equals("not null")) {
+			imagePath = "images/component-types/type_not_null.png";
+		}
 		if (displayName.equals("string length range")) {
 			imagePath = "images/component-types/type_string_length_range.png";
 		}

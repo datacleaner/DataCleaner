@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -68,7 +68,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.add(new JSeparator(JSeparator.VERTICAL));
+		toolBar.add(Box.createHorizontalGlue());
 
 		// Add filter
 		ImageManager imageManager = ImageManager.getInstance();

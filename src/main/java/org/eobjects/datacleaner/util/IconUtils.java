@@ -183,6 +183,9 @@ public final class IconUtils {
 		if (displayName.equals("date gap analyzer")) {
 			imagePath = "images/component-types/type_date_gap_analyzer.png";
 		}
+		if (displayName.equals("number range")) {
+			imagePath = "images/component-types/type_number_range.png";
+		}
 		if (displayName.equals("string length range")) {
 			imagePath = "images/component-types/type_string_length_range.png";
 		}

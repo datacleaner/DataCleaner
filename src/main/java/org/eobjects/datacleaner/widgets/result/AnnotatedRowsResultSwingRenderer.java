@@ -75,8 +75,6 @@ public class AnnotatedRowsResultSwingRenderer implements Renderer<AnnotatedRowsR
 			comboBox.setSelectedItem(VIEWS[0]);
 
 			buttonPanel.add(comboBox);
-		} else if (inputColumns.size() == 1) {
-			applyDistinctValuesView(table, result);
 		} else {
 			applyDetailedView(table, result);
 		}

@@ -68,7 +68,7 @@ public class SaveDataSetActionListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String datastoreName = JOptionPane.showInputDialog("Datastore name");
-				OutputWriter writer = DatastoreOutputWriterFactory.getWriter(datastoreName, _inputColumns);
+				OutputWriter writer = DatastoreOutputWriterFactory.getWriter(datastoreName, "DATASET", _inputColumns);
 				performWrite(writer);
 
 				UsageLogger.getInstance().log("Save DataSet as datastore");

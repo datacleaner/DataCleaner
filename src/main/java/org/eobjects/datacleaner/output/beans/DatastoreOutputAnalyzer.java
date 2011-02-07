@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.output.beans;
 
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
@@ -41,10 +42,14 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	private OutputWriter _outputWriter;
 
-	@Configured
+	@Configured(order = 1)
 	String datastoreName;
 
-	@Configured
+	@Configured(order = 2)
+	String tableName = "DATASET";
+
+	@Configured(order = 3)
+	@Description("Determines the behaviour in case of there's an existing datastore and table with the given names.")
 	WriteMode writeMode = WriteMode.TRUNCATE;
 
 	@Override
@@ -64,7 +69,7 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 				if (_outputWriter == null) {
 					boolean truncate = (writeMode == WriteMode.TRUNCATE);
-					_outputWriter = DatastoreOutputWriterFactory.getWriter(datastoreName, truncate, columns);
+					_outputWriter = DatastoreOutputWriterFactory.getWriter(datastoreName, tableName, truncate, columns);
 				}
 			}
 		}

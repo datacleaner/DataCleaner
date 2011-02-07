@@ -62,7 +62,7 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 				dcp.close();
 			}
 		};
-		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore",
+		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore", "dataset",
 				scenarioHelper.getColumns());
 
 		scenarioHelper.writeExampleData(writer);

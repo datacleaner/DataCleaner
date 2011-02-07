@@ -52,12 +52,12 @@ final class DatastoreOutputWriter implements OutputWriter {
 	private final PreparedStatement _insertStatement;
 	private final DatastoreCreationDelegate _datastoreCreationDelegate;
 
-	public DatastoreOutputWriter(String datastoreName, File directory, InputColumn<?>[] columns,
+	public DatastoreOutputWriter(String datastoreName, String tableName, File directory, InputColumn<?>[] columns,
 			DatastoreCreationDelegate datastoreCreationDelegate) {
-		this(datastoreName, directory, columns, datastoreCreationDelegate, true);
+		this(datastoreName, tableName, directory, columns, datastoreCreationDelegate, true);
 	}
 
-	public DatastoreOutputWriter(String datastoreName, File directory, InputColumn<?>[] columns,
+	public DatastoreOutputWriter(String datastoreName, String tableName, File directory, InputColumn<?>[] columns,
 			DatastoreCreationDelegate datastoreCreationDelegate, boolean truncateExisting) {
 		_datastoreName = datastoreName;
 		_jdbcUrl = DatastoreOutputUtils.getJdbcUrl(directory, _datastoreName);
@@ -76,12 +76,15 @@ final class DatastoreOutputWriter implements OutputWriter {
 			throw new IllegalStateException(e);
 		}
 
+		// make table name safe
+		tableName = DatastoreOutputUtils.safeName(tableName);
+
 		synchronized (_jdbcUrl) {
 			final DataContext dc = DataContextFactory.createJdbcDataContext(_connection);
 			final String[] tableNames = dc.getDefaultSchema().getTableNames();
 
 			if (truncateExisting) {
-				_tableName = "DATASET";
+				_tableName = tableName;
 
 				for (String existingTableName : tableNames) {
 					SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE " + existingTableName);
@@ -92,7 +95,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 				String proposalName = null;
 				while (!accepted) {
 					tableNumber++;
-					proposalName = "DATASET_" + tableNumber;
+					proposalName = tableName + '_' + tableNumber;
 					accepted = true;
 					for (String existingTableName : tableNames) {
 						if (existingTableName.equals(proposalName)) {

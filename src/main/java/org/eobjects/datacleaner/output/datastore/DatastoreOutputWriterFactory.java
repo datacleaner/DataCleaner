@@ -40,42 +40,43 @@ public final class DatastoreOutputWriterFactory {
 
 	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 
-	public static OutputWriter getWriter(String datastoreName, InputColumn<?>... columns) {
-		return getWriter(datastoreName, true, columns);
+	public static OutputWriter getWriter(String datastoreName, String tableName, InputColumn<?>... columns) {
+		return getWriter(datastoreName, tableName, true, columns);
 	}
 
-	public static OutputWriter getWriter(String datastoreName, boolean truncate, InputColumn<?>... columns) {
-		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName, truncate, columns);
+	public static OutputWriter getWriter(String datastoreName, String tableName, boolean truncate, InputColumn<?>... columns) {
+		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName, tableName, truncate, columns);
 	}
 
-	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName,
+	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName, String tableName,
 			InputColumn<?>... columns) {
-		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName, columns);
+		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName, tableName, columns);
 	}
 
 	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
-			List<InputColumn<?>> columns) {
-		return getWriter(directory, creationDelegate, datastoreName, columns.toArray(new InputColumn<?>[columns.size()]));
-	}
-
-	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName,
-			List<InputColumn<?>> columns) {
-		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName,
+			String tableName, List<InputColumn<?>> columns) {
+		return getWriter(directory, creationDelegate, datastoreName, tableName,
 				columns.toArray(new InputColumn<?>[columns.size()]));
 	}
 
-	public static OutputWriter getWriter(String datastoreName, List<InputColumn<?>> columns) {
-		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName,
+	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName, String tableName,
+			List<InputColumn<?>> columns) {
+		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName, tableName,
+				columns.toArray(new InputColumn<?>[columns.size()]));
+	}
+
+	public static OutputWriter getWriter(String datastoreName, String tableName, List<InputColumn<?>> columns) {
+		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName, tableName,
 				columns.toArray(new InputColumn<?>[columns.size()]));
 	}
 
 	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
-			InputColumn<?>... columns) {
-		return getWriter(directory, creationDelegate, datastoreName, true, columns);
+			String tableName, InputColumn<?>... columns) {
+		return getWriter(directory, creationDelegate, datastoreName, tableName, true, columns);
 	}
 
 	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
-			boolean truncate, InputColumn<?>... columns) {
+			String tableName, boolean truncate, InputColumn<?>... columns) {
 		if (!directory.exists()) {
 			if (!directory.mkdirs()) {
 				logger.error("Failed to create directory for datastores: {}", directory);
@@ -88,7 +89,7 @@ public final class DatastoreOutputWriterFactory {
 			}
 		}
 
-		return new DatastoreOutputWriter(datastoreName, directory, columns, creationDelegate, truncate);
+		return new DatastoreOutputWriter(datastoreName, tableName, directory, columns, creationDelegate, truncate);
 	}
 
 	private static void cleanFiles(final File directory, final String datastoreName) {

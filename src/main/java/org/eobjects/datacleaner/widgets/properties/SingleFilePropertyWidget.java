@@ -80,7 +80,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
 		File currentValue = (File) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
-			_filenameField.setFilename(currentValue.getAbsolutePath());
+			_filenameField.setFile(currentValue);
 		}
 
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {

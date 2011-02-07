@@ -151,19 +151,19 @@ public final class FilenameTextField extends DCPanel {
 
 	public void setFile(File file) {
 		try {
-			_textField.setText(file.getCanonicalPath());
+			setFilename(file.getCanonicalPath());
 		} catch (IOException e1) {
 			// ignore
-			_textField.setText(file.getAbsolutePath());
+			setFilename(file.getAbsolutePath());
 		}
 	}
 	
 	public File getFile() {
-		String text = _textField.getText();
-		if (StringUtils.isNullOrEmpty(text)) {
+		String filename = getFilename();
+		if (StringUtils.isNullOrEmpty(filename)) {
 			return null;
 		}
-		return new File(text);
+		return new File(filename);
 	}
 
 	public void addFileSelectionListener(FileSelectionListener listener) {

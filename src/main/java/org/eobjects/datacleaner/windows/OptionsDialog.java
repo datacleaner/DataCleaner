@@ -23,11 +23,13 @@ import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.NumberFormat;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -50,6 +52,8 @@ import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.FileSelectionListener;
+import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.h2.util.StringUtils;
@@ -124,10 +128,26 @@ public class OptionsDialog extends AbstractWindow {
 		userRegistrationPanel.add(usernameTextField);
 		userRegistrationPanel.add(logoutButton);
 
+		final FilenameTextField saveDatastoreDirectoryField = new FilenameTextField(
+				userPreferences.getSaveDatastoreDirectory(), true);
+		saveDatastoreDirectoryField.setFile(userPreferences.getSaveDatastoreDirectory());
+		saveDatastoreDirectoryField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		saveDatastoreDirectoryField.addFileSelectionListener(new FileSelectionListener() {
+			@Override
+			public void onSelected(FilenameTextField filenameTextField, File file) {
+				userPreferences.setSaveDatastoreDirectory(file);
+			}
+		});
+
+		final DCPanel directoriesPanel = new DCPanel().setTitledBorder("Files & directories");
+		directoriesPanel.add(DCLabel.dark("Written datastores:"));
+		directoriesPanel.add(saveDatastoreDirectoryField);
+
 		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		panel.setLayout(new VerticalLayout(4));
 		panel.add(userInterfacePanel);
 		panel.add(userRegistrationPanel);
+		panel.add(directoriesPanel);
 
 		return panel;
 	}

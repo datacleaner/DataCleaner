@@ -23,6 +23,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -55,6 +57,7 @@ public final class FilenameTextField extends DCPanel {
 	private final List<FileFilter> _chooseableFileFilters = new ArrayList<FileFilter>();
 	private volatile FileFilter _selectedFileFilter;
 	private volatile File _directory;
+	private int _fileSelectionMode = JFileChooser.FILES_ONLY;
 
 	/**
 	 * 
@@ -87,6 +90,8 @@ public final class FilenameTextField extends DCPanel {
 					fileChooser.addChoosableFileFilter(filter);
 				}
 
+				fileChooser.setFileSelectionMode(_fileSelectionMode);
+
 				if (_selectedFileFilter != null) {
 					if (!_chooseableFileFilters.contains(_selectedFileFilter)) {
 						_chooseableFileFilters.add(_selectedFileFilter);
@@ -102,15 +107,19 @@ public final class FilenameTextField extends DCPanel {
 				}
 				if (result == JFileChooser.APPROVE_OPTION) {
 					File file = fileChooser.getSelectedFile();
-					
+
 					boolean accepted = true;
 					if (fileOpenDialog) {
-						accepted = file.exists() && file.isFile();
+						accepted = file.exists();
 					}
-					
+
 					if (accepted) {
-						_textField.setText(file.getAbsolutePath());
-						_directory = file.getParentFile();
+						setFile(file);
+						if (file.isDirectory()) {
+							_directory = file;
+						} else {
+							_directory = file.getParentFile();
+						}
 						for (FileSelectionListener listener : _listeners) {
 							listener.onSelected(FilenameTextField.this, file);
 						}
@@ -140,6 +149,23 @@ public final class FilenameTextField extends DCPanel {
 		_textField.setText(filename);
 	}
 
+	public void setFile(File file) {
+		try {
+			_textField.setText(file.getCanonicalPath());
+		} catch (IOException e1) {
+			// ignore
+			_textField.setText(file.getAbsolutePath());
+		}
+	}
+	
+	public File getFile() {
+		String text = _textField.getText();
+		if (StringUtils.isNullOrEmpty(text)) {
+			return null;
+		}
+		return new File(text);
+	}
+
 	public void addFileSelectionListener(FileSelectionListener listener) {
 		_listeners.add(listener);
 	}
@@ -154,5 +180,13 @@ public final class FilenameTextField extends DCPanel {
 
 	public void setSelectedFileFilter(FileFilter filter) {
 		_selectedFileFilter = filter;
+	}
+
+	public void setFileSelectionMode(int fileSelectionMode) {
+		_fileSelectionMode = fileSelectionMode;
+	}
+
+	public int getFileSelectionMode() {
+		return _fileSelectionMode;
 	}
 }

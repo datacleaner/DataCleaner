@@ -81,7 +81,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 		_statusLabel = DCLabel.bright("Please select file");
 
-		_filenameField = new FilenameTextField(userPreferences.getDatastoreDirectory(), true);
+		_filenameField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
@@ -95,7 +95,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {
 				File dir = file.getParentFile();
-				userPreferences.setDatastoreDirectory(dir);
+				userPreferences.setOpenDatastoreDirectory(dir);
 
 				if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
 					_datastoreNameField.setText(file.getName());

@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,20 +38,19 @@ public final class DatastoreOutputWriterFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
-	private static final File DEFAULT_OUTPUT_DIRECTORY = new File(DataCleanerHome.get(), "datastores");
 	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 
 	public static OutputWriter getWriter(String datastoreName, InputColumn<?>... columns) {
 		return getWriter(datastoreName, true, columns);
 	}
-	
+
 	public static OutputWriter getWriter(String datastoreName, boolean truncate, InputColumn<?>... columns) {
-		return getWriter(DEFAULT_OUTPUT_DIRECTORY, DEFAULT_CREATION_DELEGATE, datastoreName, truncate, columns);
+		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName, truncate, columns);
 	}
 
 	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName,
 			InputColumn<?>... columns) {
-		return getWriter(DEFAULT_OUTPUT_DIRECTORY, creationDelegate, datastoreName, columns);
+		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName, columns);
 	}
 
 	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
@@ -61,12 +60,12 @@ public final class DatastoreOutputWriterFactory {
 
 	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName,
 			List<InputColumn<?>> columns) {
-		return getWriter(DEFAULT_OUTPUT_DIRECTORY, creationDelegate, datastoreName,
+		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName,
 				columns.toArray(new InputColumn<?>[columns.size()]));
 	}
 
 	public static OutputWriter getWriter(String datastoreName, List<InputColumn<?>> columns) {
-		return getWriter(DEFAULT_OUTPUT_DIRECTORY, DEFAULT_CREATION_DELEGATE, datastoreName,
+		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName,
 				columns.toArray(new InputColumn<?>[columns.size()]));
 	}
 
@@ -104,5 +103,9 @@ public final class DatastoreOutputWriterFactory {
 				logger.error("Failed to clean up (delete) file: {}", file);
 			}
 		}
+	}
+
+	private static File getDefaultOutputDirectory() {
+		return UserPreferences.getInstance().getSaveDatastoreDirectory();
 	}
 }

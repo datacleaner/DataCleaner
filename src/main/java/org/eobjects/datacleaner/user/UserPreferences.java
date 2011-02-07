@@ -68,9 +68,10 @@ public class UserPreferences implements Serializable {
 	private boolean displayStringPatternsTaskPane = false;
 
 	private List<File> recentJobFiles = new ArrayList<File>();
-	private File datastoreDirectory = DataCleanerHome.get();
+	private File openDatastoreDirectory = DataCleanerHome.get();
 	private File configuredFileDirectory = DataCleanerHome.get();
 	private File analysisJobDirectory = DataCleanerHome.get();
+	private File saveDatastoreDirectory;
 
 	public static UserPreferences getInstance() {
 		if (instance == null) {
@@ -141,12 +142,12 @@ public class UserPreferences implements Serializable {
 		}
 	}
 
-	public File getDatastoreDirectory() {
-		return datastoreDirectory;
+	public File getOpenDatastoreDirectory() {
+		return openDatastoreDirectory;
 	}
 
-	public void setDatastoreDirectory(File openFileDir) {
-		this.datastoreDirectory = openFileDir;
+	public void setOpenDatastoreDirectory(File openFileDir) {
+		this.openDatastoreDirectory = openFileDir;
 	}
 
 	public File getConfiguredFileDirectory() {
@@ -163,6 +164,17 @@ public class UserPreferences implements Serializable {
 
 	public void setAnalysisJobDirectory(File saveFileDirectory) {
 		this.analysisJobDirectory = saveFileDirectory;
+	}
+
+	public File getSaveDatastoreDirectory() {
+		if (saveDatastoreDirectory == null) {
+			saveDatastoreDirectory = new File(DataCleanerHome.get(), "datastores");
+		}
+		return saveDatastoreDirectory;
+	}
+
+	public void setSaveDatastoreDirectory(File saveDatastoreDirectory) {
+		this.saveDatastoreDirectory = saveDatastoreDirectory;
 	}
 
 	public void setUsername(String username) {

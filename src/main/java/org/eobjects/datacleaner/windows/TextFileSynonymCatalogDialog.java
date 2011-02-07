@@ -79,7 +79,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 			}
 		});
 
-		_filenameTextField = new FilenameTextField(_userPreferences.getDatastoreDirectory(), true);
+		_filenameTextField = new FilenameTextField(_userPreferences.getOpenDatastoreDirectory(), true);
 		_filenameTextField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {
@@ -88,7 +88,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 					_nameAutomaticallySet = true;
 				}
 				File dir = file.getParentFile();
-				_userPreferences.setDatastoreDirectory(dir);
+				_userPreferences.setOpenDatastoreDirectory(dir);
 			}
 		});
 

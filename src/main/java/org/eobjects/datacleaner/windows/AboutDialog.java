@@ -19,7 +19,13 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,12 +35,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Box;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.ResourceManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
@@ -46,6 +65,8 @@ import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.FileHelper;
+import org.jdesktop.swingx.VerticalLayout;
+import org.jdesktop.swingx.action.OpenBrowserAction;
 
 public class AboutDialog extends AbstractDialog {
 
@@ -100,16 +121,96 @@ public class AboutDialog extends AbstractDialog {
 	}
 
 	private JComponent getLicensePanel() {
-		DCPanel panel = new DCPanel();
-		
-		WidgetUtils.addToGridBag(DCLabel.dark("DataCleaners license:"), panel, 0, 0);
+		final String dcLicense = getLicense("lgpl");
 
-		WidgetUtils.addToGridBag(DCLabel.dark("LGPL"), panel, 1, 0, 1.0, 0.0);
-		String license = getLicense("lgpl");
-		DCLabel licenseLabel = DCLabel.darkMultiLine(license);
-		WidgetUtils.addToGridBag(licenseLabel, panel, 0, 1, 2, 1);
+		final DCLabel licenseHeader = DCLabel.dark("");
+		licenseHeader.setFont(WidgetUtils.FONT_HEADER);
 
-		return WidgetUtils.scrolleable(panel);
+		final DCLabel licenseLabel = DCLabel.darkMultiLine("");
+		licenseLabel.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		licenseLabel.setFont(WidgetUtils.FONT_MONOSPACE);
+		licenseLabel.setOpaque(true);
+
+		final JButton dcLicenseButton = WidgetFactory.createSmallButton("images/menu/license.png");
+		dcLicenseButton.setToolTipText("DataCleaner's license: GNU LGPL");
+		dcLicenseButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				licenseHeader.setText("Displaying license of DataCleaner");
+				licenseLabel.setText(dcLicense);
+			}
+		});
+
+		final JComboBox librariesComboBox = new JComboBox();
+		librariesComboBox.setRenderer(new DefaultListCellRenderer() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				if (value instanceof LicensedProject) {
+					LicensedProject project = (LicensedProject) value;
+					String name = project.name;
+					return super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
+				}
+				throw new UnsupportedOperationException();
+			}
+		});
+		librariesComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				LicensedProject project = (LicensedProject) e.getItem();
+				licenseLabel.setText(project.license);
+				licenseHeader.setText("Displaying license of " + project.name + "");
+			}
+		});
+
+		final JButton visitProjectButton = WidgetFactory.createSmallButton("images/actions/website.png");
+		visitProjectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LicensedProject project = (LicensedProject) librariesComboBox.getSelectedItem();
+				String websiteUrl = project.websiteUrl;
+				if (!StringUtils.isNullOrEmpty(websiteUrl)) {
+					new OpenBrowserAction(websiteUrl).actionPerformed(e);
+				}
+			}
+		});
+
+		final List<LicensedProject> licensedProjects = getLicensedProjects();
+		for (LicensedProject licensedProject : licensedProjects) {
+			librariesComboBox.addItem(licensedProject);
+		}
+
+		final JToolBar toolBar = WidgetFactory.createToolBar();
+		toolBar.add(DCLabel.dark("DataCleaners license: "));
+		toolBar.add(dcLicenseButton);
+		toolBar.add(WidgetFactory.createToolBarSeparator());
+		toolBar.add(DCLabel.dark("Included libraries: "));
+		toolBar.add(librariesComboBox);
+		toolBar.add(visitProjectButton);
+
+		final JScrollPane licenseLabelScroll = WidgetUtils.scrolleable(licenseLabel);
+		licenseLabelScroll.setBorder(new CompoundBorder(new EmptyBorder(10, 0, 10, 0), WidgetUtils.BORDER_THIN));
+
+		licenseLabel.setText(dcLicense);
+		licenseHeader.setText("Displaying license of DataCleaner");
+
+		final DCPanel headerPanel = new DCPanel();
+		headerPanel.setLayout(new VerticalLayout());
+		headerPanel.add(toolBar);
+		headerPanel.add(Box.createVerticalStrut(20));
+		headerPanel.add(licenseHeader);
+
+		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		panel.setBorder(new EmptyBorder(4, 4, 4, 4));
+		panel.setLayout(new BorderLayout());
+		panel.add(headerPanel, BorderLayout.NORTH);
+		panel.add(licenseLabelScroll, BorderLayout.CENTER);
+
+		return panel;
 	}
 
 	private JComponent getAboutPanel() {
@@ -187,6 +288,13 @@ public class AboutDialog extends AbstractDialog {
 			_licenses.put(licenseName, license);
 		}
 		return license;
+	}
 
+	public static void main(String[] args) {
+		LookAndFeelManager.getInstance().init();
+
+		AboutDialog dialog = new AboutDialog();
+		dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		dialog.setVisible(true);
 	}
 }

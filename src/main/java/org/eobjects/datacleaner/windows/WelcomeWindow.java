@@ -40,7 +40,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -211,10 +210,12 @@ public class WelcomeWindow extends AbstractWindow {
 						}
 					});
 
-			final DefaultListCellRenderer delegateCellRenderer = new DefaultListCellRenderer();
 			final JXList list = new JXList(recentJobFiles.toArray());
 			list.addHighlighter(WidgetUtils.LIBERELLO_HIGHLIGHTER);
-			list.setCellRenderer(new ListCellRenderer() {
+			list.setCellRenderer(new DefaultListCellRenderer() {
+
+				private static final long serialVersionUID = 1L;
+
 				@Override
 				public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
 						boolean cellHasFocus) {
@@ -222,7 +223,7 @@ public class WelcomeWindow extends AbstractWindow {
 						File file = (File) value;
 						value = file.getName() + " - " + file.getAbsolutePath();
 					}
-					return delegateCellRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+					return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				}
 			});
 

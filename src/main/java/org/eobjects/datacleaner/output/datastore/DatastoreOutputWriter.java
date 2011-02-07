@@ -83,7 +83,9 @@ final class DatastoreOutputWriter implements OutputWriter {
 				_tableName = tableName;
 
 				for (String existingTableName : tableNames) {
-					SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE " + existingTableName);
+					if (_tableName.equalsIgnoreCase(existingTableName)) {
+						SqlDatabaseUtils.performUpdate(_connection, "DROP TABLE " + existingTableName);
+					}
 				}
 			} else {
 				int tableNumber = 0;
@@ -159,7 +161,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 	public String getJdbcUrl() {
 		return _jdbcUrl;
 	}
-	
+
 	public Connection getConnection() {
 		return _connection;
 	}

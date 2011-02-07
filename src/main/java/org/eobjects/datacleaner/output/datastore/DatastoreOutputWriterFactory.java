@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.output.datastore;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -91,12 +90,6 @@ public final class DatastoreOutputWriterFactory {
 			}
 		}
 
-		if (truncate) {
-			synchronized (DatastoreOutputWriterFactory.class) {
-				cleanFiles(directory, datastoreName);
-			}
-		}
-
 		synchronized (counters) {
 			final DatastoreOutputWriter outputWriter = new DatastoreOutputWriter(datastoreName, tableName, directory,
 					columns, creationDelegate, truncate);
@@ -109,20 +102,6 @@ public final class DatastoreOutputWriterFactory {
 			counter.incrementAndGet();
 
 			return outputWriter;
-		}
-	}
-
-	private static void cleanFiles(final File directory, final String datastoreName) {
-		File[] files = directory.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.startsWith(datastoreName);
-			}
-		});
-		for (File file : files) {
-			if (!file.delete()) {
-				logger.error("Failed to clean up (delete) file: {}", file);
-			}
 		}
 	}
 

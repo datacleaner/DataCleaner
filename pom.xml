@@ -80,6 +80,7 @@
 		</url>
 	</scm>
 	<build>
+		<finalName>DataCleaner</finalName>
 		<plugins>
 			<plugin>
 				<!-- Ensures java 6 compatibility -->
@@ -167,7 +168,7 @@
 				<configuration>
 					<templateFilename>clientTemplate.vm</templateFilename>
 					<jnlp>
-						<outputFile>DataCleaner.jnlp</outputFile>
+						<outputFile>datacleaner.jnlp</outputFile>
 						<mainClass>${mainClass}</mainClass>
 					</jnlp>
 					<outputJarVersions>false</outputJarVersions>
@@ -187,6 +188,26 @@
 						</excludes>
 					</instrumentation>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<!-- Assembly which creates the zip and tar.gz distributables -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

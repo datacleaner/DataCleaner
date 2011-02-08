@@ -1,0 +1,29 @@
+<assembly>
+	<id>all</id>
+	<formats>
+		<format>tar.gz</format>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>true</includeBaseDirectory>
+	<baseDirectory>DataCleaner</baseDirectory>
+	<files>
+		<file>
+			<source>target/DataCleaner.jar</source>
+		</file>
+		<file>
+			<source>conf.xml</source>
+		</file>
+		<file>
+			<source>COPYING.txt</source>
+		</file>
+		<file>
+			<source>NOTICE.txt</source>
+		</file>
+	</files>
+	<fileSets>
+		<fileSet>
+			<directory>target/lib</directory>
+			<outputDirectory>/lib</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>

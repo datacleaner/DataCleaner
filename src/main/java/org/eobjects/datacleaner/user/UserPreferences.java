@@ -33,6 +33,8 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
+import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,7 @@ public class UserPreferences implements Serializable {
 
 	private static UserPreferences instance;
 
+	private transient List<LoginChangeListener> loginChangeListeners;
 	private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
 	private List<Datastore> userDatastores = new ArrayList<Datastore>();
 	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
@@ -142,6 +145,21 @@ public class UserPreferences implements Serializable {
 		}
 	}
 
+	private List<LoginChangeListener> getLoginChangeListeners() {
+		if (loginChangeListeners == null) {
+			loginChangeListeners = new ArrayList<LoginChangeListener>();
+		}
+		return loginChangeListeners;
+	}
+
+	public void addLoginChangeListener(LoginChangeListener listener) {
+		getLoginChangeListeners().add(listener);
+	}
+
+	public void removeLoginChangeListener(LoginChangeListener listener) {
+		getLoginChangeListeners().add(listener);
+	}
+
 	public File getOpenDatastoreDirectory() {
 		return openDatastoreDirectory;
 	}
@@ -179,10 +197,19 @@ public class UserPreferences implements Serializable {
 
 	public void setUsername(String username) {
 		this.username = username;
+
+		List<LoginChangeListener> listeners = getLoginChangeListeners();
+		for (LoginChangeListener listener : listeners) {
+			listener.onLoginStateChanged(isLoggedIn(), username);
+		}
 	}
 
 	public String getUsername() {
 		return username;
+	}
+
+	public boolean isLoggedIn() {
+		return !StringUtils.isNullOrEmpty(getUsername());
 	}
 
 	public void addRecentJobFile(File file) {

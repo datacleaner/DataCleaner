@@ -57,14 +57,15 @@ public final class UsageLogger {
 	}
 
 	public void log(final String action) {
-		final String username = _userPreferences.getUsername();
-		if (username == null) {
+		if (!_userPreferences.isLoggedIn()) {
 			logger.debug("Not logging '{}', because user is not logged in", action);
-		} else {
-			logger.debug("Logging '{}'", action);
-			Runnable runnable = new UsageLoggerRunnable(username, action);
-			_executorService.submit(runnable);
+			return;
 		}
+
+		final String username = _userPreferences.getUsername();
+		logger.debug("Logging '{}'", action);
+		Runnable runnable = new UsageLoggerRunnable(username, action);
+		_executorService.submit(runnable);
 	}
 
 	/**

@@ -24,13 +24,14 @@ import java.util.List;
 
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.reference.StringPattern;
+import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RegexSwapUserPreferencesHandler {
+public class RegexSwapUserPreferencesHandler implements LoginChangeListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(RegexSwapUserPreferencesHandler.class);
 
@@ -73,6 +74,20 @@ public class RegexSwapUserPreferencesHandler {
 						logger.debug("Omitting regex: {}", regex);
 					}
 				}
+			}
+		}
+	}
+
+	@Override
+	public void onLoginStateChanged(boolean loggedIn, String username) {
+		if (loggedIn) {
+			logger.info("User logged in as {}, checking for regexes from RegexSwap", username);
+			if (!isLoaded()) {
+				new Thread() {
+					public void run() {
+						loadInitialRegexes();
+					};
+				}.start();
 			}
 		}
 	}

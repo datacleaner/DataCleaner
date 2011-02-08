@@ -85,10 +85,10 @@ public class LoginPanel extends JPanel {
 		super();
 		_authenticationService = authenticationService;
 
-		if (StringUtils.isNullOrEmpty(userPreferences.getUsername())) {
-			_state = LoginState.NOT_LOGGED_IN;
-		} else {
+		if (userPreferences.isLoggedIn()) {
 			_state = LoginState.LOGGED_IN;
+		} else {
+			_state = LoginState.NOT_LOGGED_IN;
 		}
 
 		setOpaque(false);

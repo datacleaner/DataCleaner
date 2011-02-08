@@ -6,6 +6,7 @@ ICU4J,http://site.icu-project.org,icu
 JUNG,http://jung.sourceforge.net,bsd
 ASM,http://asm.ow2.org,bsd
 Joda time,http://joda-time.sourceforge.net/,apache2
+Berkeley DB,http://www.oracle.com/technetwork/database/berkeleydb,berkeley
 Hsqldb,http://hsqldb.org,hsqldb
 H2 database,http://www.h2database.com/,eclipse
 Rhino,http://www.mozilla.org/rhino,mozilla

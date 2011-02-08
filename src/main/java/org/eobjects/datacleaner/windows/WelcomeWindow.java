@@ -140,12 +140,11 @@ public class WelcomeWindow extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 100, 80,
+		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 103, 80,
 				WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.add(
-				new DCBannerPanel(imageManager.getImage("images/window/banner-welcome.png"), "Welcome to DataCleaner"),
-				BorderLayout.NORTH);
+		mainPanel.add(new DCBannerPanel(imageManager.getImage("images/window/banner-welcome.png"), "Welcome to DataCleaner",
+				false), BorderLayout.NORTH);
 		mainPanel.add(getRecentJobsPanel(), BorderLayout.CENTER);
 
 		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);

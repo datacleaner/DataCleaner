@@ -101,14 +101,14 @@ public class AboutDialog extends AbstractDialog {
 	protected JComponent getDialogContent() {
 		CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
 
-		tabbedPane.addTab("", imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE),
+		tabbedPane.addTab("About DataCleaner", imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE),
 				getAboutPanel(), "About DataCleaner");
 		tabbedPane.setUnclosableTab(0);
 
-		tabbedPane.addTab("", imageManager.getImageIcon("images/menu/license.png"), getLicensePanel(), "License");
+		tabbedPane.addTab("License", imageManager.getImageIcon("images/menu/license.png"), getLicensePanel(), "License");
 		tabbedPane.setUnclosableTab(1);
 
-		tabbedPane.addTab("", imageManager.getImageIcon("images/menu/users.png"), getCommunityPanel(), "Community");
+		tabbedPane.addTab("Community", imageManager.getImageIcon("images/menu/users.png"), getCommunityPanel(), "Community");
 		tabbedPane.setUnclosableTab(2);
 
 		tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 500));

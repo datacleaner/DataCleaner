@@ -58,11 +58,9 @@ public final class Main {
 		// log usage
 		UsageLogger.getInstance().log("GUI: " + Main.VERSION);
 
-		// load regex swap regexes if nescesary
+		// load regex swap regexes if logged in
 		final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
 				(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
-		if (!regexSwapHandler.isLoaded()) {
-			regexSwapHandler.loadInitialRegexes();
-		}
+		userPreferences.addLoginChangeListener(regexSwapHandler);
 	}
 }

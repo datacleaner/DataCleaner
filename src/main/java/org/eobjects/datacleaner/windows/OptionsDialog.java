@@ -56,7 +56,6 @@ import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
-import org.h2.util.StringUtils;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -107,7 +106,6 @@ public class OptionsDialog extends AbstractWindow {
 		userInterfacePanel.add(welcomeDialogShownOnStartupCheckBox);
 
 		final String username = userPreferences.getUsername();
-
 		final JXTextField usernameTextField = WidgetFactory.createTextField();
 		usernameTextField.setText(username);
 		usernameTextField.setEnabled(false);
@@ -121,7 +119,7 @@ public class OptionsDialog extends AbstractWindow {
 				logoutButton.setEnabled(false);
 			}
 		});
-		logoutButton.setEnabled(!StringUtils.isNullOrEmpty(username));
+		logoutButton.setEnabled(userPreferences.isLoggedIn());
 
 		final DCPanel userRegistrationPanel = new DCPanel().setTitledBorder("User registration");
 		userRegistrationPanel.add(DCLabel.dark("Logged in as:"));

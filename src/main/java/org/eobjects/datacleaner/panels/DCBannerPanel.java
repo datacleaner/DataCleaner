@@ -19,33 +19,43 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
+import org.eobjects.datacleaner.actions.LoginChangeListener;
+import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.WelcomeWindow;
 
 /**
  * Renders a DataCleaner-banner as a panel
  * 
  * @author Kasper Sørensen
  */
-public class DCBannerPanel extends JPanel {
+public class DCBannerPanel extends JPanel implements MouseListener, MouseMotionListener, LoginChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final int BANNER_BG_WIDTH = 150;
 	private static final int BANNER_HEIGHT = 150;
 	private static final Image BANNER_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
+	private static final UserPreferences userPreferences = UserPreferences.getInstance();
+	private final boolean _onlineOfflineTagEnabled;
 	private final int _bannerImageWidth;
 	private final Image _bannerImage;
-	private final Image _betaTagImage;
 	private final String _title;
+	private volatile Image _onlineOfflineImage;
 
 	public DCBannerPanel() {
 		this(null, null);
@@ -60,16 +70,28 @@ public class DCBannerPanel extends JPanel {
 	}
 
 	public DCBannerPanel(Image bannerImage, String title) {
+		this(bannerImage, title, true);
+	}
+
+	public DCBannerPanel(Image bannerImage, String title, boolean onlineOfflineTagEnabled) {
 		super();
+
+		_onlineOfflineTagEnabled = onlineOfflineTagEnabled;
 		if (bannerImage == null) {
 			_bannerImage = ImageManager.getInstance().getImage("images/window/banner-logo.png");
 		} else {
 			_bannerImage = bannerImage;
 		}
 		_bannerImageWidth = _bannerImage.getWidth(null);
-		_betaTagImage = ImageManager.getInstance().getImage("images/beta-tag.png");
 		_title = title;
 		setOpaque(false);
+
+		userPreferences.addLoginChangeListener(this);
+
+		addMouseListener(this);
+		addMouseMotionListener(this);
+
+		onLoginStateChanged(userPreferences.isLoggedIn(), userPreferences.getUsername());
 	}
 
 	@Override
@@ -117,7 +139,71 @@ public class DCBannerPanel extends JPanel {
 			}
 		}
 
-		// temporary beta tag
-		g.drawImage(_betaTagImage, x + w - 59, y, this);
+		if (_onlineOfflineTagEnabled) {
+			g.drawImage(_onlineOfflineImage, x + w - 59, y, this);
+		}
+	}
+
+	private boolean isOnlineOfflineCoordinate(final int x, final int y) {
+		if (!_onlineOfflineTagEnabled) {
+			return false;
+		}
+		final int w = getWidth();
+		if (x >= w - 59) {
+			if (y <= 59) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (isOnlineOfflineCoordinate(e.getX(), e.getY())) {
+			new WelcomeWindow(DCConfiguration.get()).setVisible(true);
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+		setCursor(cursor);
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+		if (isOnlineOfflineCoordinate(e.getX(), e.getY())) {
+			if (!userPreferences.isLoggedIn()) {
+				cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+			}
+		}
+		setCursor(cursor);
+	}
+
+	@Override
+	public void onLoginStateChanged(boolean loggedIn, String username) {
+		if (loggedIn) {
+			_onlineOfflineImage = ImageManager.getInstance().getImage("images/window/banner-online.png");
+		} else {
+			_onlineOfflineImage = ImageManager.getInstance().getImage("images/window/banner-offline.png");
+		}
+		updateUI();
 	}
 }

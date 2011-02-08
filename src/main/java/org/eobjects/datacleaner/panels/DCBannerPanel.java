@@ -75,7 +75,6 @@ public class DCBannerPanel extends JPanel implements MouseListener, MouseMotionL
 
 	public DCBannerPanel(Image bannerImage, String title, boolean onlineOfflineTagEnabled) {
 		super();
-
 		_onlineOfflineTagEnabled = onlineOfflineTagEnabled;
 		if (bannerImage == null) {
 			_bannerImage = ImageManager.getInstance().getImage("images/window/banner-logo.png");
@@ -86,7 +85,9 @@ public class DCBannerPanel extends JPanel implements MouseListener, MouseMotionL
 		_title = title;
 		setOpaque(false);
 
-		userPreferences.addLoginChangeListener(this);
+		if (_onlineOfflineTagEnabled) {
+			userPreferences.addLoginChangeListener(this);
+		}
 
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -97,6 +98,14 @@ public class DCBannerPanel extends JPanel implements MouseListener, MouseMotionL
 	@Override
 	public int getHeight() {
 		return BANNER_HEIGHT;
+	}
+	
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		if (_onlineOfflineTagEnabled) {
+			userPreferences.removeLoginChangeListener(this);
+		}
 	}
 
 	@Override

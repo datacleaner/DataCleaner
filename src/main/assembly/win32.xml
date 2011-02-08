@@ -1,7 +1,6 @@
 <assembly>
-	<id>all</id>
+	<id>win32</id>
 	<formats>
-		<format>tar.gz</format>
 		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>true</includeBaseDirectory>
@@ -11,7 +10,7 @@
 			<source>target/DataCleaner.jar</source>
 		</file>
 		<file>
-			<source>conf.xml</source>
+			<source>target/DataCleaner.exe</source>
 		</file>
 		<file>
 			<source>COPYING.txt</source>

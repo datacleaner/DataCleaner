@@ -48,6 +48,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -65,6 +66,7 @@ import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.FileHelper;
+import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
@@ -101,26 +103,21 @@ public class AboutDialog extends AbstractDialog {
 	protected JComponent getDialogContent() {
 		CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
 
-		tabbedPane.addTab("About DataCleaner", imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE),
-				getAboutPanel(), "About DataCleaner");
+		tabbedPane.addTab("About DataCleaner",
+				imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE), getAboutPanel(),
+				"About DataCleaner");
 		tabbedPane.setUnclosableTab(0);
 
-		tabbedPane.addTab("License", imageManager.getImageIcon("images/menu/license.png"), getLicensePanel(), "License");
+		tabbedPane.addTab("Licensing", imageManager.getImageIcon("images/menu/license.png"), getLicensingPanel(),
+				"Licensing");
 		tabbedPane.setUnclosableTab(1);
-
-		tabbedPane.addTab("Community", imageManager.getImageIcon("images/menu/users.png"), getCommunityPanel(), "Community");
-		tabbedPane.setUnclosableTab(2);
 
 		tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 500));
 
 		return tabbedPane;
 	}
 
-	private JComponent getCommunityPanel() {
-		return DCLabel.dark("TODO");
-	}
-
-	private JComponent getLicensePanel() {
+	private JComponent getLicensingPanel() {
 		final String dcLicense = getLicense("lgpl");
 
 		final DCLabel licenseHeader = DCLabel.dark("");
@@ -143,6 +140,8 @@ public class AboutDialog extends AbstractDialog {
 		});
 
 		final JComboBox librariesComboBox = new JComboBox();
+		final JButton visitProjectButton = WidgetFactory.createSmallButton("images/actions/website.png");
+
 		librariesComboBox.setRenderer(new DefaultListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
@@ -154,6 +153,8 @@ public class AboutDialog extends AbstractDialog {
 					LicensedProject project = (LicensedProject) value;
 					String name = project.name;
 					return super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
+				} else if (value instanceof String) {
+					return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 				}
 				throw new UnsupportedOperationException();
 			}
@@ -161,17 +162,25 @@ public class AboutDialog extends AbstractDialog {
 		librariesComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				LicensedProject project = (LicensedProject) e.getItem();
-				licenseLabel.setText(project.license);
-				licenseHeader.setText("Displaying license of " + project.name + "");
+				Object item = e.getItem();
+				if (item instanceof LicensedProject) {
+					visitProjectButton.setEnabled(true);
+					LicensedProject project = (LicensedProject) item;
+					licenseLabel.setText(project.license);
+					licenseHeader.setText("Displaying license of " + project.name + "");
+				} else {
+					visitProjectButton.setEnabled(false);
+					licenseHeader.setText("Displaying license of DataCleaner");
+					licenseLabel.setText(dcLicense);
+				}
 			}
 		});
 
-		final JButton visitProjectButton = WidgetFactory.createSmallButton("images/actions/website.png");
 		visitProjectButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				LicensedProject project = (LicensedProject) librariesComboBox.getSelectedItem();
+				Object item = librariesComboBox.getSelectedItem();
+				LicensedProject project = (LicensedProject) item;
 				String websiteUrl = project.websiteUrl;
 				if (!StringUtils.isNullOrEmpty(websiteUrl)) {
 					new OpenBrowserAction(websiteUrl).actionPerformed(e);
@@ -179,6 +188,7 @@ public class AboutDialog extends AbstractDialog {
 			}
 		});
 
+		librariesComboBox.addItem("- select project -");
 		final List<LicensedProject> licensedProjects = getLicensedProjects();
 		for (LicensedProject licensedProject : licensedProjects) {
 			librariesComboBox.addItem(licensedProject);
@@ -194,9 +204,6 @@ public class AboutDialog extends AbstractDialog {
 
 		final JScrollPane licenseLabelScroll = WidgetUtils.scrolleable(licenseLabel);
 		licenseLabelScroll.setBorder(new CompoundBorder(new EmptyBorder(10, 0, 10, 0), WidgetUtils.BORDER_THIN));
-
-		licenseLabel.setText(dcLicense);
-		licenseHeader.setText("Displaying license of DataCleaner");
 
 		final DCPanel headerPanel = new DCPanel();
 		headerPanel.setLayout(new VerticalLayout());
@@ -214,7 +221,48 @@ public class AboutDialog extends AbstractDialog {
 	}
 
 	private JComponent getAboutPanel() {
-		return DCLabel.dark("TODO");
+		final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Main.VERSION);
+		headerLabel.setFont(WidgetUtils.FONT_HEADER);
+
+		final ImageManager imageManager = ImageManager.getInstance();
+
+		final JButton datacleanerButton = new JButton(imageManager.getImageIcon("images/links/datacleaner.png"));
+		datacleanerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
+		datacleanerButton.setToolTipText("Visit the DataCleaner website");
+
+		final JButton bloggerButton = new JButton(imageManager.getImageIcon("images/links/blogger.png"));
+		bloggerButton.addActionListener(new OpenBrowserAction("http://kasper.eobjects.org"));
+		bloggerButton.setToolTipText("Follow along at our blog");
+
+		final JButton linkedInButton = new JButton(imageManager.getImageIcon("images/links/linkedin.png"));
+		linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
+		linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
+
+		final DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setLayout(new HorizontalLayout());
+		buttonPanel.add(datacleanerButton);
+		buttonPanel.add(Box.createHorizontalStrut(10));
+		buttonPanel.add(bloggerButton);
+		buttonPanel.add(Box.createHorizontalStrut(10));
+		buttonPanel.add(linkedInButton);
+
+		final DCPanel contentPanel = new DCPanel();
+		contentPanel.setLayout(new VerticalLayout());
+		contentPanel.add(headerLabel);
+		contentPanel.add(DCLabel.dark("Copyright (C) 2010 eobjects.org"));
+		contentPanel.add(Box.createVerticalStrut(10));
+		contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
+		contentPanel.add(DCLabel.dark("(see Licensing tab)."));
+		contentPanel.add(Box.createVerticalStrut(50));
+		contentPanel.add(buttonPanel);
+
+		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 97, 10,
+				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		mainPanel.setLayout(new VerticalLayout());
+		mainPanel.add(contentPanel);
+
+		return mainPanel;
 	}
 
 	@Override

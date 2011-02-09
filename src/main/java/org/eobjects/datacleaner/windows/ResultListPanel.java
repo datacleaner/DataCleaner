@@ -45,6 +45,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
@@ -178,8 +179,10 @@ public class ResultListPanel extends DCPanel {
 		if (req instanceof FilterOutcome) {
 			FilterJob filterJob = ((FilterOutcome) req).getFilterJob();
 			Enum<?> category = ((FilterOutcome) req).getCategory();
-
-			sb.append(filterJob.getDescriptor().getDisplayName());
+			
+			String filterLabel = LabelUtils.getLabel(filterJob);
+			
+			sb.append(filterLabel);
 			sb.append("=");
 			sb.append(category);
 		} else if (req instanceof MergedOutcome) {

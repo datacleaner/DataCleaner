@@ -89,6 +89,10 @@ public final class ResultWindow extends AbstractWindow {
 			@Override
 			public void run() {
 				_tabbedPane.addTab(tableName, tableIcon, panel);
+				if (_tabbedPane.getTabCount() == 2) {
+					// switch to the first available result panel
+					_tabbedPane.setSelectedIndex(1);
+				}
 			}
 		});
 	}
@@ -105,12 +109,6 @@ public final class ResultWindow extends AbstractWindow {
 	public void addResult(Table table, AnalyzerJob analyzerJob, AnalyzerResult result) {
 		ResultListPanel resultListPanel = getTableResultPanel(table);
 		resultListPanel.addResult(analyzerJob, result);
-		synchronized (_tabbedPane) {
-			if (_tabbedPane.getTabCount() == 2) {
-				// switch to the first available result panel
-				_tabbedPane.setSelectedIndex(1);
-			}
-		}
 	}
 
 	@Override

@@ -62,7 +62,9 @@ public class PatternFinderResultSwingRenderer implements Renderer<PatternFinderR
 				expression = value.toString();
 			}
 
-			if (!_catalog.containsSynonymCatalog(expression)) {
+			final String synonymCatalogName = "PF: " + expression;
+
+			if (!_catalog.containsSynonymCatalog(synonymCatalogName)) {
 				DCPanel panel = new DCPanel();
 				panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
@@ -74,7 +76,7 @@ public class PatternFinderResultSwingRenderer implements Renderer<PatternFinderR
 				button.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						_catalog.addStringPattern(new SimpleStringPattern(expression, expression));
+						_catalog.addStringPattern(new SimpleStringPattern(synonymCatalogName, expression));
 						button.setEnabled(false);
 					}
 				});

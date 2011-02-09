@@ -26,6 +26,10 @@
 	</files>
 	<fileSets>
 		<fileSet>
+			<directory>examples</directory>
+			<outputDirectory>/examples</outputDirectory>
+		</fileSet>
+		<fileSet>
 			<directory>target/lib</directory>
 			<outputDirectory>/lib</outputDirectory>
 		</fileSet>

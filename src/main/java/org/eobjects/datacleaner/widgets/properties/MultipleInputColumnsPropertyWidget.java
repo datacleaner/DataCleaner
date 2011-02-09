@@ -87,6 +87,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private volatile List<InputColumn<?>> _inputColumns;
 	private volatile JCheckBox[] _checkBoxes;
+	private volatile boolean _firstUpdate;
 
 	private final ExpressionBasedInputColumnOptionsMouseListener _expressionColumnMouseListener;
 
@@ -94,6 +95,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
 		_analysisJobBuilder = analysisJobBuilder;
+		_firstUpdate = true;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
@@ -115,6 +117,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		}
 
 		updateComponents();
+		_firstUpdate = false;
 	}
 
 	private void updateComponents() {
@@ -184,15 +187,17 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	private boolean isEnabled(InputColumn<?> inputColumn, InputColumn<?>[] currentValue) {
-		if (currentValue == null || currentValue.length == 0) {
-			// set all to true if this is the only inputcolumn property
-			ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
-			if (componentDescriptor instanceof BeanDescriptor<?>) {
-				if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput().size() == 1) {
-					return true;
+		if (_firstUpdate) {
+			if (currentValue == null || currentValue.length == 0) {
+				// set all to true if this is the only inputcolumn property
+				ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
+				if (componentDescriptor instanceof BeanDescriptor<?>) {
+					if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput().size() == 1) {
+						return true;
+					}
 				}
+				return false;
 			}
-			return false;
 		}
 		for (InputColumn<?> col : currentValue) {
 			if (inputColumn == col) {

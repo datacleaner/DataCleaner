@@ -32,6 +32,7 @@ import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -48,6 +49,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 	private final ColumnListTable _outputColumnsTable;
 	private final ChangeRequirementButton _requirementButton;
 	private final JButton _previewButton;
+	private final JButton _saveOutputButton;
 
 	public TransformerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder,
 			AnalyzerBeansConfiguration configuration) {
@@ -65,6 +67,11 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 		}
 		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, analysisJobBuilder);
 
+		_saveOutputButton = new JButton("Save transformed data",
+				imageManager.getImageIcon("images/component-types/type_output_writer.png"));
+		_saveOutputButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_configuration,
+				analysisJobBuilder, _transformerJobBuilder));
+
 		_previewButton = new JButton("Preview transformed data",
 				imageManager.getImageIcon("images/actions/preview_data.png"));
 		_previewButton.addActionListener(new PreviewTransformedDataActionListener(this, analysisJobBuilder,
@@ -72,16 +79,17 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 
 		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, transformerJobBuilder);
 
-		final DCPanel previewButtonPanel = new DCPanel();
-		previewButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		previewButtonPanel.add(_previewButton);
-		_outputColumnsTable.add(previewButtonPanel, BorderLayout.SOUTH);
+		final DCPanel bottomButtonPanel = new DCPanel();
+		bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
+		bottomButtonPanel.add(_saveOutputButton);
+		bottomButtonPanel.add(_previewButton);
+		_outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
 
 		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
 				_outputColumnsTable);
 
 		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
 		buttonPanel.add(_requirementButton);
 		add(buttonPanel, BorderLayout.NORTH);
 	}

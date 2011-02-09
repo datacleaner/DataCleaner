@@ -96,21 +96,22 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			}
 		});
 
-
 		_editButton.setToolTipText("Edit or test pattern");
 		_editButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				if (selectedStringPattern instanceof RegexSwapStringPattern) {
-					Regex regex = ((RegexSwapStringPattern) selectedStringPattern).getRegex();
-					OpenBrowserAction actionListener = new OpenBrowserAction(regex.createWebsiteUrl());
-					actionListener.actionPerformed(event);
-				} else if (selectedStringPattern instanceof RegexStringPattern) {
-					new RegexStringPatternDialog(selectedStringPattern.getName(),
-							((RegexStringPattern) selectedStringPattern).getExpression(), _catalog).setVisible(true);
-				} else if (selectedStringPattern instanceof SimpleStringPattern) {
-					new SimpleStringPatternDialog(selectedStringPattern.getName(),
-							((SimpleStringPattern) selectedStringPattern).getExpression(), _catalog).setVisible(true);
+				if (selectedStringPattern != null) {
+					if (selectedStringPattern instanceof RegexSwapStringPattern) {
+						Regex regex = ((RegexSwapStringPattern) selectedStringPattern).getRegex();
+						OpenBrowserAction actionListener = new OpenBrowserAction(regex.createWebsiteUrl());
+						actionListener.actionPerformed(event);
+					} else if (selectedStringPattern instanceof RegexStringPattern) {
+						new RegexStringPatternDialog(selectedStringPattern.getName(),
+								((RegexStringPattern) selectedStringPattern).getExpression(), _catalog).setVisible(true);
+					} else if (selectedStringPattern instanceof SimpleStringPattern) {
+						new SimpleStringPatternDialog(selectedStringPattern.getName(),
+								((SimpleStringPattern) selectedStringPattern).getExpression(), _catalog).setVisible(true);
+					}
 				}
 			}
 		});
@@ -119,15 +120,17 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		_removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_catalog.isStringPatternMutable(selectedStringPattern.getName())) {
-					int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
-							"Are you sure you wish to remove the string pattern '" + "" + "'?", "Confirm remove",
-							JOptionPane.YES_NO_OPTION);
-					if (result == JOptionPane.YES_OPTION) {
-						_catalog.removeStringPattern(selectedStringPattern);
+				if (selectedStringPattern != null) {
+					if (_catalog.isStringPatternMutable(selectedStringPattern.getName())) {
+						int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
+								"Are you sure you wish to remove the string pattern '" + "" + "'?", "Confirm remove",
+								JOptionPane.YES_NO_OPTION);
+						if (result == JOptionPane.YES_OPTION) {
+							_catalog.removeStringPattern(selectedStringPattern);
+						}
+					} else {
+						JOptionPane.showMessageDialog(StringPatternListPanel.this, "This string pattern cannot be deleted.");
 					}
-				} else {
-					JOptionPane.showMessageDialog(StringPatternListPanel.this, "This string pattern cannot be deleted.");
 				}
 			}
 		});

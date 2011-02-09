@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
@@ -44,29 +45,32 @@ import org.eobjects.datacleaner.actions.InvokeResultProducerActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 
 @RendererBean(SwingRenderingFormat.class)
-public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCTable> {
+public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, JComponent> {
 
 	@Override
-	public DCTable render(CrosstabResult result) {
-		return render(result.getCrosstab());
+	public JComponent render(CrosstabResult result) {
+		DCTable table = renderTable(result.getCrosstab());
+		if ("".equals(table.getColumnName(1))) {
+			return table;
+		} else {
+			return table.toPanel();
+		}
 	}
 
-	public DCTable render(Crosstab<?> crosstab) {
+	public DCTable renderTable(Crosstab<?> crosstab) {
 		CrosstabRenderer renderer = new CrosstabRenderer(crosstab);
 		TableModel tableModel = renderer.render(new Callback());
 		DCTable table = new DCTable(tableModel);
-		table.setColumnControlVisible(false);
 		table.setRowHeight(22);
-		table.setBorder(WidgetUtils.BORDER_THIN);
 		return table;
 	}
 
 	private static final class Callback implements CrosstabRendererCallback<TableModel> {
 
+		private boolean headersIncluded;
 		private TableModel _tableModel;
 		private int _row = 0;
 		private int _col = 0;
@@ -87,7 +91,27 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 			}
 			cols += verticalDimensions.size();
 
-			_tableModel = new DefaultTableModel(rows, cols);
+			final String[] columnNames = new String[cols];
+			if (horizontalDimensions.size() == 1) {
+				headersIncluded = true;
+
+				final CrosstabDimension horizontalDimension = horizontalDimensions.get(0);
+				final List<String> categories = horizontalDimension.getCategories();
+				columnNames[0] = "";
+				for (int i = 1; i < columnNames.length; i++) {
+					columnNames[i] = categories.get(i - 1);
+				}
+
+				// minus one row, because the header is included
+				rows--;
+				_row--;
+			} else {
+				headersIncluded = false;
+				for (int i = 0; i < columnNames.length; i++) {
+					columnNames[i] = "";
+				}
+			}
+			_tableModel = new DefaultTableModel(columnNames, rows);
 
 			if (ReflectionUtils.isNumber(crosstab.getValueClass())) {
 				_alignment = SwingConstants.RIGHT;
@@ -110,21 +134,25 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 
 		@Override
 		public void horizontalHeaderCell(String category, CrosstabDimension dimension, int width) {
-			_tableModel.setValueAt(category, _row, _col);
+			if (_row >= 0) {
+				_tableModel.setValueAt(category, _row, _col);
+			}
 			_col++;
 		}
 
 		@Override
 		public void verticalHeaderCell(String category, CrosstabDimension dimension, int height) {
-			_tableModel.setValueAt(category, _row, _col);
+			if (_row >= 0) {
+				_tableModel.setValueAt(category, _row, _col);
+			}
 			_col++;
 		}
 
 		@Override
 		public void valueCell(Object value, final ResultProducer drillToDetailResultProducer) {
-			DCPanel panel = new DCPanel();
+			final DCPanel panel = new DCPanel();
+			final JLabel label = new JLabel();
 			panel.setLayout(new FlowLayout(_alignment, 0, 0));
-			JLabel label = new JLabel();
 			if (value == null) {
 				label.setText(LabelUtils.NULL_LABEL);
 			} else if (value instanceof Double || value instanceof Float) {
@@ -135,20 +163,25 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 			panel.add(label);
 
 			if (drillToDetailResultProducer != null) {
-				StringBuilder sb = new StringBuilder("Detailed result for [");
+				final StringBuilder sb = new StringBuilder("Detailed result for [");
 
 				sb.append(label.getText());
 				sb.append(" (");
 
-				String cat1 = _tableModel.getValueAt(0, _col).toString();
+				final String cat1; 
+				if (headersIncluded) {
+					cat1 = _tableModel.getColumnName(_col);
+				} else {
+					cat1 = _tableModel.getValueAt(0, _col).toString();
+				}
 				sb.append(cat1).append(", ");
 
-				String cat2 = _tableModel.getValueAt(_row, 0).toString();
+				final String cat2 = _tableModel.getValueAt(_row, 0).toString();
 				sb.append(cat2);
 
 				sb.append(")]");
 
-				JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
+				final JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
 				button.addActionListener(new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer));
 				panel.add(Box.createHorizontalStrut(4));
 				panel.add(button);
@@ -165,7 +198,9 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, DCT
 
 		@Override
 		public void emptyHeader(CrosstabDimension verticalDimension, CrosstabDimension horizontalDimension) {
-			_tableModel.setValueAt("", _row, _col);
+			if (_row >= 0) {
+				_tableModel.setValueAt("", _row, _col);
+			}
 			_col++;
 		}
 	}

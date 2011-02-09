@@ -56,7 +56,6 @@ public final class LookAndFeelManager {
 	}
 
 	public void init() {
-
 		try {
 			LookAndFeel laf = new PlasticXPLookAndFeel();
 			UIManager.setLookAndFeel(laf);
@@ -130,6 +129,7 @@ public final class LookAndFeelManager {
 		UIManager.put("ToolTip.border", WidgetUtils.BORDER_THIN);
 
 		// task pane colors
+		UIManager.put("TaskPane.font", WidgetUtils.FONT_TABLE_HEADER);
 		UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TaskPane.titleForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.BG_COLOR_DARKEST);

@@ -57,6 +57,7 @@ public final class WidgetUtils {
 
 	public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 25);
 	public static final Font FONT_HEADER = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
+	public static final Font FONT_TABLE_HEADER = new FontUIResource("Trebuchet MS", Font.BOLD, 13);
 	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
 	public static final Font FONT_NORMAL = new FontUIResource("LucidaSans", Font.PLAIN, 12);
 	public static final Font FONT_SMALL = new FontUIResource("LucidaSans", Font.PLAIN, 10);
@@ -104,8 +105,8 @@ public final class WidgetUtils {
 	/**
 	 * A highlighter for coloring odd/even rows in a table
 	 */
-	public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory.createAlternateStriping(BG_COLOR_BRIGHT,
-			BG_COLOR_BRIGHTEST);
+	public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory.createAlternateStriping(
+			colorBetween(BG_COLOR_BRIGHTEST, BG_COLOR_BRIGHT), BG_COLOR_BRIGHTEST);
 
 	/**
 	 * Slightly moderated version of COLOR.FACTOR
@@ -245,6 +246,20 @@ public final class WidgetUtils {
 		scroll.setOpaque(false);
 		scroll.getViewport().setOpaque(false);
 		return scroll;
+	}
+
+	/**
+	 * Creates a color that is in between two colors, in terms of RGB balance.
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
+	public static Color colorBetween(Color c1, Color c2) {
+		int red = (c1.getRed() + c2.getRed()) / 2;
+		int green = (c1.getGreen() + c2.getGreen()) / 2;
+		int blue = (c1.getBlue() + c2.getBlue()) / 2;
+		return new Color(red, green, blue);
 	}
 
 	/**

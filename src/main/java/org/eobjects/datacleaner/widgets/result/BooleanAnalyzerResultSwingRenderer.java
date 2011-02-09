@@ -43,12 +43,12 @@ public class BooleanAnalyzerResultSwingRenderer implements Renderer<BooleanAnaly
 		Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
 		Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();
 
-		DCTable columnStatisticsTable = crosstabResultSwingRenderer.render(columnStatisticsCrosstab);
+		DCTable columnStatisticsTable = crosstabResultSwingRenderer.renderTable(columnStatisticsCrosstab);
 		if (valueCombinationCrosstab == null) {
-			return columnStatisticsTable;
+			return columnStatisticsTable.toPanel();
 		}
 
-		DCTable valueCombinationTable = crosstabResultSwingRenderer.render(valueCombinationCrosstab);
+		DCTable valueCombinationTable = crosstabResultSwingRenderer.renderTable(valueCombinationCrosstab);
 
 		DCPanel panel = new DCPanel();
 		panel.setLayout(new VerticalLayout(4));
@@ -56,14 +56,14 @@ public class BooleanAnalyzerResultSwingRenderer implements Renderer<BooleanAnaly
 		JLabel label = new JLabel("Column statistics:");
 		label.setFont(WidgetUtils.FONT_HEADER);
 		panel.add(label);
-		panel.add(columnStatisticsTable);
+		panel.add(columnStatisticsTable.toPanel());
 		
 		panel.add(Box.createVerticalStrut(4));
 
 		label = new JLabel("Frequency of combinations:");
 		label.setFont(WidgetUtils.FONT_HEADER);
 		panel.add(label);
-		panel.add(valueCombinationTable);
+		panel.add(valueCombinationTable.toPanel());
 
 		return panel;
 	}

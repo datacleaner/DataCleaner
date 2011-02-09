@@ -47,7 +47,7 @@ public class PatternFinderResultSwingRenderer implements Renderer<PatternFinderR
 
 	@Override
 	public JComponent render(PatternFinderResult result) {
-		DCTable table = new CrosstabResultSwingRenderer().render(result);
+		DCTable table = new CrosstabResultSwingRenderer().renderTable(result.getCrosstab());
 		int rowCount = table.getRowCount();
 		for (int i = 1; i < rowCount; i++) {
 			final String expression;
@@ -86,7 +86,7 @@ public class PatternFinderResultSwingRenderer implements Renderer<PatternFinderR
 				table.setValueAt(panel, i, 0);
 			}
 		}
-		return table;
+		return table.toPanel();
 	}
 
 }

@@ -37,15 +37,15 @@
         </transformer>
     </transformation>
     <analysis>
-        <analyzer>
-            <descriptor ref="Boolean analyzer (matches)"/>
+        <analyzer name="Boolean analyzer (matches)">
+            <descriptor ref="Boolean analyzer"/>
             <properties/>
             <input ref="col_2"/>
             <input ref="col_3"/>
             <input ref="col_4"/>
         </analyzer>
-        <analyzer>
-            <descriptor ref="Value distribution (ending)"/>
+        <analyzer name="Value distribution (ending)">
+            <descriptor ref="Value distribution"/>
             <properties>
                 <property value="true" name="Record unique values"/>
             </properties>
@@ -67,8 +67,8 @@
             </properties>
             <input ref="col_0"/>
         </analyzer>
-        <analyzer>
-            <descriptor ref="Number analyzer (length)"/>
+        <analyzer name="Number analyzer (length)">
+            <descriptor ref="Number analyzer"/>
             <properties/>
             <input ref="col_1"/>
         </analyzer>

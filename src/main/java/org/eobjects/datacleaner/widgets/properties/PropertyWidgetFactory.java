@@ -86,6 +86,8 @@ public final class PropertyWidgetFactory {
 				result = new MultipleSynonymCatalogsPropertyWidget(_beanJobBuilder, propertyDescriptor);
 			} else if (type == StringPattern.class) {
 				result = new MultipleStringPatternPropertyWidget(_beanJobBuilder, propertyDescriptor);
+			} else if (type == char.class) {
+				result = new MultipleCharPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else {
 				// not yet implemented
 				result = new DummyPropertyWidget(propertyDescriptor);

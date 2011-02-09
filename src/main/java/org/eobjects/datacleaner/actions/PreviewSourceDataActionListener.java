@@ -22,15 +22,14 @@ package org.eobjects.datacleaner.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.windows.DataSetWindow;
-
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
@@ -68,7 +67,7 @@ public class PreviewSourceDataActionListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Column[] columns = _columns;
 		if (columns == null) {
-			Set<Column> cols = new HashSet<Column>();
+			Set<Column> cols = new TreeSet<Column>();
 			for (InputColumn<?> col : _inputColumns) {
 				if (col.isPhysicalColumn()) {
 					cols.add(col.getPhysicalColumn());

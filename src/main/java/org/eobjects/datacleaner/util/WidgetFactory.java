@@ -100,10 +100,13 @@ public final class WidgetFactory {
 	}
 
 	public static JXStatusBar createStatusBar(JComponent comp) {
-		JXStatusBar statusBar = new JXStatusBar();
+		final JXStatusBar statusBar = new JXStatusBar();
 		statusBar.setUI(new MetalStatusBarUI());
 		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
-		JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
+		final MatteBorder outerBorder = new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
+		final EmptyBorder innerBorder = new EmptyBorder(2, 2, 2, 2);
+		statusBar.setBorder(new CompoundBorder(outerBorder, innerBorder));
+		final JXStatusBar.Constraint c1 = new JXStatusBar.Constraint(JXStatusBar.Constraint.ResizeBehavior.FILL);
 		statusBar.add(comp, c1);
 		return statusBar;
 	}

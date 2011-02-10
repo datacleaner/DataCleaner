@@ -37,6 +37,7 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 	public AbstractWindow() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
+		getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
 	}
 
 	protected void initialize() {

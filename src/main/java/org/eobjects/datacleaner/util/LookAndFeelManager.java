@@ -92,6 +92,10 @@ public final class LookAndFeelManager {
 
 		UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
+		
+		// splitpane "flattening" (remove bevel like borders in divider)
+		UIManager.put("SplitPane.border", new EmptyBorder(0, 0, 0, 0));
+		UIManager.put("SplitPaneDivider.border", new EmptyBorder(0, 0, 0, 0));
 
 		UIManager.put("PopupMenu.border", emptyBorder);
 		UIManager.put("PopupMenu.background", WidgetUtils.BG_COLOR_DARKEST);

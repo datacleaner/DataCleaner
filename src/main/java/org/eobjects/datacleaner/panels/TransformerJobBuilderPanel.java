@@ -65,7 +65,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 		} else {
 			outputColumns = new ArrayList<MutableInputColumn<?>>(0);
 		}
-		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, analysisJobBuilder);
+		_outputColumnsTable = new ColumnListTable(outputColumns, _configuration, analysisJobBuilder, false);
 
 		_saveOutputButton = new JButton("Save transformed data",
 				imageManager.getImageIcon("images/component-types/type_output_writer.png"));

@@ -37,9 +37,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalButtonUI;
 
+import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
@@ -130,10 +130,8 @@ public final class WidgetFactory {
 		return button;
 	}
 
-	public static JXTaskPaneContainer createTaskPaneContainer() {
-		JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
-		taskPaneContainer.setOpaque(false);
-		taskPaneContainer.setBackgroundPainter(null);
+	public static DCTaskPaneContainer createTaskPaneContainer() {
+		DCTaskPaneContainer taskPaneContainer = new DCTaskPaneContainer();
 		return taskPaneContainer;
 	}
 

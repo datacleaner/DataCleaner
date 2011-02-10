@@ -34,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
 
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
@@ -59,7 +60,7 @@ public class ProgressInformationPanel extends DCPanel {
 		_textArea.setText("--- DataCleaner progress information user-log ---");
 		_textArea.setEditable(false);
 		_textAreaScroll = WidgetUtils.scrolleable(_textArea);
-		_textAreaScroll.setBorder(WidgetUtils.BORDER_THIN);
+		_textAreaScroll.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
 
 		_progressBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		_progressBarPanel.setLayout(new VerticalLayout(4));

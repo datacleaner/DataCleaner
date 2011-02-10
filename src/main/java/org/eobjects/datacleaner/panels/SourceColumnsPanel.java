@@ -29,10 +29,9 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.jdesktop.swingx.VerticalLayout;
-
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
+import org.jdesktop.swingx.VerticalLayout;
 
 public final class SourceColumnsPanel extends DCPanel implements SourceColumnChangeListener {
 
@@ -93,7 +92,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		}
 
 		if (sourceColumnTable == null) {
-			sourceColumnTable = new ColumnListTable(table, _configuration, _analysisJobBuilder);
+			sourceColumnTable = new ColumnListTable(table, _configuration, _analysisJobBuilder, true);
 			this.add(sourceColumnTable);
 			_sourceColumnTables.add(sourceColumnTable);
 			updateUI();

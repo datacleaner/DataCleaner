@@ -72,16 +72,17 @@ public final class ColumnListTable extends DCPanel {
 	private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>(new InputColumnComparator());
 
 	public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalyzerBeansConfiguration configuration,
-			AnalysisJobBuilder analysisJobBuilder) {
-		this(null, columns, configuration, analysisJobBuilder);
+			AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
+		this(null, columns, configuration, analysisJobBuilder, addShadowBorder);
 	}
 
-	public ColumnListTable(Table table, AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
-		this(table, null, configuration, analysisJobBuilder);
+	public ColumnListTable(Table table, AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+			boolean addShadowBorder) {
+		this(table, null, configuration, analysisJobBuilder, addShadowBorder);
 	}
 
 	private ColumnListTable(Table table, Collection<? extends InputColumn<?>> columns,
-			AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
+			AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
 		super();
 		_table = table;
 		_configuration = configuration;
@@ -101,7 +102,7 @@ public final class ColumnListTable extends DCPanel {
 			previewButton.setToolTipText("Preview table rows");
 			previewButton.addActionListener(new PreviewSourceDataActionListener(
 					_analysisJobBuilder.getDataContextProvider(), _columns));
-			
+
 			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove table from source");
 			removeButton.addActionListener(new ActionListener() {
@@ -127,9 +128,10 @@ public final class ColumnListTable extends DCPanel {
 		_columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 
 		JPanel tablePanel = _columnTable.toPanel();
-		tablePanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-		tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_EMPTY, WidgetUtils.BORDER_THIN));
+		if (addShadowBorder) {
+			tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
+		}
 		add(tablePanel, BorderLayout.CENTER);
 
 		if (columns != null) {

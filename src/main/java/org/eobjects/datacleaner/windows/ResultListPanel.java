@@ -26,7 +26,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
@@ -128,7 +127,6 @@ public class ResultListPanel extends DCPanel {
 		final JXTaskPane taskPane = WidgetFactory.createTaskPane(resultLabel, icon);
 
 		final DCPanel taskPanePanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		taskPanePanel.setBorder(new EmptyBorder(4, 4, 4, 4));
 		taskPanePanel.setLayout(new BorderLayout());
 		taskPane.add(taskPanePanel);
 

@@ -1,0 +1,68 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+package org.eobjects.datacleaner.widgets;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.WidgetUtils;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.JXTaskPaneContainer;
+
+/**
+ * Minor improvement to the regular JXTaskPaneContainer, wrapping all task panes
+ * in a bordered panel.
+ * 
+ * @author Kasper Sørensen
+ */
+public class DCTaskPaneContainer extends JXTaskPaneContainer {
+
+	private static final long serialVersionUID = 1L;
+
+	public DCTaskPaneContainer() {
+		super();
+		setOpaque(false);
+		setBackgroundPainter(null);
+	}
+
+	@Override
+	public void add(JXTaskPane group) {
+		DCPanel panel = new DCPanel();
+		panel.setBorder(WidgetUtils.BORDER_SHADOW);
+		panel.setLayout(new BorderLayout());
+		panel.add(group, BorderLayout.CENTER);
+		super.add(panel);
+	}
+
+	@Override
+	public void remove(JXTaskPane group) {
+		Component[] components = getComponents();
+		for (Component component : components) {
+			if (component instanceof DCPanel) {
+				Component innerComponent = ((DCPanel) component).getComponent(0);
+				if (innerComponent.equals(group)) {
+					super.remove(component);
+					return;
+				}
+			}
+		}
+	}
+}

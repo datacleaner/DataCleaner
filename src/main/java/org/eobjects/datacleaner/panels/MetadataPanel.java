@@ -24,6 +24,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.swing.Icon;
+import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
 
 import org.eobjects.analyzer.data.InputColumn;
@@ -48,7 +49,9 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 
 		setLayout(new BorderLayout());
-		add(_table.toPanel(), BorderLayout.CENTER);
+		DCPanel tablePanel = _table.toPanel();
+		tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
+		add(tablePanel, BorderLayout.CENTER);
 		updateComponents();
 	}
 

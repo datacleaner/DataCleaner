@@ -44,6 +44,7 @@ import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.jdesktop.swingx.JXErrorPane;
+import org.jdesktop.swingx.border.DropShadowBorder;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.error.ErrorInfo;
@@ -97,6 +98,7 @@ public final class WidgetUtils {
 
 	public static final int BORDER_WIDE_WIDTH = 4;
 
+	public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
 	public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
 	public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH,
 			WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);

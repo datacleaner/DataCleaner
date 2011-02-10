@@ -84,17 +84,17 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;
+	private final InputColumnPropertyWidgetAccessoryHandler _accessoryHandler;
+	private final List<InputColumn<?>> _inputColumns;
 
-	private volatile List<InputColumn<?>> _inputColumns;
 	private volatile JCheckBox[] _checkBoxes;
 	private volatile boolean _firstUpdate;
-
-	private final ExpressionBasedInputColumnOptionsMouseListener _expressionColumnMouseListener;
 
 	public MultipleInputColumnsPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
 		_analysisJobBuilder = analysisJobBuilder;
+		_inputColumns = new ArrayList<InputColumn<?>>();
 		_firstUpdate = true;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
@@ -102,18 +102,18 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		setLayout(new VerticalLayout(2));
 
 		if (propertyDescriptor.isArray()) {
+			boolean allowExpressionBasedColumns = false;
 			if (_dataTypeFamily == DataTypeFamily.STRING || _dataTypeFamily == DataTypeFamily.UNDEFINED) {
-				_expressionColumnMouseListener = new ExpressionBasedInputColumnOptionsMouseListener(propertyDescriptor,
-						beanJobBuilder, this);
-			} else {
-				_expressionColumnMouseListener = null;
+				allowExpressionBasedColumns = true;
 			}
+			_accessoryHandler = new InputColumnPropertyWidgetAccessoryHandler(propertyDescriptor, beanJobBuilder, this,
+					allowExpressionBasedColumns);
 		} else {
 			// actually this widget is also used for analyzers such as the
 			// Pattern Finder and the Value Distribution which only accepts
 			// single columns but automatically generate several components
 			// behind the scenes.
-			_expressionColumnMouseListener = null;
+			_accessoryHandler = null;
 		}
 
 		updateComponents();
@@ -122,7 +122,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private void updateComponents() {
 		removeAll();
-		_inputColumns = _analysisJobBuilder.getAvailableInputColumns(_dataTypeFamily);
+		_inputColumns.clear();
 
 		InputColumn<?>[] currentValue = (InputColumn<?>[]) getBeanJobBuilder()
 				.getConfiguredProperty(getPropertyDescriptor());
@@ -132,6 +132,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 				if (!_inputColumns.contains(inputColumn)) {
 					_inputColumns.add(inputColumn);
 				}
+			}
+		}
+
+		List<InputColumn<?>> availableColumns = _analysisJobBuilder.getAvailableInputColumns(_dataTypeFamily);
+		for (InputColumn<?> inputColumn : availableColumns) {
+			if (!_inputColumns.contains(inputColumn)) {
+				_inputColumns.add(inputColumn);
 			}
 		}
 
@@ -163,8 +170,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			_checkBoxes[0].setEnabled(false);
 			add(_checkBoxes[0]);
 
-			if (_expressionColumnMouseListener != null) {
-				_expressionColumnMouseListener.registerListComponent(_checkBoxes[0], null);
+			if (_accessoryHandler != null) {
+				_accessoryHandler.registerListComponent(_checkBoxes[0], null);
 			}
 		} else {
 			_checkBoxes = new JCheckBox[_inputColumns.size()];
@@ -177,8 +184,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 				add(checkBox);
 				i++;
 
-				if (_expressionColumnMouseListener != null) {
-					_expressionColumnMouseListener.registerListComponent(checkBox, inputColumn);
+				if (_accessoryHandler != null) {
+					_accessoryHandler.registerListComponent(checkBox, inputColumn);
 				}
 			}
 		}

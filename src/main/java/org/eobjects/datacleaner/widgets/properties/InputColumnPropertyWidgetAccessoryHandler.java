@@ -19,69 +19,87 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.eobjects.analyzer.data.ConstantInputColumn;
-import org.eobjects.analyzer.data.ELInputColumn;
 import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.actions.AddExpressionBasedColumnActionListener;
+import org.eobjects.datacleaner.actions.ReorderColumnsActionListener;
+import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.jdesktop.swingx.VerticalLayout;
 
-public class ExpressionBasedInputColumnOptionsMouseListener implements ActionListener {
+/**
+ * Handler class for displaying the accessory buttons (a popup with the
+ * "insert expression based column" button and the "reorder columns" button) on
+ * input column selection widgets
+ * 
+ * @author Kasper Sørensen
+ */
+public class InputColumnPropertyWidgetAccessoryHandler {
 
-	private static final String ICON_PATH = "images/model/column_expression.png";
+	private static final String EXPRESSION_COLUMN_ICON_PATH = "images/model/column_expression.png";
+	private static final String REORDER_COLUMN_ICON_PATH = "images/actions/reorder-columns.png";
+
+	private final MouseAdapter buttonMouseListener = new MouseAdapter() {
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			_hoveringButton = true;
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			_hoveringButton = false;
+			hideIfNescesary();
+		}
+	};
+
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final JPopupMenu _popup;
 	private final JComponent _parent;
-	private final JButton _button;
 	private volatile boolean _hoveringParent = false;
 	private volatile boolean _hoveringChild = false;
 	private volatile boolean _hoveringButton = false;
 	private volatile InputColumn<?> _hoveringInputColumn = null;
 
-	public ExpressionBasedInputColumnOptionsMouseListener(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> jobBuilder, JComponent parent) {
+	public InputColumnPropertyWidgetAccessoryHandler(ConfiguredPropertyDescriptor propertyDescriptor,
+			AbstractBeanJobBuilder<?, ?, ?> jobBuilder, JComponent parent, boolean allowExpressionBasedColumns) {
 		_propertyDescriptor = propertyDescriptor;
 		_beanJobBuilder = jobBuilder;
-		_button = WidgetFactory.createSmallButton(ICON_PATH);
-		_button.setToolTipText("Create expression/value based column");
-		_button.addActionListener(this);
-
-		_button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				_hoveringButton = true;
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				_hoveringButton = false;
-				hideIfNescesary();
-			}
-		});
-
 		_parent = parent;
+
+		final DCPanel panel = new DCPanel();
+		panel.setLayout(new VerticalLayout());
+
+		if (allowExpressionBasedColumns) {
+			final JButton expressionColumnButton = WidgetFactory.createSmallButton(EXPRESSION_COLUMN_ICON_PATH);
+			expressionColumnButton.setToolTipText("Create expression/value based column");
+			expressionColumnButton.addActionListener(new AddExpressionBasedColumnActionListener(this));
+			expressionColumnButton.addMouseListener(buttonMouseListener);
+			panel.add(expressionColumnButton);
+		}
+
+		if (_propertyDescriptor.isArray()) {
+			final JButton reorderColumnsButton = WidgetFactory.createSmallButton(REORDER_COLUMN_ICON_PATH);
+			reorderColumnsButton.setToolTipText("Reorder columns");
+			reorderColumnsButton.addMouseListener(buttonMouseListener);
+			reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(_propertyDescriptor, _beanJobBuilder));
+			panel.add(reorderColumnsButton);
+		}
 
 		_popup = new JPopupMenu();
 		_popup.setInvoker(_parent);
-		_popup.add(_button);
+		_popup.add(panel);
+		_popup.pack();
 
 		_parent.addMouseListener(new MouseAdapter() {
 			@Override
@@ -132,55 +150,6 @@ public class ExpressionBasedInputColumnOptionsMouseListener implements ActionLis
 		});
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		final boolean replace;
-		final String initialValue;
-		if (_hoveringInputColumn instanceof ExpressionBasedInputColumn) {
-			replace = true;
-			initialValue = ((ExpressionBasedInputColumn<?>) _hoveringInputColumn).getExpression();
-		} else {
-			replace = false;
-			initialValue = "";
-		}
-
-		String expression = JOptionPane.showInputDialog(_parent,
-				"In stead of referencing a column you can also enter an expression.\n"
-						+ "An expression may either be a constant string or an EL-expression\n"
-						+ "that can access the other columns using the #{column_name} syntax.", initialValue);
-
-		if (!StringUtils.isNullOrEmpty(expression)) {
-			Object newValue;
-			if (expression.indexOf("#{") != -1) {
-				newValue = new ELInputColumn(expression);
-			} else {
-				newValue = new ConstantInputColumn(expression);
-			}
-
-			if (_propertyDescriptor.isArray()) {
-				InputColumn<?>[] currentValue = (InputColumn[]) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
-				if (currentValue == null) {
-					currentValue = new InputColumn[0];
-				}
-				newValue = CollectionUtils.array(currentValue, newValue);
-
-				if (replace) {
-					List<InputColumn<?>> list = new ArrayList<InputColumn<?>>();
-					int length = Array.getLength(newValue);
-					for (int i = 0; i < length; i++) {
-						Object o = Array.get(newValue, i);
-						if (!_hoveringInputColumn.equals(o)) {
-							list.add((InputColumn<?>) o);
-						}
-					}
-					newValue = list.toArray(new InputColumn[list.size()]);
-				}
-			}
-			_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
-		}
-
-	}
-
 	private void hideIfNescesary() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -190,5 +159,21 @@ public class ExpressionBasedInputColumnOptionsMouseListener implements ActionLis
 				}
 			}
 		});
+	}
+
+	public JComponent getParent() {
+		return _parent;
+	}
+
+	public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
+		return _beanJobBuilder;
+	}
+
+	public InputColumn<?> getHoveringInputColumn() {
+		return _hoveringInputColumn;
+	}
+
+	public ConfiguredPropertyDescriptor getPropertyDescriptor() {
+		return _propertyDescriptor;
 	}
 }

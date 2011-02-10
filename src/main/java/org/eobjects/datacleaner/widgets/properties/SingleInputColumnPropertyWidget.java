@@ -48,7 +48,7 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private volatile JRadioButton[] _radioButtons;
 	private volatile List<InputColumn<?>> _inputColumns;
-	private final ExpressionBasedInputColumnOptionsMouseListener _expressionColumnMouseListener;
+	private final InputColumnPropertyWidgetAccessoryHandler _accessoryHandler;
 
 	public SingleInputColumnPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
@@ -63,10 +63,10 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 
 		if (_dataTypeFamily == DataTypeFamily.STRING || _dataTypeFamily == DataTypeFamily.UNDEFINED) {
-			_expressionColumnMouseListener = new ExpressionBasedInputColumnOptionsMouseListener(_propertyDescriptor,
-					_beanJobBuilder, this);
+			_accessoryHandler = new InputColumnPropertyWidgetAccessoryHandler(_propertyDescriptor, _beanJobBuilder, this,
+					true);
 		} else {
-			_expressionColumnMouseListener = null;
+			_accessoryHandler = null;
 		}
 
 		updateComponents();
@@ -135,8 +135,8 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 				}
 			});
 
-			if (_expressionColumnMouseListener != null) {
-				_expressionColumnMouseListener.registerListComponent(rb, null);
+			if (_accessoryHandler != null) {
+				_accessoryHandler.registerListComponent(rb, null);
 			}
 		}
 

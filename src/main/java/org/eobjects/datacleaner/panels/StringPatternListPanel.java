@@ -123,8 +123,8 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				if (selectedStringPattern != null) {
 					if (_catalog.isStringPatternMutable(selectedStringPattern.getName())) {
 						int result = JOptionPane.showConfirmDialog(StringPatternListPanel.this,
-								"Are you sure you wish to remove the string pattern '" + "" + "'?", "Confirm remove",
-								JOptionPane.YES_NO_OPTION);
+								"Are you sure you wish to remove the string pattern '" + selectedStringPattern.getName()
+										+ "'?", "Confirm remove", JOptionPane.YES_NO_OPTION);
 						if (result == JOptionPane.YES_OPTION) {
 							_catalog.removeStringPattern(selectedStringPattern);
 						}
@@ -134,7 +134,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				}
 			}
 		});
-		// toolBar.add(_stringPatternListPanel);
+
 		final JButton addButton = new JButton("New string pattern", imageManager.getImageIcon("images/actions/new.png"));
 		addButton.setToolTipText("New string pattern");
 		addButton.addActionListener(new ActionListener() {

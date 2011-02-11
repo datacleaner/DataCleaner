@@ -28,6 +28,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,15 +57,44 @@ public final class UsageLogger {
 		_userPreferences = UserPreferences.getInstance();
 	}
 
+	public void logApplicationStartup() {
+		final String action = "Startup: " + Main.VERSION;
+		final String username = getUsername();
+
+		logger.debug("Logging '{}'", action);
+		final Runnable runnable = new UsageLoggerRunnable(username, action);
+		_executorService.submit(runnable);
+	}
+
+	private String getUsername() {
+		if (_userPreferences.isLoggedIn()) {
+			return _userPreferences.getUsername();
+		} else {
+			return "[not-logged-in]";
+		}
+	}
+
+	public void logApplicationShutdown() {
+		final String action = "Shutdown: " + Main.VERSION;
+		final String username = getUsername();
+		logger.debug("Logging '{}'", action);
+		final Runnable runnable = new UsageLoggerRunnable(username, action);
+		try {
+			_executorService.submit(runnable).get();
+		} catch (Exception e) {
+			logger.warn("Exception occurred sending shutdown message", e);
+		}
+	}
+
 	public void log(final String action) {
 		if (!_userPreferences.isLoggedIn()) {
 			logger.debug("Not logging '{}', because user is not logged in", action);
 			return;
 		}
 
-		final String username = _userPreferences.getUsername();
+		final String username = getUsername();
 		logger.debug("Logging '{}'", action);
-		Runnable runnable = new UsageLoggerRunnable(username, action);
+		final Runnable runnable = new UsageLoggerRunnable(username, action);
 		_executorService.submit(runnable);
 	}
 

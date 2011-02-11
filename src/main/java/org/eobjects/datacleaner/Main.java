@@ -34,7 +34,7 @@ import org.eobjects.datacleaner.windows.WelcomeWindow;
 
 public final class Main {
 
-	public static final String VERSION = "2.0 (BETA)";
+	public static final String VERSION = "2.0";
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 		// set up default error handling
@@ -56,7 +56,7 @@ public final class Main {
 		new MainWindow(configuration).setVisible(true);
 
 		// log usage
-		UsageLogger.getInstance().log("GUI: " + Main.VERSION);
+		UsageLogger.getInstance().logApplicationStartup();
 
 		// load regex swap regexes if logged in
 		final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(

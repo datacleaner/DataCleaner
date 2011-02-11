@@ -46,6 +46,7 @@ import org.eobjects.datacleaner.panels.DictionaryListPanel;
 import org.eobjects.datacleaner.panels.JobListPanel;
 import org.eobjects.datacleaner.panels.StringPatternListPanel;
 import org.eobjects.datacleaner.panels.SynonymCatalogListPanel;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -205,6 +206,7 @@ public class MainWindow extends AbstractWindow {
 
 		if (confirmation == JOptionPane.OK_OPTION) {
 			UserPreferences.getInstance().save();
+			UsageLogger.getInstance().logApplicationShutdown();
 			System.exit(0);
 		}
 	}

@@ -63,7 +63,12 @@ public class ReorderColumnsActionListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		InputColumn<?>[] currentValue = (InputColumn[]) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
 		if (currentValue == null || currentValue.length == 0) {
-			WidgetUtils.showErrorMessage("No columns selected", "Cannot reorder columns, when none is selected", null);
+			WidgetUtils.showErrorMessage("No columns selected", "Cannot reorder columns, when none is selected.", null);
+			return;
+		}
+		if (currentValue.length < 2) {
+			WidgetUtils.showErrorMessage("Nothing to reorder",
+					"You need to have at least two selected colummns to be able to reorder them.", null);
 			return;
 		}
 

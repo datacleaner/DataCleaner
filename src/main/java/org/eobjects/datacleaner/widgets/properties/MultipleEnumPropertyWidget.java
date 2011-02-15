@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,16 +30,13 @@ import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidget<SynonymCatalog[]> {
+public class MultipleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>[]> {
 
 	private final ChangeListener CHANGE_LISTENER = new ChangeListener() {
 		@Override
@@ -67,21 +65,21 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidge
 
 	private static final long serialVersionUID = 1L;
 
-	private final AnalyzerBeansConfiguration _configuration;
 	private volatile JCheckBox[] _checkBoxes;
+	private final Enum<?>[] _availableEnums;
 
-	public MultipleSynonymCatalogsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public MultipleEnumPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_configuration = DCConfiguration.get();
+		_availableEnums = (Enum<?>[]) getPropertyDescriptor().getBaseType().getEnumConstants();
 		setLayout(new VerticalLayout(2));
 		updateComponents();
 	}
 
 	private void updateComponents() {
 		removeAll();
-		String[] synonymCatalogNames = _configuration.getReferenceDataCatalog().getSynonymCatalogNames();
-		SynonymCatalog[] currentValue = (SynonymCatalog[]) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
+
+		Enum<?>[] currentValue = (Enum<?>[]) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
 
 		DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new HorizontalLayout(2));
@@ -96,17 +94,17 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidge
 
 		add(buttonPanel);
 
-		_checkBoxes = new JCheckBox[synonymCatalogNames.length];
+		_checkBoxes = new JCheckBox[_availableEnums.length];
 		if (_checkBoxes.length == 0) {
 			_checkBoxes = new JCheckBox[1];
-			_checkBoxes[0] = new JCheckBox("- no synonym catalogs available -");
+			_checkBoxes[0] = new JCheckBox("- no values available -");
 			_checkBoxes[0].setOpaque(false);
 			_checkBoxes[0].setEnabled(false);
 			add(_checkBoxes[0]);
 		} else {
 			int i = 0;
-			for (String synonymCatalogName : synonymCatalogNames) {
-				JCheckBox checkBox = new JCheckBox(synonymCatalogName, isEnabled(synonymCatalogName, currentValue));
+			for (Enum<?> e : _availableEnums) {
+				JCheckBox checkBox = new JCheckBox(e.name(), isEnabled(e, currentValue));
 				checkBox.setOpaque(false);
 				checkBox.addChangeListener(CHANGE_LISTENER);
 				_checkBoxes[i] = checkBox;
@@ -117,9 +115,12 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidge
 		fireValueChanged();
 	}
 
-	private boolean isEnabled(String synonymCatalogName, SynonymCatalog[] currentValue) {
-		for (SynonymCatalog syn : currentValue) {
-			if (synonymCatalogName.equals(syn.getName())) {
+	private boolean isEnabled(Enum<?> e, Enum<?>[] currentValue) {
+		if (currentValue == null || currentValue.length == 0) {
+			return false;
+		}
+		for (Enum<?> cur : currentValue) {
+			if (e.equals(cur)) {
 				return true;
 			}
 		}
@@ -137,19 +138,24 @@ public class MultipleSynonymCatalogsPropertyWidget extends AbstractPropertyWidge
 	}
 
 	@Override
-	public SynonymCatalog[] getValue() {
-		List<SynonymCatalog> result = new ArrayList<SynonymCatalog>();
+	public Enum<?>[] getValue() {
+		List<Enum<?>> result = new ArrayList<Enum<?>>();
 		for (int i = 0; i < _checkBoxes.length; i++) {
 			if (_checkBoxes[i].isSelected()) {
-				String synonymCatalogName = _checkBoxes[i].getText();
-				result.add(_configuration.getReferenceDataCatalog().getSynonymCatalog(synonymCatalogName));
+				result.add(_availableEnums[i]);
 			}
 		}
-		return result.toArray(new SynonymCatalog[result.size()]);
+
+		// create an array of the specific type defined by the property
+		Object array = Array.newInstance(getPropertyDescriptor().getBaseType(), result.size());
+		for (int i = 0; i < result.size(); i++) {
+			Array.set(array, i, result.get(i));
+		}
+		return (Enum<?>[]) array;
 	}
-	
+
 	@Override
-	protected void setValue(SynonymCatalog[] value) {
+	protected void setValue(Enum<?>[] value) {
 		updateComponents();
 	}
 }

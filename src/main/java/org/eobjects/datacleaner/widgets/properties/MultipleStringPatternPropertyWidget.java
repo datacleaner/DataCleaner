@@ -67,14 +67,12 @@ public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<
 
 	private static final long serialVersionUID = 1L;
 
-	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
 	private volatile JCheckBox[] _checkBoxes;
 
 	public MultipleStringPatternPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_beanJobBuilder = beanJobBuilder;
 		_configuration = DCConfiguration.get();
 		setLayout(new VerticalLayout(2));
 		updateComponents();
@@ -83,7 +81,7 @@ public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<
 	private void updateComponents() {
 		removeAll();
 		String[] stringPatternNames = _configuration.getReferenceDataCatalog().getStringPatternNames();
-		StringPattern[] currentValue = (StringPattern[]) _beanJobBuilder.getConfiguredProperty(getPropertyDescriptor());
+		StringPattern[] currentValue = (StringPattern[]) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
 
 		DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new HorizontalLayout(2));
@@ -155,16 +153,6 @@ public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<
 
 	@Override
 	protected void setValue(StringPattern[] value) {
-		for (JCheckBox checkBox : _checkBoxes) {
-			String text = checkBox.getText();
-			boolean enabled = false;
-			for (StringPattern stringPattern : value) {
-				if (text.equals(stringPattern.getName())) {
-					enabled = true;
-					break;
-				}
-			}
-			checkBox.setEnabled(enabled);
-		}
+		updateComponents();
 	}
 }

@@ -67,14 +67,12 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 
 	private static final long serialVersionUID = 1L;
 
-	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
 	private volatile JCheckBox[] _checkBoxes;
 
 	public MultipleDictionariesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_beanJobBuilder = beanJobBuilder;
 		_configuration = DCConfiguration.get();
 		setLayout(new VerticalLayout(2));
 		updateComponents();
@@ -83,7 +81,7 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 	private void updateComponents() {
 		removeAll();
 		String[] dictionaryNames = _configuration.getReferenceDataCatalog().getDictionaryNames();
-		Dictionary[] currentValue = (Dictionary[]) _beanJobBuilder.getConfiguredProperty(getPropertyDescriptor());
+		Dictionary[] currentValue = (Dictionary[]) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
 
 		DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new HorizontalLayout(2));
@@ -155,16 +153,6 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 
 	@Override
 	protected void setValue(Dictionary[] value) {
-		for (JCheckBox checkBox : _checkBoxes) {
-			String text = checkBox.getText();
-			boolean enabled = false;
-			for (Dictionary dictionary : value) {
-				if (text.equals(dictionary.getName())) {
-					enabled = true;
-					break;
-				}
-			}
-			checkBox.setEnabled(enabled);
-		}
+		updateComponents();
 	}
 }

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.net.URL;
+
 import javax.swing.Icon;
 
 import org.eobjects.analyzer.connection.AccessDatastore;
@@ -88,6 +90,13 @@ public final class IconUtils {
 	}
 
 	protected static String getDescriptorImagePath(BeanDescriptor<?> descriptor) {
+		final Class<?> componentClass = descriptor.getComponentClass();
+		final String bundledIconPath = componentClass.getName().replaceAll("\\.", "/") + ".png";
+		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath);
+		if (url != null) {
+			return bundledIconPath;
+		}
+		
 		if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
 			// plugins get a special icon
 			return "images/component-types/plugin.png";

@@ -27,19 +27,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
+import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.SingleCharacterDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.HorizontalLayout;
-import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
@@ -64,7 +65,7 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addTextField();
+				addTextComponent();
 				fireValueChanged();
 			}
 		});
@@ -101,21 +102,21 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 		_textFieldPanel.removeAll();
 		if (values != null) {
 			for (char value : values) {
-				addTextField(value);
+				addTextComponent(value);
 			}
 		}
 	}
 
-	private JXTextField addTextField() {
+	private JTextComponent addTextComponent() {
 		final DCLabel label = DCLabel.dark("");
 
-		final JXTextField textField = WidgetFactory.createTextField();
-		textField.setColumns(1);
-		textField.setDocument(new SingleCharacterDocument());
-		textField.getDocument().addDocumentListener(new DCDocumentListener() {
+		final JTextArea textComponent = new JTextArea(1, 1);
+		textComponent.setBorder(WidgetUtils.BORDER_THIN);
+		textComponent.setDocument(new SingleCharacterDocument());
+		textComponent.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
-				final String text = textField.getText();
+				final String text = textComponent.getText();
 				if (text == null || text.length() == 0) {
 					label.setText("");
 				} else if (text.charAt(0) == ' ') {
@@ -139,16 +140,16 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new HorizontalLayout(2));
-		panel.add(textField);
+		panel.add(textComponent);
 		panel.add(label);
 
 		_textFieldPanel.add(panel);
 		_textFieldPanel.updateUI();
-		return textField;
+		return textComponent;
 	}
 
-	private void addTextField(char value) {
-		addTextField().setText(value + "");
+	private void addTextComponent(char value) {
+		addTextComponent().setText(value + "");
 	}
 
 	@Override
@@ -157,9 +158,9 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 		List<Character> list = new ArrayList<Character>();
 		for (int i = 0; i < components.length; i++) {
 			DCPanel panel = (DCPanel) components[i];
-			JXTextField textField = (JXTextField) panel.getComponent(0);
-			String text = textField.getText();
-			if (!StringUtils.isNullOrEmpty(text)) {
+			JTextComponent textComponent = (JTextComponent) panel.getComponent(0);
+			String text = textComponent.getText();
+			if (text != null && text.length() == 1) {
 				list.add(text.charAt(0));
 			}
 		}

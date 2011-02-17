@@ -45,6 +45,8 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.MutableInputColumn;
+import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
+import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
@@ -55,6 +57,7 @@ import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
@@ -181,7 +184,19 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
 			}
 		} catch (Exception ex) {
-			_statusLabel.setText("Job error status: " + ex.getMessage());
+			logger.debug("Job not correctly configured", ex);
+			final String errorMessage;
+			if (ex instanceof UnconfiguredConfiguredPropertyException) {
+				ConfiguredPropertyDescriptor configuredProperty = ((UnconfiguredConfiguredPropertyException) ex)
+						.getConfiguredProperty();
+				AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ((UnconfiguredConfiguredPropertyException) ex)
+						.getBeanJobBuilder();
+				errorMessage = "Property '" + configuredProperty.getName() + "' in " + LabelUtils.getLabel(beanJobBuilder)
+						+ " is not set!";
+			} else {
+				errorMessage = ex.getMessage();
+			}
+			_statusLabel.setText("Job error status: " + errorMessage);
 			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
 		}
 	}

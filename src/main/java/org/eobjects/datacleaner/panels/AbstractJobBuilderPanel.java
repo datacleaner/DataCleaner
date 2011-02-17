@@ -35,6 +35,7 @@ import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -151,7 +152,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 				setConfiguredProperty(propertyDescriptor, value);
 			} else {
 				if (errorAware && propertyDescriptor.isRequired()) {
-					throw new IllegalStateException("Required property not set: " + propertyDescriptor.getName());
+					throw new UnconfiguredConfiguredPropertyException(_beanJobBuilder, propertyDescriptor);
 				}
 			}
 		}

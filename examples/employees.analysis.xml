@@ -28,7 +28,7 @@
         <filter name="Sales Rep?">
             <descriptor ref="Equals"/>
             <properties>
-                <property value="Sales Rep" name="Value"/>
+                <property value="Sales Rep" name="Values"/>
             </properties>
             <input ref="col_7"/>
             <outcome id="outcome_0" category="VALID"/>

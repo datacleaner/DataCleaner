@@ -29,6 +29,7 @@ import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.job.FilterOutcome;
 import org.eobjects.analyzer.job.InputColumnSinkJob;
 import org.eobjects.analyzer.job.InputColumnSourceJob;
 import org.eobjects.analyzer.job.Outcome;
@@ -120,6 +121,9 @@ public final class VisualizeJobGraph {
 				if (obj instanceof AbstractBeanJobBuilder) {
 					return LabelUtils.getLabel((AbstractBeanJobBuilder<?, ?, ?>) obj);
 				}
+				if (obj instanceof FilterOutcome) {
+					return ((FilterOutcome) obj).getCategory().name();
+				}
 				if (obj instanceof MergedOutcomeJobBuilder) {
 					return LabelUtils.getLabel((MergedOutcomeJobBuilder) obj);
 				}
@@ -143,8 +147,11 @@ public final class VisualizeJobGraph {
 				if (obj instanceof AbstractBeanJobBuilder) {
 					return IconUtils.getDescriptorIcon(((AbstractBeanJobBuilder<?, ?, ?>) obj).getDescriptor());
 				}
+				if (obj instanceof FilterOutcome) {
+					return imageManager.getImageIcon("images/component-types/filter-outcome.png", IconUtils.ICON_SIZE_SMALL);
+				}
 				if (obj instanceof MergedOutcomeJobBuilder) {
-					return imageManager.getImageIcon("images/component-types/merged-outcome.png");
+					return imageManager.getImageIcon("images/component-types/merged-outcome.png", IconUtils.ICON_SIZE_SMALL);
 				}
 				return imageManager.getImageIcon("images/status/error.png");
 			}
@@ -164,15 +171,20 @@ public final class VisualizeJobGraph {
 				}
 			}
 
+			if (item instanceof FilterOutcome) {
+				OutcomeSourceJob source = scf.findOutcomeSource((FilterOutcome) item);
+				if (source != null) {
+					addGraphNodes(g, scf, source);
+					addEdge(g, source, item);
+				}
+			}
+
 			if (item instanceof OutcomeSinkJob) {
 				Outcome[] requirements = ((OutcomeSinkJob) item).getRequirements();
 				if (requirements != null && requirements.length > 0) {
 					for (Outcome req : requirements) {
-						OutcomeSourceJob source = scf.findOutcomeSource(req);
-						if (source != null) {
-							addGraphNodes(g, scf, source);
-							addEdge(g, source, item);
-						}
+						addGraphNodes(g, scf, req);
+						addEdge(g, req, item);
 					}
 				}
 			}

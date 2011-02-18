@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.Box;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -48,6 +49,7 @@ import javax.swing.tree.TreePath;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.HttpUtils;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -149,6 +151,8 @@ public class RegexSwapDialog extends AbstractDialog {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
 					boolean leaf, int row, boolean hasFocus) {
+				Icon icon = null;
+
 				JComponent result;
 				Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
 				if (userObject instanceof Category) {
@@ -157,12 +161,17 @@ public class RegexSwapDialog extends AbstractDialog {
 					result = (JComponent) _treeRendererDelegate.getTreeCellRendererComponent(tree, category.getName(),
 							selected, expanded, leaf, row, hasFocus);
 					result.setToolTipText(category.getDescription());
+					icon = imageManager.getImageIcon("images/filetypes/search-folder.png", IconUtils.ICON_SIZE_SMALL);
 				} else if (userObject instanceof JLabel) {
 					result = (JLabel) userObject;
 				} else {
 					// Default renderer
 					result = (JComponent) _treeRendererDelegate.getTreeCellRendererComponent(tree, value, selected,
 							expanded, leaf, row, hasFocus);
+
+					if ("Categories".equals(userObject)) {
+						icon = imageManager.getImageIcon("images/filetypes/folder.png", IconUtils.ICON_SIZE_SMALL);
+					}
 				}
 
 				final boolean opaque = hasFocus || selected;
@@ -171,6 +180,10 @@ public class RegexSwapDialog extends AbstractDialog {
 				if (result instanceof WrappingIconPanel) {
 					WrappingIconPanel wip = (WrappingIconPanel) result;
 					wip.getComponent().setOpaque(opaque);
+
+					if (icon != null) {
+						wip.setIcon(icon);
+					}
 				}
 				return result;
 			}

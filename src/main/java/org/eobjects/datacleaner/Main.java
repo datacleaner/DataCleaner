@@ -34,7 +34,7 @@ import org.eobjects.datacleaner.windows.WelcomeWindow;
 
 public final class Main {
 
-	public static final String VERSION = "2.0.1";
+	public static final String VERSION = "2.1-SNAPSHOT";
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 		// set up default error handling

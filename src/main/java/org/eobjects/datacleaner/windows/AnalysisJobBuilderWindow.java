@@ -44,6 +44,7 @@ import javax.swing.event.ChangeListener;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -55,6 +56,7 @@ import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException;
@@ -89,7 +91,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class AnalysisJobBuilderWindow extends AbstractWindow implements AnalyzerChangeListener,
-		TransformerChangeListener, FilterChangeListener, TabCloseListener {
+		TransformerChangeListener, FilterChangeListener, SourceColumnChangeListener, TabCloseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -113,8 +115,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
 	private String _jobFilename;
-
-	private DCPanel _schemaTreePanel;
+	private final DCPanel _schemaTreePanel;
+	private final JButton _saveButton;
+	private final JButton _visualizeButton;
+	private final JButton _addTransformerButton;
+	private final JButton _addAnalyzerButton;
+	private final JButton _runButton;
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
 			String jobFilename) {
@@ -141,8 +147,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
+		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_tabbedPane = new CloseableTabbedPane();
+
+		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
+		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
+		_addTransformerButton = new JButton("Add transformer", imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
+		_addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
+		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 
 		final Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
 		_schemaTreePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
@@ -174,7 +187,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	}
 
 	private void updateStatusLabel() {
-		ImageManager imageManager = ImageManager.getInstance();
 		try {
 			if (_analysisJobBuilder.isConfigured(true)) {
 				_statusLabel.setText("Job is correctly configured");
@@ -211,6 +223,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		if (windowClosing) {
 			_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
 			_analysisJobBuilder.getTransformerChangeListeners().remove(this);
+			_analysisJobBuilder.getFilterChangeListeners().remove(this);
+			_analysisJobBuilder.getSourceColumnListeners().remove(this);
 			_analysisJobBuilder.close();
 			_dataContextProvider.close();
 		}
@@ -239,7 +253,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	protected Image getWindowIcon() {
-		return ImageManager.getInstance().getImage("images/filetypes/analysis_job.png");
+		return imageManager.getImage("images/filetypes/analysis_job.png");
 	}
 
 	@Override
@@ -249,14 +263,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	protected JComponent getWindowContent() {
-		final ImageManager imageManager = ImageManager.getInstance();
+		_saveButton.addActionListener(new SaveAnalysisJobActionListener(this, _analysisJobBuilder));
 
-		final JButton saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
-		saveButton.addActionListener(new SaveAnalysisJobActionListener(this, _analysisJobBuilder));
-
-		final JButton visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
-		visualizeButton.setToolTipText("Visualize execution flow");
-		visualizeButton.addActionListener(new ActionListener() {
+		_visualizeButton.setToolTipText("Visualize execution flow");
+		_visualizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder);
@@ -265,20 +275,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		});
 
 		// Add transformer
-		final JButton addTransformerButton = new JButton("Add transformer",
-				imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
-		addTransformerButton.addActionListener(new AddTransformerActionListener(_configuration, _analysisJobBuilder));
+		_addTransformerButton.addActionListener(new AddTransformerActionListener(_configuration, _analysisJobBuilder));
 
 		// Add analyzer
-		final JButton addAnalyzerButton = new JButton("Add analyzer",
-				imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
-		addAnalyzerButton.addActionListener(new AddAnalyzerActionListener(_configuration, _analysisJobBuilder));
+		_addAnalyzerButton.addActionListener(new AddAnalyzerActionListener(_configuration, _analysisJobBuilder));
 
 		// Run analysis
-		final JButton runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 		final RunAnalysisActionListener runAnalysisActionListener = new RunAnalysisActionListener(_analysisJobBuilder,
 				_configuration, _jobFilename);
-		runButton.addActionListener(new ActionListener() {
+		_runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				_filterListPanel.applyPropertyValues();
@@ -297,25 +302,25 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			}
 		});
 
-		saveButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		saveButton.setFocusPainted(false);
-		visualizeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		visualizeButton.setFocusPainted(false);
-		addTransformerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		addTransformerButton.setFocusPainted(false);
-		addAnalyzerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		addAnalyzerButton.setFocusPainted(false);
-		runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		runButton.setFocusPainted(false);
+		_saveButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_saveButton.setFocusPainted(false);
+		_visualizeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_visualizeButton.setFocusPainted(false);
+		_addTransformerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_addTransformerButton.setFocusPainted(false);
+		_addAnalyzerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_addAnalyzerButton.setFocusPainted(false);
+		_runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		_runButton.setFocusPainted(false);
 
 		final JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.add(saveButton);
-		toolBar.add(visualizeButton);
+		toolBar.add(_saveButton);
+		toolBar.add(_visualizeButton);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
-		toolBar.add(addTransformerButton);
-		toolBar.add(addAnalyzerButton);
+		toolBar.add(_addTransformerButton);
+		toolBar.add(_addAnalyzerButton);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
-		toolBar.add(runButton);
+		toolBar.add(_runButton);
 
 		// load the schema tree in the background because it will retrieve
 		// metadata about the datastore (might take several seconds)
@@ -417,6 +422,27 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				throw new IllegalStateException("Unknown analyzer type: " + ajb);
 			}
 		}
+
+		onSourceColumnsChanged();
+	}
+
+	private void onSourceColumnsChanged() {
+		boolean everythingEnabled = true;
+
+		if (_analysisJobBuilder.getSourceColumns().isEmpty()) {
+			_tabbedPane.setSelectedIndex(SOURCE_TAB);
+			everythingEnabled = false;
+		}
+
+		int tabCount = _tabbedPane.getTabCount();
+		for (int i = 1; i < tabCount; i++) {
+			_tabbedPane.setEnabledAt(i, everythingEnabled);
+		}
+		_saveButton.setEnabled(everythingEnabled);
+		_visualizeButton.setEnabled(everythingEnabled);
+		_addTransformerButton.setEnabled(everythingEnabled);
+		_addAnalyzerButton.setEnabled(everythingEnabled);
+		_runButton.setEnabled(everythingEnabled);
 	}
 
 	@Override
@@ -573,5 +599,17 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		if (panel != null) {
 			panel.onRequirementChanged();
 		}
+	}
+
+	@Override
+	public void onAdd(InputColumn<?> sourceColumn) {
+		onSourceColumnsChanged();
+		updateStatusLabel();
+	}
+
+	@Override
+	public void onRemove(InputColumn<?> sourceColumn) {
+		onSourceColumnsChanged();
+		updateStatusLabel();
 	}
 }

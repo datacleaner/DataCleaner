@@ -56,6 +56,11 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final int NUM_TEST_FIELDS = 10;
+	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final Icon ICON_ERROR = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
+	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
+
 	private final MutableReferenceDataCatalog _catalog;
 	private final JXTextField _expressionField;
 	private final JXTextField _expressionNameField;
@@ -66,15 +71,9 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 	private List<JLabel> _statusLabels;
 	private JLabel _errorLabel;
 	private Pattern _pattern;
-	private static final int NUM_TEST_FIELDS = 10;
 	private JButton _resetButton;
 	final JButton _saveButton;
-	private static final ImageManager imageManager = ImageManager.getInstance();
 	private StringPattern _regexStringPattern;
-
-	private static final Icon ICON_ERROR = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
-
-	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 
 	public RegexStringPatternDialog(MutableReferenceDataCatalog catalog) {
 		super(ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
@@ -98,7 +97,6 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 			_saveButton.setEnabled(false);
 		}
 		_regexStringPattern = _catalog.getStringPattern(_expressionNameString);
-		_pattern = Pattern.compile(expression);
 
 	}
 
@@ -243,7 +241,6 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 
 	private void checkInputFields() {
 		try {
-			_pattern = Pattern.compile(_expressionField.getText());
 			_saveButton.setEnabled(true);
 			_errorLabel.setText("");
 			for (int i = 0; i < NUM_TEST_FIELDS; i++) {
@@ -253,7 +250,14 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 			_errorLabel.setText(e.getMessage());
 			_saveButton.setEnabled(false);
 		}
+	}
 
+	private Pattern getPattern() {
+		String text = _expressionField.getText();
+		if (_pattern == null || !text.equals(_pattern.pattern())) {
+			_pattern = Pattern.compile(text);
+		}
+		return _pattern;
 	}
 
 	private void checkInputField(int index) {
@@ -262,7 +266,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 		if ("".equals(text)) {
 			label.setIcon(null);
 		} else {
-			Matcher matcher = _pattern.matcher(text);
+			Matcher matcher = getPattern().matcher(text);
 			if (matcher.matches()) {
 				label.setIcon(ICON_SUCCESS);
 			} else {

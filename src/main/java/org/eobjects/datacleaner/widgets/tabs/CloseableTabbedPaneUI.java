@@ -114,7 +114,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		}
 		return width;
 	}
-
+	
 	@Override
 	protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
 		return CLOSE_ICON_TOP_MARGIN + 4 + _pane.getMarginSize() + (horizRunCount * CLOSE_ICON_WIDTH);

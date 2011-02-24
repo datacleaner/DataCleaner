@@ -24,8 +24,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -51,9 +49,9 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 			if (currentValue != null) {
 				_checkBox.setSelected(currentValue.booleanValue());
 			}
-			_checkBox.addChangeListener(new ChangeListener() {
+			_checkBox.addActionListener(new ActionListener() {
 				@Override
-				public void stateChanged(ChangeEvent e) {
+				public void actionPerformed(ActionEvent e) {
 					fireValueChanged();
 				}
 			});

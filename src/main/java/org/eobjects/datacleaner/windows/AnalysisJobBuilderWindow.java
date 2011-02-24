@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -35,9 +37,11 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -112,7 +116,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final FilterListPanel _filterListPanel;
 	private final DCLabel _statusLabel = DCLabel.bright("");
 	private final CollapsibleTreePanel _leftPanel;
-
+	private final SourceColumnsPanel _sourceColumnsPanel;
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
 	private String _jobFilename;
 	private final DCPanel _schemaTreePanel;
@@ -150,6 +154,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_tabbedPane = new CloseableTabbedPane();
+		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
+		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 
 		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
 		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
@@ -351,11 +357,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		}.execute();
 
-		final SourceColumnsPanel sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
 		final MetadataPanel metadataPanel = new MetadataPanel(_analysisJobBuilder);
 
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
-				WidgetUtils.scrolleable(sourceColumnsPanel));
+				WidgetUtils.scrolleable(_sourceColumnsPanel));
 		_tabbedPane.setRightClickActionListener(0, new HideTabTextActionListener(_tabbedPane, 0));
 		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"), metadataPanel);
 		_tabbedPane.setRightClickActionListener(1, new HideTabTextActionListener(_tabbedPane, 1));
@@ -543,8 +548,47 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	}
 
 	@Override
-	public void onAdd(FilterJobBuilder<?, ?> filterJobBuilder) {
-		_tabbedPane.setSelectedIndex(FILTERS_TAB);
+	public void onAdd(final FilterJobBuilder<?, ?> filterJobBuilder) {
+		FilterJobBuilder<?, ?> maxRowsFilterJobBuilder = _sourceColumnsPanel.getMaxRowsFilterShortcutPanel()
+				.getFilterJobBuilder();
+		if (filterJobBuilder == maxRowsFilterJobBuilder) {
+			// draw a "think bubble" near the filter tab stating that the filter
+			// was added.
+			final Rectangle filterTabBounds = _tabbedPane.getTabBounds(FILTERS_TAB);
+			final Point locationOnScreen = _tabbedPane.getLocation();
+
+			final int x = filterTabBounds.x + locationOnScreen.x + 10;
+			final int y = filterTabBounds.y + locationOnScreen.y + filterTabBounds.height;
+
+			final DCLabel label = DCLabel.bright("<html>'<b>" + LabelUtils.getLabel(filterJobBuilder)
+					+ "</b>'<br/>added to <b>filters</b></html>");
+			label.setIcon(imageManager.getImageIcon("images/menu/filter-tab.png"));
+			label.setSize(240, 50);
+			label.setLocation(5, 25);
+
+			final DCPanel panel = new DCPanel(imageManager.getImage("images/window/popup-bubble.png"), 0, 0);
+			panel.setLayout(null);
+			panel.setSize(250, 81);
+			panel.add(label);
+			panel.setLocation(x, y);
+
+			final JPanel glassPane = (JPanel) getGlassPane();
+			glassPane.setLayout(null);
+			glassPane.add(panel);
+			glassPane.setVisible(true);
+
+			new Timer(2000, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					glassPane.remove(panel);
+					if (glassPane.getComponentCount() == 0) {
+						glassPane.setVisible(false);
+					}
+				}
+			}).start();
+		} else {
+			_tabbedPane.setSelectedIndex(FILTERS_TAB);
+		}
 		updateStatusLabel();
 	}
 

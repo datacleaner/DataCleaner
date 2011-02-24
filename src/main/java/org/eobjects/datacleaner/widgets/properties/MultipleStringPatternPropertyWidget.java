@@ -26,8 +26,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -40,9 +38,9 @@ import org.jdesktop.swingx.VerticalLayout;
 
 public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern[]> {
 
-	private final ChangeListener CHANGE_LISTENER = new ChangeListener() {
+	private final ActionListener CHANGE_LISTENER = new ActionListener() {
 		@Override
-		public void stateChanged(ChangeEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			fireValueChanged();
 		}
 	};
@@ -108,7 +106,7 @@ public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<
 			for (String stringPatternName : stringPatternNames) {
 				JCheckBox checkBox = new JCheckBox(stringPatternName, isEnabled(stringPatternName, currentValue));
 				checkBox.setOpaque(false);
-				checkBox.addChangeListener(CHANGE_LISTENER);
+				checkBox.addActionListener(CHANGE_LISTENER);
 				_checkBoxes[i] = checkBox;
 				add(checkBox);
 				i++;

@@ -45,7 +45,7 @@ public final class IconUtils {
 
 	public static int ICON_SIZE_LARGE = 32;
 	public static int ICON_SIZE_SMALL = 16;
-	
+
 	public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
 	public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
 	public static final String XML_IMAGEPATH = "images/datastore-types/xml.png";
@@ -58,6 +58,7 @@ public final class IconUtils {
 	public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
 	public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
 	public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
+	public static final String MAX_ROWS_IMAGEPATH = "images/component-types/type_max_rows.png";
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
@@ -96,7 +97,7 @@ public final class IconUtils {
 		if (url != null) {
 			return bundledIconPath;
 		}
-		
+
 		if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
 			// plugins get a special icon
 			return "images/component-types/plugin.png";
@@ -199,7 +200,7 @@ public final class IconUtils {
 			imagePath = "images/component-types/type_equals.png";
 		}
 		if (displayName.equals("max rows")) {
-			imagePath = "images/component-types/type_max_rows.png";
+			imagePath = MAX_ROWS_IMAGEPATH;
 		}
 		if (displayName.equals("not null")) {
 			imagePath = "images/component-types/type_not_null.png";

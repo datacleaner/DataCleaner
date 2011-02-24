@@ -27,8 +27,6 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -38,9 +36,9 @@ import org.jdesktop.swingx.VerticalLayout;
 
 public class MultipleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>[]> {
 
-	private final ChangeListener CHANGE_LISTENER = new ChangeListener() {
+	private final ActionListener CHANGE_LISTENER = new ActionListener() {
 		@Override
-		public void stateChanged(ChangeEvent e) {
+		public void actionPerformed(ActionEvent e) {
 			fireValueChanged();
 		}
 	};
@@ -106,7 +104,7 @@ public class MultipleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>[]
 			for (Enum<?> e : _availableEnums) {
 				JCheckBox checkBox = new JCheckBox(e.name(), isEnabled(e, currentValue));
 				checkBox.setOpaque(false);
-				checkBox.addChangeListener(CHANGE_LISTENER);
+				checkBox.addActionListener(CHANGE_LISTENER);
 				_checkBoxes[i] = checkBox;
 				add(checkBox);
 				i++;

@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.widgets.tabs;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -276,5 +277,9 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
 	public void setTabBorderColor(Color tabBorderColor) {
 		_tabBorderColor = tabBorderColor;
+	}
+	
+	public Rectangle getTabBounds(int tabIndex) {
+		return getUI().getTabBounds(this, tabIndex);
 	}
 }

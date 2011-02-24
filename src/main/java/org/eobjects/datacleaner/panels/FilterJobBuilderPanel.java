@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -43,7 +44,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.jdesktop.swingx.VerticalLayout;
 
-public class FilterJobBuilderPanel extends DCPanel {
+public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
@@ -124,7 +125,34 @@ public class FilterJobBuilderPanel extends DCPanel {
 		return _propertyWidgetFactory;
 	}
 
+	@Override
 	public void onRequirementChanged() {
 		_requirementButton.updateText();
+	}
+
+	@Override
+	public FilterJobBuilder<?, ?> getFilterJobBuilder() {
+		return _filterJobBuilder;
+	}
+
+	@Override
+	public void applyPropertyValues() {
+		for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory().getWidgets()) {
+			if (propertyWidget.isSet()) {
+				Object value = propertyWidget.getValue();
+				ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
+				_filterJobBuilder.setConfiguredProperty(propertyDescriptor, value);
+			}
+		}
+	}
+
+	@Override
+	public JComponent getJComponent() {
+		return this;
+	}
+
+	@Override
+	public void onConfigurationChanged() {
+		getPropertyWidgetFactory().onConfigurationChanged();
 	}
 }

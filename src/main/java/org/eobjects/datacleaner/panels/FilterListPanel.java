@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,6 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
@@ -42,8 +42,6 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
-import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
@@ -53,9 +51,10 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final Map<FilterJobBuilder<?, ?>, JXTaskPane> _taskPanes;
-	private final Map<FilterJobBuilder<?, ?>, FilterJobBuilderPanel> _panels;
+	private final Map<FilterJobBuilder<?, ?>, FilterJobBuilderPresenter> _presenters;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final JXTaskPaneContainer _taskPaneContainer;
+	private final Set<FilterJobBuilderPresenter> _preconfiguredPresenters;
 
 	public FilterListPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
@@ -63,8 +62,9 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		setLayout(new BorderLayout());
 		_configuration = configuration;
 		_taskPanes = new IdentityHashMap<FilterJobBuilder<?, ?>, JXTaskPane>();
-		_panels = new IdentityHashMap<FilterJobBuilder<?, ?>, FilterJobBuilderPanel>();
+		_presenters = new IdentityHashMap<FilterJobBuilder<?, ?>, FilterJobBuilderPresenter>();
 		_analysisJobBuilder = analysisJobBuilder;
+		_preconfiguredPresenters = new HashSet<FilterJobBuilderPresenter>();
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
@@ -84,17 +84,14 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		add(_taskPaneContainer, BorderLayout.CENTER);
 	}
 
+	public void addPreconfiguredPresenter(FilterJobBuilderPresenter presenter) {
+		_preconfiguredPresenters.add(presenter);
+	}
+
 	public void applyPropertyValues() {
-		Set<FilterJobBuilder<?, ?>> filterJobBuilders = _panels.keySet();
+		Set<FilterJobBuilder<?, ?>> filterJobBuilders = _presenters.keySet();
 		for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
-			PropertyWidgetFactory propertyWidgetFactory = _panels.get(filterJobBuilder).getPropertyWidgetFactory();
-			for (PropertyWidget<?> propertyWidget : propertyWidgetFactory.getWidgets()) {
-				if (propertyWidget.isSet()) {
-					Object value = propertyWidget.getValue();
-					ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
-					filterJobBuilder.setConfiguredProperty(propertyDescriptor, value);
-				}
-			}
+			_presenters.get(filterJobBuilder).applyPropertyValues();
 		}
 	}
 
@@ -102,7 +99,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		String title = LabelUtils.getLabel(fjb);
 		Icon icon = IconUtils.getDescriptorIcon(fjb.getDescriptor(), IconUtils.ICON_SIZE_SMALL);
 		final JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
-		taskPane.add(_panels.get(fjb));
+		taskPane.add(_presenters.get(fjb).getJComponent());
 		return taskPane;
 	}
 
@@ -114,8 +111,21 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	@Override
 	public void onAdd(FilterJobBuilder<?, ?> fjb) {
-		final FilterJobBuilderPanel panel = new FilterJobBuilderPanel(_configuration, _analysisJobBuilder, fjb);
-		_panels.put(fjb, panel);
+		boolean createPresenter = true;
+		for (FilterJobBuilderPresenter presenter : _preconfiguredPresenters) {
+			final FilterJobBuilder<?, ?> presentedFjb = presenter.getFilterJobBuilder();
+			if (presentedFjb == fjb) {
+				createPresenter = false;
+				_presenters.put(fjb, presenter);
+				break;
+			}
+		}
+
+		if (createPresenter) {
+			final FilterJobBuilderPresenter presenter = new FilterJobBuilderPanel(_configuration, _analysisJobBuilder, fjb);
+			_presenters.put(fjb, presenter);
+		}
+
 		final JXTaskPane taskPane = createTaskPane(fjb);
 		taskPane.addMouseListener(new JobBuilderTaskPaneTextMouseListener(_analysisJobBuilder, fjb, taskPane));
 		_taskPanes.put(fjb, taskPane);
@@ -124,25 +134,27 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	@Override
 	public void onRemove(FilterJobBuilder<?, ?> fjb) {
-		_panels.remove(fjb);
+		_presenters.remove(fjb);
 		JXTaskPane taskPane = _taskPanes.remove(fjb);
-		_taskPaneContainer.remove(taskPane);
-		updateUI();
+		if (taskPane != null) {
+			_taskPaneContainer.remove(taskPane);
+			updateUI();
+		}
 	}
 
 	@Override
 	public void onConfigurationChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
-		FilterJobBuilderPanel panel = _panels.get(filterJobBuilder);
-		if (panel != null) {
-			panel.getPropertyWidgetFactory().onConfigurationChanged();
+		FilterJobBuilderPresenter presenter = _presenters.get(filterJobBuilder);
+		if (presenter != null) {
+			presenter.onConfigurationChanged();
 		}
 	}
 
 	@Override
 	public void onRequirementChanged(FilterJobBuilder<?, ?> filterJobBuilder) {
-		FilterJobBuilderPanel panel = _panels.get(filterJobBuilder);
-		if (panel != null) {
-			panel.onRequirementChanged();
+		FilterJobBuilderPresenter presenter = _presenters.get(filterJobBuilder);
+		if (presenter != null) {
+			presenter.onRequirementChanged();
 		}
 	}
 

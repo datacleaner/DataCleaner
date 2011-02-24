@@ -21,9 +21,11 @@ Apache HttpComponents,http://hc.apache.org/,apache2
 Larvalabs collections,http://larvalabs.com/collections/,apache2
 SLF4J,http://www.slf4j.org/,mit
 Apache Log4j,http://logging.apache.org/log4j,apache2
+Apache Commons lang,http://commons.apache.org/lang,apache2
 Apache Commons logging,http://commons.apache.org/logging,apache2
 Apache Commons codec,http://commons.apache.org/codec,apache2
 Apache Commons math,http://commons.apache.org/math,apache2
 JUEL,http://juel.sourceforge.net/,apache2
 XmlBeans,http://xmlbeans.apache.org,apache2
 Dom4j,http://www.dom4j.org/,bsd
+gentyref,http://code.google.com/p/gentyref/,apache2

@@ -53,16 +53,21 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	private final List<Integer> _unclosables = new LinkedList<Integer>();
 	private final List<Integer> _separators = new LinkedList<Integer>();
 	private final Map<Integer, ActionListener> _rightClickActionListeners = new HashMap<Integer, ActionListener>();
-	private final CloseableTabbedPaneUI _ui;
+
+	private int _marginSize = 4;
+
+	private Color unselectedTabTopColor = WidgetUtils.BG_COLOR_DARKEST;
+	private Color unselectedTabBottomColor = WidgetUtils.BG_COLOR_DARKEST;
+	private Color selectedTabTopColor = WidgetUtils.BG_COLOR_BRIGHTEST;
+	private Color selectedTabBottomColor = WidgetUtils.BG_COLOR_BRIGHT;
+	private Color _tabBorderColor = WidgetUtils.BG_COLOR_LESS_DARK;
 
 	/**
 	 * Create a tabbed pane
 	 */
 	public CloseableTabbedPane() {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
-		_ui = new CloseableTabbedPaneUI(this);
-		setUI(_ui);
-		setBorder(new LineBorder(WidgetUtils.BG_COLOR_DARK, 4));
+		setUI(new CloseableTabbedPaneUI(this));
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		setBackground(WidgetUtils.BG_COLOR_DARK);
 		setOpaque(true);
@@ -212,5 +217,64 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	@Override
 	public void updateUI() {
 		repaint();
+	}
+
+	@Override
+	public void setBackground(Color bg) {
+		super.setBackground(bg);
+		updateBorder();
+	}
+
+	private void updateBorder() {
+		setBorder(new LineBorder(getBackground(), getMarginSize()));
+	}
+
+	public int getMarginSize() {
+		return _marginSize;
+	}
+
+	public void setMarginSize(int marginSize) {
+		_marginSize = marginSize;
+		updateBorder();
+	}
+
+	public Color getUnselectedTabTopColor() {
+		return unselectedTabTopColor;
+	}
+
+	public void setUnselectedTabTopColor(Color unselectedTabTopColor) {
+		this.unselectedTabTopColor = unselectedTabTopColor;
+	}
+
+	public Color getUnselectedTabBottomColor() {
+		return unselectedTabBottomColor;
+	}
+
+	public void setUnselectedTabBottomColor(Color unselectedTabBottomColor) {
+		this.unselectedTabBottomColor = unselectedTabBottomColor;
+	}
+
+	public Color getSelectedTabTopColor() {
+		return selectedTabTopColor;
+	}
+
+	public void setSelectedTabTopColor(Color selectedTabTopColor) {
+		this.selectedTabTopColor = selectedTabTopColor;
+	}
+
+	public Color getSelectedTabBottomColor() {
+		return selectedTabBottomColor;
+	}
+
+	public void setSelectedTabBottomColor(Color selectedTabBottomColor) {
+		this.selectedTabBottomColor = selectedTabBottomColor;
+	}
+
+	public Color getTabBorderColor() {
+		return _tabBorderColor;
+	}
+
+	public void setTabBorderColor(Color tabBorderColor) {
+		_tabBorderColor = tabBorderColor;
 	}
 }

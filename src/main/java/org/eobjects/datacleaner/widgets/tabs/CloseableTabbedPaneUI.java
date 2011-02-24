@@ -34,7 +34,6 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.WidgetUtils;
 
 /**
  * This is a slightly rewritten/modified version of swingutil's
@@ -44,11 +43,9 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 
 	private static final int HACK_HEIGHT_OF_TABS_AREA = 500;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
-
 	// the close image(s)
-	private static final Image CLOSE_IMAGE = imageManager.getImage("images/widgets/tab_close.png");
-	private static final Image CLOSE_IMAGE_HOVER = imageManager.getImage("images/widgets/tab_close_hover.png");
+	private static final Image CLOSE_IMAGE = ImageManager.getInstance().getImage("images/widgets/tab_close.png");
+	private static final Image CLOSE_IMAGE_HOVER = ImageManager.getInstance().getImage("images/widgets/tab_close_hover.png");
 
 	// the width of the close images
 	private static final int CLOSE_ICON_WIDTH = IconUtils.ICON_SIZE_LARGE;
@@ -120,7 +117,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 
 	@Override
 	protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
-		return CLOSE_ICON_TOP_MARGIN + 8 + (horizRunCount * CLOSE_ICON_WIDTH);
+		return CLOSE_ICON_TOP_MARGIN + 4 + _pane.getMarginSize() + (horizRunCount * CLOSE_ICON_WIDTH);
 	}
 
 	@Override
@@ -145,7 +142,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	@Override
 	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
 		if (!isSelected) {
-			g.setColor(WidgetUtils.BG_COLOR_LESS_DARK);
+			g.setColor(_pane.getTabBorderColor());
 
 			// the top line
 			g.drawLine(x + TAB_CORNER_RADIUS, y, x + w - TAB_CORNER_RADIUS, y);
@@ -167,17 +164,17 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	@Override
 	protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
 			boolean isSelected) {
-		Color topColor;
-		Color bottomColor;
+		final Color topColor;
+		final Color bottomColor;
 
 		if (isSelected) {
-			topColor = WidgetUtils.BG_COLOR_BRIGHTEST;
-			bottomColor = WidgetUtils.BG_COLOR_BRIGHT;
+			topColor = _pane.getSelectedTabTopColor();
+			bottomColor = _pane.getSelectedTabBottomColor();
 		} else {
-			topColor = WidgetUtils.BG_COLOR_DARKEST;
-			bottomColor = WidgetUtils.BG_COLOR_DARKEST;
+			topColor = _pane.getUnselectedTabTopColor();
+			bottomColor = _pane.getUnselectedTabBottomColor();
 		}
-		GradientPaint gradient = new GradientPaint(x, y, topColor, x, y + h, bottomColor);
+		final GradientPaint gradient = new GradientPaint(x, y, topColor, x, y + h, bottomColor);
 
 		if (g instanceof Graphics2D) {
 			((Graphics2D) g).setPaint(gradient);
@@ -221,7 +218,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		// y += calculateTabAreaHeight(tabPlacement, runCount, maxTabHeight);
 		// y -= tabAreaInsets.bottom;
 
-		g.setColor(WidgetUtils.BG_COLOR_BRIGHT);
+		g.setColor(_pane.getSelectedTabBottomColor());
 		g.fillRect(x, y, w, h);
 	}
 

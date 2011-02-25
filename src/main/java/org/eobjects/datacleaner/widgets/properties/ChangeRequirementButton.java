@@ -177,7 +177,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 				MergedOutcomeJob job = ((MergedOutcome) requirement).getMergedOutcomeJob();
 				setText(LabelUtils.getLabel(job));
 			} else {
-				// TODO: Other requirement types not yet supported
+				// Other requirement types not yet supported
 				setText(requirement.toString());
 			}
 		}

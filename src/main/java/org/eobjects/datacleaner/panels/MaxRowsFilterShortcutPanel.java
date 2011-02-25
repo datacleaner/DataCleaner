@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -36,10 +35,7 @@ import javax.swing.event.DocumentEvent;
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
 import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -93,6 +89,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 
 				if (selected) {
 					_analysisJobBuilder.addFilter(_maxRowsFilterJobBuilder);
+					_analysisJobBuilder.setDefaultRequirement(_maxRowsFilterJobBuilder, ValidationCategory.VALID);
 				} else {
 					_analysisJobBuilder.removeFilter(_maxRowsFilterJobBuilder);
 				}
@@ -132,31 +129,6 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 
 	@Override
 	public void applyPropertyValues() {
-		List<AnalyzerJobBuilder<?>> analyzerJobBuilders = _analysisJobBuilder.getAnalyzerJobBuilders();
-		for (AnalyzerJobBuilder<?> analyzerJobBuilder : analyzerJobBuilders) {
-			if (analyzerJobBuilder instanceof RowProcessingAnalyzerJobBuilder) {
-				RowProcessingAnalyzerJobBuilder<?> ajb = (RowProcessingAnalyzerJobBuilder<?>) analyzerJobBuilder;
-				if (ajb.getRequirement() == null) {
-					ajb.setRequirement(_maxRowsFilterJobBuilder, ValidationCategory.VALID);
-				}
-			}
-		}
-
-		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
-		for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
-			if (filterJobBuilder != _maxRowsFilterJobBuilder) {
-				if (filterJobBuilder.getRequirement() == null) {
-					filterJobBuilder.setRequirement(_maxRowsFilterJobBuilder, ValidationCategory.VALID);
-				}
-			}
-		}
-
-		List<TransformerJobBuilder<?>> transformerJobBuilders = _analysisJobBuilder.getTransformerJobBuilders();
-		for (TransformerJobBuilder<?> transformerJobBuilder : transformerJobBuilders) {
-			if (transformerJobBuilder.getRequirement() == null) {
-				transformerJobBuilder.setRequirement(_maxRowsFilterJobBuilder, ValidationCategory.VALID);
-			}
-		}
 	}
 
 	@Override

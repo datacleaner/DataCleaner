@@ -27,8 +27,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,11 +35,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.SwingWorker;
-import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -72,10 +66,12 @@ import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
+import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.panels.MetadataPanel;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
+import org.eobjects.datacleaner.panels.SchemaTreePanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -85,11 +81,9 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
-import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
-import org.eobjects.datacleaner.widgets.tree.SchemaTree;
 import org.jdesktop.swingx.JXStatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,21 +104,26 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final Map<TransformerJobBuilder<?>, TransformerJobBuilderPanel> _transformerTabPanels = new LinkedHashMap<TransformerJobBuilder<?>, TransformerJobBuilderPanel>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
-	private final Datastore _datastore;
-	private final DataContextProvider _dataContextProvider;
 	private final CloseableTabbedPane _tabbedPane;
 	private final FilterListPanel _filterListPanel;
 	private final DCLabel _statusLabel = DCLabel.bright("");
 	private final CollapsibleTreePanel _leftPanel;
 	private final SourceColumnsPanel _sourceColumnsPanel;
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
-	private String _jobFilename;
-	private final DCPanel _schemaTreePanel;
+	private final SchemaTreePanel _schemaTreePanel;
 	private final JButton _saveButton;
 	private final JButton _visualizeButton;
 	private final JButton _addTransformerButton;
 	private final JButton _addAnalyzerButton;
 	private final JButton _runButton;
+	private final DCGlassPane _glassPane;
+	private String _jobFilename;
+	private Datastore _datastore;
+	private DataContextProvider _dataContextProvider;
+
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration) {
+		this(configuration, (Datastore) null);
+	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
 			String jobFilename) {
@@ -142,36 +141,18 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				datastoreName));
 	}
 
-	private AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb, Datastore datastore) {
+	private AnalysisJobBuilderWindow(final AnalyzerBeansConfiguration configuration, final AnalysisJobBuilder ajb,
+			final Datastore datastore) {
+		super();
 		_configuration = configuration;
-		_datastore = datastore;
-		_dataContextProvider = _datastore.getDataContextProvider();
 		_analysisJobBuilder = ajb;
-		_analysisJobBuilder.setDatastore(datastore);
+		_glassPane = new DCGlassPane(getGlassPane());
+
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
-		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_tabbedPane = new CloseableTabbedPane();
-		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
-		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
-
-		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
-		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
-		_addTransformerButton = new JButton("Add transformer", imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
-		_addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
-		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
-
-		final Image treeBackgroundImage = imageManager.getImage("images/window/schema-tree-background.png");
-		_schemaTreePanel = new DCPanel(treeBackgroundImage, 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
-				WidgetUtils.BG_COLOR_BRIGHT);
-		_schemaTreePanel.setLayout(new BorderLayout());
-		_schemaTreePanel.setBorder(WidgetUtils.BORDER_WIDE);
-		_schemaTreePanel.add(new LoadingIcon().setPreferredSize(150, 150), BorderLayout.CENTER);
-
-		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
-
 		_tabbedPane.addTabCloseListener(this);
 		_tabbedPane.addChangeListener(new ChangeListener() {
 			@Override
@@ -185,11 +166,42 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				} else {
 					_latestPanel = null;
 				}
-
 				updateStatusLabel();
 			}
 		});
+		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
+		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
+		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
+		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
+		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
+		_addTransformerButton = new JButton("Add transformer", imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
+		_addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
+		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
+
+		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder);
+		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
+		_schemaTreePanel.setUpdatePanel(_leftPanel);
+
+		setDatastore(datastore);
+
 		updateStatusLabel();
+	}
+
+	private void setDatastore(Datastore datastore) {
+		final DataContextProvider dcp;
+		if (datastore == null) {
+			dcp = null;
+		} else {
+			dcp = datastore.getDataContextProvider();
+		}
+
+		_datastore = datastore;
+		if (_dataContextProvider != null) {
+			_dataContextProvider.close();
+		}
+		_dataContextProvider = dcp;
+		_analysisJobBuilder.setDatastore(datastore);
+		_schemaTreePanel.setDatastore(datastore);
 	}
 
 	private void updateStatusLabel() {
@@ -232,7 +244,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			_analysisJobBuilder.getFilterChangeListeners().remove(this);
 			_analysisJobBuilder.getSourceColumnListeners().remove(this);
 			_analysisJobBuilder.close();
-			_dataContextProvider.close();
+			if (_dataContextProvider != null) {
+				_dataContextProvider.close();
+			}
 		}
 		return windowClosing;
 	}
@@ -327,35 +341,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(_addAnalyzerButton);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(_runButton);
-
-		// load the schema tree in the background because it will retrieve
-		// metadata about the datastore (might take several seconds)
-		new SwingWorker<SchemaTree, Void>() {
-			@Override
-			protected SchemaTree doInBackground() throws Exception {
-				return new SchemaTree(_datastore, _analysisJobBuilder);
-			}
-
-			protected void done() {
-				try {
-					SchemaTree schemaTree = get();
-					final JScrollPane schemaTreeScroll = WidgetUtils.scrolleable(schemaTree);
-					schemaTreeScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-					schemaTree.addComponentListener(new ComponentAdapter() {
-						@Override
-						public void componentResized(ComponentEvent e) {
-							_leftPanel.updateUI();
-						}
-					});
-					_schemaTreePanel.removeAll();
-					_schemaTreePanel.add(schemaTreeScroll, BorderLayout.CENTER);
-					_leftPanel.updateUI();
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			};
-
-		}.execute();
 
 		final MetadataPanel metadataPanel = new MetadataPanel(_analysisJobBuilder);
 
@@ -572,20 +557,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			panel.add(label);
 			panel.setLocation(x, y);
 
-			final JPanel glassPane = (JPanel) getGlassPane();
-			glassPane.setLayout(null);
-			glassPane.add(panel);
-			glassPane.setVisible(true);
-
-			new Timer(2000, new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					glassPane.remove(panel);
-					if (glassPane.getComponentCount() == 0) {
-						glassPane.setVisible(false);
-					}
-				}
-			}).start();
+			_glassPane.show(panel, 2000);
 		} else {
 			_tabbedPane.setSelectedIndex(FILTERS_TAB);
 		}

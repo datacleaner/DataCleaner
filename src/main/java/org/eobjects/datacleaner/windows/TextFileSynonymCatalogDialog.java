@@ -196,7 +196,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Text file synonym catalog";
 	}
 

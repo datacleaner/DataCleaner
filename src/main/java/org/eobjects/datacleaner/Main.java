@@ -54,6 +54,7 @@ public final class Main {
 			new WelcomeWindow(configuration).setVisible(true);
 		}
 		new MainWindow(configuration).setVisible(true);
+//		new AnalysisJobBuilderWindow(configuration).setVisible(true);
 
 		// log usage
 		UsageLogger.getInstance().logApplicationStartup();
@@ -62,5 +63,6 @@ public final class Main {
 		final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
 				(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
 		userPreferences.addLoginChangeListener(regexSwapHandler);
+		
 	}
 }

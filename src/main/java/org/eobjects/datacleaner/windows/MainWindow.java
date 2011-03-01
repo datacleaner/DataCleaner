@@ -22,23 +22,15 @@ package org.eobjects.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.Main;
-import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.eobjects.datacleaner.actions.ExitActions;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoresListPanel;
@@ -46,17 +38,15 @@ import org.eobjects.datacleaner.panels.DictionaryListPanel;
 import org.eobjects.datacleaner.panels.JobListPanel;
 import org.eobjects.datacleaner.panels.StringPatternListPanel;
 import org.eobjects.datacleaner.panels.SynonymCatalogListPanel;
-import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCWindowMenuBar;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
-import org.jdesktop.swingx.action.OpenBrowserAction;
 
 public class MainWindow extends AbstractWindow {
 
@@ -71,7 +61,7 @@ public class MainWindow extends AbstractWindow {
 	public MainWindow(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
-		setJMenuBar(getWindowMenuBar());
+		setJMenuBar(new DCWindowMenuBar(_configuration));
 	}
 
 	@Override
@@ -83,12 +73,12 @@ public class MainWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "DataCleaner " + Main.VERSION;
 	}
 
 	@Override
-	protected Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return ImageManager.getInstance().getImage("images/window/app-icon.png");
 	}
 
@@ -192,102 +182,12 @@ public class MainWindow extends AbstractWindow {
 
 	@Override
 	public void dispose() {
-		showExitDialog();
+		ExitActions.showExitDialog();
 	}
 
 	@Override
 	protected boolean isWindowResizable() {
 		return true;
-	}
-
-	public static void showExitDialog() {
-		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
-				JOptionPane.OK_CANCEL_OPTION);
-
-		if (confirmation == JOptionPane.OK_OPTION) {
-			UserPreferences.getInstance().save();
-			UsageLogger.getInstance().logApplicationShutdown();
-			System.exit(0);
-		}
-	}
-
-	private JMenuBar getWindowMenuBar() {
-		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job...", "images/actions/open.png");
-		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
-
-		final JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
-		exitMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				showExitDialog();
-			}
-		});
-
-		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options...", "images/menu/options.png");
-		optionsMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new OptionsDialog(_configuration).setVisible(true);
-			}
-		});
-
-		final JMenuItem helpContents = WidgetFactory.createMenuItem("Help contents", "images/widgets/help.png");
-		helpContents.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/docs"));
-
-		final JMenuItem askAtTheForumsMenuItem = WidgetFactory.createMenuItem("Ask at the forums", "images/menu/forums.png");
-		askAtTheForumsMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/forum/1"));
-
-		final JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
-		aboutMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new AboutDialog().setVisible(true);
-			}
-		});
-
-		final JMenu fileMenu = WidgetFactory.createMenu("File", 'F');
-		fileMenu.add(openJobMenuItem);
-		fileMenu.add(exitMenuItem);
-
-		final JMenu windowMenu = WidgetFactory.createMenu("Window", 'W');
-		windowMenu.add(optionsMenuItem);
-		windowMenu.addSeparator();
-
-		final int minimumSize = windowMenu.getMenuComponentCount();
-
-		WindowManager.getInstance().addListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final int currentSize = windowMenu.getMenuComponentCount();
-				for (int i = currentSize; i > minimumSize; i--) {
-					windowMenu.remove(i - 1);
-				}
-				final List<AbstractWindow> windows = WindowManager.getInstance().getWindows();
-				for (final AbstractWindow window : windows) {
-					final Image windowIcon = window.getWindowIcon();
-					final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(32, 32, Image.SCALE_DEFAULT));
-					final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(window.getWindowTitle(), icon);
-					switchToWindowItem.addActionListener(new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							window.toFront();
-						}
-					});
-					windowMenu.add(switchToWindowItem);
-				}
-			}
-		});
-
-		final JMenu helpMenu = WidgetFactory.createMenu("Help", 'H');
-		helpMenu.add(askAtTheForumsMenuItem);
-		helpMenu.add(helpContents);
-		helpMenu.add(aboutMenuItem);
-
-		final JMenuBar menuBar = new JMenuBar();
-		menuBar.add(fileMenu);
-		menuBar.add(windowMenu);
-		menuBar.add(helpMenu);
-		return menuBar;
 	}
 
 	@Override

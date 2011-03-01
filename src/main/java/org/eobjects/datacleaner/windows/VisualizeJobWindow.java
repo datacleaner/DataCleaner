@@ -58,12 +58,12 @@ public class VisualizeJobWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Visualize job";
 	}
 
 	@Override
-	protected Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return imageManager.getImage("images/actions/visualize.png");
 	}
 

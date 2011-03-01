@@ -118,8 +118,9 @@ public class DCPanel extends JPanel {
 		}
 	}
 
-	public void setPreferredSize(int width, int height) {
+	public DCPanel setPreferredSize(int width, int height) {
 		setPreferredSize(new Dimension(width, height));
+		return this;
 	}
 
 	public DCPanel setTitledBorder(String title) {

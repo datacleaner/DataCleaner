@@ -314,7 +314,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Database connection | Datastore";
 	}
 

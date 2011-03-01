@@ -156,7 +156,7 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Simple dictionary";
 	}
 

@@ -266,7 +266,7 @@ public class AboutDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "About DataCleaner | DataCleaner";
 	}
 

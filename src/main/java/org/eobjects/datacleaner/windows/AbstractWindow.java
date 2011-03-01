@@ -92,9 +92,9 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 		setTitle(windowTitle);
 	}
 
-	protected abstract String getWindowTitle();
+	public abstract String getWindowTitle();
 
-	protected abstract Image getWindowIcon();
+	public abstract Image getWindowIcon();
 
 	protected abstract JComponent getWindowContent();
 

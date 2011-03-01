@@ -43,7 +43,7 @@ public class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<OdbData
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "OpenOffice.org database | Datastore";
 	}
 

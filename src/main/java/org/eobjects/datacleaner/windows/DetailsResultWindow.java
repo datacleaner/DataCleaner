@@ -70,12 +70,12 @@ public final class DetailsResultWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return _title;
 	}
 
 	@Override
-	protected Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return imageManager.getImage("images/model/result.png");
 	}
 

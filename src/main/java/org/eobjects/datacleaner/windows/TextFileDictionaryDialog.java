@@ -184,7 +184,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Text file dictionary";
 	}
 

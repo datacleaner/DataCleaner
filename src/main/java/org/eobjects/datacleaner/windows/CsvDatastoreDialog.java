@@ -557,7 +557,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "CSV file datastore";
 	}
 

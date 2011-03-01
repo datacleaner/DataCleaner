@@ -261,7 +261,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Add database driver | Local JAR file(s)";
 	}
 

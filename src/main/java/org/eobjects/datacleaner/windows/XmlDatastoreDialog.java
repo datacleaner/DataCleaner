@@ -50,7 +50,7 @@ public class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<XmlData
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "XML file | Datastore";
 	}
 

@@ -43,7 +43,7 @@ public class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog<Dbase
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "dBase database | Datastore";
 	}
 

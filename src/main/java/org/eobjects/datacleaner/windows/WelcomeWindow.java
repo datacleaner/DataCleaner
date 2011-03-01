@@ -262,12 +262,12 @@ public class WelcomeWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return imageManager.getImage("images/actions/login.png");
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Welcome to DataCleaner";
 	}
 

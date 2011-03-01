@@ -53,11 +53,13 @@ public class SchemaTreePanel extends DCPanel {
 	}
 
 	public void setDatastore(final Datastore datastore) {
+		removeAll();
 		if (datastore == null) {
-			removeAll();
-			add(new LoadingIcon().setPreferredSize(150, 150), BorderLayout.CENTER);
+			add(new DCPanel().setPreferredSize(150, 150), BorderLayout.CENTER);
 			return;
 		}
+
+		add(new LoadingIcon().setPreferredSize(150, 150), BorderLayout.CENTER);
 
 		// load the schema tree in the background because it will retrieve
 		// metadata about the datastore (might take several seconds)

@@ -122,7 +122,7 @@ public final class ResultWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		String title = "Analysis results";
 
 		String datastoreName = getDatastoreName();
@@ -150,7 +150,7 @@ public final class ResultWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return imageManager.getImage("images/model/result.png");
 	}
 

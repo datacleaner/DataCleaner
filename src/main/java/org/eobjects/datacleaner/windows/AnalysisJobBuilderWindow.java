@@ -81,6 +81,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCWindowMenuBar;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
@@ -145,6 +146,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			final Datastore datastore) {
 		super();
 		_configuration = configuration;
+		setJMenuBar(new DCWindowMenuBar(_configuration));
 		_analysisJobBuilder = ajb;
 		_glassPane = new DCGlassPane(this);
 
@@ -319,7 +321,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		String title = "Analysis job";
 		if (_datastore != null) {
 			String datastoreName = _datastore.getName();
@@ -334,7 +336,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	}
 
 	@Override
-	protected Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return imageManager.getImage("images/filetypes/analysis_job.png");
 	}
 
@@ -406,7 +408,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 
-		final Dimension windowSize = new Dimension(780, 630);
+		final Dimension windowSize = new Dimension(880, 630);
 
 		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
 		toolBarPanel.setLayout(new BorderLayout());

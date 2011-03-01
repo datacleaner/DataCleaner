@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.actions.ExitActions;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractDialog;
@@ -101,6 +102,10 @@ public final class WindowManager {
 		}
 
 		notifyListeners();
+		
+		if (_windows.isEmpty()) {
+			ExitActions.exit();
+		}
 	}
 
 	private void notifyListeners() {

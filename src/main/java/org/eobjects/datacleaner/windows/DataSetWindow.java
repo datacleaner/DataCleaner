@@ -63,7 +63,7 @@ public class DataSetWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return _title;
 	}
 
@@ -73,7 +73,7 @@ public class DataSetWindow extends AbstractWindow {
 	}
 
 	@Override
-	protected Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return ImageManager.getInstance().getImage("images/actions/preview_data.png");
 	}
 

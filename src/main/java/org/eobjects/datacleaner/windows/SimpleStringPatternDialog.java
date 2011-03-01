@@ -231,7 +231,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Simple string pattern";
 	}
 

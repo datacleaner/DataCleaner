@@ -307,7 +307,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Open analysis job as template";
 	}
 

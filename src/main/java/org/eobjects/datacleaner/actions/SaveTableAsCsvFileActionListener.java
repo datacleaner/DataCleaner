@@ -76,7 +76,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected String getWindowTitle() {
+			public String getWindowTitle() {
 				return "Save " + _table.getName() + " as CSV file";
 			}
 

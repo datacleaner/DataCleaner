@@ -235,7 +235,7 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Regular expression pattern";
 	}
 

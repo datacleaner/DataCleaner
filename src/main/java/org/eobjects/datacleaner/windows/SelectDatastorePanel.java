@@ -121,7 +121,7 @@ public class SelectDatastorePanel extends DCPanel {
 			}
 		});
 		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 		buttonPanel.add(button);
 
 		add(buttonPanel);

@@ -221,7 +221,7 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Composite datastore | Datastore";
 	}
 

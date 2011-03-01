@@ -221,7 +221,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Datastore synonym catalog";
 	}
 

@@ -162,7 +162,7 @@ public class DownloadProgressWindow extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Downloading...";
 	}
 

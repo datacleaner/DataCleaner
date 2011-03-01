@@ -317,7 +317,7 @@ public class RegexSwapDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "RegexSwap browser";
 	}
 

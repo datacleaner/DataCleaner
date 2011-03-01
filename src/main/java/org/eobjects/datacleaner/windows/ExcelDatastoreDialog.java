@@ -56,7 +56,7 @@ public class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<Excel
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Excel spreadsheet | Datastore";
 	}
 

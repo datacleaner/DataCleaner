@@ -226,7 +226,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "Datastore dictionary";
 	}
 

@@ -43,7 +43,7 @@ public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<Acce
 	}
 
 	@Override
-	protected String getWindowTitle() {
+	public String getWindowTitle() {
 		return "MS Access database | Datastore";
 	}
 

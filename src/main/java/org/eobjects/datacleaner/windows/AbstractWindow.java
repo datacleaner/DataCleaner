@@ -74,8 +74,12 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 			initialize();
 		}
 		super.setVisible(true);
+		onWindowVisible();
 	}
 	
+	protected void onWindowVisible() {
+	}
+
 	protected void updateWindowTitle() {
 		String windowTitle = getWindowTitle();
 		if (windowTitle == null) {

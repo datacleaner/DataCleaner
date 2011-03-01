@@ -152,6 +152,11 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
+
+		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
+		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
+		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
+
 		_tabbedPane = new CloseableTabbedPane();
 		_tabbedPane.addTabCloseListener(this);
 		_tabbedPane.addChangeListener(new ChangeListener() {
@@ -169,9 +174,25 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				updateStatusLabel();
 			}
 		});
-		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
-		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
-		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
+		final MetadataPanel metadataPanel = new MetadataPanel(_analysisJobBuilder);
+
+		final DCPanel sourceTabOuterPanel = new DCPanel(imageManager.getImage("images/window/source-tab-background.png"),
+				95, 95, WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		sourceTabOuterPanel.setLayout(new BorderLayout());
+		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"), sourceTabOuterPanel);
+		_tabbedPane.setRightClickActionListener(0, new HideTabTextActionListener(_tabbedPane, 0));
+		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"), metadataPanel);
+		_tabbedPane.setRightClickActionListener(1, new HideTabTextActionListener(_tabbedPane, 1));
+		_tabbedPane.addTab("Filters", imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH),
+				WidgetUtils.scrolleable(_filterListPanel));
+		_tabbedPane.setRightClickActionListener(2, new HideTabTextActionListener(_tabbedPane, 2));
+
+		_tabbedPane.setUnclosableTab(SOURCE_TAB);
+		_tabbedPane.setUnclosableTab(METADATA_TAB);
+		_tabbedPane.setUnclosableTab(FILTERS_TAB);
+
+		_tabbedPane.addSeparator();
+
 		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
 		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
 		_addTransformerButton = new JButton("Add transformer", imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
@@ -180,6 +201,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder);
 		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
+		_leftPanel.setCollapsed(datastore == null);
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 
 		setDatastore(datastore);
@@ -187,7 +209,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		updateStatusLabel();
 	}
 
-	private void setDatastore(Datastore datastore) {
+	public void setDatastore(final Datastore datastore) {
 		final DataContextProvider dcp;
 		if (datastore == null) {
 			dcp = null;
@@ -202,6 +224,46 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_dataContextProvider = dcp;
 		_analysisJobBuilder.setDatastore(datastore);
 		_schemaTreePanel.setDatastore(datastore);
+
+		if (datastore == null) {
+			displayDatastoreSelection();
+		} else {
+			displaySourceColumnsList();
+		}
+	}
+
+	private void displaySourceColumnsList() {
+		if (_leftPanel.isCollapsed()) {
+			_leftPanel.setCollapsed(false);
+		}
+
+		DCPanel panel = (DCPanel) _tabbedPane.getComponentAt(SOURCE_TAB);
+		panel.removeAll();
+		panel.add(WidgetUtils.scrolleable(_sourceColumnsPanel));
+	}
+
+	private void displayDatastoreSelection() {
+		if (isShowing()) {
+			if (_datastore == null) {
+				if (!_leftPanel.isCollapsed()) {
+					_leftPanel.setCollapsed(true);
+				}
+
+				DCPanel panel = (DCPanel) _tabbedPane.getComponentAt(SOURCE_TAB);
+				panel.removeAll();
+				panel.add(new SelectDatastorePanel(_configuration, this));
+				panel.updateUI();
+			}
+		}
+	}
+
+	public void removeGlassPaneComponent(JComponent comp) {
+		_glassPane.remove(comp);
+	}
+
+	@Override
+	protected void onWindowVisible() {
+		displayDatastoreSelection();
 	}
 
 	private void updateStatusLabel() {
@@ -341,23 +403,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(_addAnalyzerButton);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(_runButton);
-
-		final MetadataPanel metadataPanel = new MetadataPanel(_analysisJobBuilder);
-
-		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
-				WidgetUtils.scrolleable(_sourceColumnsPanel));
-		_tabbedPane.setRightClickActionListener(0, new HideTabTextActionListener(_tabbedPane, 0));
-		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"), metadataPanel);
-		_tabbedPane.setRightClickActionListener(1, new HideTabTextActionListener(_tabbedPane, 1));
-		_tabbedPane.addTab("Filters", imageManager.getImageIcon(IconUtils.FILTER_IMAGEPATH),
-				WidgetUtils.scrolleable(_filterListPanel));
-		_tabbedPane.setRightClickActionListener(2, new HideTabTextActionListener(_tabbedPane, 2));
-
-		_tabbedPane.setUnclosableTab(SOURCE_TAB);
-		_tabbedPane.setUnclosableTab(METADATA_TAB);
-		_tabbedPane.setUnclosableTab(FILTERS_TAB);
-
-		_tabbedPane.addSeparator();
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
 

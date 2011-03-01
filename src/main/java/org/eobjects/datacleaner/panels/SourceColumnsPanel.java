@@ -48,12 +48,11 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	private final MaxRowsFilterShortcutPanel _maxRowsFilterShortcutPanel;
 
 	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration) {
-		super(ImageManager.getInstance().getImage("images/window/source-tab-background.png"), 95, 95,
-				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		super();
 		_analysisJobBuilder = analysisJobBuilder;
 		_configuration = configuration;
 		_maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder);
-		_maxRowsFilterShortcutPanel.setVisible(false);
+		_maxRowsFilterShortcutPanel.setEnabled(false);
 
 		_hintLabel = DCLabel.darkMultiLine("Please select the source columns of your job in the tree to the left.\n\n"
 				+ "Source columns define where to retrieve the input of your analysis.");
@@ -62,13 +61,12 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		_hintLabel.setIconTextGap(20);
 		_hintLabel.setIcon(ImageManager.getInstance().getImageIcon("images/model/column.png"));
 
-		setOpaque(true);
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		setBorder(WidgetUtils.BORDER_EMPTY);
 		setLayout(new VerticalLayout(4));
 
-		add(_hintLabel);
 		add(_maxRowsFilterShortcutPanel);
+		add(_hintLabel);
 		add(Box.createVerticalStrut(10));
 
 		List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns();
@@ -80,7 +78,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	@Override
 	public void onAdd(InputColumn<?> sourceColumn) {
 		_hintLabel.setVisible(false);
-		_maxRowsFilterShortcutPanel.setVisible(true);
+		_maxRowsFilterShortcutPanel.setEnabled(true);
 
 		Column column = sourceColumn.getPhysicalColumn();
 		Table table = column.getTable();
@@ -101,7 +99,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 
 			if (_analysisJobBuilder.getSourceColumns().isEmpty()) {
 				_hintLabel.setVisible(true);
-				_maxRowsFilterShortcutPanel.setVisible(false);
+				_maxRowsFilterShortcutPanel.setEnabled(false);
 			}
 
 			// force UI update because sometimes the removed panel doesn't go

@@ -145,4 +145,10 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 	@Override
 	public void onRequirementChanged() {
 	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		_checkBox.setEnabled(enabled);
+	}
 }

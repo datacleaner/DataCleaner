@@ -146,7 +146,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		super();
 		_configuration = configuration;
 		_analysisJobBuilder = ajb;
-		_glassPane = new DCGlassPane(getGlassPane());
+		_glassPane = new DCGlassPane(this);
 
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
@@ -557,7 +557,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			panel.add(label);
 			panel.setLocation(x, y);
 
-			_glassPane.show(panel, 2000);
+			_glassPane.showTooltip(panel, 2000);
 		} else {
 			_tabbedPane.setSelectedIndex(FILTERS_TAB);
 		}

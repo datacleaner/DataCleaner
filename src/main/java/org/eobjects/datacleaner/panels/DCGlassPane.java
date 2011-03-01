@@ -20,12 +20,16 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import org.eobjects.datacleaner.util.WidgetUtils;
 
 /**
  * Encapsulated Swing glass pane, ensures correct access to it.
@@ -34,14 +38,17 @@ import javax.swing.Timer;
  */
 public class DCGlassPane {
 
+	private final JFrame _frame;
 	private final JPanel _glassPane;
 
-	public DCGlassPane(Component glassPane) {
-		_glassPane = (JPanel) glassPane;
+	public DCGlassPane(JFrame frame) {
+		_frame = frame;
+		_glassPane = (JPanel) frame.getGlassPane();
 		_glassPane.setLayout(null);
+		_glassPane.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 	}
 
-	public void show(final JComponent comp, int timeoutMillis) {
+	public void showTooltip(final JComponent comp, int timeoutMillis) {
 		add(comp);
 
 		new Timer(timeoutMillis, new ActionListener() {
@@ -49,7 +56,6 @@ public class DCGlassPane {
 			public void actionPerformed(ActionEvent e) {
 				remove(comp);
 			}
-
 		}).start();
 	}
 
@@ -59,9 +65,29 @@ public class DCGlassPane {
 	}
 
 	public void remove(JComponent comp) {
-		_glassPane.remove(comp);
+		Component[] components = _glassPane.getComponents();
+		for (int i = 0; i < components.length; i++) {
+			Component component = components[i];
+			if (component.equals(comp)) {
+				_glassPane.remove(i);
+				break;
+			}
+		}
 		if (_glassPane.getComponentCount() == 0) {
 			_glassPane.setVisible(false);
 		}
+	}
+
+	public void addCentered(JComponent comp) {
+		Dimension compSize = comp.getSize();
+		Dimension totalSize = _frame.getContentPane().getSize();
+		int x = (totalSize.width - compSize.width) / 2;
+		int y = (totalSize.height - compSize.height) / 2;
+		comp.setLocation(x, y);
+		add(comp);
+	}
+
+	public boolean isEmpty() {
+		return _glassPane.getComponentCount() == 0;
 	}
 }

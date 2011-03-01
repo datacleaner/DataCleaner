@@ -97,7 +97,11 @@ public class InputColumnPropertyWidgetAccessoryHandler {
 		}
 
 		_popup = new JPopupMenu();
-		_popup.setInvoker(_parent);
+
+		// the invoker is not being set because it causes an unwanted Frame
+		// focus, which may cause interruptions because the mouse is only
+		// hovered.
+		// _popup.setInvoker(_parent);
 		_popup.add(panel);
 		_popup.pack();
 
@@ -128,6 +132,7 @@ public class InputColumnPropertyWidgetAccessoryHandler {
 		} else {
 			y = _parent.getLocationOnScreen().y;
 		}
+
 		_popup.setLocation(x, y);
 		_popup.setVisible(true);
 	}

@@ -1,0 +1,85 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+package org.eobjects.datacleaner.widgets;
+
+import java.awt.Point;
+
+import org.eobjects.datacleaner.panels.DCGlassPane;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.ImageManager;
+
+public class DCPopupBubble {
+
+	private static final long serialVersionUID = 1L;
+
+	private static final ImageManager imageManager = ImageManager.getInstance();
+
+	private final DCGlassPane _glassPane;
+	private final DCPanel _panel;
+	private int _xOnScreen;
+	private int _yOnScreen;
+
+	public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen) {
+		this(glassPane, text, xOnScreen, yOnScreen, null);
+	}
+
+	public DCPopupBubble(DCGlassPane glassPane, String text, int xOnScreen, int yOnScreen, String iconPath) {
+		_glassPane = glassPane;
+		_panel = new DCPanel(imageManager.getImage("images/window/popup-bubble.png"), 0, 0);
+		_xOnScreen = xOnScreen;
+		_yOnScreen = yOnScreen;
+		final DCLabel label = DCLabel.bright(text);
+		if (iconPath != null) {
+			label.setIcon(imageManager.getImageIcon(iconPath));
+		}
+		label.setSize(240, 50);
+		label.setLocation(5, 25);
+
+		_panel.setLayout(null);
+		_panel.setSize(250, 81);
+		_panel.add(label);
+	}
+
+	private void initLocation() {
+		Point locationOnScreen = _glassPane.getLocationOnScreen();
+		int x = _xOnScreen - locationOnScreen.x - 40;
+		int y = _yOnScreen - locationOnScreen.y;
+		_panel.setLocation(x, y);
+	}
+
+	public void showTooltip(int timeoutMillis) {
+		initLocation();
+		_glassPane.showTooltip(_panel, timeoutMillis);
+	}
+
+	public void show() {
+		initLocation();
+		_glassPane.add(_panel);
+	}
+
+	public void hide() {
+		_glassPane.remove(_panel);
+	}
+
+	public void setLocationOnScreen(int x, int y) {
+		_xOnScreen = x;
+		_yOnScreen = y;
+	}
+}

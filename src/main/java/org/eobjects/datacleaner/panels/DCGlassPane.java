@@ -21,11 +21,13 @@ package org.eobjects.datacleaner.panels;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -89,5 +91,16 @@ public class DCGlassPane {
 
 	public boolean isEmpty() {
 		return _glassPane.getComponentCount() == 0;
+	}
+
+	public Point getLocationOnScreen() {
+		Point contentPaneLocation = _frame.getContentPane().getLocationOnScreen();
+		int x = contentPaneLocation.x;
+		int y = contentPaneLocation.y;
+		JMenuBar menuBar = _frame.getJMenuBar();
+		if (menuBar != null) {
+			y -= menuBar.getHeight();
+		}
+		return new Point(x, y);
 	}
 }

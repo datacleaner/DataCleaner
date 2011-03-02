@@ -81,6 +81,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.DCWindowMenuBar;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
@@ -253,14 +254,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 				DCPanel panel = (DCPanel) _tabbedPane.getComponentAt(SOURCE_TAB);
 				panel.removeAll();
-				panel.add(new SelectDatastorePanel(_configuration, this));
+				panel.add(new SelectDatastorePanel(_configuration, this, _glassPane));
 				panel.updateUI();
 			}
 		}
-	}
-
-	public void removeGlassPaneComponent(JComponent comp) {
-		_glassPane.remove(comp);
 	}
 
 	@Override
@@ -587,24 +584,15 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			// draw a "think bubble" near the filter tab stating that the filter
 			// was added.
 			final Rectangle filterTabBounds = _tabbedPane.getTabBounds(FILTERS_TAB);
-			final Point locationOnScreen = _tabbedPane.getLocation();
+			final Point tpLocation = _tabbedPane.getLocationOnScreen();
 
-			final int x = filterTabBounds.x + locationOnScreen.x + 10;
-			final int y = filterTabBounds.y + locationOnScreen.y + filterTabBounds.height;
+			final int x = filterTabBounds.x + tpLocation.x + 50;
+			final int y = filterTabBounds.y + tpLocation.y + filterTabBounds.height + getJMenuBar().getHeight();
 
-			final DCLabel label = DCLabel.bright("<html>'<b>" + LabelUtils.getLabel(filterJobBuilder)
-					+ "</b>'<br/>added to <b>filters</b></html>");
-			label.setIcon(imageManager.getImageIcon("images/menu/filter-tab.png"));
-			label.setSize(240, 50);
-			label.setLocation(5, 25);
-
-			final DCPanel panel = new DCPanel(imageManager.getImage("images/window/popup-bubble.png"), 0, 0);
-			panel.setLayout(null);
-			panel.setSize(250, 81);
-			panel.add(label);
-			panel.setLocation(x, y);
-
-			_glassPane.showTooltip(panel, 2000);
+			final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html>'<b>"
+					+ LabelUtils.getLabel(filterJobBuilder) + "</b>'<br/>added to <b>filters</b></html>", x, y,
+					"images/menu/filter-tab.png");
+			popupBubble.showTooltip(2000);
 		} else {
 			_tabbedPane.setSelectedIndex(FILTERS_TAB);
 		}

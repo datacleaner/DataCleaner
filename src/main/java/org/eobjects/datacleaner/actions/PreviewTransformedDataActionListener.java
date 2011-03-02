@@ -139,8 +139,6 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 			rowNumber++;
 		}
 
-		dataContextProvider.close();
-
 		// close
 		for (TransformerJobBuilder<?> tjb : transformerJobs) {
 			new CloseCallback().onEvent(LifeCycleState.CLOSE, tjb.getConfigurableBean(), tjb.getDescriptor());

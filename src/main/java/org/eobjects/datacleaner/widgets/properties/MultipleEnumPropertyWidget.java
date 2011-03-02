@@ -49,6 +49,7 @@ public class MultipleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>[]
 			for (JCheckBox cb : _checkBoxes) {
 				cb.setSelected(true);
 			}
+			fireValueChanged();
 		}
 	};
 
@@ -58,6 +59,7 @@ public class MultipleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>[]
 			for (JCheckBox cb : _checkBoxes) {
 				cb.setSelected(false);
 			}
+			fireValueChanged();
 		}
 	};
 

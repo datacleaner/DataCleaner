@@ -51,6 +51,7 @@ public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<
 			for (JCheckBox cb : _checkBoxes) {
 				cb.setSelected(true);
 			}
+			fireValueChanged();
 		}
 	};
 
@@ -60,6 +61,7 @@ public class MultipleStringPatternPropertyWidget extends AbstractPropertyWidget<
 			for (JCheckBox cb : _checkBoxes) {
 				cb.setSelected(false);
 			}
+			fireValueChanged();
 		}
 	};
 

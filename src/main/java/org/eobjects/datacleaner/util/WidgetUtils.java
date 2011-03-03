@@ -246,7 +246,10 @@ public final class WidgetUtils {
 	}
 
 	public static JScrollPane scrolleable(final JComponent comp) {
-		final JScrollPane scroll = new JScrollPane(comp);
+		final JScrollPane scroll = new JScrollPane();
+		if (comp != null) {
+			scroll.setViewportView(comp);
+		}
 		scroll.setOpaque(false);
 		scroll.getViewport().setOpaque(false);
 		return scroll;

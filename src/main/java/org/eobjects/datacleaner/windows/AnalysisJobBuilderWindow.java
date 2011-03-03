@@ -587,7 +587,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			final Point tpLocation = _tabbedPane.getLocationOnScreen();
 
 			final int x = filterTabBounds.x + tpLocation.x + 50;
-			final int y = filterTabBounds.y + tpLocation.y + filterTabBounds.height + getJMenuBar().getHeight();
+			final int y = filterTabBounds.y + tpLocation.y + filterTabBounds.height;
 
 			final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html>'<b>"
 					+ LabelUtils.getLabel(filterJobBuilder) + "</b>'<br/>added to <b>filters</b></html>", x, y,

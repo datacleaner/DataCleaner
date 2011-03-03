@@ -238,7 +238,9 @@ public final class WidgetUtils {
 		final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception, ErrorLevel.SEVERE,
 				null);
 		errorPane.setErrorInfo(info);
-		final JDialog dialog = JXErrorPane.createDialog(WindowManager.getInstance().getMainWindow(), errorPane);
+		final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
+		centerOnScreen(dialog);
+		dialog.setModal(true);
 		dialog.setTitle(shortMessage);
 		dialog.setVisible(true);
 	}

@@ -73,15 +73,6 @@ public final class WindowManager {
 		_listeners.remove(listener);
 	}
 
-	public MainWindow getMainWindow() {
-		for (AbstractWindow window : _windows) {
-			if (window instanceof MainWindow) {
-				return (MainWindow) window;
-			}
-		}
-		throw new IllegalStateException("The main window appears to be missing!");
-	}
-
 	public void onDispose(AbstractWindow window) {
 		_windows.remove(window);
 

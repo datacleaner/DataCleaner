@@ -34,7 +34,7 @@ import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
-import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
@@ -67,7 +67,8 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		final RowProcessingAnalyzerJobBuilder<CsvOutputAnalyzer> csvOutputAnalyzerBuilder = ajb
 				.addRowProcessingAnalyzer(CsvOutputAnalyzer.class);
 		csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
-		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(DataCleanerHome.get(), _table.getName() + ".csv"));
+		File directory = UserPreferences.getInstance().getConfiguredFileDirectory();
+		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
 
 		final RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(ajb,
 				csvOutputAnalyzerBuilder, false);

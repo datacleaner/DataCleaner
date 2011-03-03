@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import java.awt.Dimension;
 import java.awt.Image;
 
 import javax.swing.JComponent;
@@ -36,15 +35,31 @@ public class VisualizeJobWindow extends AbstractWindow {
 	private static final long serialVersionUID = 1L;
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final AnalysisJobBuilder _analysisJobBuilder;
+	private JScrollPane _scroll;
 
 	public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder) {
 		_analysisJobBuilder = analysisJobBuilder;
+
+		final JComponent visualization = VisualizeJobGraph.create(_analysisJobBuilder);
+		_scroll = WidgetUtils.scrolleable(visualization);
+		_scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		_scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 	}
 
 	@Override
 	protected void initialize() {
 		super.initialize();
-		setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+	}
+
+	@Override
+	protected void onWindowVisible() {
+		super.onWindowVisible();
+		boolean horizontalShowing = _scroll.getHorizontalScrollBar().isShowing();
+		boolean verticalShowing = _scroll.getVerticalScrollBar().isShowing();
+		if (horizontalShowing || verticalShowing) {
+			// maximize if needed
+			setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+		}
 	}
 
 	@Override
@@ -69,9 +84,6 @@ public class VisualizeJobWindow extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		JComponent visualization = VisualizeJobGraph.create(_analysisJobBuilder);
-		JScrollPane scroll = WidgetUtils.scrolleable(visualization);
-		scroll.setPreferredSize(new Dimension(700, 500));
-		return scroll;
+		return _scroll;
 	}
 }

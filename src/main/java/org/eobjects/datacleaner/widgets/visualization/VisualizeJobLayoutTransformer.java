@@ -51,17 +51,19 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 		}
 	};
 
-	private static final int X_STEP = 180;
+	private static final int X_STEP = 160;
 	private static final int X_OFFSET = 40;
 	private static final int Y_STEP = 80;
 	private static final int Y_OFFSET = 40;
 	private final DirectedGraph<Object, VisualizeJobLink> _graph;
 	private final Map<Object, Point> _points = new IdentityHashMap<Object, Point>();
 	private final Map<Integer, Integer> _yCount = new HashMap<Integer, Integer>();
+	private volatile boolean _transformed;
 
 	public VisualizeJobLayoutTransformer(DirectedGraph<Object, VisualizeJobLink> graph) {
 		_graph = graph;
 		createPoints();
+		_transformed = false;
 	}
 
 	private void createPoints() {
@@ -158,7 +160,12 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 			logger.warn("Vertex {} has no assigned coordinate!", vertex);
 			return new Point(0, 0);
 		}
+		_transformed = true;
 		return point;
+	}
+	
+	public boolean isTransformed() {
+		return _transformed;
 	}
 
 	private List<Object> getPrerequisites(Object vertex) {

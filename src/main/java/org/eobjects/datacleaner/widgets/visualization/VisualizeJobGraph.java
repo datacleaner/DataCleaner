@@ -19,7 +19,9 @@
  */
 package org.eobjects.datacleaner.widgets.visualization;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -43,11 +45,11 @@ import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.SourceColumnFinder;
+import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
@@ -69,21 +71,21 @@ public final class VisualizeJobGraph {
 	}
 
 	public static JComponent create(AnalysisJobBuilder analysisJobBuilder) {
-		final DirectedGraph<Object, VisualizeJobLink> g = new DirectedSparseGraph<Object, VisualizeJobLink>();
+		final DirectedGraph<Object, VisualizeJobLink> graph = new DirectedSparseGraph<Object, VisualizeJobLink>();
 
-		final SourceColumnFinder scf = new SourceColumnFinder();
-		scf.addSources(analysisJobBuilder);
+		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+		sourceColumnFinder.addSources(analysisJobBuilder);
 
 		final List<TransformerJobBuilder<?>> tjbs = analysisJobBuilder.getTransformerJobBuilders();
 		for (TransformerJobBuilder<?> tjb : tjbs) {
-			addGraphNodes(g, scf, tjb);
+			addGraphNodes(graph, sourceColumnFinder, tjb);
 		}
 
 		final List<AnalyzerJobBuilder<?>> ajbs = analysisJobBuilder.getAnalyzerJobBuilders();
 		for (AnalyzerJobBuilder<?> ajb : ajbs) {
 			if (ajb instanceof RowProcessingAnalyzerJobBuilder) {
 				RowProcessingAnalyzerJobBuilder<?> rpajb = (RowProcessingAnalyzerJobBuilder<?>) ajb;
-				addGraphNodes(g, scf, rpajb);
+				addGraphNodes(graph, sourceColumnFinder, rpajb);
 			} else {
 				// TODO: Add support for explorers
 			}
@@ -91,25 +93,36 @@ public final class VisualizeJobGraph {
 
 		final List<FilterJobBuilder<?, ?>> fjbs = analysisJobBuilder.getFilterJobBuilders();
 		for (FilterJobBuilder<?, ?> fjb : fjbs) {
-			addGraphNodes(g, scf, fjb);
+			addGraphNodes(graph, sourceColumnFinder, fjb);
 		}
 
-		if (g.getVertexCount() == 0) {
-			g.addVertex("No components in job");
+		if (graph.getVertexCount() == 0) {
+			graph.addVertex("No components in job");
 		}
 
-		final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(g);
-		final Layout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(g, layoutTransformer);
-
+		final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(graph);
 		final Dimension preferredSize = layoutTransformer.getPreferredSize();
-		final VisualizationViewer<Object, VisualizeJobLink> bvs = new VisualizationViewer<Object, VisualizeJobLink>(layout,
-				preferredSize);
+		final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(graph,
+				layoutTransformer, preferredSize);
 
-		final RenderContext<Object, VisualizeJobLink> renderContext = bvs.getRenderContext();
+		Collection<Object> vertices = graph.getVertices();
+		for (Object vertex : vertices) {
+			// manually initialize all vertices
+			layout.transform(vertex);
+		}
+		if (!layoutTransformer.isTransformed()) {
+			throw new IllegalStateException("Layout transformer was never invoked!");
+		}
 
-		final DefaultModalGraphMouse<Object, Integer> gm = new DefaultModalGraphMouse<Object, Integer>();
-		gm.setMode(ModalGraphMouse.Mode.PICKING);
-		bvs.setGraphMouse(gm);
+		final VisualizationViewer<Object, VisualizeJobLink> visualizationViewer = new VisualizationViewer<Object, VisualizeJobLink>(
+				layout);
+		visualizationViewer.setSize(preferredSize);
+
+		final RenderContext<Object, VisualizeJobLink> renderContext = visualizationViewer.getRenderContext();
+
+		final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>();
+		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+		visualizationViewer.setGraphMouse(graphMouse);
 
 		// render labels
 		renderContext.setVertexLabelTransformer(new Transformer<Object, String>() {
@@ -156,8 +169,12 @@ public final class VisualizeJobGraph {
 				return imageManager.getImageIcon("images/status/error.png");
 			}
 		});
-
-		return bvs;
+		
+		DCPanel panel = new DCPanel();
+		panel.setPreferredSize(preferredSize);
+		panel.setLayout(new BorderLayout());
+		panel.add(visualizationViewer, BorderLayout.CENTER);
+		return panel;
 	}
 
 	private static void addGraphNodes(Graph<Object, VisualizeJobLink> g, SourceColumnFinder scf, Object item) {

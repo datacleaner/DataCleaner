@@ -21,9 +21,9 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -67,7 +67,7 @@ public class PreviewSourceDataActionListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Column[] columns = _columns;
 		if (columns == null) {
-			Set<Column> cols = new TreeSet<Column>();
+			List<Column> cols = new ArrayList<Column>();
 			for (InputColumn<?> col : _inputColumns) {
 				if (col.isPhysicalColumn()) {
 					cols.add(col.getPhysicalColumn());

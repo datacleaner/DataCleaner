@@ -95,17 +95,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 					}
 				});
 
-				final JMenuItem simpleSynonymCatalogMenuItem = WidgetFactory.createMenuItem("Simple synonym catalog",
-						imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL));
-				simpleSynonymCatalogMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						// TODO
-					}
-				});
-				simpleSynonymCatalogMenuItem.setEnabled(false);
 				popup.add(textFileSynonymCatalogMenuItem);
-				popup.add(simpleSynonymCatalogMenuItem);
 				popup.add(dataStoreSynonymCatalogMenuItem);
 
 				popup.show(addButton, 0, addButton.getHeight());

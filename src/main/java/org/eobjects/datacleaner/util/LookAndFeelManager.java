@@ -155,5 +155,12 @@ public final class LookAndFeelManager {
 		UIManager.put("FileChooser.homeFolderIcon", imageManager.getImageIcon("images/filetypes/home-folder.png"));
 		UIManager.put("FileChooser.newFolderIcon", imageManager.getImageIcon("images/filetypes/new-folder.png"));
 		UIManager.put("FileChooser.upFolderIcon", imageManager.getImageIcon("images/filetypes/parent-folder.png"));
+		
+		// date picker month view
+		UIManager.put("JXMonthView.foreground", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("JXMonthView.monthStringForeground", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("JXMonthView.daysOfTheWeekForeground", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("JXMonthView.weekOfTheYearForeground", WidgetUtils.BG_COLOR_DARK);
+		UIManager.put("JXMonthView.unselectableDayForeground", WidgetUtils.BG_COLOR_MEDIUM);
 	}
 }

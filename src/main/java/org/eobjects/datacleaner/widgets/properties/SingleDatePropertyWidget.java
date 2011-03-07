@@ -37,6 +37,7 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 		_datePicker = new JXDatePicker();
+		_datePicker.setFormats("yyyy-MM-dd");
 		_datePicker.addActionListener(new ActionListener() {
 
 			@Override

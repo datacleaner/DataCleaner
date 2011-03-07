@@ -238,6 +238,12 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 				"images/datastore-types/databases/oracle.png"));
 		panel.add(createNewDatastoreButton("Microsoft SQL Server connection", "Connect to a Microsoft SQL Server database",
 				"images/datastore-types/databases/microsoft.png"));
+		
+		final JButton moreDatastoreTypesButton = new JButton("more");
+		moreDatastoreTypesButton.setOpaque(false);
+		moreDatastoreTypesButton.setMargin(new Insets(0, 0, 0, 0));
+		panel.add(moreDatastoreTypesButton);
+
 		return panel;
 	}
 

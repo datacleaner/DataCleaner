@@ -71,7 +71,7 @@ public class DatabaseDriverCatalog implements Serializable {
 		add("Apache Derby (embedded)", "images/datastore-types/databases/derby.png", "org.apache.derby.jdbc.EmbeddedDriver",
 				"http://repo1.maven.org/maven2/org/apache/derby/derby/10.6.2.1/derby-10.6.2.1.jar", "jdbc:derby:<database>");
 		add("Oracle database", "images/datastore-types/databases/oracle.png", "oracle.jdbc.OracleDriver", null,
-				"jdbc:oracle:thin:@<hostname>:1521:<schema>");
+				"jdbc:oracle:thin:@<hostname>:1521:<sid>");
 		add("Microsoft SQL Server", "images/datastore-types/databases/microsoft.png",
 				"com.microsoft.sqlserver.jdbc.SQLServerDriver", null,
 				"jdbc:sqlserver://<hostname>:3341;databaseName=<database>",

@@ -179,6 +179,9 @@ public final class IconUtils {
 		if (displayName.indexOf("javascript") != -1) {
 			imagePath = "images/component-types/type_javascript.png";
 		}
+		if (displayName.indexOf("xml") != -1) {
+			imagePath = "images/component-types/type_xml.png";
+		}
 
 		// some individual icons
 		if (displayName.equals("concatenator")) {

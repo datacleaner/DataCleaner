@@ -181,22 +181,27 @@ public class DCTable extends JXTable implements MouseListener {
 		return result;
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		forwardMouseEvent(e);
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 		// forwardMouseEvent(e);
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 		// forwardMouseEvent(e);
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		forwardMouseEvent(e);
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		boolean forwarded = forwardMouseEvent(e);
 		if (!forwarded) {

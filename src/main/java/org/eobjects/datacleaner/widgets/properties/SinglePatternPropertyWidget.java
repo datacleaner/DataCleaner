@@ -31,13 +31,18 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXTextField;
 
-public class PatternPropertyWidget extends AbstractPropertyWidget<Pattern> implements DocumentListener {
+/**
+ * Property widget for regular expression Pattern properties.
+ * 
+ * @author Stefan Janssen
+ */
+public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern> implements DocumentListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private final JXTextField _textField;
 
-	public PatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+	public SinglePatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());

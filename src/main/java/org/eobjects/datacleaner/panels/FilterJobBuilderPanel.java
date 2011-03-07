@@ -39,7 +39,7 @@ import org.eobjects.datacleaner.actions.DisplayOutputWritersForFilterOutcomeActi
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.properties.ChangeRequirementButton;
+import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.jdesktop.swingx.VerticalLayout;

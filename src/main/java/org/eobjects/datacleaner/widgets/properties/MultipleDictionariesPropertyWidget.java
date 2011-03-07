@@ -49,7 +49,9 @@ public class MultipleDictionariesPropertyWidget extends AbstractPropertyWidget<D
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			for (JCheckBox cb : _checkBoxes) {
-				cb.setSelected(true);
+				if (cb.isEnabled()) {
+					cb.setSelected(true);
+				}
 			}
 			fireValueChanged();
 		}

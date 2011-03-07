@@ -118,7 +118,7 @@ public final class PropertyWidgetFactory {
 			} else if (type == File.class) {
 				result = new SingleFilePropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type == Pattern.class) {
-				result = new PatternPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				result = new SinglePatternPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else {
 				// not yet implemented
 				result = new DummyPropertyWidget(propertyDescriptor);

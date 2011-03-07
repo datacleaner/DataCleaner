@@ -28,7 +28,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
-import org.eobjects.datacleaner.widgets.properties.ChangeRequirementButton;
+import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 

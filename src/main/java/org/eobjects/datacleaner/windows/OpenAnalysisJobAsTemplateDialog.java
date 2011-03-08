@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.Box;
@@ -49,10 +50,12 @@ import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.jdesktop.swingx.HorizontalLayout;
+import org.jdesktop.swingx.JXTextField;
 
 import org.eobjects.metamodel.schema.Column;
 
@@ -76,6 +79,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 	private final DatastoreCatalog _datastoreCatalog;
 	private final JComboBox _datastoreCombobox;
 	private final Map<String, List<SourceColumnComboBox>> _sourceColumnComboBoxes;
+	private final Map<String, JXTextField> _variableTextFields;
 	private final JButton _openButton;
 
 	private volatile Datastore _datastore;
@@ -87,6 +91,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 		_file = file;
 		_metadata = metadata;
 		_sourceColumnMapping = new SourceColumnMapping(metadata);
+		_variableTextFields = new HashMap<String, JXTextField>();
 
 		_openButton = new JButton("Open job");
 		_openButton.addActionListener(new ActionListener() {
@@ -97,8 +102,13 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 				try {
 					SourceColumnMapping sourceColumnMapping = getSourceColumnMapping();
 
+					Map<String, String> variableOverrides = new HashMap<String, String>();
+					for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
+						variableOverrides.put(entry.getKey(), entry.getValue().getText());
+					}
+
 					AnalysisJobBuilder ajb = reader.create(new BufferedInputStream(new FileInputStream(_file)),
-							sourceColumnMapping);
+							sourceColumnMapping, variableOverrides);
 					OpenAnalysisJobActionListener.openJob(_file, _configuration, ajb);
 					OpenAnalysisJobAsTemplateDialog.this.dispose();
 				} catch (Exception e1) {
@@ -141,6 +151,14 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 			}
 
 			_sourceColumnComboBoxes.get(tablePath).add(comboBox);
+		}
+
+		for (Entry<String, String> variableEntry : metadata.getVariables().entrySet()) {
+			String id = variableEntry.getKey();
+			String value = variableEntry.getValue();
+			JXTextField textField = WidgetFactory.createTextField("Original: " + value);
+			textField.setText(value);
+			_variableTextFields.put(id, textField);
 		}
 
 		_openButton.setEnabled(false);
@@ -297,8 +315,27 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 				WidgetUtils.addToGridBag(comboBox, panel, 2, row, GridBagConstraints.WEST);
 			}
 		}
-
 		row++;
+
+		if (!_variableTextFields.isEmpty()) {
+			final JLabel tableLabel = DCLabel.bright("<html><b>Job-level variables</b></html>");
+			tableLabel.setIcon(imageManager.getImageIcon("images/filetypes/analysis_job.png", IconUtils.ICON_SIZE_SMALL));
+			WidgetUtils.addToGridBag(tableLabel, panel, 0, row, 2, 1, GridBagConstraints.WEST);
+
+			for (Entry<String, JXTextField> entry : _variableTextFields.entrySet()) {
+				row++;
+				String variableId = entry.getKey();
+				JXTextField textField = entry.getValue();
+
+				WidgetUtils.addToGridBag(
+						new JLabel(imageManager.getImageIcon("images/model/variable.png", IconUtils.ICON_SIZE_SMALL)),
+						panel, 0, row);
+				WidgetUtils.addToGridBag(DCLabel.bright(variableId), panel, 1, row, GridBagConstraints.WEST);
+				WidgetUtils.addToGridBag(textField, panel, 2, row, GridBagConstraints.WEST);
+			}
+			row++;
+		}
+
 		final DCPanel openButtonPanel = new DCPanel();
 		openButtonPanel.add(_openButton);
 		WidgetUtils.addToGridBag(openButtonPanel, panel, 2, row, GridBagConstraints.EAST);

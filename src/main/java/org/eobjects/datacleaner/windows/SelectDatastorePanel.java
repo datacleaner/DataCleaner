@@ -129,6 +129,12 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		add(buttonPanel);
 	}
 
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_datastoreCatalog.removeListener(this);
+	}
+
 	private void updateDatastores() {
 		_existingDatastoresPanel.removeAll();
 		final DCLabel existingDatastoresLabel = DCLabel.dark("Analyze an existing datastore:");

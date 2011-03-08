@@ -41,7 +41,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
@@ -62,7 +61,6 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final JdbcDatastore _originalDatastore;
-	private final AnalyzerBeansConfiguration _configuration;
 	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
 	private final MutableDatastoreCatalog _catalog;
 	private final JXTextField _datastoreNameTextField;
@@ -72,15 +70,13 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private final JPasswordField _passwordField;
 	private final JComboBox _databaseDriverComboBox;
 
-	public JdbcDatastoreDialog(AnalyzerBeansConfiguration configuration, MutableDatastoreCatalog catalog) {
-		this(null, configuration, catalog);
+	public JdbcDatastoreDialog(MutableDatastoreCatalog catalog) {
+		this(null, catalog);
 	}
 
-	public JdbcDatastoreDialog(JdbcDatastore datastore, AnalyzerBeansConfiguration configuration,
-			MutableDatastoreCatalog catalog) {
+	public JdbcDatastoreDialog(JdbcDatastore datastore, MutableDatastoreCatalog catalog) {
 		super(imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = datastore;
-		_configuration = configuration;
 		_catalog = catalog;
 
 		_datastoreNameTextField = WidgetFactory.createTextField("Name");
@@ -137,7 +133,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 					String[] connectionUrls = driver.getConnectionUrlTemplates();
 					setConnectionUrlTemplates(connectionUrls);
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
-					OptionsDialog optionsDialog = new OptionsDialog(_configuration);
+					OptionsDialog optionsDialog = new OptionsDialog();
 					optionsDialog.selectDatabaseDriversTab();
 					optionsDialog.setVisible(true);
 					JdbcDatastoreDialog.this.dispose();

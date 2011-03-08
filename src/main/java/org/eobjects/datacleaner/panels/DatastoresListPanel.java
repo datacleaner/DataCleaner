@@ -146,7 +146,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				jdbcMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new JdbcDatastoreDialog(_configuration, _catalog).setVisible(true);
+						new JdbcDatastoreDialog(_catalog).setVisible(true);
 					}
 				});
 
@@ -199,7 +199,7 @@ public final class DatastoresListPanel extends DCPanel implements DatastoreChang
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						JdbcDatastoreDialog dialog = new JdbcDatastoreDialog((JdbcDatastore) datastore, _configuration,
+						JdbcDatastoreDialog dialog = new JdbcDatastoreDialog((JdbcDatastore) datastore,
 								_catalog);
 						dialog.setVisible(true);
 					}

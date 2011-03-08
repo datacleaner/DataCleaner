@@ -45,6 +45,7 @@ import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -69,8 +70,8 @@ public class OptionsDialog extends AbstractWindow {
 	private final AnalyzerBeansConfiguration _configuration;
 	private Timer _updateMemoryTimer;
 
-	public OptionsDialog(AnalyzerBeansConfiguration configuration) {
-		_configuration = configuration;
+	public OptionsDialog() {
+		_configuration = DCConfiguration.get();
 		_tabbedPane = new CloseableTabbedPane();
 
 		_tabbedPane.addTab("General", imageManager.getImageIcon("images/menu/options.png"), getGeneralTab());

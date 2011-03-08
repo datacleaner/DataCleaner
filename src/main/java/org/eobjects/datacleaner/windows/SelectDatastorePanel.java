@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,7 @@ import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -69,6 +71,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 	private final MutableDatastoreCatalog _datastoreCatalog;
 	private final AnalysisJobBuilderWindow _analysisJobBuilderWindow;
 	private final List<JCheckBox> _checkBoxes = new ArrayList<JCheckBox>();
+	private final List<String> _datastoreNames = new ArrayList<String>();
 	private final DCGlassPane _glassPane;
 
 	private final DCPanel _existingDatastoresPanel;
@@ -113,7 +116,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 				int i = 0;
 				for (JCheckBox c : _checkBoxes) {
 					if (c.isSelected()) {
-						String dsName = _datastoreCatalog.getDatastoreNames()[i];
+						String dsName = _datastoreNames.get(i);
 						Datastore datastore = _datastoreCatalog.getDatastore(dsName);
 						_analysisJobBuilderWindow.setDatastore(datastore);
 						return;
@@ -137,6 +140,8 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 
 	private void updateDatastores() {
 		_existingDatastoresPanel.removeAll();
+		_datastoreNames.clear();
+		_checkBoxes.clear();
 		final DCLabel existingDatastoresLabel = DCLabel.dark("Analyze an existing datastore:");
 		existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER);
 
@@ -171,7 +176,9 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 			}
 		});
 		_checkBoxes.add(checkBox);
-		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastore.getName() + "</b><br/>"
+		String datastoreName = datastore.getName();
+		_datastoreNames.add(datastoreName);
+		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>"
 				+ getDescription(datastore) + "</html>");
 		datastoreNameLabel.setIconTextGap(10);
 		datastoreNameLabel.setIcon(icon);
@@ -223,37 +230,37 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		panel.setBorder(new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		panel.add(createNewDatastoreButton("CSV file", "Comma-separated values (CSV) file (or file with other separators)",
-				"images/datastore-types/csv.png"));
+				"images/datastore-types/csv.png", CsvDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Excel spreadsheet",
 				"Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.",
-				"images/datastore-types/excel.png"));
+				"images/datastore-types/excel.png", ExcelDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
-				"images/datastore-types/access.png"));
+				"images/datastore-types/access.png", AccessDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)",
-				"images/datastore-types/dbase.png"));
+				"images/datastore-types/dbase.png", DbaseDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)",
-				"images/datastore-types/xml.png"));
+				"images/datastore-types/xml.png", XmlDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
-				"images/datastore-types/odb.png"));
+				"images/datastore-types/odb.png", OdbDatastoreDialog.class));
 		panel.add(Box.createHorizontalStrut(20));
 		panel.add(createNewDatastoreButton("MySQL connection", "Connect to a MySQL database",
-				"images/datastore-types/databases/mysql.png"));
+				"images/datastore-types/databases/mysql.png", JdbcDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
-				"images/datastore-types/databases/postgresql.png"));
+				"images/datastore-types/databases/postgresql.png", JdbcDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Oracle connection", "Connect to a Oracle database",
-				"images/datastore-types/databases/oracle.png"));
+				"images/datastore-types/databases/oracle.png", JdbcDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Microsoft SQL Server connection", "Connect to a Microsoft SQL Server database",
-				"images/datastore-types/databases/microsoft.png"));
+				"images/datastore-types/databases/microsoft.png", JdbcDatastoreDialog.class));
 
 		final JButton moreDatastoreTypesButton = new JButton("more");
-		moreDatastoreTypesButton.setOpaque(false);
 		moreDatastoreTypesButton.setMargin(new Insets(0, 0, 0, 0));
 		panel.add(moreDatastoreTypesButton);
 
 		return panel;
 	}
 
-	private JButton createNewDatastoreButton(final String title, final String description, final String imagePath) {
+	private JButton createNewDatastoreButton(final String title, final String description, final String imagePath,
+			final Class<? extends AbstractDialog> dialogClass) {
 		ImageIcon icon = imageManager.getImageIcon(imagePath);
 		final JButton button = new JButton(icon);
 		button.setMargin(new Insets(0, 0, 0, 0));
@@ -273,6 +280,25 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 			@Override
 			public void mouseExited(MouseEvent e) {
 				popupBubble.hide();
+			}
+		});
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try {
+					Object[] constructorArgs = null;
+					Constructor<? extends AbstractDialog> constructor = null;
+					try {
+						constructor = dialogClass.getConstructor(new Class[0]);
+					} catch (NoSuchMethodException e) {
+						constructor = dialogClass.getConstructor(new Class[] { MutableDatastoreCatalog.class });
+						constructorArgs = new Object[] { DCConfiguration.get().getDatastoreCatalog() };
+					}
+					AbstractDialog dialog = constructor.newInstance(constructorArgs);
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
 			}
 		});
 		return button;

@@ -30,7 +30,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,7 +41,6 @@ import java.util.Set;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -57,22 +55,20 @@ import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
-import org.eobjects.analyzer.job.runner.AnalysisRunner;
-import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
-import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.eobjects.datacleaner.windows.DetailsResultWindow;
+import org.eobjects.datacleaner.windows.ResultWindow;
+import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -85,8 +81,6 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.eobjects.metamodel.schema.Table;
 
 @RendererBean(SwingRenderingFormat.class)
 public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistributionResult, JComponent> {
@@ -197,14 +191,11 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		// chart for display of the dataset
 		final JFreeChart chart = ChartFactory.createPieChart3D("Value distribution of " + columnName, _dataset, false, true,
 				false);
+		ChartUtils.applyStyles(chart);
 
 		// code-block for tweaking style and coloring of chart
 		{
-			chart.getTitle().setFont(WidgetUtils.FONT_HEADER);
-
 			final PiePlot plot = (PiePlot) chart.getPlot();
-			plot.setLabelFont(WidgetUtils.FONT_SMALL);
-			plot.setSectionOutlinesVisible(false);
 
 			int colorIndex = 0;
 			for (int i = 0; i < _dataset.getItemCount(); i++) {
@@ -244,6 +235,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		}
 
 		chartPanel.setPreferredSize(new Dimension(0, chartHeight));
+		chartPanel.setOpaque(false);
 		chartPanel.addChartMouseListener(new ChartMouseListener() {
 
 			@Override
@@ -275,7 +267,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 			}
 		});
 
-		final DCPanel leftPanel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHTEST, WidgetUtils.BG_COLOR_BRIGHTEST);
+		final DCPanel leftPanel = new DCPanel();
 		leftPanel.setLayout(new BorderLayout());
 		leftPanel.add(chartPanel, BorderLayout.NORTH);
 
@@ -292,6 +284,7 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		rightPanel.add(drillableValuesTable.toPanel());
 
 		final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		split.setOpaque(false);
 		split.add(leftPanel);
 		split.add(rightPanel);
 		split.setDividerLocation(550);
@@ -494,7 +487,6 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 
 		// run a small job
 		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
@@ -503,22 +495,9 @@ public class ValueDistributionResultSwingRenderer implements Renderer<ValueDistr
 		ajb.addSourceColumns(table.getColumns());
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.getConfigurableBean().setRecordUniqueValues(true);
-		AnalysisResultFuture resultFuture = runner.run(ajb.toAnalysisJob());
 
-		List<AnalyzerResult> list = Collections.emptyList();
-		DetailsResultWindow window = new DetailsResultWindow("Example", list);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		List<AnalyzerResult> results = resultFuture.getResults();
-		for (AnalyzerResult analyzerResult : results) {
-			JComponent renderedResult = new ValueDistributionResultSwingRenderer()
-					.render((ValueDistributionResult) analyzerResult);
-			window.addRenderedResult(renderedResult);
-		}
-		window.repaint();
-
-		window.setPreferredSize(new Dimension(800, 600));
-
-		window.setVisible(true);
+		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null);
+		resultWindow.setVisible(true);
+		resultWindow.startAnalysis();
 	}
 }

@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -150,25 +151,14 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, JCo
 
 		@Override
 		public void valueCell(Object value, final ResultProducer drillToDetailResultProducer) {
-			final DCPanel panel = new DCPanel();
-			final JLabel label = new JLabel();
-			panel.setLayout(new FlowLayout(_alignment, 0, 0));
-			if (value == null) {
-				label.setText(LabelUtils.NULL_LABEL);
-			} else if (value instanceof Double || value instanceof Float) {
-				label.setText(NumberFormat.getInstance().format(value));
-			} else {
-				label.setText(value.toString());
-			}
-			panel.add(label);
-
+			ActionListener action = null;
 			if (drillToDetailResultProducer != null) {
 				final StringBuilder sb = new StringBuilder("Detailed result for [");
 
-				sb.append(label.getText());
+				sb.append(getLabelText(value));
 				sb.append(" (");
 
-				final String cat1; 
+				final String cat1;
 				if (headersIncluded) {
 					cat1 = _tableModel.getColumnName(_col);
 				} else {
@@ -181,12 +171,11 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, JCo
 
 				sb.append(")]");
 
-				final JButton button = WidgetFactory.createSmallButton("images/actions/drill-to-detail.png");
-				button.addActionListener(new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer));
-				panel.add(Box.createHorizontalStrut(4));
-				panel.add(button);
+				action = new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer);
 			}
-			panel.setAlignmentX(_alignment);
+
+			DCPanel panel = createActionableValuePanel(value, _alignment, action, "images/actions/drill-to-detail.png");
+
 			_tableModel.setValueAt(panel, _row, _col);
 			_col++;
 		}
@@ -205,4 +194,29 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, JCo
 		}
 	}
 
+	private static String getLabelText(Object value) {
+		if (value == null) {
+			return LabelUtils.NULL_LABEL;
+		} else if (value instanceof Double || value instanceof Float) {
+			return NumberFormat.getInstance().format(value);
+		} else {
+			return value.toString();
+		}
+	}
+
+	public static DCPanel createActionableValuePanel(Object value, int alignment, ActionListener action, String iconImagePath) {
+		final JLabel label = new JLabel(getLabelText(value));
+		final DCPanel panel = new DCPanel();
+		panel.add(label);
+		panel.setLayout(new FlowLayout(alignment, 0, 0));
+
+		if (action != null && iconImagePath != null) {
+			final JButton button = WidgetFactory.createSmallButton(iconImagePath);
+			button.addActionListener(action);
+			panel.add(Box.createHorizontalStrut(4));
+			panel.add(button);
+		}
+
+		return panel;
+	}
 }

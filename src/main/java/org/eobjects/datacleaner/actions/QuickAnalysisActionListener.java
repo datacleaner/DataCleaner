@@ -157,6 +157,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 		for (InputColumn<?> inputColumn : columns) {
 			if (columnCount == 4) {
 				analyzerJobBuilder = ajb.addRowProcessingAnalyzer(analyzerClass);
+				columnCount = 0;
 			}
 			analyzerJobBuilder.addInputColumn(inputColumn);
 			columnCount++;

@@ -47,9 +47,9 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class ResultListPanel extends DCPanel {
 	private static final Logger logger = LoggerFactory.getLogger(ResultListPanel.class);
 
 	private final RendererFactory _rendererFactory;
-	private final JXTaskPaneContainer _taskPaneContainer;
+	private final DCTaskPaneContainer _taskPaneContainer;
 	private final ProgressInformationPanel _progressInformationPanel;
 
 	public ResultListPanel(RendererFactory rendererFactory, ProgressInformationPanel progressInformationPanel) {
@@ -136,7 +136,20 @@ public class ResultListPanel extends DCPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				_taskPaneContainer.add(taskPane);
+				String title = taskPane.getTitle();
+				JXTaskPane[] taskPanes = _taskPaneContainer.getTaskPanes();
+				boolean added = false;
+				for (int i = 0; i < taskPanes.length; i++) {
+					JXTaskPane existingTaskPane = taskPanes[i];
+					if (existingTaskPane.getTitle().compareTo(title) > 0) {
+						_taskPaneContainer.add(taskPane, i);
+						added = true;
+						break;
+					}
+				}
+				if (!added) {
+					_taskPaneContainer.add(taskPane);
+				}
 			}
 		});
 
@@ -177,9 +190,9 @@ public class ResultListPanel extends DCPanel {
 		if (req instanceof FilterOutcome) {
 			FilterJob filterJob = ((FilterOutcome) req).getFilterJob();
 			Enum<?> category = ((FilterOutcome) req).getCategory();
-			
+
 			String filterLabel = LabelUtils.getLabel(filterJob);
-			
+
 			sb.append(filterLabel);
 			sb.append("=");
 			sb.append(category);

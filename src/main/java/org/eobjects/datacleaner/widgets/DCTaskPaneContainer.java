@@ -52,6 +52,44 @@ public class DCTaskPaneContainer extends JXTaskPaneContainer {
 		super.add(panel);
 	}
 
+	public void add(JXTaskPane group, int index) {
+		DCPanel panel = new DCPanel();
+		panel.setBorder(WidgetUtils.BORDER_SHADOW);
+		panel.setLayout(new BorderLayout());
+		panel.add(group, BorderLayout.CENTER);
+		super.add(panel, index);
+	}
+
+	@Override
+	public Component add(Component comp) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Component add(Component comp, int index) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void add(Component comp, Object constraints) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void add(Component comp, Object constraints, int index) {
+		throw new UnsupportedOperationException();
+	}
+
+	public JXTaskPane[] getTaskPanes() {
+		Component[] components = getComponents();
+		JXTaskPane[] result = new JXTaskPane[components.length];
+		for (int i = 0; i < result.length; i++) {
+			DCPanel panel = (DCPanel) components[i];
+			result[i] = (JXTaskPane) panel.getComponent(0);
+		}
+		return result;
+	}
+
 	@Override
 	public void remove(JXTaskPane group) {
 		Component[] components = getComponents();

@@ -64,7 +64,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 
 	private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
 	private static final ImageManager imageManager = ImageManager.getInstance();
-	
+
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCFileChooser _fileChooser;
 	private final DCPanel _centerPanel;
@@ -133,8 +133,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 			public void actionPerformed(ActionEvent e) {
 				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_configuration, _file,
 						_metadata);
-				dialog.setVisible(true);
 				_fileChooser.cancelSelection();
+				dialog.setVisible(true);
 			}
 		});
 		return openAsTemplateButton;
@@ -225,8 +225,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
 		if (datastore == null) {
 			_openJobButton.setEnabled(false);
-			datastoreLabel.setIcon(imageManager.getImageIcon("images/status/warning.png",
-					IconUtils.ICON_SIZE_SMALL));
+			datastoreLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
 			datastoreLabel.setToolTipText("No such datastore: " + datastoreName);
 		} else {
 			_openJobButton.setEnabled(true);
@@ -240,8 +239,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		List<String> paths = _metadata.getSourceColumnPaths();
 		for (String path : paths) {
 			JLabel columnLabel = new JLabel(path);
-			columnLabel.setIcon(imageManager
-					.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL));
+			columnLabel.setIcon(imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL));
 			_centerPanel.add(columnLabel);
 		}
 

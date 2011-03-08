@@ -96,7 +96,7 @@ public class ResultListPanel extends DCPanel {
 		final InputColumn<?>[] input = analyzerJob.getInput();
 		if (input.length > 0) {
 			sb.append(" (");
-			if (input.length < 4) {
+			if (input.length < 5) {
 				for (int i = 0; i < input.length; i++) {
 					if (i != 0) {
 						sb.append(',');

@@ -28,11 +28,13 @@ import org.eobjects.analyzer.beans.BooleanAnalyzer;
 import org.eobjects.analyzer.beans.DateAndTimeAnalyzer;
 import org.eobjects.analyzer.beans.NumberAnalyzer;
 import org.eobjects.analyzer.beans.StringAnalyzer;
+import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.metamodel.schema.Column;
@@ -110,16 +112,18 @@ public class QuickAnalysisActionListener implements ActionListener {
 		}
 
 		if (!booleanColumns.isEmpty()) {
+			// boolean analyzer contains combination matrices, so all columns
+			// are added to a single analyzer job.
 			ajb.addRowProcessingAnalyzer(BooleanAnalyzer.class).addInputColumns(booleanColumns);
 		}
 		if (!numberColumns.isEmpty()) {
-			ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(numberColumns);
+			createAnalyzers(ajb, NumberAnalyzer.class, numberColumns);
 		}
 		if (!dateTimeColumns.isEmpty()) {
-			ajb.addRowProcessingAnalyzer(DateAndTimeAnalyzer.class).addInputColumns(dateTimeColumns);
+			createAnalyzers(ajb, DateAndTimeAnalyzer.class, dateTimeColumns);
 		}
 		if (!stringColumns.isEmpty()) {
-			ajb.addRowProcessingAnalyzer(StringAnalyzer.class).addInputColumns(stringColumns);
+			createAnalyzers(ajb, StringAnalyzer.class, stringColumns);
 		}
 
 		try {
@@ -134,6 +138,29 @@ public class QuickAnalysisActionListener implements ActionListener {
 			WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);
 		}
 
+	}
+
+	/**
+	 * Registers analyzers and up to 4 columns per analyzer. This restriction is
+	 * to ensure that results will be nicely readable. A table might contain
+	 * hundreds of columns.
+	 * 
+	 * @param ajb
+	 * @param analyzerClass
+	 * @param columns
+	 */
+	private void createAnalyzers(AnalysisJobBuilder ajb, Class<? extends RowProcessingAnalyzer<?>> analyzerClass,
+			List<InputColumn<?>> columns) {
+		RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder = ajb
+				.addRowProcessingAnalyzer(analyzerClass);
+		int columnCount = 0;
+		for (InputColumn<?> inputColumn : columns) {
+			if (columnCount == 4) {
+				analyzerJobBuilder = ajb.addRowProcessingAnalyzer(analyzerClass);
+			}
+			analyzerJobBuilder.addInputColumn(inputColumn);
+			columnCount++;
+		}
 	}
 
 }

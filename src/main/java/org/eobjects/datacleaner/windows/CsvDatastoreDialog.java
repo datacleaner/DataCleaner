@@ -79,6 +79,7 @@ import com.ibm.icu.text.CharsetMatch;
 
 public class CsvDatastoreDialog extends AbstractDialog {
 
+
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
@@ -91,9 +92,14 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private static final int SAMPLE_BUFFER_SIZE = 2048;
 
 	/**
-	 * Amount of rows to display in the preview table
+	 * Max amount of rows to display in the preview table
 	 */
 	private static final int PREVIEW_ROWS = 7;
+	
+	/**
+	 * Max amount of columns to display in the preview table
+	 */
+	private static final int PREVIEW_COLUMNS = 10;
 
 	private static final String SEPARATOR_TAB = "Tab (\\t)";
 	private static final String SEPARATOR_COMMA = "Comma (,)";
@@ -112,7 +118,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private final JComboBox _quoteCharField;
 	private final JComboBox _encodingComboBox;
 	private final DCLabel _statusLabel;
-	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, 10));
+	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, PREVIEW_COLUMNS));
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
 	private final CsvDatastore _originalDatastore;
@@ -434,6 +440,10 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			Schema schema = dc.getDefaultSchema();
 			Table table = schema.getTables()[0];
 			Column[] columns = table.getColumns();
+			if (columns.length > PREVIEW_COLUMNS) {
+				// include max 10 columns
+				columns = Arrays.copyOf(columns, PREVIEW_COLUMNS);
+			}
 
 			Query q = dc.query().from(table).select(columns).toQuery();
 			q.setMaxRows(PREVIEW_ROWS);

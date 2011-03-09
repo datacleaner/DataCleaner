@@ -76,7 +76,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		optionsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new OptionsDialog(_configuration).setVisible(true);
+				new OptionsDialog().setVisible(true);
 			}
 		});
 

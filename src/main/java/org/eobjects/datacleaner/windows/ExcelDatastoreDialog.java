@@ -74,5 +74,4 @@ public class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<Excel
 	protected String getDatastoreIconPath() {
 		return IconUtils.EXCEL_IMAGEPATH;
 	}
-
 }

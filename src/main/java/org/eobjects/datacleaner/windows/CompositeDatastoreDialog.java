@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/composite.png");
+		_addDatastoreButton = WidgetFactory.createButton("Save datastore", IconUtils.COMPOSITE_IMAGEPATH);
 		_addDatastoreButton.setEnabled(false);
 
 		String[] datastoreNames = _mutableDatastoreCatalog.getDatastoreNames();
@@ -225,4 +226,8 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 		return "Composite datastore | Datastore";
 	}
 
+	@Override
+	public Image getWindowIcon() {
+		return imageManager.getImage(IconUtils.COMPOSITE_IMAGEPATH);
+	}
 }

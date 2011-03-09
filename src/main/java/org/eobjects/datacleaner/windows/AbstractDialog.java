@@ -65,7 +65,7 @@ public abstract class AbstractDialog extends AbstractWindow {
 	}
 
 	@Override
-	public final Image getWindowIcon() {
+	public Image getWindowIcon() {
 		return ImageManager.getInstance().getImage("images/window/app-icon.png");
 	}
 

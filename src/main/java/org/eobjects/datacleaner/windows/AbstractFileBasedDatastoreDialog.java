@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -206,5 +207,10 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		_outerPanel.add(statusBar, BorderLayout.SOUTH);
 
 		return _outerPanel;
+	}
+
+	@Override
+	public Image getWindowIcon() {
+		return imageManager.getImage(getDatastoreIconPath());
 	}
 }

@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -34,10 +35,12 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
@@ -58,6 +61,7 @@ import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
+import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.CsvDataContextStrategy;
 import org.eobjects.metamodel.DataContext;
@@ -79,7 +83,6 @@ import com.ibm.icu.text.CharsetMatch;
 
 public class CsvDatastoreDialog extends AbstractDialog {
 
-
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
@@ -95,7 +98,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	 * Max amount of rows to display in the preview table
 	 */
 	private static final int PREVIEW_ROWS = 7;
-	
+
 	/**
 	 * Max amount of columns to display in the preview table
 	 */
@@ -118,10 +121,12 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private final JComboBox _quoteCharField;
 	private final JComboBox _encodingComboBox;
 	private final DCLabel _statusLabel;
-	private final DCTable _previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, PREVIEW_COLUMNS));
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
 	private final CsvDatastore _originalDatastore;
+	private final LoadingIcon _loadingIcon;
+	private final DCTable _previewTable;
+	private final DCPanel _previewTablePanel;
 
 	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
 		this(null, mutableDatastoreCatalog);
@@ -132,6 +137,12 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_originalDatastore = datastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
+
+		_loadingIcon = new LoadingIcon();
+		_loadingIcon.setVisible(false);
+		_previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, PREVIEW_COLUMNS));
+		_previewTablePanel = _previewTable.toPanel();
+		_previewTablePanel.setBorder(new EmptyBorder(0, 10, 0, 10));
 
 		_filenameField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
@@ -196,7 +207,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		_addDatastoreButton = WidgetFactory.createButton("Save datastore", "images/datastore-types/csv.png");
+		_addDatastoreButton = WidgetFactory.createButton("Save datastore", IconUtils.CSV_IMAGEPATH);
 		_addDatastoreButton.setEnabled(false);
 
 		if (_originalDatastore != null) {
@@ -246,11 +257,13 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		return "Comma-separated\nfile";
 	}
 
-	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote, boolean autoDetectEncoding) {
-		List<String> warnings = new ArrayList<String>();
-		boolean showPreview = true;
+	private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding) {
+		// show loading indicator
+		_previewTablePanel.setVisible(false);
+		_loadingIcon.setVisible(true);
+		_addDatastoreButton.setEnabled(false);
 
-		File file = new File(_filenameField.getFilename());
+		final File file = new File(_filenameField.getFilename());
 		if (file.exists()) {
 			if (!file.isFile()) {
 				_statusLabel.setText("Not a valid file!");
@@ -264,33 +277,62 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			_addDatastoreButton.setEnabled(false);
 			return;
 		}
-		_addDatastoreButton.setEnabled(true);
 
-		byte[] bytes = new byte[SAMPLE_BUFFER_SIZE];
+		// read file in background, it may take time if eg. it's located on a
+		// network drive
+		new SwingWorker<byte[], Void>() {
 
-		FileInputStream fileInputStream = null;
-		try {
-			fileInputStream = new FileInputStream(file);
-			int bufferSize = fileInputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
-			if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
-				bytes = Arrays.copyOf(bytes, bufferSize);
-			}
-		} catch (Exception e) {
-			if (logger.isWarnEnabled()) {
-				logger.warn("Error reading from file: " + e.getMessage(), e);
-			}
-			_statusLabel.setText("Error reading from file: " + e.getMessage());
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			return;
-		} finally {
-			if (fileInputStream != null) {
+			private volatile byte[] bytes = new byte[SAMPLE_BUFFER_SIZE];
+
+			@Override
+			protected byte[] doInBackground() throws Exception {
+				FileInputStream fileInputStream = null;
 				try {
-					fileInputStream.close();
-				} catch (IOException ioe) {
-					logger.debug("Could not close reader", ioe);
+					fileInputStream = new FileInputStream(file);
+					int bufferSize = fileInputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
+					if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
+						bytes = Arrays.copyOf(bytes, bufferSize);
+					}
+					return bytes;
+				} finally {
+					if (fileInputStream != null) {
+						try {
+							fileInputStream.close();
+						} catch (IOException ioe) {
+							logger.debug("Could not close reader", ioe);
+						}
+					}
 				}
 			}
-		}
+
+			@Override
+			protected void done() {
+				try {
+					onSettingsUpdated(autoDetectSeparatorAndQuote, autoDetectEncoding, bytes);
+				} catch (Throwable e) {
+					if (e instanceof ExecutionException) {
+						// get the cause of the execution exception (it's a
+						// wrapper around the throwable)
+						e = e.getCause();
+					}
+					if (logger.isWarnEnabled()) {
+						logger.warn("Error reading from file: " + e.getMessage(), e);
+					}
+					_statusLabel.setText("Error reading from file: " + e.getMessage());
+					_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				}
+
+				// show table
+				_previewTablePanel.setVisible(true);
+				_loadingIcon.setVisible(false);
+				_addDatastoreButton.setEnabled(true);
+			}
+		}.execute();
+	}
+
+	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote, boolean autoDetectEncoding, byte[] bytes) {
+		final List<String> warnings = new ArrayList<String>();
+		boolean showPreview = true;
 
 		final String charSet;
 		if (autoDetectEncoding) {
@@ -488,9 +530,8 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(_quoteCharField, formPanel, 1, row);
 
 		row++;
-		DCPanel previewTablePanel = _previewTable.toPanel();
-		previewTablePanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-		WidgetUtils.addToGridBag(previewTablePanel, formPanel, 0, row, 2, 1);
+		WidgetUtils.addToGridBag(_previewTablePanel, formPanel, 0, row, 2, 1);
+		WidgetUtils.addToGridBag(_loadingIcon, formPanel, 0, row, 2, 1);
 
 		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override
@@ -513,7 +554,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		DCPanel centerPanel = new DCPanel();
 		centerPanel.setLayout(new VerticalLayout(4));
 		centerPanel.add(formPanel);
-		centerPanel.add(previewTablePanel);
+		centerPanel.add(_previewTablePanel);
 		centerPanel.add(buttonPanel);
 
 		JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
@@ -567,8 +608,12 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	}
 
 	@Override
+	public Image getWindowIcon() {
+		return imageManager.getImage(IconUtils.CSV_IMAGEPATH);
+	}
+
+	@Override
 	public String getWindowTitle() {
 		return "CSV file datastore";
 	}
-
 }

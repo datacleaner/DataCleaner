@@ -34,4 +34,4 @@ if $macos; then
 	JAVA_OPTS="$JAVA_OPTS -Xdock:name=DataCleaner"
 fi
 
-exec java $JAVA_OPTS -jar datacleaner.jar
+exec java $JAVA_OPTS -jar DataCleaner.jar

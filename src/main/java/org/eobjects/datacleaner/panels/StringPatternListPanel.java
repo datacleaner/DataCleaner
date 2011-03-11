@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -49,6 +48,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.RegexStringPatternDialog;
 import org.eobjects.datacleaner.windows.SimpleStringPatternDialog;
+import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 public class StringPatternListPanel extends DCPanel implements StringPatternChangeListener {
@@ -192,9 +192,9 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		WidgetUtils.addToGridBag(_editButton, listPanel, 1, 0);
 		WidgetUtils.addToGridBag(_removeButton, listPanel, 2, 0);
 
-		setLayout(new BorderLayout());
-		add(listPanel, BorderLayout.CENTER);
-		add(toolBar, BorderLayout.NORTH);
+		setLayout(new VerticalLayout(10));
+		add(listPanel);
+		add(toolBar);
 
 	}
 

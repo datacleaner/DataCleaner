@@ -29,8 +29,7 @@ import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
-import org.eobjects.datacleaner.windows.MainWindow;
-import org.eobjects.datacleaner.windows.WelcomeWindow;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public final class Main {
 
@@ -49,12 +48,7 @@ public final class Main {
 		// loads dynamic user preferences
 		final UserPreferences userPreferences = UserPreferences.getInstance();
 
-		// show windows
-		if (userPreferences.isWelcomeDialogShownOnStartup()) {
-			new WelcomeWindow(configuration).setVisible(true);
-		}
-		new MainWindow(configuration).setVisible(true);
-//		new AnalysisJobBuilderWindow(configuration).setVisible(true);
+		new AnalysisJobBuilderWindow(configuration).setVisible(true);
 
 		// log usage
 		UsageLogger.getInstance().logApplicationStartup();

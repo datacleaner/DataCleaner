@@ -29,7 +29,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
@@ -45,10 +44,10 @@ public class DCPanel extends JPanel {
 	private final Color _bottomColor;
 	private final Color _topColor;
 
-	public static Component flow(JComponent... components) {
+	public static DCPanel flow(Component... components) {
 		DCPanel panel = new DCPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		for (JComponent component : components) {
+		for (Component component : components) {
 			panel.add(component);
 		}
 		return panel;

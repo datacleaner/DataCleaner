@@ -25,16 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.actions.ExitActions;
-import org.eobjects.datacleaner.user.DCConfiguration;
-import org.eobjects.datacleaner.user.UserPreferences;
-import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
-import org.eobjects.datacleaner.windows.MainWindow;
-import org.eobjects.datacleaner.windows.WelcomeWindow;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Singleton class that manages events related to opening and closing of windows
@@ -46,12 +38,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class WindowManager {
 
-	private static final Logger logger = LoggerFactory.getLogger(WindowManager.class);
-
 	private static final WindowManager instance = new WindowManager();
 
 	private final List<AbstractWindow> _windows = new ArrayList<AbstractWindow>();
-	private final UserPreferences _userPreferences = UserPreferences.getInstance();
 	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();
 
 	public static WindowManager getInstance() {
@@ -75,25 +64,8 @@ public final class WindowManager {
 
 	public void onDispose(AbstractWindow window) {
 		_windows.remove(window);
-
-		// if the disposed window was not a dialog and if it's the last window
-		// (except the main window), then show the welcome window.
-		if (!(window instanceof AbstractDialog) && !(window instanceof WelcomeWindow)) {
-			if (isOnlyMainWindowShowing()) {
-				try {
-					AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-					if (_userPreferences.isWelcomeDialogShownOnStartup()) {
-						new WelcomeWindow(configuration).setVisible(true);
-					}
-				} catch (IllegalStateException e) {
-					// this will only happen during test and mock window runs
-					logger.warn("Could not determine if welcome window should be shown", e);
-				}
-			}
-		}
-
 		notifyListeners();
-		
+
 		if (_windows.isEmpty()) {
 			ExitActions.exit();
 		}
@@ -110,14 +82,5 @@ public final class WindowManager {
 		_windows.add(window);
 
 		notifyListeners();
-	}
-
-	public boolean isOnlyMainWindowShowing() {
-		for (AbstractWindow window : _windows) {
-			if (!(window instanceof MainWindow)) {
-				return false;
-			}
-		}
-		return true;
 	}
 }

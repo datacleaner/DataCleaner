@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -376,19 +375,8 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 
 		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description
 				+ "</html>", 0, 0, imagePath);
-		button.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				Point locationOnScreen = button.getLocationOnScreen();
-				popupBubble.setLocationOnScreen(locationOnScreen.x + 15, locationOnScreen.y + button.getHeight());
-				popupBubble.show();
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				popupBubble.hide();
-			}
-		});
+		popupBubble.attachTo(button);
+		
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {

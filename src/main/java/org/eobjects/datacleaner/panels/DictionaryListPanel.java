@@ -19,20 +19,19 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Collection;
 
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
@@ -41,14 +40,16 @@ import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.analyzer.reference.TextBasedDictionary;
 import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
-import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
 import org.eobjects.datacleaner.windows.SimpleDictionaryDialog;
 import org.eobjects.datacleaner.windows.TextFileDictionaryDialog;
+import org.jdesktop.swingx.VerticalLayout;
 
 public class DictionaryListPanel extends DCPanel implements DictionaryChangeListener {
 
@@ -58,87 +59,101 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	private final AnalyzerBeansConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
+	private final DCGlassPane _glassPane;
 
-	public DictionaryListPanel(AnalyzerBeansConfiguration configuration) {
+	public DictionaryListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		_glassPane = glassPane;
 		_configuration = configuration;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addDictionaryListener(this);
+
 		_listPanel = new DCPanel();
-
-		JToolBar toolBar = WidgetFactory.createToolBar();
-
-		final JButton addButton = new JButton("New dictionary", imageManager.getImageIcon("images/actions/new.png"));
-		addButton.setToolTipText("New dictionary");
-		addButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JPopupMenu popup = new JPopupMenu();
-
-				final JMenuItem datastoreDictionaryMenuItem = WidgetFactory.createMenuItem("Datastore dictionary",
-						imageManager.getImageIcon("images/model/datastore.png", IconUtils.ICON_SIZE_SMALL));
-				datastoreDictionaryMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog()).setVisible(true);
-					}
-				});
-
-				final JMenuItem textFileDictionaryMenuItem = WidgetFactory.createMenuItem("Text file dictionary",
-						imageManager.getImageIcon("images/datastore-types/csv.png", IconUtils.ICON_SIZE_SMALL));
-				textFileDictionaryMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						new TextFileDictionaryDialog(_catalog).setVisible(true);
-					}
-				});
-
-				final JMenuItem simpleDictionaryMenuItem = WidgetFactory.createMenuItem("Simple dictionary",
-						imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL));
-				simpleDictionaryMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						new SimpleDictionaryDialog(_catalog).setVisible(true);
-					}
-				});
-
-				popup.add(datastoreDictionaryMenuItem);
-				popup.add(textFileDictionaryMenuItem);
-				popup.add(simpleDictionaryMenuItem);
-
-				popup.show(addButton, 0, addButton.getHeight());
-			}
-		});
-		toolBar.add(addButton);
-
-		toolBar.add(Box.createHorizontalGlue());
-		toolBar.add(new HelpIcon("<b>Dictionaries</b><br>"
-				+ "A dictionary is a set of values that grouped together represent a named set of values,"
-				+ "for example valid values or blacklisted values for a given type of data.<br>"
-				+ "Dictionaries can be used throughout DataCleaner for filtering, matching and more."));
-		toolBar.add(Box.createHorizontalStrut(4));
+		_listPanel.setLayout(new VerticalLayout(4));
 
 		updateComponents();
 
-		setLayout(new BorderLayout());
-		add(toolBar, BorderLayout.NORTH);
-		add(_listPanel, BorderLayout.CENTER);
+		final DCLabel newDictionariesLabel = DCLabel.dark("Create new dictionary:");
+		newDictionariesLabel.setFont(WidgetUtils.FONT_HEADER);
+
+		final DCLabel existingDictionariesLabel = DCLabel.dark("Existing dictionaries:");
+		existingDictionariesLabel.setFont(WidgetUtils.FONT_HEADER);
+
+		setLayout(new VerticalLayout(10));
+		add(newDictionariesLabel);
+		add(createNewDictionariesPanel());
+		add(Box.createVerticalStrut(10));
+		add(existingDictionariesLabel);
+		setBorder(new EmptyBorder(10, 10, 10, 0));
+		add(_listPanel);
+	}
+
+	private DCPanel createNewDictionariesPanel() {
+
+		final JButton textFileDictionaryButton = createButton("images/datastore-types/csv.png",
+				"<html><b>Text file dictionary</b><br/>A dictionary based on a text file on your filesystem.</html>");
+		textFileDictionaryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new TextFileDictionaryDialog(_catalog).setVisible(true);
+			}
+		});
+
+		final JButton simpleDictionaryButton = createButton("images/actions/edit.png",
+				"<html><b>Simple dictionary</b><br/>A dictionary written and stored directly in DataCleaner.</html>");
+		simpleDictionaryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new SimpleDictionaryDialog(_catalog).setVisible(true);
+			}
+		});
+
+		final JButton datastoreDictionaryButton = createButton("images/model/datastore.png",
+				"<html><b>Datastore dictionary</b><br/>Dictionary based on a column in a datastore.</html>");
+		datastoreDictionaryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog()).setVisible(true);
+			}
+		});
+
+		final HelpIcon helpIcon = new HelpIcon("<b>Dictionaries</b><br>"
+				+ "A dictionary is a set of values that grouped together represent a named set of values,"
+				+ "for example valid values or blacklisted values for a given type of data.<br>"
+				+ "Dictionaries can be used throughout DataCleaner for filtering, matching and more.");
+
+		final DCPanel panel = DCPanel.flow(textFileDictionaryButton, simpleDictionaryButton, datastoreDictionaryButton,
+				Box.createHorizontalStrut(100), helpIcon);
+		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+		return panel;
+	}
+
+	private JButton createButton(String imagePath, String description) {
+		JButton button = new JButton(imageManager.getImageIcon(imagePath));
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.setBorder(null);
+		button.setOpaque(false);
+
+		DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
+		popupBubble.attachTo(button);
+
+		return button;
 	}
 
 	private void updateComponents() {
 		_listPanel.removeAll();
 
-		String[] names = _catalog.getDictionaryNames();
+		final String[] names = _catalog.getDictionaryNames();
 		Arrays.sort(names);
 
-		Icon icon = imageManager.getImageIcon("images/model/dictionary.png", IconUtils.ICON_SIZE_SMALL);
+		final Icon icon = imageManager.getImageIcon("images/model/dictionary.png");
 
-		int row = 0;
 		for (final String name : names) {
-
 			final Dictionary dictionary = _catalog.getDictionary(name);
 
-			final JLabel dictLabel = new JLabel(name, icon, JLabel.LEFT);
+			final DCLabel dictLabel = DCLabel
+					.dark("<html><b>" + name + "</b><br/>" + getDescription(dictionary) + "</html>");
+			dictLabel.setIcon(icon);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit dictionary");
@@ -187,17 +202,43 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				}
 			});
 
-			WidgetUtils.addToGridBag(dictLabel, _listPanel, 0, row, 1.0, 0.0);
-
-			if (_catalog.isDictionaryMutable(name)) {
-				WidgetUtils.addToGridBag(editButton, _listPanel, 1, row);
-				WidgetUtils.addToGridBag(removeButton, _listPanel, 2, row);
+			if (!_catalog.isDictionaryMutable(name)) {
+				editButton.setEnabled(false);
+				removeButton.setEnabled(false);
 			}
 
-			row++;
+			final DCPanel dictionaryPanel = new DCPanel();
+			dictionaryPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+			WidgetUtils.addToGridBag(dictLabel, dictionaryPanel, 0, 0, 1.0, 0.0);
+			WidgetUtils.addToGridBag(editButton, dictionaryPanel, 1, 0, GridBagConstraints.EAST);
+			WidgetUtils.addToGridBag(removeButton, dictionaryPanel, 2, 0, GridBagConstraints.EAST);
+			_listPanel.add(dictionaryPanel);
 		}
 
 		updateUI();
+	}
+
+	private String getDescription(Dictionary dictionary) {
+		if (dictionary instanceof TextBasedDictionary) {
+			return ((TextBasedDictionary) dictionary).getFilename();
+		} else if (dictionary instanceof DatastoreDictionary) {
+			DatastoreDictionary datastoreDictionary = (DatastoreDictionary) dictionary;
+			return datastoreDictionary.getDatastoreName() + ": " + datastoreDictionary.getQualifiedColumnName();
+		} else if (dictionary instanceof SimpleDictionary) {
+			Collection<String> values = dictionary.getValues().getValues();
+			StringBuilder sb = new StringBuilder();
+			for (String value : values) {
+				if (sb.length() > 0) {
+					sb.append(",");
+				}
+				sb.append(value);
+				if (sb.length() > 20) {
+					break;
+				}
+			}
+			return sb.toString();
+		}
+		return "";
 	}
 
 	@Override

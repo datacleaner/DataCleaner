@@ -93,19 +93,6 @@ public class OptionsDialog extends AbstractWindow {
 	}
 
 	private DCPanel getGeneralTab() {
-
-		final JCheckBox welcomeDialogShownOnStartupCheckBox = new JCheckBox("Display welcome dialog on start-up?");
-		welcomeDialogShownOnStartupCheckBox.setSelected(userPreferences.isWelcomeDialogShownOnStartup());
-		welcomeDialogShownOnStartupCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				userPreferences.setWelcomeDialogShownOnStartup(welcomeDialogShownOnStartupCheckBox.isSelected());
-			}
-		});
-
-		final DCPanel userInterfacePanel = new DCPanel().setTitledBorder("User interface");
-		userInterfacePanel.add(welcomeDialogShownOnStartupCheckBox);
-
 		final String username = userPreferences.getUsername();
 		final JXTextField usernameTextField = WidgetFactory.createTextField();
 		usernameTextField.setText(username);
@@ -144,7 +131,6 @@ public class OptionsDialog extends AbstractWindow {
 
 		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		panel.setLayout(new VerticalLayout(4));
-		panel.add(userInterfacePanel);
 		panel.add(userRegistrationPanel);
 		panel.add(directoriesPanel);
 

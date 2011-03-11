@@ -34,7 +34,6 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -73,7 +72,6 @@ public class WelcomeWindow extends AbstractWindow {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final AnalyzerBeansConfiguration _configuration;
-	private final JCheckBox _showOnStartupCheckBox;
 
 	private final ActionListener _skipActionListener = new ActionListener() {
 		@Override
@@ -86,7 +84,6 @@ public class WelcomeWindow extends AbstractWindow {
 	private final ActionListener _closeActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			userPreferences.setWelcomeDialogShownOnStartup(_showOnStartupCheckBox.isSelected());
 			WelcomeWindow.this.dispose();
 		}
 	};
@@ -99,11 +96,6 @@ public class WelcomeWindow extends AbstractWindow {
 	public WelcomeWindow(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
-		_showOnStartupCheckBox = new JCheckBox("Show this dialog on startup");
-		_showOnStartupCheckBox.setOpaque(false);
-		_showOnStartupCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		_showOnStartupCheckBox.setVisible(false);
-		_showOnStartupCheckBox.setSelected(userPreferences.isWelcomeDialogShownOnStartup());
 		_nextStepButton = WidgetFactory.createButton(null);
 		updateDialogState(true);
 	}
@@ -133,7 +125,6 @@ public class WelcomeWindow extends AbstractWindow {
 			_nextStepButton.setIcon(imageManager.getImageIcon("images/actions/skip.png"));
 			_nextStepButton.removeActionListener(_skipActionListener);
 			_nextStepButton.addActionListener(_closeActionListener);
-			_showOnStartupCheckBox.setVisible(true);
 		}
 		_recentJobsPanel.setVisible(!_showLoginPanel);
 	}
@@ -292,7 +283,6 @@ public class WelcomeWindow extends AbstractWindow {
 		toolBar.add(bloggerButton);
 		toolBar.add(linkedInButton);
 		toolBar.add(WidgetFactory.createToolBarSeparator());
-		toolBar.add(_showOnStartupCheckBox);
 		toolBar.add(_nextStepButton);
 
 		return toolBar;

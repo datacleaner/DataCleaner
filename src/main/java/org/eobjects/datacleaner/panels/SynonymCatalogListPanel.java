@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -33,6 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -48,6 +48,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.DatastoreSynonymCatalogDialog;
 import org.eobjects.datacleaner.windows.TextFileSynonymCatalogDialog;
+import org.jdesktop.swingx.VerticalLayout;
 
 public final class SynonymCatalogListPanel extends DCPanel implements SynonymCatalogChangeListener {
 
@@ -64,6 +65,8 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		_catalog.addSynonymCatalogListener(this);
 		_listPanel = new DCPanel();
 		_datastoreCatalog = configuration.getDatastoreCatalog();
+		_listPanel.setLayout(new VerticalLayout(4));
+		_listPanel.setBorder(new EmptyBorder(4, 10, 0, 0));
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 
@@ -111,9 +114,9 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 		updateComponents();
 
-		setLayout(new BorderLayout());
-		add(toolBar, BorderLayout.NORTH);
-		add(_listPanel, BorderLayout.CENTER);
+		setLayout(new VerticalLayout(10));
+		add(toolBar);
+		add(_listPanel);
 	}
 
 	private void updateComponents() {

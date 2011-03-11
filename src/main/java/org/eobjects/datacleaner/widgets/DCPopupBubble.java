@@ -20,6 +20,10 @@
 package org.eobjects.datacleaner.widgets;
 
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JComponent;
 
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -60,6 +64,9 @@ public class DCPopupBubble {
 	private void initLocation() {
 		Point locationOnScreen = _glassPane.getLocationOnScreen();
 		int x = _xOnScreen - locationOnScreen.x - 40;
+		if (x < 0) {
+			x = 0;
+		}
 		int y = _yOnScreen - locationOnScreen.y;
 		_panel.setLocation(x, y);
 	}
@@ -81,5 +88,21 @@ public class DCPopupBubble {
 	public void setLocationOnScreen(int x, int y) {
 		_xOnScreen = x;
 		_yOnScreen = y;
+	}
+
+	public void attachTo(final JComponent component) {
+		component.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				Point locationOnScreen = component.getLocationOnScreen();
+				DCPopupBubble.this.setLocationOnScreen(locationOnScreen.x + 15, locationOnScreen.y + component.getHeight());
+				DCPopupBubble.this.show();
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				DCPopupBubble.this.hide();
+			}
+		});
 	}
 }

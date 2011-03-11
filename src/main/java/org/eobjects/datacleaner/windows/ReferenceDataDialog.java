@@ -28,9 +28,11 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DictionaryListPanel;
 import org.eobjects.datacleaner.panels.StringPatternListPanel;
@@ -49,20 +51,33 @@ public class ReferenceDataDialog extends AbstractDialog {
 	private final CloseableTabbedPane _tabbedPane;
 
 	public ReferenceDataDialog() {
+		super();
+		final DCGlassPane glassPane = new DCGlassPane(this);
 
 		_tabbedPane = new CloseableTabbedPane();
+
+		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration);
+		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(configuration);
+		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(configuration);
+
 		_tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
-				new DictionaryListPanel(configuration));
+				scrolleable(dictionaryListPanel));
 		_tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage("images/model/synonym.png")),
-				new SynonymCatalogListPanel(configuration));
+				scrolleable(synonymCatalogListPanel));
 		_tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage("images/model/stringpattern.png")),
-				new StringPatternListPanel(configuration));
+				scrolleable(stringPatternListPanel));
 
 		_tabbedPane.setUnclosableTab(0);
 		_tabbedPane.setUnclosableTab(1);
 		_tabbedPane.setUnclosableTab(2);
 
-		_tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 300));
+		_tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 400));
+	}
+
+	private JComponent scrolleable(JComponent comp) {
+		JScrollPane scroll = WidgetUtils.scrolleable(comp);
+		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		return scroll;
 	}
 
 	public void selectDictionariesTab() {

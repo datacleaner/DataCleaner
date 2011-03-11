@@ -157,6 +157,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getFilterChangeListeners().add(this);
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 
+		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
+		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
+		_addTransformerButton = new JButton("Add transformer", imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
+		_addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
+		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
+
 		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
@@ -196,12 +202,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_tabbedPane.setUnclosableTab(FILTERS_TAB);
 
 		_tabbedPane.addSeparator();
-
-		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
-		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
-		_addTransformerButton = new JButton("Add transformer", imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
-		_addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
-		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 
 		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder);
 		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
@@ -270,8 +270,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	}
 
 	private void updateStatusLabel() {
+		boolean success = false;
 		try {
 			if (_analysisJobBuilder.isConfigured(true)) {
+				success = true;
 				_statusLabel.setText("Job is correctly configured");
 				_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
 			} else {
@@ -294,6 +296,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			_statusLabel.setText("Job error status: " + errorMessage);
 			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
 		}
+		_runButton.setEnabled(success);
 	}
 
 	public String getStatusLabelText() {
@@ -489,7 +492,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_visualizeButton.setEnabled(everythingEnabled);
 		_addTransformerButton.setEnabled(everythingEnabled);
 		_addAnalyzerButton.setEnabled(everythingEnabled);
-		_runButton.setEnabled(everythingEnabled);
 	}
 
 	@Override
@@ -498,34 +500,31 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	}
 
 	@Override
-	public void tabClosing(TabCloseEvent ev) {
-		int tabIndex = ev.getClosedTab();
-		if (tabIndex > 3) {
-			Component panel = _tabbedPane.getComponent(tabIndex);
+	public void tabClosed(TabCloseEvent ev) {
+		Component panel = ev.getTabContents();
 
-			if (panel != null) {
-				if (panel instanceof RowProcessingAnalyzerJobBuilderPanel) {
-					for (Iterator<RowProcessingAnalyzerJobBuilderPanel> it = _rowProcessingTabPanels.values().iterator(); it
-							.hasNext();) {
-						RowProcessingAnalyzerJobBuilderPanel analyzerPanel = it.next();
-						if (analyzerPanel == panel) {
-							_analysisJobBuilder.removeAnalyzer(analyzerPanel.getAnalyzerJobBuilder());
-							return;
-						}
-					}
-				} else if (panel instanceof TransformerJobBuilderPanel) {
-					for (Iterator<TransformerJobBuilderPanel> it = _transformerTabPanels.values().iterator(); it.hasNext();) {
-						TransformerJobBuilderPanel transformerPanel = it.next();
-						if (transformerPanel == panel) {
-							_analysisJobBuilder.removeTransformer(transformerPanel.getTransformerJobBuilder());
-							return;
-						}
+		if (panel != null) {
+			if (panel instanceof RowProcessingAnalyzerJobBuilderPanel) {
+				for (Iterator<RowProcessingAnalyzerJobBuilderPanel> it = _rowProcessingTabPanels.values().iterator(); it
+						.hasNext();) {
+					RowProcessingAnalyzerJobBuilderPanel analyzerPanel = it.next();
+					if (analyzerPanel == panel) {
+						_analysisJobBuilder.removeAnalyzer(analyzerPanel.getAnalyzerJobBuilder());
+						return;
 					}
 				}
-				// TODO also handle exploring analyzers
+			} else if (panel instanceof TransformerJobBuilderPanel) {
+				for (Iterator<TransformerJobBuilderPanel> it = _transformerTabPanels.values().iterator(); it.hasNext();) {
+					TransformerJobBuilderPanel transformerPanel = it.next();
+					if (transformerPanel == panel) {
+						_analysisJobBuilder.removeTransformer(transformerPanel.getTransformerJobBuilder());
+						return;
+					}
+				}
 			}
-			logger.warn("Could not handle removal of tab {}, containing {}", tabIndex, panel);
+			// TODO also handle exploring analyzers
 		}
+		logger.warn("Could not handle removal of tab {}, containing {}", ev.getTabIndex(), panel);
 	}
 
 	@Override

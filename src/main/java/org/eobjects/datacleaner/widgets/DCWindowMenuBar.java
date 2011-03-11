@@ -53,14 +53,15 @@ public class DCWindowMenuBar extends JMenuBar {
 	public DCWindowMenuBar(AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
-		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job", "images/actions/new_analysis_job.png");
+		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
+				"images/actions/new_analysis_job.png");
 		newJobMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new AnalysisJobBuilderWindow(_configuration).setVisible(true);
 			}
 		});
-		
+
 		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job...", "images/actions/open.png");
 		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
 
@@ -71,6 +72,13 @@ public class DCWindowMenuBar extends JMenuBar {
 				ExitActions.showExitDialog();
 			}
 		});
+
+		final JMenuItem dictionariesMenuItem = WidgetFactory
+				.createMenuItem("Dictionaries...", "images/model/dictionary.png");
+		final JMenuItem synonymCatalogsMenuItem = WidgetFactory.createMenuItem("Synonym catalogs...",
+				"images/model/synonym.png");
+		final JMenuItem stringPatternsMenuItem = WidgetFactory.createMenuItem("String patterns...",
+				"images/model/stringpattern.png");
 
 		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options...", "images/menu/options.png");
 		optionsMenuItem.addActionListener(new ActionListener() {
@@ -98,6 +106,11 @@ public class DCWindowMenuBar extends JMenuBar {
 		fileMenu.add(newJobMenuItem);
 		fileMenu.add(openJobMenuItem);
 		fileMenu.add(exitMenuItem);
+
+		final JMenu referenceDataMenu = WidgetFactory.createMenu("Reference data", 'R');
+		referenceDataMenu.add(dictionariesMenuItem);
+		referenceDataMenu.add(synonymCatalogsMenuItem);
+		referenceDataMenu.add(stringPatternsMenuItem);
 
 		final JMenu windowMenu = WidgetFactory.createMenu("Window", 'W');
 		windowMenu.add(optionsMenuItem);
@@ -134,6 +147,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		helpMenu.add(aboutMenuItem);
 
 		add(fileMenu);
+		add(referenceDataMenu);
 		add(windowMenu);
 		add(helpMenu);
 	}

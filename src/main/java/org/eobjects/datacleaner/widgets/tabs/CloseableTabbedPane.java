@@ -135,19 +135,20 @@ public final class CloseableTabbedPane extends JTabbedPane {
 		_closeListeners.remove(lis);
 	}
 
-	public void closeTab(int tab) {
+	public void closeTab(int tabIndex) {
+		Component component = getComponent(tabIndex);
+		remove(tabIndex);
+
 		if (!_closeListeners.isEmpty()) {
-			TabCloseEvent ev = new TabCloseEvent(this, tab);
+			TabCloseEvent ev = new TabCloseEvent(this, tabIndex, component);
 			for (TabCloseListener l : _closeListeners) {
 				try {
-					l.tabClosing(ev);
+					l.tabClosed(ev);
 				} catch (Exception ex) {
 					_logger.error(ex.toString(), ex);
 				}
 			}
 		}
-
-		remove(tab);
 	}
 
 	@Override
@@ -278,7 +279,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	public void setTabBorderColor(Color tabBorderColor) {
 		_tabBorderColor = tabBorderColor;
 	}
-	
+
 	public Rectangle getTabBounds(int tabIndex) {
 		return getUI().getTabBounds(this, tabIndex);
 	}

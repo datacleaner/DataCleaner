@@ -59,6 +59,5 @@ public class JobBuilderTabTextActionListener extends AbstractJobBuilderPopupList
 
 	@Override
 	protected void onRemoved() {
-		_tabbedPane.remove(_tabIndex);
 	}
 }

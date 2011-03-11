@@ -219,4 +219,10 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			}
 		});
 	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_catalog.removeDictionaryListener(this);
+	}
 }

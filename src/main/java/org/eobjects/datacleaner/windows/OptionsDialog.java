@@ -363,11 +363,6 @@ public class OptionsDialog extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
-		panel.setLayout(new BorderLayout());
-		panel.add(new DCBannerPanel("Options"), BorderLayout.NORTH);
-		panel.add(_tabbedPane, BorderLayout.CENTER);
-
 		final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
 		closeButton.addActionListener(new ActionListener() {
 			@Override
@@ -384,8 +379,11 @@ public class OptionsDialog extends AbstractWindow {
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
+		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+		panel.setLayout(new BorderLayout());
+		panel.add(new DCBannerPanel("Options"), BorderLayout.NORTH);
+		panel.add(_tabbedPane, BorderLayout.CENTER);
 		panel.add(toolBarPanel, BorderLayout.SOUTH);
-
 		panel.setPreferredSize(500, 500);
 		return panel;
 	}

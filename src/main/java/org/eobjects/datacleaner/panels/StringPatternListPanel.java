@@ -230,4 +230,9 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		});
 	}
 
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_catalog.removeStringPatternListener(this);
+	}
 }

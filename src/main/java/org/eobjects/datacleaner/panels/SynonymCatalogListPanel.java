@@ -198,4 +198,10 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			}
 		});
 	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_catalog.removeSynonymCatalogListener(this);
+	}
 }

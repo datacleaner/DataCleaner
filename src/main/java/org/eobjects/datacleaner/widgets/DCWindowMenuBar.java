@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.AboutDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
@@ -73,14 +74,39 @@ public class DCWindowMenuBar extends JMenuBar {
 			}
 		});
 
-		final JMenuItem dictionariesMenuItem = WidgetFactory
-				.createMenuItem("Dictionaries...", "images/model/dictionary.png");
-		final JMenuItem synonymCatalogsMenuItem = WidgetFactory.createMenuItem("Synonym catalogs...",
-				"images/model/synonym.png");
-		final JMenuItem stringPatternsMenuItem = WidgetFactory.createMenuItem("String patterns...",
-				"images/model/stringpattern.png");
+		final JMenuItem dictionariesMenuItem = WidgetFactory.createMenuItem("Dictionaries", "images/model/dictionary.png");
+		dictionariesMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog();
+				referenceDataDialog.selectDictionariesTab();
+				referenceDataDialog.setVisible(true);
+			}
+		});
 
-		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options...", "images/menu/options.png");
+		final JMenuItem synonymCatalogsMenuItem = WidgetFactory.createMenuItem("Synonyms", "images/model/synonym.png");
+		synonymCatalogsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog();
+				referenceDataDialog.selectSynonymsTab();
+				referenceDataDialog.setVisible(true);
+			}
+		});
+
+		final JMenuItem stringPatternsMenuItem = WidgetFactory.createMenuItem("String patterns",
+				"images/model/stringpattern.png");
+		stringPatternsMenuItem.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog();
+				referenceDataDialog.selectStringPatternsTab();
+				referenceDataDialog.setVisible(true);
+			}
+		});
+
+		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options", "images/menu/options.png");
 		optionsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

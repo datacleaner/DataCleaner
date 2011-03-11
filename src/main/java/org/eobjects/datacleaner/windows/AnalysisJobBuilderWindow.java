@@ -60,6 +60,7 @@ import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
 import org.eobjects.datacleaner.actions.HideTabTextActionListener;
@@ -271,31 +272,38 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	private void updateStatusLabel() {
 		boolean success = false;
-		try {
-			if (_analysisJobBuilder.isConfigured(true)) {
-				success = true;
-				_statusLabel.setText("Job is correctly configured");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
-			} else {
-				_statusLabel.setText("Job is not correctly configured");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+
+		if (_datastore == null) {
+			_statusLabel.setText("Welcome to DataCleaner " + Main.VERSION);
+			_statusLabel.setIcon(imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_SMALL));
+		} else {
+			try {
+				if (_analysisJobBuilder.isConfigured(true)) {
+					success = true;
+					_statusLabel.setText("Job is correctly configured");
+					_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+				} else {
+					_statusLabel.setText("Job is not correctly configured");
+					_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+				}
+			} catch (Exception ex) {
+				logger.debug("Job not correctly configured", ex);
+				final String errorMessage;
+				if (ex instanceof UnconfiguredConfiguredPropertyException) {
+					ConfiguredPropertyDescriptor configuredProperty = ((UnconfiguredConfiguredPropertyException) ex)
+							.getConfiguredProperty();
+					AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ((UnconfiguredConfiguredPropertyException) ex)
+							.getBeanJobBuilder();
+					errorMessage = "Property '" + configuredProperty.getName() + "' in "
+							+ LabelUtils.getLabel(beanJobBuilder) + " is not set!";
+				} else {
+					errorMessage = ex.getMessage();
+				}
+				_statusLabel.setText("Job error status: " + errorMessage);
+				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
 			}
-		} catch (Exception ex) {
-			logger.debug("Job not correctly configured", ex);
-			final String errorMessage;
-			if (ex instanceof UnconfiguredConfiguredPropertyException) {
-				ConfiguredPropertyDescriptor configuredProperty = ((UnconfiguredConfiguredPropertyException) ex)
-						.getConfiguredProperty();
-				AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ((UnconfiguredConfiguredPropertyException) ex)
-						.getBeanJobBuilder();
-				errorMessage = "Property '" + configuredProperty.getName() + "' in " + LabelUtils.getLabel(beanJobBuilder)
-						+ " is not set!";
-			} else {
-				errorMessage = ex.getMessage();
-			}
-			_statusLabel.setText("Job error status: " + errorMessage);
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
 		}
+
 		_runButton.setEnabled(success);
 	}
 

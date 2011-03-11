@@ -38,8 +38,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.AccessDatastore;
@@ -140,12 +140,6 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		add(buttonPanel);
 	}
 
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		_datastoreCatalog.removeListener(this);
-	}
-
 	private void updateDatastores() {
 		_existingDatastoresPanel.removeAll();
 		_datastoreNames.clear();
@@ -201,7 +195,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		final JButton removeButton = createRemoveButton(datastore);
 
 		final DCPanel panel = new DCPanel();
-		panel.setBorder(new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
+		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 
 		WidgetUtils.addToGridBag(DCPanel.flow(checkBox, datastoreNameLabel), panel, 0, 0, GridBagConstraints.WEST, 1.0, 1.0);
 		WidgetUtils.addToGridBag(editButton, panel, 1, 0, GridBagConstraints.EAST);
@@ -340,7 +334,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 
 	private DCPanel createNewDatastorePanel() {
 		DCPanel panel = new DCPanel();
-		panel.setBorder(new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
+		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		panel.add(createNewDatastoreButton("CSV file", "Comma-separated values (CSV) file (or file with other separators)",
 				"images/datastore-types/csv.png", CsvDatastoreDialog.class));
@@ -418,12 +412,28 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 	}
 
 	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_datastoreCatalog.removeListener(this);
+	}
+
+	@Override
 	public void onAdd(Datastore datastore) {
-		updateDatastores();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateDatastores();
+			}
+		});
 	}
 
 	@Override
 	public void onRemove(Datastore datastore) {
-		updateDatastores();
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateDatastores();
+			}
+		});
 	}
 }

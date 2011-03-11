@@ -36,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -206,7 +207,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder);
 		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
-		_leftPanel.setCollapsed(datastore == null);
+		_leftPanel.setVisible(false);
+		_leftPanel.setCollapsed(true);
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 
 		setDatastore(datastore);
@@ -239,6 +241,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	}
 
 	private void displaySourceColumnsList() {
+		_leftPanel.setVisible(true);
 		if (_leftPanel.isCollapsed()) {
 			_leftPanel.setCollapsed(false);
 		}
@@ -254,6 +257,14 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				if (!_leftPanel.isCollapsed()) {
 					_leftPanel.setCollapsed(true);
 				}
+				Timer timer = new Timer(500, new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						_leftPanel.setVisible(false);
+					}
+				});
+				timer.setRepeats(false);
+				timer.start();
 				final SelectDatastorePanel selectDatastoresPanel = new SelectDatastorePanel(_configuration, this, _glassPane);
 				selectDatastoresPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 

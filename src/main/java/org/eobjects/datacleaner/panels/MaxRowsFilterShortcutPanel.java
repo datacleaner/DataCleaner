@@ -29,7 +29,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
@@ -119,7 +118,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 		add(_textField);
 		add(_suffixLabel);
 
-		setBorder(new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
+		setBorder(WidgetUtils.BORDER_LIST_ITEM);
 	}
 
 	@Override

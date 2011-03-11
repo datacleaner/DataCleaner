@@ -36,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -143,12 +144,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				datastoreName));
 	}
 
-	private AnalysisJobBuilderWindow(final AnalyzerBeansConfiguration configuration, final AnalysisJobBuilder ajb,
-			final Datastore datastore) {
+	private AnalysisJobBuilderWindow(final AnalyzerBeansConfiguration configuration,
+			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore) {
 		super();
 		_configuration = configuration;
 		setJMenuBar(new DCWindowMenuBar(_configuration));
-		_analysisJobBuilder = ajb;
+		_analysisJobBuilder = analysisJobBuilder;
 		_glassPane = new DCGlassPane(this);
 
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
@@ -208,8 +209,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 
 		setDatastore(datastore);
-
-		updateStatusLabel();
 	}
 
 	public void setDatastore(final Datastore datastore) {
@@ -229,10 +228,13 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_schemaTreePanel.setDatastore(datastore);
 
 		if (datastore == null) {
+			_analysisJobBuilder.reset();
 			displayDatastoreSelection();
 		} else {
 			displaySourceColumnsList();
 		}
+
+		updateStatusLabel();
 	}
 
 	private void displaySourceColumnsList() {
@@ -251,10 +253,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				if (!_leftPanel.isCollapsed()) {
 					_leftPanel.setCollapsed(true);
 				}
+				final SelectDatastorePanel selectDatastoresPanel = new SelectDatastorePanel(_configuration, this, _glassPane);
+				selectDatastoresPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
-				DCPanel panel = (DCPanel) _tabbedPane.getComponentAt(SOURCE_TAB);
+				final DCPanel panel = (DCPanel) _tabbedPane.getComponentAt(SOURCE_TAB);
 				panel.removeAll();
-				panel.add(new SelectDatastorePanel(_configuration, this, _glassPane));
+				panel.add(selectDatastoresPanel);
 				panel.updateUI();
 			}
 		}
@@ -300,16 +304,25 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	protected boolean onWindowClosing() {
 		boolean windowClosing = super.onWindowClosing();
 		if (windowClosing) {
-			_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
-			_analysisJobBuilder.getTransformerChangeListeners().remove(this);
-			_analysisJobBuilder.getFilterChangeListeners().remove(this);
-			_analysisJobBuilder.getSourceColumnListeners().remove(this);
-			_analysisJobBuilder.close();
-			if (_dataContextProvider != null) {
-				_dataContextProvider.close();
+			if (_datastore != null) {
+				resetJob();
+				return false;
+			} else {
+				_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
+				_analysisJobBuilder.getTransformerChangeListeners().remove(this);
+				_analysisJobBuilder.getFilterChangeListeners().remove(this);
+				_analysisJobBuilder.getSourceColumnListeners().remove(this);
+				_analysisJobBuilder.close();
+				if (_dataContextProvider != null) {
+					_dataContextProvider.close();
+				}
 			}
 		}
 		return windowClosing;
+	}
+
+	private void resetJob() {
+		setDatastore(null);
 	}
 
 	public void setJobFilename(String jobFilename) {
@@ -544,7 +557,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onRemove(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		_rowProcessingTabPanels.remove(analyzerJobBuilder);
+		RowProcessingAnalyzerJobBuilderPanel panel = _rowProcessingTabPanels.remove(analyzerJobBuilder);
+		_tabbedPane.remove(panel);
 		updateStatusLabel();
 	}
 
@@ -564,7 +578,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
-		_transformerTabPanels.remove(transformerJobBuilder);
+		TransformerJobBuilderPanel panel = _transformerTabPanels.remove(transformerJobBuilder);
+		_tabbedPane.remove(panel);
 		updateStatusLabel();
 	}
 

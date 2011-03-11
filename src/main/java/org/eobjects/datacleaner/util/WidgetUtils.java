@@ -197,6 +197,10 @@ public final class WidgetUtils {
 		addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
 	}
 
+	public static void addToGridBag(Component comp, JPanel panel, int x, int y, int anchor, double weightx, double weighty) {
+		addToGridBag(comp, panel, x, y, 1, 1, anchor, DEFAULT_PADDING, weightx, weighty);
+	}
+
 	/**
 	 * Adds a component to a panel with a grid bag layout
 	 * 

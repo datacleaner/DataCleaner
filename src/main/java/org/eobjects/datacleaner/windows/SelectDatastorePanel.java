@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -36,14 +37,21 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
+import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DbaseDatastore;
+import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.OdbDatastore;
+import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -52,6 +60,7 @@ import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
@@ -85,7 +94,6 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 
 		_datastoreCatalog.addListener(this);
 
-		setBorder(WidgetUtils.BORDER_EMPTY);
 		setLayout(new VerticalLayout(4));
 
 		final DCLabel headerLabel = DCLabel.dark("Select datastore for analysis");
@@ -189,12 +197,117 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 			}
 		});
 
+		final JButton editButton = createEditButton(datastore);
+		final JButton removeButton = createRemoveButton(datastore);
+
 		final DCPanel panel = new DCPanel();
 		panel.setBorder(new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM));
-		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		panel.add(checkBox);
-		panel.add(datastoreNameLabel);
+
+		WidgetUtils.addToGridBag(DCPanel.flow(checkBox, datastoreNameLabel), panel, 0, 0, GridBagConstraints.WEST, 1.0, 1.0);
+		WidgetUtils.addToGridBag(editButton, panel, 1, 0, GridBagConstraints.EAST);
+		WidgetUtils.addToGridBag(removeButton, panel, 2, 0, GridBagConstraints.EAST);
 		return panel;
+	}
+
+	private JButton createRemoveButton(final Datastore datastore) {
+		final String name = datastore.getName();
+		final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		removeButton.setToolTipText("Remove datastore");
+		removeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int result = JOptionPane.showConfirmDialog(SelectDatastorePanel.this,
+						"Are you sure you wish to remove the datastore '" + name + "'?", "Confirm remove",
+						JOptionPane.YES_NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) {
+					_datastoreCatalog.removeDatastore(datastore);
+				}
+			}
+		});
+		if (!_datastoreCatalog.isDatastoreMutable(name)) {
+			removeButton.setEnabled(false);
+		}
+		return removeButton;
+	}
+
+	private JButton createEditButton(final Datastore datastore) {
+		final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
+		editButton.setToolTipText("Edit datastore");
+
+		if (datastore instanceof JdbcDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JdbcDatastoreDialog dialog = new JdbcDatastoreDialog((JdbcDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof CsvDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					CsvDatastoreDialog dialog = new CsvDatastoreDialog((CsvDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof AccessDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AccessDatastoreDialog dialog = new AccessDatastoreDialog((AccessDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof ExcelDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ExcelDatastoreDialog dialog = new ExcelDatastoreDialog((ExcelDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof XmlDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					XmlDatastoreDialog dialog = new XmlDatastoreDialog((XmlDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof OdbDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					OdbDatastoreDialog dialog = new OdbDatastoreDialog((OdbDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof DbaseDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					DbaseDatastoreDialog dialog = new DbaseDatastoreDialog((DbaseDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof CompositeDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
+							_datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else {
+			editButton.setEnabled(false);
+		}
+
+		if (!_datastoreCatalog.isDatastoreMutable(datastore.getName())) {
+			editButton.setEnabled(false);
+		}
+
+		return editButton;
 	}
 
 	private String getDescription(Datastore datastore) {

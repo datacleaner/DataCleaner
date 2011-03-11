@@ -20,13 +20,16 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
@@ -41,6 +44,15 @@ public class DCPanel extends JPanel {
 	private final float _verticalAlignment;
 	private final Color _bottomColor;
 	private final Color _topColor;
+
+	public static Component flow(JComponent... components) {
+		DCPanel panel = new DCPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+		for (JComponent component : components) {
+			panel.add(component);
+		}
+		return panel;
+	}
 
 	public DCPanel() {
 		this(null, 0, 0);
@@ -127,5 +139,4 @@ public class DCPanel extends JPanel {
 		setBorder(new TitledBorder(title));
 		return this;
 	}
-
 }

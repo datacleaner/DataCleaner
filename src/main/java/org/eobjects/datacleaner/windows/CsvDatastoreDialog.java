@@ -138,11 +138,13 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 
-		_loadingIcon = new LoadingIcon();
-		_loadingIcon.setVisible(false);
 		_previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, PREVIEW_COLUMNS));
 		_previewTablePanel = _previewTable.toPanel();
 		_previewTablePanel.setBorder(new EmptyBorder(0, 10, 0, 10));
+
+		_loadingIcon = new LoadingIcon();
+		_loadingIcon.setVisible(false);
+		_loadingIcon.setPreferredSize(_previewTablePanel.getPreferredSize());
 
 		_filenameField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {

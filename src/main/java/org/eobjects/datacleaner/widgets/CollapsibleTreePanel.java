@@ -45,26 +45,27 @@ public class CollapsibleTreePanel extends DCPanel {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final JXCollapsiblePane _collapsibleTreePane;
+	private final JButton _toggleTreeViewButton;
 
 	public CollapsibleTreePanel(JComponent treeComponent) {
 		_collapsibleTreePane = new JXCollapsiblePane(JXCollapsiblePane.Direction.LEFT);
 		_collapsibleTreePane.getContentPane().setBackground(WidgetUtils.BG_COLOR_DARK);
 		_collapsibleTreePane.add(treeComponent);
 
-		final JButton toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
-		toggleTreeViewButton.setBorder(null);
-		toggleTreeViewButton.setOpaque(false);
-		toggleTreeViewButton.setContentAreaFilled(false);
-		toggleTreeViewButton.addActionListener(new ActionListener() {
+		_toggleTreeViewButton = new JButton(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
+		_toggleTreeViewButton.setBorder(null);
+		_toggleTreeViewButton.setOpaque(false);
+		_toggleTreeViewButton.setContentAreaFilled(false);
+		_toggleTreeViewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				boolean collapsed = _collapsibleTreePane.isCollapsed();
 				if (collapsed) {
-					toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
-					toggleTreeViewButton.setBorder(null);
+					_toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-collapse.png"));
+					_toggleTreeViewButton.setBorder(null);
 				} else {
-					toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
-					toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
+					_toggleTreeViewButton.setIcon(imageManager.getImageIcon("images/widgets/tree-panel-expand.png"));
+					_toggleTreeViewButton.setBorder(new EmptyBorder(0, 2, 0, 0));
 				}
 				_collapsibleTreePane.setCollapsed(!collapsed);
 			}
@@ -75,7 +76,7 @@ public class CollapsibleTreePanel extends DCPanel {
 		collapseButtonPanel.setBackground(WidgetUtils.BG_COLOR_DARK);
 		collapseButtonPanel.setLayout(new VerticalLayout(4));
 		collapseButtonPanel.setBorder(null);
-		collapseButtonPanel.add(toggleTreeViewButton);
+		collapseButtonPanel.add(_toggleTreeViewButton);
 
 		setLayout(new BorderLayout());
 		add(_collapsibleTreePane, BorderLayout.CENTER);
@@ -83,7 +84,9 @@ public class CollapsibleTreePanel extends DCPanel {
 	}
 
 	public void setCollapsed(boolean collapsed) {
-		_collapsibleTreePane.setCollapsed(collapsed);
+		if (collapsed != _collapsibleTreePane.isCollapsed()) {
+			_toggleTreeViewButton.doClick();
+		}
 	}
 
 	public boolean isCollapsed() {

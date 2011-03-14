@@ -136,8 +136,10 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
 					OptionsDialog optionsDialog = new OptionsDialog();
 					optionsDialog.selectDatabaseDriversTab();
-					optionsDialog.setVisible(true);
 					JdbcDatastoreDialog.this.dispose();
+
+					optionsDialog.setVisible(true);
+					optionsDialog.toFront();
 				}
 			}
 		});

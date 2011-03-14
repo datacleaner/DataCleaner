@@ -29,11 +29,16 @@ import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
+import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
+import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
+import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
+
+import com.mysql.jdbc.StringUtils;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
@@ -240,7 +245,21 @@ public final class IconUtils {
 
 	protected static String getDatastoreImagePath(Datastore datastore) {
 		String imagePath = GENERIC_DATASTORE_IMAGEPATH;
-		if (datastore instanceof CsvDatastore) {
+		if (datastore instanceof JdbcDatastore) {
+			JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
+			if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
+				imagePath = "images/datastore-types/orderdb.png";
+			} else {
+				String driverClass = jdbcDatastore.getDriverClass();
+				if (!StringUtils.isNullOrEmpty(driverClass)) {
+					DatabaseDriverCatalog databaseDriverCatalog = new DatabaseDriverCatalog();
+					DatabaseDriverDescriptor driver = databaseDriverCatalog.getDatabaseDriverByDriverClassName(driverClass);
+					if (driver != null) {
+						imagePath = driver.getIconImagePath();
+					}
+				}
+			}
+		} else if (datastore instanceof CsvDatastore) {
 			imagePath = CSV_IMAGEPATH;
 		} else if (datastore instanceof ExcelDatastore) {
 			imagePath = EXCEL_IMAGEPATH;

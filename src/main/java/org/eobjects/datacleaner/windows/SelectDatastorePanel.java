@@ -44,6 +44,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.AccessDatastore;
@@ -175,7 +177,12 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 	}
 
 	private Component createDatastorePanel(Datastore datastore) {
+		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
+		panel.setOpaque(false);
+
 		final Icon icon = IconUtils.getDatastoreIcon(datastore);
+		final String description = getDescription(datastore);
+
 		final JCheckBox checkBox = new JCheckBox();
 		checkBox.setOpaque(false);
 		checkBox.addActionListener(new ActionListener() {
@@ -187,14 +194,21 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 					} else {
 						c.setSelected(false);
 					}
+					c.getParent();
 				}
+			}
+		});
+		checkBox.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				panel.setOpaque(checkBox.isSelected());
+				panel.updateUI();
 			}
 		});
 		_checkBoxes.add(checkBox);
 		String datastoreName = datastore.getName();
 		_datastoreNames.add(datastoreName);
-		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>"
-				+ getDescription(datastore) + "</html>");
+		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description + "</html>");
 		datastoreNameLabel.setIconTextGap(10);
 		datastoreNameLabel.setIcon(icon);
 		datastoreNameLabel.addMouseListener(new MouseAdapter() {
@@ -207,7 +221,6 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		final JButton editButton = createEditButton(datastore);
 		final JButton removeButton = createRemoveButton(datastore);
 
-		final DCPanel panel = new DCPanel();
 		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 
 		WidgetUtils.addToGridBag(DCPanel.flow(checkBox, datastoreNameLabel), panel, 0, 0, GridBagConstraints.WEST, 1.0, 1.0);
@@ -323,10 +336,10 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		} else if (datastore instanceof JdbcDatastore) {
 			JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
 			String jdbcUrl = jdbcDatastore.getJdbcUrl();
-			if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcUrl)) {
+			String datasourceJndiUrl = jdbcDatastore.getDatasourceJndiUrl();
+			if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
 				return "DataCleaner example database";
 			}
-			String datasourceJndiUrl = jdbcDatastore.getDatasourceJndiUrl();
 			if (StringUtils.isNullOrEmpty(datasourceJndiUrl)) {
 				return jdbcUrl;
 			}

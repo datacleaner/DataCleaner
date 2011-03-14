@@ -26,13 +26,17 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eobjects.datacleaner.actions.ExitActions;
+import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
+import org.eobjects.datacleaner.windows.DCWindow;
 
 /**
  * Singleton class that manages events related to opening and closing of windows
  * in DataCleaner.
  * 
+ * @see DCWindow
  * @see AbstractWindow
+ * @see AbstractDialog
  * 
  * @author Kasper Sørensen
  */
@@ -40,7 +44,7 @@ public final class WindowManager {
 
 	private static final WindowManager instance = new WindowManager();
 
-	private final List<AbstractWindow> _windows = new ArrayList<AbstractWindow>();
+	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();
 
 	public static WindowManager getInstance() {
@@ -50,7 +54,7 @@ public final class WindowManager {
 	private WindowManager() {
 	}
 
-	public List<AbstractWindow> getWindows() {
+	public List<DCWindow> getWindows() {
 		return Collections.unmodifiableList(_windows);
 	}
 
@@ -62,7 +66,7 @@ public final class WindowManager {
 		_listeners.remove(listener);
 	}
 
-	public void onDispose(AbstractWindow window) {
+	public void onDispose(DCWindow window) {
 		_windows.remove(window);
 		notifyListeners();
 
@@ -78,7 +82,7 @@ public final class WindowManager {
 		}
 	}
 
-	public void onShow(AbstractWindow window) {
+	public void onShow(DCWindow window) {
 		_windows.add(window);
 
 		notifyListeners();

@@ -20,12 +20,14 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -42,10 +44,20 @@ public class DCGlassPane {
 
 	private final JFrame _frame;
 	private final JPanel _glassPane;
+	private final JDialog _dialog;
 
 	public DCGlassPane(JFrame frame) {
 		_frame = frame;
+		_dialog = null;
 		_glassPane = (JPanel) frame.getGlassPane();
+		_glassPane.setLayout(null);
+		_glassPane.setBackground(WidgetUtils.BG_COLOR_DARKEST);
+	}
+
+	public DCGlassPane(JDialog dialog) {
+		_frame = null;
+		_dialog = dialog;
+		_glassPane = (JPanel) dialog.getGlassPane();
 		_glassPane.setLayout(null);
 		_glassPane.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 	}
@@ -82,11 +94,25 @@ public class DCGlassPane {
 
 	public void addCentered(JComponent comp) {
 		Dimension compSize = comp.getSize();
-		Dimension totalSize = _frame.getContentPane().getSize();
+		Dimension totalSize = getContentPaneInternal().getSize();
 		int x = (totalSize.width - compSize.width) / 2;
 		int y = (totalSize.height - compSize.height) / 2;
 		comp.setLocation(x, y);
 		add(comp);
+	}
+
+	private Container getContentPaneInternal() {
+		if (_frame == null) {
+			return _dialog.getContentPane();
+		}
+		return _frame.getContentPane();
+	}
+
+	private JMenuBar getJMenuBarInternal() {
+		if (_frame == null) {
+			return _dialog.getJMenuBar();
+		}
+		return _frame.getJMenuBar();
 	}
 
 	public boolean isEmpty() {
@@ -94,10 +120,10 @@ public class DCGlassPane {
 	}
 
 	public Point getLocationOnScreen() {
-		Point contentPaneLocation = _frame.getContentPane().getLocationOnScreen();
+		Point contentPaneLocation = getContentPaneInternal().getLocationOnScreen();
 		int x = contentPaneLocation.x;
 		int y = contentPaneLocation.y;
-		JMenuBar menuBar = _frame.getJMenuBar();
+		JMenuBar menuBar = getJMenuBarInternal();
 		if (menuBar != null) {
 			y -= menuBar.getHeight();
 		}

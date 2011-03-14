@@ -22,18 +22,23 @@ package org.eobjects.datacleaner.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 
-public abstract class AbstractDialog extends AbstractWindow {
+public abstract class AbstractDialog extends JDialog implements DCWindow, WindowListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private volatile boolean initialized = false;
 	private final Image _bannerImage;
 	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
@@ -43,25 +48,65 @@ public abstract class AbstractDialog extends AbstractWindow {
 	}
 
 	public AbstractDialog(Image bannerImage) {
+		super();
+		setModal(true);
+		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
+		setResizable(isWindowResizable());
 		_bannerImage = bannerImage;
 	}
-	
+
 	protected void setTopBackgroundColor(Color topBackgroundColor) {
 		_topBackgroundColor = topBackgroundColor;
 	}
-	
+
 	protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
 		_bottomBackgroundColor = bottomBackgroundColor;
 	}
 
-	@Override
-	protected boolean isWindowResizable() {
-		return false;
+	protected void updateWindowTitle() {
+		String windowTitle = getWindowTitle();
+		if (windowTitle == null) {
+			windowTitle = "DataCleaner";
+		} else {
+			if (windowTitle.indexOf("DataCleaner") == -1) {
+				windowTitle = windowTitle + " | DataCleaner";
+			}
+		}
+		setTitle(windowTitle);
+	}
+
+	protected void initialize() {
+		updateWindowTitle();
+		setIconImage(getWindowIcon());
+		setResizable(isWindowResizable());
+
+		JComponent content = getWindowContent();
+		getContentPane().add(content);
+
+		getContentPane().setPreferredSize(content.getPreferredSize());
+
+		pack();
+
+		WidgetUtils.centerOnScreen(this);
+
+		WindowManager.getInstance().onShow(this);
 	}
 
 	@Override
-	protected final boolean isCentered() {
-		return true;
+	public void setVisible(boolean b) {
+		if (b == false) {
+			throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
+		}
+		if (!initialized) {
+			initialized = true;
+			initialize();
+		}
+		super.setVisible(true);
+	}
+
+	protected boolean isWindowResizable() {
+		return false;
 	}
 
 	@Override
@@ -69,7 +114,6 @@ public abstract class AbstractDialog extends AbstractWindow {
 		return ImageManager.getInstance().getImage("images/window/app-icon.png");
 	}
 
-	@Override
 	protected final JComponent getWindowContent() {
 		DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
 		panel.setLayout(new BorderLayout());
@@ -89,4 +133,46 @@ public abstract class AbstractDialog extends AbstractWindow {
 	protected abstract int getDialogWidth();
 
 	protected abstract JComponent getDialogContent();
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+	}
+
+	@Override
+	public final void windowClosing(WindowEvent e) {
+		boolean dispose = onWindowClosing();
+		if (dispose) {
+			dispose();
+		}
+	}
+
+	@Override
+	public void dispose() {
+		WindowManager.getInstance().onDispose(this);
+		super.dispose();
+	}
+
+	protected boolean onWindowClosing() {
+		return true;
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+	}
 }

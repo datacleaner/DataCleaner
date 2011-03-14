@@ -35,10 +35,10 @@ import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.AboutDialog;
-import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
-import org.eobjects.datacleaner.windows.ReferenceDataDialog;
+import org.eobjects.datacleaner.windows.DCWindow;
 import org.eobjects.datacleaner.windows.OptionsDialog;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
 /**
@@ -151,11 +151,12 @@ public class DCWindowMenuBar extends JMenuBar {
 				for (int i = currentSize; i > minimumSize; i--) {
 					windowMenu.remove(i - 1);
 				}
-				final List<AbstractWindow> windows = WindowManager.getInstance().getWindows();
-				for (final AbstractWindow window : windows) {
+				final List<DCWindow> windows = WindowManager.getInstance().getWindows();
+				for (final DCWindow window : windows) {
 					final Image windowIcon = window.getWindowIcon();
+					final String title = window.getWindowTitle();
 					final ImageIcon icon = new ImageIcon(windowIcon.getScaledInstance(32, 32, Image.SCALE_DEFAULT));
-					final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(window.getWindowTitle(), icon);
+					final JMenuItem switchToWindowItem = WidgetFactory.createMenuItem(title, icon);
 					switchToWindowItem.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {

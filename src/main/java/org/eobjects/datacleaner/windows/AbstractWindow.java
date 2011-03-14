@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import java.awt.Image;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -29,11 +28,11 @@ import javax.swing.JFrame;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.util.WindowManager;
 
-public abstract class AbstractWindow extends JFrame implements WindowListener {
+public abstract class AbstractWindow extends JFrame implements DCWindow, WindowListener {
 
 	private static final long serialVersionUID = 1L;
 	private volatile boolean initialized = false;
-	
+
 	public AbstractWindow() {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
@@ -47,16 +46,15 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 
 		JComponent content = getWindowContent();
 		getContentPane().add(content);
-		
+
 		getContentPane().setPreferredSize(content.getPreferredSize());
 
 		pack();
-		
+
 		if (isCentered()) {
 			centerOnScreen();
 		}
 
-		setVisible(true);
 		WindowManager.getInstance().onShow(this);
 	}
 
@@ -76,7 +74,7 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 		super.setVisible(true);
 		onWindowVisible();
 	}
-	
+
 	protected void onWindowVisible() {
 	}
 
@@ -91,10 +89,6 @@ public abstract class AbstractWindow extends JFrame implements WindowListener {
 		}
 		setTitle(windowTitle);
 	}
-
-	public abstract String getWindowTitle();
-
-	public abstract Image getWindowIcon();
 
 	protected abstract JComponent getWindowContent();
 

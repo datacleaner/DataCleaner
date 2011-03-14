@@ -90,6 +90,7 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
 import org.jdesktop.swingx.JXStatusBar;
+import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,6 +126,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private String _jobFilename;
 	private Datastore _datastore;
 	private DataContextProvider _dataContextProvider;
+
+	private SelectDatastorePanel _selectDatastoresPanel;
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration) {
 		this(configuration, (Datastore) null);
@@ -165,6 +168,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
 		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 
+		_selectDatastoresPanel = new SelectDatastorePanel(_configuration, this, _glassPane);
+		_selectDatastoresPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
+
 		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
@@ -190,8 +196,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		final DCPanel sourceTabOuterPanel = new DCPanel(imageManager.getImage("images/window/source-tab-background.png"),
 				95, 95, WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		sourceTabOuterPanel.setLayout(new BorderLayout());
-		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"), sourceTabOuterPanel);
+		sourceTabOuterPanel.setLayout(new VerticalLayout(0));
+		sourceTabOuterPanel.add(_selectDatastoresPanel);
+		sourceTabOuterPanel.add(_sourceColumnsPanel);
+
+		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
+				WidgetUtils.scrolleable(sourceTabOuterPanel));
 		_tabbedPane.setRightClickActionListener(0, new HideTabTextActionListener(_tabbedPane, 0));
 		_tabbedPane.addTab("Metadata", imageManager.getImageIcon("images/model/metadata.png"), metadataPanel);
 		_tabbedPane.setRightClickActionListener(1, new HideTabTextActionListener(_tabbedPane, 1));
@@ -246,9 +256,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			_leftPanel.setCollapsed(false);
 		}
 
-		DCPanel panel = (DCPanel) _tabbedPane.getComponentAt(SOURCE_TAB);
-		panel.removeAll();
-		panel.add(WidgetUtils.scrolleable(_sourceColumnsPanel));
+		_sourceColumnsPanel.setVisible(true);
+		_selectDatastoresPanel.setVisible(false);
 	}
 
 	private void displayDatastoreSelection() {
@@ -265,13 +274,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				});
 				timer.setRepeats(false);
 				timer.start();
-				final SelectDatastorePanel selectDatastoresPanel = new SelectDatastorePanel(_configuration, this, _glassPane);
-				selectDatastoresPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
-				final DCPanel panel = (DCPanel) _tabbedPane.getComponentAt(SOURCE_TAB);
-				panel.removeAll();
-				panel.add(selectDatastoresPanel);
-				panel.updateUI();
+				_sourceColumnsPanel.setVisible(false);
+				_selectDatastoresPanel.setVisible(true);
 			}
 		}
 	}

@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -129,10 +128,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	}
 
 	private JButton createButton(String imagePath, String description) {
-		JButton button = new JButton(imageManager.getImageIcon(imagePath));
-		button.setMargin(new Insets(0, 0, 0, 0));
-		button.setBorder(null);
-		button.setOpaque(false);
+		JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
 
 		DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
 		popupBubble.attachTo(button);

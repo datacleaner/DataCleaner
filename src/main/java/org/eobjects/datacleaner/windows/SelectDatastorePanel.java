@@ -52,6 +52,7 @@ import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
@@ -349,34 +350,36 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
 				"images/datastore-types/odb.png", OdbDatastoreDialog.class));
 		panel.add(Box.createHorizontalStrut(20));
-		panel.add(createNewDatastoreButton("MySQL connection", "Connect to a MySQL database",
-				"images/datastore-types/databases/mysql.png", JdbcDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
-				"images/datastore-types/databases/postgresql.png", JdbcDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("Oracle connection", "Connect to a Oracle database",
-				"images/datastore-types/databases/oracle.png", JdbcDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("Microsoft SQL Server connection", "Connect to a Microsoft SQL Server database",
-				"images/datastore-types/databases/microsoft.png", JdbcDatastoreDialog.class));
+		panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
+				"images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
+		panel.add(createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
+				"images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
+		panel.add(createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
+				"images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE));
+		panel.add(createNewJdbcDatastoreButton("Microsoft SQL Server connection",
+				"Connect to a Microsoft SQL Server database", "images/datastore-types/databases/microsoft.png",
+				DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS));
 
 		final JButton moreDatastoreTypesButton = new JButton("more");
 		moreDatastoreTypesButton.setMargin(new Insets(0, 0, 0, 0));
 		panel.add(moreDatastoreTypesButton);
+		
+		// TODO: Add additional installed drivers.
+		// TODO: Add composite datastores.
+		// TODO: Add link to "manage database drivers".
 
 		return panel;
 	}
 
 	private JButton createNewDatastoreButton(final String title, final String description, final String imagePath,
 			final Class<? extends AbstractDialog> dialogClass) {
-		ImageIcon icon = imageManager.getImageIcon(imagePath);
-		final JButton button = new JButton(icon);
-		button.setMargin(new Insets(0, 0, 0, 0));
-		button.setBorder(null);
-		button.setOpaque(false);
+		final ImageIcon icon = imageManager.getImageIcon(imagePath);
+		final JButton button = WidgetFactory.createImageButton(icon);
 
 		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description
 				+ "</html>", 0, 0, imagePath);
 		popupBubble.attachTo(button);
-		
+
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -396,6 +399,27 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 				}
 			}
 		});
+		return button;
+	}
+
+	private JButton createNewJdbcDatastoreButton(final String title, final String description, final String imagePath,
+			final String databaseName) {
+		final ImageIcon icon = imageManager.getImageIcon(imagePath);
+		final JButton button = WidgetFactory.createImageButton(icon);
+
+		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description
+				+ "</html>", 0, 0, imagePath);
+		popupBubble.attachTo(button);
+
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JdbcDatastoreDialog dialog = new JdbcDatastoreDialog(_datastoreCatalog);
+				dialog.setSelectedDatabase(databaseName);
+				dialog.setVisible(true);
+			}
+		});
+
 		return button;
 	}
 

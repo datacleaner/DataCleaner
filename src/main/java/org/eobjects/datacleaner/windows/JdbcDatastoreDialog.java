@@ -161,6 +161,16 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		}
 	}
 
+	public void setSelectedDatabase(String databaseName) {
+		DatabaseDriverDescriptor databaseDriverDescriptor = _databaseDriverCatalog
+				.getDatabaseDriverByDriverDatabaseName(databaseName);
+		setSelectedDatabase(databaseDriverDescriptor);
+	}
+
+	public void setSelectedDatabase(DatabaseDriverDescriptor databaseDriverDescriptor) {
+		_databaseDriverComboBox.setSelectedItem(databaseDriverDescriptor);
+	}
+
 	@Override
 	protected boolean isWindowResizable() {
 		return true;

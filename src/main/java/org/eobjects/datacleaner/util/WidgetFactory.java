@@ -171,4 +171,12 @@ public final class WidgetFactory {
 	public static JButton createButton(String text) {
 		return createButton(text, (Icon) null);
 	}
+
+	public static JButton createImageButton(ImageIcon icon) {
+		final JButton button = new JButton(icon);
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.setBorder(null);
+		button.setOpaque(false);
+		return button;
+	}
 }

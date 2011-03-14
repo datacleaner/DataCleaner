@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -76,7 +77,7 @@ public class ProgressInformationPanel extends DCPanel {
 		_progressBarPanel.add(DCLabel.bright("Preparing..."));
 
 		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setDividerLocation(190);
+		splitPane.setDividerLocation(240);
 		splitPane.setBorder(null);
 		splitPane.add(WidgetUtils.scrolleable(_progressBarPanel));
 		splitPane.add(_textAreaScroll);
@@ -199,5 +200,18 @@ public class ProgressInformationPanel extends DCPanel {
 				addUserLog("Progress for table '" + table.getName() + "': Row no. " + currentRow);
 			}
 		}
+	}
+
+	public void onSuccess() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				_stopButton.setVisible(false);
+				Collection<DCProgressBar> progressBars = _progressBars.values();
+				for (DCProgressBar progressBar : progressBars) {
+					progressBar.setValue(progressBar.getMaximum());
+				}
+			}
+		});
 	}
 }

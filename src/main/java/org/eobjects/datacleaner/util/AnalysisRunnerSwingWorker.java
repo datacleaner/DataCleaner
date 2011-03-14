@@ -79,6 +79,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	public void jobSuccess(AnalysisJob job) {
 		String now = new DateTime().toString(DateTimeFormat.fullTime());
 		_progressInformationPanel.addUserLog("Job success (" + now + ")");
+		_progressInformationPanel.onSuccess();
 	}
 
 	@Override

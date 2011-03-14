@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
@@ -28,6 +29,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -36,6 +38,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCProgressBar;
@@ -47,12 +51,14 @@ public class ProgressInformationPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	private final ImageManager imageManager = ImageManager.getInstance();
 	private final JTextArea _textArea = new JTextArea();
 	private final DCPanel _progressBarPanel;
 	private final Map<Table, DCProgressBar> _progressBars = new IdentityHashMap<Table, DCProgressBar>();
 	private final JScrollPane _textAreaScroll;
 	private volatile boolean _verboseLogging = false;
 	private final Map<Table, Integer> _verboseCounter = new IdentityHashMap<Table, Integer>();
+	private final JButton _stopButton;
 
 	public ProgressInformationPanel() {
 		super();
@@ -76,6 +82,7 @@ public class ProgressInformationPanel extends DCPanel {
 		splitPane.add(_textAreaScroll);
 
 		final JCheckBox verboseCheckBox = new JCheckBox("Verbose logging?");
+		verboseCheckBox.setOpaque(false);
 		verboseCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -83,8 +90,23 @@ public class ProgressInformationPanel extends DCPanel {
 			}
 		});
 
+		_stopButton = new JButton("Cancel job", imageManager.getImageIcon("images/actions/stop.png",
+				IconUtils.ICON_SIZE_SMALL));
+		_stopButton.setMargin(new Insets(1, 1, 1, 1));
+		_stopButton.setVisible(false);
+
+		final DCPanel bottomPanel = new DCPanel();
+		bottomPanel.setLayout(new BorderLayout());
+		bottomPanel.add(verboseCheckBox, BorderLayout.WEST);
+		bottomPanel.add(_stopButton, BorderLayout.EAST);
+
 		add(splitPane, BorderLayout.CENTER);
-		add(verboseCheckBox, BorderLayout.SOUTH);
+		add(bottomPanel, BorderLayout.SOUTH);
+	}
+
+	public void addStopActionListener(ActionListener actionListener) {
+		_stopButton.addActionListener(actionListener);
+		_stopButton.setVisible(true);
 	}
 
 	public void addUserLog(String string) {

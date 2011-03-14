@@ -47,6 +47,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	private final AnalysisJob _job;
 	private final ResultWindow _resultWindow;
 	private final ProgressInformationPanel _progressInformationPanel;
+	private AnalysisResultFuture _resultFuture;
 
 	public AnalysisRunnerSwingWorker(AnalyzerBeansConfiguration configuration, AnalysisJob job, ResultWindow resultWindow,
 			ProgressInformationPanel progressInformationPanel) {
@@ -59,7 +60,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	@Override
 	protected AnalysisResultFuture doInBackground() throws Exception {
 		try {
-			return _analysisRunner.run(_job);
+			_resultFuture = _analysisRunner.run(_job);
+			return _resultFuture;
 		} catch (final Exception e) {
 			logger.error("Unexpected error occurred when invoking run(...) on AnalysisRunner", e);
 			errorUknown(_job, e);
@@ -98,7 +100,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	@Override
 	public void rowProcessingSuccess(AnalysisJob job, final Table table) {
 		String now = new DateTime().toString(DateTimeFormat.fullTime());
-		_progressInformationPanel.addUserLog("Row processing for " + table.getQualifiedLabel() + " finished (" + now + "). Generating results ...");
+		_progressInformationPanel.addUserLog("Row processing for " + table.getQualifiedLabel() + " finished (" + now
+				+ "). Generating results ...");
 	}
 
 	@Override
@@ -140,4 +143,11 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 		_progressInformationPanel.addUserLog("An error occurred in the analysis job!", throwable);
 	}
 
+	public void cancelIfRunning() {
+		if (_resultFuture != null) {
+			if (!_resultFuture.isDone()) {
+				_resultFuture.cancel();
+			}
+		}
+	}
 }

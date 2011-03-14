@@ -23,6 +23,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +62,7 @@ public final class ResultWindow extends AbstractWindow {
 	private final ProgressInformationPanel _progressInformationPanel;
 	private final RendererFactory _rendererFactory;
 	private final String _jobFilename;
+	private final AnalysisRunnerSwingWorker _worker;
 
 	public ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job, String jobFilename) {
 		super();
@@ -72,12 +75,19 @@ public final class ResultWindow extends AbstractWindow {
 		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/result.png"),
 				_progressInformationPanel);
 		_tabbedPane.setUnclosableTab(0);
+
+		_worker = new AnalysisRunnerSwingWorker(_configuration, _job, this, _progressInformationPanel);
+
+		_progressInformationPanel.addStopActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				_worker.cancelIfRunning();
+			}
+		});
 	}
 
 	public void startAnalysis() {
-		AnalysisRunnerSwingWorker worker = new AnalysisRunnerSwingWorker(_configuration, _job, this,
-				_progressInformationPanel);
-		worker.execute();
+		_worker.execute();
 	}
 
 	private void addTableResultPanel(final Table table) {
@@ -152,6 +162,15 @@ public final class ResultWindow extends AbstractWindow {
 	@Override
 	public Image getWindowIcon() {
 		return imageManager.getImage("images/model/result.png");
+	}
+
+	@Override
+	protected boolean onWindowClosing() {
+		boolean closing = super.onWindowClosing();
+		if (closing) {
+			_worker.cancelIfRunning();
+		}
+		return closing;
 	}
 
 	@Override

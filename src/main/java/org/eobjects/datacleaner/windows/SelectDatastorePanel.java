@@ -44,6 +44,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
+import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
@@ -126,7 +127,13 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 					if (c.isSelected()) {
 						String dsName = _datastoreNames.get(i);
 						Datastore datastore = _datastoreCatalog.getDatastore(dsName);
+
+						// open the connection here, to make any connection
+						// issues apparent early
+						DataContextProvider dataContextProvider = datastore.getDataContextProvider();
+						dataContextProvider.getDataContext().getSchemaNames();
 						_analysisJobBuilderWindow.setDatastore(datastore);
+						dataContextProvider.close();
 						return;
 					}
 					i++;
@@ -363,7 +370,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		final JButton moreDatastoreTypesButton = new JButton("more");
 		moreDatastoreTypesButton.setMargin(new Insets(0, 0, 0, 0));
 		panel.add(moreDatastoreTypesButton);
-		
+
 		// TODO: Add additional installed drivers.
 		// TODO: Add composite datastores.
 		// TODO: Add link to "manage database drivers".

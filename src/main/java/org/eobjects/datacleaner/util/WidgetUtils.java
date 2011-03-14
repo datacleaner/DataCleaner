@@ -238,7 +238,7 @@ public final class WidgetUtils {
 		container.add(component);
 	}
 
-	public static void showErrorMessage(String shortMessage, String detailedMessage, Throwable exception) {
+	public static void showErrorMessage(final String shortMessage, final String detailedMessage, final Throwable exception) {
 		JXErrorPane.setDefaultLocale(Locale.ENGLISH);
 		final JXErrorPane errorPane = new JXErrorPane();
 		final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception, ErrorLevel.SEVERE,
@@ -246,9 +246,24 @@ public final class WidgetUtils {
 		errorPane.setErrorInfo(info);
 		final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
 		centerOnScreen(dialog);
+		dialog.setLocale(Locale.ENGLISH);
 		dialog.setModal(true);
 		dialog.setTitle(shortMessage);
 		dialog.setVisible(true);
+	}
+
+	public static void showErrorMessage(final String shortMessage, final Throwable exception) {
+		StringBuilder sb = new StringBuilder();
+		Throwable e = exception;
+		while (e != null) {
+			if (sb.length() != 0) {
+				sb.append("\n\n");
+			}
+			String message = e.getMessage();
+			sb.append(message);
+			e = e.getCause();
+		}
+		showErrorMessage(shortMessage, sb.toString(), exception);
 	}
 
 	public static JScrollPane scrolleable(final JComponent comp) {

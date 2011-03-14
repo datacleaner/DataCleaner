@@ -43,6 +43,7 @@ import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -281,9 +282,8 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 					Connection connection = datastore.createConnection();
 					connection.close();
 					JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
-				} catch (Exception e) {
-					WidgetUtils.showErrorMessage("Could not establish connection",
-							"An error occurred while creating connection:\n" + e.getMessage(), e);
+				} catch (Throwable e) {
+					WidgetUtils.showErrorMessage("Could not establish connection", e);
 				}
 			}
 		});
@@ -314,6 +314,10 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 	private JdbcDatastore createDatastore() {
 		final String datastoreName = _datastoreNameTextField.getText();
+		if (StringUtils.isNullOrEmpty(datastoreName)) {
+			throw new IllegalStateException("No datastore name");
+		}
+
 		final String driverClass = _driverClassNameTextField.getText();
 
 		JdbcDatastore datastore = new JdbcDatastore(datastoreName, _connectionStringTextField.getText(), driverClass,

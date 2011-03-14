@@ -37,7 +37,9 @@ public final class Main {
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 		// set up default error handling
-		Thread.setDefaultUncaughtExceptionHandler(new DCUncaughtExceptionHandler());
+
+		final DCUncaughtExceptionHandler uncaughtExceptionHandler = new DCUncaughtExceptionHandler();
+		Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
 
 		// init the look and feel
 		LookAndFeelManager.getInstance().init();
@@ -57,6 +59,6 @@ public final class Main {
 		final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
 				(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
 		userPreferences.addLoginChangeListener(regexSwapHandler);
-		
+
 	}
 }

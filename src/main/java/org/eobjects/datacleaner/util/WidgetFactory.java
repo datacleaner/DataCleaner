@@ -62,7 +62,6 @@ public final class WidgetFactory {
 
 	public static JMenuItem createMenuItem(String text, Icon icon) {
 		JMenuItem menu = new JMenuItem();
-		menu.setToolTipText(text);
 		menu.setText(text);
 		if (icon != null) {
 			menu.setIcon(icon);

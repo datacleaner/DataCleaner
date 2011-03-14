@@ -59,7 +59,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String MANAGE_DATABASE_DRIVERS = "... Manage database drivers...";
+	private static final String MANAGE_DATABASE_DRIVERS = "Manage database drivers...";
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final JdbcDatastore _originalDatastore;

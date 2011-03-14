@@ -50,7 +50,7 @@ public final class AddAnalyzerActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPopupMenu popup = new JPopupMenu();
+		final JPopupMenu popup = new JPopupMenu();
 
 		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
 				.getAnalyzerBeanDescriptors();

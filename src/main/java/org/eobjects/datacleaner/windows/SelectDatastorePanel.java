@@ -29,14 +29,19 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
@@ -54,6 +59,7 @@ import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
+import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
@@ -340,7 +346,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 	}
 
 	private DCPanel createNewDatastorePanel() {
-		DCPanel panel = new DCPanel();
+		final DCPanel panel = new DCPanel();
 		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		panel.add(createNewDatastoreButton("CSV file", "Comma-separated values (CSV) file (or file with other separators)",
@@ -356,24 +362,74 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 				"images/datastore-types/xml.png", XmlDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
 				"images/datastore-types/odb.png", OdbDatastoreDialog.class));
+
 		panel.add(Box.createHorizontalStrut(20));
+
+		// set of databases that are displayed directly on panel
+		final Set<String> databaseNames = new HashSet<String>();
+
 		panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
-				"images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL));
+				"images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL, databaseNames));
 		panel.add(createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
-				"images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL));
+				"images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
+				databaseNames));
 		panel.add(createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
-				"images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE));
+				"images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE, databaseNames));
 		panel.add(createNewJdbcDatastoreButton("Microsoft SQL Server connection",
 				"Connect to a Microsoft SQL Server database", "images/datastore-types/databases/microsoft.png",
-				DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS));
+				DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, databaseNames));
 
 		final JButton moreDatastoreTypesButton = new JButton("more");
-		moreDatastoreTypesButton.setMargin(new Insets(0, 0, 0, 0));
-		panel.add(moreDatastoreTypesButton);
+		moreDatastoreTypesButton.setMargin(new Insets(1, 1, 1, 1));
+		moreDatastoreTypesButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final JPopupMenu popup = new JPopupMenu();
 
-		// TODO: Add additional installed drivers.
-		// TODO: Add composite datastores.
-		// TODO: Add link to "manage database drivers".
+				final List<DatabaseDriverDescriptor> databaseDrivers = new DatabaseDriverCatalog()
+						.getInstalledWorkingDatabaseDrivers();
+				for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
+					final String databaseName = databaseDriver.getDisplayName();
+					if (!databaseNames.contains(databaseName)) {
+						final String imagePath = databaseDriver.getIconImagePath();
+						final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
+						final JMenuItem menuItem = WidgetFactory.createMenuItem(databaseName, icon);
+						menuItem.addActionListener(createJdbcActionListener(databaseName));
+						popup.add(menuItem);
+					}
+				}
+
+				final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
+						imageManager.getImageIcon("images/datastore-types/composite.png", IconUtils.ICON_SIZE_SMALL));
+				compositeMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						new CompositeDatastoreDialog(_datastoreCatalog).setVisible(true);
+					}
+				});
+
+				final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
+						imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL));
+				databaseDriversMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						OptionsDialog dialog = new OptionsDialog();
+						dialog.selectDatabaseDriversTab();
+						dialog.setVisible(true);
+					}
+				});
+
+				popup.add(databaseDriversMenuItem);
+				popup.add(new JSeparator(JSeparator.HORIZONTAL));
+				popup.add(compositeMenuItem);
+				popup.setBorder(WidgetUtils.BORDER_THIN);
+
+				popup.show(moreDatastoreTypesButton, 0, moreDatastoreTypesButton.getHeight());
+			}
+		});
+
+		panel.add(Box.createHorizontalStrut(10));
+		panel.add(moreDatastoreTypesButton);
 
 		return panel;
 	}
@@ -410,7 +466,10 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 	}
 
 	private JButton createNewJdbcDatastoreButton(final String title, final String description, final String imagePath,
-			final String databaseName) {
+			final String databaseName, Set<String> databaseNames) {
+
+		databaseNames.add(databaseName);
+
 		final ImageIcon icon = imageManager.getImageIcon(imagePath);
 		final JButton button = WidgetFactory.createImageButton(icon);
 
@@ -418,16 +477,20 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 				+ "</html>", 0, 0, imagePath);
 		popupBubble.attachTo(button);
 
-		button.addActionListener(new ActionListener() {
+		button.addActionListener(createJdbcActionListener(databaseName));
+
+		return button;
+	}
+
+	private ActionListener createJdbcActionListener(final String databaseName) {
+		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JdbcDatastoreDialog dialog = new JdbcDatastoreDialog(_datastoreCatalog);
 				dialog.setSelectedDatabase(databaseName);
 				dialog.setVisible(true);
 			}
-		});
-
-		return button;
+		};
 	}
 
 	@Override

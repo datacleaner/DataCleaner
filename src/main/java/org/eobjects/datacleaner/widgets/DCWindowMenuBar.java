@@ -70,7 +70,9 @@ public class DCWindowMenuBar extends JMenuBar {
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ExitActions.showExitDialog();
+				if (ExitActions.showExitDialog()) {
+					ExitActions.exit();
+				}
 			}
 		});
 

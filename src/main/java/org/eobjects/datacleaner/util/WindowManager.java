@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.actions.ExitActions;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
@@ -86,5 +87,15 @@ public final class WindowManager {
 		_windows.add(window);
 
 		notifyListeners();
+	}
+
+	public int getWindowCount(Class<? extends DCWindow> windowClass) {
+		int count = 0;
+		for (DCWindow window : _windows) {
+			if (ReflectionUtils.is(window.getClass(), windowClass)) {
+				count++;
+			}
+		}
+		return count;
 	}
 }

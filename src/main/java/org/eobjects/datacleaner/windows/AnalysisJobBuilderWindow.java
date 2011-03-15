@@ -64,6 +64,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
+import org.eobjects.datacleaner.actions.ExitActions;
 import org.eobjects.datacleaner.actions.HideTabTextActionListener;
 import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
@@ -82,6 +83,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
@@ -335,13 +337,30 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				resetJob();
 				return false;
 			} else {
-				_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
-				_analysisJobBuilder.getTransformerChangeListeners().remove(this);
-				_analysisJobBuilder.getFilterChangeListeners().remove(this);
-				_analysisJobBuilder.getSourceColumnListeners().remove(this);
-				_analysisJobBuilder.close();
-				if (_dataContextProvider != null) {
-					_dataContextProvider.close();
+				int count = WindowManager.getInstance().getWindowCount(AnalysisJobBuilderWindow.class);
+
+				final boolean exit;
+
+				if (count == 1) {
+					exit = ExitActions.showExitDialog();
+					windowClosing = exit;
+				} else {
+					exit = false;
+				}
+
+				if (windowClosing) {
+					_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
+					_analysisJobBuilder.getTransformerChangeListeners().remove(this);
+					_analysisJobBuilder.getFilterChangeListeners().remove(this);
+					_analysisJobBuilder.getSourceColumnListeners().remove(this);
+					_analysisJobBuilder.close();
+					if (_dataContextProvider != null) {
+						_dataContextProvider.close();
+					}
+				}
+				
+				if (exit) {
+					ExitActions.exit();
 				}
 			}
 		}

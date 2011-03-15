@@ -30,13 +30,14 @@ public class ExitActions {
 		// prevent instantiation
 	}
 
-	public static void showExitDialog() {
+	public static boolean showExitDialog() {
 		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
 				JOptionPane.OK_CANCEL_OPTION);
 
 		if (confirmation == JOptionPane.OK_OPTION) {
-			exit();
+			return true;
 		}
+		return false;
 	}
 
 	public static void exit() {

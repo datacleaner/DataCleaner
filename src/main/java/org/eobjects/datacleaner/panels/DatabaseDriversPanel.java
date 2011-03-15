@@ -52,6 +52,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.AddDatabaseDriverDialog;
 import org.slf4j.Logger;
@@ -162,6 +163,7 @@ public class DatabaseDriversPanel extends DCPanel {
 		final Icon validIcon = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 		final Icon invalidIcon = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
 
+		final int installedCol = 3;
 		int row = 0;
 		for (final DatabaseDriverDescriptor dd : databaseDrivers) {
 			final String driverClassName = dd.getDriverClassName();
@@ -175,8 +177,6 @@ public class DatabaseDriversPanel extends DCPanel {
 			tableModel.setValueAt(driverClassName, row, 2);
 			tableModel.setValueAt("", row, 3);
 			tableModel.setValueAt("", row, 4);
-
-			final int installedCol = 3;
 
 			final DatabaseDriverState state = _databaseDriverCatalog.getState(dd);
 			if (state == DatabaseDriverState.INSTALLED_WORKING) {
@@ -205,10 +205,12 @@ public class DatabaseDriversPanel extends DCPanel {
 
 			row++;
 		}
+		
+		table.setAlignment(installedCol, Alignment.CENTER);
 
 		table.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 		table.getColumn(0).setMaxWidth(IconUtils.ICON_SIZE_SMALL + 4);
-		table.getColumn(3).setMaxWidth(84);
+		table.getColumn(installedCol).setMaxWidth(84);
 		table.getColumn(4).setMaxWidth(70);
 		table.setColumnControlVisible(false);
 		return table;

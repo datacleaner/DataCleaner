@@ -143,10 +143,15 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 		final Alignment alignment = rendererCallback.getAlignment();
 		final DCTable table = new DCTable(tableModel);
 
+		table.setSortable(false);
 		table.setAlignment(0, Alignment.LEFT);
 		final int columnCount = table.getColumnCount();
 		for (int i = 1; i < columnCount; i++) {
 			table.setAlignment(i, alignment);
+		}
+
+		if (columnCount >= 10) {
+			table.setHorizontalScrollEnabled(true);
 		}
 
 		table.setRowHeight(22);

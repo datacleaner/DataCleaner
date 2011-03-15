@@ -126,8 +126,9 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		add(_existingDatastoresPanel);
 		updateDatastores();
 
-		JButton button = new JButton("Analyze!", imageManager.getImageIcon("images/filetypes/analysis_job.png"));
-		button.addActionListener(new ActionListener() {
+		final JButton analyzeButton = new JButton("Analyze!", imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+		analyzeButton.setMargin(new Insets(1, 1, 1, 1));
+		analyzeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int i = 0;
@@ -148,9 +149,11 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 				}
 			}
 		});
-		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-		buttonPanel.add(button);
+
+		final DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		buttonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
+		buttonPanel.add(analyzeButton);
 
 		add(buttonPanel);
 	}
@@ -211,12 +214,15 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description + "</html>");
 		datastoreNameLabel.setIconTextGap(10);
 		datastoreNameLabel.setIcon(icon);
-		datastoreNameLabel.addMouseListener(new MouseAdapter() {
+		MouseAdapter invokeCheckBoxMouseListener = new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				checkBox.doClick();
 			}
-		});
+		};
+
+		panel.addMouseListener(invokeCheckBoxMouseListener);
+		datastoreNameLabel.addMouseListener(invokeCheckBoxMouseListener);
 
 		final JButton editButton = createEditButton(datastore);
 		final JButton removeButton = createRemoveButton(datastore);

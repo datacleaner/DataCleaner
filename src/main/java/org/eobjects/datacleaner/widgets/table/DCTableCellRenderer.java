@@ -58,32 +58,24 @@ public class DCTableCellRenderer implements TableCellRenderer {
 	}
 
 	@Override
-	public Component getTableCellRendererComponent(JTable table, final Object value, boolean isSelected, boolean hasFocus,
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 			int row, int column) {
 		logger.debug("getTableCellRendererComponent({},{})", row, column);
+
+		// icons are displayed as labels
 		if (value instanceof Icon) {
 			final JLabel label = new JLabel((Icon) value);
 			label.setOpaque(true);
-			return label;
+			value = label;
 		}
 
-		Alignment alignment = _alignmentOverrides.get(column);
-		if (alignment == null) {
-			alignment = Alignment.LEFT;
-		}
+		final Component result;
 
+		// render components directly
 		if (value instanceof JComponent) {
 			final JComponent component = (JComponent) value;
+
 			component.setOpaque(true);
-			if (value instanceof JLabel) {
-				((JLabel) value).setHorizontalAlignment(alignment.getSwingContstantsAlignment());
-			} else if (value instanceof JPanel) {
-				final LayoutManager layout = ((JPanel) value).getLayout();
-				if (layout instanceof FlowLayout) {
-					final FlowLayout flowLayout = (FlowLayout) layout;
-					flowLayout.setAlignment(alignment.getFlowLayoutAlignment());
-				}
-			}
 
 			if (component.getMouseListeners().length == 0) {
 				component.addMouseListener(new MouseAdapter() {
@@ -95,13 +87,26 @@ public class DCTableCellRenderer implements TableCellRenderer {
 				});
 			}
 
-			return component;
+			result = component;
+		} else {
+			result = _delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			assert result instanceof JLabel;
 		}
 
-		final Component result = _delegate.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		// alignment is applied to all labels or panels (with flowlayout)
+		Alignment alignment = _alignmentOverrides.get(column);
+		if (alignment == null) {
+			alignment = Alignment.LEFT;
+		}
 
-		assert result instanceof JLabel;
-		if (result instanceof JLabel) {
+		// set alignment
+		if (value instanceof JPanel) {
+			final LayoutManager layout = ((JPanel) value).getLayout();
+			if (layout instanceof FlowLayout) {
+				final FlowLayout flowLayout = (FlowLayout) layout;
+				flowLayout.setAlignment(alignment.getFlowLayoutAlignment());
+			}
+		} else if (result instanceof JLabel) {
 			final JLabel label = (JLabel) result;
 			label.setHorizontalAlignment(alignment.getSwingContstantsAlignment());
 		}

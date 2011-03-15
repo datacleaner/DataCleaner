@@ -17,43 +17,19 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.actions;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+package org.eobjects.datacleaner.widgets.result;
 
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ResultProducer;
 import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
 
-public final class InvokeResultProducerActionListener implements ActionListener {
-
-	private final String _title;
-	private final ResultProducer _resultProducer;
-	private final AnalyzerResult _result;
-
-	public InvokeResultProducerActionListener(String title, ResultProducer resultProducer) {
-		_title = title;
-		_resultProducer = resultProducer;
-		_result = null;
-	}
-
-	public InvokeResultProducerActionListener(String title, AnalyzerResult result) {
-		_title = title;
-		_result = result;
-		_resultProducer = null;
-	}
+public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		AnalyzerResult result;
-		if (_result == null) {
-			result = _resultProducer.getResult();
-		} else {
-			result = _result;
-		}
-		new DetailsResultWindow(_title, CollectionUtils.list(result)).setVisible(true);
+	public void drillToDetails(String title, ResultProducer resultProducer) {
+		final AnalyzerResult result = resultProducer.getResult();
+		final DetailsResultWindow window = new DetailsResultWindow(title, CollectionUtils.list(result));
+		window.setVisible(true);
 	}
-
 }

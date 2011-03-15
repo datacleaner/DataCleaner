@@ -38,7 +38,7 @@ public class BooleanAnalyzerResultSwingRenderer implements Renderer<BooleanAnaly
 
 	@Override
 	public JComponent render(BooleanAnalyzerResult result) {
-		CrosstabResultSwingRenderer crosstabResultSwingRenderer = new CrosstabResultSwingRenderer();
+		DefaultCrosstabResultSwingRenderer crosstabResultSwingRenderer = new DefaultCrosstabResultSwingRenderer();
 
 		Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
 		Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();

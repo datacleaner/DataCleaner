@@ -19,7 +19,9 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.util.List;
@@ -32,7 +34,6 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabDimension;
 import org.eobjects.analyzer.result.CrosstabResult;
@@ -40,36 +41,101 @@ import org.eobjects.analyzer.result.ResultProducer;
 import org.eobjects.analyzer.result.renderer.CrosstabRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRendererCallback;
 import org.eobjects.analyzer.result.renderer.Renderer;
-import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.actions.InvokeResultProducerActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.table.DCTable;
+import org.jdesktop.swingx.JXCollapsiblePane;
+import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 
-@RendererBean(SwingRenderingFormat.class)
-public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, JComponent> {
+public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> implements Renderer<R, JComponent> {
+
+	final DrillToDetailsCallback _drillToDetailsCallback = new DrillToDetailsCallbackImpl();
 
 	@Override
-	public JComponent render(CrosstabResult result) {
-		DCTable table = renderTable(result.getCrosstab());
+	public JComponent render(R result) {
+
+		final DCTable table = renderTable(result.getCrosstab());
+		final JComponent tableComponent;
 		if ("".equals(table.getColumnName(1))) {
-			return table;
+			tableComponent = table;
 		} else {
-			return table.toPanel();
+			tableComponent = table.toPanel();
 		}
+
+		final JXCollapsiblePane chartContainer = new JXCollapsiblePane(Direction.UP);
+		chartContainer.setCollapsed(true);
+
+		final DisplayChartCallback displayChartCallback = new DisplayChartCallbackImpl(chartContainer);
+		decorateWithCharts(result, table, displayChartCallback);
+
+		final DCPanel resultPanel = new DCPanel();
+		resultPanel.setLayout(new BorderLayout());
+		resultPanel.add(chartContainer, BorderLayout.NORTH);
+		resultPanel.add(tableComponent, BorderLayout.CENTER);
+		return resultPanel;
+	}
+
+	protected void decorateWithCharts(R result, DCTable table, DisplayChartCallback displayChartCallback) {
 	}
 
 	public DCTable renderTable(Crosstab<?> crosstab) {
 		CrosstabRenderer renderer = new CrosstabRenderer(crosstab);
-		TableModel tableModel = renderer.render(new Callback());
+		TableModel tableModel = renderer.render(new RendererCallback());
 		DCTable table = new DCTable(tableModel);
 		table.setRowHeight(22);
 		return table;
 	}
 
-	private static final class Callback implements CrosstabRendererCallback<TableModel> {
+	protected void horizontalHeaderCell(String category, TableModel tableModel, int row, int col) {
+		if (row >= 0) {
+			tableModel.setValueAt(category, row, col);
+		}
+	}
+
+	protected void verticalHeaderCell(String category, TableModel tableModel, int row, int col) {
+		if (row >= 0) {
+			tableModel.setValueAt(category, row, col);
+		}
+	}
+
+	protected void valueCell(Object value, final ResultProducer drillToDetailResultProducer, TableModel tableModel, int row,
+			int col, boolean headersIncluded, int alignment) {
+		ActionListener action = null;
+		if (drillToDetailResultProducer != null) {
+			final StringBuilder sb = new StringBuilder("Detailed result for [");
+
+			sb.append(getLabelText(value));
+			sb.append(" (");
+
+			final String cat1;
+			if (headersIncluded) {
+				cat1 = tableModel.getColumnName(col);
+			} else {
+				cat1 = tableModel.getValueAt(0, col).toString();
+			}
+			sb.append(cat1).append(", ");
+
+			final String cat2 = tableModel.getValueAt(row, 0).toString();
+			sb.append(cat2);
+
+			sb.append(")]");
+
+			action = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					_drillToDetailsCallback.drillToDetails(sb.toString(), drillToDetailResultProducer);
+				}
+			};
+		}
+
+		DCPanel panel = createActionableValuePanel(value, alignment, action, "images/actions/drill-to-detail.png");
+
+		tableModel.setValueAt(panel, row, col);
+	}
+
+	private final class RendererCallback implements CrosstabRendererCallback<TableModel> {
 
 		private boolean headersIncluded;
 		private TableModel _tableModel;
@@ -135,48 +201,20 @@ public class CrosstabResultSwingRenderer implements Renderer<CrosstabResult, JCo
 
 		@Override
 		public void horizontalHeaderCell(String category, CrosstabDimension dimension, int width) {
-			if (_row >= 0) {
-				_tableModel.setValueAt(category, _row, _col);
-			}
+			AbstractCrosstabResultSwingRenderer.this.horizontalHeaderCell(category, _tableModel, _row, _col);
 			_col++;
 		}
 
 		@Override
 		public void verticalHeaderCell(String category, CrosstabDimension dimension, int height) {
-			if (_row >= 0) {
-				_tableModel.setValueAt(category, _row, _col);
-			}
+			AbstractCrosstabResultSwingRenderer.this.verticalHeaderCell(category, _tableModel, _row, _col);
 			_col++;
 		}
 
 		@Override
 		public void valueCell(Object value, final ResultProducer drillToDetailResultProducer) {
-			ActionListener action = null;
-			if (drillToDetailResultProducer != null) {
-				final StringBuilder sb = new StringBuilder("Detailed result for [");
-
-				sb.append(getLabelText(value));
-				sb.append(" (");
-
-				final String cat1;
-				if (headersIncluded) {
-					cat1 = _tableModel.getColumnName(_col);
-				} else {
-					cat1 = _tableModel.getValueAt(0, _col).toString();
-				}
-				sb.append(cat1).append(", ");
-
-				final String cat2 = _tableModel.getValueAt(_row, 0).toString();
-				sb.append(cat2);
-
-				sb.append(")]");
-
-				action = new InvokeResultProducerActionListener(sb.toString(), drillToDetailResultProducer);
-			}
-
-			DCPanel panel = createActionableValuePanel(value, _alignment, action, "images/actions/drill-to-detail.png");
-
-			_tableModel.setValueAt(panel, _row, _col);
+			AbstractCrosstabResultSwingRenderer.this.valueCell(value, drillToDetailResultProducer, _tableModel, _row, _col,
+					headersIncluded, _alignment);
 			_col++;
 		}
 

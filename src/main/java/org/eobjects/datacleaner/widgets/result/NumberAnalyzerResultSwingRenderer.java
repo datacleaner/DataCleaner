@@ -20,12 +20,10 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
 import org.eobjects.analyzer.beans.NumberAnalyzer;
@@ -39,7 +37,6 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabNavigator;
 import org.eobjects.analyzer.result.NumberAnalyzerResult;
-import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
@@ -49,8 +46,6 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -63,15 +58,12 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
 
 @RendererBean(SwingRenderingFormat.class)
-public class NumberAnalyzerResultSwingRenderer implements Renderer<NumberAnalyzerResult, JComponent> {
+public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<NumberAnalyzerResult> {
 
 	@Override
-	public JComponent render(NumberAnalyzerResult result) {
-		final JXCollapsiblePane chartContainer = new JXCollapsiblePane(Direction.UP);
-		chartContainer.setCollapsed(true);
-
-		final Crosstab<?> crosstab = result.getCrosstab();
-		final DCTable table = new CrosstabResultSwingRenderer().renderTable(crosstab);
+	protected void decorateWithCharts(NumberAnalyzerResult result, DCTable table,
+			final DisplayChartCallback displayChartCallback) {
+		super.decorateWithCharts(result, table, displayChartCallback);
 
 		// find the std. deviation row number.
 		int rowNumber = -1;
@@ -88,6 +80,8 @@ public class NumberAnalyzerResultSwingRenderer implements Renderer<NumberAnalyze
 			}
 		}
 
+		Crosstab<?> crosstab = result.getCrosstab();
+
 		final InputColumn<? extends Number>[] columns = result.getColumns();
 		int columnNumber = 1;
 		for (final InputColumn<? extends Number> column : columns) {
@@ -103,8 +97,6 @@ public class NumberAnalyzerResultSwingRenderer implements Renderer<NumberAnalyze
 					ActionListener action = new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							chartContainer.getContentPane().removeAll();
-
 							final Number mean = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
 									NumberAnalyzer.MEASURE_MEAN).get();
 							final Number min = (Number) nav.where(NumberAnalyzer.DIMENSION_MEASURE,
@@ -129,14 +121,11 @@ public class NumberAnalyzerResultSwingRenderer implements Renderer<NumberAnalyze
 							chart.getXYPlot().addDomainMarker(meanMarker);
 
 							final ChartPanel chartPanel = new ChartPanel(chart);
-							chartContainer.removeAll();
-							chartContainer.getContentPane().add(chartPanel);
-							chartContainer.updateUI();
-							chartContainer.setCollapsed(false);
+							displayChartCallback.displayChart(chartPanel);
 						}
 					};
 
-					DCPanel panel = CrosstabResultSwingRenderer.createActionableValuePanel(standardDeviation,
+					DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(standardDeviation,
 							SwingConstants.RIGHT, action, "images/chart-types/line.png");
 					table.setValueAt(panel, rowNumber, columnNumber);
 				}
@@ -144,12 +133,6 @@ public class NumberAnalyzerResultSwingRenderer implements Renderer<NumberAnalyze
 
 			columnNumber++;
 		}
-
-		final DCPanel resultPanel = new DCPanel();
-		resultPanel.setLayout(new BorderLayout());
-		resultPanel.add(chartContainer, BorderLayout.NORTH);
-		resultPanel.add(table.toPanel(), BorderLayout.CENTER);
-		return resultPanel;
 	}
 
 	/**

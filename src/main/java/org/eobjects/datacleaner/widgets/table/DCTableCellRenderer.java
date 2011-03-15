@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.widgets.table;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.LayoutManager;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
@@ -43,11 +46,13 @@ public class DCTableCellRenderer implements TableCellRenderer {
 
 	private static final Logger logger = LoggerFactory.getLogger(DCTableCellRenderer.class);
 
+	private final DCTable _table;
 	private final Map<Integer, Alignment> _alignmentOverrides;
 	private final DefaultTableCellRenderer _delegate;
 
-	public DCTableCellRenderer() {
+	public DCTableCellRenderer(DCTable table) {
 		super();
+		_table = table;
 		_alignmentOverrides = new HashMap<Integer, Alignment>();
 		_delegate = new DefaultTableCellRenderer();
 	}
@@ -79,6 +84,17 @@ public class DCTableCellRenderer implements TableCellRenderer {
 					flowLayout.setAlignment(alignment.getFlowLayoutAlignment());
 				}
 			}
+
+			if (component.getMouseListeners().length == 0) {
+				component.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						MouseEvent newEvent = SwingUtilities.convertMouseEvent(component, e, _table);
+						_table.consumeMouseClick(newEvent);
+					}
+				});
+			}
+
 			return component;
 		}
 

@@ -333,7 +333,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 			panel.add(Box.createHorizontalStrut(4));
 			panel.add(button);
 		}
-
+		
 		return panel;
 	}
 }

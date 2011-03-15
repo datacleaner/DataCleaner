@@ -85,7 +85,7 @@ public class DCTable extends JXTable implements MouseListener {
 
 		addMouseListener(this);
 		_rightClickMenuItems = getCopyMenuItems();
-		_tableCellRenderer = new DCTableCellRenderer();
+		_tableCellRenderer = new DCTableCellRenderer(this);
 	}
 
 	public DCTable() {
@@ -209,18 +209,22 @@ public class DCTable extends JXTable implements MouseListener {
 		boolean forwarded = forwardMouseEvent(e);
 		if (!forwarded) {
 			// handle right click
+			consumeMouseClick(e);
+		}
+	}
 
-			if (e.getClickCount() == 1) {
-				int button = e.getButton();
-				if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
-					if (_rightClickMenuItems != null && _rightClickMenuItems.size() > 0) {
-						JPopupMenu popup = new JPopupMenu();
-						for (JMenuItem item : _rightClickMenuItems) {
-							popup.add(item);
-						}
-						popup.show(e.getComponent(), e.getX(), e.getY());
-						return;
+	protected void consumeMouseClick(MouseEvent e) {
+		logger.debug("consumeMouseClick({})", e);
+		if (e.getClickCount() == 1) {
+			int button = e.getButton();
+			if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {
+				if (_rightClickMenuItems != null && _rightClickMenuItems.size() > 0) {
+					JPopupMenu popup = new JPopupMenu();
+					for (JMenuItem item : _rightClickMenuItems) {
+						popup.add(item);
 					}
+					popup.show(e.getComponent(), e.getX(), e.getY());
+					return;
 				}
 			}
 		}

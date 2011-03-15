@@ -24,8 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.SwingConstants;
-
 import org.eobjects.analyzer.beans.NumberAnalyzer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -43,6 +41,7 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
@@ -61,10 +60,8 @@ import org.jfree.ui.RectangleInsets;
 public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<NumberAnalyzerResult> {
 
 	@Override
-	protected void decorateWithCharts(NumberAnalyzerResult result, DCTable table,
+	protected void decorate(NumberAnalyzerResult result, DCTable table,
 			final DisplayChartCallback displayChartCallback) {
-		super.decorateWithCharts(result, table, displayChartCallback);
-
 		// find the std. deviation row number.
 		int rowNumber = -1;
 		{
@@ -126,13 +123,15 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 					};
 
 					DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(standardDeviation,
-							SwingConstants.RIGHT, action, "images/chart-types/line.png");
+							Alignment.RIGHT, action, "images/chart-types/line.png");
 					table.setValueAt(panel, rowNumber, columnNumber);
 				}
 			}
 
 			columnNumber++;
 		}
+
+		super.decorate(result, table, displayChartCallback);
 	}
 
 	/**

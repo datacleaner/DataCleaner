@@ -47,6 +47,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.jdesktop.swingx.JXTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,8 @@ public class DCTable extends JXTable implements MouseListener {
 	private static final Logger logger = LoggerFactory.getLogger(DCTable.class);
 
 	private static final long serialVersionUID = -5376226138423224572L;
-	protected List<JMenuItem> _rightClickMenuItems;
+	private final DCTableCellRenderer _tableCellRenderer;
+	protected final List<JMenuItem> _rightClickMenuItems;
 	protected DCPanel _panel;
 	private JScrollPane _scrollPane;
 
@@ -83,6 +85,7 @@ public class DCTable extends JXTable implements MouseListener {
 
 		addMouseListener(this);
 		_rightClickMenuItems = getCopyMenuItems();
+		_tableCellRenderer = new DCTableCellRenderer();
 	}
 
 	public DCTable() {
@@ -313,15 +316,7 @@ public class DCTable extends JXTable implements MouseListener {
 
 	@Override
 	public TableCellRenderer getCellRenderer(int row, int column) {
-		logger.debug("getCellRenderer({},{})", row, column);
-		Object value = getValueAt(row, column);
-		if (value instanceof JComponent) {
-			return JComponentCellRenderer.getInstance();
-		}
-		if (value instanceof Icon) {
-			return IconCellRenderer.getInstance();
-		}
-		return super.getCellRenderer(row, column);
+		return _tableCellRenderer;
 	}
 
 	@Override
@@ -334,5 +329,9 @@ public class DCTable extends JXTable implements MouseListener {
 		}
 
 		return JComponentCellEditor.forComponent(null);
+	}
+
+	public void setAlignment(int column, Alignment alignment) {
+		_tableCellRenderer.setAlignment(column, alignment);
 	}
 }

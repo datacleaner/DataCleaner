@@ -25,29 +25,31 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.reference.SimpleStringPattern;
 import org.eobjects.analyzer.result.PatternFinderResult;
-import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 
 @RendererBean(SwingRenderingFormat.class)
-public class PatternFinderResultSwingRenderer implements Renderer<PatternFinderResult, JComponent> {
+public class PatternFinderResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<PatternFinderResult> {
 
 	private final MutableReferenceDataCatalog _catalog = (MutableReferenceDataCatalog) DCConfiguration.get()
 			.getReferenceDataCatalog();
 
 	@Override
-	public JComponent render(PatternFinderResult result) {
-		DCTable table = new DefaultCrosstabResultSwingRenderer().renderTable(result.getCrosstab());
+	protected void decorate(PatternFinderResult result, DCTable table, DisplayChartCallback displayChartCallback) {
+		super.decorate(result, table, displayChartCallback);
+		
+		table.setAlignment(1, Alignment.RIGHT);
+
 		int rowCount = table.getRowCount();
 		for (int i = 0; i < rowCount; i++) {
 			final String expression;
@@ -86,7 +88,5 @@ public class PatternFinderResultSwingRenderer implements Renderer<PatternFinderR
 				table.setValueAt(panel, i, 0);
 			}
 		}
-		return table.toPanel();
 	}
-
 }

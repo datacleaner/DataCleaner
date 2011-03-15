@@ -22,10 +22,13 @@ package org.eobjects.datacleaner.util;
 import java.awt.BasicStroke;
 import java.awt.Stroke;
 
+import org.eobjects.datacleaner.widgets.result.DCDrawingSupplier;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.UnitType;
@@ -44,11 +47,11 @@ public final class ChartUtils {
 		chart.setBackgroundPaint(null);
 		chart.setBorderVisible(false);
 
-
 		final Plot plot = chart.getPlot();
 		plot.setInsets(new RectangleInsets(UnitType.ABSOLUTE, 0d, 0d, 0d, 0d));
 		plot.setBackgroundPaint(WidgetUtils.BG_COLOR_BRIGHTEST);
 		plot.setOutlinePaint(WidgetUtils.BG_COLOR_MEDIUM);
+
 		plot.setOutlineVisible(true);
 		if (plot instanceof PiePlot) {
 			final PiePlot piePlot = (PiePlot) plot;
@@ -59,16 +62,29 @@ public final class ChartUtils {
 			piePlot.setLabelOutlineStroke(normalStroke);
 			piePlot.setLabelPaint(WidgetUtils.BG_COLOR_DARK);
 			piePlot.setSectionOutlinesVisible(false);
+		} else if (plot instanceof CategoryPlot) {
+			final CategoryPlot categoryPlot = (CategoryPlot) plot;
+
+			categoryPlot.getDomainAxis().setLabelFont(WidgetUtils.FONT_SMALL);
+			categoryPlot.getDomainAxis().setTickLabelFont(WidgetUtils.FONT_SMALL);
+			categoryPlot.getRangeAxis().setLabelFont(WidgetUtils.FONT_SMALL);
+			categoryPlot.getRangeAxis().setTickLabelFont(WidgetUtils.FONT_SMALL);
+			categoryPlot.setDrawingSupplier(new DCDrawingSupplier());
+			
+			final CategoryItemRenderer renderer = categoryPlot.getRenderer();
+			renderer.setBaseOutlinePaint(WidgetUtils.BG_COLOR_DARK);
+			renderer.setBaseOutlineStroke(wideStroke);
+
 		} else if (plot instanceof XYPlot) {
 			final XYPlot xyPlot = (XYPlot) plot;
 			
+			xyPlot.setDrawingSupplier(new DCDrawingSupplier());
+
 			xyPlot.getDomainAxis().setLabelFont(WidgetUtils.FONT_SMALL);
 			xyPlot.getDomainAxis().setTickLabelFont(WidgetUtils.FONT_SMALL);
 			xyPlot.getRangeAxis().setLabelFont(WidgetUtils.FONT_SMALL);
 			xyPlot.getRangeAxis().setTickLabelFont(WidgetUtils.FONT_SMALL);
-			
-			
-			
+
 			final XYItemRenderer renderer = xyPlot.getRenderer();
 			final int seriesCount = xyPlot.getSeriesCount();
 			for (int i = 0; i < seriesCount; i++) {

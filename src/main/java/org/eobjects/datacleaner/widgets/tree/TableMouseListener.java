@@ -54,7 +54,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		TreePath path = _schemaTree.getPathForLocation(e.getX(), e.getY());
+		final TreePath path = _schemaTree.getSelectionPath();
 		if (path == null) {
 			return;
 		}

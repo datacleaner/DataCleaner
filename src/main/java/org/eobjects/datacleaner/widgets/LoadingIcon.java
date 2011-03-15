@@ -30,19 +30,19 @@ public class LoadingIcon extends JLabel {
 
 	private static final long serialVersionUID = 1L;
 
-	private final ImageIcon icon = ImageManager.getInstance().getImageIcon("images/status/loading.gif");
+	public static final ImageIcon ICON = ImageManager.getInstance().getImageIcon("images/status/loading.gif");
 
 	public LoadingIcon() {
 		super();
-		setIcon(icon);
-		icon.setImageObserver(this);
+		setIcon(ICON);
+		ICON.setImageObserver(this);
 		setHorizontalAlignment(JLabel.CENTER);
 	}
 
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
-		icon.setImageObserver(null);
+		ICON.setImageObserver(null);
 	}
 
 	public LoadingIcon setPreferredSize(int w, int h) {

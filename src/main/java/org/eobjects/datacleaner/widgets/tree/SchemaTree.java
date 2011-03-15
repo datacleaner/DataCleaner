@@ -22,10 +22,12 @@ package org.eobjects.datacleaner.widgets.tree;
 import java.awt.Component;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTree;
+import javax.swing.SwingWorker;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -40,15 +42,14 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
 
 public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer {
 
@@ -112,61 +113,92 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
 		TreePath path = event.getPath();
 		DefaultMutableTreeNode lastTreeNode = (DefaultMutableTreeNode) path.getLastPathComponent();
-		Runnable runnable = null;
+		SwingWorker<?, ?> worker = null;
 		if (lastTreeNode.getChildCount() == 1) {
 			DefaultMutableTreeNode firstChildNode = (DefaultMutableTreeNode) lastTreeNode.getChildAt(0);
 			if (firstChildNode.getUserObject() == LOADING_TABLES_STRING) {
 				// Load a schema's tables
-				runnable = new LoadTablesRunnable(lastTreeNode);
+				worker = new LoadTablesSwingWorker(lastTreeNode);
 			} else if (firstChildNode.getUserObject() == LOADING_COLUMNS_STRING) {
 				// Load a table's columns
-				runnable = new LoadColumnsRunnable(path, lastTreeNode);
+				worker = new LoadColumnsSwingWorker(path, lastTreeNode);
 			}
 		}
 
-		if (runnable != null) {
-			runnable.run();
+		if (worker != null) {
+			worker.execute();
 		}
 	}
 
-	class LoadTablesRunnable implements Runnable {
+	class LoadTablesSwingWorker extends SwingWorker<Void, Table> {
+
 		private final DefaultMutableTreeNode _schemaNode;
 
-		public LoadTablesRunnable(DefaultMutableTreeNode schemaNode) {
+		public LoadTablesSwingWorker(DefaultMutableTreeNode schemaNode) {
 			_schemaNode = schemaNode;
 		}
 
-		public void run() {
+		@Override
+		protected Void doInBackground() throws Exception {
 			Schema schema = (Schema) _schemaNode.getUserObject();
 			Table[] tables = schema.getTables();
 			for (Table table : tables) {
+				String name = table.getName();
+				logger.debug("Publishing table name: {}", name);
+				publish(table);
+			}
+			return null;
+		}
+
+		@Override
+		protected void process(List<Table> chunks) {
+			for (Table table : chunks) {
 				DefaultMutableTreeNode tableNode = new DefaultMutableTreeNode(table);
 				DefaultMutableTreeNode loadingColumnsNode = new DefaultMutableTreeNode(LOADING_COLUMNS_STRING);
 				tableNode.add(loadingColumnsNode);
 				_schemaNode.add(tableNode);
 			}
-			_schemaNode.remove(0);
-			setModel(getModel());
+			updateUI();
 		}
+
+		protected void done() {
+			_schemaNode.remove(0);
+			updateUI();
+		};
 	}
 
-	class LoadColumnsRunnable implements Runnable {
+	class LoadColumnsSwingWorker extends SwingWorker<Void, Column> {
+
 		private final DefaultMutableTreeNode _tableNode;
 
-		public LoadColumnsRunnable(TreePath path, DefaultMutableTreeNode tableNode) {
+		public LoadColumnsSwingWorker(TreePath path, DefaultMutableTreeNode tableNode) {
 			_tableNode = tableNode;
 		}
 
-		public void run() {
+		@Override
+		protected Void doInBackground() throws Exception {
 			Table table = (Table) _tableNode.getUserObject();
 			Column[] columns = table.getColumns();
 			for (Column column : columns) {
+				String name = column.getName();
+				logger.debug("Publishing column name: {}", name);
+				publish(column);
+			}
+			return null;
+		}
+
+		protected void process(List<Column> chunks) {
+			for (Column column : chunks) {
 				DefaultMutableTreeNode columnNode = new DefaultMutableTreeNode(column);
 				_tableNode.add(columnNode);
 			}
+			updateUI();
+		};
+
+		protected void done() {
 			_tableNode.remove(0);
-			setModel(getModel());
-		}
+			updateUI();
+		};
 	}
 
 	@Override

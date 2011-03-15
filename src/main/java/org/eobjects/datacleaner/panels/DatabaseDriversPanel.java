@@ -126,7 +126,8 @@ public class DatabaseDriversPanel extends DCPanel {
 				localJarFilesMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog);
+						AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
+								DatabaseDriversPanel.this);
 						dialog.setVisible(true);
 					}
 				});
@@ -142,6 +143,13 @@ public class DatabaseDriversPanel extends DCPanel {
 		final DCTable table = getDatabaseDriverTable();
 		this.add(toolBar, BorderLayout.NORTH);
 		this.add(table.toPanel(), BorderLayout.CENTER);
+	}
+
+	/**
+	 * Called by other components in case a driver list update is needed.
+	 */
+	public void updateDriverList() {
+		updateComponents();
 	}
 
 	private DCTable getDatabaseDriverTable() {
@@ -226,7 +234,7 @@ public class DatabaseDriversPanel extends DCPanel {
 				} catch (IllegalStateException e) {
 					WidgetUtils.showErrorMessage("Error while loading driver", "Error message: " + e.getMessage(), e);
 				}
-				updateComponents();
+				updateDriverList();
 			}
 		});
 	}

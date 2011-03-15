@@ -39,6 +39,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
 import org.eobjects.datacleaner.user.UserDatabaseDriver;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
@@ -68,13 +69,15 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	private final DatabaseDriverCatalog _databaseDriverCatalog;
 	private final JButton _addDriverButton;
 	private final DCLabel _statusLabel = DCLabel.bright("");
+	private final DatabaseDriversPanel _databaseDriversPanel;
 
-	public AddDatabaseDriverDialog(DatabaseDriverCatalog databaseDriverCatalog) {
+	public AddDatabaseDriverDialog(DatabaseDriverCatalog databaseDriverCatalog, DatabaseDriversPanel databaseDriversPanel) {
 		super();
+		_databaseDriverCatalog = databaseDriverCatalog;
+		_databaseDriversPanel = databaseDriversPanel;
 		_filenameTextFields = new ArrayList<FilenameTextField>();
 		_filesPanel = new DCPanel();
 		_filesPanel.setLayout(new VerticalLayout(4));
-		_databaseDriverCatalog = databaseDriverCatalog;
 
 		final Set<String> classNames = new TreeSet<String>();
 		classNames.add("");
@@ -101,6 +104,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 
 				try {
 					userDatabaseDriver.loadDriver();
+					_databaseDriversPanel.updateDriverList();
 					dispose();
 				} catch (IllegalStateException e) {
 					WidgetUtils.showErrorMessage("Error while loading driver", "Error message: " + e.getMessage(), e);

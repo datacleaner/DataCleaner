@@ -46,19 +46,19 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 public class ReferenceDataDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
-	private final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 	private final CloseableTabbedPane _tabbedPane;
 
 	public ReferenceDataDialog() {
-		super();
+		super(imageManager.getImage("images/window/banner-reference-data.png"));
 		final DCGlassPane glassPane = new DCGlassPane(this);
 
 		_tabbedPane = new CloseableTabbedPane();
 
 		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration);
 		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(configuration);
-		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(configuration);
+		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(glassPane, configuration);
 
 		_tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
 				scrolleable(dictionaryListPanel));

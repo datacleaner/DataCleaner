@@ -72,7 +72,7 @@ public final class ResultWindow extends AbstractWindow {
 		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider());
 
 		_progressInformationPanel = new ProgressInformationPanel();
-		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/result.png"),
+		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
 				_progressInformationPanel);
 		_tabbedPane.setUnclosableTab(0);
 

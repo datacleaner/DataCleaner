@@ -84,6 +84,10 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 		_saveButton = WidgetFactory.createButton("Save expression", "images/model/stringpattern_regex.png");
 	}
 
+	public RegexStringPatternDialog(RegexStringPattern stringPattern, MutableReferenceDataCatalog catalog) {
+		this(stringPattern.getName(), stringPattern.getExpression(), catalog);
+	}
+
 	public RegexStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog) {
 		this(catalog);
 		_expressionString = expression;

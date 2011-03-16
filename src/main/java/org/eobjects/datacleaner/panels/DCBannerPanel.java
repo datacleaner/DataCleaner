@@ -48,7 +48,7 @@ public class DCBannerPanel extends JPanel implements MouseListener, MouseMotionL
 	private static final long serialVersionUID = 1L;
 
 	private static final int BANNER_BG_WIDTH = 150;
-	private static final int BANNER_HEIGHT = 150;
+	private static final int BANNER_HEIGHT = 80;
 	private static final Image BANNER_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
 	private static final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final boolean _onlineOfflineTagEnabled;
@@ -99,7 +99,7 @@ public class DCBannerPanel extends JPanel implements MouseListener, MouseMotionL
 	public int getHeight() {
 		return BANNER_HEIGHT;
 	}
-	
+
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
@@ -131,19 +131,25 @@ public class DCBannerPanel extends JPanel implements MouseListener, MouseMotionL
 		super.paint(g);
 
 		if (_title != null) {
-			int titleY = 80;
-			String[] titleLines = _title.split("\n");
+			int titleY = 45;
+			final String[] titleLines = _title.split("\n");
 			if (titleLines.length > 1) {
-				titleY = 60;
+				titleY = 30;
 			}
 
 			if (g instanceof Graphics2D) {
 				((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			}
-			g.setFont(WidgetUtils.FONT_BANNER);
-			g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+			
+			final int titleX = _bannerImageWidth + 10;
+
 			for (int i = 0; i < titleLines.length; i++) {
-				g.drawString(titleLines[i], _bannerImageWidth, titleY);
+				g.setFont(WidgetUtils.FONT_BANNER);
+				g.setColor(WidgetUtils.BG_COLOR_BLUE_DARK);
+				g.drawString(titleLines[i], titleX + 2, titleY + 2);
+				g.setFont(WidgetUtils.FONT_BANNER);
+				g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
+				g.drawString(titleLines[i], titleX, titleY);
 				titleY += 30;
 			}
 		}

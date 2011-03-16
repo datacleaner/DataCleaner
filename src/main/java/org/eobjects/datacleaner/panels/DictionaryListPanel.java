@@ -89,7 +89,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 
 	private DCPanel createNewDictionariesPanel() {
 
-		final JButton textFileDictionaryButton = createButton("images/datastore-types/csv.png",
+		final JButton textFileDictionaryButton = createButton("images/model/dictionary_textfile.png",
 				"<html><b>Text file dictionary</b><br/>A dictionary based on a text file on your filesystem.</html>");
 		textFileDictionaryButton.addActionListener(new ActionListener() {
 			@Override
@@ -98,7 +98,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			}
 		});
 
-		final JButton simpleDictionaryButton = createButton("images/actions/edit.png",
+		final JButton simpleDictionaryButton = createButton("images/model/dictionary_simple.png",
 				"<html><b>Simple dictionary</b><br/>A dictionary written and stored directly in DataCleaner.</html>");
 		simpleDictionaryButton.addActionListener(new ActionListener() {
 			@Override
@@ -107,7 +107,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			}
 		});
 
-		final JButton datastoreDictionaryButton = createButton("images/model/datastore.png",
+		final JButton datastoreDictionaryButton = createButton("images/model/dictionary_datastore.png",
 				"<html><b>Datastore dictionary</b><br/>Dictionary based on a column in a datastore.</html>");
 		datastoreDictionaryButton.addActionListener(new ActionListener() {
 			@Override
@@ -128,9 +128,9 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	}
 
 	private JButton createButton(String imagePath, String description) {
-		JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
+		final JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
 
-		DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
+		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
 		popupBubble.attachTo(button);
 
 		return button;
@@ -209,6 +209,10 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			WidgetUtils.addToGridBag(editButton, dictionaryPanel, 1, 0, GridBagConstraints.EAST);
 			WidgetUtils.addToGridBag(removeButton, dictionaryPanel, 2, 0, GridBagConstraints.EAST);
 			_listPanel.add(dictionaryPanel);
+		}
+
+		if (names.length == 0) {
+			_listPanel.add(DCLabel.dark("(none)"));
 		}
 
 		updateUI();

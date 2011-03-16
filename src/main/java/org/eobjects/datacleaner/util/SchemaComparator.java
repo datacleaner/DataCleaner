@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import org.eobjects.metamodel.schema.Schema;
@@ -29,7 +30,9 @@ import org.eobjects.metamodel.schema.Schema;
  * @author Kasper Sørensen
  * 
  */
-public class SchemaComparator implements Comparator<Schema> {
+public class SchemaComparator implements Comparator<Schema>, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public int compare(Schema o1, Schema o2) {

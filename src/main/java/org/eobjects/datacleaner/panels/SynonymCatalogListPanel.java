@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -26,28 +27,24 @@ import java.util.Arrays;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.reference.SimpleSynonymCatalog;
+import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.reference.TextBasedSynonymCatalog;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
-import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.DatastoreSynonymCatalogDialog;
-import org.eobjects.datacleaner.windows.TextFileSynonymCatalogDialog;
+import org.eobjects.datacleaner.windows.TextBasedSynonymCatalogDialog;
 import org.jdesktop.swingx.VerticalLayout;
 
 public final class SynonymCatalogListPanel extends DCPanel implements SynonymCatalogChangeListener {
@@ -55,100 +52,113 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	private static final long serialVersionUID = 1L;
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
+	private final AnalyzerBeansConfiguration _configuration;
 	private final MutableReferenceDataCatalog _catalog;
-	private final DatastoreCatalog _datastoreCatalog;
 	private final DCPanel _listPanel;
+	private final DCGlassPane _glassPane;
 
-	public SynonymCatalogListPanel(AnalyzerBeansConfiguration configuration) {
+	public SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		_catalog = (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog();
+		_glassPane = glassPane;
+		_configuration = configuration;
+		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addSynonymCatalogListener(this);
+
 		_listPanel = new DCPanel();
-		_datastoreCatalog = configuration.getDatastoreCatalog();
 		_listPanel.setLayout(new VerticalLayout(4));
-		_listPanel.setBorder(new EmptyBorder(4, 10, 0, 0));
-
-		JToolBar toolBar = WidgetFactory.createToolBar();
-
-		final JButton addButton = new JButton("New synonym catalog", imageManager.getImageIcon("images/actions/new.png"));
-		addButton.setToolTipText("New synonym catalog");
-		addButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JPopupMenu popup = new JPopupMenu();
-
-				final JMenuItem textFileSynonymCatalogMenuItem = WidgetFactory.createMenuItem("Text file synonym catalog",
-						imageManager.getImageIcon("images/datastore-types/csv.png", IconUtils.ICON_SIZE_SMALL));
-				textFileSynonymCatalogMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						new TextFileSynonymCatalogDialog(_catalog).setVisible(true);
-					}
-				});
-
-				final JMenuItem dataStoreSynonymCatalogMenuItem = WidgetFactory.createMenuItem("Datastore synonym catalog",
-						imageManager.getImageIcon("images/datastore-types/csv.png", IconUtils.ICON_SIZE_SMALL));
-				dataStoreSynonymCatalogMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						new DatastoreSynonymCatalogDialog(_catalog, _datastoreCatalog).setVisible(true);
-						// new
-						// TextFileSynonymCatalogDialog(_catalog).setVisible(true);
-						// ToDO.. create a new dailog for data store
-					}
-				});
-
-				popup.add(textFileSynonymCatalogMenuItem);
-				popup.add(dataStoreSynonymCatalogMenuItem);
-
-				popup.show(addButton, 0, addButton.getHeight());
-			}
-		});
-		toolBar.add(addButton);
-		toolBar.add(Box.createHorizontalGlue());
-		toolBar.add(new HelpIcon("<b>Synonyms (Synonym catalogs)</b><br>"
-				+ "A synonym catalog is reference data used for replacing odd values with correct ones. "
-				+ "A synonym in this sense can also be eg. a standardized value or a code for a given entity.<br>"
-				+ "Synonyms can be used throughout DataCleaner for matching, replacing values and more."));
-		toolBar.add(Box.createHorizontalStrut(4));
 
 		updateComponents();
 
+		final DCLabel newSynonymCatalogsLabel = DCLabel.dark("Create new synonym catalog:");
+		newSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER);
+
+		final DCLabel existingSynonymCatalogsLabel = DCLabel.dark("Existing synonym catalogs:");
+		existingSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER);
+
 		setLayout(new VerticalLayout(10));
-		add(toolBar);
+		add(newSynonymCatalogsLabel);
+		add(createNewSynonymCatalogsPanel());
+		add(Box.createVerticalStrut(10));
+		add(existingSynonymCatalogsLabel);
+		setBorder(new EmptyBorder(10, 10, 10, 0));
 		add(_listPanel);
+	}
+
+	private DCPanel createNewSynonymCatalogsPanel() {
+
+		final JButton regexSynonymCatalogButton = createButton(
+				"images/model/synonym.png",
+				"<html><b>Text file synonym catalog</b><br/>A synonym catalog based on a file with comma-separated synonyms appended to a master term.</html>");
+		regexSynonymCatalogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new TextBasedSynonymCatalogDialog(_catalog).setVisible(true);
+			}
+		});
+
+		final JButton regexSwapSynonymCatalogButton = createButton("images/model/synonym.png",
+				"<html><b>Datastore synonym catalog</b><br/>A synonym catalog based on columns in a registered datastore.</html>");
+		regexSwapSynonymCatalogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DatastoreSynonymCatalogDialog(_catalog, _configuration.getDatastoreCatalog()).setVisible(true);
+			}
+		});
+
+		final HelpIcon helpIcon = new HelpIcon("<b>Synonym catalogs</b><br>"
+				+ "A synonym catalog is reference data used for replacing odd values with correct ones. "
+				+ "A synonym in this sense can also be eg. a standardized value or a code for a given entity.<br>"
+				+ "Synonyms can be used throughout DataCleaner for matching, replacing values and more..");
+
+		final DCPanel panel = DCPanel.flow(regexSynonymCatalogButton, regexSwapSynonymCatalogButton,
+				Box.createHorizontalStrut(100), helpIcon);
+		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+		return panel;
+	}
+
+	private JButton createButton(String imagePath, String description) {
+		final JButton button = WidgetFactory.createImageButton(imageManager.getImageIcon(imagePath));
+
+		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, description, 0, 0, imagePath);
+		popupBubble.attachTo(button);
+
+		return button;
 	}
 
 	private void updateComponents() {
 		_listPanel.removeAll();
 
-		String[] names = _catalog.getSynonymCatalogNames();
+		final String[] names = _catalog.getSynonymCatalogNames();
 		Arrays.sort(names);
 
-		Icon icon = imageManager.getImageIcon("images/model/synonym.png", IconUtils.ICON_SIZE_SMALL);
+		final Icon icon = imageManager.getImageIcon("images/model/synonym.png");
 
-		int row = 0;
 		for (final String name : names) {
+			final SynonymCatalog synonymCatalog = _catalog.getSynonymCatalog(name);
 
-			final SynonymCatalog sc = _catalog.getSynonymCatalog(name);
-
-			final JLabel scLabel = new JLabel(name, icon, JLabel.LEFT);
+			final DCLabel synonymCatalogLabel = DCLabel.dark("<html><b>" + name + "</b><br/>"
+					+ getDescription(synonymCatalog) + "</html>");
+			synonymCatalogLabel.setIcon(icon);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit synonym catalog");
 
-			if (sc instanceof TextBasedSynonymCatalog) {
+			if (synonymCatalog instanceof TextBasedSynonymCatalog) {
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new TextFileSynonymCatalogDialog((TextBasedSynonymCatalog) sc, _catalog).setVisible(true);
+						TextBasedSynonymCatalogDialog dialog = new TextBasedSynonymCatalogDialog(
+								(TextBasedSynonymCatalog) synonymCatalog, _catalog);
+						dialog.setVisible(true);
 					}
 				});
-			} else if (sc instanceof SimpleSynonymCatalog) {
+			} else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						// TODO
+						DatastoreSynonymCatalogDialog dialog = new DatastoreSynonymCatalogDialog(
+								(DatastoreSynonymCatalog) synonymCatalog, _catalog, _configuration.getDatastoreCatalog());
+						dialog.setVisible(true);
 					}
 				});
 			} else {
@@ -164,22 +174,40 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 							"Are you sure you wish to remove the synonym catalog '" + name + "'?", "Confirm remove",
 							JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
-						_catalog.removeSynonymCatalog(sc);
+						_catalog.removeSynonymCatalog(synonymCatalog);
 					}
 				}
 			});
 
-			WidgetUtils.addToGridBag(scLabel, _listPanel, 0, row, 1.0, 0.0);
-
-			if (_catalog.isSynonymCatalogMutable(name)) {
-				WidgetUtils.addToGridBag(editButton, _listPanel, 1, row);
-				WidgetUtils.addToGridBag(removeButton, _listPanel, 2, row);
+			if (!_catalog.isSynonymCatalogMutable(name)) {
+				editButton.setEnabled(false);
+				removeButton.setEnabled(false);
 			}
 
-			row++;
+			final DCPanel synonymCatalogPanel = new DCPanel();
+			synonymCatalogPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+			WidgetUtils.addToGridBag(synonymCatalogLabel, synonymCatalogPanel, 0, 0, 1.0, 0.0);
+			WidgetUtils.addToGridBag(editButton, synonymCatalogPanel, 1, 0, GridBagConstraints.EAST);
+			WidgetUtils.addToGridBag(removeButton, synonymCatalogPanel, 2, 0, GridBagConstraints.EAST);
+			_listPanel.add(synonymCatalogPanel);
+		}
+
+		if (names.length == 0) {
+			_listPanel.add(DCLabel.dark("(none)"));
 		}
 
 		updateUI();
+	}
+
+	private String getDescription(SynonymCatalog synonymCatalog) {
+		if (synonymCatalog instanceof TextBasedSynonymCatalog) {
+			return ((TextBasedSynonymCatalog) synonymCatalog).getFilename();
+		} else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
+			DatastoreSynonymCatalog datastoreSynonymCatalog = (DatastoreSynonymCatalog) synonymCatalog;
+			return datastoreSynonymCatalog.getDatastoreName() + ": "
+					+ datastoreSynonymCatalog.getMasterTermQualifiedColumnName();
+		}
+		return "";
 	}
 
 	@Override

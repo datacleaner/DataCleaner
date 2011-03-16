@@ -71,7 +71,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 		updateComponents();
 
-		final DCLabel newStringPatternsLabel = DCLabel.dark("Create new string patterns:");
+		final DCLabel newStringPatternsLabel = DCLabel.dark("Create new string pattern:");
 		newStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER);
 
 		final DCLabel existingStringPatternsLabel = DCLabel.dark("Existing string patterns:");
@@ -116,7 +116,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		});
 
 		final HelpIcon helpIcon = new HelpIcon(
-				"<b>StringPatterns</b><br>"
+				"<b>String patterns</b><br>"
 						+ "String pattern provides a way to match string values against patterns. This is often useful for validation or categorization of values in semi- or unstructured columns.");
 
 		final DCPanel panel = DCPanel.flow(simpleStringPatternButton, regexStringPatternButton,

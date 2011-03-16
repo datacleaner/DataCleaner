@@ -49,7 +49,7 @@ import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public final class TextFileSynonymCatalogDialog extends AbstractDialog {
+public final class TextBasedSynonymCatalogDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -62,11 +62,11 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 	private final JComboBox _encodingComboBox;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public TextFileSynonymCatalogDialog(MutableReferenceDataCatalog catalog) {
+	public TextBasedSynonymCatalogDialog(MutableReferenceDataCatalog catalog) {
 		this(null, catalog);
 	}
 
-	public TextFileSynonymCatalogDialog(TextBasedSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog) {
+	public TextBasedSynonymCatalogDialog(TextBasedSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog) {
 		super(ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_catalog = catalog;
@@ -143,21 +143,21 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 			public void actionPerformed(ActionEvent e) {
 				String name = _nameTextField.getText();
 				if (StringUtils.isNullOrEmpty(name)) {
-					JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,
+					JOptionPane.showMessageDialog(TextBasedSynonymCatalogDialog.this,
 							"Please fill out the name of the synonym catalog");
 					return;
 				}
 
 				String filename = _filenameTextField.getFilename();
 				if (StringUtils.isNullOrEmpty(filename)) {
-					JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,
+					JOptionPane.showMessageDialog(TextBasedSynonymCatalogDialog.this,
 							"Please fill out the filename or select a file using the 'Browse' button");
 					return;
 				}
 
 				String encoding = (String) _encodingComboBox.getSelectedItem();
 				if (StringUtils.isNullOrEmpty(filename)) {
-					JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this, "Please select a character encoding");
+					JOptionPane.showMessageDialog(TextBasedSynonymCatalogDialog.this, "Please select a character encoding");
 					return;
 				}
 
@@ -168,7 +168,7 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 					_catalog.removeSynonymCatalog(_originalsynonymCatalog);
 				}
 				_catalog.addSynonymCatalog(sc);
-				TextFileSynonymCatalogDialog.this.dispose();
+				TextBasedSynonymCatalogDialog.this.dispose();
 			}
 		});
 

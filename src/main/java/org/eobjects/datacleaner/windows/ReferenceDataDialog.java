@@ -57,7 +57,7 @@ public class ReferenceDataDialog extends AbstractDialog {
 		_tabbedPane = new CloseableTabbedPane();
 
 		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration);
-		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(configuration);
+		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(glassPane, configuration);
 		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(glassPane, configuration);
 
 		_tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),

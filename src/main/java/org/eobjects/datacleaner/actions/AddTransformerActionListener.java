@@ -43,6 +43,7 @@ import org.eobjects.analyzer.beans.standardize.UrlStandardizerTransformer;
 import org.eobjects.analyzer.beans.transform.ConcatenatorTransformer;
 import org.eobjects.analyzer.beans.transform.DateDiffTransformer;
 import org.eobjects.analyzer.beans.transform.DateMaskMatcherTransformer;
+import org.eobjects.analyzer.beans.transform.DatePartTransformer;
 import org.eobjects.analyzer.beans.transform.DateToAgeTransformer;
 import org.eobjects.analyzer.beans.transform.ELTransformer;
 import org.eobjects.analyzer.beans.transform.StringLengthTransformer;
@@ -86,8 +87,9 @@ public final class AddTransformerActionListener implements ActionListener {
 				StringPatternMatcherTransformer.class, DateMaskMatcherTransformer.class).setIconDecoration(
 				"images/component-types/type_match.png"));
 		descriptorMenus.add(new DescriptorMenu("Date and time").addComponentClasses(DateDiffTransformer.class,
-				DateMaskMatcherTransformer.class, DateToAgeTransformer.class, CoalesceDatesTransformer.class,
-				ConvertToDateTransformer.class).setIconDecoration("images/component-types/type_date_time_analyzer.png"));
+				DateMaskMatcherTransformer.class, DatePartTransformer.class, DateToAgeTransformer.class,
+				CoalesceDatesTransformer.class, ConvertToDateTransformer.class).setIconDecoration(
+				"images/component-types/type_date_time_analyzer.png"));
 		descriptorMenus.add(new DescriptorMenu("Scripting").addComponentClasses(JavaScriptTransformer.class,
 				ELTransformer.class).setIconDecoration("images/component-types/transformer.png"));
 

@@ -86,19 +86,19 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 	private DCPanel createNewSynonymCatalogsPanel() {
 
-		final JButton regexSynonymCatalogButton = createButton(
-				"images/model/synonym.png",
+		final JButton textFileSynonymCatalogButton = createButton(
+				"images/model/synonym_textfile.png",
 				"<html><b>Text file synonym catalog</b><br/>A synonym catalog based on a file with comma-separated synonyms appended to a master term.</html>");
-		regexSynonymCatalogButton.addActionListener(new ActionListener() {
+		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new TextBasedSynonymCatalogDialog(_catalog).setVisible(true);
 			}
 		});
 
-		final JButton regexSwapSynonymCatalogButton = createButton("images/model/synonym.png",
+		final JButton datastoreSynonymCatalogButton = createButton("images/model/synonym_datastore.png",
 				"<html><b>Datastore synonym catalog</b><br/>A synonym catalog based on columns in a registered datastore.</html>");
-		regexSwapSynonymCatalogButton.addActionListener(new ActionListener() {
+		datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new DatastoreSynonymCatalogDialog(_catalog, _configuration.getDatastoreCatalog()).setVisible(true);
@@ -110,7 +110,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				+ "A synonym in this sense can also be eg. a standardized value or a code for a given entity.<br>"
 				+ "Synonyms can be used throughout DataCleaner for matching, replacing values and more..");
 
-		final DCPanel panel = DCPanel.flow(regexSynonymCatalogButton, regexSwapSynonymCatalogButton,
+		final DCPanel panel = DCPanel.flow(textFileSynonymCatalogButton, datastoreSynonymCatalogButton,
 				Box.createHorizontalStrut(100), helpIcon);
 		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 		return panel;

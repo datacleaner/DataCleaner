@@ -135,7 +135,7 @@ public class ReferenceDataDialog extends AbstractDialog {
 
 	@Override
 	public Image getWindowIcon() {
-		return imageManager.getImage("images/model/dictionary.png");
+		return imageManager.getImage("images/model/reference-data.png");
 	}
 
 	@Override

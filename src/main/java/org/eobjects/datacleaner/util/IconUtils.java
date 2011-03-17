@@ -34,11 +34,10 @@ import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
-
-import com.mysql.jdbc.StringUtils;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and

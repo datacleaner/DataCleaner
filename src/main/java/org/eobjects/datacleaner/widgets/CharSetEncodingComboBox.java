@@ -19,6 +19,10 @@
  */
 package org.eobjects.datacleaner.widgets;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JComboBox;
 
 /**
@@ -30,8 +34,31 @@ public class CharSetEncodingComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String[] encodings;
+
+	static {
+		List<String> list = new ArrayList<String>();
+		list.add("UTF-8");
+		list.add("UTF-16");
+		list.add("UTF-16BE");
+		list.add("UTF-16LE");
+		list.add("ASCII");
+		for (int i = 1; i <= 16; i++) {
+			list.add("ISO-8859-" + i);
+		}
+
+		for (int i = 1250; i <= 1258; i++) {
+			list.add("Windows-" + i);
+		}
+
+		encodings = list.toArray(new String[list.size()]);
+	}
+
 	public CharSetEncodingComboBox() {
-		super(new String[] { "UTF-8", "ISO-8859-1", "ASCII", "windows-1252" });
+		super(encodings);
 		setEditable(true);
+
+		String defaultCharset = Charset.defaultCharset().name();
+		setSelectedItem(defaultCharset);
 	}
 }

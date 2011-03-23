@@ -40,8 +40,6 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 		TRUNCATE, NEW_TABLE
 	}
 
-	private OutputWriter _outputWriter;
-
 	@Configured(order = 1)
 	String datastoreName;
 
@@ -59,30 +57,19 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	}
 
 	@Override
-	public OutputWriter getOutputWriter() {
-		if (_outputWriter == null) {
-			synchronized (this) {
-				String[] headers = new String[columns.length];
-				for (int i = 0; i < headers.length; i++) {
-					headers[i] = columns[i].getName();
-				}
-
-				if (_outputWriter == null) {
-					boolean truncate = (writeMode == WriteMode.TRUNCATE);
-					_outputWriter = DatastoreOutputWriterFactory.getWriter(datastoreName, tableName, truncate, columns);
-				}
-			}
+	public OutputWriter createOutputWriter() {
+		String[] headers = new String[columns.length];
+		for (int i = 0; i < headers.length; i++) {
+			headers[i] = columns[i].getName();
 		}
-		return _outputWriter;
+
+		boolean truncate = (writeMode == WriteMode.TRUNCATE);
+		return DatastoreOutputWriterFactory.getWriter(datastoreName, tableName, truncate, columns);
 	}
 
 	@Override
 	protected OutputAnalyzerResult getResultInternal(int rowCount) {
 		return new DatastoreOutputAnalyzerResult(rowCount, datastoreName);
-	}
-
-	public void setOutputWriter(OutputWriter outputWriter) {
-		_outputWriter = outputWriter;
 	}
 
 	public String getDatastoreName() {

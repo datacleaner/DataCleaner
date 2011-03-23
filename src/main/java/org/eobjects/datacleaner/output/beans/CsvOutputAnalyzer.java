@@ -35,8 +35,6 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
 @OutputWriterAnalyzer
 public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
-	private OutputWriter _outputWriter;
-
 	@Configured
 	char separatorChar = ',';
 
@@ -55,21 +53,12 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	}
 
 	@Override
-	public OutputWriter getOutputWriter() {
-		if (_outputWriter == null) {
-			synchronized (this) {
-				if (_outputWriter == null) {
-					String[] headers = new String[columns.length];
-					for (int i = 0; i < headers.length; i++) {
-						headers[i] = columns[i].getName();
-					}
-
-					_outputWriter = CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar,
-							columns);
-				}
-			}
+	public OutputWriter createOutputWriter() {
+		String[] headers = new String[columns.length];
+		for (int i = 0; i < headers.length; i++) {
+			headers[i] = columns[i].getName();
 		}
-		return _outputWriter;
+		return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, columns);
 	}
 
 	@Override

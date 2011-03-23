@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.output.beans;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
@@ -33,19 +34,26 @@ import org.eobjects.datacleaner.output.OutputWriter;
 public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnalyzer<OutputAnalyzerResult> {
 
 	private final AtomicInteger rowCount = new AtomicInteger(0);
-	
+
 	@Configured
 	InputColumn<?>[] columns;
 
+	protected OutputWriter outputWriter;
+
+	@Initialize
+	public final void init() {
+		outputWriter = createOutputWriter();
+	}
+
 	@Override
 	public final OutputAnalyzerResult getResult() {
-		getOutputWriter().close();
+		outputWriter.close();
 		return getResultInternal(rowCount.get());
 	}
-	
+
 	protected abstract OutputAnalyzerResult getResultInternal(int rowCount);
 
-	public abstract OutputWriter getOutputWriter();
+	public abstract OutputWriter createOutputWriter();
 
 	/**
 	 * Subclasses should implement this method with any configuration logic such
@@ -68,9 +76,9 @@ public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnaly
 		writeRow(row, distinctCount);
 		rowCount.incrementAndGet();
 	}
-	
+
 	protected void writeRow(InputRow row, int distinctCount) {
-		OutputRow outputRow = getOutputWriter().createRow();
+		OutputRow outputRow = outputWriter.createRow();
 		for (InputColumn<?> col : columns) {
 			@SuppressWarnings("unchecked")
 			InputColumn<Object> objectCol = (InputColumn<Object>) col;

@@ -104,6 +104,7 @@ public final class CsvOutputWriterFactory {
 				} catch (IOException e) {
 					logger.error("Could not correctly close CSV file");
 				}
+				writers.remove(filename);
 			}
 		}
 	}

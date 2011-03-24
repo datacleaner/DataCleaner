@@ -20,7 +20,6 @@
 	</datastore-catalog>
 
 	<reference-data-catalog>
-		
 	</reference-data-catalog>
 
 	<multithreaded-taskrunner max-threads="30" />

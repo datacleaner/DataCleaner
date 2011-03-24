@@ -52,8 +52,10 @@ import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 public class OpenAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
+	private final AnalysisJobBuilderWindow _window;
 
-	public OpenAnalysisJobActionListener(AnalyzerBeansConfiguration configuration) {
+	public OpenAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalyzerBeansConfiguration configuration) {
+		_window = window;
 		_configuration = configuration;
 	}
 
@@ -71,6 +73,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		if (openFileResult == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 			openFile(file, _configuration);
+			if (_window != null && !_window.isDatastoreSet()) {
+				_window.dispose();
+			}
 		}
 	}
 

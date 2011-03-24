@@ -52,6 +52,10 @@ public class DCWindowMenuBar extends JMenuBar {
 	private final AnalyzerBeansConfiguration _configuration;
 
 	public DCWindowMenuBar(AnalyzerBeansConfiguration configuration) {
+		this(null, configuration);
+	}
+
+	public DCWindowMenuBar(AnalysisJobBuilderWindow window, AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
 		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
@@ -64,7 +68,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		});
 
 		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job...", "images/actions/open.png");
-		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(_configuration));
+		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(window, _configuration));
 
 		final JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
 		exitMenuItem.addActionListener(new ActionListener() {

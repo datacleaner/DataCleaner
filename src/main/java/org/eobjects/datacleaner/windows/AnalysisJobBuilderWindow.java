@@ -155,7 +155,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore) {
 		super();
 		_configuration = configuration;
-		setJMenuBar(new DCWindowMenuBar(_configuration));
+		setJMenuBar(new DCWindowMenuBar(this, _configuration));
 		_analysisJobBuilder = analysisJobBuilder;
 		_glassPane = new DCGlassPane(this);
 
@@ -224,6 +224,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 
 		setDatastore(datastore);
+	}
+
+	public boolean isDatastoreSet() {
+		return _datastore != null;
 	}
 
 	public void setDatastore(final Datastore datastore) {
@@ -358,7 +362,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 						_dataContextProvider.close();
 					}
 				}
-				
+
 				if (exit) {
 					ExitActions.exit();
 				}

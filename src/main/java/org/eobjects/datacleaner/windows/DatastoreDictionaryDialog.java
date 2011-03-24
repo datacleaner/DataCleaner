@@ -160,8 +160,8 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 		DCPanel formPanel = new DCPanel();
 
 		int row = 0;
-		DCLabel descriptionLabel = DCLabel.brightMultiLine(
-				"A datastore dictionary is a dictionary based on a column in one of your datastores. Please select a datastore in the form below and a tree of that datastore will appear. From here on you can select which column in the datastore to use for dictionary lookups.");
+		DCLabel descriptionLabel = DCLabel
+				.brightMultiLine("A datastore dictionary is a dictionary based on a column in one of your datastores. Please select a datastore in the form below and a tree of that datastore will appear. From here on you can select which column in the datastore to use for dictionary lookups.");
 		descriptionLabel.setBorder(new EmptyBorder(0, 0, 0, 20));
 		descriptionLabel.setPreferredSize(new Dimension(300, 100));
 		WidgetUtils.addToGridBag(descriptionLabel, formPanel, 0, row, 2, 1);
@@ -202,7 +202,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 					return;
 				}
 
-				DatastoreDictionary dictionary = new DatastoreDictionary(name, _datastoreCatalog, datastoreName, columnPath);
+				DatastoreDictionary dictionary = new DatastoreDictionary(name, datastoreName, columnPath);
 				if (_originalDictionary != null) {
 					_referenceDataCatalog.removeDictionary(_originalDictionary);
 				}

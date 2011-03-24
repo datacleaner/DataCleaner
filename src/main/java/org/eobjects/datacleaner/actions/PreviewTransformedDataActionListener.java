@@ -27,21 +27,26 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.data.MetaModelInputRow;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.data.TransformedInputRow;
+import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
+import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.analyzer.lifecycle.CloseCallback;
-import org.eobjects.analyzer.lifecycle.InitializeCallback;
-import org.eobjects.analyzer.lifecycle.LifeCycleState;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
+import org.eobjects.analyzer.reference.ReferenceData;
+import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.MetaModelHelper;
@@ -58,12 +63,18 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 	private final TransformerJobBuilderPanel _transformerJobBuilderPanel;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
+	private final LifeCycleHelper _lifeCycleHelper;
 
 	public PreviewTransformedDataActionListener(TransformerJobBuilderPanel transformerJobBuilderPanel,
 			AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder) {
 		_transformerJobBuilderPanel = transformerJobBuilderPanel;
 		_analysisJobBuilder = analysisJobBuilder;
 		_transformerJobBuilder = transformerJobBuilder;
+
+		final DatastoreCatalog datastoreCatalog = DCConfiguration.get().getDatastoreCatalog();
+		final ReferenceDataCatalog referenceDataCatalog = DCConfiguration.get().getReferenceDataCatalog();
+
+		_lifeCycleHelper = new LifeCycleHelper(datastoreCatalog, referenceDataCatalog);
 	}
 
 	// TODO: This method was basically just hacked together. Most of it is based
@@ -104,7 +115,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		q.setMaxRows(DEFAULT_PREVIEW_ROWS);
 
 		for (TransformerJobBuilder<?> tjb : transformerJobs) {
-			new InitializeCallback().onEvent(LifeCycleState.INITIALIZE, tjb.getConfigurableBean(), tjb.getDescriptor());
+			initialize(tjb);
 		}
 
 		// getting the output columns can be an expensive call, so we do it
@@ -141,7 +152,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 		// close
 		for (TransformerJobBuilder<?> tjb : transformerJobs) {
-			new CloseCallback().onEvent(LifeCycleState.CLOSE, tjb.getConfigurableBean(), tjb.getDescriptor());
+			close(tjb);
 		}
 
 		List<MutableInputColumn<?>> ownOutputColumns = outputColumns.get(_transformerJobBuilder);
@@ -173,6 +184,32 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		}
 
 		new DataSetWindow("Preview of transformed dataset", tableModel).setVisible(true);
+	}
+
+	private void initialize(TransformerJobBuilder<?> tjb) {
+		Object bean = tjb.getConfigurableBean();
+		TransformerBeanDescriptor<?> descriptor = tjb.getDescriptor();
+		_lifeCycleHelper.initialize(descriptor, bean);
+
+		Set<ConfiguredPropertyDescriptor> referenceDataProperties = descriptor.getConfiguredPropertiesByType(
+				ReferenceData.class, true);
+		for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : referenceDataProperties) {
+			Object configuredProperty = tjb.getConfiguredProperty(configuredPropertyDescriptor);
+			_lifeCycleHelper.initialize(configuredProperty);
+		}
+	}
+
+	private void close(TransformerJobBuilder<?> tjb) {
+		Object bean = tjb.getConfigurableBean();
+		TransformerBeanDescriptor<?> descriptor = tjb.getDescriptor();
+		_lifeCycleHelper.close(descriptor, bean);
+
+		Set<ConfiguredPropertyDescriptor> referenceDataProperties = descriptor.getConfiguredPropertiesByType(
+				ReferenceData.class, true);
+		for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : referenceDataProperties) {
+			Object configuredProperty = tjb.getConfiguredProperty(configuredPropertyDescriptor);
+			_lifeCycleHelper.close(configuredProperty);
+		}
 	}
 
 	private void buildInputChain(InputColumn<?> inputColumn, List<Column> physicalColumns,

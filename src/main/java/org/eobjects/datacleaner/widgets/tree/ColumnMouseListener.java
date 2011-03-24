@@ -97,8 +97,8 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 								.getReferenceDataCatalog();
 						DatastoreCatalog datastoreCatalog = conf.getDatastoreCatalog();
 						String datastoreName = _analysisJobBuilder.getDataContextProvider().getDatastore().getName();
-						DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreCatalog,
-								datastoreName, column.getQualifiedLabel());
+						DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName, column
+								.getQualifiedLabel());
 						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog(dictionary, referenceDataCatalog,
 								datastoreCatalog);
 						dialog.setVisible(true);

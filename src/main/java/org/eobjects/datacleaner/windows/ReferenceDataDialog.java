@@ -71,7 +71,7 @@ public class ReferenceDataDialog extends AbstractDialog {
 		_tabbedPane.setUnclosableTab(1);
 		_tabbedPane.setUnclosableTab(2);
 
-		_tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 400));
+		_tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
 	}
 
 	private JComponent scrolleable(JComponent comp) {
@@ -129,7 +129,7 @@ public class ReferenceDataDialog extends AbstractDialog {
 		panel.setLayout(new BorderLayout());
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 		panel.add(toolBarPanel, BorderLayout.SOUTH);
-		panel.setPreferredSize(getDialogWidth(), 300);
+		panel.setPreferredSize(getDialogWidth(), 500);
 		return panel;
 	}
 

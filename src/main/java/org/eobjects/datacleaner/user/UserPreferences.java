@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class UserPreferences implements Serializable {
 
-	private static final long serialVersionUID = 5L;
+	private static final long serialVersionUID = 6L;
 
 	private static final File userPreferencesFile = new File(DataCleanerHome.get(), "userpreferences.dat");
 	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
@@ -68,6 +68,8 @@ public class UserPreferences implements Serializable {
 	private File configuredFileDirectory = DataCleanerHome.get();
 	private File analysisJobDirectory = DataCleanerHome.get();
 	private File saveDatastoreDirectory;
+
+	private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
 
 	public static UserPreferences getInstance() {
 		if (instance == null) {
@@ -297,5 +299,13 @@ public class UserPreferences implements Serializable {
 
 	public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled) {
 		this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
+	}
+
+	public QuickAnalysisStrategy getQuickAnalysisStrategy() {
+		return quickAnalysisStrategy;
+	}
+
+	public void setQuickAnalysisStrategy(QuickAnalysisStrategy quickAnalysisStrategy) {
+		this.quickAnalysisStrategy = quickAnalysisStrategy;
 	}
 }

@@ -29,6 +29,8 @@ import org.eobjects.analyzer.beans.DateAndTimeAnalyzer;
 import org.eobjects.analyzer.beans.NumberAnalyzer;
 import org.eobjects.analyzer.beans.StringAnalyzer;
 import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
+import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
+import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.DataTypeFamily;
@@ -36,6 +38,8 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -151,17 +155,26 @@ public class QuickAnalysisActionListener implements ActionListener {
 	 */
 	private void createAnalyzers(AnalysisJobBuilder ajb, Class<? extends RowProcessingAnalyzer<?>> analyzerClass,
 			List<InputColumn<?>> columns) {
+		final QuickAnalysisStrategy quickAnalysisStrategy = UserPreferences.getInstance().getQuickAnalysisStrategy();
+		final int columnsPerAnalyzer = quickAnalysisStrategy.getColumnsPerAnalyzer();
+
 		RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder = ajb
 				.addRowProcessingAnalyzer(analyzerClass);
 		int columnCount = 0;
 		for (InputColumn<?> inputColumn : columns) {
-			if (columnCount == 4) {
+			if (columnCount == columnsPerAnalyzer) {
 				analyzerJobBuilder = ajb.addRowProcessingAnalyzer(analyzerClass);
 				columnCount = 0;
 			}
 			analyzerJobBuilder.addInputColumn(inputColumn);
+
+			if (quickAnalysisStrategy.isIncludeValueDistribution()) {
+				ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumn(inputColumn);
+			}
+			if (inputColumn.getDataTypeFamily() == DataTypeFamily.STRING && quickAnalysisStrategy.isIncludePatternFinder()) {
+				ajb.addRowProcessingAnalyzer(PatternFinderAnalyzer.class).addInputColumn(inputColumn);
+			}
 			columnCount++;
 		}
 	}
-
 }

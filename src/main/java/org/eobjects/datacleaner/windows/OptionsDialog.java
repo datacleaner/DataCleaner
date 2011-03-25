@@ -46,6 +46,7 @@ import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -132,9 +133,55 @@ public class OptionsDialog extends AbstractWindow {
 		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		panel.setLayout(new VerticalLayout(4));
 		panel.add(userRegistrationPanel);
+		panel.add(getQuickAnalysisPanel());
 		panel.add(directoriesPanel);
 
 		return panel;
+	}
+
+	private DCPanel getQuickAnalysisPanel() {
+		final QuickAnalysisStrategy quickAnalysisStrategy = userPreferences.getQuickAnalysisStrategy();
+		final JXTextField columnsTextField = WidgetFactory.createTextField("Columns");
+		columnsTextField.setColumns(2);
+		columnsTextField.setDocument(new NumberDocument());
+		columnsTextField.setText("" + quickAnalysisStrategy.getColumnsPerAnalyzer());
+
+		final JCheckBox valueDistributionCheckBox = new JCheckBox("Include Value distribution in Quick analysis?");
+		valueDistributionCheckBox.setOpaque(false);
+		valueDistributionCheckBox.setSelected(quickAnalysisStrategy.isIncludeValueDistribution());
+
+		final JCheckBox patternFinderCheckBox = new JCheckBox("Include Pattern finder in Quick analysis?");
+		patternFinderCheckBox.setOpaque(false);
+		patternFinderCheckBox.setSelected(quickAnalysisStrategy.isIncludePatternFinder());
+
+		final ActionListener actionListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try {
+					int columns = Integer.parseInt(columnsTextField.getText());
+					QuickAnalysisStrategy newStrategy = new QuickAnalysisStrategy(columns,
+							valueDistributionCheckBox.isSelected(), patternFinderCheckBox.isSelected());
+					userPreferences.setQuickAnalysisStrategy(newStrategy);
+				} catch (NumberFormatException e) {
+					// skip this action, could not parse columns
+				}
+			}
+		};
+		valueDistributionCheckBox.addActionListener(actionListener);
+		patternFinderCheckBox.addActionListener(actionListener);
+		columnsTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent event) {
+				actionListener.actionPerformed(null);
+			}
+		});
+
+		final DCPanel quickAnalysisPanel = new DCPanel().setTitledBorder("Quick analysis");
+		WidgetUtils.addToGridBag(DCLabel.dark("Max columns per analyzer:"), quickAnalysisPanel, 0, 0);
+		WidgetUtils.addToGridBag(columnsTextField, quickAnalysisPanel, 1, 0);
+		WidgetUtils.addToGridBag(valueDistributionCheckBox, quickAnalysisPanel, 0, 1, 2, 1);
+		WidgetUtils.addToGridBag(patternFinderCheckBox, quickAnalysisPanel, 0, 2, 2, 1);
+		return quickAnalysisPanel;
 	}
 
 	private DCPanel getNetworkTab() {

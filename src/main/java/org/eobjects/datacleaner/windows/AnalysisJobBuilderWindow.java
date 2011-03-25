@@ -335,38 +335,46 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	protected boolean onWindowClosing() {
-		boolean windowClosing = super.onWindowClosing();
-		if (windowClosing) {
-			if (_datastore != null) {
+		if (!super.onWindowClosing()) {
+			return false;
+		}
+
+		final int count = WindowManager.getInstance().getWindowCount(AnalysisJobBuilderWindow.class);
+
+		final boolean windowClosing;
+		final boolean exit;
+
+		if (count == 1) {
+			// if this is the last workspace window
+			if (isDatastoreSet()) {
+				// if datastore is set, reset the window
 				resetJob();
-				return false;
+				exit = false;
+				windowClosing = false;
 			} else {
-				int count = WindowManager.getInstance().getWindowCount(AnalysisJobBuilderWindow.class);
-
-				final boolean exit;
-
-				if (count == 1) {
-					exit = ExitActions.showExitDialog();
-					windowClosing = exit;
-				} else {
-					exit = false;
-				}
-
-				if (windowClosing) {
-					_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
-					_analysisJobBuilder.getTransformerChangeListeners().remove(this);
-					_analysisJobBuilder.getFilterChangeListeners().remove(this);
-					_analysisJobBuilder.getSourceColumnListeners().remove(this);
-					_analysisJobBuilder.close();
-					if (_dataContextProvider != null) {
-						_dataContextProvider.close();
-					}
-				}
-
-				if (exit) {
-					ExitActions.exit();
-				}
+				// if datastore is not set, show exit dialog
+				exit = ExitActions.showExitDialog();
+				windowClosing = exit;
 			}
+		} else {
+			// if there are more workspace windows, simply close the window
+			exit = false;
+			windowClosing = true;
+		}
+
+		if (windowClosing) {
+			_analysisJobBuilder.getAnalyzerChangeListeners().remove(this);
+			_analysisJobBuilder.getTransformerChangeListeners().remove(this);
+			_analysisJobBuilder.getFilterChangeListeners().remove(this);
+			_analysisJobBuilder.getSourceColumnListeners().remove(this);
+			_analysisJobBuilder.close();
+			if (_dataContextProvider != null) {
+				_dataContextProvider.close();
+			}
+		}
+
+		if (exit) {
+			ExitActions.exit();
 		}
 		return windowClosing;
 	}

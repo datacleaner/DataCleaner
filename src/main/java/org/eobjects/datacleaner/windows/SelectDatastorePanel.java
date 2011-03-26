@@ -91,7 +91,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 	private final List<JCheckBox> _checkBoxes = new ArrayList<JCheckBox>();
 	private final List<String> _datastoreNames = new ArrayList<String>();
 	private final DCGlassPane _glassPane;
-
+	private final JButton _analyzeButton;
 	private final DCPanel _existingDatastoresPanel;
 
 	public SelectDatastorePanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilderWindow analysisJobBuilderWindow,
@@ -126,9 +126,9 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		add(_existingDatastoresPanel);
 		updateDatastores();
 
-		final JButton analyzeButton = new JButton("Analyze!", imageManager.getImageIcon("images/filetypes/analysis_job.png"));
-		analyzeButton.setMargin(new Insets(1, 1, 1, 1));
-		analyzeButton.addActionListener(new ActionListener() {
+		_analyzeButton = new JButton("Analyze!", imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+		_analyzeButton.setMargin(new Insets(1, 1, 1, 1));
+		_analyzeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int i = 0;
@@ -153,7 +153,7 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 		final DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 		buttonPanel.setBorder(new EmptyBorder(0, 10, 0, 0));
-		buttonPanel.add(analyzeButton);
+		buttonPanel.add(_analyzeButton);
 
 		add(buttonPanel);
 	}
@@ -218,6 +218,10 @@ public class SelectDatastorePanel extends DCPanel implements DatastoreChangeList
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				checkBox.doClick();
+				if (e.getClickCount() > 1) {
+					// begin job on double click
+					_analyzeButton.doClick();
+				}
 			}
 		};
 

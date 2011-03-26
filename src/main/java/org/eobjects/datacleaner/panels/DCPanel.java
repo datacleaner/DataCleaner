@@ -44,6 +44,13 @@ public class DCPanel extends JPanel {
 	private final Color _bottomColor;
 	private final Color _topColor;
 
+	public static DCPanel around(Component component) {
+		DCPanel panel = new DCPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		panel.add(component);
+		return panel;
+	}
+
 	public static DCPanel flow(Component... components) {
 		DCPanel panel = new DCPanel();
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));

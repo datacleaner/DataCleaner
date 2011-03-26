@@ -42,6 +42,7 @@ import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
 import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
 
 /**
@@ -101,6 +102,7 @@ public final class WidgetFactory {
 	public static JXStatusBar createStatusBar(JComponent comp) {
 		final JXStatusBar statusBar = new JXStatusBar();
 		statusBar.setUI(new MetalStatusBarUI());
+		statusBar.putClientProperty(BasicStatusBarUI.AUTO_ADD_SEPARATOR, false);
 		statusBar.setBackground(WidgetUtils.BG_COLOR_DARKEST);
 		final MatteBorder outerBorder = new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_LESS_DARK);
 		final EmptyBorder innerBorder = new EmptyBorder(2, 2, 2, 2);

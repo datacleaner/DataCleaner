@@ -88,6 +88,7 @@ import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.DCWindowMenuBar;
+import org.eobjects.datacleaner.widgets.LoginStatusLabel;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
@@ -475,6 +476,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(_runButton);
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
+		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel();
+		statusBar.add(loggedInStatusLabel);
 
 		final Dimension windowSize = new Dimension(880, 630);
 

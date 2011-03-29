@@ -50,6 +50,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
@@ -63,7 +64,7 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 	private static final long serialVersionUID = 1L;
 
 	private static final int WIDTH = 360;
-	private static final int POSITION_Y = 140;
+	private static final int POSITION_Y = 130;
 
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final AuthenticationService _authenticationService;
@@ -87,15 +88,15 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 
 		setOpaque(false);
 		setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
-		updateContents();
 		setVisible(false);
-		setSize(WIDTH, 370);
+		setSize(WIDTH, 400);
 		setLocation(getXWhenOut(), POSITION_Y);
 	}
 
 	@Override
 	public void addNotify() {
 		super.addNotify();
+		updateContents();
 		_userPreferences.addLoginChangeListener(this);
 	}
 
@@ -248,7 +249,7 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 			passwordLabel.setForeground(getForeground());
 			WidgetUtils.addToGridBag(passwordLabel, this, 0, y);
 			WidgetUtils.addToGridBag(passwordTextField, this, 1, y);
-
+			
 			y++;
 			WidgetUtils.addToGridBag(Box.createVerticalStrut(10), this, 0, y, 2, 1);
 
@@ -260,6 +261,12 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 			buttonPanel.add(Box.createHorizontalStrut(4));
 			buttonPanel.add(cancelButton);
 			WidgetUtils.addToGridBag(buttonPanel, this, 0, y, 2, 1);
+			
+			y++;
+			WidgetUtils.addToGridBag(Box.createVerticalStrut(10), this, 0, y, 2, 1);
+			
+			y++;
+			WidgetUtils.addToGridBag(new HumanInferenceToolbarButton(), this, 0, y, 2, 1);
 		}
 		updateUI();
 	}

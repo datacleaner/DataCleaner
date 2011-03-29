@@ -71,6 +71,8 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		// Add filter
 		ImageManager imageManager = ImageManager.getInstance();
 		JButton addFilterButton = new JButton("Add filter", imageManager.getImageIcon("images/component-types/filter.png"));
+		addFilterButton
+				.setToolTipText("<html>Filters represent a way to<br/>categorize rows and use these<br/>categories as requirements for<br/>succeeding steps in a job.</html>");
 		addFilterButton.addActionListener(new AddFilterActionListener(configuration, _analysisJobBuilder, this));
 		toolBar.add(addFilterButton);
 

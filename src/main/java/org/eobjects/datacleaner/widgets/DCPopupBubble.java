@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetUtils;
 
 public class DCPopupBubble {
 
@@ -53,6 +54,7 @@ public class DCPopupBubble {
 		if (iconPath != null) {
 			label.setIcon(imageManager.getImageIcon(iconPath));
 		}
+		label.setFont(WidgetUtils.FONT_SMALL);
 		label.setSize(240, 50);
 		label.setLocation(5, 25);
 
@@ -94,9 +96,11 @@ public class DCPopupBubble {
 		component.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				Point locationOnScreen = component.getLocationOnScreen();
-				DCPopupBubble.this.setLocationOnScreen(locationOnScreen.x + 15, locationOnScreen.y + component.getHeight());
-				DCPopupBubble.this.show();
+				if (component.isEnabled()) {
+					Point locationOnScreen = component.getLocationOnScreen();
+					DCPopupBubble.this.setLocationOnScreen(locationOnScreen.x + 15, locationOnScreen.y + component.getHeight());
+					DCPopupBubble.this.show();
+				}
 			}
 
 			@Override

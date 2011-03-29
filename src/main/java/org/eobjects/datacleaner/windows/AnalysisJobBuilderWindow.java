@@ -166,9 +166,16 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 
 		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
-		_visualizeButton = new JButton("Visualize", imageManager.getImageIcon("images/actions/visualize.png"));
-		_addTransformerButton = new JButton("Add transformer", imageManager.getImageIcon(IconUtils.TRANSFORMER_IMAGEPATH));
-		_addAnalyzerButton = new JButton("Add analyzer", imageManager.getImageIcon(IconUtils.ANALYZER_IMAGEPATH));
+		_visualizeButton = createToolbarButton("Visualize", "images/actions/visualize.png",
+				"<html><b>Visualize job</b><br/>Visualize the components of this job in a flow-chart.</html>");
+		_addTransformerButton = createToolbarButton(
+				"Add transformer",
+				IconUtils.TRANSFORMER_IMAGEPATH,
+				"<html><b>Transformers</b><br/>Preprocess your data in order to extract, combine or generate separate values.</html>");
+		_addAnalyzerButton = createToolbarButton(
+				"Add analyzer",
+				IconUtils.ANALYZER_IMAGEPATH,
+				"<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
 		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 
 		_selectDatastoresPanel = new SelectDatastorePanel(_configuration, this, _glassPane);
@@ -225,6 +232,17 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 
 		setDatastore(datastore);
+	}
+
+	private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
+		JButton button = new JButton(text, imageManager.getImageIcon(iconPath));
+		button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+		button.setFocusPainted(false);
+		if (popupDescription != null) {
+			DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, popupDescription, 0, 0, iconPath);
+			popupBubble.attachTo(button);
+		}
+		return button;
 	}
 
 	public boolean isDatastoreSet() {
@@ -459,8 +477,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_saveButton.setFocusPainted(false);
 		_visualizeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		_visualizeButton.setFocusPainted(false);
-		_addTransformerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		_addTransformerButton.setFocusPainted(false);
 		_addAnalyzerButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		_addAnalyzerButton.setFocusPainted(false);
 		_runButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);

@@ -88,7 +88,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 		final JButton textFileSynonymCatalogButton = createButton(
 				"images/model/synonym_textfile.png",
-				"<html><b>Text file synonym catalog</b><br/>A synonym catalog based on a file with comma-separated synonyms appended to a master term.</html>");
+				"<html><b>Text file synonym catalog</b><br/>Synonyms from a file with master terms and comma-separated synonyms.</html>");
 		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -97,7 +97,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		});
 
 		final JButton datastoreSynonymCatalogButton = createButton("images/model/synonym_datastore.png",
-				"<html><b>Datastore synonym catalog</b><br/>A synonym catalog based on columns in a registered datastore.</html>");
+				"<html><b>Datastore synonym catalog</b><br/>Synonym catalog based on columns in a registered datastore.</html>");
 		datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

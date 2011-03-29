@@ -92,9 +92,13 @@ public class DCGlassPane {
 		}
 	}
 
+	public Dimension getSize() {
+		return getContentPaneInternal().getSize();
+	}
+
 	public void addCentered(JComponent comp) {
 		Dimension compSize = comp.getSize();
-		Dimension totalSize = getContentPaneInternal().getSize();
+		Dimension totalSize = getSize();
 		int x = (totalSize.width - compSize.width) / 2;
 		int y = (totalSize.height - compSize.height) / 2;
 		comp.setLocation(x, y);

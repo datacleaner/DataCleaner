@@ -27,12 +27,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import org.eobjects.datacleaner.actions.LoginChangeListener;
-import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.panels.DCGlassPane;
+import org.eobjects.datacleaner.panels.LoginPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.OptionsDialog;
-import org.eobjects.datacleaner.windows.WelcomeWindow;
 
 /**
  * A widget that displays the login status (online or offline) and provides a
@@ -50,9 +50,13 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 			"images/status/trafficlight-red.png");
 
 	private final UserPreferences _userPreferences;
+	private final DCGlassPane _glassPane;
+	private final LoginPanel _loginPanel;
 
-	public LoginStatusLabel() {
+	public LoginStatusLabel(DCGlassPane glassPane) {
 		super();
+		_glassPane = glassPane;
+		_loginPanel = new LoginPanel(_glassPane);
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		_userPreferences = UserPreferences.getInstance();
 		_userPreferences.addLoginChangeListener(this);
@@ -72,7 +76,11 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 		if (_userPreferences.isLoggedIn()) {
 			new OptionsDialog().setVisible(true);
 		} else {
-			new WelcomeWindow(DCConfiguration.get()).setVisible(true);
+			if (_loginPanel.isVisible()) {
+				_loginPanel.moveOut(0);
+			} else {
+				_loginPanel.moveIn(0);
+			}
 		}
 	}
 

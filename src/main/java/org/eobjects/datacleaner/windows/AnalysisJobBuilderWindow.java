@@ -476,7 +476,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(_runButton);
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel();
+		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane);
 		statusBar.add(loggedInStatusLabel);
 
 		final Dimension windowSize = new Dimension(880, 630);

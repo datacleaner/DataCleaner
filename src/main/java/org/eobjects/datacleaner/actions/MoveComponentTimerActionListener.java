@@ -26,7 +26,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
-public class MoveComponentTimerActionListener implements ActionListener {
+public abstract class MoveComponentTimerActionListener implements ActionListener {
 
 	private final JComponent component;
 	private final int x;
@@ -46,7 +46,7 @@ public class MoveComponentTimerActionListener implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Timer timer = (Timer) e.getSource();
-		
+
 		Point location = component.getLocation();
 		int currentX = location.x;
 		int currentY = location.y;
@@ -54,15 +54,18 @@ public class MoveComponentTimerActionListener implements ActionListener {
 			timer.stop();
 		} else if (numSteps <= 1) {
 			component.setLocation(x, y);
+			done();
 		} else {
-			int diffX = x-currentX;
+			int diffX = x - currentX;
 			diffX = diffX / numSteps;
-			int diffY = y-currentY;
+			int diffY = y - currentY;
 			diffY = diffY / numSteps;
-			
+
 			component.setLocation(currentX + diffX, currentY + diffY);
 		}
-		component.updateUI();
+
 		numSteps--;
 	}
+
+	protected abstract void done();
 }

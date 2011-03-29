@@ -21,15 +21,12 @@ package org.eobjects.datacleaner.panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -37,12 +34,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JToolBar;
 import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.eobjects.datacleaner.actions.MoveComponentTimerActionListener;
 import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.DCAuthenticationService;
@@ -59,65 +58,84 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
  * 
  * @author Kasper Sørensen
  */
-public class LoginPanel extends JPanel {
+public class LoginPanel extends JPanel implements LoginChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
-	public static enum LoginState {
-		NOT_LOGGED_IN, LOGGED_IN
-	}
+	private static final int WIDTH = 360;
+	private static final int POSITION_Y = 140;
 
 	private final UserPreferences userPreferences = UserPreferences.getInstance();
-	private final List<ActionListener> _loginChangeListeners = new ArrayList<ActionListener>();
 	private final AuthenticationService _authenticationService;
+	private final DCGlassPane _glassPane;
 	private final int _alpha = 220;
 	private final int _margin = 0;
 	private final Color _background = WidgetUtils.BG_COLOR_DARKEST;
 	private final Color _foreground = WidgetUtils.BG_COLOR_BRIGHTEST;
 	private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
-	private volatile LoginState _state;
+	private final UserPreferences _userPreferences;
 
-	public LoginPanel() {
-		this(new DCAuthenticationService());
+	public LoginPanel(DCGlassPane glassPane) {
+		this(new DCAuthenticationService(), glassPane);
 	}
 
-	public LoginPanel(AuthenticationService authenticationService) {
+	public LoginPanel(AuthenticationService authenticationService, DCGlassPane glassPane) {
 		super();
 		_authenticationService = authenticationService;
-
-		if (userPreferences.isLoggedIn()) {
-			_state = LoginState.LOGGED_IN;
-		} else {
-			_state = LoginState.NOT_LOGGED_IN;
-		}
+		_glassPane = glassPane;
+		_userPreferences = UserPreferences.getInstance();
 
 		setOpaque(false);
-		setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 40, 20, 30)));
-
+		setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
 		updateContents();
-
-		setSize(350, 370);
-		setLocation(-360, 145);
+		setVisible(false);
+		setSize(WIDTH, 370);
+		setLocation(getXWhenOut(), POSITION_Y);
 	}
 
-	public LoginState getLoginState() {
-		return _state;
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		_userPreferences.addLoginChangeListener(this);
+	}
+
+	public void removeNotify() {
+		super.removeNotify();
+		_userPreferences.removeLoginChangeListener(this);
+	};
+
+	private int getXWhenOut() {
+		return _glassPane.getSize().width + WIDTH + 10;
+	}
+
+	private int getXWhenIn() {
+		return _glassPane.getSize().width - WIDTH + 10;
 	}
 
 	public void moveIn(int delay) {
-		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -10, 145, 40));
+		setLocation(getXWhenOut(), POSITION_Y);
+		setVisible(true);
+		_glassPane.add(this);
+		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenIn(), POSITION_Y, 40) {
+			@Override
+			protected void done() {
+			}
+		});
 		timer.setInitialDelay(delay);
 		timer.start();
 	}
 
 	public void moveOut(int delay) {
-		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, -360, 145, 40));
+		final Timer timer = new Timer(10, new MoveComponentTimerActionListener(this, getXWhenOut(), POSITION_Y, 40) {
+			@Override
+			protected void done() {
+				LoginPanel loginPanel = LoginPanel.this;
+				loginPanel.setVisible(false);
+				_glassPane.remove(loginPanel);
+			}
+		});
 		timer.setInitialDelay(delay);
 		timer.start();
-	}
-
-	public void addLoginChangeListener(ActionListener listener) {
-		_loginChangeListeners.add(listener);
 	}
 
 	@Override
@@ -157,7 +175,7 @@ public class LoginPanel extends JPanel {
 
 	private void updateContents() {
 		removeAll();
-		if (_state == LoginState.LOGGED_IN) {
+		if (userPreferences.isLoggedIn()) {
 			final JLabel loggedInLabel = new JLabel("Logged in as: " + userPreferences.getUsername());
 			loggedInLabel.setForeground(getForeground());
 
@@ -169,7 +187,7 @@ public class LoginPanel extends JPanel {
 			usernameTextField.setColumns(15);
 			final JPasswordField passwordTextField = new JPasswordField(15);
 
-			final JButton registerButton = WidgetFactory.createButton("Register", "images/menu/users.png");
+			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/website.png");
 			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));
 
 			final JButton loginButton = WidgetFactory.createButton("Login", "images/actions/login.png");
@@ -185,9 +203,7 @@ public class LoginPanel extends JPanel {
 						boolean authenticated = _authenticationService.auth(username, password);
 						if (authenticated) {
 							userPreferences.setUsername(username);
-							_state = LoginState.LOGGED_IN;
 							updateContents();
-							notifyLoginChangeListeners();
 							moveOut(1000);
 						} else {
 							JOptionPane.showMessageDialog(LoginPanel.this,
@@ -195,6 +211,14 @@ public class LoginPanel extends JPanel {
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
+				}
+			});
+
+			final JButton cancelButton = WidgetFactory.createButton("Cancel", "images/actions/back.png");
+			cancelButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					moveOut(500);
 				}
 			});
 
@@ -226,20 +250,22 @@ public class LoginPanel extends JPanel {
 			WidgetUtils.addToGridBag(passwordTextField, this, 1, y);
 
 			y++;
-			final DCPanel buttonPanel = new DCPanel();
-			buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+			WidgetUtils.addToGridBag(Box.createVerticalStrut(10), this, 0, y, 2, 1);
+
+			y++;
+			final JToolBar buttonPanel = WidgetFactory.createToolBar();
 			buttonPanel.add(registerButton);
-			buttonPanel.add(Box.createHorizontalStrut(4));
+			buttonPanel.add(Box.createHorizontalGlue());
 			buttonPanel.add(loginButton);
+			buttonPanel.add(Box.createHorizontalStrut(4));
+			buttonPanel.add(cancelButton);
 			WidgetUtils.addToGridBag(buttonPanel, this, 0, y, 2, 1);
 		}
 		updateUI();
 	}
 
-	protected void notifyLoginChangeListeners() {
-		ActionEvent event = new ActionEvent(this, 0, _state.name());
-		for (ActionListener listener : _loginChangeListeners) {
-			listener.actionPerformed(event);
-		}
+	@Override
+	public void onLoginStateChanged(boolean loggedIn, String username) {
+		updateContents();
 	}
 }

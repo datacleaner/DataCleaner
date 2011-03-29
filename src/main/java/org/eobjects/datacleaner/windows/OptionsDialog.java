@@ -57,6 +57,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HelpIcon;
+import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -405,6 +406,7 @@ public class OptionsDialog extends AbstractWindow {
 		});
 
 		final JToolBar toolBar = WidgetFactory.createToolBar();
+		toolBar.add(new HumanInferenceToolbarButton());
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(closeButton);
 

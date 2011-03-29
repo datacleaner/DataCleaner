@@ -57,6 +57,7 @@ import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.DataContextFactory;
@@ -245,19 +246,16 @@ public class AboutDialog extends AbstractDialog {
 		buttonPanel.add(bloggerButton);
 		buttonPanel.add(Box.createHorizontalStrut(10));
 		buttonPanel.add(linkedInButton);
-		
-		final JButton poweredByHumanInferenceButton = new JButton(imageManager.getImageIcon("images/powered-by-human-inference.png"));
-		poweredByHumanInferenceButton.addActionListener(new OpenBrowserAction("http://www.humaninference.com"));
-		poweredByHumanInferenceButton.setOpaque(false);
-		poweredByHumanInferenceButton.setBorder(null);
-		poweredByHumanInferenceButton.setToolTipText("Powered by Human Inference");
+
+		final HumanInferenceToolbarButton humanInferenceButton = new HumanInferenceToolbarButton(
+				imageManager.getImageIcon("images/powered-by-human-inference-bright.png"));
 
 		final DCPanel contentPanel = new DCPanel();
 		contentPanel.setLayout(new VerticalLayout());
 		contentPanel.add(headerLabel);
 		contentPanel.add(DCLabel.dark("Copyright (C) 2010 eobjects.org"));
 		contentPanel.add(Box.createVerticalStrut(20));
-		contentPanel.add(DCPanel.around(poweredByHumanInferenceButton));
+		contentPanel.add(DCPanel.around(humanInferenceButton));
 		contentPanel.add(Box.createVerticalStrut(20));
 		contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
 		contentPanel.add(DCLabel.dark("(see Licensing tab)."));

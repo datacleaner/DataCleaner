@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 public class ReferenceDataDialog extends AbstractDialog {
@@ -118,6 +119,7 @@ public class ReferenceDataDialog extends AbstractDialog {
 		});
 
 		final JToolBar toolBar = WidgetFactory.createToolBar();
+		toolBar.add(new HumanInferenceToolbarButton());
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(closeButton);
 

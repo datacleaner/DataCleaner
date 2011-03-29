@@ -54,6 +54,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.jdesktop.swingx.JXList;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
@@ -263,25 +264,31 @@ public class WelcomeWindow extends AbstractWindow {
 	}
 
 	private JToolBar getBottomToolBar() {
+		final EmptyBorder border = new EmptyBorder(4, 4, 4, 4);
+
 		final JButton datacleanerButton = WidgetFactory.createButton(null, "images/links/datacleaner.png");
 		datacleanerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
 		datacleanerButton.setToolTipText("Visit the DataCleaner website");
+		datacleanerButton.setBorder(border);
 		datacleanerButton.setMargin(new Insets(0, 0, 0, 0));
 
 		final JButton bloggerButton = WidgetFactory.createButton(null, "images/links/blogger.png");
 		bloggerButton.addActionListener(new OpenBrowserAction("http://kasper.eobjects.org"));
 		bloggerButton.setToolTipText("Follow along at our blog");
+		bloggerButton.setBorder(border);
 		bloggerButton.setMargin(new Insets(0, 0, 0, 0));
 
 		final JButton linkedInButton = WidgetFactory.createButton(null, "images/links/linkedin.png");
 		linkedInButton.addActionListener(new OpenBrowserAction("http://www.linkedin.com/groups?gid=3352784"));
 		linkedInButton.setToolTipText("Join the DataCleaner LinkedIn group");
+		linkedInButton.setBorder(border);
 		linkedInButton.setMargin(new Insets(0, 0, 0, 0));
 
 		JToolBar toolBar = WidgetFactory.createToolBar();
 		toolBar.add(datacleanerButton);
 		toolBar.add(bloggerButton);
 		toolBar.add(linkedInButton);
+		toolBar.add(new HumanInferenceToolbarButton());
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 		toolBar.add(_nextStepButton);
 

@@ -209,14 +209,24 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	}
 
 	private String getDescription(StringPattern stringPattern) {
+		final String description;
 		if (stringPattern instanceof RegexSwapStringPattern) {
-			return ((RegexSwapStringPattern) stringPattern).getRegex().getExpression();
+			description = ((RegexSwapStringPattern) stringPattern).getRegex().getExpression();
 		} else if (stringPattern instanceof RegexStringPattern) {
-			return ((RegexStringPattern) stringPattern).getExpression();
+			description = ((RegexStringPattern) stringPattern).getExpression();
 		} else if (stringPattern instanceof SimpleStringPattern) {
-			return ((SimpleStringPattern) stringPattern).getExpression();
+			description = ((SimpleStringPattern) stringPattern).getExpression();
+		} else {
+			description = "";
 		}
-		return "";
+
+		if (description == null) {
+			return "";
+		}
+		if (description.length() > 30) {
+			return description.substring(0, 27) + "...";
+		}
+		return description;
 	}
 
 	@Override

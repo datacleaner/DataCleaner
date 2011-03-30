@@ -24,9 +24,9 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.table.DefaultTableModel;
 
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.result.ListResult;
-import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 

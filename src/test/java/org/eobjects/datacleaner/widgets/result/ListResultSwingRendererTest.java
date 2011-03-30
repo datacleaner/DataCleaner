@@ -21,10 +21,10 @@ package org.eobjects.datacleaner.widgets.result;
 
 import junit.framework.TestCase;
 
+import org.eobjects.analyzer.beans.api.RenderingFormat;
 import org.eobjects.analyzer.descriptors.AnnotationBasedRendererBeanDescriptor;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ListResult;
-import org.eobjects.analyzer.result.renderer.RenderingFormat;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 
 public class ListResultSwingRendererTest extends TestCase {

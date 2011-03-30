@@ -27,10 +27,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.table.TableModel;
 
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
-import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.actions.SaveDataSetActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;

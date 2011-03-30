@@ -41,6 +41,7 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.DateGapAnalyzer;
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.convert.ConvertToStringTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -55,7 +56,6 @@ import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.DateGapAnalyzerResult;
-import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.TimeInterval;
 import org.eobjects.datacleaner.panels.DCPanel;

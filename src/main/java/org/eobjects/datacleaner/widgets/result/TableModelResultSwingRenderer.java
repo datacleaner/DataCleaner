@@ -22,9 +22,9 @@ package org.eobjects.datacleaner.widgets.result;
 import javax.swing.JComponent;
 import javax.swing.table.TableModel;
 
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.result.TableModelResult;
-import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 

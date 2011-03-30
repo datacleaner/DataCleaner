@@ -33,13 +33,13 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabDimension;
 import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.ResultProducer;
 import org.eobjects.analyzer.result.renderer.CrosstabRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRendererCallback;
-import org.eobjects.analyzer.result.renderer.Renderer;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ChartUtils;

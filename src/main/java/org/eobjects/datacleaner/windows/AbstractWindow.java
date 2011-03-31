@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -47,7 +49,14 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 		JComponent content = getWindowContent();
 		getContentPane().add(content);
 
-		getContentPane().setPreferredSize(content.getPreferredSize());
+		Dimension preferredSize = content.getPreferredSize();
+		
+		int maxHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 30;
+		if (preferredSize.height > maxHeight) {
+			preferredSize.height = maxHeight;
+		}
+
+		getContentPane().setPreferredSize(preferredSize);
 
 		pack();
 

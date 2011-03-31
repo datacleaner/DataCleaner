@@ -25,7 +25,6 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.border.EmptyBorder;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -44,13 +43,11 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	private final List<ColumnListTable> _sourceColumnTables = new ArrayList<ColumnListTable>();
 	private final DCLabel _hintLabel;
 	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final AnalyzerBeansConfiguration _configuration;
 	private final MaxRowsFilterShortcutPanel _maxRowsFilterShortcutPanel;
 
-	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration) {
+	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder) {
 		super();
 		_analysisJobBuilder = analysisJobBuilder;
-		_configuration = configuration;
 		_maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder);
 		_maxRowsFilterShortcutPanel.setEnabled(false);
 
@@ -118,7 +115,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		}
 
 		if (sourceColumnTable == null) {
-			sourceColumnTable = new ColumnListTable(table, _configuration, _analysisJobBuilder, true);
+			sourceColumnTable = new ColumnListTable(table, _analysisJobBuilder, true);
 			this.add(sourceColumnTable);
 			_sourceColumnTables.add(sourceColumnTable);
 			updateUI();
@@ -131,7 +128,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		_analysisJobBuilder.getSourceColumnListeners().remove(this);
 		super.removeNotify();
 	}
-	
+
 	public MaxRowsFilterShortcutPanel getMaxRowsFilterShortcutPanel() {
 		return _maxRowsFilterShortcutPanel;
 	}

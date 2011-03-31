@@ -138,7 +138,7 @@ public class VisualizeJobWindow extends AbstractWindow {
 		final DCPanel buttonPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 10));
 		buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
-		
+
 		buttonPanel.add(new JLabel(imageManager.getImageIcon("images/model/column.png")));
 		buttonPanel.add(displayColumnsCheckBox);
 		buttonPanel.add(Box.createHorizontalStrut(20));

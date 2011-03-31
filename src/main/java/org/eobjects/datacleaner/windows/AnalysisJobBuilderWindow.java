@@ -168,20 +168,16 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
 		_visualizeButton = createToolbarButton("Visualize", "images/actions/visualize.png",
 				"<html><b>Visualize job</b><br/>Visualize the components of this job in a flow-chart.</html>");
-		_addTransformerButton = createToolbarButton(
-				"Add transformer",
-				IconUtils.TRANSFORMER_IMAGEPATH,
+		_addTransformerButton = createToolbarButton("Add transformer", IconUtils.TRANSFORMER_IMAGEPATH,
 				"<html><b>Transformers</b><br/>Preprocess your data in order to extract, combine or generate separate values.</html>");
-		_addAnalyzerButton = createToolbarButton(
-				"Add analyzer",
-				IconUtils.ANALYZER_IMAGEPATH,
+		_addAnalyzerButton = createToolbarButton("Add analyzer", IconUtils.ANALYZER_IMAGEPATH,
 				"<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
 		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 
 		_selectDatastoresPanel = new SelectDatastorePanel(_configuration, this, _glassPane);
 		_selectDatastoresPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
-		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, _configuration);
+		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 

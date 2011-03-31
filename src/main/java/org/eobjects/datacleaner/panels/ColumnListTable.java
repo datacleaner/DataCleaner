@@ -39,25 +39,22 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.InputColumnComparator;
-import org.eobjects.datacleaner.actions.AddQuickFilterActionListener;
-import org.eobjects.datacleaner.actions.AddQuickTransformationActionListener;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.jdesktop.swingx.HorizontalLayout;
-import org.jdesktop.swingx.JXTextField;
-
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
+import org.jdesktop.swingx.HorizontalLayout;
+import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 public final class ColumnListTable extends DCPanel {
 
@@ -65,27 +62,24 @@ public final class ColumnListTable extends DCPanel {
 
 	private static final String[] headers = new String[] { "Name", "Type", "" };
 	private final ImageManager imageManager = ImageManager.getInstance();
-	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final Table _table;
 	private final DCTable _columnTable;
 	private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>(new InputColumnComparator());
 
-	public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalyzerBeansConfiguration configuration,
-			AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
-		this(null, columns, configuration, analysisJobBuilder, addShadowBorder);
+	public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
+			boolean addShadowBorder) {
+		this(null, columns, analysisJobBuilder, addShadowBorder);
 	}
 
-	public ColumnListTable(Table table, AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			boolean addShadowBorder) {
-		this(table, null, configuration, analysisJobBuilder, addShadowBorder);
+	public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
+		this(table, null, analysisJobBuilder, addShadowBorder);
 	}
 
 	private ColumnListTable(Table table, Collection<? extends InputColumn<?>> columns,
-			AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
+			AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
 		super();
 		_table = table;
-		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
 
 		setLayout(new BorderLayout());
@@ -126,7 +120,7 @@ public final class ColumnListTable extends DCPanel {
 		_columnTable = new DCTable(headers);
 		_columnTable.setColumnControlVisible(false);
 		_columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
-
+		
 		JPanel tablePanel = _columnTable.toPanel();
 
 		if (addShadowBorder) {
@@ -174,16 +168,6 @@ public final class ColumnListTable extends DCPanel {
 			}
 			model.setValueAt(column.getDataTypeFamily(), i, 1);
 
-			JButton transformButton = WidgetFactory.createSmallButton("images/component-types/transformer.png");
-			transformButton.setToolTipText("Quick transformation");
-			transformButton.addActionListener(new AddQuickTransformationActionListener(transformButton, _configuration,
-					_analysisJobBuilder, column));
-
-			JButton filterButton = WidgetFactory.createSmallButton("images/component-types/filter.png");
-			filterButton.setToolTipText("Quick filter");
-			filterButton.addActionListener(new AddQuickFilterActionListener(filterButton, _configuration,
-					_analysisJobBuilder, column));
-
 			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove column from source");
 			removeButton.addActionListener(new ActionListener() {
@@ -195,8 +179,8 @@ public final class ColumnListTable extends DCPanel {
 
 			DCPanel buttonPanel = new DCPanel();
 			buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
-			buttonPanel.add(transformButton);
-			buttonPanel.add(filterButton);
+			// buttonPanel.add(transformButton);
+			// buttonPanel.add(filterButton);
 			if (column.isPhysicalColumn()) {
 				buttonPanel.add(removeButton);
 			}
@@ -205,6 +189,11 @@ public final class ColumnListTable extends DCPanel {
 			i++;
 		}
 		_columnTable.setModel(model);
+		
+		TableColumnExt columnExt = _columnTable.getColumnExt(2);
+		columnExt.setMinWidth(26);
+		columnExt.setMaxWidth(80);
+		columnExt.setPreferredWidth(30);
 	}
 
 	public Table getTable() {

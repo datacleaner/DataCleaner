@@ -33,7 +33,7 @@ import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public final class Main {
 
-	public static final String VERSION = "2.1-SNAPSHOT";
+	public static final String VERSION = "2.1";
 
 	public static void main(String[] args) throws UnsupportedLookAndFeelException {
 		// set up default error handling

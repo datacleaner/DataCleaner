@@ -36,7 +36,7 @@ public class HumanInferenceToolbarButton extends JButton {
 
 	public HumanInferenceToolbarButton(Icon icon) {
 		super(icon);
-		addActionListener(new OpenBrowserAction("http://www.humaninference.com"));
+		addActionListener(new OpenBrowserAction("http://eobjects.org/humaninference"));
 		setOpaque(false);
 		setBorder(new EmptyBorder(4, 4, 4, 4));
 		setToolTipText("Powered by Human Inference");

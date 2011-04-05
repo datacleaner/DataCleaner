@@ -122,6 +122,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
+						<!-- Copy dependencies to lib/ -->
 						<id>copy-dependencies</id>
 						<phase>package</phase>
 						<goals>
@@ -132,6 +133,25 @@
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 						</configuration>
 					</execution>
+
+					<execution>
+						<!-- Unpack resources for docbook XSLT generation -->
+						<!-- See http://wiki.docbook.org/MavenDocBookXSL -->
+						<id>unpack-shared-resources</id>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<!-- linked with generate-resources phase -->
+						<phase>generate-resources</phase>
+						<configuration>
+							<outputDirectory>${project.build.directory}/docbook-resources</outputDirectory>
+							<includeGroupIds>net.sf.docbook</includeGroupIds>
+							<includeArtifactIds>docbook-xsl</includeArtifactIds>
+							<includeClassifiers>ns-resources</includeClassifiers>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+
 				</executions>
 			</plugin>
 
@@ -241,6 +261,50 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<!-- Generate documentation based on DocBook xslt -->
+				<!-- See http://wiki.docbook.org/MavenDocBookXSL -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<transformationSet>
+							<dir>src/main/docbook</dir>
+							<stylesheet>${project.build.directory}/docbook-resources/docbook/html/docbook.xsl</stylesheet>
+							<parameters>
+								<parameter>
+									<name>html.stylesheet</name>
+									<value>style.css</value>
+								</parameter>
+							</parameters>
+							<fileMappers>
+								<fileMapper
+									implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+									<targetExtension>.html</targetExtension>
+								</fileMapper>
+							</fileMappers>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.docbook</groupId>
+						<artifactId>docbook-xsl-saxon</artifactId>
+						<version>1.0.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 		</plugins>
 	</build>
 	<reporting>
@@ -381,6 +445,17 @@
 			<artifactId>jtds</artifactId>
 			<version>1.2.4</version>
 			<optional>true</optional>
+		</dependency>
+
+		<!-- DocBook dependency only used for documentation generation -->
+		<dependency>
+			<groupId>net.sf.docbook</groupId>
+			<artifactId>docbook-xsl</artifactId>
+			<version>1.75.1</version>
+			<type>zip</type>
+			<classifier>ns-resources</classifier>
+			<optional>true</optional>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Test dependencies -->

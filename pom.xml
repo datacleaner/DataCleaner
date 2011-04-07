@@ -280,7 +280,7 @@
 					<transformationSets>
 						<transformationSet>
 							<dir>src/main/docbook</dir>
-							<stylesheet>${project.build.directory}/docbook-resources/docbook/html/docbook.xsl</stylesheet>
+							<stylesheet>${project.build.directory}/docbook-resources/docbook/xhtml-1_1/docbook.xsl</stylesheet>
 							<parameters>
 								<parameter>
 									<name>html.stylesheet</name>
@@ -298,9 +298,9 @@
 				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>net.sf.docbook</groupId>
-						<artifactId>docbook-xsl-saxon</artifactId>
-						<version>1.0.0</version>
+						<groupId>net.sourceforge.saxon</groupId>
+						<artifactId>saxon</artifactId>
+						<version>9.1.0.8</version>
 					</dependency>
 				</dependencies>
 			</plugin>

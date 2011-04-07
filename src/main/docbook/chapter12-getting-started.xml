@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Getting started</title>
+
+	<section id="installation">
+		<title>Installing DataCleaner</title>
+		<para>TODO</para>
+	</section>
+
+	<section id="installation">
+		<title>Connecting to your datastore</title>
+		<para>TODO</para>
+	</section>
+
+</chapter>

@@ -5,10 +5,18 @@
 	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
 		<param name="Target" value="System.out" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-5p %c{1} - %m%n" />
+			<param name="ConversionPattern" value="%-5p %d{HH:mm:ss} %c{1} - %m%n" />
 		</layout>
 	</appender>
 
+	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="File" value="log/datacleaner.log" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-5p %d{HH:mm:ss.SSS} %c{1} - %m%n" />
+		</layout>
+	</appender>
+	
 	<logger name="org.eobjects.metamodel">
 		<level value="info" />
 	</logger>
@@ -20,7 +28,7 @@
 	<logger name="org.eobjects.analyzer.job.runner">
 		<level value="info" />
 	</logger>
-	
+
 	<logger name="org.eobjects.analyzer.storage">
 		<level value="info" />
 	</logger>
@@ -37,6 +45,7 @@
 	<root>
 		<priority value="info" />
 		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
 	</root>
 
 </log4j:configuration>

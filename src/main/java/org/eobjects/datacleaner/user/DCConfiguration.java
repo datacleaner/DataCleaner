@@ -44,12 +44,14 @@ public final class DCConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger(DCConfiguration.class);
 
 	static {
+		final File dataCleanerHome = DataCleanerHome.get();
+
 		// load the configuration file
-		JaxbConfigurationReader configurationReader = new JaxbConfigurationReader();
+		final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(new DataCleanerConfigurationReaderInterceptor(dataCleanerHome));
 
 		AnalyzerBeansConfiguration c;
 		try {
-			File file = new File(DataCleanerHome.get(), "conf.xml");
+			File file = new File(dataCleanerHome, "conf.xml");
 			c = configurationReader.create(file);
 			logger.info("Succesfully read configuration from {}", file.getAbsolutePath());
 		} catch (Exception ex1) {

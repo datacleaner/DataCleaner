@@ -99,7 +99,7 @@ public final class DataCleanerHome {
 			return;
 		}
 		ResourceManager resourceManager = ResourceManager.getInstance();
-		URL url = resourceManager.getUrl("datacleaner-home/conf.xml");
+		URL url = resourceManager.getUrl("datacleaner-home/" + filename);
 
 		InputStream is = null;
 		OutputStream os = null;

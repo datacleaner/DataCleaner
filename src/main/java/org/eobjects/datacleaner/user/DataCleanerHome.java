@@ -26,9 +26,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.util.ResourceManager;
-import org.h2.util.StringUtils;
 
 /**
  * Incapsulation of the DATACLEANER_HOME folder. This folder is resolved using

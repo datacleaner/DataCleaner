@@ -24,7 +24,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -34,45 +35,25 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
-import org.jdesktop.swingx.HorizontalLayout;
-import org.jdesktop.swingx.VerticalLayout;
-
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
+import org.jdesktop.swingx.VerticalLayout;
 
 public class MultiSourceColumnComboBoxPanel extends DCPanel {
 
 	private static final long serialVersionUID = 6598553122965748098L;
-	private SourceColumnComboBox _sourceColumnComboBox;
 	private Datastore _datastore;
-	private DCPanel _sourceComboBoxPanel;
-	private DCPanel _parentPanel;
-	private DCPanel _buttonPanel;
-	private List<SourceColumnComboBox> _sourceColumnComboBoxes;
 	private Table _table;
+	private final DCPanel _sourceComboBoxPanel;
+	private final DCPanel _buttonPanel;
+	private final List<SourceColumnComboBox> _sourceColumnComboBoxes;
 
 	public MultiSourceColumnComboBoxPanel() {
-		_sourceColumnComboBoxes = new ArrayList<SourceColumnComboBox>();
-		_sourceColumnComboBox = getNewSourceColumnComboBox();
-		initializePanels();
-	}
-
-	private SourceColumnComboBox getNewSourceColumnComboBox() {
-		SourceColumnComboBox sourceColumnComboBox = (_table == null) ? new SourceColumnComboBox(_datastore)
-				: new SourceColumnComboBox(_datastore, _table);
-		_sourceColumnComboBoxes.add(sourceColumnComboBox);
-		return sourceColumnComboBox;
-	}
-
-	private void initializePanels() {
-		initializeSourceComboBoxPanel();
-		initializeParentPanel();
-		initializeButtonPanel();
-	}
-
-	private void initializeButtonPanel() {
-
+		_sourceComboBoxPanel = new DCPanel();
 		_buttonPanel = new DCPanel();
+		_sourceComboBoxPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
+		_sourceComboBoxPanel.setLayout(new VerticalLayout());
+		_sourceColumnComboBoxes = new ArrayList<SourceColumnComboBox>();
 
 		JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
 		JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
@@ -86,9 +67,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SourceColumnComboBox sourceColumnComboBox = getNewSourceColumnComboBox();
-				_sourceComboBoxPanel.add(sourceColumnComboBox);
-				_sourceComboBoxPanel.updateUI();
+				createSourceColumnComboBox(null);
 			}
 
 		});
@@ -103,20 +82,18 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 				}
 			}
 		});
+
+		// add a single uninitialized combo box to begin with
+		createSourceColumnComboBox(null);
 	}
 
-	private void initializeSourceComboBoxPanel() {
-		_sourceComboBoxPanel = new DCPanel();
-		_sourceComboBoxPanel.add(_sourceColumnComboBox);
-		_sourceComboBoxPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
-		_sourceComboBoxPanel.setLayout(new VerticalLayout());
-	}
-
-	private void initializeParentPanel() {
-		_parentPanel = new DCPanel();
-		_parentPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
-		_parentPanel.setLayout(new HorizontalLayout(2));
-		_parentPanel.add(_sourceComboBoxPanel);
+	private void createSourceColumnComboBox(Column column) {
+		SourceColumnComboBox sourceColumnComboBox = (_table == null) ? new SourceColumnComboBox(_datastore)
+				: new SourceColumnComboBox(_datastore, _table);
+		sourceColumnComboBox.setSelectedItem(column);
+		_sourceColumnComboBoxes.add(sourceColumnComboBox);
+		_sourceComboBoxPanel.add(sourceColumnComboBox);
+		_sourceComboBoxPanel.updateUI();
 	}
 
 	/**
@@ -125,15 +102,18 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 	 * @return DCPanel
 	 */
 	public DCPanel createPanel() {
-		_parentPanel.setLayout(new BorderLayout());
-		_parentPanel.add(_sourceComboBoxPanel, BorderLayout.CENTER);
-		_parentPanel.add(_buttonPanel, BorderLayout.EAST);
-		return _parentPanel;
+		DCPanel parentPanel = new DCPanel();
+		parentPanel.setLayout(new BorderLayout());
+		parentPanel.add(_sourceComboBoxPanel, BorderLayout.CENTER);
+		parentPanel.add(_buttonPanel, BorderLayout.EAST);
+		return parentPanel;
 	}
 
 	public void setModel(Datastore datastore) {
 		_datastore = datastore;
-		_sourceColumnComboBox.setModel(_datastore);
+		for (SourceColumnComboBox comboBox : _sourceColumnComboBoxes) {
+			comboBox.setModel(datastore);
+		}
 	}
 
 	/**
@@ -157,7 +137,7 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 	 */
 	public List<Column> getColumns() {
 		List<Column> columns = new ArrayList<Column>();
-		List<Component> components = Arrays.asList(_sourceComboBoxPanel.getComponents());
+		Component[] components = _sourceComboBoxPanel.getComponents();
 		for (Component component : components) {
 			if (component instanceof SourceColumnComboBox) {
 				SourceColumnComboBox sourceColumnComboBox = (SourceColumnComboBox) component;
@@ -167,8 +147,28 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 		return columns;
 	}
 
+	public void setColumns(Collection<Column> columns) {
+		Iterator<Column> it = columns.iterator();
+		Component[] components = _sourceComboBoxPanel.getComponents();
+		for (Component component : components) {
+			if (component instanceof SourceColumnComboBox) {
+				if (!it.hasNext()) {
+					return;
+				}
+
+				Column column = it.next();
+				SourceColumnComboBox sourceColumnComboBox = (SourceColumnComboBox) component;
+				sourceColumnComboBox.setSelectedItem(column);
+			}
+		}
+
+		while (it.hasNext()) {
+			createSourceColumnComboBox(it.next());
+		}
+	}
+
 	/**
-	 * updates the SourceColumnComboBoxes with the provided datastore and table 
+	 * updates the SourceColumnComboBoxes with the provided datastore and table
 	 */
 	public void updateSourceComboBoxes(Datastore datastore, Table table) {
 		_datastore = datastore;

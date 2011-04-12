@@ -32,6 +32,7 @@
 
 		<xi:include href="chapter11-concepts.xml" />
 		<xi:include href="chapter12-getting-started.xml" />
+		<xi:include href="chapter13-building-jobs.xml" />
 	</part>
 
 	<part>
@@ -49,6 +50,7 @@
 		</partinfo>
 		<xi:include href="chapter31-configuration-file.xml" />
 		<xi:include href="chapter32-job-files.xml" />
+		<xi:include href="chapter33-logging.xml" />
 	</part>
 
 	<part>

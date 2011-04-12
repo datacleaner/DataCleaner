@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Building jobs</title>
+
+	<section id="adding_components">
+		<title>Adding components to the job</title>
+		<para>TODO</para>
+	</section>
+
+	<section id="executing">
+		<title>Executing jobs</title>
+		<para>TODO</para>
+	</section>
+
+	<section id="saving_and_opening_jobs">
+		<title>Saving and opening jobs</title>
+		<para>TODO</para>
+	</section>
+
+	<section id="template_jobs">
+		<title>Template jobs</title>
+		<para>TODO</para>
+	</section>
+</chapter>

@@ -17,9 +17,31 @@
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
+
+		<csv-datastore name="Country codes">
+			<filename>examples/countrycodes.csv</filename>
+			<quote-char>"</quote-char>
+			<separator-char>;</separator-char>
+			<encoding>UTF-8</encoding>
+		</csv-datastore>
 	</datastore-catalog>
 
 	<reference-data-catalog>
+		<dictionaries>
+			<datastore-dictionary name="Country names">
+				<datastore-name>Country codes</datastore-name>
+				<column-path>Country name</column-path>
+			</datastore-dictionary>
+		</dictionaries>
+		<synonym-catalogs>
+			<datastore-synonym-catalog name="Country code (3 letter)">
+				<datastore-name>Country codes</datastore-name>
+				<master-term-column-path>ISO 3166-3</master-term-column-path>
+				<synonym-column-path>ISO 3166-2</synonym-column-path>
+				<synonym-column-path>ISO Numeric</synonym-column-path>
+				<synonym-column-path>Country name</synonym-column-path>
+			</datastore-synonym-catalog>
+		</synonym-catalogs>
 	</reference-data-catalog>
 
 	<multithreaded-taskrunner max-threads="30" />

@@ -86,8 +86,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 	private DCPanel createNewSynonymCatalogsPanel() {
 
-		final JButton textFileSynonymCatalogButton = createButton(
-				"images/model/synonym_textfile.png",
+		final JButton textFileSynonymCatalogButton = createButton("images/model/synonym_textfile.png",
 				"<html><b>Text file synonym catalog</b><br/>Synonyms from a file with master terms and comma-separated synonyms.</html>");
 		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
@@ -204,8 +203,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			return ((TextBasedSynonymCatalog) synonymCatalog).getFilename();
 		} else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
 			DatastoreSynonymCatalog datastoreSynonymCatalog = (DatastoreSynonymCatalog) synonymCatalog;
-			return datastoreSynonymCatalog.getDatastoreName() + ": "
-					+ datastoreSynonymCatalog.getMasterTermQualifiedColumnName();
+			return datastoreSynonymCatalog.getDatastoreName() + ": " + datastoreSynonymCatalog.getMasterTermColumnPath();
 		}
 		return "";
 	}

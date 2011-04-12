@@ -62,7 +62,7 @@ public class DataCleanerConfigurationReaderInterceptor implements ConfigurationR
 
 	@Override
 	public String getTemporaryStorageDirectory() {
-		return UserPreferences.getInstance().getSaveDatastoreDirectory().getAbsolutePath();
+		return new File(_dataCleanerHome, "temp").getAbsolutePath();
 	}
 
 }

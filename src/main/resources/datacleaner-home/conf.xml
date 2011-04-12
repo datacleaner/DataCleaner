@@ -6,7 +6,7 @@
 		<configuration-name>DataCleaner configuration</configuration-name>
 		<configuration-description>Configures DataCleaner's initial environment.
 			This includes an example datastore and some example reference data.</configuration-description>
-		<configuration-version>2.0</configuration-version>
+		<configuration-version>2.2</configuration-version>
 		<author>eobjects.org</author>
 	</configuration-metadata>
 
@@ -22,7 +22,7 @@
 			<filename>examples/countrycodes.csv</filename>
 			<quote-char>"</quote-char>
 			<separator-char>;</separator-char>
-			<encoding>UTF-8</encoding>
+			<encoding>ISO-8859-1</encoding>
 		</csv-datastore>
 	</datastore-catalog>
 
@@ -34,6 +34,14 @@
 			</datastore-dictionary>
 		</dictionaries>
 		<synonym-catalogs>
+			<datastore-synonym-catalog name="Country code (2 letter)">
+				<datastore-name>Country codes</datastore-name>
+				<master-term-column-path>ISO 3166-2</master-term-column-path>
+				<synonym-column-path>ISO 3166-3</synonym-column-path>
+				<synonym-column-path>ISO Numeric</synonym-column-path>
+				<synonym-column-path>Country name</synonym-column-path>
+			</datastore-synonym-catalog>
+			
 			<datastore-synonym-catalog name="Country code (3 letter)">
 				<datastore-name>Country codes</datastore-name>
 				<master-term-column-path>ISO 3166-3</master-term-column-path>

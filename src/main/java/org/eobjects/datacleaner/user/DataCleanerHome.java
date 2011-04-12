@@ -29,6 +29,8 @@ import java.net.URL;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.util.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Incapsulation of the DATACLEANER_HOME folder. This folder is resolved using
@@ -45,6 +47,7 @@ import org.eobjects.datacleaner.util.ResourceManager;
  */
 public final class DataCleanerHome {
 
+	private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
 	private static final File _dataCleanerHome;
 
 	static {
@@ -100,6 +103,11 @@ public final class DataCleanerHome {
 	private static void copyIfNonExisting(File directory, String filename) {
 		File file = new File(directory, filename);
 		if (file.exists()) {
+			logger.info("File already exists in DATACLEANER_HOME: " + filename);
+			return;
+		}
+		if (!file.getParentFile().mkdirs()) {
+			logger.warn("Could not create directory for file in DATACLEANER_HOME: " + filename);
 			return;
 		}
 		ResourceManager resourceManager = ResourceManager.getInstance();

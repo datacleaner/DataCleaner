@@ -106,7 +106,8 @@ public final class DataCleanerHome {
 			logger.info("File already exists in DATACLEANER_HOME: " + filename);
 			return;
 		}
-		if (!file.getParentFile().mkdirs()) {
+		File parentFile = file.getParentFile();
+		if (!parentFile.exists() && !parentFile.mkdirs()) {
 			logger.warn("Could not create directory for file in DATACLEANER_HOME: " + filename);
 			return;
 		}

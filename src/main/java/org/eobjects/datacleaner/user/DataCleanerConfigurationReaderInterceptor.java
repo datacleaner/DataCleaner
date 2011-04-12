@@ -44,6 +44,9 @@ public class DataCleanerConfigurationReaderInterceptor implements ConfigurationR
 
 	@Override
 	public String createFilename(String filename) {
+		if (filename == null) {
+			return null;
+		}
 		File file = new File(filename);
 		if (!file.isAbsolute()) {
 			file = new File(_dataCleanerHome, filename);
@@ -55,6 +58,11 @@ public class DataCleanerConfigurationReaderInterceptor implements ConfigurationR
 			}
 		}
 		return filename;
+	}
+
+	@Override
+	public String getTemporaryStorageDirectory() {
+		return UserPreferences.getInstance().getSaveDatastoreDirectory().getAbsolutePath();
 	}
 
 }

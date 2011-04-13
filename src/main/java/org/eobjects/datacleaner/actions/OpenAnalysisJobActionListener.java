@@ -52,10 +52,10 @@ import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 public class OpenAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
-	private final AnalysisJobBuilderWindow _window;
+	private final AnalysisJobBuilderWindow _parentWindow;
 
-	public OpenAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalyzerBeansConfiguration configuration) {
-		_window = window;
+	public OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration) {
+		_parentWindow = parentWindow;
 		_configuration = configuration;
 	}
 
@@ -65,44 +65,68 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
 		UserPreferences userPreferences = UserPreferences.getInstance();
 		DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
-		fileChooser.setAccessory(new OpenAnalysisJobFileChooserAccessory(_configuration, fileChooser));
+		fileChooser.setAccessory(new OpenAnalysisJobFileChooserAccessory(_parentWindow, _configuration, fileChooser));
 
 		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
 		int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
 
 		if (openFileResult == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
-			openFile(file, _configuration);
-			if (_window != null && !_window.isDatastoreSet()) {
-				_window.dispose();
-			}
+			openFile(_parentWindow, file, _configuration);
+
 		}
 	}
 
-	public static void openFile(File file, AnalyzerBeansConfiguration configuration) {
+	/**
+	 * Opens a job file
+	 * 
+	 * @param parentWindow
+	 *            the parent window that invoked this open call, or null if none
+	 *            exists
+	 * @param file
+	 * @param configuration
+	 */
+	public static void openFile(final AnalysisJobBuilderWindow parentWindow, File file,
+			AnalyzerBeansConfiguration configuration) {
 		JaxbJobReader reader = new JaxbJobReader(configuration);
 		try {
 			AnalysisJobBuilder ajb = reader.create(file);
 
-			openJob(file, configuration, ajb);
+			openJob(parentWindow, file, configuration, ajb);
 		} catch (NoSuchDatastoreException e) {
 			AnalysisJobMetadata metadata = reader.readMetadata(file);
 			int result = JOptionPane.showConfirmDialog(null, e.getMessage()
 					+ "\n\nDo you wish to open this job as a template?", "Error: " + e.getMessage(),
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 			if (result == JOptionPane.OK_OPTION) {
-				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(configuration, file, metadata);
+				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(parentWindow, configuration,
+						file, metadata);
 				dialog.setVisible(true);
 			}
 		}
 	}
 
-	public static void openJob(File file, AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb) {
+	/**
+	 * Opens a job builder
+	 * 
+	 * @param parentWindow
+	 *            the parent window that invoked this open call, or null if none
+	 *            exists
+	 * @param file
+	 * @param configuration
+	 * @param ajb
+	 */
+	public static void openJob(final AnalysisJobBuilderWindow parentWindow, File file,
+			AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb) {
 		UserPreferences userPreferences = UserPreferences.getInstance();
 		userPreferences.setAnalysisJobDirectory(file.getParentFile());
 		userPreferences.addRecentJobFile(file);
 
 		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, ajb, file.getName());
 		window.setVisible(true);
+
+		if (parentWindow != null && !parentWindow.isDatastoreSet()) {
+			parentWindow.dispose();
+		}
 	}
 }

@@ -36,7 +36,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.SimpleDictionary;
-import org.eobjects.analyzer.reference.TextBasedDictionary;
+import org.eobjects.analyzer.reference.TextFileDictionary;
 import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -163,11 +163,11 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 						dialog.setVisible(true);
 					}
 				});
-			} else if (dictionary instanceof TextBasedDictionary) {
+			} else if (dictionary instanceof TextFileDictionary) {
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						TextFileDictionaryDialog dialog = new TextFileDictionaryDialog((TextBasedDictionary) dictionary,
+						TextFileDictionaryDialog dialog = new TextFileDictionaryDialog((TextFileDictionary) dictionary,
 								_catalog);
 						dialog.setVisible(true);
 					}
@@ -219,8 +219,8 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	}
 
 	private String getDescription(Dictionary dictionary) {
-		if (dictionary instanceof TextBasedDictionary) {
-			return ((TextBasedDictionary) dictionary).getFilename();
+		if (dictionary instanceof TextFileDictionary) {
+			return ((TextFileDictionary) dictionary).getFilename();
 		} else if (dictionary instanceof DatastoreDictionary) {
 			DatastoreDictionary datastoreDictionary = (DatastoreDictionary) dictionary;
 			return datastoreDictionary.getDatastoreName() + ": " + datastoreDictionary.getQualifiedColumnName();

@@ -54,10 +54,9 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
+import org.eobjects.metamodel.schema.Column;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
-
-import org.eobjects.metamodel.schema.Column;
 
 /**
  * Dialog for opening a job as a template. This feature allows the user to reuse
@@ -81,12 +80,13 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 	private final Map<String, List<SourceColumnComboBox>> _sourceColumnComboBoxes;
 	private final Map<String, JXTextField> _variableTextFields;
 	private final JButton _openButton;
+	private final AnalysisJobBuilderWindow _parentWindow;
+	private final JButton _autoMapButton;
 
 	private volatile Datastore _datastore;
 
-	private JButton _autoMapButton;
-
-	public OpenAnalysisJobAsTemplateDialog(AnalyzerBeansConfiguration configuration, File file, AnalysisJobMetadata metadata) {
+	public OpenAnalysisJobAsTemplateDialog(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration, File file, AnalysisJobMetadata metadata) {
+		_parentWindow = parentWindow;
 		_configuration = configuration;
 		_file = file;
 		_metadata = metadata;
@@ -109,7 +109,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
 					AnalysisJobBuilder ajb = reader.create(new BufferedInputStream(new FileInputStream(_file)),
 							sourceColumnMapping, variableOverrides);
-					OpenAnalysisJobActionListener.openJob(_file, _configuration, ajb);
+					OpenAnalysisJobActionListener.openJob(_parentWindow, _file, _configuration, ajb);
 					OpenAnalysisJobAsTemplateDialog.this.dispose();
 				} catch (Exception e1) {
 					throw new IllegalStateException(e1);

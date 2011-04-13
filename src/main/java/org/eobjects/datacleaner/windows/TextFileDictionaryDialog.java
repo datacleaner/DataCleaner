@@ -32,7 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.eobjects.analyzer.reference.TextBasedDictionary;
+import org.eobjects.analyzer.reference.TextFileDictionary;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -53,7 +53,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 	private static final long serialVersionUID = 1L;
 
 	private final UserPreferences _userPreferences = UserPreferences.getInstance();
-	private final TextBasedDictionary _originalDictionary;
+	private final TextFileDictionary _originalDictionary;
 	private final MutableReferenceDataCatalog _catalog;
 	private final JXTextField _nameTextField;
 	private final FilenameTextField _filenameTextField;
@@ -64,7 +64,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 		this(null, catalog);
 	}
 
-	public TextFileDictionaryDialog(TextBasedDictionary dictionary, MutableReferenceDataCatalog catalog) {
+	public TextFileDictionaryDialog(TextFileDictionary dictionary, MutableReferenceDataCatalog catalog) {
 		super(ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_catalog = catalog;
@@ -150,7 +150,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 					return;
 				}
 
-				TextBasedDictionary dict = new TextBasedDictionary(name, filename, encoding);
+				TextFileDictionary dict = new TextFileDictionary(name, filename, encoding);
 
 				if (_originalDictionary != null) {
 					_catalog.removeDictionary(_originalDictionary);

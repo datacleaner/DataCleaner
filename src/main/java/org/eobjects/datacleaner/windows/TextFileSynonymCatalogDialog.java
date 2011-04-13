@@ -33,7 +33,7 @@ import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
-import org.eobjects.analyzer.reference.TextBasedSynonymCatalog;
+import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -49,12 +49,12 @@ import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
-public final class TextBasedSynonymCatalogDialog extends AbstractDialog {
+public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
 	private final UserPreferences _userPreferences = UserPreferences.getInstance();
-	private final TextBasedSynonymCatalog _originalsynonymCatalog;
+	private final TextFileSynonymCatalog _originalsynonymCatalog;
 	private final MutableReferenceDataCatalog _catalog;
 	private final JXTextField _nameTextField;
 	private final JCheckBox _caseSensitiveCheckBox;
@@ -62,11 +62,11 @@ public final class TextBasedSynonymCatalogDialog extends AbstractDialog {
 	private final JComboBox _encodingComboBox;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public TextBasedSynonymCatalogDialog(MutableReferenceDataCatalog catalog) {
+	public TextFileSynonymCatalogDialog(MutableReferenceDataCatalog catalog) {
 		this(null, catalog);
 	}
 
-	public TextBasedSynonymCatalogDialog(TextBasedSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog) {
+	public TextFileSynonymCatalogDialog(TextFileSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog) {
 		super(ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_catalog = catalog;
@@ -143,32 +143,32 @@ public final class TextBasedSynonymCatalogDialog extends AbstractDialog {
 			public void actionPerformed(ActionEvent e) {
 				String name = _nameTextField.getText();
 				if (StringUtils.isNullOrEmpty(name)) {
-					JOptionPane.showMessageDialog(TextBasedSynonymCatalogDialog.this,
+					JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,
 							"Please fill out the name of the synonym catalog");
 					return;
 				}
 
 				String filename = _filenameTextField.getFilename();
 				if (StringUtils.isNullOrEmpty(filename)) {
-					JOptionPane.showMessageDialog(TextBasedSynonymCatalogDialog.this,
+					JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this,
 							"Please fill out the filename or select a file using the 'Browse' button");
 					return;
 				}
 
 				String encoding = (String) _encodingComboBox.getSelectedItem();
 				if (StringUtils.isNullOrEmpty(filename)) {
-					JOptionPane.showMessageDialog(TextBasedSynonymCatalogDialog.this, "Please select a character encoding");
+					JOptionPane.showMessageDialog(TextFileSynonymCatalogDialog.this, "Please select a character encoding");
 					return;
 				}
 
-				TextBasedSynonymCatalog sc = new TextBasedSynonymCatalog(name, filename,
+				TextFileSynonymCatalog sc = new TextFileSynonymCatalog(name, filename,
 						_caseSensitiveCheckBox.isSelected(), encoding);
 
 				if (_originalsynonymCatalog != null) {
 					_catalog.removeSynonymCatalog(_originalsynonymCatalog);
 				}
 				_catalog.addSynonymCatalog(sc);
-				TextBasedSynonymCatalogDialog.this.dispose();
+				TextFileSynonymCatalogDialog.this.dispose();
 			}
 		});
 

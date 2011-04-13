@@ -47,6 +47,7 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 	private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
+	private final AnalysisJobBuilderWindow _parentWindow;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCFileChooser _fileChooser;
 	private final DCPanel _centerPanel;
@@ -72,8 +74,10 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 	private volatile AnalysisJobMetadata _metadata;
 	private final JButton _openJobButton;
 
-	public OpenAnalysisJobFileChooserAccessory(AnalyzerBeansConfiguration configuration, DCFileChooser fileChooser) {
+	public OpenAnalysisJobFileChooserAccessory(AnalysisJobBuilderWindow parentWindow,
+			AnalyzerBeansConfiguration configuration, DCFileChooser fileChooser) {
 		super();
+		_parentWindow = parentWindow;
 		_configuration = configuration;
 		_centerPanel = new DCPanel();
 		_centerPanel.setLayout(new VerticalLayout(0));
@@ -117,7 +121,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		openJobButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				OpenAnalysisJobActionListener.openFile(_file, _configuration);
+				OpenAnalysisJobActionListener.openFile(_parentWindow, _file, _configuration);
 				_fileChooser.cancelSelection();
 			}
 		});
@@ -131,8 +135,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		openAsTemplateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_configuration, _file,
-						_metadata);
+				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_parentWindow, _configuration,
+						_file, _metadata);
 				_fileChooser.cancelSelection();
 				dialog.setVisible(true);
 			}

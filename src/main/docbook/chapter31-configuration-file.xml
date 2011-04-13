@@ -5,4 +5,72 @@
 
 	<title>Configuration file</title>
 
+	<chapterinfo>
+		<abstract>
+			<para>In this file we go through the elements of a configuration
+				file
+				(conf.xml), making it possible (although optional) to change the
+				static
+				configuration and configure the environment of DataCleaner.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<sect1>
+		<title>Datastores</title>
+		<sect1info>
+			<abstract>
+				<para>Datastores can be configured in the configuration file under
+					the element &lt;datastore-catalog&gt;.</para>
+			</abstract>
+		</sect1info>
+
+		<sect2>
+			<title>Database (JDBC) connections</title>
+
+			<para>Here are a few examples of common database types.</para>
+
+			<tip>
+				<para>The DataCleaner GUI makes it a lot easier to figure out the
+					url (connection string) and driver class part of the connection
+					properties. It's a good place to start if you don't know these
+					properties already.</para>
+			</tip>
+
+			<para>MySQL</para>
+			<programlisting lang="xml">
+				&lt;jdbc-datastore name="MySQL datastore"&gt;
+					&lt;url&gt;jdbc:mysql://hostname:3306/database&lt;/url&gt;
+					&lt;driver&gt;com.mysql.jdbc.Driver&lt;/driver&gt;
+					&lt;username&gt;username&lt;/username&gt;
+					&lt;password&gt;password&lt;/password&gt;
+				&lt;/jdbc-datastore&gt;
+			</programlisting>
+			
+			<para>Oracle</para>
+			<programlisting lang="xml">
+				&lt;jdbc-datastore name="Oracle datastore"&gt;
+					&lt;url&gt;jdbc:oracle:thin:@hostname:1521:sid&lt;/url&gt;
+					&lt;driver&gt;oracle.jdbc.OracleDriver&lt;/driver&gt;
+					&lt;username&gt;username&lt;/username&gt;
+					&lt;password&gt;password&lt;/password&gt;
+				&lt;/jdbc-datastore&gt;
+			</programlisting>
+			
+			<para>Microsoft SQL Server</para>
+			<programlisting lang="xml">
+				&lt;jdbc-datastore name="MS SQL Server datastore"&gt;
+					&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt;
+					&lt;driver&gt;net.sourceforge.jtds.jdbc.Driver&lt;/driver&gt;
+					&lt;username&gt;username&lt;/username&gt;
+					&lt;password&gt;password&lt;/password&gt;
+				&lt;/jdbc-datastore&gt;
+			</programlisting>
+		</sect2>
+
+		<sect2>
+			<title>Comma-separated values (CSV) files</title>
+			<para>TODO</para>
+		</sect2>
+	</sect1>
 </chapter>

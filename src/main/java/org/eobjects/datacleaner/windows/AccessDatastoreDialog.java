@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import javax.swing.filechooser.FileFilter;
+
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -64,8 +66,11 @@ public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<Acce
 
 	@Override
 	protected void setFileFilters(FilenameTextField filenameField) {
+		FileFilter combinedFilter = FileFilters.combined("Any Access database (.mdb, .accdb)", FileFilters.MDB,
+				FileFilters.ACCDB);
 		filenameField.addChoosableFileFilter(FileFilters.MDB);
+		filenameField.addChoosableFileFilter(FileFilters.ACCDB);
 		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(FileFilters.MDB);
+		filenameField.setSelectedFileFilter(combinedFilter);
 	}
 }

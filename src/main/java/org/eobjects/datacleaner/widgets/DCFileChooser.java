@@ -112,7 +112,7 @@ public class DCFileChooser extends JFileChooser {
 				|| name.endsWith(FileFilters.DAT.getExtension()) || name.endsWith(FileFilters.TXT.getExtension())) {
 			return imageManager.getImageIcon(IconUtils.CSV_IMAGEPATH);
 		}
-		if (name.endsWith(FileFilters.MDB.getExtension())) {
+		if (name.endsWith(FileFilters.MDB.getExtension()) || name.endsWith(FileFilters.ACCDB.getExtension())) {
 			return imageManager.getImageIcon(IconUtils.ACCESS_IMAGEPATH);
 		}
 		if (name.endsWith(FileFilters.DBF.getExtension())) {

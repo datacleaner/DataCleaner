@@ -67,7 +67,8 @@ public final class FileFilters {
 	public static final ExtensionFilter TXT = new ExtensionFilter("Text files (.csv)", ".txt");
 	public static final ExtensionFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
 	public static final ExtensionFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
-	public static final ExtensionFilter MDB = new ExtensionFilter("Access database (.mdb)", ".mdb");
+	public static final ExtensionFilter MDB = new ExtensionFilter("Access 97-2003 database (.mdb)", ".mdb");
+	public static final ExtensionFilter ACCDB = new ExtensionFilter("Access database (.accdb)", ".accdb");
 	public static final ExtensionFilter DBF = new ExtensionFilter("Dbase database (.dbf)", ".dbf");
 	public static final ExtensionFilter ODB = new ExtensionFilter("OpenOffice.org database (.odb)", ".odb");
 	public static final ExtensionFilter XML = new ExtensionFilter("Extensible Markup Language (.xml)", ".xml");

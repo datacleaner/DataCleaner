@@ -22,6 +22,12 @@ package org.eobjects.datacleaner.user;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
@@ -116,5 +122,69 @@ public final class ExtensionPackage implements Serializable {
 
 	public int getLoadedTransformers() {
 		return _loadedTransformers;
+	}
+
+	public static String autoDetectPackageName(File file) {
+		try {
+			Set<String> packageNames = new HashSet<String>();
+			JarFile jarFile = new JarFile(file);
+			Enumeration<JarEntry> entries = jarFile.entries();
+			while (entries.hasMoreElements()) {
+				JarEntry entry = entries.nextElement();
+				String name = entry.getName();
+				if (name.endsWith(".class")) {
+					logger.debug("Considering package of entry '{}'", name);
+
+					int lastIndexOfSlash = name.lastIndexOf('/');
+					if (lastIndexOfSlash != -1) {
+						name = name.substring(0, lastIndexOfSlash);
+						packageNames.add(name);
+					}
+
+				}
+			}
+
+			if (packageNames.isEmpty()) {
+				return null;
+			}
+
+			logger.info("Found {} packages in extension jar: {}", packageNames.size(), packageNames);
+
+			// find the longest common prefix of all the package names
+			Iterator<String> it = packageNames.iterator();
+			String packageName = it.next();
+			while (it.hasNext()) {
+				if (packageName == "") {
+					logger.debug("No common package prefix");
+					return null;
+				}
+				String name = it.next();
+				if (!name.startsWith(packageName)) {
+					packageName = longestCommonPrefix(packageName, name, '/');
+				}
+			}
+
+			packageName = packageName.replace('/', '.');
+			return packageName;
+		} catch (Exception e) {
+			logger.warn("Error occurred while auto detecting package name", e);
+			return null;
+		}
+	}
+
+	protected static String longestCommonPrefix(String str1, String str2, char tokenizerChar) {
+		StringBuilder result = new StringBuilder();
+		String[] tokens1 = str1.split("\\" + tokenizerChar);
+		String[] tokens2 = str2.split("\\" + tokenizerChar);
+		for (int i = 0; i < Math.min(tokens1.length, tokens2.length); i++) {
+			if (!tokens1[i].equals(tokens2[i])) {
+				break;
+			}
+			if (i != 0) {
+				result.append(tokenizerChar);
+			}
+			result.append(tokens1[i]);
+		}
+		return result.toString();
 	}
 }

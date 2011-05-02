@@ -44,11 +44,26 @@ public class ExtensionPackageTest extends TestCase {
 		assertEquals(1, extensionPackage.getLoadedTransformers());
 		assertEquals(1, extensionPackage.getLoadedFilters());
 
-		assertEquals("[AnnotationBasedAnalyzerBeanDescriptor[foo.bar.BazAnalyzer]]", descriptorProvider
+		assertEquals("[AnnotationBasedAnalyzerBeanDescriptor[foo.bar.analyzer.BazAnalyzer]]", descriptorProvider
 				.getAnalyzerBeanDescriptors().toString());
-		assertEquals("[AnnotationBasedTransformerBeanDescriptor[foo.bar.BazTransformer]]", descriptorProvider
+		assertEquals("[AnnotationBasedTransformerBeanDescriptor[foo.bar.transformer.BazTransformer]]", descriptorProvider
 				.getTransformerBeanDescriptors().toString());
-		assertEquals("[AnnotationBasedFilterBeanDescriptor[foo.bar.BazFilter]]", descriptorProvider
+		assertEquals("[AnnotationBasedFilterBeanDescriptor[foo.bar.filter.BazFilter]]", descriptorProvider
 				.getFilterBeanDescriptors().toString());
+	}
+
+	public void testLongestCommonPrefix() throws Exception {
+		assertEquals("foo.bar", ExtensionPackage.longestCommonPrefix("foo.bar.analyzer", "foo.bar.transformer", '.'));
+		assertEquals("", ExtensionPackage.longestCommonPrefix("hello", "world", '.'));
+		assertEquals("", ExtensionPackage.longestCommonPrefix("bfoo.bar.analyzer", "foo.bar.transformer", '.'));
+		assertEquals("hello.world", ExtensionPackage.longestCommonPrefix("hello.world", "hello.world", '.'));
+		assertEquals("hello", ExtensionPackage.longestCommonPrefix("hello.world", "hello.brave.world", '.'));
+	}
+
+	public void testAutoDetectPackageName() throws Exception {
+		File file = new File("src/test/resources/FooBarPlugin.jar");
+		assertTrue("example plugin jar does not exist", file.exists());
+
+		assertEquals("foo.bar", ExtensionPackage.autoDetectPackageName(file));
 	}
 }

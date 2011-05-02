@@ -45,6 +45,7 @@ import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
+import org.eobjects.datacleaner.panels.ExtensionPackagesPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -82,12 +83,14 @@ public class OptionsDialog extends AbstractWindow {
 		_tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
 		_tabbedPane.addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
 		_tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());
+		_tabbedPane.addTab("Extensions", imageManager.getImageIcon("images/component-types/plugin.png"), new ExtensionPackagesPanel());
 
 		_tabbedPane.setUnclosableTab(0);
 		_tabbedPane.setUnclosableTab(1);
 		_tabbedPane.setUnclosableTab(2);
 		_tabbedPane.setUnclosableTab(3);
 		_tabbedPane.setUnclosableTab(4);
+		_tabbedPane.setUnclosableTab(5);
 	}
 
 	public void selectDatabaseDriversTab() {

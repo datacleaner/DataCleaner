@@ -31,9 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
@@ -81,9 +79,13 @@ public class AboutDialog extends AbstractDialog {
 		public String license;
 	}
 
-	private final ResourceManager resourceManager = ResourceManager.getInstance();
-	private final ImageManager imageManager = ImageManager.getInstance();
-	private final Map<String, String> _licenses = new HashMap<String, String>();
+	private static final ResourceManager resourceManager = ResourceManager.getInstance();
+	private static final ImageManager imageManager = ImageManager.getInstance();
+
+	@Override
+	public void toFront() {
+		super.toFront();
+	}
 
 	@Override
 	protected String getBannerTitle() {
@@ -279,7 +281,7 @@ public class AboutDialog extends AbstractDialog {
 		return "About DataCleaner | DataCleaner";
 	}
 
-	public List<LicensedProject> getLicensedProjects() {
+	public static List<LicensedProject> getLicensedProjects() {
 		final List<LicensedProject> result = new ArrayList<AboutDialog.LicensedProject>();
 		final URL url = resourceManager.getUrl("licenses/dependency-licenses.csv");
 		if (url == null) {
@@ -312,39 +314,34 @@ public class AboutDialog extends AbstractDialog {
 		return result;
 	}
 
-	public String getLicense(final String licenseName) {
-		String license = _licenses.get(licenseName);
-		if (license == null) {
-			URL url = resourceManager.getUrl("licenses/" + licenseName + ".txt");
-			if (url == null) {
-				throw new IllegalArgumentException("Could not find license file for license: " + licenseName);
-			}
-			BufferedReader reader = null;
-			try {
-				reader = new BufferedReader(new InputStreamReader(url.openStream(), FileHelper.UTF_8_ENCODING));
-				final StringBuilder sb = new StringBuilder();
-				for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-					if (sb.length() != 0) {
-						sb.append('\n');
-					}
-					sb.append(line);
-				}
-
-				license = sb.toString();
-			} catch (Exception e) {
-				throw new IllegalStateException("Error occurred while reading license file: " + licenseName, e);
-			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (IOException e) {
-						// do nothing
-					}
-				}
-			}
-			_licenses.put(licenseName, license);
+	public static String getLicense(final String licenseName) {
+		URL url = resourceManager.getUrl("licenses/" + licenseName + ".txt");
+		if (url == null) {
+			throw new IllegalArgumentException("Could not find license file for license: " + licenseName);
 		}
-		return license;
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(url.openStream(), FileHelper.UTF_8_ENCODING));
+			final StringBuilder sb = new StringBuilder();
+			for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+				if (sb.length() != 0) {
+					sb.append('\n');
+				}
+				sb.append(line);
+			}
+
+			return sb.toString();
+		} catch (Exception e) {
+			throw new IllegalStateException("Error occurred while reading license file: " + licenseName, e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// do nothing
+				}
+			}
+		}
 	}
 
 	public static void main(String[] args) {

@@ -28,16 +28,14 @@ import junit.framework.TestCase;
 public class AboutDialogTest extends TestCase {
 
 	public void testGetLicense() throws Exception {
-		AboutDialog dialog = new AboutDialog();
-		String mit = dialog.getLicense("mit");
+		String mit = AboutDialog.getLicense("mit");
 		assertNotNull(mit);
 		assertTrue(mit.startsWith("Copyright (C)"));
 		assertTrue(mit.endsWith(" OTHER DEALINGS IN\nTHE SOFTWARE."));
 	}
 
 	public void testGetLicensedProects() throws Exception {
-		AboutDialog dialog = new AboutDialog();
-		List<LicensedProject> lp = dialog.getLicensedProjects();
+		List<LicensedProject> lp = AboutDialog.getLicensedProjects();
 		for (LicensedProject licensedProject : lp) {
 			assertNotNull(licensedProject.name);
 			assertNotNull(licensedProject.websiteUrl);

@@ -20,11 +20,13 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.File;
+import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
+import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.descriptors.SimpleDescriptorProvider;
 import org.eobjects.analyzer.job.concurrent.SingleThreadedTaskRunner;
 import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
@@ -47,7 +49,8 @@ public final class DCConfiguration {
 		final File dataCleanerHome = DataCleanerHome.get();
 
 		// load the configuration file
-		final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(new DataCleanerConfigurationReaderInterceptor(dataCleanerHome));
+		final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
+				new DataCleanerConfigurationReaderInterceptor(dataCleanerHome));
 
 		AnalyzerBeansConfiguration c;
 		try {
@@ -71,8 +74,15 @@ public final class DCConfiguration {
 		MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog());
 		MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(c.getReferenceDataCatalog(),
 				datastoreCatalog);
-		configuration = new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog,
-				c.getDescriptorProvider(), c.getTaskRunner(), c.getStorageProvider());
+		DescriptorProvider descriptorProvider = c.getDescriptorProvider();
+		
+		List<ExtensionPackage> extensionPackages = UserPreferences.getInstance().getExtensionPackages();
+		for (ExtensionPackage extensionPackage : extensionPackages) {
+			extensionPackage.loadExtension(descriptorProvider);
+		}
+		
+		configuration = new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog, descriptorProvider,
+				c.getTaskRunner(), c.getStorageProvider());
 	}
 
 	private static final AnalyzerBeansConfiguration configuration;

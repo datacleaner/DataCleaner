@@ -49,6 +49,7 @@ public class UserPreferences implements Serializable {
 
 	private transient List<LoginChangeListener> loginChangeListeners;
 	private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
+	private List<ExtensionPackage> extensionPackages = new ArrayList<ExtensionPackage>();
 	private List<Datastore> userDatastores = new ArrayList<Datastore>();
 	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
 	private List<StringPattern> userStringPatterns = new ArrayList<StringPattern>();
@@ -89,7 +90,6 @@ public class UserPreferences implements Serializable {
 									logger.error("Could not load database driver", e);
 								}
 							}
-
 						} catch (InvalidClassException e) {
 							logger.warn("User preferences file version does not match application version: {}",
 									e.getMessage());
@@ -307,5 +307,16 @@ public class UserPreferences implements Serializable {
 
 	public void setQuickAnalysisStrategy(QuickAnalysisStrategy quickAnalysisStrategy) {
 		this.quickAnalysisStrategy = quickAnalysisStrategy;
+	}
+
+	public List<ExtensionPackage> getExtensionPackages() {
+		if (extensionPackages == null) {
+			extensionPackages = new ArrayList<ExtensionPackage>();
+		}
+		return extensionPackages;
+	}
+
+	public void setExtensionPackages(List<ExtensionPackage> extensionPackages) {
+		this.extensionPackages = extensionPackages;
 	}
 }

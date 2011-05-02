@@ -21,20 +21,26 @@ package org.eobjects.datacleaner.user;
 
 import java.io.File;
 import java.io.Serializable;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverState;
 import org.eobjects.datacleaner.database.DriverWrapper;
+import org.eobjects.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Represents a database driver that the user has installed. Such database
+ * drivers are based on (JAR) files on the filesystem and are loaded dynamically
+ * (as opposed to statically loaded drivers, which are loaded at startup time).
+ * 
+ * @author Kasper Sørensen
+ * 
+ */
 public final class UserDatabaseDriver implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -63,47 +69,33 @@ public final class UserDatabaseDriver implements Serializable {
 	}
 
 	public File[] getFiles() {
-		return _files;
+		return Arrays.copyOf(_files, _files.length);
 	}
 
 	public UserDatabaseDriver loadDriver() throws IllegalStateException {
-		try {
-			final URL[] urls = new URL[_files.length];
-			for (int i = 0; i < urls.length; i++) {
-				URL url = _files[i].toURI().toURL();
-				logger.debug("Using URL: {}", url);
-				urls[i] = url;
-			}
+		if (!_loaded) {
+			try {
+				ClassLoader driverClassLoader = ResourceManager.getInstance().getClassLoader(_files);
 
-			final ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
+				Class<?> loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
+				logger.info("Loaded class: {}", loadedClass.getName());
 
-			// removing the security manager is nescesary for classes in
-			// external jar files to have privileges to do eg. system property
-			// lookups etc.
-			System.setSecurityManager(null);
-
-			final URLClassLoader driverClassLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-				@Override
-				public URLClassLoader run() {
-					return new URLClassLoader(urls, parentClassLoader);
+				if (ReflectionUtils.is(loadedClass, Driver.class)) {
+					_driverInstance = (Driver) loadedClass.newInstance();
+					_registeredDriver = new DriverWrapper(_driverInstance);
+					DriverManager.registerDriver(_registeredDriver);
+				} else {
+					throw new IllegalStateException("Class is not a Driver class: " + _driverClassName);
 				}
-			});
-
-			Class<?> loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
-			logger.info("Loaded class: {}", loadedClass.getName());
-
-			if (ReflectionUtils.is(loadedClass, Driver.class)) {
-				_driverInstance = (Driver) loadedClass.newInstance();
-				_registeredDriver = new DriverWrapper(_driverInstance);
-				DriverManager.registerDriver(_registeredDriver);
-			} else {
-				throw new IllegalStateException("Class is not a Driver class: " + _driverClassName);
+				_loaded = true;
+			} catch (Exception e) {
+				if (e instanceof RuntimeException) {
+					throw (RuntimeException) e;
+				}
+				throw new IllegalStateException(e);
 			}
-			_loaded = true;
-			return this;
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
 		}
+		return this;
 	}
 
 	public void unloadDriver() {

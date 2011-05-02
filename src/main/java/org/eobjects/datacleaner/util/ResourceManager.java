@@ -21,7 +21,11 @@ package org.eobjects.datacleaner.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +44,37 @@ public final class ResourceManager {
 	}
 
 	private ResourceManager() {
+	}
+	
+	public ClassLoader getClassLoader(File[] files) {
+		try {
+			final URL[] urls = new URL[files.length];
+			for (int i = 0; i < urls.length; i++) {
+				URL url = files[i].toURI().toURL();
+				logger.debug("Using URL: {}", url);
+				urls[i] = url;
+			}
+			return getClassLoader(urls);
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+	
+	public ClassLoader getClassLoader(final URL[] urls) {
+		final ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
+
+		// removing the security manager is nescesary for classes in
+		// external jar files to have privileges to do eg. system property
+		// lookups etc.
+		System.setSecurityManager(null);
+
+		final URLClassLoader newClassLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
+			@Override
+			public URLClassLoader run() {
+				return new URLClassLoader(urls, parentClassLoader);
+			}
+		});
+		return newClassLoader;
 	}
 
 	public List<URL> getUrls(String path) {

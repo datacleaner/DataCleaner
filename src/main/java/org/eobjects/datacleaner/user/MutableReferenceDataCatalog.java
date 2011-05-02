@@ -31,6 +31,15 @@ import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.StringUtils;
 
+/**
+ * Reference data catalog implementation that allows mutations/modifications.
+ * This is used to enable runtime changes by the user. This reference data
+ * catalog wraps an immutable instance, which typically represents what is
+ * configured in datacleaner's xml file.
+ * 
+ * @author Kasper Sørensen
+ * 
+ */
 public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	private static final long serialVersionUID = 1L;

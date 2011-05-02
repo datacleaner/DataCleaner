@@ -27,6 +27,15 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.util.StringUtils;
 
+/**
+ * Mutable/modifyable implementation of the datastore catalog interface. Used to
+ * allow the user to change the catalog of datastores at runtime. This datastore
+ * catalog wraps an immutable instance, which typically represents what is
+ * configured in datacleaner's xml file.
+ * 
+ * @author Kasper Sørensen
+ * 
+ */
 public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 
 	private static final long serialVersionUID = 1L;

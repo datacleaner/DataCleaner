@@ -108,6 +108,7 @@ public class DatastorePanel extends DCPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				_checkBox.doClick();
+				_datastoreListPanel.requestSearchFieldFocus();
 				if (e.getClickCount() > 1) {
 					// begin job on double click
 					_datastoreListPanel.clickAnalyzeButton();

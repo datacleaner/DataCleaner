@@ -157,8 +157,6 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				}
 			}
 		});
-		_searchDatastoreTextField.requestFocusInWindow();
-		_searchDatastoreTextField.requestFocus();
 
 		setLayout(new VerticalLayout(4));
 
@@ -417,11 +415,16 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				panel.setSelected(false);
 			}
 		}
+		requestSearchFieldFocus();
 	}
 
 	public void clickAnalyzeButton() {
 		if (_analyzeButton.isEnabled()) {
 			_analyzeButton.doClick();
 		}
+	}
+	
+	public void requestSearchFieldFocus() {
+		_searchDatastoreTextField.requestFocus();
 	}
 }

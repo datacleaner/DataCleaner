@@ -229,7 +229,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		setDatastore(datastore);
 	}
-
+	
 	private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
 		JButton button = new JButton(text, imageManager.getImageIcon(iconPath));
 		button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -298,6 +298,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 				_sourceColumnsPanel.setVisible(false);
 				_datastoreListPanel.setVisible(true);
+				
+				_datastoreListPanel.requestSearchFieldFocus();
 			}
 		}
 	}

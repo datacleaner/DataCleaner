@@ -44,6 +44,7 @@ import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
 import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
+import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 
 /**
  * Factory class for various commonly used widgets in DataCleaner. Typically the
@@ -158,6 +159,9 @@ public final class WidgetFactory {
 	public static JXTextField createTextField(String promptText) {
 		JXTextField tf = new JXTextField(promptText);
 		tf.setColumns(17);
+		if (promptText != null) {
+			tf.setFocusBehavior(FocusBehavior.SHOW_PROMPT);
+		}
 		return tf;
 	}
 

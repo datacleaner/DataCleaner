@@ -212,7 +212,7 @@
 				<version>1.5.0.0</version>
 				<executions>
 					<execution>
-						<id>launch4j</id>
+						<id>launch4j-gui</id>
 						<phase>verify</phase>
 						<goals>
 							<goal>launch4j</goal>
@@ -222,6 +222,33 @@
 							<headerType>gui</headerType>
 							<jar>DataCleaner.jar</jar>
 							<outfile>target/DataCleaner.exe</outfile>
+							<errTitle>DataCleaner</errTitle>
+							<priority>normal</priority>
+							<downloadUrl>http://java.com/download</downloadUrl>
+							<supportUrl>http://datacleaner.eobjects.org</supportUrl>
+							<customProcName>true</customProcName>
+							<stayAlive>false</stayAlive>
+							<icon>src/main/assembly/app-icon.ico</icon>
+							<jre>
+								<path></path>
+								<minVersion>1.6.0</minVersion>
+								<maxVersion></maxVersion>
+								<initialHeapSize>256</initialHeapSize>
+								<maxHeapSize>1024</maxHeapSize>
+							</jre>
+						</configuration>
+					</execution>
+					<execution>
+						<id>launch4j-cli</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<dontWrapJar>true</dontWrapJar>
+							<headerType>console</headerType>
+							<jar>DataCleaner.jar</jar>
+							<outfile>target/DataCleaner-console.exe</outfile>
 							<errTitle>DataCleaner</errTitle>
 							<priority>normal</priority>
 							<downloadUrl>http://java.com/download</downloadUrl>
@@ -304,7 +331,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
@@ -363,12 +390,6 @@
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans</artifactId>
 			<version>0.5-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>args4j</artifactId>
-					<groupId>args4j</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.jgoodies</groupId>

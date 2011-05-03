@@ -76,6 +76,7 @@ import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.panels.MetadataPanel;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
+import org.eobjects.datacleaner.panels.DatastoreListPanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -129,8 +130,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private String _jobFilename;
 	private Datastore _datastore;
 	private DataContextProvider _dataContextProvider;
-
-	private SelectDatastorePanel _selectDatastoresPanel;
+	private DatastoreListPanel _datastoreListPanel;
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration) {
 		this(configuration, (Datastore) null);
@@ -174,8 +174,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				"<html><b>Analyzers</b><br/>Analyzers provide Data Quality analysis and profiling operations.</html>");
 		_runButton = new JButton("Run analysis", imageManager.getImageIcon("images/actions/execute.png"));
 
-		_selectDatastoresPanel = new SelectDatastorePanel(_configuration, this, _glassPane);
-		_selectDatastoresPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
+		_datastoreListPanel = new DatastoreListPanel(_configuration, this, _glassPane);
+		_datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
 		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder);
 		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
@@ -203,7 +203,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		final DCPanel sourceTabOuterPanel = new DCPanel(imageManager.getImage("images/window/source-tab-background.png"),
 				95, 95, WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		sourceTabOuterPanel.setLayout(new VerticalLayout(0));
-		sourceTabOuterPanel.add(_selectDatastoresPanel);
+		sourceTabOuterPanel.add(_datastoreListPanel);
 		sourceTabOuterPanel.add(_sourceColumnsPanel);
 
 		_tabbedPane.addTab("Source", imageManager.getImageIcon("images/model/source.png"),
@@ -278,7 +278,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		}
 
 		_sourceColumnsPanel.setVisible(true);
-		_selectDatastoresPanel.setVisible(false);
+		_datastoreListPanel.setVisible(false);
 	}
 
 	private void displayDatastoreSelection() {
@@ -297,7 +297,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				timer.start();
 
 				_sourceColumnsPanel.setVisible(false);
-				_selectDatastoresPanel.setVisible(true);
+				_datastoreListPanel.setVisible(true);
 			}
 		}
 	}

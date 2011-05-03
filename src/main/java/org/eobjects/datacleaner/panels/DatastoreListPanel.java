@@ -154,6 +154,10 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					clickAnalyzeButton();
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					selectNextVisibleDatastore();
+				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+					selectPreviousVisibleDatastore();
 				}
 			}
 		});
@@ -217,20 +221,6 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		}
 
 		selectFirstVisibleDatastore();
-	}
-
-	private void selectFirstVisibleDatastore() {
-		boolean found = false;
-
-		for (DatastorePanel datastorePanel : _datastorePanels) {
-			if (datastorePanel.isVisible()) {
-				setSelectedDatastorePanel(datastorePanel);
-				found = true;
-				break;
-			}
-		}
-
-		_analyzeButton.setEnabled(found);
 	}
 
 	private DCPanel createNewDatastorePanel() {
@@ -407,6 +397,50 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		});
 	}
 
+	private void selectFirstVisibleDatastore() {
+		boolean found = false;
+
+		for (DatastorePanel datastorePanel : _datastorePanels) {
+			if (datastorePanel.isVisible()) {
+				setSelectedDatastorePanel(datastorePanel);
+				found = true;
+				break;
+			}
+		}
+
+		_analyzeButton.setEnabled(found);
+	}
+
+	private void selectNextVisibleDatastore() {
+		DatastorePanel selectedDatastorePanel = getSelectedDatastorePanel();
+		if (selectedDatastorePanel != null) {
+
+			int indexOf = _datastorePanels.indexOf(selectedDatastorePanel);
+			for (int i = indexOf + 1; i < _datastorePanels.size(); i++) {
+				DatastorePanel panel = _datastorePanels.get(i);
+				if (panel.isVisible()) {
+					setSelectedDatastorePanel(panel);
+					break;
+				}
+			}
+		}
+	}
+
+	private void selectPreviousVisibleDatastore() {
+		DatastorePanel selectedDatastorePanel = getSelectedDatastorePanel();
+		if (selectedDatastorePanel != null) {
+
+			int indexOf = _datastorePanels.indexOf(selectedDatastorePanel);
+			for (int i = indexOf - 1; i >= 0; i--) {
+				DatastorePanel panel = _datastorePanels.get(i);
+				if (panel.isVisible()) {
+					setSelectedDatastorePanel(panel);
+					break;
+				}
+			}
+		}
+	}
+
 	public void setSelectedDatastorePanel(DatastorePanel datastorePanel) {
 		for (DatastorePanel panel : _datastorePanels) {
 			if (datastorePanel == panel) {
@@ -418,12 +452,21 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		requestSearchFieldFocus();
 	}
 
+	public DatastorePanel getSelectedDatastorePanel() {
+		for (DatastorePanel panel : _datastorePanels) {
+			if (panel.isVisible() && panel.isSelected()) {
+				return panel;
+			}
+		}
+		return null;
+	}
+
 	public void clickAnalyzeButton() {
 		if (_analyzeButton.isEnabled()) {
 			_analyzeButton.doClick();
 		}
 	}
-	
+
 	public void requestSearchFieldFocus() {
 		_searchDatastoreTextField.requestFocus();
 	}

@@ -250,6 +250,7 @@ public final class WidgetUtils {
 		dialog.setModal(true);
 		dialog.setTitle(shortMessage);
 		dialog.setVisible(true);
+		dialog.toFront();
 	}
 
 	public static void showErrorMessage(final String shortMessage, final Throwable exception) {

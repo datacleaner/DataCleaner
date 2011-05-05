@@ -26,7 +26,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
@@ -40,6 +42,8 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.VerticalLayout;
+
+import cern.colt.Arrays;
 
 /**
  * Panel for configuring extension packages.
@@ -71,17 +75,27 @@ public class ExtensionPackagesPanel extends DCPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DCFileChooser fileChooser = new DCFileChooser(userPreferences.getConfiguredFileDirectory());
+				fileChooser.setMultiSelectionEnabled(true);
 				fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
 				int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
 				if (result == DCFileChooser.APPROVE_OPTION) {
-					final File file = fileChooser.getSelectedFile();
-					final String packageName = ExtensionPackage.autoDetectPackageName(file);
-					if (packageName == null) {
-						throw new IllegalStateException(
-								"Extension JAR file does not have a single rooted package hierarchy.");
+
+					final File[] files = fileChooser.getSelectedFiles();
+
+					final String suggestedPackageName = ExtensionPackage.autoDetectPackageName(files[0]);
+					final String packageName = JOptionPane.showInputDialog(
+							"Please provide the package name of the extension", suggestedPackageName);
+
+					final StringBuilder extensionNameBuilder = new StringBuilder();
+					for (File file : files) {
+						if (extensionNameBuilder.length() > 0) {
+							extensionNameBuilder.append(", ");
+						}
+						extensionNameBuilder.append(file.getName());
 					}
-					final ExtensionPackage userExtensionPackage = new ExtensionPackage(file.getName(), packageName, true,
-							new File[] { file });
+					final String extensionName = extensionNameBuilder.toString();
+					final ExtensionPackage userExtensionPackage = new ExtensionPackage(extensionName, packageName, true,
+							files);
 					userExtensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
 					extensionPackages.add(userExtensionPackage);
 
@@ -99,12 +113,30 @@ public class ExtensionPackagesPanel extends DCPanel {
 		listPanel.setLayout(new VerticalLayout(4));
 		listPanel.setBorder(new EmptyBorder(0, 10, 10, 0));
 
+		final ImageIcon pluginIcon = imageManager.getImageIcon("images/component-types/plugin.png");
+		final ImageIcon errorIcon = imageManager.getImageIcon("images/status/error.png");
+
 		for (final ExtensionPackage extensionPackage : extensionPackages) {
-			final DCLabel extensionLabel = DCLabel.dark("<html><b>" + extensionPackage.getName() + "</b><br/>Loaded: "
-					+ extensionPackage.getLoadedAnalyzers() + " Analyzers, " + extensionPackage.getLoadedTransformers()
-					+ " Transformers, " + extensionPackage.getLoadedFilters() + " Filters.<br/>Root package: '"
-					+ extensionPackage.getScanPackage() + "'.</html>");
-			extensionLabel.setIcon(imageManager.getImageIcon("images/component-types/plugin.png"));
+			File[] files = extensionPackage.getFiles();
+			boolean valid = true;
+			for (File file : files) {
+				if (!file.exists()) {
+					valid = false;
+				}
+			}
+
+			final DCLabel extensionLabel;
+			if (valid) {
+				extensionLabel = DCLabel.dark("<html><b>" + extensionPackage.getName() + "</b><br/>Loaded: "
+						+ extensionPackage.getLoadedAnalyzers() + " Analyzers, " + extensionPackage.getLoadedTransformers()
+						+ " Transformers, " + extensionPackage.getLoadedFilters() + " Filters.<br/>Root package: '"
+						+ extensionPackage.getScanPackage() + "'.</html>");
+				extensionLabel.setIcon(pluginIcon);
+			} else {
+				extensionLabel = DCLabel.dark("<html><b>" + extensionPackage.getName()
+						+ "</b><br/>Error loading extension files:<br/>" + Arrays.toString(files) + "</html>");
+				extensionLabel.setIcon(errorIcon);
+			}
 
 			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove extension");

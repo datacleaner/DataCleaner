@@ -63,9 +63,9 @@ import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.eobjects.metamodel.CsvDataContextStrategy;
+import org.eobjects.metamodel.CsvConfiguration;
 import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.DefaultDataContext;
+import org.eobjects.metamodel.DataContextFactory;
 import org.eobjects.metamodel.data.DataSet;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
@@ -479,8 +479,9 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			char separatorChar = getSeparatorChar();
 			char quoteChar = getQuoteChar();
 
-			CsvDataContextStrategy dcStrategy = new CsvDataContextStrategy(file, separatorChar, quoteChar, getEncoding());
-			DataContext dc = new DefaultDataContext(dcStrategy);
+			CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
+					getEncoding(), separatorChar, quoteChar, CsvConfiguration.DEFAULT_ESCAPE_CHAR);
+			DataContext dc = DataContextFactory.createCsvDataContext(file, csvConfiguration);
 			Schema schema = dc.getDefaultSchema();
 			Table table = schema.getTables()[0];
 			Column[] columns = table.getColumns();

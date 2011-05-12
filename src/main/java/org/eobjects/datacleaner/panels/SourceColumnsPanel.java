@@ -28,6 +28,7 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -48,8 +49,8 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder) {
 		super();
 		_analysisJobBuilder = analysisJobBuilder;
-		_maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder);
-		_maxRowsFilterShortcutPanel.setEnabled(false);
+
+		_maxRowsFilterShortcutPanel = createMaxRowsFilterShortcutPanel();
 
 		_hintLabel = DCLabel.darkMultiLine("Please select the source columns of your job in the tree to the left.\n\n"
 				+ "Source columns define where to retrieve the input of your analysis.");
@@ -70,6 +71,22 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		for (InputColumn<?> column : sourceColumns) {
 			onAdd(column);
 		}
+	}
+
+	private MaxRowsFilterShortcutPanel createMaxRowsFilterShortcutPanel() {
+		MaxRowsFilterShortcutPanel maxRowsFilterShortcutPanel = null;
+		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
+		for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
+			if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
+				maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder, filterJobBuilder);
+				break;
+			}
+		}
+		if (maxRowsFilterShortcutPanel == null) {
+			maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder);
+		}
+		maxRowsFilterShortcutPanel.setEnabled(false);
+		return maxRowsFilterShortcutPanel;
 	}
 
 	@Override

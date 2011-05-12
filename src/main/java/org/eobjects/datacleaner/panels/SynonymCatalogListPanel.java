@@ -198,7 +198,10 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		updateUI();
 	}
 
-	private String getDescription(SynonymCatalog synonymCatalog) {
+	private static String getDescription(SynonymCatalog synonymCatalog) {
+		if (synonymCatalog.getDescription() != null) {
+			return synonymCatalog.getDescription();
+		}
 		if (synonymCatalog instanceof TextFileSynonymCatalog) {
 			return ((TextFileSynonymCatalog) synonymCatalog).getFilename();
 		} else if (synonymCatalog instanceof DatastoreSynonymCatalog) {

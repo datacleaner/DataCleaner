@@ -19,29 +19,46 @@
  */
 package org.eobjects.datacleaner.regexswap;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
+
+import org.eobjects.analyzer.reference.AbstractReferenceData;
 import org.eobjects.analyzer.reference.RegexStringPattern;
 import org.eobjects.analyzer.reference.StringPattern;
+import org.eobjects.analyzer.util.ReadObjectBuilder;
 
 /**
  * A specialized type of string pattern, based on a regex downloaded from the
  * regex swap
  * 
  * @author Kasper Sørensen
- * 
  */
-public class RegexSwapStringPattern implements StringPattern {
+public final class RegexSwapStringPattern extends AbstractReferenceData implements StringPattern {
 
 	private static final long serialVersionUID = 1L;
 	private final Regex _regex;
 	private transient RegexStringPattern _delegate;
 
 	public RegexSwapStringPattern(Regex regex) {
+		super(regex.getName());
+		setDescription(regex.getDescription());
 		_regex = regex;
 	}
 
+	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+		ReadObjectBuilder.create(this, RegexSwapStringPattern.class).readObject(stream);
+	}
+
 	@Override
-	public String getName() {
-		return _regex.getName();
+	public String toString() {
+		return "RegexSwapStringPattern[regex=" + _regex + "]";
+	}
+
+	@Override
+	protected void decorateIdentity(List<Object> identifiers) {
+		super.decorateIdentity(identifiers);
+		identifiers.add(_regex);
 	}
 
 	@Override

@@ -33,6 +33,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
+import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.slf4j.Logger;
@@ -72,41 +73,55 @@ public class UserPreferences implements Serializable {
 
 	private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
 
+	protected static UserPreferences load(File file, boolean loadDrivers) {
+		ObjectInputStream inputStream = null;
+		try {
+			inputStream = new ChangeAwareObjectInputStream(new FileInputStream(file));
+			UserPreferences result = (UserPreferences) inputStream.readObject();
+
+			if (loadDrivers) {
+				List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
+				for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
+					try {
+						userDatabaseDriver.loadDriver();
+					} catch (IllegalStateException e) {
+						logger.error("Could not load database driver", e);
+					}
+				}
+			}
+
+			return result;
+		} catch (InvalidClassException e) {
+			logger.warn("User preferences file version does not match application version: {}", e.getMessage());
+			return null;
+		} catch (Exception e) {
+			logger.warn("Could not read user preferences file", e);
+			return null;
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Gets the user preferences associated with the current user.
+	 * 
+	 * @return
+	 */
 	public static UserPreferences getInstance() {
 		if (instance == null) {
 			synchronized (UserPreferences.class) {
 				if (instance == null) {
 					if (userPreferencesFile.exists()) {
-						ObjectInputStream inputStream = null;
-						try {
-							inputStream = new ObjectInputStream(new FileInputStream(userPreferencesFile));
-							instance = (UserPreferences) inputStream.readObject();
+						instance = load(userPreferencesFile, true);
+					}
 
-							List<UserDatabaseDriver> installedDatabaseDrivers = instance.getDatabaseDrivers();
-							for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
-								try {
-									userDatabaseDriver.loadDriver();
-								} catch (IllegalStateException e) {
-									logger.error("Could not load database driver", e);
-								}
-							}
-						} catch (InvalidClassException e) {
-							logger.warn("User preferences file version does not match application version: {}",
-									e.getMessage());
-							instance = new UserPreferences();
-						} catch (Exception e) {
-							logger.warn("Could not read user preferences file", e);
-							instance = new UserPreferences();
-						} finally {
-							if (inputStream != null) {
-								try {
-									inputStream.close();
-								} catch (Exception e) {
-									throw new IllegalStateException(e);
-								}
-							}
-						}
-					} else {
+					if (instance == null) {
 						instance = new UserPreferences();
 					}
 				}

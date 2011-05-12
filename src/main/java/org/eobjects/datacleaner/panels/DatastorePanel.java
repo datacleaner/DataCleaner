@@ -234,16 +234,16 @@ public class DatastorePanel extends DCPanel {
 		return editButton;
 	}
 
-	private String getDescription(Datastore datastore) {
+	private static String getDescription(Datastore datastore) {
+		if (datastore.getDescription() != null) {
+			return datastore.getDescription();
+		}
 		if (datastore instanceof FileDatastore) {
 			return ((FileDatastore) datastore).getFilename();
 		} else if (datastore instanceof JdbcDatastore) {
 			JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
 			String jdbcUrl = jdbcDatastore.getJdbcUrl();
 			String datasourceJndiUrl = jdbcDatastore.getDatasourceJndiUrl();
-			if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
-				return "DataCleaner example database";
-			}
 			if (StringUtils.isNullOrEmpty(datasourceJndiUrl)) {
 				return jdbcUrl;
 			}

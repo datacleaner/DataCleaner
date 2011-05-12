@@ -208,7 +208,10 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		updateUI();
 	}
 
-	private String getDescription(StringPattern stringPattern) {
+	private static String getDescription(StringPattern stringPattern) {
+		if (stringPattern.getDescription() != null) {
+			return stringPattern.getDescription();
+		}
 		final String description;
 		if (stringPattern instanceof RegexSwapStringPattern) {
 			description = ((RegexSwapStringPattern) stringPattern).getRegex().getExpression();

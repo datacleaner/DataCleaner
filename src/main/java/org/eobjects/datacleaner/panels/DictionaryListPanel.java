@@ -218,7 +218,10 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		updateUI();
 	}
 
-	private String getDescription(Dictionary dictionary) {
+	private static String getDescription(Dictionary dictionary) {
+		if (dictionary.getDescription() != null) {
+			return dictionary.getDescription();
+		}
 		if (dictionary instanceof TextFileDictionary) {
 			return ((TextFileDictionary) dictionary).getFilename();
 		} else if (dictionary instanceof DatastoreDictionary) {

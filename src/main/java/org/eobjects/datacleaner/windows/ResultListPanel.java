@@ -158,12 +158,16 @@ public class ResultListPanel extends DCPanel {
 
 			@Override
 			protected JComponent doInBackground() throws Exception {
-				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result,
+				final Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(result,
 						SwingRenderingFormat.class);
 				if (renderer == null) {
-					throw new IllegalStateException("No renderer found for result type " + result.getClass().getName());
+					final String message = "No renderer found for result type " + result.getClass().getName();
+					logger.error(message);
+					throw new IllegalStateException(message);
 				}
-				JComponent component = renderer.render(result);
+				logger.debug("renderer.render({})", result);
+				final JComponent component = renderer.render(result);
+				logger.info("renderer.render({}) returned: {}", result, component);
 				return component;
 			}
 

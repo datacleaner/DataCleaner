@@ -100,7 +100,12 @@ public class DataSetWindow extends AbstractWindow {
 			_table.setModel(_tableModel);
 		}
 
-		DCPanel tablePanel = _table.toPanel();
+		if (_table.getColumnCount() > 10) {
+			_table.setHorizontalScrollEnabled(true);
+		}
+		
+		final DCPanel tablePanel = _table.toPanel();
+		
 		if (_query == null) {
 			return tablePanel;
 		}

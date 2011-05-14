@@ -131,7 +131,7 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 	}
 
 	@Override
-	public FilterJobBuilder<?, ?> getFilterJobBuilder() {
+	public FilterJobBuilder<?, ?> getJobBuilder() {
 		return _filterJobBuilder;
 	}
 
@@ -150,7 +150,7 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 	public JComponent getJComponent() {
 		return this;
 	}
-
+	
 	@Override
 	public void onConfigurationChanged() {
 		getPropertyWidgetFactory().onConfigurationChanged();

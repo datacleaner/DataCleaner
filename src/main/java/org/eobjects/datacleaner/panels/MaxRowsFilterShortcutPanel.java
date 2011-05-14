@@ -154,7 +154,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 	}
 
 	@Override
-	public FilterJobBuilder<?, ?> getFilterJobBuilder() {
+	public FilterJobBuilder<?, ?> getJobBuilder() {
 		return _maxRowsFilterJobBuilder;
 	}
 

@@ -70,7 +70,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		File directory = UserPreferences.getInstance().getConfiguredFileDirectory();
 		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
 
-		final RowProcessingAnalyzerJobBuilderPanel panel = new RowProcessingAnalyzerJobBuilderPanel(ajb,
+		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(ajb,
 				csvOutputAnalyzerBuilder, false);
 
 		final AbstractDialog dialog = new AbstractDialog() {
@@ -90,7 +90,8 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 			protected JComponent getDialogContent() {
 				final AnalyzerBeanDescriptor<CsvOutputAnalyzer> descriptor = csvOutputAnalyzerBuilder.getDescriptor();
 				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
-				tabbedPane.addTab(descriptor.getDisplayName(), IconUtils.getDescriptorIcon(descriptor), panel);
+				tabbedPane.addTab(descriptor.getDisplayName(), IconUtils.getDescriptorIcon(descriptor),
+						presenter.getJComponent());
 				tabbedPane.setUnclosableTab(0);
 				return tabbedPane;
 			}
@@ -113,7 +114,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 			}
 		});
 
-		panel.addToButtonPanel(runButton);
+		presenter.addToButtonPanel(runButton);
 
 		dialog.setVisible(true);
 	}

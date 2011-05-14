@@ -32,7 +32,8 @@ import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 
-public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPanel {
+public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements
+		RowProcessingAnalyzerJobBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
@@ -61,7 +62,7 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 		}
 		add(_buttonPanel, BorderLayout.NORTH);
 	}
-	
+
 	public void addToButtonPanel(JComponent component) {
 		_buttonPanel.add(component);
 	}
@@ -80,16 +81,28 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 		return super.createPropertyWidget(analysisJobBuilder, beanJobBuilder, propertyDescriptor);
 	}
 
-	public RowProcessingAnalyzerJobBuilder<?> getAnalyzerJobBuilder() {
-		return _analyzerJobBuilder;
-	}
-
 	@Override
 	protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
 		_analyzerJobBuilder.setConfiguredProperty(propertyDescriptor, value);
 	}
 
+	@Override
 	public void onRequirementChanged() {
 		_requirementButton.updateText();
+	}
+
+	@Override
+	public RowProcessingAnalyzerJobBuilder<?> getJobBuilder() {
+		return _analyzerJobBuilder;
+	}
+
+	@Override
+	public JComponent getJComponent() {
+		return this;
+	}
+
+	@Override
+	public void onConfigurationChanged() {
+		getPropertyWidgetFactory().onConfigurationChanged();
 	}
 }

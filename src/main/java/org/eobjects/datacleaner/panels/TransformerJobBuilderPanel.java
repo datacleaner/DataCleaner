@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
@@ -38,7 +39,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 
-public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
+public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
@@ -103,7 +104,8 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 		_outputColumnsTable.setColumns(outputColumns);
 	}
 
-	public TransformerJobBuilder<?> getTransformerJobBuilder() {
+	@Override
+	public TransformerJobBuilder<?> getJobBuilder() {
 		return _transformerJobBuilder;
 	}
 
@@ -113,11 +115,28 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel {
 		getAnalysisJobBuilder().getTransformerChangeListeners().remove(this);
 	}
 
+	@Override
 	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns) {
 		_outputColumnsTable.setColumns(outputColumns);
 	}
 
+	@Override
 	public void onRequirementChanged() {
 		_requirementButton.updateText();
+	}
+
+	@Override
+	public void applyPropertyValues() {
+		super.applyPropertyValues();
+	}
+	
+	@Override
+	public void onConfigurationChanged() {
+		getPropertyWidgetFactory().onConfigurationChanged();
+	}
+
+	@Override
+	public JComponent getJComponent() {
+		return this;
 	}
 }

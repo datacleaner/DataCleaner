@@ -45,7 +45,7 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.reference.ReferenceData;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
-import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
+import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 import org.eobjects.metamodel.DataContext;
@@ -56,18 +56,24 @@ import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 
+/**
+ * ActionListener responsible for previewing transformed data in a
+ * {@link DataSetWindow}.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class PreviewTransformedDataActionListener implements ActionListener {
 
 	private static final int DEFAULT_PREVIEW_ROWS = 400;
 
-	private final TransformerJobBuilderPanel _transformerJobBuilderPanel;
+	private final TransformerJobBuilderPresenter _transformerJobBuilderPresenter;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 	private final LifeCycleHelper _lifeCycleHelper;
 
-	public PreviewTransformedDataActionListener(TransformerJobBuilderPanel transformerJobBuilderPanel,
+	public PreviewTransformedDataActionListener(TransformerJobBuilderPresenter transformerJobBuilderPresenter,
 			AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder) {
-		_transformerJobBuilderPanel = transformerJobBuilderPanel;
+		_transformerJobBuilderPresenter = transformerJobBuilderPresenter;
 		_analysisJobBuilder = analysisJobBuilder;
 		_transformerJobBuilder = transformerJobBuilder;
 
@@ -83,7 +89,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 	// RowProcessingPublisher :)
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		_transformerJobBuilderPanel.applyPropertyValues(true);
+		_transformerJobBuilderPresenter.applyPropertyValues();
 
 		final List<TransformerJobBuilder<?>> transformerJobs = new ArrayList<TransformerJobBuilder<?>>();
 		transformerJobs.add(_transformerJobBuilder);

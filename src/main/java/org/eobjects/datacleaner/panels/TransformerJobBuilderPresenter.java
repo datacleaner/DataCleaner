@@ -19,18 +19,22 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import java.util.List;
+
 import javax.swing.JComponent;
 
-import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.data.MutableInputColumn;
+import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 
 /**
- * Interface for presenter widgets that present {@link FilterJobBuilder} objects.
+ * Interface for presenter widgets that present {@link TransformerJobBuilder}
+ * objects.
  * 
  * @author Kasper Sørensen
  */
-public interface FilterJobBuilderPresenter {
+public interface TransformerJobBuilderPresenter {
 
-	public FilterJobBuilder<?, ?> getJobBuilder();
+	public TransformerJobBuilder<?> getJobBuilder();
 
 	public JComponent getJComponent();
 
@@ -46,7 +50,14 @@ public interface FilterJobBuilderPresenter {
 	public void onConfigurationChanged();
 
 	/**
-	 * Invoked when the requirement for this filter changes.
+	 * Invoked when the requirement for this transformer changes.
 	 */
 	public void onRequirementChanged();
+
+	/**
+	 * Invoked when the output columns of this transformer changes.
+	 * 
+	 * @param outputColumns
+	 */
+	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns);
 }

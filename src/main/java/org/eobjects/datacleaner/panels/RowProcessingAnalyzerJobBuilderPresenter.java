@@ -21,16 +21,17 @@ package org.eobjects.datacleaner.panels;
 
 import javax.swing.JComponent;
 
-import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 
 /**
- * Interface for presenter widgets that present {@link FilterJobBuilder} objects.
+ * Interface for presenter widgets that present
+ * {@link RowProcessingAnalyzerJobBuilder} objects.
  * 
  * @author Kasper Sørensen
  */
-public interface FilterJobBuilderPresenter {
+public interface RowProcessingAnalyzerJobBuilderPresenter {
 
-	public FilterJobBuilder<?, ?> getJobBuilder();
+	public RowProcessingAnalyzerJobBuilder<?> getJobBuilder();
 
 	public JComponent getJComponent();
 
@@ -46,7 +47,7 @@ public interface FilterJobBuilderPresenter {
 	public void onConfigurationChanged();
 
 	/**
-	 * Invoked when the requirement for this filter changes.
+	 * Invoked when the requirement for this transformer changes.
 	 */
 	public void onRequirementChanged();
 }

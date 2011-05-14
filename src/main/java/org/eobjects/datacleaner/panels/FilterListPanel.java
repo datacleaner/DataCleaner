@@ -113,7 +113,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 	public void onAdd(FilterJobBuilder<?, ?> fjb) {
 		boolean createPresenter = true;
 		for (FilterJobBuilderPresenter presenter : _preconfiguredPresenters) {
-			final FilterJobBuilder<?, ?> presentedFjb = presenter.getFilterJobBuilder();
+			final FilterJobBuilder<?, ?> presentedFjb = presenter.getJobBuilder();
 			if (presentedFjb == fjb) {
 				createPresenter = false;
 				_presenters.put(fjb, presenter);

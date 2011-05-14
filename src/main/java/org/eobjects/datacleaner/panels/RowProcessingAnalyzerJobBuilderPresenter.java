@@ -19,8 +19,6 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import javax.swing.JComponent;
-
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 
 /**
@@ -29,22 +27,8 @@ import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
  * 
  * @author Kasper Sørensen
  */
-public interface RowProcessingAnalyzerJobBuilderPresenter {
-
-	public RowProcessingAnalyzerJobBuilder<?> getJobBuilder();
-
-	public JComponent getJComponent();
-
-	/**
-	 * Invoked before execution, the class should make sure all configured
-	 * properties are set.
-	 */
-	public void applyPropertyValues();
-
-	/**
-	 * Invoked when a configured property changes.
-	 */
-	public void onConfigurationChanged();
+public interface RowProcessingAnalyzerJobBuilderPresenter extends
+		ComponentJobBuilderPresenter<RowProcessingAnalyzerJobBuilder<?>> {
 
 	/**
 	 * Invoked when the requirement for this transformer changes.

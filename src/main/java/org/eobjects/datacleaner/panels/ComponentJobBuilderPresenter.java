@@ -19,28 +19,40 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import java.util.List;
-
-import org.eobjects.analyzer.data.MutableInputColumn;
-import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import javax.swing.JComponent;
 
 /**
- * Interface for presenter widgets that present {@link TransformerJobBuilder}
- * objects.
+ * Interface for all job builder presenter objects. These are objects that are
+ * used to present the configuration screen (eg. the builder objects) of a
+ * component.
  * 
  * @author Kasper Sørensen
  */
-public interface TransformerJobBuilderPresenter extends ComponentJobBuilderPresenter<TransformerJobBuilder<?>> {
+public interface ComponentJobBuilderPresenter<E> {
 
 	/**
-	 * Invoked when the requirement for this transformer changes.
-	 */
-	public void onRequirementChanged();
-
-	/**
-	 * Invoked when the output columns of this transformer changes.
+	 * Gets the job builder object that is being presented.
 	 * 
-	 * @param outputColumns
+	 * @return
 	 */
-	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns);
+	public E getJobBuilder();
+
+	/**
+	 * Gets the {@link JComponent} that is the visual representation of the job
+	 * builder.
+	 * 
+	 * @return
+	 */
+	public JComponent getJComponent();
+
+	/**
+	 * Invoked before execution, the presenter should make sure all configured
+	 * properties are set on the job builder.
+	 */
+	public void applyPropertyValues();
+
+	/**
+	 * Invoked when a configured property changes.
+	 */
+	public void onConfigurationChanged();
 }

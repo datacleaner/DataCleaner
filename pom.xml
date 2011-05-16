@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>2.2-SNAPSHOT</version>
+	<version>2.1.1</version>
 	<packaging>jar</packaging>
 	<name>DataCleaner</name>
 	<url>http://datacleaner.eobjects.org</url>
@@ -307,7 +307,7 @@
 					<transformationSets>
 						<transformationSet>
 							<dir>src/main/docbook</dir>
-							<stylesheet>${project.build.directory}/docbook-resources/docbook/xhtml-1_1/docbook.xsl</stylesheet>
+							<stylesheet>${project.build.directory}/docbook-resources/docbook/html/docbook.xsl</stylesheet>
 							<parameters>
 								<parameter>
 									<name>html.stylesheet</name>

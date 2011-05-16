@@ -13,6 +13,9 @@
 			<source>target/DataCleaner.exe</source>
 		</file>
 		<file>
+			<source>target/DataCleaner-console.exe</source>
+		</file>
+		<file>
 			<source>COPYING.txt</source>
 		</file>
 		<file>

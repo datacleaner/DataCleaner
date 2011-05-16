@@ -30,7 +30,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
@@ -48,18 +47,16 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final AnalyzerBeansConfiguration _configuration;
 	private final Map<FilterJobBuilder<?, ?>, JXTaskPane> _taskPanes;
 	private final Map<FilterJobBuilder<?, ?>, FilterJobBuilderPresenter> _presenters;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final JXTaskPaneContainer _taskPaneContainer;
 	private final Set<FilterJobBuilderPresenter> _preconfiguredPresenters;
 
-	public FilterListPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
+	public FilterListPanel(AnalysisJobBuilder analysisJobBuilder) {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		setLayout(new BorderLayout());
-		_configuration = configuration;
 		_taskPanes = new IdentityHashMap<FilterJobBuilder<?, ?>, JXTaskPane>();
 		_presenters = new IdentityHashMap<FilterJobBuilder<?, ?>, FilterJobBuilderPresenter>();
 		_analysisJobBuilder = analysisJobBuilder;
@@ -73,7 +70,8 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		JButton addFilterButton = new JButton("Add filter", imageManager.getImageIcon("images/component-types/filter.png"));
 		addFilterButton
 				.setToolTipText("<html>Filters represent a way to<br/>categorize rows and use these<br/>categories as requirements for<br/>succeeding steps in a job.</html>");
-		addFilterButton.addActionListener(new AddFilterActionListener(configuration, _analysisJobBuilder, this));
+		addFilterButton.addActionListener(new AddFilterActionListener(_analysisJobBuilder.getConfiguration(),
+				_analysisJobBuilder, this));
 		toolBar.add(addFilterButton);
 
 		add(toolBar, BorderLayout.NORTH);
@@ -122,7 +120,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		}
 
 		if (createPresenter) {
-			final FilterJobBuilderPresenter presenter = new FilterJobBuilderPanel(_configuration, _analysisJobBuilder, fjb);
+			final FilterJobBuilderPresenter presenter = new FilterJobBuilderPanel(fjb);
 			_presenters.put(fjb, presenter);
 		}
 

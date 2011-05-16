@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.actions;
 import java.util.List;
 
 import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -33,9 +32,9 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Abstra
 
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 
-	public DisplayOutputWritersForTransformedDataActionListener(AnalyzerBeansConfiguration configuration,
-			AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder) {
-		super(configuration, analysisJobBuilder);
+	public DisplayOutputWritersForTransformedDataActionListener(TransformerJobBuilder<?> transformerJobBuilder) {
+		super(transformerJobBuilder.getAnalysisJobBuilder().getConfiguration(), transformerJobBuilder
+				.getAnalysisJobBuilder());
 		_transformerJobBuilder = transformerJobBuilder;
 	}
 

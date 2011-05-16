@@ -30,7 +30,6 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -49,20 +48,15 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 	private static final long serialVersionUID = 1L;
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
-	private final AnalyzerBeansConfiguration _configuration;
 	private final PropertyWidgetFactory _propertyWidgetFactory;
 	private final FilterJobBuilder<?, ?> _filterJobBuilder;
 	private final ChangeRequirementButton _requirementButton;
-	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final FilterBeanDescriptor<?, ?> _descriptor;
 
-	public FilterJobBuilderPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			FilterJobBuilder<?, ?> filterJobBuilder) {
-		_configuration = configuration;
-		_analysisJobBuilder = analysisJobBuilder;
+	public FilterJobBuilderPanel(FilterJobBuilder<?, ?> filterJobBuilder) {
 		_filterJobBuilder = filterJobBuilder;
-		_propertyWidgetFactory = new PropertyWidgetFactory(analysisJobBuilder, filterJobBuilder);
-		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, filterJobBuilder);
+		_propertyWidgetFactory = new PropertyWidgetFactory(filterJobBuilder);
+		_requirementButton = new ChangeRequirementButton(filterJobBuilder);
 		_descriptor = _filterJobBuilder.getDescriptor();
 
 		final JButton removeButton = new JButton("Remove filter", imageManager.getImageIcon("images/actions/remove.png",
@@ -70,7 +64,7 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_analysisJobBuilder.removeFilter(_filterJobBuilder);
+				_filterJobBuilder.getAnalysisJobBuilder().removeFilter(_filterJobBuilder);
 			}
 		});
 
@@ -113,8 +107,9 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 		for (final String categoryName : categoryNames) {
 			final JButton outcomeButton = new JButton(categoryName, imageManager.getImageIcon(
 					"images/component-types/filter-outcome.png", IconUtils.ICON_SIZE_SMALL));
-			outcomeButton.addActionListener(new DisplayOutputWritersForFilterOutcomeActionListener(_configuration,
-					_analysisJobBuilder, _filterJobBuilder, categoryName));
+			AnalysisJobBuilder analysisJobBuilder = _filterJobBuilder.getAnalysisJobBuilder();
+			outcomeButton.addActionListener(new DisplayOutputWritersForFilterOutcomeActionListener(_filterJobBuilder
+					.getAnalysisJobBuilder().getConfiguration(), analysisJobBuilder, _filterJobBuilder, categoryName));
 			outcomePanel.add(outcomeButton);
 		}
 
@@ -150,7 +145,7 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 	public JComponent getJComponent() {
 		return this;
 	}
-	
+
 	@Override
 	public void onConfigurationChanged() {
 		getPropertyWidgetFactory().onConfigurationChanged();

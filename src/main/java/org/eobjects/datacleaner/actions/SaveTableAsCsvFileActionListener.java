@@ -70,7 +70,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		File directory = UserPreferences.getInstance().getConfiguredFileDirectory();
 		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
 
-		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(ajb,
+		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
 				csvOutputAnalyzerBuilder, false);
 
 		final AbstractDialog dialog = new AbstractDialog() {

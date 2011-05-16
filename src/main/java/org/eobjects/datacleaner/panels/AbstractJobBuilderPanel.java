@@ -49,21 +49,18 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final JXTaskPaneContainer _taskPaneContainer;
 	private final PropertyWidgetFactory _propertyWidgetFactory;
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final BeanDescriptor<?> _descriptor;
 
-	public AbstractJobBuilderPanel(String backgroundImagePath, AnalysisJobBuilder analysisJobBuilder,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+	public AbstractJobBuilderPanel(String backgroundImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(ImageManager.getInstance().getImage(backgroundImagePath), 95, 95, WidgetUtils.BG_COLOR_BRIGHT,
 				WidgetUtils.BG_COLOR_BRIGHTEST);
-		_analysisJobBuilder = analysisJobBuilder;
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_beanJobBuilder = beanJobBuilder;
 		_descriptor = beanJobBuilder.getDescriptor();
-		_propertyWidgetFactory = new PropertyWidgetFactory(analysisJobBuilder, beanJobBuilder);
+		_propertyWidgetFactory = new PropertyWidgetFactory(beanJobBuilder);
 		setLayout(new BorderLayout());
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
@@ -114,8 +111,8 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 					WidgetUtils.addToGridBag(descLabel, panel, 0, i + 1, 1, 1, GridBagConstraints.NORTHEAST, 0);
 				}
 
-				PropertyWidget<?> propertyWidget = createPropertyWidget(_analysisJobBuilder, beanJobBuilder,
-						propertyDescriptor);
+				PropertyWidget<?> propertyWidget = createPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(),
+						beanJobBuilder, propertyDescriptor);
 				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 2, GridBagConstraints.NORTHWEST, 4);
 				i = i + 2;
 			}
@@ -163,7 +160,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 	}
 
 	public AnalysisJobBuilder getAnalysisJobBuilder() {
-		return _analysisJobBuilder;
+		return _beanJobBuilder.getAnalysisJobBuilder();
 	}
 
 	protected abstract void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value);

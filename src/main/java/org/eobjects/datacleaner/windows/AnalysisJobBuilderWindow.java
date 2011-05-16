@@ -180,7 +180,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
 		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder);
-		_filterListPanel = new FilterListPanel(_configuration, _analysisJobBuilder);
+		_filterListPanel = new FilterListPanel(_analysisJobBuilder);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 
 		_tabbedPane = new CloseableTabbedPane();
@@ -610,8 +610,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		RowProcessingAnalyzerJobBuilderPresenter presenter = new RowProcessingAnalyzerJobBuilderPanel(_analysisJobBuilder,
-				analyzerJobBuilder);
+		RowProcessingAnalyzerJobBuilderPresenter presenter = new RowProcessingAnalyzerJobBuilderPanel(analyzerJobBuilder);
 		_rowProcessingTabPresenters.put(analyzerJobBuilder, presenter);
 		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),
 				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), presenter.getJComponent());
@@ -637,8 +636,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
-		final TransformerJobBuilderPresenter presenter = new TransformerJobBuilderPanel(_analysisJobBuilder,
-				transformerJobBuilder, _configuration);
+		final TransformerJobBuilderPresenter presenter = new TransformerJobBuilderPanel(transformerJobBuilder);
 		_transformerPresenters.put(transformerJobBuilder, presenter);
 		_tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
 				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), presenter.getJComponent());

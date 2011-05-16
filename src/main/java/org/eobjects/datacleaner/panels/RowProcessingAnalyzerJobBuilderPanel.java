@@ -41,19 +41,18 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	private final ChangeRequirementButton _requirementButton;
 	private final DCPanel _buttonPanel;
 
-	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder,
-			RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		this(analysisJobBuilder, analyzerJobBuilder, true);
+	public RowProcessingAnalyzerJobBuilderPanel(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+		this(analyzerJobBuilder, true);
 	}
 
-	public RowProcessingAnalyzerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder,
-			RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder, boolean displayRequirementButton) {
-		super("images/window/analyzer-tab-background.png", analysisJobBuilder, analyzerJobBuilder);
+	public RowProcessingAnalyzerJobBuilderPanel(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder,
+			boolean displayRequirementButton) {
+		super("images/window/analyzer-tab-background.png", analyzerJobBuilder);
 		_analyzerJobBuilder = analyzerJobBuilder;
 
 		init();
 
-		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, analyzerJobBuilder);
+		_requirementButton = new ChangeRequirementButton(analyzerJobBuilder);
 
 		_buttonPanel = new DCPanel();
 		_buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));

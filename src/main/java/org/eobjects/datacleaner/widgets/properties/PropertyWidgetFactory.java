@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
@@ -44,11 +43,9 @@ import org.eobjects.analyzer.util.ReflectionUtils;
 public final class PropertyWidgetFactory {
 
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
-	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
-	public PropertyWidgetFactory(AnalysisJobBuilder analysisJobBuilder, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		_analysisJobBuilder = analysisJobBuilder;
+	public PropertyWidgetFactory(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		_beanJobBuilder = beanJobBuilder;
 	}
 
@@ -77,7 +74,8 @@ public final class PropertyWidgetFactory {
 
 		if (propertyDescriptor.isArray()) {
 			if (propertyDescriptor.isInputColumn()) {
-				result = new MultipleInputColumnsPropertyWidget(_analysisJobBuilder, _beanJobBuilder, propertyDescriptor);
+				result = new MultipleInputColumnsPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(), _beanJobBuilder,
+						propertyDescriptor);
 			} else if (ReflectionUtils.isString(type)) {
 				result = new MultipleStringPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type == Dictionary.class) {
@@ -96,7 +94,8 @@ public final class PropertyWidgetFactory {
 			}
 		} else {
 			if (propertyDescriptor.isInputColumn()) {
-				result = new SingleInputColumnPropertyWidget(_analysisJobBuilder, _beanJobBuilder, propertyDescriptor);
+				result = new SingleInputColumnPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(), _beanJobBuilder,
+						propertyDescriptor);
 			} else if (ReflectionUtils.isCharacter(type)) {
 				result = new SingleCharacterPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (ReflectionUtils.isString(type)) {

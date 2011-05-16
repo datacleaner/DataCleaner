@@ -27,11 +27,9 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
@@ -46,17 +44,14 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
-	private final AnalyzerBeansConfiguration _configuration;
 	private final ColumnListTable _outputColumnsTable;
 	private final ChangeRequirementButton _requirementButton;
 	private final JButton _previewButton;
 	private final JButton _saveOutputButton;
 
-	public TransformerJobBuilderPanel(AnalysisJobBuilder analysisJobBuilder, TransformerJobBuilder<?> transformerJobBuilder,
-			AnalyzerBeansConfiguration configuration) {
-		super("images/window/transformer-tab-background.png", analysisJobBuilder, transformerJobBuilder);
+	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder) {
+		super("images/window/transformer-tab-background.png", transformerJobBuilder);
 		_transformerJobBuilder = transformerJobBuilder;
-		_configuration = configuration;
 
 		init();
 
@@ -66,19 +61,19 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		} else {
 			outputColumns = new ArrayList<MutableInputColumn<?>>(0);
 		}
-		_outputColumnsTable = new ColumnListTable(outputColumns, analysisJobBuilder, false);
+		_outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false);
 
 		_saveOutputButton = new JButton("Save transformed data",
 				imageManager.getImageIcon("images/component-types/type_output_writer.png"));
-		_saveOutputButton.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_configuration,
-				analysisJobBuilder, _transformerJobBuilder));
+		_saveOutputButton
+				.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_transformerJobBuilder));
 
 		_previewButton = new JButton("Preview transformed data",
 				imageManager.getImageIcon("images/actions/preview_data.png"));
-		_previewButton.addActionListener(new PreviewTransformedDataActionListener(this, analysisJobBuilder,
+		_previewButton.addActionListener(new PreviewTransformedDataActionListener(this, getAnalysisJobBuilder(),
 				_transformerJobBuilder));
 
-		_requirementButton = new ChangeRequirementButton(analysisJobBuilder, transformerJobBuilder);
+		_requirementButton = new ChangeRequirementButton(transformerJobBuilder);
 
 		final DCPanel bottomButtonPanel = new DCPanel();
 		bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
@@ -129,7 +124,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	public void applyPropertyValues() {
 		super.applyPropertyValues();
 	}
-	
+
 	@Override
 	public void onConfigurationChanged() {
 		getPropertyWidgetFactory().onConfigurationChanged();

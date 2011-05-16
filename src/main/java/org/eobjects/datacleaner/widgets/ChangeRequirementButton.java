@@ -40,7 +40,6 @@ import org.eobjects.analyzer.job.MergedOutcome;
 import org.eobjects.analyzer.job.MergedOutcomeJob;
 import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.LazyFilterOutcome;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -62,14 +61,11 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 	private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon("images/status/warning.png",
 			IconUtils.ICON_SIZE_SMALL);
 
-	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;
 
-	public ChangeRequirementButton(AnalysisJobBuilder analysisJobBuilder,
-			AbstractBeanWithInputColumnsBuilder<?, ?, ?> jobBuilder) {
+	public ChangeRequirementButton(AbstractBeanWithInputColumnsBuilder<?, ?, ?> jobBuilder) {
 		super(NO_FILTER_TEXT, ImageManager.getInstance().getImageIcon("images/component-types/filter.png",
 				IconUtils.ICON_SIZE_SMALL));
-		_analysisJobBuilder = analysisJobBuilder;
 		_jobBuilder = jobBuilder;
 		addActionListener(this);
 		updateText();
@@ -92,7 +88,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 		});
 		popup.add(noFilterMenuItem);
 
-		List<FilterJobBuilder<?, ?>> fjbs = _analysisJobBuilder.getFilterJobBuilders();
+		List<FilterJobBuilder<?, ?>> fjbs = _jobBuilder.getAnalysisJobBuilder().getFilterJobBuilders();
 
 		// if this JobBuilder is a FilterJobBuilder, remove it from the list of
 		// available filters

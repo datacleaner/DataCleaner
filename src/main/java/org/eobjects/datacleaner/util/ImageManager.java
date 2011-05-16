@@ -38,6 +38,7 @@ public final class ImageManager {
 	private static ImageManager instance = new ImageManager();
 
 	private final Map<String, Image> _cachedImageIcons = CollectionUtils.createCacheMap();
+	private final ResourceManager resourceManager = ResourceManager.getInstance();
 
 	public static ImageManager getInstance() {
 		return instance;
@@ -46,24 +47,23 @@ public final class ImageManager {
 	private ImageManager() {
 	}
 
-	public ImageIcon getImageIcon(String imagePath) {
+	public ImageIcon getImageIcon(String imagePath, ClassLoader... classLoaders) {
 		if (imagePath.endsWith(".gif")) {
 			// animated gif's will loose their animations if loaded as images
-			URL url = ResourceManager.getInstance().getUrl(imagePath);
+			URL url = resourceManager.getUrl(imagePath, classLoaders);
 			return new ImageIcon(url);
 		}
-		return new ImageIcon(getImage(imagePath));
+		return new ImageIcon(getImage(imagePath, classLoaders));
 	}
 
-	public ImageIcon getImageIcon(String imagePath, int newWidth) {
-		return new ImageIcon(getImage(imagePath, newWidth));
+	public ImageIcon getImageIcon(String imagePath, int newWidth, ClassLoader... classLoaders) {
+		return new ImageIcon(getImage(imagePath, newWidth, classLoaders));
 	}
 
-	public Image getImage(String imagePath) {
+	public Image getImage(String imagePath, ClassLoader... classLoaders) {
 		Image image = _cachedImageIcons.get(imagePath);
 		if (image == null) {
-			ResourceManager resourceManager = ResourceManager.getInstance();
-			URL url = resourceManager.getUrl(imagePath);
+			URL url = resourceManager.getUrl(imagePath, classLoaders);
 
 			if (url == null) {
 				logger.warn("Image path ({}) could not be resolved", imagePath);
@@ -83,10 +83,10 @@ public final class ImageManager {
 		return image;
 	}
 
-	public Image getImage(String imagePath, int newWidth) {
+	public Image getImage(String imagePath, int newWidth, ClassLoader... classLoaders) {
 		Image image = _cachedImageIcons.get(imagePath + ",width=" + newWidth);
 		if (image == null) {
-			image = getImage(imagePath);
+			image = getImage(imagePath, classLoaders);
 			int width = image.getWidth(null);
 			int height = image.getHeight(null);
 			if (width > newWidth) {

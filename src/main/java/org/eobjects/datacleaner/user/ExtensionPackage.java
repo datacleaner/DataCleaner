@@ -88,7 +88,7 @@ public final class ExtensionPackage implements Serializable {
 			}
 			ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
 
-			ClassLoader classLoader = ResourceManager.getInstance().getClassLoader(_files);
+			ClassLoader classLoader = ResourceManager.getInstance().createClassLoader(_files);
 
 			int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors().size();
 			int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();

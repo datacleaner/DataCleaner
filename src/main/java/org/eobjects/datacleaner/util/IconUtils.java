@@ -71,33 +71,31 @@ public final class IconUtils {
 	}
 
 	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor, int newWidth) {
-		String imagePath = getDescriptorImagePath(descriptor);
+		final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
+		String imagePath = getDescriptorImagePath(descriptor, classLoader);
+		return imageManager.getImageIcon(imagePath, newWidth, classLoader);
+	}
 
-		return imageManager.getImageIcon(imagePath, newWidth);
+	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor) {
+		final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
+		String imagePath = getDescriptorImagePath(descriptor, classLoader);
+		return imageManager.getImageIcon(imagePath, classLoader);
 	}
 
 	public static Icon getDatastoreIcon(Datastore datastore, int newWidth) {
 		String imagePath = getDatastoreImagePath(datastore);
-
 		return imageManager.getImageIcon(imagePath, newWidth);
-	}
-
-	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor) {
-		String imagePath = getDescriptorImagePath(descriptor);
-
-		return imageManager.getImageIcon(imagePath);
 	}
 
 	public static Icon getDatastoreIcon(Datastore datastore) {
 		String imagePath = getDatastoreImagePath(datastore);
-
 		return imageManager.getImageIcon(imagePath);
 	}
 
-	protected static String getDescriptorImagePath(BeanDescriptor<?> descriptor) {
+	protected static String getDescriptorImagePath(BeanDescriptor<?> descriptor, ClassLoader classLoader) {
 		final Class<?> componentClass = descriptor.getComponentClass();
 		final String bundledIconPath = componentClass.getName().replaceAll("\\.", "/") + ".png";
-		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath);
+		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath, classLoader);
 		if (url != null) {
 			return bundledIconPath;
 		}

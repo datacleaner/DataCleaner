@@ -75,7 +75,7 @@ public final class UserDatabaseDriver implements Serializable {
 	public UserDatabaseDriver loadDriver() throws IllegalStateException {
 		if (!_loaded) {
 			try {
-				ClassLoader driverClassLoader = ResourceManager.getInstance().getClassLoader(_files);
+				ClassLoader driverClassLoader = ResourceManager.getInstance().createClassLoader(_files);
 
 				Class<?> loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
 				logger.info("Loaded class: {}", loadedClass.getName());

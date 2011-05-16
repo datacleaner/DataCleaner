@@ -44,9 +44,10 @@ public final class ResourceManager {
 	}
 
 	private ResourceManager() {
+		// only a single instance
 	}
-	
-	public ClassLoader getClassLoader(File[] files) {
+
+	public ClassLoader createClassLoader(File[] files) {
 		try {
 			final URL[] urls = new URL[files.length];
 			for (int i = 0; i < urls.length; i++) {
@@ -54,14 +55,14 @@ public final class ResourceManager {
 				logger.debug("Using URL: {}", url);
 				urls[i] = url;
 			}
-			return getClassLoader(urls);
+			return createClassLoader(urls);
 		} catch (MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
 	}
-	
-	public ClassLoader getClassLoader(final URL[] urls) {
-		final ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
+
+	public ClassLoader createClassLoader(final URL[] urls) {
+		final ClassLoader parentClassLoader = getParentClassLoader();
 
 		// removing the security manager is nescesary for classes in
 		// external jar files to have privileges to do eg. system property
@@ -77,7 +78,17 @@ public final class ResourceManager {
 		return newClassLoader;
 	}
 
-	public List<URL> getUrls(String path) {
+	private ClassLoader getParentClassLoader() {
+		return Thread.currentThread().getContextClassLoader();
+	}
+
+	public List<URL> getUrls(String path, ClassLoader... classLoaders) {
+		if (classLoaders == null || classLoaders.length == 0) {
+			classLoaders = new ClassLoader[] { getParentClassLoader() };
+		} else {
+			logger.info("Custom classloaders specified: {}", classLoaders);
+		}
+
 		List<URL> result = new LinkedList<URL>();
 		URL url = getClass().getResource(path);
 		if (url != null) {
@@ -85,10 +96,11 @@ public final class ResourceManager {
 		}
 
 		try {
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			Enumeration<URL> resources = classLoader.getResources(path);
-			while (resources.hasMoreElements()) {
-				result.add(resources.nextElement());
+			for (ClassLoader classLoader : classLoaders) {
+				Enumeration<URL> resources = classLoader.getResources(path);
+				while (resources.hasMoreElements()) {
+					result.add(resources.nextElement());
+				}
 			}
 		} catch (IOException e) {
 			logger.error("IOException when investigating classloader resources", e);
@@ -107,8 +119,8 @@ public final class ResourceManager {
 		return result;
 	}
 
-	public URL getUrl(String path) {
-		List<URL> urls = getUrls(path);
+	public URL getUrl(String path, ClassLoader... classLoaders) {
+		List<URL> urls = getUrls(path, classLoaders);
 		if (urls.isEmpty()) {
 			return null;
 		}

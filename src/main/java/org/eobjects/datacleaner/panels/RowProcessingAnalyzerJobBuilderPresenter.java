@@ -27,8 +27,13 @@ import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
  * 
  * @author Kasper Sørensen
  */
-public interface RowProcessingAnalyzerJobBuilderPresenter extends
-		ComponentJobBuilderPresenter<RowProcessingAnalyzerJobBuilder<?>> {
+public interface RowProcessingAnalyzerJobBuilderPresenter extends ComponentJobBuilderPresenter {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public RowProcessingAnalyzerJobBuilder<?> getJobBuilder();
 
 	/**
 	 * Invoked when the requirement for this transformer changes.

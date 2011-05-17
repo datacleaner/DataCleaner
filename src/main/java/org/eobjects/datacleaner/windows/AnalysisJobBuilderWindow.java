@@ -41,6 +41,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
@@ -60,6 +61,7 @@ import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
@@ -70,6 +72,8 @@ import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
+import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
+import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoreListPanel;
@@ -79,7 +83,6 @@ import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
-import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -116,6 +119,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final Map<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> _transformerPresenters = new LinkedHashMap<TransformerJobBuilder<?>, TransformerJobBuilderPresenter>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
+	private final RendererFactory _rendererFactory;
 	private final CloseableTabbedPane _tabbedPane;
 	private final FilterListPanel _filterListPanel;
 	private final DCLabel _statusLabel = DCLabel.bright("");
@@ -158,6 +162,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore) {
 		super();
 		_configuration = configuration;
+		_rendererFactory = new RendererFactory(_configuration.getDescriptorProvider());
 		setJMenuBar(new DCWindowMenuBar(this, _configuration));
 		_analysisJobBuilder = analysisJobBuilder;
 		_glassPane = new DCGlassPane(this);
@@ -636,7 +641,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
-		final TransformerJobBuilderPresenter presenter = new TransformerJobBuilderPanel(transformerJobBuilder);
+		@SuppressWarnings("unchecked")
+		final Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _rendererFactory
+				.getRenderer(transformerJobBuilder, ComponentJobBuilderRenderingFormat.class);
+		final TransformerJobBuilderPresenter presenter = (TransformerJobBuilderPresenter) renderer
+				.render(transformerJobBuilder);
+
 		_transformerPresenters.put(transformerJobBuilder, presenter);
 		_tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
 				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), presenter.getJComponent());

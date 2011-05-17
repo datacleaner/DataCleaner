@@ -73,6 +73,7 @@
 		<package recursive="true">org.eobjects.analyzer.beans</package>
 		<package>org.eobjects.analyzer.result.renderer</package>
 		<package>org.eobjects.datacleaner.output.beans</package>
+		<package>org.eobjects.datacleaner.panels</package>
 		<package recursive="true">org.eobjects.datacleaner.widgets.result</package>
 	</classpath-scanner>
 

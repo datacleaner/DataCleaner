@@ -28,14 +28,14 @@ import javax.swing.JComponent;
  * 
  * @author Kasper Sørensen
  */
-public interface ComponentJobBuilderPresenter<E> {
+public interface ComponentJobBuilderPresenter {
 
 	/**
 	 * Gets the job builder object that is being presented.
 	 * 
 	 * @return
 	 */
-	public E getJobBuilder();
+	public Object getJobBuilder();
 
 	/**
 	 * Gets the {@link JComponent} that is the visual representation of the job

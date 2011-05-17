@@ -30,7 +30,13 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
  * 
  * @author Kasper Sørensen
  */
-public interface TransformerJobBuilderPresenter extends ComponentJobBuilderPresenter<TransformerJobBuilder<?>> {
+public interface TransformerJobBuilderPresenter extends ComponentJobBuilderPresenter {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TransformerJobBuilder<?> getJobBuilder();
 
 	/**
 	 * Invoked when the requirement for this transformer changes.

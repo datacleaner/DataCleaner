@@ -86,7 +86,7 @@ public final class ResourceManager {
 		if (classLoaders == null || classLoaders.length == 0) {
 			classLoaders = new ClassLoader[] { getParentClassLoader() };
 		} else {
-			logger.info("Custom classloaders specified: {}", classLoaders);
+			logger.debug("Custom classloaders specified: {}", classLoaders);
 		}
 
 		List<URL> result = new LinkedList<URL>();

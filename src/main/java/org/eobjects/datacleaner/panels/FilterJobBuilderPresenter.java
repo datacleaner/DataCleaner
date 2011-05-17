@@ -27,7 +27,13 @@ import org.eobjects.analyzer.job.builder.FilterJobBuilder;
  * 
  * @author Kasper Sørensen
  */
-public interface FilterJobBuilderPresenter extends ComponentJobBuilderPresenter<FilterJobBuilder<?, ?>> {
+public interface FilterJobBuilderPresenter extends ComponentJobBuilderPresenter {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public FilterJobBuilder<?, ?> getJobBuilder();
 
 	/**
 	 * Invoked when the requirement for this filter changes.

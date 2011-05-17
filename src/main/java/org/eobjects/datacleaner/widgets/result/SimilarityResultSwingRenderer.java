@@ -34,11 +34,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.similarity.SimilarityGroup;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
 import org.eobjects.analyzer.result.SimilarityResult;
+import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -46,7 +46,7 @@ import org.jdesktop.swingx.JXTree;
 import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 
 @RendererBean(SwingRenderingFormat.class)
-public class SimilarityResultSwingRenderer implements Renderer<SimilarityResult, JComponent> {
+public class SimilarityResultSwingRenderer extends AbstractRenderer<SimilarityResult, JComponent> {
 
 	@Override
 	public JComponent render(SimilarityResult result) {

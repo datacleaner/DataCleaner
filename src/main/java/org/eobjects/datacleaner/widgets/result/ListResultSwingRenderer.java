@@ -24,14 +24,14 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.table.DefaultTableModel;
 
-import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.result.ListResult;
+import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 
 @RendererBean(SwingRenderingFormat.class)
-public class ListResultSwingRenderer implements Renderer<ListResult<?>, JComponent> {
+public class ListResultSwingRenderer extends AbstractRenderer<ListResult<?>, JComponent> {
 
 	@Override
 	public JComponent render(ListResult<?> result) {

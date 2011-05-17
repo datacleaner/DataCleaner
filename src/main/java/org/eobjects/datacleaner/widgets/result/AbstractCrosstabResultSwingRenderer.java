@@ -33,11 +33,11 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabDimension;
 import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.ResultProducer;
+import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRendererCallback;
 import org.eobjects.analyzer.util.ReflectionUtils;
@@ -55,7 +55,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> implements Renderer<R, JComponent> {
+public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
 
 	final DrillToDetailsCallback _drillToDetailsCallback = new DrillToDetailsCallbackImpl();
 
@@ -333,7 +333,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 			panel.add(Box.createHorizontalStrut(4));
 			panel.add(button);
 		}
-		
+
 		return panel;
 	}
 }

@@ -22,13 +22,13 @@ package org.eobjects.datacleaner.widgets.result;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
+import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.output.beans.OutputAnalyzerResult;
 
 @RendererBean(SwingRenderingFormat.class)
-public class OutputAnalyzerResultRenderer implements Renderer<OutputAnalyzerResult, JComponent> {
+public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyzerResult, JComponent> {
 
 	@Override
 	public JComponent render(OutputAnalyzerResult result) {

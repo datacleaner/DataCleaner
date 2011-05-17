@@ -41,7 +41,6 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.DateGapAnalyzer;
-import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.convert.ConvertToStringTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -56,6 +55,7 @@ import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.DateGapAnalyzerResult;
+import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.TimeInterval;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -64,6 +64,7 @@ import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
+import org.eobjects.metamodel.schema.Table;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -82,10 +83,8 @@ import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriod;
 
-import org.eobjects.metamodel.schema.Table;
-
 @RendererBean(SwingRenderingFormat.class)
-public class DateGapAnalyzerResultSwingRenderer implements Renderer<DateGapAnalyzerResult, JComponent> {
+public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGapAnalyzerResult, JComponent> {
 
 	private static final String LABEL_OVERLAPS = "Overlaps";
 	private static final String LABEL_GAPS = "Gaps";

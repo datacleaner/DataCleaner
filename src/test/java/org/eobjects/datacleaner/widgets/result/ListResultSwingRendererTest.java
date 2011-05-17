@@ -23,8 +23,8 @@ import junit.framework.TestCase;
 
 import org.eobjects.analyzer.beans.api.RenderingFormat;
 import org.eobjects.analyzer.descriptors.AnnotationBasedRendererBeanDescriptor;
-import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ListResult;
+import org.eobjects.analyzer.result.renderer.Renderable;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 
 public class ListResultSwingRendererTest extends TestCase {
@@ -32,7 +32,7 @@ public class ListResultSwingRendererTest extends TestCase {
 	public void testDescriptor() throws Exception {
 		AnnotationBasedRendererBeanDescriptor descriptor = new AnnotationBasedRendererBeanDescriptor(
 				ListResultSwingRenderer.class);
-		Class<? extends AnalyzerResult> analyzerResultType = descriptor.getAnalyzerResultType();
+		Class<? extends Renderable> analyzerResultType = descriptor.getRenderableType();
 		assertEquals(ListResult.class, analyzerResultType);
 
 		Class<? extends RenderingFormat<?>> renderingFormat = descriptor.getRenderingFormat();

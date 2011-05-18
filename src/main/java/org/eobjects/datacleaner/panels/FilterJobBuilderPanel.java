@@ -142,7 +142,7 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 	}
 
 	@Override
-	public JComponent getJComponent() {
+	public JComponent createJComponent() {
 		return this;
 	}
 

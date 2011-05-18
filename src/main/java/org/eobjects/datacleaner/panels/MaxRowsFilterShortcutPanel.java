@@ -163,7 +163,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 	}
 
 	@Override
-	public JComponent getJComponent() {
+	public JComponent createJComponent() {
 		DCLabel label = DCLabel.dark("Configured in 'Source' tab");
 		label.setBorder(new EmptyBorder(4, 4, 4, 4));
 		return label;

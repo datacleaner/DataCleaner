@@ -27,6 +27,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -103,6 +104,14 @@ import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The main window in the DataCleaner GUI. This window is called the
+ * AnalysisJobBuilderWindow because it's main purpose is to present a job that
+ * is being built. Behind the covers this job state is respresented in the
+ * {@link AnalysisJobBuilder} class.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class AnalysisJobBuilderWindow extends AbstractWindow implements AnalyzerChangeListener,
 		TransformerChangeListener, FilterChangeListener, SourceColumnChangeListener, TabCloseListener {
 
@@ -117,6 +126,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	private final Map<RowProcessingAnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter> _rowProcessingTabPresenters = new LinkedHashMap<RowProcessingAnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter>();
 	private final Map<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> _transformerPresenters = new LinkedHashMap<TransformerJobBuilder<?>, TransformerJobBuilderPresenter>();
+	private final Map<ComponentJobBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<ComponentJobBuilderPresenter, JComponent>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final RendererFactory _rendererFactory;
@@ -594,7 +604,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			for (Iterator<RowProcessingAnalyzerJobBuilderPresenter> it = _rowProcessingTabPresenters.values().iterator(); it
 					.hasNext();) {
 				RowProcessingAnalyzerJobBuilderPresenter analyzerPresenter = it.next();
-				if (analyzerPresenter.getJComponent() == panel) {
+				if (_jobBuilderTabs.get(analyzerPresenter) == panel) {
 					_analysisJobBuilder.removeAnalyzer(analyzerPresenter.getJobBuilder());
 					return;
 				}
@@ -603,7 +613,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			// if panel was a transformer panel
 			for (Iterator<TransformerJobBuilderPresenter> it = _transformerPresenters.values().iterator(); it.hasNext();) {
 				TransformerJobBuilderPresenter transformerPresenter = it.next();
-				if (transformerPresenter.getJComponent() == panel) {
+				if (_jobBuilderTabs.get(transformerPresenter) == panel) {
 					_analysisJobBuilder.removeTransformer(transformerPresenter.getJobBuilder());
 					return;
 				}
@@ -624,8 +634,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	public void onAdd(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
 		RowProcessingAnalyzerJobBuilderPresenter presenter = new RowProcessingAnalyzerJobBuilderPanel(analyzerJobBuilder);
 		_rowProcessingTabPresenters.put(analyzerJobBuilder, presenter);
+		JComponent comp = presenter.createJComponent();
 		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),
-				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), presenter.getJComponent());
+				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), comp);
+		_jobBuilderTabs.put(presenter, comp);
 		final int tabIndex = _tabbedPane.getTabCount() - 1;
 		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
 				analyzerJobBuilder, tabIndex, _tabbedPane));
@@ -642,7 +654,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	@Override
 	public void onRemove(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
 		RowProcessingAnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.remove(analyzerJobBuilder);
-		_tabbedPane.remove(presenter.getJComponent());
+		JComponent comp = _jobBuilderTabs.remove(presenter);
+		_tabbedPane.remove(comp);
 		updateStatusLabel();
 	}
 
@@ -655,8 +668,10 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				.render(transformerJobBuilder);
 
 		_transformerPresenters.put(transformerJobBuilder, presenter);
+		JComponent comp = presenter.createJComponent();
 		_tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
-				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), presenter.getJComponent());
+				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), comp);
+		_jobBuilderTabs.put(presenter, comp);
 		final int tabIndex = _tabbedPane.getTabCount() - 1;
 		_tabbedPane.setSelectedIndex(tabIndex);
 		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
@@ -667,7 +682,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	@Override
 	public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
 		TransformerJobBuilderPresenter presenter = _transformerPresenters.remove(transformerJobBuilder);
-		_tabbedPane.remove(presenter.getJComponent());
+		JComponent comp = _jobBuilderTabs.remove(presenter);
+		_tabbedPane.remove(comp);
 		updateStatusLabel();
 	}
 

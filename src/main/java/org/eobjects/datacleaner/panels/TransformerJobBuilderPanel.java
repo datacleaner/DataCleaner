@@ -131,7 +131,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	}
 
 	@Override
-	public JComponent getJComponent() {
+	public JComponent createJComponent() {
 		return this;
 	}
 }

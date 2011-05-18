@@ -38,12 +38,13 @@ public interface ComponentJobBuilderPresenter {
 	public Object getJobBuilder();
 
 	/**
-	 * Gets the {@link JComponent} that is the visual representation of the job
-	 * builder.
+	 * Creates the {@link JComponent} that is the visual representation of the
+	 * job builder.
 	 * 
-	 * @return
+	 * @return a {@link JComponent} that can be used to present the
+	 *         configuration of the job builder.
 	 */
-	public JComponent getJComponent();
+	public JComponent createJComponent();
 
 	/**
 	 * Invoked before execution, the presenter should make sure all configured

@@ -97,7 +97,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		String title = LabelUtils.getLabel(fjb);
 		Icon icon = IconUtils.getDescriptorIcon(fjb.getDescriptor(), IconUtils.ICON_SIZE_SMALL);
 		final JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
-		taskPane.add(_presenters.get(fjb).getJComponent());
+		taskPane.add(_presenters.get(fjb).createJComponent());
 		return taskPane;
 	}
 

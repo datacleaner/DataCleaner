@@ -94,7 +94,7 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	}
 
 	@Override
-	public JComponent getJComponent() {
+	public JComponent createJComponent() {
 		return this;
 	}
 

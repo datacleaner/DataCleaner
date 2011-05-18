@@ -112,6 +112,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 				}
 
 				PropertyWidget<?> propertyWidget = createPropertyWidget(beanJobBuilder, propertyDescriptor);
+				getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
 				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 2, GridBagConstraints.NORTHWEST, 4);
 				i = i + 2;
 			}
@@ -121,7 +122,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 
 	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		PropertyWidget<?> propertyWidget = _propertyWidgetFactory.create(propertyDescriptor);
+		PropertyWidget<?> propertyWidget = getPropertyWidgetFactory().create(propertyDescriptor);
 		return propertyWidget;
 	}
 
@@ -141,7 +142,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 	 *            case some of the applied properties are missing or errornous
 	 */
 	public void applyPropertyValues(boolean errorAware) {
-		for (PropertyWidget<?> propertyWidget : _propertyWidgetFactory.getWidgets()) {
+		for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory().getWidgets()) {
 			ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
 			if (propertyWidget.isSet()) {
 				Object value = propertyWidget.getValue();
@@ -154,7 +155,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 		}
 	}
 
-	public PropertyWidgetFactory getPropertyWidgetFactory() {
+	public final PropertyWidgetFactory getPropertyWidgetFactory() {
 		return _propertyWidgetFactory;
 	}
 

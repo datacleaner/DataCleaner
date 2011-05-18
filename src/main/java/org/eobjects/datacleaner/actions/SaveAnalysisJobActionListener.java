@@ -57,6 +57,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 
 		AnalysisJob analysisJob = null;
 		try {
+			_window.applyPropertyValues();
 			analysisJob = _analysisJobBuilder.toAnalysisJob();
 		} catch (Exception e) {
 			WidgetUtils

@@ -462,15 +462,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				_filterListPanel.applyPropertyValues();
-
-				for (TransformerJobBuilderPresenter presenter : _transformerPresenters.values()) {
-					presenter.applyPropertyValues();
-				}
-
-				for (RowProcessingAnalyzerJobBuilderPresenter presenter : _rowProcessingTabPresenters.values()) {
-					presenter.applyPropertyValues();
-				}
+				applyPropertyValues();
 
 				// TODO: Also support exploring analyzers
 
@@ -520,6 +512,21 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		initializeExistingComponents();
 
 		return panel;
+	}
+
+	/**
+	 * Applies property values for all components visible in the window.
+	 */
+	public void applyPropertyValues() {
+		_filterListPanel.applyPropertyValues();
+
+		for (TransformerJobBuilderPresenter presenter : _transformerPresenters.values()) {
+			presenter.applyPropertyValues();
+		}
+
+		for (RowProcessingAnalyzerJobBuilderPresenter presenter : _rowProcessingTabPresenters.values()) {
+			presenter.applyPropertyValues();
+		}
 	}
 
 	/**

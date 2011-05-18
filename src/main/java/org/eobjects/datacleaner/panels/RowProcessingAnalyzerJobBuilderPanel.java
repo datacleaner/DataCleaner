@@ -70,9 +70,8 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (_analyzerJobBuilder.isMultipleJobsSupported()) {
 			if (propertyDescriptor.isInputColumn()) {
-				MultipleInputColumnsPropertyWidget propertyWidget = new MultipleInputColumnsPropertyWidget(
-						beanJobBuilder, propertyDescriptor);
-				getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
+				MultipleInputColumnsPropertyWidget propertyWidget = new MultipleInputColumnsPropertyWidget(beanJobBuilder,
+						propertyDescriptor);
 				return propertyWidget;
 			}
 		}

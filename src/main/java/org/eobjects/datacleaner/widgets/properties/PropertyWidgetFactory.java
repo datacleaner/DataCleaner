@@ -74,8 +74,7 @@ public final class PropertyWidgetFactory {
 
 		if (propertyDescriptor.isArray()) {
 			if (propertyDescriptor.isInputColumn()) {
-				result = new MultipleInputColumnsPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(), _beanJobBuilder,
-						propertyDescriptor);
+				result = new MultipleInputColumnsPropertyWidget(_beanJobBuilder, propertyDescriptor);
 			} else if (ReflectionUtils.isString(type)) {
 				result = new MultipleStringPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (type == Dictionary.class) {

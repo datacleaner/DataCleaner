@@ -34,7 +34,6 @@ import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -84,7 +83,6 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		}
 	};
 
-	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;
 	private final InputColumnPropertyWidgetAccessoryHandler _accessoryHandler;
 	private final List<InputColumn<?>> _inputColumns;
@@ -92,15 +90,14 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	private volatile JCheckBox[] _checkBoxes;
 	private volatile boolean _firstUpdate;
 
-	public MultipleInputColumnsPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+	public MultipleInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_analysisJobBuilder = analysisJobBuilder;
 		_inputColumns = new ArrayList<InputColumn<?>>();
 		_firstUpdate = true;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
-		_analysisJobBuilder.getSourceColumnListeners().add(this);
-		_analysisJobBuilder.getTransformerChangeListeners().add(this);
+		getAnalysisJobBuilder().getSourceColumnListeners().add(this);
+		getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
 		setLayout(new VerticalLayout(2));
 
 		if (propertyDescriptor.isArray()) {
@@ -137,7 +134,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			}
 		}
 
-		List<InputColumn<?>> availableColumns = _analysisJobBuilder.getAvailableInputColumns(_dataTypeFamily);
+		List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(_dataTypeFamily);
 		for (InputColumn<?> inputColumn : availableColumns) {
 			if (!_inputColumns.contains(inputColumn)) {
 				_inputColumns.add(inputColumn);
@@ -280,7 +277,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
-		_analysisJobBuilder.getSourceColumnListeners().remove(this);
+		getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
 	}
 
 	@Override

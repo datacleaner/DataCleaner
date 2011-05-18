@@ -111,8 +111,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 					WidgetUtils.addToGridBag(descLabel, panel, 0, i + 1, 1, 1, GridBagConstraints.NORTHEAST, 0);
 				}
 
-				PropertyWidget<?> propertyWidget = createPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(),
-						beanJobBuilder, propertyDescriptor);
+				PropertyWidget<?> propertyWidget = createPropertyWidget(beanJobBuilder, propertyDescriptor);
 				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 2, GridBagConstraints.NORTHWEST, 4);
 				i = i + 2;
 			}
@@ -120,8 +119,8 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 		}
 	}
 
-	protected PropertyWidget<?> createPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			ConfiguredPropertyDescriptor propertyDescriptor) {
 		PropertyWidget<?> propertyWidget = _propertyWidgetFactory.create(propertyDescriptor);
 		return propertyWidget;
 	}

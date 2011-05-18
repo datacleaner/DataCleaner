@@ -25,6 +25,7 @@ import javax.swing.JComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.CompareUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 		return _propertyDescriptor;
 	}
 
-	public AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
+	public final AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
 		return _beanJobBuilder;
 	}
 
@@ -95,6 +96,10 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 				logger.warn("Exception thrown when setting configured property " + _propertyDescriptor, e);
 			}
 		}
+	}
+
+	protected final AnalysisJobBuilder getAnalysisJobBuilder() {
+		return _beanJobBuilder.getAnalysisJobBuilder();
 	}
 
 	@Override

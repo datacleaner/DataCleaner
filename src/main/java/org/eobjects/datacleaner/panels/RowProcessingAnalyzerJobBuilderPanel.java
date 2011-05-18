@@ -26,7 +26,6 @@ import javax.swing.JComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
@@ -67,17 +66,17 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	}
 
 	@Override
-	protected PropertyWidget<?> createPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
+	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (_analyzerJobBuilder.isMultipleJobsSupported()) {
 			if (propertyDescriptor.isInputColumn()) {
 				MultipleInputColumnsPropertyWidget propertyWidget = new MultipleInputColumnsPropertyWidget(
-						analysisJobBuilder, beanJobBuilder, propertyDescriptor);
+						beanJobBuilder, propertyDescriptor);
 				getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
 				return propertyWidget;
 			}
 		}
-		return super.createPropertyWidget(analysisJobBuilder, beanJobBuilder, propertyDescriptor);
+		return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
 	}
 
 	@Override

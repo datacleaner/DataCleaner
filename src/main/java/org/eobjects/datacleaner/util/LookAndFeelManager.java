@@ -93,6 +93,18 @@ public final class LookAndFeelManager {
 		UIManager.put("MenuItem.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("MenuItem.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
 		
+		UIManager.put("List.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("List.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
+		UIManager.put("List.focusCellHighlightBorder", WidgetUtils.BORDER_THIN);
+		
+		UIManager.put("Tree.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("Tree.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
+		UIManager.put("Tree.selectionBorderColor", WidgetUtils.BG_COLOR_MEDIUM);
+		
+		UIManager.put("Table.selectionForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
+		UIManager.put("Table.selectionBackground", WidgetUtils.BG_COLOR_LESS_DARK);
+		UIManager.put("Table.focusCellHighlightBorder", WidgetUtils.BORDER_THIN);
+		
 		// splitpane "flattening" (remove bevel like borders in divider)
 		UIManager.put("SplitPane.border", new EmptyBorder(0, 0, 0, 0));
 		UIManager.put("SplitPaneDivider.border", new EmptyBorder(0, 0, 0, 0));

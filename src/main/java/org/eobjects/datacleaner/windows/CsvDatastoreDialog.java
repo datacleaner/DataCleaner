@@ -92,7 +92,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	 * Amount of bytes to read for autodetection of encoding, separator and
 	 * quotes
 	 */
-	private static final int SAMPLE_BUFFER_SIZE = 2048;
+	private static final int SAMPLE_BUFFER_SIZE = 16 * 1024;
 
 	/**
 	 * Max amount of rows to display in the preview table
@@ -147,39 +147,15 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		_loadingIcon.setPreferredSize(_previewTablePanel.getPreferredSize());
 
 		_filenameField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
-		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent e) {
-				onSettingsUpdated(true, true);
-			}
-		});
 
 		_separatorCharField = new JComboBox(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
 				SEPARATOR_PIPE });
 		_separatorCharField.setEditable(true);
-		_separatorCharField.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(false, false);
-			}
-		});
 
 		_quoteCharField = new JComboBox(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
 		_quoteCharField.setEditable(true);
-		_quoteCharField.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(false, false);
-			}
-		});
 
 		_encodingComboBox = new CharSetEncodingComboBox();
-		_encodingComboBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(true, false);
-			}
-		});
 
 		_statusLabel = DCLabel.bright("Please select file");
 
@@ -251,7 +227,35 @@ public class CsvDatastoreDialog extends AbstractDialog {
 				}
 			}
 			_quoteCharField.setSelectedItem(quote);
+			
+			onSettingsUpdated(false, false);
 		}
+		
+		// add listeners
+		_separatorCharField.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				onSettingsUpdated(false, false);
+			}
+		});
+		_quoteCharField.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				onSettingsUpdated(false, false);
+			}
+		});
+		_encodingComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				onSettingsUpdated(true, false);
+			}
+		});
+		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent e) {
+				onSettingsUpdated(true, true);
+			}
+		});
 	}
 
 	@Override

@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +137,14 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		while (dataSet.next()) {
 			Row row = dataSet.getRow();
 			InputRow inputRow = new MetaModelInputRow(rowNumber, row);
+			
+			TransformedInputRow resultRow;
+			if (inputRow instanceof TransformedInputRow) {
+				// re-use existing transformed input row.
+				resultRow = (TransformedInputRow) inputRow;
+			} else {
+				resultRow = new TransformedInputRow(inputRow);
+			}
 
 			for (TransformerJobBuilder<?> tjb : transformerJobs) {
 				List<MutableInputColumn<?>> cols = outputColumns.get(tjb);
@@ -145,14 +152,12 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 				assert cols.size() == output.length;
 
-				Map<InputColumn<?>, Object> newValues = new HashMap<InputColumn<?>, Object>();
 				for (int i = 0; i < output.length; i++) {
-					newValues.put(cols.get(i), output[i]);
+					resultRow.addValue(cols.get(i), output[i]);
 				}
-				inputRow = new TransformedInputRow(inputRow, newValues);
 			}
 
-			result.add(inputRow);
+			result.add(resultRow);
 			rowNumber++;
 		}
 

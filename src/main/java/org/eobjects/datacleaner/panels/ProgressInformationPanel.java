@@ -39,6 +39,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
+import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -118,8 +119,13 @@ public class ProgressInformationPanel extends DCPanel {
 		StringWriter stringWriter = new StringWriter();
 		stringWriter.append("\nERROR: ");
 		stringWriter.append(string);
-		stringWriter.append('\n');
-		throwable.printStackTrace(new PrintWriter(stringWriter));
+		if (throwable instanceof PreviousErrorsExistException) {
+			stringWriter.append(' ');
+			stringWriter.append(throwable.getMessage());
+		} else {
+			stringWriter.append('\n');
+			throwable.printStackTrace(new PrintWriter(stringWriter));
+		}
 		appendMessage(stringWriter.toString());
 	}
 

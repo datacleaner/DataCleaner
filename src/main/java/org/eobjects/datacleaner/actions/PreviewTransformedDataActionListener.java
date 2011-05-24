@@ -27,8 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -61,7 +63,7 @@ import org.eobjects.metamodel.schema.Table;
  * 
  * @author Kasper Sørensen
  */
-public final class PreviewTransformedDataActionListener implements ActionListener {
+public final class PreviewTransformedDataActionListener implements ActionListener, Callable<TableModel> {
 
 	private static final int DEFAULT_PREVIEW_ROWS = 400;
 
@@ -88,6 +90,53 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 	// RowProcessingPublisher :)
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		new DataSetWindow("Preview of transformed dataset", this).setVisible(true);
+	}
+
+	private void initialize(TransformerJobBuilder<?> tjb) {
+		Object bean = tjb.getConfigurableBean();
+		TransformerBeanDescriptor<?> descriptor = tjb.getDescriptor();
+		_lifeCycleHelper.initialize(descriptor, bean);
+
+		Set<ConfiguredPropertyDescriptor> referenceDataProperties = descriptor.getConfiguredPropertiesByType(
+				ReferenceData.class, true);
+		for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : referenceDataProperties) {
+			Object configuredProperty = tjb.getConfiguredProperty(configuredPropertyDescriptor);
+			_lifeCycleHelper.initialize(configuredProperty);
+		}
+	}
+
+	private void close(TransformerJobBuilder<?> tjb) {
+		Object bean = tjb.getConfigurableBean();
+		TransformerBeanDescriptor<?> descriptor = tjb.getDescriptor();
+		_lifeCycleHelper.close(descriptor, bean);
+
+		Set<ConfiguredPropertyDescriptor> referenceDataProperties = descriptor.getConfiguredPropertiesByType(
+				ReferenceData.class, true);
+		for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : referenceDataProperties) {
+			Object configuredProperty = tjb.getConfiguredProperty(configuredPropertyDescriptor);
+			_lifeCycleHelper.close(configuredProperty);
+		}
+	}
+
+	private void buildInputChain(InputColumn<?> inputColumn, List<Column> physicalColumns,
+			List<TransformerJobBuilder<?>> transformerJobs) {
+		if (inputColumn.isPhysicalColumn()) {
+			physicalColumns.add(inputColumn.getPhysicalColumn());
+		} else {
+			TransformerJobBuilder<?> tjb = _analysisJobBuilder.getOriginatingTransformer(inputColumn);
+			if (!transformerJobs.contains(tjb)) {
+				transformerJobs.add(tjb);
+				List<InputColumn<?>> tjbInputs = tjb.getInputColumns();
+				for (InputColumn<?> tjbInput : tjbInputs) {
+					buildInputChain(tjbInput, physicalColumns, transformerJobs);
+				}
+			}
+		}
+	}
+
+	@Override
+	public TableModel call() throws Exception {
 		_transformerJobBuilderPresenter.applyPropertyValues();
 
 		final List<TransformerJobBuilder<?>> transformerJobs = new ArrayList<TransformerJobBuilder<?>>();
@@ -137,7 +186,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		while (dataSet.next()) {
 			Row row = dataSet.getRow();
 			InputRow inputRow = new MetaModelInputRow(rowNumber, row);
-			
+
 			TransformedInputRow resultRow;
 			if (inputRow instanceof TransformedInputRow) {
 				// re-use existing transformed input row.
@@ -193,50 +242,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 			row++;
 		}
-
-		new DataSetWindow("Preview of transformed dataset", tableModel).setVisible(true);
-	}
-
-	private void initialize(TransformerJobBuilder<?> tjb) {
-		Object bean = tjb.getConfigurableBean();
-		TransformerBeanDescriptor<?> descriptor = tjb.getDescriptor();
-		_lifeCycleHelper.initialize(descriptor, bean);
-
-		Set<ConfiguredPropertyDescriptor> referenceDataProperties = descriptor.getConfiguredPropertiesByType(
-				ReferenceData.class, true);
-		for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : referenceDataProperties) {
-			Object configuredProperty = tjb.getConfiguredProperty(configuredPropertyDescriptor);
-			_lifeCycleHelper.initialize(configuredProperty);
-		}
-	}
-
-	private void close(TransformerJobBuilder<?> tjb) {
-		Object bean = tjb.getConfigurableBean();
-		TransformerBeanDescriptor<?> descriptor = tjb.getDescriptor();
-		_lifeCycleHelper.close(descriptor, bean);
-
-		Set<ConfiguredPropertyDescriptor> referenceDataProperties = descriptor.getConfiguredPropertiesByType(
-				ReferenceData.class, true);
-		for (ConfiguredPropertyDescriptor configuredPropertyDescriptor : referenceDataProperties) {
-			Object configuredProperty = tjb.getConfiguredProperty(configuredPropertyDescriptor);
-			_lifeCycleHelper.close(configuredProperty);
-		}
-	}
-
-	private void buildInputChain(InputColumn<?> inputColumn, List<Column> physicalColumns,
-			List<TransformerJobBuilder<?>> transformerJobs) {
-		if (inputColumn.isPhysicalColumn()) {
-			physicalColumns.add(inputColumn.getPhysicalColumn());
-		} else {
-			TransformerJobBuilder<?> tjb = _analysisJobBuilder.getOriginatingTransformer(inputColumn);
-			if (!transformerJobs.contains(tjb)) {
-				transformerJobs.add(tjb);
-				List<InputColumn<?>> tjbInputs = tjb.getInputColumns();
-				for (InputColumn<?> tjbInput : tjbInputs) {
-					buildInputChain(tjbInput, physicalColumns, transformerJobs);
-				}
-			}
-		}
+		return tableModel;
 	}
 
 }

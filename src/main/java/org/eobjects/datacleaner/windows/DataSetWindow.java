@@ -25,9 +25,11 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
 
@@ -35,6 +37,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.data.DataSet;
@@ -44,34 +47,46 @@ public class DataSetWindow extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
 	private final Query _query;
-	private final DataContext _dataContext;
 	private final int _pageSize;
 	private final String _title;
-	private final TableModel _tableModel;
+	private final Callable<TableModel> _tableModelCallable;
 	private final DCTable _table;
+	private final LoadingIcon _loadingIcon = new LoadingIcon();
+	private JButton _previousPageButton;
+	private JButton _nextPageButton;
 
-	public DataSetWindow(Query query, DataContext dataContext) {
+	public DataSetWindow(Query query, final DataContext dataContext) {
 		this(query, dataContext, -1);
 	}
 
-	public DataSetWindow(Query query, DataContext dataContext, int pageSize) {
+	public DataSetWindow(final Query query, final DataContext dataContext, int pageSize) {
 		super();
 		_table = new DCTable();
 		_query = query;
-		_dataContext = dataContext;
 		_pageSize = pageSize;
 		_title = "DataSet: " + _query.toSql();
-		_tableModel = null;
+		_tableModelCallable = new Callable<TableModel>() {
+			@Override
+			public TableModel call() throws Exception {
+				DataSet dataSet = dataContext.executeQuery(_query);
+				return dataSet.toTableModel();
+			}
+		};
+		_previousPageButton = WidgetFactory.createButton("Previous page", "images/actions/back.png");
+		_previousPageButton.setEnabled(false);
+		_nextPageButton = WidgetFactory.createButton("Next page", "images/actions/forward.png");
+		_nextPageButton.setEnabled(false);
 	}
 
-	public DataSetWindow(String title, TableModel tableModel) {
+	public DataSetWindow(String title, Callable<TableModel> tableModelCallable) {
 		super();
 		_table = new DCTable();
 		_query = null;
-		_dataContext = null;
 		_pageSize = -1;
 		_title = title;
-		_tableModel = tableModel;
+		_tableModelCallable = tableModelCallable;
+		_previousPageButton = null;
+		_nextPageButton = null;
 	}
 
 	@Override
@@ -91,50 +106,79 @@ public class DataSetWindow extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		if (_tableModel == null) {
-			if (_pageSize > 0) {
-				_query.setMaxRows(_pageSize);
-			}
-			updateTableByQuery();
-		} else {
-			_table.setModel(_tableModel);
-		}
+		updateTable();
 
-		if (_table.getColumnCount() > 10) {
-			_table.setHorizontalScrollEnabled(true);
-		}
-		
 		final DCPanel tablePanel = _table.toPanel();
-		
-		if (_query == null) {
-			return tablePanel;
-		}
-
-		Integer maxRows = _query.getMaxRows();
-		if (maxRows == null) {
-			// no paging needed when there are no max rows property
-			return tablePanel;
-		}
 
 		final DCPanel pagingButtonPanel = createPagingButtonPanel();
-		if (pagingButtonPanel == null) {
-			// paging not needed because the actual amount of rows where low
-			return tablePanel;
-		}
 
 		DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());
+		_loadingIcon.setPreferredSize(300, 300);
+		panel.add(_loadingIcon, BorderLayout.NORTH);
 		panel.add(tablePanel, BorderLayout.CENTER);
-		panel.add(pagingButtonPanel, BorderLayout.SOUTH);
+		if (pagingButtonPanel != null) {
+			panel.add(pagingButtonPanel, BorderLayout.SOUTH);
+		}
 		return panel;
 	}
 
-	private DCPanel createPagingButtonPanel() {
-		final int maxRows = _query.getMaxRows();
-		final JButton previousPageButton = WidgetFactory.createButton("Previous page", "images/actions/back.png");
-		final JButton nextPageButton = WidgetFactory.createButton("Next page", "images/actions/forward.png");
+	private void updateTable() {
+		_loadingIcon.setVisible(true);
+		_table.setVisible(false);
 
-		previousPageButton.addActionListener(new ActionListener() {
+		if (_query != null) {
+			if (_pageSize > 0) {
+				_query.setMaxRows(_pageSize);
+			}
+		}
+
+		new SwingWorker<TableModel, Void>() {
+			protected TableModel doInBackground() throws Exception {
+				return _tableModelCallable.call();
+			};
+
+			protected void done() {
+				try {
+					TableModel tableModel = get();
+					_table.setModel(tableModel);
+
+					if (_table.getColumnCount() > 10) {
+						_table.setHorizontalScrollEnabled(true);
+					}
+					updatePagingButtons();
+
+					_loadingIcon.setVisible(false);
+					_table.setVisible(true);
+
+					Dimension dimensions = autoSetSize();
+					setSize(dimensions);
+					centerOnScreen();
+					
+				} catch (Exception e) {
+					DataSetWindow.this.dispose();
+					if (e instanceof RuntimeException) {
+						throw (RuntimeException) e;
+					}
+					throw new IllegalStateException(e);
+				}
+			};
+		}.execute();
+
+	}
+
+	private DCPanel createPagingButtonPanel() {
+		if (_query == null) {
+			return null;
+		}
+
+		final Integer maxRows = _query.getMaxRows();
+		if (maxRows == null) {
+			// no paging needed when there are no max rows property
+			return null;
+		}
+
+		_previousPageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int newFirstRow = getFirstRow() - maxRows;
@@ -142,58 +186,48 @@ public class DataSetWindow extends AbstractWindow {
 					newFirstRow = 0;
 				}
 				_query.setFirstRow(newFirstRow);
-				updateTableByQuery();
-				updatePagingButtons(previousPageButton, nextPageButton);
+				updateTable();
 			}
 		});
 
-		nextPageButton.addActionListener(new ActionListener() {
+		_nextPageButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int newFirstRow = getFirstRow() + maxRows;
 				_query.setFirstRow(newFirstRow);
-				updateTableByQuery();
-				updatePagingButtons(previousPageButton, nextPageButton);
+				updateTable();
 			}
 		});
-
-		updatePagingButtons(previousPageButton, nextPageButton);
-
-		if (!previousPageButton.isEnabled() && !nextPageButton.isEnabled()) {
-			return null;
-		}
 
 		final DCPanel buttonPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 10));
 		buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
-		buttonPanel.add(previousPageButton);
-		buttonPanel.add(nextPageButton);
+		buttonPanel.add(_previousPageButton);
+		buttonPanel.add(_nextPageButton);
 
 		return buttonPanel;
 	}
 
-	private void updatePagingButtons(JButton previousPageButton, JButton nextPageButton) {
-		if (_table.getRowCount() < _query.getMaxRows()) {
-			nextPageButton.setEnabled(false);
-		} else {
-			nextPageButton.setEnabled(true);
+	private void updatePagingButtons() {
+		if (_nextPageButton != null) {
+			if (_table.getRowCount() < _query.getMaxRows()) {
+				_nextPageButton.setEnabled(false);
+			} else {
+				_nextPageButton.setEnabled(true);
+			}
 		}
 
-		if (getFirstRow() <= 0) {
-			previousPageButton.setEnabled(false);
-		} else {
-			previousPageButton.setEnabled(true);
+		if (_previousPageButton != null) {
+			if (getFirstRow() <= 0) {
+				_previousPageButton.setEnabled(false);
+			} else {
+				_previousPageButton.setEnabled(true);
+			}
 		}
-
 	}
 
 	private int getFirstRow() {
 		return _query.getFirstRow() == null ? 0 : _query.getFirstRow();
-	}
-
-	private void updateTableByQuery() {
-		DataSet dataSet = _dataContext.executeQuery(_query);
-		_table.setModel(dataSet.toTableModel());
 	}
 
 	@Override

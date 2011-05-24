@@ -502,7 +502,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane);
 		statusBar.add(loggedInStatusLabel);
 
-		final Dimension windowSize = new Dimension(880, 630);
+		final Dimension windowSize = new Dimension(900, 630);
 
 		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
 		toolBarPanel.setLayout(new BorderLayout());

@@ -128,8 +128,17 @@ public class DCTable extends JXTable implements MouseListener {
 			_panel.add(_scrollPane, BorderLayout.CENTER);
 			Dimension ps = getPanelPreferredSize();
 			_panel.setPreferredSize(ps);
+			_panel.setVisible(isVisible());
 		}
 		return _panel;
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		if (_panel != null) {
+			_panel.setVisible(visible);
+		}
 	}
 
 	private Dimension getPanelPreferredSize() {

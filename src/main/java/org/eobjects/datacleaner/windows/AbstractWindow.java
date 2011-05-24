@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
@@ -49,24 +50,40 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 		JComponent content = getWindowContent();
 		getContentPane().add(content);
 
-		Dimension preferredSize = content.getPreferredSize();
-		
-		int maxHeight = Toolkit.getDefaultToolkit().getScreenSize().height - 30;
-		if (preferredSize.height > maxHeight) {
-			preferredSize.height = maxHeight;
-		}
+		autoSetSize(content);
 
-		getContentPane().setPreferredSize(preferredSize);
+		WindowManager.getInstance().onShow(this);
+	}
+
+	public Dimension autoSetSize() {
+		return autoSetSize(getContentPane().getComponent(0));
+	}
+
+	public Dimension autoSetSize(Component content) {
+
+		Dimension preferredSize = content.getPreferredSize();
+
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+
+		int maxWidth = toolkit.getScreenSize().width - 30;
+		int maxHeight = toolkit.getScreenSize().height - 30;
+		preferredSize.width = Math.min(preferredSize.width, maxWidth);
+		preferredSize.height = Math.min(preferredSize.height, maxHeight);
+
+		Dimension currentSize = getContentPane().getSize();
+		preferredSize.width = Math.max(preferredSize.width, currentSize.width);
+		preferredSize.width = Math.max(preferredSize.height, currentSize.height);
 
 		pack();
+		getContentPane().setPreferredSize(preferredSize);
 
 		if (isCentered()) {
 			centerOnScreen();
 		}
 
-		WindowManager.getInstance().onShow(this);
+		return preferredSize;
 	}
-
+	
 	protected abstract boolean isWindowResizable();
 
 	protected abstract boolean isCentered();

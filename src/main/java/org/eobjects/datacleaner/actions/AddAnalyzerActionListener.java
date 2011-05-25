@@ -32,11 +32,10 @@ import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.util.DisplayNameComparator;
-import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
+import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
+import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
 
 public final class AddAnalyzerActionListener implements ActionListener {
 
@@ -50,36 +49,41 @@ public final class AddAnalyzerActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final JPopupMenu popup = new JPopupMenu();
-
-		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
+		final Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
 				.getAnalyzerBeanDescriptors();
-		descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
-		for (final AnalyzerBeanDescriptor<?> descriptor : descriptors) {
-			if (descriptor.getAnnotation(OutputWriterAnalyzer.class) == null) {
-				if (descriptor.isRowProcessingAnalyzer()) {
-					JMenuItem menuItem = new DescriptorMenuItem(descriptor);
-					menuItem.addActionListener(new ActionListener() {
-						@SuppressWarnings("unchecked")
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							Class<?> analyzerClass = descriptor.getComponentClass();
-							if (descriptor.isExploringAnalyzer()) {
-								_analysisJobBuilder
-										.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
-							} else {
-								_analysisJobBuilder
-										.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
-							}
 
-							UsageLogger.getInstance().log("Add analyzer: " + descriptor.getDisplayName());
-						}
-					});
+		final JPopupMenu popup = new DescriptorPopupMenu<AnalyzerBeanDescriptor<?>>(descriptors) {
 
-					popup.add(menuItem);
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected JMenuItem createMenuItem(final AnalyzerBeanDescriptor<?> descriptor) {
+				if (descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {
+					return null;
 				}
+				if (descriptor.isExploringAnalyzer()) {
+					return null;
+				}
+				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
+				menuItem.addActionListener(new ActionListener() {
+					@SuppressWarnings("unchecked")
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						Class<?> analyzerClass = descriptor.getComponentClass();
+						if (descriptor.isExploringAnalyzer()) {
+							_analysisJobBuilder.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
+						} else {
+							_analysisJobBuilder
+									.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
+						}
+
+						UsageLogger.getInstance().log("Add analyzer: " + descriptor.getDisplayName());
+					}
+				});
+
+				return menuItem;
 			}
-		}
+		};
 
 		Component source = (Component) e.getSource();
 		popup.show(source, 0, source.getHeight());

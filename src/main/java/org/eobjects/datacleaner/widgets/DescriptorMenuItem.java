@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.tooltip;
+package org.eobjects.datacleaner.widgets;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -36,7 +36,13 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.tooltip.DCToolTip;
 
+/**
+ * MenuItem for a bean descriptor.
+ * 
+ * @author Kasper Sørensen
+ */
 public class DescriptorMenuItem extends JMenuItem {
 
 	private static final long serialVersionUID = 1L;

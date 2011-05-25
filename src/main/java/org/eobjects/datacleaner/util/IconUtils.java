@@ -19,10 +19,14 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
+import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
@@ -90,6 +94,32 @@ public final class IconUtils {
 	public static Icon getDatastoreIcon(Datastore datastore) {
 		String imagePath = getDatastoreImagePath(datastore);
 		return imageManager.getImageIcon(imagePath);
+	}
+
+	public static Icon getComponentCategoryIcon(ComponentCategory category) {
+		Class<? extends ComponentCategory> categoryClass = category.getClass();
+		final ClassLoader classLoader = categoryClass.getClassLoader();
+		final String bundledIconPath = categoryClass.getName().replaceAll("\\.", "/") + ".png";
+		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath, classLoader);
+
+		final int totalSize = IconUtils.ICON_SIZE_SMALL;
+		final Image decoration;
+		if (url == null) {
+			decoration = null;
+		} else {
+			decoration = imageManager.getImage(bundledIconPath, totalSize / 2, classLoader);
+		}
+
+		final Image folderIcon = imageManager.getImage("images/filetypes/folder.png", totalSize);
+
+		if (decoration == null) {
+			return new ImageIcon(folderIcon);
+		}
+
+		final BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
+		bufferedImage.getGraphics().drawImage(folderIcon, 0, 0, null);
+		bufferedImage.getGraphics().drawImage(decoration, totalSize / 2, totalSize / 2, null);
+		return new ImageIcon(bufferedImage);
 	}
 
 	protected static String getDescriptorImagePath(BeanDescriptor<?> descriptor, ClassLoader classLoader) {

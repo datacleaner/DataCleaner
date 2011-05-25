@@ -30,11 +30,10 @@ import javax.swing.JPopupMenu;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.util.DisplayNameComparator;
-import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
+import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
+import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
 
 public final class AddFilterActionListener implements ActionListener {
 
@@ -51,27 +50,31 @@ public final class AddFilterActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JPopupMenu popup = new JPopupMenu();
-
-		Collection<FilterBeanDescriptor<?, ?>> descriptors = _configuration.getDescriptorProvider()
+		final Collection<FilterBeanDescriptor<?, ?>> descriptors = _configuration.getDescriptorProvider()
 				.getFilterBeanDescriptors();
-		descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
-		for (final FilterBeanDescriptor<?, ?> descriptor : descriptors) {
-			JMenuItem menuItem = new DescriptorMenuItem(descriptor);
-			menuItem.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					_analysisJobBuilder.addFilter(descriptor);
 
-					UsageLogger.getInstance().log("Add filter: " + descriptor.getDisplayName());
+		final JPopupMenu popup = new DescriptorPopupMenu<FilterBeanDescriptor<?, ?>>(descriptors) {
 
-					_filterListPanel.updateUI();
-				}
-			});
-			popup.add(menuItem);
-		}
+			private static final long serialVersionUID = 1L;
 
-		Component source = (Component) e.getSource();
+			@Override
+			protected JMenuItem createMenuItem(final FilterBeanDescriptor<?, ?> descriptor) {
+				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
+				menuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						_analysisJobBuilder.addFilter(descriptor);
+
+						UsageLogger.getInstance().log("Add filter: " + descriptor.getDisplayName());
+
+						_filterListPanel.updateUI();
+					}
+				});
+				return menuItem;
+			}
+		};
+
+		final Component source = (Component) e.getSource();
 		popup.show(source, 0, source.getHeight());
 	}
 }

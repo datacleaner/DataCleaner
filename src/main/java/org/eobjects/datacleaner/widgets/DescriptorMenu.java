@@ -17,18 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.tooltip;
+package org.eobjects.datacleaner.widgets;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JMenu;
 
+import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.datacleaner.util.IconUtils;
-import org.eobjects.datacleaner.util.ImageManager;
 
 /**
  * A menu folder used to group together similar descriptors, eg "coalesce"
@@ -40,15 +38,22 @@ public class DescriptorMenu extends JMenu {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String FOLDER_IMAGE_PATH = "images/filetypes/folder.png";
-
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private final ComponentCategory _componentCategory;
 	private final Set<Class<?>> _componentClasses;
 
-	public DescriptorMenu(String name) {
-		super(name);
-		setIcon(imageManager.getImageIcon(FOLDER_IMAGE_PATH, IconUtils.ICON_SIZE_SMALL));
+	public DescriptorMenu(ComponentCategory componentCategory) {
+		super(componentCategory.getName());
+		_componentCategory = componentCategory;
 		_componentClasses = new HashSet<Class<?>>();
+	}
+
+	@Override
+	public Icon getIcon() {
+		return IconUtils.getComponentCategoryIcon(_componentCategory);
+	}
+
+	public ComponentCategory getComponentCategory() {
+		return _componentCategory;
 	}
 
 	public DescriptorMenu addComponentClass(Class<?> clazz) {
@@ -63,19 +68,11 @@ public class DescriptorMenu extends JMenu {
 		return this;
 	}
 
-	public boolean containsComponentClass(Class<?> clazz) {
-		return _componentClasses.contains(clazz);
+	public int getComponentClassCount() {
+		return _componentClasses.size();
 	}
 
-	public DescriptorMenu setIconDecoration(String imagePath) {
-		int totalSize = IconUtils.ICON_SIZE_SMALL;
-		Image decoration = imageManager.getImage(imagePath, totalSize / 2);
-		Image folderIcon = imageManager.getImage(FOLDER_IMAGE_PATH, totalSize);
-
-		BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
-		bufferedImage.getGraphics().drawImage(folderIcon, 0, 0, null);
-		bufferedImage.getGraphics().drawImage(decoration, totalSize / 2, totalSize / 2, null);
-		setIcon(new ImageIcon(bufferedImage));
-		return this;
+	public boolean containsComponentClass(Class<?> clazz) {
+		return _componentClasses.contains(clazz);
 	}
 }

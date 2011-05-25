@@ -37,7 +37,7 @@ import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
-import org.eobjects.datacleaner.widgets.tooltip.DescriptorMenuItem;
+import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 
 public abstract class AbstractDisplayOutputWritersActionListener implements ActionListener {
 

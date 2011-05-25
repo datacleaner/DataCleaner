@@ -74,26 +74,31 @@ public final class UserDatabaseDriver implements Serializable {
 
 	public UserDatabaseDriver loadDriver() throws IllegalStateException {
 		if (!_loaded) {
+			ClassLoader driverClassLoader = ResourceManager.getInstance().createClassLoader(_files);
+
+			final Class<?> loadedClass;
 			try {
-				ClassLoader driverClassLoader = ResourceManager.getInstance().createClassLoader(_files);
-
-				Class<?> loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
-				logger.info("Loaded class: {}", loadedClass.getName());
-
-				if (ReflectionUtils.is(loadedClass, Driver.class)) {
-					_driverInstance = (Driver) loadedClass.newInstance();
-					_registeredDriver = new DriverWrapper(_driverInstance);
-					DriverManager.registerDriver(_registeredDriver);
-				} else {
-					throw new IllegalStateException("Class is not a Driver class: " + _driverClassName);
-				}
-				_loaded = true;
+				loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
 			} catch (Exception e) {
 				if (e instanceof RuntimeException) {
 					throw (RuntimeException) e;
 				}
-				throw new IllegalStateException(e);
+				throw new IllegalStateException("Could not load driver class", e);
 			}
+			logger.info("Loaded class: {}", loadedClass.getName());
+
+			if (ReflectionUtils.is(loadedClass, Driver.class)) {
+				_driverInstance = (Driver) ReflectionUtils.newInstance(loadedClass);
+				_registeredDriver = new DriverWrapper(_driverInstance);
+				try {
+					DriverManager.registerDriver(_registeredDriver);
+				} catch (SQLException e) {
+					throw new IllegalStateException("Could not register driver", e);
+				}
+			} else {
+				throw new IllegalStateException("Class is not a Driver class: " + _driverClassName);
+			}
+			_loaded = true;
 		}
 		return this;
 	}

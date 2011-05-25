@@ -106,7 +106,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 				filterMenuItem.setToolTipText("Filter is not correctly configured");
 			} else {
 				FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
-				Set<String> categoryNames = fjbDescriptor.getCategoryNames();
+				Set<String> categoryNames = fjbDescriptor.getOutcomeCategoryNames();
 				for (final String category : categoryNames) {
 					JMenuItem categoryMenuItem = new JMenuItem(category);
 
@@ -117,7 +117,7 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 							FilterJob filterJob = fjb.toFilterJob();
 
 							if (filterOutcome.getFilterJob().equals(filterJob)) {
-								if (filterOutcome.getCategory().equals(fjbDescriptor.getCategoryByName(category))) {
+								if (filterOutcome.getCategory().equals(fjbDescriptor.getOutcomeCategoryByName(category))) {
 									filterMenuItem.setIcon(mappedFilterIcon);
 									categoryMenuItem.setIcon(mappedFilterIcon);
 								}

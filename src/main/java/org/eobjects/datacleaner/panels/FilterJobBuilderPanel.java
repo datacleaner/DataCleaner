@@ -103,7 +103,7 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 		final DCPanel outcomePanel = new DCPanel();
 		outcomePanel.setBorder(new TitledBorder("Outcomes"));
 
-		final Set<String> categoryNames = _descriptor.getCategoryNames();
+		final Set<String> categoryNames = _descriptor.getOutcomeCategoryNames();
 		for (final String categoryName : categoryNames) {
 			final JButton outcomeButton = new JButton(categoryName, imageManager.getImageIcon(
 					"images/component-types/filter-outcome.png", IconUtils.ICON_SIZE_SMALL));

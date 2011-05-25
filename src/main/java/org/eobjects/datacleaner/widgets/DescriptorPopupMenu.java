@@ -93,6 +93,10 @@ public abstract class DescriptorPopupMenu<E extends BeanDescriptor<?>> extends J
 					if (descriptorMenu.containsComponentClass(componentClass)) {
 						descriptorMenu.add(menuItem);
 						placedInSubmenu = true;
+
+						// create a new menu item (or else it will be moved
+						// instead of added.
+						menuItem = createMenuItem(descriptor);
 					}
 				}
 

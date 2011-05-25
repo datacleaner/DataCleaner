@@ -636,7 +636,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_rowProcessingTabPresenters.put(analyzerJobBuilder, presenter);
 		JComponent comp = presenter.createJComponent();
 		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),
-				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor()), comp);
+				IconUtils.getDescriptorIcon(analyzerJobBuilder.getDescriptor(), IconUtils.ICON_SIZE_LARGE), comp);
 		_jobBuilderTabs.put(presenter, comp);
 		final int tabIndex = _tabbedPane.getTabCount() - 1;
 		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
@@ -670,7 +670,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_transformerPresenters.put(transformerJobBuilder, presenter);
 		JComponent comp = presenter.createJComponent();
 		_tabbedPane.addTab(LabelUtils.getLabel(transformerJobBuilder),
-				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor()), comp);
+				IconUtils.getDescriptorIcon(transformerJobBuilder.getDescriptor(), IconUtils.ICON_SIZE_LARGE), comp);
 		_jobBuilderTabs.put(presenter, comp);
 		final int tabIndex = _tabbedPane.getTabCount() - 1;
 		_tabbedPane.setSelectedIndex(tabIndex);

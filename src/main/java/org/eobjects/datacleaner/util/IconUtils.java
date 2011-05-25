@@ -52,6 +52,7 @@ import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 public final class IconUtils {
 
 	public static int ICON_SIZE_LARGE = 32;
+	public static int ICON_SIZE_MEDIUM = 22;
 	public static int ICON_SIZE_SMALL = 16;
 
 	public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
@@ -81,9 +82,7 @@ public final class IconUtils {
 	}
 
 	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor) {
-		final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
-		String imagePath = getDescriptorImagePath(descriptor, classLoader);
-		return imageManager.getImageIcon(imagePath, classLoader);
+		return getDescriptorIcon(descriptor, ICON_SIZE_MEDIUM);
 	}
 
 	public static Icon getDatastoreIcon(Datastore datastore, int newWidth) {
@@ -102,12 +101,13 @@ public final class IconUtils {
 		final String bundledIconPath = categoryClass.getName().replaceAll("\\.", "/") + ".png";
 		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath, classLoader);
 
-		final int totalSize = IconUtils.ICON_SIZE_SMALL;
+		final int totalSize = ICON_SIZE_MEDIUM;
 		final Image decoration;
+		final int decorationSize = ICON_SIZE_SMALL;
 		if (url == null) {
 			decoration = null;
 		} else {
-			decoration = imageManager.getImage(bundledIconPath, totalSize / 2, classLoader);
+			decoration = imageManager.getImage(bundledIconPath, decorationSize, classLoader);
 		}
 
 		final Image folderIcon = imageManager.getImage("images/filetypes/folder.png", totalSize);
@@ -118,7 +118,7 @@ public final class IconUtils {
 
 		final BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
 		bufferedImage.getGraphics().drawImage(folderIcon, 0, 0, null);
-		bufferedImage.getGraphics().drawImage(decoration, totalSize / 2, totalSize / 2, null);
+		bufferedImage.getGraphics().drawImage(decoration, totalSize - decorationSize, totalSize - decorationSize, null);
 		return new ImageIcon(bufferedImage);
 	}
 

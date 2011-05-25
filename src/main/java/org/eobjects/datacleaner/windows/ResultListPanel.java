@@ -79,7 +79,7 @@ public class ResultListPanel extends DCPanel {
 
 	public void addResult(final AnalyzerJob analyzerJob, final AnalyzerResult result) {
 		final AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
-		final Icon icon = IconUtils.getDescriptorIcon(descriptor);
+		final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE);
 
 		final StringBuilder sb = new StringBuilder();
 

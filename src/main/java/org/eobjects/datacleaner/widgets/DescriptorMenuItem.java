@@ -23,6 +23,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JTextArea;
@@ -50,9 +51,14 @@ public class DescriptorMenuItem extends JMenuItem {
 	private final BeanDescriptor<?> _descriptor;
 
 	public DescriptorMenuItem(BeanDescriptor<?> descriptor) {
-		super(descriptor.getDisplayName(), IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_SMALL));
+		super(descriptor.getDisplayName());
 		_descriptor = descriptor;
 		ToolTipManager.sharedInstance().registerComponent(this);
+	}
+	
+	@Override
+	public Icon getIcon() {
+		return IconUtils.getDescriptorIcon(_descriptor);
 	}
 
 	@Override

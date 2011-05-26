@@ -41,8 +41,10 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 		super(beanJobBuilder, propertyDescriptor);
 
 		Boolean currentValue = (Boolean) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		
+		boolean useCheckBox = propertyDescriptor.isRequired() || propertyDescriptor.getBaseType().isPrimitive();
 
-		if (propertyDescriptor.isRequired()) {
+		if (useCheckBox) {
 			_checkBox = new JCheckBox();
 			_comboBox = null;
 			_checkBox.setOpaque(false);

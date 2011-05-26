@@ -53,6 +53,11 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 		add(_textField);
 	}
 
+	public boolean isSet() {
+		String text = _textField.getText();
+		return text != null && text.length() == 1;
+	};
+
 	@Override
 	public Character getValue() {
 		String text = _textField.getText();

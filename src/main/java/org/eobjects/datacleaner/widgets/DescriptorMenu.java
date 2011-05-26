@@ -34,7 +34,7 @@ import org.eobjects.datacleaner.util.IconUtils;
  * 
  * @author Kasper Sørensen
  */
-public class DescriptorMenu extends JMenu {
+public class DescriptorMenu extends JMenu implements Comparable<DescriptorMenu> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -74,5 +74,17 @@ public class DescriptorMenu extends JMenu {
 
 	public boolean containsComponentClass(Class<?> clazz) {
 		return _componentClasses.contains(clazz);
+	}
+
+	@Override
+	public int compareTo(DescriptorMenu o) {
+		int diff = getText().compareTo(o.getText());
+		if (diff == 0) {
+			if (getComponentCategory().equals(o.getComponentCategory())) {
+				return 0;
+			}
+			return -1;
+		}
+		return diff;
 	}
 }

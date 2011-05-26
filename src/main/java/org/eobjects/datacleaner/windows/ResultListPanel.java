@@ -28,19 +28,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.beans.api.Renderer;
-import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.AnalyzerJob;
-import org.eobjects.analyzer.job.FilterJob;
-import org.eobjects.analyzer.job.FilterOutcome;
-import org.eobjects.analyzer.job.MergeInput;
-import org.eobjects.analyzer.job.MergedOutcome;
-import org.eobjects.analyzer.job.MergedOutcomeJob;
-import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
-import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -81,48 +73,7 @@ public class ResultListPanel extends DCPanel {
 		final AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
 		final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE);
 
-		final StringBuilder sb = new StringBuilder();
-
-		String jobName = analyzerJob.getName();
-		if (StringUtils.isNullOrEmpty(jobName)) {
-			sb.append(descriptor.getDisplayName());
-		} else {
-			sb.append(jobName);
-			sb.append(" (");
-			sb.append(descriptor.getDisplayName());
-			sb.append(')');
-		}
-
-		final InputColumn<?>[] input = analyzerJob.getInput();
-		if (input.length > 0) {
-			sb.append(" (");
-			if (input.length < 5) {
-				for (int i = 0; i < input.length; i++) {
-					if (i != 0) {
-						sb.append(',');
-					}
-					sb.append(input[i].getName());
-				}
-			} else {
-				sb.append(input.length);
-				sb.append(" columns");
-			}
-			sb.append(")");
-		}
-
-		final Outcome[] requirements = analyzerJob.getRequirements();
-		if (requirements != null && requirements.length != 0) {
-			sb.append(" (");
-			for (int i = 0; i < requirements.length; i++) {
-				if (i != 0) {
-					sb.append(" ,");
-				}
-				appendRequirement(sb, requirements[i]);
-			}
-			sb.append(")");
-		}
-
-		final String resultLabel = sb.toString();
+		final String resultLabel = LabelUtils.getLabel(analyzerJob);
 
 		final JXTaskPane taskPane = WidgetFactory.createTaskPane(resultLabel, icon);
 
@@ -180,7 +131,7 @@ public class ResultListPanel extends DCPanel {
 					_progressInformationPanel.addUserLog("Result rendered for " + resultLabel);
 				} catch (Exception e) {
 					logger.error("Error occurred while rendering result", e);
-					_progressInformationPanel.addUserLog("Error occurred while rendering result", e);
+					_progressInformationPanel.addUserLog("Error occurred while rendering result", e, false);
 					taskPanePanel.add(new JLabel("An error occurred while rendering result, check the status tab"));
 				}
 
@@ -188,35 +139,5 @@ public class ResultListPanel extends DCPanel {
 			};
 
 		}.execute();
-	}
-
-	private void appendRequirement(StringBuilder sb, Outcome req) {
-		if (req instanceof FilterOutcome) {
-			FilterJob filterJob = ((FilterOutcome) req).getFilterJob();
-			Enum<?> category = ((FilterOutcome) req).getCategory();
-
-			String filterLabel = LabelUtils.getLabel(filterJob);
-
-			sb.append(filterLabel);
-			sb.append("=");
-			sb.append(category);
-		} else if (req instanceof MergedOutcome) {
-			sb.append('[');
-			MergedOutcomeJob mergedOutcomeJob = ((MergedOutcome) req).getMergedOutcomeJob();
-
-			MergeInput[] mergeInputs = mergedOutcomeJob.getMergeInputs();
-			for (int i = 0; i < mergeInputs.length; i++) {
-				if (i != 0) {
-					sb.append(',');
-				}
-				MergeInput mergeInput = mergeInputs[i];
-				Outcome outcome = mergeInput.getOutcome();
-				appendRequirement(sb, outcome);
-			}
-			sb.append(']');
-		} else {
-			// should not happen
-			sb.append(req.toString());
-		}
 	}
 }

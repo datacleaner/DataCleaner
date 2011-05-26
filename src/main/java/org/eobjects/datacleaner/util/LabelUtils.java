@@ -21,11 +21,17 @@ package org.eobjects.datacleaner.util;
 
 import java.util.List;
 
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
+import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.job.ConfigurableBeanJob;
+import org.eobjects.analyzer.job.FilterJob;
+import org.eobjects.analyzer.job.FilterOutcome;
 import org.eobjects.analyzer.job.MergeInput;
+import org.eobjects.analyzer.job.MergedOutcome;
 import org.eobjects.analyzer.job.MergedOutcomeJob;
+import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.MergeInputBuilder;
 import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
@@ -58,23 +64,93 @@ public final class LabelUtils {
 	}
 
 	public static String getLabel(ComponentJob job) {
-		String label = job.getName();
-		if (StringUtils.isNullOrEmpty(label)) {
+		String jobName = job.getName();
+		StringBuilder label = new StringBuilder();
+		if (StringUtils.isNullOrEmpty(jobName)) {
 			if (job instanceof ConfigurableBeanJob) {
 				BeanDescriptor<?> descriptor = ((ConfigurableBeanJob<?>) job).getDescriptor();
-				label = descriptor.getDisplayName();
+				label.append(descriptor.getDisplayName());
 			} else if (job instanceof MergedOutcomeJob) {
 				MergeInput[] inputs = ((MergedOutcomeJob) job).getMergeInputs();
-				StringBuilder sb = new StringBuilder();
-				sb.append("MergedOutcome[");
-				sb.append(inputs.length);
-				sb.append(']');
-				label = sb.toString();
+				label.append("MergedOutcome[");
+				label.append(inputs.length);
+				label.append(']');
 			} else {
-				label = job.toString();
+				label.append(job.toString());
+			}
+		} else {
+			label.append(jobName);
+		}
+
+		if (job instanceof AnalyzerJob) {
+			AnalyzerJob analyzerJob = (AnalyzerJob) job;
+			if (!StringUtils.isNullOrEmpty(jobName)) {
+				label.append(" (");
+				label.append(analyzerJob.getDescriptor().getDisplayName());
+				label.append(')');
+			}
+
+			final InputColumn<?>[] input = analyzerJob.getInput();
+			if (input.length > 0) {
+				label.append(" (");
+				if (input.length < 5) {
+					for (int i = 0; i < input.length; i++) {
+						if (i != 0) {
+							label.append(',');
+						}
+						label.append(input[i].getName());
+					}
+				} else {
+					label.append(input.length);
+					label.append(" columns");
+				}
+				label.append(")");
+			}
+
+			final Outcome[] requirements = analyzerJob.getRequirements();
+			if (requirements != null && requirements.length != 0) {
+				label.append(" (");
+				for (int i = 0; i < requirements.length; i++) {
+					if (i != 0) {
+						label.append(" ,");
+					}
+					appendRequirement(label, requirements[i]);
+				}
+				label.append(")");
 			}
 		}
-		return label;
+
+		return label.toString();
+	}
+
+	private static void appendRequirement(StringBuilder sb, Outcome req) {
+		if (req instanceof FilterOutcome) {
+			FilterJob filterJob = ((FilterOutcome) req).getFilterJob();
+			Enum<?> category = ((FilterOutcome) req).getCategory();
+
+			String filterLabel = LabelUtils.getLabel(filterJob);
+
+			sb.append(filterLabel);
+			sb.append("=");
+			sb.append(category);
+		} else if (req instanceof MergedOutcome) {
+			sb.append('[');
+			MergedOutcomeJob mergedOutcomeJob = ((MergedOutcome) req).getMergedOutcomeJob();
+
+			MergeInput[] mergeInputs = mergedOutcomeJob.getMergeInputs();
+			for (int i = 0; i < mergeInputs.length; i++) {
+				if (i != 0) {
+					sb.append(',');
+				}
+				MergeInput mergeInput = mergeInputs[i];
+				Outcome outcome = mergeInput.getOutcome();
+				appendRequirement(sb, outcome);
+			}
+			sb.append(']');
+		} else {
+			// should not happen
+			sb.append(req.toString());
+		}
 	}
 
 	public static String getLabel(MergedOutcomeJobBuilder builder) {

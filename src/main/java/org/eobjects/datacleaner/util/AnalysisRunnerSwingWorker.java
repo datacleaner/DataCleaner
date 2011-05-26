@@ -107,7 +107,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 
 	@Override
 	public void analyzerBegin(AnalysisJob job, final AnalyzerJob analyzerJob) {
-		_progressInformationPanel.addUserLog("Starting analyzer '" + analyzerJob.getDescriptor().getDisplayName() + "'");
+		_progressInformationPanel.addUserLog("Starting analyzer '" + LabelUtils.getLabel(analyzerJob) + "'");
 	}
 
 	@Override
@@ -116,32 +116,32 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 		sourceColumnFinder.addSources(job);
 		final Table table = sourceColumnFinder.findOriginatingTable(analyzerJob.getInput()[0]);
 
-		_progressInformationPanel.addUserLog("Analyzer '" + analyzerJob.getDescriptor().getDisplayName() + "' finished");
+		_progressInformationPanel.addUserLog("Analyzer '" + LabelUtils.getLabel(analyzerJob) + "' finished");
 		_progressInformationPanel.addUserLog("Adding result to tab of " + table.getName());
 		_resultWindow.addResult(table, analyzerJob, result);
 	}
 
 	@Override
 	public void errorInFilter(AnalysisJob job, final FilterJob filterJob, final Throwable throwable) {
-		_progressInformationPanel.addUserLog("An error occurred in the filter: "
-				+ filterJob.getDescriptor().getDisplayName(), throwable);
+		_progressInformationPanel.addUserLog("An error occurred in the filter: " + LabelUtils.getLabel(filterJob),
+				throwable, true);
 	}
 
 	@Override
 	public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, final Throwable throwable) {
-		_progressInformationPanel.addUserLog("An error occurred in the transformer: "
-				+ transformerJob.getDescriptor().getDisplayName(), throwable);
+		_progressInformationPanel.addUserLog("An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob),
+				throwable, true);
 	}
 
 	@Override
 	public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, final Throwable throwable) {
-		_progressInformationPanel.addUserLog("An error occurred in the analyzer: "
-				+ analyzerJob.getDescriptor().getDisplayName(), throwable);
+		_progressInformationPanel.addUserLog("An error occurred in the analyzer: " + LabelUtils.getLabel(analyzerJob),
+				throwable, true);
 	}
 
 	@Override
 	public void errorUknown(AnalysisJob job, final Throwable throwable) {
-		_progressInformationPanel.addUserLog("An error occurred in the analysis job!", throwable);
+		_progressInformationPanel.addUserLog("An error occurred in the analysis job!", throwable, true);
 	}
 
 	public void cancelIfRunning() {

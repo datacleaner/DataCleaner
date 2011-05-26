@@ -38,6 +38,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.job.concurrent.PreviousErrorsExistException;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -61,6 +62,8 @@ public class ProgressInformationPanel extends DCPanel {
 	private volatile boolean _verboseLogging = false;
 	private final Map<Table, Integer> _verboseCounter = new IdentityHashMap<Table, Integer>();
 	private final JButton _stopButton;
+	private final LoadingIcon _loadingIcon;
+	private final DCLabel _loadingLabel;
 
 	public ProgressInformationPanel() {
 		super();
@@ -74,8 +77,11 @@ public class ProgressInformationPanel extends DCPanel {
 		_progressBarPanel.setLayout(new VerticalLayout(4));
 		_progressBarPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 
-		_progressBarPanel.add(new LoadingIcon());
-		_progressBarPanel.add(DCLabel.bright("Preparing..."));
+		_loadingIcon = new LoadingIcon();
+		_loadingLabel = DCLabel.bright("Preparing...");
+		_loadingLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		_progressBarPanel.add(_loadingIcon);
+		_progressBarPanel.add(_loadingLabel);
 
 		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setDividerLocation(240);
@@ -115,7 +121,7 @@ public class ProgressInformationPanel extends DCPanel {
 		appendMessage("\nINFO: " + string);
 	}
 
-	public void addUserLog(String string, Throwable throwable) {
+	public void addUserLog(String string, Throwable throwable, boolean jobFinished) {
 		StringWriter stringWriter = new StringWriter();
 		stringWriter.append("\nERROR: ");
 		stringWriter.append(string);
@@ -127,6 +133,18 @@ public class ProgressInformationPanel extends DCPanel {
 			throwable.printStackTrace(new PrintWriter(stringWriter));
 		}
 		appendMessage(stringWriter.toString());
+
+		if (jobFinished) {
+			_stopButton.setEnabled(false);
+			_loadingLabel.setText("Stopped!");
+			_loadingLabel.setVisible(true);
+			_loadingIcon.setVisible(false);
+			Collection<DCProgressBar> progressBars = _progressBars.values();
+			for (DCProgressBar progressBar : progressBars) {
+				progressBar.setEnabled(false);
+				progressBar.setString("Stopped!");
+			}
+		}
 	}
 
 	private void appendMessage(final String message) {
@@ -166,6 +184,7 @@ public class ProgressInformationPanel extends DCPanel {
 	}
 
 	private DCProgressBar getProgressBar(Table table, int expectedRows) {
+
 		synchronized (_progressBars) {
 			DCProgressBar progressBar = _progressBars.get(table);
 			if (progressBar == null) {
@@ -173,10 +192,11 @@ public class ProgressInformationPanel extends DCPanel {
 					expectedRows = Integer.MAX_VALUE;
 				}
 				progressBar = new DCProgressBar(0, expectedRows);
-				if (_progressBars.isEmpty()) {
-					_progressBarPanel.removeAll();
-				}
 				_progressBars.put(table, progressBar);
+
+				// remove loading indicators
+				_loadingIcon.setVisible(false);
+				_loadingLabel.setVisible(false);
 			} else {
 				if (expectedRows != -1) {
 					progressBar.setMaximum(expectedRows);
@@ -212,7 +232,7 @@ public class ProgressInformationPanel extends DCPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				_stopButton.setVisible(false);
+				_stopButton.setEnabled(false);
 				Collection<DCProgressBar> progressBars = _progressBars.values();
 				for (DCProgressBar progressBar : progressBars) {
 					progressBar.setValue(progressBar.getMaximum());

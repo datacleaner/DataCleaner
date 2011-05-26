@@ -57,7 +57,12 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 	public Character getValue() {
 		String text = _textField.getText();
 		if (text == null || text.length() == 0) {
-			return null;
+			if (getPropertyDescriptor().getBaseType().isPrimitive()) {
+				// cannot return null if it's a primitive char.
+				return (char) 0;
+			} else {
+				return null;
+			}
 		}
 		return text.charAt(0);
 	}

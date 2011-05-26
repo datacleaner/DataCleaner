@@ -19,19 +19,18 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.util.DCDocumentListener;
-import org.eobjects.datacleaner.util.SingleCharacterDocument;
+import org.eobjects.datacleaner.widgets.CharTextField;
 
 public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Character> {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JTextField _textField;
+	private final CharTextField _textField;
 	private final DCDocumentListener _listener = new DCDocumentListener() {
 		@Override
 		protected void onChange(DocumentEvent e) {
@@ -42,26 +41,24 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 	public SingleCharacterPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
-		_textField = new JTextField(1);
-		_textField.setDocument(new SingleCharacterDocument());
+		_textField = new CharTextField();
 		Character currentValue = (Character) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue != null) {
-			_textField.setText(currentValue.toString());
-		}
-		_textField.getDocument().addDocumentListener(_listener);
+		setValue(currentValue);
+
+		_textField.addDocumentListener(_listener);
 
 		add(_textField);
 	}
 
 	public boolean isSet() {
-		String text = _textField.getText();
-		return text != null && text.length() == 1;
+		Character value = _textField.getValue();
+		return value != null;
 	};
 
 	@Override
 	public Character getValue() {
-		String text = _textField.getText();
-		if (text == null || text.length() == 0) {
+		Character value = _textField.getValue();
+		if (value == null) {
 			if (getPropertyDescriptor().getBaseType().isPrimitive()) {
 				// cannot return null if it's a primitive char.
 				return (char) 0;
@@ -69,17 +66,13 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 				return null;
 			}
 		}
-		return text.charAt(0);
+		return value;
 	}
 
 	@Override
 	protected void setValue(Character value) {
-		_textField.getDocument().removeDocumentListener(_listener);
-		if (value == null) {
-			_textField.setText("");
-		} else {
-			_textField.setText(value.toString());
-		}
-		_textField.getDocument().addDocumentListener(_listener);
+		_textField.removeDocumentListener(_listener);
+		_textField.setValue(value);
+		_textField.addDocumentListener(_listener);
 	}
 }

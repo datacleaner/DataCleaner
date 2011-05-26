@@ -33,8 +33,17 @@ public class SingleCharacterDocument extends PlainDocument {
 			return;
 		}
 
-		if ((getLength() + str.length()) <= 1) {
+		String newText = getText(0, getLength()) + str;
+		int length = newText.length();
+
+		if (length == 1) {
 			super.insertString(offs, str, a);
+		} else if (length == 2) {
+			if ('\\' == newText.charAt(0)) {
+				// 2 characters are only allowed if the first letter is a
+				// backslash (escape char)
+				super.insertString(offs, str, a);
+			}
 		}
 	}
 }

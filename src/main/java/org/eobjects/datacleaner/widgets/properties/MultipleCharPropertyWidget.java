@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
@@ -36,11 +35,8 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
-import org.eobjects.datacleaner.util.SingleCharacterDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.widgets.DCLabel;
-import org.jdesktop.swingx.HorizontalLayout;
+import org.eobjects.datacleaner.widgets.CharTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
@@ -65,7 +61,7 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addTextComponent();
+				addCharField();
 				fireValueChanged();
 			}
 		});
@@ -107,49 +103,21 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 		}
 	}
 
-	private JTextComponent addTextComponent() {
-		final DCLabel label = DCLabel.dark("");
-
-		final JTextArea textComponent = new JTextArea(1, 1);
-		textComponent.setBorder(WidgetUtils.BORDER_THIN);
-		textComponent.setDocument(new SingleCharacterDocument());
-		textComponent.getDocument().addDocumentListener(new DCDocumentListener() {
+	private CharTextField addCharField() {
+		CharTextField textField = new CharTextField();
+		textField.addDocumentListener(new DCDocumentListener() {
 			@Override
-			protected void onChange(DocumentEvent e) {
-				final String text = textComponent.getText();
-				if (text == null || text.length() == 0) {
-					label.setText("");
-				} else if (text.charAt(0) == ' ') {
-					label.setText("[whitespace]");
-				} else if (text.charAt(0) == '\t') {
-					label.setText("[tab]");
-				} else if (text.charAt(0) == '\n') {
-					label.setText("[newline]");
-				} else if (text.charAt(0) == '\r') {
-					label.setText("[carriage return]");
-				} else if (text.charAt(0) == '\f') {
-					label.setText("[form feed]");
-				} else if (text.charAt(0) == '\b') {
-					label.setText("[backspace]");
-				} else {
-					label.setText("" + text.charAt(0));
-				}
+			protected void onChange(DocumentEvent event) {
 				fireValueChanged();
 			}
 		});
-
-		final DCPanel panel = new DCPanel();
-		panel.setLayout(new HorizontalLayout(2));
-		panel.add(textComponent);
-		panel.add(label);
-
-		_textFieldPanel.add(panel);
+		_textFieldPanel.add(textField);
 		_textFieldPanel.updateUI();
-		return textComponent;
+		return textField;
 	}
 
 	private void addTextComponent(char value) {
-		addTextComponent().setText(value + "");
+		addCharField().setValue(value);
 	}
 
 	@Override

@@ -66,6 +66,7 @@ import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
 import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
+import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
@@ -228,18 +229,21 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		panel.add(createNewDatastoreButton("CSV file", "Comma-separated values (CSV) file (or file with other separators)",
-				"images/datastore-types/csv.png", CsvDatastoreDialog.class));
+				IconUtils.CSV_IMAGEPATH, CsvDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Excel spreadsheet",
-				"Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.",
-				"images/datastore-types/excel.png", ExcelDatastoreDialog.class));
+				"Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.", IconUtils.EXCEL_IMAGEPATH,
+				ExcelDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
-				"images/datastore-types/access.png", AccessDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)",
-				"images/datastore-types/dbase.png", DbaseDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)",
-				"images/datastore-types/xml.png", XmlDatastoreDialog.class));
+				IconUtils.ACCESS_IMAGEPATH, AccessDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
+				DbaseDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("Fixed width file",
+				"Text file with fixed width values. Each value spans a fixed amount of text characters.",
+				IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)", IconUtils.XML_IMAGEPATH,
+				XmlDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
-				"images/datastore-types/odb.png", OdbDatastoreDialog.class));
+				IconUtils.ODB_IMAGEPATH, OdbDatastoreDialog.class));
 
 		panel.add(Box.createHorizontalStrut(20));
 
@@ -278,7 +282,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				}
 
 				final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
-						imageManager.getImageIcon("images/datastore-types/composite.png", IconUtils.ICON_SIZE_SMALL));
+						imageManager.getImageIcon(IconUtils.COMPOSITE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
 				compositeMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {

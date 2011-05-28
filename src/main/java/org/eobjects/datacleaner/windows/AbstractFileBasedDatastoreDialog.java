@@ -25,6 +25,9 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -32,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
@@ -164,18 +168,25 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		return 400;
 	}
 
+	protected List<Entry<String, JComponent>> getFormElements() {
+		ArrayList<Entry<String, JComponent>> res = new ArrayList<Entry<String, JComponent>>();
+		res.add(new ImmutableEntry<String, JComponent>("Datastore name", _datastoreNameField));
+		res.add(new ImmutableEntry<String, JComponent>("Filename", _filenameField));
+		return res;
+	}
+
 	@Override
 	protected JComponent getDialogContent() {
 		DCPanel formPanel = new DCPanel();
 
+		List<Entry<String, JComponent>> formElements = getFormElements();
 		// temporary variable to make it easier to refactor the layout
 		int row = 0;
-		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Filename:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
+		for (Entry<String, JComponent> entry : formElements) {
+			WidgetUtils.addToGridBag(DCLabel.bright(entry.getKey() + ":"), formPanel, 0, row);
+			WidgetUtils.addToGridBag(entry.getValue(), formPanel, 1, row);
+			row++;
+		}
 
 		_addDatastoreButton.addActionListener(new ActionListener() {
 			@Override

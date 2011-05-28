@@ -41,7 +41,7 @@ public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<Acce
 
 	@Override
 	protected String getBannerTitle() {
-		return "MS Access\ndatabase";
+		return "MS Access database";
 	}
 
 	@Override

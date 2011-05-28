@@ -40,6 +40,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
@@ -54,6 +55,7 @@ import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
 import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
+import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
@@ -203,6 +205,15 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					OdbDatastoreDialog dialog = new OdbDatastoreDialog((OdbDatastore) datastore, _datastoreCatalog);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof FixedWidthDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					FixedWidthDatastoreDialog dialog = new FixedWidthDatastoreDialog((FixedWidthDatastore) datastore,
+							_datastoreCatalog);
 					dialog.setVisible(true);
 				}
 			});

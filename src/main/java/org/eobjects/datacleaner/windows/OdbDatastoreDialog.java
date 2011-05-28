@@ -39,7 +39,7 @@ public class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<OdbData
 
 	@Override
 	protected String getBannerTitle() {
-		return "OpenOffice.org\ndatabase";
+		return "OpenOffice.org database";
 	}
 
 	@Override

@@ -260,7 +260,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 	@Override
 	protected String getBannerTitle() {
-		return "Comma-separated\nfile";
+		return "Comma-separated file";
 	}
 
 	private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding) {

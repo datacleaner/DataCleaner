@@ -39,7 +39,7 @@ public class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog<Dbase
 
 	@Override
 	protected String getBannerTitle() {
-		return "dBase\ndatabase";
+		return "dBase database";
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<Excel
 
 	@Override
 	protected String getBannerTitle() {
-		return "MS Excel\nspreadsheet";
+		return "MS Excel spreadsheet";
 	}
 
 	@Override

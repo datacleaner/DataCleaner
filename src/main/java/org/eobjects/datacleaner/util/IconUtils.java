@@ -33,6 +33,7 @@ import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
+import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
@@ -61,6 +62,7 @@ public final class IconUtils {
 	public static final String EXCEL_IMAGEPATH = "images/datastore-types/excel.png";
 	public static final String ACCESS_IMAGEPATH = "images/datastore-types/access.png";
 	public static final String DBASE_IMAGEPATH = "images/datastore-types/dbase.png";
+	public static final String FIXEDWIDTH_IMAGEPATH = "images/datastore-types/fixedwidth.png";
 	public static final String ODB_IMAGEPATH = "images/datastore-types/odb.png";
 	public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
 
@@ -294,6 +296,8 @@ public final class IconUtils {
 			imagePath = ACCESS_IMAGEPATH;
 		} else if (datastore instanceof OdbDatastore) {
 			imagePath = ODB_IMAGEPATH;
+		} else if (datastore instanceof FixedWidthDatastore) {
+			imagePath = FIXEDWIDTH_IMAGEPATH;
 		} else if (datastore instanceof DbaseDatastore) {
 			imagePath = DBASE_IMAGEPATH;
 		} else if (datastore instanceof CompositeDatastore) {

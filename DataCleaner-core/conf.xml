@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<configuration-metadata>
+		<configuration-name>DataCleaner configuration</configuration-name>
+		<configuration-description>Configures DataCleaner's initial environment.
+			This includes an example datastore and some example reference data.</configuration-description>
+		<configuration-version>2.2</configuration-version>
+		<author>eobjects.org</author>
+	</configuration-metadata>
+
+	<datastore-catalog>
+		<jdbc-datastore name="orderdb" description="DataCleaner example database">
+			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>
+			<driver>org.hsqldb.jdbcDriver</driver>
+			<username>SA</username>
+			<password></password>
+		</jdbc-datastore>
+
+		<csv-datastore name="Country codes"
+			description="Country reference data, courtesy of Graham Rhind">
+			<filename>examples/countrycodes.csv</filename>
+			<quote-char>"</quote-char>
+			<separator-char>;</separator-char>
+			<encoding>ISO-8859-1</encoding>
+		</csv-datastore>
+	</datastore-catalog>
+
+	<reference-data-catalog>
+		<dictionaries>
+			<datastore-dictionary name="Country names"
+				description="List of country names">
+				<datastore-name>Country codes</datastore-name>
+				<column-path>Country name</column-path>
+			</datastore-dictionary>
+		</dictionaries>
+		<synonym-catalogs>
+			<datastore-synonym-catalog name="Country code (2 letter)"
+				description="Retrieve ISO 3166-1 alpha-2 code of country/territory">
+				<datastore-name>Country codes</datastore-name>
+				<master-term-column-path>ISO 3166-2</master-term-column-path>
+				<synonym-column-path>ISO 3166-3</synonym-column-path>
+				<synonym-column-path>ISO Numeric</synonym-column-path>
+				<synonym-column-path>Country name</synonym-column-path>
+			</datastore-synonym-catalog>
+
+			<datastore-synonym-catalog name="Country code (3 letter)"
+				description="Retrieve ISO 3166-1 alpha-3 code of country/territory">
+				<datastore-name>Country codes</datastore-name>
+				<master-term-column-path>ISO 3166-3</master-term-column-path>
+				<synonym-column-path>ISO 3166-2</synonym-column-path>
+				<synonym-column-path>ISO Numeric</synonym-column-path>
+				<synonym-column-path>Country name</synonym-column-path>
+			</datastore-synonym-catalog>
+		</synonym-catalogs>
+	</reference-data-catalog>
+
+	<multithreaded-taskrunner max-threads="30" />
+
+	<storage-provider>
+		<combined>
+			<collections-storage>
+				<berkeley-db />
+			</collections-storage>
+			<row-annotation-storage>
+				<in-memory max-rows-threshold="1000" />
+			</row-annotation-storage>
+		</combined>
+	</storage-provider>
+
+	<classpath-scanner>
+		<package recursive="true">org.eobjects.analyzer.beans</package>
+		<package>org.eobjects.analyzer.result.renderer</package>
+		<package>org.eobjects.datacleaner.output.beans</package>
+		<package>org.eobjects.datacleaner.panels</package>
+		<package recursive="true">org.eobjects.datacleaner.widgets.result</package>
+	</classpath-scanner>
+
+</configuration>

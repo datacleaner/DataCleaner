@@ -18,10 +18,10 @@
 			<fileMode>755</fileMode>
 		</file>
 		<file>
-			<source>COPYING.txt</source>
+			<source>../COPYING.txt</source>
 		</file>
 		<file>
-			<source>NOTICE.txt</source>
+			<source>../NOTICE.txt</source>
 		</file>
 	</files>
 	<fileSets>

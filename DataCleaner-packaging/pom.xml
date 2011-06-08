@@ -1,0 +1,275 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<artifactId>DataCleaner</artifactId>
+		<version>2.2-SNAPSHOT</version>
+	</parent>
+	<groupId>org.eobjects.datacleaner</groupId>
+	<artifactId>DataCleaner-packaging</artifactId>
+	<version>2.2-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>DataCleaner-packaging</name>
+	<properties>
+		<mainClass>org.eobjects.datacleaner.Main</mainClass>
+	</properties>
+	<build>
+		<finalName>DataCleaner</finalName>
+		<plugins>
+			<plugin>
+				<!-- make the jar file executable when dependencies are available in 
+					lib/ folder -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<addDefaultImplementationEntries>true
+							</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true
+							</addDefaultSpecificationEntries>
+							<classpathPrefix>lib</classpathPrefix>
+							<mainClass>${mainClass}</mainClass>
+						</manifest>
+						<manifestEntries>
+							<SplashScreen-Image>images/splash.png</SplashScreen-Image>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<!-- Copy dependencies to lib/ folder -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<!-- Copy dependencies to lib/ -->
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeScope>runtime</includeScope>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+						</configuration>
+					</execution>
+
+					<execution>
+						<!-- Unpack resources for docbook XSLT generation -->
+						<!-- See http://wiki.docbook.org/MavenDocBookXSL -->
+						<id>unpack-shared-resources</id>
+						<goals>
+							<goal>unpack-dependencies</goal>
+						</goals>
+						<!-- linked with generate-resources phase -->
+						<phase>generate-resources</phase>
+						<configuration>
+							<outputDirectory>${project.build.directory}/docbook-resources</outputDirectory>
+							<includeGroupIds>net.sf.docbook</includeGroupIds>
+							<includeArtifactIds>docbook-xsl</includeArtifactIds>
+							<includeClassifiers>ns-resources</includeClassifiers>
+							<excludeTransitive>true</excludeTransitive>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- Java Web start JNLP file generation -->
+				<groupId>org.codehaus.mojo.webstart</groupId>
+				<artifactId>webstart-maven-plugin</artifactId>
+				<version>1.0-beta-1</version>
+				<configuration>
+					<templateFilename>clientTemplate.vm</templateFilename>
+					<jnlp>
+						<outputFile>datacleaner.jnlp</outputFile>
+						<mainClass>${mainClass}</mainClass>
+					</jnlp>
+					<outputJarVersions>false</outputJarVersions>
+					<verbose>true</verbose>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<!-- Create win32 executable -->
+				<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+				<artifactId>launch4j-plugin</artifactId>
+				<version>1.5.0.0</version>
+				<executions>
+					<execution>
+						<id>launch4j-gui</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<dontWrapJar>true</dontWrapJar>
+							<headerType>gui</headerType>
+							<jar>DataCleaner.jar</jar>
+							<outfile>target/DataCleaner.exe</outfile>
+							<errTitle>DataCleaner</errTitle>
+							<priority>normal</priority>
+							<downloadUrl>http://java.com/download</downloadUrl>
+							<supportUrl>http://datacleaner.eobjects.org</supportUrl>
+							<customProcName>true</customProcName>
+							<stayAlive>false</stayAlive>
+							<icon>src/main/assembly/app-icon.ico</icon>
+							<jre>
+								<path></path>
+								<minVersion>1.6.0</minVersion>
+								<maxVersion></maxVersion>
+								<initialHeapSize>256</initialHeapSize>
+								<maxHeapSize>1024</maxHeapSize>
+							</jre>
+						</configuration>
+					</execution>
+					<execution>
+						<id>launch4j-cli</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<dontWrapJar>true</dontWrapJar>
+							<headerType>console</headerType>
+							<jar>DataCleaner.jar</jar>
+							<outfile>target/DataCleaner-console.exe</outfile>
+							<errTitle>DataCleaner</errTitle>
+							<priority>normal</priority>
+							<downloadUrl>http://java.com/download</downloadUrl>
+							<supportUrl>http://datacleaner.eobjects.org</supportUrl>
+							<customProcName>true</customProcName>
+							<stayAlive>false</stayAlive>
+							<icon>src/main/assembly/app-icon.ico</icon>
+							<jre>
+								<path></path>
+								<minVersion>1.6.0</minVersion>
+								<maxVersion></maxVersion>
+								<initialHeapSize>256</initialHeapSize>
+								<maxHeapSize>1024</maxHeapSize>
+							</jre>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- Assembly which creates the zip and tar.gz distributables -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/all.xml</descriptor>
+						<descriptor>src/main/assembly/win32.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<!-- Generate documentation based on DocBook xslt -->
+				<!-- See http://wiki.docbook.org/MavenDocBookXSL -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<transformationSets>
+						<transformationSet>
+							<dir>src/main/docbook</dir>
+							<stylesheet>${project.build.directory}/docbook-resources/docbook/html/docbook.xsl</stylesheet>
+							<parameters>
+								<parameter>
+									<name>html.stylesheet</name>
+									<value>style.css</value>
+								</parameter>
+							</parameters>
+							<fileMappers>
+								<fileMapper
+									implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+									<targetExtension>.html</targetExtension>
+								</fileMapper>
+							</fileMappers>
+						</transformationSet>
+					</transformationSets>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sourceforge.saxon</groupId>
+						<artifactId>saxon</artifactId>
+						<version>9.1.0.8</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<!-- Custom repository containing jar files that are not available via 
+				any public maven repos -->
+			<id>libext-repo</id>
+			<url>file://${basedir}/libext</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-core</artifactId>
+			<version>2.2-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Default database drivers -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>11.2.0.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.0-801.jdbc4</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.14</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.jtds</groupId>
+			<artifactId>jtds</artifactId>
+			<version>1.2.4</version>
+		</dependency>
+
+		<!-- DocBook dependency only used for documentation generation -->
+		<dependency>
+			<groupId>net.sf.docbook</groupId>
+			<artifactId>docbook-xsl</artifactId>
+			<version>1.75.1</version>
+			<type>zip</type>
+			<classifier>ns-resources</classifier>
+			<optional>true</optional>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

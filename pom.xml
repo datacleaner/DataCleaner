@@ -94,6 +94,20 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<!-- Does RMI stub compilation -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>rmic-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>rmi compilation</id>
+						<goals>
+							<goal>rmic</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<!-- make the jar file executable when dependencies are available in 
 					lib/ folder -->
 				<groupId>org.apache.maven.plugins</groupId>

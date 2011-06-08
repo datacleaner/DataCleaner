@@ -52,6 +52,7 @@ public final class ExtensionPackage implements Serializable {
 	private transient int _loadedAnalyzers;
 	private transient int _loadedTransformers;
 	private transient int _loadedFilters;
+	
 	private final File[] _files;
 	private final String _name;
 	private final String _scanPackage;
@@ -59,6 +60,9 @@ public final class ExtensionPackage implements Serializable {
 
 	public ExtensionPackage(String name, String scanPackage, boolean scanRecursive, File[] files) {
 		_name = name;
+		if (scanPackage == null) {
+			scanPackage = "";
+		}
 		_scanPackage = scanPackage;
 		_scanRecursive = scanRecursive;
 		_files = files;

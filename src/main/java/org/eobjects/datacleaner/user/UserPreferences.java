@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ public class UserPreferences implements Serializable {
 	private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
 
 	protected static UserPreferences load(File file, boolean loadDrivers) {
-		ObjectInputStream inputStream = null;
+		ChangeAwareObjectInputStream inputStream = null;
 		try {
 			inputStream = new ChangeAwareObjectInputStream(new FileInputStream(file));
 			UserPreferences result = (UserPreferences) inputStream.readObject();

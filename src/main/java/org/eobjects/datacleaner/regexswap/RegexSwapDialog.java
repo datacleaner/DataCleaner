@@ -48,7 +48,7 @@ import javax.swing.tree.TreePath;
 
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
-import org.eobjects.datacleaner.util.HttpUtils;
+import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -87,7 +87,7 @@ public class RegexSwapDialog extends AbstractDialog {
 	public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog) {
 		super(imageManager.getImage("images/window/banner-string-patterns.png"));
 		_referenceDataCatalog = referenceDataCatalog;
-		_client = new RegexSwapClient(HttpUtils.getHttpClient());
+		_client = new RegexSwapClient(HttpXmlUtils.getHttpClient());
 		_regexDescriptionLabel = DCLabel.brightMultiLine("No regex selected");
 
 		_importRegexButton = new JButton("Import regex",

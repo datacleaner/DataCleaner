@@ -27,7 +27,7 @@ import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.util.HttpUtils;
+import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ public class RegexSwapUserPreferencesHandler implements LoginChangeListener {
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 
 	public RegexSwapUserPreferencesHandler(MutableReferenceDataCatalog referenceDataCatalog) {
-		this(referenceDataCatalog, HttpUtils.getHttpClient());
+		this(referenceDataCatalog, HttpXmlUtils.getHttpClient());
 	}
 
 	public RegexSwapUserPreferencesHandler(MutableReferenceDataCatalog referenceDataCatalog, HttpClient httpClient) {

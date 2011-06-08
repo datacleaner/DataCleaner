@@ -19,24 +19,16 @@
  */
 package org.eobjects.datacleaner.regexswap;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.eobjects.datacleaner.util.HttpUtils;
-import org.w3c.dom.Document;
+import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Client class for the RegexSwap, which allows for easy retrieval of shared
@@ -54,7 +46,7 @@ public final class RegexSwapClient {
 	private final HttpClient _httpClient;
 
 	public RegexSwapClient() {
-		this(HttpUtils.getHttpClient());
+		this(HttpXmlUtils.getHttpClient());
 	}
 
 	public RegexSwapClient(HttpClient httpClient) {
@@ -80,8 +72,8 @@ public final class RegexSwapClient {
 	}
 
 	public void refreshRegexes() {
-		Element rootNode = getRootNode(REGEXES_URL);
-		final List<Node> regexNodes = getChildNodesByName(rootNode, "regex");
+		Element rootNode = HttpXmlUtils.getRootNode(_httpClient, REGEXES_URL);
+		final List<Node> regexNodes = HttpXmlUtils.getChildNodesByName(rootNode, "regex");
 		for (Node node : regexNodes) {
 			createRegex((Element) node);
 		}
@@ -95,12 +87,12 @@ public final class RegexSwapClient {
 	}
 
 	public void refreshCategories() {
-		Element rootNode = getRootNode(CATEGORIES_URL);
-		final List<Node> categoryNodes = getChildNodesByName(rootNode, "category");
+		Element rootNode = HttpXmlUtils.getRootNode(_httpClient, CATEGORIES_URL);
+		final List<Node> categoryNodes = HttpXmlUtils.getChildNodesByName(rootNode, "category");
 		for (Node categoryNode : categoryNodes) {
-			final String name = getChildNodeText(categoryNode, "name");
-			final String description = getChildNodeText(categoryNode, "description");
-			final String detailsUrl = getChildNodeText(categoryNode, "detailsUrl");
+			final String name = HttpXmlUtils.getChildNodeText(categoryNode, "name");
+			final String description = HttpXmlUtils.getChildNodeText(categoryNode, "description");
+			final String detailsUrl = HttpXmlUtils.getChildNodeText(categoryNode, "detailsUrl");
 
 			final Category category = new Category(name, description, detailsUrl);
 			_categories.put(name, category);
@@ -108,21 +100,21 @@ public final class RegexSwapClient {
 	}
 
 	private Regex createRegex(final Element regexNode) {
-		String name = getChildNodeText(regexNode, "name");
-		String description = getChildNodeText(regexNode, "description");
-		String expression = getChildNodeText(regexNode, "expression");
-		String author = getChildNodeText(regexNode, "author");
-		long timestamp = Long.parseLong(getChildNodeText(regexNode, "timestamp"));
-		int positiveVotes = Integer.parseInt(getChildNodeText(regexNode, "positiveVotes"));
-		int negativeVotes = Integer.parseInt(getChildNodeText(regexNode, "negativeVotes"));
-		String detailsUrl = getChildNodeText(regexNode, "detailsUrl");
+		String name = HttpXmlUtils.getChildNodeText(regexNode, "name");
+		String description = HttpXmlUtils.getChildNodeText(regexNode, "description");
+		String expression = HttpXmlUtils.getChildNodeText(regexNode, "expression");
+		String author = HttpXmlUtils.getChildNodeText(regexNode, "author");
+		long timestamp = Long.parseLong(HttpXmlUtils.getChildNodeText(regexNode, "timestamp"));
+		int positiveVotes = Integer.parseInt(HttpXmlUtils.getChildNodeText(regexNode, "positiveVotes"));
+		int negativeVotes = Integer.parseInt(HttpXmlUtils.getChildNodeText(regexNode, "negativeVotes"));
+		String detailsUrl = HttpXmlUtils.getChildNodeText(regexNode, "detailsUrl");
 		List<Category> categories = new ArrayList<Category>();
-		List<Node> categoriesNodes = getChildNodesByName(regexNode, "categories");
+		List<Node> categoriesNodes = HttpXmlUtils.getChildNodesByName(regexNode, "categories");
 		if (!categoriesNodes.isEmpty()) {
 			Node categoriesNode = categoriesNodes.get(0);
-			List<Node> categoryNodes = getChildNodesByName(categoriesNode, "category");
+			List<Node> categoryNodes = HttpXmlUtils.getChildNodesByName(categoriesNode, "category");
 			for (Node categoryNode : categoryNodes) {
-				String categoryName = getText(categoryNode);
+				String categoryName = HttpXmlUtils.getText(categoryNode);
 				Category category = getCategoryByName(categoryName);
 				if (category != null) {
 					categories.add(category);
@@ -137,25 +129,25 @@ public final class RegexSwapClient {
 
 	public Regex refreshRegex(Regex regex) {
 		String detailsUrl = regex.getDetailsUrl();
-		Element regexNode = getRootNode(detailsUrl);
+		Element regexNode = HttpXmlUtils.getRootNode(_httpClient, detailsUrl);
 		regex = createRegex(regexNode);
 		return regex;
 	}
 
 	public List<Regex> getRegexes(Category category) {
 		List<Regex> regexes = new ArrayList<Regex>();
-		Node rootNode = getRootNode(category.getDetailsUrl());
-		List<Node> regexNodes = getChildNodesByName(rootNode, "regex");
+		Node rootNode = HttpXmlUtils.getRootNode(_httpClient, category.getDetailsUrl());
+		List<Node> regexNodes = HttpXmlUtils.getChildNodesByName(rootNode, "regex");
 		for (Node regexNode : regexNodes) {
 
-			String name = getChildNodeText(regexNode, "name");
-			String description = getChildNodeText(regexNode, "description");
-			String expression = getChildNodeText(regexNode, "expression");
-			String author = getChildNodeText(regexNode, "author");
-			long timestamp = Long.parseLong(getChildNodeText(regexNode, "timestamp"));
-			int positiveVotes = Integer.parseInt(getChildNodeText(regexNode, "positiveVotes"));
-			int negativeVotes = Integer.parseInt(getChildNodeText(regexNode, "negativeVotes"));
-			String detailsUrl = getChildNodeText(regexNode, "detailsUrl");
+			String name = HttpXmlUtils.getChildNodeText(regexNode, "name");
+			String description = HttpXmlUtils.getChildNodeText(regexNode, "description");
+			String expression = HttpXmlUtils.getChildNodeText(regexNode, "expression");
+			String author = HttpXmlUtils.getChildNodeText(regexNode, "author");
+			long timestamp = Long.parseLong(HttpXmlUtils.getChildNodeText(regexNode, "timestamp"));
+			int positiveVotes = Integer.parseInt(HttpXmlUtils.getChildNodeText(regexNode, "positiveVotes"));
+			int negativeVotes = Integer.parseInt(HttpXmlUtils.getChildNodeText(regexNode, "negativeVotes"));
+			String detailsUrl = HttpXmlUtils.getChildNodeText(regexNode, "detailsUrl");
 
 			List<Category> categories;
 			Regex regex = _regexes.get(name);
@@ -175,59 +167,5 @@ public final class RegexSwapClient {
 			regexes.add(regex);
 		}
 		return regexes;
-	}
-
-	private static DocumentBuilder getDocumentBuilder() {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setIgnoringComments(true);
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			return db;
-		} catch (Exception e) {
-			// This shouldn't be possible
-			throw new RuntimeException(e);
-		}
-	}
-
-	private Element getRootNode(String url) {
-		try {
-			HttpGet method = new HttpGet(url);
-			HttpResponse response = _httpClient.execute(method);
-			InputStream inputStream = response.getEntity().getContent();
-			Document document = getDocumentBuilder().parse(inputStream);
-			return (Element) document.getFirstChild();
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	private static List<Node> getChildNodesByName(Node parentNode, String childNodeName) {
-		List<Node> result = new ArrayList<Node>();
-		if (childNodeName != null) {
-			NodeList childNodes = parentNode.getChildNodes();
-			for (int i = 0; i < childNodes.getLength(); i++) {
-				Node childNode = childNodes.item(i);
-				if (childNodeName.equals(childNode.getNodeName())) {
-					result.add(childNode);
-				}
-			}
-		}
-		return result;
-	}
-
-	private static String getChildNodeText(Node node, String childNodeName) {
-		List<Node> childNodes = getChildNodesByName(node, childNodeName);
-		if (childNodes.isEmpty()) {
-			return null;
-		}
-		if (childNodes.size() > 1) {
-			throw new IllegalArgumentException("The node " + node + " contains several childNodes named " + childNodeName);
-		}
-		return getText(childNodes.get(0));
-	}
-
-	private static String getText(Node node) {
-		Element element = (Element) node;
-		return element.getTextContent();
 	}
 }

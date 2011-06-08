@@ -23,6 +23,7 @@ package org.eobjects.datacleaner.user;
 import java.io.File;
 
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
+import org.eobjects.datacleaner.user.ExtensionPackage;
 
 import junit.framework.TestCase;
 

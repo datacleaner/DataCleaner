@@ -36,7 +36,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.user.DataCleanerHome;
-import org.eobjects.datacleaner.util.HttpUtils;
+import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.windows.DownloadProgressWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,24 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 	private final DownloadProgressWindow _downloadProgressWindow;
 	private volatile boolean _cancelled = false;
 
+	private static String[] createTargetFilenames(String[] urls) {
+		String[] filenames = new String[urls.length];
+		for (int i = 0; i < urls.length; i++) {
+			String url = urls[i];
+			if (url == null) {
+				throw new IllegalArgumentException("urls[" + i + "] cannot be null");
+			}
+			String filename = url.substring(url.lastIndexOf('/') + 1);
+			filenames[i] = filename;
+		}
+		return filenames;
+	}
+
 	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener) {
+		this(urls, createTargetFilenames(urls), listener);
+	}
+
+	public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener) {
 		if (urls == null) {
 			throw new IllegalArgumentException("urls cannot be null");
 		}
@@ -65,11 +82,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 		_listener = listener;
 		_files = new File[_urls.length];
 		for (int i = 0; i < urls.length; i++) {
-			String url = _urls[i];
-			if (url == null) {
-				throw new IllegalArgumentException("urls[" + i + "] cannot be null");
-			}
-			String filename = url.substring(url.lastIndexOf('/') + 1);
+			String filename = targetFilenames[i];
 			_files[i] = new File(DataCleanerHome.get(), filename);
 		}
 		_downloadProgressWindow = new DownloadProgressWindow(this);
@@ -122,7 +135,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 			try {
 				byte[] buffer = new byte[1024];
 
-				final HttpClient httpClient = HttpUtils.getHttpClient();
+				final HttpClient httpClient = HttpXmlUtils.getHttpClient();
 				final HttpGet method = new HttpGet(url);
 
 				if (!_cancelled) {

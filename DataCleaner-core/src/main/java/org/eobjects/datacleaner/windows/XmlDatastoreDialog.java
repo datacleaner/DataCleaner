@@ -23,18 +23,20 @@ import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
 public class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<XmlDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public XmlDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(mutableDatastoreCatalog);
+	public XmlDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		super(mutableDatastoreCatalog, windowManager);
 	}
 
-	public XmlDatastoreDialog(XmlDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(originalDatastore, mutableDatastoreCatalog);
+	public XmlDatastoreDialog(XmlDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowManager windowManager) {
+		super(originalDatastore, mutableDatastoreCatalog, windowManager);
 	}
 
 	@Override

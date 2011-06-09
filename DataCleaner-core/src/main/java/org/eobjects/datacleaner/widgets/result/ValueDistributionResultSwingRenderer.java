@@ -58,7 +58,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
-import org.eobjects.datacleaner.DefaultExitActionListener;
+import org.eobjects.datacleaner.DCExitActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
@@ -498,7 +498,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.getConfigurableBean().setRecordUniqueValues(true);
 
-		WindowManager windowManager = new WindowManager(new DefaultExitActionListener());
+		WindowManager windowManager = new WindowManager(new DCExitActionListener());
 		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowManager);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

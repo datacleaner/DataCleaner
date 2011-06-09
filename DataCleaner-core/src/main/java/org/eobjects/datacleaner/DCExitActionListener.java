@@ -19,31 +19,10 @@
  */
 package org.eobjects.datacleaner;
 
-import org.eobjects.analyzer.cli.CliArguments;
-
-public class DefaultBootstrapOptions implements BootstrapOptions {
-
-	private final String[] _args;
-	private final CliArguments _arguments;
-
-	public DefaultBootstrapOptions(String[] args) {
-		_args = args;
-		_arguments = CliArguments.parse(_args);
-	}
+public class DCExitActionListener implements ExitActionListener {
 
 	@Override
-	public boolean isCommandLineMode() {
-		return _arguments.isSet();
+	public void exit(int statusCode) {
+		System.exit(statusCode);
 	}
-
-	@Override
-	public CliArguments getCommandLineArguments() {
-		return _arguments;
-	}
-
-	@Override
-	public ExitActionListener getExitActionListener() {
-		return new DCExitActionListener();
-	}
-
 }

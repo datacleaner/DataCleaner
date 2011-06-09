@@ -58,7 +58,7 @@ import org.eobjects.analyzer.result.DateGapAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.TimeInterval;
-import org.eobjects.datacleaner.DefaultExitActionListener;
+import org.eobjects.datacleaner.DCExitActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -324,7 +324,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
 		List<AnalyzerResult> list = Collections.emptyList();
 		DetailsResultWindow window = new DetailsResultWindow("Example", list, new WindowManager(
-				new DefaultExitActionListener()));
+				new DCExitActionListener()));
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		List<AnalyzerResult> results = resultFuture.getResults();

@@ -167,7 +167,10 @@ public class DatabaseDriverCatalog implements Serializable {
 	}
 
 	public String getIconImagePath(DatabaseDriverDescriptor dd) {
-		String iconImagePath = dd.getIconImagePath();
+		String iconImagePath = null;
+		if (dd != null) {
+			iconImagePath = dd.getIconImagePath();
+		}
 		if (iconImagePath == null) {
 			iconImagePath = "images/model/datastore.png";
 		}
@@ -175,6 +178,9 @@ public class DatabaseDriverCatalog implements Serializable {
 	}
 
 	public DatabaseDriverDescriptor getDatabaseDriverByDriverDatabaseName(String databaseName) {
+		if (databaseName == null) {
+			return null;
+		}
 		for (DatabaseDriverDescriptor databaseDriver : _databaseDrivers) {
 			if (databaseName.equals(databaseDriver.getDisplayName())) {
 				return databaseDriver;
@@ -184,11 +190,23 @@ public class DatabaseDriverCatalog implements Serializable {
 	}
 
 	public DatabaseDriverDescriptor getDatabaseDriverByDriverClassName(String driverClass) {
+		if (driverClass == null) {
+			return null;
+		}
 		for (DatabaseDriverDescriptor databaseDriver : _databaseDrivers) {
 			if (driverClass.equals(databaseDriver.getDriverClassName())) {
 				return databaseDriver;
 			}
 		}
 		return null;
+	}
+
+	public boolean isInstalled(String databaseName) {
+		DatabaseDriverDescriptor databaseDriver = getDatabaseDriverByDriverDatabaseName(databaseName);
+		if (databaseDriver == null) {
+			return false;
+		}
+		getState(databaseDriver);
+		return false;
 	}
 }

@@ -23,18 +23,19 @@ import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
 public class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog<DbaseDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public DbaseDatastoreDialog(DbaseDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(originalDatastore, mutableDatastoreCatalog);
+	public DbaseDatastoreDialog(DbaseDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		super(originalDatastore, mutableDatastoreCatalog, windowManager);
 	}
 
-	public DbaseDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(mutableDatastoreCatalog);
+	public DbaseDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		super(mutableDatastoreCatalog, windowManager);
 	}
 
 	@Override

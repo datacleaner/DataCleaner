@@ -54,6 +54,7 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
@@ -73,17 +74,19 @@ public class OptionsDialog extends AbstractWindow {
 	private final AnalyzerBeansConfiguration _configuration;
 	private Timer _updateMemoryTimer;
 
-	public OptionsDialog() {
+	public OptionsDialog(WindowManager windowManager) {
+		super(windowManager);
 		_configuration = DCConfiguration.get();
 		_tabbedPane = new CloseableTabbedPane();
 
 		_tabbedPane.addTab("General", imageManager.getImageIcon("images/menu/options.png"), getGeneralTab());
 		_tabbedPane.addTab("Database drivers", imageManager.getImageIcon("images/model/datastore.png"),
-				new DatabaseDriversPanel(_configuration));
+				new DatabaseDriversPanel(_configuration, windowManager));
 		_tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
 		_tabbedPane.addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
 		_tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());
-		_tabbedPane.addTab("Extensions", imageManager.getImageIcon("images/component-types/plugin.png"), new ExtensionPackagesPanel());
+		_tabbedPane.addTab("Extensions", imageManager.getImageIcon("images/component-types/plugin.png"),
+				new ExtensionPackagesPanel());
 
 		_tabbedPane.setUnclosableTab(0);
 		_tabbedPane.setUnclosableTab(1);

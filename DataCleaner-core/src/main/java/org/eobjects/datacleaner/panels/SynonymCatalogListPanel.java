@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.HelpIcon;
@@ -56,11 +57,14 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
+	private final WindowManager _windowManager;
 
-	public SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration) {
+	public SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
+			WindowManager windowManager) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
+		_windowManager = windowManager;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addSynonymCatalogListener(this);
 
@@ -91,7 +95,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new TextFileSynonymCatalogDialog(_catalog).setVisible(true);
+				new TextFileSynonymCatalogDialog(_catalog, _windowManager).setVisible(true);
 			}
 		});
 
@@ -100,7 +104,8 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DatastoreSynonymCatalogDialog(_catalog, _configuration.getDatastoreCatalog()).setVisible(true);
+				new DatastoreSynonymCatalogDialog(_catalog, _configuration.getDatastoreCatalog(), _windowManager)
+						.setVisible(true);
 			}
 		});
 
@@ -147,7 +152,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						TextFileSynonymCatalogDialog dialog = new TextFileSynonymCatalogDialog(
-								(TextFileSynonymCatalog) synonymCatalog, _catalog);
+								(TextFileSynonymCatalog) synonymCatalog, _catalog, _windowManager);
 						dialog.setVisible(true);
 					}
 				});
@@ -156,7 +161,8 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						DatastoreSynonymCatalogDialog dialog = new DatastoreSynonymCatalogDialog(
-								(DatastoreSynonymCatalog) synonymCatalog, _catalog, _configuration.getDatastoreCatalog());
+								(DatastoreSynonymCatalog) synonymCatalog, _catalog, _configuration.getDatastoreCatalog(),
+								_windowManager);
 						dialog.setVisible(true);
 					}
 				});

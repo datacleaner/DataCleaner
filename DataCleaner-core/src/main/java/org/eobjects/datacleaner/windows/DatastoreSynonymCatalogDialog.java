@@ -50,6 +50,7 @@ import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
@@ -73,13 +74,15 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 	private volatile boolean _nameAutomaticallySet = true;
 	private final MultiSourceColumnComboBoxPanel _synonymColumnsPanel;
 
-	public DatastoreSynonymCatalogDialog(MutableReferenceDataCatalog catalog, DatastoreCatalog datastoreCatalog) {
-		this(null, catalog, datastoreCatalog);
+	public DatastoreSynonymCatalogDialog(MutableReferenceDataCatalog catalog, DatastoreCatalog datastoreCatalog,
+			WindowManager windowManager) {
+		this(null, catalog, datastoreCatalog, windowManager);
 	}
 
 	public DatastoreSynonymCatalogDialog(DatastoreSynonymCatalog synonymCatalog,
-			MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog) {
-		super(ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
+			MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
+			WindowManager windowManager) {
+		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_datastoreCatalog = datastoreCatalog;
 		_mutableReferenceCatalog = mutableReferenceCatalog;
@@ -115,7 +118,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 					_synonymColumnsPanel.setModel(_datastore);
 					if (_datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(_datastore);
+						final SchemaTree schemaTree = new SchemaTree(_datastore, getWindowManager());
 						schemaTree.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseClicked(MouseEvent e) {

@@ -25,18 +25,25 @@ import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
+/**
+ * Datastore configuration dialog for MS Access datastores.
+ * 
+ * @author Kasper Sørensen
+ */
 public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<AccessDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public AccessDatastoreDialog(AccessDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(originalDatastore, mutableDatastoreCatalog);
+	public AccessDatastoreDialog(AccessDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowManager windowManager) {
+		super(originalDatastore, mutableDatastoreCatalog, windowManager);
 	}
 
-	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(mutableDatastoreCatalog);
+	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		super(mutableDatastoreCatalog, windowManager);
 	}
 
 	@Override

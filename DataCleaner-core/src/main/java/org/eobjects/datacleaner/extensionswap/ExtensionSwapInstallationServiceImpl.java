@@ -29,6 +29,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.eobjects.datacleaner.DefaultExitActionListener;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,15 +40,23 @@ class ExtensionSwapInstallationServiceImpl implements ExtensionSwapInstallationS
 
 	private static final Logger logger = LoggerFactory.getLogger(ExtensionSwapInstallationServiceImpl.class);
 
+	private final WindowManager _windowManager;
+
+	public ExtensionSwapInstallationServiceImpl(WindowManager windowManager) {
+		_windowManager = windowManager;
+	}
+
 	public static void main(String[] args) throws Throwable {
 		JFrame frame = new JFrame();
 		frame.setVisible(true);
 		JOptionPane.setRootFrame(frame);
-		startListener();
+		ExtensionSwapInstallationServiceImpl service = new ExtensionSwapInstallationServiceImpl(new WindowManager(
+				new DefaultExitActionListener()));
+		service.startListener();
 	}
 
-	public static void startListener() throws RemoteException {
-		ExtensionSwapInstallationService service = new ExtensionSwapInstallationServiceImpl();
+	public void startListener() throws RemoteException {
+		ExtensionSwapInstallationService service = new ExtensionSwapInstallationServiceImpl(_windowManager);
 		Remote stub = UnicastRemoteObject.exportObject(service, 0);
 
 		Registry registry = LocateRegistry.createRegistry(DEFAULT_PORT);
@@ -57,7 +67,7 @@ class ExtensionSwapInstallationServiceImpl implements ExtensionSwapInstallationS
 	public void initiateTransfer(String extensionId) {
 		logger.info("Initiating transfer of extension: {}", extensionId);
 
-		final ExtensionSwapClient client = new ExtensionSwapClient();
+		final ExtensionSwapClient client = new ExtensionSwapClient(_windowManager);
 		final ExtensionSwapPackage extensionSwapPackage = client.getExtensionSwapPackage(extensionId);
 		logger.info("Fetched ExtensionSwap package: {}", extensionSwapPackage);
 

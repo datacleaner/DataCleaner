@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCProgressBar;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -57,8 +58,8 @@ public class DownloadProgressWindow extends AbstractDialog {
 	private final JLabel[] _infoLabels;
 	private final File[] _files;
 
-	public DownloadProgressWindow(DownloadFilesActionListener downloadFilesActionListener) {
-		super();
+	public DownloadProgressWindow(DownloadFilesActionListener downloadFilesActionListener, WindowManager windowManager) {
+		super(windowManager);
 		setTopBackgroundColor(WidgetUtils.BG_COLOR_DARK);
 		setBottomBackgroundColor(WidgetUtils.BG_COLOR_LESS_DARK);
 

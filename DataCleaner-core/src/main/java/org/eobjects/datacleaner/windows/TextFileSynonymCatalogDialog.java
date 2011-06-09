@@ -42,6 +42,7 @@ import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
@@ -62,12 +63,13 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 	private final JComboBox _encodingComboBox;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public TextFileSynonymCatalogDialog(MutableReferenceDataCatalog catalog) {
-		this(null, catalog);
+	public TextFileSynonymCatalogDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
+		this(null, catalog, windowManager);
 	}
 
-	public TextFileSynonymCatalogDialog(TextFileSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog) {
-		super(ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
+	public TextFileSynonymCatalogDialog(TextFileSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog,
+			WindowManager windowManager) {
+		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_catalog = catalog;
 
@@ -161,8 +163,8 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 					return;
 				}
 
-				TextFileSynonymCatalog sc = new TextFileSynonymCatalog(name, filename,
-						_caseSensitiveCheckBox.isSelected(), encoding);
+				TextFileSynonymCatalog sc = new TextFileSynonymCatalog(name, filename, _caseSensitiveCheckBox.isSelected(),
+						encoding);
 
 				if (_originalsynonymCatalog != null) {
 					_catalog.removeSynonymCatalog(_originalsynonymCatalog);

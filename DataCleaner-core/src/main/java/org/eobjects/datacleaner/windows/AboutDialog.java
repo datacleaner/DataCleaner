@@ -38,7 +38,6 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -50,10 +49,10 @@ import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
@@ -69,6 +68,11 @@ import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 
+/**
+ * The "About" dialog of the DataCleaner application.
+ * 
+ * @author Kasper Sørensen
+ */
 public class AboutDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -81,6 +85,10 @@ public class AboutDialog extends AbstractDialog {
 
 	private static final ResourceManager resourceManager = ResourceManager.getInstance();
 	private static final ImageManager imageManager = ImageManager.getInstance();
+
+	public AboutDialog(WindowManager windowManager) {
+		super(windowManager);
+	}
 
 	@Override
 	public void toFront() {
@@ -342,13 +350,5 @@ public class AboutDialog extends AbstractDialog {
 				}
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		LookAndFeelManager.getInstance().init();
-
-		AboutDialog dialog = new AboutDialog();
-		dialog.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		dialog.setVisible(true);
 	}
 }

@@ -48,6 +48,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
@@ -71,8 +72,9 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	private final DCLabel _statusLabel = DCLabel.bright("");
 	private final DatabaseDriversPanel _databaseDriversPanel;
 
-	public AddDatabaseDriverDialog(DatabaseDriverCatalog databaseDriverCatalog, DatabaseDriversPanel databaseDriversPanel) {
-		super();
+	public AddDatabaseDriverDialog(DatabaseDriverCatalog databaseDriverCatalog, DatabaseDriversPanel databaseDriversPanel,
+			WindowManager windowManager) {
+		super(windowManager);
 		_databaseDriverCatalog = databaseDriverCatalog;
 		_databaseDriversPanel = databaseDriversPanel;
 		_filenameTextFields = new ArrayList<FilenameTextField>();

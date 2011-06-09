@@ -40,24 +40,25 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 	private volatile boolean initialized = false;
 	private final Image _bannerImage;
+	private final WindowManager _windowManager;
 	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 
-	public AbstractDialog() {
-		this(null);
+	public AbstractDialog(WindowManager windowManager) {
+		this(windowManager, null);
 	}
 
-	public AbstractDialog(Image bannerImage) {
+	public AbstractDialog(WindowManager windowManager, Image bannerImage) {
 		super();
-
 		// modal dialogs are turned off because they prevent use of default
 		// uncaught exception handlers(!)
 		setModal(false);
-		
+
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		setResizable(isWindowResizable());
 		_bannerImage = bannerImage;
+		_windowManager = windowManager;
 	}
 
 	protected void setTopBackgroundColor(Color topBackgroundColor) {
@@ -94,7 +95,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 		WidgetUtils.centerOnScreen(this);
 
-		WindowManager.getInstance().onShow(this);
+		_windowManager.onShow(this);
 	}
 
 	@Override
@@ -152,8 +153,13 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 	@Override
 	public void dispose() {
-		WindowManager.getInstance().onDispose(this);
+		_windowManager.onDispose(this);
 		super.dispose();
+	}
+	
+	@Override
+	public WindowManager getWindowManager() {
+		return _windowManager;
 	}
 
 	protected boolean onWindowClosing() {

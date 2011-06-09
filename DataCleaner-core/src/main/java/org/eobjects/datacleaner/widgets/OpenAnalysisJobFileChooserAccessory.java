@@ -121,7 +121,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		openJobButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				OpenAnalysisJobActionListener.openFile(_parentWindow, _file, _configuration);
+				OpenAnalysisJobActionListener.openFile(_parentWindow, _parentWindow.getWindowManager(), _file,
+						_configuration);
 				_fileChooser.cancelSelection();
 			}
 		});

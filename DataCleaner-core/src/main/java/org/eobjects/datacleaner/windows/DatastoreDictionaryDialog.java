@@ -48,6 +48,7 @@ import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
 import org.eobjects.metamodel.schema.Column;
@@ -66,13 +67,13 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 	private final JSplitPane _splitPane;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public DatastoreDictionaryDialog(MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog) {
-		this(null, referenceDataCatalog, datastoreCatalog);
+	public DatastoreDictionaryDialog(MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog, WindowManager windowManager) {
+		this(null, referenceDataCatalog, datastoreCatalog, windowManager);
 	}
 
 	public DatastoreDictionaryDialog(DatastoreDictionary dictionary, MutableReferenceDataCatalog referenceDataCatalog,
-			DatastoreCatalog datastoreCatalog) {
-		super(ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
+			DatastoreCatalog datastoreCatalog, WindowManager windowManager) {
+		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_referenceDataCatalog = referenceDataCatalog;
 		_datastoreCatalog = datastoreCatalog;
@@ -106,7 +107,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 					Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
 					if (datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(datastore);
+						final SchemaTree schemaTree = new SchemaTree(datastore, getWindowManager());
 						schemaTree.addMouseListener(new MouseAdapter() {
 							public void mouseClicked(MouseEvent e) {
 								TreePath path = schemaTree.getSelectionPath();

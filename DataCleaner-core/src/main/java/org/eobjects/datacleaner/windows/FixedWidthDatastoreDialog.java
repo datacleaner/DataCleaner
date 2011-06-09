@@ -34,6 +34,7 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
@@ -44,12 +45,13 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 	private final CharSetEncodingComboBox _encodingComboBox;
 	private final JTextField _valueWidthTextField;
 
-	public FixedWidthDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		this(null, mutableDatastoreCatalog);
+	public FixedWidthDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		this(null, mutableDatastoreCatalog, windowManager);
 	}
 
-	public FixedWidthDatastoreDialog(FixedWidthDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(originalDatastore, mutableDatastoreCatalog);
+	public FixedWidthDatastoreDialog(FixedWidthDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowManager windowManager) {
+		super(originalDatastore, mutableDatastoreCatalog, windowManager);
 
 		_encodingComboBox = new CharSetEncodingComboBox();
 		_valueWidthTextField = WidgetFactory.createTextField("No. characters");

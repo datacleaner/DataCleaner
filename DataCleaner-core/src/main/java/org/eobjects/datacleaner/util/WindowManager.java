@@ -25,15 +25,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.actions.ExitActions;
+import org.eobjects.datacleaner.ExitActionListener;
+import org.eobjects.datacleaner.user.UsageLogger;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.DCWindow;
 
 /**
- * Singleton class that manages events related to opening and closing of windows
- * in DataCleaner.
+ * Represents the contexts of the GUI windows in DataCleaner.
  * 
  * @see DCWindow
  * @see AbstractWindow
@@ -43,16 +46,12 @@ import org.eobjects.datacleaner.windows.DCWindow;
  */
 public final class WindowManager {
 
-	private static final WindowManager instance = new WindowManager();
-
 	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();
+	private final ExitActionListener _exitActionListener;
 
-	public static WindowManager getInstance() {
-		return instance;
-	}
-
-	private WindowManager() {
+	public WindowManager(ExitActionListener exitActionListener) {
+		_exitActionListener = exitActionListener;
 	}
 
 	public List<DCWindow> getWindows() {
@@ -72,7 +71,7 @@ public final class WindowManager {
 		notifyListeners();
 
 		if (_windows.isEmpty()) {
-			ExitActions.exit();
+			exit();
 		}
 	}
 
@@ -97,5 +96,21 @@ public final class WindowManager {
 			}
 		}
 		return count;
+	}
+
+	public boolean showExitDialog() {
+		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
+				JOptionPane.OK_CANCEL_OPTION);
+
+		if (confirmation == JOptionPane.OK_OPTION) {
+			return true;
+		}
+		return false;
+	}
+
+	public void exit() {
+		UserPreferences.getInstance().save();
+		UsageLogger.getInstance().logApplicationShutdown();
+		_exitActionListener.exit(0);
 	}
 }

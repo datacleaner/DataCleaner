@@ -48,6 +48,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -75,8 +76,8 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 	final JButton _saveButton;
 	private StringPattern _regexStringPattern;
 
-	public RegexStringPatternDialog(MutableReferenceDataCatalog catalog) {
-		super(ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
+	public RegexStringPatternDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
+		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
 		_catalog = catalog;
 		_expressionNameField = WidgetFactory.createTextField("String pattern name");
 		_expressionField = WidgetFactory.createTextField("Expression");
@@ -84,12 +85,14 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 		_saveButton = WidgetFactory.createButton("Save expression", "images/model/stringpattern_regex.png");
 	}
 
-	public RegexStringPatternDialog(RegexStringPattern stringPattern, MutableReferenceDataCatalog catalog) {
-		this(stringPattern.getName(), stringPattern.getExpression(), catalog);
+	public RegexStringPatternDialog(RegexStringPattern stringPattern, MutableReferenceDataCatalog catalog,
+			WindowManager windowManager) {
+		this(stringPattern.getName(), stringPattern.getExpression(), catalog, windowManager);
 	}
 
-	public RegexStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog) {
-		this(catalog);
+	public RegexStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog,
+			WindowManager windowManager) {
+		this(catalog, windowManager);
 		_expressionString = expression;
 		_expressionNameString = expressionName;
 		_expressionNameField.setText(expressionName);

@@ -37,6 +37,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 
 public class VisualizeJobWindow extends AbstractWindow {
@@ -48,7 +49,8 @@ public class VisualizeJobWindow extends AbstractWindow {
 	private volatile boolean _displayColumns;
 	private volatile boolean _displayOutcomes;
 
-	public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder) {
+	public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder, WindowManager windowManager) {
+		super(windowManager);
 		_analysisJobBuilder = analysisJobBuilder;
 		_displayColumns = true;
 		_displayOutcomes = true;

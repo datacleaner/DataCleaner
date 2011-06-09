@@ -17,32 +17,9 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.actions;
+package org.eobjects.datacleaner;
 
-import javax.swing.JOptionPane;
+public interface ExitActionListener {
 
-import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.user.UserPreferences;
-
-public class ExitActions {
-
-	private ExitActions() {
-		// prevent instantiation
-	}
-
-	public static boolean showExitDialog() {
-		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
-				JOptionPane.OK_CANCEL_OPTION);
-
-		if (confirmation == JOptionPane.OK_OPTION) {
-			return true;
-		}
-		return false;
-	}
-
-	public static void exit() {
-		UserPreferences.getInstance().save();
-		UsageLogger.getInstance().logApplicationShutdown();
-		System.exit(0);
-	}
+	public void exit(int statusCode);
 }

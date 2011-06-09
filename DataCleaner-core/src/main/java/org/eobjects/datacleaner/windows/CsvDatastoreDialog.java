@@ -57,6 +57,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
@@ -128,12 +129,13 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private final DCTable _previewTable;
 	private final DCPanel _previewTablePanel;
 
-	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		this(null, mutableDatastoreCatalog);
+	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		this(null, mutableDatastoreCatalog, windowManager);
 	}
 
-	public CsvDatastoreDialog(CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(imageManager.getImage("images/window/banner-datastores.png"));
+	public CsvDatastoreDialog(CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowManager windowManager) {
+		super(windowManager, imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = datastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
@@ -227,10 +229,10 @@ public class CsvDatastoreDialog extends AbstractDialog {
 				}
 			}
 			_quoteCharField.setSelectedItem(quote);
-			
+
 			onSettingsUpdated(false, false);
 		}
-		
+
 		// add listeners
 		_separatorCharField.addItemListener(new ItemListener() {
 			@Override

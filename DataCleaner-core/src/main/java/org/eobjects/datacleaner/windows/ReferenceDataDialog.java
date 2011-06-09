@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
@@ -51,15 +52,17 @@ public class ReferenceDataDialog extends AbstractDialog {
 	private final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 	private final CloseableTabbedPane _tabbedPane;
 
-	public ReferenceDataDialog() {
-		super(imageManager.getImage("images/window/banner-reference-data.png"));
+	public ReferenceDataDialog(WindowManager windowManager) {
+		super(windowManager, imageManager.getImage("images/window/banner-reference-data.png"));
 		final DCGlassPane glassPane = new DCGlassPane(this);
 
 		_tabbedPane = new CloseableTabbedPane();
 
-		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration);
-		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(glassPane, configuration);
-		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(glassPane, configuration);
+		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration, windowManager);
+		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(glassPane, configuration,
+				windowManager);
+		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(glassPane, configuration,
+				windowManager);
 
 		_tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
 				scrolleable(dictionaryListPanel));

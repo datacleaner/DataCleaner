@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -66,21 +67,24 @@ public final class ColumnListTable extends DCPanel {
 	private final Table _table;
 	private final DCTable _columnTable;
 	private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>(new InputColumnComparator());
+	private final WindowManager _windowManager;
 
 	public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
-			boolean addShadowBorder) {
-		this(null, columns, analysisJobBuilder, addShadowBorder);
+			boolean addShadowBorder, WindowManager windowManager) {
+		this(null, columns, analysisJobBuilder, addShadowBorder, windowManager);
 	}
 
-	public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
-		this(table, null, analysisJobBuilder, addShadowBorder);
+	public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder,
+			WindowManager windowManager) {
+		this(table, null, analysisJobBuilder, addShadowBorder, windowManager);
 	}
 
 	private ColumnListTable(Table table, Collection<? extends InputColumn<?>> columns,
-			AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder) {
+			AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, WindowManager windowManager) {
 		super();
 		_table = table;
 		_analysisJobBuilder = analysisJobBuilder;
+		_windowManager = windowManager;
 
 		setLayout(new BorderLayout());
 
@@ -94,8 +98,8 @@ public final class ColumnListTable extends DCPanel {
 
 			JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
 			previewButton.setToolTipText("Preview table rows");
-			previewButton.addActionListener(new PreviewSourceDataActionListener(
-					_analysisJobBuilder.getDataContextProvider(), _columns));
+			previewButton.addActionListener(new PreviewSourceDataActionListener(_windowManager, _analysisJobBuilder
+					.getDataContextProvider(), _columns));
 
 			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove table from source");
@@ -120,7 +124,7 @@ public final class ColumnListTable extends DCPanel {
 		_columnTable = new DCTable(headers);
 		_columnTable.setColumnControlVisible(false);
 		_columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
-		
+
 		JPanel tablePanel = _columnTable.toPanel();
 
 		if (addShadowBorder) {
@@ -189,7 +193,7 @@ public final class ColumnListTable extends DCPanel {
 			i++;
 		}
 		_columnTable.setModel(model);
-		
+
 		TableColumnExt columnExt = _columnTable.getColumnExt(2);
 		columnExt.setMinWidth(26);
 		columnExt.setMaxWidth(80);

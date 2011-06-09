@@ -23,18 +23,20 @@ import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
 public class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<OdbDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public OdbDatastoreDialog(OdbDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(originalDatastore, mutableDatastoreCatalog);
+	public OdbDatastoreDialog(OdbDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowManager windowManager) {
+		super(originalDatastore, mutableDatastoreCatalog, windowManager);
 	}
 
-	public OdbDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(mutableDatastoreCatalog);
+	public OdbDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		super(mutableDatastoreCatalog, windowManager);
 	}
 
 	@Override

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.panels;
 
+import javax.inject.Inject;
+
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
@@ -26,6 +28,7 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.util.WindowManager;
 
 /**
  * Renders/creates the default panels that present component job builders.
@@ -35,6 +38,9 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class ComponentJobBuilderPresenterRenderer implements
 		Renderer<AbstractBeanJobBuilder<?, ?, ?>, ComponentJobBuilderPresenter> {
+
+	@Inject
+	WindowManager windowManager;
 
 	@Override
 	public RendererPrecedence getPrecedence(AbstractBeanJobBuilder<?, ?, ?> renderable) {
@@ -48,7 +54,7 @@ public class ComponentJobBuilderPresenterRenderer implements
 			return new FilterJobBuilderPanel(fjb);
 		} else if (renderable instanceof TransformerJobBuilder) {
 			TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
-			return new TransformerJobBuilderPanel(tjb);
+			return new TransformerJobBuilderPanel(tjb, windowManager);
 		} else if (renderable instanceof RowProcessingAnalyzerJobBuilder) {
 			RowProcessingAnalyzerJobBuilder<?> ajb = (RowProcessingAnalyzerJobBuilder<?>) renderable;
 			return new RowProcessingAnalyzerJobBuilderPanel(ajb);

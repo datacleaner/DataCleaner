@@ -39,6 +39,8 @@ import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
@@ -51,8 +53,8 @@ public final class DetailsResultWindow extends AbstractWindow {
 	private final String _title;
 	private final JXTaskPaneContainer _taskPaneContainer;
 
-	public DetailsResultWindow(String title, List<AnalyzerResult> results) {
-		super();
+	public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowManager windowManager) {
+		super(windowManager);
 		_title = title;
 		_results = results;
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
@@ -83,7 +85,8 @@ public final class DetailsResultWindow extends AbstractWindow {
 	protected JComponent getWindowContent() {
 		if (!_results.isEmpty()) {
 			AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider());
+			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider(),
+					new DCRendererInitializer(getWindowManager()));
 
 			for (AnalyzerResult analyzerResult : _results) {
 				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = renderFactory.getRenderer(analyzerResult,

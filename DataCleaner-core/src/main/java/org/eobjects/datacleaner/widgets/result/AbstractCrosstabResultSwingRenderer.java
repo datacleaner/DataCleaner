@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -45,6 +46,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -57,10 +59,15 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
 
-	final DrillToDetailsCallback _drillToDetailsCallback = new DrillToDetailsCallbackImpl();
+	@Inject
+	WindowManager windowManager;
+
+	private DrillToDetailsCallback _drillToDetailsCallback;
 
 	@Override
 	public JComponent render(R result) {
+		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(windowManager);
+
 		final DCTable table = renderTable(result.getCrosstab());
 
 		final JComponent tableComponent;

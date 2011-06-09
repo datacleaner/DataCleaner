@@ -32,6 +32,8 @@ import org.eobjects.datacleaner.util.WindowManager;
  * @author Kasper Sørensen
  */
 public interface DCWindow {
+	
+	public WindowManager getWindowManager();
 
 	public String getWindowTitle();
 

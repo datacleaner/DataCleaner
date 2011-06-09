@@ -36,11 +36,13 @@ import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabNavigator;
 import org.eobjects.analyzer.result.NumberAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.datacleaner.DefaultExitActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.ResultWindow;
@@ -60,8 +62,7 @@ import org.jfree.ui.RectangleInsets;
 public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<NumberAnalyzerResult> {
 
 	@Override
-	protected void decorate(NumberAnalyzerResult result, DCTable table,
-			final DisplayChartCallback displayChartCallback) {
+	protected void decorate(NumberAnalyzerResult result, DCTable table, final DisplayChartCallback displayChartCallback) {
 		// find the std. deviation row number.
 		int rowNumber = -1;
 		{
@@ -153,7 +154,8 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		ajb.addSourceColumns(table.getNumberColumns());
 		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
-		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null);
+		WindowManager windowManager = new WindowManager(new DefaultExitActionListener());
+		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowManager);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();
 	}

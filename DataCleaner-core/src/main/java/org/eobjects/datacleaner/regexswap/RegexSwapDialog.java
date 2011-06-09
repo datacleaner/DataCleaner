@@ -53,6 +53,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.table.DCTable;
@@ -84,8 +85,8 @@ public class RegexSwapDialog extends AbstractDialog {
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private Regex _selectedRegex;
 
-	public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog) {
-		super(imageManager.getImage("images/window/banner-string-patterns.png"));
+	public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog, WindowManager windowManager) {
+		super(windowManager, imageManager.getImage("images/window/banner-string-patterns.png"));
 		_referenceDataCatalog = referenceDataCatalog;
 		_client = new RegexSwapClient(HttpXmlUtils.getHttpClient());
 		_regexDescriptionLabel = DCLabel.brightMultiLine("No regex selected");

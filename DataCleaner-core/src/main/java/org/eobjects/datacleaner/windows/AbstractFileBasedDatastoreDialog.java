@@ -45,6 +45,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
@@ -75,12 +76,13 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
 
-	public AbstractFileBasedDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		this(null, mutableDatastoreCatalog);
+	public AbstractFileBasedDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		this(null, mutableDatastoreCatalog, windowManager);
 	}
 
-	public AbstractFileBasedDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(imageManager.getImage("images/window/banner-datastores.png"));
+	public AbstractFileBasedDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowManager windowManager) {
+		super(windowManager, imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = originalDatastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");

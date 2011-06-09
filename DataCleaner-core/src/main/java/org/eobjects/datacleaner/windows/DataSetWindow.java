@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.DataContext;
@@ -55,12 +56,12 @@ public class DataSetWindow extends AbstractWindow {
 	private JButton _previousPageButton;
 	private JButton _nextPageButton;
 
-	public DataSetWindow(Query query, final DataContext dataContext) {
-		this(query, dataContext, -1);
+	public DataSetWindow(Query query, final DataContext dataContext, WindowManager windowManager) {
+		this(query, dataContext, -1, windowManager);
 	}
 
-	public DataSetWindow(final Query query, final DataContext dataContext, int pageSize) {
-		super();
+	public DataSetWindow(final Query query, final DataContext dataContext, int pageSize, WindowManager windowManager) {
+		super(windowManager);
 		_table = new DCTable();
 		_query = query;
 		_pageSize = pageSize;
@@ -78,8 +79,8 @@ public class DataSetWindow extends AbstractWindow {
 		_nextPageButton.setEnabled(false);
 	}
 
-	public DataSetWindow(String title, Callable<TableModel> tableModelCallable) {
-		super();
+	public DataSetWindow(String title, Callable<TableModel> tableModelCallable, WindowManager windowManager) {
+		super(windowManager);
 		_table = new DCTable();
 		_query = null;
 		_pageSize = -1;
@@ -154,7 +155,7 @@ public class DataSetWindow extends AbstractWindow {
 					Dimension dimensions = autoSetSize();
 					setSize(dimensions);
 					centerOnScreen();
-					
+
 				} catch (Exception e) {
 					DataSetWindow.this.dispose();
 					if (e instanceof RuntimeException) {

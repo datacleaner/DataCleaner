@@ -35,8 +35,10 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
 	private static final long serialVersionUID = 1L;
 	private volatile boolean initialized = false;
+	private final WindowManager _windowManager;
 
-	public AbstractWindow() {
+	public AbstractWindow(WindowManager windowManager) {
+		_windowManager = windowManager;
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
@@ -52,7 +54,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
 		autoSetSize(content);
 
-		WindowManager.getInstance().onShow(this);
+		_windowManager.onShow(this);
 	}
 
 	public Dimension autoSetSize() {
@@ -83,7 +85,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
 		return preferredSize;
 	}
-	
+
 	protected abstract boolean isWindowResizable();
 
 	protected abstract boolean isCentered();
@@ -136,8 +138,13 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
 	@Override
 	public void dispose() {
-		WindowManager.getInstance().onDispose(this);
+		_windowManager.onDispose(this);
 		super.dispose();
+	}
+
+	@Override
+	public WindowManager getWindowManager() {
+		return _windowManager;
 	}
 
 	protected boolean onWindowClosing() {

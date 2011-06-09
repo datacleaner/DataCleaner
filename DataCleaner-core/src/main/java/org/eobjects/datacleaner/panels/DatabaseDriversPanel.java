@@ -52,6 +52,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.AddDatabaseDriverDialog;
@@ -73,9 +74,11 @@ public class DatabaseDriversPanel extends DCPanel {
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final Set<String> _usedDriverClassNames = new HashSet<String>();
 	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
+	private final WindowManager _windowManager;
 
-	public DatabaseDriversPanel(AnalyzerBeansConfiguration configuration) {
+	public DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowManager windowManager) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		_windowManager = windowManager;
 		setLayout(new BorderLayout());
 
 		DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -128,7 +131,7 @@ public class DatabaseDriversPanel extends DCPanel {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
-								DatabaseDriversPanel.this);
+								DatabaseDriversPanel.this, _windowManager);
 						dialog.setVisible(true);
 					}
 				});
@@ -205,7 +208,7 @@ public class DatabaseDriversPanel extends DCPanel {
 
 			row++;
 		}
-		
+
 		table.setAlignment(installedCol, Alignment.CENTER);
 
 		table.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
@@ -238,6 +241,6 @@ public class DatabaseDriversPanel extends DCPanel {
 				}
 				updateDriverList();
 			}
-		});
+		}, _windowManager);
 	}
 }

@@ -42,6 +42,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
@@ -65,16 +66,18 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	private final DataContextProvider _dataContextProvider;
 	private final TreeCellRenderer _rendererDelegate;
 	private final Datastore _datastore;
+	private final WindowManager _windowManager;
 
-	public SchemaTree(Datastore datastore) {
-		this(datastore, null);
+	public SchemaTree(Datastore datastore, WindowManager windowManager) {
+		this(datastore, null, windowManager);
 	}
 
-	public SchemaTree(final Datastore datastore, final AnalysisJobBuilder analysisJobBuilder) {
+	public SchemaTree(final Datastore datastore, final AnalysisJobBuilder analysisJobBuilder, WindowManager windowManager) {
 		super();
 		if (datastore == null) {
 			throw new IllegalArgumentException("Datastore cannot be null");
 		}
+		_windowManager = windowManager;
 		_rendererDelegate = new DefaultTreeRenderer();
 		setCellRenderer(this);
 		_datastore = datastore;
@@ -87,6 +90,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 			addMouseListener(new ColumnMouseListener(this, _datastore, analysisJobBuilder));
 		}
 		updateTree();
+	}
+	
+	public WindowManager getWindowManager() {
+		return _windowManager;
 	}
 
 	private void updateTree() {

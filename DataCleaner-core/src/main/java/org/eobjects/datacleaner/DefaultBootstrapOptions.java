@@ -17,26 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.widgets.result;
+package org.eobjects.datacleaner;
 
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.ResultProducer;
-import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.util.WindowManager;
-import org.eobjects.datacleaner.windows.DetailsResultWindow;
+import org.eobjects.analyzer.cli.CliArguments;
 
-public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
+public class DefaultBootstrapOptions implements BootstrapOptions {
 
-	private final WindowManager _windowManager;
+	private final String[] _args;
+	private final CliArguments _arguments;
 
-	public DrillToDetailsCallbackImpl(WindowManager windowManager) {
-		_windowManager = windowManager;
+	public DefaultBootstrapOptions(String[] args) {
+		_args = args;
+		_arguments = CliArguments.parse(_args);
 	}
 
 	@Override
-	public void drillToDetails(String title, ResultProducer resultProducer) {
-		final AnalyzerResult result = resultProducer.getResult();
-		final DetailsResultWindow window = new DetailsResultWindow(title, CollectionUtils.list(result), _windowManager);
-		window.setVisible(true);
+	public boolean isCommandLineMode() {
+		return _arguments.isSet();
 	}
+
+	@Override
+	public CliArguments getCommandLineArguments() {
+		return _arguments;
+	}
+
+	@Override
+	public ExitActionListener getExitActionListener() {
+		return new DefaultExitActionListener();
+	}
+
 }

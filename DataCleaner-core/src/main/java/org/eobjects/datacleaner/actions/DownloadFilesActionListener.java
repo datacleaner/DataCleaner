@@ -37,6 +37,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.DownloadProgressWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,25 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 	private final DownloadProgressWindow _downloadProgressWindow;
 	private volatile boolean _cancelled = false;
 
+	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowManager windowManager) {
+		this(urls, createTargetFilenames(urls), listener, windowManager);
+	}
+
+	public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener,
+			WindowManager windowManager) {
+		if (urls == null) {
+			throw new IllegalArgumentException("urls cannot be null");
+		}
+		_urls = urls;
+		_listener = listener;
+		_files = new File[_urls.length];
+		for (int i = 0; i < urls.length; i++) {
+			String filename = targetFilenames[i];
+			_files[i] = new File(DataCleanerHome.get(), filename);
+		}
+		_downloadProgressWindow = new DownloadProgressWindow(this, windowManager);
+	}
+
 	private static String[] createTargetFilenames(String[] urls) {
 		String[] filenames = new String[urls.length];
 		for (int i = 0; i < urls.length; i++) {
@@ -68,24 +88,6 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 			filenames[i] = filename;
 		}
 		return filenames;
-	}
-
-	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener) {
-		this(urls, createTargetFilenames(urls), listener);
-	}
-
-	public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener) {
-		if (urls == null) {
-			throw new IllegalArgumentException("urls cannot be null");
-		}
-		_urls = urls;
-		_listener = listener;
-		_files = new File[_urls.length];
-		for (int i = 0; i < urls.length; i++) {
-			String filename = targetFilenames[i];
-			_files[i] = new File(DataCleanerHome.get(), filename);
-		}
-		_downloadProgressWindow = new DownloadProgressWindow(this);
 	}
 
 	public File[] getFiles() {

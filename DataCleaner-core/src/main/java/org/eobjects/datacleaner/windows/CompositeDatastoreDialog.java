@@ -45,6 +45,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTextField;
@@ -69,12 +70,13 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 		return "Composite datastore";
 	}
 
-	public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog) {
-		this(null, mutableDatastoreCatalog);
+	public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
+		this(null, mutableDatastoreCatalog, windowManager);
 	}
 
-	public CompositeDatastoreDialog(CompositeDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog) {
-		super(imageManager.getImage("images/window/banner-datastores.png"));
+	public CompositeDatastoreDialog(CompositeDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowManager windowManager) {
+		super(windowManager, imageManager.getImage("images/window/banner-datastores.png"));
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_originalDatastore = originalDatastore;
 		_statusLabel = DCLabel.bright("");

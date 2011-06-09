@@ -19,13 +19,13 @@
  */
 package org.eobjects.datacleaner;
 
-public final class Main {
+import org.eobjects.analyzer.cli.CliArguments;
 
-	public static final String VERSION = "2.2-SNAPSHOT";
+public interface BootstrapOptions {
 
-	public static void main(String[] args) {
-		BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
-		Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
-		bootstrap.run();
-	}
+	public boolean isCommandLineMode();
+
+	public CliArguments getCommandLineArguments();
+
+	public ExitActionListener getExitActionListener();
 }

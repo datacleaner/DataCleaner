@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
@@ -51,10 +52,12 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
 	private final Datastore _datastore;
 	private final Table _table;
+	private final WindowManager _windowManager;
 
-	public SaveTableAsCsvFileActionListener(Datastore datastore, Table table) {
+	public SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowManager windowManager) {
 		_datastore = datastore;
 		_table = table;
+		_windowManager = windowManager;
 	}
 
 	@Override
@@ -73,7 +76,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
 				csvOutputAnalyzerBuilder, false);
 
-		final AbstractDialog dialog = new AbstractDialog() {
+		final AbstractDialog dialog = new AbstractDialog(_windowManager) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -107,7 +110,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ResultWindow window = new ResultWindow(configuration, ajb.toAnalysisJob(), "Save " + _table.getName()
-						+ " as CSV file");
+						+ " as CSV file", _windowManager);
 				window.setVisible(true);
 				dialog.dispose();
 				window.startAnalysis();

@@ -45,6 +45,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -72,8 +73,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
 	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 
-	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog) {
-		super(ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
+	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
+		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
 		_catalog = catalog;
 		_expressionNameField = WidgetFactory.createTextField("String pattern name");
 		_expressionField = WidgetFactory.createTextField("Expression");
@@ -81,12 +82,14 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		_saveButton = WidgetFactory.createButton("Save Pattern", "images/model/stringpattern_simple.png");
 	}
 
-	public SimpleStringPatternDialog(SimpleStringPattern stringPattern, MutableReferenceDataCatalog catalog) {
-		this(stringPattern.getName(), stringPattern.getExpression(), catalog);
+	public SimpleStringPatternDialog(SimpleStringPattern stringPattern, MutableReferenceDataCatalog catalog,
+			WindowManager windowManager) {
+		this(stringPattern.getName(), stringPattern.getExpression(), catalog, windowManager);
 	}
 
-	public SimpleStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog) {
-		this(catalog);
+	public SimpleStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog,
+			WindowManager windowManager) {
+		this(catalog, windowManager);
 		_expressionString = expression;
 		_expressionNameString = expressionName;
 		_expressionNameField.setText(expressionName);

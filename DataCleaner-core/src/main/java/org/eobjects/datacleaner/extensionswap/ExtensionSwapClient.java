@@ -27,6 +27,7 @@ import org.eobjects.datacleaner.actions.FileDownloadListener;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.w3c.dom.Element;
 
 public final class ExtensionSwapClient {
@@ -34,13 +35,15 @@ public final class ExtensionSwapClient {
 	private static final String EXTENSION_BASE_URL = "http://datacleaner.eobjects.org/ws/extension/";
 
 	private final HttpClient _httpClient;
+	private final WindowManager _windowManager;
 
-	public ExtensionSwapClient() {
-		this(HttpXmlUtils.getHttpClient());
+	public ExtensionSwapClient(WindowManager windowManager) {
+		this(HttpXmlUtils.getHttpClient(), windowManager);
 	}
 
-	public ExtensionSwapClient(HttpClient httpClient) {
+	public ExtensionSwapClient(HttpClient httpClient, WindowManager windowManager) {
 		_httpClient = httpClient;
+		_windowManager = windowManager;
 	}
 
 	public ExtensionPackage registerExtensionPackage(ExtensionSwapPackage extensionSwapPackage, File jarFile) {
@@ -71,7 +74,7 @@ public final class ExtensionSwapClient {
 		String url = EXTENSION_BASE_URL + extensionSwapPackage.getId() + "/jarfile";
 		String filename = extensionSwapPackage.getId() + ".jar";
 		DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
-				new String[] { filename }, listener);
+				new String[] { filename }, listener, _windowManager);
 		actionListener.actionPerformed(null);
 	}
 }

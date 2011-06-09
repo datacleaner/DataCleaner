@@ -32,6 +32,7 @@ import org.eobjects.datacleaner.panels.LoginPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 
 /**
@@ -49,13 +50,15 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 	private static final ImageIcon OFFLINE_ICON = ImageManager.getInstance().getImageIcon(
 			"images/status/trafficlight-red.png");
 
+	private final WindowManager _windowManager;
 	private final UserPreferences _userPreferences;
 	private final DCGlassPane _glassPane;
 	private final LoginPanel _loginPanel;
 
-	public LoginStatusLabel(DCGlassPane glassPane) {
+	public LoginStatusLabel(DCGlassPane glassPane, WindowManager windowManager) {
 		super();
 		_glassPane = glassPane;
+		_windowManager = windowManager;
 		_loginPanel = new LoginPanel(_glassPane);
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		_userPreferences = UserPreferences.getInstance();
@@ -74,7 +77,7 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 
 	private void onMouseClick() {
 		if (_userPreferences.isLoggedIn()) {
-			new OptionsDialog().setVisible(true);
+			new OptionsDialog(_windowManager).setVisible(true);
 		} else {
 			if (_loginPanel.isVisible()) {
 				_loginPanel.moveOut(0);

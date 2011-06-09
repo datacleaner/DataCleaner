@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
@@ -60,12 +61,13 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 	private final JComboBox _encodingComboBox;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public TextFileDictionaryDialog(MutableReferenceDataCatalog catalog) {
-		this(null, catalog);
+	public TextFileDictionaryDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
+		this(null, catalog, windowManager);
 	}
 
-	public TextFileDictionaryDialog(TextFileDictionary dictionary, MutableReferenceDataCatalog catalog) {
-		super(ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
+	public TextFileDictionaryDialog(TextFileDictionary dictionary, MutableReferenceDataCatalog catalog,
+			WindowManager windowManager) {
+		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_catalog = catalog;
 

@@ -67,7 +67,6 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
-import org.eobjects.datacleaner.actions.ExitActions;
 import org.eobjects.datacleaner.actions.HideTabTextActionListener;
 import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
@@ -96,6 +95,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.DCWindowMenuBar;
 import org.eobjects.datacleaner.widgets.LoginStatusLabel;
+import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseEvent;
 import org.eobjects.datacleaner.widgets.tabs.TabCloseListener;
@@ -129,7 +129,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final Map<ComponentJobBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<ComponentJobBuilderPresenter, JComponent>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
-	private final RendererFactory _rendererFactory;
+	private final RendererFactory _componentJobBuilderPresenterRendererFactory;
 	private final CloseableTabbedPane _tabbedPane;
 	private final FilterListPanel _filterListPanel;
 	private final DCLabel _statusLabel = DCLabel.bright("");
@@ -148,32 +148,35 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private DataContextProvider _dataContextProvider;
 	private DatastoreListPanel _datastoreListPanel;
 
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration) {
-		this(configuration, (Datastore) null);
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, WindowManager windowManager) {
+		this(configuration, (Datastore) null, windowManager);
 	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			String jobFilename) {
-		this(configuration, analysisJobBuilder, analysisJobBuilder.getDataContextProvider().getDatastore());
+			String jobFilename, WindowManager windowManager) {
+		this(configuration, analysisJobBuilder, analysisJobBuilder.getDataContextProvider().getDatastore(), windowManager);
 		setJobFilename(jobFilename);
 	}
 
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, Datastore datastore) {
-		this(configuration, new AnalysisJobBuilder(configuration), datastore);
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, Datastore datastore,
+			WindowManager windowManager) {
+		this(configuration, new AnalysisJobBuilder(configuration), datastore, windowManager);
 
 	}
 
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName) {
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName,
+			WindowManager windowManager) {
 		this(configuration, new AnalysisJobBuilder(configuration), configuration.getDatastoreCatalog().getDatastore(
-				datastoreName));
+				datastoreName), windowManager);
 	}
 
 	private AnalysisJobBuilderWindow(final AnalyzerBeansConfiguration configuration,
-			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore) {
-		super();
+			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore, WindowManager windowManager) {
+		super(windowManager);
 		_configuration = configuration;
-		_rendererFactory = new RendererFactory(_configuration.getDescriptorProvider());
-		setJMenuBar(new DCWindowMenuBar(this, _configuration));
+		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
+				new DCRendererInitializer(windowManager));
+		setJMenuBar(new DCWindowMenuBar(this, windowManager, _configuration));
 		_analysisJobBuilder = analysisJobBuilder;
 		_glassPane = new DCGlassPane(this);
 
@@ -194,7 +197,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_datastoreListPanel = new DatastoreListPanel(_configuration, this, _glassPane);
 		_datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
-		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder);
+		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, getWindowManager());
 		_filterListPanel = new FilterListPanel(_analysisJobBuilder);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 
@@ -238,7 +241,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		_tabbedPane.addSeparator();
 
-		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder);
+		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder, getWindowManager());
 		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
 		_leftPanel.setVisible(false);
 		_leftPanel.setCollapsed(true);
@@ -373,7 +376,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			return false;
 		}
 
-		final int count = WindowManager.getInstance().getWindowCount(AnalysisJobBuilderWindow.class);
+		final int count = getWindowManager().getWindowCount(AnalysisJobBuilderWindow.class);
 
 		final boolean windowClosing;
 		final boolean exit;
@@ -387,7 +390,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				windowClosing = false;
 			} else {
 				// if datastore is not set, show exit dialog
-				exit = ExitActions.showExitDialog();
+				exit = getWindowManager().showExitDialog();
 				windowClosing = exit;
 			}
 		} else {
@@ -408,7 +411,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		}
 
 		if (exit) {
-			ExitActions.exit();
+			getWindowManager().exit();
 		}
 		return windowClosing;
 	}
@@ -455,7 +458,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_visualizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder);
+				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder, getWindowManager());
 				window.setVisible(true);
 			}
 		});
@@ -468,7 +471,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		// Run analysis
 		final RunAnalysisActionListener runAnalysisActionListener = new RunAnalysisActionListener(_analysisJobBuilder,
-				_configuration, _jobFilename);
+				_configuration, _jobFilename, getWindowManager());
 		_runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -499,7 +502,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(_runButton);
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane);
+		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane, getWindowManager());
 		statusBar.add(loggedInStatusLabel);
 
 		final Dimension windowSize = new Dimension(900, 630);
@@ -662,7 +665,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	@Override
 	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
 		@SuppressWarnings("unchecked")
-		final Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _rendererFactory
+		final Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
 				.getRenderer(transformerJobBuilder, ComponentJobBuilderRenderingFormat.class);
 		final TransformerJobBuilderPresenter presenter = (TransformerJobBuilderPresenter) renderer
 				.render(transformerJobBuilder);

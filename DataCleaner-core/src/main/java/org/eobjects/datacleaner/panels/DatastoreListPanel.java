@@ -216,7 +216,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		for (int i = 0; i < datastoreNames.length; i++) {
 			final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
 
-			DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this);
+			DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
+					_analysisJobBuilderWindow.getWindowManager());
 			_datastorePanels.add(datastorePanel);
 			_listPanel.add(datastorePanel);
 		}
@@ -250,16 +251,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		// set of databases that are displayed directly on panel
 		final Set<String> databaseNames = new HashSet<String>();
 
-		panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
-				"images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL, databaseNames));
-		panel.add(createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
-				"images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
-				databaseNames));
-		panel.add(createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
-				"images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE, databaseNames));
-		panel.add(createNewJdbcDatastoreButton("Microsoft SQL Server connection",
-				"Connect to a Microsoft SQL Server database", "images/datastore-types/databases/microsoft.png",
-				DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, databaseNames));
+		createDefaultDatabaseButtons(panel, databaseNames);
 
 		final JButton moreDatastoreTypesButton = new JButton("more");
 		moreDatastoreTypesButton.setMargin(new Insets(1, 1, 1, 1));
@@ -286,7 +278,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				compositeMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new CompositeDatastoreDialog(_datastoreCatalog).setVisible(true);
+						new CompositeDatastoreDialog(_datastoreCatalog, _analysisJobBuilderWindow.getWindowManager())
+								.setVisible(true);
 					}
 				});
 
@@ -295,7 +288,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				databaseDriversMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						OptionsDialog dialog = new OptionsDialog();
+						OptionsDialog dialog = new OptionsDialog(_analysisJobBuilderWindow.getWindowManager());
 						dialog.selectDatabaseDriversTab();
 						dialog.setVisible(true);
 					}
@@ -314,6 +307,28 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		panel.add(moreDatastoreTypesButton);
 
 		return panel;
+	}
+
+	private void createDefaultDatabaseButtons(DCPanel panel, Set<String> databaseNames) {
+		DatabaseDriverCatalog catalog = new DatabaseDriverCatalog();
+		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
+			panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
+					"images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL, databaseNames));
+		}
+		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
+			panel.add(createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
+					"images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
+					databaseNames));
+		}
+		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
+			panel.add(createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
+					"images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE, databaseNames));
+		}
+		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
+			panel.add(createNewJdbcDatastoreButton("Microsoft SQL Server connection",
+					"Connect to a Microsoft SQL Server database", "images/datastore-types/databases/microsoft.png",
+					DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, databaseNames));
+		}
 	}
 
 	private JButton createNewDatastoreButton(final String title, final String description, final String imagePath,
@@ -368,7 +383,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				JdbcDatastoreDialog dialog = new JdbcDatastoreDialog(_datastoreCatalog);
+				JdbcDatastoreDialog dialog = new JdbcDatastoreDialog(_datastoreCatalog,
+						_analysisJobBuilderWindow.getWindowManager());
 				dialog.setSelectedDatabase(databaseName);
 				dialog.setVisible(true);
 			}

@@ -38,6 +38,7 @@ import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;
@@ -52,12 +53,13 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 	private final JXTextField _nameTextField;
 	private final JXTextArea _valuesTextArea;
 
-	public SimpleDictionaryDialog(MutableReferenceDataCatalog catalog) {
-		this(null, catalog);
+	public SimpleDictionaryDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
+		this(null, catalog, windowManager);
 	}
 
-	public SimpleDictionaryDialog(SimpleDictionary dictionary, MutableReferenceDataCatalog catalog) {
-		super(ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
+	public SimpleDictionaryDialog(SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
+			WindowManager windowManager) {
+		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_catalog = catalog;
 

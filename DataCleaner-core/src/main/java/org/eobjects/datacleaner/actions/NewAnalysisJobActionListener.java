@@ -33,14 +33,17 @@ import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 public final class NewAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
+	private final WindowManager _windowManager;
 
-	public NewAnalysisJobActionListener(AnalyzerBeansConfiguration configuration) {
+	public NewAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, WindowManager windowManager) {
 		_configuration = configuration;
+		_windowManager = windowManager;
 	}
 
 	@Override
@@ -63,7 +66,7 @@ public final class NewAnalysisJobActionListener implements ActionListener {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						UsageLogger.getInstance().log("New analysis job");
-						new AnalysisJobBuilderWindow(_configuration, datastoreName).setVisible(true);
+						new AnalysisJobBuilderWindow(_configuration, datastoreName, _windowManager).setVisible(true);
 					}
 				});
 				popupMenu.add(menuItem);

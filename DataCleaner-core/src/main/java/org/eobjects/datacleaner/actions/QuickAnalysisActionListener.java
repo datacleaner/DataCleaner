@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 
@@ -54,19 +55,21 @@ public class QuickAnalysisActionListener implements ActionListener {
 	private final Datastore _datastore;
 	private final Table _table;
 	private final Column[] _columns;
+	private final WindowManager _windowManager;
 
-	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns) {
+	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns, WindowManager windowManager) {
 		_datastore = datastore;
 		_table = table;
 		_columns = columns;
+		_windowManager = windowManager;
 	}
 
-	public QuickAnalysisActionListener(Datastore datastore, Table table) {
-		this(datastore, table, null);
+	public QuickAnalysisActionListener(Datastore datastore, Table table, WindowManager windowManager) {
+		this(datastore, table, null, windowManager);
 	}
 
-	public QuickAnalysisActionListener(Datastore datastore, Column column) {
-		this(datastore, null, new Column[] { column });
+	public QuickAnalysisActionListener(Datastore datastore, Column column, WindowManager windowManager) {
+		this(datastore, null, new Column[] { column }, windowManager);
 	}
 
 	public Column[] getColumns() {
@@ -136,7 +139,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 			}
 
 			RunAnalysisActionListener actionListener = new RunAnalysisActionListener(ajb, configuration, "Quick analysis: "
-					+ getTable().getName());
+					+ getTable().getName(), _windowManager);
 			actionListener.actionPerformed(event);
 		} catch (Exception e) {
 			WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);

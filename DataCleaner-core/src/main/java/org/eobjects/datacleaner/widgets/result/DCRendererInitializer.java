@@ -19,24 +19,37 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.ResultProducer;
-import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.util.WindowManager;
-import org.eobjects.datacleaner.windows.DetailsResultWindow;
+import java.lang.reflect.Field;
 
-public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
+import javax.inject.Inject;
+
+import org.eobjects.analyzer.beans.api.Renderer;
+import org.eobjects.analyzer.result.renderer.RendererInitializer;
+import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.datacleaner.util.WindowManager;
+
+public class DCRendererInitializer implements RendererInitializer {
 
 	private final WindowManager _windowManager;
 
-	public DrillToDetailsCallbackImpl(WindowManager windowManager) {
+	public DCRendererInitializer(WindowManager windowManager) {
 		_windowManager = windowManager;
 	}
 
 	@Override
-	public void drillToDetails(String title, ResultProducer resultProducer) {
-		final AnalyzerResult result = resultProducer.getResult();
-		final DetailsResultWindow window = new DetailsResultWindow(title, CollectionUtils.list(result), _windowManager);
-		window.setVisible(true);
+	public void initialize(Renderer<?, ?> renderer) {
+		Field[] injectFields = ReflectionUtils.getFields(renderer.getClass(), Inject.class);
+		for (Field field : injectFields) {
+			if (field.getType() == WindowManager.class) {
+				try {
+					field.setAccessible(true);
+					field.set(renderer, _windowManager);
+				} catch (Exception e) {
+					throw new IllegalStateException("Could not assign " + WindowManager.class.getSimpleName() + " to "
+							+ field, e);
+				}
+			}
+		}
 	}
+
 }

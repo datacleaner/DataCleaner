@@ -46,6 +46,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.user.DCConfiguration;
@@ -349,8 +350,10 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 					try {
 						constructor = dialogClass.getConstructor(new Class[0]);
 					} catch (NoSuchMethodException e) {
-						constructor = dialogClass.getConstructor(new Class[] { MutableDatastoreCatalog.class });
-						constructorArgs = new Object[] { DCConfiguration.get().getDatastoreCatalog() };
+						constructor = dialogClass.getConstructor(new Class[] { MutableDatastoreCatalog.class,
+								WindowManager.class });
+						WindowManager windowManager = _analysisJobBuilderWindow.getWindowManager();
+						constructorArgs = new Object[] { DCConfiguration.get().getDatastoreCatalog(), windowManager };
 					}
 					AbstractDialog dialog = constructor.newInstance(constructorArgs);
 					dialog.setVisible(true);

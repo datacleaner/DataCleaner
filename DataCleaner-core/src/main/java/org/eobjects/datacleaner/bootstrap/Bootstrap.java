@@ -21,6 +21,11 @@ package org.eobjects.datacleaner.bootstrap;
 
 import java.awt.SplashScreen;
 import java.io.PrintWriter;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
@@ -74,47 +79,77 @@ public class Bootstrap {
 				_options.getExitActionListener().exit(1);
 				return;
 			}
-		} else {
+		}
+
+		// loads static configuration in a separate thread
+		final Future<AnalyzerBeansConfiguration> configurationFuture = loadConfiguration();
+
+		if (!cliMode) {
 			// set up error handling that displays an error dialog
-			final DCUncaughtExceptionHandler uncaughtExceptionHandler = new DCUncaughtExceptionHandler();
-			Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+			final DCUncaughtExceptionHandler exceptionHandler = new DCUncaughtExceptionHandler();
+			Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
 
 			// init the look and feel
 			LookAndFeelManager.getInstance().init();
 		}
 
-		// loads static configuration
-		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-
 		// log usage
 		UsageLogger.getInstance().logApplicationStartup();
 
-		if (cliMode) {
+		try {
+			if (cliMode) {
 
-			final PrintWriter out = new PrintWriter(System.out);
-			// run in CLI mode
+				final PrintWriter out = new PrintWriter(System.out);
+				// run in CLI mode
 
-			CliArguments arguments = _options.getCommandLineArguments();
+				CliArguments arguments = _options.getCommandLineArguments();
 
-			final CliRunner runner = new CliRunner(arguments, out);
-			runner.run(configuration);
-			out.flush();
+				final CliRunner runner = new CliRunner(arguments, out);
+				runner.run(configurationFuture.get());
+				out.flush();
 
-			_options.getExitActionListener().exit(0);
-		} else {
-			// run in GUI mode
+				_options.getExitActionListener().exit(0);
+			} else {
+				// run in GUI mode
 
-			// loads dynamic user preferences
-			final UserPreferences userPreferences = UserPreferences.getInstance();
+				// loads dynamic user preferences
+				final UserPreferences userPreferences = UserPreferences.getInstance();
 
-			final WindowManager windowManager = new DCWindowContext(_options.getExitActionListener());
+				final WindowManager windowManager = new DCWindowContext(_options.getExitActionListener());
 
-			new AnalysisJobBuilderWindow(configuration, windowManager).setVisible(true);
+				final AnalyzerBeansConfiguration configuration = configurationFuture.get();
 
-			// load regex swap regexes if logged in
-			final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
-					(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
-			userPreferences.addLoginChangeListener(regexSwapHandler);
+				new AnalysisJobBuilderWindow(configuration, windowManager).setVisible(true);
+
+				// load regex swap regexes if logged in
+				final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
+						(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
+				userPreferences.addLoginChangeListener(regexSwapHandler);
+			}
+		} catch (InterruptedException e) {
+			logger.error("Configuration loading was interrupted!", e);
+			_options.getExitActionListener().exit(2);
+		} catch (ExecutionException e) {
+			logger.error("Configuration loading threw unexpected exception!", e.getCause());
+			_options.getExitActionListener().exit(3);
 		}
+	}
+
+	private Future<AnalyzerBeansConfiguration> loadConfiguration() {
+		final ExecutorService executor = Executors.newSingleThreadExecutor();
+		logger.info("Loading configuration reader thread");
+		Future<AnalyzerBeansConfiguration> future = executor.submit(new Callable<AnalyzerBeansConfiguration>() {
+			@Override
+			public AnalyzerBeansConfiguration call() throws Exception {
+				try {
+					AnalyzerBeansConfiguration configuration = DCConfiguration.get();
+					return configuration;
+				} finally {
+					logger.info("Shutting down configuration reader thread");
+					executor.shutdown();
+				}
+			}
+		});
+		return future;
 	}
 }

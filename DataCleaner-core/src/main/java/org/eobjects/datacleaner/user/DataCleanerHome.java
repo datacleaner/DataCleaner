@@ -52,7 +52,7 @@ public final class DataCleanerHome {
 
 	static {
 		File candidate = null;
-
+		
 		String env = System.getenv("DATACLEANER_HOME");
 		if (!StringUtils.isNullOrEmpty(env)) {
 			candidate = new File(env);

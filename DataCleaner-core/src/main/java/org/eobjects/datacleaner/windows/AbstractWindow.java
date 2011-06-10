@@ -28,8 +28,8 @@ import java.awt.event.WindowListener;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 
 public abstract class AbstractWindow extends JFrame implements DCWindow, WindowListener {
 

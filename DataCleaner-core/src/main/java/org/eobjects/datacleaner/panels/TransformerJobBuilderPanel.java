@@ -33,9 +33,9 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter {

@@ -27,12 +27,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import org.eobjects.datacleaner.actions.LoginChangeListener;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.LoginPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 
 /**

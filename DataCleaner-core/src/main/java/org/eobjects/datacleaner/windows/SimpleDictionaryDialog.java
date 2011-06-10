@@ -33,12 +33,12 @@ import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextArea;
 import org.jdesktop.swingx.JXTextField;

@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererInitializer;
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 
 public class DCRendererInitializer implements RendererInitializer {
 

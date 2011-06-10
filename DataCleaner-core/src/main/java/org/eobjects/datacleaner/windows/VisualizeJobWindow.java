@@ -34,10 +34,10 @@ import javax.swing.JScrollPane;
 import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 
 public class VisualizeJobWindow extends AbstractWindow {

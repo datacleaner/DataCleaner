@@ -58,7 +58,8 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
-import org.eobjects.datacleaner.DCExitActionListener;
+import org.eobjects.datacleaner.bootstrap.DCWindowContext;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
@@ -67,7 +68,6 @@ import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
@@ -498,7 +498,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.getConfigurableBean().setRecordUniqueValues(true);
 
-		WindowManager windowManager = new WindowManager(new DCExitActionListener());
+		WindowManager windowManager = new DCWindowContext();
 		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowManager);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

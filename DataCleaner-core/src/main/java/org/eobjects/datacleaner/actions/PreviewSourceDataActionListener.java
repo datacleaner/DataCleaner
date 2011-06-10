@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.query.Query;

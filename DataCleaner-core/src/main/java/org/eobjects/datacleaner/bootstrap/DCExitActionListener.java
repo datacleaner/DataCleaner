@@ -17,15 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner;
+package org.eobjects.datacleaner.bootstrap;
 
-import org.eobjects.analyzer.cli.CliArguments;
+class DCExitActionListener implements ExitActionListener {
 
-public interface BootstrapOptions {
-
-	public boolean isCommandLineMode();
-
-	public CliArguments getCommandLineArguments();
-
-	public ExitActionListener getExitActionListener();
+	@Override
+	public void exit(int statusCode) {
+		System.exit(statusCode);
+	}
 }

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.util;
+package org.eobjects.datacleaner.bootstrap;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,7 +28,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.ExitActionListener;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractDialog;
@@ -44,28 +43,36 @@ import org.eobjects.datacleaner.windows.DCWindow;
  * 
  * @author Kasper Sørensen
  */
-public final class WindowManager {
+public final class DCWindowContext implements WindowManager {
 
 	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();
 	private final ExitActionListener _exitActionListener;
 
-	public WindowManager(ExitActionListener exitActionListener) {
+	public DCWindowContext() {
+		this(new DCExitActionListener());
+	}
+
+	public DCWindowContext(ExitActionListener exitActionListener) {
 		_exitActionListener = exitActionListener;
 	}
 
+	@Override
 	public List<DCWindow> getWindows() {
 		return Collections.unmodifiableList(_windows);
 	}
 
-	public void addListener(ActionListener listener) {
+	@Override
+	public void addWindowListener(ActionListener listener) {
 		_listeners.add(listener);
 	}
 
-	public void removeListener(ActionListener listener) {
+	@Override
+	public void removeWindowListener(ActionListener listener) {
 		_listeners.remove(listener);
 	}
 
+	@Override
 	public void onDispose(DCWindow window) {
 		_windows.remove(window);
 		notifyListeners();
@@ -82,12 +89,14 @@ public final class WindowManager {
 		}
 	}
 
+	@Override
 	public void onShow(DCWindow window) {
 		_windows.add(window);
 
 		notifyListeners();
 	}
 
+	@Override
 	public int getWindowCount(Class<? extends DCWindow> windowClass) {
 		int count = 0;
 		for (DCWindow window : _windows) {
@@ -98,6 +107,7 @@ public final class WindowManager {
 		return count;
 	}
 
+	@Override
 	public boolean showExitDialog() {
 		int confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit DataCleaner?", "Exit",
 				JOptionPane.OK_CANCEL_OPTION);
@@ -108,6 +118,7 @@ public final class WindowManager {
 		return false;
 	}
 
+	@Override
 	public void exit() {
 		UserPreferences.getInstance().save();
 		UsageLogger.getInstance().logApplicationShutdown();

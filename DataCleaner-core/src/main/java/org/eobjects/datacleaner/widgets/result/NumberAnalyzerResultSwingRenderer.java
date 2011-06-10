@@ -36,13 +36,13 @@ import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabNavigator;
 import org.eobjects.analyzer.result.NumberAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
-import org.eobjects.datacleaner.DCExitActionListener;
+import org.eobjects.datacleaner.bootstrap.DCWindowContext;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.ResultWindow;
@@ -154,7 +154,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		ajb.addSourceColumns(table.getNumberColumns());
 		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
-		WindowManager windowManager = new WindowManager(new DCExitActionListener());
+		WindowManager windowManager = new DCWindowContext();
 		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowManager);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

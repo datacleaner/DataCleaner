@@ -25,8 +25,8 @@ import java.awt.event.ActionListener;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
 public class RunAnalysisActionListener implements ActionListener {

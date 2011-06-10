@@ -29,8 +29,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.eobjects.datacleaner.DCExitActionListener;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.bootstrap.DCWindowContext;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +50,7 @@ class ExtensionSwapInstallationServiceImpl implements ExtensionSwapInstallationS
 		JFrame frame = new JFrame();
 		frame.setVisible(true);
 		JOptionPane.setRootFrame(frame);
-		ExtensionSwapInstallationServiceImpl service = new ExtensionSwapInstallationServiceImpl(new WindowManager(
-				new DCExitActionListener()));
+		ExtensionSwapInstallationServiceImpl service = new ExtensionSwapInstallationServiceImpl(new DCWindowContext());
 		service.startListener();
 	}
 

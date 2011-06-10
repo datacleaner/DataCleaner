@@ -28,11 +28,11 @@ import java.awt.event.WindowListener;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 
 public abstract class AbstractDialog extends JDialog implements DCWindow, WindowListener {
 

@@ -24,10 +24,10 @@ import java.io.File;
 import org.apache.http.client.HttpClient;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.w3c.dom.Element;
 
 public final class ExtensionSwapClient {

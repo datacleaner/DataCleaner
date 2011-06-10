@@ -17,27 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.windows;
+package org.eobjects.datacleaner.bootstrap;
 
-import java.awt.Image;
+import java.awt.event.ActionListener;
+import java.util.List;
 
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.windows.DCWindow;
 
 /**
- * Defines a common interface for windows in DataCleaner. Windows are registered
- * in the WindowManager class.
- * 
- * @see WindowManager
+ * Interface for component that manages the context of the UI in DataCleaner.
  * 
  * @author Kasper Sørensen
  */
-public interface DCWindow {
+public interface WindowManager {
+
+	public List<DCWindow> getWindows();
+
+	public void onDispose(DCWindow window);
+
+	public void onShow(DCWindow window);
+
+	public int getWindowCount(Class<? extends DCWindow> windowClass);
 	
-	public WindowManager getWindowManager();
+	public void addWindowListener(ActionListener listener);
+	
+	public void removeWindowListener(ActionListener listener);
 
-	public String getWindowTitle();
+	public boolean showExitDialog();
 
-	public Image getWindowIcon();
-
-	public void toFront();
+	public void exit();
 }

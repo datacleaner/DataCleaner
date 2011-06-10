@@ -32,9 +32,9 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.widgets.DCProgressBar;
 import org.jdesktop.swingx.VerticalLayout;
 

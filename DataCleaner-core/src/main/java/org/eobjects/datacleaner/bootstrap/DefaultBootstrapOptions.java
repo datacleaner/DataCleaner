@@ -17,9 +17,33 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner;
+package org.eobjects.datacleaner.bootstrap;
 
-public interface ExitActionListener {
+import org.eobjects.analyzer.cli.CliArguments;
 
-	public void exit(int statusCode);
+public class DefaultBootstrapOptions implements BootstrapOptions {
+
+	private final String[] _args;
+	private final CliArguments _arguments;
+
+	public DefaultBootstrapOptions(String[] args) {
+		_args = args;
+		_arguments = CliArguments.parse(_args);
+	}
+
+	@Override
+	public boolean isCommandLineMode() {
+		return _arguments.isSet();
+	}
+
+	@Override
+	public CliArguments getCommandLineArguments() {
+		return _arguments;
+	}
+
+	@Override
+	public ExitActionListener getExitActionListener() {
+		return new DCExitActionListener();
+	}
+
 }

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner;
+package org.eobjects.datacleaner.bootstrap;
 
 import java.awt.SplashScreen;
 import java.io.PrintWriter;
@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -32,7 +33,6 @@ import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +107,7 @@ public class Bootstrap {
 			// loads dynamic user preferences
 			final UserPreferences userPreferences = UserPreferences.getInstance();
 
-			final WindowManager windowManager = new WindowManager(_options.getExitActionListener());
+			final WindowManager windowManager = new DCWindowContext(_options.getExitActionListener());
 
 			new AnalysisJobBuilderWindow(configuration, windowManager).setVisible(true);
 

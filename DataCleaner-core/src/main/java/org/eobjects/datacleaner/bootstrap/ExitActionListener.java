@@ -17,33 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner;
+package org.eobjects.datacleaner.bootstrap;
 
-import org.eobjects.analyzer.cli.CliArguments;
+/**
+ * Represents the action listener invoked when the user quits DataCleaner.
+ * 
+ * Typically the exit call will stop the process completely, but for embedded
+ * use it might instead simply change the state of the surrounding application
+ * or similar.
+ * 
+ * @author Kasper Sørensen
+ */
+public interface ExitActionListener {
 
-public class DefaultBootstrapOptions implements BootstrapOptions {
-
-	private final String[] _args;
-	private final CliArguments _arguments;
-
-	public DefaultBootstrapOptions(String[] args) {
-		_args = args;
-		_arguments = CliArguments.parse(_args);
-	}
-
-	@Override
-	public boolean isCommandLineMode() {
-		return _arguments.isSet();
-	}
-
-	@Override
-	public CliArguments getCommandLineArguments() {
-		return _arguments;
-	}
-
-	@Override
-	public ExitActionListener getExitActionListener() {
-		return new DCExitActionListener();
-	}
-
+	public void exit(int statusCode);
 }

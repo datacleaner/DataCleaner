@@ -31,8 +31,8 @@ import javax.swing.JMenuItem;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.util.WindowManager;
 import org.eobjects.datacleaner.windows.AboutDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.DCWindow;
@@ -50,6 +50,7 @@ public class DCWindowMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final WindowManager _windowManager;
+	private final ActionListener _windowListener;
 
 	public DCWindowMenuBar(final AnalysisJobBuilderWindow window, final WindowManager windowManager,
 			AnalyzerBeansConfiguration configuration) {
@@ -148,7 +149,7 @@ public class DCWindowMenuBar extends JMenuBar {
 
 		final int minimumSize = windowMenu.getMenuComponentCount();
 
-		_windowManager.addListener(new ActionListener() {
+		_windowListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				final int currentSize = windowMenu.getMenuComponentCount();
@@ -170,7 +171,7 @@ public class DCWindowMenuBar extends JMenuBar {
 					windowMenu.add(switchToWindowItem);
 				}
 			}
-		});
+		};
 
 		final JMenu helpMenu = WidgetFactory.createMenu("Help", 'H');
 		helpMenu.add(askAtTheForumsMenuItem);
@@ -181,5 +182,17 @@ public class DCWindowMenuBar extends JMenuBar {
 		add(referenceDataMenu);
 		add(windowMenu);
 		add(helpMenu);
+	}
+
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		_windowManager.addWindowListener(_windowListener);
+	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_windowManager.removeWindowListener(_windowListener);
 	}
 }

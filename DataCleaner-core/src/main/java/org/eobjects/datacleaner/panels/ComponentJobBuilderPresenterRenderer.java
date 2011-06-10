@@ -28,7 +28,7 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 
 /**
  * Renders/creates the default panels that present component job builders.

@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.widgets.result;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ResultProducer;
 import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.util.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
 
 public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {

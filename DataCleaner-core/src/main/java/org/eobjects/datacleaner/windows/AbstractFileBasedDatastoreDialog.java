@@ -185,8 +185,13 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		// temporary variable to make it easier to refactor the layout
 		int row = 0;
 		for (Entry<String, JComponent> entry : formElements) {
-			WidgetUtils.addToGridBag(DCLabel.bright(entry.getKey() + ":"), formPanel, 0, row);
-			WidgetUtils.addToGridBag(entry.getValue(), formPanel, 1, row);
+			String key = entry.getKey();
+			if (StringUtils.isNullOrEmpty(key)) {
+				WidgetUtils.addToGridBag(entry.getValue(), formPanel, 0, row, 2, 1);
+			} else {
+				WidgetUtils.addToGridBag(DCLabel.bright(key + ":"), formPanel, 0, row);
+				WidgetUtils.addToGridBag(entry.getValue(), formPanel, 1, row);
+			}
 			row++;
 		}
 

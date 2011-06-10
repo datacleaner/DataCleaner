@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
@@ -121,6 +122,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private final JComboBox _separatorCharField;
 	private final JComboBox _quoteCharField;
 	private final JComboBox _encodingComboBox;
+	private final JCheckBox _failOnInconsistenciesCheckBox;
 	private final DCLabel _statusLabel;
 	private final DCPanel _outerPanel = new DCPanel();
 	private final JButton _addDatastoreButton;
@@ -187,10 +189,15 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			}
 		});
 
+		_failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
+		_failOnInconsistenciesCheckBox.setOpaque(false);
+		_failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+
 		_addDatastoreButton = WidgetFactory.createButton("Save datastore", IconUtils.CSV_IMAGEPATH);
 		_addDatastoreButton.setEnabled(false);
 
 		if (_originalDatastore != null) {
+			_failOnInconsistenciesCheckBox.setSelected(_originalDatastore.isFailOnInconsistencies());
 			_datastoreNameField.setText(_originalDatastore.getName());
 			_datastoreNameField.setEnabled(false);
 			_filenameField.setFilename(_originalDatastore.getFilename());
@@ -537,6 +544,9 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		row++;
 		WidgetUtils.addToGridBag(DCLabel.bright("Quote char:"), formPanel, 0, row);
 		WidgetUtils.addToGridBag(_quoteCharField, formPanel, 1, row);
+		
+		row++;
+		WidgetUtils.addToGridBag(_failOnInconsistenciesCheckBox, formPanel, 0, row, 2, 1);
 
 		row++;
 		WidgetUtils.addToGridBag(_previewTablePanel, formPanel, 0, row, 2, 1);
@@ -549,7 +559,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 					_mutableDatastoreCatalog.removeDatastore(_originalDatastore);
 				}
 				CsvDatastore datastore = new CsvDatastore(_datastoreNameField.getText(), _filenameField.getFilename(),
-						getQuoteChar(), getSeparatorChar(), getEncoding());
+						getQuoteChar(), getSeparatorChar(), getEncoding(), _failOnInconsistenciesCheckBox.isSelected());
 				_mutableDatastoreCatalog.addDatastore(datastore);
 				dispose();
 			}

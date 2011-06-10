@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.windows;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
@@ -35,6 +36,7 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
@@ -44,6 +46,7 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 
 	private final CharSetEncodingComboBox _encodingComboBox;
 	private final JTextField _valueWidthTextField;
+	private final JCheckBox _failOnInconsistenciesCheckBox;
 
 	public FixedWidthDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
 		this(null, mutableDatastoreCatalog, windowManager);
@@ -57,9 +60,14 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 		_valueWidthTextField = WidgetFactory.createTextField("No. characters");
 		_valueWidthTextField.setDocument(new NumberDocument());
 
+		_failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent line length", true);
+		_failOnInconsistenciesCheckBox.setOpaque(false);
+		_failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+
 		if (originalDatastore != null) {
 			_encodingComboBox.setSelectedItem(originalDatastore.getEncoding());
 			_valueWidthTextField.setText("" + originalDatastore.getFixedValueWidth());
+			_failOnInconsistenciesCheckBox.setSelected(originalDatastore.isFailOnInconsistencies());
 		} else {
 			_valueWidthTextField.setText("10");
 		}
@@ -70,6 +78,7 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 		List<Entry<String, JComponent>> result = super.getFormElements();
 		result.add(new ImmutableEntry<String, JComponent>("Encoding", _encodingComboBox));
 		result.add(new ImmutableEntry<String, JComponent>("Value width", _valueWidthTextField));
+		result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
 		return result;
 	}
 
@@ -106,7 +115,8 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 		}
 		try {
 			final int valueWidth = Integer.parseInt(valueWidthText);
-			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem().toString(), valueWidth);
+			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem().toString(), valueWidth,
+					_failOnInconsistenciesCheckBox.isSelected());
 		} catch (NumberFormatException e) {
 			throw new IllegalStateException("Value width must be a valid number.");
 		}

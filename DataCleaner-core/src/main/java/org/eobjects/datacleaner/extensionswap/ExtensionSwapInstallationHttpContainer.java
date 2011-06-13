@@ -55,13 +55,15 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 
 	@Override
 	public void handle(Request req, Response resp) {
-		PrintStream printStream = null;
+		PrintStream out = null;
 		try {
-			printStream = resp.getPrintStream();
-			String extensionId = req.getParameter("extensionId");
+			out = resp.getPrintStream();
+			final String extensionId = req.getParameter("extensionId");
 			if (extensionId == null) {
 				throw new IllegalArgumentException("extensionId cannot be null");
 			}
+			
+			final String callback = req.getParameter("callback");
 
 			logger.info("Initiating transfer of extension: {}", extensionId);
 
@@ -79,13 +81,17 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 					}
 				}
 			});
+			
+			if (callback != null) {
+				out.print(callback + "({\"success\":true})");
+			}
 
 			resp.setCode(200);
 		} catch (IOException e) {
 			logger.error("IOException occurred while processing HTTP request", e);
 			resp.setCode(400);
 		} finally {
-			FileHelper.safeClose(printStream);
+			FileHelper.safeClose(out);
 		}
 	}
 
@@ -102,7 +108,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 		ExtensionSwapClient client = new ExtensionSwapClient("localhost:8000", new DCWindowContext());
 		ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(client);
 		Connection connection = new SocketConnection(container);
-		SocketAddress address = new InetSocketAddress(8080);
+		SocketAddress address = new InetSocketAddress(31389);
 
 		connection.connect(address);
 		System.out.println("Ready!");

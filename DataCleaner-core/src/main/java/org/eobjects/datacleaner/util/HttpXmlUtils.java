@@ -109,11 +109,19 @@ public final class HttpXmlUtils {
 		try {
 			HttpGet method = new HttpGet(url);
 			HttpResponse response = httpClient.execute(method);
+			int statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode != 200) {
+				logger.error("Response status code was: {} (url={})", statusCode, url);
+				throw new IllegalStateException("Response status code was: " + statusCode);
+			}
 			InputStream inputStream = response.getEntity().getContent();
 			Document document = createDocumentBuilder().parse(inputStream);
 			return (Element) document.getFirstChild();
 		} catch (Exception e) {
-			throw new IllegalStateException(e);
+			if (e instanceof RuntimeException) {
+				throw (RuntimeException) e;
+			}
+			throw new IllegalStateException("Could not get root XML node of url=" + url, e);
 		}
 	}
 

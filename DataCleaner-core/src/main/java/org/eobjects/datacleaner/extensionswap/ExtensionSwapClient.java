@@ -32,18 +32,24 @@ import org.w3c.dom.Element;
 
 public final class ExtensionSwapClient {
 
-	private static final String EXTENSION_BASE_URL = "http://datacleaner.eobjects.org/ws/extension/";
+	private static final String DEFAULT_WEBSITE_HOSTNAME = "datacleaner.eobjects.org";
 
 	private final HttpClient _httpClient;
 	private final WindowManager _windowManager;
+	private final String _baseUrl;
 
 	public ExtensionSwapClient(WindowManager windowManager) {
-		this(HttpXmlUtils.getHttpClient(), windowManager);
+		this(DEFAULT_WEBSITE_HOSTNAME, windowManager);
 	}
 
-	public ExtensionSwapClient(HttpClient httpClient, WindowManager windowManager) {
+	public ExtensionSwapClient(String websiteHostname, WindowManager windowManager) {
+		this(HttpXmlUtils.getHttpClient(), websiteHostname, windowManager);
+	}
+
+	public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowManager windowManager) {
 		_httpClient = httpClient;
 		_windowManager = windowManager;
+		_baseUrl = "http://" + websiteHostname + "/ws/extension/";
 	}
 
 	public ExtensionPackage registerExtensionPackage(ExtensionSwapPackage extensionSwapPackage, File jarFile) {
@@ -55,7 +61,7 @@ public final class ExtensionSwapClient {
 	}
 
 	public ExtensionSwapPackage getExtensionSwapPackage(String id) {
-		final Element rootNode = HttpXmlUtils.getRootNode(_httpClient, EXTENSION_BASE_URL + id);
+		final Element rootNode = HttpXmlUtils.getRootNode(_httpClient, _baseUrl + id);
 		final String name = HttpXmlUtils.getChildNodeText(rootNode, "name");
 		return new ExtensionSwapPackage(id, name);
 	}
@@ -71,7 +77,7 @@ public final class ExtensionSwapClient {
 	}
 
 	private void downloadJarFile(ExtensionSwapPackage extensionSwapPackage, FileDownloadListener listener) {
-		String url = EXTENSION_BASE_URL + extensionSwapPackage.getId() + "/jarfile";
+		String url = _baseUrl + extensionSwapPackage.getId() + "/jarfile";
 		String filename = extensionSwapPackage.getId() + ".jar";
 		DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
 				new String[] { filename }, listener, _windowManager);

@@ -124,7 +124,7 @@ public class Bootstrap {
 				new AnalysisJobBuilderWindow(configuration, windowManager).setVisible(true);
 
 				// set up HTTP service for ExtensionSwap installation
-				ExtensionSwapClient extensionSwapClient = new ExtensionSwapClient(windowManager);
+				final ExtensionSwapClient extensionSwapClient = new ExtensionSwapClient(windowManager);
 				ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
 
 				// load regex swap regexes if logged in

@@ -24,11 +24,9 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
@@ -41,6 +39,12 @@ import org.simpleframework.transport.connect.SocketConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * HTTP container used for the ExtensionSwap to signal that the user wants to
+ * install an extension.
+ * 
+ * @author Kasper Sørensen
+ */
 public class ExtensionSwapInstallationHttpContainer implements Container {
 
 	private static final int PORT_NUMBER = 31389;
@@ -75,23 +79,33 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 			final ExtensionSwapPackage extensionSwapPackage = _client.getExtensionSwapPackage(extensionId);
 			logger.info("Fetched ExtensionSwap package: {}", extensionSwapPackage);
 
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					UsageLogger.getInstance().log("Extension install: " + extensionSwapPackage.getId());
-					int confirmation = JOptionPane.showConfirmDialog(null,
-							"Do you want to download and install the extension '" + extensionSwapPackage.getName() + "'");
-					if (confirmation == JOptionPane.YES_OPTION) {
-						_client.registerExtensionPackage(extensionSwapPackage);
-					}
+			if (_client.isInstalled(extensionSwapPackage)) {
+				// reject the extension because it is already installed.
+				if (callback != null && out != null) {
+					out.print(callback + "({\"success\":false,\"errorMessage\":\"This extension is already installed\"})");
 				}
-			});
+				resp.setCode(500);
+			} else {
+				// install the extension
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						UsageLogger.getInstance().log("Extension install: " + extensionSwapPackage.getId());
+						int confirmation = JOptionPane
+								.showConfirmDialog(null, "Do you want to download and install the extension '"
+										+ extensionSwapPackage.getName() + "'");
+						if (confirmation == JOptionPane.YES_OPTION) {
+							_client.registerExtensionPackage(extensionSwapPackage);
+						}
+					}
+				});
 
-			if (callback != null) {
-				out.print(callback + "({\"success\":true})");
+				if (callback != null) {
+					out.print(callback + "({\"success\":true})");
+				}
+				resp.setCode(200);
 			}
 
-			resp.setCode(200);
 		} catch (InvalidHttpResponseException e) {
 			if (callback != null && out != null) {
 				out.print(callback + "({\"success\":false,\"errorMessage\":\"Could not retrieve extension details\"})");
@@ -116,20 +130,5 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 			logger.warn("Could not host HTTP service for ExtensionSwap installation on port " + PORT_NUMBER
 					+ ". Automatic installations of extensions will not be available.", e);
 		}
-	}
-
-	/**
-	 * Example main method used for testing
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String[] args) throws Exception {
-		JFrame frame = new JFrame("ExtensionSwap dummy server");
-		frame.setVisible(true);
-
-		ExtensionSwapClient client = new ExtensionSwapClient("localhost:8000", new DCWindowContext());
-
-		initialize(client);
 	}
 }

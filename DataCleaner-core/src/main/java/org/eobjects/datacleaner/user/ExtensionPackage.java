@@ -23,8 +23,10 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -52,11 +54,12 @@ public final class ExtensionPackage implements Serializable {
 	private transient int _loadedAnalyzers;
 	private transient int _loadedTransformers;
 	private transient int _loadedFilters;
-	
+
 	private final File[] _files;
 	private final String _name;
 	private final String _scanPackage;
 	private final boolean _scanRecursive;
+	private Map<String, String> additionalProperties = new HashMap<String, String>();
 
 	public ExtensionPackage(String name, String scanPackage, boolean scanRecursive, File[] files) {
 		_name = name;
@@ -110,6 +113,13 @@ public final class ExtensionPackage implements Serializable {
 					new Object[] { getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters() });
 		}
 		return this;
+	}
+
+	public Map<String, String> getAdditionalProperties() {
+		if (additionalProperties == null) {
+			additionalProperties = new HashMap<String, String>();
+		}
+		return additionalProperties;
 	}
 
 	public boolean isLoaded() {

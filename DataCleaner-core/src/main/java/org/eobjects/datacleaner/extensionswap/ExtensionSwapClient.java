@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.extensionswap;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.http.client.HttpClient;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
@@ -57,6 +58,7 @@ public final class ExtensionSwapClient {
 		String packageName = ExtensionPackage.autoDetectPackageName(jarFile);
 		ExtensionPackage extensionPackage = new ExtensionPackage(extensionSwapPackage.getName(), packageName, true,
 				new File[] { jarFile });
+		extensionPackage.getAdditionalProperties().put("extensionswap.id", extensionSwapPackage.getId());
 		extensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
 		UserPreferences.getInstance().getExtensionPackages().add(extensionPackage);
 		return extensionPackage;
@@ -84,5 +86,16 @@ public final class ExtensionSwapClient {
 		DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
 				new String[] { filename }, listener, _windowManager);
 		actionListener.actionPerformed(null);
+	}
+
+	public boolean isInstalled(ExtensionSwapPackage extensionSwapPackage) {
+		List<ExtensionPackage> extensionPackages = UserPreferences.getInstance().getExtensionPackages();
+		for (ExtensionPackage extensionPackage : extensionPackages) {
+			String id = extensionPackage.getAdditionalProperties().get("extensionswap.id");
+			if (extensionSwapPackage.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

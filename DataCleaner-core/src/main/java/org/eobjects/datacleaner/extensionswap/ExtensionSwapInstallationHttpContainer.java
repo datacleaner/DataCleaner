@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 public class ExtensionSwapInstallationHttpContainer implements Container {
 
+	private static final int PORT_NUMBER = 31389;
+
 	private static final Logger logger = LoggerFactory.getLogger(ExtensionSwapInstallationHttpContainer.class);
 
 	private final ExtensionSwapClient _client;
@@ -62,7 +64,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 			if (extensionId == null) {
 				throw new IllegalArgumentException("extensionId cannot be null");
 			}
-			
+
 			final String callback = req.getParameter("callback");
 
 			logger.info("Initiating transfer of extension: {}", extensionId);
@@ -81,7 +83,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 					}
 				}
 			});
-			
+
 			if (callback != null) {
 				out.print(callback + "({\"success\":true})");
 			}
@@ -95,6 +97,19 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 		}
 	}
 
+	public static void initialize(ExtensionSwapClient client) {
+		try {
+			ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(client);
+			Connection connection = new SocketConnection(container);
+			SocketAddress address = new InetSocketAddress(PORT_NUMBER);
+			connection.connect(address);
+			logger.info("HTTP service for ExtensionSwap installation running on port {}", PORT_NUMBER);
+		} catch (IOException e) {
+			logger.warn("Could not host HTTP service for ExtensionSwap installation on port " + PORT_NUMBER
+					+ ". Automatic installations of extensions will not be available.", e);
+		}
+	}
+
 	/**
 	 * Example main method used for testing
 	 * 
@@ -104,13 +119,9 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 	public static void main(String[] args) throws Exception {
 		JFrame frame = new JFrame("ExtensionSwap dummy server");
 		frame.setVisible(true);
-		
-		ExtensionSwapClient client = new ExtensionSwapClient("localhost:8000", new DCWindowContext());
-		ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(client);
-		Connection connection = new SocketConnection(container);
-		SocketAddress address = new InetSocketAddress(31389);
 
-		connection.connect(address);
-		System.out.println("Ready!");
+		ExtensionSwapClient client = new ExtensionSwapClient("localhost:8000", new DCWindowContext());
+
+		initialize(client);
 	}
 }

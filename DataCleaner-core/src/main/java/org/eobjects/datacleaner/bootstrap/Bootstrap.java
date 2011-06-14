@@ -31,6 +31,8 @@ import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
+import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
 import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -120,6 +122,10 @@ public class Bootstrap {
 				final AnalyzerBeansConfiguration configuration = configurationFuture.get();
 
 				new AnalysisJobBuilderWindow(configuration, windowManager).setVisible(true);
+
+				// set up HTTP service for ExtensionSwap installation
+				ExtensionSwapClient extensionSwapClient = new ExtensionSwapClient(windowManager);
+				ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
 
 				// load regex swap regexes if logged in
 				final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(

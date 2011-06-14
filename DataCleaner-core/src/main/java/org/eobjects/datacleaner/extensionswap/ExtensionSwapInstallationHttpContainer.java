@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.metamodel.util.FileHelper;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
@@ -58,14 +59,15 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 	@Override
 	public void handle(Request req, Response resp) {
 		PrintStream out = null;
+		String callback = null;
 		try {
 			out = resp.getPrintStream();
+			callback = req.getParameter("callback");
+
 			final String extensionId = req.getParameter("extensionId");
 			if (extensionId == null) {
 				throw new IllegalArgumentException("extensionId cannot be null");
 			}
-
-			final String callback = req.getParameter("callback");
 
 			logger.info("Initiating transfer of extension: {}", extensionId);
 
@@ -89,6 +91,11 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 			}
 
 			resp.setCode(200);
+		} catch (InvalidHttpResponseException e) {
+			if (callback != null && out != null) {
+				out.print(callback + "({\"success\":false,\"errorMessage\":\"Could not retrieve extension details\"})");
+			}
+			resp.setCode(500);
 		} catch (IOException e) {
 			logger.error("IOException occurred while processing HTTP request", e);
 			resp.setCode(400);

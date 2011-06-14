@@ -104,7 +104,7 @@ public final class HttpXmlUtils {
 		return httpClient;
 	}
 
-	public static Element getRootNode(HttpClient httpClient, String url) {
+	public static Element getRootNode(HttpClient httpClient, String url) throws InvalidHttpResponseException {
 		logger.info("getRootNode({})", url);
 		try {
 			HttpGet method = new HttpGet(url);
@@ -112,7 +112,7 @@ public final class HttpXmlUtils {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != 200) {
 				logger.error("Response status code was: {} (url={})", statusCode, url);
-				throw new IllegalStateException("Response status code was: " + statusCode);
+				throw new InvalidHttpResponseException(response);
 			}
 			InputStream inputStream = response.getEntity().getContent();
 			Document document = createDocumentBuilder().parse(inputStream);

@@ -104,13 +104,12 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 	}
 
 	@Override
-	protected void process(List<Task> chunks) {
+	protected void process(final List<Task> chunks) {
 		for (Task task : chunks) {
 			try {
 				task.execute();
 			} catch (Exception e) {
-				// should never happen
-				throw new IllegalArgumentException(e);
+				WidgetUtils.showErrorMessage("Error processing file chunk: " + task, e);
 			}
 		}
 	}
@@ -150,7 +149,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 
 				if (!_cancelled) {
 					final HttpResponse response = httpClient.execute(method);
-					
+
 					if (response.getStatusLine().getStatusCode() != 200) {
 						throw new InvalidHttpResponseException(response);
 					}

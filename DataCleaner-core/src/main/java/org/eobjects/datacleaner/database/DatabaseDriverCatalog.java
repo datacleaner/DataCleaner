@@ -206,7 +206,6 @@ public class DatabaseDriverCatalog implements Serializable {
 		if (databaseDriver == null) {
 			return false;
 		}
-		getState(databaseDriver);
-		return false;
+		return getState(databaseDriver) == DatabaseDriverState.INSTALLED_WORKING;
 	}
 }

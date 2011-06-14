@@ -61,7 +61,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 	private final JCheckBox _checkBox;
 	private final DCLabel _suffixLabel;
 	private final DCLabel _prefixLabel;
-	private final FilterJobBuilder<MaxRowsFilter, ValidationCategory> _maxRowsFilterJobBuilder;
+	private FilterJobBuilder<MaxRowsFilter, ValidationCategory> _maxRowsFilterJobBuilder;
 
 	/**
 	 * Checks if the given filter is in fact the filter specified by this
@@ -99,11 +99,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 		_suffixLabel = DCLabel.dark(" rows.");
 		_suffixLabel.setEnabled(false);
 
-		if (filterJobBuilder == null) {
-			_maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, ValidationCategory>(_analysisJobBuilder,
-					DCConfiguration.get().getDescriptorProvider().getFilterBeanDescriptorForClass(MaxRowsFilter.class));
-			_maxRowsFilterJobBuilder.setName(FILTER_NAME);
-		} else {
+		if (filterJobBuilder != null) {
 			@SuppressWarnings("unchecked")
 			FilterJobBuilder<MaxRowsFilter, ValidationCategory> maxRowFilterJobBuilder = (FilterJobBuilder<MaxRowsFilter, ValidationCategory>) filterJobBuilder;
 			_maxRowsFilterJobBuilder = maxRowFilterJobBuilder;
@@ -115,11 +111,13 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 			public void actionPerformed(ActionEvent e) {
 				final boolean selected = _checkBox.isSelected();
 
+				FilterJobBuilder<MaxRowsFilter, ValidationCategory> maxRowsFilterJobBuilder = getJobBuilder();
+
 				if (selected) {
-					_analysisJobBuilder.addFilter(_maxRowsFilterJobBuilder);
-					_analysisJobBuilder.setDefaultRequirement(_maxRowsFilterJobBuilder, ValidationCategory.VALID);
+					_analysisJobBuilder.addFilter(maxRowsFilterJobBuilder);
+					_analysisJobBuilder.setDefaultRequirement(maxRowsFilterJobBuilder, ValidationCategory.VALID);
 				} else {
-					_analysisJobBuilder.removeFilter(_maxRowsFilterJobBuilder);
+					_analysisJobBuilder.removeFilter(maxRowsFilterJobBuilder);
 				}
 				updateLabels();
 			}
@@ -128,7 +126,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {
-				final FilterJobBuilder<MaxRowsFilter, ValidationCategory> fjb = _maxRowsFilterJobBuilder;
+				final FilterJobBuilder<MaxRowsFilter, ValidationCategory> fjb = getJobBuilder();
 				if (fjb != null) {
 					try {
 						int maxRows = Integer.parseInt(_textField.getText());
@@ -154,7 +152,14 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 	}
 
 	@Override
-	public FilterJobBuilder<?, ?> getJobBuilder() {
+	public FilterJobBuilder<MaxRowsFilter, ValidationCategory> getJobBuilder() {
+		if (_maxRowsFilterJobBuilder == null) {
+			// Lazy initializing getter (to postpone the call to
+			// DCConfiguration.
+			_maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, ValidationCategory>(_analysisJobBuilder,
+					DCConfiguration.get().getDescriptorProvider().getFilterBeanDescriptorForClass(MaxRowsFilter.class));
+			_maxRowsFilterJobBuilder.setName(FILTER_NAME);
+		}
 		return _maxRowsFilterJobBuilder;
 	}
 

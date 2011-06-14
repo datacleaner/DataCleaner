@@ -36,6 +36,11 @@ public class InvalidHttpResponseException extends RuntimeException {
 		_response = response;
 	}
 
+	@Override
+	public String getMessage() {
+		return "Invalid HTTP response status code: " + getStatusCode();
+	}
+
 	public HttpResponse getResponse() {
 		return _response;
 	}

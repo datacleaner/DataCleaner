@@ -30,6 +30,7 @@ import java.util.concurrent.Future;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
@@ -50,9 +51,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-public class Bootstrap {
+public final class Bootstrap {
 
-	private static final Logger logger = LoggerFactory.getLogger(Main.class);
+	private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 
 	private final BootstrapOptions _options;
 
@@ -124,8 +125,7 @@ public class Bootstrap {
 				new AnalysisJobBuilderWindow(configuration, windowManager).setVisible(true);
 
 				// set up HTTP service for ExtensionSwap installation
-				final ExtensionSwapClient extensionSwapClient = new ExtensionSwapClient(windowManager);
-				ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
+				loadExtensionSwapService(userPreferences, windowManager);
 
 				// load regex swap regexes if logged in
 				final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
@@ -139,6 +139,23 @@ public class Bootstrap {
 			logger.error("Configuration loading threw unexpected exception!", e.getCause());
 			_options.getExitActionListener().exit(3);
 		}
+	}
+
+	private void loadExtensionSwapService(UserPreferences userPreferences, WindowManager windowManager) {
+		String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
+		if (StringUtils.isNullOrEmpty(websiteHostname)) {
+			websiteHostname = System.getProperty("extensionswap.hostname");
+		}
+
+		final ExtensionSwapClient extensionSwapClient;
+		if (StringUtils.isNullOrEmpty(websiteHostname)) {
+			logger.info("Using default ExtensionSwap website hostname");
+			extensionSwapClient = new ExtensionSwapClient(windowManager);
+		} else {
+			logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
+			extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowManager);
+		}
+		ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
 	}
 
 	private Future<AnalyzerBeansConfiguration> loadConfiguration() {

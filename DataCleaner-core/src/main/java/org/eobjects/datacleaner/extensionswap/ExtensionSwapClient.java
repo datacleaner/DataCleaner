@@ -25,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
 import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
@@ -32,7 +33,7 @@ import org.w3c.dom.Element;
 
 public final class ExtensionSwapClient {
 
-	private static final String DEFAULT_WEBSITE_HOSTNAME = "datacleaner.eobjects.org";
+	public static final String DEFAULT_WEBSITE_HOSTNAME = "datacleaner.eobjects.org";
 
 	private final HttpClient _httpClient;
 	private final WindowManager _windowManager;
@@ -56,6 +57,7 @@ public final class ExtensionSwapClient {
 		String packageName = ExtensionPackage.autoDetectPackageName(jarFile);
 		ExtensionPackage extensionPackage = new ExtensionPackage(extensionSwapPackage.getName(), packageName, true,
 				new File[] { jarFile });
+		extensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
 		UserPreferences.getInstance().getExtensionPackages().add(extensionPackage);
 		return extensionPackage;
 	}

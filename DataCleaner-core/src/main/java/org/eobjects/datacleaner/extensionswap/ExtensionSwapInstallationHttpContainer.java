@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.metamodel.util.FileHelper;
 import org.simpleframework.http.Request;
@@ -77,9 +78,9 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					UsageLogger.getInstance().log("Extension install: " + extensionSwapPackage.getId());
 					int confirmation = JOptionPane.showConfirmDialog(null,
 							"Do you want to download and install the extension '" + extensionSwapPackage.getName() + "'");
-
 					if (confirmation == JOptionPane.YES_OPTION) {
 						_client.registerExtensionPackage(extensionSwapPackage);
 					}

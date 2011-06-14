@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -38,6 +39,8 @@ import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.util.InvalidHttpResponseException;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.DownloadProgressWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +124,12 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 	protected void done() {
 		super.done();
 		if (!_cancelled) {
-			_listener.onFilesDownloaded(_files);
+			try {
+				File[] files = get();
+				_listener.onFilesDownloaded(files);
+			} catch (Throwable e) {
+				WidgetUtils.showErrorMessage("Error processing file!", e);
+			}
 		}
 	}
 
@@ -142,8 +150,13 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 
 				if (!_cancelled) {
 					final HttpResponse response = httpClient.execute(method);
+					
+					if (response.getStatusLine().getStatusCode() != 200) {
+						throw new InvalidHttpResponseException(response);
+					}
 
-					final long expectedSize = response.getEntity().getContentLength();
+					final HttpEntity responseEntity = response.getEntity();
+					final long expectedSize = responseEntity.getContentLength();
 					publish(new Task() {
 						@Override
 						public void execute() throws Exception {
@@ -151,7 +164,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 						}
 					});
 
-					inputStream = response.getEntity().getContent();
+					inputStream = responseEntity.getContent();
 					outputStream = new BufferedOutputStream(new FileOutputStream(file));
 
 					long bytes = 0;

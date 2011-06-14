@@ -26,7 +26,9 @@ import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
@@ -54,6 +56,7 @@ public class UserPreferences implements Serializable {
 	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
 	private List<StringPattern> userStringPatterns = new ArrayList<StringPattern>();
 	private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
+	private Map<String, String> additionalProperties = new HashMap<String, String>();
 
 	private String username;
 
@@ -332,5 +335,12 @@ public class UserPreferences implements Serializable {
 
 	public void setExtensionPackages(List<ExtensionPackage> extensionPackages) {
 		this.extensionPackages = extensionPackages;
+	}
+
+	public Map<String, String> getAdditionalProperties() {
+		if (additionalProperties == null) {
+			additionalProperties = new HashMap<String, String>();
+		}
+		return additionalProperties;
 	}
 }

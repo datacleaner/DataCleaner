@@ -80,7 +80,6 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoreListPanel;
 import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.panels.MetadataPanel;
-import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
@@ -198,7 +197,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
 		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, getWindowManager());
-		_filterListPanel = new FilterListPanel(_analysisJobBuilder);
+		_filterListPanel = new FilterListPanel(_analysisJobBuilder, _componentJobBuilderPresenterRendererFactory);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 
 		_tabbedPane = new CloseableTabbedPane();
@@ -635,7 +634,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	public void onAdd(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		RowProcessingAnalyzerJobBuilderPresenter presenter = new RowProcessingAnalyzerJobBuilderPanel(analyzerJobBuilder);
+		@SuppressWarnings("unchecked")
+		final Renderer<RowProcessingAnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<RowProcessingAnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
+				.getRenderer(analyzerJobBuilder, ComponentJobBuilderRenderingFormat.class);
+		RowProcessingAnalyzerJobBuilderPresenter presenter = (RowProcessingAnalyzerJobBuilderPresenter) renderer
+				.render(analyzerJobBuilder);
+
 		_rowProcessingTabPresenters.put(analyzerJobBuilder, presenter);
 		JComponent comp = presenter.createJComponent();
 		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder),

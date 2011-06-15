@@ -30,9 +30,11 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
+import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.actions.AddFilterActionListener;
 import org.eobjects.datacleaner.actions.JobBuilderTaskPaneTextMouseListener;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -52,10 +54,12 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final JXTaskPaneContainer _taskPaneContainer;
 	private final Set<FilterJobBuilderPresenter> _preconfiguredPresenters;
+	private final RendererFactory _componentJobBuilderPresenterRendererFactory;
 
-	public FilterListPanel(AnalysisJobBuilder analysisJobBuilder) {
+	public FilterListPanel(AnalysisJobBuilder analysisJobBuilder, RendererFactory componentJobBuilderPresenterRendererFactory) {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		_componentJobBuilderPresenterRendererFactory = componentJobBuilderPresenterRendererFactory;
 		setLayout(new BorderLayout());
 		_taskPanes = new IdentityHashMap<FilterJobBuilder<?, ?>, JXTaskPane>();
 		_presenters = new IdentityHashMap<FilterJobBuilder<?, ?>, FilterJobBuilderPresenter>();
@@ -120,7 +124,10 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		}
 
 		if (createPresenter) {
-			final FilterJobBuilderPresenter presenter = new FilterJobBuilderPanel(fjb);
+			@SuppressWarnings("unchecked")
+			final Renderer<FilterJobBuilder<?, ?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<FilterJobBuilder<?, ?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
+					.getRenderer(fjb, ComponentJobBuilderRenderingFormat.class);
+			final FilterJobBuilderPresenter presenter = (FilterJobBuilderPresenter) renderer.render(fjb);
 			_presenters.put(fjb, presenter);
 		}
 

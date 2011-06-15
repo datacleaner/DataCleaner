@@ -39,7 +39,7 @@ import javax.swing.event.DocumentListener;
 import org.eobjects.analyzer.reference.SimpleStringPattern;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -73,8 +73,8 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 
 	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 
-	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
-		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
+	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
+		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));
 		_catalog = catalog;
 		_expressionNameField = WidgetFactory.createTextField("String pattern name");
 		_expressionField = WidgetFactory.createTextField("Expression");
@@ -83,13 +83,13 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	}
 
 	public SimpleStringPatternDialog(SimpleStringPattern stringPattern, MutableReferenceDataCatalog catalog,
-			WindowManager windowManager) {
-		this(stringPattern.getName(), stringPattern.getExpression(), catalog, windowManager);
+			WindowContext windowContext) {
+		this(stringPattern.getName(), stringPattern.getExpression(), catalog, windowContext);
 	}
 
 	public SimpleStringPatternDialog(String expressionName, String expression, MutableReferenceDataCatalog catalog,
-			WindowManager windowManager) {
-		this(catalog, windowManager);
+			WindowContext windowContext) {
+		this(catalog, windowContext);
 		_expressionString = expression;
 		_expressionNameString = expressionName;
 		_expressionNameField.setText(expressionName);

@@ -39,7 +39,7 @@ import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
@@ -66,12 +66,12 @@ public final class ResultWindow extends AbstractWindow {
 	private final String _jobFilename;
 	private final AnalysisRunnerSwingWorker _worker;
 
-	public ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job, String jobFilename, WindowManager windowManager) {
-		super(windowManager);
+	public ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job, String jobFilename, WindowContext windowContext) {
+		super(windowContext);
 		_configuration = configuration;
 		_job = job;
 		_jobFilename = jobFilename;
-		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), new DCRendererInitializer(getWindowManager()));
+		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), new DCRendererInitializer(getwindowContext()));
 
 		_progressInformationPanel = new ProgressInformationPanel();
 		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),

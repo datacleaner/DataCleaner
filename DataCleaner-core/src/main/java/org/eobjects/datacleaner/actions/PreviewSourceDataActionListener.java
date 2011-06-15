@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.query.Query;
@@ -40,23 +40,23 @@ public class PreviewSourceDataActionListener implements ActionListener {
 	private final DataContextProvider _dataContextProvider;
 	private final Column[] _columns;
 	private final Collection<? extends InputColumn<?>> _inputColumns;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public PreviewSourceDataActionListener(WindowManager windowManager, DataContextProvider dataContextProvider,
+	public PreviewSourceDataActionListener(WindowContext windowContext, DataContextProvider dataContextProvider,
 			Column... columns) {
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_dataContextProvider = dataContextProvider;
 		_columns = columns;
 		_inputColumns = null;
 	}
 
-	public PreviewSourceDataActionListener(WindowManager windowManager, DataContextProvider dataContextProvider, Table table) {
-		this(windowManager, dataContextProvider, table.getColumns());
+	public PreviewSourceDataActionListener(WindowContext windowContext, DataContextProvider dataContextProvider, Table table) {
+		this(windowContext, dataContextProvider, table.getColumns());
 	}
 
-	public PreviewSourceDataActionListener(WindowManager windowManager, DataContextProvider dataContextProvider,
+	public PreviewSourceDataActionListener(WindowContext windowContext, DataContextProvider dataContextProvider,
 			Collection<? extends InputColumn<?>> inputColumns) {
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_dataContextProvider = dataContextProvider;
 		_inputColumns = inputColumns;
 		_columns = null;
@@ -77,7 +77,7 @@ public class PreviewSourceDataActionListener implements ActionListener {
 		DataContext dc = _dataContextProvider.getDataContext();
 		Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
-		DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowManager);
+		DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
 		window.setVisible(true);
 	}
 }

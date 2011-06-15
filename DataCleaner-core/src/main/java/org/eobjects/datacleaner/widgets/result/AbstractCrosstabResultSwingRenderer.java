@@ -42,7 +42,7 @@ import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRendererCallback;
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -60,13 +60,13 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
 
 	@Inject
-	WindowManager windowManager;
+	WindowContext windowContext;
 
 	private DrillToDetailsCallback _drillToDetailsCallback;
 
 	@Override
 	public JComponent render(R result) {
-		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(windowManager);
+		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(windowContext);
 
 		final DCTable table = renderTable(result.getCrosstab());
 

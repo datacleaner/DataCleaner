@@ -33,7 +33,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
@@ -49,12 +49,12 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private final ChangeRequirementButton _requirementButton;
 	private final JButton _previewButton;
 	private final JButton _writeOutputButton;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowManager windowManager) {
+	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext) {
 		super("images/window/transformer-tab-background.png", transformerJobBuilder);
 		_transformerJobBuilder = transformerJobBuilder;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 
 		init();
 
@@ -64,7 +64,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		} else {
 			outputColumns = new ArrayList<MutableInputColumn<?>>(0);
 		}
-		_outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowManager);
+		_outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowContext);
 
 		_writeOutputButton = new JButton("Write data",
 				imageManager.getImageIcon("images/component-types/type_output_writer.png"));
@@ -72,7 +72,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 				.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_transformerJobBuilder));
 
 		_previewButton = new JButton("Preview data", imageManager.getImageIcon("images/actions/preview_data.png"));
-		_previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowManager, this,
+		_previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
 				getAnalysisJobBuilder(), _transformerJobBuilder));
 
 		_requirementButton = new ChangeRequirementButton(transformerJobBuilder);
@@ -92,8 +92,8 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		add(buttonPanel, BorderLayout.NORTH);
 	}
 
-	public WindowManager getWindowManager() {
-		return _windowManager;
+	public WindowContext getwindowContext() {
+		return _windowContext;
 	}
 
 	@Override

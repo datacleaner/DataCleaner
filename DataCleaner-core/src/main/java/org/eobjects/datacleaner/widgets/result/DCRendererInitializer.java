@@ -26,26 +26,26 @@ import javax.inject.Inject;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererInitializer;
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 
 public class DCRendererInitializer implements RendererInitializer {
 
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public DCRendererInitializer(WindowManager windowManager) {
-		_windowManager = windowManager;
+	public DCRendererInitializer(WindowContext windowContext) {
+		_windowContext = windowContext;
 	}
 
 	@Override
 	public void initialize(Renderer<?, ?> renderer) {
 		Field[] injectFields = ReflectionUtils.getFields(renderer.getClass(), Inject.class);
 		for (Field field : injectFields) {
-			if (field.getType() == WindowManager.class) {
+			if (field.getType() == WindowContext.class) {
 				try {
 					field.setAccessible(true);
-					field.set(renderer, _windowManager);
+					field.set(renderer, _windowContext);
 				} catch (Exception e) {
-					throw new IllegalStateException("Could not assign " + WindowManager.class.getSimpleName() + " to "
+					throw new IllegalStateException("Could not assign " + WindowContext.class.getSimpleName() + " to "
 							+ field, e);
 				}
 			}

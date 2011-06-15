@@ -37,7 +37,7 @@ import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -55,21 +55,21 @@ public class QuickAnalysisActionListener implements ActionListener {
 	private final Datastore _datastore;
 	private final Table _table;
 	private final Column[] _columns;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns, WindowManager windowManager) {
+	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns, WindowContext windowContext) {
 		_datastore = datastore;
 		_table = table;
 		_columns = columns;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 	}
 
-	public QuickAnalysisActionListener(Datastore datastore, Table table, WindowManager windowManager) {
-		this(datastore, table, null, windowManager);
+	public QuickAnalysisActionListener(Datastore datastore, Table table, WindowContext windowContext) {
+		this(datastore, table, null, windowContext);
 	}
 
-	public QuickAnalysisActionListener(Datastore datastore, Column column, WindowManager windowManager) {
-		this(datastore, null, new Column[] { column }, windowManager);
+	public QuickAnalysisActionListener(Datastore datastore, Column column, WindowContext windowContext) {
+		this(datastore, null, new Column[] { column }, windowContext);
 	}
 
 	public Column[] getColumns() {
@@ -139,7 +139,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 			}
 
 			RunAnalysisActionListener actionListener = new RunAnalysisActionListener(ajb, configuration, "Quick analysis: "
-					+ getTable().getName(), _windowManager);
+					+ getTable().getName(), _windowContext);
 			actionListener.actionPerformed(event);
 		} catch (Exception e) {
 			WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);

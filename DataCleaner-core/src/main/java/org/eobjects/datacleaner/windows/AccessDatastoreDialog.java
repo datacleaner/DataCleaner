@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.windows;
 import javax.swing.filechooser.FileFilter;
 
 import org.eobjects.analyzer.connection.AccessDatastore;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -38,12 +38,12 @@ public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<Acce
 	private static final long serialVersionUID = 1L;
 
 	public AccessDatastoreDialog(AccessDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowManager windowManager) {
-		super(originalDatastore, mutableDatastoreCatalog, windowManager);
+			WindowContext windowContext) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext);
 	}
 
-	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
-		super(mutableDatastoreCatalog, windowManager);
+	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
+		super(mutableDatastoreCatalog, windowContext);
 	}
 
 	@Override

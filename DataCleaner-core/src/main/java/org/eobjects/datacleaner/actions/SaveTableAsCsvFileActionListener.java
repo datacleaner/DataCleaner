@@ -31,7 +31,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
@@ -52,12 +52,12 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
 	private final Datastore _datastore;
 	private final Table _table;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowManager windowManager) {
+	public SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext) {
 		_datastore = datastore;
 		_table = table;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
 				csvOutputAnalyzerBuilder, false);
 
-		final AbstractDialog dialog = new AbstractDialog(_windowManager) {
+		final AbstractDialog dialog = new AbstractDialog(_windowContext) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
@@ -110,7 +110,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ResultWindow window = new ResultWindow(configuration, ajb.toAnalysisJob(), "Save " + _table.getName()
-						+ " as CSV file", _windowManager);
+						+ " as CSV file", _windowContext);
 				window.setVisible(true);
 				dialog.dispose();
 				window.startAnalysis();

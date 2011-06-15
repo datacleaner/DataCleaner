@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
@@ -35,12 +35,12 @@ public class RunAnalysisActionListener implements ActionListener {
 	private final AnalyzerBeansConfiguration _configuration;
 	private final String _jobFilename;
 	private long lastClickTime = 0;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
 	public RunAnalysisActionListener(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration,
-			String jobFilename, WindowManager windowManager) {
+			String jobFilename, WindowContext windowContext) {
 		super();
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_analysisJobBuilder = analysisJobBuilder;
 		_configuration = configuration;
 		_jobFilename = jobFilename;
@@ -60,7 +60,7 @@ public class RunAnalysisActionListener implements ActionListener {
 		UsageLogger.getInstance().log("Run analysis");
 
 		AnalysisJob job = _analysisJobBuilder.toAnalysisJob();
-		ResultWindow window = new ResultWindow(_configuration, job, _jobFilename, _windowManager);
+		ResultWindow window = new ResultWindow(_configuration, job, _jobFilename, _windowContext);
 		window.setVisible(true);
 		window.startAnalysis();
 	}

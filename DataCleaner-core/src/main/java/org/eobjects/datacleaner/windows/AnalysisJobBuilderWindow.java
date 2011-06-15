@@ -71,7 +71,7 @@ import org.eobjects.datacleaner.actions.HideTabTextActionListener;
 import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
@@ -147,35 +147,35 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private DataContextProvider _dataContextProvider;
 	private DatastoreListPanel _datastoreListPanel;
 
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, WindowManager windowManager) {
-		this(configuration, (Datastore) null, windowManager);
+	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
+		this(configuration, (Datastore) null, windowContext);
 	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			String jobFilename, WindowManager windowManager) {
-		this(configuration, analysisJobBuilder, analysisJobBuilder.getDataContextProvider().getDatastore(), windowManager);
+			String jobFilename, WindowContext windowContext) {
+		this(configuration, analysisJobBuilder, analysisJobBuilder.getDataContextProvider().getDatastore(), windowContext);
 		setJobFilename(jobFilename);
 	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, Datastore datastore,
-			WindowManager windowManager) {
-		this(configuration, new AnalysisJobBuilder(configuration), datastore, windowManager);
+			WindowContext windowContext) {
+		this(configuration, new AnalysisJobBuilder(configuration), datastore, windowContext);
 
 	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName,
-			WindowManager windowManager) {
+			WindowContext windowContext) {
 		this(configuration, new AnalysisJobBuilder(configuration), configuration.getDatastoreCatalog().getDatastore(
-				datastoreName), windowManager);
+				datastoreName), windowContext);
 	}
 
 	private AnalysisJobBuilderWindow(final AnalyzerBeansConfiguration configuration,
-			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore, WindowManager windowManager) {
-		super(windowManager);
+			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore, WindowContext windowContext) {
+		super(windowContext);
 		_configuration = configuration;
 		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
-				new DCRendererInitializer(windowManager));
-		setJMenuBar(new DCWindowMenuBar(this, windowManager, _configuration));
+				new DCRendererInitializer(windowContext));
+		setJMenuBar(new DCWindowMenuBar(this, windowContext, _configuration));
 		_analysisJobBuilder = analysisJobBuilder;
 		_glassPane = new DCGlassPane(this);
 
@@ -196,7 +196,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_datastoreListPanel = new DatastoreListPanel(_configuration, this, _glassPane);
 		_datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
-		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, getWindowManager());
+		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, getwindowContext());
 		_filterListPanel = new FilterListPanel(_analysisJobBuilder, _componentJobBuilderPresenterRendererFactory);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 
@@ -240,7 +240,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		_tabbedPane.addSeparator();
 
-		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder, getWindowManager());
+		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder, getwindowContext());
 		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
 		_leftPanel.setVisible(false);
 		_leftPanel.setCollapsed(true);
@@ -375,7 +375,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			return false;
 		}
 
-		final int count = getWindowManager().getWindowCount(AnalysisJobBuilderWindow.class);
+		final int count = getwindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
 
 		final boolean windowClosing;
 		final boolean exit;
@@ -389,7 +389,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				windowClosing = false;
 			} else {
 				// if datastore is not set, show exit dialog
-				exit = getWindowManager().showExitDialog();
+				exit = getwindowContext().showExitDialog();
 				windowClosing = exit;
 			}
 		} else {
@@ -410,7 +410,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		}
 
 		if (exit) {
-			getWindowManager().exit();
+			getwindowContext().exit();
 		}
 		return windowClosing;
 	}
@@ -457,7 +457,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_visualizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder, getWindowManager());
+				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder, getwindowContext());
 				window.setVisible(true);
 			}
 		});
@@ -470,7 +470,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		// Run analysis
 		final RunAnalysisActionListener runAnalysisActionListener = new RunAnalysisActionListener(_analysisJobBuilder,
-				_configuration, _jobFilename, getWindowManager());
+				_configuration, _jobFilename, getwindowContext());
 		_runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -501,7 +501,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(_runButton);
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane, getWindowManager());
+		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane, getwindowContext());
 		statusBar.add(loggedInStatusLabel);
 
 		final Dimension windowSize = new Dimension(900, 630);

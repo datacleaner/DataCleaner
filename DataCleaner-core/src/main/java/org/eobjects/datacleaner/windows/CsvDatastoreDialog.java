@@ -49,7 +49,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -131,13 +131,13 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private final DCTable _previewTable;
 	private final DCPanel _previewTablePanel;
 
-	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
-		this(null, mutableDatastoreCatalog, windowManager);
+	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
+		this(null, mutableDatastoreCatalog, windowContext);
 	}
 
 	public CsvDatastoreDialog(CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowManager windowManager) {
-		super(windowManager, imageManager.getImage("images/window/banner-datastores.png"));
+			WindowContext windowContext) {
+		super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = datastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");

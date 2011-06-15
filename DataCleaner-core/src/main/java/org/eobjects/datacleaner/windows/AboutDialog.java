@@ -46,7 +46,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -86,8 +86,8 @@ public class AboutDialog extends AbstractDialog {
 	private static final ResourceManager resourceManager = ResourceManager.getInstance();
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
-	public AboutDialog(WindowManager windowManager) {
-		super(windowManager);
+	public AboutDialog(WindowContext windowContext) {
+		super(windowContext);
 	}
 
 	@Override

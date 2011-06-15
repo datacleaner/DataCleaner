@@ -28,17 +28,17 @@ import java.awt.event.WindowListener;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.WidgetUtils;
 
 public abstract class AbstractWindow extends JFrame implements DCWindow, WindowListener {
 
 	private static final long serialVersionUID = 1L;
 	private volatile boolean initialized = false;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public AbstractWindow(WindowManager windowManager) {
-		_windowManager = windowManager;
+	public AbstractWindow(WindowContext windowContext) {
+		_windowContext = windowContext;
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
@@ -54,7 +54,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
 		autoSetSize(content);
 
-		_windowManager.onShow(this);
+		_windowContext.onShow(this);
 	}
 
 	public Dimension autoSetSize() {
@@ -138,13 +138,13 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 
 	@Override
 	public void dispose() {
-		_windowManager.onDispose(this);
+		_windowContext.onDispose(this);
 		super.dispose();
 	}
 
 	@Override
-	public WindowManager getWindowManager() {
-		return _windowManager;
+	public WindowContext getwindowContext() {
+		return _windowContext;
 	}
 
 	protected boolean onWindowClosing() {

@@ -46,7 +46,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
@@ -85,8 +85,8 @@ public class RegexSwapDialog extends AbstractDialog {
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private Regex _selectedRegex;
 
-	public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog, WindowManager windowManager) {
-		super(windowManager, imageManager.getImage("images/window/banner-string-patterns.png"));
+	public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog, WindowContext windowContext) {
+		super(windowContext, imageManager.getImage("images/window/banner-string-patterns.png"));
 		_referenceDataCatalog = referenceDataCatalog;
 		_client = new RegexSwapClient(HttpXmlUtils.getHttpClient());
 		_regexDescriptionLabel = DCLabel.brightMultiLine("No regex selected");

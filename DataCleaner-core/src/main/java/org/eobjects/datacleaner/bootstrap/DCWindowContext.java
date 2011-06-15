@@ -43,7 +43,7 @@ import org.eobjects.datacleaner.windows.DCWindow;
  * 
  * @author Kasper Sørensen
  */
-public final class DCWindowContext implements WindowManager {
+public final class DCWindowContext implements WindowContext {
 
 	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();

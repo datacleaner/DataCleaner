@@ -30,7 +30,7 @@ import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
@@ -46,12 +46,12 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	private final DCLabel _hintLabel;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final MaxRowsFilterShortcutPanel _maxRowsFilterShortcutPanel;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowManager windowManager) {
+	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
 		super();
 		_analysisJobBuilder = analysisJobBuilder;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 
 		_maxRowsFilterShortcutPanel = createMaxRowsFilterShortcutPanel();
 
@@ -135,7 +135,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		}
 
 		if (sourceColumnTable == null) {
-			sourceColumnTable = new ColumnListTable(table, _analysisJobBuilder, true, _windowManager);
+			sourceColumnTable = new ColumnListTable(table, _analysisJobBuilder, true, _windowContext);
 			this.add(sourceColumnTable);
 			_sourceColumnTables.add(sourceColumnTable);
 			updateUI();

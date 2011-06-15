@@ -100,7 +100,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 						DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName, column
 								.getQualifiedLabel());
 						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog(dictionary, referenceDataCatalog,
-								datastoreCatalog, _schemaTree.getWindowManager());
+								datastoreCatalog, _schemaTree.getwindowContext());
 						dialog.setVisible(true);
 					}
 				});
@@ -108,11 +108,11 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
 						"images/component-types/analyzer.png");
 				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, column, _schemaTree
-						.getWindowManager()));
+						.getwindowContext()));
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
 						"images/actions/preview_data.png");
-				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowManager(),
+				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getwindowContext(),
 						_analysisJobBuilder.getDataContextProvider(), column));
 
 				final JPopupMenu popup = new JPopupMenu();

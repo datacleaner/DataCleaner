@@ -46,7 +46,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.user.DCConfiguration;
@@ -218,7 +218,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
 
 			DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
-					_analysisJobBuilderWindow.getWindowManager());
+					_analysisJobBuilderWindow.getwindowContext());
 			_datastorePanels.add(datastorePanel);
 			_listPanel.add(datastorePanel);
 		}
@@ -279,7 +279,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				compositeMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new CompositeDatastoreDialog(_datastoreCatalog, _analysisJobBuilderWindow.getWindowManager())
+						new CompositeDatastoreDialog(_datastoreCatalog, _analysisJobBuilderWindow.getwindowContext())
 								.setVisible(true);
 					}
 				});
@@ -289,7 +289,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				databaseDriversMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						OptionsDialog dialog = new OptionsDialog(_analysisJobBuilderWindow.getWindowManager());
+						OptionsDialog dialog = new OptionsDialog(_analysisJobBuilderWindow.getwindowContext());
 						dialog.selectDatabaseDriversTab();
 						dialog.setVisible(true);
 					}
@@ -351,9 +351,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 						constructor = dialogClass.getConstructor(new Class[0]);
 					} catch (NoSuchMethodException e) {
 						constructor = dialogClass.getConstructor(new Class[] { MutableDatastoreCatalog.class,
-								WindowManager.class });
-						WindowManager windowManager = _analysisJobBuilderWindow.getWindowManager();
-						constructorArgs = new Object[] { DCConfiguration.get().getDatastoreCatalog(), windowManager };
+								WindowContext.class });
+						WindowContext windowContext = _analysisJobBuilderWindow.getwindowContext();
+						constructorArgs = new Object[] { DCConfiguration.get().getDatastoreCatalog(), windowContext };
 					}
 					AbstractDialog dialog = constructor.newInstance(constructorArgs);
 					dialog.setVisible(true);
@@ -387,7 +387,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JdbcDatastoreDialog dialog = new JdbcDatastoreDialog(_datastoreCatalog,
-						_analysisJobBuilderWindow.getWindowManager());
+						_analysisJobBuilderWindow.getwindowContext());
 				dialog.setSelectedDatabase(databaseName);
 				dialog.setVisible(true);
 			}

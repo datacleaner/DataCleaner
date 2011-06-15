@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 
@@ -35,8 +35,8 @@ public class HelloWorldTransformerPresenter extends TransformerJobBuilderPanel i
 
 	private static final long serialVersionUID = 1L;
 
-	public HelloWorldTransformerPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowManager windowManager) {
-		super(transformerJobBuilder, windowManager);
+	public HelloWorldTransformerPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext) {
+		super(transformerJobBuilder, windowContext);
 	}
 
 	@Override

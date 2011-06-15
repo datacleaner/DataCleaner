@@ -37,7 +37,7 @@ import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.analyzer.reference.TextFileDictionary;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -60,13 +60,13 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public DictionaryListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration, WindowManager windowManager) {
+	public DictionaryListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addDictionaryListener(this);
 
@@ -97,7 +97,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		textFileDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new TextFileDictionaryDialog(_catalog, _windowManager).setVisible(true);
+				new TextFileDictionaryDialog(_catalog, _windowContext).setVisible(true);
 			}
 		});
 
@@ -106,7 +106,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		simpleDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new SimpleDictionaryDialog(_catalog, _windowManager).setVisible(true);
+				new SimpleDictionaryDialog(_catalog, _windowContext).setVisible(true);
 			}
 		});
 
@@ -115,7 +115,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		datastoreDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog(), _windowManager)
+				new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog(), _windowContext)
 						.setVisible(true);
 			}
 		});
@@ -163,7 +163,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog((DatastoreDictionary) dictionary,
-								_catalog, _configuration.getDatastoreCatalog(), _windowManager);
+								_catalog, _configuration.getDatastoreCatalog(), _windowContext);
 						dialog.setVisible(true);
 					}
 				});
@@ -172,7 +172,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						TextFileDictionaryDialog dialog = new TextFileDictionaryDialog((TextFileDictionary) dictionary,
-								_catalog, _windowManager);
+								_catalog, _windowContext);
 						dialog.setVisible(true);
 					}
 				});
@@ -181,7 +181,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						SimpleDictionaryDialog dialog = new SimpleDictionaryDialog((SimpleDictionary) dictionary, _catalog,
-								_windowManager);
+								_windowContext);
 						dialog.setVisible(true);
 					}
 				});

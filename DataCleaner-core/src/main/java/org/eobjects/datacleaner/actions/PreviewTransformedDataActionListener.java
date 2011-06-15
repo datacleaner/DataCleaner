@@ -46,7 +46,7 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.reference.ReferenceData;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.windows.DataSetWindow;
@@ -72,12 +72,12 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 	private final LifeCycleHelper _lifeCycleHelper;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public PreviewTransformedDataActionListener(WindowManager windowManager,
+	public PreviewTransformedDataActionListener(WindowContext windowContext,
 			TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
 			TransformerJobBuilder<?> transformerJobBuilder) {
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_transformerJobBuilderPresenter = transformerJobBuilderPresenter;
 		_analysisJobBuilder = analysisJobBuilder;
 		_transformerJobBuilder = transformerJobBuilder;
@@ -94,7 +94,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 	// RowProcessingPublisher :)
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new DataSetWindow("Preview of transformed dataset", this, _windowManager).setVisible(true);
+		new DataSetWindow("Preview of transformed dataset", this, _windowContext).setVisible(true);
 	}
 
 	private void initialize(TransformerJobBuilder<?> tjb) {

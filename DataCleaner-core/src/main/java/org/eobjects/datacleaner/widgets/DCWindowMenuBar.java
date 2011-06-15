@@ -31,7 +31,7 @@ import javax.swing.JMenuItem;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.AboutDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -49,32 +49,32 @@ public class DCWindowMenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
 	private final AnalyzerBeansConfiguration _configuration;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 	private final ActionListener _windowListener;
 
-	public DCWindowMenuBar(final AnalysisJobBuilderWindow window, final WindowManager windowManager,
+	public DCWindowMenuBar(final AnalysisJobBuilderWindow window, final WindowContext windowContext,
 			AnalyzerBeansConfiguration configuration) {
 		super();
 		_configuration = configuration;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
 				"images/actions/new_analysis_job.png");
 		newJobMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new AnalysisJobBuilderWindow(_configuration, _windowManager).setVisible(true);
+				new AnalysisJobBuilderWindow(_configuration, _windowContext).setVisible(true);
 			}
 		});
 
 		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job...", "images/actions/open.png");
-		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(window, _configuration, _windowManager));
+		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(window, _configuration, _windowContext));
 
 		final JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
 		exitMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_windowManager.showExitDialog()) {
-					_windowManager.exit();
+				if (_windowContext.showExitDialog()) {
+					_windowContext.exit();
 				}
 			}
 		});
@@ -83,7 +83,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		dictionariesMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowManager);
+				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowContext);
 				referenceDataDialog.selectDictionariesTab();
 				referenceDataDialog.setVisible(true);
 			}
@@ -93,7 +93,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		synonymCatalogsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowManager);
+				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowContext);
 				referenceDataDialog.selectSynonymsTab();
 				referenceDataDialog.setVisible(true);
 			}
@@ -105,7 +105,7 @@ public class DCWindowMenuBar extends JMenuBar {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowManager);
+				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowContext);
 				referenceDataDialog.selectStringPatternsTab();
 				referenceDataDialog.setVisible(true);
 			}
@@ -115,7 +115,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		optionsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new OptionsDialog(_windowManager).setVisible(true);
+				new OptionsDialog(_windowContext).setVisible(true);
 			}
 		});
 
@@ -129,7 +129,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		aboutMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new AboutDialog(_windowManager).setVisible(true);
+				new AboutDialog(_windowContext).setVisible(true);
 			}
 		});
 
@@ -156,7 +156,7 @@ public class DCWindowMenuBar extends JMenuBar {
 				for (int i = currentSize; i > minimumSize; i--) {
 					windowMenu.remove(i - 1);
 				}
-				final List<DCWindow> windows = _windowManager.getWindows();
+				final List<DCWindow> windows = _windowContext.getWindows();
 				for (final DCWindow window : windows) {
 					final Image windowIcon = window.getWindowIcon();
 					final String title = window.getWindowTitle();
@@ -187,12 +187,12 @@ public class DCWindowMenuBar extends JMenuBar {
 	@Override
 	public void addNotify() {
 		super.addNotify();
-		_windowManager.addWindowListener(_windowListener);
+		_windowContext.addWindowListener(_windowListener);
 	}
 
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
-		_windowManager.removeWindowListener(_windowListener);
+		_windowContext.removeWindowListener(_windowListener);
 	}
 }

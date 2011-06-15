@@ -34,7 +34,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.reference.TextFileDictionary;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -61,13 +61,13 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 	private final JComboBox _encodingComboBox;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public TextFileDictionaryDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
-		this(null, catalog, windowManager);
+	public TextFileDictionaryDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
+		this(null, catalog, windowContext);
 	}
 
 	public TextFileDictionaryDialog(TextFileDictionary dictionary, MutableReferenceDataCatalog catalog,
-			WindowManager windowManager) {
-		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
+			WindowContext windowContext) {
+		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_catalog = catalog;
 

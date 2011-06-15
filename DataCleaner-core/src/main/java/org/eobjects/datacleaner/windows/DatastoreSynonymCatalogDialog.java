@@ -45,7 +45,7 @@ import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -75,14 +75,14 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 	private final MultiSourceColumnComboBoxPanel _synonymColumnsPanel;
 
 	public DatastoreSynonymCatalogDialog(MutableReferenceDataCatalog catalog, DatastoreCatalog datastoreCatalog,
-			WindowManager windowManager) {
-		this(null, catalog, datastoreCatalog, windowManager);
+			WindowContext windowContext) {
+		this(null, catalog, datastoreCatalog, windowContext);
 	}
 
 	public DatastoreSynonymCatalogDialog(DatastoreSynonymCatalog synonymCatalog,
 			MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
-			WindowManager windowManager) {
-		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
+			WindowContext windowContext) {
+		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_datastoreCatalog = datastoreCatalog;
 		_mutableReferenceCatalog = mutableReferenceCatalog;
@@ -118,7 +118,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 					_synonymColumnsPanel.setModel(_datastore);
 					if (_datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(_datastore, getWindowManager());
+						final SchemaTree schemaTree = new SchemaTree(_datastore, getwindowContext());
 						schemaTree.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseClicked(MouseEvent e) {

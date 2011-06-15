@@ -26,7 +26,7 @@ import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -41,20 +41,20 @@ public final class ExtensionSwapClient {
 	private static final String EXTENSIONSWAP_VERSION_PROPERTY = "extensionswap.version";
 
 	private final HttpClient _httpClient;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 	private final String _baseUrl;
 
-	public ExtensionSwapClient(WindowManager windowManager) {
-		this(DEFAULT_WEBSITE_HOSTNAME, windowManager);
+	public ExtensionSwapClient(WindowContext windowContext) {
+		this(DEFAULT_WEBSITE_HOSTNAME, windowContext);
 	}
 
-	public ExtensionSwapClient(String websiteHostname, WindowManager windowManager) {
-		this(HttpXmlUtils.getHttpClient(), websiteHostname, windowManager);
+	public ExtensionSwapClient(String websiteHostname, WindowContext windowContext) {
+		this(HttpXmlUtils.getHttpClient(), websiteHostname, windowContext);
 	}
 
-	public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowManager windowManager) {
+	public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowContext windowContext) {
 		_httpClient = httpClient;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_baseUrl = "http://" + websiteHostname + "/ws/extension/";
 	}
 
@@ -94,7 +94,7 @@ public final class ExtensionSwapClient {
 		}
 		String filename = extensionSwapPackage.getId() + ".jar";
 		DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
-				new String[] { filename }, listener, _windowManager);
+				new String[] { filename }, listener, _windowContext);
 		actionListener.actionPerformed(null);
 	}
 

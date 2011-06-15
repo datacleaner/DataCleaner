@@ -25,7 +25,7 @@ import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.sample.HelloWorldTransformer;
@@ -44,7 +44,7 @@ public class HelloWorldTransformerBuilderRenderer implements
 		Renderer<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> {
 
 	@Inject
-	WindowManager windowManager;
+	WindowContext windowContext;
 
 	@Override
 	public RendererPrecedence getPrecedence(TransformerJobBuilder<?> renderable) {
@@ -56,6 +56,6 @@ public class HelloWorldTransformerBuilderRenderer implements
 
 	@Override
 	public TransformerJobBuilderPresenter render(TransformerJobBuilder<?> tjb) {
-		return new HelloWorldTransformerPresenter(tjb, windowManager);
+		return new HelloWorldTransformerPresenter(tjb, windowContext);
 	}
 }

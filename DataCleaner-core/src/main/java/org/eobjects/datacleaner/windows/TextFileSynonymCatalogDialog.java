@@ -35,7 +35,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -63,13 +63,13 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 	private final JComboBox _encodingComboBox;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public TextFileSynonymCatalogDialog(MutableReferenceDataCatalog catalog, WindowManager windowManager) {
-		this(null, catalog, windowManager);
+	public TextFileSynonymCatalogDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
+		this(null, catalog, windowContext);
 	}
 
 	public TextFileSynonymCatalogDialog(TextFileSynonymCatalog synonymCatalog, MutableReferenceDataCatalog catalog,
-			WindowManager windowManager) {
-		super(windowManager, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
+			WindowContext windowContext) {
+		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_catalog = catalog;
 

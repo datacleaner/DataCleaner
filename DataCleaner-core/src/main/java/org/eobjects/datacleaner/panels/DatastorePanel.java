@@ -45,7 +45,7 @@ import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -75,15 +75,15 @@ public class DatastorePanel extends DCPanel {
 	private final MutableDatastoreCatalog _datastoreCatalog;
 	private final DatastoreListPanel _datastoreListPanel;
 	private final JCheckBox _checkBox;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
 	public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
-			DatastoreListPanel datastoreListPanel, WindowManager windowManager) {
+			DatastoreListPanel datastoreListPanel, WindowContext windowContext) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
 		_datastore = datastore;
 		_datastoreCatalog = datastoreCatalog;
 		_datastoreListPanel = datastoreListPanel;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 
 		setOpaque(false);
 
@@ -168,7 +168,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JdbcDatastoreDialog dialog = new JdbcDatastoreDialog((JdbcDatastore) datastore, _datastoreCatalog,
-							_windowManager);
+							_windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -177,7 +177,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					CsvDatastoreDialog dialog = new CsvDatastoreDialog((CsvDatastore) datastore, _datastoreCatalog,
-							_windowManager);
+							_windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -186,7 +186,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					AccessDatastoreDialog dialog = new AccessDatastoreDialog((AccessDatastore) datastore, _datastoreCatalog,
-							_windowManager);
+							_windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -195,7 +195,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					ExcelDatastoreDialog dialog = new ExcelDatastoreDialog((ExcelDatastore) datastore, _datastoreCatalog,
-							_windowManager);
+							_windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -204,7 +204,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					XmlDatastoreDialog dialog = new XmlDatastoreDialog((XmlDatastore) datastore, _datastoreCatalog,
-							_windowManager);
+							_windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -213,7 +213,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					OdbDatastoreDialog dialog = new OdbDatastoreDialog((OdbDatastore) datastore, _datastoreCatalog,
-							_windowManager);
+							_windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -222,7 +222,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					FixedWidthDatastoreDialog dialog = new FixedWidthDatastoreDialog((FixedWidthDatastore) datastore,
-							_datastoreCatalog, _windowManager);
+							_datastoreCatalog, _windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -231,7 +231,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					DbaseDatastoreDialog dialog = new DbaseDatastoreDialog((DbaseDatastore) datastore, _datastoreCatalog,
-							_windowManager);
+							_windowContext);
 					dialog.setVisible(true);
 				}
 			});
@@ -240,7 +240,7 @@ public class DatastorePanel extends DCPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
-							_datastoreCatalog, _windowManager);
+							_datastoreCatalog, _windowContext);
 					dialog.setVisible(true);
 				}
 			});

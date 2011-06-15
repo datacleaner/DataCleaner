@@ -112,12 +112,12 @@ public final class Bootstrap {
 			// loads dynamic user preferences
 			final UserPreferences userPreferences = UserPreferences.getInstance();
 
-			final WindowManager windowManager = new DCWindowContext(_options.getExitActionListener());
+			final WindowContext windowContext = new DCWindowContext(_options.getExitActionListener());
 
-			new AnalysisJobBuilderWindow(configuration, windowManager).setVisible(true);
+			new AnalysisJobBuilderWindow(configuration, windowContext).setVisible(true);
 
 			// set up HTTP service for ExtensionSwap installation
-			loadExtensionSwapService(userPreferences, windowManager);
+			loadExtensionSwapService(userPreferences, windowContext);
 
 			// load regex swap regexes if logged in
 			final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
@@ -126,7 +126,7 @@ public final class Bootstrap {
 		}
 	}
 
-	private void loadExtensionSwapService(UserPreferences userPreferences, WindowManager windowManager) {
+	private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext) {
 		String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
 		if (StringUtils.isNullOrEmpty(websiteHostname)) {
 			websiteHostname = System.getProperty("extensionswap.hostname");
@@ -135,10 +135,10 @@ public final class Bootstrap {
 		final ExtensionSwapClient extensionSwapClient;
 		if (StringUtils.isNullOrEmpty(websiteHostname)) {
 			logger.info("Using default ExtensionSwap website hostname");
-			extensionSwapClient = new ExtensionSwapClient(windowManager);
+			extensionSwapClient = new ExtensionSwapClient(windowContext);
 		} else {
 			logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-			extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowManager);
+			extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext);
 		}
 		ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
 	}

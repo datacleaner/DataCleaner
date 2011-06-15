@@ -37,7 +37,7 @@ import org.eobjects.analyzer.result.CrosstabNavigator;
 import org.eobjects.analyzer.result.NumberAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
@@ -154,8 +154,8 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		ajb.addSourceColumns(table.getNumberColumns());
 		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
-		WindowManager windowManager = new DCWindowContext();
-		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowManager);
+		WindowContext windowContext = new DCWindowContext();
+		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();
 	}

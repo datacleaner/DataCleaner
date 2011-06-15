@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -39,11 +39,11 @@ import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 public final class NewAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public NewAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, WindowManager windowManager) {
+	public NewAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
 		_configuration = configuration;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public final class NewAnalysisJobActionListener implements ActionListener {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						UsageLogger.getInstance().log("New analysis job");
-						new AnalysisJobBuilderWindow(_configuration, datastoreName, _windowManager).setVisible(true);
+						new AnalysisJobBuilderWindow(_configuration, datastoreName, _windowContext).setVisible(true);
 					}
 				});
 				popupMenu.add(menuItem);

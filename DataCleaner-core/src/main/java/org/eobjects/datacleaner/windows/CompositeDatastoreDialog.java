@@ -38,7 +38,7 @@ import javax.swing.event.DocumentEvent;
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.DCDocumentListener;
@@ -70,13 +70,13 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 		return "Composite datastore";
 	}
 
-	public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
-		this(null, mutableDatastoreCatalog, windowManager);
+	public CompositeDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
+		this(null, mutableDatastoreCatalog, windowContext);
 	}
 
 	public CompositeDatastoreDialog(CompositeDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowManager windowManager) {
-		super(windowManager, imageManager.getImage("images/window/banner-datastores.png"));
+			WindowContext windowContext) {
+		super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
 		_originalDatastore = originalDatastore;
 		_statusLabel = DCLabel.bright("");

@@ -29,7 +29,7 @@ import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
@@ -42,14 +42,14 @@ public class SchemaTreePanel extends DCPanel {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 	private JComponent _updatePanel;
 
-	public SchemaTreePanel(AnalysisJobBuilder analysisJobBuilder, WindowManager windowManager) {
+	public SchemaTreePanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
 		super(imageManager.getImage("images/window/schema-tree-background.png"), 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
 				WidgetUtils.BG_COLOR_BRIGHT);
 		_analysisJobBuilder = analysisJobBuilder;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		setLayout(new BorderLayout());
 		setBorder(WidgetUtils.BORDER_WIDE);
 		setDatastore(null);
@@ -69,7 +69,7 @@ public class SchemaTreePanel extends DCPanel {
 		new SwingWorker<SchemaTree, Void>() {
 			@Override
 			protected SchemaTree doInBackground() throws Exception {
-				return new SchemaTree(datastore, _analysisJobBuilder, _windowManager);
+				return new SchemaTree(datastore, _analysisJobBuilder, _windowContext);
 			}
 
 			protected void done() {

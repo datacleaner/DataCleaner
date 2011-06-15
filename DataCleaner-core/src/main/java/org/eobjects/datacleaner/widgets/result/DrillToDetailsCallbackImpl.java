@@ -22,21 +22,21 @@ package org.eobjects.datacleaner.widgets.result;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ResultProducer;
 import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
 
 public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
 
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public DrillToDetailsCallbackImpl(WindowManager windowManager) {
-		_windowManager = windowManager;
+	public DrillToDetailsCallbackImpl(WindowContext windowContext) {
+		_windowContext = windowContext;
 	}
 
 	@Override
 	public void drillToDetails(String title, ResultProducer resultProducer) {
 		final AnalyzerResult result = resultProducer.getResult();
-		final DetailsResultWindow window = new DetailsResultWindow(title, CollectionUtils.list(result), _windowManager);
+		final DetailsResultWindow window = new DetailsResultWindow(title, CollectionUtils.list(result), _windowContext);
 		window.setVisible(true);
 	}
 }

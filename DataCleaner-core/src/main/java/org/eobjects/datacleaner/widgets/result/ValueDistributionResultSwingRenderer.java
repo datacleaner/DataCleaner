@@ -59,7 +59,7 @@ import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
@@ -498,8 +498,8 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.getConfigurableBean().setRecordUniqueValues(true);
 
-		WindowManager windowManager = new DCWindowContext();
-		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowManager);
+		WindowContext windowContext = new DCWindowContext();
+		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();
 	}

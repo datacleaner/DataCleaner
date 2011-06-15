@@ -44,7 +44,7 @@ import javax.swing.KeyStroke;
 
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -73,12 +73,12 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private final JPasswordField _passwordField;
 	private final JComboBox _databaseDriverComboBox;
 
-	public JdbcDatastoreDialog(MutableDatastoreCatalog catalog, WindowManager windowManager) {
-		this(null, catalog, windowManager);
+	public JdbcDatastoreDialog(MutableDatastoreCatalog catalog, WindowContext windowContext) {
+		this(null, catalog, windowContext);
 	}
 
-	public JdbcDatastoreDialog(JdbcDatastore datastore, MutableDatastoreCatalog catalog, WindowManager windowManager) {
-		super(windowManager, imageManager.getImage("images/window/banner-datastores.png"));
+	public JdbcDatastoreDialog(JdbcDatastore datastore, MutableDatastoreCatalog catalog, WindowContext windowContext) {
+		super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = datastore;
 		_catalog = catalog;
 
@@ -136,7 +136,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 					String[] connectionUrls = driver.getConnectionUrlTemplates();
 					setConnectionUrlTemplates(connectionUrls);
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
-					OptionsDialog optionsDialog = new OptionsDialog(getWindowManager());
+					OptionsDialog optionsDialog = new OptionsDialog(getwindowContext());
 					optionsDialog.selectDatabaseDriversTab();
 					JdbcDatastoreDialog.this.dispose();
 

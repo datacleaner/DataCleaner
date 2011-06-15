@@ -29,21 +29,65 @@ import org.eobjects.datacleaner.windows.DCWindow;
  * 
  * @author Kasper Sørensen
  */
-public interface WindowManager {
+public interface WindowContext {
 
+	/**
+	 * Gets all active windows in the application
+	 * 
+	 * @return
+	 */
 	public List<DCWindow> getWindows();
 
+	/**
+	 * Method which should be invoked when a window is closed/disposed.
+	 * 
+	 * @param window
+	 *            the window that was closed.
+	 */
 	public void onDispose(DCWindow window);
 
+	/**
+	 * Method which should be invoked when a window is opened/shown.
+	 * 
+	 * @param window
+	 *            the window that is shown.
+	 */
 	public void onShow(DCWindow window);
 
+	/**
+	 * Gets the count of windows of a particular type.
+	 * 
+	 * @param windowClass
+	 *            the window type
+	 * @return an integer representing the count of the specified window type.
+	 */
 	public int getWindowCount(Class<? extends DCWindow> windowClass);
-	
+
+	/**
+	 * Adds a window listener which will be invoked when windows are shown and
+	 * disposed.
+	 * 
+	 * @param listener
+	 */
 	public void addWindowListener(ActionListener listener);
-	
+
+	/**
+	 * Removes a window listener that has previously been added using
+	 * {@link #addWindowListener(ActionListener)}
+	 * 
+	 * @param listener
+	 */
 	public void removeWindowListener(ActionListener listener);
 
+	/**
+	 * Requests that an "exit application" dialog is shown.
+	 * 
+	 * @return true if the user decides to exit.
+	 */
 	public boolean showExitDialog();
 
+	/**
+	 * Requests the application to exit.
+	 */
 	public void exit();
 }

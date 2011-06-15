@@ -43,7 +43,7 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.database.DatabaseDriverState;
@@ -74,11 +74,11 @@ public class DatabaseDriversPanel extends DCPanel {
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final Set<String> _usedDriverClassNames = new HashSet<String>();
 	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowManager windowManager) {
+	public DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		setLayout(new BorderLayout());
 
 		DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -131,7 +131,7 @@ public class DatabaseDriversPanel extends DCPanel {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
-								DatabaseDriversPanel.this, _windowManager);
+								DatabaseDriversPanel.this, _windowContext);
 						dialog.setVisible(true);
 					}
 				});
@@ -241,6 +241,6 @@ public class DatabaseDriversPanel extends DCPanel {
 				}
 				updateDriverList();
 			}
-		}, _windowManager);
+		}, _windowContext);
 	}
 }

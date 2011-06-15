@@ -34,7 +34,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -53,8 +53,8 @@ public final class DetailsResultWindow extends AbstractWindow {
 	private final String _title;
 	private final JXTaskPaneContainer _taskPaneContainer;
 
-	public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowManager windowManager) {
-		super(windowManager);
+	public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowContext windowContext) {
+		super(windowContext);
 		_title = title;
 		_results = results;
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
@@ -86,7 +86,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 		if (!_results.isEmpty()) {
 			AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider(),
-					new DCRendererInitializer(getWindowManager()));
+					new DCRendererInitializer(getwindowContext()));
 
 			for (AnalyzerResult analyzerResult : _results) {
 				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = renderFactory.getRenderer(analyzerResult,

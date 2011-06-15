@@ -32,7 +32,7 @@ import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -54,13 +54,13 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilderWindow _parentWindow;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
 	public OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
-			WindowManager windowManager) {
+			WindowContext windowContext) {
 		_parentWindow = parentWindow;
 		_configuration = configuration;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
 		if (openFileResult == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
-			openFile(_parentWindow, _windowManager, file, _configuration);
+			openFile(_parentWindow, _windowContext, file, _configuration);
 		}
 	}
 
@@ -89,13 +89,13 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	 * @param file
 	 * @param configuration
 	 */
-	public static void openFile(final AnalysisJobBuilderWindow parentWindow, WindowManager windowManager, File file,
+	public static void openFile(final AnalysisJobBuilderWindow parentWindow, WindowContext windowContext, File file,
 			AnalyzerBeansConfiguration configuration) {
 		JaxbJobReader reader = new JaxbJobReader(configuration);
 		try {
 			AnalysisJobBuilder ajb = reader.create(file);
 
-			openJob(parentWindow, windowManager, file, configuration, ajb);
+			openJob(parentWindow, windowContext, file, configuration, ajb);
 		} catch (NoSuchDatastoreException e) {
 			AnalysisJobMetadata metadata = reader.readMetadata(file);
 			int result = JOptionPane.showConfirmDialog(null, e.getMessage()
@@ -119,13 +119,13 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	 * @param configuration
 	 * @param ajb
 	 */
-	public static void openJob(final AnalysisJobBuilderWindow parentWindow, final WindowManager windowManager, File file,
+	public static void openJob(final AnalysisJobBuilderWindow parentWindow, final WindowContext windowContext, File file,
 			AnalyzerBeansConfiguration configuration, AnalysisJobBuilder ajb) {
 		UserPreferences userPreferences = UserPreferences.getInstance();
 		userPreferences.setAnalysisJobDirectory(file.getParentFile());
 		userPreferences.addRecentJobFile(file);
 
-		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, ajb, file.getName(), windowManager);
+		AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, ajb, file.getName(), windowContext);
 		window.setVisible(true);
 
 		if (parentWindow != null && !parentWindow.isDatastoreSet()) {

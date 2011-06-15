@@ -36,7 +36,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
@@ -61,12 +61,12 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 	private final DownloadProgressWindow _downloadProgressWindow;
 	private volatile boolean _cancelled = false;
 
-	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowManager windowManager) {
-		this(urls, createTargetFilenames(urls), listener, windowManager);
+	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext) {
+		this(urls, createTargetFilenames(urls), listener, windowContext);
 	}
 
 	public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener,
-			WindowManager windowManager) {
+			WindowContext windowContext) {
 		if (urls == null) {
 			throw new IllegalArgumentException("urls cannot be null");
 		}
@@ -77,7 +77,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 			String filename = targetFilenames[i];
 			_files[i] = new File(DataCleanerHome.get(), filename);
 		}
-		_downloadProgressWindow = new DownloadProgressWindow(this, windowManager);
+		_downloadProgressWindow = new DownloadProgressWindow(this, windowContext);
 	}
 
 	private static String[] createTargetFilenames(String[] urls) {

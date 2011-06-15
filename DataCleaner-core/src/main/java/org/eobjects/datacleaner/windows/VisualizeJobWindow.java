@@ -34,7 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.MatteBorder;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -49,8 +49,8 @@ public class VisualizeJobWindow extends AbstractWindow {
 	private volatile boolean _displayColumns;
 	private volatile boolean _displayOutcomes;
 
-	public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder, WindowManager windowManager) {
-		super(windowManager);
+	public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
+		super(windowContext);
 		_analysisJobBuilder = analysisJobBuilder;
 		_displayColumns = true;
 		_displayOutcomes = true;

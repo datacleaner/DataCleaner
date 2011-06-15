@@ -21,19 +21,19 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.Image;
 
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 
 /**
  * Defines a common interface for windows in DataCleaner. Windows are registered
- * in the WindowManager class.
+ * in the windowContext class.
  * 
- * @see WindowManager
+ * @see WindowContext
  * 
  * @author Kasper Sørensen
  */
 public interface DCWindow {
 	
-	public WindowManager getWindowManager();
+	public WindowContext getwindowContext();
 
 	public String getWindowTitle();
 

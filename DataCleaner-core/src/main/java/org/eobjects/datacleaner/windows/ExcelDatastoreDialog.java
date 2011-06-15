@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.windows;
 import javax.swing.filechooser.FileFilter;
 
 import org.eobjects.analyzer.connection.ExcelDatastore;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -32,13 +32,13 @@ public class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<Excel
 
 	private static final long serialVersionUID = 1L;
 
-	public ExcelDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
-		super(mutableDatastoreCatalog, windowManager);
+	public ExcelDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
+		super(mutableDatastoreCatalog, windowContext);
 	}
 
 	public ExcelDatastoreDialog(ExcelDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowManager windowManager) {
-		super(originalDatastore, mutableDatastoreCatalog, windowManager);
+			WindowContext windowContext) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext);
 	}
 
 	@Override

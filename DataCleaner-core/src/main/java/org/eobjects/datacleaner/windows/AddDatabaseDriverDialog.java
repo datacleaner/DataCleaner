@@ -36,7 +36,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -73,8 +73,8 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	private final DatabaseDriversPanel _databaseDriversPanel;
 
 	public AddDatabaseDriverDialog(DatabaseDriverCatalog databaseDriverCatalog, DatabaseDriversPanel databaseDriversPanel,
-			WindowManager windowManager) {
-		super(windowManager);
+			WindowContext windowContext) {
+		super(windowContext);
 		_databaseDriverCatalog = databaseDriverCatalog;
 		_databaseDriversPanel = databaseDriversPanel;
 		_filenameTextFields = new ArrayList<FilenameTextField>();

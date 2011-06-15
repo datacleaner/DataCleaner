@@ -28,7 +28,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -40,15 +40,15 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 	private volatile boolean initialized = false;
 	private final Image _bannerImage;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 
-	public AbstractDialog(WindowManager windowManager) {
-		this(windowManager, null);
+	public AbstractDialog(WindowContext windowContext) {
+		this(windowContext, null);
 	}
 
-	public AbstractDialog(WindowManager windowManager, Image bannerImage) {
+	public AbstractDialog(WindowContext windowContext, Image bannerImage) {
 		super();
 		// modal dialogs are turned off because they prevent use of default
 		// uncaught exception handlers(!)
@@ -58,7 +58,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 		addWindowListener(this);
 		setResizable(isWindowResizable());
 		_bannerImage = bannerImage;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 	}
 
 	protected void setTopBackgroundColor(Color topBackgroundColor) {
@@ -95,7 +95,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 		WidgetUtils.centerOnScreen(this);
 
-		_windowManager.onShow(this);
+		_windowContext.onShow(this);
 	}
 
 	@Override
@@ -153,13 +153,13 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 	@Override
 	public void dispose() {
-		_windowManager.onDispose(this);
+		_windowContext.onDispose(this);
 		super.dispose();
 	}
 	
 	@Override
-	public WindowManager getWindowManager() {
-		return _windowManager;
+	public WindowContext getwindowContext() {
+		return _windowContext;
 	}
 
 	protected boolean onWindowClosing() {

@@ -30,7 +30,7 @@ import javax.swing.filechooser.FileFilter;
 import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -48,13 +48,13 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 	private final JTextField _valueWidthTextField;
 	private final JCheckBox _failOnInconsistenciesCheckBox;
 
-	public FixedWidthDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowManager windowManager) {
-		this(null, mutableDatastoreCatalog, windowManager);
+	public FixedWidthDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
+		this(null, mutableDatastoreCatalog, windowContext);
 	}
 
 	public FixedWidthDatastoreDialog(FixedWidthDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowManager windowManager) {
-		super(originalDatastore, mutableDatastoreCatalog, windowManager);
+			WindowContext windowContext) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext);
 
 		_encodingComboBox = new CharSetEncodingComboBox();
 		_valueWidthTextField = WidgetFactory.createTextField("No. characters");

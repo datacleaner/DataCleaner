@@ -35,7 +35,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.RegexStringPattern;
 import org.eobjects.analyzer.reference.SimpleStringPattern;
 import org.eobjects.analyzer.reference.StringPattern;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.regexswap.RegexSwapDialog;
 import org.eobjects.datacleaner.regexswap.RegexSwapStringPattern;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -59,14 +59,14 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
 	public StringPatternListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
-			WindowManager windowManager) {
+			WindowContext windowContext) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addStringPatternListener(this);
 
@@ -97,7 +97,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		simpleStringPatternButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new SimpleStringPatternDialog(_catalog, _windowManager).setVisible(true);
+				new SimpleStringPatternDialog(_catalog, _windowContext).setVisible(true);
 			}
 		});
 
@@ -106,7 +106,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		regexStringPatternButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new RegexStringPatternDialog(_catalog, _windowManager).setVisible(true);
+				new RegexStringPatternDialog(_catalog, _windowContext).setVisible(true);
 			}
 		});
 
@@ -115,7 +115,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		regexSwapStringPatternButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new RegexSwapDialog(_catalog, _windowManager).setVisible(true);
+				new RegexSwapDialog(_catalog, _windowContext).setVisible(true);
 			}
 		});
 
@@ -161,7 +161,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						RegexStringPatternDialog dialog = new RegexStringPatternDialog((RegexStringPattern) stringPattern,
-								_catalog, _windowManager);
+								_catalog, _windowContext);
 						dialog.setVisible(true);
 					}
 				});
@@ -170,7 +170,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						SimpleStringPatternDialog dialog = new SimpleStringPatternDialog(
-								(SimpleStringPattern) stringPattern, _catalog, _windowManager);
+								(SimpleStringPattern) stringPattern, _catalog, _windowContext);
 						dialog.setVisible(true);
 					}
 				});

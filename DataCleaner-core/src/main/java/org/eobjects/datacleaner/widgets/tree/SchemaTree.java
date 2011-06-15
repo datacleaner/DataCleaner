@@ -39,7 +39,7 @@ import javax.swing.tree.TreePath;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
@@ -66,18 +66,18 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	private final DataContextProvider _dataContextProvider;
 	private final TreeCellRenderer _rendererDelegate;
 	private final Datastore _datastore;
-	private final WindowManager _windowManager;
+	private final WindowContext _windowContext;
 
-	public SchemaTree(Datastore datastore, WindowManager windowManager) {
-		this(datastore, null, windowManager);
+	public SchemaTree(Datastore datastore, WindowContext windowContext) {
+		this(datastore, null, windowContext);
 	}
 
-	public SchemaTree(final Datastore datastore, final AnalysisJobBuilder analysisJobBuilder, WindowManager windowManager) {
+	public SchemaTree(final Datastore datastore, final AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
 		super();
 		if (datastore == null) {
 			throw new IllegalArgumentException("Datastore cannot be null");
 		}
-		_windowManager = windowManager;
+		_windowContext = windowContext;
 		_rendererDelegate = new DefaultTreeRenderer();
 		setCellRenderer(this);
 		_datastore = datastore;
@@ -92,8 +92,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		updateTree();
 	}
 	
-	public WindowManager getWindowManager() {
-		return _windowManager;
+	public WindowContext getwindowContext() {
+		return _windowContext;
 	}
 
 	private void updateTree() {

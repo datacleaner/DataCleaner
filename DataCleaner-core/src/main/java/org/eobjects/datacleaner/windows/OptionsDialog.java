@@ -42,7 +42,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
 import org.eobjects.analyzer.storage.StorageProvider;
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
@@ -74,14 +74,14 @@ public class OptionsDialog extends AbstractWindow {
 	private final AnalyzerBeansConfiguration _configuration;
 	private Timer _updateMemoryTimer;
 
-	public OptionsDialog(WindowManager windowManager) {
-		super(windowManager);
+	public OptionsDialog(WindowContext windowContext) {
+		super(windowContext);
 		_configuration = DCConfiguration.get();
 		_tabbedPane = new CloseableTabbedPane();
 
 		_tabbedPane.addTab("General", imageManager.getImageIcon("images/menu/options.png"), getGeneralTab());
 		_tabbedPane.addTab("Database drivers", imageManager.getImageIcon("images/model/datastore.png"),
-				new DatabaseDriversPanel(_configuration, windowManager));
+				new DatabaseDriversPanel(_configuration, windowContext));
 		_tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
 		_tabbedPane.addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
 		_tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());

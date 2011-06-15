@@ -27,7 +27,7 @@ import java.net.SocketAddress;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
@@ -54,8 +54,8 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 
 	private final ExtensionSwapClient _client;
 
-	public ExtensionSwapInstallationHttpContainer(WindowManager windowManager) {
-		this(new ExtensionSwapClient(windowManager));
+	public ExtensionSwapInstallationHttpContainer(WindowContext windowContext) {
+		this(new ExtensionSwapClient(windowContext));
 	}
 
 	public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient) {

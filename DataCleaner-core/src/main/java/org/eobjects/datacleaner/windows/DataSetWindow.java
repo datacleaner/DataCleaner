@@ -33,7 +33,7 @@ import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
 
-import org.eobjects.datacleaner.bootstrap.WindowManager;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -56,12 +56,12 @@ public class DataSetWindow extends AbstractWindow {
 	private JButton _previousPageButton;
 	private JButton _nextPageButton;
 
-	public DataSetWindow(Query query, final DataContext dataContext, WindowManager windowManager) {
-		this(query, dataContext, -1, windowManager);
+	public DataSetWindow(Query query, final DataContext dataContext, WindowContext windowContext) {
+		this(query, dataContext, -1, windowContext);
 	}
 
-	public DataSetWindow(final Query query, final DataContext dataContext, int pageSize, WindowManager windowManager) {
-		super(windowManager);
+	public DataSetWindow(final Query query, final DataContext dataContext, int pageSize, WindowContext windowContext) {
+		super(windowContext);
 		_table = new DCTable();
 		_query = query;
 		_pageSize = pageSize;
@@ -79,8 +79,8 @@ public class DataSetWindow extends AbstractWindow {
 		_nextPageButton.setEnabled(false);
 	}
 
-	public DataSetWindow(String title, Callable<TableModel> tableModelCallable, WindowManager windowManager) {
-		super(windowManager);
+	public DataSetWindow(String title, Callable<TableModel> tableModelCallable, WindowContext windowContext) {
+		super(windowContext);
 		_table = new DCTable();
 		_query = null;
 		_pageSize = -1;

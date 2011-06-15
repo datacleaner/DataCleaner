@@ -21,18 +21,52 @@ package org.eobjects.datacleaner.sample;
 
 import java.util.Random;
 
+import org.eobjects.analyzer.beans.api.Categorized;
+import org.eobjects.analyzer.beans.api.Concurrent;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.OutputColumns;
 import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.beans.api.TransformerBean;
+import org.eobjects.analyzer.beans.categories.StringManipulationCategory;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 
+/**
+ * A sample transformer that appends a greeting to a name column's values.
+ * 
+ * After reading the sample code, notice these characteristics of the
+ * transformer implementation.
+ * 
+ * REQUIRED: The class must be annotated with @TransformerBean with a name
+ * 
+ * REQUIRED: The class must implement the {@link Transformer} interface. The
+ * generic parameter to this interface specifies the transformed output
+ * column(s) type.
+ * 
+ * OPTIONAL: @Categorized for categorization in menus etc.
+ * 
+ * OPTIONAL: @Description for tooltips etc.
+ * 
+ * OPTIONAL: @Concurrent for specification of multithreaded behaviour (default
+ * true = multithreading allowed)
+ * 
+ * REQUIRED: One or more @Configured InputColumn (or InputColumn[]) fields.
+ * 
+ * OPTIONAL: Additional @Configured fields.
+ * 
+ * OPTIONAL: Any amount of methods with the @Initialize or @Close methods.
+ * 
+ * OPTIONAL: A .png file with the fully classified class name as it's path (see
+ * src/main/resources).
+ */
 @TransformerBean("Hello world transformer")
+@Categorized(StringManipulationCategory.class)
 @Description("Put your description of your transformer here")
+@Concurrent(true)
 public class HelloWorldTransformer implements Transformer<String> {
 
+	// REQUIRED: One or more InputColumn based
 	@Configured
 	InputColumn<String> nameColumn;
 

@@ -151,7 +151,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 					final HttpResponse response = httpClient.execute(method);
 
 					if (response.getStatusLine().getStatusCode() != 200) {
-						throw new InvalidHttpResponseException(response);
+						throw new InvalidHttpResponseException(url, response);
 					}
 
 					final HttpEntity responseEntity = response.getEntity();

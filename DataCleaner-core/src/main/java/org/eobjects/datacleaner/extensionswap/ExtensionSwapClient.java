@@ -90,7 +90,7 @@ public final class ExtensionSwapClient {
 	private void downloadJarFile(ExtensionSwapPackage extensionSwapPackage, String username, FileDownloadListener listener) {
 		String url = _baseUrl + extensionSwapPackage.getId() + "/jarfile";
 		if (!StringUtils.isNullOrEmpty(username)) {
-			url += url + "?username=" + username;
+			url = url + "?username=" + username;
 		}
 		String filename = extensionSwapPackage.getId() + ".jar";
 		DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },

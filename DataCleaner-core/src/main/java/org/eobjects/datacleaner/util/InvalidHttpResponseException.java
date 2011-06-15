@@ -31,14 +31,20 @@ public class InvalidHttpResponseException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	private final HttpResponse _response;
+	private final String _url;
 
-	public InvalidHttpResponseException(HttpResponse response) {
+	public InvalidHttpResponseException(String url, HttpResponse response) {
 		_response = response;
+		_url = url;
 	}
 
 	@Override
 	public String getMessage() {
-		return "Invalid HTTP response status code: " + getStatusCode();
+		return "Invalid HTTP response status code: " + getStatusCode() + " (" + _url + ")";
+	}
+
+	public String getUrl() {
+		return _url;
 	}
 
 	public HttpResponse getResponse() {

@@ -112,7 +112,7 @@ public final class HttpXmlUtils {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode != 200) {
 				logger.error("Response status code was: {} (url={})", statusCode, url);
-				throw new InvalidHttpResponseException(response);
+				throw new InvalidHttpResponseException(url, response);
 			}
 			InputStream inputStream = response.getEntity().getContent();
 			Document document = createDocumentBuilder().parse(inputStream);

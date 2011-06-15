@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.widgets.table;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.LayoutManager;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -36,6 +37,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +111,15 @@ public class DCTableCellRenderer implements TableCellRenderer {
 		} else if (result instanceof JLabel) {
 			final JLabel label = (JLabel) result;
 			label.setHorizontalAlignment(alignment.getSwingContstantsAlignment());
+
+			String text = label.getText();
+			int canDisplay = label.getFont().canDisplayUpTo(text);
+			if (canDisplay != -1) {
+				// if the label contains undisplayable characters, look for a
+				// different font able of displaying the characters.
+				Font font = WidgetUtils.findCompatibleFont(text, label.getFont());
+				label.setFont(font);
+			}
 		}
 
 		return result;

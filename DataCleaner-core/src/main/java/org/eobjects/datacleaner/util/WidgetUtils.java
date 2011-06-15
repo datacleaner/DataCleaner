@@ -24,11 +24,14 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -56,6 +59,15 @@ import org.slf4j.LoggerFactory;
 public final class WidgetUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
+
+	private static final Map<String, Font> fonts;
+	static {
+		Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+		fonts = new HashMap<String, Font>();
+		for (Font font : fontArray) {
+			fonts.put(font.getName(), font);
+		}
+	}
 
 	public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 25);
 	public static final Font FONT_HEADER = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
@@ -356,5 +368,34 @@ public final class WidgetUtils {
 
 		logger.warn("Could not extract text from component: {}", comp);
 		return "";
+	}
+
+	/**
+	 * Finds a font that is capable of displaying the provided text.
+	 * 
+	 * @param text
+	 *            the text to display.
+	 * @param fallbackFont
+	 *            the font to fall back to in case no capable font was found
+	 * @return a font suitable for displaying the text
+	 */
+	public static Font findCompatibleFont(String text, Font fallbackFont) {
+		final String[] searchFonts = new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS",
+				"MS UI Gothic", "MS Mincho", "MS Gothic", "Osaka" };
+		for (String fontName : searchFonts) {
+			Font font = fonts.get(fontName);
+			if (font == null) {
+				font = new Font(fontName, fallbackFont.getStyle(), fallbackFont.getSize());
+			}
+
+			if (font.canDisplayUpTo(text) == -1) {
+				logger.info("Font '{}' was capable, returning", fontName);
+				font = font.deriveFont(fallbackFont.getSize2D());
+				return font;
+			}
+		}
+
+		logger.warn("Didn't find any capable fonts for text '{}'", text);
+		return fallbackFont;
 	}
 }

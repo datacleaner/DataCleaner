@@ -29,6 +29,7 @@ import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.bootstrap.WindowManager;
 import org.eobjects.datacleaner.user.UsageLogger;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.metamodel.util.FileHelper;
 import org.simpleframework.http.Request;
@@ -74,6 +75,13 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 				throw new IllegalArgumentException("extensionId cannot be null");
 			}
 
+			final String username;
+			if (UserPreferences.getInstance().isLoggedIn()) {
+				username = UserPreferences.getInstance().getUsername();
+			} else {
+				username = req.getParameter("username");
+			}
+
 			logger.info("Initiating transfer of extension: {}", extensionId);
 
 			final ExtensionSwapPackage extensionSwapPackage = _client.getExtensionSwapPackage(extensionId);
@@ -95,7 +103,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 								.showConfirmDialog(null, "Do you want to download and install the extension '"
 										+ extensionSwapPackage.getName() + "'");
 						if (confirmation == JOptionPane.YES_OPTION) {
-							_client.registerExtensionPackage(extensionSwapPackage);
+							_client.registerExtensionPackage(extensionSwapPackage, username);
 						}
 					}
 				});

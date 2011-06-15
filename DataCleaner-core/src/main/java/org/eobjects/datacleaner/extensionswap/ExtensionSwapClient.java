@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.http.client.HttpClient;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
 import org.eobjects.datacleaner.bootstrap.WindowManager;
@@ -76,8 +77,8 @@ public final class ExtensionSwapClient {
 		return new ExtensionSwapPackage(id, version, name);
 	}
 
-	public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage) {
-		downloadJarFile(extensionSwapPackage, new FileDownloadListener() {
+	public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final String username) {
+		downloadJarFile(extensionSwapPackage, username, new FileDownloadListener() {
 			@Override
 			public void onFilesDownloaded(File[] files) {
 				File jarFile = files[0];
@@ -86,8 +87,11 @@ public final class ExtensionSwapClient {
 		});
 	}
 
-	private void downloadJarFile(ExtensionSwapPackage extensionSwapPackage, FileDownloadListener listener) {
+	private void downloadJarFile(ExtensionSwapPackage extensionSwapPackage, String username, FileDownloadListener listener) {
 		String url = _baseUrl + extensionSwapPackage.getId() + "/jarfile";
+		if (!StringUtils.isNullOrEmpty(username)) {
+			url += url + "?username=" + username;
+		}
 		String filename = extensionSwapPackage.getId() + ".jar";
 		DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
 				new String[] { filename }, listener, _windowManager);

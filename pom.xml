@@ -24,6 +24,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>DataCleaner-core</module>
+		<module>DataCleaner-sample-extension</module>
 		<module>DataCleaner-packaging</module>
 	</modules>
 

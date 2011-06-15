@@ -36,6 +36,9 @@ public final class ExtensionSwapClient {
 
 	public static final String DEFAULT_WEBSITE_HOSTNAME = "datacleaner.eobjects.org";
 
+	private static final String EXTENSIONSWAP_ID_PROPERTY = "extensionswap.id";
+	private static final String EXTENSIONSWAP_VERSION_PROPERTY = "extensionswap.version";
+
 	private final HttpClient _httpClient;
 	private final WindowManager _windowManager;
 	private final String _baseUrl;
@@ -58,7 +61,9 @@ public final class ExtensionSwapClient {
 		String packageName = ExtensionPackage.autoDetectPackageName(jarFile);
 		ExtensionPackage extensionPackage = new ExtensionPackage(extensionSwapPackage.getName(), packageName, true,
 				new File[] { jarFile });
-		extensionPackage.getAdditionalProperties().put("extensionswap.id", extensionSwapPackage.getId());
+		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_ID_PROPERTY, extensionSwapPackage.getId());
+		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_VERSION_PROPERTY,
+				Integer.toString(extensionSwapPackage.getVersion()));
 		extensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
 		UserPreferences.getInstance().getExtensionPackages().add(extensionPackage);
 		return extensionPackage;
@@ -67,7 +72,8 @@ public final class ExtensionSwapClient {
 	public ExtensionSwapPackage getExtensionSwapPackage(String id) {
 		final Element rootNode = HttpXmlUtils.getRootNode(_httpClient, _baseUrl + id);
 		final String name = HttpXmlUtils.getChildNodeText(rootNode, "name");
-		return new ExtensionSwapPackage(id, name);
+		final int version = Integer.parseInt(HttpXmlUtils.getChildNodeText(rootNode, "version"));
+		return new ExtensionSwapPackage(id, version, name);
 	}
 
 	public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage) {
@@ -91,7 +97,7 @@ public final class ExtensionSwapClient {
 	public boolean isInstalled(ExtensionSwapPackage extensionSwapPackage) {
 		List<ExtensionPackage> extensionPackages = UserPreferences.getInstance().getExtensionPackages();
 		for (ExtensionPackage extensionPackage : extensionPackages) {
-			String id = extensionPackage.getAdditionalProperties().get("extensionswap.id");
+			String id = extensionPackage.getAdditionalProperties().get(EXTENSIONSWAP_ID_PROPERTY);
 			if (extensionSwapPackage.getId().equals(id)) {
 				return true;
 			}

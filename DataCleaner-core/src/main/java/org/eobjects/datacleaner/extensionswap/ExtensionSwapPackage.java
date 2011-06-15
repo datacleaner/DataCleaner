@@ -29,11 +29,17 @@ import org.eobjects.datacleaner.user.ExtensionPackage;
 public final class ExtensionSwapPackage {
 
 	private final String _id;
+	private final int _version;
 	private final String _name;
 
-	public ExtensionSwapPackage(String id, String name) {
+	public ExtensionSwapPackage(String id, int version, String name) {
 		_id = id;
+		_version = version;
 		_name = name;
+	}
+
+	public int getVersion() {
+		return _version;
 	}
 
 	public String getId() {

@@ -398,4 +398,19 @@ public final class WidgetUtils {
 		logger.warn("Didn't find any capable fonts for text '{}'", text);
 		return fallbackFont;
 	}
+
+	public static void setAppropriateFont(JLabel label) {
+		String text = label.getText();
+		if (text == null) {
+			return;
+		}
+		Font font = label.getFont();
+		int canDisplay = font.canDisplayUpTo(text);
+		if (canDisplay != -1) {
+			// if the label contains undisplayable characters, look for a
+			// different font able of displaying the characters.
+			font = findCompatibleFont(text, font);
+			label.setFont(font);
+		}
+	}
 }

@@ -28,7 +28,9 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
@@ -42,6 +44,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.VerticalLayout;
+import org.jdesktop.swingx.action.OpenBrowserAction;
 
 import cern.colt.Arrays;
 
@@ -74,34 +77,49 @@ public class ExtensionPackagesPanel extends DCPanel {
 		addExtensionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DCFileChooser fileChooser = new DCFileChooser(userPreferences.getConfiguredFileDirectory());
-				fileChooser.setMultiSelectionEnabled(true);
-				fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
-				int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
-				if (result == DCFileChooser.APPROVE_OPTION) {
+				final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap", imageManager
+						.getImageIcon("images/actions/website.png"));
+				extensionSwapMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/extensions"));
 
-					final File[] files = fileChooser.getSelectedFiles();
+				final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file", imageManager
+						.getImageIcon("images/filetypes/archive.png"));
+				manualInstallMenuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						final DCFileChooser fileChooser = new DCFileChooser(userPreferences.getConfiguredFileDirectory());
+						fileChooser.setMultiSelectionEnabled(true);
+						fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
+						int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
+						if (result == DCFileChooser.APPROVE_OPTION) {
 
-					final String suggestedPackageName = ExtensionPackage.autoDetectPackageName(files[0]);
-					final String packageName = JOptionPane.showInputDialog(
-							"Please provide the package name of the extension", suggestedPackageName);
+							final File[] files = fileChooser.getSelectedFiles();
 
-					final StringBuilder extensionNameBuilder = new StringBuilder();
-					for (File file : files) {
-						if (extensionNameBuilder.length() > 0) {
-							extensionNameBuilder.append(", ");
+							final String suggestedPackageName = ExtensionPackage.autoDetectPackageName(files[0]);
+							final String packageName = JOptionPane.showInputDialog(
+									"Please provide the package name of the extension", suggestedPackageName);
+
+							final StringBuilder extensionNameBuilder = new StringBuilder();
+							for (File file : files) {
+								if (extensionNameBuilder.length() > 0) {
+									extensionNameBuilder.append(", ");
+								}
+								extensionNameBuilder.append(file.getName());
+							}
+							final String extensionName = extensionNameBuilder.toString();
+							final ExtensionPackage userExtensionPackage = new ExtensionPackage(extensionName, packageName,
+									true, files);
+							userExtensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
+							extensionPackages.add(userExtensionPackage);
+
+							updateComponents();
 						}
-						extensionNameBuilder.append(file.getName());
 					}
-					final String extensionName = extensionNameBuilder.toString();
-					final ExtensionPackage userExtensionPackage = new ExtensionPackage(extensionName, packageName, true,
-							files);
-					userExtensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
-					extensionPackages.add(userExtensionPackage);
+				});
 
-					updateComponents();
-				}
-
+				final JPopupMenu popup = new JPopupMenu("Add extension");
+				popup.add(extensionSwapMenuItem);
+				popup.add(manualInstallMenuItem);
+				popup.show(addExtensionButton, 0, addExtensionButton.getHeight());
 			}
 		});
 

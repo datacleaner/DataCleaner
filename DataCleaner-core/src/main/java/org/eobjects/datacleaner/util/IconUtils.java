@@ -66,7 +66,7 @@ public final class IconUtils {
 	public static final String FIXEDWIDTH_IMAGEPATH = "images/datastore-types/fixedwidth.png";
 	public static final String ODB_IMAGEPATH = "images/datastore-types/odb.png";
 	public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
-
+	
 	public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
 	public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
 	public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";

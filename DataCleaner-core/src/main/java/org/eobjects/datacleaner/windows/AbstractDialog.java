@@ -158,7 +158,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 	}
 	
 	@Override
-	public WindowContext getwindowContext() {
+	public WindowContext getWindowContext() {
 		return _windowContext;
 	}
 

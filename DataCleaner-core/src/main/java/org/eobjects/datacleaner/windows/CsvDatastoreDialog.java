@@ -289,7 +289,7 @@ public class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvData
 	protected boolean isPreviewTableEnabled() {
 		return true;
 	}
-	
+
 	@Override
 	protected boolean isPreviewDataAvailable() {
 		return showPreview;

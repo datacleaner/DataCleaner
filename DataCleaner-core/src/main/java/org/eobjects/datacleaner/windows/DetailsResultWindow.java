@@ -86,7 +86,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 		if (!_results.isEmpty()) {
 			AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider(),
-					new DCRendererInitializer(getwindowContext()));
+					new DCRendererInitializer(getWindowContext()));
 
 			for (AnalyzerResult analyzerResult : _results) {
 				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = renderFactory.getRenderer(analyzerResult,

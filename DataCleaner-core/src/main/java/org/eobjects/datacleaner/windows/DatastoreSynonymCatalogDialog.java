@@ -118,7 +118,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 					_synonymColumnsPanel.setModel(_datastore);
 					if (_datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(_datastore, getwindowContext());
+						final SchemaTree schemaTree = new SchemaTree(_datastore, getWindowContext());
 						schemaTree.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseClicked(MouseEvent e) {

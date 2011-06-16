@@ -143,7 +143,7 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 	}
 
 	@Override
-	public WindowContext getwindowContext() {
+	public WindowContext getWindowContext() {
 		return _windowContext;
 	}
 

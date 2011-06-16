@@ -107,7 +107,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 					Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
 					if (datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(datastore, getwindowContext());
+						final SchemaTree schemaTree = new SchemaTree(datastore, getWindowContext());
 						schemaTree.addMouseListener(new MouseAdapter() {
 							public void mouseClicked(MouseEvent e) {
 								TreePath path = schemaTree.getSelectionPath();

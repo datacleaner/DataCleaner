@@ -136,7 +136,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 					String[] connectionUrls = driver.getConnectionUrlTemplates();
 					setConnectionUrlTemplates(connectionUrls);
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
-					OptionsDialog optionsDialog = new OptionsDialog(getwindowContext());
+					OptionsDialog optionsDialog = new OptionsDialog(getWindowContext());
 					optionsDialog.selectDatabaseDriversTab();
 					JdbcDatastoreDialog.this.dispose();
 

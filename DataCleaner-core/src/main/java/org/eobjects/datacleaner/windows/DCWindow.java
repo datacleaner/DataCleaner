@@ -33,7 +33,7 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
  */
 public interface DCWindow {
 	
-	public WindowContext getwindowContext();
+	public WindowContext getWindowContext();
 
 	public String getWindowTitle();
 

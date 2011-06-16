@@ -43,6 +43,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
+import org.eobjects.datacleaner.user.SasDatastore;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
@@ -301,6 +302,8 @@ public final class IconUtils {
 			imagePath = FIXEDWIDTH_IMAGEPATH;
 		} else if (datastore instanceof DbaseDatastore) {
 			imagePath = DBASE_IMAGEPATH;
+		} else if (datastore instanceof SasDatastore) {
+			imagePath = SAS_IMAGEPATH;
 		} else if (datastore instanceof CompositeDatastore) {
 			imagePath = COMPOSITE_IMAGEPATH;
 		}

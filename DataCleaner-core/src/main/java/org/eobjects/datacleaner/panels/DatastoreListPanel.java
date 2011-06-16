@@ -71,6 +71,7 @@ import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
+import org.eobjects.datacleaner.windows.SasDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -218,7 +219,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
 
 			DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
-					_analysisJobBuilderWindow.getwindowContext());
+					_analysisJobBuilderWindow.getWindowContext());
 			_datastorePanels.add(datastorePanel);
 			_listPanel.add(datastorePanel);
 		}
@@ -237,6 +238,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				ExcelDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
 				IconUtils.ACCESS_IMAGEPATH, AccessDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("SAS library",
+				"A directory of SAS library files (.sas7bdat).", IconUtils.SAS_IMAGEPATH,
+				SasDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
 				DbaseDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Fixed width file",
@@ -279,7 +283,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				compositeMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new CompositeDatastoreDialog(_datastoreCatalog, _analysisJobBuilderWindow.getwindowContext())
+						new CompositeDatastoreDialog(_datastoreCatalog, _analysisJobBuilderWindow.getWindowContext())
 								.setVisible(true);
 					}
 				});
@@ -289,7 +293,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				databaseDriversMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						OptionsDialog dialog = new OptionsDialog(_analysisJobBuilderWindow.getwindowContext());
+						OptionsDialog dialog = new OptionsDialog(_analysisJobBuilderWindow.getWindowContext());
 						dialog.selectDatabaseDriversTab();
 						dialog.setVisible(true);
 					}
@@ -352,7 +356,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 					} catch (NoSuchMethodException e) {
 						constructor = dialogClass.getConstructor(new Class[] { MutableDatastoreCatalog.class,
 								WindowContext.class });
-						WindowContext windowContext = _analysisJobBuilderWindow.getwindowContext();
+						WindowContext windowContext = _analysisJobBuilderWindow.getWindowContext();
 						constructorArgs = new Object[] { DCConfiguration.get().getDatastoreCatalog(), windowContext };
 					}
 					AbstractDialog dialog = constructor.newInstance(constructorArgs);
@@ -387,7 +391,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JdbcDatastoreDialog dialog = new JdbcDatastoreDialog(_datastoreCatalog,
-						_analysisJobBuilderWindow.getwindowContext());
+						_analysisJobBuilderWindow.getWindowContext());
 				dialog.setSelectedDatabase(databaseName);
 				dialog.setVisible(true);
 			}

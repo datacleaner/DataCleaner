@@ -71,7 +71,7 @@ public final class ResultWindow extends AbstractWindow {
 		_configuration = configuration;
 		_job = job;
 		_jobFilename = jobFilename;
-		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), new DCRendererInitializer(getwindowContext()));
+		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), new DCRendererInitializer(getWindowContext()));
 
 		_progressInformationPanel = new ProgressInformationPanel();
 		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),

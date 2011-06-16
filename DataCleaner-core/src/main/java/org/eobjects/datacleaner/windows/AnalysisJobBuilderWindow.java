@@ -196,7 +196,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_datastoreListPanel = new DatastoreListPanel(_configuration, this, _glassPane);
 		_datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
 
-		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, getwindowContext());
+		_sourceColumnsPanel = new SourceColumnsPanel(_analysisJobBuilder, getWindowContext());
 		_filterListPanel = new FilterListPanel(_analysisJobBuilder, _componentJobBuilderPresenterRendererFactory);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 
@@ -240,7 +240,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		_tabbedPane.addSeparator();
 
-		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder, getwindowContext());
+		_schemaTreePanel = new SchemaTreePanel(_analysisJobBuilder, getWindowContext());
 		_leftPanel = new CollapsibleTreePanel(_schemaTreePanel);
 		_leftPanel.setVisible(false);
 		_leftPanel.setCollapsed(true);
@@ -375,7 +375,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			return false;
 		}
 
-		final int count = getwindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
+		final int count = getWindowContext().getWindowCount(AnalysisJobBuilderWindow.class);
 
 		final boolean windowClosing;
 		final boolean exit;
@@ -389,7 +389,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 				windowClosing = false;
 			} else {
 				// if datastore is not set, show exit dialog
-				exit = getwindowContext().showExitDialog();
+				exit = getWindowContext().showExitDialog();
 				windowClosing = exit;
 			}
 		} else {
@@ -410,7 +410,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		}
 
 		if (exit) {
-			getwindowContext().exit();
+			getWindowContext().exit();
 		}
 		return windowClosing;
 	}
@@ -457,7 +457,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_visualizeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder, getwindowContext());
+				VisualizeJobWindow window = new VisualizeJobWindow(_analysisJobBuilder, getWindowContext());
 				window.setVisible(true);
 			}
 		});
@@ -470,7 +470,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		// Run analysis
 		final RunAnalysisActionListener runAnalysisActionListener = new RunAnalysisActionListener(_analysisJobBuilder,
-				_configuration, _jobFilename, getwindowContext());
+				_configuration, _jobFilename, getWindowContext());
 		_runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -501,7 +501,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		toolBar.add(_runButton);
 
 		final JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane, getwindowContext());
+		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane, getWindowContext());
 		statusBar.add(loggedInStatusLabel);
 
 		final Dimension windowSize = new Dimension(900, 630);

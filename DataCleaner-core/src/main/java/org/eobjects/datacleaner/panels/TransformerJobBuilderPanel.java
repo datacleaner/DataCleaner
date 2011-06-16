@@ -92,7 +92,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		add(buttonPanel, BorderLayout.NORTH);
 	}
 
-	public WindowContext getwindowContext() {
+	public WindowContext getWindowContext() {
 		return _windowContext;
 	}
 

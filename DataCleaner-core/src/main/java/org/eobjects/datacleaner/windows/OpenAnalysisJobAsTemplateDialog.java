@@ -87,7 +87,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
 	public OpenAnalysisJobAsTemplateDialog(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
 			File file, AnalysisJobMetadata metadata) {
-		super(parentWindow.getwindowContext());
+		super(parentWindow.getWindowContext());
 		_parentWindow = parentWindow;
 		_configuration = configuration;
 		_file = file;
@@ -111,7 +111,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
 					AnalysisJobBuilder ajb = reader.create(new BufferedInputStream(new FileInputStream(_file)),
 							sourceColumnMapping, variableOverrides);
-					OpenAnalysisJobActionListener.openJob(_parentWindow, getwindowContext(), _file, _configuration, ajb);
+					OpenAnalysisJobActionListener.openJob(_parentWindow, getWindowContext(), _file, _configuration, ajb);
 					OpenAnalysisJobAsTemplateDialog.this.dispose();
 				} catch (Exception e1) {
 					throw new IllegalStateException(e1);

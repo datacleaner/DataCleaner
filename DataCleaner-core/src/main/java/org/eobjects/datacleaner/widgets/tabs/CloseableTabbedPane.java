@@ -139,6 +139,13 @@ public final class CloseableTabbedPane extends JTabbedPane {
 		Component component = getComponent(tabIndex);
 		remove(tabIndex);
 
+		int selectedIndex = getSelectedIndex();
+		while (_separators.contains(selectedIndex) && selectedIndex > 0) {
+			// make sure the separator tabs are not "selected"
+			selectedIndex = selectedIndex - 1;
+			setSelectedIndex(selectedIndex);
+		}
+
 		if (!_closeListeners.isEmpty()) {
 			TabCloseEvent ev = new TabCloseEvent(this, tabIndex, component);
 			for (TabCloseListener l : _closeListeners) {

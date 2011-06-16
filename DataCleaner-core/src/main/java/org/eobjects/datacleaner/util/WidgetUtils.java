@@ -407,6 +407,9 @@ public final class WidgetUtils {
 		Font font = label.getFont();
 		int canDisplay = font.canDisplayUpTo(text);
 		if (canDisplay != -1) {
+			logger.warn("Default font ('{}') was unable to display text ('{}'), searching for alternative.", font.getName(),
+					text);
+
 			// if the label contains undisplayable characters, look for a
 			// different font able of displaying the characters.
 			font = findCompatibleFont(text, font);

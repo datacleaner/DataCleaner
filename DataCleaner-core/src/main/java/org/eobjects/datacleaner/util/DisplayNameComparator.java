@@ -24,6 +24,12 @@ import java.util.Comparator;
 
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 
+/**
+ * Comparator of {@link BeanDescriptor} objects, which sorts based on display
+ * name.
+ * 
+ * @author Kasper Sørensen
+ */
 public class DisplayNameComparator implements Comparator<BeanDescriptor<?>>, Serializable {
 
 	private static final long serialVersionUID = 1L;

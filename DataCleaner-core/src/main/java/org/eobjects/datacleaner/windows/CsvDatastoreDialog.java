@@ -19,92 +19,42 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Map.Entry;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.SwingWorker;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.table.DefaultTableModel;
 
 import org.eobjects.analyzer.connection.CsvDatastore;
+import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
-import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
-import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
-import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
-import org.eobjects.datacleaner.widgets.LoadingIcon;
-import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.eobjects.metamodel.CsvConfiguration;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.DataContextFactory;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.query.Query;
-import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.Schema;
-import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.FileHelper;
-import org.jdesktop.swingx.JXStatusBar;
-import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.ibm.icu.text.CharsetDetector;
-import com.ibm.icu.text.CharsetMatch;
-
-public class CsvDatastoreDialog extends AbstractDialog {
+/**
+ * Dialog for setting up CSV datastores.
+ * 
+ * @author Kasper Sørensen
+ */
+public class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvDatastore> {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreDialog.class);
-	private static final ImageManager imageManager = ImageManager.getInstance();
-
-	/**
-	 * Amount of bytes to read for autodetection of encoding, separator and
-	 * quotes
-	 */
-	private static final int SAMPLE_BUFFER_SIZE = 16 * 1024;
-
-	/**
-	 * Max amount of rows to display in the preview table
-	 */
-	private static final int PREVIEW_ROWS = 7;
-
-	/**
-	 * Max amount of columns to display in the preview table
-	 */
-	private static final int PREVIEW_COLUMNS = 10;
 
 	private static final String SEPARATOR_TAB = "Tab (\\t)";
 	private static final String SEPARATOR_COMMA = "Comma (,)";
@@ -115,21 +65,12 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	private static final String QUOTE_SINGLE_QUOTE = "Single quote (')";
 	private static final String QUOTE_NONE = "(None)";
 
-	private final UserPreferences userPreferences = UserPreferences.getInstance();
-	private final MutableDatastoreCatalog _mutableDatastoreCatalog;
-	private final JXTextField _datastoreNameField;
-	private final FilenameTextField _filenameField;
 	private final JComboBox _separatorCharField;
 	private final JComboBox _quoteCharField;
-	private final JComboBox _encodingComboBox;
+	private final CharSetEncodingComboBox _encodingComboBox;
 	private final JCheckBox _failOnInconsistenciesCheckBox;
-	private final DCLabel _statusLabel;
-	private final DCPanel _outerPanel = new DCPanel();
-	private final JButton _addDatastoreButton;
-	private final CsvDatastore _originalDatastore;
-	private final LoadingIcon _loadingIcon;
-	private final DCTable _previewTable;
-	private final DCPanel _previewTablePanel;
+
+	private volatile boolean showPreview = true;
 
 	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
 		this(null, mutableDatastoreCatalog, windowContext);
@@ -137,21 +78,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 	public CsvDatastoreDialog(CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
 			WindowContext windowContext) {
-		super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
-		_originalDatastore = datastore;
-		_mutableDatastoreCatalog = mutableDatastoreCatalog;
-		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
-
-		_previewTable = new DCTable(new DefaultTableModel(PREVIEW_ROWS, PREVIEW_COLUMNS));
-		_previewTablePanel = _previewTable.toPanel();
-		_previewTablePanel.setBorder(new EmptyBorder(0, 10, 0, 10));
-
-		_loadingIcon = new LoadingIcon();
-		_loadingIcon.setVisible(false);
-		_loadingIcon.setPreferredSize(_previewTablePanel.getPreferredSize());
-
-		_filenameField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
-
+		super(datastore, mutableDatastoreCatalog, windowContext);
 		_separatorCharField = new JComboBox(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
 				SEPARATOR_PIPE });
 		_separatorCharField.setEditable(true);
@@ -161,46 +88,15 @@ public class CsvDatastoreDialog extends AbstractDialog {
 
 		_encodingComboBox = new CharSetEncodingComboBox();
 
-		_statusLabel = DCLabel.bright("Please select file");
-
-		FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV,
-				FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
-		_filenameField.addChoosableFileFilter(combinedFilter);
-		_filenameField.addChoosableFileFilter(FileFilters.CSV);
-		_filenameField.addChoosableFileFilter(FileFilters.TSV);
-		_filenameField.addChoosableFileFilter(FileFilters.DAT);
-		_filenameField.addChoosableFileFilter(FileFilters.TXT);
-		_filenameField.addChoosableFileFilter(FileFilters.ALL);
-		_filenameField.setSelectedFileFilter(combinedFilter);
-		_filenameField.addFileSelectionListener(new FileSelectionListener() {
-
-			@Override
-			public void onSelected(FilenameTextField filenameTextField, File file) {
-				File dir = file.getParentFile();
-				userPreferences.setOpenDatastoreDirectory(dir);
-
-				if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
-					_datastoreNameField.setText(file.getName());
-				}
-
-				if (FileFilters.TSV.accept(file)) {
-					_separatorCharField.setSelectedItem(SEPARATOR_TAB);
-				}
-			}
-		});
-
 		_failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
 		_failOnInconsistenciesCheckBox.setOpaque(false);
 		_failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-		_addDatastoreButton = WidgetFactory.createButton("Save datastore", IconUtils.CSV_IMAGEPATH);
 		_addDatastoreButton.setEnabled(false);
+		showPreview = true;
 
 		if (_originalDatastore != null) {
 			_failOnInconsistenciesCheckBox.setSelected(_originalDatastore.isFailOnInconsistencies());
-			_datastoreNameField.setText(_originalDatastore.getName());
-			_datastoreNameField.setEnabled(false);
-			_filenameField.setFilename(_originalDatastore.getFilename());
 			_encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
 
 			Character separatorChar = _originalDatastore.getSeparatorChar();
@@ -259,12 +155,6 @@ public class CsvDatastoreDialog extends AbstractDialog {
 				onSettingsUpdated(true, false);
 			}
 		});
-		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent e) {
-				onSettingsUpdated(true, true);
-			}
-		});
 	}
 
 	@Override
@@ -272,124 +162,39 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		return "Comma-separated file";
 	}
 
-	private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding) {
-		// show loading indicator
-		_previewTablePanel.setVisible(false);
-		_loadingIcon.setVisible(true);
-		_addDatastoreButton.setEnabled(false);
+	@Override
+	protected void onFileSelected(File file) {
+		onSettingsUpdated(true, true);
+	}
 
-		final File file = new File(_filenameField.getFilename());
-		if (file.exists()) {
-			if (!file.isFile()) {
-				_statusLabel.setText("Not a valid file!");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-				_addDatastoreButton.setEnabled(false);
-				return;
-			}
-		} else {
-			_statusLabel.setText("The file does not exist!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			_addDatastoreButton.setEnabled(false);
+	private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding) {
+		onSettingsUpdated(autoDetectSeparatorAndQuote, autoDetectEncoding, getSampleBuffer());
+	}
+
+	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote, boolean autoDetectEncoding, byte[] sampleBuffer) {
+		if (!validateForm()) {
 			return;
 		}
 
-		// read file in background, it may take time if eg. it's located on a
-		// network drive
-		new SwingWorker<byte[], Void>() {
+		if (sampleBuffer == null || sampleBuffer.length == 0) {
+			logger.debug("No bytes read to autodetect settings");
+			return;
+		}
 
-			private volatile byte[] bytes = new byte[SAMPLE_BUFFER_SIZE];
-
-			@Override
-			protected byte[] doInBackground() throws Exception {
-				FileInputStream fileInputStream = null;
-				try {
-					fileInputStream = new FileInputStream(file);
-					int bufferSize = fileInputStream.read(bytes, 0, SAMPLE_BUFFER_SIZE);
-					if (bufferSize != -1 && bufferSize != SAMPLE_BUFFER_SIZE) {
-						bytes = Arrays.copyOf(bytes, bufferSize);
-					}
-					return bytes;
-				} finally {
-					if (fileInputStream != null) {
-						try {
-							fileInputStream.close();
-						} catch (IOException ioe) {
-							logger.debug("Could not close reader", ioe);
-						}
-					}
-				}
-			}
-
-			@Override
-			protected void done() {
-				try {
-					onSettingsUpdated(autoDetectSeparatorAndQuote, autoDetectEncoding, bytes);
-				} catch (Throwable e) {
-					if (e instanceof ExecutionException) {
-						// get the cause of the execution exception (it's a
-						// wrapper around the throwable)
-						e = e.getCause();
-					}
-					if (logger.isWarnEnabled()) {
-						logger.warn("Error reading from file: " + e.getMessage(), e);
-					}
-					_statusLabel.setText("Error reading from file: " + e.getMessage());
-					_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-				}
-
-				// show table
-				_previewTablePanel.setVisible(true);
-				_loadingIcon.setVisible(false);
-				_addDatastoreButton.setEnabled(true);
-			}
-		}.execute();
-	}
-
-	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote, boolean autoDetectEncoding, byte[] bytes) {
 		final List<String> warnings = new ArrayList<String>();
-		boolean showPreview = true;
+		showPreview = true;
 
 		final String charSet;
 		if (autoDetectEncoding) {
-			CharsetDetector cd = new CharsetDetector();
-			cd.setText(bytes);
-			CharsetMatch charsetMatch = cd.detect();
-			charSet = charsetMatch.getName();
-			logger.info("CharsetMatch: {} ({}% confidence)", charSet, charsetMatch.getConfidence());
-			_encodingComboBox.setSelectedItem(charSet);
+			charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
 		} else {
 			charSet = _encodingComboBox.getSelectedItem().toString();
 		}
 
-		char[] buffer = new char[SAMPLE_BUFFER_SIZE];
-		Reader reader = null;
-		try {
-			reader = new InputStreamReader(new ByteArrayInputStream(bytes), charSet);
+		char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
 
-			// read a sample of the file auto-detect quotes and separators
-			int bufferSize = reader.read(buffer);
-			if (bufferSize != -1) {
-				buffer = Arrays.copyOf(buffer, bufferSize);
-			}
-		} catch (Exception e) {
-			if (logger.isWarnEnabled()) {
-				logger.warn("Error reading from file: " + e.getMessage(), e);
-			}
-			_statusLabel.setText("Error reading from file: " + e.getMessage());
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			return;
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException ioe) {
-					logger.debug("Could not close reader", ioe);
-				}
-			}
-		}
-
-		if (indexOf('\n', buffer) == -1 && buffer.length == SAMPLE_BUFFER_SIZE) {
-			warnings.add("No newline in first " + buffer.length + " chars");
+		if (StringUtils.indexOf('\n', sampleChars) == -1) {
+			warnings.add("No newline in first " + sampleChars.length + " chars");
 			// don't show the preview if no newlines where found (it may try
 			// to treat the whole file as a single row)
 			showPreview = false;
@@ -403,8 +208,8 @@ public class CsvDatastoreDialog extends AbstractDialog {
 			int pipes = 0;
 			int singleQuotes = 0;
 			int doubleQuotes = 0;
-			for (int i = 0; i < buffer.length; i++) {
-				char c = buffer[i];
+			for (int i = 0; i < sampleChars.length; i++) {
+				char c = sampleChars[i];
 				if (c == '\n') {
 					newlines++;
 				} else if (c == '\t') {
@@ -452,7 +257,7 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		}
 
 		if (showPreview) {
-			updatePreviewTable();
+			validateAndUpdate();
 		}
 
 		if (warnings.isEmpty()) {
@@ -469,120 +274,35 @@ public class CsvDatastoreDialog extends AbstractDialog {
 		}
 	}
 
-	/**
-	 * Finds the index of a char in a char-array, similar to String.indexOf(...)
-	 * 
-	 * @param c
-	 * @param arr
-	 * @return
-	 */
-	private int indexOf(char c, char[] arr) {
-		for (int i = 0; i < arr.length; i++) {
-			if (c == arr[i]) {
-				return i;
-			}
+	@Override
+	protected boolean validateForm() {
+		Object selectedEncoding = _encodingComboBox.getSelectedItem();
+		if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
+			_statusLabel.setText("Please select a character encoding!");
+			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			return false;
 		}
-		return -1;
-	}
-
-	private void updatePreviewTable() {
-		try {
-			File file = new File(_filenameField.getFilename());
-
-			char separatorChar = getSeparatorChar();
-			char quoteChar = getQuoteChar();
-
-			CsvConfiguration csvConfiguration = new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE,
-					getEncoding(), separatorChar, quoteChar, CsvConfiguration.DEFAULT_ESCAPE_CHAR);
-			DataContext dc = DataContextFactory.createCsvDataContext(file, csvConfiguration);
-			Schema schema = dc.getDefaultSchema();
-			Table table = schema.getTables()[0];
-			Column[] columns = table.getColumns();
-			if (columns.length > PREVIEW_COLUMNS) {
-				// include max 10 columns
-				columns = Arrays.copyOf(columns, PREVIEW_COLUMNS);
-			}
-
-			Query q = dc.query().from(table).select(columns).toQuery();
-			q.setMaxRows(PREVIEW_ROWS);
-
-			DataSet dataSet = dc.executeQuery(q);
-
-			_previewTable.setModel(dataSet.toTableModel());
-			_outerPanel.updateUI();
-		} catch (Exception e) {
-			logger.error("Unexpected error when updating preview table", e);
-		}
+		return super.validateForm();
 	}
 
 	@Override
-	protected int getDialogWidth() {
-		return 550;
+	protected boolean isPreviewTableEnabled() {
+		return true;
+	}
+	
+	@Override
+	protected boolean isPreviewDataAvailable() {
+		return showPreview;
 	}
 
 	@Override
-	protected JComponent getDialogContent() {
-		DCPanel formPanel = new DCPanel();
-
-		// temporary variable to make it easier to refactor the layout
-		int row = 0;
-		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_datastoreNameField, formPanel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Filename:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_filenameField, formPanel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Character encoding:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_encodingComboBox, formPanel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Separator:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_separatorCharField, formPanel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Quote char:"), formPanel, 0, row);
-		WidgetUtils.addToGridBag(_quoteCharField, formPanel, 1, row);
-		
-		row++;
-		WidgetUtils.addToGridBag(_failOnInconsistenciesCheckBox, formPanel, 0, row, 2, 1);
-
-		row++;
-		WidgetUtils.addToGridBag(_previewTablePanel, formPanel, 0, row, 2, 1);
-		WidgetUtils.addToGridBag(_loadingIcon, formPanel, 0, row, 2, 1);
-
-		_addDatastoreButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (_originalDatastore != null) {
-					_mutableDatastoreCatalog.removeDatastore(_originalDatastore);
-				}
-				CsvDatastore datastore = new CsvDatastore(_datastoreNameField.getText(), _filenameField.getFilename(),
-						getQuoteChar(), getSeparatorChar(), getEncoding(), _failOnInconsistenciesCheckBox.isSelected());
-				_mutableDatastoreCatalog.addDatastore(datastore);
-				dispose();
-			}
-		});
-
-		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		buttonPanel.setBorder(new EmptyBorder(4, 4, 10, 10));
-		buttonPanel.add(_addDatastoreButton);
-
-		DCPanel centerPanel = new DCPanel();
-		centerPanel.setLayout(new VerticalLayout(4));
-		centerPanel.add(formPanel);
-		centerPanel.add(_previewTablePanel);
-		centerPanel.add(buttonPanel);
-
-		JXStatusBar statusBar = WidgetFactory.createStatusBar(_statusLabel);
-
-		_outerPanel.setLayout(new BorderLayout());
-		_outerPanel.add(centerPanel, BorderLayout.CENTER);
-		_outerPanel.add(statusBar, BorderLayout.SOUTH);
-
-		return _outerPanel;
+	protected List<Entry<String, JComponent>> getFormElements() {
+		List<Entry<String, JComponent>> result = super.getFormElements();
+		result.add(new ImmutableEntry<String, JComponent>("Character encoding:", _encodingComboBox));
+		result.add(new ImmutableEntry<String, JComponent>("Separator:", _separatorCharField));
+		result.add(new ImmutableEntry<String, JComponent>("Quote char:", _quoteCharField));
+		result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
+		return result;
 	}
 
 	public String getEncoding() {
@@ -634,5 +354,51 @@ public class CsvDatastoreDialog extends AbstractDialog {
 	@Override
 	public String getWindowTitle() {
 		return "CSV file datastore";
+	}
+
+	@Override
+	protected String getFilename(CsvDatastore datastore) {
+		return datastore.getFilename();
+	}
+
+	@Override
+	protected CsvDatastore createDatastore(String name, String filename) {
+		return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEncoding(),
+				_failOnInconsistenciesCheckBox.isSelected());
+	}
+
+	@Override
+	protected String getDatastoreIconPath() {
+		return IconUtils.CSV_IMAGEPATH;
+	}
+
+	@Override
+	protected void setFileFilters(final FilenameTextField filenameField) {
+		FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV,
+				FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
+		filenameField.addChoosableFileFilter(combinedFilter);
+		filenameField.addChoosableFileFilter(FileFilters.CSV);
+		filenameField.addChoosableFileFilter(FileFilters.TSV);
+		filenameField.addChoosableFileFilter(FileFilters.DAT);
+		filenameField.addChoosableFileFilter(FileFilters.TXT);
+		filenameField.addChoosableFileFilter(FileFilters.ALL);
+		filenameField.setSelectedFileFilter(combinedFilter);
+
+		filenameField.addFileSelectionListener(new FileSelectionListener() {
+
+			@Override
+			public void onSelected(FilenameTextField filenameTextField, File file) {
+				if (FileFilters.TSV.accept(file)) {
+					_separatorCharField.setSelectedItem(SEPARATOR_TAB);
+				}
+			}
+		});
+
+		filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent e) {
+				onSettingsUpdated(true, true);
+			}
+		});
 	}
 }

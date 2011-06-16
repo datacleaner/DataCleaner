@@ -25,6 +25,12 @@ import java.util.List;
 
 import javax.swing.JComboBox;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
+
 /**
  * An editable combobox with a default set of available character set encodings
  * 
@@ -33,6 +39,7 @@ import javax.swing.JComboBox;
 public class CharSetEncodingComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(CharSetEncodingComboBox.class);
 
 	private static final String[] encodings;
 
@@ -60,5 +67,17 @@ public class CharSetEncodingComboBox extends JComboBox {
 
 		String defaultCharset = Charset.defaultCharset().name();
 		setSelectedItem(defaultCharset);
+	}
+
+	public String autoDetectEncoding(byte[] bytes) {
+		CharsetDetector cd = new CharsetDetector();
+		cd.setText(bytes);
+		CharsetMatch charsetMatch = cd.detect();
+		String charSet = charsetMatch.getName();
+
+		int confidence = charsetMatch.getConfidence();
+		logger.info("CharsetMatch: {} ({}% confidence)", charSet, confidence);
+		setSelectedItem(charSet);
+		return charSet;
 	}
 }

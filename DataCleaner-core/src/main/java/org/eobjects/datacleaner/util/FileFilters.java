@@ -23,6 +23,11 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
+/**
+ * Contains commonly used file filters.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class FileFilters {
 
 	private FileFilters() {

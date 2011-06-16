@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
@@ -164,7 +165,12 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		_filenameField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {
-				File dir = file.getParentFile();
+				final File dir;
+				if (file.isDirectory()) {
+					dir = file;
+				} else {
+					dir = file.getParentFile();
+				}
 				userPreferences.setOpenDatastoreDirectory(dir);
 
 				if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
@@ -176,6 +182,10 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 				onFileSelected(file);
 			}
 		});
+		
+		if (isDirectoryBased()) {
+			_filenameField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		}
 
 		if (isPreviewTableEnabled()) {
 			_previewTable = new DCTable(new DefaultTableModel(7, 10));
@@ -232,10 +242,18 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 			return false;
 		}
 
-		if (!file.isFile()) {
-			_statusLabel.setText("Not a valid file!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
-			return false;
+		if (isDirectoryBased()) {
+			if (!file.isDirectory()) {
+				_statusLabel.setText("Not a valid directory!");
+				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				return false;
+			}
+		} else {
+			if (!file.isFile()) {
+				_statusLabel.setText("Not a valid file!");
+				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				return false;
+			}
 		}
 
 		final String datastoreName = _datastoreNameField.getText();
@@ -265,7 +283,11 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	protected List<Entry<String, JComponent>> getFormElements() {
 		ArrayList<Entry<String, JComponent>> res = new ArrayList<Entry<String, JComponent>>();
 		res.add(new ImmutableEntry<String, JComponent>("Datastore name", _datastoreNameField));
-		res.add(new ImmutableEntry<String, JComponent>("Filename", _filenameField));
+		if (isDirectoryBased()) {
+			res.add(new ImmutableEntry<String, JComponent>("Directory", _filenameField));
+		} else {
+			res.add(new ImmutableEntry<String, JComponent>("Filename", _filenameField));
+		}
 		return res;
 	}
 
@@ -465,5 +487,9 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	@Override
 	public Image getWindowIcon() {
 		return imageManager.getImage(getDatastoreIconPath());
+	}
+
+	protected boolean isDirectoryBased() {
+		return false;
 	}
 }

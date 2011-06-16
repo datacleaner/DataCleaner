@@ -29,6 +29,7 @@ import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.TableModel;
@@ -151,10 +152,12 @@ public class DataSetWindow extends AbstractWindow {
 
 					_loadingIcon.setVisible(false);
 					_table.setVisible(true);
-
-					Dimension dimensions = autoSetSize();
-					setSize(dimensions);
-					centerOnScreen();
+					
+					if (getExtendedState() != JFrame.MAXIMIZED_BOTH) {
+						Dimension dimensions = autoSetSize();
+						setSize(dimensions);
+						centerOnScreen();
+					}
 
 				} catch (Exception e) {
 					DataSetWindow.this.dispose();

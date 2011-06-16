@@ -116,18 +116,18 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
 						"images/component-types/analyzer.png");
 				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, table, _schemaTree
-						.getwindowContext()));
+						.getWindowContext()));
 				popup.add(quickAnalysisMenuItem);
 
 				final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
 						"images/component-types/type_output_writer.png");
 				saveAsCsvFileMenuItem.addActionListener(new SaveTableAsCsvFileActionListener(_datastore, table, _schemaTree
-						.getwindowContext()));
+						.getWindowContext()));
 				popup.add(saveAsCsvFileMenuItem);
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",
 						"images/actions/preview_data.png");
-				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getwindowContext(),
+				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
 						_analysisJobBuilder.getDataContextProvider(), columns));
 				popup.add(previewMenuItem);
 

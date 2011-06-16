@@ -92,7 +92,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		updateTree();
 	}
 	
-	public WindowContext getwindowContext() {
+	public WindowContext getWindowContext() {
 		return _windowContext;
 	}
 

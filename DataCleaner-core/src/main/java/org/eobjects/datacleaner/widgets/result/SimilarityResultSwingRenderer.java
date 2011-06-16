@@ -35,8 +35,8 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.beans.similarity.SimilarityGroup;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
+import org.eobjects.analyzer.result.SimilarityGroup;
 import org.eobjects.analyzer.result.SimilarityResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;

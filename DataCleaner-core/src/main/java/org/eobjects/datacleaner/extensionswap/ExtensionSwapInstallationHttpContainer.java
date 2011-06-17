@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.extensionswap;
 
+import java.awt.Component;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
@@ -27,6 +28,7 @@ import java.net.SocketAddress;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -98,13 +100,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						UsageLogger.getInstance().log("Extension install: " + extensionSwapPackage.getId());
-						int confirmation = JOptionPane
-								.showConfirmDialog(null, "Do you want to download and install the extension '"
-										+ extensionSwapPackage.getName() + "'");
-						if (confirmation == JOptionPane.YES_OPTION) {
-							_client.registerExtensionPackage(extensionSwapPackage, username);
-						}
+						displayInstallationOptions(extensionSwapPackage, username);
 					}
 				});
 
@@ -124,6 +120,19 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 			resp.setCode(400);
 		} finally {
 			FileHelper.safeClose(out);
+		}
+	}
+
+	private void displayInstallationOptions(final ExtensionSwapPackage extensionSwapPackage, final String username) {
+		UsageLogger.getInstance().log("Extension install: " + extensionSwapPackage.getId());
+
+		final String title = "Install DataCleaner extension?";
+		final String message = "Do you want to download and install the extension '" + extensionSwapPackage.getName() + "'";
+
+		final Component window = (Component) DCWindowContext.getAnyWindow();
+		final int confirmation = JOptionPane.showConfirmDialog(window, message, title, JOptionPane.YES_NO_OPTION);
+		if (confirmation == JOptionPane.YES_OPTION) {
+			_client.registerExtensionPackage(extensionSwapPackage, username);
 		}
 	}
 

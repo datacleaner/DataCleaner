@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.bootstrap;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,9 +46,33 @@ import org.eobjects.datacleaner.windows.DCWindow;
  */
 public final class DCWindowContext implements WindowContext {
 
+	private static final List<WeakReference<DCWindowContext>> _allWindowContexts = new ArrayList<WeakReference<DCWindowContext>>();
+
 	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();
 	private final ExitActionListener _exitActionListener;
+
+	/**
+	 * Helper method to get any window of the application. This can be
+	 * convenient if eg. displaying {@link JOptionPane}s from arbitrary places
+	 * in the code.
+	 * 
+	 * @return
+	 */
+	public static DCWindow getAnyWindow() {
+		for (WeakReference<DCWindowContext> ref : _allWindowContexts) {
+			DCWindowContext windowContext = ref.get();
+			if (windowContext != null) {
+				List<DCWindow> windows = windowContext.getWindows();
+				for (DCWindow window : windows) {
+					if (window != null) {
+						return window;
+					}
+				}
+			}
+		}
+		return null;
+	}
 
 	public DCWindowContext() {
 		this(new DCExitActionListener());
@@ -55,6 +80,7 @@ public final class DCWindowContext implements WindowContext {
 
 	public DCWindowContext(ExitActionListener exitActionListener) {
 		_exitActionListener = exitActionListener;
+		_allWindowContexts.add(new WeakReference<DCWindowContext>(this));
 	}
 
 	@Override

@@ -135,8 +135,7 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 	protected boolean validateForm() {
 		Object selectedEncoding = _encodingComboBox.getSelectedItem();
 		if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
-			_statusLabel.setText("Please select a character encoding!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusError("Please select a character encoding!");
 			return false;
 		}
 		return super.validateForm();
@@ -168,8 +167,7 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 
 		int lineLength = StringUtils.indexOf('\n', sampleChars);
 		if (lineLength == -1) {
-			_statusLabel.setText("No newline in first " + sampleChars.length + " chars");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusWarning("No newline in first " + sampleChars.length + " chars");
 			// don't show the preview if no newlines where found (it may try
 			// to treat the whole file as a single row)
 			showPreview = false;

@@ -261,16 +261,14 @@ public class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvData
 		}
 
 		if (warnings.isEmpty()) {
-			_statusLabel.setText("File read - separator and quote chars have been autodetected!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusValid();
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (String warning : warnings) {
 				sb.append(warning);
 				sb.append(". ");
 			}
-			_statusLabel.setText(sb.toString());
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusWarning(sb.toString());
 		}
 	}
 
@@ -278,8 +276,7 @@ public class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvData
 	protected boolean validateForm() {
 		Object selectedEncoding = _encodingComboBox.getSelectedItem();
 		if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
-			_statusLabel.setText("Please select a character encoding!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusError("Please select a character encoding!");
 			return false;
 		}
 		return super.validateForm();

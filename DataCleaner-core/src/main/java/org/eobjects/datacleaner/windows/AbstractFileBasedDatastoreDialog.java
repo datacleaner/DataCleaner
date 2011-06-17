@@ -104,8 +104,8 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	protected final UserPreferences userPreferences = UserPreferences.getInstance();
 	protected final MutableDatastoreCatalog _mutableDatastoreCatalog;
 	protected final D _originalDatastore;
-	protected final JLabel _statusLabel;
 	protected final JButton _addDatastoreButton;
+	private final JLabel _statusLabel;
 	private final JXTextField _datastoreNameField;
 	private final FilenameTextField _filenameField;
 	private final DCPanel _outerPanel = new DCPanel();
@@ -182,7 +182,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 				onFileSelected(file);
 			}
 		});
-		
+
 		if (isDirectoryBased()) {
 			_filenameField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		}
@@ -227,44 +227,53 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		}
 	}
 
+	protected void setStatusValid() {
+		_statusLabel.setText("Datastore readyDatastore ready");
+		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+	}
+
+	protected void setStatusWarning(String text) {
+		_statusLabel.setText(text);
+		_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+	}
+
+	protected void setStatusError(String text) {
+		_statusLabel.setText(text);
+		_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+	}
+
 	protected boolean validateForm() {
 		final String filename = _filenameField.getFilename();
 		if (StringUtils.isNullOrEmpty(filename)) {
-			_statusLabel.setText("Please enter or select a filename");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusError("Please enter or select a filename");
 			return false;
 		}
 
 		final File file = new File(filename);
 		if (!file.exists()) {
-			_statusLabel.setText("The file does not exist!");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusError("The file does not exist!");
 			return false;
 		}
 
 		if (isDirectoryBased()) {
 			if (!file.isDirectory()) {
-				_statusLabel.setText("Not a valid directory!");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				setStatusError("Not a valid directory!");
 				return false;
 			}
 		} else {
 			if (!file.isFile()) {
-				_statusLabel.setText("Not a valid file!");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				setStatusError("Not a valid file!");
 				return false;
 			}
 		}
 
 		final String datastoreName = _datastoreNameField.getText();
 		if (StringUtils.isNullOrEmpty(datastoreName)) {
-			_statusLabel.setText("Please enter a datastore name");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusError("Please enter a datastore name");
 			return false;
 		}
 
-		_statusLabel.setText("Datastore ready");
-		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+		setStatusValid();
 		return true;
 	}
 
@@ -378,8 +387,8 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 					if (logger.isWarnEnabled()) {
 						logger.warn("Error creating preview data: " + e.getMessage(), e);
 					}
-					_statusLabel.setText("Error create preview data: " + e.getMessage());
-					_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+
+					setStatusError("Error create preview data: " + e.getMessage());
 				}
 
 				// show table
@@ -465,8 +474,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 			if (logger.isWarnEnabled()) {
 				logger.warn("Error reading from file: " + e.getMessage(), e);
 			}
-			_statusLabel.setText("Error reading from file: " + e.getMessage());
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			setStatusError("Error reading from file: " + e.getMessage());
 			return new char[0];
 		} finally {
 			if (reader != null) {

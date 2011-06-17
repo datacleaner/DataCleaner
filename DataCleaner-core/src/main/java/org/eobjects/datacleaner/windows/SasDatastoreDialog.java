@@ -20,24 +20,61 @@
 package org.eobjects.datacleaner.windows;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map.Entry;
+
+import javax.swing.JComponent;
 
 import org.eobjects.analyzer.connection.SasDatastore;
+import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
+import org.eobjects.sassy.SasFilenameFilter;
 
 public class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<SasDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
+	private final DCLabel _tableCountLabel;
+
 	public SasDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
 		super(mutableDatastoreCatalog, windowContext);
+		_tableCountLabel = DCLabel.bright("");
 	}
 
 	public SasDatastoreDialog(SasDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
 			WindowContext windowContext) {
 		super(originalDatastore, mutableDatastoreCatalog, windowContext);
+		_tableCountLabel = DCLabel.bright("");
+
+		if (originalDatastore != null) {
+			onFileSelected(new File(originalDatastore.getFilename()));
+		}
+	}
+
+	@Override
+	protected void onFileSelected(File file) {
+		if (file.exists() && file.isDirectory()) {
+			String[] files = file.list(new SasFilenameFilter());
+			_tableCountLabel.setText("Directory contains " + files.length + " SAS table(s).");
+			if (files.length == 0) {
+				setStatusWarning("No SAS tables in directory");
+			} else {
+				setStatusValid();
+			}
+		} else {
+			setStatusWarning("Please select a valid directory");
+		}
+	}
+
+	@Override
+	protected List<Entry<String, JComponent>> getFormElements() {
+		List<Entry<String, JComponent>> result = super.getFormElements();
+		result.add(new ImmutableEntry<String, JComponent>("Tables", _tableCountLabel));
+		return result;
 	}
 
 	@Override
@@ -68,7 +105,7 @@ public class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<SasData
 	@Override
 	protected void setFileFilters(FilenameTextField filenameField) {
 	}
-	
+
 	@Override
 	protected boolean isDirectoryBased() {
 		return true;

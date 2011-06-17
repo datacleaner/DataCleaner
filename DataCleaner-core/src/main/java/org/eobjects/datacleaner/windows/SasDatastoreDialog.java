@@ -21,9 +21,9 @@ package org.eobjects.datacleaner.windows;
 
 import java.io.File;
 
+import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
-import org.eobjects.datacleaner.user.SasDatastore;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 

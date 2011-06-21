@@ -57,14 +57,21 @@
 
 	<section id="connecting_to_your_datastore">
 		<title>Connecting to your datastore</title>
-		<para>Below is a screenshot of the initial list of datastores that
-			will be presented when launching DataCleaner.</para>
-
+		<para>Below is a screenshot of the initial screen that
+			will be
+			presented when launching DataCleaner, containing a list of
+			datastores. Above the list you will see a set of icons, each
+			representing a type of datastore. Click either of the icons to
+			register your own datastore.</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="analysis_job_01_datastore_list.jpg" format="JPG" />
+				<imagedata fileref="analysis_job_01_datastore_list.jpg"
+					format="JPG" />
 			</imageobject>
 		</mediaobject>
+		<para>Once you've registered ('created') your own datastore, you can
+			select it from the list and click 'Analyze!' to start working with
+			it!</para>
 	</section>
 
 </chapter>

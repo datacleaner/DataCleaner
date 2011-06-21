@@ -196,11 +196,51 @@
 				<version>2.0.13</version>
 				<executions>
 					<execution>
+						<!-- HTML generation -->
+						<id>reference-html</id>
 						<goals>
 							<goal>generate-html</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<chunkedOutput>true</chunkedOutput>
+							<postProcess>
+								<copy todir="${project.basedir}/target/site/reference/html">
+									<fileset dir="${project.basedir}/target/docbkx/html/index">
+										<include name="**/*.html" />
+									</fileset>
+								</copy>
+								<copy todir="${project.basedir}/target/site/reference/html">
+									<fileset dir="${project.basedir}/src/docbkx/resources">
+										<include name="**/*.css" />
+										<include name="**/*.png" />
+										<include name="**/*.gif" />
+										<include name="**/*.jpg" />
+									</fileset>
+								</copy>
+							</postProcess>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- PDF generation -->
+						<id>reference-pdf</id>
+						<goals>
 							<goal>generate-pdf</goal>
 						</goals>
 						<phase>package</phase>
+						<configuration>
+							<imgSrcPath>src/docbkx/resources/</imgSrcPath>
+							<postProcess>
+								<copy todir="${project.basedir}/target/site/reference">
+									<fileset dir="${project.basedir}/target/docbkx">
+										<include name="**/*.pdf" />
+									</fileset>
+								</copy>
+								<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
+									tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
+									failonerror="false" />
+							</postProcess>
+						</configuration>
 					</execution>
 				</executions>
 				<dependencies>
@@ -213,27 +253,6 @@
 				</dependencies>
 				<configuration>
 					<includes>index.xml</includes>
-					<chunkedOutput>false</chunkedOutput>
-					<imgSrcPath>src/docbkx/resources/</imgSrcPath>
-					<postProcess>
-						<copy todir="${project.basedir}/target/site/reference">
-							<fileset dir="${project.basedir}/target/docbkx">
-								<include name="**/*.html" />
-								<include name="**/*.pdf" />
-							</fileset>
-						</copy>
-						<copy todir="${project.basedir}/target/site/reference/html">
-							<fileset dir="${project.basedir}/src/docbkx/resources">
-								<include name="**/*.css" />
-								<include name="**/*.png" />
-								<include name="**/*.gif" />
-								<include name="**/*.jpg" />
-							</fileset>
-						</copy>
-						<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
-							tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
-							failonerror="false" />
-					</postProcess>
 				</configuration>
 			</plugin>
 

@@ -46,28 +46,37 @@
 
 	<part>
 		<partinfo>
+			<title>Reference data</title>
+		</partinfo>
+		<xi:include href="chapter31-dictionaries.xml" />
+		<xi:include href="chapter32-synonyms.xml" />
+		<xi:include href="chapter33-string-patterns.xml" />
+	</part>
+
+	<part>
+		<partinfo>
 			<title>Configuration reference</title>
 		</partinfo>
-		<xi:include href="chapter31-configuration-file.xml" />
-		<xi:include href="chapter32-job-files.xml" />
-		<xi:include href="chapter33-logging.xml" />
+		<xi:include href="chapter41-configuration-file.xml" />
+		<xi:include href="chapter42-job-files.xml" />
+		<xi:include href="chapter43-logging.xml" />
 	</part>
 
 	<part>
 		<partinfo>
 			<title>Invoking DataCleaner jobs from the command-line</title>
 		</partinfo>
-		<xi:include href="chapter41-command-line-interface.xml" />
-		<xi:include href="chapter42-scheduling-jobs.xml" />
+		<xi:include href="chapter51-command-line-interface.xml" />
+		<xi:include href="chapter52-scheduling-jobs.xml" />
 	</part>
 
 	<part>
 		<partinfo>
 			<title>Developer's guide</title>
 		</partinfo>
-		<xi:include href="chapter51-architecture.xml" />
-		<xi:include href="chapter52-developer-resources.xml" />
-		<xi:include href="chapter53-plugin-packaging.xml" />
+		<xi:include href="chapter61-architecture.xml" />
+		<xi:include href="chapter62-developer-resources.xml" />
+		<xi:include href="chapter63-plugin-packaging.xml" />
 	</part>
 
 </book>

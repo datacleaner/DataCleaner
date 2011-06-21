@@ -5,15 +5,21 @@
 
 	<title>Analyzers</title>
 
-	<chapterinfo>
-		<abstract>
-			<para>This chapter deals with one of the most important concepts in
-				DataCleaner: Analyzers. Analyzers are the endpoints of any analysis
-				job, meaning that a job requires at least on analyzer.</para>
-			<para>An analyzer consumes a (set of) column(s) and generates an
-				analysis result based on the values in the consumed columns.</para>
-		</abstract>
-	</chapterinfo>
+	<para>This chapter deals with one of the most important concepts in
+		DataCleaner: Analyzers. Analyzers are the endpoints of any analysis
+		job, meaning that a job requires at least on analyzer.</para>
+	<para>An analyzer consumes a (set of) column(s) and generates an
+		analysis result based on the values in the consumed columns.</para>
+	<para>Here is an example of a configuration panel pertaining to an
+		analyzer:</para>
+	<mediaobject>
+		<imageobject>
+			<imagedata fileref="analysis_job_04_analyzer.jpg" format="JPG" />
+		</imageobject>
+	</mediaobject>
+	<para>In the panel there will always be one or more selections of
+		columns. The configuration panel may also contain additional
+		properties for configuration.</para>
 
 	<section id="boolean_analyzer">
 		<title>Boolean analyzer</title>
@@ -51,7 +57,132 @@
 
 	<section id="pattern_finder">
 		<title>Pattern finder</title>
-		<para>TODO</para>
+		<para>The pattern finder is one of the more advanced, but also very
+			popular analyzers of DataCleaner.</para>
+		<para>Here is a screenshot of the configuration panel of the Pattern
+			finder:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analyzer_reference_pattern_finder.jpg"
+					format="JPG" />
+			</imageobject>
+		</mediaobject>
+		<para>From the screenshot we can see that the Pattern finder has these
+			configuration properties:</para>
+		<table>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>Discriminate text case</entry>
+						<entry>Defines whether or not to discriminate (ie. consider as
+							different pattern parts) based on text case. If true
+							"DataCleaner" and "datacleaner" will be considered instances of
+							different patterns, if false they will be matched within same
+							pattern.
+						</entry>
+					</row>
+					<row>
+						<entry>Discriminate negative numbers</entry>
+						<entry>When parsing numbers, this property defines if negative
+							numbers should be discriminated from positive numbers.</entry>
+					</row>
+					<row>
+						<entry>Discriminate decimals</entry>
+						<entry>When parsing numbers, this property defines if decimal
+							numbers should be discriminated from integers.</entry>
+					</row>
+					<row>
+						<entry>Enable mixed tokens</entry>
+						<entry>
+							<para>Defines whether or not to categorize tokens that contain
+								both letters and digits as "mixed", or alternatively as two
+								separate tokens. Mixed tokens are represented using questionmark
+								('?')
+								symbols.</para>
+							<para>This is one of the more important configuration properties.
+								For example if mixed tokens are enabled (default), all these
+								values will
+								be matched against the same pattern: foo123, 123foo,
+								foobar123, foo123bar. If mixed tokens are NOT enabled only
+								foo123 and foobar123 will be matched (because 123foo and
+								foo123bar represent different combinations of letter and digit
+								tokens).</para>
+						</entry>
+					</row>
+					<row>
+						<entry>Ignore repeated spaces</entry>
+						<entry>Defines whether or not to discriminate based on amount of
+							whitespaces.</entry>
+					</row>
+					<row>
+						<entry>Upper case patterns expand in size</entry>
+						<entry>Defines whether or not upper case tokens automatically
+							"expand" in size. Expandability refers to whether or not the
+							found patterns will include matches if a candidate has the same
+							type of token, but with a different size. The default
+							configuration for upper case characters is false (ie. ABC is
+							not
+							matched with ABCD).</entry>
+					</row>
+					<row>
+						<entry>Lower case patterns expand in size</entry>
+						<entry>
+							<para>Defines whether or not lower case tokens automatically
+								"expand" in size. As with upper case expandability, this
+								property
+								refers to whether or not the found patterns will include
+								matches
+								if a candidate has the same type of token, but with a
+								different
+								size. The default configuration for lower case
+								characters is
+								true
+								(ie. 'abc' is not matched with 'abc').</para>
+							<para>The defaults in the two "expandability" configuration
+								properties mean that eg. name pattern recognition is meaningful:
+								'James' and 'John' both pertain to the same pattern ('Aaaaa'),
+								while 'McDonald' pertain to a different pattern ('AaAaaaaa').
+							</para>
+						</entry>
+					</row>
+					<row>
+						<entry>Predefined token name</entry>
+						<entry>Predefined tokens make it possible to define a token to
+							look for and classify using either just a fixed list of values or
+							regular expressions. Typically this is used if the values contain
+							some additional parts which you want to manually define a
+							matching category for. The 'Predefined token name' property
+							defines the name of such a category.</entry>
+					</row>
+					<row>
+						<entry>Predefined token regexes</entry>
+						<entry>Defines a number of string values and/or regular
+							expressions which are used to match values against the
+							(pre)defined token category.</entry>
+					</row>
+					<row>
+						<entry>Decimal separator</entry>
+						<entry>The decimal separator character, used when parsing numbers
+						</entry>
+					</row>
+					<row>
+						<entry>Thousand separator</entry>
+						<entry>The thousand separator character, used when parsing numbers
+						</entry>
+					</row>
+					<row>
+						<entry>Minus sign</entry>
+						<entry>The minus sign character, used when parsing numbers</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
 	</section>
 
 	<section id="phonetic_similarity_finder">

@@ -22,6 +22,40 @@
 
 	<section id="template_jobs">
 		<title>Template jobs</title>
-		<para>TODO</para>
+		<para>DataCleaner contains a feature where you can reuse a job for
+			multiple datastores or just multiple columns in the same datastore.
+			We call this feature 'template jobs'.</para>
+		<para>When opening a job you are presented with a file chooser. When
+			you select a job file a panel will appear, containing some
+			information about the job as well as available actions:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="template_job_01_filechooser.jpg"
+					format="JPG" />
+			</imageobject>
+		</mediaobject>
+		<para>If you click the 'Open as template' button you will be presented
+			with a dialog where you can map the job's original columns to a new
+			set of columns:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="template_job_02_mapping.jpg" format="JPG" />
+			</imageobject>
+		</mediaobject>
+		<para>First you need to specify the datastore to use. On the left side
+			you see the name of the original datastore, but the job is not
+			restricted to use only this datastore. Select a datastore from the
+			list and the fields below for the columns will become active.</para>
+		<para>Then you need to map individual columns. If you have two
+			datastore that have the same column names, you can click the "Map
+			automatically" button and they will be automatically assigned.
+			Otherwise you need to map the columns from the new datastore's
+			availabel columns.</para>
+		<para>Finally your job may contain 'Job-level variables'. These are
+			configurable properties of the job that you might also want to fill
+			out.</para>
+		<para>Once these 2-3 steps have been completed, click the "Open job"
+			button, and DataCleaner will be ready for executing the job on a new
+			set of columns!</para>
 	</section>
 </chapter>

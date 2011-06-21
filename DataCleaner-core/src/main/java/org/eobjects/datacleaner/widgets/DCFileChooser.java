@@ -29,9 +29,6 @@ import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 
-import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.datacleaner.util.IconUtils;
-import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 
@@ -45,9 +42,8 @@ public class DCFileChooser extends JFileChooser {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
-	private static final String USER_HOME_PATH = System.getProperty("user.home");
-	private static final String DESKTOP_PATH = USER_HOME_PATH + File.separatorChar + "Desktop";
+	private static final FileIconFactory _defaultFileIconFactory = new DefaultFileIconFactory();
+	private FileIconFactory _fileIconFactory;
 
 	public DCFileChooser() {
 		this(null);
@@ -95,51 +91,19 @@ public class DCFileChooser extends JFileChooser {
 
 	@Override
 	public Icon getIcon(File f) {
-		if (f.isDirectory()) {
-			if (USER_HOME_PATH.equals(f.getAbsolutePath())) {
-				return imageManager.getImageIcon("images/filetypes/home-folder.png");
-			}
-			if (DESKTOP_PATH.equals(f.getAbsolutePath())) {
-				return imageManager.getImageIcon("images/filetypes/desktop-folder.png");
-			}
-			if (f.getName().startsWith(".") || f.isHidden()) {
-				return imageManager.getImageIcon("images/filetypes/hidden-folder.png");
-			}
-			return imageManager.getImageIcon("images/filetypes/folder.png");
-		}
-		String name = f.getName().toLowerCase();
-		if (name.endsWith(FileFilters.CSV.getExtension()) || name.endsWith(FileFilters.TSV.getExtension())
-				|| name.endsWith(FileFilters.DAT.getExtension()) || name.endsWith(FileFilters.TXT.getExtension())) {
-			return imageManager.getImageIcon(IconUtils.CSV_IMAGEPATH);
-		}
-		if (name.endsWith(FileFilters.MDB.getExtension()) || name.endsWith(FileFilters.ACCDB.getExtension())) {
-			return imageManager.getImageIcon(IconUtils.ACCESS_IMAGEPATH);
-		}
-		if (name.endsWith(FileFilters.DBF.getExtension())) {
-			return imageManager.getImageIcon(IconUtils.DBASE_IMAGEPATH);
-		}
-		if (name.endsWith(FileFilters.XLS.getExtension()) || name.endsWith(FileFilters.XLSX.getExtension())) {
-			return imageManager.getImageIcon(IconUtils.EXCEL_IMAGEPATH);
-		}
-		if (name.endsWith(FileFilters.ODB.getExtension())) {
-			return imageManager.getImageIcon(IconUtils.ODB_IMAGEPATH);
-		}
-		if (name.endsWith(FileFilters.ANALYSIS_XML.getExtension())) {
-			return imageManager.getImageIcon("images/filetypes/analysis_job.png");
-		}
-		if (name.endsWith(FileFilters.XML.getExtension())) {
-			return imageManager.getImageIcon(IconUtils.XML_IMAGEPATH);
-		}
-		if (name.endsWith(".zip") || name.endsWith(".tar") || name.endsWith(".gz") || name.endsWith(".jar")
-				|| name.endsWith(".war") || name.endsWith(".ear")) {
-			return imageManager.getImageIcon("images/filetypes/archive.png");
-		}
-		return imageManager.getImageIcon("images/filetypes/file.png");
+		return getFileIconFactory().getIcon(f);
 	}
 
 	public static void main(String[] args) {
 		LookAndFeelManager.getInstance().init();
 		DCFileChooser fc = new DCFileChooser();
 		fc.showOpenDialog(null);
+	}
+
+	public FileIconFactory getFileIconFactory() {
+		if (_fileIconFactory == null) {
+			return _defaultFileIconFactory;
+		}
+		return _fileIconFactory;
 	}
 }

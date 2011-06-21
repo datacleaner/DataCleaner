@@ -190,47 +190,53 @@
 			</plugin>
 
 			<plugin>
-				<!-- Generate documentation based on DocBook xslt -->
-				<!-- See http://wiki.docbook.org/MavenDocBookXSL -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xml-maven-plugin</artifactId>
-				<version>1.0</version>
+				<!-- Generate docbook documentation, see http://docbkx-tools.sourceforge.net/docbkx-maven-plugin/plugin-info.html -->
+				<groupId>com.agilejava.docbkx</groupId>
+				<artifactId>docbkx-maven-plugin</artifactId>
+				<version>2.0.13</version>
 				<executions>
 					<execution>
-						<phase>verify</phase>
 						<goals>
-							<goal>transform</goal>
+							<goal>generate-html</goal>
+							<goal>generate-pdf</goal>
 						</goals>
+						<phase>package</phase>
 					</execution>
 				</executions>
-				<configuration>
-					<transformationSets>
-						<transformationSet>
-							<dir>src/main/docbook</dir>
-							<stylesheet>${project.build.directory}/docbook-resources/docbook/html/docbook.xsl</stylesheet>
-							<parameters>
-								<parameter>
-									<name>html.stylesheet</name>
-									<value>style.css</value>
-								</parameter>
-							</parameters>
-							<fileMappers>
-								<fileMapper
-									implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-									<targetExtension>.html</targetExtension>
-								</fileMapper>
-							</fileMappers>
-						</transformationSet>
-					</transformationSets>
-				</configuration>
 				<dependencies>
 					<dependency>
-						<groupId>net.sourceforge.saxon</groupId>
-						<artifactId>saxon</artifactId>
-						<version>9.1.0.8</version>
+						<groupId>org.docbook</groupId>
+						<artifactId>docbook-xml</artifactId>
+						<version>4.4</version>
+						<scope>runtime</scope>
 					</dependency>
 				</dependencies>
+				<configuration>
+					<includes>index.xml</includes>
+					<chunkedOutput>false</chunkedOutput>
+					<imgSrcPath>src/docbkx/resources/</imgSrcPath>
+					<postProcess>
+						<copy todir="${project.basedir}/target/site/reference">
+							<fileset dir="${project.basedir}/target/docbkx">
+								<include name="**/*.html" />
+								<include name="**/*.pdf" />
+							</fileset>
+						</copy>
+						<copy todir="${project.basedir}/target/site/reference/html">
+							<fileset dir="${project.basedir}/src/docbkx/resources">
+								<include name="**/*.css" />
+								<include name="**/*.png" />
+								<include name="**/*.gif" />
+								<include name="**/*.jpg" />
+							</fileset>
+						</copy>
+						<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
+							tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
+							failonerror="false" />
+					</postProcess>
+				</configuration>
 			</plugin>
+
 
 		</plugins>
 	</build>
@@ -269,17 +275,6 @@
 			<groupId>net.sourceforge.jtds</groupId>
 			<artifactId>jtds</artifactId>
 			<version>1.2.4</version>
-		</dependency>
-
-		<!-- DocBook dependency only used for documentation generation -->
-		<dependency>
-			<groupId>net.sf.docbook</groupId>
-			<artifactId>docbook-xsl</artifactId>
-			<version>1.75.1</version>
-			<type>zip</type>
-			<classifier>ns-resources</classifier>
-			<optional>true</optional>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

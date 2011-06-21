@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Getting started</title>
+
+	<section id="installing_datacleaner">
+		<title>Installing DataCleaner</title>
+		<para>DataCleaner requires practically no installation. The
+			application is not dependent on any particular operating system and
+			does not need to "register" in any registration database or something
+			like that.</para>
+		<para>The only two requirements of DataCleaner are:</para>
+		<orderedlist>
+			<listitem>
+				A computer (with a graphical display, except if run in
+				<link xl:href="chapter41-command-line-interface.html">command-line mode</link>
+				).
+			</listitem>
+			<listitem>
+				A
+				<link xl:href="http://www.java.com">Java Runtime Environment</link>
+				(JRE), version 6 or higher.
+			</listitem>
+		</orderedlist>
+
+		<para>You have to options in terms of installation.</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					Download DataCleaner as a distributable package (.zip or .tar.gz)
+					from the release list on our
+					<link xl:href="http://datacleaner.eobjects.org/downloads">downloads page</link>
+					.
+				</para>
+
+				<para>Unpackage the distributable in a directory of your own choice.
+					DataCleaner will save it's configuration within this same
+					directory.</para>
+			</listitem>
+			<listitem>
+				<para>
+					Run DataCleaner as a Java WebStart application. You can do this by
+					clicking the WebStart link on our
+					<link xl:href="http://datacleaner.eobjects.org/downloads">downloads page</link>
+					.
+				</para>
+				<para>In WebStart the application will be installed in your JRE's
+					application cache. Each time you start the application it will
+					automatically check for updates to the application. DataCleaner's
+					configuration will be stored in your "home"-directory in a folder
+					called .datacleaner/[version].</para>
+			</listitem>
+		</orderedlist>
+	</section>
+
+	<section id="connecting_to_your_datastore">
+		<title>Connecting to your datastore</title>
+		<para>Below is a screenshot of the initial list of datastores that
+			will be presented when launching DataCleaner.</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analysis_job_01_datastore_list.jpg" format="JPG" />
+			</imageobject>
+		</mediaobject>
+	</section>
+
+</chapter>

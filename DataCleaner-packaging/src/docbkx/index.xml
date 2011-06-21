@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<bookinfo>
+		<title>Reference documentation</title>
+		<productname>DataCleaner</productname>
+		<releaseinfo>2.1</releaseinfo>
+		<author>
+			<firstname>Kasper</firstname>
+			<surname>S&#248;rensen</surname>
+		</author>
+		<copyright>
+			<year>2008-2011</year>
+		</copyright>
+		<legalnotice>
+			<para>Copies of this document may be made for your own use and for
+				distribution to others, provided that you do not charge any fee for
+				such
+				copies and further provided that each copy contains this
+				Copyright
+				Notice, whether distributed in print or electronically.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<part>
+		<partinfo>
+			<title>Introduction to DataCleaner</title>
+		</partinfo>
+
+		<xi:include href="chapter11-concepts.xml" />
+		<xi:include href="chapter12-getting-started.xml" />
+		<xi:include href="chapter13-building-jobs.xml" />
+	</part>
+
+	<part>
+		<partinfo>
+			<title>Analysis component reference</title>
+		</partinfo>
+		<xi:include href="chapter21-analyzers.xml" />
+		<xi:include href="chapter22-transformers.xml" />
+		<xi:include href="chapter23-filters.xml" />
+	</part>
+
+	<part>
+		<partinfo>
+			<title>Configuration reference</title>
+		</partinfo>
+		<xi:include href="chapter31-configuration-file.xml" />
+		<xi:include href="chapter32-job-files.xml" />
+		<xi:include href="chapter33-logging.xml" />
+	</part>
+
+	<part>
+		<partinfo>
+			<title>Invoking DataCleaner jobs from the command-line</title>
+		</partinfo>
+		<xi:include href="chapter41-command-line-interface.xml" />
+		<xi:include href="chapter42-scheduling-jobs.xml" />
+	</part>
+
+	<part>
+		<partinfo>
+			<title>Developer's guide</title>
+		</partinfo>
+		<xi:include href="chapter51-architecture.xml" />
+		<xi:include href="chapter52-developer-resources.xml" />
+		<xi:include href="chapter53-plugin-packaging.xml" />
+	</part>
+
+</book>

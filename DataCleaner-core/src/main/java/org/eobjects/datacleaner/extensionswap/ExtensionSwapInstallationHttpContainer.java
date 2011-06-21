@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.extensionswap;
 
 import java.awt.Component;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
@@ -136,16 +137,27 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 		}
 	}
 
-	public static void initialize(ExtensionSwapClient client) {
+	/**
+	 * Initializes the extension swap installation HTTP service
+	 * 
+	 * @param client
+	 *            the client to use
+	 * @return a closable that can be invoked in case the service is to be shut
+	 *         down
+	 */
+	public static Closeable initialize(ExtensionSwapClient client) {
 		try {
 			ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(client);
 			Connection connection = new SocketConnection(container);
 			SocketAddress address = new InetSocketAddress(PORT_NUMBER);
 			connection.connect(address);
 			logger.info("HTTP service for ExtensionSwap installation running on port {}", PORT_NUMBER);
+			return connection;
 		} catch (IOException e) {
 			logger.warn("Could not host HTTP service for ExtensionSwap installation on port " + PORT_NUMBER
 					+ ". Automatic installations of extensions will not be available.", e);
+			return null;
 		}
 	}
+
 }

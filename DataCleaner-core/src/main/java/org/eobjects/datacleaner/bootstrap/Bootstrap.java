@@ -20,11 +20,14 @@
 package org.eobjects.datacleaner.bootstrap;
 
 import java.awt.SplashScreen;
+import java.io.Closeable;
 import java.io.PrintWriter;
 
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
@@ -37,6 +40,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +78,7 @@ public final class Bootstrap {
 				final PrintWriter out = new PrintWriter(System.out);
 				CliArguments.printUsage(out);
 
-				_options.getExitActionListener().exit(1);
+				exitCommandLine(null, 1);
 				return;
 			}
 		}
@@ -105,16 +109,30 @@ public final class Bootstrap {
 			runner.run(configuration);
 			out.flush();
 
-			_options.getExitActionListener().exit(0);
+			exitCommandLine(configuration, 0);
+			return;
 		} else {
 			// run in GUI mode
 
 			// loads dynamic user preferences
 			final UserPreferences userPreferences = UserPreferences.getInstance();
 
-			final WindowContext windowContext = new DCWindowContext(_options.getExitActionListener());
+			final WindowContext windowContext = new DCWindowContext(configuration);
 
-			new AnalysisJobBuilderWindow(configuration, windowContext).setVisible(true);
+			final AnalysisJobBuilderWindow analysisJobBuilderWindow = new AnalysisJobBuilderWindow(configuration,
+					windowContext);
+			if (_options.isSingleDatastoreMode()) {
+				DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
+				Datastore singleDatastore = _options.getSingleDatastore(datastoreCatalog);
+				if (singleDatastore == null) {
+					logger.info("Single datastore mode was enabled, but datastore was null!");
+				} else {
+					logger.info("Initializing single datastore mode with {}", singleDatastore);
+				}
+				analysisJobBuilderWindow.setDatastoreSelectionEnabled(false);
+				analysisJobBuilderWindow.setDatastore(singleDatastore, true);
+			}
+			analysisJobBuilderWindow.setVisible(true);
 
 			// set up HTTP service for ExtensionSwap installation
 			loadExtensionSwapService(userPreferences, windowContext);
@@ -123,6 +141,22 @@ public final class Bootstrap {
 			final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
 					(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
 			userPreferences.addLoginChangeListener(regexSwapHandler);
+
+			final ExitActionListener exitActionListener = _options.getExitActionListener();
+			if (exitActionListener != null) {
+				windowContext.addExitActionListener(exitActionListener);
+			}
+		}
+	}
+
+	private void exitCommandLine(AnalyzerBeansConfiguration configuration, int statusCode) {
+		if (configuration != null) {
+			logger.debug("Shutting down task runner");
+			configuration.getTaskRunner().shutdown();
+		}
+		ExitActionListener exitActionListener = _options.getExitActionListener();
+		if (exitActionListener != null) {
+			exitActionListener.exit(statusCode);
 		}
 	}
 
@@ -140,7 +174,15 @@ public final class Bootstrap {
 			logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
 			extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext);
 		}
-		ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
+		final Closeable closeableConnection = ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
+		if (closeableConnection != null) {
+			windowContext.addExitActionListener(new ExitActionListener() {
+				@Override
+				public void exit(int statusCode) {
+					FileHelper.safeClose(closeableConnection);
+				}
+			});
+		}
 	}
 
 	private AnalyzerBeansConfiguration loadConfiguration() {

@@ -146,6 +146,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private Datastore _datastore;
 	private DataContextProvider _dataContextProvider;
 	private DatastoreListPanel _datastoreListPanel;
+	private boolean _datastoreSelectionEnabled;
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
 		this(configuration, (Datastore) null, windowContext);
@@ -160,7 +161,6 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, Datastore datastore,
 			WindowContext windowContext) {
 		this(configuration, new AnalysisJobBuilder(configuration), datastore, windowContext);
-
 	}
 
 	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName,
@@ -173,6 +173,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore, WindowContext windowContext) {
 		super(windowContext);
 		_configuration = configuration;
+		_datastoreSelectionEnabled = true;
 		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
 				new DCRendererInitializer(windowContext));
 		setJMenuBar(new DCWindowMenuBar(this, windowContext, _configuration));
@@ -260,11 +261,33 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		return button;
 	}
 
+	/**
+	 * Gets whether or not the datastore has been set in this window (ie. if the
+	 * tree is showing a datastore).
+	 * 
+	 * @return true if a datastore is set.
+	 */
 	public boolean isDatastoreSet() {
 		return _datastore != null;
 	}
 
+	/**
+	 * Initializes the window to use a particular datastore in the schema tree.
+	 * 
+	 * @param datastore
+	 */
 	public void setDatastore(final Datastore datastore) {
+		setDatastore(datastore, false);
+	}
+
+	/**
+	 * Initializes the window to use a particular datastore in the schema tree.
+	 * 
+	 * @param datastore
+	 * @param expandTree
+	 *            true if the datastore tree should be initially expanded.
+	 */
+	public void setDatastore(final Datastore datastore, boolean expandTree) {
 		final DataContextProvider dcp;
 		if (datastore == null) {
 			dcp = null;
@@ -278,7 +301,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		}
 		_dataContextProvider = dcp;
 		_analysisJobBuilder.setDatastore(datastore);
-		_schemaTreePanel.setDatastore(datastore);
+		_schemaTreePanel.setDatastore(datastore, expandTree);
 
 		if (datastore == null) {
 			_analysisJobBuilder.reset();
@@ -382,8 +405,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 		if (count == 1) {
 			// if this is the last workspace window
-			if (isDatastoreSet()) {
-				// if datastore is set, reset the window
+			if (isDatastoreSet() && isDatastoreSelectionEnabled()) {
+				// if datastore is set and datastore selection is enabled,
+				// return to datastore selection.
 				resetJob();
 				exit = false;
 				windowClosing = false;
@@ -590,6 +614,14 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_visualizeButton.setEnabled(everythingEnabled);
 		_addTransformerButton.setEnabled(everythingEnabled);
 		_addAnalyzerButton.setEnabled(everythingEnabled);
+	}
+
+	public void setDatastoreSelectionEnabled(boolean datastoreSelectionEnabled) {
+		_datastoreSelectionEnabled = datastoreSelectionEnabled;
+	}
+
+	public boolean isDatastoreSelectionEnabled() {
+		return _datastoreSelectionEnabled;
 	}
 
 	@Override

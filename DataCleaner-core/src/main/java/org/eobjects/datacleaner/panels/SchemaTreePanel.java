@@ -52,10 +52,10 @@ public class SchemaTreePanel extends DCPanel {
 		_windowContext = windowContext;
 		setLayout(new BorderLayout());
 		setBorder(WidgetUtils.BORDER_WIDE);
-		setDatastore(null);
+		setDatastore(null, false);
 	}
 
-	public void setDatastore(final Datastore datastore) {
+	public void setDatastore(final Datastore datastore, final boolean expandTree) {
 		removeAll();
 		if (datastore == null) {
 			add(new DCPanel().setPreferredSize(150, 150), BorderLayout.CENTER);
@@ -87,6 +87,9 @@ public class SchemaTreePanel extends DCPanel {
 					removeAll();
 					add(schemaTreeScroll, BorderLayout.CENTER);
 					updateParentPanel();
+					if (expandTree) {
+						schemaTree.expandAll();
+					}
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}

@@ -32,6 +32,20 @@ import org.eobjects.datacleaner.windows.DCWindow;
 public interface WindowContext {
 
 	/**
+	 * Adds an action listener for exit actions
+	 * 
+	 * @param exitActionListener
+	 */
+	public void addExitActionListener(ExitActionListener exitActionListener);
+
+	/**
+	 * Removes an action listener for exit actions
+	 * 
+	 * @param exitActionListener
+	 */
+	public void removeExitActionListener(ExitActionListener exitActionListener);
+
+	/**
 	 * Gets all active windows in the application
 	 * 
 	 * @return

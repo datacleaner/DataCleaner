@@ -20,6 +20,8 @@
 package org.eobjects.datacleaner.bootstrap;
 
 import org.eobjects.analyzer.cli.CliArguments;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 
 public class DefaultBootstrapOptions implements BootstrapOptions {
 
@@ -44,6 +46,17 @@ public class DefaultBootstrapOptions implements BootstrapOptions {
 	@Override
 	public ExitActionListener getExitActionListener() {
 		return new DCExitActionListener();
+	}
+	
+	@Override
+	public boolean isSingleDatastoreMode() {
+		return _arguments.getDatastoreName() != null;
+	}
+
+	@Override
+	public Datastore getSingleDatastore(DatastoreCatalog datastoreCatalog) {
+		String ds = _arguments.getDatastoreName();
+		return datastoreCatalog.getDatastore(ds);
 	}
 
 }

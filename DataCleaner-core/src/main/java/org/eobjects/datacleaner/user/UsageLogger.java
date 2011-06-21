@@ -44,8 +44,8 @@ public final class UsageLogger {
 
 	private static final UsageLogger instance = new UsageLogger();
 
-	private final ExecutorService _executorService;
 	private final UserPreferences _userPreferences;
+	private ExecutorService _executorService;
 
 	public static UsageLogger getInstance() {
 		return instance;
@@ -53,8 +53,14 @@ public final class UsageLogger {
 
 	// prevent instantiation
 	private UsageLogger() {
-		_executorService = Executors.newSingleThreadExecutor();
 		_userPreferences = UserPreferences.getInstance();
+	}
+
+	private ExecutorService getExecutorService() {
+		if (_executorService == null || _executorService.isShutdown()) {
+			_executorService = Executors.newSingleThreadExecutor();
+		}
+		return _executorService;
 	}
 
 	public void logApplicationStartup() {
@@ -63,7 +69,7 @@ public final class UsageLogger {
 
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
-		_executorService.submit(runnable);
+		getExecutorService().submit(runnable);
 	}
 
 	private String getUsername() {
@@ -80,10 +86,13 @@ public final class UsageLogger {
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
 		try {
-			_executorService.submit(runnable).get();
+			getExecutorService().submit(runnable).get();
 		} catch (Exception e) {
 			logger.warn("Exception occurred sending shutdown message", e);
 		}
+
+		// order the executor service to shut down.
+		getExecutorService().shutdown();
 	}
 
 	public void log(final String action) {
@@ -95,7 +104,7 @@ public final class UsageLogger {
 		final String username = getUsername();
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
-		_executorService.submit(runnable);
+		getExecutorService().submit(runnable);
 	}
 
 	/**

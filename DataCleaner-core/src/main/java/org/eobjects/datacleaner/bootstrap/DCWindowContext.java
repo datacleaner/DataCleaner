@@ -28,6 +28,7 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -49,8 +50,9 @@ public final class DCWindowContext implements WindowContext {
 	private static final List<WeakReference<DCWindowContext>> _allWindowContexts = new ArrayList<WeakReference<DCWindowContext>>();
 
 	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
-	private final List<ActionListener> _listeners = new ArrayList<ActionListener>();
-	private final ExitActionListener _exitActionListener;
+	private final List<ActionListener> _windowListeners = new ArrayList<ActionListener>();
+	private final List<ExitActionListener> _exitActionListeners = new ArrayList<ExitActionListener>();
+	private final AnalyzerBeansConfiguration _configuration;
 
 	/**
 	 * Helper method to get any window of the application. This can be
@@ -75,11 +77,11 @@ public final class DCWindowContext implements WindowContext {
 	}
 
 	public DCWindowContext() {
-		this(new DCExitActionListener());
+		this(null);
 	}
 
-	public DCWindowContext(ExitActionListener exitActionListener) {
-		_exitActionListener = exitActionListener;
+	public DCWindowContext(AnalyzerBeansConfiguration configuration) {
+		_configuration = configuration;
 		_allWindowContexts.add(new WeakReference<DCWindowContext>(this));
 	}
 
@@ -90,12 +92,12 @@ public final class DCWindowContext implements WindowContext {
 
 	@Override
 	public void addWindowListener(ActionListener listener) {
-		_listeners.add(listener);
+		_windowListeners.add(listener);
 	}
 
 	@Override
 	public void removeWindowListener(ActionListener listener) {
-		_listeners.remove(listener);
+		_windowListeners.remove(listener);
 	}
 
 	@Override
@@ -110,7 +112,7 @@ public final class DCWindowContext implements WindowContext {
 
 	private void notifyListeners() {
 		ActionEvent event = new ActionEvent(this, _windows.size(), null);
-		for (ActionListener listener : _listeners) {
+		for (ActionListener listener : _windowListeners) {
 			listener.actionPerformed(event);
 		}
 	}
@@ -148,6 +150,21 @@ public final class DCWindowContext implements WindowContext {
 	public void exit() {
 		UserPreferences.getInstance().save();
 		UsageLogger.getInstance().logApplicationShutdown();
-		_exitActionListener.exit(0);
+		if (_configuration != null) {
+			_configuration.getTaskRunner().shutdown();
+		}
+		for (ExitActionListener actionListener : _exitActionListeners) {
+			actionListener.exit(0);
+		}
+	}
+
+	@Override
+	public void addExitActionListener(ExitActionListener exitActionListener) {
+		_exitActionListeners.add(exitActionListener);
+	}
+
+	@Override
+	public void removeExitActionListener(ExitActionListener exitActionListener) {
+		_exitActionListeners.remove(exitActionListener);
 	}
 }

@@ -57,7 +57,14 @@
 
 	<section id="installation">
 		<title>Connecting to your datastore</title>
-		<para>TODO</para>
+		<para>Below is a screenshot of the initial list of datastores that
+			will be presented when launching DataCleaner.</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analysis_job_01_datastore_list.jpg" />
+			</imageobject>
+		</mediaobject>
 	</section>
 
 </chapter>

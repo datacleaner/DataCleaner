@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.widgets.table;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -132,7 +133,7 @@ public class DCTable extends JXTable implements MouseListener {
 		}
 		return _panel;
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
@@ -147,15 +148,15 @@ public class DCTable extends JXTable implements MouseListener {
 		d.width = tableSize.width;
 		Dimension headerSize = getTableHeader().getPreferredSize();
 
-		// TODO: This was reverse-engineered but I'm currently not sure why 10
-		// pixels has to be added
-		d.height = 10 + headerSize.height + (getRowHeight() * getRowCount());
+		d.height = headerSize.height + (getRowHeight() * getRowCount());
+
+		Insets insets = _panel.getInsets();
+		d.height = d.height + insets.top + insets.bottom;
 
 		if (_scrollPane != null) {
 			JScrollBar scrollBar = _scrollPane.getHorizontalScrollBar();
-			if (scrollBar.isShowing()) {
-				d.height = d.height + scrollBar.getHeight();
-			}
+			int scrollbarHeight = scrollBar.getHeight();
+			d.height = d.height + scrollbarHeight;
 		}
 
 		logger.debug("Preferred size is: {}", d);

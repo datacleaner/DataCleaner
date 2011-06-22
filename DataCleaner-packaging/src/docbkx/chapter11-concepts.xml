@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Background and concepts</title>
@@ -45,22 +45,103 @@
 
 	<section id="what_is_mdm">
 		<title>What is Master Data Management (MDM)?</title>
-		<para>TODO</para>
+		<para>Master Data Management (MDM) is a very broad term and is seen
+			materialized in a variety of ways. For the scope of this document it
+			serves more as a context of data quality than an activity that we
+			actually target per-se.</para>
+		<para>The overall goals of MDM is to manage the important data of an
+			organization. By "master data" we refer to "a single version of the
+			truth", ie. not the data of a particular system, but for example all
+			the customer data of a company.</para>
+		<para>Obviously one of the very important issues to handle in MDM is
+			the quality of data. If you simply gather eg. "all customer data"
+			from all systems in an organization, you will most likely see a lot
+			of data quality issues. There will be a lot of duplicate entries,
+			there will be variances in the way that customer data is filled out,
+			there will be different identifiers and even different levels of
+			granularity for defining "what is a customer?".</para>
 	</section>
 
 	<section id="what_is_data_quality_analysis">
 		<title>What is Data Quality Analysis (DQA)?</title>
-		<para>TODO</para>
-	</section>
-
-	<section id="what_is_data_quality_monitoring">
-		<title>What is Data Quality Monitoring?</title>
-		<para>TODO</para>
+		<para>Data Quality Analysis (DQA) is the (human) process of examining
+			the quality of data for a particular process or organization. The DQA
+			includes both technical and non-technical elements. For example, to
+			do a good DQA you will probably need to talk to users, business
+			people, partner organizations and maybe customers. This is needed to
+			asses what the goal of the DQA should be.</para>
+		<para>From a technical viewpoint the main task in a DQA is the data
+			profiling activity, which will help you discover and measure the
+			current state of affairs in the data.</para>
 	</section>
 
 	<section id="what_is_data_profiling">
 		<title>What is Data Profiling?</title>
-		<para>TODO</para>
+		<para>Data Profiling is the activity of investigating a datastore to
+			create a 'profile' of it. With a profile of your datastore you will
+			be a lot better equipped to actually improve it.</para>
+		<para>
+			The way you do profiling often depends on whether you already
+			have
+			some ideas about the quality of the data or if you're not
+			experienced
+			with the datastore at hand. Either way we recommend an
+			<emphasis>explorative</emphasis>
+			approach, because even though you think there are only a certain
+			amount of issues you need to look for, it is our experience (and
+			reasoning behind a lot of the features of DataCleaner) that it is
+			just as important to check those items in the data that you think are
+			correct! Typically it's cheap to include a bit more data into your
+			analysis and the results just might surprise you and save you time!
+		</para>
+	</section>
+
+	<section id="what_is_data_quality_monitoring">
+		<title>What is Data Quality Monitoring?</title>
+		<para>We've argued that Data Profiling is ideally an explorative
+			activity. Data Quality Monitoring isn't! The measurements that you do
+			when profiling often times needs to be continuously checked so that
+			your improvements are enforced through time. This is what Data
+			Quality Monitoring is about.</para>
+		<para>Data Quality Monitoring comes in different shapes and sizes. You
+			can set up your own bulk of scheduled jobs that run every night. You
+			can build alerts around it that send you emails if a particular
+			measure goes beyond it's allowed thresholds, or in some cases you can
+			attempt ruling out the issue entirely by applying First-Time-Right
+			(FTR) principles that validate data at entry-time. eg. at data
+			registration forms and more.
+		</para>
+	</section>
+
+	<section id="what_is_open_source">
+		<title>What is Open Source software?</title>
+		<para>That software is Open Source software basically means that the
+			software is licensed under a license that gives you the right to use
+			it (and it's source code) freely. But there are of course some
+			limitations to these rights: First and foremost you cannot sell the
+			software
+			to a third party for money. In the case of DataCleaner it
+			also means
+			that if you modify or enhance the product, then you have to
+			contribute back to the community your modifications. The idea here is
+			that we should cooperate on building great software and that we
+			should make this great software available to anyone for everybody's
+			benefit.</para>
+		<para>
+			So what
+			<emphasis>can</emphasis>
+			you do with it? You can use it for any purpose you'd like. You can
+			even include it in a software bundle that you sell for money - but
+			you can only sell the bundle, not DataCleaner as such.
+		</para>
+		<para>
+			For more information on Open Source software and the LGPL
+			license which DataCleaner is distributed under, visit the Free
+			Software Foundation:
+		</para>
+		<para>
+			<link xl:href="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</link>
+		</para>
 	</section>
 
 </chapter>

@@ -7,7 +7,31 @@
 
 	<section id="adding_components">
 		<title>Adding components to the job</title>
-		<para>TODO</para>
+		<para>There are three kinds of components that you can add to your
+			job:</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>Analyzers</emphasis>
+					, which are the most important components. Actually, without at
+					least one analyzer the job will not run. An analyzer is a component
+					that inspects the data that it receives and generates a result or a
+					report. The majority of the data profiling cruft is created as
+					analyzers.
+				</para>
+				<para>
+					<emphasis>Transformers</emphasis>, TODO
+				</para>
+				<para>
+					<emphasis>Filters</emphasis>, TODO
+				</para>
+			</listitem>
+		</orderedlist>
+		<para>Each of these components have "Add" buttons. Analyzers and
+			transformers are added by clicking their respective buttons in the
+			top of the screen. Each of these components will get their own tab,
+			from where you can configure them. Filters are added and configured
+			in the "Filters" tab.</para>
 	</section>
 
 	<section id="executing">

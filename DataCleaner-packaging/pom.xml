@@ -196,8 +196,8 @@
 				<version>2.0.13</version>
 				<executions>
 					<execution>
-						<!-- HTML generation -->
-						<id>reference-html</id>
+						<!-- HTML (multi page) generation -->
+						<id>reference-html-multi</id>
 						<goals>
 							<goal>generate-html</goal>
 						</goals>
@@ -205,11 +205,11 @@
 						<configuration>
 							<chunkedOutput>true</chunkedOutput>
 							<postProcess>
-								<copy todir="${project.basedir}/target/site/reference/html">
+								<move todir="${project.basedir}/target/site/reference/html">
 									<fileset dir="${project.basedir}/target/docbkx/html/index">
 										<include name="**/*.html" />
 									</fileset>
-								</copy>
+								</move>
 								<copy todir="${project.basedir}/target/site/reference/html">
 									<fileset dir="${project.basedir}/src/docbkx/resources">
 										<include name="**/*.css" />
@@ -221,8 +221,33 @@
 							</postProcess>
 						</configuration>
 					</execution>
+					<!-- HTML (single page) generation -->
 					<execution>
-						<!-- PDF generation -->
+						<id>reference-html-single</id>
+						<goals>
+							<goal>generate-html</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<chunkedOutput>false</chunkedOutput>
+							<postProcess>
+								<move file="${project.basedir}/target/docbkx/html/index.html"
+									tofile="${project.basedir}/target/site/reference/html_single/index.html"
+									failonerror="false" />
+								<copy todir="${project.basedir}/target/site/reference/html_single">
+									<fileset dir="${project.basedir}/src/docbkx/resources">
+										<include name="**/*.css" />
+										<include name="**/*.png" />
+										<include name="**/*.gif" />
+										<include name="**/*.jpg" />
+									</fileset>
+								</copy>
+							</postProcess>
+						</configuration>
+					</execution>
+
+					<!-- PDF generation -->
+					<execution>
 						<id>reference-pdf</id>
 						<goals>
 							<goal>generate-pdf</goal>
@@ -253,6 +278,7 @@
 				</dependencies>
 				<configuration>
 					<includes>index.xml</includes>
+					<xincludeSupported>true</xincludeSupported>
 				</configuration>
 			</plugin>
 

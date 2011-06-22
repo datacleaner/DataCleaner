@@ -6,7 +6,7 @@
 	<bookinfo>
 		<title>Reference documentation</title>
 		<productname>DataCleaner</productname>
-		<releaseinfo>2.1</releaseinfo>
+		<releaseinfo>2.2</releaseinfo>
 		<author>
 			<firstname>Kasper</firstname>
 			<surname>S&#248;rensen</surname>
@@ -76,7 +76,7 @@
 		</partinfo>
 		<xi:include href="chapter61-architecture.xml" />
 		<xi:include href="chapter62-developer-resources.xml" />
-		<xi:include href="chapter63-plugin-packaging.xml" />
+		<xi:include href="chapter63-extension-packaging.xml" />
 	</part>
 
 </book>

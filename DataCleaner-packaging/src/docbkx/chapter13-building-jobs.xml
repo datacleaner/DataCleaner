@@ -19,19 +19,67 @@
 					report. The majority of the data profiling cruft is created as
 					analyzers.
 				</para>
+			</listitem>
+			<listitem>
 				<para>
-					<emphasis>Transformers</emphasis>, TODO
+					<emphasis>Transformers</emphasis>
+					are components used to modify the data before analyzing it.
+					Sometimes it's nescesary to extract parts of a value or combine two
+					values to correctly get an idea about a particular measure. In
+					other scenarios, transformers can be used to perform reference data
+					lookups or other similar tasks and place the results of an
+					operation into the stream of data in the job.
 				</para>
 				<para>
-					<emphasis>Filters</emphasis>, TODO
+					The result of a transformer is a set of output columns. These
+					columns work excactly like regular columns in your job, except that
+					they have a preceeding step in the flow before they become
+					materialized.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Filters</emphasis>
+					are components that split the flow of processing in a job. A filter
+					will have a number of possible outcomes and depending on the
+					outcome of a filter, a particular row might be processed by
+					different sub-flows. Filters are often used simply to disregard
+					certain rows from the analysis, eg. null values or values outside
+					the range of interest.
 				</para>
 			</listitem>
 		</orderedlist>
-		<para>Each of these components have "Add" buttons. Analyzers and
-			transformers are added by clicking their respective buttons in the
-			top of the screen. Each of these components will get their own tab,
-			from where you can configure them. Filters are added and configured
-			in the "Filters" tab.</para>
+		<para>Each of these components have "Add" buttons that are used to add
+			them to the job. Analyzers and transformers are added by clicking
+			their respective buttons in the top of the screen. Each of these
+			components will get their own tab, from where you can configure them.
+			Filters are added and configured in the "Filters" tab.</para>
+	</section>
+
+	<section id="wiring_components">
+		<title>Wiring components together</title>
+		<para>Simply adding a transformer or filter actually doesn't change
+			your job as such! This is because these components only have an
+			impact if you wire them together somehow.</para>
+		<para>To wire a transformer you simply need to use it's output column.
+			DataCleaner will automatically build the flow so that a transformer
+			is executed before components that depend on it's output columns.
+		</para>
+		<para>To wire a filter you need to set up a dependency on either of
+			it's outcomes. All components have a button for selecting filter
+			outcomes in their top-right corners. Click this button to select a
+			filter outcome to depend on. If you have multiple filters you can
+			chain these simply by having dependent outcomes of the individual
+			filters.</para>
+		<para>To get an overview of your current job flow, you can click the
+			"Visualize" button, which will present the job's contents in an
+			interactive flow
+			diagram:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="visalize_job.png" format="PNG" />
+			</imageobject>
+		</mediaobject>
 	</section>
 
 	<section id="executing">

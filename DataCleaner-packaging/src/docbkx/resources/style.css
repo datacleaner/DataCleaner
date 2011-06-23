@@ -7,25 +7,38 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 	outline: 0;
 	font-size: 12px;
 	background: transparent;
-}
-
-a {
-	text-decoration: none !important;
-}
-
-body {
-	background: #fff;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
-	background: #fff url(dc-logo.png) no-repeat top left;
-	padding: 10px;
-	padding-top: 80px;
-	color: #585958;
 }
 
 html,body {
 	height: 100%;
-	width: 960px;
+}
+
+body {
+	padding: 10px;
+	color: #585958;
+}
+
+h1 {
+	font-size: 20px;
+}
+
+h2 {
+	font-size: 16px;
+}
+
+h3 {
+	font-size: 14px;
+}
+
+p {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+a {
+	color: #3E3E3E;
+	text-decoration: underline;
 }
 
 ol,ul {
@@ -36,10 +49,15 @@ ol,ul {
 }
 
 li {
-	padding: 10px;
+	margin: 0px;
+	padding: 6px;
+}
+li p {
+	margin: 0px;
+	padding: 0px;
 }
 
-ol .listitem p, ul .listitem p {
+ol .listitem p,ul .listitem p {
 	display: block;
 	margin-left: 0px;
 	padding-left: 0px;
@@ -54,6 +72,10 @@ blockquote:before,blockquote:after,q:before,q:after {
 	content: none;
 }
 
+hr {
+	margin: 10px 0px 20px 0px;
+}
+
 /* remember to define focus styles! */
 a:focus {
 	outline: 0;
@@ -64,62 +86,24 @@ table {
 	border-spacing: 0;
 }
 
-.cleardiv {
-	clear: both
-}
-
-.noborder {
-	border: none !important;
-	background-image: none !important;
-}
-
-/* styles added */
-.book {
+/* container elements */
+body>div {
 	margin: 0px auto;
 	width: 960px;
-	border: solid 1px #efefef;
 }
 
-.book .titlepage h1.title {
-	color: #5594dd;
-	font-size: 20pt;
+.navheader,body>div.book:first-child {
+	background: #fff url("dc-logo.png") no-repeat top left;
+	padding-top: 70px;
 }
 
-.book .titlepage h1.author {
-	color: #F00;
-	font-size: 20pt;
+.navfooter {
+	padding-bottom: 10px;
 }
 
-.author .firstname,.surname {
-	color: #454544;
-}
-
-.toc p b {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11pt;
-	line-height: 30px;
-}
-
-.list-of-tables p b {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 11pt;
-}
-
-.releaseinfo {
-	color: #ff6600;
-}
-
-.list-of-tables dt {
-	color: #ff6600;
-}
-
-p.copyright,.legalnotice {
-	color: #7b7b7a;
-	font-size: 11px;
-}
-
-hr {
-	margin: 10px 0px 20px 0px;
+/* Table of contents (TOC) styles */
+.toc {
+	
 }
 
 .toc dl {
@@ -127,112 +111,89 @@ hr {
 	margin: 0px;
 }
 
-.toc dl dt .part a {
-	background-color: #3E3E3E;
-	color: #fff;
-	font-size: 12pt;
-	display: block;
-	padding: 5px 5px 5px 20px;
-	font-weight: bold;
-	border-bottom: solid 2px #FFF;
+.toc a {
+	text-decoration: none !important;
 }
 
-.toc dt .chapter {
+.toc .part {
+	background-color: #3E3E3E;
+	display: block;
+	padding: 5px 5px 5px 15px;
+	border-bottom: solid 2px #FFF;
+	margin-top: 10px;
+}
+
+.toc .part a {
+	color: #fff;
+	font-weight: bold;
+	font-size: 12pt;
+}
+
+.toc .chapter {
 	border: #9babbf dotted 1px;
-	padding: 5px 15px;
+	padding: 5px 25px;
 	display: block;
 	background-color: #adc6e7;
-	color: #FFF !important;
 	margin-bottom: 1px;
 }
 
-.toc dt .chapter a {
+.toc .chapter a {
 	color: #FFF !important;
+	font-weight: bold;
 }
 
-.toc dl dd dt .section a {
+.toc .section {
 	background-color: #F7F7F7;
 	border-bottom: 1px solid #FFFFFF;
 	display: block;
-	padding: 7px 20px 7px 30px;
+	padding: 7px 20px 7px 40px;
 	text-decoration: underline !important;
-	color: #000;
 }
 
+.toc .section a {
+	color: #000000;
+}
+
+/* Title page (abstract info about the current page) */
 .titlepage {
-	display: block;
-	line-height: 18px;
-	font-size: 14pt;
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
-.chapter .toc dt .section {
-	background-color: #F7F7F7;
-	border-bottom: 1px solid #FFFFFF;
-	display: block;
-	padding: 7px 20px;
+.titlepage .title {
+	color: #5594dd;
 }
 
-.chapter .toc dt .section a {
-	text-decoration: underline !important;
-	color: #000;
-}
-
-.titlepage h2 {
-	font-size: 11pt;
-	font-weight: normal;
-	padding: 0px 2px;
-}
-
-.titlepage .abstract .title {
-	font-size: 12px;
-	padding-left: 20px;
-	line-height: 20px;
-}
-
-.titlepage .abstract p {
-	font-size: 12px;
-	color: #585958;
-	padding-left: 20px;
-	line-height: 20px;
-}
-
-.section {
-	background-color: #fff;
-}
-
-.section .titlepage {
-	background-color: #fff;
+.releaseinfo {
 	color: #ff6600;
-	display: block;
-	font-size: 11pt;
-	font-weight: bold;
-	margin: 2px 0 !important padding :   5px !important;
 }
 
-.section .titlepage h2 {
-	font-size: 9pt !important;
-	font-weight: bold;
-	padding: 0 2px;
-}
-
-.section .titlepage a {
-	text-decoration: underline;
-}
-
-.section p {
-	font-size: 12px;
-	padding-left: 25px;
-	padding-right: 20px;
-	line-height: 20px;
+.copyright,.legalnotice {
+	color: #7b7b7a;
+	font-size: 11px;
 }
 
 .mediaobject {
 	text-align: center;
 }
 
-/*
- * Added by kasper
- */
+.abstract {
+	margin: 10px;
+	padding: 12px;
+	background-color: #eee;
+	border: 1px solid silver;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	behavior: url("border-radius.htc");
+}
+
+.abstract .title {
+	color: #ff6600;
+	padding: 0px;
+	margin: 0px;
+}
+
 pre.programlisting {
 	font-family: 'Lucida Console', monospace;
 	font-size: 12px;

@@ -32,10 +32,16 @@
 			Examples of data quality issues include:</para>
 		<orderedlist>
 			<listitem>
-				<para>Completeness of data</para>
-				<para>Correctness of data</para>
-				<para>Duplication of data</para>
-				<para>Uniformedness/standardization of data</para>
+				Completeness of data
+			</listitem>
+			<listitem>
+				Correctness of data
+			</listitem>
+			<listitem>
+				Duplication of data
+			</listitem>
+			<listitem>
+				Uniformedness/standardization of data
 			</listitem>
 		</orderedlist>
 		<para>A less technical definition of high-quality data is, that data

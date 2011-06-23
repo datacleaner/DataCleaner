@@ -14,9 +14,8 @@
 		<para>The only two requirements of DataCleaner are:</para>
 		<orderedlist>
 			<listitem>
-				A computer (with a graphical display, except if run in
-				<link xl:href="chapter41-command-line-interface.html">command-line mode</link>
-				).
+				A computer (with a graphical display, except if run in command-line
+				mode).
 			</listitem>
 			<listitem>
 				A

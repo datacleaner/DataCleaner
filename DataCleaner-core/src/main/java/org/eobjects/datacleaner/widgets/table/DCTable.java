@@ -19,9 +19,6 @@
  */
 package org.eobjects.datacleaner.widgets.table;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -36,8 +33,6 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
@@ -65,7 +60,6 @@ public class DCTable extends JXTable implements MouseListener {
 	private final DCTableCellRenderer _tableCellRenderer;
 	protected final List<JMenuItem> _rightClickMenuItems;
 	protected DCPanel _panel;
-	private JScrollPane _scrollPane;
 
 	public DCTable(String... columnNames) {
 		super(new Object[0][columnNames.length], columnNames);
@@ -122,14 +116,7 @@ public class DCTable extends JXTable implements MouseListener {
 	 */
 	public DCPanel toPanel() {
 		if (_panel == null) {
-			_panel = new DCPanel();
-			_panel.setLayout(new BorderLayout());
-			_panel.add(getTableHeader(), BorderLayout.NORTH);
-			_scrollPane = WidgetUtils.scrolleable(this);
-			_panel.add(_scrollPane, BorderLayout.CENTER);
-			Dimension ps = getPanelPreferredSize();
-			_panel.setPreferredSize(ps);
-			_panel.setVisible(isVisible());
+			_panel = new DCTablePanel(this);
 		}
 		return _panel;
 	}
@@ -138,30 +125,8 @@ public class DCTable extends JXTable implements MouseListener {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (_panel != null) {
-			_panel.setVisible(visible);
+			_panel.updateUI();
 		}
-	}
-
-	private Dimension getPanelPreferredSize() {
-		Dimension d = new Dimension();
-		Dimension tableSize = getPreferredSize();
-		d.width = tableSize.width;
-		Dimension headerSize = getTableHeader().getPreferredSize();
-
-		d.height = headerSize.height + (getRowHeight() * getRowCount());
-
-		Insets insets = _panel.getInsets();
-		d.height = d.height + insets.top + insets.bottom;
-
-		if (_scrollPane != null) {
-			JScrollBar scrollBar = _scrollPane.getHorizontalScrollBar();
-			int scrollbarHeight = scrollBar.getHeight();
-			d.height = d.height + scrollbarHeight;
-		}
-
-		logger.debug("Preferred size is: {}", d);
-
-		return d;
 	}
 
 	/**
@@ -172,7 +137,6 @@ public class DCTable extends JXTable implements MouseListener {
 	public void setModel(TableModel dataModel) {
 		super.setModel(dataModel);
 		if (_panel != null) {
-			_panel.setPreferredSize(getPanelPreferredSize());
 			_panel.updateUI();
 		}
 	}

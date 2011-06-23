@@ -152,10 +152,11 @@ public class DataSetWindow extends AbstractWindow {
 
 					_loadingIcon.setVisible(false);
 					_table.setVisible(true);
-					
+
 					if (getExtendedState() != JFrame.MAXIMIZED_BOTH) {
 						Dimension dimensions = autoSetSize();
-						setSize(dimensions);
+						getContentPane().setSize(dimensions);
+						pack();
 						centerOnScreen();
 					}
 

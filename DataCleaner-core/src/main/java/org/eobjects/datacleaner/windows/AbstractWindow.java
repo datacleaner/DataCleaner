@@ -76,8 +76,8 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 		preferredSize.width = Math.max(preferredSize.width, currentSize.width);
 		preferredSize.width = Math.max(preferredSize.height, currentSize.height);
 
-		pack();
 		getContentPane().setPreferredSize(preferredSize);
+		pack();
 
 		if (isCentered()) {
 			centerOnScreen();

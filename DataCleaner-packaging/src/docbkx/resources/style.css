@@ -243,7 +243,7 @@ pre.programlisting {
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
-	behavior: url("/resources/border-radius.htc");
+	behavior: url("border-radius.htc");
 	white-space: pre-line;
 }
 
@@ -258,7 +258,7 @@ pre.programlisting {
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
-	behavior: url("/resources/border-radius.htc");
+	behavior: url("border-radius.htc");
 }
 
 .tip p {

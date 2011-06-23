@@ -359,7 +359,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 
 		// show loading indicator
 		_addDatastoreButton.setEnabled(false);
-		_previewTablePanel.setVisible(false);
+		_previewTable.setVisible(false);
 		_loadingIcon.setVisible(true);
 
 		// read file in background, it may take time if eg. it's located on a
@@ -392,7 +392,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 				}
 
 				// show table
-				_previewTablePanel.setVisible(true);
+				_previewTable.setVisible(true);
 				_loadingIcon.setVisible(false);
 				_addDatastoreButton.setEnabled(true);
 			}

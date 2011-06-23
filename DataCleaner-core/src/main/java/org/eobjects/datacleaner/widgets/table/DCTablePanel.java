@@ -76,8 +76,8 @@ final class DCTablePanel extends DCPanel {
 	}
 
 	@Override
-	public void setVisible(boolean aFlag) {
-		throw new UnsupportedOperationException();
+	public void setVisible(boolean visible) {
+		_table.setVisible(visible);
 	}
 
 	@Override

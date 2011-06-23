@@ -84,12 +84,46 @@
 
 	<section id="executing">
 		<title>Executing jobs</title>
-		<para>TODO</para>
+		<para>When a job has been built you can execute it. To check whether
+			your job is correctly configured and ready to execute, check the
+			status bar in the bottom of the job building window.</para>
+		<para>To execute the job, simply click the "Run analysis" button in
+			the top-right corner of the window. This will bring up the result
+			window, which contains:</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					The
+					<emphasis>Progress information</emphasis>
+					tab which contains useful information and progress indications
+					while the job is executing.
+				</para>
+			</listitem>
+			<listitem>
+				<para>Additional tabs for each table that is being processed in the
+					job. Results for the individual analyzers will be shown in these
+					tabs.</para>
+			</listitem>
+		</orderedlist>
+		<para>Here's an example of an analysis result window:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="analysis_job_05_result.jpg" format="JPG" />
+			</imageobject>
+		</mediaobject>
 	</section>
 
 	<section id="saving_and_opening_jobs">
 		<title>Saving and opening jobs</title>
-		<para>TODO</para>
+		<para>You can save your jobs in order to reuse them at a later time.
+			Saving a job is simple: Simply click the "Save analysis job" button
+			in the top-left corner of the window.</para>
+		<para>Analysis jobs are saved in files with the ".analysis.xml"
+			extension. These files are XML files that are readable and editable
+			using any XML editor.</para>
+		<para>Opening jobs can be done using the "File -> Open analysis
+			job..." menu item. Opening a job will restore a job building window
+			from where you can edit and run the job.</para>
 	</section>
 
 	<section id="template_jobs">

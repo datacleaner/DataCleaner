@@ -72,6 +72,7 @@
 		<xi:include href="chapter61-architecture.xml" />
 		<xi:include href="chapter62-developer-resources.xml" />
 		<xi:include href="chapter63-extension-packaging.xml" />
+		<xi:include href="chapter64-embedding-datacleaner.xml" />
 	</part>
 
 </book>

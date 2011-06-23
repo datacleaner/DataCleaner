@@ -1,8 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Developer resources</title>
-	
+
+	<section>
+		<title>Issue tracking</title>
+		<para>
+			The development of DataCleaner is driven primarily by issues
+			registered in our issue tracking system,
+			<emphasis>trac</emphasis>
+			. In trac every member of the community has the possibility to
+			register, monitor and update issues ('tickets') that he/she
+			prioritizes.
+		</para>
+		<para>
+			<link xl:href="http://eobjects.org/trac">http://eobjects.org/trac</link>
+		</para>
+		<para>When submitting code in Subversion, it is recommended to prefix
+			the commit remarks with the ticket id, so that we can track issues
+			and their corresponding patches.</para>
+	</section>
+
+	<section>
+		<title>Building DataCleaner</title>
+
+		<para>
+			Check out the source code for AnalyzerBeans and DataCleaner from
+			subversion:
+		</para>
+		<programlisting>
+			&gt;&#160;svn&#160;checkout&#160;http://eobjects.org/svn/AnalyzerBeans/trunk/&#160;AnalyzerBeans
+			&gt;&#160;svn&#160;checkout&#160;http://eobjects.org/svn/DataCleaner/trunk/&#160;DataCleaner
+		</programlisting>
+
+		<para>
+			Build the projects:
+		</para>
+		<programlisting>
+			&gt;&#160;cd&#160;AnalyzerBeans
+			&gt;&#160;mvn&#160;clean&#160;install
+			&gt;&#160;cd&#160;../DataCleaner
+			&gt;&#160;mvn&#160;clean&#160;install
+		</programlisting>
+
+		<para>Run DataCleaner</para>
+		<programlisting>
+			&gt;&#160;cd&#160;../DataCleaner/DataCleaner-packaging/target
+			&gt;&#160;java&#160;-jar&#160;DataCleaner.jar
+		</programlisting>
+	</section>
+
 </chapter>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Embedding DataCleaner</title>
+
+	<para>
+		It is possible to embed DataCleaner into other Java applications.
+		This allows a simple way to add Data Quality Analysis (DQA) and Data
+		Profiling functionality as an addition to the applications that you
+		are building.
+	</para>
+
+	<para>
+		The simples way to embed DataCleaner is simply by doing what
+		DataCleaner's main executable does - instantiate the
+		<emphasis>Bootstrap</emphasis>
+		class with default arguments:
+	</para>
+
+	<programlisting>
+		BootstrapOptions&#160;bootstrapOptions&#160;=&#160;new&#160;DefaultBootstrapOptions(args);
+		Bootstrap&#160;bootstrap&#160;=&#160;new&#160;Bootstrap(bootstrapOptions);
+		bootstrap.run();
+	</programlisting>
+
+	<para>
+		To customize further, add your own implementation of the
+		<emphasis>BootstrapOptions</emphasis>
+		class. The main scenario for embedding DataCleaner is to run the
+		application in the so-called "single datastore mode". This can be
+		archieved by implementing the BootstrapOptions and providing a
+		non-null value for the getSingleDatastore() method.
+	</para>
+
+</chapter>

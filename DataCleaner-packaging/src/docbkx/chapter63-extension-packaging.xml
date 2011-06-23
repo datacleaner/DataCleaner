@@ -7,35 +7,76 @@
 
 	<para>
 		DataCleaner extensions are packages of added functionality,
-		written in Java. To correctly package an extension, these are the
-		requirements:
+		written in Java. To correctly package an extension, this chapter will
+		walk through the details.
 	</para>
 
-	<orderedlist>
-		<listitem>
-			<para>The extension must consist of a single JAR file. If you have
-				dependencies other than the libraries provided by the DataCleaner
-				distribution, you need to package these inside your own JAR file. If
-				you're using Maven for your build, the Maven Assembly Plugin can
-				provide this functionality easily using this snippet in your POM:
-			</para>
-			<programlisting>
-				&lt;build&gt;
-					&lt;plugins&gt;
-						&lt;plugin&gt;
-							&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-							&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-							&lt;version&gt;2.2.1&lt;/version&gt;
-							&lt;configuration&gt;
-								&lt;descriptorRefs&gt;
-									&lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
-								&lt;/descriptorRefs&gt;
-							&lt;/configuration&gt;
-						&lt;/plugin&gt;
-					&lt;/plugins&gt;
-				&lt;/build&gt;
-			</programlisting>
-		</listitem>
-	</orderedlist>
+	<section>
+		<title>Annotated component</title>
+		<para>The main principle behind extension discovery in DataCleaner is
+			annotated classes. These are the annotations that will work to
+			activate components within your extension:</para>
+
+		<orderedlist>
+			<listitem>
+				@AnalyzerBean
+			</listitem>
+			<listitem>
+				@TransformerBean
+			</listitem>
+			<listitem>
+				@FilterBean
+			</listitem>
+			<listitem>
+				@RendererBean
+			</listitem>
+		</orderedlist>
+
+		<para>Please refer to the javadoc documentation of these
+			annotations/classes for details on usage.</para>
+	</section>
+
+	<section>
+		<title>Single JAR file</title>
+		<para>The extension must consist of a single JAR file. If you have
+			dependencies other than the libraries provided by the DataCleaner
+			distribution, you need to package these inside your own JAR file. If
+			you're using Maven for your build, the Maven Assembly Plugin can
+			provide this functionality easily using this snippet in your POM:
+		</para>
+		<programlisting>
+			&lt;build&gt;
+			&#160;&lt;plugins&gt;
+			&#160;&#160;&lt;plugin&gt;
+			&#160;&#160;&#160;&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+			&#160;&#160;&#160;&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+			&#160;&#160;&#160;&lt;version&gt;2.2.1&lt;/version&gt;
+			&#160;&#160;&#160;&lt;configuration&gt;
+			&#160;&#160;&#160;&#160;&lt;descriptorRefs&gt;
+			&#160;&#160;&#160;&#160;&#160;&lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
+			&#160;&#160;&#160;&#160;&lt;/descriptorRefs&gt;
+			&#160;&#160;&#160;&lt;/configuration&gt;
+			&#160;&#160;&lt;/plugin&gt;
+			&#160;&lt;/plugins&gt;
+			&lt;/build&gt; </programlisting>
+	</section>
+
+	<section>
+		<title>Component icons</title>
+		<para>If you wish to add a custom icon for your components (eg. a
+			transformer or analyzer), you need to place the icon as a PNG image
+			with the same name as the fully classified class name of the
+			component.</para>
+		<para>An example: If your component class name is
+			"com.company.ext.MyAnalyzer", then the icon for this component should
+			be located at "/com/company/ext/MyAnalyzer.png" in the extension JAR
+			file.
+		</para>
+		<para>Similarly, if you bundle your own ComponentCategory
+			implementations (which define the menu groups in DataCleaner), you
+			can define icons for these by adding a PNG file with a fully
+			classified filename corresponding to the ComponentCategory class
+			name.</para>
+	</section>
 
 </chapter>

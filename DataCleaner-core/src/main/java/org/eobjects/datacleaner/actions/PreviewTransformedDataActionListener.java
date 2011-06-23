@@ -66,7 +66,7 @@ import org.eobjects.metamodel.schema.Table;
  */
 public final class PreviewTransformedDataActionListener implements ActionListener, Callable<TableModel> {
 
-	private static final int DEFAULT_PREVIEW_ROWS = 400;
+	public static final int DEFAULT_PREVIEW_ROWS = 400;
 
 	private final TransformerJobBuilderPresenter _transformerJobBuilderPresenter;
 	private final AnalysisJobBuilder _analysisJobBuilder;
@@ -88,13 +88,10 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		_lifeCycleHelper = new LifeCycleHelper(datastoreCatalog, referenceDataCatalog);
 	}
 
-	// TODO: This method was basically just hacked together. Most of it is based
-	// on code that also exists in RowProcessingPublisher in AnalyzerBeans, but
-	// it's not a complete match and I was too lazy to refactor the
-	// RowProcessingPublisher :)
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		new DataSetWindow("Preview of transformed dataset", this, _windowContext).setVisible(true);
+		DataSetWindow window = new DataSetWindow("Preview of transformed dataset", this, _windowContext);
+		window.setVisible(true);
 	}
 
 	private void initialize(TransformerJobBuilder<?> tjb) {
@@ -141,7 +138,9 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 	@Override
 	public TableModel call() throws Exception {
-		_transformerJobBuilderPresenter.applyPropertyValues();
+		if (_transformerJobBuilderPresenter != null) {
+			_transformerJobBuilderPresenter.applyPropertyValues();
+		}
 
 		final List<TransformerJobBuilder<?>> transformerJobs = new ArrayList<TransformerJobBuilder<?>>();
 		transformerJobs.add(_transformerJobBuilder);
@@ -201,7 +200,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 			for (TransformerJobBuilder<?> tjb : transformerJobs) {
 				List<MutableInputColumn<?>> cols = outputColumns.get(tjb);
-				Object[] output = tjb.getConfigurableBean().transform(inputRow);
+				Object[] output = tjb.getConfigurableBean().transform(resultRow);
 
 				assert cols.size() == output.length;
 

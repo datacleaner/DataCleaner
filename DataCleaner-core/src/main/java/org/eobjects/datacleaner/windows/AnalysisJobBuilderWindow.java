@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -91,6 +90,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CollapsibleTreePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCPersistentSizedPanel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.DCWindowMenuBar;
 import org.eobjects.datacleaner.widgets.LoginStatusLabel;
@@ -118,6 +118,9 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisJobBuilderWindow.class);
 	private static final ImageManager imageManager = ImageManager.getInstance();
+
+	private static final int DEFAULT_WINDOW_WIDTH = 900;
+	private static final int DEFAULT_WINDOW_HEIGHT = 630;
 
 	private static final int SOURCE_TAB = 0;
 	private static final int METADATA_TAB = 1;
@@ -431,9 +434,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 			if (_dataContextProvider != null) {
 				_dataContextProvider.close();
 			}
+			getContentPane().removeAll();
 		}
 
 		if (exit) {
+			// trigger removeAll() to make sure removeNotify() methods are
+			// invoked.
 			getWindowContext().exit();
 		}
 		return windowClosing;
@@ -528,16 +534,12 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		final LoginStatusLabel loggedInStatusLabel = new LoginStatusLabel(_glassPane, getWindowContext());
 		statusBar.add(loggedInStatusLabel);
 
-		final Dimension windowSize = new Dimension(900, 630);
-
 		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_LESS_DARK, WidgetUtils.BG_COLOR_DARK);
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-		final DCPanel panel = new DCPanel();
+		final DCPanel panel = new DCPersistentSizedPanel(getClass().getName(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 		panel.setLayout(new BorderLayout());
-		panel.setSize(windowSize);
-		panel.setPreferredSize(windowSize);
 		panel.add(toolBarPanel, BorderLayout.NORTH);
 		panel.add(_leftPanel, BorderLayout.WEST);
 		panel.add(_tabbedPane, BorderLayout.CENTER);

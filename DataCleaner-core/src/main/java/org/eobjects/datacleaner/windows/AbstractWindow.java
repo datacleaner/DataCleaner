@@ -72,9 +72,11 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 		preferredSize.width = Math.min(preferredSize.width, maxWidth);
 		preferredSize.height = Math.min(preferredSize.height, maxHeight);
 
-		Dimension currentSize = getContentPane().getSize();
-		preferredSize.width = Math.max(preferredSize.width, currentSize.width);
-		preferredSize.width = Math.max(preferredSize.height, currentSize.height);
+		if (isVisible()) {
+			Dimension currentSize = getContentPane().getSize();
+			preferredSize.width = Math.max(preferredSize.width, currentSize.width);
+			preferredSize.width = Math.max(preferredSize.height, currentSize.height);
+		}
 
 		getContentPane().setPreferredSize(preferredSize);
 		pack();

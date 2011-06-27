@@ -14,7 +14,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
-	<version>2.2</version>
+	<version>2.3-SNAPSHOT</version>
 	<name>DataCleaner</name>
 	<description>DataCleaner is the premier open source data profiling application. Use it to
 		discover, analyze and diagnose the state of your data. DataCleaner works with
@@ -82,13 +82,13 @@
 	</licenses>
 	<scm>
 		<connection>
-			scm:svn:http://eobjects.org/svn/DataCleaner/tags/DataCleaner-2.2
+			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
 		</connection>
 		<developerConnection>
-			scm:svn:http://eobjects.org/svn/DataCleaner/tags/DataCleaner-2.2
+			scm:svn:http://eobjects.org/svn/DataCleaner/trunk/
 		</developerConnection>
 		<url>
-			http://eobjects.org/svn/DataCleaner/tags/DataCleaner-2.2 
+			http://eobjects.org/svn/DataCleaner/trunk/ 
 		</url>
 	</scm>
 	<mailingLists>

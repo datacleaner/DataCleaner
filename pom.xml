@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<properties>
 		<javadoc.version>2.8</javadoc.version>
 		<sshwagon.version>1.0-beta-7</sshwagon.version>
@@ -27,7 +28,6 @@
 		<module>DataCleaner-sample-extension</module>
 		<module>DataCleaner-packaging</module>
 	</modules>
-
 	<organization>
 		<name>eobjects.org</name>
 		<url>http://eobjects.org</url>
@@ -250,6 +250,12 @@
 						<phase>site</phase>
 					</execution>
 				</executions>
+				<configuration>
+					<links>
+						<link>http://analyzerbeans.eobjects.org/apidocs/</link>
+						<link>http://metamodel.eobjects.org/apidocs/</link>
+					</links>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

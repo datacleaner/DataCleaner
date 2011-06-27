@@ -26,7 +26,6 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<!-- make the jar file executable when dependencies are available in 
 					lib/ folder -->
@@ -49,7 +48,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<!-- Copy dependencies to lib/ folder -->
 				<groupId>org.apache.maven.plugins</groupId>
@@ -67,7 +65,6 @@
 							<outputDirectory>${project.build.directory}/lib</outputDirectory>
 						</configuration>
 					</execution>
-
 					<execution>
 						<!-- Unpack resources for docbook XSLT generation -->
 						<!-- See http://wiki.docbook.org/MavenDocBookXSL -->
@@ -85,17 +82,15 @@
 							<excludeTransitive>true</excludeTransitive>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
-
 			<plugin>
 				<!-- Java Web start JNLP file generation -->
 				<groupId>org.codehaus.mojo.webstart</groupId>
 				<artifactId>webstart-maven-plugin</artifactId>
 				<version>1.0-beta-1</version>
 				<configuration>
-					<templateFilename>clientTemplate.vm</templateFilename>
+					<templateFilename>template.vm</templateFilename>
 					<jnlp>
 						<outputFile>datacleaner.jnlp</outputFile>
 						<mainClass>${mainClass}</mainClass>
@@ -103,8 +98,16 @@
 					<outputJarVersions>false</outputJarVersions>
 					<verbose>true</verbose>
 				</configuration>
+				<executions>
+					<execution>
+						<id>jnlp-on-verify</id>
+						<goals>
+							<goal>jnlp</goal>
+						</goals>
+						<phase>verify</phase>
+					</execution>
+				</executions>
 			</plugin>
-
 			<plugin>
 				<!-- Create win32 executable -->
 				<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
@@ -167,7 +170,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<!-- Assembly which creates the zip and tar.gz distributables -->
 				<groupId>org.apache.maven.plugins</groupId>
@@ -188,7 +190,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<!-- Generate docbook documentation, see http://docbkx-tools.sourceforge.net/docbkx-maven-plugin/plugin-info.html -->
 				<groupId>com.agilejava.docbkx</groupId>
@@ -201,7 +202,7 @@
 						<goals>
 							<goal>generate-html</goal>
 						</goals>
-						<phase>package</phase>
+						<phase>site</phase>
 						<configuration>
 							<chunkedOutput>true</chunkedOutput>
 							<postProcess>
@@ -228,7 +229,7 @@
 						<goals>
 							<goal>generate-html</goal>
 						</goals>
-						<phase>package</phase>
+						<phase>site</phase>
 						<configuration>
 							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
@@ -246,14 +247,13 @@
 							</postProcess>
 						</configuration>
 					</execution>
-
 					<!-- PDF generation -->
 					<execution>
 						<id>reference-pdf</id>
 						<goals>
 							<goal>generate-pdf</goal>
 						</goals>
-						<phase>package</phase>
+						<phase>site</phase>
 						<configuration>
 							<imgSrcPath>src/docbkx/resources/</imgSrcPath>
 							<postProcess>
@@ -283,8 +283,6 @@
 					<htmlStylesheet>style.css</htmlStylesheet>
 				</configuration>
 			</plugin>
-
-
 		</plugins>
 	</build>
 	<repositories>

@@ -106,6 +106,7 @@
 	</mailingLists>
 	<profiles>
 		<profile>
+			<!-- Profile activated when releasing artifacts to Maven repo -->
 			<id>release-sign-artifacts</id>
 			<activation>
 				<property>
@@ -128,40 +129,6 @@
 								<goals>
 									<goal>sign</goal>
 								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<!-- Exclude/skip this module when deploying artifacts -->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.6</version>
-					</plugin>
-
-					<plugin>
-						<!-- Ensure inclusion of license header in all main java files -->
-						<groupId>com.google.code.maven-license-plugin</groupId>
-						<artifactId>maven-license-plugin</artifactId>
-						<version>1.4.0</version>
-						<configuration>
-							<header>HEADER.txt</header>
-							<includes>
-								<include>src/**/java/**</include>
-							</includes>
-							<excludes>
-								<exclude>src/main/java/org/eobjects/datacleaner/widgets/label/MultiLineLabel*.java
-						</exclude>
-							</excludes>
-						</configuration>
-						<executions>
-							<execution>
-								<id>verify-license-headers</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>check</goal>
-								</goals>
-								<inherited>false</inherited>
 							</execution>
 						</executions>
 					</plugin>
@@ -234,11 +201,42 @@
 			</plugin>
 
 			<plugin>
+				<!-- Exclude/skip this module when deploying artifacts -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.6</version>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-maven3-plugin</artifactId>
 				<version>2.8</version>
 			</plugin>
-
+			<plugin>
+				<!-- Ensure inclusion of license header in all main java files -->
+				<groupId>com.google.code.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.4.0</version>
+				<configuration>
+					<header>HEADER.txt</header>
+					<includes>
+						<include>src/**/java/**</include>
+					</includes>
+					<excludes>
+						<exclude>src/main/java/org/eobjects/datacleaner/widgets/label/MultiLineLabel*.java
+						</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>verify-license-headers</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<inherited>false</inherited>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>

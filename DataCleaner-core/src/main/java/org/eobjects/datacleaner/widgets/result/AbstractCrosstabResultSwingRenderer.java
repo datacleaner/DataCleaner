@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,9 +47,8 @@ import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.Alignment;
+import org.eobjects.datacleaner.widgets.table.CrosstabPanel;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.jdesktop.swingx.JXCollapsiblePane;
-import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -66,28 +64,27 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
 	@Override
 	public JComponent render(R result) {
+		return renderInternal(result);
+	};
+
+	/**
+	 * Alternative render method, provided to have a more precise return type
+	 * (while still allowing this class to be extended and only have a
+	 * {@link JComponent} return type.
+	 * 
+	 * @param result
+	 * @return
+	 */
+	protected CrosstabPanel renderInternal(R result) {
 		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(windowContext);
 
 		final DCTable table = renderTable(result.getCrosstab());
 
-		final JComponent tableComponent;
-		if ("".equals(table.getColumnName(1))) {
-			tableComponent = table;
-		} else {
-			tableComponent = table.toPanel();
-		}
+		final CrosstabPanel crosstabPanel = new CrosstabPanel(table);
 
-		final JXCollapsiblePane chartContainer = new JXCollapsiblePane(Direction.UP);
-		chartContainer.setCollapsed(true);
+		decorate(result, table, crosstabPanel.getDisplayChartCallback());
 
-		final DisplayChartCallback displayChartCallback = new DisplayChartCallbackImpl(chartContainer);
-		decorate(result, table, displayChartCallback);
-
-		final DCPanel resultPanel = new DCPanel();
-		resultPanel.setLayout(new BorderLayout());
-		resultPanel.add(chartContainer, BorderLayout.NORTH);
-		resultPanel.add(tableComponent, BorderLayout.CENTER);
-		return resultPanel;
+		return crosstabPanel;
 	}
 
 	protected void decorate(R result, DCTable table, DisplayChartCallback displayChartCallback) {

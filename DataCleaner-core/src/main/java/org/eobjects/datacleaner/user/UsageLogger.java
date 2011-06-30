@@ -19,11 +19,15 @@
  */
 package org.eobjects.datacleaner.user;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -42,6 +46,9 @@ public final class UsageLogger {
 
 	private static final Logger logger = LoggerFactory.getLogger(UsageLogger.class);
 
+	// Special username used for anonymous entries. This is the only
+	// non-existing username that is allowed on server side.
+	private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
 	private static final UsageLogger instance = new UsageLogger();
 
 	private final UserPreferences _userPreferences;
@@ -64,7 +71,7 @@ public final class UsageLogger {
 	}
 
 	public void logApplicationStartup() {
-		final String action = "Startup: " + Main.VERSION;
+		final String action = "Startup";
 		final String username = getUsername();
 
 		logger.debug("Logging '{}'", action);
@@ -76,12 +83,12 @@ public final class UsageLogger {
 		if (_userPreferences.isLoggedIn()) {
 			return _userPreferences.getUsername();
 		} else {
-			return "[not-logged-in]";
+			return NOT_LOGGED_IN_USERNAME;
 		}
 	}
 
 	public void logApplicationShutdown() {
-		final String action = "Shutdown: " + Main.VERSION;
+		final String action = "Shutdown";
 		final String username = getUsername();
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
@@ -130,9 +137,14 @@ public final class UsageLogger {
 				final HttpPost req = new HttpPost("http://datacleaner.eobjects.org/ws/user_action");
 				nameValuePairs.add(new BasicNameValuePair("username", _username));
 				nameValuePairs.add(new BasicNameValuePair("action", _action));
+				nameValuePairs.add(new BasicNameValuePair("version", Main.VERSION));
 				req.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-				HttpXmlUtils.getHttpClient().execute(req);
+				HttpResponse resp = HttpXmlUtils.getHttpClient().execute(req);
+				InputStream content = resp.getEntity().getContent();
+				String line = new BufferedReader(new InputStreamReader(content)).readLine();
+				assert "success".equals(line);
+				logger.debug("Usage logger response: {}", line);
 			} catch (Exception e) {
 				logger.warn("Could not dispatch usage log for action: {} ({})", _action, e.getMessage());
 				logger.debug("Error occurred while dispatching usage log", e);

@@ -19,31 +19,21 @@
  */
 package org.eobjects.datacleaner.widgets;
 
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.datacleaner.util.IconUtils;
-import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
-import org.jdesktop.swingx.combobox.ListComboBoxModel;
-
 import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.NamedStructure;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
  * A combobox that makes it easy to display and select source coumns from a
@@ -58,13 +48,15 @@ public class SourceColumnComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
 
+	private final SchemaStructureComboBoxListRenderer _renderer;
 	private volatile DataContextProvider _dataContextProvider;
 	private volatile Table _table;
 
 	public SourceColumnComboBox() {
 		super();
+		_renderer = new SchemaStructureComboBoxListRenderer();
+		setRenderer(_renderer);
 		setEditable(false);
-		setRenderer(new SourceColumnComboBoxListRenderer());
 	}
 
 	public SourceColumnComboBox(Datastore datastore) {
@@ -80,10 +72,10 @@ public class SourceColumnComboBox extends JComboBox {
 	public void setModel(Datastore datastore, Table table) {
 		final Column previousItem = getSelectedItem();
 
-		if (_table == table) {
+		if (getTable() == table) {
 			return;
 		}
-		_table = table;
+		setTable(table);
 
 		if (datastore == null) {
 			setDataContextProvider(null);
@@ -118,7 +110,7 @@ public class SourceColumnComboBox extends JComboBox {
 	public void setModel(Datastore datastore, boolean retainSelection) {
 		final Column previousItem = getSelectedItem();
 
-		_table = null;
+		setTable(null);
 
 		if (datastore == null) {
 			setDataContextProvider(null);
@@ -160,6 +152,15 @@ public class SourceColumnComboBox extends JComboBox {
 		}
 	}
 
+	private void setTable(Table table) {
+		_table = table;
+		_renderer.setIndentEnabled(table != null);
+	}
+
+	public Table getTable() {
+		return _table;
+	}
+
 	private DataContextProvider setDataContextProvider(DataContextProvider dataContextProvider) {
 		if (_dataContextProvider != null) {
 			// close the previous data context provider
@@ -184,53 +185,6 @@ public class SourceColumnComboBox extends JComboBox {
 		if (_dataContextProvider != null) {
 			// close the data context provider when the widget is removed
 			_dataContextProvider.close();
-		}
-	}
-
-	/**
-	 * Renderer for the combo box items
-	 * 
-	 * @author Kasper Sørensen
-	 */
-	class SourceColumnComboBoxListRenderer extends DefaultListCellRenderer {
-
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-				boolean cellHasFocus) {
-			JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
-			if (value instanceof NamedStructure) {
-				result.setText(((NamedStructure) value).getName());
-
-				int indent = 0;
-				ImageManager imageManager = ImageManager.getInstance();
-				Icon icon = null;
-				if (value instanceof Schema) {
-					icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
-					if (SchemaComparator.isInformationSchema((Schema) value)) {
-						icon = imageManager.getImageIcon("images/model/schema_information.png", IconUtils.ICON_SIZE_SMALL);
-					} else {
-						icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
-					}
-				} else if (value instanceof Table) {
-					icon = imageManager.getImageIcon("images/model/table.png", IconUtils.ICON_SIZE_SMALL);
-					indent = 10;
-				} else if (value instanceof Column) {
-					icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
-					indent = 20;
-				}
-
-				if (icon != null) {
-					result.setIcon(icon);
-				}
-				if (_table == null) {
-					result.setBorder(new EmptyBorder(0, indent, 0, 0));
-				}
-			}
-
-			return result;
 		}
 	}
 }

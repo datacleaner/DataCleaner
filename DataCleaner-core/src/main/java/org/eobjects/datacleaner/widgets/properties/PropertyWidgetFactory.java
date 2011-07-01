@@ -93,8 +93,13 @@ public final class PropertyWidgetFactory {
 			}
 		} else {
 			if (propertyDescriptor.isInputColumn()) {
-				result = new SingleInputColumnPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(), _beanJobBuilder,
-						propertyDescriptor);
+				if (propertyDescriptor.isRequired()) {
+					result = new SingleInputColumnRadioButtonPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(),
+							_beanJobBuilder, propertyDescriptor);
+				} else {
+					result = new SingleInputColumnComboBoxPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(),
+							_beanJobBuilder, propertyDescriptor);
+				}
 			} else if (ReflectionUtils.isCharacter(type)) {
 				result = new SingleCharacterPropertyWidget(propertyDescriptor, _beanJobBuilder);
 			} else if (ReflectionUtils.isString(type)) {

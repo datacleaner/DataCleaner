@@ -21,10 +21,10 @@ package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JRadioButton;
+import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
@@ -35,31 +35,37 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.jdesktop.swingx.JXRadioGroup;
+import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
- * {@link PropertyWidget} for single {@link InputColumn}s.
+ * {@link PropertyWidget} for single {@link InputColumn}s. Displays the
+ * selection as a ComboBox, used for optional input columns.
  * 
  * @author Kasper Sørensen
  */
-public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
+public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
 	private static final long serialVersionUID = 1L;
-	private final JXRadioGroup<JRadioButton> _radioGroup = new JXRadioGroup<JRadioButton>();
+	private final JComboBox _comboBox;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
-	private volatile JRadioButton[] _radioButtons;
 	private volatile List<InputColumn<?>> _inputColumns;
-	private final InputColumnPropertyWidgetAccessoryHandler _accessoryHandler;
 
-	public SingleInputColumnPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
+	public SingleInputColumnComboBoxPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_radioGroup.setLayoutAxis(BoxLayout.Y_AXIS);
-		_radioGroup.setOpaque(false);
+		_comboBox = new JComboBox();
+		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
+		_comboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				fireValueChanged();
+			}
+		});
 		_analysisJobBuilder = analysisJobBuilder;
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);
@@ -67,15 +73,8 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 		_propertyDescriptor = propertyDescriptor;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 
-		if (_dataTypeFamily == DataTypeFamily.STRING || _dataTypeFamily == DataTypeFamily.UNDEFINED) {
-			_accessoryHandler = new InputColumnPropertyWidgetAccessoryHandler(_propertyDescriptor, _beanJobBuilder, this,
-					true);
-		} else {
-			_accessoryHandler = null;
-		}
-
 		updateComponents();
-		add(_radioGroup);
+		add(_comboBox);
 
 	}
 
@@ -97,55 +96,14 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 			}
 		}
 
-		if (_propertyDescriptor.isRequired()) {
-			_radioButtons = new JRadioButton[_inputColumns.size()];
-		} else {
-			_radioButtons = new JRadioButton[_inputColumns.size() + 1];
-		}
-		if (_inputColumns.isEmpty()) {
-			_radioButtons = new JRadioButton[1];
-			JRadioButton radioButton = new JRadioButton("- no columns available -");
-			radioButton.setOpaque(false);
-			radioButton.setEnabled(false);
-			_radioButtons[0] = radioButton;
-		} else {
-			for (int i = 0; i < _inputColumns.size(); i++) {
-				InputColumn<?> inputColumn = _inputColumns.get(i);
-				JRadioButton radioButton = new JRadioButton(inputColumn.getName());
-				radioButton.setOpaque(false);
-				if (currentValue == inputColumn) {
-					radioButton.setSelected(true);
-				}
-				_radioButtons[i] = radioButton;
-			}
-
-			if (!_propertyDescriptor.isRequired()) {
-				JRadioButton radioButton = new JRadioButton("(none)");
-				radioButton.setOpaque(false);
-				if (currentValue == null) {
-					radioButton.setSelected(true);
-				}
-				_radioButtons[_radioButtons.length - 1] = radioButton;
-			}
+		if (!_propertyDescriptor.isRequired()) {
+			_inputColumns = new ArrayList<InputColumn<?>>(_inputColumns);
+			_inputColumns.add(0, null);
 		}
 
-		for (int i = 0; i < _radioButtons.length; i++) {
-			JRadioButton rb = _radioButtons[i];
+		_comboBox.setModel(new ListComboBoxModel<InputColumn<?>>(_inputColumns));
+		_comboBox.setSelectedItem(currentValue);
 
-			rb.addItemListener(new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					fireValueChanged();
-
-				}
-			});
-
-			if (_accessoryHandler != null) {
-				_accessoryHandler.registerListComponent(rb, null);
-			}
-		}
-
-		_radioGroup.setValues(_radioButtons);
 		fireValueChanged();
 	}
 
@@ -159,10 +117,14 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 
 	@Override
 	public void onRemove(InputColumn<?> sourceColumn) {
-		if (_dataTypeFamily == DataTypeFamily.UNDEFINED || _dataTypeFamily == sourceColumn.getDataTypeFamily()) {
+		handleRemovedColumn(sourceColumn);
+	}
+
+	private void handleRemovedColumn(InputColumn<?> column) {
+		if (_dataTypeFamily == DataTypeFamily.UNDEFINED || _dataTypeFamily == column.getDataTypeFamily()) {
 			InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
 			if (currentValue != null) {
-				if (currentValue.equals(sourceColumn)) {
+				if (currentValue.equals(column)) {
 					_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, null);
 				}
 			}
@@ -183,6 +145,10 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 
 	@Override
 	public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
+		List<MutableInputColumn<?>> outputColumns = transformerJobBuilder.getOutputColumns();
+		for (MutableInputColumn<?> column : outputColumns) {
+			handleRemovedColumn(column);
+		}
 	}
 
 	@Override
@@ -194,13 +160,7 @@ public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<Inpu
 
 	@Override
 	public InputColumn<?> getValue() {
-		for (int i = 0; i < _inputColumns.size(); i++) {
-			JRadioButton radio = _radioButtons[i];
-			if (radio.isSelected()) {
-				return _inputColumns.get(i);
-			}
-		}
-		return null;
+		return (InputColumn<?>) _comboBox.getSelectedItem();
 	}
 
 	@Override

@@ -79,6 +79,17 @@
 				</thead>
 				<tbody>
 					<row>
+						<entry>Group column</entry>
+						<entry>Allows you to define a pattern group column. With a pattern
+							group column you can separate the identified patterns into
+							separate buckets/groups. Imagine for example that you want to
+							check if the phone numbers of your customers are consistent. If
+							you have an international customer based, you should then group
+							by a country column to make sure that phone patterns identified
+							are not matched with phone patterns from different countries.
+						</entry>
+					</row>
+					<row>
 						<entry>Discriminate text case</entry>
 						<entry>Defines whether or not to discriminate (ie. consider as
 							different pattern parts) based on text case. If true

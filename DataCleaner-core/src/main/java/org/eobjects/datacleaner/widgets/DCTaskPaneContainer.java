@@ -45,19 +45,21 @@ public class DCTaskPaneContainer extends JXTaskPaneContainer {
 
 	@Override
 	public void add(JXTaskPane group) {
-		DCPanel panel = new DCPanel();
-		panel.setBorder(WidgetUtils.BORDER_SHADOW);
-		panel.setLayout(new BorderLayout());
-		panel.add(group, BorderLayout.CENTER);
+		DCPanel panel = createTaskPanePanel(group);
 		super.add(panel);
 	}
 
 	public void add(JXTaskPane group, int index) {
+		DCPanel panel = createTaskPanePanel(group);
+		super.add(panel, index);
+	}
+
+	private DCPanel createTaskPanePanel(JXTaskPane group) {
 		DCPanel panel = new DCPanel();
 		panel.setBorder(WidgetUtils.BORDER_SHADOW);
 		panel.setLayout(new BorderLayout());
 		panel.add(group, BorderLayout.CENTER);
-		super.add(panel, index);
+		return panel;
 	}
 
 	@Override

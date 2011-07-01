@@ -19,19 +19,13 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.Box;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
@@ -40,162 +34,63 @@ import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.reference.SimpleStringPattern;
+import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.result.Crosstab;
+import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.PatternFinderResult;
+import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.DataCleanerHome;
-import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
-import org.eobjects.datacleaner.util.ChartUtils;
-import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
-import org.eobjects.datacleaner.util.WidgetFactory;
-import org.eobjects.datacleaner.widgets.Alignment;
-import org.eobjects.datacleaner.widgets.table.CrosstabPanel;
-import org.eobjects.datacleaner.widgets.table.DCTable;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
+import org.jdesktop.swingx.VerticalLayout;
 
 /**
- * Renderer for {@link PatternFinderAnalyzer} results. Displays as a crosstab
- * with an optional chart displaying the distribution of the patterns.
+ * Renderer for {@link PatternFinderAnalyzer} results. Displays crosstabs with
+ * optional charts displaying the distribution of the patterns.
  * 
  * @author Kasper Sørensen
  * 
  */
 @RendererBean(SwingRenderingFormat.class)
-public class PatternFinderResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<PatternFinderResult> {
+public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFinderResult, JComponent> {
 
-	private final MutableReferenceDataCatalog _catalog = (MutableReferenceDataCatalog) DCConfiguration.get()
-			.getReferenceDataCatalog();
+	private final PatternFinderResultSwingRendererCrosstabDelegate delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate();
 
 	@Override
 	public JComponent render(PatternFinderResult result) {
-		final CrosstabPanel crosstabPanel = super.renderInternal(result);
-		final DCTable table = crosstabPanel.getTable();
-		if (isInitiallyCharted(table) || isTooLimitedToChart(table)) {
-			return crosstabPanel;
+		if (result.isGroupingEnabled()) {
+			return renderGroupedResult(result);
+		} else {
+			Crosstab<?> singleCrosstab = result.getSingleCrosstab();
+			return renderCrosstab(singleCrosstab);
 		}
+	}
 
-		final DCPanel headerPanel = new DCPanel();
-		headerPanel.setLayout(new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 1, 1));
-
-		final JButton chartButton = new JButton("Show distribution chart", ImageManager.getInstance().getImageIcon(
-				"images/chart-types/bar.png"));
-		chartButton.setMargin(new Insets(1, 1, 1, 1));
-		chartButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				headerPanel.setVisible(false);
-				displayChart(table, crosstabPanel.getDisplayChartCallback());
-			}
-		});
-
-		headerPanel.add(chartButton);
-
+	public JComponent renderGroupedResult(PatternFinderResult result) {
 		final DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(headerPanel, BorderLayout.NORTH);
-		panel.add(crosstabPanel, BorderLayout.CENTER);
-
+		panel.setLayout(new VerticalLayout(0));
+		final Map<String, Crosstab<?>> crosstabs = result.getGroupedCrosstabs();
+		final Set<Entry<String, Crosstab<?>>> entries = crosstabs.entrySet();
+		for (Entry<String, Crosstab<?>> entry : entries) {
+			if (panel.getComponentCount() != 0) {
+				panel.add(Box.createVerticalStrut(10));
+			}
+			JComponent renderedResult = delegateRenderer.render(new CrosstabResult(entry.getValue()));
+			panel.add(DCLabel.dark("Patterns for group: " + entry.getKey()));
+			panel.add(renderedResult);
+		}
 		return panel;
 	}
 
-	protected void displayChart(DCTable table, DisplayChartCallback displayChartCallback) {
-		final int rowCount = table.getRowCount();
-		final DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
-		for (int i = 0; i < rowCount; i++) {
-			final Object expressionObject = table.getValueAt(i, 0);
-			final String expression = extractString(expressionObject);
-
-			final Object countObject = table.getValueAt(i, 1);
-			final String countString = extractString(countObject);
-			final int count = Integer.parseInt(countString);
-			categoryDataset.addValue(count, expression, "");
-		}
-
-		JFreeChart chart = ChartFactory.createBarChart("Pattern distribution", "Pattern", "Match count", categoryDataset,
-				PlotOrientation.VERTICAL, false, true, false);
-		ChartUtils.applyStyles(chart);
-		displayChartCallback.displayChart(new ChartPanel(chart));
-	}
-
-	@Override
-	protected void decorate(PatternFinderResult result, DCTable table, DisplayChartCallback displayChartCallback) {
-		super.decorate(result, table, displayChartCallback);
-
-		table.setAlignment(1, Alignment.RIGHT);
-
-		final int rowCount = table.getRowCount();
-
-		for (int i = 0; i < rowCount; i++) {
-			final Object expressionObject = table.getValueAt(i, 0);
-			final String expression = extractString(expressionObject);
-
-			final String synonymCatalogName = "PF: " + expression;
-
-			if (!_catalog.containsSynonymCatalog(synonymCatalogName)) {
-				DCPanel panel = new DCPanel();
-				panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-
-				panel.add(Box.createHorizontalStrut(4));
-				panel.add(new JLabel(expression));
-
-				final JButton button = WidgetFactory.createSmallButton("images/actions/save.png");
-				button.setToolTipText("Save as string pattern");
-				button.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						_catalog.addStringPattern(new SimpleStringPattern(synonymCatalogName, expression));
-						button.setEnabled(false);
-					}
-				});
-				panel.add(Box.createHorizontalStrut(4));
-				panel.add(button);
-
-				table.setValueAt(panel, i, 0);
-			}
-		}
-
-		if (isInitiallyCharted(table)) {
-			displayChart(table, displayChartCallback);
-		}
-	}
-
-	private boolean isInitiallyCharted(DCTable table) {
-		return table.getRowCount() >= 8;
-	}
-
-	private boolean isTooLimitedToChart(DCTable table) {
-		return table.getRowCount() <= 1;
-	}
-
-	private String extractString(Object obj) {
-		if (obj == null) {
-			return null;
-		} else if (obj instanceof String) {
-			return (String) obj;
-		} else if (obj instanceof JPanel) {
-			Component[] components = ((JPanel) obj).getComponents();
-			for (Component component : components) {
-				if (component instanceof JLabel) {
-					return extractString(component);
-				}
-			}
-			return null;
-		} else if (obj instanceof JLabel) {
-			return ((JLabel) obj).getText();
-		} else {
-			return obj.toString();
-		}
+	public JComponent renderCrosstab(Crosstab<?> crosstab) {
+		CrosstabResult crosstabResult = new CrosstabResult(crosstab);
+		return delegateRenderer.render(crosstabResult);
 	}
 
 	/**
@@ -215,7 +110,15 @@ public class PatternFinderResultSwingRenderer extends AbstractCrosstabResultSwin
 		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getLiteralColumns());
-		ajb.addRowProcessingAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns());
+		ajb.addRowProcessingAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
+				.setName("Ungrouped pattern finders");
+
+		RowProcessingAnalyzerJobBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addRowProcessingAnalyzer(
+				PatternFinderAnalyzer.class).setName("Grouped PF");
+		ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
+		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));
+		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
+				.getDescriptor().getConfiguredProperty("Group column"));
 
 		WindowContext windowContext = new DCWindowContext();
 		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);

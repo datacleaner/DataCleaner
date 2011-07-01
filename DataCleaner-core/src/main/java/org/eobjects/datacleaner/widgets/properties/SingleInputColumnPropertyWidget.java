@@ -37,6 +37,11 @@ import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.jdesktop.swingx.JXRadioGroup;
 
+/**
+ * {@link PropertyWidget} for single {@link InputColumn}s.
+ * 
+ * @author Kasper Sørensen
+ */
 public class SingleInputColumnPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 

@@ -94,7 +94,7 @@ public final class ColumnListTable extends DCPanel {
 			JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(), imageManager.getImageIcon(
 					"images/model/column.png", IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
 			tableNameLabel.setOpaque(false);
-			tableNameLabel.setFont(WidgetUtils.FONT_HEADER);
+			tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 			JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
 			previewButton.setToolTipText("Preview table rows");

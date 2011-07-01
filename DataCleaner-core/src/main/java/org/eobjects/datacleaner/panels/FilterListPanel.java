@@ -42,8 +42,8 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 
 public class FilterListPanel extends DCPanel implements FilterChangeListener {
 
@@ -52,7 +52,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 	private final Map<FilterJobBuilder<?, ?>, JXTaskPane> _taskPanes;
 	private final Map<FilterJobBuilder<?, ?>, FilterJobBuilderPresenter> _presenters;
 	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final JXTaskPaneContainer _taskPaneContainer;
+	private final DCTaskPaneContainer _taskPaneContainer;
 	private final Set<FilterJobBuilderPresenter> _preconfiguredPresenters;
 	private final RendererFactory _componentJobBuilderPresenterRendererFactory;
 

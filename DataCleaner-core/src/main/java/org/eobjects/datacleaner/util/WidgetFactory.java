@@ -23,6 +23,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Image;
 import java.awt.Insets;
+import java.lang.reflect.Field;
 
 import javax.swing.Box;
 import javax.swing.Icon;
@@ -32,12 +33,15 @@ import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
+import javax.swing.JViewport;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.metal.MetalButtonUI;
 
 import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
+import org.jdesktop.swingx.JXCollapsiblePane;
+import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTextArea;
@@ -45,6 +49,8 @@ import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
 import org.jdesktop.swingx.plaf.metal.MetalStatusBarUI;
 import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory class for various commonly used widgets in DataCleaner. Typically the
@@ -54,6 +60,8 @@ import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
  * @author Kasper Sørensen
  */
 public final class WidgetFactory {
+
+	private static final Logger logger = LoggerFactory.getLogger(WidgetFactory.class);
 
 	public static JMenu createMenu(String text, char mnemonic) {
 		JMenu menu = new JMenu();
@@ -183,5 +191,23 @@ public final class WidgetFactory {
 		button.setBorder(null);
 		button.setOpaque(false);
 		return button;
+	}
+
+	public static JXCollapsiblePane createCollapsiblePane(Direction direction) {
+		JXCollapsiblePane collapsiblePane = new JXCollapsiblePane(direction);
+		collapsiblePane.setOpaque(false);
+
+		// hack to make it non-opaque!
+		try {
+			Field field = JXCollapsiblePane.class.getDeclaredField("wrapper");
+			field.setAccessible(true);
+			JViewport viewPort = (JViewport) field.get(collapsiblePane);
+			viewPort.setOpaque(false);
+			JComponent component = (JComponent) viewPort.getView();
+			component.setOpaque(false);
+		} catch (Exception e) {
+			logger.info("Failed to make JXCollapsiblePane non-opaque", e);
+		}
+		return collapsiblePane;
 	}
 }

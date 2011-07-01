@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,6 +27,7 @@ import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.JComponent;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
@@ -45,7 +47,8 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
-import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
@@ -81,11 +84,22 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 			if (panel.getComponentCount() != 0) {
 				panel.add(Box.createVerticalStrut(10));
 			}
-			JComponent renderedResult = delegateRenderer.render(new CrosstabResult(entry.getValue()));
-			panel.add(DCLabel.dark("Patterns for group: " + entry.getKey()));
-			panel.add(renderedResult);
+			final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(entry.getValue()));
+			final DCPanel decoratedPanel = createDecoration(renderedResult);
+			final String label = "Patterns for group: " + entry.getKey();
+			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(label, label, false, decoratedPanel);
+			panel.add(collapsiblePanel.toPanel());
 		}
 		return panel;
+	}
+
+	private DCPanel createDecoration(JComponent renderedResult) {
+		renderedResult.setBorder(WidgetUtils.BORDER_SHADOW);
+		final DCPanel wrappingPanel = new DCPanel();
+		wrappingPanel.setLayout(new BorderLayout());
+		wrappingPanel.add(renderedResult, BorderLayout.CENTER);
+		wrappingPanel.setBorder(new EmptyBorder(4, 20, 4, 4));
+		return wrappingPanel;
 	}
 
 	public JComponent renderCrosstab(Crosstab<?> crosstab) {

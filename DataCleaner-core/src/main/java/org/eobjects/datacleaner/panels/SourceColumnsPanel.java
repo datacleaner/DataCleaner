@@ -57,7 +57,7 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 
 		_hintLabel = DCLabel.darkMultiLine("Please select the source columns of your job in the tree to the left.\n\n"
 				+ "Source columns define where to retrieve the input of your analysis.");
-		_hintLabel.setFont(WidgetUtils.FONT_TABLE_HEADER);
+		_hintLabel.setFont(WidgetUtils.FONT_HEADER2);
 		_hintLabel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		_hintLabel.setIconTextGap(20);
 		_hintLabel.setIcon(ImageManager.getInstance().getImageIcon("images/model/column.png"));

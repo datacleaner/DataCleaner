@@ -25,6 +25,7 @@ import javax.swing.JComponent;
 
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.result.DisplayChartCallback;
 import org.eobjects.datacleaner.widgets.result.DisplayChartCallbackImpl;
 import org.jdesktop.swingx.JXCollapsiblePane;
@@ -59,7 +60,7 @@ public class CrosstabPanel extends DCPanel {
 			tableComponent = table.toPanel();
 		}
 
-		JXCollapsiblePane chartContainer = new JXCollapsiblePane(Direction.UP);
+		JXCollapsiblePane chartContainer = WidgetFactory.createCollapsiblePane(Direction.UP);
 		chartContainer.setCollapsed(true);
 
 		_displayChartCallback = new DisplayChartCallbackImpl(chartContainer);

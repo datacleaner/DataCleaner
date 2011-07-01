@@ -40,16 +40,16 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 
 public abstract class AbstractJobBuilderPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JXTaskPaneContainer _taskPaneContainer;
+	private final DCTaskPaneContainer _taskPaneContainer;
 	private final PropertyWidgetFactory _propertyWidgetFactory;
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final BeanDescriptor<?> _descriptor;

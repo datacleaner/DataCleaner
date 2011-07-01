@@ -74,10 +74,10 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		updateComponents();
 
 		final DCLabel newSynonymCatalogsLabel = DCLabel.dark("Create new synonym catalog:");
-		newSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER);
+		newSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCLabel existingSynonymCatalogsLabel = DCLabel.dark("Existing synonym catalogs:");
-		existingSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER);
+		existingSynonymCatalogsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		setLayout(new VerticalLayout(10));
 		add(newSynonymCatalogsLabel);

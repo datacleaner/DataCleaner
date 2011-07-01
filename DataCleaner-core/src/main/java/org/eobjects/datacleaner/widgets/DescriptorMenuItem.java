@@ -78,7 +78,7 @@ public class DescriptorMenuItem extends JMenuItem {
 		JLabel nameLabel = new JLabel(_descriptor.getDisplayName());
 		nameLabel.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		nameLabel.setOpaque(false);
-		nameLabel.setFont(WidgetUtils.FONT_HEADER);
+		nameLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		// if the bean has a description, add it in the CENTER of the tooltip
 		String description = _descriptor.getDescription();

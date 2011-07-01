@@ -43,7 +43,7 @@ public final class ChartUtils {
 	}
 
 	public static void applyStyles(JFreeChart chart) {
-		chart.getTitle().setFont(WidgetUtils.FONT_HEADER);
+		chart.getTitle().setFont(WidgetUtils.FONT_HEADER1);
 		chart.setBackgroundPaint(null);
 		chart.setBorderVisible(false);
 

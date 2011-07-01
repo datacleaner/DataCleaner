@@ -136,7 +136,7 @@ public final class LookAndFeelManager {
 		UIManager.put("TableHeader.cellBorder", new LineBorder(WidgetUtils.BG_COLOR_LESS_DARK));
 
 		// titled borders
-		UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER);
+		UIManager.put("TitledBorder.font", WidgetUtils.FONT_HEADER1);
 		UIManager.put("TitledBorder.titleColor", WidgetUtils.BG_COLOR_BLUE_BRIGHT);
 
 		// tool tip colors
@@ -145,7 +145,7 @@ public final class LookAndFeelManager {
 		UIManager.put("ToolTip.border", WidgetUtils.BORDER_THIN);
 
 		// task pane colors
-		UIManager.put("TaskPane.font", WidgetUtils.FONT_TABLE_HEADER);
+		UIManager.put("TaskPane.font", WidgetUtils.FONT_HEADER2);
 		UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TaskPane.titleForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.BG_COLOR_DARKEST);

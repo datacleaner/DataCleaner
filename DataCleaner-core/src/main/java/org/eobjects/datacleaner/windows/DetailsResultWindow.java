@@ -40,10 +40,16 @@ import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.JXTaskPaneContainer;
 
+/**
+ * Window for showing a single analysis result in a separate window. Typically
+ * used for "details", eg. interactionable parts of the result.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class DetailsResultWindow extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
@@ -51,7 +57,7 @@ public final class DetailsResultWindow extends AbstractWindow {
 	private final static ImageManager imageManager = ImageManager.getInstance();
 	private final List<AnalyzerResult> _results;
 	private final String _title;
-	private final JXTaskPaneContainer _taskPaneContainer;
+	private final DCTaskPaneContainer _taskPaneContainer;
 
 	public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowContext windowContext) {
 		super(windowContext);

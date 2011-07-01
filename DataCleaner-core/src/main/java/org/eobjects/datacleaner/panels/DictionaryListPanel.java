@@ -76,10 +76,10 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		updateComponents();
 
 		final DCLabel newDictionariesLabel = DCLabel.dark("Create new dictionary:");
-		newDictionariesLabel.setFont(WidgetUtils.FONT_HEADER);
+		newDictionariesLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCLabel existingDictionariesLabel = DCLabel.dark("Existing dictionaries:");
-		existingDictionariesLabel.setFont(WidgetUtils.FONT_HEADER);
+		existingDictionariesLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		setLayout(new VerticalLayout(10));
 		add(newDictionariesLabel);

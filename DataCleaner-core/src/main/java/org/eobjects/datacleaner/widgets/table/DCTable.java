@@ -65,7 +65,7 @@ public class DCTable extends JXTable implements MouseListener {
 		super(new Object[0][columnNames.length], columnNames);
 		addHighlighter(WidgetUtils.LIBERELLO_HIGHLIGHTER);
 		getTableHeader().setReorderingAllowed(true);
-		getTableHeader().setFont(WidgetUtils.FONT_TABLE_HEADER);
+		getTableHeader().setFont(WidgetUtils.FONT_HEADER2);
 		setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		setOpaque(false);
 		setRowSelectionAllowed(true);

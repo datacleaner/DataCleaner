@@ -76,10 +76,10 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		updateComponents();
 
 		final DCLabel newStringPatternsLabel = DCLabel.dark("Create new string pattern:");
-		newStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER);
+		newStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCLabel existingStringPatternsLabel = DCLabel.dark("Existing string patterns:");
-		existingStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER);
+		existingStringPatternsLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		setLayout(new VerticalLayout(10));
 		add(newStringPatternsLabel);

@@ -94,7 +94,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		final JLabel iconLabel = new JLabel(ImageManager.getInstance().getImageIcon("images/window/app-icon.png"));
 
 		final JLabel headerLabel = new JLabel("DataCleaner analysis job:");
-		headerLabel.setFont(WidgetUtils.FONT_HEADER);
+		headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCPanel northPanel = new DCPanel();
 		northPanel.setLayout(new VerticalLayout(0));

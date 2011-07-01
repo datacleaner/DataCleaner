@@ -186,7 +186,7 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 		row++;
 		JLabel testInputLabel = DCLabel.bright("Test input");
 		testInputLabel.setIcon(imageManager.getImageIcon("images/actions/test-pattern.png"));
-		testInputLabel.setFont(WidgetUtils.FONT_HEADER);
+		testInputLabel.setFont(WidgetUtils.FONT_HEADER1);
 		WidgetUtils.addToGridBag(testInputLabel, testitPanel, 0, row);
 
 		_inputFields = new ArrayList<JTextField>(NUM_TEST_FIELDS);

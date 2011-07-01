@@ -54,14 +54,14 @@ public class BooleanAnalyzerResultSwingRenderer extends AbstractRenderer<Boolean
 		panel.setLayout(new VerticalLayout(4));
 
 		JLabel label = new JLabel("Column statistics:");
-		label.setFont(WidgetUtils.FONT_HEADER);
+		label.setFont(WidgetUtils.FONT_HEADER1);
 		panel.add(label);
 		panel.add(columnStatisticsTable.toPanel());
 
 		panel.add(Box.createVerticalStrut(4));
 
 		label = new JLabel("Frequency of combinations:");
-		label.setFont(WidgetUtils.FONT_HEADER);
+		label.setFont(WidgetUtils.FONT_HEADER1);
 		panel.add(label);
 		panel.add(valueCombinationTable.toPanel());
 

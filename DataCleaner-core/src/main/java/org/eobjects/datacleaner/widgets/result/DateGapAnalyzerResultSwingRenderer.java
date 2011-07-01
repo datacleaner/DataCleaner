@@ -171,7 +171,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
 		// tweaks of the look and feel of the graph
 		{
-			chart.getTitle().setFont(WidgetUtils.FONT_HEADER);
+			chart.getTitle().setFont(WidgetUtils.FONT_HEADER1);
 			chart.getLegend().setItemFont(WidgetUtils.FONT_SMALL);
 
 			final CategoryPlot plot = (CategoryPlot) chart.getPlot();

@@ -168,11 +168,11 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		setLayout(new VerticalLayout(4));
 
 		final DCLabel headerLabel = DCLabel.dark("Select datastore for analysis");
-		headerLabel.setFont(WidgetUtils.FONT_HEADER);
+		headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 		add(headerLabel);
 
 		final DCLabel createNewDatastoreLabel = DCLabel.dark("Create a new datastore:");
-		createNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER);
+		createNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCPanel newDatastorePanel = new DCPanel();
 		newDatastorePanel.setLayout(new VerticalLayout(4));
@@ -201,7 +201,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		_datastorePanels.clear();
 
 		final DCLabel existingDatastoresLabel = DCLabel.dark("Analyze an existing datastore:");
-		existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER);
+		existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCPanel searchDatastorePanel = DCPanel.around(_searchDatastoreTextField);
 		searchDatastorePanel.setBorder(WidgetUtils.BORDER_SHADOW);

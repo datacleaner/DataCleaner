@@ -132,7 +132,7 @@ public class AboutDialog extends AbstractDialog {
 		final String dcLicense = getLicense("lgpl");
 
 		final DCLabel licenseHeader = DCLabel.dark("");
-		licenseHeader.setFont(WidgetUtils.FONT_HEADER);
+		licenseHeader.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCLabel licenseLabel = DCLabel.darkMultiLine("");
 		licenseLabel.setBackground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -233,7 +233,7 @@ public class AboutDialog extends AbstractDialog {
 
 	private JComponent getAboutPanel() {
 		final DCLabel headerLabel = DCLabel.dark("DataCleaner " + Main.VERSION);
-		headerLabel.setFont(WidgetUtils.FONT_HEADER);
+		headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final ImageManager imageManager = ImageManager.getInstance();
 

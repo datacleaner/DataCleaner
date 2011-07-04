@@ -195,10 +195,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	private boolean isEnabled(InputColumn<?> inputColumn, InputColumn<?>[] currentValue) {
 		if (_firstUpdate) {
 			if (currentValue == null || currentValue.length == 0) {
-				// set all to true if this is the only inputcolumn property
+				// set all to true if this is the only required inputcolumn
+				// property
 				ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
 				if (componentDescriptor instanceof BeanDescriptor<?>) {
-					if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput().size() == 1) {
+					if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput(false).size() == 1) {
 						return true;
 					}
 				}

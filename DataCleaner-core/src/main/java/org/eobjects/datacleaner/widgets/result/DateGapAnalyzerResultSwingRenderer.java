@@ -81,9 +81,13 @@ import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RendererBean(SwingRenderingFormat.class)
 public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGapAnalyzerResult, JComponent> {
+
+	private static final Logger logger = LoggerFactory.getLogger(DateGapAnalyzerResultSwingRenderer.class);
 
 	private static final String LABEL_OVERLAPS = "Overlaps";
 	private static final String LABEL_GAPS = "Gaps";
@@ -112,7 +116,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 			}
 
 			final TimeInterval completeDuration = result.getCompleteDuration(groupName);
-			final Task completeDurationTask = new Task(groupDisplayName, new SimpleTimePeriod(completeDuration.getFrom(),
+			final Task completeDurationTask = new Task(groupDisplayName, createTimePeriod(completeDuration.getFrom(),
 					completeDuration.getTo()));
 			completeDurationTaskSeries.add(completeDurationTask);
 
@@ -123,7 +127,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 				int i = 1;
 				Task rootTask = null;
 				for (TimeInterval interval : gaps) {
-					final TimePeriod timePeriod = new SimpleTimePeriod(interval.getFrom(), interval.getTo());
+					final TimePeriod timePeriod = createTimePeriod(interval.getFrom(), interval.getTo());
 
 					if (rootTask == null) {
 						rootTask = new Task(groupDisplayName, timePeriod);
@@ -144,7 +148,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 				int i = 1;
 				Task rootTask = null;
 				for (TimeInterval interval : overlaps) {
-					final TimePeriod timePeriod = new SimpleTimePeriod(interval.getFrom(), interval.getTo());
+					final TimePeriod timePeriod = createTimePeriod(interval.getFrom(), interval.getTo());
 
 					if (rootTask == null) {
 						rootTask = new Task(groupDisplayName, timePeriod);
@@ -256,6 +260,13 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 		split.setDividerLocation(550);
 
 		return split;
+	}
+
+	private TimePeriod createTimePeriod(long from, long to) {
+		if (from > to) {
+			logger.warn("An illegal from/to combination occurred: {}, {}", from, to);
+		}
+		return new SimpleTimePeriod(from, to);
 	}
 
 	/**

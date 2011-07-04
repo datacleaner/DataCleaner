@@ -28,10 +28,10 @@ import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.beans.valuedist.ValueCountListImpl;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MockInputColumn;
-import org.eobjects.analyzer.result.ValueDistributionResult;
+import org.eobjects.analyzer.result.ValueDistributionGroupResult;
 import org.jfree.data.general.DefaultPieDataset;
 
-public class ValueDistributionResultSwingRendererTest extends TestCase {
+public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestCase {
 
 	private InputColumn<String> column = new MockInputColumn<String>("col", String.class);
 
@@ -42,8 +42,9 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 			topValueCount.register(new ValueCount("v" + i, i + 1));
 		}
 
-		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(50, 60);
-		r.render(new ValueDistributionResult(column, topValueCount, null, 0, 0));
+		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
+				50, 60);
+		r.render(new ValueDistributionGroupResult(column.getName(), topValueCount, null, 0, 0));
 
 		assertTrue(r.getGroups().isEmpty());
 		assertEquals(40, r.getDataset().getItemCount());
@@ -85,8 +86,9 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 
 		// preferred size is 13, which would earlier on mean that all the 4
 		// values above could be individually included in the dataset.
-		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(13, 100);
-		r.render(new ValueDistributionResult(column, topValueCount, null, 0, 10));
+		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
+				13, 100);
+		r.render(new ValueDistributionGroupResult(column.getName(), topValueCount, null, 0, 10));
 
 		Map<String, PieSliceGroup> groups = r.getGroups();
 		DefaultPieDataset dataset = r.getDataset();
@@ -114,8 +116,9 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 			topValueCount.register(new ValueCount("v" + i, 2 + (int) (Math.random() * 10)));
 		}
 
-		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(17, 20);
-		r.render(new ValueDistributionResult(column, topValueCount, null, 0, 0));
+		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
+				17, 20);
+		r.render(new ValueDistributionGroupResult("foo", topValueCount, null, 0, 0));
 
 		assertEquals(
 				"[<count=10>, <count=11>, <count=2>, <count=3>, <count=4>, <count=5>, <count=6>, <count=7>, <count=8>, <count=9>]",
@@ -146,8 +149,9 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 		topValueCount.register(new ValueCount("r8", 525));
 		topValueCount.register(new ValueCount("r9", 530));
 
-		ValueDistributionResultSwingRenderer r = new ValueDistributionResultSwingRenderer(10, 13);
-		r.render(new ValueDistributionResult(column, topValueCount, null, 0, 0));
+		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
+				10, 13);
+		r.render(new ValueDistributionGroupResult("foo", topValueCount, null, 0, 0));
 
 		assertEquals(13, r.getDataset().getItemCount());
 
@@ -156,7 +160,7 @@ public class ValueDistributionResultSwingRendererTest extends TestCase {
 		for (String groupName : groups.keySet()) {
 			assertTrue(groupName.startsWith("<count="));
 		}
-		
+
 		assertTrue(groups.containsKey("<count=[100-130]>"));
 		assertTrue(groups.containsKey("<count=[160-340]>"));
 		assertTrue(groups.containsKey("<count=[520-530]>"));

@@ -158,10 +158,10 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 			if (userSpecifiedGroups || topValueCounts.size() + bottomValueCounts.size() < _preferredSlices) {
 				// vanilla scenario for cleanly distributed datasets
 				for (ValueCount valueCount : topValueCounts) {
-					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
+					_dataset.setValue(LabelUtils.getLabel(valueCount.getValue()), valueCount.getCount());
 				}
 				for (ValueCount valueCount : bottomValueCounts) {
-					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
+					_dataset.setValue(LabelUtils.getLabel(valueCount.getValue()), valueCount.getCount());
 				}
 			} else {
 				// create groups of values
@@ -174,7 +174,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 				createGroups(valueCounts);
 
 				for (ValueCount valueCount : valueCounts) {
-					_dataset.setValue(valueCount.getValue(), valueCount.getCount());
+					_dataset.setValue(LabelUtils.getLabel(valueCount.getValue()), valueCount.getCount());
 				}
 			}
 
@@ -346,7 +346,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		int i = 0;
 		while (valueCounts.hasNext()) {
 			ValueCount vc = valueCounts.next();
-			model.setValueAt(vc.getValue(), i, 0);
+			model.setValueAt(LabelUtils.getLabel(vc.getValue()), i, 0);
 			model.setValueAt(vc.getCount(), i, 1);
 			i++;
 		}

@@ -46,6 +46,7 @@ import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
@@ -86,7 +87,7 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 			}
 			final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(entry.getValue()));
 			final DCPanel decoratedPanel = createDecoration(renderedResult);
-			final String label = "Patterns for group: " + entry.getKey();
+			final String label = "Patterns for group '" + LabelUtils.getLabel(entry.getKey() + "'");
 			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(label, label, false, decoratedPanel);
 			panel.add(collapsiblePanel.toPanel());
 		}

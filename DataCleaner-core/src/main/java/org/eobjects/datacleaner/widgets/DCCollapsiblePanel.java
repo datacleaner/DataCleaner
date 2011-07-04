@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.widgets;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -73,6 +74,7 @@ public class DCCollapsiblePanel {
 			expand();
 		}
 		_label.setFont(WidgetUtils.FONT_HEADER2);
+		_label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 		_label.addMouseListener(new MouseAdapter() {
 			@Override

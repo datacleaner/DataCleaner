@@ -61,6 +61,7 @@ import org.eobjects.analyzer.util.TimeInterval;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -71,9 +72,6 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAnchor;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.plot.CategoryPlot;
@@ -168,25 +166,11 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
 		final JFreeChart chart = ChartFactory.createGanttChart("Date gaps and overlaps in " + result.getFromColumnName()
 				+ " / " + result.getToColumnName(), result.getGroupColumnName(), "Time", slidingDataset, true, true, false);
+		ChartUtils.applyStyles(chart);
 
-		// tweaks of the look and feel of the graph
+		// make sure the 3 timeline types have correct coloring
 		{
-			chart.getTitle().setFont(WidgetUtils.FONT_HEADER1);
-			chart.getLegend().setItemFont(WidgetUtils.FONT_SMALL);
-
 			final CategoryPlot plot = (CategoryPlot) chart.getPlot();
-
-			plot.setDomainGridlinesVisible(true);
-			plot.setDomainGridlinePaint(WidgetUtils.BG_COLOR_DARK);
-			plot.setDomainGridlinePosition(CategoryAnchor.END);
-
-			CategoryAxis domainAxis = plot.getDomainAxis();
-			domainAxis.setTickLabelFont(WidgetUtils.FONT_SMALL);
-			domainAxis.setLabelFont(WidgetUtils.FONT_NORMAL);
-
-			ValueAxis rangeAxis = plot.getRangeAxis();
-			rangeAxis.setTickLabelFont(WidgetUtils.FONT_SMALL);
-			rangeAxis.setLabelFont(WidgetUtils.FONT_NORMAL);
 
 			plot.setDrawingSupplier(new DCDrawingSupplier(WidgetUtils.ADDITIONAL_COLOR_GREEN_BRIGHT,
 					WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT));

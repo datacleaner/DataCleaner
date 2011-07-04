@@ -31,7 +31,8 @@ public class DCDrawingSupplier extends DefaultDrawingSupplier implements Drawing
 	private static final long serialVersionUID = 1L;
 
 	public static final Color[] DEFAULT_FILL_COLORS = new Color[] { WidgetUtils.ADDITIONAL_COLOR_GREEN_BRIGHT,
-			WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT, WidgetUtils.BG_COLOR_MEDIUM };
+			WidgetUtils.ADDITIONAL_COLOR_RED_BRIGHT, WidgetUtils.BG_COLOR_BLUE_BRIGHT, WidgetUtils.BG_COLOR_ORANGE_BRIGHT,
+			WidgetUtils.ADDITIONAL_COLOR_PURPLE_BRIGHT, WidgetUtils.ADDITIONAL_COLOR_CYAN_BRIGHT };
 
 	private volatile int _colorIndex;
 	private final Color[] _fillColors;

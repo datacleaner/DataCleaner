@@ -58,6 +58,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -70,8 +71,6 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.datacleaner.windows.ResultWindow;
-import org.eobjects.metamodel.schema.Table;
-import org.jdesktop.swingx.VerticalLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -191,7 +190,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		drillToOverview(drillableValuesTable);
 
 		// chart for display of the dataset
-		final JFreeChart chart = ChartFactory.createPieChart3D("Value distribution of " + columnName, _dataset, false, true,
+		final JFreeChart chart = ChartFactory.createPieChart("Value distribution of " + columnName, _dataset, false, true,
 				false);
 		ChartUtils.applyStyles(chart);
 
@@ -224,8 +223,8 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 					}
 				}
 			}
-			plot.setSectionPaint(LabelUtils.UNIQUE_LABEL, WidgetUtils.BG_COLOR_ORANGE_BRIGHT);
-			plot.setSectionPaint(LabelUtils.NULL_LABEL, WidgetUtils.BG_COLOR_ORANGE_DARK);
+			plot.setSectionPaint(LabelUtils.UNIQUE_LABEL, WidgetUtils.BG_COLOR_BRIGHT);
+			plot.setSectionPaint(LabelUtils.NULL_LABEL, WidgetUtils.BG_COLOR_DARKEST);
 		}
 
 		final ChartPanel chartPanel = new ChartPanel(chart);
@@ -274,7 +273,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		leftPanel.add(chartPanel, BorderLayout.NORTH);
 
 		final DCPanel rightPanel = new DCPanel();
-		rightPanel.setLayout(new VerticalLayout(2));
+		rightPanel.setLayout(new BorderLayout());
 		_backButton.setMargin(new Insets(0, 0, 0, 0));
 		_backButton.addActionListener(new ActionListener() {
 			@Override
@@ -282,8 +281,9 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 				drillToOverview(drillableValuesTable);
 			}
 		});
-		rightPanel.add(_backButton);
-		rightPanel.add(drillableValuesTable.toPanel());
+		rightPanel.add(_backButton, BorderLayout.NORTH);
+		rightPanel.add(drillableValuesTable.toPanel(), BorderLayout.CENTER);
+		rightPanel.getSize().height = chartHeight;
 
 		final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		split.setOpaque(false);
@@ -492,9 +492,10 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.TRIAL_BALANCE");
+		SchemaNavigator sn = dcp.getSchemaNavigator();
 		ajb.setDatastore(ds);
-		ajb.addSourceColumns(table.getColumns());
+		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE").getColumns());
+		ajb.addSourceColumns(sn.convertToTable("PUBLIC.EMPLOYEES").getColumns());
 		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.getConfigurableBean().setRecordUniqueValues(true);
 

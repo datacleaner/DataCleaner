@@ -24,15 +24,24 @@ import java.awt.Stroke;
 
 import org.eobjects.datacleaner.widgets.result.DCDrawingSupplier;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAnchor;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.UnitType;
 
+/**
+ * Contains features related to layout and styling of Charts.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class ChartUtils {
 
 	private static final Stroke normalStroke = new BasicStroke(1.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
@@ -44,6 +53,10 @@ public final class ChartUtils {
 
 	public static void applyStyles(JFreeChart chart) {
 		chart.getTitle().setFont(WidgetUtils.FONT_HEADER1);
+		LegendTitle legend = chart.getLegend();
+		if (legend != null) {
+			legend.setItemFont(WidgetUtils.FONT_SMALL);
+		}
 		chart.setBackgroundPaint(null);
 		chart.setBorderVisible(false);
 
@@ -54,6 +67,7 @@ public final class ChartUtils {
 
 		plot.setOutlineVisible(true);
 		if (plot instanceof PiePlot) {
+			// tweaks for pie charts
 			final PiePlot piePlot = (PiePlot) plot;
 			piePlot.setBaseSectionOutlinePaint(WidgetUtils.BG_COLOR_DARK);
 			piePlot.setBaseSectionOutlineStroke(normalStroke);
@@ -63,21 +77,33 @@ public final class ChartUtils {
 			piePlot.setLabelPaint(WidgetUtils.BG_COLOR_DARK);
 			piePlot.setSectionOutlinesVisible(false);
 		} else if (plot instanceof CategoryPlot) {
+			// tweaks for bar charts
 			final CategoryPlot categoryPlot = (CategoryPlot) plot;
+
+			categoryPlot.setDomainGridlinesVisible(true);
+			categoryPlot.setDomainGridlinePaint(WidgetUtils.BG_COLOR_DARK);
+			categoryPlot.setDomainGridlinePosition(CategoryAnchor.END);
 
 			categoryPlot.getDomainAxis().setLabelFont(WidgetUtils.FONT_SMALL);
 			categoryPlot.getDomainAxis().setTickLabelFont(WidgetUtils.FONT_SMALL);
 			categoryPlot.getRangeAxis().setLabelFont(WidgetUtils.FONT_SMALL);
 			categoryPlot.getRangeAxis().setTickLabelFont(WidgetUtils.FONT_SMALL);
 			categoryPlot.setDrawingSupplier(new DCDrawingSupplier());
-			
+
 			final CategoryItemRenderer renderer = categoryPlot.getRenderer();
 			renderer.setBaseOutlinePaint(WidgetUtils.BG_COLOR_DARK);
 			renderer.setBaseOutlineStroke(wideStroke);
 
+			if (renderer instanceof BarRenderer) {
+				BarRenderer barRenderer = (BarRenderer) renderer;
+				barRenderer.setShadowPaint(WidgetUtils.BG_COLOR_BRIGHT);
+				barRenderer.setBarPainter(new StandardBarPainter());
+			}
+
 		} else if (plot instanceof XYPlot) {
+			// tweaks for line charts
 			final XYPlot xyPlot = (XYPlot) plot;
-			
+
 			xyPlot.setDrawingSupplier(new DCDrawingSupplier());
 
 			xyPlot.getDomainAxis().setLabelFont(WidgetUtils.FONT_SMALL);

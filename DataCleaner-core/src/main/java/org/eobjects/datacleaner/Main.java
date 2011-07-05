@@ -19,17 +19,39 @@
  */
 package org.eobjects.datacleaner;
 
+import java.io.File;
+
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.eobjects.datacleaner.bootstrap.Bootstrap;
 import org.eobjects.datacleaner.bootstrap.BootstrapOptions;
 import org.eobjects.datacleaner.bootstrap.DefaultBootstrapOptions;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 
 public final class Main {
 
 	public static final String VERSION = "2.3-SNAPSHOT";
 
 	public static void main(String[] args) {
+		initializeLogging();
+
 		BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
 		Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
 		bootstrap.run();
+	}
+
+	private static void initializeLogging() {
+		final File dataCleanerHome = DataCleanerHome.get();
+		final File xmlConfigurationFile = new File(dataCleanerHome, "log4j.xml");
+		if (xmlConfigurationFile.exists() && xmlConfigurationFile.isFile()) {
+			DOMConfigurator.configure(xmlConfigurationFile.getAbsolutePath());
+			return;
+		}
+
+		final File propertiesConfigurationFile = new File(dataCleanerHome, "log4j.properties");
+		if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.isFile()) {
+			PropertyConfigurator.configure(propertiesConfigurationFile.getAbsolutePath());
+			return;
+		}
 	}
 }

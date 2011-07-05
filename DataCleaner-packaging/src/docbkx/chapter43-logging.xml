@@ -1,8 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Logging</title>
+
+	<chapterinfo>
+		<para>
+			Logging in DataCleaner is configurable either by supplying an
+			XML file or a properties file. In this chapter we explore logging
+			configuration and how you can fine-tune logging to your needs.
+		</para>
+	</chapterinfo>
+
+	<section>
+		<title>Logging configuration file</title>
+		<para>Logging in DataCleaner is based on Log4j, an open source logging
+			framework by the Apache foundation. With log4j you can configure
+			logging at a very detailed level, while at the same time keeping a
+			centralized configuration.</para>
+		<para>There are three approaches to configuring logging in
+			DataCleaner:</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>The default logging configuration</emphasis>
+					. This requires no changes to the standard distribution of
+					DataCleaner. Log files will be generated in the log/datacleaner.log
+					file.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Specifying your own XML log configuration</emphasis>
+					. This requires you to put a file named log4j.xml in the root
+					directory of DataCleaner.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Specifying your own property file log configuration
+					</emphasis>
+					. This requires you to put a file named log4j.properties in the
+					root directory of DataCleaner.
+				</para>
+			</listitem>
+		</orderedlist>
+
+		<para>
+			The recommended way of doing custom configuration of DataCleaner
+			logging is using the XML format. In the following sections we will
+			explain this approach using examples. For more detailed documentation
+			on Log4j configuration, please refer to the
+			<link xl:href="http://logging.apache.org/log4j/">Log4j website</link>
+			.
+		</para>
+	</section>
+
+	<section>
+		<title>Default logging configuration</title>
+		<para>Here's a listing of the default logging configuration, in XML
+			format:</para>
+		<programlisting>
+			&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+			&lt;!DOCTYPE log4j:configuration SYSTEM "log4j.dtd"&gt;
+			&lt;log4j:configuration&#160;xmlns:log4j="http://jakarta.apache.org/log4j/"&gt;
+
+			&#160;&lt;appender&#160;name="consoleAppender"&#160;class="org.apache.log4j.ConsoleAppender"&gt;
+			&#160;&#160;&lt;param&#160;name="Target"&#160;value="System.out"/&gt;
+			&#160;&#160;&lt;layout&#160;class="org.apache.log4j.PatternLayout"&gt;
+			&#160;&#160;&#160;&lt;param&#160;name="ConversionPattern"&#160;value="%-5p&#160;%d{HH:mm:ss}&#160;%c{1}&#160;-&#160;%m%n"/&gt;
+			&#160;&#160;&lt;/layout&gt;
+			&#160;&lt;/appender&gt;
+
+			&#160;&lt;appender&#160;name="fileAppender"&#160;class="org.apache.log4j.DailyRollingFileAppender"&gt;
+			&#160;&#160;&lt;param&#160;name="File"&#160;value="log/datacleaner.log"/&gt;
+			&#160;&#160;&lt;param&#160;name="DatePattern"&#160;value="'.'yyyy-MM-dd'.log'"/&gt;
+			&#160;&#160;&lt;layout&#160;class="org.apache.log4j.PatternLayout"&gt;
+			&#160;&#160;&#160;&lt;param&#160;name="ConversionPattern"&#160;value="%-5p&#160;%d{HH:mm:ss.SSS}&#160;%c{1}&#160;-&#160;%m%n"/&gt;
+			&#160;&#160;&lt;/layout&gt;
+			&#160;&lt;/appender&gt;
+
+			&#160;&lt;logger&#160;name="org.eobjects.metamodel"&gt;
+			&#160;&#160;&lt;level value="info" /&gt;
+			&#160;&lt;/logger&gt;
+
+			&#160;&lt;logger&#160;name="org.eobjects.analyzer"&gt;
+			&#160;&#160;&lt;level&#160;value="info" /&gt;
+			&#160;&lt;/logger&gt;
+
+			&#160;&lt;logger&#160;name="org.eobjects.analyzer.job.runner"&gt;
+			&#160;&#160;&lt;level&#160;value="info" /&gt;
+			&#160;&lt;/logger&gt;
+
+			&#160;&lt;logger&#160;name="org.eobjects.analyzer.storage"&gt;
+			&#160;&#160;&lt;level&#160;value="info" /&gt;
+			&#160;&#160;&lt;/logger&gt;
+
+			&#160;&lt;logger&#160;name="org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider"&gt;
+			&#160;&#160;&lt;level&#160;value="info" /&gt;
+			&#160;&lt;/logger&gt;
+
+			&#160;&lt;logger&#160;name="org.eobjects.datacleaner"&gt;
+			&#160;&#160;&lt;level&#160;value="info" /&gt;
+			&#160;&lt;/logger&gt;
+
+			&#160;&lt;root&gt;
+			&#160;&#160;&lt;priority&#160;value="info" /&gt;
+			&#160;&#160;&lt;appender-ref&#160;ref="consoleAppender" /&gt;
+			&#160;&#160;&lt;appender-ref&#160;ref="fileAppender" /&gt;
+			&#160;&lt;/root&gt;
+
+			&lt;/log4j:configuration&gt; </programlisting>
+		<para>This logging configuration specifies the INFO level as the
+			default level of logging. It appends (outputs) log messages to the
+			console (if
+			available) and to a file with the path:
+			log/datacleaner.log</para>
+		<para>We recommend using this default configuration as a template for
+			custom log configurations. Next we will explore how to modify the
+			configuration and create new logging outputs.</para>
+	</section>
+
+	<section>
+		<title>Modifying logging levels</title>
+		<para>These are the logging levels available in DataCleaner and Log4j,
+			order by priority (highest priority first):</para>
+		<orderedlist>
+			<listitem>
+				error
+			</listitem>
+			<listitem>
+				warn
+			</listitem>
+			<listitem>
+				info
+			</listitem>
+			<listitem>
+				debug
+			</listitem>
+			<listitem>
+				trace
+			</listitem>
+		</orderedlist>
+		<para>Typically the bottom-two logging levels (debug and trace) are
+			not used unless unexpected situations has to be investigated by
+			developers.</para>
+		<para>
+			Modifying the logging levels can be done either globally or in a
+			hierarical manner:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>If you change the &lt;priority&gt; element's value attribute,
+					you change the global threshold for logging messages.</para>
+			</listitem>
+			<listitem>
+				<para>If you change the &lt;logger&gt; element's level,
+					you change
+					the logging priority logging messages that pertain to a particular
+					hierachy of loggers.</para>
+			</listitem>
+		</orderedlist>
+	</section>
+
+	<section>
+		<title>Alternative logging outputs</title>
+		<para>Log
+			messages are printed to an output, typically a file or the
+			console. In
+			the configuration file this is configured in the
+			&lt;appender&gt;
+			elements. Here's a few examples of alternative
+			appenders you can use.
+			For more examples and documentation, please
+			refer to the
+			<link xl:href="http://logging.apache.org/log4j/">Log4j website</link>
+			.
+		</para>
+
+		<para>
+			<emphasis>Logging in a PostgreSQL database:</emphasis>
+		</para>
+		<programlisting>
+			&lt;appender&#160;name="jdbcAppender"&#160;class="org.apache.log4j.jdbc.JDBCAppender"&gt;
+			&#160;&lt;param&#160;name="URL"&#160;value="jdbc:postgresql:db"/&gt;
+			&#160;&lt;param&#160;name="Driver"&#160;value="org.postgresql.Driver"/&gt;
+			&#160;&lt;param&#160;name="User"&#160;value="user"/&gt;
+			&#160;&lt;param&#160;name="Password"&#160;value="password"/&gt;
+			&#160;&lt;layout class="org.apache.log4j.PatternLayout"&gt;
+			&#160;&#160;&lt;param&#160;name="ConversionPattern"
+			&#160;&#160;&#160;&#160;&#160;value="INSERT&#160;INTO&#160;log4j&#160;(log_date,log_level,log_location,log_message)&#160;VALUES&#160;('%d{yyyy-MM-dd}','%p','%C;%L','%m')"/&gt;
+			&#160;&lt;/layout&gt;
+			&lt;/appender&gt;</programlisting>
+	</section>
 
 </chapter>

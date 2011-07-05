@@ -34,10 +34,12 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.output.beans.OutputAnalyzerResult;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -46,6 +48,7 @@ import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
 
 @RendererBean(SwingRenderingFormat.class)
@@ -82,19 +85,20 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 		}
 	}
 
-	private DCPanel createButtonPanel(OutputAnalyzerResult result) {
+	private DCPanel createButtonPanel(final OutputAnalyzerResult result) {
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 4));
 
 		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 		final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
 		final Datastore datastore = result.getDatastore(datastoreCatalog);
+		final Insets buttonMargin = new Insets(1, 4, 1, 4);
 		if (datastore != null && datastore.getName() != null) {
 			final Datastore ds = datastoreCatalog.getDatastore(datastore.getName());
 			if (!datastore.equals(ds)) {
 				final JButton addDatastoreButton = new JButton("Add to datastores",
 						imageManager.getImageIcon("images/actions/add.png"));
-				addDatastoreButton.setMargin(new Insets(1, 1, 1, 1));
+				addDatastoreButton.setMargin(buttonMargin);
 				addDatastoreButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -109,15 +113,32 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 
 			final JButton analyzeButton = new JButton("Analyze this datastore",
 					imageManager.getImageIcon("images/filetypes/analysis_job.png"));
-			analyzeButton.setMargin(new Insets(1, 1, 1, 1));
+			analyzeButton.setMargin(buttonMargin);
 			analyzeButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, datastore, windowContext);
+					final AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, datastore,
+							windowContext);
 					window.setVisible(true);
 				}
 			});
 			panel.add(analyzeButton);
+			panel.add(Box.createHorizontalStrut(4));
+
+			final JButton previewButton = new JButton("Preview table",
+					imageManager.getImageIcon("images/actions/preview_data.png"));
+			previewButton.setMargin(buttonMargin);
+			previewButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					final DataContextProvider dcp = datastore.getDataContextProvider();
+					final Table previewTable = result.getPreviewTable(datastore);
+					final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
+							windowContext, dcp, previewTable);
+					actionListener.actionPerformed(null);
+				}
+			});
+			panel.add(previewButton);
 		}
 		return panel;
 	}

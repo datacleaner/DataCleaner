@@ -69,7 +69,7 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Override
 	protected OutputAnalyzerResult getResultInternal(int rowCount) {
-		return new DatastoreOutputAnalyzerResult(rowCount, datastoreName);
+		return new DatastoreOutputAnalyzerResult(rowCount, datastoreName, tableName);
 	}
 
 	public String getDatastoreName() {

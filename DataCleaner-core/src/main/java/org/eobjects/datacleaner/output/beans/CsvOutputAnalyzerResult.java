@@ -22,12 +22,14 @@ package org.eobjects.datacleaner.output.beans;
 import java.io.File;
 
 import org.eobjects.analyzer.connection.CsvDatastore;
+import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 
+import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.FileHelper;
 
-public class CsvOutputAnalyzerResult implements OutputAnalyzerResult {
+class CsvOutputAnalyzerResult implements OutputAnalyzerResult {
 
 	private static final long serialVersionUID = 1L;
 	private final int _rowCount;
@@ -53,4 +55,11 @@ public class CsvOutputAnalyzerResult implements OutputAnalyzerResult {
 				FileHelper.DEFAULT_ENCODING);
 	}
 
+	@Override
+	public Table getPreviewTable(Datastore datastore) {
+		DataContextProvider dcp = datastore.getDataContextProvider();
+		Table table = dcp.getDataContext().getDefaultSchema().getTables()[0];
+		dcp.close();
+		return table;
+	}
 }

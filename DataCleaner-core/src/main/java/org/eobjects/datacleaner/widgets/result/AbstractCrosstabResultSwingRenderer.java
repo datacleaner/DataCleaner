@@ -128,8 +128,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 					dataset.setValue(value, table.getColumnName(j), "");
 				}
 
-				final JFreeChart chart = ChartFactory.createBarChart3D("", "", measureName, dataset,
-						PlotOrientation.VERTICAL, true, true, false);
+				final JFreeChart chart = ChartFactory.createBarChart("", "", measureName, dataset, PlotOrientation.VERTICAL,
+						true, true, false);
 				ChartUtils.applyStyles(chart);
 				final ChartPanel chartPanel = new ChartPanel(chart);
 				displayChartCallback.displayChart(chartPanel);

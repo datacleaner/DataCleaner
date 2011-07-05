@@ -101,7 +101,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
 	protected void displayChart(DCTable table, DisplayChartCallback displayChartCallback) {
 		final int rowCount = table.getRowCount();
-		final DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
+		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		for (int i = 0; i < rowCount; i++) {
 			final Object expressionObject = table.getValueAt(i, 0);
 			final String expression = extractString(expressionObject);
@@ -109,11 +109,11 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 			final Object countObject = table.getValueAt(i, 1);
 			final String countString = extractString(countObject);
 			final int count = Integer.parseInt(countString);
-			categoryDataset.addValue(count, expression, "");
+			dataset.addValue(count, expression, "");
 		}
 
-		JFreeChart chart = ChartFactory.createBarChart("Pattern distribution", "Pattern", "Match count", categoryDataset,
-				PlotOrientation.VERTICAL, false, true, false);
+		JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset,
+				PlotOrientation.VERTICAL, true, true, false);
 		ChartUtils.applyStyles(chart);
 		displayChartCallback.displayChart(new ChartPanel(chart));
 	}

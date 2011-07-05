@@ -40,10 +40,8 @@ import java.util.Set;
 
 import javax.swing.Box;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -77,6 +75,7 @@ import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.PieSectionEntity;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.util.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,6 +101,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 	private final int _preferredSlices;
 	private final int _maxSlices;
 	private final String _groupOrColumnName;
+	private final DCTable _table;
 
 	/**
 	 * Default constructor
@@ -121,9 +121,11 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		_groupOrColumnName = groupOrColumnName;
 		_preferredSlices = preferredSlices;
 		_maxSlices = maxSlices;
+		_table = new DCTable("Value", LabelUtils.COUNT_LABEL);
+		_table.setRowHeight(22);
 	}
 
-	public JComponent render(ValueDistributionGroupResult result) {
+	public JSplitPane renderGroupResult(ValueDistributionGroupResult result) {
 		// create a special group for the unique values
 		final int uniqueCount = result.getUniqueCount();
 		final Collection<String> uniqueValues = result.getUniqueValues();
@@ -178,17 +180,32 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 				}
 			}
 
-			for (PieSliceGroup group : _groups.values()) {
-				_dataset.setValue(group.getName(), group.getTotalCount());
+			// if the is only a single group and it's size (plus the existing
+			// size) is smaller than
+			// _maxSlices, then "drill to detail" from the start.
+			boolean singleGroupExploded = false;
+			if (_groups.size() == 1) {
+				// only a single group in the complete value distribution!
+				PieSliceGroup singleGroup = _groups.values().iterator().next();
+				if (singleGroup.size() + _dataset.getItemCount() <= _preferredSlices) {
+					singleGroupExploded = true;
+					for (ValueCount vc : singleGroup) {
+						_dataset.setValue(LabelUtils.getLabel(vc.getValue()), vc.getCount());
+					}
+					_dataset.sortByValues(SortOrder.DESCENDING);
+				}
+			}
+
+			if (!singleGroupExploded) {
+				for (PieSliceGroup group : _groups.values()) {
+					_dataset.setValue(group.getName(), group.getTotalCount());
+				}
 			}
 		}
 
-		logger.info("Rendering with {} slices", _dataset.getItemCount());
 
-		// table for drill-to-detail information
-		final DCTable drillableValuesTable = new DCTable("Value", LabelUtils.COUNT_LABEL);
-		drillableValuesTable.setRowHeight(22);
-		drillToOverview(drillableValuesTable);
+		logger.info("Rendering with {} slices", _dataset.getItemCount());
+		drillToOverview();
 
 		// chart for display of the dataset
 		final JFreeChart chart = ChartFactory.createPieChart("Value distribution of " + _groupOrColumnName, _dataset, false,
@@ -263,7 +280,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 					PieSectionEntity pieSectionEntity = (PieSectionEntity) entity;
 					String sectionKey = (String) pieSectionEntity.getSectionKey();
 					if (_groups.containsKey(sectionKey)) {
-						drillToGroup(sectionKey, drillableValuesTable);
+						drillToGroup(sectionKey, true);
 					}
 				}
 			}
@@ -279,11 +296,11 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		_backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				drillToOverview(drillableValuesTable);
+				drillToOverview();
 			}
 		});
 		rightPanel.add(_backButton, BorderLayout.NORTH);
-		rightPanel.add(drillableValuesTable.toPanel(), BorderLayout.CENTER);
+		rightPanel.add(_table.toPanel(), BorderLayout.CENTER);
 		rightPanel.getSize().height = chartHeight;
 
 		final JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -303,7 +320,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		return _dataset;
 	}
 
-	private void drillToOverview(final JTable table) {
+	private void drillToOverview() {
 		final TableModel model = new DefaultTableModel(new String[] { "Value", LabelUtils.COUNT_LABEL },
 				_dataset.getItemCount());
 		for (int i = 0; i < _dataset.getItemCount(); i++) {
@@ -320,7 +337,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 				button.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						drillToGroup(key, table);
+						drillToGroup(key, true);
 					}
 				});
 
@@ -333,11 +350,11 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 				model.setValueAt(count, i, 1);
 			}
 		}
-		table.setModel(model);
+		_table.setModel(model);
 		_backButton.setVisible(false);
 	}
 
-	private void drillToGroup(String groupName, JTable table) {
+	private void drillToGroup(String groupName, boolean showBackButton) {
 		final PieSliceGroup group = _groups.get(groupName);
 		final TableModel model = new DefaultTableModel(new String[] { groupName + " value", LabelUtils.COUNT_LABEL },
 				group.size());
@@ -350,8 +367,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 			model.setValueAt(vc.getCount(), i, 1);
 			i++;
 		}
-		table.setModel(model);
-		_backButton.setVisible(true);
+		_table.setModel(model);
+		_backButton.setVisible(showBackButton);
 	}
 
 	protected void createGroups(List<ValueCount> valueCounts) {

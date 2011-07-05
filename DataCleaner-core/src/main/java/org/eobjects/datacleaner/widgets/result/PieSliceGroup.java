@@ -33,7 +33,7 @@ import org.eobjects.metamodel.util.BaseObject;
  * 
  * @author Kasper Sørensen
  */
-public class PieSliceGroup extends BaseObject {
+public class PieSliceGroup extends BaseObject implements Iterable<ValueCount> {
 
 	private final String _name;
 	private final int _totalSize;
@@ -123,5 +123,10 @@ public class PieSliceGroup extends BaseObject {
 		} else {
 			_valueCounts.add(vc);
 		}
+	}
+
+	@Override
+	public Iterator<ValueCount> iterator() {
+		return getValueCounts();
 	}
 }

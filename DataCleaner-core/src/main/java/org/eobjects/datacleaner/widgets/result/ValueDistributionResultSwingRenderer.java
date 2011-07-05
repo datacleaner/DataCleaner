@@ -49,7 +49,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		} else {
 			ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
 					result.getColumnName());
-			return delegate.render(result.getSingleValueDistributionResult());
+			return delegate.renderGroupResult(result.getSingleValueDistributionResult());
 		}
 	}
 
@@ -63,7 +63,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 			}
 			ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
 					res.getGroupName());
-			final JComponent renderedResult = delegate.render(res);
+			final JComponent renderedResult = delegate.renderGroupResult(res);
 			final DCPanel decoratedPanel = createDecoration(renderedResult);
 			final String label = "Value distribution for group '" + LabelUtils.getLabel(res.getGroupName()) + "'";
 

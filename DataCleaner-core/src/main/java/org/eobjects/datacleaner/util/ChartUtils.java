@@ -26,6 +26,7 @@ import org.eobjects.datacleaner.widgets.result.DCDrawingSupplier;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAnchor;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PieLabelLinkStyle;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
@@ -76,6 +77,7 @@ public final class ChartUtils {
 			piePlot.setLabelOutlineStroke(normalStroke);
 			piePlot.setLabelPaint(WidgetUtils.BG_COLOR_DARK);
 			piePlot.setSectionOutlinesVisible(false);
+			piePlot.setLabelLinkStyle(PieLabelLinkStyle.QUAD_CURVE);
 		} else if (plot instanceof CategoryPlot) {
 			// tweaks for bar charts
 			final CategoryPlot categoryPlot = (CategoryPlot) plot;

@@ -19,24 +19,106 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
+import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.inject.Inject;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.border.EmptyBorder;
 
+import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.RendererBean;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.output.beans.OutputAnalyzerResult;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.widgets.Alignment;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.jdesktop.swingx.VerticalLayout;
 
 @RendererBean(SwingRenderingFormat.class)
 public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyzerResult, JComponent> {
 
+	private final ImageManager imageManager = ImageManager.getInstance();
+
+	@Inject
+	@Provided
+	WindowContext windowContext;
+
 	@Override
 	public JComponent render(OutputAnalyzerResult result) {
+		final EmptyBorder border = new EmptyBorder(10, 10, 10, 10);
+
 		int rowCount = result.getWrittenRowCount();
 		if (rowCount == 0) {
-			return new JLabel("No rows written!");
+			JLabel label = new JLabel("No rows written!", imageManager.getImageIcon("images/status/warning.png"),
+					JLabel.LEFT);
+			label.setBorder(border);
+			return label;
 		} else {
-			return new JLabel(rowCount + " rows written!");
+			final JLabel label = new JLabel(rowCount + " rows written!",
+					imageManager.getImageIcon("images/status/valid.png"), JLabel.LEFT);
+			final DCPanel buttonPanel = createButtonPanel(result);
+
+			final DCPanel panel = new DCPanel();
+			panel.setLayout(new VerticalLayout(4));
+			panel.add(label);
+			panel.add(buttonPanel);
+			panel.setBorder(border);
+
+			return panel;
 		}
+	}
+
+	private DCPanel createButtonPanel(OutputAnalyzerResult result) {
+		final DCPanel panel = new DCPanel();
+		panel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 4));
+
+		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
+		final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
+		final Datastore datastore = result.getDatastore(datastoreCatalog);
+		if (datastore != null && datastore.getName() != null) {
+			final Datastore ds = datastoreCatalog.getDatastore(datastore.getName());
+			if (!datastore.equals(ds)) {
+				final JButton addDatastoreButton = new JButton("Add to datastores",
+						imageManager.getImageIcon("images/actions/add.png"));
+				addDatastoreButton.setMargin(new Insets(1, 1, 1, 1));
+				addDatastoreButton.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						MutableDatastoreCatalog mutableDatastoreCatalog = (MutableDatastoreCatalog) datastoreCatalog;
+						mutableDatastoreCatalog.addDatastore(datastore);
+						addDatastoreButton.setEnabled(false);
+					}
+				});
+				panel.add(addDatastoreButton);
+				panel.add(Box.createHorizontalStrut(4));
+			}
+
+			final JButton analyzeButton = new JButton("Analyze this datastore",
+					imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+			analyzeButton.setMargin(new Insets(1, 1, 1, 1));
+			analyzeButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, datastore, windowContext);
+					window.setVisible(true);
+				}
+			});
+			panel.add(analyzeButton);
+		}
+		return panel;
 	}
 }

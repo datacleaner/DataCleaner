@@ -118,7 +118,14 @@ public class ResultListPanel extends DCPanel {
 				}
 				logger.debug("renderer.render({})", result);
 				final JComponent component = renderer.render(result);
-				logger.info("renderer.render({}) returned: {}", result, component);
+				if (logger.isInfoEnabled()) {
+					String resultAsString = result.toString();
+					if (resultAsString.length() > 150) {
+						resultAsString = resultAsString.substring(0, 147) + "...";
+					}
+					resultAsString = resultAsString.replaceAll("\n", " | ");
+					logger.info("renderer.render({}) returned: {}", resultAsString, component);
+				}
 				return component;
 			}
 

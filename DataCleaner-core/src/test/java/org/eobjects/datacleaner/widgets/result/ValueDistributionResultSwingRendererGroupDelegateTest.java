@@ -44,7 +44,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestC
 
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
 				50, 60);
-		r.render(new ValueDistributionGroupResult(column.getName(), topValueCount, null, 0, 0));
+		r.renderGroupResult(new ValueDistributionGroupResult(column.getName(), topValueCount, null, 0, 0));
 
 		assertTrue(r.getGroups().isEmpty());
 		assertEquals(40, r.getDataset().getItemCount());
@@ -88,7 +88,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestC
 		// values above could be individually included in the dataset.
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
 				13, 100);
-		r.render(new ValueDistributionGroupResult(column.getName(), topValueCount, null, 0, 10));
+		r.renderGroupResult(new ValueDistributionGroupResult(column.getName(), topValueCount, null, 0, 10));
 
 		Map<String, PieSliceGroup> groups = r.getGroups();
 		DefaultPieDataset dataset = r.getDataset();
@@ -118,7 +118,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestC
 
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
 				17, 20);
-		r.render(new ValueDistributionGroupResult("foo", topValueCount, null, 0, 0));
+		r.renderGroupResult(new ValueDistributionGroupResult("foo", topValueCount, null, 0, 0));
 
 		assertEquals(
 				"[<count=10>, <count=11>, <count=2>, <count=3>, <count=4>, <count=5>, <count=6>, <count=7>, <count=8>, <count=9>]",
@@ -151,7 +151,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends TestC
 
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate("foo",
 				10, 13);
-		r.render(new ValueDistributionGroupResult("foo", topValueCount, null, 0, 0));
+		r.renderGroupResult(new ValueDistributionGroupResult("foo", topValueCount, null, 0, 0));
 
 		assertEquals(13, r.getDataset().getItemCount());
 

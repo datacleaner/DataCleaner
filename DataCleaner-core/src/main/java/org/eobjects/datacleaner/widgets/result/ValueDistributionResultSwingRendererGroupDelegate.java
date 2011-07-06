@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,6 +75,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.PieSectionEntity;
 import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.title.ShortTextTitle;
+import org.jfree.chart.title.Title;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.util.SortOrder;
 import org.slf4j.Logger;
@@ -128,6 +131,9 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 	public JSplitPane renderGroupResult(ValueDistributionGroupResult result) {
 		// create a special group for the unique values
 		final int uniqueCount = result.getUniqueCount();
+		final int distinctCount = result.getDistinctCount();
+		final int totalCount = result.getTotalCount();
+
 		final Collection<String> uniqueValues = result.getUniqueValues();
 		if (uniqueValues != null && !uniqueValues.isEmpty()) {
 			PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelUtils.UNIQUE_LABEL, uniqueCount, uniqueValues, 1);
@@ -203,13 +209,16 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 			}
 		}
 
-
 		logger.info("Rendering with {} slices", _dataset.getItemCount());
 		drillToOverview();
 
 		// chart for display of the dataset
 		final JFreeChart chart = ChartFactory.createPieChart("Value distribution of " + _groupOrColumnName, _dataset, false,
 				true, false);
+		Title totalCountSubtitle = new ShortTextTitle("Total count: " + totalCount);
+		Title distinctCountSubtitle = new ShortTextTitle("Distinct count: " + distinctCount);
+		chart.setSubtitles(Arrays.asList(totalCountSubtitle, distinctCountSubtitle));
+
 		ChartUtils.applyStyles(chart);
 
 		// code-block for tweaking style and coloring of chart
@@ -290,8 +299,6 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		leftPanel.setLayout(new BorderLayout());
 		leftPanel.add(chartPanel, BorderLayout.NORTH);
 
-		final DCPanel rightPanel = new DCPanel();
-		rightPanel.setLayout(new BorderLayout());
 		_backButton.setMargin(new Insets(0, 0, 0, 0));
 		_backButton.addActionListener(new ActionListener() {
 			@Override
@@ -299,6 +306,9 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 				drillToOverview();
 			}
 		});
+
+		final DCPanel rightPanel = new DCPanel();
+		rightPanel.setLayout(new BorderLayout());
 		rightPanel.add(_backButton, BorderLayout.NORTH);
 		rightPanel.add(_table.toPanel(), BorderLayout.CENTER);
 		rightPanel.getSize().height = chartHeight;

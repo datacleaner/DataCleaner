@@ -35,6 +35,8 @@ import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.title.Title;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.UnitType;
 
@@ -54,19 +56,30 @@ public final class ChartUtils {
 
 	public static void applyStyles(JFreeChart chart) {
 		chart.getTitle().setFont(WidgetUtils.FONT_HEADER1);
+		chart.getTitle().setBackgroundPaint(WidgetUtils.BG_COLOR_BRIGHTEST);
+
+		for (int i = 0; i < chart.getSubtitleCount(); i++) {
+			Title subtitle = chart.getSubtitle(i);
+			if (subtitle instanceof TextTitle) {
+				((TextTitle) subtitle).setFont(WidgetUtils.FONT_NORMAL);
+			}
+		}
+
 		LegendTitle legend = chart.getLegend();
 		if (legend != null) {
 			legend.setItemFont(WidgetUtils.FONT_SMALL);
 		}
-		chart.setBackgroundPaint(null);
+
+		// transparent background
+		chart.setBackgroundPaint(WidgetUtils.BG_COLOR_BRIGHTEST);
 		chart.setBorderVisible(false);
 
 		final Plot plot = chart.getPlot();
 		plot.setInsets(new RectangleInsets(UnitType.ABSOLUTE, 0d, 0d, 0d, 0d));
 		plot.setBackgroundPaint(WidgetUtils.BG_COLOR_BRIGHTEST);
-		plot.setOutlinePaint(WidgetUtils.BG_COLOR_MEDIUM);
-
+		plot.setOutlinePaint(WidgetUtils.BG_COLOR_BRIGHTEST);
 		plot.setOutlineVisible(true);
+
 		if (plot instanceof PiePlot) {
 			// tweaks for pie charts
 			final PiePlot piePlot = (PiePlot) plot;

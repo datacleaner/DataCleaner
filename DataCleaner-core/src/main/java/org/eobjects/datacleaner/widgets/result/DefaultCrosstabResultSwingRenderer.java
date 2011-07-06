@@ -21,9 +21,27 @@ package org.eobjects.datacleaner.widgets.result;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.result.CrosstabResult;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 
 @RendererBean(SwingRenderingFormat.class)
 public class DefaultCrosstabResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<CrosstabResult> {
+
+	/**
+	 * Constructor used for programmatic composition
+	 * 
+	 * @param windowContext
+	 */
+	public DefaultCrosstabResultSwingRenderer(WindowContext windowContext) {
+		super(windowContext);
+	}
+
+	/**
+	 * Default constructor, used by {@link RendererFactory}.
+	 */
+	public DefaultCrosstabResultSwingRenderer() {
+		super();
+	}
 
 }

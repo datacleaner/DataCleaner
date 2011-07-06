@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabDimension;
 import org.eobjects.analyzer.result.CrosstabResult;
@@ -40,6 +41,7 @@ import org.eobjects.analyzer.result.ResultProducer;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRenderer;
 import org.eobjects.analyzer.result.renderer.CrosstabRendererCallback;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -58,9 +60,24 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
 
 	@Inject
-	WindowContext windowContext;
+	WindowContext _windowContext;
 
 	private DrillToDetailsCallback _drillToDetailsCallback;
+
+	/**
+	 * Constructor used for programmatic composition.
+	 * 
+	 * @param windowContext
+	 */
+	public AbstractCrosstabResultSwingRenderer(WindowContext windowContext) {
+		_windowContext = windowContext;
+	}
+
+	/**
+	 * Default constructor, used by {@link RendererFactory}.
+	 */
+	public AbstractCrosstabResultSwingRenderer() {
+	}
 
 	@Override
 	public JComponent render(R result) {
@@ -76,13 +93,16 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 	 * @return
 	 */
 	protected CrosstabPanel renderInternal(R result) {
-		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(windowContext);
+		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(_windowContext);
 
 		final DCTable table = renderTable(result.getCrosstab());
 
 		final CrosstabPanel crosstabPanel = new CrosstabPanel(table);
 
 		decorate(result, table, crosstabPanel.getDisplayChartCallback());
+
+		// make the first column packed to fit it's size.
+		table.packColumn(0, 2);
 
 		return crosstabPanel;
 	}
@@ -99,8 +119,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 		for (int i = 0; i < rowCount; i++) {
 			boolean entirelyNumbers = true;
 			for (int j = 1; j < columnCount; j++) {
-				Object value = table.getValueAt(i, j);
-				if (!(value instanceof Number)) {
+				String value = table.getTextValueAt(i, j);
+				if (!NumberUtils.isNumber(value)) {
 					entirelyNumbers = false;
 					break;
 				}
@@ -124,7 +144,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
 				final int columnCount = table.getColumnCount();
 				for (int j = 1; j < columnCount; j++) {
-					final Number value = (Number) table.getValueAt(row, j);
+					String textValue = table.getTextValueAt(row, j);
+					final Number value = NumberUtils.createNumber(textValue);
 					dataset.setValue(value, table.getColumnName(j), "");
 				}
 
@@ -140,7 +161,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 		table.setValueAt(panel, row, 0);
 	}
 
-	public DCTable renderTable(Crosstab<?> crosstab) {
+	private DCTable renderTable(Crosstab<?> crosstab) {
 		final CrosstabRenderer renderer = new CrosstabRenderer(crosstab);
 		final RendererCallback rendererCallback = new RendererCallback();
 		final TableModel tableModel = renderer.render(rendererCallback);

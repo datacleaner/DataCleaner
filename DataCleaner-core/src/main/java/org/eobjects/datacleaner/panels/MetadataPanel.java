@@ -33,20 +33,29 @@ import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.schema.Column;
 
 public class MetadataPanel extends DCPanel implements SourceColumnChangeListener {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final String[] columnNames = new String[] { "Table", "Column", "Type", "Native type", "Size",
+			"Nullable?", "Indexed?" };
+
 	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final DCTable _table = new DCTable();
+	private final DCTable _table;;
 
 	public MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
 		super(ImageManager.getInstance().getImage("images/window/metadata-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_analysisJobBuilder = analysisJobBuilder;
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
+
+		_table = new DCTable(columnNames);
+		_table.setAlignment(5, Alignment.CENTER);
+		_table.setAlignment(6, Alignment.CENTER);
 
 		setLayout(new BorderLayout());
 		DCPanel tablePanel = _table.toPanel();
@@ -57,8 +66,6 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 
 	private void updateComponents() {
 		final SortedSet<InputColumn<?>> sourceColumns = new TreeSet<InputColumn<?>>(_analysisJobBuilder.getSourceColumns());
-		final String[] columnNames = new String[] { "Table", "Column", "Type", "Native type", "Size", "Nullable?",
-				"Indexed?" };
 
 		final Icon validIcon = ImageManager.getInstance().getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
 

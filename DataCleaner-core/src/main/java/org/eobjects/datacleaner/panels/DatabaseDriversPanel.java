@@ -167,6 +167,7 @@ public class DatabaseDriversPanel extends DCPanel {
 		final Icon invalidIcon = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
 
 		final int installedCol = 3;
+		final int usedCol = 4;
 		int row = 0;
 		for (final DatabaseDriverDescriptor dd : databaseDrivers) {
 			final String driverClassName = dd.getDriverClassName();
@@ -203,18 +204,19 @@ public class DatabaseDriversPanel extends DCPanel {
 			}
 
 			if (isUsed(driverClassName)) {
-				tableModel.setValueAt(validIcon, row, 4);
+				tableModel.setValueAt(validIcon, row, usedCol);
 			}
 
 			row++;
 		}
 
 		table.setAlignment(installedCol, Alignment.CENTER);
+		table.setAlignment(usedCol, Alignment.CENTER);
 
 		table.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 		table.getColumn(0).setMaxWidth(IconUtils.ICON_SIZE_SMALL + 4);
 		table.getColumn(installedCol).setMaxWidth(84);
-		table.getColumn(4).setMaxWidth(70);
+		table.getColumn(usedCol).setMaxWidth(70);
 		table.setColumnControlVisible(false);
 		return table;
 	}

@@ -270,6 +270,16 @@ public class DCTable extends JXTable implements MouseListener {
 		clipboard.setContents(stsel, stsel);
 	}
 
+	public String getTextValueAt(int row, int column) {
+		Object value = getValueAt(row, column);
+		if (value == null) {
+			value = "";
+		} else if (value instanceof JComponent) {
+			value = WidgetUtils.extractText((JComponent) value);
+		}
+		return value.toString();
+	}
+
 	@Override
 	public Object getValueAt(int row, int column) {
 		Object value = super.getValueAt(row, column);

@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.BorderLayout;
+import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
@@ -29,16 +30,36 @@ import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
+import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
+import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.analyzer.util.SchemaNavigator;
+import org.eobjects.datacleaner.bootstrap.DCWindowContext;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.LabelUtils;
-import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
+import org.eobjects.datacleaner.windows.ResultWindow;
 import org.jdesktop.swingx.VerticalLayout;
 
+/**
+ * Renderer for {@link ValueDistributionResult}s as Swing components.
+ * 
+ * The results will be displayed using a chart and a table of values and their
+ * counts.
+ * 
+ * @author Kasper Sørensen
+ */
 @RendererBean(SwingRenderingFormat.class)
 public class ValueDistributionResultSwingRenderer extends AbstractRenderer<ValueDistributionResult, JComponent> {
 
@@ -129,11 +150,41 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 	}
 
 	private DCPanel createDecoration(JComponent renderedResult) {
-		renderedResult.setBorder(WidgetUtils.BORDER_SHADOW);
 		final DCPanel wrappingPanel = new DCPanel();
 		wrappingPanel.setLayout(new BorderLayout());
 		wrappingPanel.add(renderedResult, BorderLayout.CENTER);
 		wrappingPanel.setBorder(new EmptyBorder(4, 20, 4, 4));
 		return wrappingPanel;
+	}
+
+	/**
+	 * A main method that will display the results of a few example value
+	 * distributions. Useful for tweaking the charts and UI.
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		LookAndFeelManager.getInstance().init();
+
+		// run a small job
+		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
+		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
+		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
+		DataContextProvider dcp = ds.getDataContextProvider();
+		SchemaNavigator sn = dcp.getSchemaNavigator();
+		ajb.setDatastore(ds);
+		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE").getColumns());
+		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns());
+
+		ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
+		RowProcessingAnalyzerJobBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
+				.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class);
+		groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
+		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
+
+		WindowContext windowContext = new DCWindowContext();
+		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
+		resultWindow.setVisible(true);
+		resultWindow.startAnalysis();
 	}
 }

@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -39,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.MatteBorder;
@@ -47,6 +49,7 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.panels.DCPanel;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
 import org.jdesktop.swingx.decorator.Highlighter;
@@ -370,6 +373,29 @@ public final class WidgetUtils {
 
 		logger.warn("Could not extract text from component: {}", comp);
 		return "";
+	}
+
+	/**
+	 * Decorates a JComponent with a nice shadow border. Since not all
+	 * JComponents handle opacity correctly, they will be wrapped inside a
+	 * DCPanel, which actually has the border.
+	 * 
+	 * @param comp
+	 * @return
+	 */
+	public static DCPanel decorateWithShadow(JComponent comp, boolean outline, int margin) {
+		DCPanel panel = new DCPanel();
+		panel.setLayout(new BorderLayout());
+		Border border = BORDER_SHADOW;
+		if (outline) {
+			border = new CompoundBorder(border, BORDER_THIN);
+		}
+		if (margin > 0) {
+			border = new CompoundBorder(new EmptyBorder(margin, margin, margin, margin), border);
+		}
+		panel.setBorder(border);
+		panel.add(comp, BorderLayout.CENTER);
+		return panel;
 	}
 
 	/**

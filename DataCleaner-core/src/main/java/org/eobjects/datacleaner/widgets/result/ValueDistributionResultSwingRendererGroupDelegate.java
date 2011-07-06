@@ -27,7 +27,6 @@ import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,26 +46,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
-import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
-import org.eobjects.analyzer.connection.DataContextProvider;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionGroupResult;
-import org.eobjects.analyzer.util.SchemaNavigator;
-import org.eobjects.datacleaner.bootstrap.DCWindowContext;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
-import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
-import org.eobjects.datacleaner.windows.ResultWindow;
+import org.jdesktop.swingx.VerticalLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -263,7 +251,6 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		}
 
 		chartPanel.setPreferredSize(new Dimension(0, chartHeight));
-		chartPanel.setOpaque(false);
 		chartPanel.addChartMouseListener(new ChartMouseListener() {
 
 			@Override
@@ -296,8 +283,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		});
 
 		final DCPanel leftPanel = new DCPanel();
-		leftPanel.setLayout(new BorderLayout());
-		leftPanel.add(chartPanel, BorderLayout.NORTH);
+		leftPanel.setLayout(new VerticalLayout());
+		leftPanel.add(WidgetUtils.decorateWithShadow(chartPanel, true, 4));
 
 		_backButton.setMargin(new Insets(0, 0, 0, 0));
 		_backButton.addActionListener(new ActionListener() {
@@ -504,31 +491,5 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 				}
 			}
 		}
-	}
-
-	/**
-	 * A main method that will display the results of a few example value
-	 * distributions. Useful for tweaking the charts and UI.
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		LookAndFeelManager.getInstance().init();
-
-		// run a small job
-		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
-		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
-		DataContextProvider dcp = ds.getDataContextProvider();
-		SchemaNavigator sn = dcp.getSchemaNavigator();
-		ajb.setDatastore(ds);
-		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE").getColumns());
-		ajb.addSourceColumns(sn.convertToTable("PUBLIC.EMPLOYEES").getColumns());
-		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns());
-
-		WindowContext windowContext = new DCWindowContext();
-		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
-		resultWindow.setVisible(true);
-		resultWindow.startAnalysis();
 	}
 }

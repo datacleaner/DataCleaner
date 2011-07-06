@@ -94,8 +94,13 @@ public final class ChartUtils {
 		} else if (plot instanceof CategoryPlot) {
 			// tweaks for bar charts
 			final CategoryPlot categoryPlot = (CategoryPlot) plot;
-
-			categoryPlot.setDomainGridlinesVisible(true);
+			
+			int columnCount = categoryPlot.getDataset().getColumnCount();
+			if (columnCount > 1) {
+				categoryPlot.setDomainGridlinesVisible(true);
+			} else {
+				categoryPlot.setDomainGridlinesVisible(false);
+			}
 			categoryPlot.setDomainGridlinePaint(WidgetUtils.BG_COLOR_DARK);
 			categoryPlot.setDomainGridlinePosition(CategoryAnchor.END);
 

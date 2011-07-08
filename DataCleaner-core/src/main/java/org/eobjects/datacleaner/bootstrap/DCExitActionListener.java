@@ -19,10 +19,31 @@
  */
 package org.eobjects.datacleaner.bootstrap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class DCExitActionListener implements ExitActionListener {
 
+	private static final Logger logger = LoggerFactory.getLogger(DCExitActionListener.class);
+
 	@Override
-	public void exit(int statusCode) {
-		System.exit(statusCode);
+	public void exit(final int statusCode) {
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				try {
+					// sleep for 5 seconds, to give the non-daemon threads a
+					// chance to shut down the applications properly
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+				}
+				logger.warn("Invoking system.exit({})", statusCode);
+				System.exit(statusCode);
+			}
+		};
+		thread.setDaemon(true);
+
+		logger.info("Scheduling shutdown thread");
+		thread.start();
 	}
 }

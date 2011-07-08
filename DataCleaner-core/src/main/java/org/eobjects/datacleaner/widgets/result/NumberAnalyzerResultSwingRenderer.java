@@ -154,7 +154,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		ajb.addSourceColumns(table.getNumberColumns());
 		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
-		WindowContext windowContext = new DCWindowContext();
+		WindowContext windowContext = new DCWindowContext(conf);
 		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

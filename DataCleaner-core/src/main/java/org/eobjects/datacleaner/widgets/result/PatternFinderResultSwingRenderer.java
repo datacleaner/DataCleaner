@@ -154,7 +154,7 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
 				.getDescriptor().getConfiguredProperty("Group column"));
 
-		WindowContext windowContext = new DCWindowContext();
+		WindowContext windowContext = new DCWindowContext(conf);
 		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

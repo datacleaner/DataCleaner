@@ -317,7 +317,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 		}
 
 		List<AnalyzerResult> list = Collections.emptyList();
-		DetailsResultWindow window = new DetailsResultWindow("Example", list, new DCWindowContext());
+		DetailsResultWindow window = new DetailsResultWindow("Example", list, new DCWindowContext(conf));
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		List<AnalyzerResult> results = resultFuture.getResults();

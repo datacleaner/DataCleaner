@@ -35,6 +35,8 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.DCWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the contexts of the GUI windows in DataCleaner.
@@ -47,12 +49,15 @@ import org.eobjects.datacleaner.windows.DCWindow;
  */
 public final class DCWindowContext implements WindowContext {
 
+	private static final Logger logger = LoggerFactory.getLogger(DCWindowContext.class);
+
 	private static final List<WeakReference<DCWindowContext>> _allWindowContexts = new ArrayList<WeakReference<DCWindowContext>>();
 
 	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 	private final List<ActionListener> _windowListeners = new ArrayList<ActionListener>();
 	private final List<ExitActionListener> _exitActionListeners = new ArrayList<ExitActionListener>();
 	private final AnalyzerBeansConfiguration _configuration;
+	private boolean _exiting;
 
 	/**
 	 * Helper method to get any window of the application. This can be
@@ -76,13 +81,10 @@ public final class DCWindowContext implements WindowContext {
 		return null;
 	}
 
-	public DCWindowContext() {
-		this(null);
-	}
-
 	public DCWindowContext(AnalyzerBeansConfiguration configuration) {
 		_configuration = configuration;
 		_allWindowContexts.add(new WeakReference<DCWindowContext>(this));
+		_exiting = false;
 	}
 
 	@Override
@@ -106,6 +108,7 @@ public final class DCWindowContext implements WindowContext {
 		notifyListeners();
 
 		if (_windows.isEmpty()) {
+			logger.info("All DataCleaner windows closed");
 			exit();
 		}
 	}
@@ -148,6 +151,10 @@ public final class DCWindowContext implements WindowContext {
 
 	@Override
 	public void exit() {
+		if (_exiting) {
+			return;
+		}
+		_exiting = true;
 		UserPreferences.getInstance().save();
 		UsageLogger.getInstance().logApplicationShutdown();
 		if (_configuration != null) {

@@ -182,7 +182,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
 		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 
-		WindowContext windowContext = new DCWindowContext();
+		WindowContext windowContext = new DCWindowContext(conf);
 		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

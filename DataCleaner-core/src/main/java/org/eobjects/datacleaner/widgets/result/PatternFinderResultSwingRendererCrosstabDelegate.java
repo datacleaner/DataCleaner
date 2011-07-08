@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.reference.SimpleStringPattern;
 import org.eobjects.analyzer.result.CrosstabResult;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -60,6 +61,10 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
 	private final MutableReferenceDataCatalog _catalog = (MutableReferenceDataCatalog) DCConfiguration.get()
 			.getReferenceDataCatalog();
+
+	public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext) {
+		super(windowContext);
+	}
 
 	@Override
 	public RendererPrecedence getPrecedence(CrosstabResult renderable) {
@@ -112,8 +117,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 			dataset.addValue(count, expression, "");
 		}
 
-		JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset,
-				PlotOrientation.VERTICAL, true, true, false);
+		JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, true, true,
+				false);
 		ChartUtils.applyStyles(chart);
 		displayChartCallback.displayChart(new ChartPanel(chart));
 	}

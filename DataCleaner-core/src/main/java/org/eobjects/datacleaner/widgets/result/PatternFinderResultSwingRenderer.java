@@ -25,10 +25,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -64,10 +66,15 @@ import org.jdesktop.swingx.VerticalLayout;
 @RendererBean(SwingRenderingFormat.class)
 public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFinderResult, JComponent> {
 
-	private final PatternFinderResultSwingRendererCrosstabDelegate delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate();
+	@Inject
+	@Provided
+	WindowContext windowContext;
+
+	private PatternFinderResultSwingRendererCrosstabDelegate delegateRenderer;
 
 	@Override
 	public JComponent render(PatternFinderResult result) {
+		delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate(windowContext);
 		if (result.isGroupingEnabled()) {
 			return renderGroupedResult(result);
 		} else {

@@ -34,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabDimension;
 import org.eobjects.analyzer.result.CrosstabResult;
@@ -60,6 +61,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
 
 	@Inject
+	@Provided
 	WindowContext _windowContext;
 
 	private DrillToDetailsCallback _drillToDetailsCallback;

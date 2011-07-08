@@ -66,6 +66,8 @@ import org.jdesktop.swingx.VerticalLayout;
 @RendererBean(SwingRenderingFormat.class)
 public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFinderResult, JComponent> {
 
+	private static final int MAX_EXPANDED_GROUPS = 30;
+
 	@Inject
 	@Provided
 	WindowContext windowContext;
@@ -87,15 +89,25 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new VerticalLayout(0));
 		final Map<String, Crosstab<?>> crosstabs = result.getGroupedCrosstabs();
+		boolean collapsed = false;
+		if (crosstabs.size() > MAX_EXPANDED_GROUPS) {
+			collapsed = true;
+		}
+
 		final Set<Entry<String, Crosstab<?>>> entries = crosstabs.entrySet();
 		for (Entry<String, Crosstab<?>> entry : entries) {
 			if (panel.getComponentCount() != 0) {
 				panel.add(Box.createVerticalStrut(10));
 			}
-			final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(entry.getValue()));
+			final Crosstab<?> crosstab = entry.getValue();
+			final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(crosstab));
 			final DCPanel decoratedPanel = createDecoration(renderedResult);
-			final String label = "Patterns for group '" + LabelUtils.getLabel(entry.getKey() + "'");
-			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(label, label, false, decoratedPanel);
+			final String expandedLabel = "Pattern finder for group '" + LabelUtils.getLabel(entry.getKey() + "'");
+			final int patternCount = crosstab.getDimension(
+					crosstab.getDimensionIndex(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN)).getCategoryCount();
+			final String collapsedLabel = expandedLabel + ": " + patternCount + " patterns";
+			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, expandedLabel, collapsed,
+					decoratedPanel);
 			panel.add(collapsiblePanel.toPanel());
 		}
 		return panel;

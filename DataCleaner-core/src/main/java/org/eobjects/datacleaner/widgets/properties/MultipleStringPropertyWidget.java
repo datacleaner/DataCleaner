@@ -27,15 +27,23 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
+import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
+/**
+ * {@link PropertyWidget} for String arrays. Displays string arrays as a set of
+ * text boxes and plus/minus buttons to grow/shrink the array.
+ * 
+ * @author Kasper Sørensen
+ */
 public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[]> {
 
 	private static final long serialVersionUID = 1L;
@@ -58,7 +66,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addTextField("");
+				addTextField("", true);
 				fireValueChanged();
 			}
 		});
@@ -92,15 +100,34 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 	}
 
 	public void updateComponents(String[] values) {
-		_textFieldPanel.removeAll();
-		if (values != null) {
-			for (String value : values) {
-				addTextField(value);
+		if (values == null) {
+			values = new String[2];
+		}
+		final String[] previousValues = getValue();
+		if (!EqualsBuilder.equals(values, previousValues)) {
+			for (int i = 0; i < Math.min(previousValues.length, values.length); i++) {
+				// modify text boxes
+				if (!EqualsBuilder.equals(previousValues[i], values[i])) {
+					JTextComponent component = (JTextComponent) _textFieldPanel.getComponent(i);
+					component.setText(values[i]);
+				}
 			}
+
+			while (_textFieldPanel.getComponentCount() < values.length) {
+				// add text boxes if there are too few
+				String nextValue = values[_textFieldPanel.getComponentCount()];
+				addTextField(nextValue, false);
+			}
+
+			while (_textFieldPanel.getComponentCount() > values.length) {
+				// remove text boxes if there are too many
+				_textFieldPanel.remove(_textFieldPanel.getComponentCount() - 1);
+			}
+			_textFieldPanel.updateUI();
 		}
 	}
 
-	private void addTextField(String value) {
+	private void addTextField(String value, boolean updateUI) {
 		JXTextField textField = WidgetFactory.createTextField();
 		if (value != null) {
 			textField.setText(value);
@@ -112,7 +139,9 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			}
 		});
 		_textFieldPanel.add(textField);
-		_textFieldPanel.updateUI();
+		if (updateUI) {
+			_textFieldPanel.updateUI();
+		}
 	}
 
 	@Override

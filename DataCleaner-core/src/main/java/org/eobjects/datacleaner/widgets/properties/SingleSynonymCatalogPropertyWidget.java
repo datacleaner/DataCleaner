@@ -28,8 +28,8 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.SynonymCatalog;
-import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.metamodel.util.CollectionUtils;
 
 public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> {
 

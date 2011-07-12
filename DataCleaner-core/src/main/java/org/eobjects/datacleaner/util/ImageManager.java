@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
-import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.analyzer.util.CollectionUtils2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public final class ImageManager {
 
 	private static ImageManager instance = new ImageManager();
 
-	private final Map<String, Image> _cachedImageIcons = CollectionUtils.createCacheMap();
+	private final Map<String, Image> _cachedImageIcons = CollectionUtils2.createCacheMap();
 	private final ResourceManager resourceManager = ResourceManager.getInstance();
 
 	public static ImageManager getInstance() {

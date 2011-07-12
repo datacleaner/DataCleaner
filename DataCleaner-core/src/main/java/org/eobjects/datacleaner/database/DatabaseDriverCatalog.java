@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eobjects.analyzer.util.CollectionUtils;
-import org.eobjects.analyzer.util.Function;
 import org.eobjects.datacleaner.user.UserDatabaseDriver;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Predicate;
 
 public class DatabaseDriverCatalog implements Serializable {
 
@@ -117,12 +117,10 @@ public class DatabaseDriverCatalog implements Serializable {
 	}
 
 	public List<DatabaseDriverDescriptor> getInstalledWorkingDatabaseDrivers() {
-		return CollectionUtils.filter(_databaseDrivers, new Function<DatabaseDriverDescriptor, Boolean>() {
-
-			private static final long serialVersionUID = 1L;
+		return CollectionUtils.filter(_databaseDrivers, new Predicate<DatabaseDriverDescriptor>() {
 
 			@Override
-			public Boolean run(DatabaseDriverDescriptor input) throws Exception {
+			public Boolean eval(DatabaseDriverDescriptor input) {
 				if (getState(input) == DatabaseDriverState.INSTALLED_WORKING) {
 					return true;
 				}

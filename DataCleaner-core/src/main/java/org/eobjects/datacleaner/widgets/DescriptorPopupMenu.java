@@ -30,7 +30,7 @@ import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
-import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public abstract class DescriptorPopupMenu<E extends BeanDescriptor<?>> extends J
 	private final List<? extends E> _descriptors;
 
 	public DescriptorPopupMenu(Collection<? extends E> descriptors) {
-		_descriptors = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
+		_descriptors = CollectionUtils2.sorted(descriptors, new DisplayNameComparator());
 
 		initialize();
 	}
@@ -76,7 +76,7 @@ public abstract class DescriptorPopupMenu<E extends BeanDescriptor<?>> extends J
 
 		{
 			// place sub menus
-			List<DescriptorMenu> sortedMenus = CollectionUtils.sorted(descriptorMenus.values());
+			List<DescriptorMenu> sortedMenus = CollectionUtils2.sorted(descriptorMenus.values());
 			for (DescriptorMenu descriptorMenu : sortedMenus) {
 				int count = descriptorMenu.getComponentClassCount();
 				if (count <= 1) {

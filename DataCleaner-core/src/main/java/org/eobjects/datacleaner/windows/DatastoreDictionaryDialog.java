@@ -40,7 +40,6 @@ import javax.swing.tree.TreePath;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
-import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -52,6 +51,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
 import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 
 public class DatastoreDictionaryDialog extends AbstractDialog {

@@ -26,7 +26,7 @@ import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.metamodel.util.CollectionUtils;
 
 public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>> {
 

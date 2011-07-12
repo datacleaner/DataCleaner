@@ -19,9 +19,10 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
+import java.util.Arrays;
+
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ResultProducer;
-import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
 
@@ -36,7 +37,7 @@ public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
 	@Override
 	public void drillToDetails(String title, ResultProducer resultProducer) {
 		final AnalyzerResult result = resultProducer.getResult();
-		final DetailsResultWindow window = new DetailsResultWindow(title, CollectionUtils.list(result), _windowContext);
+		final DetailsResultWindow window = new DetailsResultWindow(title, Arrays.asList(result), _windowContext);
 		window.setVisible(true);
 	}
 }

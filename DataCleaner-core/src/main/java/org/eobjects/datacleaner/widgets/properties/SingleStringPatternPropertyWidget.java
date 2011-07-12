@@ -28,8 +28,8 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.StringPattern;
-import org.eobjects.analyzer.util.CollectionUtils;
 import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.metamodel.util.CollectionUtils;
 
 public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> {
 

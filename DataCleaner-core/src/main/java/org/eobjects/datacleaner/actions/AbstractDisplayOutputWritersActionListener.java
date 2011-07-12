@@ -34,7 +34,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
-import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
@@ -84,7 +84,7 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 	protected List<AnalyzerBeanDescriptor<?>> getDescriptors() {
 		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
 				.getAnalyzerBeanDescriptors();
-		List<AnalyzerBeanDescriptor<?>> result = CollectionUtils.sorted(descriptors, new DisplayNameComparator());
+		List<AnalyzerBeanDescriptor<?>> result = CollectionUtils2.sorted(descriptors, new DisplayNameComparator());
 
 		for (Iterator<AnalyzerBeanDescriptor<?>> it = result.iterator(); it.hasNext();) {
 			AnalyzerBeanDescriptor<?> descriptor = it.next();

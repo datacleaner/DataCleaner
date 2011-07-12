@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eobjects.analyzer.reference.Function;
 import org.eobjects.analyzer.util.CollectionUtils;
+import org.eobjects.analyzer.util.Function;
 import org.eobjects.datacleaner.user.UserDatabaseDriver;
 import org.eobjects.datacleaner.user.UserPreferences;
 

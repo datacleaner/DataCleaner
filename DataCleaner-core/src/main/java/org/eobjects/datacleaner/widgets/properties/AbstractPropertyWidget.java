@@ -26,8 +26,8 @@ import javax.swing.JComponent;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.util.CompareUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.metamodel.util.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +109,7 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 
 	public void onValueTouched(E value) {
 		E existingValue = getValue();
-		if (CompareUtils.equals(value, existingValue)) {
+		if (EqualsBuilder.equals(value, existingValue)) {
 			return;
 		}
 		setValue(value);

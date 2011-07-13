@@ -28,6 +28,13 @@ import org.eobjects.datacleaner.bootstrap.BootstrapOptions;
 import org.eobjects.datacleaner.bootstrap.DefaultBootstrapOptions;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 
+/**
+ * The main executable class of DataCleaner. This class primarily sets up
+ * logging and delegates to the {@link Bootstrap} class for actual application
+ * startup.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class Main {
 
 	public static final String VERSION = "2.3-SNAPSHOT";

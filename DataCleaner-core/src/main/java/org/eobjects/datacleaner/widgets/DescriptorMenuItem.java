@@ -31,6 +31,7 @@ import javax.swing.JToolTip;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.util.StringUtils;
@@ -72,7 +73,8 @@ public class DescriptorMenuItem extends JMenuItem {
 		panel.setOpaque(true);
 		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
 
-		JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor));
+		JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor, IconUtils.ICON_SIZE_LARGE));
+		iconLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
 		iconLabel.setOpaque(false);
 
 		JLabel nameLabel = new JLabel(_descriptor.getDisplayName());

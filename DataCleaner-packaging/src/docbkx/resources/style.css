@@ -84,6 +84,7 @@ a:focus {
 /* tables still need 'cellspacing="0"' in the markup */
 table {
 	border-spacing: 0;
+	text-align: left;
 }
 
 /* container elements */
@@ -226,6 +227,30 @@ pre.programlisting {
 	color: black;
 	padding: 0px;
 	padding-top: 10px;
+}
+
+.table .title {
+	display: none;
+	visibility: hidden;	
+}
+
+.table table {
+}
+
+.table table th {
+	padding: 2px;
+	background-color: #ddd;
+	min-width: 200px;
+	vertical-align: top;
+	border: 1px solid white;
+}
+
+.table table td {
+	padding: 2px;
+	background-color: #eee;
+	min-width: 200px;
+	vertical-align: top;
+	border: 1px solid white;
 }
 
 .list-of-tables {

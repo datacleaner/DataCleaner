@@ -17,14 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output;
-
-import java.util.List;
+package org.eobjects.datacleaner.output.excel;
 
 import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.InputRow;
+import org.eobjects.datacleaner.output.AbstractMetaModelOutputWriter;
+import org.eobjects.metamodel.UpdateableDataContext;
+import org.eobjects.metamodel.schema.Table;
 
-public interface DataSetWriter {
+final class ExcelOutputWriter extends AbstractMetaModelOutputWriter {
 
-	public void write(List<InputColumn<?>> columns, InputRow[] rows);
+	private final String _filename;
+	private final Table _table;
+
+	public ExcelOutputWriter(UpdateableDataContext dataContext, String filename, Table table, InputColumn<?>[] columns) {
+		super(dataContext, columns, -1);
+		_filename = filename;
+		_table = table;
+	}
+
+	@Override
+	public void afterClose() {
+		ExcelOutputWriterFactory.release(_filename);
+	}
+
+	@Override
+	protected Table getTable() {
+		return _table;
+	}
+
 }

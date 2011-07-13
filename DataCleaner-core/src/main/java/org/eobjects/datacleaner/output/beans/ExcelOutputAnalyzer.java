@@ -29,34 +29,29 @@ import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
-import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.output.excel.ExcelOutputWriterFactory;
 
-@AnalyzerBean("Write to CSV file")
+@AnalyzerBean("Write to Excel spreadsheet")
 @OutputWriterAnalyzer
-public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
+public class ExcelOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Configured
-	char separatorChar = ',';
+	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
+	File file = new File("DataCleaner-staging.xlsx");
 
 	@Configured
-	char quoteChar = '"';
-
-	@Configured
-	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
-	File file;
+	String sheetName;
 
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
 		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
-		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName
-				+ ".csv");
+		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
 	}
 
 	@Override
 	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
 		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
-		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + ".csv");
+		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName();
 	}
 
 	@Override
@@ -65,16 +60,20 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 		for (int i = 0; i < headers.length; i++) {
 			headers[i] = columns[i].getName();
 		}
-		return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, columns);
+		return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
 	}
 
 	@Override
 	protected OutputAnalyzerResult getResultInternal(int rowCount) {
-		CsvOutputAnalyzerResult result = new CsvOutputAnalyzerResult(file, separatorChar, quoteChar, rowCount);
+		ExcelOutputAnalyzerResult result = new ExcelOutputAnalyzerResult(file, sheetName, rowCount);
 		return result;
 	}
 
 	public void setFile(File file) {
 		this.file = file;
+	}
+
+	public void setSheetName(String sheetName) {
+		this.sheetName = sheetName;
 	}
 }

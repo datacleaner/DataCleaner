@@ -23,6 +23,7 @@ import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
@@ -41,19 +42,25 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	}
 
 	@Configured(order = 1)
-	String datastoreName;
+	String datastoreName = "DataCleaner-staging";
 
 	@Configured(order = 2)
-	String tableName = "DATASET";
+	String tableName;
 
 	@Configured(order = 3)
 	@Description("Determines the behaviour in case of there's an existing datastore and table with the given names.")
 	WriteMode writeMode = WriteMode.TRUNCATE;
 
 	@Override
-	public void configureForOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
+	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
 		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
-		datastoreName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
+		tableName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
+	}
+	
+	@Override
+	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
+		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
+		tableName = "output-" + dsName + "-" + descriptor.getDisplayName();
 	}
 
 	@Override

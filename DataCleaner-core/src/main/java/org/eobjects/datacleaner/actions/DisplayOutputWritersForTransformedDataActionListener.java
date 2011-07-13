@@ -27,7 +27,13 @@ import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
 
+/**
+ * Action that displays output writers for a transformer's data.
+ * 
+ * @author Kasper Sørensen
+ */
 public class DisplayOutputWritersForTransformedDataActionListener extends AbstractDisplayOutputWritersActionListener {
 
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
@@ -41,6 +47,11 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Abstra
 	@Override
 	protected void configure(AnalysisJobBuilder analysisJobBuilder,
 			RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder) {
+		RowProcessingAnalyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
+		if (analyzer instanceof AbstractOutputWriterAnalyzer) {
+			((AbstractOutputWriterAnalyzer) analyzer).configureForTransformedData(analysisJobBuilder,
+					_transformerJobBuilder.getDescriptor());
+		}
 		List<InputColumn<?>> inputColumns = _transformerJobBuilder.getInputColumns();
 		List<MutableInputColumn<?>> outputColumns = _transformerJobBuilder.getOutputColumns();
 		analyzerJobBuilder.clearInputColumns();

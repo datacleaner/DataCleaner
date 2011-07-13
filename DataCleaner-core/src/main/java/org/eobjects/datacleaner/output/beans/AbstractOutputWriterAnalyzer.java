@@ -27,6 +27,7 @@ import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
@@ -68,8 +69,21 @@ public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnaly
 	 *            the outcome category of the filter that succeeds this
 	 *            component
 	 */
-	public abstract void configureForOutcome(AnalysisJobBuilder analysisJobBuilder, FilterBeanDescriptor<?, ?> descriptor,
+	public abstract void configureForFilterOutcome(AnalysisJobBuilder analysisJobBuilder, FilterBeanDescriptor<?, ?> descriptor,
 			String categoryName);
+
+	/**
+	 * Subclasses should implement this method with any configuration logic such
+	 * as setting filenames etc. when the output writer analyzer is being
+	 * created.
+	 * 
+	 * @param analysisJobBuilder
+	 *            the job builder being used to build this component
+	 * @param descriptor
+	 *            the descriptor of the transformer that succeeds this component
+	 */
+	public abstract void configureForTransformedData(AnalysisJobBuilder analysisJobBuilder,
+			TransformerBeanDescriptor<?> descriptor);
 
 	@Override
 	public final void run(InputRow row, int distinctCount) {

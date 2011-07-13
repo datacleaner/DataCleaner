@@ -17,11 +17,10 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.output.csv;
+package org.eobjects.datacleaner.output.excel;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,65 +30,35 @@ import org.eobjects.metamodel.UpdateCallback;
 import org.eobjects.metamodel.UpdateScript;
 import org.eobjects.metamodel.UpdateableDataContext;
 import org.eobjects.metamodel.create.CreateTableBuilder;
-import org.eobjects.metamodel.csv.CsvConfiguration;
-import org.eobjects.metamodel.csv.CsvDataContext;
+import org.eobjects.metamodel.excel.ExcelDataContext;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.MutableRef;
 
-public final class CsvOutputWriterFactory {
+public final class ExcelOutputWriterFactory {
 
 	private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
 	private static final Map<String, UpdateableDataContext> dataContexts = new HashMap<String, UpdateableDataContext>();
 
-	public static OutputWriter getWriter(String filename, List<InputColumn<?>> columns) {
-		return getWriter(filename, columns.toArray(new InputColumn<?>[columns.size()]));
-	}
-
-	public static OutputWriter getWriter(String filename, InputColumn<?>... columns) {
-		return getWriter(filename, ',', '"', columns);
-	}
-
-	public static OutputWriter getWriter(String filename, char separatorChar, char quoteChar, InputColumn<?>... columns) {
-		String[] headers = new String[columns.length];
-		for (int i = 0; i < headers.length; i++) {
-			headers[i] = columns[i].getName();
-		}
-		return getWriter(filename, headers, separatorChar, quoteChar, columns);
-	}
-
-	public static OutputWriter getWriter(String filename, final String[] headers, char separatorChar, char quoteChar,
-			final InputColumn<?>... columns) {
-		CsvOutputWriter outputWriter;
+	public static OutputWriter getWriter(String filename, String sheetName, final InputColumn<?>... columns) {
+		ExcelOutputWriter outputWriter;
 		synchronized (dataContexts) {
 			UpdateableDataContext dataContext = dataContexts.get(filename);
 			if (dataContext == null) {
 
 				File file = new File(filename);
-				dataContext = new CsvDataContext(file, getConfiguration(separatorChar, quoteChar));
+				dataContext = new ExcelDataContext(file);
 
-				final Schema schema = dataContext.getDefaultSchema();
-				dataContext.executeUpdate(new UpdateScript() {
-					@Override
-					public void run(UpdateCallback callback) {
-						CreateTableBuilder tableBuilder = callback.createTable(schema, "table");
-						for (String header : headers) {
-							tableBuilder.withColumn(header);
-						}
-						tableBuilder.execute();
-					}
-				});
-
-				Table table = dataContext.getDefaultSchema().getTables()[0];
+				Table table = getTable(dataContext, sheetName, columns);
 
 				dataContexts.put(filename, dataContext);
 				counters.put(filename, new AtomicInteger(1));
-				outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
+				outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
 
 				// write the headers
 			} else {
-				Table table = dataContext.getDefaultSchema().getTables()[0];
-				outputWriter = new CsvOutputWriter(dataContext, filename, table, columns);
+				Table table = getTable(dataContext, sheetName, columns);
+				outputWriter = new ExcelOutputWriter(dataContext, filename, table, columns);
 				counters.get(filename).incrementAndGet();
 			}
 		}
@@ -97,9 +66,24 @@ public final class CsvOutputWriterFactory {
 		return outputWriter;
 	}
 
-	private static CsvConfiguration getConfiguration(char separatorChar, char quoteChar) {
-		return new CsvConfiguration(CsvConfiguration.DEFAULT_COLUMN_NAME_LINE, FileHelper.DEFAULT_ENCODING, separatorChar,
-				quoteChar, '\\');
+	private static Table getTable(UpdateableDataContext dataContext, final String sheetName, final InputColumn<?>[] columns) {
+		final Schema schema = dataContext.getDefaultSchema();
+		Table table = schema.getTableByName(sheetName);
+		if (table == null) {
+			final MutableRef<Table> tableRef = new MutableRef<Table>();
+			dataContext.executeUpdate(new UpdateScript() {
+				@Override
+				public void run(UpdateCallback callback) {
+					CreateTableBuilder tableBuilder = callback.createTable(schema, sheetName);
+					for (InputColumn<?> inputColumn : columns) {
+						tableBuilder.withColumn(inputColumn.getName());
+					}
+					tableRef.set(tableBuilder.execute());
+				}
+			});
+			table = tableRef.get();
+		}
+		return table;
 	}
 
 	protected static void release(String filename) {

@@ -26,6 +26,11 @@ import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
 
+/**
+ * Action that displays output writers for a filter's outcome.
+ * 
+ * @author Kasper Sørensen
+ */
 public class DisplayOutputWritersForFilterOutcomeActionListener extends AbstractDisplayOutputWritersActionListener {
 
 	private final FilterJobBuilder<?, ?> _filterJobBuilder;
@@ -43,7 +48,7 @@ public class DisplayOutputWritersForFilterOutcomeActionListener extends Abstract
 			RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder) {
 		RowProcessingAnalyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
 		if (analyzer instanceof AbstractOutputWriterAnalyzer) {
-			((AbstractOutputWriterAnalyzer) analyzer).configureForOutcome(analysisJobBuilder,
+			((AbstractOutputWriterAnalyzer) analyzer).configureForFilterOutcome(analysisJobBuilder,
 					_filterJobBuilder.getDescriptor(), _categoryName);
 		}
 		analyzerJobBuilder.setRequirement(_filterJobBuilder, _categoryName);

@@ -5,4 +5,146 @@
 
 	<title>Command-line interface</title>
 
+	<para>DataCleaner offers a Command-Line Interface (CLI) for performing
+		various tasks, including executing analysis jobs, via simple commands
+		that can be invoked eg. as a scheduled tasks.</para>
+
+	<section>
+		<title>Executables</title>
+		<para>Depending on your distribution of DataCleaner, you will have one
+			of these CLI executables included:</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>datacleaner-console.exe</emphasis>
+					, which is a Windows-only executable.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>datacleaner.cmd</emphasis>
+					, which is a script to start DataCleaner in Windows.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>datacleaner.sh</emphasis>
+					, which is a script to start DataCleaner in Unix-like systems, like
+					Linux and Mac OS.
+				</para>
+			</listitem>
+			<listitem>
+				<para>If you're running DataCleaner in Java Webstart mode, then
+					there is no Command-Line Interface!</para>
+			</listitem>
+		</orderedlist>
+	</section>
+
+	<section>
+		<title>Usage scenarios</title>
+		<para>The usage scenarios of DataCleaner's CLI are:</para>
+
+		<orderedlist>
+			<listitem>
+				<para>Executing an analysis job</para>
+			</listitem>
+			<listitem>
+				<para>List registered datastores</para>
+			</listitem>
+			<listitem>
+				<para>List schemas in a datastore</para>
+			</listitem>
+			<listitem>
+				<para>List tables in a schema</para>
+			</listitem>
+			<listitem>
+				<para>List columns in a table</para>
+			</listitem>
+			<listitem>
+				<para>List available analyzers, transformers or filters</para>
+			</listitem>
+		</orderedlist>
+
+		<para>
+			How these scenarios are attained is revealed by invoking your
+			executable with the
+			<emphasis>-usage</emphasis>
+			argument:
+		</para>
+
+		<programlisting>
+			&gt;&#160;datacleaner-console.exe&#160;-usage
+			-conf
+			(-configuration, --configuration-file) FILE
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;XML&#160;file&#160;describing&#160;the&#160;configuration&#160;of&#160;AnalyzerBeans
+			-ds (-datastore, --datastore-name) VAL
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Name&#160;of&#160;datastore&#160;when&#160;printing&#160;a&#160;list&#160;of&#160;schemas,&#160;tables&#160;or&#160;columns
+			-job (--job-file) FILE
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;An&#160;analysis&#160;job&#160;XML&#160;file&#160;to&#160;execute
+			-list [ANALYZERS | TRANSFORMERS | FILTERS | DATASTORES | SCHEMAS |
+			TABLES | COLUMNS]
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Used&#160;to&#160;print&#160;a&#160;list&#160;of&#160;various&#160;elements&#160;available&#160;in&#160;the&#160;configuration
+			-s (-schema, --schema-name) VAL
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Name&#160;of&#160;schema&#160;when&#160;printing&#160;a&#160;list&#160;of&#160;tables&#160;or&#160;columns
+			-t (-table, --table-name) VAL
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Name&#160;of&#160;table&#160;when&#160;printing&#160;a&#160;list&#160;of&#160;columns
+		</programlisting>
+
+	</section>
+
+	<section>
+		<title>Executing an analysis job</title>
+		<para>Here's how to execute an analysis job - we'll use the bundled
+			example job "employees.analysis.xml":</para>
+		<programlisting>
+			&gt;&#160;datacleaner-console.exe&#160;-job&#160;examples/employees.analysis.xml
+			SUCCESS!
+
+			...
+
+			RESULT:
+			Value distribution for column: REPORTSTO
+			Top values:
+			&#160;- 1102: 6
+			&#160;- 1143: 6
+			&#160;- 1088: 5
+			Null count: 0
+			Unique&#160;values: 0
+
+
+			RESULT:
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Match&#160;count&#160;Sample
+			Aaaaaaa&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;22&#160;William
+			Aaaa&#160;Aaa&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1&#160;Foon&#160;Yue
+
+
+			RESULT:
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Match&#160;count&#160;Sample
+			aaaaaaaaaa&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;23&#160;jfirrelli
+
+
+			RESULT:
+			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Match&#160;count&#160;Sample
+			Aaaaa&#160;Aaa&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;17&#160;Sales&#160;Rep
+			AA&#160;Aaaaaaaaa&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2&#160;VP&#160;Marketing
+			Aaaa&#160;Aaaaaaa&#160;(AAAA)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1&#160;Sale&#160;Manager&#160;(EMEA)
+			Aaaaa&#160;Aaaaaaa&#160;(AA)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1&#160;Sales&#160;Manager&#160;(NA)
+			Aaaaa&#160;Aaaaaaa&#160;(AAAAA,&#160;AAAA)&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1&#160;Sales&#160;Manager&#160;(JAPAN,&#160;APAC)
+			Aaaaaaaaa&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1&#160;President
+
+			...
+		</programlisting>
+
+		<para>As you can see from the listing, the results of the analysis
+			will be printed directly to the command-line output. If you want to
+			save the results to a file, simply use your operating systems
+			built-in functionality to pipe command-line output to a file,
+			typically using the '&gt;' operator.</para>
+	</section>
+
+	<section>
+		<title>Listing datastore contents</title>
+		<para>TODO</para>
+	</section>
+
 </chapter>

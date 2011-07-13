@@ -35,6 +35,17 @@
 			input columns.</para>
 	</section>
 
+	<section id="character_set_distribution">
+		<title>Character set distribution</title>
+		<para>The Character set distribution analyzer inspects and maps text
+			characters according to character set affinity, such as Latin,
+			Hebrew, Cyrillic, Chinese and more.</para>
+		<para>Such analysis is convenient for getting insight into the
+			international aspects of your data. Are you able to read and
+			understand all your data? Will it work in your non-internationalized
+			systems?</para>
+	</section>
+
 	<section id="date_dap_analyzer">
 		<title>Date gap analyzer</title>
 		<para>TODO</para>
@@ -196,11 +207,6 @@
 		</table>
 	</section>
 
-	<section id="phonetic_similarity_finder">
-		<title>Phonetic similarity finder</title>
-		<para>TODO</para>
-	</section>
-
 	<section id="string_analyzer">
 		<title>String analyzer</title>
 		<para>TODO</para>
@@ -209,6 +215,57 @@
 	<section id="value_distribution">
 		<title>Value distribution</title>
 		<para>TODO</para>
+		<para>Here are the configuration properties for the value distribution
+			analyzer:</para>
+		<table>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>Group column</entry>
+						<entry>Allows you to define a column for grouping the result. With
+							a
+							group column you can separate the identified value distributions
+							into
+							separate buckets/groups. Imagine for example that you want to
+							check if the postal codes and city names correspond or if you
+							just want to segment your value distribution on eg. country or
+							gender or ...
+						</entry>
+					</row>
+					<row>
+						<entry>Record unique values</entry>
+						<entry>By default all unique values will be included in the result
+							of the value distribution. This can potentially cause memory
+							issues if your analyzed columns contains a LOT of unique values
+							(eg. if it's a unique key). If the actual unique values are not
+							of interest, then uncheck this checkbox to only count (but not
+							save for inspection) the unique values.</entry>
+					</row>
+					<row>
+						<entry>Top n most frequent vales</entry>
+						<entry>An optional number used if the analysis should only display
+							eg. the "top 5 most frequent values". The result of the analysis
+							will only contain top/bottom n most frequent values, if this
+							property is supplied.</entry>
+					</row>
+					<row>
+						<entry>Bottom n most frequent values</entry>
+						<entry>An optional number used if the analysis should only display
+							eg. the "bottom 5 most frequent values". The result of the
+							analysis
+							will only contain top/bottom n most frequent values, if
+							this
+							property is supplied.</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
 	</section>
 
 	<section id="weekday_distribution">

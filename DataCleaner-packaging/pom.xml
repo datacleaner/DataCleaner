@@ -253,6 +253,7 @@
 						<phase>site</phase>
 						<configuration>
 							<imgSrcPath>src/docbkx/resources/</imgSrcPath>
+							<defaultImageWidth>15cm</defaultImageWidth>
 							<postProcess>
 								<copy todir="${project.basedir}/target/site/reference">
 									<fileset dir="${project.basedir}/target/docbkx">

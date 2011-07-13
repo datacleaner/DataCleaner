@@ -77,7 +77,8 @@
 			diagram:</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="visualize_job.png" format="PNG" />
+				<imagedata fileref="visualize_job.png" format="PNG"
+					scalefit="1" />
 			</imageobject>
 		</mediaobject>
 	</section>
@@ -108,7 +109,8 @@
 		<para>Here's an example of an analysis result window:</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="analysis_job_05_result.jpg" format="JPG" />
+				<imagedata fileref="analysis_job_05_result.jpg" format="JPG"
+					scalefit="1" />
 			</imageobject>
 		</mediaobject>
 	</section>
@@ -137,7 +139,7 @@
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="template_job_01_filechooser.jpg"
-					format="JPG" />
+					format="JPG" scalefit="1" />
 			</imageobject>
 		</mediaobject>
 		<para>If you click the 'Open as template' button you will be presented
@@ -145,7 +147,8 @@
 			set of columns:</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="template_job_02_mapping.jpg" format="JPG" />
+				<imagedata fileref="template_job_02_mapping.jpg" format="JPG"
+					scalefit="1" />
 			</imageobject>
 		</mediaobject>
 		<para>First you need to specify the datastore to use. On the left side
@@ -184,7 +187,7 @@
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="write_cleansed_data_options.jpg"
-					format="JPG" />
+					format="JPG" scalefit="1" />
 			</imageobject>
 		</mediaobject>
 		<para>The available options are:</para>

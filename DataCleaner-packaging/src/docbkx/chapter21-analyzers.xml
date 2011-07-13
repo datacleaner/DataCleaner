@@ -14,7 +14,7 @@
 		analyzer:</para>
 	<mediaobject>
 		<imageobject>
-			<imagedata fileref="analysis_job_04_analyzer.jpg" format="JPG" />
+			<imagedata fileref="analysis_job_04_analyzer.jpg" format="JPG" scalefit="1" />
 		</imageobject>
 	</mediaobject>
 	<para>In the panel there will always be one or more selections of
@@ -75,12 +75,13 @@
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="analyzer_reference_pattern_finder.jpg"
-					format="JPG" />
+					format="JPG" scalefit="1" />
 			</imageobject>
 		</mediaobject>
 		<para>From the screenshot we can see that the Pattern finder has these
 			configuration properties:</para>
 		<table>
+			<title>Pattern finder properties</title>
 			<tgroup cols="2">
 				<thead>
 					<row>
@@ -218,6 +219,7 @@
 		<para>Here are the configuration properties for the value distribution
 			analyzer:</para>
 		<table>
+			<title>Value distribution properties</title>
 			<tgroup cols="2">
 				<thead>
 					<row>

@@ -65,7 +65,7 @@
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="analysis_job_01_datastore_list.jpg"
-					format="JPG" />
+					format="JPG" scalefit="1" />
 			</imageobject>
 		</mediaobject>
 		<para>Once you've registered ('created') your own datastore, you can

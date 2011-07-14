@@ -143,8 +143,116 @@
 	</section>
 
 	<section>
-		<title>Listing datastore contents</title>
-		<para>TODO</para>
+		<title>Listing datastore contents and available components</title>
+		<para>
+			The Command-Line Interface allows for listing of datastore
+			contents
+			and available components. The intended usage for this is to
+			aid in
+			hand-editing an analysis file, if this is desired. By using the
+			<emphasis>-list</emphasis>
+			arguments you can get the metadata of your datastore and the
+			DataCleaner components that will allow you to manually compose an
+			analysis file.
+		</para>
+
+		<para>
+			Listing the contents of a datastore is pretty self-explanatory, if
+			you look at the output of the
+			<emphasis>-usage</emphasis>
+			command. Here's a few examples, using the example database 'orderdb':
+		</para>
+
+		<programlisting>
+			&gt;&#160;datacleaner-console.exe&#160;-list&#160;datastores
+			Datastores:
+			-----------
+			Country codes
+			orderdb
+
+			&gt;&#160;datacleaner-console.exe&#160;-list&#160;tables&#160;-ds&#160;orderdb
+			Tables:
+			-------
+			CUSTOMERS
+			CUSTOMER_W_TER
+			DEPARTMENT_MANAGERS
+			DIM_TIME
+			EMPLOYEES
+			OFFICES
+			ORDERDETAILS
+			ORDERFACT
+			ORDERS
+			PAYMENTS
+			PRODUCTS
+			QUADRANT_ACTUALS
+			TRIAL_BALANCE
+
+			&gt;&#160;datacleaner-console.exe&#160;-list&#160;columns&#160;-ds&#160;orderdb&#160;-table&#160;employees
+			Columns:
+			--------
+			EMPLOYEENUMBER
+			LASTNAME
+			FIRSTNAME
+			EXTENSION
+			EMAIL
+			OFFICECODE
+			REPORTSTO
+			JOBTITLE
+		</programlisting>
+
+		<para>
+			Listing DataCleaner's components is done by setting the
+			<emphasis>-list</emphasis>
+			argument to one of the three component types: ANALYZER, TRANSFORMER
+			or FILTER:
+		</para>
+
+		<programlisting>
+			&gt;&#160;datacleaner-console.exe&#160;-list&#160;analyzers
+
+			...
+
+			name:&#160;Matching&#160;analyzer
+			-&#160;Consumes&#160;multiple&#160;input&#160;columns&#160;(type:&#160;UNDEFINED)
+			-&#160;Property:&#160;name=Dictionaries,&#160;type=Dictionary,&#160;required=false
+			-&#160;Property:&#160;name=String&#160;patterns,&#160;type=StringPattern,&#160;required=false
+			name:&#160;Pattern&#160;finder
+			-&#160;Consumes&#160;2&#160;named&#160;inputs
+			&#160;&#160;&#160;Input&#160;column:&#160;Column&#160;(type:&#160;STRING)
+			&#160;&#160;&#160;Input&#160;column:&#160;Group&#160;column&#160;(type:&#160;STRING)
+			-&#160;Property:&#160;name=Discriminate&#160;text&#160;case,&#160;type=Boolean,&#160;required=false
+			-&#160;Property:&#160;name=Discriminate&#160;negative&#160;numbers,&#160;type=Boolean,&#160;required=false
+			-&#160;Property:&#160;name=Discriminate&#160;decimals,&#160;type=Boolean,&#160;required=false
+			-&#160;Property:&#160;name=Enable&#160;mixed&#160;tokens,&#160;type=Boolean,&#160;required=false
+			-&#160;Property:&#160;name=Ignore&#160;repeated&#160;spaces,&#160;type=Boolean,&#160;required=false
+			-&#160;Property:&#160;name=Upper&#160;case&#160;patterns&#160;expand&#160;in&#160;size,&#160;type=boolean,&#160;required=false
+			-&#160;Property:&#160;name=Lower&#160;case&#160;patterns&#160;expand&#160;in&#160;size,&#160;type=boolean,&#160;required=false
+			-&#160;Property:&#160;name=Predefined&#160;token&#160;name,&#160;type=String,&#160;required=false
+			-&#160;Property:&#160;name=Predefined&#160;token&#160;regexes,&#160;type=String,&#160;required=false
+			-&#160;Property:&#160;name=Decimal&#160;separator,&#160;type=Character,&#160;required=false
+			-&#160;Property:&#160;name=Thousands&#160;separator,&#160;type=Character,&#160;required=false
+			-&#160;Property:&#160;name=Minus&#160;sign,&#160;type=Character,&#160;required=false
+
+			...
+
+			&gt;&#160;datacleaner-console.exe&#160;-list&#160;transformers
+
+			...
+
+			name:&#160;Tokenizer
+			-&#160;Consumes&#160;a&#160;single&#160;input&#160;column&#160;(type:&#160;STRING)
+			-&#160;Property:&#160;name=Delimiters,&#160;type=char,&#160;required=true
+			-&#160;Property:&#160;name=Number&#160;of&#160;tokens,&#160;type=Integer,&#160;required=true
+			-&#160;Output&#160;type&#160;is:&#160;STRING
+			name:&#160;Whitespace&#160;trimmer
+			-&#160;Consumes&#160;multiple&#160;input&#160;columns&#160;(type:&#160;STRING)
+			-&#160;Property:&#160;name=Trim&#160;left,&#160;type=boolean,&#160;required=true
+			-&#160;Property:&#160;name=Trim&#160;right,&#160;type=boolean,&#160;required=true
+			-&#160;Property:&#160;name=Trim&#160;multiple&#160;to&#160;single&#160;space,&#160;type=boolean,&#160;required=true
+			-&#160;Output&#160;type&#160;is:&#160;STRING
+
+			...
+		</programlisting>
 	</section>
 
 </chapter>

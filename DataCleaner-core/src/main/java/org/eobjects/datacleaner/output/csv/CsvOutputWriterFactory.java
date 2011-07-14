@@ -66,6 +66,10 @@ public final class CsvOutputWriterFactory {
 			if (dataContext == null) {
 
 				File file = new File(filename);
+				File parentFile = file.getParentFile();
+				if (parentFile != null && !parentFile.exists()) {
+					parentFile.mkdirs();
+				}
 				dataContext = new CsvDataContext(file, getConfiguration(separatorChar, quoteChar));
 
 				final Schema schema = dataContext.getDefaultSchema();

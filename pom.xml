@@ -174,11 +174,12 @@
 				<groupId>com.google.code.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
 				<version>1.4.0</version>
+				<inherited>false</inherited>
 				<configuration>
 					<header>HEADER.txt</header>
 					<aggregate>true</aggregate>
 					<includes>
-						<include>src/**/java/dk/**</include>
+						<include>**/src/**/java/dk/**</include>
 					</includes>
 				</configuration>
 				<executions>
@@ -188,7 +189,6 @@
 						<goals>
 							<goal>check</goal>
 						</goals>
-						<inherited>false</inherited>
 					</execution>
 				</executions>
 			</plugin>

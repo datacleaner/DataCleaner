@@ -103,38 +103,6 @@
 			<post>datacleaner-announce@googlegroups.com</post>
 		</mailingList>
 	</mailingLists>
-	<profiles>
-		<profile>
-			<!-- Profile activated when releasing artifacts to Maven repo -->
-			<id>release-sign-artifacts</id>
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<!-- Signs the artifact with GPG -->
-					<!-- see http://www.sonatype.com/people/2010/01/how-to-generate-pgp-signatures-with-maven/ -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.1</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<build>
 		<plugins>
 			<plugin>
@@ -147,27 +115,6 @@
 					<target>1.6</target>
 					<encoding>utf-8</encoding>
 				</configuration>
-			</plugin>
-			<plugin>
-				<!-- Makes source jar's available also (for repo deployment) -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- Releases new versions of MetaModel using release:prepare and release:perform -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
 			</plugin>
 			<plugin>
 				<!-- Ensure inclusion of license header in all main java files -->

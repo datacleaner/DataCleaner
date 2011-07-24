@@ -68,6 +68,13 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 	protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
 		_bottomBackgroundColor = bottomBackgroundColor;
 	}
+	
+	@Override
+	public void close() {
+		if (isVisible()) {
+			dispose();
+		}
+	}
 
 	protected void updateWindowTitle() {
 		String windowTitle = getWindowTitle();

@@ -107,9 +107,11 @@ public final class DCWindowContext implements WindowContext {
 		_windows.remove(window);
 		notifyListeners();
 
-		if (_windows.isEmpty()) {
-			logger.info("All DataCleaner windows closed");
-			exit();
+		if (!_exiting) {
+			if (_windows.isEmpty()) {
+				logger.info("All DataCleaner windows closed");
+				exit();
+			}
 		}
 	}
 
@@ -162,6 +164,9 @@ public final class DCWindowContext implements WindowContext {
 		}
 		for (ExitActionListener actionListener : _exitActionListeners) {
 			actionListener.exit(0);
+		}
+		for (DCWindow window : new ArrayList<DCWindow>(_windows)) {
+			window.close();
 		}
 	}
 

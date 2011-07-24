@@ -40,4 +40,6 @@ public interface DCWindow {
 	public Image getWindowIcon();
 
 	public void toFront();
+
+	public void close();
 }

@@ -61,6 +61,13 @@ public abstract class AbstractWindow extends JFrame implements DCWindow, WindowL
 		return autoSetSize(getContentPane().getComponent(0));
 	}
 
+	@Override
+	public void close() {
+		if (isVisible()) {
+			dispose();
+		}
+	}
+
 	public Dimension autoSetSize(Component content) {
 
 		Dimension preferredSize = content.getPreferredSize();

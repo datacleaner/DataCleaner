@@ -159,7 +159,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		_filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
-				validate();
+				validateAndUpdate();
 			}
 		});
 		_filenameField.addFileSelectionListener(new FileSelectionListener() {
@@ -177,7 +177,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 					_datastoreNameField.setText(file.getName());
 				}
 
-				validate();
+				validateAndUpdate();
 
 				onFileSelected(file);
 			}
@@ -198,8 +198,6 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 			_previewTablePanel = null;
 			_loadingIcon = null;
 		}
-
-		validate();
 	}
 
 	/**
@@ -348,6 +346,8 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		_outerPanel.setLayout(new BorderLayout());
 		_outerPanel.add(centerPanel, BorderLayout.CENTER);
 		_outerPanel.add(statusBar, BorderLayout.SOUTH);
+		
+		validateAndUpdate();
 
 		return _outerPanel;
 	}

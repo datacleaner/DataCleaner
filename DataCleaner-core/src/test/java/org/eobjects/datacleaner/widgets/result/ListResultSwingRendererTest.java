@@ -22,7 +22,8 @@ package org.eobjects.datacleaner.widgets.result;
 import junit.framework.TestCase;
 
 import org.eobjects.analyzer.beans.api.RenderingFormat;
-import org.eobjects.analyzer.descriptors.AnnotationBasedRendererBeanDescriptor;
+import org.eobjects.analyzer.descriptors.Descriptors;
+import org.eobjects.analyzer.descriptors.RendererBeanDescriptor;
 import org.eobjects.analyzer.result.ListResult;
 import org.eobjects.analyzer.result.renderer.Renderable;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
@@ -30,8 +31,7 @@ import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 public class ListResultSwingRendererTest extends TestCase {
 
 	public void testDescriptor() throws Exception {
-		AnnotationBasedRendererBeanDescriptor descriptor = new AnnotationBasedRendererBeanDescriptor(
-				ListResultSwingRenderer.class);
+		RendererBeanDescriptor descriptor = Descriptors.ofRenderer(ListResultSwingRenderer.class);
 		Class<? extends Renderable> analyzerResultType = descriptor.getRenderableType();
 		assertEquals(ListResult.class, analyzerResultType);
 

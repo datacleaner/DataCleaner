@@ -23,7 +23,9 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * This class simply wraps a JDBC driver. It is nescesary to wrap them since
@@ -81,5 +83,9 @@ public final class DriverWrapper implements Driver {
 	@Override
 	public String toString() {
 		return _driver.toString();
+	}
+
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		throw new SQLFeatureNotSupportedException();
 	}
 }

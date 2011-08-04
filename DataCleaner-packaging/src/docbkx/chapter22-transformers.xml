@@ -1,8 +1,207 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Transformers</title>
+
+	<section id="javascript_transformer">
+		<title>JavaScript transformer</title>
+		<para>The JavaScript transformer allows the user to define his/her own
+			script which can
+			perform rather intricate things like conditioning,
+			looping. It can also be
+			used as a
+			useful way to express small business
+			rules.</para>
+		<para>For this documentation, a complete reference of JavaScript is
+			out of scope. But we will show a few examples and more importantly
+			talk about the available variables and their types.</para>
+		<para>The JavaScript transformer returns a single string. The entered
+			script should provide this string as the last line of the script.
+			This is why the template script is as follows (so you can just
+			implement the eval() function):
+		</para>
+		<programlisting>
+			function&#160;eval() {
+			&#160;&#160;&#160;return&#160;\"hello&#160;\"&#160;+&#160;values[0];
+			}
+			eval();
+		</programlisting>
+
+		<para>Variables:</para>
+		<table>
+			<title>JavaScript variables</title>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Variable</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>values</entry>
+						<entry>
+							<para>An array of all values in the row (as mapped by the
+								"Columns" property).</para>
+							<para>Using "values" you can reference eg. the first and third
+								values like this:</para>
+							<programlisting>
+								var first = values[0];
+								var third = values[2];
+							</programlisting>
+							<para>Note that JavaScript arrays are 0-based.</para>
+							<para>Instead of indexes you can also reference by column name,
+								like this:</para>
+							<programlisting>
+								var idValue = values["id"];
+							</programlisting>
+
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<emphasis>column_name</emphasis>
+							*
+						</entry>
+						<entry>
+							<para>
+								Any column name that is also a valid JavaScript and
+								<emphasis>not</emphasis>
+								a reserved variable name will also be added directly to the
+								scope of the script as a variable. For example, if you have two
+								columns, FIRST_NAME and LAST_NAME, you can concatenate them
+								easily, like this:
+							</para>
+							<programlisting>var fullname = FIRST_NAME + " " + LAST_NAME;
+							</programlisting>
+						</entry>
+					</row>
+					<row>
+						<entry>out</entry>
+						<entry>
+							<para>A reference to the system console's "out" stream. If
+								running DataCleaner with the console visible, you can print
+								messages to the console, like this:</para>
+							<programlisting>out.println("Value: " + values[0]);
+							</programlisting>
+						</entry>
+					</row>
+					<row>
+						<entry>log</entry>
+						<entry>
+							<para>A reference to the logging subsystem. Logging can be
+								configured and log messages are stored in files, which makes it
+								a bit more flexible than simply using "out". Here's how you
+								write a few log messages with varying severities:</para>
+							<programlisting>
+								log.debug("This&#160;is&#160;a&#160;DEBUG&#160;message,&#160;it&#160;will&#160;probably&#160;be&#160;disregarded");
+								log.info("This&#160;is&#160;a&#160;INFO&#160;message,&#160;it&#160;will&#160;probably&#160;be&#160;written&#160;to&#160;the&#160;logs");
+								log.warn("This&#160;is&#160;a&#160;WARN&#160;message,&#160;it&#160;will&#160;most&#160;likely&#160;be&#160;written&#160;to&#160;the&#160;logs");
+								log.error("This&#160;is&#160;a&#160;ERROR&#160;message,&#160;it&#160;will&#160;almost&#160;certainly&#160;be&#160;written&#160;to&#160;the&#160;logs");
+							</programlisting>
+						</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+
+		<para>Data types:</para>
+		<table>
+			<title>JavaScript data types</title>
+			<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Data type</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>STRING</entry>
+						<entry>
+							<para>String values are represented as JavaScript strings, which
+								means that they have (among others) methods like:</para>
+							<programlisting>
+								var str = values[0];
+
+								//&#160;get&#160;the&#160;length&#160;of&#160;a&#160;string
+								var&#160;len&#160;=&#160;str.length();
+
+								//&#160;uppercase&#160;variant&#160;of&#160;a&#160;string
+								var&#160;up&#160;=&#160;str.toUpperCase();
+
+								//&#160;lowercase&#160;variant&#160;of&#160;a&#160;string
+								var&#160;lw&#160;=&#160;str.toLowerCase();
+							</programlisting>
+							<para>
+								For more information, we recommend
+								<link xl:href="http://www.w3schools.com/jsref/jsref_obj_string.asp">W3 schools JavaScript string reference</link>
+								.
+							</para>
+						</entry>
+					</row>
+					<row>
+						<entry>NUMBER</entry>
+						<entry>
+							<para>Numbers are treated as regular JavaScript numbers, which
+								means that they have (among others) methods and operators like:
+							</para>
+							<programlisting>
+								var&#160;num&#160;=&#160;values[0];
+
+								//&#160;format&#160;with&#160;2&#160;decimals
+								var&#160;formattedNumber&#160;=&#160;num.toFixed(2);
+
+								//&#160;add,&#160;subtract,&#160;multiply&#160;or&#160;divide
+								var&#160;m&#160;=&#160;(4&#160;+&#160;num&#160;*&#160;2&#160;-&#160;1)&#160;/&#160;2;
+							</programlisting>
+							<para>
+								For more information, we recommend
+								<link xl:href="http://www.w3schools.com/jsref/jsref_obj_number.asp">W3 schools JavaScript number reference</link>
+								and also check out the
+								<link xl:href="http://www.w3schools.com/jsref/jsref_obj_math.asp">Math function</link>
+								reference.
+							</para>
+						</entry>
+					</row>
+					<row>
+						<entry>DATE</entry>
+						<entry>
+							<para>Date values are treated as Java dates, which is a bit
+								unusual, but leaves you with almost an identical interface as a
+								regular JavaScript date. Here's a summary of typical methods:
+							</para>
+							<programlisting>
+								var&#160;d&#160;=&#160;values[0];
+
+								var&#160;year&#160;=&#160;d.getYear();
+								var&#160;month&#160;=&#160;d.getMonth();
+								var&#160;date&#160;=&#160;d.getDate();
+								var&#160;hour&#160;=&#160;d.getHour();
+								var&#160;minutes&#160;=&#160;d.getMinutes();
+								var&#160;seconds&#160;=&#160;d.getSeconds();
+
+								//&#160;milliseconds&#160;since&#160;1970-01-01
+								var&#160;timestamp&#160;=&#160;d.getTime();
+							</programlisting>
+							<para>
+								For a full reference, please look at the Java
+								<link
+									xl:href="http://download.oracle.com/javase/6/docs/api/java/util/Date.html">Date class reference</link>
+								.
+							</para>
+						</entry>
+					</row>
+					<row>
+						<entry>BOOLEAN</entry>
+						<entry>Boolean (true/false) values are simply booleans, no sugar
+							coating added :)</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</table>
+	</section>
 
 </chapter>

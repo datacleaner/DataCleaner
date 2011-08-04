@@ -209,6 +209,10 @@ pre.programlisting {
 	white-space: pre-line;
 }
 
+.table pre.programlisting {
+	background-color: white;
+}
+
 .tip {
 	background-color: #adc6e7;
 	background-image: url("info.png");

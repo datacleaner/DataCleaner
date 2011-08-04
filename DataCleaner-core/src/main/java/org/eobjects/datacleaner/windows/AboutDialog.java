@@ -272,7 +272,12 @@ public class AboutDialog extends AbstractDialog {
 		contentPanel.add(Box.createVerticalStrut(20));
 		contentPanel.add(DCLabel.dark("Licensed under the LGPL license"));
 		contentPanel.add(DCLabel.dark("(see Licensing tab)."));
-		contentPanel.add(Box.createVerticalStrut(50));
+		contentPanel.add(Box.createVerticalStrut(30));
+		contentPanel.add(DCLabel.dark("Java runtime information:"));
+		contentPanel.add(DCLabel.dark("  " + System.getProperty("java.vm.name")));
+		contentPanel.add(DCLabel.dark("  by " + System.getProperty("java.vm.vendor")));
+		contentPanel.add(DCLabel.dark("  version " + System.getProperty("java.runtime.version")));
+		contentPanel.add(Box.createVerticalStrut(30));
 		contentPanel.add(buttonPanel);
 
 		final DCPanel mainPanel = new DCPanel(imageManager.getImage("images/window/app-icon-hires.png"), 97, 10,

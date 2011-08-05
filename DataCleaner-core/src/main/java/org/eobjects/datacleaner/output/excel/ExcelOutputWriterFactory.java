@@ -29,7 +29,7 @@ import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.metamodel.UpdateCallback;
 import org.eobjects.metamodel.UpdateScript;
 import org.eobjects.metamodel.UpdateableDataContext;
-import org.eobjects.metamodel.create.CreateTableBuilder;
+import org.eobjects.metamodel.create.TableCreationBuilder;
 import org.eobjects.metamodel.excel.ExcelDataContext;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
@@ -74,7 +74,7 @@ public final class ExcelOutputWriterFactory {
 			dataContext.executeUpdate(new UpdateScript() {
 				@Override
 				public void run(UpdateCallback callback) {
-					CreateTableBuilder tableBuilder = callback.createTable(schema, sheetName);
+					TableCreationBuilder tableBuilder = callback.createTable(schema, sheetName);
 					for (InputColumn<?> inputColumn : columns) {
 						tableBuilder.withColumn(inputColumn.getName());
 					}

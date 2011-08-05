@@ -27,7 +27,7 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.metamodel.UpdateCallback;
 import org.eobjects.metamodel.UpdateScript;
 import org.eobjects.metamodel.UpdateableDataContext;
-import org.eobjects.metamodel.insert.InsertBuilder;
+import org.eobjects.metamodel.insert.RowInsertionBuilder;
 import org.eobjects.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public abstract class AbstractMetaModelOutputWriter implements OutputWriter {
 				@Override
 				public void run(UpdateCallback callback) {
 					for (Object[] rowData = _buffer.poll(); rowData != null; rowData = _buffer.poll()) {
-						InsertBuilder insertBuilder = callback.insertInto(getTable());
+						RowInsertionBuilder insertBuilder = callback.insertInto(getTable());
 						for (int i = 0; i < _columns.length; i++) {
 							InputColumn<?> column = _columns[i];
 							Object value = rowData[i];

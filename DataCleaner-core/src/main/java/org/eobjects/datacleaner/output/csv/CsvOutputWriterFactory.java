@@ -30,7 +30,7 @@ import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.metamodel.UpdateCallback;
 import org.eobjects.metamodel.UpdateScript;
 import org.eobjects.metamodel.UpdateableDataContext;
-import org.eobjects.metamodel.create.CreateTableBuilder;
+import org.eobjects.metamodel.create.TableCreationBuilder;
 import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.csv.CsvDataContext;
 import org.eobjects.metamodel.schema.Schema;
@@ -76,7 +76,7 @@ public final class CsvOutputWriterFactory {
 				dataContext.executeUpdate(new UpdateScript() {
 					@Override
 					public void run(UpdateCallback callback) {
-						CreateTableBuilder tableBuilder = callback.createTable(schema, "table");
+						TableCreationBuilder tableBuilder = callback.createTable(schema, "table");
 						for (String header : headers) {
 							tableBuilder.withColumn(header);
 						}

@@ -131,7 +131,7 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 			}
 		};
 		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore", "dataset",
-				scenarioHelper.getColumns());
+				scenarioHelper.getColumns().toArray(new InputColumn[0]));
 
 		scenarioHelper.writeExampleData(writer);
 

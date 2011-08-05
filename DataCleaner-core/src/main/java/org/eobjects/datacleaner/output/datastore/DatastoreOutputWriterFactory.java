@@ -47,29 +47,8 @@ public final class DatastoreOutputWriterFactory {
 	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 	private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
 
-	public static OutputWriter getWriter(String datastoreName, String tableName, InputColumn<?>... columns) {
-		return getWriter(datastoreName, tableName, true, columns);
-	}
-
 	public static OutputWriter getWriter(String datastoreName, String tableName, boolean truncate, InputColumn<?>... columns) {
 		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName, tableName, truncate, columns);
-	}
-
-	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName, String tableName,
-			InputColumn<?>... columns) {
-		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName, tableName, columns);
-	}
-
-	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
-			String tableName, List<InputColumn<?>> columns) {
-		return getWriter(directory, creationDelegate, datastoreName, tableName,
-				columns.toArray(new InputColumn<?>[columns.size()]));
-	}
-
-	public static OutputWriter getWriter(DatastoreCreationDelegate creationDelegate, String datastoreName, String tableName,
-			List<InputColumn<?>> columns) {
-		return getWriter(getDefaultOutputDirectory(), creationDelegate, datastoreName, tableName,
-				columns.toArray(new InputColumn<?>[columns.size()]));
 	}
 
 	public static OutputWriter getWriter(String datastoreName, String tableName, List<InputColumn<?>> columns) {

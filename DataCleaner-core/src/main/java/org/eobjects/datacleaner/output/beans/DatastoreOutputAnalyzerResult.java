@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.output.beans;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.schema.Table;
 
 class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
@@ -50,7 +51,13 @@ class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
 	@Override
 	public Table getPreviewTable(Datastore datastore) {
 		DataContextProvider dcp = datastore.getDataContextProvider();
-		Table table = dcp.getDataContext().getDefaultSchema().getTableByName(_tableName);
+		DataContext dc = dcp.getDataContext();
+
+		// It is likely that schemas are cached, and since it is likely a new
+		// table, we refresh the schema.
+		dc.refreshSchemas();
+
+		Table table = dc.getDefaultSchema().getTableByName(_tableName);
 		dcp.close();
 		return table;
 	}

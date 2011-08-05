@@ -54,7 +54,11 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.LazyRef;
+import org.eobjects.metamodel.util.Ref;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Renderer for {@link PatternFinderAnalyzer} results. Displays crosstabs with
@@ -65,6 +69,8 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 @RendererBean(SwingRenderingFormat.class)
 public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFinderResult, JComponent> {
+
+	private static final Logger logger = LoggerFactory.getLogger(PatternFinderResultSwingRenderer.class);
 
 	private static final int MAX_EXPANDED_GROUPS = 30;
 
@@ -96,18 +102,27 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 
 		final Set<Entry<String, Crosstab<?>>> entries = crosstabs.entrySet();
 		for (Entry<String, Crosstab<?>> entry : entries) {
+			final String groupName = entry.getKey();
 			if (panel.getComponentCount() != 0) {
 				panel.add(Box.createVerticalStrut(10));
 			}
 			final Crosstab<?> crosstab = entry.getValue();
-			final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(crosstab));
-			final DCPanel decoratedPanel = createDecoration(renderedResult);
+
+			final Ref<JComponent> componentRef = new LazyRef<JComponent>() {
+				@Override
+				protected JComponent fetch() {
+					logger.info("Rendering group result '{}'", groupName);
+					final JComponent renderedResult = delegateRenderer.render(new CrosstabResult(crosstab));
+					final DCPanel decoratedPanel = createDecoration(renderedResult);
+					return decoratedPanel;
+				}
+			};
 			final String expandedLabel = "Pattern finder for group '" + LabelUtils.getLabel(entry.getKey() + "'");
 			final int patternCount = crosstab.getDimension(
 					crosstab.getDimensionIndex(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN)).getCategoryCount();
 			final String collapsedLabel = expandedLabel + ": " + patternCount + " patterns";
 			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, expandedLabel, collapsed,
-					decoratedPanel);
+					componentRef);
 			panel.add(collapsiblePanel.toPanel());
 		}
 		return panel;

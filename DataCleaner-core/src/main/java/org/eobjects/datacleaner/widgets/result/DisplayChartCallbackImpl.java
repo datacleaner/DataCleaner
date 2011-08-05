@@ -31,15 +31,17 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 public class DisplayChartCallbackImpl implements DisplayChartCallback {
 
 	private final JXCollapsiblePane _chartContainer;
+	private final boolean _allowAnimations;
 
-	public DisplayChartCallbackImpl(JXCollapsiblePane chartContainer) {
+	public DisplayChartCallbackImpl(JXCollapsiblePane chartContainer, boolean allowAnimations) {
 		_chartContainer = chartContainer;
+		_allowAnimations = allowAnimations;
 	}
 
 	@Override
 	public void displayChart(JComponent chart) {
 		boolean showing = _chartContainer.isShowing();
-		if (!showing) {
+		if (_allowAnimations && !showing) {
 			_chartContainer.setAnimated(false);
 		}
 
@@ -48,7 +50,7 @@ public class DisplayChartCallbackImpl implements DisplayChartCallback {
 		_chartContainer.updateUI();
 		_chartContainer.setCollapsed(false);
 
-		if (!showing) {
+		if (_allowAnimations && !showing) {
 			_chartContainer.setAnimated(true);
 		}
 	}

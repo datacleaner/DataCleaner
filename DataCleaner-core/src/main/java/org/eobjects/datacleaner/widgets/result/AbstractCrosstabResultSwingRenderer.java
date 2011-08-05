@@ -83,8 +83,12 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
 	@Override
 	public JComponent render(R result) {
-		return renderInternal(result);
+		return renderInternal(result, true);
 	};
+	
+	protected CrosstabPanel renderInternal(R result) {
+		return renderInternal(result, true);
+	}
 
 	/**
 	 * Alternative render method, provided to have a more precise return type
@@ -94,12 +98,12 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 	 * @param result
 	 * @return
 	 */
-	protected CrosstabPanel renderInternal(R result) {
+	protected CrosstabPanel renderInternal(R result, boolean allowAnimations) {
 		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(_windowContext);
 
 		final DCTable table = renderTable(result.getCrosstab());
 
-		final CrosstabPanel crosstabPanel = new CrosstabPanel(table);
+		final CrosstabPanel crosstabPanel = new CrosstabPanel(table, allowAnimations);
 
 		decorate(result, table, crosstabPanel.getDisplayChartCallback());
 

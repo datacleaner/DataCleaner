@@ -74,7 +74,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
 	@Override
 	public JComponent render(CrosstabResult result) {
-		final CrosstabPanel crosstabPanel = super.renderInternal(result);
+		final CrosstabPanel crosstabPanel = super.renderInternal(result, false);
 		final DCTable table = crosstabPanel.getTable();
 		if (isInitiallyCharted(table) || isTooLimitedToChart(table)) {
 			return crosstabPanel;

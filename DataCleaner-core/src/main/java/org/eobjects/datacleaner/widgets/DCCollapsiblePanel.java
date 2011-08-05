@@ -34,6 +34,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.metamodel.util.Ref;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXCollapsiblePane.Direction;
 
@@ -54,18 +55,20 @@ public class DCCollapsiblePanel {
 
 	private final JXCollapsiblePane _collapsiblePane;
 	private final DCLabel _label;
+	private final Ref<JComponent> _componentRef;
 	private String _collapsedText;
 	private String _expandedText;
+	private boolean _rendered = false;
 
 	public DCCollapsiblePanel() {
 		this(null, null, true, null);
 	}
 
-	public DCCollapsiblePanel(String collapsedText, String expandedText, boolean collapsed, JComponent component) {
+	public DCCollapsiblePanel(String collapsedText, String expandedText, boolean collapsed, Ref<JComponent> componentRef) {
 		_collapsedText = collapsedText;
 		_expandedText = expandedText;
 		_collapsiblePane = WidgetFactory.createCollapsiblePane(Direction.DOWN);
-		setComponent(component);
+		_componentRef = componentRef;
 		if (collapsed) {
 			_label = DCLabel.dark(collapsedText);
 			collapse();
@@ -93,7 +96,11 @@ public class DCCollapsiblePanel {
 	}
 
 	public void toggle() {
-		setCollapsed(!isCollapsed());
+		if (isCollapsed()) {
+			expand();
+		} else {
+			collapse();
+		}
 	}
 
 	public void collapse() {
@@ -101,6 +108,10 @@ public class DCCollapsiblePanel {
 	}
 
 	public void expand() {
+		if (!_rendered) {
+			_rendered = true;
+			setComponent(_componentRef.get());
+		}
 		setCollapsed(false);
 	}
 

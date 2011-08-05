@@ -50,6 +50,8 @@ import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
 import org.eobjects.datacleaner.windows.ResultWindow;
+import org.eobjects.metamodel.util.LazyRef;
+import org.eobjects.metamodel.util.Ref;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -78,24 +80,32 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new VerticalLayout(0));
 		Set<ValueDistributionGroupResult> results = result.getGroupedValueDistributionResults();
-		for (ValueDistributionGroupResult res : results) {
+		for (final ValueDistributionGroupResult res : results) {
 			if (panel.getComponentCount() != 0) {
 				panel.add(Box.createVerticalStrut(10));
 			}
-			ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
-					res.getGroupName());
-			final JComponent renderedResult = delegate.renderGroupResult(res);
-			final DCPanel decoratedPanel = createDecoration(renderedResult);
+
+			final Ref<JComponent> componentRef = new LazyRef<JComponent>() {
+				@Override
+				protected JComponent fetch() {
+					ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
+							res.getGroupName());
+					final JComponent renderedResult = delegate.renderGroupResult(res);
+					final DCPanel decoratedPanel = createDecoration(renderedResult);
+					return decoratedPanel;
+				}
+			};
+
 			final String label = "Value distribution for group '" + LabelUtils.getLabel(res.getGroupName()) + "'";
 
 			final ValueCount distinctValue = getDistinctValueCount(res);
 			final DCCollapsiblePanel collapsiblePanel;
 			if (distinctValue == null) {
-				collapsiblePanel = new DCCollapsiblePanel(label, label, false, decoratedPanel);
+				collapsiblePanel = new DCCollapsiblePanel(label, label, false, componentRef);
 			} else {
 				final String collapsedLabel = label + ": " + LabelUtils.getLabel(distinctValue.getValue()) + "="
 						+ distinctValue.getCount() + "";
-				collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, label, true, decoratedPanel);
+				collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, label, true, componentRef);
 			}
 			panel.add(collapsiblePanel.toPanel());
 		}

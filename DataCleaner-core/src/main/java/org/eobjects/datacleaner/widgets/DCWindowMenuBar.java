@@ -24,17 +24,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.actions.NewAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.AboutDialog;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.DCWindow;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 import org.eobjects.datacleaner.windows.ReferenceDataDialog;
@@ -45,29 +46,25 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
  * 
  * @author Kasper Sørensen
  */
+@Singleton
 public class DCWindowMenuBar extends JMenuBar {
 
 	private static final long serialVersionUID = 1L;
-	private final AnalyzerBeansConfiguration _configuration;
+
 	private final WindowContext _windowContext;
 	private final ActionListener _windowListener;
 
-	public DCWindowMenuBar(final AnalysisJobBuilderWindow window, final WindowContext windowContext,
-			AnalyzerBeansConfiguration configuration) {
+	@Inject
+	protected DCWindowMenuBar(final WindowContext windowContext, NewAnalysisJobActionListener newAnalysisJobActionListener,
+			OpenAnalysisJobActionListener openAnalysisJobActionListener) {
 		super();
-		_configuration = configuration;
 		_windowContext = windowContext;
 		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
 				"images/actions/new_analysis_job.png");
-		newJobMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new AnalysisJobBuilderWindow(_configuration, _windowContext).setVisible(true);
-			}
-		});
+		newJobMenuItem.addActionListener(newAnalysisJobActionListener);
 
 		final JMenuItem openJobMenuItem = WidgetFactory.createMenuItem("Open analysis job...", "images/actions/open.png");
-		openJobMenuItem.addActionListener(new OpenAnalysisJobActionListener(window, _configuration, _windowContext));
+		openJobMenuItem.addActionListener(openAnalysisJobActionListener);
 
 		final JMenuItem exitMenuItem = WidgetFactory.createMenuItem("Exit DataCleaner", "images/menu/exit.png");
 		exitMenuItem.addActionListener(new ActionListener() {

@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -42,12 +43,12 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
@@ -66,24 +67,26 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 	private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
-	private final AnalysisJobBuilderWindow _parentWindow;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCFileChooser _fileChooser;
 	private final DCPanel _centerPanel;
 	private volatile File _file;
 	private volatile AnalysisJobMetadata _metadata;
 	private final JButton _openJobButton;
+	private final WindowContext _windowContext;
+	private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
 
-	public OpenAnalysisJobFileChooserAccessory(AnalysisJobBuilderWindow parentWindow,
-			AnalyzerBeansConfiguration configuration, DCFileChooser fileChooser) {
+	public OpenAnalysisJobFileChooserAccessory(WindowContext windowContext, AnalyzerBeansConfiguration configuration,
+			DCFileChooser fileChooser, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
 		super();
-		_parentWindow = parentWindow;
+		_windowContext = windowContext;
 		_configuration = configuration;
 		_centerPanel = new DCPanel();
 		_centerPanel.setLayout(new VerticalLayout(0));
 		_fileChooser = fileChooser;
 		_fileChooser.addPropertyChangeListener(this);
 		_openJobButton = getOpenJobButton();
+		_openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
 
 		setPreferredSize(220, 10);
 
@@ -121,8 +124,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		openJobButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				OpenAnalysisJobActionListener.openFile(_parentWindow, _parentWindow.getWindowContext(), _file,
-						_configuration);
+				OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider.get();
+				openAnalysisJobActionListener.openFile(_file);
 				_fileChooser.cancelSelection();
 			}
 		});
@@ -136,8 +139,8 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		openAsTemplateButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_parentWindow, _configuration,
-						_file, _metadata);
+				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext, _configuration,
+						_file, _metadata, _openAnalysisJobActionListenerProvider);
 				_fileChooser.cancelSelection();
 				dialog.setVisible(true);
 			}

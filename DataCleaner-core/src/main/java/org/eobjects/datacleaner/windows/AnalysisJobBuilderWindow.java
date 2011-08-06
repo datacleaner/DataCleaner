@@ -32,6 +32,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -71,6 +74,9 @@ import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DatastoreName;
+import org.eobjects.datacleaner.guice.JobFilename;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
@@ -111,6 +117,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
+@Singleton
 public final class AnalysisJobBuilderWindow extends AbstractWindow implements AnalyzerChangeListener,
 		TransformerChangeListener, FilterChangeListener, SourceColumnChangeListener, TabCloseListener {
 
@@ -144,43 +151,45 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final JButton _addTransformerButton;
 	private final JButton _addAnalyzerButton;
 	private final JButton _runButton;
+	private final Provider<DCWindowMenuBar> _windowMenuBarProvider;
 	private final DCGlassPane _glassPane;
+	private final DatastoreListPanel _datastoreListPanel;
 	private String _jobFilename;
 	private Datastore _datastore;
 	private DataContextProvider _dataContextProvider;
-	private DatastoreListPanel _datastoreListPanel;
 	private boolean _datastoreSelectionEnabled;
 
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
-		this(configuration, (Datastore) null, windowContext);
-	}
-
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			String jobFilename, WindowContext windowContext) {
-		this(configuration, analysisJobBuilder, analysisJobBuilder.getDataContextProvider().getDatastore(), windowContext);
-		setJobFilename(jobFilename);
-	}
-
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, Datastore datastore,
-			WindowContext windowContext) {
-		this(configuration, new AnalysisJobBuilder(configuration), datastore, windowContext);
-	}
-
-	public AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, String datastoreName,
-			WindowContext windowContext) {
-		this(configuration, new AnalysisJobBuilder(configuration), configuration.getDatastoreCatalog().getDatastore(
-				datastoreName), windowContext);
-	}
-
-	private AnalysisJobBuilderWindow(final AnalyzerBeansConfiguration configuration,
-			final AnalysisJobBuilder analysisJobBuilder, final Datastore datastore, WindowContext windowContext) {
+	@Inject
+	protected AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
+			@Nullable AnalysisJobBuilder analysisJobBuilder, @Nullable Datastore datastore,
+			@Nullable @JobFilename String jobFilename, @Nullable @DatastoreName String datastoreName,
+			Provider<DCWindowMenuBar> windowMenuBarProvider) {
 		super(windowContext);
+		_jobFilename = jobFilename;
 		_configuration = configuration;
+		_windowMenuBarProvider = windowMenuBarProvider;
+
+		if (analysisJobBuilder == null) {
+			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
+		} else {
+			_analysisJobBuilder = analysisJobBuilder;
+		}
+
+		if (datastore == null) {
+			if (datastoreName != null) {
+				_datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+			} else {
+				DataContextProvider dcp = _analysisJobBuilder.getDataContextProvider();
+				if (dcp != null) {
+					_datastore = dcp.getDatastore();
+				}
+			}
+		} else {
+			_datastore = datastore;
+		}
 		_datastoreSelectionEnabled = true;
 		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
 				new DCRendererInitializer(windowContext));
-		setJMenuBar(new DCWindowMenuBar(this, windowContext, _configuration));
-		_analysisJobBuilder = analysisJobBuilder;
 		_glassPane = new DCGlassPane(this);
 
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
@@ -250,7 +259,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_leftPanel.setCollapsed(true);
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 
-		setDatastore(datastore);
+		setDatastore(_datastore);
 	}
 
 	private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
@@ -481,6 +490,8 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Override
 	protected JComponent getWindowContent() {
+		setJMenuBar(_windowMenuBarProvider.get());
+
 		_saveButton.addActionListener(new SaveAnalysisJobActionListener(this, _analysisJobBuilder));
 
 		_visualizeButton.setToolTipText("Visualize execution flow");

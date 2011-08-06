@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -46,6 +47,7 @@ import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -80,18 +82,18 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 	private final Map<String, List<SourceColumnComboBox>> _sourceColumnComboBoxes;
 	private final Map<String, JXTextField> _variableTextFields;
 	private final JButton _openButton;
-	private final AnalysisJobBuilderWindow _parentWindow;
 	private final JButton _autoMapButton;
+	private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
 
 	private volatile Datastore _datastore;
 
-	public OpenAnalysisJobAsTemplateDialog(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
-			File file, AnalysisJobMetadata metadata) {
-		super(parentWindow.getWindowContext());
-		_parentWindow = parentWindow;
+	public OpenAnalysisJobAsTemplateDialog(WindowContext windowContext, AnalyzerBeansConfiguration configuration, File file,
+			AnalysisJobMetadata metadata, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
+		super(windowContext);
 		_configuration = configuration;
 		_file = file;
 		_metadata = metadata;
+		_openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
 		_sourceColumnMapping = new SourceColumnMapping(metadata);
 		_variableTextFields = new HashMap<String, JXTextField>();
 
@@ -111,7 +113,10 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
 					AnalysisJobBuilder ajb = reader.create(new BufferedInputStream(new FileInputStream(_file)),
 							sourceColumnMapping, variableOverrides);
-					OpenAnalysisJobActionListener.openJob(_parentWindow, getWindowContext(), _file, _configuration, ajb);
+					
+					OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider.get();
+					openAnalysisJobActionListener.openJob(_file, ajb);
+					
 					OpenAnalysisJobAsTemplateDialog.this.dispose();
 				} catch (Exception e1) {
 					throw new IllegalStateException(e1);

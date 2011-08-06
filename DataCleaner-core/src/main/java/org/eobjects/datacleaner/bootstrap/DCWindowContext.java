@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -81,12 +82,13 @@ public final class DCWindowContext implements WindowContext {
 		return null;
 	}
 
+	@Inject
 	public DCWindowContext(AnalyzerBeansConfiguration configuration) {
 		_configuration = configuration;
 		_allWindowContexts.add(new WeakReference<DCWindowContext>(this));
 		_exiting = false;
 	}
-
+	
 	@Override
 	public List<DCWindow> getWindows() {
 		return Collections.unmodifiableList(_windows);

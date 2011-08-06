@@ -47,7 +47,6 @@ import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
-import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -117,9 +116,10 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 			analyzeButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					final AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, datastore,
-							windowContext);
-					window.setVisible(true);
+					// TODO: GUICE
+//					final AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, datastore,
+//							windowContext);
+//					window.setVisible(true);
 				}
 			});
 			panel.add(analyzeButton);

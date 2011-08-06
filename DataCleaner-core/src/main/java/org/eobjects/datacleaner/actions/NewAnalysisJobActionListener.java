@@ -19,60 +19,36 @@
  */
 package org.eobjects.datacleaner.actions;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.Icon;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.util.IconUtils;
-import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+@Singleton
 public final class NewAnalysisJobActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final WindowContext _windowContext;
 
-	public NewAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
+	@Inject
+	protected NewAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
 		_configuration = configuration;
 		_windowContext = windowContext;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final Component comp = (Component) e.getSource();
-
-		final JPopupMenu popupMenu = new JPopupMenu();
-		final String[] datastoreNames = _configuration.getDatastoreCatalog().getDatastoreNames();
-
-		if (datastoreNames == null || datastoreNames.length == 0) {
-			JOptionPane.showMessageDialog(comp, "Please create a new datastore before you create a job",
-					"No datastore available", JOptionPane.ERROR_MESSAGE);
-		} else {
-			Icon icon = ImageManager.getInstance().getImageIcon("images/filetypes/analysis_job.png",
-					IconUtils.ICON_SIZE_SMALL);
-			for (final String datastoreName : datastoreNames) {
-				final JMenuItem menuItem = WidgetFactory.createMenuItem("Using " + datastoreName, icon);
-				menuItem.setToolTipText("New analysis job using " + datastoreName);
-				menuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						UsageLogger.getInstance().log("New analysis job");
-						new AnalysisJobBuilderWindow(_configuration, datastoreName, _windowContext).setVisible(true);
-					}
-				});
-				popupMenu.add(menuItem);
-			}
-			popupMenu.show(comp, 0, comp.getHeight());
-		}
+		Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext));
+		injector.getInstance(AnalysisJobBuilderWindow.class).setVisible(true);
 	}
 
 }

@@ -32,6 +32,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -43,6 +44,9 @@ import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Bootstraps an instance of DataCleaner into a running state. The initial state
@@ -113,14 +117,11 @@ public final class Bootstrap {
 			return;
 		} else {
 			// run in GUI mode
+			
+			final Injector injector = Guice.createInjector(new DCModule(configuration));
 
-			// loads dynamic user preferences
-			final UserPreferences userPreferences = UserPreferences.getInstance();
+			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
-			final WindowContext windowContext = new DCWindowContext(configuration);
-
-			final AnalysisJobBuilderWindow analysisJobBuilderWindow = new AnalysisJobBuilderWindow(configuration,
-					windowContext);
 			if (_options.isSingleDatastoreMode()) {
 				DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
 				Datastore singleDatastore = _options.getSingleDatastore(datastoreCatalog);
@@ -133,6 +134,9 @@ public final class Bootstrap {
 				analysisJobBuilderWindow.setDatastore(singleDatastore, true);
 			}
 			analysisJobBuilderWindow.setVisible(true);
+
+			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
+			final WindowContext windowContext = injector.getInstance(WindowContext.class);
 
 			// set up HTTP service for ExtensionSwap installation
 			loadExtensionSwapService(userPreferences, windowContext);

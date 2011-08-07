@@ -24,12 +24,12 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.result.BooleanAnalyzerResult;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -39,14 +39,17 @@ import org.jdesktop.swingx.VerticalLayout;
 
 @RendererBean(SwingRenderingFormat.class)
 public class BooleanAnalyzerResultSwingRenderer extends AbstractRenderer<BooleanAnalyzerResult, JComponent> {
-	
+
 	@Inject
-	@Provided
 	WindowContext _windowContext;
+
+	@Inject
+	RendererFactory _rendererFactory;
 
 	@Override
 	public JComponent render(BooleanAnalyzerResult result) {
-		DefaultCrosstabResultSwingRenderer crosstabResultSwingRenderer = new DefaultCrosstabResultSwingRenderer(_windowContext);
+		DefaultCrosstabResultSwingRenderer crosstabResultSwingRenderer = new DefaultCrosstabResultSwingRenderer(
+				_windowContext, _rendererFactory);
 
 		Crosstab<Number> columnStatisticsCrosstab = result.getColumnStatisticsCrosstab();
 		Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();

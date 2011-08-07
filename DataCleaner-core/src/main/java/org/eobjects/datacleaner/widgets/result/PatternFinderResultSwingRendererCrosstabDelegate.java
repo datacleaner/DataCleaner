@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.reference.SimpleStringPattern;
 import org.eobjects.analyzer.result.CrosstabResult;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
@@ -62,8 +63,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 	private final MutableReferenceDataCatalog _catalog = (MutableReferenceDataCatalog) DCConfiguration.get()
 			.getReferenceDataCatalog();
 
-	public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext) {
-		super(windowContext);
+	public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext, RendererFactory rendererFactory) {
+		super(windowContext, rendererFactory);
 	}
 
 	@Override

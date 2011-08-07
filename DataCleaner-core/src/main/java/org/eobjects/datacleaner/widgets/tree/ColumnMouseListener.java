@@ -107,8 +107,8 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 
 				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
 						"images/component-types/analyzer.png");
-				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, column, _schemaTree
-						.getWindowContext()));
+				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, column,
+						_analysisJobBuilder.getConfiguration(), _schemaTree.getWindowContext()));
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
 						"images/actions/preview_data.png");

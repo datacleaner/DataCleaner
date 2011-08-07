@@ -38,12 +38,16 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * ActionListener for performing a quick analysis based on standard analyzers.
@@ -56,20 +60,25 @@ public class QuickAnalysisActionListener implements ActionListener {
 	private final Table _table;
 	private final Column[] _columns;
 	private final WindowContext _windowContext;
+	private final AnalyzerBeansConfiguration _configuration;
 
-	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns, WindowContext windowContext) {
+	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns,
+			AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
 		_datastore = datastore;
 		_table = table;
 		_columns = columns;
+		_configuration = configuration;
 		_windowContext = windowContext;
 	}
 
-	public QuickAnalysisActionListener(Datastore datastore, Table table, WindowContext windowContext) {
-		this(datastore, table, null, windowContext);
+	public QuickAnalysisActionListener(Datastore datastore, Table table, AnalyzerBeansConfiguration configuration,
+			WindowContext windowContext) {
+		this(datastore, table, null, configuration, windowContext);
 	}
 
-	public QuickAnalysisActionListener(Datastore datastore, Column column, WindowContext windowContext) {
-		this(datastore, null, new Column[] { column }, windowContext);
+	public QuickAnalysisActionListener(Datastore datastore, Column column, AnalyzerBeansConfiguration configuration,
+			WindowContext windowContext) {
+		this(datastore, null, new Column[] { column }, configuration, windowContext);
 	}
 
 	public Column[] getColumns() {
@@ -138,8 +147,9 @@ public class QuickAnalysisActionListener implements ActionListener {
 				throw new IllegalStateException("Unknown job configuration issue!");
 			}
 
-			RunAnalysisActionListener actionListener = new RunAnalysisActionListener(ajb, configuration, "Quick analysis: "
-					+ getTable().getName(), _windowContext);
+			Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, ajb));
+
+			RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
 			actionListener.actionPerformed(event);
 		} catch (Exception e) {
 			WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);

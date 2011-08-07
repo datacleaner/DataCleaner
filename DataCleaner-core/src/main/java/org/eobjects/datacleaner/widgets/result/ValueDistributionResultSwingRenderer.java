@@ -44,6 +44,7 @@ import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -53,6 +54,9 @@ import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.Ref;
 import org.jdesktop.swingx.VerticalLayout;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Renderer for {@link ValueDistributionResult}s as Swing components.
@@ -178,7 +182,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 
 		// run a small job
 		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
+		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
 		SchemaNavigator sn = dcp.getSchemaNavigator();
@@ -193,7 +197,10 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 
 		WindowContext windowContext = new DCWindowContext(conf);
-		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
+		
+		Injector injector = Guice.createInjector(new DCModule(conf, windowContext, ajb));
+		
+		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();
 	}

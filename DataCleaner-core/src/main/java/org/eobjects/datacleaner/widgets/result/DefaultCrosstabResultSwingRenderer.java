@@ -32,9 +32,10 @@ public class DefaultCrosstabResultSwingRenderer extends AbstractCrosstabResultSw
 	 * Constructor used for programmatic composition
 	 * 
 	 * @param windowContext
+	 * @param rendererFactory 
 	 */
-	public DefaultCrosstabResultSwingRenderer(WindowContext windowContext) {
-		super(windowContext);
+	public DefaultCrosstabResultSwingRenderer(WindowContext windowContext, RendererFactory rendererFactory) {
+		super(windowContext, rendererFactory);
 	}
 
 	/**

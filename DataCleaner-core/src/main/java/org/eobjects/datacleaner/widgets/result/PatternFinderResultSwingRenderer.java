@@ -30,7 +30,6 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
-import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -43,9 +42,11 @@ import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.PatternFinderResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -59,6 +60,9 @@ import org.eobjects.metamodel.util.Ref;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Renderer for {@link PatternFinderAnalyzer} results. Displays crosstabs with
@@ -75,14 +79,16 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 	private static final int MAX_EXPANDED_GROUPS = 30;
 
 	@Inject
-	@Provided
 	WindowContext windowContext;
+
+	@Inject
+	RendererFactory rendererFactory;
 
 	private PatternFinderResultSwingRendererCrosstabDelegate delegateRenderer;
 
 	@Override
 	public JComponent render(PatternFinderResult result) {
-		delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate(windowContext);
+		delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate(windowContext, rendererFactory);
 		if (result.isGroupingEnabled()) {
 			return renderGroupedResult(result);
 		} else {
@@ -152,8 +158,8 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		LookAndFeelManager.getInstance().init();
 
 		// run a small job
-		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
+		final AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
+		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
 		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
@@ -162,15 +168,18 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		ajb.addRowProcessingAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.setName("Ungrouped pattern finders");
 
-		RowProcessingAnalyzerJobBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addRowProcessingAnalyzer(
+		final RowProcessingAnalyzerJobBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addRowProcessingAnalyzer(
 				PatternFinderAnalyzer.class).setName("Grouped PF");
 		ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
 				.getDescriptor().getConfiguredProperty("Group column"));
 
-		WindowContext windowContext = new DCWindowContext(conf);
-		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
+		final WindowContext windowContext = new DCWindowContext(conf);
+		
+		Injector injector = Guice.createInjector(new DCModule(conf, windowContext, ajb));
+		
+		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();
 	}

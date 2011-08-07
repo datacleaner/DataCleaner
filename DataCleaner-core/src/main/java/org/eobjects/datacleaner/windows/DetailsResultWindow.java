@@ -30,18 +30,15 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.Renderer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
-import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.jdesktop.swingx.JXTaskPane;
 
 /**
@@ -55,16 +52,18 @@ public final class DetailsResultWindow extends AbstractWindow {
 	private static final long serialVersionUID = 1L;
 
 	private final static ImageManager imageManager = ImageManager.getInstance();
+	private final RendererFactory _rendererFactory;
 	private final List<AnalyzerResult> _results;
 	private final String _title;
 	private final DCTaskPaneContainer _taskPaneContainer;
 
-	public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowContext windowContext) {
+	public DetailsResultWindow(String title, List<AnalyzerResult> results, WindowContext windowContext, RendererFactory rendererFactory) {
 		super(windowContext);
 		_title = title;
 		_results = results;
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_taskPaneContainer.setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+		_rendererFactory = rendererFactory;
 	}
 
 	@Override
@@ -90,12 +89,8 @@ public final class DetailsResultWindow extends AbstractWindow {
 	@Override
 	protected JComponent getWindowContent() {
 		if (!_results.isEmpty()) {
-			AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-			RendererFactory renderFactory = new RendererFactory(configuration.getDescriptorProvider(),
-					new DCRendererInitializer(getWindowContext()));
-
 			for (AnalyzerResult analyzerResult : _results) {
-				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = renderFactory.getRenderer(analyzerResult,
+				Renderer<? super AnalyzerResult, ? extends JComponent> renderer = _rendererFactory.getRenderer(analyzerResult,
 						SwingRenderingFormat.class);
 				JComponent component;
 				if (renderer == null) {

@@ -132,13 +132,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		userPreferences.setAnalysisJobDirectory(file.getParentFile());
 		userPreferences.addRecentJobFile(file);
 
-		Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext) {
+		Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, ajb) {
 			public String getJobFilename() {
 				return file.getName();
-			};
-
-			public AnalysisJobBuilder getAnalysisJobBuilder() {
-				return ajb;
 			};
 		});
 

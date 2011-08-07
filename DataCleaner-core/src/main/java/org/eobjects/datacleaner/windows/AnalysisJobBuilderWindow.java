@@ -152,6 +152,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 	private final JButton _addAnalyzerButton;
 	private final JButton _runButton;
 	private final Provider<DCWindowMenuBar> _windowMenuBarProvider;
+	private final Provider<RunAnalysisActionListener> _runAnalysisActionProvider;
 	private final DCGlassPane _glassPane;
 	private final DatastoreListPanel _datastoreListPanel;
 	private String _jobFilename;
@@ -161,13 +162,14 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 
 	@Inject
 	protected AnalysisJobBuilderWindow(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
-			@Nullable AnalysisJobBuilder analysisJobBuilder, @Nullable Datastore datastore,
-			@Nullable @JobFilename String jobFilename, @Nullable @DatastoreName String datastoreName,
-			Provider<DCWindowMenuBar> windowMenuBarProvider) {
+			Provider<DCRendererInitializer> rendererInitializerProvider, Provider<RunAnalysisActionListener> runAnalysisActionProvider, AnalysisJobBuilder analysisJobBuilder,
+			@Nullable Datastore datastore, @Nullable @JobFilename String jobFilename,
+			@Nullable @DatastoreName String datastoreName, Provider<DCWindowMenuBar> windowMenuBarProvider) {
 		super(windowContext);
 		_jobFilename = jobFilename;
 		_configuration = configuration;
 		_windowMenuBarProvider = windowMenuBarProvider;
+		_runAnalysisActionProvider = runAnalysisActionProvider;
 
 		if (analysisJobBuilder == null) {
 			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
@@ -189,7 +191,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		}
 		_datastoreSelectionEnabled = true;
 		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
-				new DCRendererInitializer(windowContext));
+				rendererInitializerProvider.get());
 		_glassPane = new DCGlassPane(this);
 
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
@@ -510,8 +512,7 @@ public final class AnalysisJobBuilderWindow extends AbstractWindow implements An
 		_addAnalyzerButton.addActionListener(new AddAnalyzerActionListener(_configuration, _analysisJobBuilder));
 
 		// Run analysis
-		final RunAnalysisActionListener runAnalysisActionListener = new RunAnalysisActionListener(_analysisJobBuilder,
-				_configuration, _jobFilename, getWindowContext());
+		final RunAnalysisActionListener runAnalysisActionListener = _runAnalysisActionProvider.get();
 		_runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

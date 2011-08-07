@@ -28,6 +28,8 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
@@ -40,6 +42,8 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.JobFilename;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
@@ -66,12 +70,15 @@ public final class ResultWindow extends AbstractWindow {
 	private final String _jobFilename;
 	private final AnalysisRunnerSwingWorker _worker;
 
-	public ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job, String jobFilename, WindowContext windowContext) {
+	@Inject
+	protected ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job,
+			@Nullable @JobFilename String jobFilename, WindowContext windowContext,
+			Provider<DCRendererInitializer> rendererInitializerProvider) {
 		super(windowContext);
 		_configuration = configuration;
 		_job = job;
 		_jobFilename = jobFilename;
-		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), new DCRendererInitializer(getWindowContext()));
+		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), rendererInitializerProvider.get());
 
 		_progressInformationPanel = new ProgressInformationPanel();
 		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),

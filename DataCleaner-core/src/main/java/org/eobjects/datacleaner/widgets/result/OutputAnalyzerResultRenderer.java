@@ -31,7 +31,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
-import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
@@ -56,7 +55,6 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 	private final ImageManager imageManager = ImageManager.getInstance();
 
 	@Inject
-	@Provided
 	WindowContext windowContext;
 
 	@Override

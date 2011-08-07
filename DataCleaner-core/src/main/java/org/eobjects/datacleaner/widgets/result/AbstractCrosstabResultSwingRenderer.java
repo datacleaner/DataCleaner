@@ -26,6 +26,7 @@ import java.text.NumberFormat;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -34,7 +35,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.eobjects.analyzer.beans.api.Provided;
+import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabDimension;
 import org.eobjects.analyzer.result.CrosstabResult;
@@ -61,18 +62,25 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
 
 	@Inject
-	@Provided
 	WindowContext _windowContext;
 
+	@Inject
+	DescriptorProvider descriptorProvider;
+
+	@Inject
+	Provider<DCRendererInitializer> _rendererInitializerProvider;
+
 	private DrillToDetailsCallback _drillToDetailsCallback;
+	private RendererFactory _rendererFactory;
 
 	/**
 	 * Constructor used for programmatic composition.
 	 * 
 	 * @param windowContext
 	 */
-	public AbstractCrosstabResultSwingRenderer(WindowContext windowContext) {
+	public AbstractCrosstabResultSwingRenderer(WindowContext windowContext, RendererFactory rendererFactory) {
 		_windowContext = windowContext;
+		_rendererFactory = rendererFactory;
 	}
 
 	/**
@@ -85,9 +93,16 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 	public JComponent render(R result) {
 		return renderInternal(result, true);
 	};
-	
+
 	protected CrosstabPanel renderInternal(R result) {
 		return renderInternal(result, true);
+	}
+
+	public RendererFactory getRendererFactory() {
+		if (_rendererFactory == null) {
+			_rendererFactory = new RendererFactory(descriptorProvider, _rendererInitializerProvider.get());
+		}
+		return _rendererFactory;
 	}
 
 	/**
@@ -99,7 +114,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 	 * @return
 	 */
 	protected CrosstabPanel renderInternal(R result, boolean allowAnimations) {
-		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(_windowContext);
+		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(_windowContext, getRendererFactory());
 
 		final DCTable table = renderTable(result.getCrosstab());
 

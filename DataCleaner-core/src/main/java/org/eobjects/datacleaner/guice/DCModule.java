@@ -19,34 +19,50 @@
  */
 package org.eobjects.datacleaner.guice;
 
+import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
+import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.metamodel.util.ImmutableRef;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.Ref;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 
 /**
- * Google Guice module for DataCleaner.
+ * Google Guice module for DataCleaner. Defines the main contextual components
+ * of a DataCleaner session.
  * 
  * @author Kasper Sørensen
  */
 public class DCModule extends AbstractModule {
 
 	private final AnalyzerBeansConfiguration _configuration;
+	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final Ref<WindowContext> _windowContext;
 
-	public DCModule(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
+	/**
+	 * Creates a DCModule that derives from an existing window context and
+	 * optionally also from an existing analysis job builder.
+	 * 
+	 * @param configuration
+	 * @param windowContext
+	 * @param analysisJobBuilder
+	 */
+	public DCModule(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
+			AnalysisJobBuilder analysisJobBuilder) {
 		_configuration = configuration;
 		if (windowContext == null) {
 			_windowContext = new LazyRef<WindowContext>() {
@@ -58,10 +74,24 @@ public class DCModule extends AbstractModule {
 		} else {
 			_windowContext = ImmutableRef.of(windowContext);
 		}
+
+		if (analysisJobBuilder == null) {
+			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
+		} else {
+			_analysisJobBuilder = analysisJobBuilder;
+		}
 	}
 
+	/**
+	 * Constructs a new DCModule based only on a configuration. New window
+	 * contexts and analysis job builder will be created. Thus this constructor
+	 * should only be used to create a completely new environment (at bootstrap
+	 * time).
+	 * 
+	 * @param configuration
+	 */
 	public DCModule(AnalyzerBeansConfiguration configuration) {
-		this(configuration, null);
+		this(configuration, null, null);
 	}
 
 	@Override
@@ -72,14 +102,27 @@ public class DCModule extends AbstractModule {
 		bind(DescriptorProvider.class).toInstance(_configuration.getDescriptorProvider());
 		bind(TaskRunner.class).toInstance(_configuration.getTaskRunner());
 
-		// optional bindings are all set to null to begin with
-		// bind(AnalysisJobBuilder.class).toProvider(Providers.<AnalysisJobBuilder>
-		// of(null));
-		// bind(String.class).annotatedWith(JobFilename.class).toProvider(Providers.<String>
-		// of(null));
-		// bind(String.class).annotatedWith(DatastoreName.class).toProvider(Providers.<String>
-		// of(null));
-		// bind(Datastore.class).toProvider(Providers.<Datastore> of(null));
+		// @Provided variants
+		bind(WindowContext.class).annotatedWith(Provided.class).toProvider(new Provider<WindowContext>() {
+			@Override
+			public WindowContext get() {
+				return getWindowContext();
+			}
+		});
+	}
+
+	@Provides
+	public AnalysisJob getAnalysisJob(@Nullable AnalysisJobBuilder builder) {
+		if (builder == null) {
+			return null;
+		}
+		return builder.toAnalysisJob();
+	}
+
+	@Provides
+	public RendererFactory getRendererFactory(DescriptorProvider descriptorProvider,
+			DCRendererInitializer rendererInitializer) {
+		return new RendererFactory(descriptorProvider, rendererInitializer);
 	}
 
 	@Provides
@@ -88,8 +131,8 @@ public class DCModule extends AbstractModule {
 	}
 
 	@Provides
-	public AnalysisJobBuilder getAnalysisJobBuilder() {
-		return null;
+	public final AnalysisJobBuilder getAnalysisJobBuilder() {
+		return _analysisJobBuilder;
 	}
 
 	@Provides
@@ -105,7 +148,7 @@ public class DCModule extends AbstractModule {
 	}
 
 	@Provides
-	protected WindowContext getWindowContext() {
+	protected final WindowContext getWindowContext() {
 		return _windowContext.get();
 	}
 

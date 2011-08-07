@@ -47,7 +47,7 @@ public final class NewAnalysisJobActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext));
+		Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, null));
 		injector.getInstance(AnalysisJobBuilderWindow.class).setVisible(true);
 	}
 

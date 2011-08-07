@@ -22,28 +22,20 @@ package org.eobjects.datacleaner.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
 public class RunAnalysisActionListener implements ActionListener {
 
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final AnalyzerBeansConfiguration _configuration;
-	private final String _jobFilename;
 	private long lastClickTime = 0;
-	private final WindowContext _windowContext;
+	private Provider<ResultWindow> _resultWindowProvider;
 
-	public RunAnalysisActionListener(AnalysisJobBuilder analysisJobBuilder, AnalyzerBeansConfiguration configuration,
-			String jobFilename, WindowContext windowContext) {
-		super();
-		_windowContext = windowContext;
-		_analysisJobBuilder = analysisJobBuilder;
-		_configuration = configuration;
-		_jobFilename = jobFilename;
+	@Inject
+	protected RunAnalysisActionListener(Provider<ResultWindow> resultWindowProvider) {
+		_resultWindowProvider = resultWindowProvider;
 	}
 
 	@Override
@@ -59,8 +51,7 @@ public class RunAnalysisActionListener implements ActionListener {
 
 		UsageLogger.getInstance().log("Run analysis");
 
-		AnalysisJob job = _analysisJobBuilder.toAnalysisJob();
-		ResultWindow window = new ResultWindow(_configuration, job, _jobFilename, _windowContext);
+		ResultWindow window = _resultWindowProvider.get();
 		window.setVisible(true);
 		window.startAnalysis();
 	}

@@ -23,21 +23,24 @@ import java.util.Arrays;
 
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ResultProducer;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.DetailsResultWindow;
 
 public class DrillToDetailsCallbackImpl implements DrillToDetailsCallback {
 
 	private final WindowContext _windowContext;
+	private final RendererFactory _rendererFactory;
 
-	public DrillToDetailsCallbackImpl(WindowContext windowContext) {
+	public DrillToDetailsCallbackImpl(WindowContext windowContext, RendererFactory rendererFactory) {
 		_windowContext = windowContext;
+		_rendererFactory = rendererFactory;
 	}
 
 	@Override
 	public void drillToDetails(String title, ResultProducer resultProducer) {
 		final AnalyzerResult result = resultProducer.getResult();
-		final DetailsResultWindow window = new DetailsResultWindow(title, Arrays.asList(result), _windowContext);
+		final DetailsResultWindow window = new DetailsResultWindow(title, Arrays.asList(result), _windowContext, _rendererFactory);
 		window.setVisible(true);
 	}
 }

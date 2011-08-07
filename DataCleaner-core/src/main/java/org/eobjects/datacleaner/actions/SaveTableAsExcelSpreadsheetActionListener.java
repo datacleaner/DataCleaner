@@ -32,9 +32,9 @@ import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.output.beans.ExcelOutputAnalyzer;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -42,6 +42,9 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Provides an action for the user to save a table as an Excel spreadsheet
@@ -53,17 +56,19 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 	private final Datastore _datastore;
 	private final Table _table;
 	private final WindowContext _windowContext;
+	private final AnalyzerBeansConfiguration _configuration;
 
-	public SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext) {
+	public SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext,
+			AnalyzerBeansConfiguration configuration) {
 		_datastore = datastore;
 		_table = table;
 		_windowContext = windowContext;
+		_configuration = configuration;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
 		ajb.setDatastore(_datastore);
 		ajb.addSourceColumns(_table.getColumns());
 
@@ -110,8 +115,14 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 		runButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ResultWindow window = new ResultWindow(configuration, ajb.toAnalysisJob(), "Save " + _table.getName()
-						+ " as Excel spreadsheet", _windowContext);
+				Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, ajb) {
+					@Override
+					public String getJobFilename() {
+						return "Save " + _table.getName() + " as Excel spreadsheet";
+					}
+				});
+
+				ResultWindow window = injector.getInstance(ResultWindow.class);
 				window.setVisible(true);
 				dialog.dispose();
 				window.startAnalysis();

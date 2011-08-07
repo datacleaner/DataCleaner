@@ -32,6 +32,7 @@ import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
@@ -43,6 +44,9 @@ import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.schema.Table;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 /**
  * Provides an action for the user to save a table as a CSV file
  * 
@@ -53,11 +57,14 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 	private final Datastore _datastore;
 	private final Table _table;
 	private final WindowContext _windowContext;
+	private final AnalyzerBeansConfiguration _configuration;
 
-	public SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext) {
+	public SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
+			AnalyzerBeansConfiguration configuration) {
 		_datastore = datastore;
 		_table = table;
 		_windowContext = windowContext;
+		_configuration = configuration;
 	}
 
 	@Override
@@ -107,10 +114,17 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
 		final JButton runButton = new JButton("Run", ImageManager.getInstance().getImageIcon("images/actions/execute.png"));
 		runButton.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ResultWindow window = new ResultWindow(configuration, ajb.toAnalysisJob(), "Save " + _table.getName()
-						+ " as CSV file", _windowContext);
+				Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, ajb) {
+					@Override
+					public String getJobFilename() {
+						return "Save " + _table.getName() + " as CSV file";
+					}
+				});
+
+				ResultWindow window = injector.getInstance(ResultWindow.class);
 				window.setVisible(true);
 				dialog.dispose();
 				window.startAnalysis();

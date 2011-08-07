@@ -19,37 +19,26 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
-import java.lang.reflect.Field;
-
 import javax.inject.Inject;
 
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.result.renderer.RendererInitializer;
-import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
+
+import com.google.inject.Injector;
 
 public class DCRendererInitializer implements RendererInitializer {
 
-	private final WindowContext _windowContext;
+	private final Injector _injector;
 
-	public DCRendererInitializer(WindowContext windowContext) {
-		_windowContext = windowContext;
+	@Inject
+	protected DCRendererInitializer(Injector injector) {
+		_injector = injector;
 	}
 
 	@Override
 	public void initialize(Renderer<?, ?> renderer) {
-		Field[] injectFields = ReflectionUtils.getFields(renderer.getClass(), Inject.class);
-		for (Field field : injectFields) {
-			if (field.getType() == WindowContext.class) {
-				try {
-					field.setAccessible(true);
-					field.set(renderer, _windowContext);
-				} catch (Exception e) {
-					throw new IllegalStateException("Could not assign " + WindowContext.class.getSimpleName() + " to "
-							+ field, e);
-				}
-			}
-		}
+		// use google guice to perform the injections
+		_injector.injectMembers(renderer);
 	}
 
 }

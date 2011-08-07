@@ -38,6 +38,7 @@ import org.eobjects.analyzer.result.NumberAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
@@ -57,6 +58,9 @@ import org.jfree.data.function.NormalDistributionFunction2D;
 import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 @RendererBean(SwingRenderingFormat.class)
 public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwingRenderer<NumberAnalyzerResult> {
@@ -146,7 +150,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 
 		// run a small job
 		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
+		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
 		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
@@ -155,7 +159,10 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
 		WindowContext windowContext = new DCWindowContext(conf);
-		ResultWindow resultWindow = new ResultWindow(conf, ajb.toAnalysisJob(), null, windowContext);
+		
+		Injector injector = Guice.createInjector(new DCModule(conf, windowContext, ajb));
+		
+		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();
 	}

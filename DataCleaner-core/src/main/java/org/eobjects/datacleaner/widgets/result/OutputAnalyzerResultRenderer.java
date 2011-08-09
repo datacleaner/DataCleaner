@@ -115,9 +115,10 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO: GUICE
-//					final AnalysisJobBuilderWindow window = new AnalysisJobBuilderWindow(configuration, datastore,
-//							windowContext);
-//					window.setVisible(true);
+					// final AnalysisJobBuilderWindow window = new
+					// AnalysisJobBuilderWindow(configuration, datastore,
+					// windowContext);
+					// window.setVisible(true);
 				}
 			});
 			panel.add(analyzeButton);
@@ -131,9 +132,13 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 				public void actionPerformed(ActionEvent e) {
 					final DataContextProvider dcp = datastore.getDataContextProvider();
 					final Table previewTable = result.getPreviewTable(datastore);
-					final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-							windowContext, dcp, previewTable);
-					actionListener.actionPerformed(null);
+					if (previewTable == null) {
+						throw new IllegalStateException("Result did not return any preview table: " + result);
+					} else {
+						final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
+								windowContext, dcp, previewTable);
+						actionListener.actionPerformed(null);
+					}
 				}
 			});
 			panel.add(previewButton);

@@ -40,6 +40,7 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
@@ -68,11 +69,12 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	private final Datastore _datastore;
 	private final WindowContext _windowContext;
 
-	public SchemaTree(Datastore datastore, WindowContext windowContext) {
-		this(datastore, null, windowContext);
+	public SchemaTree(Datastore datastore, WindowContext windowContext, DCModule parentModule) {
+		this(datastore, null, windowContext, parentModule);
 	}
 
-	public SchemaTree(final Datastore datastore, final AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
+	public SchemaTree(final Datastore datastore, final AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext,
+			DCModule parentModule) {
 		super();
 		if (datastore == null) {
 			throw new IllegalArgumentException("Datastore cannot be null");
@@ -85,13 +87,13 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		setOpaque(false);
 		addTreeWillExpandListener(this);
 		if (analysisJobBuilder != null) {
-			addMouseListener(new SchemaMouseListener(this, _datastore, analysisJobBuilder));
-			addMouseListener(new TableMouseListener(this, _datastore, analysisJobBuilder));
-			addMouseListener(new ColumnMouseListener(this, _datastore, analysisJobBuilder));
+			addMouseListener(new SchemaMouseListener(this, _datastore, analysisJobBuilder, parentModule));
+			addMouseListener(new TableMouseListener(this, _datastore, analysisJobBuilder, parentModule));
+			addMouseListener(new ColumnMouseListener(this, _datastore, analysisJobBuilder, parentModule));
 		}
 		updateTree();
 	}
-	
+
 	public WindowContext getWindowContext() {
 		return _windowContext;
 	}

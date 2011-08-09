@@ -33,6 +33,8 @@ import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 import org.eobjects.metamodel.util.ImmutableRef;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.Ref;
@@ -52,6 +54,28 @@ public class DCModule extends AbstractModule {
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final Ref<WindowContext> _windowContext;
+	private final UserPreferences _userPreferences;
+
+	/**
+	 * Creates a DCModule based on a parent module. This constructor is
+	 * convenient when you want to create a module with overridden getter
+	 * methods.
+	 * 
+	 * @param parent
+	 * @param analysisJobBuilder
+	 *            the AnalysisJobBuilder to use within this module, or null if a
+	 *            new AnalysisJobBuilder should be created.
+	 */
+	public DCModule(DCModule parent, AnalysisJobBuilder analysisJobBuilder) {
+		_configuration = parent._configuration;
+		if (analysisJobBuilder == null) {
+			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
+		} else {
+			_analysisJobBuilder = analysisJobBuilder;
+		}
+		_windowContext = parent._windowContext;
+		_userPreferences = parent._userPreferences;
+	}
 
 	/**
 	 * Creates a DCModule that derives from an existing window context and
@@ -60,15 +84,17 @@ public class DCModule extends AbstractModule {
 	 * @param configuration
 	 * @param windowContext
 	 * @param analysisJobBuilder
+	 * @param userPreferences
 	 */
 	public DCModule(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
-			AnalysisJobBuilder analysisJobBuilder) {
+			AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
 		_configuration = configuration;
+		_userPreferences = userPreferences;
 		if (windowContext == null) {
 			_windowContext = new LazyRef<WindowContext>() {
 				@Override
 				protected WindowContext fetch() {
-					return new DCWindowContext(_configuration);
+					return new DCWindowContext(_configuration, _userPreferences);
 				}
 			};
 		} else {
@@ -91,16 +117,16 @@ public class DCModule extends AbstractModule {
 	 * @param configuration
 	 */
 	public DCModule(AnalyzerBeansConfiguration configuration) {
-		this(configuration, null, null);
+		this(configuration, null, null, UserPreferences.getInstance());
 	}
 
 	@Override
 	protected void configure() {
-		bind(AnalyzerBeansConfiguration.class).toInstance(_configuration);
 		bind(DatastoreCatalog.class).toInstance(_configuration.getDatastoreCatalog());
 		bind(ReferenceDataCatalog.class).toInstance(_configuration.getReferenceDataCatalog());
 		bind(DescriptorProvider.class).toInstance(_configuration.getDescriptorProvider());
 		bind(TaskRunner.class).toInstance(_configuration.getTaskRunner());
+		bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
 
 		// @Provided variants
 		bind(WindowContext.class).annotatedWith(Provided.class).toProvider(new Provider<WindowContext>() {
@@ -109,6 +135,11 @@ public class DCModule extends AbstractModule {
 				return getWindowContext();
 			}
 		});
+	}
+
+	@Provides
+	public final AnalyzerBeansConfiguration getConfiguration() {
+		return _configuration;
 	}
 
 	@Provides
@@ -131,7 +162,7 @@ public class DCModule extends AbstractModule {
 	}
 
 	@Provides
-	public final AnalysisJobBuilder getAnalysisJobBuilder() {
+	public AnalysisJobBuilder getAnalysisJobBuilder() {
 		return _analysisJobBuilder;
 	}
 
@@ -148,12 +179,17 @@ public class DCModule extends AbstractModule {
 	}
 
 	@Provides
-	protected final WindowContext getWindowContext() {
+	public final DCModule getModule() {
+		return this;
+	}
+
+	@Provides
+	public final WindowContext getWindowContext() {
 		return _windowContext.get();
 	}
 
 	@Provides
-	protected UserPreferences getUserPreferences() {
-		return UserPreferences.getInstance();
+	public final UserPreferences getUserPreferences() {
+		return _userPreferences;
 	}
 }

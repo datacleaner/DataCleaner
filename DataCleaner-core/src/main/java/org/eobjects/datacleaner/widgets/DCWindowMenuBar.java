@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
@@ -53,12 +54,17 @@ public class DCWindowMenuBar extends JMenuBar {
 
 	private final WindowContext _windowContext;
 	private final ActionListener _windowListener;
+	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
+	private final Provider<OptionsDialog> _optionsDialogProvider;
 
 	@Inject
-	protected DCWindowMenuBar(final WindowContext windowContext, NewAnalysisJobActionListener newAnalysisJobActionListener,
-			OpenAnalysisJobActionListener openAnalysisJobActionListener) {
+	protected DCWindowMenuBar(final WindowContext windowContext, final Provider<ReferenceDataDialog> referenceDataDialogProvider,
+			NewAnalysisJobActionListener newAnalysisJobActionListener,
+			OpenAnalysisJobActionListener openAnalysisJobActionListener, Provider<OptionsDialog> optionsDialogProvider) {
 		super();
 		_windowContext = windowContext;
+		_referenceDataDialogProvider = referenceDataDialogProvider;
+		_optionsDialogProvider = optionsDialogProvider;
 		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
 				"images/actions/new_analysis_job.png");
 		newJobMenuItem.addActionListener(newAnalysisJobActionListener);
@@ -80,7 +86,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		dictionariesMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowContext);
+				ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
 				referenceDataDialog.selectDictionariesTab();
 				referenceDataDialog.setVisible(true);
 			}
@@ -90,7 +96,7 @@ public class DCWindowMenuBar extends JMenuBar {
 		synonymCatalogsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowContext);
+				ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
 				referenceDataDialog.selectSynonymsTab();
 				referenceDataDialog.setVisible(true);
 			}
@@ -102,7 +108,7 @@ public class DCWindowMenuBar extends JMenuBar {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog referenceDataDialog = new ReferenceDataDialog(_windowContext);
+				ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
 				referenceDataDialog.selectStringPatternsTab();
 				referenceDataDialog.setVisible(true);
 			}
@@ -112,7 +118,8 @@ public class DCWindowMenuBar extends JMenuBar {
 		optionsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new OptionsDialog(_windowContext).setVisible(true);
+				OptionsDialog optionsDialog = _optionsDialogProvider.get();
+				optionsDialog.setVisible(true);
 			}
 		});
 

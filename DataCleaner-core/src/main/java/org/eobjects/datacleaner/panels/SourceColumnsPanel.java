@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.panels;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.border.EmptyBorder;
 
@@ -38,6 +39,11 @@ import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
 
+/**
+ * Panel that presents the source columns of a job.
+ * 
+ * @author Kasper Sørensen
+ */
 public final class SourceColumnsPanel extends DCPanel implements SourceColumnChangeListener {
 
 	private static final long serialVersionUID = 1L;
@@ -48,7 +54,8 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	private final MaxRowsFilterShortcutPanel _maxRowsFilterShortcutPanel;
 	private final WindowContext _windowContext;
 
-	public SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
+	@Inject
+	protected SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
 		super();
 		_analysisJobBuilder = analysisJobBuilder;
 		_windowContext = windowContext;

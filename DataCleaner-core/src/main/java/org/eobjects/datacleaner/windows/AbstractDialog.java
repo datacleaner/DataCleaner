@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -67,6 +68,11 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 	protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
 		_bottomBackgroundColor = bottomBackgroundColor;
+	}
+	
+	@Override
+	public void open() {
+		setVisible(true);
 	}
 	
 	@Override
@@ -191,5 +197,10 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
+	}
+	
+	@Override
+	public Component toComponent() {
+		return this;
 	}
 }

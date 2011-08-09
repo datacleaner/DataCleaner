@@ -68,9 +68,9 @@ public class UserPreferences implements Serializable {
 	private String proxyPassword;
 
 	private List<File> recentJobFiles = new ArrayList<File>();
-	private File openDatastoreDirectory = DataCleanerHome.get();
-	private File configuredFileDirectory = DataCleanerHome.get();
-	private File analysisJobDirectory = DataCleanerHome.get();
+	private File openDatastoreDirectory;
+	private File configuredFileDirectory;
+	private File analysisJobDirectory;
 	private File saveDatastoreDirectory;
 
 	private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
@@ -173,6 +173,9 @@ public class UserPreferences implements Serializable {
 	}
 
 	public File getOpenDatastoreDirectory() {
+		if (openDatastoreDirectory == null) {
+			openDatastoreDirectory = DataCleanerHome.get();
+		}
 		return openDatastoreDirectory;
 	}
 
@@ -181,6 +184,9 @@ public class UserPreferences implements Serializable {
 	}
 
 	public File getConfiguredFileDirectory() {
+		if (configuredFileDirectory == null) {
+			configuredFileDirectory = DataCleanerHome.get();
+		}
 		return configuredFileDirectory;
 	}
 
@@ -189,6 +195,9 @@ public class UserPreferences implements Serializable {
 	}
 
 	public File getAnalysisJobDirectory() {
+		if (analysisJobDirectory == null) {
+			analysisJobDirectory = DataCleanerHome.get();
+		}
 		return analysisJobDirectory;
 	}
 

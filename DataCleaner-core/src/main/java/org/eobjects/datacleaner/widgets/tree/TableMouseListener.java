@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveTableAsCsvFileActionListener;
 import org.eobjects.datacleaner.actions.SaveTableAsExcelSpreadsheetActionListener;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -46,11 +47,14 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final SchemaTree _schemaTree;
 	private final Datastore _datastore;
+	private final DCModule _parentModule;
 
-	public TableMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder) {
+	public TableMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder,
+			DCModule parentModule) {
 		_schemaTree = schemaTree;
 		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
+		_parentModule = parentModule;
 	}
 
 	@Override
@@ -116,20 +120,19 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
 						"images/component-types/analyzer.png");
-				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, table,
-						_analysisJobBuilder.getConfiguration(), _schemaTree.getWindowContext()));
+				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, table, _parentModule));
 				popup.add(quickAnalysisMenuItem);
 
 				final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem("Save table as Excel spreadsheet",
 						"images/component-types/type_output_writer.png");
 				saveAsExcelFileMenuItem.addActionListener(new SaveTableAsExcelSpreadsheetActionListener(_datastore, table,
-						_schemaTree.getWindowContext(), _analysisJobBuilder.getConfiguration()));
+						_schemaTree.getWindowContext(), _analysisJobBuilder.getConfiguration(), _parentModule));
 				popup.add(saveAsExcelFileMenuItem);
 
 				final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
 						"images/component-types/type_output_writer.png");
 				saveAsCsvFileMenuItem.addActionListener(new SaveTableAsCsvFileActionListener(_datastore, table, _schemaTree
-						.getWindowContext(), _analysisJobBuilder.getConfiguration()));
+						.getWindowContext(), _parentModule));
 				popup.add(saveAsCsvFileMenuItem);
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",

@@ -71,7 +71,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 		DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
 		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
 
-		int result = fileChooser.showSaveDialog(_window);
+		int result = fileChooser.showSaveDialog(_window.toComponent());
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
 
@@ -80,7 +80,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 			}
 
 			if (file.exists()) {
-				int overwrite = JOptionPane.showConfirmDialog(_window, "Are you sure you want to overwrite the file '"
+				int overwrite = JOptionPane.showConfirmDialog(_window.toComponent(), "Are you sure you want to overwrite the file '"
 						+ file.getName() + "'?", "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
 				if (overwrite != JOptionPane.YES_OPTION) {
 					return;

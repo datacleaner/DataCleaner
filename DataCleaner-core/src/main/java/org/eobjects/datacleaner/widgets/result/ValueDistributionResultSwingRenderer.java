@@ -42,8 +42,6 @@ import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.SchemaNavigator;
-import org.eobjects.datacleaner.bootstrap.DCWindowContext;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
@@ -196,9 +194,12 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
 		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 
-		WindowContext windowContext = new DCWindowContext(conf);
-		
-		Injector injector = Guice.createInjector(new DCModule(conf, windowContext, ajb));
+		Injector injector = Guice.createInjector(new DCModule(conf) {
+			@Override
+			public AnalysisJobBuilder getAnalysisJobBuilder() {
+				return ajb;
+			}
+		});
 		
 		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);

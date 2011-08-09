@@ -45,6 +45,7 @@ import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -69,24 +70,26 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 	private final SourceColumnComboBox _masterTermColumnComboBox;
 	private final JXTextField _nameTextField;
 	private final DatastoreCatalog _datastoreCatalog;
+	private final DCModule _parentModule;
 	private Datastore _datastore;
 	private final DCPanel _treePanel;
 	private volatile boolean _nameAutomaticallySet = true;
 	private final MultiSourceColumnComboBoxPanel _synonymColumnsPanel;
 
 	public DatastoreSynonymCatalogDialog(MutableReferenceDataCatalog catalog, DatastoreCatalog datastoreCatalog,
-			WindowContext windowContext) {
-		this(null, catalog, datastoreCatalog, windowContext);
+			WindowContext windowContext, DCModule parentModule) {
+		this(null, catalog, datastoreCatalog, windowContext, parentModule);
 	}
 
 	public DatastoreSynonymCatalogDialog(DatastoreSynonymCatalog synonymCatalog,
 			MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
-			WindowContext windowContext) {
+			WindowContext windowContext, DCModule parentModule) {
 		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_datastoreCatalog = datastoreCatalog;
 		_mutableReferenceCatalog = mutableReferenceCatalog;
 		_nameTextField = WidgetFactory.createTextField("Synonym catalog name");
+		_parentModule = parentModule;
 		String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
 		_datastoreComboBox = new JComboBox(comboBoxModel);
@@ -118,7 +121,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 					_synonymColumnsPanel.setModel(_datastore);
 					if (_datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(_datastore, getWindowContext());
+						final SchemaTree schemaTree = new SchemaTree(_datastore, getWindowContext(), _parentModule);
 						schemaTree.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseClicked(MouseEvent e) {

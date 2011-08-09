@@ -133,7 +133,7 @@ public final class Bootstrap {
 				analysisJobBuilderWindow.setDatastoreSelectionEnabled(false);
 				analysisJobBuilderWindow.setDatastore(singleDatastore, true);
 			}
-			analysisJobBuilderWindow.setVisible(true);
+			analysisJobBuilderWindow.open();
 
 			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
 			final WindowContext windowContext = injector.getInstance(WindowContext.class);

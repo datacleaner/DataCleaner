@@ -44,7 +44,6 @@ import org.eobjects.analyzer.result.PatternFinderResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
-import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -158,7 +157,8 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		LookAndFeelManager.getInstance().init();
 
 		// run a small job
-		final AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
+		final AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(),
+				"conf.xml"));
 		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
@@ -175,10 +175,13 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
 				.getDescriptor().getConfiguredProperty("Group column"));
 
-		final WindowContext windowContext = new DCWindowContext(conf);
-		
-		Injector injector = Guice.createInjector(new DCModule(conf, windowContext, ajb));
-		
+		Injector injector = Guice.createInjector(new DCModule(conf) {
+			@Override
+			public AnalysisJobBuilder getAnalysisJobBuilder() {
+				return ajb;
+			}
+		});
+
 		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

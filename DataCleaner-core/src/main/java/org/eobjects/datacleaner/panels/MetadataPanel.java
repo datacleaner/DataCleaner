@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
 import javax.swing.Icon;
 import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
@@ -47,7 +48,8 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DCTable _table;;
 
-	public MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
+	@Inject
+	protected MetadataPanel(AnalysisJobBuilder analysisJobBuilder) {
 		super(ImageManager.getInstance().getImage("images/window/metadata-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_analysisJobBuilder = analysisJobBuilder;

@@ -47,6 +47,7 @@ import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.AdHocModule;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -63,6 +64,8 @@ import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.SasDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 
+import com.google.inject.Injector;
+
 /**
  * A panel that presents a datastore and shows edit/remove buttons. This panel
  * is placed as a child inside the {@link DatastoreListPanel}.
@@ -78,14 +81,16 @@ public class DatastorePanel extends DCPanel {
 	private final DatastoreListPanel _datastoreListPanel;
 	private final JCheckBox _checkBox;
 	private final WindowContext _windowContext;
+	private final Injector _injector;
 
 	public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
-			DatastoreListPanel datastoreListPanel, WindowContext windowContext) {
+			DatastoreListPanel datastoreListPanel, WindowContext windowContext, Injector injector) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
 		_datastore = datastore;
 		_datastoreCatalog = datastoreCatalog;
 		_datastoreListPanel = datastoreListPanel;
 		_windowContext = windowContext;
+		_injector = injector;
 
 		setOpaque(false);
 
@@ -169,8 +174,9 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					JdbcDatastoreDialog dialog = new JdbcDatastoreDialog((JdbcDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injectorWithDatastore = _injector.createChildInjector(new AdHocModule().add(
+							JdbcDatastore.class, datastore));
+					JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});

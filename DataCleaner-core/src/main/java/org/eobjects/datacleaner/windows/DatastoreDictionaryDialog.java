@@ -42,6 +42,7 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.DCDocumentListener;
@@ -67,12 +68,12 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 	private final JSplitPane _splitPane;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public DatastoreDictionaryDialog(MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog, WindowContext windowContext) {
-		this(null, referenceDataCatalog, datastoreCatalog, windowContext);
+	public DatastoreDictionaryDialog(MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog, WindowContext windowContext, DCModule parentModule) {
+		this(null, referenceDataCatalog, datastoreCatalog, windowContext, parentModule);
 	}
 
 	public DatastoreDictionaryDialog(DatastoreDictionary dictionary, MutableReferenceDataCatalog referenceDataCatalog,
-			DatastoreCatalog datastoreCatalog, WindowContext windowContext) {
+			DatastoreCatalog datastoreCatalog, WindowContext windowContext, final DCModule parentModule) {
 		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_referenceDataCatalog = referenceDataCatalog;
@@ -107,7 +108,7 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 					Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
 					if (datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(datastore, getWindowContext());
+						final SchemaTree schemaTree = new SchemaTree(datastore, getWindowContext(), parentModule);
 						schemaTree.addMouseListener(new MouseAdapter() {
 							public void mouseClicked(MouseEvent e) {
 								TreePath path = schemaTree.getSelectionPath();

@@ -25,8 +25,6 @@ import java.awt.event.ActionListener;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
@@ -36,19 +34,17 @@ import com.google.inject.Injector;
 @Singleton
 public final class NewAnalysisJobActionListener implements ActionListener {
 
-	private final AnalyzerBeansConfiguration _configuration;
-	private final WindowContext _windowContext;
+	private final DCModule _parentModule;
 
 	@Inject
-	protected NewAnalysisJobActionListener(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
-		_configuration = configuration;
-		_windowContext = windowContext;
+	protected NewAnalysisJobActionListener(DCModule parentModule) {
+		_parentModule = parentModule;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, null));
-		injector.getInstance(AnalysisJobBuilderWindow.class).setVisible(true);
+		Injector injector = Guice.createInjector(new DCModule(_parentModule, null));
+		injector.getInstance(AnalysisJobBuilderWindow.class).open();
 	}
 
 }

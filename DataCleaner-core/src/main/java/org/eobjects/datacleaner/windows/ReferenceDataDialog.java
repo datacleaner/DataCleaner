@@ -25,6 +25,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.inject.Inject;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -33,6 +34,7 @@ import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DictionaryListPanel;
@@ -52,15 +54,17 @@ public class ReferenceDataDialog extends AbstractDialog {
 	private final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
 	private final CloseableTabbedPane _tabbedPane;
 
-	public ReferenceDataDialog(WindowContext windowContext) {
+	@Inject
+	protected ReferenceDataDialog(WindowContext windowContext, DCModule parentModule) {
 		super(windowContext, imageManager.getImage("images/window/banner-reference-data.png"));
 		final DCGlassPane glassPane = new DCGlassPane(this);
 
 		_tabbedPane = new CloseableTabbedPane();
 
-		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration, windowContext);
+		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration, windowContext,
+				parentModule);
 		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(glassPane, configuration,
-				windowContext);
+				windowContext, parentModule);
 		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(glassPane, configuration,
 				windowContext);
 

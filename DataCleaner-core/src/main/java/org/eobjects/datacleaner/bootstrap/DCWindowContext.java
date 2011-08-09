@@ -58,6 +58,7 @@ public final class DCWindowContext implements WindowContext {
 	private final List<ActionListener> _windowListeners = new ArrayList<ActionListener>();
 	private final List<ExitActionListener> _exitActionListeners = new ArrayList<ExitActionListener>();
 	private final AnalyzerBeansConfiguration _configuration;
+	private final UserPreferences _userPreferences;
 	private boolean _exiting;
 
 	/**
@@ -83,12 +84,13 @@ public final class DCWindowContext implements WindowContext {
 	}
 
 	@Inject
-	public DCWindowContext(AnalyzerBeansConfiguration configuration) {
+	public DCWindowContext(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
 		_configuration = configuration;
+		_userPreferences = userPreferences;
 		_allWindowContexts.add(new WeakReference<DCWindowContext>(this));
 		_exiting = false;
 	}
-	
+
 	@Override
 	public List<DCWindow> getWindows() {
 		return Collections.unmodifiableList(_windows);
@@ -159,7 +161,7 @@ public final class DCWindowContext implements WindowContext {
 			return;
 		}
 		_exiting = true;
-		UserPreferences.getInstance().save();
+		_userPreferences.save();
 		UsageLogger.getInstance().logApplicationShutdown();
 		if (_configuration != null) {
 			_configuration.getTaskRunner().shutdown();

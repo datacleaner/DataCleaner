@@ -41,11 +41,13 @@ public class DCPersistentSizedPanel extends DCPanel {
 	private final String _identifier;
 	private final int _defaultWidth;
 	private final int _defaultHeight;
+	private final UserPreferences _userPreferences;
 
-	public DCPersistentSizedPanel(String identifier, int defaultWidth, int defaultHeight) {
+	public DCPersistentSizedPanel(UserPreferences userPreferences, String identifier, int defaultWidth, int defaultHeight) {
 		_identifier = identifier;
 		_defaultWidth = defaultWidth;
 		_defaultHeight = defaultHeight;
+		_userPreferences = userPreferences;
 
 		setPreferredSize(getPreferredSizeFromUserPreferences());
 	}
@@ -54,7 +56,7 @@ public class DCPersistentSizedPanel extends DCPanel {
 	public void removeNotify() {
 		super.removeNotify();
 		
-		Map<String, String> properties = UserPreferences.getInstance().getAdditionalProperties();
+		Map<String, String> properties = _userPreferences.getAdditionalProperties();
 
 		Dimension size = getSize();
 		logger.info("Persisting panel size: {}", size);
@@ -63,7 +65,7 @@ public class DCPersistentSizedPanel extends DCPanel {
 	}
 
 	private Dimension getPreferredSizeFromUserPreferences() {
-		Map<String, String> properties = UserPreferences.getInstance().getAdditionalProperties();
+		Map<String, String> properties = _userPreferences.getAdditionalProperties();
 		String widthStr = properties.get(getWidthPropertyKey());
 		if (widthStr == null) {
 			widthStr = "" + _defaultWidth;

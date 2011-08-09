@@ -62,22 +62,26 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	private final AnalysisJobBuilderWindow _parentWindow;
 	private final WindowContext _windowContext;
 	private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
+	private final DCModule _parentModule;
+	private final UserPreferences _userPreferences;
 
 	@Inject
 	protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
+			WindowContext windowContext, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
+			DCModule parentModule, UserPreferences userPreferences) {
 		_parentWindow = parentWindow;
 		_configuration = configuration;
 		_windowContext = windowContext;
 		_openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
+		_parentModule = parentModule;
+		_userPreferences = userPreferences;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		UsageLogger.getInstance().log("Open analysis job");
 
-		UserPreferences userPreferences = UserPreferences.getInstance();
-		DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
+		DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 
 		OpenAnalysisJobFileChooserAccessory accessory = new OpenAnalysisJobFileChooserAccessory(_windowContext,
 				_configuration, fileChooser, _openAnalysisJobActionListenerProvider);
@@ -128,21 +132,20 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	 * @param ajb
 	 */
 	public void openJob(final File file, final AnalysisJobBuilder ajb) {
-		UserPreferences userPreferences = UserPreferences.getInstance();
-		userPreferences.setAnalysisJobDirectory(file.getParentFile());
-		userPreferences.addRecentJobFile(file);
+		_userPreferences.setAnalysisJobDirectory(file.getParentFile());
+		_userPreferences.addRecentJobFile(file);
 
-		Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, ajb) {
+		Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb) {
 			public String getJobFilename() {
 				return file.getName();
 			};
 		});
 
 		AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-		window.setVisible(true);
+		window.open();
 
 		if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
-			_parentWindow.dispose();
+			_parentWindow.close();
 		}
 	}
 }

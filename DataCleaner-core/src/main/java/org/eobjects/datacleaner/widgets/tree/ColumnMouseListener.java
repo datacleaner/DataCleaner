@@ -38,6 +38,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -49,11 +50,14 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final SchemaTree _schemaTree;
 	private final Datastore _datastore;
+	private final DCModule _parentModule;
 
-	public ColumnMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder) {
+	public ColumnMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder,
+			DCModule parentModule) {
 		_schemaTree = schemaTree;
 		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
+		_parentModule = parentModule;
 	}
 
 	@Override
@@ -100,7 +104,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 						DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName, column
 								.getQualifiedLabel());
 						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog(dictionary, referenceDataCatalog,
-								datastoreCatalog, _schemaTree.getWindowContext());
+								datastoreCatalog, _schemaTree.getWindowContext(), _parentModule);
 						dialog.setVisible(true);
 					}
 				});
@@ -108,7 +112,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
 						"images/component-types/analyzer.png");
 				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, column,
-						_analysisJobBuilder.getConfiguration(), _schemaTree.getWindowContext()));
+						_analysisJobBuilder.getConfiguration(), _schemaTree.getWindowContext(), _parentModule));
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
 						"images/actions/preview_data.png");

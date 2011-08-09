@@ -62,6 +62,7 @@ import org.eobjects.analyzer.util.TimeInterval;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
@@ -319,7 +320,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
 		List<AnalyzerResult> list = Collections.emptyList();
 		RendererFactory rendererFactory = new RendererFactory(conf.getDescriptorProvider(), null);
-		DetailsResultWindow window = new DetailsResultWindow("Example", list, new DCWindowContext(conf), rendererFactory );
+		DetailsResultWindow window = new DetailsResultWindow("Example", list, new DCWindowContext(conf,
+				UserPreferences.getInstance()), rendererFactory);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		List<AnalyzerResult> results = resultFuture.getResults();

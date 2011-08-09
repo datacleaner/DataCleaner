@@ -47,7 +47,6 @@ import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatabaseDriversPanel;
 import org.eobjects.datacleaner.panels.ExtensionPackagesPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
@@ -64,19 +63,24 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.google.inject.Inject;
+
 public class OptionsDialog extends AbstractWindow {
 
 	private static final long serialVersionUID = 1L;
 
 	private final ImageManager imageManager = ImageManager.getInstance();
-	private final UserPreferences userPreferences = UserPreferences.getInstance();
+	private final UserPreferences _userPreferences;
 	private final CloseableTabbedPane _tabbedPane;
 	private final AnalyzerBeansConfiguration _configuration;
 	private Timer _updateMemoryTimer;
 
-	public OptionsDialog(WindowContext windowContext) {
+	@Inject
+	protected OptionsDialog(WindowContext windowContext, AnalyzerBeansConfiguration configuration,
+			UserPreferences userPreferences) {
 		super(windowContext);
-		_configuration = DCConfiguration.get();
+		_userPreferences = userPreferences;
+		_configuration = configuration;
 		_tabbedPane = new CloseableTabbedPane();
 
 		_tabbedPane.addTab("General", imageManager.getImageIcon("images/menu/options.png"), getGeneralTab());
@@ -101,7 +105,7 @@ public class OptionsDialog extends AbstractWindow {
 	}
 
 	private DCPanel getGeneralTab() {
-		final String username = userPreferences.getUsername();
+		final String username = _userPreferences.getUsername();
 		final JXTextField usernameTextField = WidgetFactory.createTextField();
 		usernameTextField.setText(username);
 		usernameTextField.setEnabled(false);
@@ -110,12 +114,12 @@ public class OptionsDialog extends AbstractWindow {
 		logoutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				userPreferences.setUsername(null);
+				_userPreferences.setUsername(null);
 				usernameTextField.setText("");
 				logoutButton.setEnabled(false);
 			}
 		});
-		logoutButton.setEnabled(userPreferences.isLoggedIn());
+		logoutButton.setEnabled(_userPreferences.isLoggedIn());
 
 		final DCPanel userRegistrationPanel = new DCPanel().setTitledBorder("User registration");
 		userRegistrationPanel.add(DCLabel.dark("Logged in as:"));
@@ -123,13 +127,13 @@ public class OptionsDialog extends AbstractWindow {
 		userRegistrationPanel.add(logoutButton);
 
 		final FilenameTextField saveDatastoreDirectoryField = new FilenameTextField(
-				userPreferences.getSaveDatastoreDirectory(), true);
-		saveDatastoreDirectoryField.setFile(userPreferences.getSaveDatastoreDirectory());
+				_userPreferences.getSaveDatastoreDirectory(), true);
+		saveDatastoreDirectoryField.setFile(_userPreferences.getSaveDatastoreDirectory());
 		saveDatastoreDirectoryField.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		saveDatastoreDirectoryField.addFileSelectionListener(new FileSelectionListener() {
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {
-				userPreferences.setSaveDatastoreDirectory(file);
+				_userPreferences.setSaveDatastoreDirectory(file);
 			}
 		});
 
@@ -147,7 +151,7 @@ public class OptionsDialog extends AbstractWindow {
 	}
 
 	private DCPanel getQuickAnalysisPanel() {
-		final QuickAnalysisStrategy quickAnalysisStrategy = userPreferences.getQuickAnalysisStrategy();
+		final QuickAnalysisStrategy quickAnalysisStrategy = _userPreferences.getQuickAnalysisStrategy();
 		final JXTextField columnsTextField = WidgetFactory.createTextField("Columns");
 		columnsTextField.setColumns(2);
 		columnsTextField.setDocument(new NumberDocument());
@@ -168,7 +172,7 @@ public class OptionsDialog extends AbstractWindow {
 					int columns = Integer.parseInt(columnsTextField.getText());
 					QuickAnalysisStrategy newStrategy = new QuickAnalysisStrategy(columns,
 							valueDistributionCheckBox.isSelected(), patternFinderCheckBox.isSelected());
-					userPreferences.setQuickAnalysisStrategy(newStrategy);
+					_userPreferences.setQuickAnalysisStrategy(newStrategy);
 				} catch (NumberFormatException e) {
 					// skip this action, could not parse columns
 				}
@@ -193,23 +197,23 @@ public class OptionsDialog extends AbstractWindow {
 
 	private DCPanel getNetworkTab() {
 
-		final JCheckBox proxyCheckBox = new JCheckBox("Enable HTTP proxy?", userPreferences.isProxyEnabled());
+		final JCheckBox proxyCheckBox = new JCheckBox("Enable HTTP proxy?", _userPreferences.isProxyEnabled());
 		proxyCheckBox.setOpaque(false);
 		proxyCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				userPreferences.setProxyEnabled(proxyCheckBox.isSelected());
+				_userPreferences.setProxyEnabled(proxyCheckBox.isSelected());
 			}
 		});
 
 		final DCPanel proxyPanel = new DCPanel().setTitledBorder("Proxy settings");
 
 		final JTextField proxyHostField = WidgetFactory.createTextField("Proxy host");
-		proxyHostField.setText(userPreferences.getProxyHostname());
+		proxyHostField.setText(_userPreferences.getProxyHostname());
 		proxyHostField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent e) {
-				userPreferences.setProxyHostname(proxyHostField.getText());
+				_userPreferences.setProxyHostname(proxyHostField.getText());
 			}
 		});
 		WidgetUtils.addToGridBag(new JLabel("Proxy host"), proxyPanel, 0, 0);
@@ -226,40 +230,40 @@ public class OptionsDialog extends AbstractWindow {
 				} catch (Exception e) {
 					port = 8080;
 				}
-				userPreferences.setProxyPort(port);
+				_userPreferences.setProxyPort(port);
 			}
 		});
-		proxyPortField.setText("" + userPreferences.getProxyPort());
+		proxyPortField.setText("" + _userPreferences.getProxyPort());
 		WidgetUtils.addToGridBag(new JLabel("Proxy port"), proxyPanel, 0, 1);
 		WidgetUtils.addToGridBag(proxyPortField, proxyPanel, 1, 1);
 
 		final JCheckBox proxyAuthCheckBox = new JCheckBox("Enable authentication?",
-				userPreferences.isProxyAuthenticationEnabled());
+				_userPreferences.isProxyAuthenticationEnabled());
 		proxyAuthCheckBox.setOpaque(false);
 		proxyAuthCheckBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				userPreferences.setProxyAuthenticationEnabled(proxyAuthCheckBox.isSelected());
+				_userPreferences.setProxyAuthenticationEnabled(proxyAuthCheckBox.isSelected());
 			}
 		});
 
 		final DCPanel proxyAuthPanel = new DCPanel().setTitledBorder("Proxy authentication");
 		final JTextField proxyUsernameField = WidgetFactory.createTextField("Username");
-		proxyUsernameField.setText(userPreferences.getProxyUsername());
+		proxyUsernameField.setText(_userPreferences.getProxyUsername());
 		proxyUsernameField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {
-				userPreferences.setProxyUsername(proxyUsernameField.getText());
+				_userPreferences.setProxyUsername(proxyUsernameField.getText());
 			}
 		});
 		WidgetUtils.addToGridBag(new JLabel("Username"), proxyAuthPanel, 0, 0);
 		WidgetUtils.addToGridBag(proxyUsernameField, proxyAuthPanel, 1, 0);
 
-		final JPasswordField proxyPasswordField = new JPasswordField(userPreferences.getProxyPassword());
+		final JPasswordField proxyPasswordField = new JPasswordField(_userPreferences.getProxyPassword());
 		proxyPasswordField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {
-				userPreferences.setProxyPassword(String.valueOf(proxyPasswordField.getPassword()));
+				_userPreferences.setProxyPassword(String.valueOf(proxyPasswordField.getPassword()));
 			}
 		});
 		WidgetUtils.addToGridBag(new JLabel("Password"), proxyAuthPanel, 0, 1);

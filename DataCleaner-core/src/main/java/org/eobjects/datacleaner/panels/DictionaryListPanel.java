@@ -38,6 +38,7 @@ import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.analyzer.reference.TextFileDictionary;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -61,12 +62,14 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
 	private final WindowContext _windowContext;
+	private final DCModule _parentModule;
 
-	public DictionaryListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
+	public DictionaryListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
 		_windowContext = windowContext;
+		_parentModule = parentModule;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addDictionaryListener(this);
 
@@ -115,7 +118,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		datastoreDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog(), _windowContext)
+				new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog(), _windowContext, _parentModule)
 						.setVisible(true);
 			}
 		});
@@ -163,7 +166,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog((DatastoreDictionary) dictionary,
-								_catalog, _configuration.getDatastoreCatalog(), _windowContext);
+								_catalog, _configuration.getDatastoreCatalog(), _windowContext, _parentModule);
 						dialog.setVisible(true);
 					}
 				});

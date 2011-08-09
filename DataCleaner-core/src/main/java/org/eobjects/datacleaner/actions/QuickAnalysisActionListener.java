@@ -59,26 +59,22 @@ public class QuickAnalysisActionListener implements ActionListener {
 	private final Datastore _datastore;
 	private final Table _table;
 	private final Column[] _columns;
-	private final WindowContext _windowContext;
-	private final AnalyzerBeansConfiguration _configuration;
+	private final DCModule _parentModule;
 
-	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns,
-			AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
+	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns, DCModule parentModule) {
 		_datastore = datastore;
 		_table = table;
 		_columns = columns;
-		_configuration = configuration;
-		_windowContext = windowContext;
+		_parentModule = parentModule;
 	}
 
-	public QuickAnalysisActionListener(Datastore datastore, Table table, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext) {
-		this(datastore, table, null, configuration, windowContext);
+	public QuickAnalysisActionListener(Datastore datastore, Table table, DCModule parentModule) {
+		this(datastore, table, null, parentModule);
 	}
 
 	public QuickAnalysisActionListener(Datastore datastore, Column column, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext) {
-		this(datastore, null, new Column[] { column }, configuration, windowContext);
+			WindowContext windowContext, DCModule parentModule) {
+		this(datastore, null, new Column[] { column }, parentModule);
 	}
 
 	public Column[] getColumns() {
@@ -147,7 +143,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 				throw new IllegalStateException("Unknown job configuration issue!");
 			}
 
-			Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, ajb));
+			Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
 
 			RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
 			actionListener.actionPerformed(event);

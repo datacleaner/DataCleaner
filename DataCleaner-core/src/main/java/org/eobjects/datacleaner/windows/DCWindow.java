@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.Component;
 import java.awt.Image;
 
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -40,6 +41,10 @@ public interface DCWindow {
 	public Image getWindowIcon();
 
 	public void toFront();
+	
+	public void open();
 
 	public void close();
+	
+	public Component toComponent();
 }

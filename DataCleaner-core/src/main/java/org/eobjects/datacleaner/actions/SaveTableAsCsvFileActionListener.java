@@ -57,14 +57,14 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 	private final Datastore _datastore;
 	private final Table _table;
 	private final WindowContext _windowContext;
-	private final AnalyzerBeansConfiguration _configuration;
+	private final DCModule _parentModule;
 
 	public SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
-			AnalyzerBeansConfiguration configuration) {
+			DCModule parentModule) {
 		_datastore = datastore;
 		_table = table;
 		_windowContext = windowContext;
-		_configuration = configuration;
+		_parentModule = parentModule;
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Injector injector = Guice.createInjector(new DCModule(_configuration, _windowContext, ajb) {
+				Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb) {
 					@Override
 					public String getJobFilename() {
 						return "Save " + _table.getName() + " as CSV file";

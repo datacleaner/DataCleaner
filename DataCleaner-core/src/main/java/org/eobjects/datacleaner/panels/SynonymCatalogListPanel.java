@@ -36,6 +36,7 @@ import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -58,13 +59,15 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
 	private final WindowContext _windowContext;
+	private final DCModule _parentModule;
 
 	public SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext) {
+			WindowContext windowContext, DCModule parentModule) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
 		_windowContext = windowContext;
+		_parentModule = parentModule;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addSynonymCatalogListener(this);
 
@@ -104,8 +107,8 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DatastoreSynonymCatalogDialog(_catalog, _configuration.getDatastoreCatalog(), _windowContext)
-						.setVisible(true);
+				new DatastoreSynonymCatalogDialog(_catalog, _configuration.getDatastoreCatalog(), _windowContext,
+						_parentModule).setVisible(true);
 			}
 		});
 
@@ -162,7 +165,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 					public void actionPerformed(ActionEvent e) {
 						DatastoreSynonymCatalogDialog dialog = new DatastoreSynonymCatalogDialog(
 								(DatastoreSynonymCatalog) synonymCatalog, _catalog, _configuration.getDatastoreCatalog(),
-								_windowContext);
+								_windowContext, _parentModule);
 						dialog.setVisible(true);
 					}
 				});

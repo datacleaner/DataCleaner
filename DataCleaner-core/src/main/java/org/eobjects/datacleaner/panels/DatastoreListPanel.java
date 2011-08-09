@@ -31,6 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -45,10 +47,12 @@ import javax.swing.event.DocumentEvent;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
+import org.eobjects.datacleaner.guice.AdHocModule;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
@@ -76,6 +80,8 @@ import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.google.inject.Injector;
+
 /**
  * Panel to select which datastore to use. Shown in the "source" tab, if no
  * datastore has been selected to begin with.
@@ -89,18 +95,24 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final MutableDatastoreCatalog _datastoreCatalog;
 	private final AnalysisJobBuilderWindow _analysisJobBuilderWindow;
+	private final Provider<OptionsDialog> _optionsDialogProvider;
 	private final List<DatastorePanel> _datastorePanels = new ArrayList<DatastorePanel>();
 	private final DCGlassPane _glassPane;
 	private final JButton _analyzeButton;
 	private final DCPanel _listPanel;
 	private final JXTextField _searchDatastoreTextField;
+	private final Injector _injector;
 
-	public DatastoreListPanel(AnalyzerBeansConfiguration configuration, AnalysisJobBuilderWindow analysisJobBuilderWindow,
-			DCGlassPane glassPane) {
+	@Inject
+	protected DatastoreListPanel(AnalyzerBeansConfiguration configuration,
+			AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
+			Provider<OptionsDialog> optionsDialogProvider, Injector injector) {
 		super();
 		_datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
 		_analysisJobBuilderWindow = analysisJobBuilderWindow;
 		_glassPane = glassPane;
+		_optionsDialogProvider = optionsDialogProvider;
+		_injector = injector;
 
 		_datastoreCatalog.addListener(this);
 
@@ -217,9 +229,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
 		for (int i = 0; i < datastoreNames.length; i++) {
 			final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
-
 			DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
-					_analysisJobBuilderWindow.getWindowContext());
+					_analysisJobBuilderWindow.getWindowContext(), _injector);
 			_datastorePanels.add(datastorePanel);
 			_listPanel.add(datastorePanel);
 		}
@@ -238,9 +249,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				ExcelDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
 				IconUtils.ACCESS_IMAGEPATH, AccessDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("SAS library",
-				"A directory of SAS library files (.sas7bdat).", IconUtils.SAS_IMAGEPATH,
-				SasDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("SAS library", "A directory of SAS library files (.sas7bdat).",
+				IconUtils.SAS_IMAGEPATH, SasDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
 				DbaseDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Fixed width file",
@@ -293,7 +303,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				databaseDriversMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						OptionsDialog dialog = new OptionsDialog(_analysisJobBuilderWindow.getWindowContext());
+						OptionsDialog dialog = _optionsDialogProvider.get();
 						dialog.selectDatabaseDriversTab();
 						dialog.setVisible(true);
 					}
@@ -390,8 +400,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				JdbcDatastoreDialog dialog = new JdbcDatastoreDialog(_datastoreCatalog,
-						_analysisJobBuilderWindow.getWindowContext());
+				Injector injectorWithDatastore = _injector.createChildInjector(new AdHocModule().add(JdbcDatastore.class,
+						null));
+				JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
 				dialog.setSelectedDatabase(databaseName);
 				dialog.setVisible(true);
 			}

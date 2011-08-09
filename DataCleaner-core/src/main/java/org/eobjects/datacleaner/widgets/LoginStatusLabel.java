@@ -23,11 +23,12 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import org.eobjects.datacleaner.actions.LoginChangeListener;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.LoginPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -50,19 +51,21 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 	private static final ImageIcon OFFLINE_ICON = ImageManager.getInstance().getImageIcon(
 			"images/status/trafficlight-red.png");
 
-	private final WindowContext _windowContext;
 	private final UserPreferences _userPreferences;
 	private final DCGlassPane _glassPane;
 	private final LoginPanel _loginPanel;
+	private final Provider<OptionsDialog> _optionsDialogProvider;
 
-	public LoginStatusLabel(DCGlassPane glassPane, WindowContext windowContext) {
+	@Inject
+	protected LoginStatusLabel(DCGlassPane glassPane, UserPreferences userPreferences,
+			Provider<OptionsDialog> optionsDialogProvider) {
 		super();
 		_glassPane = glassPane;
-		_windowContext = windowContext;
+		_userPreferences = userPreferences;
 		_loginPanel = new LoginPanel(_glassPane);
-		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		_userPreferences = UserPreferences.getInstance();
 		_userPreferences.addLoginChangeListener(this);
+		_optionsDialogProvider = optionsDialogProvider;
+		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		final boolean loggedIn = _userPreferences.isLoggedIn();
 		final String username = _userPreferences.getUsername();
 		onLoginStateChanged(loggedIn, username);
@@ -77,7 +80,8 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 
 	private void onMouseClick() {
 		if (_userPreferences.isLoggedIn()) {
-			new OptionsDialog(_windowContext).setVisible(true);
+			OptionsDialog optionsDialog = _optionsDialogProvider.get();
+			optionsDialog.setVisible(true);
 		} else {
 			if (_loginPanel.isVisible()) {
 				_loginPanel.moveOut(0);

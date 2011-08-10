@@ -66,7 +66,6 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 	private static final int WIDTH = 360;
 	private static final int POSITION_Y = 130;
 
-	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final AuthenticationService _authenticationService;
 	private final DCGlassPane _glassPane;
 	private final int _alpha = 220;
@@ -76,15 +75,15 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 	private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 	private final UserPreferences _userPreferences;
 
-	public LoginPanel(DCGlassPane glassPane) {
-		this(new DCAuthenticationService(), glassPane);
+	public LoginPanel(DCGlassPane glassPane, UserPreferences userPreferences) {
+		this(new DCAuthenticationService(), glassPane, userPreferences);
 	}
 
-	public LoginPanel(AuthenticationService authenticationService, DCGlassPane glassPane) {
+	public LoginPanel(AuthenticationService authenticationService, DCGlassPane glassPane, UserPreferences userPreferences) {
 		super();
 		_authenticationService = authenticationService;
 		_glassPane = glassPane;
-		_userPreferences = UserPreferences.getInstance();
+		_userPreferences = userPreferences;
 
 		setOpaque(false);
 		setBorder(new CompoundBorder(new LineBorder(_borderColor, 1), new EmptyBorder(20, 20, 20, 30)));
@@ -176,8 +175,8 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 
 	private void updateContents() {
 		removeAll();
-		if (userPreferences.isLoggedIn()) {
-			final JLabel loggedInLabel = new JLabel("Logged in as: " + userPreferences.getUsername());
+		if (_userPreferences.isLoggedIn()) {
+			final JLabel loggedInLabel = new JLabel("Logged in as: " + _userPreferences.getUsername());
 			loggedInLabel.setForeground(getForeground());
 
 			WidgetUtils.addToGridBag(new JLabel(ImageManager.getInstance().getImageIcon("images/status/valid.png")), this,
@@ -203,7 +202,7 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 					} else {
 						boolean authenticated = _authenticationService.auth(username, password);
 						if (authenticated) {
-							userPreferences.setUsername(username);
+							_userPreferences.setUsername(username);
 							updateContents();
 							moveOut(1000);
 						} else {
@@ -249,7 +248,7 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 			passwordLabel.setForeground(getForeground());
 			WidgetUtils.addToGridBag(passwordLabel, this, 0, y);
 			WidgetUtils.addToGridBag(passwordTextField, this, 1, y);
-			
+
 			y++;
 			WidgetUtils.addToGridBag(Box.createVerticalStrut(10), this, 0, y, 2, 1);
 
@@ -261,10 +260,10 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 			buttonPanel.add(Box.createHorizontalStrut(4));
 			buttonPanel.add(cancelButton);
 			WidgetUtils.addToGridBag(buttonPanel, this, 0, y, 2, 1);
-			
+
 			y++;
 			WidgetUtils.addToGridBag(Box.createVerticalStrut(10), this, 0, y, 2, 1);
-			
+
 			y++;
 			WidgetUtils.addToGridBag(new HumanInferenceToolbarButton(), this, 0, y, 2, 1);
 		}

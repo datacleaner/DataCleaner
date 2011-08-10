@@ -62,7 +62,7 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 		super();
 		_glassPane = glassPane;
 		_userPreferences = userPreferences;
-		_loginPanel = new LoginPanel(_glassPane);
+		_loginPanel = new LoginPanel(_glassPane, userPreferences);
 		_userPreferences.addLoginChangeListener(this);
 		_optionsDialogProvider = optionsDialogProvider;
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);

@@ -102,9 +102,8 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		_addDriverButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				UserPreferences userPreferences = UserPreferences.getInstance();
 				UserDatabaseDriver userDatabaseDriver = new UserDatabaseDriver(getDriverFiles(), getDriverClassName());
-				userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
+				_userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
 
 				try {
 					userDatabaseDriver.loadDriver();

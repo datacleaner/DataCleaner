@@ -29,6 +29,10 @@ import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
+
+import com.google.inject.Injector;
 
 /**
  * Renders/creates the default panels that present component job builders.
@@ -42,6 +46,9 @@ public class ComponentJobBuilderPresenterRenderer implements
 	@Inject
 	WindowContext windowContext;
 
+	@Inject
+	InjectorBuilder injectorBuilder;
+
 	@Override
 	public RendererPrecedence getPrecedence(AbstractBeanJobBuilder<?, ?, ?> renderable) {
 		return RendererPrecedence.LOW;
@@ -49,15 +56,19 @@ public class ComponentJobBuilderPresenterRenderer implements
 
 	@Override
 	public ComponentJobBuilderPresenter render(AbstractBeanJobBuilder<?, ?, ?> renderable) {
+		final Injector injector = injectorBuilder.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, renderable)
+				.createInjector();
+		final PropertyWidgetFactory propertyWidgetFactory = injector.getInstance(PropertyWidgetFactory.class);
+
 		if (renderable instanceof FilterJobBuilder) {
 			FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) renderable;
-			return new FilterJobBuilderPanel(fjb);
+			return new FilterJobBuilderPanel(fjb, propertyWidgetFactory);
 		} else if (renderable instanceof TransformerJobBuilder) {
 			TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
-			return new TransformerJobBuilderPanel(tjb, windowContext);
+			return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory);
 		} else if (renderable instanceof RowProcessingAnalyzerJobBuilder) {
 			RowProcessingAnalyzerJobBuilder<?> ajb = (RowProcessingAnalyzerJobBuilder<?>) renderable;
-			return new RowProcessingAnalyzerJobBuilderPanel(ajb);
+			return new RowProcessingAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);
 		}
 		throw new UnsupportedOperationException();
 	}

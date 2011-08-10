@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import javax.inject.Inject;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
@@ -29,7 +30,8 @@ public class DummyPropertyWidget implements PropertyWidget<Object> {
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
 	private Object _value;
 
-	public DummyPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+	@Inject
+	protected DummyPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
 		_propertyDescriptor = propertyDescriptor;
 	}
 

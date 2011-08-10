@@ -54,13 +54,15 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final BeanDescriptor<?> _descriptor;
 
-	public AbstractJobBuilderPanel(String backgroundImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+	protected AbstractJobBuilderPanel(String backgroundImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			PropertyWidgetFactory propertyWidgetFactory) {
 		super(ImageManager.getInstance().getImage(backgroundImagePath), 95, 95, WidgetUtils.BG_COLOR_BRIGHT,
 				WidgetUtils.BG_COLOR_BRIGHTEST);
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_beanJobBuilder = beanJobBuilder;
 		_descriptor = beanJobBuilder.getDescriptor();
-		_propertyWidgetFactory = new PropertyWidgetFactory(beanJobBuilder);
+		_propertyWidgetFactory = propertyWidgetFactory;
+
 		setLayout(new BorderLayout());
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}

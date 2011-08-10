@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
 
@@ -43,10 +44,13 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 	private static final long serialVersionUID = 1L;
 
 	private final FilenameTextField _filenameField;
+	private final UserPreferences _userPreferences;
 
+	@Inject
 	public SingleFilePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, UserPreferences userPreferences) {
 		super(beanJobBuilder, propertyDescriptor);
+		_userPreferences = userPreferences;
 
 		boolean openFileDialog = true;
 		String[] extensions = null;
@@ -58,7 +62,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 			extensions = fileProperty.extension();
 		}
 
-		_filenameField = new FilenameTextField(UserPreferences.getInstance().getConfiguredFileDirectory(), openFileDialog);
+		_filenameField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(), openFileDialog);
 
 		if (extensions != null && extensions.length > 0) {
 			List<FileFilter> filters = new ArrayList<FileFilter>(extensions.length);
@@ -95,7 +99,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 			@Override
 			public void onSelected(FilenameTextField filenameTextField, File file) {
 				File dir = file.getParentFile();
-				UserPreferences.getInstance().setConfiguredFileDirectory(dir);
+				_userPreferences.setConfiguredFileDirectory(dir);
 				fireValueChanged();
 			}
 		});

@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
@@ -90,6 +91,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	private volatile JCheckBox[] _checkBoxes;
 	private volatile boolean _firstUpdate;
 
+	@Inject
 	public MultipleInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
@@ -120,14 +122,17 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	private void updateComponents() {
+		InputColumn<?>[] currentValue = (InputColumn<?>[]) getBeanJobBuilder()
+				.getConfiguredProperty(getPropertyDescriptor());
+		updateComponents(currentValue);
+	}
+
+	private void updateComponents(InputColumn<?>[] value) {
 		removeAll();
 		_inputColumns.clear();
 
-		InputColumn<?>[] currentValue = (InputColumn<?>[]) getBeanJobBuilder()
-				.getConfiguredProperty(getPropertyDescriptor());
-
-		if (currentValue != null) {
-			for (InputColumn<?> inputColumn : currentValue) {
+		if (value != null) {
+			for (InputColumn<?> inputColumn : value) {
 				if (!_inputColumns.contains(inputColumn)) {
 					_inputColumns.add(inputColumn);
 				}
@@ -176,7 +181,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			_checkBoxes = new JCheckBox[_inputColumns.size()];
 			int i = 0;
 			for (InputColumn<?> inputColumn : _inputColumns) {
-				JCheckBox checkBox = new JCheckBox(inputColumn.getName(), isEnabled(inputColumn, currentValue));
+				JCheckBox checkBox = new JCheckBox(inputColumn.getName(), isEnabled(inputColumn, value));
 				checkBox.setOpaque(false);
 				checkBox.addActionListener(checkBoxActionListener);
 				_checkBoxes[i] = checkBox;
@@ -291,7 +296,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	@Override
 	protected void setValue(InputColumn<?>[] value) {
-		updateComponents();
+		updateComponents(value);
 		updateUI();
 	}
 }

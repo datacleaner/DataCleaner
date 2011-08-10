@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -45,10 +46,13 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalysisJobBuilderWindow _window;
+	private final UserPreferences _userPreferences;
 
-	public SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder) {
+	@Inject
+	protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
 		_window = window;
 		_analysisJobBuilder = analysisJobBuilder;
+		_userPreferences = userPreferences;
 	}
 
 	@Override
@@ -66,9 +70,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 			return;
 		}
 
-		UserPreferences userPreferences = UserPreferences.getInstance();
-
-		DCFileChooser fileChooser = new DCFileChooser(userPreferences.getAnalysisJobDirectory());
+		DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
 
 		int result = fileChooser.showSaveDialog(_window.toComponent());
@@ -87,9 +89,9 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 				}
 			}
 
-			userPreferences.setAnalysisJobDirectory(file.getParentFile());
+			_userPreferences.setAnalysisJobDirectory(file.getParentFile());
 
-			String author = userPreferences.getUsername();
+			String author = _userPreferences.getUsername();
 			String jobName = null;
 			String jobDescription = "Created with DataCleaner " + Main.VERSION;
 			String jobVersion = null;
@@ -115,7 +117,7 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 				}
 			}
 
-			userPreferences.addRecentJobFile(file);
+			_userPreferences.addRecentJobFile(file);
 
 			_window.setJobFilename(file.getName());
 		}

@@ -117,9 +117,9 @@ public final class Bootstrap {
 			return;
 		} else {
 			// run in GUI mode
-			
+
 			final Injector injector = Guice.createInjector(new DCModule(configuration));
-			
+
 			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
 			if (_options.isSingleDatastoreMode()) {
@@ -173,12 +173,15 @@ public final class Bootstrap {
 		final ExtensionSwapClient extensionSwapClient;
 		if (StringUtils.isNullOrEmpty(websiteHostname)) {
 			logger.info("Using default ExtensionSwap website hostname");
-			extensionSwapClient = new ExtensionSwapClient(windowContext);
+			extensionSwapClient = new ExtensionSwapClient(windowContext, userPreferences);
 		} else {
 			logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-			extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext);
+			extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext, userPreferences);
 		}
-		final Closeable closeableConnection = ExtensionSwapInstallationHttpContainer.initialize(extensionSwapClient);
+		ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(extensionSwapClient,
+				userPreferences);
+
+		final Closeable closeableConnection = container.initialize();
 		if (closeableConnection != null) {
 			windowContext.addExitActionListener(new ExitActionListener() {
 				@Override

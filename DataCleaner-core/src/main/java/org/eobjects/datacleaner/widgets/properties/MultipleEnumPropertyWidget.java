@@ -19,145 +19,32 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.inject.Inject;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.datacleaner.panels.DCPanel;
-import org.jdesktop.swingx.HorizontalLayout;
-import org.jdesktop.swingx.VerticalLayout;
 
-public class MultipleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>[]> {
+public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Enum<?>> {
 
-	private final ActionListener CHANGE_LISTENER = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			fireValueChanged();
-		}
-	};
-
-	private final ActionListener selectAllActionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			for (JCheckBox cb : _checkBoxes) {
-				if (cb.isEnabled()) {
-					cb.setSelected(true);
-				}
-			}
-			fireValueChanged();
-		}
-	};
-
-	private final ActionListener selectNoneActionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			for (JCheckBox cb : _checkBoxes) {
-				cb.setSelected(false);
-			}
-			fireValueChanged();
-		}
-	};
+	@Inject
+	@SuppressWarnings("unchecked")
+	public MultipleEnumPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			ConfiguredPropertyDescriptor propertyDescriptor) {
+		super(beanJobBuilder, propertyDescriptor, (Class<Enum<?>>) propertyDescriptor.getBaseType());
+	}
 
 	private static final long serialVersionUID = 1L;
 
-	private volatile JCheckBox[] _checkBoxes;
-	private final Enum<?>[] _availableEnums;
-
-	public MultipleEnumPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(beanJobBuilder, propertyDescriptor);
-		_availableEnums = (Enum<?>[]) getPropertyDescriptor().getBaseType().getEnumConstants();
-		setLayout(new VerticalLayout(2));
-		updateComponents();
-	}
-
-	private void updateComponents() {
-		removeAll();
-
-		Enum<?>[] currentValue = (Enum<?>[]) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
-
-		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new HorizontalLayout(2));
-
-		JButton selectAllButton = new JButton("Select all");
-		selectAllButton.addActionListener(selectAllActionListener);
-		buttonPanel.add(selectAllButton);
-
-		JButton selectNoneButton = new JButton("Select none");
-		selectNoneButton.addActionListener(selectNoneActionListener);
-		buttonPanel.add(selectNoneButton);
-
-		add(buttonPanel);
-
-		_checkBoxes = new JCheckBox[_availableEnums.length];
-		if (_checkBoxes.length == 0) {
-			_checkBoxes = new JCheckBox[1];
-			_checkBoxes[0] = new JCheckBox("- no values available -");
-			_checkBoxes[0].setOpaque(false);
-			_checkBoxes[0].setEnabled(false);
-			add(_checkBoxes[0]);
-		} else {
-			int i = 0;
-			for (Enum<?> e : _availableEnums) {
-				JCheckBox checkBox = new JCheckBox(e.name(), isEnabled(e, currentValue));
-				checkBox.setOpaque(false);
-				checkBox.addActionListener(CHANGE_LISTENER);
-				_checkBoxes[i] = checkBox;
-				add(checkBox);
-				i++;
-			}
-		}
-		fireValueChanged();
-	}
-
-	private boolean isEnabled(Enum<?> e, Enum<?>[] currentValue) {
-		if (currentValue == null || currentValue.length == 0) {
-			return false;
-		}
-		for (Enum<?> cur : currentValue) {
-			if (e.equals(cur)) {
-				return true;
-			}
-		}
-		return false;
+	@Override
+	protected Enum<?>[] getAvailableValues() {
+		@SuppressWarnings("unchecked")
+		Class<? extends Enum<?>> baseType = (Class<? extends Enum<?>>) getPropertyDescriptor().getBaseType();
+		return baseType.getEnumConstants();
 	}
 
 	@Override
-	public boolean isSet() {
-		for (JCheckBox checkBox : _checkBoxes) {
-			if (checkBox.isSelected()) {
-				return true;
-			}
-		}
-		return false;
+	protected String getName(Enum<?> item) {
+		return item.toString();
 	}
 
-	@Override
-	public Enum<?>[] getValue() {
-		List<Enum<?>> result = new ArrayList<Enum<?>>();
-		for (int i = 0; i < _checkBoxes.length; i++) {
-			if (_checkBoxes[i].isSelected()) {
-				result.add(_availableEnums[i]);
-			}
-		}
-
-		// create an array of the specific type defined by the property
-		Object array = Array.newInstance(getPropertyDescriptor().getBaseType(), result.size());
-		for (int i = 0; i < result.size(); i++) {
-			Array.set(array, i, result.get(i));
-		}
-		return (Enum<?>[]) array;
-	}
-
-	@Override
-	protected void setValue(Enum<?>[] value) {
-		updateComponents();
-	}
 }

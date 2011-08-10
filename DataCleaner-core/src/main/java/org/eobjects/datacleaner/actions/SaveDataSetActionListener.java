@@ -46,10 +46,12 @@ public class SaveDataSetActionListener implements ActionListener {
 
 	private final List<InputColumn<?>> _inputColumns;
 	private final InputRow[] _rows;
+	private final UserPreferences _userPreferences;
 
-	public SaveDataSetActionListener(List<InputColumn<?>> inputColumns, InputRow[] rows) {
+	public SaveDataSetActionListener(List<InputColumn<?>> inputColumns, InputRow[] rows, UserPreferences userPreferences) {
 		_inputColumns = inputColumns;
 		_rows = rows;
+		_userPreferences = userPreferences;
 	}
 
 	private void performWrite(OutputWriter writer) {
@@ -79,7 +81,7 @@ public class SaveDataSetActionListener implements ActionListener {
 		saveAsCsvItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DCFileChooser fileChooser = new DCFileChooser(UserPreferences.getInstance().getAnalysisJobDirectory());
+				DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 				fileChooser.addChoosableFileFilter(FileFilters.CSV);
 				if (fileChooser.showSaveDialog((Component) event.getSource()) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
@@ -91,7 +93,7 @@ public class SaveDataSetActionListener implements ActionListener {
 					performWrite(writer);
 
 					File dir = selectedFile.getParentFile();
-					UserPreferences.getInstance().setAnalysisJobDirectory(dir);
+					_userPreferences.setAnalysisJobDirectory(dir);
 
 					UsageLogger.getInstance().log("Save DataSet as CSV file");
 				}

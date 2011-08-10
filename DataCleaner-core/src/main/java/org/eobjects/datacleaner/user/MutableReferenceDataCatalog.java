@@ -53,12 +53,13 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<StringPatternChangeListener>();
 	private final ReferenceDataCatalog _immutableDelegate;
 
-	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, DatastoreCatalog datastoreCatalog) {
+	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, DatastoreCatalog datastoreCatalog,
+			UserPreferences userPreferences) {
 		_immutableDelegate = immutableDelegate;
 		_datastoreCatalog = datastoreCatalog;
-		_dictionaries = UserPreferences.getInstance().getUserDictionaries();
-		_synonymCatalogs = UserPreferences.getInstance().getUserSynonymCatalogs();
-		_stringPatterns = UserPreferences.getInstance().getUserStringPatterns();
+		_dictionaries = userPreferences.getUserDictionaries();
+		_synonymCatalogs = userPreferences.getUserSynonymCatalogs();
+		_stringPatterns = userPreferences.getUserStringPatterns();
 
 		String[] names = _immutableDelegate.getDictionaryNames();
 		for (String name : names) {

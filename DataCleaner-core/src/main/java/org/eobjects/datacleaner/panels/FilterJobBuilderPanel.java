@@ -53,9 +53,10 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 	private final ChangeRequirementButton _requirementButton;
 	private final FilterBeanDescriptor<?, ?> _descriptor;
 
-	public FilterJobBuilderPanel(FilterJobBuilder<?, ?> filterJobBuilder) {
+	public FilterJobBuilderPanel(FilterJobBuilder<?, ?> filterJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
 		_filterJobBuilder = filterJobBuilder;
-		_propertyWidgetFactory = new PropertyWidgetFactory(filterJobBuilder);
+		_propertyWidgetFactory = propertyWidgetFactory;
+
 		_requirementButton = new ChangeRequirementButton(filterJobBuilder);
 		_descriptor = _filterJobBuilder.getDescriptor();
 

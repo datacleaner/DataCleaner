@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter {
 
@@ -51,8 +52,9 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private final JButton _writeOutputButton;
 	private final WindowContext _windowContext;
 
-	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext) {
-		super("images/window/transformer-tab-background.png", transformerJobBuilder);
+	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+			PropertyWidgetFactory propertyWidgetFactory) {
+		super("images/window/transformer-tab-background.png", transformerJobBuilder, propertyWidgetFactory);
 		_transformerJobBuilder = transformerJobBuilder;
 		_windowContext = windowContext;
 

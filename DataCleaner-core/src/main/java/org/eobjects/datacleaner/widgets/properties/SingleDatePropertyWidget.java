@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.jdesktop.swingx.JXDatePicker;
@@ -33,6 +35,7 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
 	private final JXDatePicker _datePicker;
 
+	@Inject
 	public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

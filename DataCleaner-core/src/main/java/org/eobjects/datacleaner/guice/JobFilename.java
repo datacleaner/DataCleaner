@@ -24,6 +24,11 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Qualifier;
 
+/**
+ * Qualifier annotation used for specifying job filename in various contexts.
+ * 
+ * @author Kasper Sørensen
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
 public @interface JobFilename {

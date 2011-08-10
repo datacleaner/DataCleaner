@@ -56,13 +56,15 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 	private static final Logger logger = LoggerFactory.getLogger(ExtensionSwapInstallationHttpContainer.class);
 
 	private final ExtensionSwapClient _client;
+	private final UserPreferences _userPreferences;
 
-	public ExtensionSwapInstallationHttpContainer(WindowContext windowContext) {
-		this(new ExtensionSwapClient(windowContext));
+	public ExtensionSwapInstallationHttpContainer(WindowContext windowContext, UserPreferences userPreferences) {
+		this(new ExtensionSwapClient(windowContext, userPreferences), userPreferences);
 	}
 
-	public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient) {
+	public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient, UserPreferences userPreferences) {
 		_client = extensionSwapClient;
+		_userPreferences = userPreferences;
 	}
 
 	@Override
@@ -79,8 +81,8 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 			}
 
 			final String username;
-			if (UserPreferences.getInstance().isLoggedIn()) {
-				username = UserPreferences.getInstance().getUsername();
+			if (_userPreferences.isLoggedIn()) {
+				username = _userPreferences.getUsername();
 			} else {
 				username = req.getParameter("username");
 			}
@@ -145,10 +147,9 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 	 * @return a closable that can be invoked in case the service is to be shut
 	 *         down
 	 */
-	public static Closeable initialize(ExtensionSwapClient client) {
+	public Closeable initialize() {
 		try {
-			ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(client);
-			Connection connection = new SocketConnection(container);
+			Connection connection = new SocketConnection(this);
 			SocketAddress address = new InetSocketAddress(PORT_NUMBER);
 			connection.connect(address);
 			logger.info("HTTP service for ExtensionSwap installation running on port {}", PORT_NUMBER);

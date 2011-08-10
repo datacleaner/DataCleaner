@@ -43,19 +43,22 @@ public final class ExtensionSwapClient {
 	private final HttpClient _httpClient;
 	private final WindowContext _windowContext;
 	private final String _baseUrl;
+	private final UserPreferences _userPreferences;
 
-	public ExtensionSwapClient(WindowContext windowContext) {
-		this(DEFAULT_WEBSITE_HOSTNAME, windowContext);
+	public ExtensionSwapClient(WindowContext windowContext, UserPreferences userPreferences) {
+		this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences);
 	}
 
-	public ExtensionSwapClient(String websiteHostname, WindowContext windowContext) {
-		this(HttpXmlUtils.getHttpClient(), websiteHostname, windowContext);
+	public ExtensionSwapClient(String websiteHostname, WindowContext windowContext, UserPreferences userPreferences) {
+		this(HttpXmlUtils.getHttpClient(), websiteHostname, windowContext, userPreferences);
 	}
 
-	public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowContext windowContext) {
+	public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowContext windowContext,
+			UserPreferences userPreferences) {
 		_httpClient = httpClient;
 		_windowContext = windowContext;
 		_baseUrl = "http://" + websiteHostname + "/ws/extension/";
+		_userPreferences = userPreferences;
 	}
 
 	public ExtensionPackage registerExtensionPackage(ExtensionSwapPackage extensionSwapPackage, File jarFile) {
@@ -66,7 +69,7 @@ public final class ExtensionSwapClient {
 		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_VERSION_PROPERTY,
 				Integer.toString(extensionSwapPackage.getVersion()));
 		extensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
-		UserPreferences.getInstance().getExtensionPackages().add(extensionPackage);
+		_userPreferences.getExtensionPackages().add(extensionPackage);
 		return extensionPackage;
 	}
 
@@ -99,7 +102,7 @@ public final class ExtensionSwapClient {
 	}
 
 	public boolean isInstalled(ExtensionSwapPackage extensionSwapPackage) {
-		List<ExtensionPackage> extensionPackages = UserPreferences.getInstance().getExtensionPackages();
+		List<ExtensionPackage> extensionPackages = _userPreferences.getExtensionPackages();
 		for (ExtensionPackage extensionPackage : extensionPackages) {
 			String id = extensionPackage.getAdditionalProperties().get(EXTENSIONSWAP_ID_PROPERTY);
 			if (extensionSwapPackage.getId().equals(id)) {

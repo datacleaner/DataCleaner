@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -44,6 +45,7 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 	private static final long serialVersionUID = 1L;
 	private final DCPanel _textFieldPanel;
 
+	@Inject
 	public MultipleCharPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

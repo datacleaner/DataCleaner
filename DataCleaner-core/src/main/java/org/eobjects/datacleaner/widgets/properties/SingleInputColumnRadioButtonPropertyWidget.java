@@ -23,6 +23,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.BoxLayout;
 import javax.swing.JRadioButton;
 
@@ -56,6 +57,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 	private volatile List<InputColumn<?>> _inputColumns;
 	private final InputColumnPropertyWidgetAccessoryHandler _accessoryHandler;
 
+	@Inject
 	public SingleInputColumnRadioButtonPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
@@ -77,10 +79,14 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
 		updateComponents();
 		add(_radioGroup);
-
 	}
 
 	private void updateComponents() {
+		InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		updateComponents(currentValue);
+	}
+
+	private void updateComponents(InputColumn<?> value) {
 		_inputColumns = _analysisJobBuilder.getAvailableInputColumns(_dataTypeFamily);
 
 		if (_beanJobBuilder instanceof TransformerJobBuilder) {
@@ -91,10 +97,9 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 			_inputColumns.removeAll(outputColumns);
 		}
 
-		InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
-		if (currentValue != null) {
-			if (!_inputColumns.contains(currentValue)) {
-				_inputColumns.add(currentValue);
+		if (value != null) {
+			if (!_inputColumns.contains(value)) {
+				_inputColumns.add(value);
 			}
 		}
 
@@ -114,7 +119,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 				InputColumn<?> inputColumn = _inputColumns.get(i);
 				JRadioButton radioButton = new JRadioButton(inputColumn.getName());
 				radioButton.setOpaque(false);
-				if (currentValue == inputColumn) {
+				if (value == inputColumn) {
 					radioButton.setSelected(true);
 				}
 				_radioButtons[i] = radioButton;
@@ -123,7 +128,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 			if (!_propertyDescriptor.isRequired()) {
 				JRadioButton radioButton = new JRadioButton("(none)");
 				radioButton.setOpaque(false);
-				if (currentValue == null) {
+				if (value == null) {
 					radioButton.setSelected(true);
 				}
 				_radioButtons[_radioButtons.length - 1] = radioButton;
@@ -222,7 +227,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
 	@Override
 	protected void setValue(InputColumn<?> value) {
-		updateComponents();
+		updateComponents(value);
 		updateUI();
 	}
 }

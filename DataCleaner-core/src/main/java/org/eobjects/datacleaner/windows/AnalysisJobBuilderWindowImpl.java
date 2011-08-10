@@ -158,6 +158,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private final JButton _runButton;
 	private final Provider<DCWindowMenuBar> _windowMenuBarProvider;
 	private final Provider<RunAnalysisActionListener> _runAnalysisActionProvider;
+	private final Provider<SaveAnalysisJobActionListener> _saveAnalysisJobActionListenerProvider;
 	private final DCGlassPane _glassPane;
 	private final Ref<DatastoreListPanel> _datastoreListPanelRef;
 	private final UserPreferences _userPreferences;
@@ -176,12 +177,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			SourceColumnsPanel sourceColumnsPanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,
 			MetadataPanel metadataPanel, AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder,
 			UserPreferences userPreferences, @Nullable @JobFilename String jobFilename,
-			 Provider<DCWindowMenuBar> windowMenuBarProvider) {
+			Provider<DCWindowMenuBar> windowMenuBarProvider,
+			Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider) {
 		super(windowContext);
 		_jobFilename = jobFilename;
 		_configuration = configuration;
 		_windowMenuBarProvider = windowMenuBarProvider;
 		_runAnalysisActionProvider = runAnalysisActionProvider;
+		_saveAnalysisJobActionListenerProvider = saveAnalysisJobActionListenerProvider;
 		_userPreferences = userPreferences;
 
 		if (analysisJobBuilder == null) {
@@ -193,7 +196,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 				_datastore = dcp.getDatastore();
 			}
 		}
-		
+
 		_datastoreSelectionEnabled = true;
 		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
 				rendererInitializerProvider.get());
@@ -382,9 +385,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 				logger.debug("Job not correctly configured", ex);
 				final String errorMessage;
 				if (ex instanceof UnconfiguredConfiguredPropertyException) {
-					ConfiguredPropertyDescriptor configuredProperty = ((UnconfiguredConfiguredPropertyException) ex)
+					UnconfiguredConfiguredPropertyException unconfiguredConfiguredPropertyException = (UnconfiguredConfiguredPropertyException) ex;
+					ConfiguredPropertyDescriptor configuredProperty = unconfiguredConfiguredPropertyException
 							.getConfiguredProperty();
-					AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ((UnconfiguredConfiguredPropertyException) ex)
+					AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = unconfiguredConfiguredPropertyException
 							.getBeanJobBuilder();
 					errorMessage = "Property '" + configuredProperty.getName() + "' in "
 							+ LabelUtils.getLabel(beanJobBuilder) + " is not set!";
@@ -521,7 +525,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
 		_tabbedPane.addSeparator();
 
-		_saveButton.addActionListener(new SaveAnalysisJobActionListener(this, _analysisJobBuilder));
+		_saveButton.addActionListener(_saveAnalysisJobActionListenerProvider.get());
 
 		_visualizeButton.setToolTipText("Visualize execution flow");
 		_visualizeButton.addActionListener(new ActionListener() {

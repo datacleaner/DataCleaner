@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -57,11 +58,14 @@ public class ExtensionPackagesPanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private final UserPreferences userPreferences = UserPreferences.getInstance();
+	private final UserPreferences _userPreferences;
 	private final ImageManager imageManager = ImageManager.getInstance();
 
-	public ExtensionPackagesPanel() {
+	@Inject
+	protected ExtensionPackagesPanel(UserPreferences userPreferences) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		_userPreferences = userPreferences;
+
 		setLayout(new BorderLayout());
 
 		updateComponents();
@@ -70,7 +74,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 	private void updateComponents() {
 		removeAll();
 
-		final List<ExtensionPackage> extensionPackages = UserPreferences.getInstance().getExtensionPackages();
+		final List<ExtensionPackage> extensionPackages = _userPreferences.getExtensionPackages();
 
 		final JButton addExtensionButton = new JButton("Add extension package",
 				imageManager.getImageIcon("images/actions/add.png"));
@@ -86,7 +90,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 				manualInstallMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						final DCFileChooser fileChooser = new DCFileChooser(userPreferences.getConfiguredFileDirectory());
+						final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getConfiguredFileDirectory());
 						fileChooser.setMultiSelectionEnabled(true);
 						fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
 						int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);

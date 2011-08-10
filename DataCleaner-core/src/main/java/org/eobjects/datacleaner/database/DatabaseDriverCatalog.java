@@ -24,11 +24,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eobjects.datacleaner.user.UserDatabaseDriver;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.Predicate;
 
+/**
+ * A catalog of metadata about database drivers and their current installation
+ * status.
+ * 
+ * @author Kasper Sørensen
+ */
+@Singleton
 public class DatabaseDriverCatalog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -51,9 +61,10 @@ public class DatabaseDriverCatalog implements Serializable {
 	public static final String DATABASE_NAME_DB2 = "DB2";
 	public static final String DATABASE_NAME_MYSQL = "MySQL";
 
-	private final List<DatabaseDriverDescriptor> _databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
+	private static final List<DatabaseDriverDescriptor> _databaseDrivers;
 
-	public DatabaseDriverCatalog() {
+	static {
+		_databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
 		add(DATABASE_NAME_MYSQL, "images/datastore-types/databases/mysql.png", "com.mysql.jdbc.Driver",
 				"http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.13/mysql-connector-java-5.1.13.jar",
 				"jdbc:mysql://<hostname>:3306/<database>");
@@ -112,6 +123,13 @@ public class DatabaseDriverCatalog implements Serializable {
 		Collections.sort(_databaseDrivers);
 	}
 
+	private final UserPreferences _userPreferences;
+
+	@Inject
+	protected DatabaseDriverCatalog(UserPreferences userPreferences) {
+		_userPreferences = userPreferences;
+	}
+
 	public List<DatabaseDriverDescriptor> getDatabaseDrivers() {
 		return _databaseDrivers;
 	}
@@ -129,13 +147,13 @@ public class DatabaseDriverCatalog implements Serializable {
 		});
 	}
 
-	private void add(String databaseName, String iconImagePath, String driverClassName, String[] downloadUrls,
+	private static void add(String databaseName, String iconImagePath, String driverClassName, String[] downloadUrls,
 			String[] urlTemplates) {
 		_databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, downloadUrls,
 				urlTemplates));
 	}
 
-	private void add(String databaseName, String iconImagePath, String driverClassName, String downloadUrl,
+	private static void add(String databaseName, String iconImagePath, String driverClassName, String downloadUrl,
 			String... urlTemplates) {
 		String[] urls;
 		if (downloadUrl == null) {
@@ -148,7 +166,7 @@ public class DatabaseDriverCatalog implements Serializable {
 
 	public DatabaseDriverState getState(DatabaseDriverDescriptor databaseDescriptor) {
 		String driverClassName = databaseDescriptor.getDriverClassName();
-		List<UserDatabaseDriver> drivers = UserPreferences.getInstance().getDatabaseDrivers();
+		List<UserDatabaseDriver> drivers = _userPreferences.getDatabaseDrivers();
 		for (UserDatabaseDriver userDatabaseDriver : drivers) {
 			if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
 				return userDatabaseDriver.getState();
@@ -164,7 +182,7 @@ public class DatabaseDriverCatalog implements Serializable {
 		}
 	}
 
-	public String getIconImagePath(DatabaseDriverDescriptor dd) {
+	public static String getIconImagePath(DatabaseDriverDescriptor dd) {
 		String iconImagePath = null;
 		if (dd != null) {
 			iconImagePath = dd.getIconImagePath();
@@ -175,7 +193,7 @@ public class DatabaseDriverCatalog implements Serializable {
 		return iconImagePath;
 	}
 
-	public DatabaseDriverDescriptor getDatabaseDriverByDriverDatabaseName(String databaseName) {
+	public static DatabaseDriverDescriptor getDatabaseDriverByDriverDatabaseName(String databaseName) {
 		if (databaseName == null) {
 			return null;
 		}
@@ -187,7 +205,7 @@ public class DatabaseDriverCatalog implements Serializable {
 		return null;
 	}
 
-	public DatabaseDriverDescriptor getDatabaseDriverByDriverClassName(String driverClass) {
+	public static DatabaseDriverDescriptor getDatabaseDriverByDriverClassName(String driverClass) {
 		if (driverClass == null) {
 			return null;
 		}

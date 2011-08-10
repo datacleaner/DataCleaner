@@ -67,7 +67,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final JdbcDatastore _originalDatastore;
-	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
+	private final DatabaseDriverCatalog _databaseDriverCatalog;
 	private final MutableDatastoreCatalog _catalog;
 	private final JXTextField _datastoreNameTextField;
 	private final JXTextField _driverClassNameTextField;
@@ -79,11 +79,13 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 	@Inject
 	protected JdbcDatastoreDialog(@Nullable JdbcDatastore datastore, MutableDatastoreCatalog catalog,
-			WindowContext windowContext, Provider<OptionsDialog> optionsDialogProvider) {
+			WindowContext windowContext, Provider<OptionsDialog> optionsDialogProvider,
+			DatabaseDriverCatalog databaseDriverCatalog) {
 		super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = datastore;
 		_catalog = catalog;
 		_optionsDialogProvider = optionsDialogProvider;
+		_databaseDriverCatalog = databaseDriverCatalog;
 
 		_datastoreNameTextField = WidgetFactory.createTextField("Name");
 		_driverClassNameTextField = WidgetFactory.createTextField("Driver class name");
@@ -113,7 +115,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 				if (value instanceof DatabaseDriverDescriptor) {
 					DatabaseDriverDescriptor databaseDriver = (DatabaseDriverDescriptor) value;
 
-					String iconImagePath = _databaseDriverCatalog.getIconImagePath(databaseDriver);
+					String iconImagePath = DatabaseDriverCatalog.getIconImagePath(databaseDriver);
 					Icon driverIcon = imageManager.getImageIcon(iconImagePath, IconUtils.ICON_SIZE_SMALL);
 
 					result.setText(databaseDriver.getDisplayName());
@@ -155,7 +157,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		if (_originalDatastore != null) {
 			// the database driver has to be set as the first thing, because the
 			// combobox's action listener will set other field's values as well.
-			DatabaseDriverDescriptor databaseDriver = _databaseDriverCatalog
+			DatabaseDriverDescriptor databaseDriver = DatabaseDriverCatalog
 					.getDatabaseDriverByDriverClassName(_originalDatastore.getDriverClass());
 			_databaseDriverComboBox.setSelectedItem(databaseDriver);
 
@@ -169,7 +171,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	}
 
 	public void setSelectedDatabase(String databaseName) {
-		DatabaseDriverDescriptor databaseDriverDescriptor = _databaseDriverCatalog
+		DatabaseDriverDescriptor databaseDriverDescriptor = DatabaseDriverCatalog
 				.getDatabaseDriverByDriverDatabaseName(databaseName);
 		setSelectedDatabase(databaseDriverDescriptor);
 	}

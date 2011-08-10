@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.table.TableModel;
@@ -34,6 +35,7 @@ import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.actions.SaveDataSetActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.table.ColumnHighlighter;
 import org.eobjects.datacleaner.widgets.table.DCTable;
@@ -45,6 +47,9 @@ import org.jdesktop.swingx.decorator.Highlighter;
 public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<AnnotatedRowsResult, DCPanel> {
 
 	private static final String[] VIEWS = new String[] { "View detailed rows", "View distinct values" };
+
+	@Inject
+	UserPreferences userPreferences;
 
 	@Override
 	public DCPanel render(final AnnotatedRowsResult result) {
@@ -81,7 +86,8 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
 		final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
 				"images/actions/save.png"));
-		saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(), result.getRows()));
+		saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(), result.getRows(),
+				userPreferences));
 		buttonPanel.add(saveToFileButton);
 
 		panel.add(buttonPanel);

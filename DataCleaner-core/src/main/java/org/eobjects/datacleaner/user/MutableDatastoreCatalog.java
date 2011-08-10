@@ -44,9 +44,9 @@ public class MutableDatastoreCatalog implements DatastoreCatalog, Serializable {
 	private final List<Datastore> _datastores;
 	private final List<DatastoreChangeListener> _listeners = new LinkedList<DatastoreChangeListener>();
 
-	public MutableDatastoreCatalog(final DatastoreCatalog immutableDelegate) {
+	public MutableDatastoreCatalog(final DatastoreCatalog immutableDelegate, UserPreferences userPreferences) {
 		_immutableDelegate = immutableDelegate;
-		_datastores = UserPreferences.getInstance().getUserDatastores();
+		_datastores = userPreferences.getUserDatastores();
 		String[] datastoreNames = immutableDelegate.getDatastoreNames();
 		for (String name : datastoreNames) {
 			if (containsDatastore(name)) {

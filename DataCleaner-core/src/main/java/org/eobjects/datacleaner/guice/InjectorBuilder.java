@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.guice;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,6 +32,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Modules;
 
 /**
@@ -41,7 +42,7 @@ import com.google.inject.util.Modules;
  */
 public final class InjectorBuilder {
 
-	private final List<Class<?>> _inheritedClassBindings;
+	private final List<TypeLiteral<?>> _inheritedTypeLiterals;
 	private final AdHocModule _adHocModule;
 	private final DCModule _parentModule;
 	private final Injector _parentInjector;
@@ -51,7 +52,9 @@ public final class InjectorBuilder {
 		_parentModule = parentModule;
 		_parentInjector = injector;
 		_adHocModule = new AdHocModule();
-		_inheritedClassBindings = Arrays.<Class<?>> asList(AnalysisJobBuilderWindow.class, Datastore.class);
+		_inheritedTypeLiterals = new ArrayList<TypeLiteral<?>>();
+		inherit(AnalysisJobBuilderWindow.class);
+		inherit(Datastore.class);
 	}
 
 	public InjectorBuilder with(Class<?> bindingClass, Object providerOrInstance) {
@@ -59,14 +62,34 @@ public final class InjectorBuilder {
 		return this;
 	}
 
+	public InjectorBuilder with(TypeLiteral<?> bindingTypeLiteral, Object providerOrInstance) {
+		_adHocModule.bind(bindingTypeLiteral, providerOrInstance);
+		return this;
+	}
+
+	public InjectorBuilder inherit(Class<?> bindingClass) {
+		return inherit(Key.get(bindingClass));
+	}
+
+	public InjectorBuilder inherit(Key<?> key) {
+		return inherit(key.getTypeLiteral());
+	}
+
+	public InjectorBuilder inherit(TypeLiteral<?> typeLiteral) {
+		if (!_inheritedTypeLiterals.contains(typeLiteral)) {
+			_inheritedTypeLiterals.add(typeLiteral);
+		}
+		return this;
+	}
+
 	public Injector createInjector() {
-		for (Class<?> inheritedClass : _inheritedClassBindings) {
-			Key<?> key = Key.get(inheritedClass);
+		for (TypeLiteral<?> typeLiteral : _inheritedTypeLiterals) {
+			Key<?> key = Key.get(typeLiteral);
 			Binding<?> binding = _parentInjector.getExistingBinding(key);
 			if (binding != null) {
-				if (!_adHocModule.hasBindingFor(key)) {
+				if (!_adHocModule.hasBindingFor(typeLiteral)) {
 					// Bind entry if not already bound in adhoc module!!!
-					_adHocModule.bind(key, binding.getProvider());
+					_adHocModule.bind(typeLiteral, binding.getProvider());
 				}
 			}
 		}

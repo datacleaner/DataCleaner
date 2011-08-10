@@ -30,6 +30,7 @@ import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements
 		RowProcessingAnalyzerJobBuilderPresenter {
@@ -40,13 +41,14 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	private final ChangeRequirementButton _requirementButton;
 	private final DCPanel _buttonPanel;
 
-	public RowProcessingAnalyzerJobBuilderPanel(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		this(analyzerJobBuilder, true);
+	public RowProcessingAnalyzerJobBuilderPanel(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder,
+			PropertyWidgetFactory propertyWidgetFactory) {
+		this(analyzerJobBuilder, true, propertyWidgetFactory);
 	}
 
 	public RowProcessingAnalyzerJobBuilderPanel(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder,
-			boolean displayRequirementButton) {
-		super("images/window/analyzer-tab-background.png", analyzerJobBuilder);
+			boolean displayRequirementButton, PropertyWidgetFactory propertyWidgetFactory) {
+		super("images/window/analyzer-tab-background.png", analyzerJobBuilder, propertyWidgetFactory);
 		_analyzerJobBuilder = analyzerJobBuilder;
 
 		init();

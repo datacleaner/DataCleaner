@@ -22,40 +22,40 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.inject.Inject;
 import javax.swing.JComboBox;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.StringPattern;
-import org.eobjects.datacleaner.user.DCConfiguration;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
 
 public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> {
 
 	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
-	private final AnalyzerBeansConfiguration _configuration;
 
+	@Inject
 	public SingleStringPatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ReferenceDataCatalog referenceDataCatalog) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_configuration = DCConfiguration.get();
-		String[] stringPatternNames = _configuration.getReferenceDataCatalog().getStringPatternNames();
 
-		if (!propertyDescriptor.isRequired()) {
-			stringPatternNames = CollectionUtils.array(new String[1], stringPatternNames);
-		}
-		_comboBox = new JComboBox(stringPatternNames);
+		_comboBox = new JComboBox();
+		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
 		_comboBox.setEditable(false);
 
-		StringPattern currentValue = (StringPattern) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue == null) {
-			_comboBox.setSelectedItem(null);
-		} else {
-			_comboBox.setSelectedItem(currentValue.getName());
+		if (!propertyDescriptor.isRequired()) {
+			_comboBox.addItem(null);
 		}
+		final String[] stringPatternNames = referenceDataCatalog.getStringPatternNames();
+		for (String name : stringPatternNames) {
+			_comboBox.addItem(referenceDataCatalog.getStringPattern(name));
+		}
+
+		StringPattern currentValue = (StringPattern) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		_comboBox.setSelectedItem(currentValue);
 
 		_comboBox.addActionListener(new ActionListener() {
 			@Override
@@ -68,17 +68,13 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
 
 	@Override
 	public StringPattern getValue() {
-		String name = (String) _comboBox.getSelectedItem();
-		return _configuration.getReferenceDataCatalog().getStringPattern(name);
+		return (StringPattern) _comboBox.getSelectedItem();
 	}
 
 	@Override
 	protected void setValue(StringPattern value) {
-		if (value == null) {
-			_comboBox.setSelectedItem(null);
-			return;
-		}
-
-		_comboBox.setSelectedItem(value.getName());
+		_comboBox.setEditable(true);
+		_comboBox.setSelectedItem(value);
+		_comboBox.setEditable(false);
 	}
 }

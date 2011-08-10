@@ -57,6 +57,20 @@ public final class IconUtils {
 	public static int ICON_SIZE_MEDIUM = 22;
 	public static int ICON_SIZE_SMALL = 16;
 
+	public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
+	public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";
+	public static final String DICTIONARY_TEXTFILE_IMAGEPATH = "images/model/dictionary_textfile.png";
+	public static final String DICTIONARY_DATASTORE_IMAGEPATH = "images/model/dictionary_datastore.png";
+
+	public static final String SYNONYM_CATALOG_IMAGEPATH = "images/model/synonym.png";
+	public static final String SYNONYM_CATALOG_TEXTFILE_IMAGEPATH = "images/model/synonym_textfile.png";
+	public static final String SYNONYM_CATALOG_DATASTORE_IMAGEPATH = "images/model/synonym_datastore.png";
+
+	public static final String STRING_PATTERN_IMAGEPATH = "images/model/stringpattern.png";
+	public static final String STRING_PATTERN_SIMPLE_IMAGEPATH = "images/model/stringpattern_simple.png";
+	public static final String STRING_PATTERN_REGEX_IMAGEPATH = "images/model/stringpattern_regex.png";
+	public static final String STRING_PATTERN_REGEXSWAP_IMAGEPATH = "images/model/stringpattern_regexswap.png";
+
 	public static final String GENERIC_DATASTORE_IMAGEPATH = "images/model/datastore.png";
 	public static final String CSV_IMAGEPATH = "images/datastore-types/csv.png";
 	public static final String XML_IMAGEPATH = "images/datastore-types/xml.png";
@@ -67,13 +81,13 @@ public final class IconUtils {
 	public static final String FIXEDWIDTH_IMAGEPATH = "images/datastore-types/fixedwidth.png";
 	public static final String ODB_IMAGEPATH = "images/datastore-types/odb.png";
 	public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
-	
+
 	public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
 	public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
 	public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
 	public static final String MAX_ROWS_IMAGEPATH = "images/component-types/type_max_rows.png";
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageManager _imageManager = ImageManager.getInstance();
 
 	private IconUtils() {
 		// prevent instantiation
@@ -82,7 +96,7 @@ public final class IconUtils {
 	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor, int newWidth) {
 		final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
 		String imagePath = getDescriptorImagePath(descriptor, classLoader);
-		return imageManager.getImageIcon(imagePath, newWidth, classLoader);
+		return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
 	}
 
 	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor) {
@@ -91,12 +105,12 @@ public final class IconUtils {
 
 	public static Icon getDatastoreIcon(Datastore datastore, int newWidth) {
 		String imagePath = getDatastoreImagePath(datastore);
-		return imageManager.getImageIcon(imagePath, newWidth);
+		return _imageManager.getImageIcon(imagePath, newWidth);
 	}
 
 	public static Icon getDatastoreIcon(Datastore datastore) {
 		String imagePath = getDatastoreImagePath(datastore);
-		return imageManager.getImageIcon(imagePath);
+		return _imageManager.getImageIcon(imagePath);
 	}
 
 	public static Icon getComponentCategoryIcon(ComponentCategory category) {
@@ -111,10 +125,10 @@ public final class IconUtils {
 		if (url == null) {
 			decoration = null;
 		} else {
-			decoration = imageManager.getImage(bundledIconPath, decorationSize, classLoader);
+			decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
 		}
 
-		final Image folderIcon = imageManager.getImage("images/filetypes/folder.png", totalSize);
+		final Image folderIcon = _imageManager.getImage("images/filetypes/folder.png", totalSize);
 
 		if (decoration == null) {
 			return new ImageIcon(folderIcon);
@@ -283,8 +297,7 @@ public final class IconUtils {
 			} else {
 				String driverClass = jdbcDatastore.getDriverClass();
 				if (!StringUtils.isNullOrEmpty(driverClass)) {
-					DatabaseDriverCatalog databaseDriverCatalog = new DatabaseDriverCatalog();
-					DatabaseDriverDescriptor driver = databaseDriverCatalog.getDatabaseDriverByDriverClassName(driverClass);
+					DatabaseDriverDescriptor driver = DatabaseDriverCatalog.getDatabaseDriverByDriverClassName(driverClass);
 					if (driver != null) {
 						imagePath = driver.getIconImagePath();
 					}

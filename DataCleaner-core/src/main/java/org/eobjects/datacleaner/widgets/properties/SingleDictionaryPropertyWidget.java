@@ -22,40 +22,40 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.inject.Inject;
 import javax.swing.JComboBox;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
-import org.eobjects.datacleaner.user.DCConfiguration;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.analyzer.reference.ReferenceDataCatalog;
+import org.eobjects.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
 
 public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dictionary> {
 
 	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
-	private final AnalyzerBeansConfiguration _configuration;
 
+	@Inject
 	public SingleDictionaryPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ReferenceDataCatalog referenceDataCatalog) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_configuration = DCConfiguration.get();
-		String[] dictionaryNames = _configuration.getReferenceDataCatalog().getDictionaryNames();
-
-		if (!propertyDescriptor.isRequired()) {
-			dictionaryNames = CollectionUtils.array(new String[1], dictionaryNames);
-		}
-		_comboBox = new JComboBox(dictionaryNames);
+		_comboBox = new JComboBox();
+		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
 		_comboBox.setEditable(false);
 
-		Dictionary currentValue = (Dictionary) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue == null) {
-			_comboBox.setSelectedItem(null);
-		} else {
-			_comboBox.setSelectedItem(currentValue.getName());
+		if (!propertyDescriptor.isRequired()) {
+			_comboBox.addItem(null);
 		}
+
+		final String[] dictionaryNames = referenceDataCatalog.getDictionaryNames();
+		for (String name : dictionaryNames) {
+			_comboBox.addItem(referenceDataCatalog.getDictionary(name));
+		}
+
+		Dictionary currentValue = (Dictionary) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		_comboBox.setSelectedItem(currentValue);
 
 		_comboBox.addActionListener(new ActionListener() {
 			@Override
@@ -68,17 +68,13 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 
 	@Override
 	public Dictionary getValue() {
-		String dictionaryName = (String) _comboBox.getSelectedItem();
-		return _configuration.getReferenceDataCatalog().getDictionary(dictionaryName);
+		return (Dictionary) _comboBox.getSelectedItem();
 	}
 
 	@Override
 	protected void setValue(Dictionary value) {
-		if (value == null) {
-			_comboBox.setSelectedItem(null);
-			return;
-		}
-
-		_comboBox.setSelectedItem(value.getName());
+		_comboBox.setEditable(true);
+		_comboBox.setSelectedItem(value);
+		_comboBox.setEditable(false);
 	}
 }

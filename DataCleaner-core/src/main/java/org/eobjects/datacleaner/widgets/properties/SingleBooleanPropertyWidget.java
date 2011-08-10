@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
@@ -36,6 +37,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 	private final JCheckBox _checkBox;
 	private final JComboBox _comboBox;
 
+	@Inject
 	public SingleBooleanPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

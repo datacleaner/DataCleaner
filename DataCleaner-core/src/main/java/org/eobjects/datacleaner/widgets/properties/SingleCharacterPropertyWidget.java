@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -37,7 +38,8 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 			fireValueChanged();
 		}
 	};
-
+	
+	@Inject
 	public SingleCharacterPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

@@ -34,12 +34,14 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
@@ -59,14 +61,18 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 	private final Table _table;
 	private final WindowContext _windowContext;
 	private final DCModule _parentModule;
+	private final UserPreferences _userPreferences;
+	private final InjectorBuilder _injectorBuilder;
 
 	@Inject
 	protected SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
-			DCModule parentModule) {
+			DCModule parentModule, UserPreferences userPreferences, InjectorBuilder injectorBuilder) {
 		_datastore = datastore;
 		_table = table;
 		_windowContext = windowContext;
 		_parentModule = parentModule;
+		_userPreferences = userPreferences;
+		_injectorBuilder = injectorBuilder;
 	}
 
 	@Override
@@ -79,11 +85,15 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		final RowProcessingAnalyzerJobBuilder<CsvOutputAnalyzer> csvOutputAnalyzerBuilder = ajb
 				.addRowProcessingAnalyzer(CsvOutputAnalyzer.class);
 		csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
-		File directory = UserPreferences.getInstance().getConfiguredFileDirectory();
+		File directory = _userPreferences.getConfiguredFileDirectory();
 		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
 
+		final Injector injector = _injectorBuilder.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER,
+				csvOutputAnalyzerBuilder).createInjector();
+		final PropertyWidgetFactory propertyWidgetFactory = injector.getInstance(PropertyWidgetFactory.class);
+
 		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
-				csvOutputAnalyzerBuilder, false);
+				csvOutputAnalyzerBuilder, false, propertyWidgetFactory);
 
 		final AbstractDialog dialog = new AbstractDialog(_windowContext) {
 			private static final long serialVersionUID = 1L;

@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import javax.inject.Inject;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 
@@ -37,6 +38,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 	private final boolean _primitive;
 	private final JTextField _textField;
 
+	@Inject
 	public SingleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

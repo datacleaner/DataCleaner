@@ -39,6 +39,7 @@ import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -94,7 +95,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 	private DCPanel createNewSynonymCatalogsPanel() {
 
-		final JButton textFileSynonymCatalogButton = createButton("images/model/synonym_textfile.png",
+		final JButton textFileSynonymCatalogButton = createButton(IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH,
 				"<html><b>Text file synonym catalog</b><br/>Synonyms from a file with master terms and comma-separated synonyms.</html>");
 		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
@@ -105,7 +106,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			}
 		});
 
-		final JButton datastoreSynonymCatalogButton = createButton("images/model/synonym_datastore.png",
+		final JButton datastoreSynonymCatalogButton = createButton(IconUtils.SYNONYM_CATALOG_DATASTORE_IMAGEPATH,
 				"<html><b>Datastore synonym catalog</b><br/>Synonym catalog based on columns in a registered datastore.</html>");
 		datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override

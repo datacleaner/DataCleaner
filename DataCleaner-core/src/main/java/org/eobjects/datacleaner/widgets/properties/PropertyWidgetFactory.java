@@ -25,12 +25,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
+import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
+import org.eobjects.analyzer.descriptors.PropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
+
+import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * Represents a factory and a catalog of widgets used for @Configured
@@ -42,11 +50,22 @@ import org.eobjects.analyzer.util.ReflectionUtils;
  */
 public final class PropertyWidgetFactory {
 
+	/**
+	 * Convenient type literal that can be used with Guice's binding mechanism
+	 * to bind to the {@link AbstractBeanJobBuilder} argument of this class's
+	 * constructor.
+	 */
+	public static final TypeLiteral<AbstractBeanJobBuilder<?, ?, ?>> TYPELITERAL_BEAN_JOB_BUILDER = new TypeLiteral<AbstractBeanJobBuilder<?, ?, ?>>() {
+	};
+
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _widgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
+	private final InjectorBuilder _injectorBuilder;
 
-	public PropertyWidgetFactory(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+	@Inject
+	protected PropertyWidgetFactory(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, InjectorBuilder injectorBuilder) {
 		_beanJobBuilder = beanJobBuilder;
+		_injectorBuilder = injectorBuilder;
 	}
 
 	public Collection<PropertyWidget<?>> getWidgets() {
@@ -61,6 +80,21 @@ public final class PropertyWidgetFactory {
 		return _beanJobBuilder;
 	}
 
+	public Injector getInjectorForPropertyWidgets(ConfiguredPropertyDescriptor propertyDescriptor) {
+		return _injectorBuilder.inherit(TYPELITERAL_BEAN_JOB_BUILDER)
+				.with(ConfiguredPropertyDescriptor.class, propertyDescriptor)
+				.with(PropertyDescriptor.class, propertyDescriptor).createInjector();
+	}
+
+	public PropertyWidget<?> create(String propertyName) {
+		BeanDescriptor<?> descriptor = _beanJobBuilder.getDescriptor();
+		ConfiguredPropertyDescriptor propertyDescriptor = descriptor.getConfiguredProperty(propertyName);
+		if (propertyDescriptor == null) {
+			throw new IllegalArgumentException("No such property: " + propertyName);
+		}
+		return create(propertyDescriptor);
+	}
+
 	/**
 	 * Creates (and registers) a widget that fits the specified configured
 	 * property.
@@ -69,64 +103,66 @@ public final class PropertyWidgetFactory {
 	 * @return
 	 */
 	public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor) {
-		final PropertyWidget<?> result;
 		final Class<?> type = propertyDescriptor.getBaseType();
 
+		final Class<? extends PropertyWidget<?>> widgetClass;
 		if (propertyDescriptor.isArray()) {
 			if (propertyDescriptor.isInputColumn()) {
-				result = new MultipleInputColumnsPropertyWidget(_beanJobBuilder, propertyDescriptor);
+				widgetClass = MultipleInputColumnsPropertyWidget.class;
 			} else if (ReflectionUtils.isString(type)) {
-				result = new MultipleStringPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = MultipleStringPropertyWidget.class;
 			} else if (type == Dictionary.class) {
-				result = new MultipleDictionariesPropertyWidget(_beanJobBuilder, propertyDescriptor);
+				widgetClass = MultipleDictionariesPropertyWidget.class;
 			} else if (type == SynonymCatalog.class) {
-				result = new MultipleSynonymCatalogsPropertyWidget(_beanJobBuilder, propertyDescriptor);
+				widgetClass = MultipleSynonymCatalogsPropertyWidget.class;
 			} else if (type == StringPattern.class) {
-				result = new MultipleStringPatternPropertyWidget(_beanJobBuilder, propertyDescriptor);
+				widgetClass = MultipleStringPatternPropertyWidget.class;
 			} else if (type.isEnum()) {
-				result = new MultipleEnumPropertyWidget(_beanJobBuilder, propertyDescriptor);
+				widgetClass = MultipleEnumPropertyWidget.class;
 			} else if (type == char.class) {
-				result = new MultipleCharPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = MultipleCharPropertyWidget.class;
 			} else {
 				// not yet implemented
-				result = new DummyPropertyWidget(propertyDescriptor);
+				widgetClass = DummyPropertyWidget.class;
 			}
 		} else {
+
 			if (propertyDescriptor.isInputColumn()) {
 				if (propertyDescriptor.isRequired()) {
-					result = new SingleInputColumnRadioButtonPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(),
-							_beanJobBuilder, propertyDescriptor);
+					widgetClass = SingleInputColumnRadioButtonPropertyWidget.class;
 				} else {
-					result = new SingleInputColumnComboBoxPropertyWidget(_beanJobBuilder.getAnalysisJobBuilder(),
-							_beanJobBuilder, propertyDescriptor);
+					widgetClass = SingleInputColumnComboBoxPropertyWidget.class;
 				}
 			} else if (ReflectionUtils.isCharacter(type)) {
-				result = new SingleCharacterPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleCharacterPropertyWidget.class;
 			} else if (ReflectionUtils.isString(type)) {
-				result = new SingleStringPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleStringPropertyWidget.class;
 			} else if (ReflectionUtils.isBoolean(type)) {
-				result = new SingleBooleanPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleBooleanPropertyWidget.class;
 			} else if (ReflectionUtils.isNumber(type)) {
-				result = new SingleNumberPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleNumberPropertyWidget.class;
 			} else if (ReflectionUtils.isDate(type)) {
-				result = new SingleDatePropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleDatePropertyWidget.class;
 			} else if (type == Dictionary.class) {
-				result = new SingleDictionaryPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleDictionaryPropertyWidget.class;
 			} else if (type == SynonymCatalog.class) {
-				result = new SingleSynonymCatalogPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleSynonymCatalogPropertyWidget.class;
 			} else if (type == StringPattern.class) {
-				result = new SingleStringPatternPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleStringPatternPropertyWidget.class;
 			} else if (type.isEnum()) {
-				result = new SingleEnumPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleEnumPropertyWidget.class;
 			} else if (type == File.class) {
-				result = new SingleFilePropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SingleFilePropertyWidget.class;
 			} else if (type == Pattern.class) {
-				result = new SinglePatternPropertyWidget(propertyDescriptor, _beanJobBuilder);
+				widgetClass = SinglePatternPropertyWidget.class;
 			} else {
 				// not yet implemented
-				result = new DummyPropertyWidget(propertyDescriptor);
+				widgetClass = DummyPropertyWidget.class;
 			}
 		}
+
+		final Injector injector = getInjectorForPropertyWidgets(propertyDescriptor);
+		final PropertyWidget<?> result = injector.getInstance(widgetClass);
 
 		registerWidget(propertyDescriptor, result);
 		return result;

@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -49,6 +50,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 	private static final long serialVersionUID = 1L;
 	private final DCPanel _textFieldPanel;
 
+	@Inject
 	public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

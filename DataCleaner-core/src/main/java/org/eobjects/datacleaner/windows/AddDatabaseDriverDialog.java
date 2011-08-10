@@ -71,12 +71,14 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	private final JButton _addDriverButton;
 	private final DCLabel _statusLabel = DCLabel.bright("");
 	private final DatabaseDriversPanel _databaseDriversPanel;
+	private final UserPreferences _userPreferences;
 
 	public AddDatabaseDriverDialog(DatabaseDriverCatalog databaseDriverCatalog, DatabaseDriversPanel databaseDriversPanel,
-			WindowContext windowContext) {
+			WindowContext windowContext, UserPreferences userPreferences) {
 		super(windowContext);
 		_databaseDriverCatalog = databaseDriverCatalog;
 		_databaseDriversPanel = databaseDriversPanel;
+		_userPreferences = userPreferences;
 		_filenameTextFields = new ArrayList<FilenameTextField>();
 		_filesPanel = new DCPanel();
 		_filesPanel.setLayout(new VerticalLayout(4));
@@ -139,8 +141,8 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	}
 
 	private void addFilenameTextField() {
-		final FilenameTextField filenameTextField = new FilenameTextField(UserPreferences.getInstance()
-				.getConfiguredFileDirectory(), true);
+		final FilenameTextField filenameTextField = new FilenameTextField(_userPreferences.getConfiguredFileDirectory(),
+				true);
 		filenameTextField.setSelectedFileFilter(new ExtensionFilter("JDBC driver JAR file (.jar)", ".jar"));
 		filenameTextField.addFileSelectionListener(new FileSelectionListener() {
 			@Override

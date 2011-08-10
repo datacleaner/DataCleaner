@@ -41,6 +41,7 @@ import org.eobjects.analyzer.reference.TextFileDictionary;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -97,7 +98,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 
 	private DCPanel createNewDictionariesPanel() {
 
-		final JButton textFileDictionaryButton = createButton("images/model/dictionary_textfile.png",
+		final JButton textFileDictionaryButton = createButton(IconUtils.DICTIONARY_TEXTFILE_IMAGEPATH,
 				"<html><b>Text file dictionary</b><br/>A dictionary based on a text file on your filesystem.</html>");
 		textFileDictionaryButton.addActionListener(new ActionListener() {
 			@Override
@@ -108,7 +109,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			}
 		});
 
-		final JButton simpleDictionaryButton = createButton("images/model/dictionary_simple.png",
+		final JButton simpleDictionaryButton = createButton(IconUtils.DICTIONARY_SIMPLE_IMAGEPATH,
 				"<html><b>Simple dictionary</b><br/>A dictionary written and stored directly in DataCleaner.</html>");
 		simpleDictionaryButton.addActionListener(new ActionListener() {
 			@Override
@@ -119,7 +120,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			}
 		});
 
-		final JButton datastoreDictionaryButton = createButton("images/model/dictionary_datastore.png",
+		final JButton datastoreDictionaryButton = createButton(IconUtils.DICTIONARY_DATASTORE_IMAGEPATH,
 				"<html><b>Datastore dictionary</b><br/>Dictionary based on a column in a datastore.</html>");
 		datastoreDictionaryButton.addActionListener(new ActionListener() {
 			@Override
@@ -156,7 +157,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		final String[] names = _catalog.getDictionaryNames();
 		Arrays.sort(names);
 
-		final Icon icon = imageManager.getImageIcon("images/model/dictionary.png");
+		final Icon icon = imageManager.getImageIcon(IconUtils.DICTIONARY_IMAGEPATH);
 
 		for (final String name : names) {
 			final Dictionary dictionary = _catalog.getDictionary(name);

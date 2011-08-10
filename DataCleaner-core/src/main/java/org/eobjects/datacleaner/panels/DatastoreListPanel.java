@@ -101,6 +101,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 	private final MutableDatastoreCatalog _datastoreCatalog;
 	private final AnalysisJobBuilderWindow _analysisJobBuilderWindow;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
+	private final DatabaseDriverCatalog _databaseDriverCatalog;
 	private final List<DatastorePanel> _datastorePanels = new ArrayList<DatastorePanel>();
 	private final DCGlassPane _glassPane;
 	private final JButton _analyzeButton;
@@ -111,13 +112,15 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 	@Inject
 	protected DatastoreListPanel(AnalyzerBeansConfiguration configuration,
 			AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-			Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder) {
+			Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
+			DatabaseDriverCatalog databaseDriverCatalog) {
 		super();
 		_datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
 		_analysisJobBuilderWindow = analysisJobBuilderWindow;
 		_glassPane = glassPane;
 		_optionsDialogProvider = optionsDialogProvider;
 		_injectorBuilder = injectorBuilder;
+		_databaseDriverCatalog = databaseDriverCatalog;
 
 		_datastoreCatalog.addListener(this);
 
@@ -280,7 +283,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			public void actionPerformed(ActionEvent e) {
 				final JPopupMenu popup = new JPopupMenu();
 
-				final List<DatabaseDriverDescriptor> databaseDrivers = new DatabaseDriverCatalog()
+				final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
 						.getInstalledWorkingDatabaseDrivers();
 				for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
 					final String databaseName = databaseDriver.getDisplayName();
@@ -330,21 +333,20 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 	}
 
 	private void createDefaultDatabaseButtons(DCPanel panel, Set<String> databaseNames) {
-		DatabaseDriverCatalog catalog = new DatabaseDriverCatalog();
-		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
+		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
 			panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
 					"images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL, databaseNames));
 		}
-		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
+		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
 			panel.add(createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
 					"images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
 					databaseNames));
 		}
-		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
+		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
 			panel.add(createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
 					"images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE, databaseNames));
 		}
-		if (catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
+		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
 			panel.add(createNewJdbcDatastoreButton("Microsoft SQL Server connection",
 					"Connect to a Microsoft SQL Server database", "images/datastore-types/databases/microsoft.png",
 					DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, databaseNames));

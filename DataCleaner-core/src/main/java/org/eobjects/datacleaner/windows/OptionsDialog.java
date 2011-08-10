@@ -77,20 +77,21 @@ public class OptionsDialog extends AbstractWindow {
 
 	@Inject
 	protected OptionsDialog(WindowContext windowContext, AnalyzerBeansConfiguration configuration,
-			UserPreferences userPreferences) {
+			UserPreferences userPreferences, DatabaseDriversPanel databaseDriversPanel,
+			ExtensionPackagesPanel extensionPackagesPanel) {
 		super(windowContext);
 		_userPreferences = userPreferences;
 		_configuration = configuration;
 		_tabbedPane = new CloseableTabbedPane();
 
 		_tabbedPane.addTab("General", imageManager.getImageIcon("images/menu/options.png"), getGeneralTab());
-		_tabbedPane.addTab("Database drivers", imageManager.getImageIcon("images/model/datastore.png"),
-				new DatabaseDriversPanel(_configuration, windowContext));
+		_tabbedPane
+				.addTab("Database drivers", imageManager.getImageIcon("images/model/datastore.png"), databaseDriversPanel);
 		_tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
 		_tabbedPane.addTab("Performance", imageManager.getImageIcon("images/menu/performance.png"), getPerformanceTab());
 		_tabbedPane.addTab("Memory", imageManager.getImageIcon("images/menu/memory.png"), getMemoryTab());
 		_tabbedPane.addTab("Extensions", imageManager.getImageIcon("images/component-types/plugin.png"),
-				new ExtensionPackagesPanel());
+				extensionPackagesPanel);
 
 		_tabbedPane.setUnclosableTab(0);
 		_tabbedPane.setUnclosableTab(1);

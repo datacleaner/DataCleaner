@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -70,15 +71,19 @@ public class DatabaseDriversPanel extends DCPanel {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseDriversPanel.class);
-	private final UserPreferences userPreferences = UserPreferences.getInstance();
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final Set<String> _usedDriverClassNames = new HashSet<String>();
-	private final DatabaseDriverCatalog _databaseDriverCatalog = new DatabaseDriverCatalog();
+	private final DatabaseDriverCatalog _databaseDriverCatalog;
 	private final WindowContext _windowContext;
+	private final UserPreferences _userPreferences;
 
-	public DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext) {
+	@Inject
+	protected DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
+			UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_windowContext = windowContext;
+		_userPreferences = userPreferences;
+		_databaseDriverCatalog = databaseDriverCatalog;
 		setLayout(new BorderLayout());
 
 		DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -131,7 +136,7 @@ public class DatabaseDriversPanel extends DCPanel {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						AddDatabaseDriverDialog dialog = new AddDatabaseDriverDialog(_databaseDriverCatalog,
-								DatabaseDriversPanel.this, _windowContext);
+								DatabaseDriversPanel.this, _windowContext, _userPreferences);
 						dialog.setVisible(true);
 					}
 				});
@@ -173,7 +178,7 @@ public class DatabaseDriversPanel extends DCPanel {
 			final String driverClassName = dd.getDriverClassName();
 			final String displayName = dd.getDisplayName();
 
-			final Icon driverIcon = imageManager.getImageIcon(_databaseDriverCatalog.getIconImagePath(dd),
+			final Icon driverIcon = imageManager.getImageIcon(DatabaseDriverCatalog.getIconImagePath(dd),
 					IconUtils.ICON_SIZE_SMALL);
 
 			tableModel.setValueAt(driverIcon, row, 0);
@@ -234,7 +239,7 @@ public class DatabaseDriversPanel extends DCPanel {
 				logger.info("Registering and loading driver '{}' in files '{}'", driverClassName, files);
 
 				final UserDatabaseDriver userDatabaseDriver = new UserDatabaseDriver(files, driverClassName);
-				userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
+				_userPreferences.getDatabaseDrivers().add(userDatabaseDriver);
 
 				try {
 					userDatabaseDriver.loadDriver();

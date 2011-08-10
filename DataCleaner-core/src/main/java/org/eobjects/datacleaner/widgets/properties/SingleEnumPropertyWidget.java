@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.inject.Inject;
 import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -33,6 +34,7 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
 	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
 
+	@Inject
 	public SingleEnumPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

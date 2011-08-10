@@ -70,17 +70,19 @@ public final class DCConfiguration {
 			}
 		}
 
+		final UserPreferences userPreferences = UserPreferences.getInstance();
+
 		// make the configuration mutable
-		MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog());
+		MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog(), userPreferences);
 		MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(c.getReferenceDataCatalog(),
-				datastoreCatalog);
+				datastoreCatalog, userPreferences);
 		DescriptorProvider descriptorProvider = c.getDescriptorProvider();
-		
-		List<ExtensionPackage> extensionPackages = UserPreferences.getInstance().getExtensionPackages();
+
+		List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
 		for (ExtensionPackage extensionPackage : extensionPackages) {
 			extensionPackage.loadExtension(descriptorProvider);
 		}
-		
+
 		configuration = new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog, descriptorProvider,
 				c.getTaskRunner(), c.getStorageProvider());
 	}

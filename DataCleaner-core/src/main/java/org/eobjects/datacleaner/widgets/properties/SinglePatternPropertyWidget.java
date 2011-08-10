@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -42,6 +43,7 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
 
 	private final JXTextField _textField;
 
+	@Inject
 	public SinglePatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

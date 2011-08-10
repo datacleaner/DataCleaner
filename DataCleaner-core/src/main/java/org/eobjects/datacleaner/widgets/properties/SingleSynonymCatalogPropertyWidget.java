@@ -22,40 +22,40 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.inject.Inject;
 import javax.swing.JComboBox;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.SynonymCatalog;
-import org.eobjects.datacleaner.user.DCConfiguration;
-import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
 
 public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> {
 
 	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
-	private final AnalyzerBeansConfiguration _configuration;
 
+	@Inject
 	public SingleSynonymCatalogPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ReferenceDataCatalog referenceDataCatalog) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		_configuration = DCConfiguration.get();
-		String[] synonymCatalogNames = _configuration.getReferenceDataCatalog().getSynonymCatalogNames();
-
-		if (!propertyDescriptor.isRequired()) {
-			synonymCatalogNames = CollectionUtils.array(new String[1], synonymCatalogNames);
-		}
-		_comboBox = new JComboBox(synonymCatalogNames);
+		_comboBox = new JComboBox();
+		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
 		_comboBox.setEditable(false);
 
-		SynonymCatalog currentValue = (SynonymCatalog) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		if (currentValue == null) {
-			_comboBox.setSelectedItem(null);
-		} else {
-			_comboBox.setSelectedItem(currentValue.getName());
+		if (!propertyDescriptor.isRequired()) {
+			_comboBox.addItem(null);
 		}
+
+		final String[] synonymCatalogNames = referenceDataCatalog.getSynonymCatalogNames();
+		for (String name : synonymCatalogNames) {
+			_comboBox.addItem(referenceDataCatalog.getSynonymCatalog(name));
+		}
+
+		SynonymCatalog currentValue = (SynonymCatalog) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		_comboBox.setSelectedItem(currentValue);
 
 		_comboBox.addActionListener(new ActionListener() {
 			@Override
@@ -69,17 +69,14 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 
 	@Override
 	public SynonymCatalog getValue() {
-		String synonymCatalogName = (String) _comboBox.getSelectedItem();
-		return _configuration.getReferenceDataCatalog().getSynonymCatalog(synonymCatalogName);
+		return (SynonymCatalog) _comboBox.getSelectedItem();
 	}
 
 	@Override
 	protected void setValue(SynonymCatalog value) {
-		if (value == null) {
-			_comboBox.setSelectedItem(null);
-			return;
-		}
-		_comboBox.setSelectedItem(value.getName());
+		_comboBox.setEditable(true);
+		_comboBox.setSelectedItem(value);
+		_comboBox.setEditable(false);
 	}
 
 }

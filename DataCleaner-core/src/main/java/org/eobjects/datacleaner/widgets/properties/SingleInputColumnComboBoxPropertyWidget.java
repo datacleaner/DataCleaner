@@ -24,6 +24,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
@@ -55,6 +56,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private volatile List<InputColumn<?>> _inputColumns;
 
+	@Inject
 	public SingleInputColumnComboBoxPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);

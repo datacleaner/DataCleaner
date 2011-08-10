@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import javax.inject.Inject;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
@@ -38,6 +39,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
 	private final JTextComponent _textComponent;
 
+	@Inject
 	public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);

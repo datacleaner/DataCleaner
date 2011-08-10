@@ -34,11 +34,13 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.output.beans.ExcelOutputAnalyzer;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
@@ -59,15 +61,20 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 	private final WindowContext _windowContext;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCModule _parentModule;
+	private final UserPreferences _userPreferences;
+	private final InjectorBuilder _injectorBuilder;
 
 	@Inject
 	protected SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext,
-			AnalyzerBeansConfiguration configuration, DCModule parentModule) {
+			AnalyzerBeansConfiguration configuration, UserPreferences userPreferences, DCModule parentModule,
+			InjectorBuilder injectorBuilder) {
 		_datastore = datastore;
 		_table = table;
 		_windowContext = windowContext;
 		_configuration = configuration;
 		_parentModule = parentModule;
+		_userPreferences = userPreferences;
+		_injectorBuilder = injectorBuilder;
 	}
 
 	@Override
@@ -79,12 +86,16 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 		final RowProcessingAnalyzerJobBuilder<ExcelOutputAnalyzer> excelOutputAnalyzerBuilder = ajb
 				.addRowProcessingAnalyzer(ExcelOutputAnalyzer.class);
 		excelOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
-		File directory = UserPreferences.getInstance().getConfiguredFileDirectory();
+		File directory = _userPreferences.getConfiguredFileDirectory();
 		excelOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _datastore.getName() + ".xlsx"));
 		excelOutputAnalyzerBuilder.getConfigurableBean().setSheetName(_table.getName());
 
+		final Injector injector = _injectorBuilder.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER,
+				excelOutputAnalyzerBuilder).createInjector();
+		final PropertyWidgetFactory propertyWidgetFactory = injector.getInstance(PropertyWidgetFactory.class);
+
 		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
-				excelOutputAnalyzerBuilder, false);
+				excelOutputAnalyzerBuilder, false, propertyWidgetFactory);
 
 		final AbstractDialog dialog = new AbstractDialog(_windowContext) {
 			private static final long serialVersionUID = 1L;

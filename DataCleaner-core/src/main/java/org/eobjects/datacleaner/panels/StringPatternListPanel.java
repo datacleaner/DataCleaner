@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.regexswap.RegexSwapDialog;
 import org.eobjects.datacleaner.regexswap.RegexSwapStringPattern;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.StringPatternChangeListener;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -94,7 +95,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 
 	private DCPanel createNewStringPatternsPanel() {
 
-		final JButton simpleStringPatternButton = createButton("images/model/stringpattern_simple.png",
+		final JButton simpleStringPatternButton = createButton(IconUtils.STRING_PATTERN_SIMPLE_IMAGEPATH,
 				"<html><b>Simple string pattern</b><br/>A string pattern based on simple string tokens, eg. 'Aaaaa 999'.</html>");
 		simpleStringPatternButton.addActionListener(new ActionListener() {
 			@Override
@@ -103,7 +104,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			}
 		});
 
-		final JButton regexStringPatternButton = createButton("images/model/stringpattern_regex.png",
+		final JButton regexStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEX_IMAGEPATH,
 				"<html><b>Regular expression string pattern</b><br/>A very flexible string pattern, based on regular expressions.</html>");
 		regexStringPatternButton.addActionListener(new ActionListener() {
 			@Override
@@ -112,7 +113,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			}
 		});
 
-		final JButton regexSwapStringPatternButton = createButton("images/model/stringpattern_regexswap.png",
+		final JButton regexSwapStringPatternButton = createButton(IconUtils.STRING_PATTERN_REGEXSWAP_IMAGEPATH,
 				"<html><b>Browse the RegexSwap</b><br/>Download patterns from DataCleaner's online RegexSwap.</html>");
 		regexSwapStringPatternButton.addActionListener(new ActionListener() {
 			@Override

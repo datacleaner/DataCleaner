@@ -33,6 +33,7 @@ import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 
 /**
@@ -45,10 +46,10 @@ final class AdHocModule implements Module {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdHocModule.class);
 
-	private final Map<Key<?>, Object> _bindings;
+	private final Map<TypeLiteral<?>, Object> _bindings;
 
 	public AdHocModule() {
-		_bindings = new HashMap<Key<?>, Object>();
+		_bindings = new HashMap<TypeLiteral<?>, Object>();
 	}
 
 	public <E> void bind(Class<?> bindingClass, Object providerOrInstance) {
@@ -56,14 +57,22 @@ final class AdHocModule implements Module {
 	}
 
 	public <E> void bind(Key<?> bindingKey, Object providerOrInstance) {
+		bind(bindingKey.getTypeLiteral(), providerOrInstance);
+	}
+
+	public <E> void bind(TypeLiteral<?> bindingTypeLiteral, Object providerOrInstance) {
 		if (providerOrInstance == null) {
 			providerOrInstance = Providers.of(null);
 		}
-		_bindings.put(bindingKey, providerOrInstance);
+		_bindings.put(bindingTypeLiteral, providerOrInstance);
+	}
+
+	public boolean hasBindingFor(TypeLiteral<?> bindingTypeLiteral) {
+		return _bindings.containsKey(bindingTypeLiteral);
 	}
 
 	public boolean hasBindingFor(Key<?> bindingKey) {
-		return _bindings.containsKey(bindingKey);
+		return hasBindingFor(bindingKey.getTypeLiteral());
 	}
 
 	public boolean hasBindingFor(Class<?> bindingClass) {
@@ -72,24 +81,24 @@ final class AdHocModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
-		Set<Entry<Key<?>, Object>> entrySet = _bindings.entrySet();
-		for (Entry<Key<?>, Object> entry : entrySet) {
+		Set<Entry<TypeLiteral<?>, Object>> entrySet = _bindings.entrySet();
+		for (Entry<TypeLiteral<?>, Object> entry : entrySet) {
 			@SuppressWarnings("unchecked")
-			Key<Object> bindingKey = (Key<Object>) entry.getKey();
+			TypeLiteral<Object> bindingLiteral = (TypeLiteral<Object>) entry.getKey();
 
 			Object providerOrInstance = entry.getValue();
 
-			logger.info("Binding ad-hoc dependency for {}: {}", bindingKey, providerOrInstance);
+			logger.info("Binding ad-hoc dependency for {}: {}", bindingLiteral, providerOrInstance);
 
 			if (providerOrInstance instanceof Provider) {
 				Provider<?> provider = (Provider<?>) providerOrInstance;
 				com.google.inject.Provider<?> guiceProvider = Providers.guicify(provider);
-				binder.bind(bindingKey).toProvider(guiceProvider);
+				binder.bind(bindingLiteral).toProvider(guiceProvider);
 			} else if (providerOrInstance instanceof com.google.inject.Provider) {
 				com.google.inject.Provider<?> guiceProvider = (com.google.inject.Provider<?>) providerOrInstance;
-				binder.bind(bindingKey).toProvider(guiceProvider);
+				binder.bind(bindingLiteral).toProvider(guiceProvider);
 			} else {
-				binder.bind(bindingKey).toInstance(providerOrInstance);
+				binder.bind(bindingLiteral).toInstance(providerOrInstance);
 			}
 		}
 	}

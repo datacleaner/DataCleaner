@@ -62,14 +62,16 @@ public class QuickAnalysisActionListener implements ActionListener {
 	private final Table _table;
 	private final Column[] _columns;
 	private final DCModule _parentModule;
+	private final UserPreferences _userPreferences;
 
 	@Inject
 	protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
-			DCModule parentModule) {
+			DCModule parentModule, UserPreferences userPreferences) {
 		_datastore = datastore;
 		_table = table;
 		_columns = columns;
 		_parentModule = parentModule;
+		_userPreferences = userPreferences;
 	}
 
 	public Column[] getColumns() {
@@ -159,7 +161,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 	 */
 	private void createAnalyzers(AnalysisJobBuilder ajb, Class<? extends RowProcessingAnalyzer<?>> analyzerClass,
 			List<InputColumn<?>> columns) {
-		final QuickAnalysisStrategy quickAnalysisStrategy = UserPreferences.getInstance().getQuickAnalysisStrategy();
+		final QuickAnalysisStrategy quickAnalysisStrategy = _userPreferences.getQuickAnalysisStrategy();
 		final int columnsPerAnalyzer = quickAnalysisStrategy.getColumnsPerAnalyzer();
 
 		RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder = ajb

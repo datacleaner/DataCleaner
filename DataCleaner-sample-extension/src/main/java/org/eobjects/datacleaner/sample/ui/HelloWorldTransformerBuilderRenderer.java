@@ -26,9 +26,11 @@ import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.sample.HelloWorldTransformer;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
  * A sample renderer which provides a presenter object for the configuration
@@ -46,6 +48,9 @@ public class HelloWorldTransformerBuilderRenderer implements
 	@Inject
 	WindowContext windowContext;
 
+	@Inject
+	InjectorBuilder injectorBuilder;
+
 	@Override
 	public RendererPrecedence getPrecedence(TransformerJobBuilder<?> renderable) {
 		if (renderable.getDescriptor().getComponentClass() == HelloWorldTransformer.class) {
@@ -56,6 +61,8 @@ public class HelloWorldTransformerBuilderRenderer implements
 
 	@Override
 	public TransformerJobBuilderPresenter render(TransformerJobBuilder<?> tjb) {
-		return new HelloWorldTransformerPresenter(tjb, windowContext);
+		PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
+				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, tjb).getInstance(PropertyWidgetFactory.class);
+		return new HelloWorldTransformerPresenter(tjb, windowContext, propertyWidgetFactory);
 	}
 }

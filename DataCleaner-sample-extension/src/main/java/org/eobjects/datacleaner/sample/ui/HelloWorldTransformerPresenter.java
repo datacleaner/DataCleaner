@@ -30,13 +30,14 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 public class HelloWorldTransformerPresenter extends TransformerJobBuilderPanel implements TransformerJobBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
-	public HelloWorldTransformerPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext) {
-		super(transformerJobBuilder, windowContext);
+	public HelloWorldTransformerPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory) {
+		super(transformerJobBuilder, windowContext, propertyWidgetFactory);
 	}
 
 	@Override

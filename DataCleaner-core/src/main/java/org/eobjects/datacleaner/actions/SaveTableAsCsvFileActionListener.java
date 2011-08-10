@@ -88,9 +88,9 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		File directory = _userPreferences.getConfiguredFileDirectory();
 		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
 
-		final Injector injector = _injectorBuilder.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER,
-				csvOutputAnalyzerBuilder).createInjector();
-		final PropertyWidgetFactory propertyWidgetFactory = injector.getInstance(PropertyWidgetFactory.class);
+		final PropertyWidgetFactory propertyWidgetFactory = _injectorBuilder.with(
+				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, csvOutputAnalyzerBuilder).getInstance(
+				PropertyWidgetFactory.class);
 
 		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
 				csvOutputAnalyzerBuilder, false, propertyWidgetFactory);

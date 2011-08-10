@@ -82,6 +82,26 @@ public final class InjectorBuilder {
 		return this;
 	}
 
+	/**
+	 * Gets an instance of a particular type
+	 * 
+	 * @param <E>
+	 * @param type
+	 * @return
+	 */
+	public <E> E getInstance(Class<E> type) {
+		return createInjector().getInstance(type);
+	}
+
+	/**
+	 * Creates an {@link Injector} which in turn can be used to get instances of
+	 * various types.
+	 * 
+	 * Note the the {@link #getInstance(Class)} method is preferred, if only a
+	 * single injection is to be made.
+	 * 
+	 * @return a Guice injector
+	 */
 	public Injector createInjector() {
 		for (TypeLiteral<?> typeLiteral : _inheritedTypeLiterals) {
 			Key<?> key = Key.get(typeLiteral);

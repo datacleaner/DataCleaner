@@ -32,8 +32,6 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
-import com.google.inject.Injector;
-
 /**
  * Renders/creates the default panels that present component job builders.
  * 
@@ -56,9 +54,8 @@ public class ComponentJobBuilderPresenterRenderer implements
 
 	@Override
 	public ComponentJobBuilderPresenter render(AbstractBeanJobBuilder<?, ?, ?> renderable) {
-		final Injector injector = injectorBuilder.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, renderable)
-				.createInjector();
-		final PropertyWidgetFactory propertyWidgetFactory = injector.getInstance(PropertyWidgetFactory.class);
+		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
+				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, renderable).getInstance(PropertyWidgetFactory.class);
 
 		if (renderable instanceof FilterJobBuilder) {
 			FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) renderable;

@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -61,7 +62,8 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private final DCGlassPane _glassPane;
 	private final WindowContext _windowContext;
 
-	public StringPatternListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
+	@Inject
+	protected StringPatternListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
 			WindowContext windowContext) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;

@@ -23,31 +23,30 @@ import java.io.File;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.swing.JComponent;
 
 import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.sassy.SasFilenameFilter;
 
-public class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<SasDatastore> {
+public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<SasDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
 	private final DCLabel _tableCountLabel;
 
-	public SasDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		super(mutableDatastoreCatalog, windowContext);
-		_tableCountLabel = DCLabel.bright("");
-	}
-
-	public SasDatastoreDialog(SasDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext);
+	@Inject
+	protected SasDatastoreDialog(@Nullable SasDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowContext windowContext, UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 		_tableCountLabel = DCLabel.bright("");
 
 		if (originalDatastore != null) {

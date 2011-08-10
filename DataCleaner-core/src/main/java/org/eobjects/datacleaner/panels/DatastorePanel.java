@@ -47,7 +47,7 @@ import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.AdHocModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -81,16 +81,16 @@ public class DatastorePanel extends DCPanel {
 	private final DatastoreListPanel _datastoreListPanel;
 	private final JCheckBox _checkBox;
 	private final WindowContext _windowContext;
-	private final Injector _injector;
+	private final InjectorBuilder _injectorBuilder;
 
 	public DatastorePanel(Datastore datastore, MutableDatastoreCatalog datastoreCatalog,
-			DatastoreListPanel datastoreListPanel, WindowContext windowContext, Injector injector) {
+			DatastoreListPanel datastoreListPanel, WindowContext windowContext, InjectorBuilder injectorBuilder) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_LESS_BRIGHT);
 		_datastore = datastore;
 		_datastoreCatalog = datastoreCatalog;
 		_datastoreListPanel = datastoreListPanel;
 		_windowContext = windowContext;
-		_injector = injector;
+		_injectorBuilder = injectorBuilder;
 
 		setOpaque(false);
 
@@ -174,8 +174,7 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Injector injectorWithDatastore = _injector.createChildInjector(new AdHocModule().add(
-							JdbcDatastore.class, datastore));
+					Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, datastore).createInjector();
 					JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
@@ -184,8 +183,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					CsvDatastoreDialog dialog = new CsvDatastoreDialog((CsvDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injector = _injectorBuilder.with(CsvDatastore.class, datastore).createInjector();
+					CsvDatastoreDialog dialog = injector.getInstance(CsvDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});
@@ -193,8 +192,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					AccessDatastoreDialog dialog = new AccessDatastoreDialog((AccessDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injector = _injectorBuilder.with(AccessDatastore.class, datastore).createInjector();
+					AccessDatastoreDialog dialog = injector.getInstance(AccessDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});
@@ -202,8 +201,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					ExcelDatastoreDialog dialog = new ExcelDatastoreDialog((ExcelDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injector = _injectorBuilder.with(ExcelDatastore.class, datastore).createInjector();
+					ExcelDatastoreDialog dialog = injector.getInstance(ExcelDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});
@@ -211,8 +210,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					SasDatastoreDialog dialog = new SasDatastoreDialog((SasDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injector = _injectorBuilder.with(SasDatastore.class, datastore).createInjector();
+					SasDatastoreDialog dialog = injector.getInstance(SasDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});
@@ -220,8 +219,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					XmlDatastoreDialog dialog = new XmlDatastoreDialog((XmlDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injector = _injectorBuilder.with(XmlDatastore.class, datastore).createInjector();
+					XmlDatastoreDialog dialog = injector.getInstance(XmlDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});
@@ -229,8 +228,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					OdbDatastoreDialog dialog = new OdbDatastoreDialog((OdbDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injector = _injectorBuilder.with(OdbDatastore.class, datastore).createInjector();
+					OdbDatastoreDialog dialog = injector.getInstance(OdbDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});
@@ -238,8 +237,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					FixedWidthDatastoreDialog dialog = new FixedWidthDatastoreDialog((FixedWidthDatastore) datastore,
-							_datastoreCatalog, _windowContext);
+					Injector injector = _injectorBuilder.with(FixedWidthDatastore.class, datastore).createInjector();
+					FixedWidthDatastoreDialog dialog = injector.getInstance(FixedWidthDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});
@@ -247,8 +246,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					DbaseDatastoreDialog dialog = new DbaseDatastoreDialog((DbaseDatastore) datastore, _datastoreCatalog,
-							_windowContext);
+					Injector injector = _injectorBuilder.with(DbaseDatastore.class, datastore).createInjector();
+					DbaseDatastoreDialog dialog = injector.getInstance(DbaseDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});

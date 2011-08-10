@@ -26,38 +26,36 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
-import org.eobjects.datacleaner.guice.DCModule;
-import org.eobjects.datacleaner.user.DCConfiguration;
-import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
 import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.Table;
+
+import com.google.inject.Injector;
 
 final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final SchemaTree _schemaTree;
-	private final Datastore _datastore;
-	private final DCModule _parentModule;
+	private final InjectorBuilder _injectorBuilder;
 
-	public ColumnMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder,
-			DCModule parentModule) {
+	@Inject
+	protected ColumnMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder,
+			InjectorBuilder injectorBuilder) {
 		_schemaTree = schemaTree;
-		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
-		_parentModule = parentModule;
+		_injectorBuilder = injectorBuilder;
 	}
 
 	@Override
@@ -96,23 +94,26 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				createDictionaryItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						AnalyzerBeansConfiguration conf = DCConfiguration.get();
-						MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) conf
-								.getReferenceDataCatalog();
-						DatastoreCatalog datastoreCatalog = conf.getDatastoreCatalog();
 						String datastoreName = _analysisJobBuilder.getDataContextProvider().getDatastore().getName();
 						DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName, column
 								.getQualifiedLabel());
-						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog(dictionary, referenceDataCatalog,
-								datastoreCatalog, _schemaTree.getWindowContext(), _parentModule);
+
+						Injector injector = _injectorBuilder.with(DatastoreDictionary.class, dictionary).createInjector();
+
+						DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
 						dialog.setVisible(true);
 					}
 				});
 
 				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
 						"images/component-types/analyzer.png");
-				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, column,
-						_analysisJobBuilder.getConfiguration(), _schemaTree.getWindowContext(), _parentModule));
+
+				Injector injector = _injectorBuilder.with(Column[].class, new Column[] { column }).with(Table.class, null)
+						.createInjector();
+				QuickAnalysisActionListener quickAnalysisActionListener = injector
+						.getInstance(QuickAnalysisActionListener.class);
+
+				quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
 						"images/actions/preview_data.png");

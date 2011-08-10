@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -37,8 +38,7 @@ import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.analyzer.reference.TextFileDictionary;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.DictionaryChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -52,6 +52,8 @@ import org.eobjects.datacleaner.windows.SimpleDictionaryDialog;
 import org.eobjects.datacleaner.windows.TextFileDictionaryDialog;
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.google.inject.Injector;
+
 public class DictionaryListPanel extends DCPanel implements DictionaryChangeListener {
 
 	private static final long serialVersionUID = 1L;
@@ -61,15 +63,15 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
-	private final WindowContext _windowContext;
-	private final DCModule _parentModule;
+	private final InjectorBuilder _injectorBuilder;
 
-	public DictionaryListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule) {
+	@Inject
+	protected DictionaryListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
+			InjectorBuilder injectorBuilder) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
-		_windowContext = windowContext;
-		_parentModule = parentModule;
+		_injectorBuilder = injectorBuilder;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addDictionaryListener(this);
 
@@ -100,7 +102,9 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		textFileDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new TextFileDictionaryDialog(_catalog, _windowContext).setVisible(true);
+				Injector injector = _injectorBuilder.with(TextFileDictionary.class, null).createInjector();
+				TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
+				dialog.open();
 			}
 		});
 
@@ -109,7 +113,9 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		simpleDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new SimpleDictionaryDialog(_catalog, _windowContext).setVisible(true);
+				Injector injector = _injectorBuilder.with(SimpleDictionary.class, null).createInjector();
+				SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
+				dialog.open();
 			}
 		});
 
@@ -118,8 +124,9 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 		datastoreDictionaryButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DatastoreDictionaryDialog(_catalog, _configuration.getDatastoreCatalog(), _windowContext, _parentModule)
-						.setVisible(true);
+				Injector injector = _injectorBuilder.with(DatastoreDictionary.class, null).createInjector();
+				DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+				dialog.open();
 			}
 		});
 
@@ -165,27 +172,27 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						DatastoreDictionaryDialog dialog = new DatastoreDictionaryDialog((DatastoreDictionary) dictionary,
-								_catalog, _configuration.getDatastoreCatalog(), _windowContext, _parentModule);
-						dialog.setVisible(true);
+						Injector injector = _injectorBuilder.with(DatastoreDictionary.class, dictionary).createInjector();
+						DatastoreDictionaryDialog dialog = injector.getInstance(DatastoreDictionaryDialog.class);
+						dialog.open();
 					}
 				});
 			} else if (dictionary instanceof TextFileDictionary) {
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						TextFileDictionaryDialog dialog = new TextFileDictionaryDialog((TextFileDictionary) dictionary,
-								_catalog, _windowContext);
-						dialog.setVisible(true);
+						Injector injector = _injectorBuilder.with(TextFileDictionary.class, dictionary).createInjector();
+						TextFileDictionaryDialog dialog = injector.getInstance(TextFileDictionaryDialog.class);
+						dialog.open();
 					}
 				});
 			} else if (dictionary instanceof SimpleDictionary) {
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						SimpleDictionaryDialog dialog = new SimpleDictionaryDialog((SimpleDictionary) dictionary, _catalog,
-								_windowContext);
-						dialog.setVisible(true);
+						Injector injector = _injectorBuilder.with(SimpleDictionary.class, dictionary).createInjector();
+						SimpleDictionaryDialog dialog = injector.getInstance(SimpleDictionaryDialog.class);
+						dialog.open();
 					}
 				});
 			} else {

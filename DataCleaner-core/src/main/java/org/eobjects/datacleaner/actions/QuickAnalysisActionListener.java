@@ -24,6 +24,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.eobjects.analyzer.beans.BooleanAnalyzer;
 import org.eobjects.analyzer.beans.DateAndTimeAnalyzer;
 import org.eobjects.analyzer.beans.NumberAnalyzer;
@@ -37,8 +39,8 @@ import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -61,20 +63,13 @@ public class QuickAnalysisActionListener implements ActionListener {
 	private final Column[] _columns;
 	private final DCModule _parentModule;
 
-	private QuickAnalysisActionListener(Datastore datastore, Table table, Column[] columns, DCModule parentModule) {
+	@Inject
+	protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
+			DCModule parentModule) {
 		_datastore = datastore;
 		_table = table;
 		_columns = columns;
 		_parentModule = parentModule;
-	}
-
-	public QuickAnalysisActionListener(Datastore datastore, Table table, DCModule parentModule) {
-		this(datastore, table, null, parentModule);
-	}
-
-	public QuickAnalysisActionListener(Datastore datastore, Column column, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext, DCModule parentModule) {
-		this(datastore, null, new Column[] { column }, parentModule);
 	}
 
 	public Column[] getColumns() {

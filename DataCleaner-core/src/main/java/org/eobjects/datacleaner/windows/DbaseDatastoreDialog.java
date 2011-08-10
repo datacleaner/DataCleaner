@@ -19,23 +19,25 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import javax.inject.Inject;
+
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
-public class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog<DbaseDatastore> {
+public final class DbaseDatastoreDialog extends AbstractFileBasedDatastoreDialog<DbaseDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public DbaseDatastoreDialog(DbaseDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext);
-	}
-
-	public DbaseDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		super(mutableDatastoreCatalog, windowContext);
+	@Inject
+	protected DbaseDatastoreDialog(@Nullable DbaseDatastore originalDatastore,
+			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 	}
 
 	@Override

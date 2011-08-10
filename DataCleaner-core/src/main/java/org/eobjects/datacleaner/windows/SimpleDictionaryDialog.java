@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -34,6 +35,7 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -53,11 +55,8 @@ public final class SimpleDictionaryDialog extends AbstractDialog {
 	private final JXTextField _nameTextField;
 	private final JXTextArea _valuesTextArea;
 
-	public SimpleDictionaryDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
-		this(null, catalog, windowContext);
-	}
-
-	public SimpleDictionaryDialog(SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
+	@Inject
+	protected SimpleDictionaryDialog(@Nullable SimpleDictionary dictionary, MutableReferenceDataCatalog catalog,
 			WindowContext windowContext) {
 		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;

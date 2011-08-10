@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -35,8 +36,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -49,6 +49,8 @@ import org.eobjects.datacleaner.windows.DatastoreSynonymCatalogDialog;
 import org.eobjects.datacleaner.windows.TextFileSynonymCatalogDialog;
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.google.inject.Injector;
+
 public final class SynonymCatalogListPanel extends DCPanel implements SynonymCatalogChangeListener {
 
 	private static final long serialVersionUID = 1L;
@@ -58,16 +60,15 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 	private final MutableReferenceDataCatalog _catalog;
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
-	private final WindowContext _windowContext;
-	private final DCModule _parentModule;
+	private final InjectorBuilder _injectorBuilder;
 
-	public SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext, DCModule parentModule) {
+	@Inject
+	protected SynonymCatalogListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
+			InjectorBuilder injectorBuilder) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
-		_windowContext = windowContext;
-		_parentModule = parentModule;
+		_injectorBuilder = injectorBuilder;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addSynonymCatalogListener(this);
 
@@ -98,7 +99,9 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new TextFileSynonymCatalogDialog(_catalog, _windowContext).setVisible(true);
+				Injector injector = _injectorBuilder.with(TextFileSynonymCatalog.class, null).createInjector();
+				TextFileSynonymCatalogDialog dialog = injector.getInstance(TextFileSynonymCatalogDialog.class);
+				dialog.setVisible(true);
 			}
 		});
 
@@ -107,8 +110,9 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 		datastoreSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DatastoreSynonymCatalogDialog(_catalog, _configuration.getDatastoreCatalog(), _windowContext,
-						_parentModule).setVisible(true);
+				Injector injector = _injectorBuilder.with(DatastoreSynonymCatalog.class, null).createInjector();
+				DatastoreSynonymCatalogDialog dialog = injector.getInstance(DatastoreSynonymCatalogDialog.class);
+				dialog.setVisible(true);
 			}
 		});
 
@@ -154,8 +158,9 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						TextFileSynonymCatalogDialog dialog = new TextFileSynonymCatalogDialog(
-								(TextFileSynonymCatalog) synonymCatalog, _catalog, _windowContext);
+						Injector injector = _injectorBuilder.with(TextFileSynonymCatalog.class, synonymCatalog)
+								.createInjector();
+						TextFileSynonymCatalogDialog dialog = injector.getInstance(TextFileSynonymCatalogDialog.class);
 						dialog.setVisible(true);
 					}
 				});
@@ -163,9 +168,9 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				editButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						DatastoreSynonymCatalogDialog dialog = new DatastoreSynonymCatalogDialog(
-								(DatastoreSynonymCatalog) synonymCatalog, _catalog, _configuration.getDatastoreCatalog(),
-								_windowContext, _parentModule);
+						Injector injector = _injectorBuilder.with(DatastoreSynonymCatalog.class, synonymCatalog)
+								.createInjector();
+						DatastoreSynonymCatalogDialog dialog = injector.getInstance(DatastoreSynonymCatalogDialog.class);
 						dialog.setVisible(true);
 					}
 				});

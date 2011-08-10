@@ -101,7 +101,6 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	private static final int PREVIEW_COLUMNS = 10;
 
 	protected static final ImageManager imageManager = ImageManager.getInstance();
-	protected final UserPreferences userPreferences = UserPreferences.getInstance();
 	protected final MutableDatastoreCatalog _mutableDatastoreCatalog;
 	protected final D _originalDatastore;
 	protected final JButton _addDatastoreButton;
@@ -112,20 +111,18 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	private final DCPanel _previewTablePanel;
 	private final DCTable _previewTable;
 	private final LoadingIcon _loadingIcon;
+	private final UserPreferences _userPreferences;
 
-	public AbstractFileBasedDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		this(null, mutableDatastoreCatalog, windowContext);
-	}
-
-	public AbstractFileBasedDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext) {
+	protected AbstractFileBasedDatastoreDialog(D originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowContext windowContext, UserPreferences userPreferences) {
 		super(windowContext, imageManager.getImage("images/window/banner-datastores.png"));
 		_originalDatastore = originalDatastore;
 		_mutableDatastoreCatalog = mutableDatastoreCatalog;
+		_userPreferences = userPreferences;
 		_datastoreNameField = WidgetFactory.createTextField("Datastore name");
 		_statusLabel = DCLabel.bright("Please select file");
 
-		_filenameField = new FilenameTextField(userPreferences.getOpenDatastoreDirectory(), true);
+		_filenameField = new FilenameTextField(_userPreferences.getOpenDatastoreDirectory(), true);
 
 		_addDatastoreButton = WidgetFactory.createButton("Save datastore", getDatastoreIconPath());
 		_addDatastoreButton.addActionListener(new ActionListener() {
@@ -171,7 +168,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 				} else {
 					dir = file.getParentFile();
 				}
-				userPreferences.setOpenDatastoreDirectory(dir);
+				_userPreferences.setOpenDatastoreDirectory(dir);
 
 				if (StringUtils.isNullOrEmpty(_datastoreNameField.getText())) {
 					_datastoreNameField.setText(file.getName());
@@ -193,6 +190,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 			_previewTablePanel.setBorder(new EmptyBorder(0, 10, 0, 10));
 			_loadingIcon = new LoadingIcon();
 			_loadingIcon.setVisible(false);
+			_loadingIcon.setPreferredSize(_previewTablePanel.getPreferredSize());
 		} else {
 			_previewTable = null;
 			_previewTablePanel = null;
@@ -226,7 +224,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	}
 
 	protected void setStatusValid() {
-		_statusLabel.setText("Datastore readyDatastore ready");
+		_statusLabel.setText("Datastore ready");
 		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
 	}
 
@@ -346,7 +344,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		_outerPanel.setLayout(new BorderLayout());
 		_outerPanel.add(centerPanel, BorderLayout.CENTER);
 		_outerPanel.add(statusBar, BorderLayout.SOUTH);
-		
+
 		validateAndUpdate();
 
 		return _outerPanel;

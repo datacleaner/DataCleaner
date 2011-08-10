@@ -32,54 +32,37 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DictionaryListPanel;
 import org.eobjects.datacleaner.panels.StringPatternListPanel;
 import org.eobjects.datacleaner.panels.SynonymCatalogListPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
-public class ReferenceDataDialog extends AbstractDialog {
+import com.google.inject.Injector;
+
+public final class ReferenceDataDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 	private static final ImageManager imageManager = ImageManager.getInstance();
-	private final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
+
 	private final CloseableTabbedPane _tabbedPane;
+	private final DCGlassPane _glassPane;
+	private final InjectorBuilder _injectorBuilder;
+	private volatile int _selectedTab;
 
 	@Inject
-	protected ReferenceDataDialog(WindowContext windowContext, DCModule parentModule) {
+	protected ReferenceDataDialog(WindowContext windowContext, InjectorBuilder injectorBuilder) {
 		super(windowContext, imageManager.getImage("images/window/banner-reference-data.png"));
-		final DCGlassPane glassPane = new DCGlassPane(this);
-
+		_glassPane = new DCGlassPane(this);
 		_tabbedPane = new CloseableTabbedPane();
-
-		final DictionaryListPanel dictionaryListPanel = new DictionaryListPanel(glassPane, configuration, windowContext,
-				parentModule);
-		final SynonymCatalogListPanel synonymCatalogListPanel = new SynonymCatalogListPanel(glassPane, configuration,
-				windowContext, parentModule);
-		final StringPatternListPanel stringPatternListPanel = new StringPatternListPanel(glassPane, configuration,
-				windowContext);
-
-		_tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
-				scrolleable(dictionaryListPanel));
-		_tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage("images/model/synonym.png")),
-				scrolleable(synonymCatalogListPanel));
-		_tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage("images/model/stringpattern.png")),
-				scrolleable(stringPatternListPanel));
-
-		_tabbedPane.setUnclosableTab(0);
-		_tabbedPane.setUnclosableTab(1);
-		_tabbedPane.setUnclosableTab(2);
-
-		_tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
+		_injectorBuilder = injectorBuilder;
 	}
 
 	private JComponent scrolleable(JComponent comp) {
@@ -89,15 +72,24 @@ public class ReferenceDataDialog extends AbstractDialog {
 	}
 
 	public void selectDictionariesTab() {
-		_tabbedPane.setSelectedIndex(0);
+		_selectedTab = 0;
+		updateSelectedTab();
 	}
 
 	public void selectSynonymsTab() {
-		_tabbedPane.setSelectedIndex(1);
+		_selectedTab = 1;
+		updateSelectedTab();
 	}
 
 	public void selectStringPatternsTab() {
-		_tabbedPane.setSelectedIndex(2);
+		_selectedTab = 2;
+		updateSelectedTab();
+	}
+
+	private void updateSelectedTab() {
+		if (_tabbedPane.getTabCount() > _selectedTab) {
+			_tabbedPane.setSelectedIndex(_selectedTab);
+		}
 	}
 
 	@Override
@@ -117,6 +109,29 @@ public class ReferenceDataDialog extends AbstractDialog {
 
 	@Override
 	protected JComponent getDialogContent() {
+		Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
+
+		final DictionaryListPanel dictionaryListPanel = injectorWithGlassPane.getInstance(DictionaryListPanel.class);
+		final SynonymCatalogListPanel synonymCatalogListPanel = injectorWithGlassPane
+				.getInstance(SynonymCatalogListPanel.class);
+		final StringPatternListPanel stringPatternListPanel = injectorWithGlassPane
+				.getInstance(StringPatternListPanel.class);
+
+		_tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
+				scrolleable(dictionaryListPanel));
+		_tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage("images/model/synonym.png")),
+				scrolleable(synonymCatalogListPanel));
+		_tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage("images/model/stringpattern.png")),
+				scrolleable(stringPatternListPanel));
+
+		_tabbedPane.setUnclosableTab(0);
+		_tabbedPane.setUnclosableTab(1);
+		_tabbedPane.setUnclosableTab(2);
+
+		updateSelectedTab();
+
+		_tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
+
 		final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
 		closeButton.addActionListener(new ActionListener() {
 			@Override

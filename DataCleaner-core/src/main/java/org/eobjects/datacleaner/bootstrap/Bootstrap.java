@@ -119,7 +119,7 @@ public final class Bootstrap {
 			// run in GUI mode
 			
 			final Injector injector = Guice.createInjector(new DCModule(configuration));
-
+			
 			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
 			if (_options.isSingleDatastoreMode()) {

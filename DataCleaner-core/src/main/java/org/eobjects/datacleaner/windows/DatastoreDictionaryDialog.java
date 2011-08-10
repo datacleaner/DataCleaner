@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -39,10 +40,12 @@ import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.DCDocumentListener;
@@ -55,7 +58,9 @@ import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 
-public class DatastoreDictionaryDialog extends AbstractDialog {
+import com.google.inject.Injector;
+
+public final class DatastoreDictionaryDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final DatastoreDictionary _originalDictionary;
@@ -66,18 +71,18 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 	private final JComboBox _datastoreComboBox;
 	private final DCPanel _treePanel;
 	private final JSplitPane _splitPane;
+	private final InjectorBuilder _injectorBuilder;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public DatastoreDictionaryDialog(MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog, WindowContext windowContext, DCModule parentModule) {
-		this(null, referenceDataCatalog, datastoreCatalog, windowContext, parentModule);
-	}
-
-	public DatastoreDictionaryDialog(DatastoreDictionary dictionary, MutableReferenceDataCatalog referenceDataCatalog,
-			DatastoreCatalog datastoreCatalog, WindowContext windowContext, final DCModule parentModule) {
+	@Inject
+	protected DatastoreDictionaryDialog(@Nullable DatastoreDictionary dictionary,
+			MutableReferenceDataCatalog referenceDataCatalog, DatastoreCatalog datastoreCatalog,
+			WindowContext windowContext, InjectorBuilder injectorBuilder) {
 		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_referenceDataCatalog = referenceDataCatalog;
 		_datastoreCatalog = datastoreCatalog;
+		_injectorBuilder = injectorBuilder;
 
 		_nameTextField = WidgetFactory.createTextField("Dictionary name");
 		_nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {
@@ -108,7 +113,11 @@ public class DatastoreDictionaryDialog extends AbstractDialog {
 					Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
 					if (datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(datastore, getWindowContext(), parentModule);
+
+						Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, datastore)
+								.with(AnalyzerJobBuilder.class, null).createInjector();
+
+						final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
 						schemaTree.addMouseListener(new MouseAdapter() {
 							public void mouseClicked(MouseEvent e) {
 								TreePath path = schemaTree.getSelectionPath();

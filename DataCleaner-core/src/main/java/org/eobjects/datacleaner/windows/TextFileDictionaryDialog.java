@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -35,6 +36,7 @@ import javax.swing.event.DocumentEvent;
 import org.eobjects.analyzer.reference.TextFileDictionary;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -53,7 +55,7 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private final UserPreferences _userPreferences = UserPreferences.getInstance();
+	private final UserPreferences _userPreferences;
 	private final TextFileDictionary _originalDictionary;
 	private final MutableReferenceDataCatalog _catalog;
 	private final JXTextField _nameTextField;
@@ -61,15 +63,13 @@ public final class TextFileDictionaryDialog extends AbstractDialog {
 	private final JComboBox _encodingComboBox;
 	private volatile boolean _nameAutomaticallySet = true;
 
-	public TextFileDictionaryDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
-		this(null, catalog, windowContext);
-	}
-
-	public TextFileDictionaryDialog(TextFileDictionary dictionary, MutableReferenceDataCatalog catalog,
-			WindowContext windowContext) {
+	@Inject
+	protected TextFileDictionaryDialog(@Nullable TextFileDictionary dictionary, MutableReferenceDataCatalog catalog,
+			WindowContext windowContext, UserPreferences userPreferences) {
 		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-dictionaries.png"));
 		_originalDictionary = dictionary;
 		_catalog = catalog;
+		_userPreferences = userPreferences;
 
 		_nameTextField = WidgetFactory.createTextField("Dictionary name");
 		_nameTextField.getDocument().addDocumentListener(new DCDocumentListener() {

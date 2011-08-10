@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,15 +44,21 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.AccessDatastore;
+import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DbaseDatastore;
+import org.eobjects.analyzer.connection.ExcelDatastore;
+import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.OdbDatastore;
+import org.eobjects.analyzer.connection.SasDatastore;
+import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
-import org.eobjects.datacleaner.guice.AdHocModule;
-import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.DCDocumentListener;
@@ -64,7 +69,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
-import org.eobjects.datacleaner.windows.AbstractDialog;
+import org.eobjects.datacleaner.windows.AbstractFileBasedDatastoreDialog;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
@@ -101,18 +106,18 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 	private final JButton _analyzeButton;
 	private final DCPanel _listPanel;
 	private final JXTextField _searchDatastoreTextField;
-	private final Injector _injector;
+	private final InjectorBuilder _injectorBuilder;
 
 	@Inject
 	protected DatastoreListPanel(AnalyzerBeansConfiguration configuration,
 			AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-			Provider<OptionsDialog> optionsDialogProvider, Injector injector) {
+			Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder) {
 		super();
 		_datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
 		_analysisJobBuilderWindow = analysisJobBuilderWindow;
 		_glassPane = glassPane;
 		_optionsDialogProvider = optionsDialogProvider;
-		_injector = injector;
+		_injectorBuilder = injectorBuilder;
 
 		_datastoreCatalog.addListener(this);
 
@@ -230,7 +235,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		for (int i = 0; i < datastoreNames.length; i++) {
 			final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
 			DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
-					_analysisJobBuilderWindow.getWindowContext(), _injector);
+					_analysisJobBuilderWindow.getWindowContext(), _injectorBuilder);
 			_datastorePanels.add(datastorePanel);
 			_listPanel.add(datastorePanel);
 		}
@@ -243,23 +248,23 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		panel.add(createNewDatastoreButton("CSV file", "Comma-separated values (CSV) file (or file with other separators)",
-				IconUtils.CSV_IMAGEPATH, CsvDatastoreDialog.class));
+				IconUtils.CSV_IMAGEPATH, CsvDatastore.class, CsvDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Excel spreadsheet",
 				"Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.", IconUtils.EXCEL_IMAGEPATH,
-				ExcelDatastoreDialog.class));
+				ExcelDatastore.class, ExcelDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
-				IconUtils.ACCESS_IMAGEPATH, AccessDatastoreDialog.class));
+				IconUtils.ACCESS_IMAGEPATH, AccessDatastore.class, AccessDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("SAS library", "A directory of SAS library files (.sas7bdat).",
-				IconUtils.SAS_IMAGEPATH, SasDatastoreDialog.class));
+				IconUtils.SAS_IMAGEPATH, SasDatastore.class, SasDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
-				DbaseDatastoreDialog.class));
+				DbaseDatastore.class, DbaseDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("Fixed width file",
 				"Text file with fixed width values. Each value spans a fixed amount of text characters.",
-				IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastoreDialog.class));
+				IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)", IconUtils.XML_IMAGEPATH,
-				XmlDatastoreDialog.class));
+				XmlDatastore.class, XmlDatastoreDialog.class));
 		panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
-				IconUtils.ODB_IMAGEPATH, OdbDatastoreDialog.class));
+				IconUtils.ODB_IMAGEPATH, OdbDatastore.class, OdbDatastoreDialog.class));
 
 		panel.add(Box.createHorizontalStrut(20));
 
@@ -346,8 +351,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		}
 	}
 
-	private JButton createNewDatastoreButton(final String title, final String description, final String imagePath,
-			final Class<? extends AbstractDialog> dialogClass) {
+	private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
+			final String imagePath, final Class<D> datastoreClass,
+			final Class<? extends AbstractFileBasedDatastoreDialog<D>> dialogClass) {
 		final ImageIcon icon = imageManager.getImageIcon(imagePath);
 		final JButton button = WidgetFactory.createImageButton(icon);
 
@@ -358,22 +364,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				try {
-					Object[] constructorArgs = null;
-					Constructor<? extends AbstractDialog> constructor = null;
-					try {
-						constructor = dialogClass.getConstructor(new Class[0]);
-					} catch (NoSuchMethodException e) {
-						constructor = dialogClass.getConstructor(new Class[] { MutableDatastoreCatalog.class,
-								WindowContext.class });
-						WindowContext windowContext = _analysisJobBuilderWindow.getWindowContext();
-						constructorArgs = new Object[] { DCConfiguration.get().getDatastoreCatalog(), windowContext };
-					}
-					AbstractDialog dialog = constructor.newInstance(constructorArgs);
-					dialog.setVisible(true);
-				} catch (Exception e) {
-					throw new IllegalStateException(e);
-				}
+				Injector injectorWithNullDatastore = _injectorBuilder.with(datastoreClass, null).createInjector();
+				AbstractFileBasedDatastoreDialog<D> dialog = injectorWithNullDatastore.getInstance(dialogClass);
+				dialog.setVisible(true);
 			}
 		});
 		return button;
@@ -400,8 +393,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Injector injectorWithDatastore = _injector.createChildInjector(new AdHocModule().add(JdbcDatastore.class,
-						null));
+				Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, null).createInjector();
 				JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
 				dialog.setSelectedDatabase(databaseName);
 				dialog.setVisible(true);

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -37,7 +38,9 @@ import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -52,7 +55,7 @@ import org.eobjects.metamodel.util.FileHelper;
  * 
  * @author Kasper Sørensen
  */
-public class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvDatastore> {
+public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -72,13 +75,10 @@ public class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvData
 
 	private volatile boolean showPreview = true;
 
-	public CsvDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		this(null, mutableDatastoreCatalog, windowContext);
-	}
-
-	public CsvDatastoreDialog(CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext) {
-		super(datastore, mutableDatastoreCatalog, windowContext);
+	@Inject
+	public CsvDatastoreDialog(@Nullable CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowContext windowContext, UserPreferences userPreferences) {
+		super(datastore, mutableDatastoreCatalog, windowContext, userPreferences);
 		_separatorCharField = new JComboBox(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
 				SEPARATOR_PIPE });
 		_separatorCharField.setEditable(true);

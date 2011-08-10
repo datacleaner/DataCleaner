@@ -24,6 +24,7 @@ import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTree;
@@ -40,7 +41,8 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.SchemaComparator;
@@ -52,6 +54,8 @@ import org.jdesktop.swingx.renderer.DefaultTreeRenderer;
 import org.jdesktop.swingx.renderer.WrappingIconPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Injector;
 
 public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCellRenderer {
 
@@ -66,32 +70,49 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
 	private final DataContextProvider _dataContextProvider;
 	private final TreeCellRenderer _rendererDelegate;
-	private final Datastore _datastore;
 	private final WindowContext _windowContext;
+	private final AnalysisJobBuilder _analysisJobBuilder;
+	private final InjectorBuilder _injectorBuilder;
 
-	public SchemaTree(Datastore datastore, WindowContext windowContext, DCModule parentModule) {
-		this(datastore, null, windowContext, parentModule);
-	}
-
-	public SchemaTree(final Datastore datastore, final AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext,
-			DCModule parentModule) {
+	@Inject
+	protected SchemaTree(final Datastore datastore, @Nullable AnalysisJobBuilder analysisJobBuilder,
+			WindowContext windowContext, InjectorBuilder injectorBuilder) {
 		super();
 		if (datastore == null) {
 			throw new IllegalArgumentException("Datastore cannot be null");
 		}
 		_windowContext = windowContext;
+		_analysisJobBuilder = analysisJobBuilder;
+		_injectorBuilder = injectorBuilder;
+		_dataContextProvider = datastore.getDataContextProvider();
 		_rendererDelegate = new DefaultTreeRenderer();
 		setCellRenderer(this);
-		_datastore = datastore;
-		_dataContextProvider = datastore.getDataContextProvider();
 		setOpaque(false);
 		addTreeWillExpandListener(this);
-		if (analysisJobBuilder != null) {
-			addMouseListener(new SchemaMouseListener(this, _datastore, analysisJobBuilder, parentModule));
-			addMouseListener(new TableMouseListener(this, _datastore, analysisJobBuilder, parentModule));
-			addMouseListener(new ColumnMouseListener(this, _datastore, analysisJobBuilder, parentModule));
+	}
+
+	@Override
+	public void addNotify() {
+		super.addNotify();
+
+		Injector injector = _injectorBuilder.with(SchemaTree.class, this).createInjector();
+
+		if (_analysisJobBuilder != null) {
+			addMouseListener(injector.getInstance(SchemaMouseListener.class));
+			addMouseListener(injector.getInstance(TableMouseListener.class));
+			addMouseListener(injector.getInstance(ColumnMouseListener.class));
 		}
 		updateTree();
+	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		MouseListener[] mouseListeners = getMouseListeners();
+		for (MouseListener mouseListener : mouseListeners) {
+			removeMouseListener(mouseListener);
+		}
+		_dataContextProvider.close();
 	}
 
 	public WindowContext getWindowContext() {
@@ -208,16 +229,6 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 			_tableNode.remove(0);
 			updateUI();
 		};
-	}
-
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-		MouseListener[] mouseListeners = getMouseListeners();
-		for (MouseListener mouseListener : mouseListeners) {
-			removeMouseListener(mouseListener);
-		}
-		_dataContextProvider.close();
 	}
 
 	@Override

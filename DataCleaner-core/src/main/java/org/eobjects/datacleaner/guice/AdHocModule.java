@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Binder;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.util.Providers;
 
@@ -40,40 +41,55 @@ import com.google.inject.util.Providers;
  * 
  * @author Kasper Sørensen
  */
-public class AdHocModule implements Module {
+final class AdHocModule implements Module {
 
 	private static final Logger logger = LoggerFactory.getLogger(AdHocModule.class);
 
-	private final Map<Class<?>, Object> _bindings;
+	private final Map<Key<?>, Object> _bindings;
 
 	public AdHocModule() {
-		_bindings = new HashMap<Class<?>, Object>();
+		_bindings = new HashMap<Key<?>, Object>();
 	}
 
-	public <E> AdHocModule add(Class<?> bindingClass, Object providerOrInstance) {
-		_bindings.put(bindingClass, providerOrInstance);
-		return this;
+	public <E> void bind(Class<?> bindingClass, Object providerOrInstance) {
+		bind(Key.get(bindingClass), providerOrInstance);
+	}
+
+	public <E> void bind(Key<?> bindingKey, Object providerOrInstance) {
+		if (providerOrInstance == null) {
+			providerOrInstance = Providers.of(null);
+		}
+		_bindings.put(bindingKey, providerOrInstance);
+	}
+
+	public boolean hasBindingFor(Key<?> bindingKey) {
+		return _bindings.containsKey(bindingKey);
+	}
+
+	public boolean hasBindingFor(Class<?> bindingClass) {
+		return hasBindingFor(Key.get(bindingClass));
 	}
 
 	@Override
 	public void configure(Binder binder) {
-		Set<Entry<Class<?>, Object>> entrySet = _bindings.entrySet();
-		for (Entry<Class<?>, Object> entry : entrySet) {
+		Set<Entry<Key<?>, Object>> entrySet = _bindings.entrySet();
+		for (Entry<Key<?>, Object> entry : entrySet) {
 			@SuppressWarnings("unchecked")
-			Class<Object> bindingClass = (Class<Object>) entry.getKey();
+			Key<Object> bindingKey = (Key<Object>) entry.getKey();
+
 			Object providerOrInstance = entry.getValue();
 
-			logger.info("Binding ad-hoc dependency for {}: {}", bindingClass.getName(), providerOrInstance);
+			logger.info("Binding ad-hoc dependency for {}: {}", bindingKey, providerOrInstance);
 
 			if (providerOrInstance instanceof Provider) {
 				Provider<?> provider = (Provider<?>) providerOrInstance;
 				com.google.inject.Provider<?> guiceProvider = Providers.guicify(provider);
-				binder.bind(bindingClass).toProvider(guiceProvider);
+				binder.bind(bindingKey).toProvider(guiceProvider);
 			} else if (providerOrInstance instanceof com.google.inject.Provider) {
 				com.google.inject.Provider<?> guiceProvider = (com.google.inject.Provider<?>) providerOrInstance;
-				binder.bind(bindingClass).toProvider(guiceProvider);
+				binder.bind(bindingKey).toProvider(guiceProvider);
 			} else {
-				binder.bind(bindingClass).toInstance(providerOrInstance);
+				binder.bind(bindingKey).toInstance(providerOrInstance);
 			}
 		}
 	}

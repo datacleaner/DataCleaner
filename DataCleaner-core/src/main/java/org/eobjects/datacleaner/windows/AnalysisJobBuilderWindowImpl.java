@@ -74,8 +74,7 @@ import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.AdHocModule;
-import org.eobjects.datacleaner.guice.DatastoreName;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.guice.JobFilename;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
@@ -175,9 +174,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
 			Provider<DCRendererInitializer> rendererInitializerProvider, SchemaTreePanel schemaTreePanel,
 			SourceColumnsPanel sourceColumnsPanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,
-			MetadataPanel metadataPanel, AnalysisJobBuilder analysisJobBuilder, Injector injector,
-			UserPreferences userPreferences, @Nullable Datastore datastore, @Nullable @JobFilename String jobFilename,
-			@Nullable @DatastoreName String datastoreName, Provider<DCWindowMenuBar> windowMenuBarProvider) {
+			MetadataPanel metadataPanel, AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder,
+			UserPreferences userPreferences, @Nullable @JobFilename String jobFilename,
+			 Provider<DCWindowMenuBar> windowMenuBarProvider) {
 		super(windowContext);
 		_jobFilename = jobFilename;
 		_configuration = configuration;
@@ -189,25 +188,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
 		} else {
 			_analysisJobBuilder = analysisJobBuilder;
-		}
-
-		if (datastore == null) {
-			if (datastoreName != null) {
-				_datastore = configuration.getDatastoreCatalog().getDatastore(datastoreName);
-			} else {
-				DataContextProvider dcp = _analysisJobBuilder.getDataContextProvider();
-				if (dcp != null) {
-					_datastore = dcp.getDatastore();
-				}
+			DataContextProvider dcp = _analysisJobBuilder.getDataContextProvider();
+			if (dcp != null) {
+				_datastore = dcp.getDatastore();
 			}
-		} else {
-			_datastore = datastore;
 		}
+		
 		_datastoreSelectionEnabled = true;
 		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
 				rendererInitializerProvider.get());
 		_glassPane = new DCGlassPane(this);
-		_injectorWithGlassPane = injector.createChildInjector(new AdHocModule().add(DCGlassPane.class, _glassPane));
+		_injectorWithGlassPane = injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
 
 		_analysisJobBuilder.getAnalyzerChangeListeners().add(this);
 		_analysisJobBuilder.getTransformerChangeListeners().add(this);

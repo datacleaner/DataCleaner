@@ -26,35 +26,36 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveTableAsCsvFileActionListener;
 import org.eobjects.datacleaner.actions.SaveTableAsExcelSpreadsheetActionListener;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
+
+import com.google.inject.Injector;
 
 final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final SchemaTree _schemaTree;
-	private final Datastore _datastore;
-	private final DCModule _parentModule;
+	private final InjectorBuilder _injectorBuilder;
 
-	public TableMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder,
-			DCModule parentModule) {
+	@Inject
+	protected TableMouseListener(SchemaTree schemaTree, AnalysisJobBuilder analysisJobBuilder,
+			InjectorBuilder injectorBuilder) {
 		_schemaTree = schemaTree;
-		_datastore = datastore;
 		_analysisJobBuilder = analysisJobBuilder;
-		_parentModule = parentModule;
+		_injectorBuilder = injectorBuilder;
 	}
 
 	@Override
@@ -120,19 +121,27 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 				final JMenuItem quickAnalysisMenuItem = WidgetFactory.createMenuItem("Quick analysis",
 						"images/component-types/analyzer.png");
-				quickAnalysisMenuItem.addActionListener(new QuickAnalysisActionListener(_datastore, table, _parentModule));
+
+				Injector injector = _injectorBuilder.with(Table.class, table).with(Column[].class, null).createInjector();
+
+				QuickAnalysisActionListener quickAnalysisActionListener = injector
+						.getInstance(QuickAnalysisActionListener.class);
+				quickAnalysisMenuItem.addActionListener(quickAnalysisActionListener);
 				popup.add(quickAnalysisMenuItem);
 
 				final JMenuItem saveAsExcelFileMenuItem = WidgetFactory.createMenuItem("Save table as Excel spreadsheet",
 						"images/component-types/type_output_writer.png");
-				saveAsExcelFileMenuItem.addActionListener(new SaveTableAsExcelSpreadsheetActionListener(_datastore, table,
-						_schemaTree.getWindowContext(), _analysisJobBuilder.getConfiguration(), _parentModule));
+				SaveTableAsExcelSpreadsheetActionListener saveTableAsExcelSpreadsheetActionListener = injector
+						.getInstance(SaveTableAsExcelSpreadsheetActionListener.class);
+				saveAsExcelFileMenuItem.addActionListener(saveTableAsExcelSpreadsheetActionListener);
 				popup.add(saveAsExcelFileMenuItem);
 
 				final JMenuItem saveAsCsvFileMenuItem = WidgetFactory.createMenuItem("Save table as CSV file",
 						"images/component-types/type_output_writer.png");
-				saveAsCsvFileMenuItem.addActionListener(new SaveTableAsCsvFileActionListener(_datastore, table, _schemaTree
-						.getWindowContext(), _parentModule));
+				SaveTableAsCsvFileActionListener saveTableAsCsvFileActionListener = injector
+						.getInstance(SaveTableAsCsvFileActionListener.class);
+
+				saveAsCsvFileMenuItem.addActionListener(saveTableAsCsvFileActionListener);
 				popup.add(saveAsCsvFileMenuItem);
 
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",

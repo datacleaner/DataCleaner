@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -41,11 +42,13 @@ import javax.swing.tree.TreePath;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -60,6 +63,8 @@ import org.eobjects.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.google.inject.Injector;
+
 public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -70,26 +75,22 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 	private final SourceColumnComboBox _masterTermColumnComboBox;
 	private final JXTextField _nameTextField;
 	private final DatastoreCatalog _datastoreCatalog;
-	private final DCModule _parentModule;
+	private final MultiSourceColumnComboBoxPanel _synonymColumnsPanel;
+	private final InjectorBuilder _injectorBuilder;
 	private Datastore _datastore;
 	private final DCPanel _treePanel;
 	private volatile boolean _nameAutomaticallySet = true;
-	private final MultiSourceColumnComboBoxPanel _synonymColumnsPanel;
 
-	public DatastoreSynonymCatalogDialog(MutableReferenceDataCatalog catalog, DatastoreCatalog datastoreCatalog,
-			WindowContext windowContext, DCModule parentModule) {
-		this(null, catalog, datastoreCatalog, windowContext, parentModule);
-	}
-
-	public DatastoreSynonymCatalogDialog(DatastoreSynonymCatalog synonymCatalog,
+	@Inject
+	protected DatastoreSynonymCatalogDialog(@Nullable DatastoreSynonymCatalog synonymCatalog,
 			MutableReferenceDataCatalog mutableReferenceCatalog, DatastoreCatalog datastoreCatalog,
-			WindowContext windowContext, DCModule parentModule) {
+			WindowContext windowContext, InjectorBuilder injectorBuilder) {
 		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-synonym-catalog.png"));
 		_originalsynonymCatalog = synonymCatalog;
 		_datastoreCatalog = datastoreCatalog;
 		_mutableReferenceCatalog = mutableReferenceCatalog;
+		_injectorBuilder = injectorBuilder;
 		_nameTextField = WidgetFactory.createTextField("Synonym catalog name");
-		_parentModule = parentModule;
 		String[] comboBoxModel = CollectionUtils.array(new String[1], _datastoreCatalog.getDatastoreNames());
 
 		_datastoreComboBox = new JComboBox(comboBoxModel);
@@ -121,7 +122,10 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 					_synonymColumnsPanel.setModel(_datastore);
 					if (_datastore != null) {
 						_treePanel.removeAll();
-						final SchemaTree schemaTree = new SchemaTree(_datastore, getWindowContext(), _parentModule);
+						Injector injectorWithDatastore = _injectorBuilder.with(Datastore.class, _datastore)
+								.with(AnalysisJobBuilder.class, null).createInjector();
+
+						final SchemaTree schemaTree = injectorWithDatastore.getInstance(SchemaTree.class);
 						schemaTree.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseClicked(MouseEvent e) {

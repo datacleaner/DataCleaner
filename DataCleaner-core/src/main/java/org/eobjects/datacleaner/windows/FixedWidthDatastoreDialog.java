@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -41,8 +42,10 @@ import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -54,7 +57,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
 
-public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<FixedWidthDatastore> {
+public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<FixedWidthDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -69,13 +72,10 @@ public class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<
 
 	private volatile boolean showPreview = true;
 
-	public FixedWidthDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		this(null, mutableDatastoreCatalog, windowContext);
-	}
-
-	public FixedWidthDatastoreDialog(FixedWidthDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext);
+	@Inject
+	protected FixedWidthDatastoreDialog(@Nullable FixedWidthDatastore originalDatastore,
+			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 		_updatePreviewTableDocumentListener = new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {

@@ -26,32 +26,26 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.util.WidgetFactory;
-
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 
 final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 
 	private final SchemaTree _schemaTree;
-	private final Datastore _datastore;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final DCModule _parentModule;
+	private final Provider<TableMouseListener> _tableMouseListenerProvider;
 
-	public SchemaMouseListener(SchemaTree schemaTree, Datastore datastore, AnalysisJobBuilder analysisJobBuilder,
-			DCModule parentModule) {
+	@Inject
+	protected SchemaMouseListener(SchemaTree schemaTree, Provider<TableMouseListener> tableMouseListenerProvider) {
 		_schemaTree = schemaTree;
-		_datastore = datastore;
-		_analysisJobBuilder = analysisJobBuilder;
-		_parentModule = parentModule;
+		_tableMouseListenerProvider = tableMouseListenerProvider;
 	}
 
 	@Override
@@ -74,8 +68,7 @@ final class SchemaMouseListener extends MouseAdapter implements MouseListener {
 				addTableItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						TableMouseListener tableMouseListener = new TableMouseListener(_schemaTree, _datastore,
-								_analysisJobBuilder, _parentModule);
+						TableMouseListener tableMouseListener = _tableMouseListenerProvider.get();
 						Table[] tables = schema.getTables();
 						for (Table table : tables) {
 							tableMouseListener.addTable(table);

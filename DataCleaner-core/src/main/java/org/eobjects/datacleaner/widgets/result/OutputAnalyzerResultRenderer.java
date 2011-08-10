@@ -40,14 +40,19 @@ import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.output.beans.OutputAnalyzerResult;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.VerticalLayout;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 @RendererBean(SwingRenderingFormat.class)
 public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyzerResult, JComponent> {
@@ -56,6 +61,9 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 
 	@Inject
 	WindowContext windowContext;
+
+	@Inject
+	DCModule _parentModule;
 
 	@Override
 	public JComponent render(OutputAnalyzerResult result) {
@@ -114,11 +122,10 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 			analyzeButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO: GUICE
-					// final AnalysisJobBuilderWindow window = new
-					// AnalysisJobBuilderWindow(configuration, datastore,
-					// windowContext);
-					// window.setVisible(true);
+					Injector injector = Guice.createInjector(new DCModule(_parentModule, null));
+					AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+					window.setDatastore(datastore);
+					window.open();
 				}
 			});
 			panel.add(analyzeButton);

@@ -19,24 +19,25 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import javax.inject.Inject;
+
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
-public class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<XmlDatastore> {
+public final class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<XmlDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public XmlDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		super(mutableDatastoreCatalog, windowContext);
-	}
-
-	public XmlDatastoreDialog(XmlDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext);
+	@Inject
+	protected XmlDatastoreDialog(@Nullable XmlDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+			WindowContext windowContext, UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 	}
 
 	@Override

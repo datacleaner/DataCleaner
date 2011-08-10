@@ -19,11 +19,14 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import javax.inject.Inject;
 import javax.swing.filechooser.FileFilter;
 
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
@@ -33,17 +36,14 @@ import org.eobjects.datacleaner.widgets.FilenameTextField;
  * 
  * @author Kasper Sørensen
  */
-public class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<AccessDatastore> {
+public final class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialog<AccessDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public AccessDatastoreDialog(AccessDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext);
-	}
-
-	public AccessDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		super(mutableDatastoreCatalog, windowContext);
+	@Inject
+	protected AccessDatastoreDialog(@Nullable AccessDatastore originalDatastore,
+			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 	}
 
 	@Override

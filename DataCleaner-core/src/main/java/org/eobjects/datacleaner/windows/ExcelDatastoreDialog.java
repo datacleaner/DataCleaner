@@ -19,26 +19,26 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import javax.inject.Inject;
 import javax.swing.filechooser.FileFilter;
 
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 
-public class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<ExcelDatastore> {
+public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog<ExcelDatastore> {
 
 	private static final long serialVersionUID = 1L;
 
-	public ExcelDatastoreDialog(MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext) {
-		super(mutableDatastoreCatalog, windowContext);
-	}
-
-	public ExcelDatastoreDialog(ExcelDatastore originalDatastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext) {
-		super(originalDatastore, mutableDatastoreCatalog, windowContext);
+	@Inject
+	protected ExcelDatastoreDialog(@Nullable ExcelDatastore originalDatastore,
+			MutableDatastoreCatalog mutableDatastoreCatalog, WindowContext windowContext, UserPreferences userPreferences) {
+		super(originalDatastore, mutableDatastoreCatalog, windowContext, userPreferences);
 	}
 
 	@Override

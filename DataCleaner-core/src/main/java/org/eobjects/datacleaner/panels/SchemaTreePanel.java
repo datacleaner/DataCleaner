@@ -29,13 +29,13 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
+
+import com.google.inject.Injector;
 
 public class SchemaTreePanel extends DCPanel {
 
@@ -43,18 +43,14 @@ public class SchemaTreePanel extends DCPanel {
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final WindowContext _windowContext;
-	private final DCModule _parentModule;
+	private final InjectorBuilder _injectorBuilder;
 	private JComponent _updatePanel;
 
 	@Inject
-	protected SchemaTreePanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext, DCModule parentModule) {
+	protected SchemaTreePanel(InjectorBuilder injectorBuilder) {
 		super(imageManager.getImage("images/window/schema-tree-background.png"), 100, 100, WidgetUtils.BG_COLOR_BRIGHTEST,
 				WidgetUtils.BG_COLOR_BRIGHT);
-		_analysisJobBuilder = analysisJobBuilder;
-		_windowContext = windowContext;
-		_parentModule = parentModule;
+		_injectorBuilder = injectorBuilder;
 		setLayout(new BorderLayout());
 		setBorder(WidgetUtils.BORDER_WIDE);
 		setDatastore(null, false);
@@ -74,7 +70,9 @@ public class SchemaTreePanel extends DCPanel {
 		new SwingWorker<SchemaTree, Void>() {
 			@Override
 			protected SchemaTree doInBackground() throws Exception {
-				return new SchemaTree(datastore, _analysisJobBuilder, _windowContext, _parentModule);
+				Injector injector = _injectorBuilder.with(Datastore.class, datastore).createInjector();
+				SchemaTree tree = injector.getInstance(SchemaTree.class);
+				return tree;
 			}
 
 			protected void done() {

@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.guice;
 
 import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -31,6 +30,8 @@ import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -138,6 +139,16 @@ public class DCModule extends AbstractModule {
 	}
 
 	@Provides
+	public final MutableReferenceDataCatalog getMutableReferenceDataCatalog(ReferenceDataCatalog referenceDataCatalog) {
+		return (MutableReferenceDataCatalog) referenceDataCatalog;
+	}
+
+	@Provides
+	public final MutableDatastoreCatalog getMutableDatastoreCatalog(DatastoreCatalog datastoreCatalog) {
+		return (MutableDatastoreCatalog) datastoreCatalog;
+	}
+
+	@Provides
 	public final AnalyzerBeansConfiguration getConfiguration() {
 		return _configuration;
 	}
@@ -157,19 +168,8 @@ public class DCModule extends AbstractModule {
 	}
 
 	@Provides
-	public Datastore getDatastore() {
-		return null;
-	}
-
-	@Provides
 	public AnalysisJobBuilder getAnalysisJobBuilder() {
 		return _analysisJobBuilder;
-	}
-
-	@Provides
-	@DatastoreName
-	public String getDatastoreName() {
-		return null;
 	}
 
 	@Provides

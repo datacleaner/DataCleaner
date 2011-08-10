@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.inject.Inject;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -59,7 +60,8 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCModule _parentModule;
 
-	public SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext,
+	@Inject
+	protected SaveTableAsExcelSpreadsheetActionListener(Datastore datastore, Table table, WindowContext windowContext,
 			AnalyzerBeansConfiguration configuration, DCModule parentModule) {
 		_datastore = datastore;
 		_table = table;

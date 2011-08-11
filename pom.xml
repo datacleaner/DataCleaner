@@ -27,6 +27,7 @@
 		<module>DataCleaner-phonetic-similarity</module>
 		<module>DataCleaner-sample-extension</module>
 		<module>DataCleaner-packaging</module>
+		<module>DataCleaner-regex-parser</module>
 	</modules>
 	<organization>
 		<name>eobjects.org</name>

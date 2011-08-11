@@ -34,7 +34,7 @@ import org.eobjects.analyzer.beans.categories.StringManipulationCategory;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 
-@TransformerBean("Regex transformer")
+@TransformerBean("Regex parser")
 @Description("Parses strings using a regular expression and transforms it into substrings based on regex groups")
 @Categorized({ StringManipulationCategory.class, ScriptingCategory.class, MatchingAndStandardizationCategory.class })
 public class RegexParserTransformer implements Transformer<String> {

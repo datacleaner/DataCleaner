@@ -38,7 +38,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.DataCleanerHome;
-import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.DownloadProgressWindow;
@@ -59,14 +58,16 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 	private final File[] _files;
 	private final FileDownloadListener _listener;
 	private final DownloadProgressWindow _downloadProgressWindow;
+	private final HttpClient _httpClient;
 	private volatile boolean _cancelled = false;
 
-	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext) {
-		this(urls, createTargetFilenames(urls), listener, windowContext);
+	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext,
+			HttpClient httpClient) {
+		this(urls, createTargetFilenames(urls), listener, windowContext, httpClient);
 	}
 
 	public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener,
-			WindowContext windowContext) {
+			WindowContext windowContext, HttpClient httpClient) {
 		if (urls == null) {
 			throw new IllegalArgumentException("urls cannot be null");
 		}
@@ -78,6 +79,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 			_files[i] = new File(DataCleanerHome.get(), filename);
 		}
 		_downloadProgressWindow = new DownloadProgressWindow(this, windowContext);
+		_httpClient = httpClient;
 	}
 
 	private static String[] createTargetFilenames(String[] urls) {
@@ -144,11 +146,10 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 			try {
 				byte[] buffer = new byte[1024];
 
-				final HttpClient httpClient = HttpXmlUtils.getHttpClient();
 				final HttpGet method = new HttpGet(url);
 
 				if (!_cancelled) {
-					final HttpResponse response = httpClient.execute(method);
+					final HttpResponse response = _httpClient.execute(method);
 
 					if (response.getStatusLine().getStatusCode() != 200) {
 						throw new InvalidHttpResponseException(url, response);

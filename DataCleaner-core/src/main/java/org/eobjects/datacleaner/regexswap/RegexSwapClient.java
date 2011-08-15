@@ -45,10 +45,6 @@ public final class RegexSwapClient {
 	private final Map<String, Regex> _regexes = new HashMap<String, Regex>();
 	private final HttpClient _httpClient;
 
-	public RegexSwapClient() {
-		this(HttpXmlUtils.getHttpClient());
-	}
-
 	public RegexSwapClient(HttpClient httpClient) {
 		_httpClient = httpClient;
 	}

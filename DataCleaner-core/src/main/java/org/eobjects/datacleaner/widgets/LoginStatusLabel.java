@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.LoginPanel;
+import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -58,11 +59,11 @@ public class LoginStatusLabel extends JLabel implements LoginChangeListener {
 
 	@Inject
 	protected LoginStatusLabel(DCGlassPane glassPane, UserPreferences userPreferences,
-			Provider<OptionsDialog> optionsDialogProvider) {
+			Provider<OptionsDialog> optionsDialogProvider, AuthenticationService authenticationService) {
 		super();
 		_glassPane = glassPane;
 		_userPreferences = userPreferences;
-		_loginPanel = new LoginPanel(_glassPane, userPreferences);
+		_loginPanel = new LoginPanel(authenticationService, _glassPane, userPreferences);
 		_userPreferences.addLoginChangeListener(this);
 		_optionsDialogProvider = optionsDialogProvider;
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);

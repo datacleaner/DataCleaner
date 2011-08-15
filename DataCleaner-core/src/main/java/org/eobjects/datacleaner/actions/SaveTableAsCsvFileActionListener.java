@@ -37,7 +37,6 @@ import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
 import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -63,22 +62,23 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 	private final DCModule _parentModule;
 	private final UserPreferences _userPreferences;
 	private final InjectorBuilder _injectorBuilder;
+	private AnalyzerBeansConfiguration _configuration;
 
 	@Inject
 	protected SaveTableAsCsvFileActionListener(Datastore datastore, Table table, WindowContext windowContext,
-			DCModule parentModule, UserPreferences userPreferences, InjectorBuilder injectorBuilder) {
+			DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration, InjectorBuilder injectorBuilder) {
 		_datastore = datastore;
 		_table = table;
 		_windowContext = windowContext;
 		_parentModule = parentModule;
 		_userPreferences = userPreferences;
+		_configuration = configuration;
 		_injectorBuilder = injectorBuilder;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
 		ajb.setDatastore(_datastore);
 		ajb.addSourceColumns(_table.getColumns());
 

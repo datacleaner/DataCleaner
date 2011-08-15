@@ -28,11 +28,11 @@ import org.eobjects.analyzer.reference.Dictionary;
 
 import junit.framework.TestCase;
 
-public class UserPreferencesTest extends TestCase {
+public class UserPreferencesImplTest extends TestCase {
 
 	public void testDeserialize21preferences() throws Exception {
 		File file = new File("src/test/resources/userpreferences-2.1.dat");
-		UserPreferences preferences = UserPreferences.load(file, false);
+		UserPreferences preferences = UserPreferencesImpl.load(file, false);
 		assertNotNull(preferences);
 
 		List<Datastore> datastores = preferences.getUserDatastores();
@@ -44,7 +44,9 @@ public class UserPreferencesTest extends TestCase {
 		assertEquals(null, datastore.getDescription());
 
 		datastore = datastores.get(1);
-		assertEquals("CsvDatastore[name=foobar, filename=C:\\foobar.txt, quoteChar='\"', separatorChar=',', encoding=UTF-8]", datastore.toString());
+		assertEquals(
+				"CsvDatastore[name=foobar, filename=C:\\foobar.txt, quoteChar='\"', separatorChar=',', encoding=UTF-8]",
+				datastore.toString());
 		assertEquals("C:\\foobar.txt", ((CsvDatastore) datastore).getFilename());
 		assertEquals(null, datastore.getDescription());
 
@@ -52,6 +54,5 @@ public class UserPreferencesTest extends TestCase {
 		assertEquals(1, dictionaries.size());
 
 		assertEquals("SimpleDictionary[name=my dictionary]", dictionaries.get(0).toString());
-
 	}
 }

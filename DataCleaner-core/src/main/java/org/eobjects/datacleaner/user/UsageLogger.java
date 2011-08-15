@@ -49,18 +49,14 @@ public final class UsageLogger {
 	// Special username used for anonymous entries. This is the only
 	// non-existing username that is allowed on server side.
 	private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
-	private static final UsageLogger instance = new UsageLogger();
 
 	private final UserPreferences _userPreferences;
+	private final HttpXmlUtils _httpXmlUtils;
 	private ExecutorService _executorService;
 
-	public static UsageLogger getInstance() {
-		return instance;
-	}
-
-	// prevent instantiation
-	private UsageLogger() {
-		_userPreferences = UserPreferences.getInstance();
+	public UsageLogger(UserPreferences userPreferences, HttpXmlUtils httpXmlUtils) {
+		_userPreferences = userPreferences;
+		_httpXmlUtils = httpXmlUtils;
 	}
 
 	private ExecutorService getExecutorService() {
@@ -120,7 +116,7 @@ public final class UsageLogger {
 	 * 
 	 * @author Kasper Sørensen
 	 */
-	private static final class UsageLoggerRunnable implements Runnable {
+	private final class UsageLoggerRunnable implements Runnable {
 
 		private final String _username;
 		private final String _action;
@@ -140,7 +136,7 @@ public final class UsageLogger {
 				nameValuePairs.add(new BasicNameValuePair("version", Main.VERSION));
 				req.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-				HttpResponse resp = HttpXmlUtils.getHttpClient().execute(req);
+				HttpResponse resp = _httpXmlUtils.getHttpClient().execute(req);
 				InputStream content = resp.getEntity().getContent();
 				String line = new BufferedReader(new InputStreamReader(content)).readLine();
 				assert "success".equals(line);

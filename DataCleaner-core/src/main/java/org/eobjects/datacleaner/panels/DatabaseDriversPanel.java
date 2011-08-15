@@ -38,6 +38,7 @@ import javax.swing.JToolBar;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -76,14 +77,16 @@ public class DatabaseDriversPanel extends DCPanel {
 	private final DatabaseDriverCatalog _databaseDriverCatalog;
 	private final WindowContext _windowContext;
 	private final UserPreferences _userPreferences;
+	private final HttpClient _httpClient;
 
 	@Inject
 	protected DatabaseDriversPanel(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
-			UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog) {
+			UserPreferences userPreferences, DatabaseDriverCatalog databaseDriverCatalog, HttpClient httpClient) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_windowContext = windowContext;
 		_userPreferences = userPreferences;
 		_databaseDriverCatalog = databaseDriverCatalog;
+		_httpClient = httpClient;
 		setLayout(new BorderLayout());
 
 		DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -248,6 +251,6 @@ public class DatabaseDriversPanel extends DCPanel {
 				}
 				updateDriverList();
 			}
-		}, _windowContext);
+		}, _windowContext, _httpClient);
 	}
 }

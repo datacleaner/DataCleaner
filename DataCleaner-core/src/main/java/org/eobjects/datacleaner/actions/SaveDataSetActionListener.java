@@ -31,12 +31,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
+import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegate;
+import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegateImpl;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
+import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -47,11 +51,16 @@ public class SaveDataSetActionListener implements ActionListener {
 	private final List<InputColumn<?>> _inputColumns;
 	private final InputRow[] _rows;
 	private final UserPreferences _userPreferences;
+	private final DatastoreCatalog _datastoreCatalog;
+	private final UsageLogger _usageLogger;
 
-	public SaveDataSetActionListener(List<InputColumn<?>> inputColumns, InputRow[] rows, UserPreferences userPreferences) {
+	public SaveDataSetActionListener(List<InputColumn<?>> inputColumns, InputRow[] rows, UserPreferences userPreferences,
+			DatastoreCatalog datastoreCatalog, UsageLogger usageLogger) {
 		_inputColumns = inputColumns;
 		_rows = rows;
 		_userPreferences = userPreferences;
+		_datastoreCatalog = datastoreCatalog;
+		_usageLogger = usageLogger;
 	}
 
 	private void performWrite(OutputWriter writer) {
@@ -69,11 +78,16 @@ public class SaveDataSetActionListener implements ActionListener {
 		saveAsDatastoreItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String datastoreName = JOptionPane.showInputDialog("Datastore name");
-				OutputWriter writer = DatastoreOutputWriterFactory.getWriter(datastoreName, "DATASET", _inputColumns);
+				final String datastoreName = JOptionPane.showInputDialog("Datastore name");
+				final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(
+						(MutableDatastoreCatalog) _datastoreCatalog);
+
+				final OutputWriter writer = DatastoreOutputWriterFactory.getWriter(
+						_userPreferences.getSaveDatastoreDirectory(), creationDelegate, datastoreName, "DATASET",
+						_inputColumns.toArray(new InputColumn[0]));
 				performWrite(writer);
 
-				UsageLogger.getInstance().log("Save DataSet as datastore");
+				_usageLogger.log("Save DataSet as datastore");
 			}
 		});
 
@@ -95,7 +109,7 @@ public class SaveDataSetActionListener implements ActionListener {
 					File dir = selectedFile.getParentFile();
 					_userPreferences.setAnalysisJobDirectory(dir);
 
-					UsageLogger.getInstance().log("Save DataSet as CSV file");
+					_usageLogger.log("Save DataSet as CSV file");
 				}
 			}
 		});

@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
+import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -41,10 +42,14 @@ public final class AddAnalyzerActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilder _analysisJobBuilder;
+	private final UsageLogger _usageLogger;
 
-	public AddAnalyzerActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
+	@Inject
+	protected AddAnalyzerActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+			UsageLogger usageLogger) {
 		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
+		_usageLogger = usageLogger;
 	}
 
 	@Override
@@ -77,7 +82,7 @@ public final class AddAnalyzerActionListener implements ActionListener {
 									.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
 						}
 
-						UsageLogger.getInstance().log("Add analyzer: " + descriptor.getDisplayName());
+						_usageLogger.log("Add analyzer: " + descriptor.getDisplayName());
 					}
 				});
 

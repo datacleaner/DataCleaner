@@ -40,12 +40,14 @@ public final class AddFilterActionListener implements ActionListener {
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final FilterListPanel _filterListPanel;
+	private final UsageLogger _usageLogger;
 
 	public AddFilterActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			FilterListPanel filterListPanel) {
+			FilterListPanel filterListPanel, UsageLogger usageLogger) {
 		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
 		_filterListPanel = filterListPanel;
+		_usageLogger = usageLogger;
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public final class AddFilterActionListener implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
 						_analysisJobBuilder.addFilter(descriptor);
 
-						UsageLogger.getInstance().log("Add filter: " + descriptor.getDisplayName());
+						_usageLogger.log("Add filter: " + descriptor.getDisplayName());
 
 						_filterListPanel.updateUI();
 					}

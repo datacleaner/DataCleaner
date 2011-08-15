@@ -19,26 +19,51 @@
  */
 package org.eobjects.datacleaner.guice;
 
+import java.io.File;
+import java.util.List;
+
+import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
+import org.eobjects.analyzer.configuration.InjectionManager;
+import org.eobjects.analyzer.configuration.InjectionManagerFactory;
+import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
+import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
+import org.eobjects.analyzer.descriptors.SimpleDescriptorProvider;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.concurrent.SingleThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
+import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
+import org.eobjects.analyzer.storage.InMemoryStorageProvider;
+import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.user.AuthenticationService;
+import org.eobjects.datacleaner.user.DCAuthenticationService;
+import org.eobjects.datacleaner.user.DataCleanerConfigurationReaderInterceptor;
+import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.user.UserPreferencesImpl;
+import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 import org.eobjects.metamodel.util.ImmutableRef;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.Ref;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
@@ -52,10 +77,13 @@ import com.google.inject.Provides;
  */
 public class DCModule extends AbstractModule {
 
-	private final AnalyzerBeansConfiguration _configuration;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final Ref<WindowContext> _windowContext;
-	private final UserPreferences _userPreferences;
+	private static final Logger logger = LoggerFactory.getLogger(DCModule.class);
+
+	private final Ref<AnalyzerBeansConfiguration> _configurationRef;
+	private final Ref<AnalysisJobBuilder> _analysisJobBuilderRef;
+	private final Ref<WindowContext> _windowContextRef;
+	private final Ref<UserPreferences> _userPreferencesRef;
+	private final Ref<UsageLogger> _usageLoggerRef;
 
 	/**
 	 * Creates a DCModule based on a parent module. This constructor is
@@ -67,67 +95,143 @@ public class DCModule extends AbstractModule {
 	 *            the AnalysisJobBuilder to use within this module, or null if a
 	 *            new AnalysisJobBuilder should be created.
 	 */
-	public DCModule(DCModule parent, AnalysisJobBuilder analysisJobBuilder) {
-		_configuration = parent._configuration;
+	public DCModule(DCModule parent, final AnalysisJobBuilder analysisJobBuilder) {
+		_configurationRef = parent._configurationRef;
+		_usageLoggerRef = parent._usageLoggerRef;
 		if (analysisJobBuilder == null) {
-			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
-		} else {
-			_analysisJobBuilder = analysisJobBuilder;
-		}
-		_windowContext = parent._windowContext;
-		_userPreferences = parent._userPreferences;
-	}
-
-	/**
-	 * Creates a DCModule that derives from an existing window context and
-	 * optionally also from an existing analysis job builder.
-	 * 
-	 * @param configuration
-	 * @param windowContext
-	 * @param analysisJobBuilder
-	 * @param userPreferences
-	 */
-	public DCModule(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
-			AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
-		_configuration = configuration;
-		_userPreferences = userPreferences;
-		if (windowContext == null) {
-			_windowContext = new LazyRef<WindowContext>() {
+			_analysisJobBuilderRef = new LazyRef<AnalysisJobBuilder>() {
 				@Override
-				protected WindowContext fetch() {
-					return new DCWindowContext(_configuration, _userPreferences);
+				protected AnalysisJobBuilder fetch() {
+					return new AnalysisJobBuilder(getConfiguration());
 				}
 			};
 		} else {
-			_windowContext = ImmutableRef.of(windowContext);
+			_analysisJobBuilderRef = ImmutableRef.of(analysisJobBuilder);
 		}
-
-		if (analysisJobBuilder == null) {
-			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
-		} else {
-			_analysisJobBuilder = analysisJobBuilder;
-		}
+		_windowContextRef = parent._windowContextRef;
+		_userPreferencesRef = parent._userPreferencesRef;
 	}
 
 	/**
-	 * Constructs a new DCModule based only on a configuration. New window
-	 * contexts and analysis job builder will be created. Thus this constructor
-	 * should only be used to create a completely new environment (at bootstrap
-	 * time).
-	 * 
-	 * @param configuration
+	 * Constructs a new DCModule based only on a DataCleaner home directory. New
+	 * window contexts and analysis job builder will be created. Thus this
+	 * constructor should only be used to create a completely new environment
+	 * (at bootstrap time).
 	 */
-	public DCModule(AnalyzerBeansConfiguration configuration) {
-		this(configuration, null, null, UserPreferences.getInstance());
+	public DCModule(final File dataCleanerHome) {
+		_configurationRef = createConfigurationRef(dataCleanerHome);
+		_userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
+		_analysisJobBuilderRef = new LazyRef<AnalysisJobBuilder>() {
+			@Override
+			protected AnalysisJobBuilder fetch() {
+				return new AnalysisJobBuilder(getConfiguration());
+			}
+		};
+		_windowContextRef = new LazyRef<WindowContext>() {
+			@Override
+			protected WindowContext fetch() {
+				UserPreferences userPreferences = getUserPreferences();
+				return new DCWindowContext(getConfiguration(), userPreferences,
+						getUsageLogger(getHttpXmlUtils(userPreferences)));
+			}
+		};
+		_usageLoggerRef = new LazyRef<UsageLogger>() {
+			@Override
+			protected UsageLogger fetch() {
+				UserPreferences userPreferences = getUserPreferences();
+				return new UsageLogger(userPreferences, getHttpXmlUtils(userPreferences));
+			}
+		};
+	}
+
+	@Provides
+	public HttpXmlUtils getHttpXmlUtils(UserPreferences userPreferences) {
+		return new HttpXmlUtils(userPreferences);
+	}
+
+	@Provides
+	public UsageLogger getUsageLogger(HttpXmlUtils httpXmlUtils) {
+		return _usageLoggerRef.get();
+	}
+
+	private Ref<UserPreferences> createUserPreferencesRef(final File dataCleanerHome) {
+		return new LazyRef<UserPreferences>() {
+
+			@Override
+			protected UserPreferences fetch() {
+				final File userPreferencesFile = new File(dataCleanerHome, "userpreferences.dat");
+				return UserPreferencesImpl.load(userPreferencesFile, true);
+			}
+		};
+	}
+
+	private Ref<AnalyzerBeansConfiguration> createConfigurationRef(final File dataCleanerHome) {
+		return new LazyRef<AnalyzerBeansConfiguration>() {
+			@Override
+			protected AnalyzerBeansConfiguration fetch() {
+
+				// load the configuration file
+				final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
+						new DataCleanerConfigurationReaderInterceptor(dataCleanerHome));
+
+				AnalyzerBeansConfiguration c;
+				try {
+					File file = new File(dataCleanerHome, "conf.xml");
+					c = configurationReader.create(file);
+					logger.info("Succesfully read configuration from {}", file.getAbsolutePath());
+				} catch (Exception ex1) {
+					logger.warn("Unexpected error while reading conf.xml from DataCleanerHome!", ex1);
+					try {
+						c = configurationReader.create(ResourceManager.getInstance().getUrl("datacleaner-home/conf.xml")
+								.openStream());
+					} catch (Exception ex2) {
+						logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
+						logger.warn("Creating a bare-minimum configuration because of previous errors!");
+						c = new AnalyzerBeansConfigurationImpl(new DatastoreCatalogImpl(), new ReferenceDataCatalogImpl(),
+								new SimpleDescriptorProvider(), new SingleThreadedTaskRunner(),
+								new InMemoryStorageProvider());
+					}
+				}
+
+				final UserPreferences userPreferences = getUserPreferences();
+
+				// make the configuration mutable
+				final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog(),
+						userPreferences);
+				final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
+						c.getReferenceDataCatalog(), datastoreCatalog, userPreferences);
+				final DescriptorProvider descriptorProvider = c.getDescriptorProvider();
+
+				final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
+				for (ExtensionPackage extensionPackage : extensionPackages) {
+					extensionPackage.loadExtension(descriptorProvider);
+				}
+
+				final StorageProvider storageProvider = c.getStorageProvider();
+
+				final InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl(datastoreCatalog,
+						referenceDataCatalog, storageProvider) {
+					@Override
+					public InjectionManager getInjectionManager(AnalysisJob job) {
+						InjectionManager injectionManager = super.getInjectionManager(job);
+						return new DCInjectionManager(injectionManager, DCModule.this);
+					}
+				};
+
+				return new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog, descriptorProvider,
+						c.getTaskRunner(), storageProvider, injectionManagerFactory);
+			}
+		};
 	}
 
 	@Override
 	protected void configure() {
-		bind(DatastoreCatalog.class).toInstance(_configuration.getDatastoreCatalog());
-		bind(ReferenceDataCatalog.class).toInstance(_configuration.getReferenceDataCatalog());
-		bind(DescriptorProvider.class).toInstance(_configuration.getDescriptorProvider());
-		bind(TaskRunner.class).toInstance(_configuration.getTaskRunner());
+		bind(DatastoreCatalog.class).toInstance(getConfiguration().getDatastoreCatalog());
+		bind(ReferenceDataCatalog.class).toInstance(getConfiguration().getReferenceDataCatalog());
+		bind(DescriptorProvider.class).toInstance(getConfiguration().getDescriptorProvider());
+		bind(TaskRunner.class).toInstance(getConfiguration().getTaskRunner());
 		bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
+		bind(AuthenticationService.class).to(DCAuthenticationService.class);
 
 		// @Provided variants
 		bind(WindowContext.class).annotatedWith(Provided.class).toProvider(new Provider<WindowContext>() {
@@ -150,7 +254,7 @@ public class DCModule extends AbstractModule {
 
 	@Provides
 	public final AnalyzerBeansConfiguration getConfiguration() {
-		return _configuration;
+		return _configurationRef.get();
 	}
 
 	@Provides
@@ -169,7 +273,7 @@ public class DCModule extends AbstractModule {
 
 	@Provides
 	public AnalysisJobBuilder getAnalysisJobBuilder() {
-		return _analysisJobBuilder;
+		return _analysisJobBuilderRef.get();
 	}
 
 	@Provides
@@ -185,11 +289,16 @@ public class DCModule extends AbstractModule {
 
 	@Provides
 	public final WindowContext getWindowContext() {
-		return _windowContext.get();
+		return _windowContextRef.get();
 	}
 
 	@Provides
 	public final UserPreferences getUserPreferences() {
-		return _userPreferences;
+		return _userPreferencesRef.get();
+	}
+
+	@Provides
+	public HttpClient getHttpClient(HttpXmlUtils httpXmlUtils) {
+		return httpXmlUtils.getHttpClient();
 	}
 }

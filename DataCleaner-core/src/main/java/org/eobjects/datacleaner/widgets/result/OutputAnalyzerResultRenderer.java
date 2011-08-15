@@ -32,7 +32,6 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -43,7 +42,6 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.output.beans.OutputAnalyzerResult;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
@@ -64,6 +62,9 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 
 	@Inject
 	DCModule _parentModule;
+
+	@Inject
+	DatastoreCatalog _datastoreCatalog;
 
 	@Override
 	public JComponent render(OutputAnalyzerResult result) {
@@ -94,12 +95,10 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 4));
 
-		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-		final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
-		final Datastore datastore = result.getDatastore(datastoreCatalog);
+		final Datastore datastore = result.getDatastore(_datastoreCatalog);
 		final Insets buttonMargin = new Insets(1, 4, 1, 4);
 		if (datastore != null && datastore.getName() != null) {
-			final Datastore ds = datastoreCatalog.getDatastore(datastore.getName());
+			final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
 			if (!datastore.equals(ds)) {
 				final JButton addDatastoreButton = new JButton("Add to datastores",
 						imageManager.getImageIcon("images/actions/add.png"));
@@ -107,7 +106,7 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 				addDatastoreButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						MutableDatastoreCatalog mutableDatastoreCatalog = (MutableDatastoreCatalog) datastoreCatalog;
+						MutableDatastoreCatalog mutableDatastoreCatalog = (MutableDatastoreCatalog) _datastoreCatalog;
 						mutableDatastoreCatalog.addDatastore(datastore);
 						addDatastoreButton.setEnabled(false);
 					}

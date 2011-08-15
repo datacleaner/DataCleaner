@@ -30,7 +30,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
@@ -57,14 +56,13 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 
 	private final ExtensionSwapClient _client;
 	private final UserPreferences _userPreferences;
+	private final UsageLogger _usageLogger;
 
-	public ExtensionSwapInstallationHttpContainer(WindowContext windowContext, UserPreferences userPreferences) {
-		this(new ExtensionSwapClient(windowContext, userPreferences), userPreferences);
-	}
-
-	public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient, UserPreferences userPreferences) {
+	public ExtensionSwapInstallationHttpContainer(ExtensionSwapClient extensionSwapClient, UserPreferences userPreferences,
+			UsageLogger usageLogger) {
 		_client = extensionSwapClient;
 		_userPreferences = userPreferences;
+		_usageLogger = usageLogger;
 	}
 
 	@Override
@@ -127,7 +125,7 @@ public class ExtensionSwapInstallationHttpContainer implements Container {
 	}
 
 	private void displayInstallationOptions(final ExtensionSwapPackage extensionSwapPackage, final String username) {
-		UsageLogger.getInstance().log("Extension install: " + extensionSwapPackage.getId());
+		_usageLogger.log("Extension install: " + extensionSwapPackage.getId());
 
 		final String title = "Install DataCleaner extension?";
 		final String message = "Do you want to download and install the extension '" + extensionSwapPackage.getName() + "'";

@@ -38,6 +38,7 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.PatternFinderResult;
@@ -48,6 +49,7 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -83,11 +85,15 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 	@Inject
 	RendererFactory rendererFactory;
 
+	@Inject
+	ReferenceDataCatalog referenceDataCatalog;
+
 	private PatternFinderResultSwingRendererCrosstabDelegate delegateRenderer;
 
 	@Override
 	public JComponent render(PatternFinderResult result) {
-		delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate(windowContext, rendererFactory);
+		delegateRenderer = new PatternFinderResultSwingRendererCrosstabDelegate(windowContext, rendererFactory,
+				(MutableReferenceDataCatalog) referenceDataCatalog);
 		if (result.isGroupingEnabled()) {
 			return renderGroupedResult(result);
 		} else {
@@ -175,7 +181,7 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.TERRITORY"), groupedPatternFinder
 				.getDescriptor().getConfiguredProperty("Group column"));
 
-		Injector injector = Guice.createInjector(new DCModule(conf) {
+		Injector injector = Guice.createInjector(new DCModule(new File(".")) {
 			@Override
 			public AnalysisJobBuilder getAnalysisJobBuilder() {
 				return ajb;

@@ -23,11 +23,11 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.http.client.HttpClient;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
@@ -44,21 +44,25 @@ public final class ExtensionSwapClient {
 	private final WindowContext _windowContext;
 	private final String _baseUrl;
 	private final UserPreferences _userPreferences;
+	private final AnalyzerBeansConfiguration _configuration;
 
-	public ExtensionSwapClient(WindowContext windowContext, UserPreferences userPreferences) {
-		this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences);
+	public ExtensionSwapClient(HttpClient httpClient, WindowContext windowContext, UserPreferences userPreferences,
+			AnalyzerBeansConfiguration configuration) {
+		this(DEFAULT_WEBSITE_HOSTNAME, windowContext, userPreferences, configuration, httpClient);
 	}
 
-	public ExtensionSwapClient(String websiteHostname, WindowContext windowContext, UserPreferences userPreferences) {
-		this(HttpXmlUtils.getHttpClient(), websiteHostname, windowContext, userPreferences);
+	public ExtensionSwapClient(String websiteHostname, WindowContext windowContext, UserPreferences userPreferences,
+			AnalyzerBeansConfiguration configuration, HttpClient httpClient) {
+		this(httpClient, websiteHostname, windowContext, userPreferences, configuration);
 	}
 
 	public ExtensionSwapClient(HttpClient httpClient, String websiteHostname, WindowContext windowContext,
-			UserPreferences userPreferences) {
+			UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
 		_httpClient = httpClient;
 		_windowContext = windowContext;
 		_baseUrl = "http://" + websiteHostname + "/ws/extension/";
 		_userPreferences = userPreferences;
+		_configuration = configuration;
 	}
 
 	public ExtensionPackage registerExtensionPackage(ExtensionSwapPackage extensionSwapPackage, File jarFile) {
@@ -68,7 +72,7 @@ public final class ExtensionSwapClient {
 		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_ID_PROPERTY, extensionSwapPackage.getId());
 		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_VERSION_PROPERTY,
 				Integer.toString(extensionSwapPackage.getVersion()));
-		extensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
+		extensionPackage.loadExtension(_configuration.getDescriptorProvider());
 		_userPreferences.getExtensionPackages().add(extensionPackage);
 		return extensionPackage;
 	}
@@ -97,7 +101,7 @@ public final class ExtensionSwapClient {
 		}
 		String filename = extensionSwapPackage.getId() + ".jar";
 		DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
-				new String[] { filename }, listener, _windowContext);
+				new String[] { filename }, listener, _windowContext, _httpClient);
 		actionListener.actionPerformed(null);
 	}
 

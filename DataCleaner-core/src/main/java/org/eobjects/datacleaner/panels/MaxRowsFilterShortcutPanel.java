@@ -35,7 +35,6 @@ import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
 import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -157,7 +156,8 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 			// Lazy initializing getter (to postpone the call to
 			// DCConfiguration.
 			_maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, ValidationCategory>(_analysisJobBuilder,
-					DCConfiguration.get().getDescriptorProvider().getFilterBeanDescriptorForClass(MaxRowsFilter.class));
+					_analysisJobBuilder.getConfiguration().getDescriptorProvider()
+							.getFilterBeanDescriptorForClass(MaxRowsFilter.class));
 			_maxRowsFilterJobBuilder.setName(FILTER_NAME);
 		}
 		return _maxRowsFilterJobBuilder;

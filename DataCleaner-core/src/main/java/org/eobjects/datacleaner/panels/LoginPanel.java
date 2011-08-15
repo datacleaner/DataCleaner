@@ -44,7 +44,6 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.eobjects.datacleaner.actions.MoveComponentTimerActionListener;
 import org.eobjects.datacleaner.user.AuthenticationService;
-import org.eobjects.datacleaner.user.DCAuthenticationService;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -74,10 +73,6 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 	private final Color _foreground = WidgetUtils.BG_COLOR_BRIGHTEST;
 	private final Color _borderColor = WidgetUtils.BG_COLOR_MEDIUM;
 	private final UserPreferences _userPreferences;
-
-	public LoginPanel(DCGlassPane glassPane, UserPreferences userPreferences) {
-		this(new DCAuthenticationService(), glassPane, userPreferences);
-	}
 
 	public LoginPanel(AuthenticationService authenticationService, DCGlassPane glassPane, UserPreferences userPreferences) {
 		super();

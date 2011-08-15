@@ -32,8 +32,9 @@ import java.util.concurrent.Callable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.InjectionManagerImpl;
 import org.eobjects.analyzer.connection.DataContextProvider;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.data.MetaModelInputRow;
@@ -45,10 +46,8 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.reference.ReferenceData;
-import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.windows.DataSetWindow;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.MetaModelHelper;
@@ -76,16 +75,13 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 	public PreviewTransformedDataActionListener(WindowContext windowContext,
 			TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
-			TransformerJobBuilder<?> transformerJobBuilder) {
+			TransformerJobBuilder<?> transformerJobBuilder, AnalyzerBeansConfiguration configuration) {
 		_windowContext = windowContext;
 		_transformerJobBuilderPresenter = transformerJobBuilderPresenter;
 		_analysisJobBuilder = analysisJobBuilder;
 		_transformerJobBuilder = transformerJobBuilder;
-
-		final DatastoreCatalog datastoreCatalog = DCConfiguration.get().getDatastoreCatalog();
-		final ReferenceDataCatalog referenceDataCatalog = DCConfiguration.get().getReferenceDataCatalog();
-
-		_lifeCycleHelper = new LifeCycleHelper(datastoreCatalog, referenceDataCatalog);
+		
+		_lifeCycleHelper = new LifeCycleHelper(new InjectionManagerImpl(configuration));
 	}
 
 	@Override

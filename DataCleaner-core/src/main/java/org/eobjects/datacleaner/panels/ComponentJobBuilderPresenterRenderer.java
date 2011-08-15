@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
@@ -45,6 +46,9 @@ public class ComponentJobBuilderPresenterRenderer implements
 	WindowContext windowContext;
 
 	@Inject
+	AnalyzerBeansConfiguration configuration;
+
+	@Inject
 	InjectorBuilder injectorBuilder;
 
 	@Override
@@ -62,7 +66,7 @@ public class ComponentJobBuilderPresenterRenderer implements
 			return new FilterJobBuilderPanel(fjb, propertyWidgetFactory);
 		} else if (renderable instanceof TransformerJobBuilder) {
 			TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
-			return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory);
+			return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
 		} else if (renderable instanceof RowProcessingAnalyzerJobBuilder) {
 			RowProcessingAnalyzerJobBuilder<?> ajb = (RowProcessingAnalyzerJobBuilder<?>) renderable;
 			return new RowProcessingAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);

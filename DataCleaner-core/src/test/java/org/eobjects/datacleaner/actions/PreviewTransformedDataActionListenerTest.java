@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.actions;
 
+import java.io.File;
+
 import javax.swing.table.TableModel;
 
 import junit.framework.TestCase;
@@ -28,10 +30,11 @@ import org.eobjects.analyzer.beans.transform.StringLengthTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.guice.DCModule;
 
 public class PreviewTransformedDataActionListenerTest extends TestCase {
 
+	private AnalyzerBeansConfiguration configuration;
 	private TransformerJobBuilder<EmailStandardizerTransformer> emailTransformerBuilder;
 	private AnalysisJobBuilder analysisJobBuilder;
 
@@ -39,7 +42,8 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		AnalyzerBeansConfiguration configuration = DCConfiguration.get();
+		configuration = new DCModule(new File(".")).getConfiguration();
+
 		analysisJobBuilder = new AnalysisJobBuilder(configuration);
 		analysisJobBuilder.setDatastore("orderdb");
 		analysisJobBuilder.addSourceColumns("PUBLIC.EMPLOYEES.EMAIL");
@@ -49,7 +53,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 
 	public void testSingleTransformer() throws Exception {
 		PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-				analysisJobBuilder, emailTransformerBuilder);
+				analysisJobBuilder, emailTransformerBuilder, configuration);
 		TableModel tableModel = action.call();
 
 		assertEquals(3, tableModel.getColumnCount());
@@ -80,7 +84,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 		lengthTransformerBuilder.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
 
 		PreviewTransformedDataActionListener action = new PreviewTransformedDataActionListener(null, null,
-				analysisJobBuilder, lengthTransformerBuilder);
+				analysisJobBuilder, lengthTransformerBuilder, configuration);
 		TableModel tableModel = action.call();
 
 		assertEquals(2, tableModel.getColumnCount());

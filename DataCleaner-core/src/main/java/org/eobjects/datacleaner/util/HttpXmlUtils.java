@@ -61,11 +61,13 @@ public final class HttpXmlUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(HttpXmlUtils.class);
 
-	private HttpXmlUtils() {
-		// prevent instantiation
+	private final UserPreferences _userPreferences;
+
+	public HttpXmlUtils(UserPreferences userPreferences) {
+		_userPreferences = userPreferences;
 	}
 
-	public static String getUrlContent(String url, Map<String, String> params) throws IOException {
+	public String getUrlContent(String url, Map<String, String> params) throws IOException {
 		if (params == null) {
 			params = Collections.emptyMap();
 		}
@@ -81,22 +83,21 @@ public final class HttpXmlUtils {
 		return response;
 	}
 
-	public static HttpClient getHttpClient() {
-		DefaultHttpClient httpClient = new DefaultHttpClient();
+	public HttpClient getHttpClient() {
+		final DefaultHttpClient httpClient = new DefaultHttpClient();
 
-		final UserPreferences userPreferences = UserPreferences.getInstance();
-		if (userPreferences.isProxyEnabled()) {
+		if (_userPreferences.isProxyEnabled()) {
 			// set up HTTP proxy
-			final String proxyHostname = userPreferences.getProxyHostname();
-			final int proxyPort = userPreferences.getProxyPort();
+			final String proxyHostname = _userPreferences.getProxyHostname();
+			final int proxyPort = _userPreferences.getProxyPort();
 
 			final HttpHost proxy = new HttpHost(proxyHostname, proxyPort);
 			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
-			if (userPreferences.isProxyAuthenticationEnabled()) {
+			if (_userPreferences.isProxyAuthenticationEnabled()) {
 				final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
 				final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-						userPreferences.getProxyUsername(), userPreferences.getProxyPassword());
+						_userPreferences.getProxyUsername(), _userPreferences.getProxyPassword());
 				httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
 			}
 		}

@@ -24,14 +24,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.storage.SqlDatabaseUtils;
 import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,17 +42,7 @@ public final class DatastoreOutputWriterFactory {
 
 	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputWriterFactory.class);
 
-	private static final DatastoreCreationDelegate DEFAULT_CREATION_DELEGATE = new DatastoreCreationDelegateImpl();
 	private static final Map<String, AtomicInteger> counters = new HashMap<String, AtomicInteger>();
-
-	public static OutputWriter getWriter(String datastoreName, String tableName, boolean truncate, InputColumn<?>... columns) {
-		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName, tableName, truncate, columns);
-	}
-
-	public static OutputWriter getWriter(String datastoreName, String tableName, List<InputColumn<?>> columns) {
-		return getWriter(getDefaultOutputDirectory(), DEFAULT_CREATION_DELEGATE, datastoreName, tableName,
-				columns.toArray(new InputColumn<?>[columns.size()]));
-	}
 
 	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
 			String tableName, InputColumn<?>... columns) {
@@ -82,10 +70,6 @@ public final class DatastoreOutputWriterFactory {
 
 			return outputWriter;
 		}
-	}
-
-	private static File getDefaultOutputDirectory() {
-		return UserPreferences.getInstance().getSaveDatastoreDirectory();
 	}
 
 	protected static void release(DatastoreOutputWriter writer) {

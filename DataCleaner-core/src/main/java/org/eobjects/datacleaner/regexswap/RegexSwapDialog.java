@@ -85,10 +85,11 @@ public class RegexSwapDialog extends AbstractDialog {
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private Regex _selectedRegex;
 
-	public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog, WindowContext windowContext) {
+	public RegexSwapDialog(MutableReferenceDataCatalog referenceDataCatalog, WindowContext windowContext,
+			HttpXmlUtils httpXmlUtils) {
 		super(windowContext, imageManager.getImage("images/window/banner-string-patterns.png"));
 		_referenceDataCatalog = referenceDataCatalog;
-		_client = new RegexSwapClient(HttpXmlUtils.getHttpClient());
+		_client = new RegexSwapClient(httpXmlUtils.getHttpClient());
 		_regexDescriptionLabel = DCLabel.brightMultiLine("No regex selected");
 
 		_importRegexButton = new JButton("Import regex",

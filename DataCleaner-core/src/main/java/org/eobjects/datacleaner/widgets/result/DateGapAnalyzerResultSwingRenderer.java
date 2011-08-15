@@ -59,10 +59,10 @@ import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.TimeInterval;
-import org.eobjects.datacleaner.bootstrap.DCWindowContext;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.DataCleanerHome;
-import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
@@ -85,6 +85,9 @@ import org.jfree.data.time.SimpleTimePeriod;
 import org.jfree.data.time.TimePeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 @RendererBean(SwingRenderingFormat.class)
 public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGapAnalyzerResult, JComponent> {
@@ -282,9 +285,11 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 		LookAndFeelManager.getInstance().init();
 
 		// run a small job
-		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		AnalysisRunner runner = new AnalysisRunnerImpl(conf);
-		AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
+		final AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(),
+				"conf.xml"));
+		final Injector injector = Guice.createInjector(new DCModule(new File(".")));
+		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
+		final AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 
 		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
 		ajb.setDatastore(ds);
@@ -320,8 +325,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 
 		List<AnalyzerResult> list = Collections.emptyList();
 		RendererFactory rendererFactory = new RendererFactory(conf.getDescriptorProvider(), null);
-		DetailsResultWindow window = new DetailsResultWindow("Example", list, new DCWindowContext(conf,
-				UserPreferences.getInstance()), rendererFactory);
+		DetailsResultWindow window = new DetailsResultWindow("Example", list, injector.getInstance(WindowContext.class),
+				rendererFactory);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		List<AnalyzerResult> results = resultFuture.getResults();

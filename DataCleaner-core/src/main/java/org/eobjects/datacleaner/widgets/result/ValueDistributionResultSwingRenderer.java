@@ -194,7 +194,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
 		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 
-		Injector injector = Guice.createInjector(new DCModule(conf) {
+		Injector injector = Guice.createInjector(new DCModule(new File(".")) {
 			@Override
 			public AnalysisJobBuilder getAnalysisJobBuilder() {
 				return ajb;

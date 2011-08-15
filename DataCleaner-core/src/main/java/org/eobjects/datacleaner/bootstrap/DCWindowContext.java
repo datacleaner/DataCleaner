@@ -61,6 +61,8 @@ public final class DCWindowContext implements WindowContext {
 	private final UserPreferences _userPreferences;
 	private boolean _exiting;
 
+	private UsageLogger _usageLogger;
+
 	/**
 	 * Helper method to get any window of the application. This can be
 	 * convenient if eg. displaying {@link JOptionPane}s from arbitrary places
@@ -84,9 +86,10 @@ public final class DCWindowContext implements WindowContext {
 	}
 
 	@Inject
-	public DCWindowContext(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
+	public DCWindowContext(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences, UsageLogger usageLogger) {
 		_configuration = configuration;
 		_userPreferences = userPreferences;
+		_usageLogger = usageLogger;
 		_allWindowContexts.add(new WeakReference<DCWindowContext>(this));
 		_exiting = false;
 	}
@@ -162,7 +165,7 @@ public final class DCWindowContext implements WindowContext {
 		}
 		_exiting = true;
 		_userPreferences.save();
-		UsageLogger.getInstance().logApplicationShutdown();
+		_usageLogger.logApplicationShutdown();
 		if (_configuration != null) {
 			_configuration.getTaskRunner().shutdown();
 		}

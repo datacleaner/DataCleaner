@@ -41,7 +41,6 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.Nullable;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -63,15 +62,17 @@ public class QuickAnalysisActionListener implements ActionListener {
 	private final Column[] _columns;
 	private final DCModule _parentModule;
 	private final UserPreferences _userPreferences;
+	private final AnalyzerBeansConfiguration _configuration;
 
 	@Inject
 	protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
-			DCModule parentModule, UserPreferences userPreferences) {
+			DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
 		_datastore = datastore;
 		_table = table;
 		_columns = columns;
 		_parentModule = parentModule;
 		_userPreferences = userPreferences;
+		_configuration = configuration;
 	}
 
 	public Column[] getColumns() {
@@ -90,9 +91,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		final AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
+		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
 		ajb.setDatastore(_datastore);
 
 		final List<InputColumn<?>> booleanColumns = new ArrayList<InputColumn<?>>();

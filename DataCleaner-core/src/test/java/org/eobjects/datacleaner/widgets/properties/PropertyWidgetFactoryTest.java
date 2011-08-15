@@ -40,7 +40,6 @@ import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.metamodel.util.EqualsBuilder;
 
 import com.google.inject.Guice;
@@ -49,7 +48,7 @@ import com.google.inject.Injector;
 public class PropertyWidgetFactoryTest extends TestCase {
 
 	public void testCreateAllPropertyTypes() throws Exception {
-		Injector injector = Guice.createInjector(new DCModule(DCConfiguration.get()));
+		Injector injector = Guice.createInjector(new DCModule(new File(".")));
 
 		AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
 

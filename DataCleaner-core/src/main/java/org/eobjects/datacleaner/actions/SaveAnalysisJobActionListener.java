@@ -47,17 +47,20 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalysisJobBuilderWindow _window;
 	private final UserPreferences _userPreferences;
+	private final UsageLogger _usageLogger;
 
 	@Inject
-	protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder, UserPreferences userPreferences) {
+	protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
+			UserPreferences userPreferences, UsageLogger usageLogger) {
 		_window = window;
 		_analysisJobBuilder = analysisJobBuilder;
 		_userPreferences = userPreferences;
+		_usageLogger = usageLogger;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		UsageLogger.getInstance().log("Save analysis job");
+		_usageLogger.log("Save analysis job");
 
 		AnalysisJob analysisJob = null;
 		try {
@@ -82,8 +85,9 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 			}
 
 			if (file.exists()) {
-				int overwrite = JOptionPane.showConfirmDialog(_window.toComponent(), "Are you sure you want to overwrite the file '"
-						+ file.getName() + "'?", "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
+				int overwrite = JOptionPane.showConfirmDialog(_window.toComponent(),
+						"Are you sure you want to overwrite the file '" + file.getName() + "'?", "Overwrite existing file?",
+						JOptionPane.YES_NO_OPTION);
 				if (overwrite != JOptionPane.YES_OPTION) {
 					return;
 				}

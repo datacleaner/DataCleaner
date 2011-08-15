@@ -27,7 +27,6 @@ import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
-import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,14 +36,13 @@ public class RegexSwapUserPreferencesHandler implements LoginChangeListener {
 
 	private final RegexSwapClient _client;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
+	private final UsageLogger _usageLogger;
 
-	public RegexSwapUserPreferencesHandler(MutableReferenceDataCatalog referenceDataCatalog) {
-		this(referenceDataCatalog, HttpXmlUtils.getHttpClient());
-	}
-
-	public RegexSwapUserPreferencesHandler(MutableReferenceDataCatalog referenceDataCatalog, HttpClient httpClient) {
+	public RegexSwapUserPreferencesHandler(MutableReferenceDataCatalog referenceDataCatalog, HttpClient httpClient,
+			UsageLogger usageLogger) {
 		_referenceDataCatalog = referenceDataCatalog;
 		_client = new RegexSwapClient(httpClient);
+		_usageLogger = usageLogger;
 	}
 
 	public boolean isLoaded() {
@@ -60,7 +58,7 @@ public class RegexSwapUserPreferencesHandler implements LoginChangeListener {
 
 	public void loadInitialRegexes() {
 		logger.info("Loading initial regexes from RegexSwap");
-		UsageLogger.getInstance().log("RegexSwap: Initial download");
+		_usageLogger.log("RegexSwap: Initial download");
 		Collection<Category> categories = _client.getCategories();
 		for (Category category : categories) {
 			List<Regex> regexes = _client.getRegexes(category);

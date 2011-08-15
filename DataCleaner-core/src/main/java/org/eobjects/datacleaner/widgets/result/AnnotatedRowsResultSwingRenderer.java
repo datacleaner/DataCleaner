@@ -29,12 +29,14 @@ import javax.swing.JComboBox;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.actions.SaveDataSetActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.table.ColumnHighlighter;
@@ -50,6 +52,12 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 
 	@Inject
 	UserPreferences userPreferences;
+
+	@Inject
+	DatastoreCatalog datastoreCatalog;
+
+	@Inject
+	UsageLogger _usageLogger;
 
 	@Override
 	public DCPanel render(final AnnotatedRowsResult result) {
@@ -87,7 +95,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 		final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
 				"images/actions/save.png"));
 		saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(), result.getRows(),
-				userPreferences));
+				userPreferences, datastoreCatalog, _usageLogger));
 		buttonPanel.add(saveToFileButton);
 
 		panel.add(buttonPanel);

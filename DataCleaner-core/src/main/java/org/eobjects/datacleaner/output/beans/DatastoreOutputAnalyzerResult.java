@@ -19,15 +19,22 @@
  */
 package org.eobjects.datacleaner.output.beans;
 
+import java.util.Arrays;
+
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.schema.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = LoggerFactory.getLogger(DatastoreOutputAnalyzerResult.class);
+
 	private final int _rowCount;
 	private final String _datastoreName;
 	private final String _tableName;
@@ -58,6 +65,12 @@ class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
 		dc.refreshSchemas();
 
 		Table table = dc.getDefaultSchema().getTableByName(_tableName);
+
+		if (table == null && logger.isWarnEnabled()) {
+			logger.warn("Could not find table '{}', even after refreshing schemas", _tableName);
+			logger.warn("Available tables are: {}", Arrays.toString(dc.getDefaultSchema().getTableNames()));
+		}
+
 		dcp.close();
 		return table;
 	}

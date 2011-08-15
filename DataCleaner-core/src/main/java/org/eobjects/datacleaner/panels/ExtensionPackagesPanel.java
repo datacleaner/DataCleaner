@@ -35,7 +35,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
-import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ExtensionFilter;
@@ -60,10 +60,12 @@ public class ExtensionPackagesPanel extends DCPanel {
 
 	private final UserPreferences _userPreferences;
 	private final ImageManager imageManager = ImageManager.getInstance();
+	private final AnalyzerBeansConfiguration _configuration;
 
 	@Inject
-	protected ExtensionPackagesPanel(UserPreferences userPreferences) {
+	protected ExtensionPackagesPanel(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+		_configuration = configuration;
 		_userPreferences = userPreferences;
 
 		setLayout(new BorderLayout());
@@ -112,7 +114,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 							final String extensionName = extensionNameBuilder.toString();
 							final ExtensionPackage userExtensionPackage = new ExtensionPackage(extensionName, packageName,
 									true, files);
-							userExtensionPackage.loadExtension(DCConfiguration.get().getDescriptorProvider());
+							userExtensionPackage.loadExtension(_configuration.getDescriptorProvider());
 							extensionPackages.add(userExtensionPackage);
 
 							updateComponents();

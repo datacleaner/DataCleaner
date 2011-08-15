@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -53,7 +54,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private final WindowContext _windowContext;
 
 	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
-			PropertyWidgetFactory propertyWidgetFactory) {
+			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
 		super("images/window/transformer-tab-background.png", transformerJobBuilder, propertyWidgetFactory);
 		_transformerJobBuilder = transformerJobBuilder;
 		_windowContext = windowContext;
@@ -75,7 +76,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 
 		_previewButton = new JButton("Preview data", imageManager.getImageIcon("images/actions/preview_data.png"));
 		_previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
-				getAnalysisJobBuilder(), _transformerJobBuilder));
+				getAnalysisJobBuilder(), _transformerJobBuilder, configuration));
 
 		_requirementButton = new ChangeRequirementButton(transformerJobBuilder);
 

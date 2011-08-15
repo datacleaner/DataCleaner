@@ -64,22 +64,24 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
 	private final DCModule _parentModule;
 	private final UserPreferences _userPreferences;
+	private final UsageLogger _usageLogger;
 
 	@Inject
 	protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
 			WindowContext windowContext, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
-			DCModule parentModule, UserPreferences userPreferences) {
+			DCModule parentModule, UserPreferences userPreferences, UsageLogger usageLogger) {
 		_parentWindow = parentWindow;
 		_configuration = configuration;
 		_windowContext = windowContext;
 		_openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
 		_parentModule = parentModule;
 		_userPreferences = userPreferences;
+		_usageLogger = usageLogger;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		UsageLogger.getInstance().log("Open analysis job");
+		_usageLogger.log("Open analysis job");
 
 		DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 

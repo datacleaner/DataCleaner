@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
@@ -36,8 +37,9 @@ public class HelloWorldTransformerPresenter extends TransformerJobBuilderPanel i
 
 	private static final long serialVersionUID = 1L;
 
-	public HelloWorldTransformerPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory) {
-		super(transformerJobBuilder, windowContext, propertyWidgetFactory);
+	public HelloWorldTransformerPresenter(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
+		super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 	}
 
 	@Override

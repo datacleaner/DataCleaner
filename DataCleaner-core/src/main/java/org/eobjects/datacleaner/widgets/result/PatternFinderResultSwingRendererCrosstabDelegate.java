@@ -38,7 +38,6 @@ import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DCConfiguration;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -60,11 +59,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabResultSwingRenderer<CrosstabResult> {
 
-	private final MutableReferenceDataCatalog _catalog = (MutableReferenceDataCatalog) DCConfiguration.get()
-			.getReferenceDataCatalog();
+	private final MutableReferenceDataCatalog _catalog;
 
-	public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext, RendererFactory rendererFactory) {
+	public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext, RendererFactory rendererFactory,
+			MutableReferenceDataCatalog referenceDataCatalog) {
 		super(windowContext, rendererFactory);
+		_catalog = referenceDataCatalog;
 	}
 
 	@Override

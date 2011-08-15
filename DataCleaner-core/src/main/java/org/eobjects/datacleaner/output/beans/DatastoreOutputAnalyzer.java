@@ -19,14 +19,21 @@
  */
 package org.eobjects.datacleaner.output.beans;
 
+import javax.inject.Inject;
+
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
+import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegate;
+import org.eobjects.datacleaner.output.datastore.DatastoreCreationDelegateImpl;
 import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
+import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.user.UserPreferences;
 
 @AnalyzerBean("Write to Datastore")
 @OutputWriterAnalyzer
@@ -51,12 +58,18 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	@Description("Determines the behaviour in case of there's an existing datastore and table with the given names.")
 	WriteMode writeMode = WriteMode.TRUNCATE;
 
+	@Inject
+	UserPreferences userPreferences;
+
+	@Inject
+	DatastoreCatalog datastoreCatalog;
+
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
 		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
 		tableName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
 	}
-	
+
 	@Override
 	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
 		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
@@ -65,13 +78,17 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Override
 	public OutputWriter createOutputWriter() {
-		String[] headers = new String[columns.length];
+		final String[] headers = new String[columns.length];
 		for (int i = 0; i < headers.length; i++) {
 			headers[i] = columns[i].getName();
 		}
 
-		boolean truncate = (writeMode == WriteMode.TRUNCATE);
-		return DatastoreOutputWriterFactory.getWriter(datastoreName, tableName, truncate, columns);
+		final boolean truncate = (writeMode == WriteMode.TRUNCATE);
+		final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(
+				(MutableDatastoreCatalog) datastoreCatalog);
+
+		return DatastoreOutputWriterFactory.getWriter(userPreferences.getSaveDatastoreDirectory(), creationDelegate,
+				datastoreName, tableName, truncate, columns);
 	}
 
 	@Override

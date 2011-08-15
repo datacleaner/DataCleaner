@@ -156,7 +156,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		ajb.addSourceColumns(table.getNumberColumns());
 		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
-		Injector injector = Guice.createInjector(new DCModule(conf) {
+		Injector injector = Guice.createInjector(new DCModule(new File(".")) {
 			@Override
 			public AnalysisJobBuilder getAnalysisJobBuilder() {
 				return ajb;

@@ -30,12 +30,15 @@ import org.eobjects.datacleaner.windows.ResultWindow;
 
 public class RunAnalysisActionListener implements ActionListener {
 
+	private final Provider<ResultWindow> _resultWindowProvider;
+	private final UsageLogger _usageLogger;
+
 	private long lastClickTime = 0;
-	private Provider<ResultWindow> _resultWindowProvider;
 
 	@Inject
-	protected RunAnalysisActionListener(Provider<ResultWindow> resultWindowProvider) {
+	protected RunAnalysisActionListener(Provider<ResultWindow> resultWindowProvider, UsageLogger usageLogger) {
 		_resultWindowProvider = resultWindowProvider;
+		_usageLogger = usageLogger;
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class RunAnalysisActionListener implements ActionListener {
 			lastClickTime = thisClickTime;
 		}
 
-		UsageLogger.getInstance().log("Run analysis");
+		_usageLogger.log("Run analysis");
 
 		ResultWindow window = _resultWindowProvider.get();
 		window.setVisible(true);

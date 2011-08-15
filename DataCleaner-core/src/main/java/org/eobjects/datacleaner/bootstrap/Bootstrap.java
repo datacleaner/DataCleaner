@@ -21,8 +21,10 @@ package org.eobjects.datacleaner.bootstrap;
 
 import java.awt.SplashScreen;
 import java.io.Closeable;
+import java.io.File;
 import java.io.PrintWriter;
 
+import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -34,7 +36,7 @@ import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
-import org.eobjects.datacleaner.user.DCConfiguration;
+import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -87,8 +89,12 @@ public final class Bootstrap {
 			}
 		}
 
+		final File dataCleanerHome = DataCleanerHome.get();
+
+		final Injector injector = Guice.createInjector(new DCModule(dataCleanerHome));
+
 		// configuration loading can be multithreaded, so begin early
-		final AnalyzerBeansConfiguration configuration = loadConfiguration();
+		final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
 		if (!cliMode) {
 			// set up error handling that displays an error dialog
@@ -100,7 +106,8 @@ public final class Bootstrap {
 		}
 
 		// log usage
-		UsageLogger.getInstance().logApplicationStartup();
+		UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
+		usageLogger.logApplicationStartup();
 
 		if (cliMode) {
 
@@ -117,9 +124,6 @@ public final class Bootstrap {
 			return;
 		} else {
 			// run in GUI mode
-
-			final Injector injector = Guice.createInjector(new DCModule(configuration));
-
 			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
 			if (_options.isSingleDatastoreMode()) {
@@ -138,12 +142,14 @@ public final class Bootstrap {
 			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
 			final WindowContext windowContext = injector.getInstance(WindowContext.class);
 
+			final HttpClient httpClient = injector.getInstance(HttpClient.class);
+
 			// set up HTTP service for ExtensionSwap installation
-			loadExtensionSwapService(userPreferences, windowContext);
+			loadExtensionSwapService(userPreferences, windowContext, configuration, httpClient, usageLogger);
 
 			// load regex swap regexes if logged in
 			final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
-					(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog());
+					(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog(), httpClient, usageLogger);
 			userPreferences.addLoginChangeListener(regexSwapHandler);
 
 			final ExitActionListener exitActionListener = _options.getExitActionListener();
@@ -164,7 +170,8 @@ public final class Bootstrap {
 		}
 	}
 
-	private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext) {
+	private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext,
+			AnalyzerBeansConfiguration configuration, HttpClient httpClient, UsageLogger usageLogger) {
 		String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
 		if (StringUtils.isNullOrEmpty(websiteHostname)) {
 			websiteHostname = System.getProperty("extensionswap.hostname");
@@ -173,13 +180,14 @@ public final class Bootstrap {
 		final ExtensionSwapClient extensionSwapClient;
 		if (StringUtils.isNullOrEmpty(websiteHostname)) {
 			logger.info("Using default ExtensionSwap website hostname");
-			extensionSwapClient = new ExtensionSwapClient(windowContext, userPreferences);
+			extensionSwapClient = new ExtensionSwapClient(httpClient, windowContext, userPreferences, configuration);
 		} else {
 			logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-			extensionSwapClient = new ExtensionSwapClient(websiteHostname, windowContext, userPreferences);
+			extensionSwapClient = new ExtensionSwapClient(httpClient, websiteHostname, windowContext, userPreferences,
+					configuration);
 		}
 		ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(extensionSwapClient,
-				userPreferences);
+				userPreferences, usageLogger);
 
 		final Closeable closeableConnection = container.initialize();
 		if (closeableConnection != null) {
@@ -190,10 +198,5 @@ public final class Bootstrap {
 				}
 			});
 		}
-	}
-
-	private AnalyzerBeansConfiguration loadConfiguration() {
-		AnalyzerBeansConfiguration configuration = DCConfiguration.get();
-		return configuration;
 	}
 }

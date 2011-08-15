@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
+import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -38,10 +39,14 @@ public final class AddTransformerActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilder _analysisJobBuilder;
+	private final UsageLogger _usageLogger;
 
-	public AddTransformerActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder) {
+	@Inject
+	protected AddTransformerActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+			UsageLogger usageLogger) {
 		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
+		_usageLogger = usageLogger;
 	}
 
 	@Override
@@ -60,7 +65,7 @@ public final class AddTransformerActionListener implements ActionListener {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						_analysisJobBuilder.addTransformer(descriptor);
-						UsageLogger.getInstance().log("Add transformer: " + descriptor.getDisplayName());
+						_usageLogger.log("Add transformer: " + descriptor.getDisplayName());
 					}
 				});
 				return menuItem;

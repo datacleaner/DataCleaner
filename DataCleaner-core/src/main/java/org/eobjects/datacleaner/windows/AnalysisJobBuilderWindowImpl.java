@@ -89,6 +89,7 @@ import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -159,6 +160,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private final Provider<DCWindowMenuBar> _windowMenuBarProvider;
 	private final Provider<RunAnalysisActionListener> _runAnalysisActionProvider;
 	private final Provider<SaveAnalysisJobActionListener> _saveAnalysisJobActionListenerProvider;
+	private final Provider<AddAnalyzerActionListener> _addAnalyzerActionListenerProvider;
+	private final Provider<AddTransformerActionListener> _addTransformerActionListenerProvider;
 	private final DCGlassPane _glassPane;
 	private final Ref<DatastoreListPanel> _datastoreListPanelRef;
 	private final UserPreferences _userPreferences;
@@ -178,13 +181,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			MetadataPanel metadataPanel, AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder,
 			UserPreferences userPreferences, @Nullable @JobFilename String jobFilename,
 			Provider<DCWindowMenuBar> windowMenuBarProvider,
-			Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider) {
+			Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
+			Provider<AddAnalyzerActionListener> addAnalyzerActionListenerProvider,
+			Provider<AddTransformerActionListener> addTransformerActionListenerProvider, UsageLogger usageLogger) {
 		super(windowContext);
 		_jobFilename = jobFilename;
 		_configuration = configuration;
 		_windowMenuBarProvider = windowMenuBarProvider;
 		_runAnalysisActionProvider = runAnalysisActionProvider;
 		_saveAnalysisJobActionListenerProvider = saveAnalysisJobActionListenerProvider;
+		_addAnalyzerActionListenerProvider = addAnalyzerActionListenerProvider;
+		_addTransformerActionListenerProvider = addTransformerActionListenerProvider;
 		_userPreferences = userPreferences;
 
 		if (analysisJobBuilder == null) {
@@ -228,7 +235,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		};
 
 		_sourceColumnsPanel = sourceColumnsPanel;
-		_filterListPanel = new FilterListPanel(_analysisJobBuilder, _componentJobBuilderPresenterRendererFactory);
+		_filterListPanel = new FilterListPanel(_analysisJobBuilder, _componentJobBuilderPresenterRendererFactory,
+				usageLogger);
 		_filterListPanel.addPreconfiguredPresenter(_sourceColumnsPanel.getMaxRowsFilterShortcutPanel());
 
 		_tabbedPane = new CloseableTabbedPane();
@@ -537,10 +545,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		});
 
 		// Add transformer
-		_addTransformerButton.addActionListener(new AddTransformerActionListener(_configuration, _analysisJobBuilder));
+		_addTransformerButton.addActionListener(_addTransformerActionListenerProvider.get());
 
 		// Add analyzer
-		_addAnalyzerButton.addActionListener(new AddAnalyzerActionListener(_configuration, _analysisJobBuilder));
+		_addAnalyzerButton.addActionListener(_addAnalyzerActionListenerProvider.get());
 
 		// Run analysis
 		final RunAnalysisActionListener runAnalysisActionListener = _runAnalysisActionProvider.get();

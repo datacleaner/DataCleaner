@@ -37,6 +37,7 @@ import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.actions.AddFilterActionListener;
 import org.eobjects.datacleaner.actions.JobBuilderTaskPaneTextMouseListener;
+import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -56,7 +57,8 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 	private final Set<FilterJobBuilderPresenter> _preconfiguredPresenters;
 	private final RendererFactory _componentJobBuilderPresenterRendererFactory;
 
-	public FilterListPanel(AnalysisJobBuilder analysisJobBuilder, RendererFactory componentJobBuilderPresenterRendererFactory) {
+	public FilterListPanel(AnalysisJobBuilder analysisJobBuilder,
+			RendererFactory componentJobBuilderPresenterRendererFactory, UsageLogger usageLogger) {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_componentJobBuilderPresenterRendererFactory = componentJobBuilderPresenterRendererFactory;
@@ -75,7 +77,7 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		addFilterButton
 				.setToolTipText("<html>Filters represent a way to<br/>categorize rows and use these<br/>categories as requirements for<br/>succeeding steps in a job.</html>");
 		addFilterButton.addActionListener(new AddFilterActionListener(_analysisJobBuilder.getConfiguration(),
-				_analysisJobBuilder, this));
+				_analysisJobBuilder, this, usageLogger));
 		toolBar.add(addFilterButton);
 
 		add(toolBar, BorderLayout.NORTH);

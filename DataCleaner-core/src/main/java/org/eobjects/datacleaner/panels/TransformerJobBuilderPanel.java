@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
@@ -83,9 +84,6 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		bottomButtonPanel.add(_previewButton);
 		_outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
 
-		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
-				_outputColumnsTable);
-
 		final DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
 		buttonPanel.add(_requirementButton);
@@ -94,6 +92,14 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 
 	public WindowContext getWindowContext() {
 		return _windowContext;
+	}
+
+	@Override
+	protected JComponent decorate(DCPanel panel) {
+		JComponent result = super.decorate(panel);
+		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
+				_outputColumnsTable);
+		return result;
 	}
 
 	@Override

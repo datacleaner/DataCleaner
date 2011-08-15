@@ -44,14 +44,16 @@ public class HelloWorldTransformerPresenter extends TransformerJobBuilderPanel i
 	}
 
 	@Override
-	protected JComponent decorate(final DCPanel parentComponent) {
+	protected JComponent decorate(final DCPanel panel) {
+		JComponent result = super.decorate(panel);
+
 		JPanel outerPanel = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Hello DataCleaner users! This label was drawn by our extension!");
 		label.setOpaque(false);
 		label.setBorder(new EmptyBorder(20, 20, 20, 20));
 
 		outerPanel.add(label, BorderLayout.NORTH);
-		outerPanel.add(parentComponent, BorderLayout.CENTER);
+		outerPanel.add(result, BorderLayout.CENTER);
 		return outerPanel;
 	}
 }

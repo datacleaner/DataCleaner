@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
@@ -43,17 +44,14 @@ public class HelloWorldTransformerPresenter extends TransformerJobBuilderPanel i
 	}
 
 	@Override
-	public JComponent createJComponent() {
-		// delegate to the parent implementation
-		JComponent parentComponent = super.createJComponent();
-
-		JPanel panel = new JPanel(new BorderLayout());
+	protected JComponent decorate(final DCPanel parentComponent) {
+		JPanel outerPanel = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Hello DataCleaner users! This label was drawn by our extension!");
 		label.setOpaque(false);
 		label.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-		panel.add(label, BorderLayout.NORTH);
-		panel.add(parentComponent, BorderLayout.CENTER);
-		return panel;
+		outerPanel.add(label, BorderLayout.NORTH);
+		outerPanel.add(parentComponent, BorderLayout.CENTER);
+		return outerPanel;
 	}
 }

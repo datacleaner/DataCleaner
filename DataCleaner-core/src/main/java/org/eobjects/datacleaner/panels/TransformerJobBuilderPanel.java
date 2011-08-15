@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
@@ -58,8 +57,6 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		super("images/window/transformer-tab-background.png", transformerJobBuilder, propertyWidgetFactory);
 		_transformerJobBuilder = transformerJobBuilder;
 		_windowContext = windowContext;
-
-		init();
 
 		final List<MutableInputColumn<?>> outputColumns;
 		if (_transformerJobBuilder.isConfigured()) {
@@ -130,17 +127,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	}
 
 	@Override
-	public void applyPropertyValues() {
-		super.applyPropertyValues();
-	}
-
-	@Override
 	public void onConfigurationChanged() {
 		getPropertyWidgetFactory().onConfigurationChanged();
-	}
-
-	@Override
-	public JComponent createJComponent() {
-		return this;
 	}
 }

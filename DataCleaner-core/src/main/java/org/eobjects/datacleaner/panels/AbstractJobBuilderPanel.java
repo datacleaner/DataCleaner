@@ -45,7 +45,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.jdesktop.swingx.JXTaskPane;
 
-public abstract class AbstractJobBuilderPanel extends DCPanel {
+public abstract class AbstractJobBuilderPanel extends DCPanel implements ComponentJobBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,7 +67,24 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
 
-	protected void init() {
+	@Override
+	public final JComponent createJComponent() {
+		init();
+		return decorate(this);
+	}
+
+	/**
+	 * Can be implemented by subclasses to intercept the created JComponent
+	 * before returning.
+	 * 
+	 * @param panel
+	 * @return
+	 */
+	protected JComponent decorate(DCPanel panel) {
+		return panel;
+	}
+
+	private final void init() {
 		Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
 				_descriptor.getConfiguredProperties());
 
@@ -134,7 +151,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 		_taskPaneContainer.add(taskPane);
 	}
 
-	public void applyPropertyValues() {
+	public final void applyPropertyValues() {
 		applyPropertyValues(true);
 	}
 
@@ -143,7 +160,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel {
 	 *            defines whether or not the method should throw an exception in
 	 *            case some of the applied properties are missing or errornous
 	 */
-	public void applyPropertyValues(boolean errorAware) {
+	public final void applyPropertyValues(boolean errorAware) {
 		for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory().getWidgets()) {
 			ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
 			if (propertyWidget.isSet()) {

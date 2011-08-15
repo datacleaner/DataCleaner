@@ -51,8 +51,6 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 		super("images/window/analyzer-tab-background.png", analyzerJobBuilder, propertyWidgetFactory);
 		_analyzerJobBuilder = analyzerJobBuilder;
 
-		init();
-
 		_requirementButton = new ChangeRequirementButton(analyzerJobBuilder);
 
 		_buttonPanel = new DCPanel();
@@ -93,11 +91,6 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	@Override
 	public RowProcessingAnalyzerJobBuilder<?> getJobBuilder() {
 		return _analyzerJobBuilder;
-	}
-
-	@Override
-	public JComponent createJComponent() {
-		return this;
 	}
 
 	@Override

@@ -31,10 +31,9 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionGroupResult;
@@ -44,7 +43,6 @@ import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
@@ -178,10 +176,11 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 	public static void main(String[] args) {
 		LookAndFeelManager.getInstance().init();
 
+		Injector injector = Guice.createInjector(new DCModule(new File(".")));
+
 		// run a small job
-		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
-		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
+		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
+		Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
 		SchemaNavigator sn = dcp.getSchemaNavigator();
 		ajb.setDatastore(ds);
@@ -194,13 +193,6 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
 		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 
-		Injector injector = Guice.createInjector(new DCModule(new File(".")) {
-			@Override
-			public AnalysisJobBuilder getAnalysisJobBuilder() {
-				return ajb;
-			}
-		});
-		
 		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);
 		resultWindow.startAnalysis();

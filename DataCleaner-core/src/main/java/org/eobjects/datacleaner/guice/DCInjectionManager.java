@@ -45,16 +45,15 @@ final class DCInjectionManager implements InjectionManager {
 	@Override
 	public <E> E getInstance(InjectionPoint<E> injectionPoint) {
 		E instance = _delegate.getInstance(injectionPoint);
-		if (instance != null) {
-			return instance;
+		if (instance == null) {
+			Class<E> baseType = injectionPoint.getBaseType();
+			if (baseType == UserPreferences.class) {
+				instance = (E) _module.getUserPreferences();
+			} else if (baseType == WindowContext.class) {
+				instance = (E) _module.getWindowContext();
+			}
 		}
-		Class<E> baseType = injectionPoint.getBaseType();
-		if (baseType == UserPreferences.class) {
-			return (E) _module.getUserPreferences();
-		} else if (baseType == WindowContext.class) {
-			return (E) _module.getWindowContext();
-		}
-		return null;
+		return instance;
 	}
 
 }

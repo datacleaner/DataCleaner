@@ -26,10 +26,9 @@ import java.io.File;
 
 import org.eobjects.analyzer.beans.NumberAnalyzer;
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.Crosstab;
@@ -38,7 +37,6 @@ import org.eobjects.analyzer.result.NumberAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -145,23 +143,17 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 	 */
 	public static void main(String[] args) {
 		LookAndFeelManager.getInstance().init();
+		
+		Injector injector = Guice.createInjector(new DCModule(new File(".")));
 
 		// run a small job
-		AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(), "conf.xml"));
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(conf);
-		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
+		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
+		Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
 		DataContextProvider dcp = ds.getDataContextProvider();
 		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getNumberColumns());
 		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
-
-		Injector injector = Guice.createInjector(new DCModule(new File(".")) {
-			@Override
-			public AnalysisJobBuilder getAnalysisJobBuilder() {
-				return ajb;
-			}
-		});
 
 		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);

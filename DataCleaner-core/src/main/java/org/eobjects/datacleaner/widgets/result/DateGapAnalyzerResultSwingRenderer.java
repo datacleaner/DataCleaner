@@ -44,9 +44,9 @@ import org.eobjects.analyzer.beans.DateGapAnalyzer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.convert.ConvertToStringTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -62,7 +62,6 @@ import org.eobjects.analyzer.util.TimeInterval;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
@@ -284,15 +283,16 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 	public static void main(String[] args) throws Throwable {
 		LookAndFeelManager.getInstance().init();
 
+		Injector injector = Guice.createInjector(new DCModule(new File(".")));
+
 		// run a small job
-		final AnalyzerBeansConfiguration conf = new JaxbConfigurationReader().create(new File(DataCleanerHome.get(),
-				"conf.xml"));
-		final Injector injector = Guice.createInjector(new DCModule(new File(".")));
 		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
+		final Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
+		ajb.setDatastore(ds);
+
+		final AnalyzerBeansConfiguration conf = injector.getInstance(AnalyzerBeansConfiguration.class);
 		final AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 
-		Datastore ds = conf.getDatastoreCatalog().getDatastore("orderdb");
-		ajb.setDatastore(ds);
 
 		DataContextProvider dcp = ds.getDataContextProvider();
 		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.ORDERS");

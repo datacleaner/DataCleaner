@@ -6,7 +6,7 @@
 		<configuration-name>DataCleaner configuration</configuration-name>
 		<configuration-description>Configures DataCleaner's initial environment.
 			This includes an example datastore and some example reference data.</configuration-description>
-		<configuration-version>2.2</configuration-version>
+		<configuration-version>2.3</configuration-version>
 		<author>eobjects.org</author>
 	</configuration-metadata>
 

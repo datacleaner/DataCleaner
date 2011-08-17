@@ -61,7 +61,9 @@
 	<storage-provider>
 		<combined>
 			<collections-storage>
-				<berkeley-db />
+				<berkeley-db>
+					<clean-directory-on-startup>true</clean-directory-on-startup>
+				</berkeley-db>
 			</collections-storage>
 			<row-annotation-storage>
 				<in-memory max-rows-threshold="1000" />

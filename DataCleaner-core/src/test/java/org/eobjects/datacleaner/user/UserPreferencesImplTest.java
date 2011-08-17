@@ -45,7 +45,7 @@ public class UserPreferencesImplTest extends TestCase {
 
 		datastore = datastores.get(1);
 		assertEquals(
-				"CsvDatastore[name=foobar, filename=C:\\foobar.txt, quoteChar='\"', separatorChar=',', encoding=UTF-8]",
+				"CsvDatastore[name=foobar, filename=C:\\foobar.txt, quoteChar='\"', separatorChar=',', encoding=UTF-8, headerLineNumber=0]",
 				datastore.toString());
 		assertEquals("C:\\foobar.txt", ((CsvDatastore) datastore).getFilename());
 		assertEquals(null, datastore.getDescription());

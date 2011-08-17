@@ -147,6 +147,10 @@ final class DatastoreOutputWriter implements OutputWriter {
 	public OutputRow createRow() {
 		return new DatastoreOutputRow(_insertStatement, _columns);
 	}
+	
+	public String getTableName() {
+		return _tableName;
+	}
 
 	@Override
 	public void close() {

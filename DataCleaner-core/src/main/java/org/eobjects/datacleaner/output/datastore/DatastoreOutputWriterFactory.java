@@ -49,8 +49,8 @@ public final class DatastoreOutputWriterFactory {
 		return getWriter(directory, creationDelegate, datastoreName, tableName, true, columns);
 	}
 
-	public static OutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate, String datastoreName,
-			String tableName, boolean truncate, InputColumn<?>... columns) {
+	public static DatastoreOutputWriter getWriter(File directory, DatastoreCreationDelegate creationDelegate,
+			String datastoreName, String tableName, boolean truncate, InputColumn<?>... columns) {
 		if (!directory.exists()) {
 			if (!directory.mkdirs()) {
 				logger.error("Failed to create directory for datastores: {}", directory);
@@ -70,6 +70,20 @@ public final class DatastoreOutputWriterFactory {
 
 			return outputWriter;
 		}
+	}
+
+	/**
+	 * Gets the actual table name written by an {@link OutputWriter}, which may
+	 * differ from the requested name if the name was not a valid RDBMS table
+	 * name or if the table name was already used and truncation was disabled.
+	 * 
+	 * @param outputWriter
+	 * @return
+	 */
+	public static String getActualTableName(OutputWriter outputWriter) {
+		assert outputWriter instanceof DatastoreOutputWriter;
+		DatastoreOutputWriter dow = (DatastoreOutputWriter) outputWriter;
+		return dow.getTableName();
 	}
 
 	protected static void release(DatastoreOutputWriter writer) {

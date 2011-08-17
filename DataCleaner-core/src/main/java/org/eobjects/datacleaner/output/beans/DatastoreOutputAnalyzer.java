@@ -87,8 +87,13 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 		final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegateImpl(
 				(MutableDatastoreCatalog) datastoreCatalog);
 
-		return DatastoreOutputWriterFactory.getWriter(userPreferences.getSaveDatastoreDirectory(), creationDelegate,
-				datastoreName, tableName, truncate, columns);
+		final OutputWriter outputWriter = DatastoreOutputWriterFactory.getWriter(
+				userPreferences.getSaveDatastoreDirectory(), creationDelegate, datastoreName, tableName, truncate, columns);
+
+		// update the tablename property with the actual name (whitespace
+		// escaped etc.)
+		tableName = DatastoreOutputWriterFactory.getActualTableName(outputWriter);
+		return outputWriter;
 	}
 
 	@Override

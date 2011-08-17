@@ -25,6 +25,7 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,18 +58,19 @@ class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
 
 	@Override
 	public Table getPreviewTable(Datastore datastore) {
-		DataContextProvider dcp = datastore.getDataContextProvider();
-		DataContext dc = dcp.getDataContext();
+		final DataContextProvider dcp = datastore.getDataContextProvider();
+		final DataContext dc = dcp.getDataContext();
 
 		// It is likely that schemas are cached, and since it is likely a new
 		// table, we refresh the schema.
 		dc.refreshSchemas();
 
-		Table table = dc.getDefaultSchema().getTableByName(_tableName);
+		final Schema schema = dc.getDefaultSchema();
+		final Table table = schema.getTableByName(_tableName);
 
 		if (table == null && logger.isWarnEnabled()) {
 			logger.warn("Could not find table '{}', even after refreshing schemas", _tableName);
-			logger.warn("Available tables are: {}", Arrays.toString(dc.getDefaultSchema().getTableNames()));
+			logger.warn("Available tables are: {}", Arrays.toString(schema.getTableNames()));
 		}
 
 		dcp.close();

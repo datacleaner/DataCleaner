@@ -130,10 +130,12 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 				dcp.close();
 			}
 		};
-		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore", "dataset",
+		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore", "my dataset",
 				scenarioHelper.getColumns().toArray(new InputColumn[0]));
 
 		scenarioHelper.writeExampleData(writer);
+		
+		assertEquals("my_dataset", DatastoreOutputWriterFactory.getActualTableName(writer));
 
 		assertTrue(_datastoreCreated);
 	}

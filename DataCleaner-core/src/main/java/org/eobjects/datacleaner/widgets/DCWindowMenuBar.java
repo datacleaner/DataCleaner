@@ -35,6 +35,7 @@ import javax.swing.JMenuItem;
 import org.eobjects.datacleaner.actions.NewAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.AboutDialog;
 import org.eobjects.datacleaner.windows.DCWindow;
@@ -58,7 +59,8 @@ public class DCWindowMenuBar extends JMenuBar {
 	private final Provider<OptionsDialog> _optionsDialogProvider;
 
 	@Inject
-	protected DCWindowMenuBar(final WindowContext windowContext, final Provider<ReferenceDataDialog> referenceDataDialogProvider,
+	protected DCWindowMenuBar(final WindowContext windowContext,
+			final Provider<ReferenceDataDialog> referenceDataDialogProvider,
 			NewAnalysisJobActionListener newAnalysisJobActionListener,
 			OpenAnalysisJobActionListener openAnalysisJobActionListener, Provider<OptionsDialog> optionsDialogProvider) {
 		super();
@@ -114,7 +116,7 @@ public class DCWindowMenuBar extends JMenuBar {
 			}
 		});
 
-		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options", "images/menu/options.png");
+		final JMenuItem optionsMenuItem = WidgetFactory.createMenuItem("Options", IconUtils.MENU_OPTIONS);
 		optionsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

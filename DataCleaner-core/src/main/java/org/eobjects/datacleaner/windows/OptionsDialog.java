@@ -51,6 +51,7 @@ import org.eobjects.datacleaner.panels.ExtensionPackagesPanel;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -83,7 +84,7 @@ public class OptionsDialog extends AbstractWindow {
 		_configuration = configuration;
 		_tabbedPane = new CloseableTabbedPane();
 
-		_tabbedPane.addTab("General", imageManager.getImageIcon("images/menu/options.png"), getGeneralTab());
+		_tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS), getGeneralTab());
 		_tabbedPane
 				.addTab("Database drivers", imageManager.getImageIcon("images/model/datastore.png"), databaseDriversPanel);
 		_tabbedPane.addTab("Network", imageManager.getImageIcon("images/menu/network.png"), getNetworkTab());
@@ -450,6 +451,6 @@ public class OptionsDialog extends AbstractWindow {
 
 	@Override
 	public Image getWindowIcon() {
-		return imageManager.getImage("images/menu/options.png");
+		return imageManager.getImage(IconUtils.MENU_OPTIONS);
 	}
 }

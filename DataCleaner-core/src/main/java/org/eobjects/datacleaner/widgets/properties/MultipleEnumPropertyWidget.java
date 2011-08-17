@@ -47,4 +47,9 @@ public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesProper
 		return item.toString();
 	}
 
+	@Override
+	protected String getNotAvailableText() {
+		return "not available";
+	}
+
 }

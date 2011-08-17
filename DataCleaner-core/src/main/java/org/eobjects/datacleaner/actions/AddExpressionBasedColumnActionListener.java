@@ -21,20 +21,17 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.data.ConstantInputColumn;
 import org.eobjects.analyzer.data.ELInputColumn;
-import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.widgets.properties.InputColumnPropertyWidgetAccessoryHandler;
+import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.eobjects.metamodel.util.CollectionUtils;
 
 /**
@@ -44,29 +41,22 @@ import org.eobjects.metamodel.util.CollectionUtils;
  */
 public class AddExpressionBasedColumnActionListener implements ActionListener {
 
-	private final InputColumnPropertyWidgetAccessoryHandler _accessoryHandler;
-	private volatile InputColumn<?> _hoveringInputColumn = null;
+	private final JComponent _parentComponent;
+	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
+	private final ConfiguredPropertyDescriptor _propertyDescriptor;
 
-	public AddExpressionBasedColumnActionListener(InputColumnPropertyWidgetAccessoryHandler accessoryHandler) {
-		_accessoryHandler = accessoryHandler;
+	public AddExpressionBasedColumnActionListener(AbstractPropertyWidget<?> propertyWidget) {
+		_parentComponent = propertyWidget.getWidget();
+		_beanJobBuilder = propertyWidget.getBeanJobBuilder();
+		_propertyDescriptor = propertyWidget.getPropertyDescriptor();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final boolean replace;
-		final String initialValue;
-		if (_hoveringInputColumn instanceof ExpressionBasedInputColumn) {
-			replace = true;
-			initialValue = ((ExpressionBasedInputColumn<?>) _hoveringInputColumn).getExpression();
-		} else {
-			replace = false;
-			initialValue = "";
-		}
-
-		String expression = JOptionPane.showInputDialog(_accessoryHandler.getParent(),
+		String expression = JOptionPane.showInputDialog(_parentComponent,
 				"In stead of referencing a column you can also enter an expression.\n"
 						+ "An expression may either be a constant string or an EL-expression\n"
-						+ "that can access the other columns using the #{column_name} syntax.", initialValue);
+						+ "that can access the other columns using the #{column_name} syntax.", "");
 
 		if (!StringUtils.isNullOrEmpty(expression)) {
 			Object newValue;
@@ -76,29 +66,14 @@ public class AddExpressionBasedColumnActionListener implements ActionListener {
 				newValue = new ConstantInputColumn(expression);
 			}
 
-			final ConfiguredPropertyDescriptor propertyDescriptor = _accessoryHandler.getPropertyDescriptor();
-			final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = _accessoryHandler.getBeanJobBuilder();
-			if (propertyDescriptor.isArray()) {
-				InputColumn<?>[] currentValue = (InputColumn[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+			if (_propertyDescriptor.isArray()) {
+				InputColumn<?>[] currentValue = (InputColumn[]) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
 				if (currentValue == null) {
 					currentValue = new InputColumn[0];
 				}
 				newValue = CollectionUtils.array(currentValue, newValue);
-
-				if (replace) {
-					List<InputColumn<?>> list = new ArrayList<InputColumn<?>>();
-					int length = Array.getLength(newValue);
-					for (int i = 0; i < length; i++) {
-						Object o = Array.get(newValue, i);
-						if (!_hoveringInputColumn.equals(o)) {
-							list.add((InputColumn<?>) o);
-						}
-					}
-					newValue = list.toArray(new InputColumn[list.size()]);
-				}
 			}
-			beanJobBuilder.setConfiguredProperty(propertyDescriptor, newValue);
+			_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
 		}
 	}
-
 }

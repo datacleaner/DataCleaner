@@ -23,23 +23,38 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.SynonymCatalog;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
+import org.jdesktop.swingx.HorizontalLayout;
 
-public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> {
+public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> implements
+		SynonymCatalogChangeListener {
 
 	private static final long serialVersionUID = 1L;
+
 	private final JComboBox _comboBox;
+	private final MutableReferenceDataCatalog _referenceDataCatalog;
+	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
 	@Inject
 	public SingleSynonymCatalogPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ReferenceDataCatalog referenceDataCatalog) {
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, MutableReferenceDataCatalog referenceDataCatalog,
+			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
 		super(beanJobBuilder, propertyDescriptor);
+		_referenceDataCatalog = referenceDataCatalog;
+		_referenceDataDialogProvider = referenceDataDialogProvider;
 
 		_comboBox = new JComboBox();
 		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
@@ -64,7 +79,35 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 			}
 		});
 
-		add(_comboBox);
+		final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
+		dialogButton.setToolTipText("Configure synonym catalogs");
+		dialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+				dialog.selectSynonymsTab();
+				dialog.setVisible(true);
+			}
+		});
+
+		final DCPanel outerPanel = new DCPanel();
+		outerPanel.setLayout(new HorizontalLayout(2));
+		outerPanel.add(_comboBox);
+		outerPanel.add(dialogButton);
+
+		add(outerPanel);
+	}
+
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		_referenceDataCatalog.addSynonymCatalogListener(this);
+	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_referenceDataCatalog.removeSynonymCatalogListener(this);
 	}
 
 	@Override
@@ -77,6 +120,16 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 		_comboBox.setEditable(true);
 		_comboBox.setSelectedItem(value);
 		_comboBox.setEditable(false);
+	}
+
+	@Override
+	public void onAdd(SynonymCatalog synonymCatalog) {
+		_comboBox.addItem(synonymCatalog);
+	}
+
+	@Override
+	public void onRemove(SynonymCatalog synonymCatalog) {
+		_comboBox.removeItem(synonymCatalog);
 	}
 
 }

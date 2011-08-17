@@ -23,24 +23,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.StringPattern;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.user.StringPatternChangeListener;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
+import org.jdesktop.swingx.HorizontalLayout;
 
-public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> {
+public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> implements
+		StringPatternChangeListener {
 
 	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
+	private final MutableReferenceDataCatalog _referenceDataCatalog;
+	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
 	@Inject
 	public SingleStringPatternPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ReferenceDataCatalog referenceDataCatalog) {
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, MutableReferenceDataCatalog referenceDataCatalog,
+			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
 		super(beanJobBuilder, propertyDescriptor);
-
+		_referenceDataCatalog = referenceDataCatalog;
+		_referenceDataDialogProvider = referenceDataDialogProvider;
 
 		_comboBox = new JComboBox();
 		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
@@ -63,7 +76,36 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
 				fireValueChanged();
 			}
 		});
-		add(_comboBox);
+
+		final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
+		dialogButton.setToolTipText("Configure synonym catalogs");
+		dialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+				dialog.selectStringPatternsTab();
+				dialog.setVisible(true);
+			}
+		});
+
+		final DCPanel outerPanel = new DCPanel();
+		outerPanel.setLayout(new HorizontalLayout(2));
+		outerPanel.add(_comboBox);
+		outerPanel.add(dialogButton);
+
+		add(outerPanel);
+	}
+
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		_referenceDataCatalog.addStringPatternListener(this);
+	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_referenceDataCatalog.removeStringPatternListener(this);
 	}
 
 	@Override
@@ -76,5 +118,15 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
 		_comboBox.setEditable(true);
 		_comboBox.setSelectedItem(value);
 		_comboBox.setEditable(false);
+	}
+
+	@Override
+	public void onAdd(StringPattern stringPattern) {
+		_comboBox.addItem(stringPattern);
+	}
+
+	@Override
+	public void onRemove(StringPattern stringPattern) {
+		_comboBox.removeItem(stringPattern);
 	}
 }

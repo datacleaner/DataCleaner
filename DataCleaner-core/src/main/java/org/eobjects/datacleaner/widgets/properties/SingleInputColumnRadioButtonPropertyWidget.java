@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JRadioButton;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
@@ -36,7 +38,12 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.actions.AddExpressionBasedColumnActionListener;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.jdesktop.swingx.JXRadioGroup;
+import org.jdesktop.swingx.VerticalLayout;
 
 /**
  * {@link PropertyWidget} for single {@link InputColumn}s. Displays the
@@ -53,9 +60,9 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 	private final DataTypeFamily _dataTypeFamily;
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
+	private final DCPanel _buttonPanel;
 	private volatile JRadioButton[] _radioButtons;
 	private volatile List<InputColumn<?>> _inputColumns;
-	private final InputColumnPropertyWidgetAccessoryHandler _accessoryHandler;
 
 	@Inject
 	public SingleInputColumnRadioButtonPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
@@ -70,15 +77,25 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 		_propertyDescriptor = propertyDescriptor;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 
+		_buttonPanel = new DCPanel();
+		_buttonPanel.setLayout(new VerticalLayout(2));
+
 		if (_dataTypeFamily == DataTypeFamily.STRING || _dataTypeFamily == DataTypeFamily.UNDEFINED) {
-			_accessoryHandler = new InputColumnPropertyWidgetAccessoryHandler(_propertyDescriptor, _beanJobBuilder, this,
-					true);
-		} else {
-			_accessoryHandler = null;
+			final JButton expressionColumnButton = WidgetFactory
+					.createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
+			expressionColumnButton.setToolTipText("Create expression/value based column");
+			expressionColumnButton.addActionListener(new AddExpressionBasedColumnActionListener(this));
+			expressionColumnButton.setFocusable(false);
+			_buttonPanel.add(expressionColumnButton);
 		}
 
 		updateComponents();
-		add(_radioGroup);
+
+		DCPanel outerPanel = new DCPanel();
+		outerPanel.setLayout(new BorderLayout());
+		outerPanel.add(_radioGroup, BorderLayout.CENTER);
+		outerPanel.add(_buttonPanel, BorderLayout.EAST);
+		add(outerPanel);
 	}
 
 	private void updateComponents() {
@@ -145,10 +162,6 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
 				}
 			});
-
-			if (_accessoryHandler != null) {
-				_accessoryHandler.registerListComponent(rb, null);
-			}
 		}
 
 		_radioGroup.setValues(_radioButtons);

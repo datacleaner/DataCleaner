@@ -121,7 +121,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 					result.setText(databaseDriver.getDisplayName());
 					result.setIcon(driverIcon);
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
-					result.setIcon(imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL));
+					result.setIcon(imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
 				} else if (value instanceof Component) {
 					return (Component) value;
 				}

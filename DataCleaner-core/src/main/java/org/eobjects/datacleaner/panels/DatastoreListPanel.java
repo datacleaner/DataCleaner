@@ -308,7 +308,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				});
 
 				final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
-						imageManager.getImageIcon("images/menu/options.png", IconUtils.ICON_SIZE_SMALL));
+						imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
 				databaseDriversMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {

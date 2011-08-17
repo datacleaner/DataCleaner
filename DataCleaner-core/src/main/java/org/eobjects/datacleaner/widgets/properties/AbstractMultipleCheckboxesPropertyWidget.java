@@ -23,10 +23,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -34,6 +34,7 @@ import javax.swing.JCheckBox;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -59,7 +60,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 	private final ActionListener SELECT_ALL_LISTENER = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			for (JCheckBox cb : _checkBoxes) {
+			for (JCheckBox cb : _checkBoxes.values()) {
 				if (cb.isEnabled()) {
 					cb.setSelected(true);
 				}
@@ -71,30 +72,51 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 	private final ActionListener SELECT_NONE_LISTENER = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			for (JCheckBox cb : _checkBoxes) {
+			for (JCheckBox cb : _checkBoxes.values()) {
 				cb.setSelected(false);
 			}
 			fireValueChanged();
 		}
 	};
 
-	private final Map<String, E> _availableValues;
-	private volatile JCheckBox[] _checkBoxes;
+	private final Map<String, DCCheckBox<E>> _checkBoxes;
 	private final Class<E> _itemClass;
+	private final DCPanel _buttonPanel;
+	private final JCheckBox _notAvailableCheckBox;
 
 	public AbstractMultipleCheckboxesPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor, Class<E> itemClass) {
 		super(beanJobBuilder, propertyDescriptor);
-		_availableValues = new LinkedHashMap<String, E>();
 		_itemClass = itemClass;
+		_checkBoxes = new LinkedHashMap<String, DCCheckBox<E>>();
 		setLayout(new VerticalLayout(2));
+
+		_notAvailableCheckBox = new JCheckBox(getNotAvailableText());
+		_notAvailableCheckBox.setOpaque(false);
+		_notAvailableCheckBox.setEnabled(false);
+
+		_buttonPanel = createButtonPanel();
+	}
+
+	protected DCPanel createButtonPanel() {
+		final DCPanel buttonPanel = new DCPanel();
+		buttonPanel.setLayout(new HorizontalLayout(2));
+
+		JButton selectAllButton = new JButton("Select all");
+		selectAllButton.addActionListener(SELECT_ALL_LISTENER);
+		buttonPanel.add(selectAllButton);
+
+		JButton selectNoneButton = new JButton("Select none");
+		selectNoneButton.addActionListener(SELECT_NONE_LISTENER);
+		buttonPanel.add(selectNoneButton);
+		return buttonPanel;
 	}
 
 	protected JCheckBox[] getCheckBoxes() {
-		if (_checkBoxes == null) {
+		if (_checkBoxes.isEmpty()) {
 			updateComponents();
 		}
-		return _checkBoxes;
+		return _checkBoxes.values().toArray(new JCheckBox[_checkBoxes.size()]);
 	}
 
 	@Override
@@ -105,8 +127,6 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 
 	protected abstract E[] getAvailableValues();
 
-	protected abstract String getName(E item);
-
 	protected void updateComponents() {
 		@SuppressWarnings("unchecked")
 		E[] currentValues = (E[]) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
@@ -115,53 +135,62 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 
 	protected void updateComponents(E[] values) {
 		removeAll();
+		_checkBoxes.clear();
 
-		_availableValues.clear();
+		add(_buttonPanel);
 
 		{
 			E[] availableValues = getAvailableValues();
-			for (E availableValue : availableValues) {
-				_availableValues.put(getName(availableValue), availableValue);
+			for (E item : availableValues) {
+				addCheckBox(item, isEnabled(item, values));
 			}
 			if (values != null) {
 				for (E value : values) {
-					_availableValues.put(getName(value), value);
+					addCheckBox(value, true);
 				}
 			}
 		}
 
-		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new HorizontalLayout(2));
+		_notAvailableCheckBox.setVisible(_checkBoxes.isEmpty());
+		add(_notAvailableCheckBox);
 
-		JButton selectAllButton = new JButton("Select all");
-		selectAllButton.addActionListener(SELECT_ALL_LISTENER);
-		buttonPanel.add(selectAllButton);
-
-		JButton selectNoneButton = new JButton("Select none");
-		selectNoneButton.addActionListener(SELECT_NONE_LISTENER);
-		buttonPanel.add(selectNoneButton);
-
-		add(buttonPanel);
-
-		_checkBoxes = new JCheckBox[_availableValues.size()];
-		if (_checkBoxes.length == 0) {
-			_checkBoxes = new JCheckBox[1];
-			_checkBoxes[0] = new JCheckBox("- no string patterns available -");
-			_checkBoxes[0].setOpaque(false);
-			_checkBoxes[0].setEnabled(false);
-			add(_checkBoxes[0]);
-		} else {
-			int i = 0;
-			for (Entry<String, E> entry : _availableValues.entrySet()) {
-				JCheckBox checkBox = new JCheckBox(entry.getKey(), isEnabled(entry.getValue(), values));
-				checkBox.setOpaque(false);
-				checkBox.addActionListener(CHANGE_LISTENER);
-				_checkBoxes[i] = checkBox;
-				add(checkBox);
-				i++;
-			}
-		}
 		fireValueChanged();
+	}
+
+	/**
+	 * Gets the text for an optional disabled checkbox in case no items are
+	 * available.
+	 * 
+	 * @return
+	 */
+	protected abstract String getNotAvailableText();
+
+	protected JCheckBox addCheckBox(E item, boolean checked) {
+		DCCheckBox<E> checkBox = _checkBoxes.get(item);
+		if (checkBox != null) {
+			checkBox.setSelected(checked);
+			return checkBox;
+		}
+		checkBox = new DCCheckBox<E>(getName(item), checked);
+		checkBox.setValue(item);
+		checkBox.setOpaque(false);
+		checkBox.addActionListener(CHANGE_LISTENER);
+		_checkBoxes.put(getName(item), checkBox);
+		add(checkBox);
+
+		_notAvailableCheckBox.setVisible(_checkBoxes.isEmpty());
+		updateUI();
+		
+		return checkBox;
+	}
+
+	protected void removeCheckBox(E item) {
+		DCCheckBox<E> checkBox = _checkBoxes.remove(getName(item));
+		if (checkBox != null) {
+			remove(checkBox);
+		}
+
+		_notAvailableCheckBox.setVisible(_checkBoxes.isEmpty());
 	}
 
 	private boolean isEnabled(E value, E[] enabledValues) {
@@ -189,11 +218,10 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 	@Override
 	public E[] getValue() {
 		List<E> result = new ArrayList<E>();
-		JCheckBox[] checkBoxes = getCheckBoxes();
-		for (int i = 0; i < checkBoxes.length; i++) {
-			if (checkBoxes[i].isSelected()) {
-				String itemName = checkBoxes[i].getText();
-				result.add(_availableValues.get(itemName));
+		Collection<DCCheckBox<E>> checkBoxes = _checkBoxes.values();
+		for (DCCheckBox<E> cb : checkBoxes) {
+			if (cb.isSelected()) {
+				result.add(cb.getValue());
 			}
 		}
 		@SuppressWarnings("unchecked")
@@ -205,4 +233,6 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 	protected void setValue(E[] value) {
 		updateComponents(value);
 	}
+
+	protected abstract String getName(E item);
 }

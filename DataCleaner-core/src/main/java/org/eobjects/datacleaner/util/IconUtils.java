@@ -56,6 +56,11 @@ public final class IconUtils {
 	public static int ICON_SIZE_LARGE = 32;
 	public static int ICON_SIZE_MEDIUM = 22;
 	public static int ICON_SIZE_SMALL = 16;
+	
+	public static final String MENU_OPTIONS = "images/menu/options.png";
+
+	public static final String BUTTON_EXPRESSION_COLUMN_IMAGEPATH = "images/model/column_expression.png";
+	public static final String BUTTON_REORDER_COLUMN_IMAGEPATH = "images/actions/reorder-columns.png";
 
 	public static final String DICTIONARY_IMAGEPATH = "images/model/dictionary.png";
 	public static final String DICTIONARY_SIMPLE_IMAGEPATH = "images/model/dictionary_simple.png";

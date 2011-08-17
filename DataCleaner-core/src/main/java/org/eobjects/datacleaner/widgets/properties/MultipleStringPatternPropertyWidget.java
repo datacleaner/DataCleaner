@@ -19,24 +19,69 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.swing.JButton;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.StringPattern;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
+import org.eobjects.datacleaner.user.StringPatternChangeListener;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 
-public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<StringPattern> {
+public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<StringPattern> implements
+		StringPatternChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private final ReferenceDataCatalog _referenceDataCatalog;
+	private final MutableReferenceDataCatalog _referenceDataCatalog;
+	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
 	@Inject
 	public MultipleStringPatternPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor, ReferenceDataCatalog referenceDataCatalog) {
+			ConfiguredPropertyDescriptor propertyDescriptor, MutableReferenceDataCatalog referenceDataCatalog,
+			Provider<ReferenceDataDialog> referenceDataDialogProvider) {
 		super(beanJobBuilder, propertyDescriptor, StringPattern.class);
 		_referenceDataCatalog = referenceDataCatalog;
+		_referenceDataDialogProvider = referenceDataDialogProvider;
+	}
+
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		_referenceDataCatalog.addStringPatternListener(this);
+	}
+
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		_referenceDataCatalog.removeStringPatternListener(this);
+	}
+
+	@Override
+	protected DCPanel createButtonPanel() {
+		DCPanel buttonPanel = super.createButtonPanel();
+
+		final JButton dialogButton = WidgetFactory.createSmallButton(IconUtils.MENU_OPTIONS);
+		dialogButton.setToolTipText("Configure string patterns");
+		dialogButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ReferenceDataDialog dialog = _referenceDataDialogProvider.get();
+				dialog.selectStringPatternsTab();
+				dialog.setVisible(true);
+			}
+		});
+
+		buttonPanel.add(dialogButton);
+		return buttonPanel;
 	}
 
 	@Override
@@ -48,9 +93,24 @@ public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckbo
 		}
 		return result;
 	}
-	
+
 	@Override
 	protected String getName(StringPattern item) {
 		return item.getName();
+	}
+
+	@Override
+	public void onAdd(StringPattern stringPattern) {
+		addCheckBox(stringPattern, false);
+	}
+
+	@Override
+	public void onRemove(StringPattern stringPattern) {
+		removeCheckBox(stringPattern);
+	}
+
+	@Override
+	protected String getNotAvailableText() {
+		return "- no string patterns available - ";
 	}
 }

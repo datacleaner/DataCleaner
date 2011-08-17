@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
+import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
@@ -38,11 +39,15 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXRadioGroup;
+import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
@@ -63,6 +68,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 	private final DCPanel _buttonPanel;
 	private volatile JRadioButton[] _radioButtons;
 	private volatile List<InputColumn<?>> _inputColumns;
+	private final JXTextField _searchDatastoreTextField;
 
 	@Inject
 	public SingleInputColumnRadioButtonPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
@@ -76,6 +82,28 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 		_beanJobBuilder = beanJobBuilder;
 		_propertyDescriptor = propertyDescriptor;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
+
+		_searchDatastoreTextField = WidgetFactory.createTextField("Search/filter columns");
+		_searchDatastoreTextField.setBorder(WidgetUtils.BORDER_THIN);
+		_searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+			@Override
+			protected void onChange(DocumentEvent event) {
+				String text = _searchDatastoreTextField.getText();
+				if (StringUtils.isNullOrEmpty(text)) {
+					// when there is no search query, set all datastores visible
+					for (JRadioButton rb : _radioButtons) {
+						rb.setVisible(true);
+					}
+				} else {
+					// do a case insensitive search
+					text = text.trim().toLowerCase();
+					for (JRadioButton rb : _radioButtons) {
+						String name = rb.getText().toLowerCase();
+						rb.setVisible(name.indexOf(text) != -1);
+					}
+				}
+			}
+		});
 
 		_buttonPanel = new DCPanel();
 		_buttonPanel.setLayout(new VerticalLayout(2));
@@ -93,6 +121,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 
 		DCPanel outerPanel = new DCPanel();
 		outerPanel.setLayout(new BorderLayout());
+		outerPanel.add(_searchDatastoreTextField, BorderLayout.NORTH);
 		outerPanel.add(_radioGroup, BorderLayout.CENTER);
 		outerPanel.add(_buttonPanel, BorderLayout.EAST);
 		add(outerPanel);
@@ -119,6 +148,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 				_inputColumns.add(value);
 			}
 		}
+
+		_searchDatastoreTextField.setVisible(_inputColumns.size() > 5);
 
 		if (_propertyDescriptor.isRequired()) {
 			_radioButtons = new JRadioButton[_inputColumns.size()];

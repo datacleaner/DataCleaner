@@ -47,6 +47,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -83,7 +84,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @param <D>
  */
-public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> extends AbstractDialog {
+public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
@@ -142,7 +143,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 		if (_originalDatastore != null) {
 			_datastoreNameField.setText(_originalDatastore.getName());
 			_datastoreNameField.setEnabled(false);
-			_filenameField.setFilename(getFilename(_originalDatastore));
+			_filenameField.setFilename(_originalDatastore.getFilename());
 		}
 
 		// add listeners after setting initial values.
@@ -206,8 +207,6 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends Datastore> exte
 	 */
 	protected void onFileSelected(File file) {
 	}
-
-	protected abstract String getFilename(D datastore);
 
 	protected abstract D createDatastore(String name, String filename);
 

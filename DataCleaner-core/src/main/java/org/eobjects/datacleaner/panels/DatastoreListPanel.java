@@ -50,6 +50,7 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
+import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
@@ -353,7 +354,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		}
 	}
 
-	private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
+	private <D extends FileDatastore> JButton createNewDatastoreButton(final String title, final String description,
 			final String imagePath, final Class<D> datastoreClass,
 			final Class<? extends AbstractFileBasedDatastoreDialog<D>> dialogClass) {
 		final ImageIcon icon = imageManager.getImageIcon(imagePath);

@@ -51,11 +51,6 @@ public final class OdbDatastoreDialog extends AbstractFileBasedDatastoreDialog<O
 	}
 
 	@Override
-	protected String getFilename(OdbDatastore datastore) {
-		return datastore.getFilename();
-	}
-
-	@Override
 	protected OdbDatastore createDatastore(String name, String filename) {
 		return new OdbDatastore(name, filename);
 	}

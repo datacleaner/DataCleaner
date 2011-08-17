@@ -57,11 +57,6 @@ public final class AccessDatastoreDialog extends AbstractFileBasedDatastoreDialo
 	}
 
 	@Override
-	protected String getFilename(AccessDatastore datastore) {
-		return datastore.getFilename();
-	}
-
-	@Override
 	protected AccessDatastore createDatastore(String name, String filename) {
 		return new AccessDatastore(name, filename);
 	}

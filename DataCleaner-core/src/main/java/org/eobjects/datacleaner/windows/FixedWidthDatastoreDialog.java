@@ -284,11 +284,6 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	}
 
 	@Override
-	protected String getFilename(FixedWidthDatastore datastore) {
-		return datastore.getFilename();
-	}
-
-	@Override
 	protected FixedWidthDatastore createDatastore(String name, String filename) {
 		boolean failOnInconsistencies = _failOnInconsistenciesCheckBox.isSelected();
 		return createDatastore(name, filename, failOnInconsistencies);

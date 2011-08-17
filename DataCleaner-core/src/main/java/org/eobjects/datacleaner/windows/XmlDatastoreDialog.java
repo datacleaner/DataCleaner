@@ -58,11 +58,6 @@ public final class XmlDatastoreDialog extends AbstractFileBasedDatastoreDialog<X
 	}
 
 	@Override
-	protected String getFilename(XmlDatastore datastore) {
-		return datastore.getFilename();
-	}
-
-	@Override
 	protected XmlDatastore createDatastore(String name, String filename) {
 		return new XmlDatastore(name, filename);
 	}

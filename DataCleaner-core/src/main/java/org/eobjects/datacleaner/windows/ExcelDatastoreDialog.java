@@ -63,11 +63,6 @@ public final class ExcelDatastoreDialog extends AbstractFileBasedDatastoreDialog
 	}
 
 	@Override
-	protected String getFilename(ExcelDatastore datastore) {
-		return datastore.getFilename();
-	}
-
-	@Override
 	protected ExcelDatastore createDatastore(String name, String filename) {
 		return new ExcelDatastore(name, filename);
 	}

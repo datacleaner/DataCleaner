@@ -87,11 +87,6 @@ public final class SasDatastoreDialog extends AbstractFileBasedDatastoreDialog<S
 	}
 
 	@Override
-	protected String getFilename(SasDatastore datastore) {
-		return datastore.getFilename();
-	}
-
-	@Override
 	protected SasDatastore createDatastore(String name, String filename) {
 		return new SasDatastore(name, new File(filename));
 	}

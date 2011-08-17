@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -28,11 +29,15 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.event.DocumentEvent;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
@@ -44,11 +49,14 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
+import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.NumberComparator;
 
 /**
  * Dialog for setting up CSV datastores.
@@ -70,6 +78,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 
 	private final JComboBox _separatorCharField;
 	private final JComboBox _quoteCharField;
+	private final JComboBox _headerLineComboBox;
 	private final CharSetEncodingComboBox _encodingComboBox;
 	private final JCheckBox _failOnInconsistenciesCheckBox;
 
@@ -87,6 +96,30 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 		_quoteCharField.setEditable(true);
 
 		_encodingComboBox = new CharSetEncodingComboBox();
+
+		_headerLineComboBox = new JComboBox();
+		JTextComponent headerLineNumberText = (JTextComponent) _headerLineComboBox.getEditor().getEditorComponent();
+		headerLineNumberText.setDocument(new NumberDocument());
+		_headerLineComboBox.setEditable(true);
+		_headerLineComboBox.setModel(new DefaultComboBoxModel(new Integer[] { 0, 1 }));
+		_headerLineComboBox.setSelectedItem(1);
+		_headerLineComboBox.setRenderer(new DefaultListCellRenderer() {
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				if (value instanceof Integer) {
+					Integer i = (Integer) value;
+					if (i <= 0) {
+						value = "No header";
+					}
+				}
+				return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			}
+
+		});
 
 		_failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
 		_failOnInconsistenciesCheckBox.setOpaque(false);
@@ -153,6 +186,12 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				onSettingsUpdated(true, false);
+			}
+		});
+		_headerLineComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				onSettingsUpdated(false, false);
 			}
 		});
 	}
@@ -295,11 +334,27 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 	@Override
 	protected List<Entry<String, JComponent>> getFormElements() {
 		List<Entry<String, JComponent>> result = super.getFormElements();
-		result.add(new ImmutableEntry<String, JComponent>("Character encoding:", _encodingComboBox));
-		result.add(new ImmutableEntry<String, JComponent>("Separator:", _separatorCharField));
-		result.add(new ImmutableEntry<String, JComponent>("Quote char:", _quoteCharField));
+		result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
+		result.add(new ImmutableEntry<String, JComponent>("Separator", _separatorCharField));
+		result.add(new ImmutableEntry<String, JComponent>("Quote char", _quoteCharField));
+		result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
 		result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
 		return result;
+	}
+
+	public int getHeaderLine() {
+		Number headerLineComboValue = NumberComparator.toNumber(_headerLineComboBox.getSelectedItem());
+		if (headerLineComboValue != null) {
+			int intComboValue = headerLineComboValue.intValue();
+			if (intComboValue <= 0) {
+				return CsvConfiguration.NO_COLUMN_NAME_LINE;
+			} else {
+				// MetaModel's headerline number is 0-based
+				return intComboValue - 1;
+			}
+		} else {
+			return CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
+		}
 	}
 
 	public String getEncoding() {
@@ -354,14 +409,9 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 	}
 
 	@Override
-	protected String getFilename(CsvDatastore datastore) {
-		return datastore.getFilename();
-	}
-
-	@Override
 	protected CsvDatastore createDatastore(String name, String filename) {
 		return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEncoding(),
-				_failOnInconsistenciesCheckBox.isSelected());
+				_failOnInconsistenciesCheckBox.isSelected(), getHeaderLine());
 	}
 
 	@Override

@@ -131,7 +131,6 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		_analyzeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int i = 0;
 				for (DatastorePanel datastorePanel : _datastorePanels) {
 					if (datastorePanel.isSelected()) {
 						Datastore datastore = datastorePanel.getDatastore();
@@ -144,7 +143,6 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 						dataContextProvider.close();
 						return;
 					}
-					i++;
 				}
 			}
 		});

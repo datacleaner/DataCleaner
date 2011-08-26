@@ -63,7 +63,6 @@ import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 
 public final class VisualizeJobGraph {
 
-	private static final long serialVersionUID = 1L;
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private VisualizeJobGraph() {

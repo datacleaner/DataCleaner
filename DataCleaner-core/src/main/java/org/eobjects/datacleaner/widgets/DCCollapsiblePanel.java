@@ -46,8 +46,6 @@ import org.jdesktop.swingx.JXCollapsiblePane.Direction;
  */
 public class DCCollapsiblePanel {
 
-	private static final long serialVersionUID = 1L;
-
 	private static final Icon _expandedIcon = ImageManager.getInstance().getImageIcon("images/actions/add.png",
 			IconUtils.ICON_SIZE_SMALL);
 	private static final Icon _collapsedIcon = ImageManager.getInstance().getImageIcon("images/actions/remove.png",

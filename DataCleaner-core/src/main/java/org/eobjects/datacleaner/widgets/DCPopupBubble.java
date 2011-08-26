@@ -32,8 +32,6 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 
 public class DCPopupBubble {
 
-	private static final long serialVersionUID = 1L;
-
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final DCGlassPane _glassPane;

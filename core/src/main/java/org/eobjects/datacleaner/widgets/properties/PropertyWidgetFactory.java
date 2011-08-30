@@ -117,6 +117,8 @@ public final class PropertyWidgetFactory {
 				widgetClass = MultipleSynonymCatalogsPropertyWidget.class;
 			} else if (type == StringPattern.class) {
 				widgetClass = MultipleStringPatternPropertyWidget.class;
+			} else if (ReflectionUtils.isNumber(type)) {
+				widgetClass = MultipleNumberPropertyWidget.class;
 			} else if (type.isEnum()) {
 				widgetClass = MultipleEnumPropertyWidget.class;
 			} else if (type == char.class) {

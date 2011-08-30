@@ -23,6 +23,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Array;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -32,6 +35,8 @@ import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -40,32 +45,34 @@ import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
 
 /**
- * {@link PropertyWidget} for String arrays. Displays string arrays as a set of
+ * {@link PropertyWidget} for Number arrays. Displays number arrays as a set of
  * text boxes and plus/minus buttons to grow/shrink the array.
  * 
  * @author Kasper Sørensen
  */
-public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[]> {
+public class MultipleNumberPropertyWidget extends AbstractPropertyWidget<Number[]> {
 
 	private static final long serialVersionUID = 1L;
+
+	private final NumberFormat _numberFormat = NumberFormat.getInstance();
 	private final DCPanel _textFieldPanel;
 
 	@Inject
-	public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+	public MultipleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));
 
-		String[] currentValue = (String[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Number[] currentValue = (Number[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		updateComponents(currentValue);
 
 		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addTextField("", true);
+				addTextField(null, true);
 				fireValueChanged();
 			}
 		});
@@ -98,23 +105,27 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		add(outerPanel);
 	}
 
-	public void updateComponents(String[] values) {
+	private Number[] createArray(int length) {
+		return (Number[]) Array.newInstance(getPropertyDescriptor().getBaseType(), length);
+	}
+
+	public void updateComponents(Number[] values) {
 		if (values == null) {
-			values = new String[2];
+			values = createArray(2);
 		}
-		final String[] previousValues = getValue();
+		final Number[] previousValues = getValue();
 		if (!EqualsBuilder.equals(values, previousValues)) {
 			for (int i = 0; i < Math.min(previousValues.length, values.length); i++) {
 				// modify text boxes
 				if (!EqualsBuilder.equals(previousValues[i], values[i])) {
 					JTextComponent component = (JTextComponent) _textFieldPanel.getComponent(i);
-					component.setText(values[i]);
+					component.setText(_numberFormat.format(values[i]));
 				}
 			}
 
 			while (_textFieldPanel.getComponentCount() < values.length) {
 				// add text boxes if there are too few
-				String nextValue = values[_textFieldPanel.getComponentCount()];
+				Number nextValue = values[_textFieldPanel.getComponentCount()];
 				addTextField(nextValue, false);
 			}
 
@@ -126,10 +137,10 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		}
 	}
 
-	private void addTextField(String value, boolean updateUI) {
+	private void addTextField(Number value, boolean updateUI) {
 		JXTextField textField = WidgetFactory.createTextField();
 		if (value != null) {
-			textField.setText(value);
+			textField.setText(_numberFormat.format(value));
 		}
 		textField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
@@ -144,18 +155,48 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 	}
 
 	@Override
-	public String[] getValue() {
+	public Number[] getValue() {
 		Component[] components = _textFieldPanel.getComponents();
-		String[] result = new String[components.length];
+
+		final Number[] result = createArray(components.length);
 		for (int i = 0; i < components.length; i++) {
 			JXTextField textField = (JXTextField) components[i];
-			result[i] = textField.getText();
+			String stringValue = textField.getText();
+			result[i] = convertToNumber(stringValue);
 		}
 		return result;
 	}
 
+	private Number convertToNumber(String stringValue) {
+		if (StringUtils.isNullOrEmpty(stringValue)) {
+			return null;
+		}
+		Class<?> type = getPropertyDescriptor().getBaseType();
+		try {
+			final Number number = _numberFormat.parse(stringValue);
+			if (type != Number.class) {
+				if (ReflectionUtils.isInteger(type)) {
+					return Integer.valueOf(number.intValue());
+				} else if (ReflectionUtils.isLong(type)) {
+					return Long.valueOf(number.longValue());
+				} else if (ReflectionUtils.isDouble(type)) {
+					return Double.valueOf(number.doubleValue());
+				} else if (ReflectionUtils.isShort(type)) {
+					return Short.valueOf(number.shortValue());
+				} else if (ReflectionUtils.isByte(type)) {
+					return Byte.valueOf(number.byteValue());
+				} else if (ReflectionUtils.isFloat(type)) {
+					return Float.valueOf(number.floatValue());
+				}
+			}
+			return number;
+		} catch (ParseException e) {
+			throw new IllegalStateException("Cannot parse to number: " + stringValue);
+		}
+	}
+
 	@Override
-	protected void setValue(String[] value) {
+	protected void setValue(Number[] value) {
 		updateComponents(value);
 	}
 

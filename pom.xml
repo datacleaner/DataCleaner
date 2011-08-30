@@ -23,11 +23,11 @@
 	<url>http://datacleaner.eobjects.org</url>
 	<packaging>pom</packaging>
 	<modules>
-		<module>DataCleaner-core</module>
-		<module>DataCleaner-phonetic-similarity</module>
-		<module>DataCleaner-sample-extension</module>
-		<module>DataCleaner-packaging</module>
-		<module>DataCleaner-regex-parser</module>
+		<module>core</module>
+		<module>extension-phonetic</module>
+		<module>extension-sample</module>
+		<module>extension-regex-parser</module>
+		<module>packaging</module>
 	</modules>
 	<organization>
 		<name>eobjects.org</name>

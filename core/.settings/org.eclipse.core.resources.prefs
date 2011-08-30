@@ -1,5 +1,9 @@
-#Mon Jul 04 16:22:43 CEST 2011
+#Tue Aug 30 10:52:13 CEST 2011
 eclipse.preferences.version=1
 encoding//examples/countrycodes.csv=ISO-8859-1
+encoding//src/main/java=utf-8
+encoding//src/main/resources=UTF-8
 encoding//src/main/resources/datacleaner-home/examples/countrycodes.csv=ISO-8859-1
+encoding//src/test/java=utf-8
+encoding//src/test/resources=UTF-8
 encoding/<project>=UTF-8

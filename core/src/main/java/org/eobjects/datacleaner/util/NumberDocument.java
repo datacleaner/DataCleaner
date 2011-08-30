@@ -29,6 +29,16 @@ public class NumberDocument extends PlainDocument {
 
 	private static final long serialVersionUID = 1L;
 
+	private final boolean _allowDecimal;
+
+	public NumberDocument(boolean allowDecimal) {
+		_allowDecimal = allowDecimal;
+	}
+
+	public NumberDocument() {
+		this(true);
+	}
+
 	@Override
 	public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
 		boolean number = true;
@@ -37,8 +47,10 @@ public class NumberDocument extends PlainDocument {
 			it.next();
 			if (!it.isDigit()) {
 				if (!it.is('-')) {
-					if (!it.is('.')) {
-						if (!it.is('%')) {
+					if (!it.is('%')) {
+						if (!_allowDecimal) {
+							number = false;
+						} else if (!it.is('.')) {
 							number = false;
 						}
 					}

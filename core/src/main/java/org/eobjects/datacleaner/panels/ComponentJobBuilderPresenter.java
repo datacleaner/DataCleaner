@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.panels;
 
 import javax.swing.JComponent;
 
+import org.eobjects.analyzer.job.builder.UnconfiguredConfiguredPropertyException;
+
 /**
  * Interface for all job builder presenter objects. These are objects that are
  * used to present the configuration screen (eg. the builder objects) of a
@@ -49,8 +51,11 @@ public interface ComponentJobBuilderPresenter {
 	/**
 	 * Invoked before execution, the presenter should make sure all configured
 	 * properties are set on the job builder.
+	 * 
+	 * @throws UnconfiguredConfiguredPropertyException
+	 *             in case one or more properties have not been configured
 	 */
-	public void applyPropertyValues();
+	public void applyPropertyValues() throws UnconfiguredConfiguredPropertyException;
 
 	/**
 	 * Invoked when a configured property changes.

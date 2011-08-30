@@ -43,7 +43,8 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 		_textField = new JTextField(5);
-		_textField.setDocument(new NumberDocument());
+
+		_textField.setDocument(new NumberDocument(isDecimalAllowed()));
 		_primitive = propertyDescriptor.getType().isPrimitive();
 		Number currentValue = (Number) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		if (currentValue != null) {
@@ -57,6 +58,15 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 			}
 		});
 		add(_textField);
+	}
+
+	private boolean isDecimalAllowed() {
+		Class<?> type = getPropertyDescriptor().getBaseType();
+		if (ReflectionUtils.isByte(type) || ReflectionUtils.isShort(type) || ReflectionUtils.isInteger(type)
+				|| ReflectionUtils.isLong(type)) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

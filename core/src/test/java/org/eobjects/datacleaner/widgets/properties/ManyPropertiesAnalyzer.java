@@ -45,6 +45,12 @@ public class ManyPropertiesAnalyzer implements RowProcessingAnalyzer<NumberResul
 	int[] intArrayProperty;
 
 	@Configured
+	Number numberProperty;
+
+	@Configured
+	Number[] numberArrayProperty;
+	
+	@Configured
 	double doubleProperty;
 
 	@Configured

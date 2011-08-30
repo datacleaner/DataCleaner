@@ -54,7 +54,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
 		AnalyzerBeanDescriptor<ManyPropertiesAnalyzer> descriptor = Descriptors.ofAnalyzer(ManyPropertiesAnalyzer.class);
 
-		assertEquals(24, descriptor.getConfiguredProperties().size());
+		assertEquals(26, descriptor.getConfiguredProperties().size());
 
 		AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ajb.addRowProcessingAnalyzer(descriptor);
 
@@ -65,12 +65,18 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
 		performAssertions(propertyWidgetFactory, "Int property", SingleNumberPropertyWidget.class, 0, 2);
 
-		performAssertions(propertyWidgetFactory, "Int array property", DummyPropertyWidget.class, null, new int[] { 2, 3 }); // TODO
+		performAssertions(propertyWidgetFactory, "Int array property", MultipleNumberPropertyWidget.class, new int[2],
+				new int[] { 2, 3 });
+
+		performAssertions(propertyWidgetFactory, "Number property", SingleNumberPropertyWidget.class, null, 2l);
+
+		performAssertions(propertyWidgetFactory, "Number array property", MultipleNumberPropertyWidget.class, new Number[] {
+				null, null }, new Number[] { 2l, 3l });
 
 		performAssertions(propertyWidgetFactory, "Double property", SingleNumberPropertyWidget.class, 0d, 2d);
 
-		performAssertions(propertyWidgetFactory, "Double array property", DummyPropertyWidget.class, null, new double[] {
-				2d, 3d }); // TODO
+		performAssertions(propertyWidgetFactory, "Double array property", MultipleNumberPropertyWidget.class, new double[2],
+				new double[] { 2d, 3d }); // TODO
 
 		performAssertions(propertyWidgetFactory, "Bool property", SingleBooleanPropertyWidget.class, false, true);
 

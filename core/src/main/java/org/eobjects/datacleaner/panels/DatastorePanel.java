@@ -286,7 +286,7 @@ public class DatastorePanel extends DCPanel {
 			}
 			return datasourceJndiUrl;
 		} else if (datastore instanceof CompositeDatastore) {
-			List<Datastore> datastores = ((CompositeDatastore) datastore).getDatastores();
+			List<? extends Datastore> datastores = ((CompositeDatastore) datastore).getDatastores();
 			StringBuilder sb = new StringBuilder();
 			for (Datastore ds : datastores) {
 				if (sb.length() != 0) {

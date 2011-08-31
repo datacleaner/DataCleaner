@@ -114,7 +114,7 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 			_datastoreNameField.setText(_originalDatastore.getName());
 			_datastoreNameField.setEnabled(false);
 
-			List<Datastore> containedDatastores = _originalDatastore.getDatastores();
+			List<? extends Datastore> containedDatastores = _originalDatastore.getDatastores();
 			Set<String> containedDatastoreNames = new HashSet<String>();
 			for (Datastore datastore : containedDatastores) {
 				containedDatastoreNames.add(datastore.getName());

@@ -32,6 +32,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
+import org.eobjects.datacleaner.widgets.Alignment;
+
 public class DCPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -52,8 +54,12 @@ public class DCPanel extends JPanel {
 	}
 
 	public static DCPanel flow(Component... components) {
+		return flow(Alignment.LEFT, components);
+	}
+
+	public static DCPanel flow(Alignment alignment, Component... components) {
 		DCPanel panel = new DCPanel();
-		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+		panel.setLayout(new FlowLayout(alignment.getFlowLayoutAlignment(), 10, 10));
 		for (Component component : components) {
 			panel.add(component);
 		}

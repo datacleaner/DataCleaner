@@ -69,9 +69,9 @@ public final class SimpleStringPatternDialog extends AbstractDialog {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private StringPattern _simpleStringPattern;
 
-	private static final Icon ICON_ERROR = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
+	private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
 
-	private static final Icon ICON_SUCCESS = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
+	private static final Icon ICON_SUCCESS = imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
 
 	public SimpleStringPatternDialog(MutableReferenceDataCatalog catalog, WindowContext windowContext) {
 		super(windowContext, ImageManager.getInstance().getImage("images/window/banner-string-patterns.png"));

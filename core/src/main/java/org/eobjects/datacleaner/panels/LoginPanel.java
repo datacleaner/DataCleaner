@@ -45,6 +45,7 @@ import org.eobjects.datacleaner.actions.LoginChangeListener;
 import org.eobjects.datacleaner.actions.MoveComponentTimerActionListener;
 import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -174,8 +175,8 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 			final JLabel loggedInLabel = new JLabel("Logged in as: " + _userPreferences.getUsername());
 			loggedInLabel.setForeground(getForeground());
 
-			WidgetUtils.addToGridBag(new JLabel(ImageManager.getInstance().getImageIcon("images/status/valid.png")), this,
-					0, 0);
+			WidgetUtils
+					.addToGridBag(new JLabel(ImageManager.getInstance().getImageIcon(IconUtils.STATUS_VALID)), this, 0, 0);
 			WidgetUtils.addToGridBag(loggedInLabel, this, 0, 1);
 		} else {
 			final JXTextField usernameTextField = new JXTextField();

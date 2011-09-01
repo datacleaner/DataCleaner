@@ -171,8 +171,8 @@ public class DatabaseDriversPanel extends DCPanel {
 
 		final DCTable table = new DCTable(tableModel);
 
-		final Icon validIcon = imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
-		final Icon invalidIcon = imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL);
+		final Icon validIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
+		final Icon invalidIcon = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
 
 		final int installedCol = 3;
 		final int usedCol = 4;

@@ -58,6 +58,11 @@ public final class IconUtils {
 	public static int ICON_SIZE_SMALL = 16;
 	
 	public static final String MENU_OPTIONS = "images/menu/options.png";
+	
+	public static final String STATUS_INFO = "images/status/info.png";
+	public static final String STATUS_WARNING = "images/status/warning.png";
+	public static final String STATUS_ERROR = "images/status/error.png";
+	public static final String STATUS_VALID = "images/status/valid.png";
 
 	public static final String BUTTON_EXPRESSION_COLUMN_IMAGEPATH = "images/model/column_expression.png";
 	public static final String BUTTON_REORDER_COLUMN_IMAGEPATH = "images/actions/reorder-columns.png";

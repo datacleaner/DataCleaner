@@ -43,6 +43,7 @@ import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.output.beans.OutputAnalyzerResult;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -72,13 +73,12 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 
 		int rowCount = result.getWrittenRowCount();
 		if (rowCount == 0) {
-			JLabel label = new JLabel("No rows written!", imageManager.getImageIcon("images/status/warning.png"),
-					JLabel.LEFT);
+			JLabel label = new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING), JLabel.LEFT);
 			label.setBorder(border);
 			return label;
 		} else {
 			final JLabel label = new JLabel(rowCount + " rows written!",
-					imageManager.getImageIcon("images/status/valid.png"), JLabel.LEFT);
+					imageManager.getImageIcon(IconUtils.STATUS_VALID), JLabel.LEFT);
 			final DCPanel buttonPanel = createButtonPanel(result);
 
 			final DCPanel panel = new DCPanel();

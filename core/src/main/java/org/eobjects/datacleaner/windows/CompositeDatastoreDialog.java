@@ -141,16 +141,16 @@ public class CompositeDatastoreDialog extends AbstractDialog {
 
 		if (selected < 2) {
 			_statusLabel.setText("Please select at least 2 contained datastores");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
 			_addDatastoreButton.setEnabled(false);
 		} else {
 			if (nameFilledOut) {
 				_statusLabel.setText("Composite datastore ready");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+				_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
 				_addDatastoreButton.setEnabled(true);
 			} else {
 				_statusLabel.setText("Please fill out a datastore name");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
 				_addDatastoreButton.setEnabled(false);
 			}
 		}

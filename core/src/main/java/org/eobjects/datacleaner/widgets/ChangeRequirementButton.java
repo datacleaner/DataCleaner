@@ -56,9 +56,9 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 
 	private static final String NO_FILTER_TEXT = "(No filter requirement)";
 	private static final ImageManager imageManager = ImageManager.getInstance();
-	private static final Icon mappedFilterIcon = imageManager.getImageIcon("images/status/valid.png",
+	private static final Icon mappedFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_VALID,
 			IconUtils.ICON_SIZE_SMALL);
-	private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon("images/status/warning.png",
+	private static final Icon unconfiguredFilterIcon = imageManager.getImageIcon(IconUtils.STATUS_WARNING,
 			IconUtils.ICON_SIZE_SMALL);
 
 	private final AbstractBeanWithInputColumnsBuilder<?, ?, ?> _jobBuilder;

@@ -69,7 +69,7 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 	private void updateComponents() {
 		final SortedSet<InputColumn<?>> sourceColumns = new TreeSet<InputColumn<?>>(_analysisJobBuilder.getSourceColumns());
 
-		final Icon validIcon = ImageManager.getInstance().getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL);
+		final Icon validIcon = ImageManager.getInstance().getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
 
 		DefaultTableModel model = new DefaultTableModel(columnNames, sourceColumns.size());
 

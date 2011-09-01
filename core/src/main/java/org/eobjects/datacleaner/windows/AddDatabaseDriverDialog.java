@@ -173,7 +173,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		final String driverClassName = getDriverClassName();
 		if (StringUtils.isNullOrEmpty(driverClassName)) {
 			_statusLabel.setText("Please enter or select a driver class name");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
 			_addDriverButton.setEnabled(false);
 			return;
 		}
@@ -181,7 +181,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		File[] files = getDriverFiles();
 		if (files == null || files.length == 0) {
 			_statusLabel.setText("Please enter or select one or more driver files");
-			_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+			_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
 			_addDriverButton.setEnabled(false);
 			return;
 		}
@@ -189,14 +189,14 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		for (File file : files) {
 			if (!file.exists() || !file.isFile()) {
 				_statusLabel.setText("The file " + file.getPath() + " does not exist or is not a valid file");
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
 				_addDriverButton.setEnabled(false);
 				return;
 			}
 		}
 
 		_statusLabel.setText("Database driver ready");
-		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+		_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
 		_addDriverButton.setEnabled(true);
 		return;
 	}

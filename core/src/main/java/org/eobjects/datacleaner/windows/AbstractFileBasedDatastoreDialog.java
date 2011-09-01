@@ -224,17 +224,17 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
 
 	protected void setStatusValid() {
 		_statusLabel.setText("Datastore ready");
-		_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+		_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
 	}
 
 	protected void setStatusWarning(String text) {
 		_statusLabel.setText(text);
-		_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+		_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
 	}
 
 	protected void setStatusError(String text) {
 		_statusLabel.setText(text);
-		_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+		_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
 	}
 
 	protected boolean validateForm() {

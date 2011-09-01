@@ -384,10 +384,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 				if (_analysisJobBuilder.isConfigured(true)) {
 					success = true;
 					_statusLabel.setText("Job is correctly configured");
-					_statusLabel.setIcon(imageManager.getImageIcon("images/status/valid.png", IconUtils.ICON_SIZE_SMALL));
+					_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
 				} else {
 					_statusLabel.setText("Job is not correctly configured");
-					_statusLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+					_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
 				}
 			} catch (Exception ex) {
 				logger.debug("Job not correctly configured", ex);
@@ -404,7 +404,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 					errorMessage = ex.getMessage();
 				}
 				_statusLabel.setText("Job error status: " + errorMessage);
-				_statusLabel.setIcon(imageManager.getImageIcon("images/status/error.png", IconUtils.ICON_SIZE_SMALL));
+				_statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
 			}
 		}
 

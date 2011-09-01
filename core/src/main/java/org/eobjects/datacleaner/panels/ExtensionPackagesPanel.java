@@ -39,6 +39,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ExtensionFilter;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -138,7 +139,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 		listPanel.setBorder(new EmptyBorder(0, 10, 10, 0));
 
 		final ImageIcon pluginIcon = imageManager.getImageIcon("images/component-types/plugin.png");
-		final ImageIcon errorIcon = imageManager.getImageIcon("images/status/error.png");
+		final ImageIcon errorIcon = imageManager.getImageIcon(IconUtils.STATUS_ERROR);
 
 		for (final ExtensionPackage extensionPackage : extensionPackages) {
 			File[] files = extensionPackage.getFiles();

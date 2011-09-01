@@ -166,7 +166,7 @@ public final class VisualizeJobGraph {
 				if (obj instanceof MergedOutcomeJobBuilder) {
 					return imageManager.getImageIcon("images/component-types/merged-outcome.png", IconUtils.ICON_SIZE_SMALL);
 				}
-				return imageManager.getImageIcon("images/status/error.png");
+				return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
 			}
 		});
 

@@ -233,7 +233,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
 		if (datastore == null) {
 			_openJobButton.setEnabled(false);
-			datastoreLabel.setIcon(imageManager.getImageIcon("images/status/warning.png", IconUtils.ICON_SIZE_SMALL));
+			datastoreLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
 			datastoreLabel.setToolTipText("No such datastore: " + datastoreName);
 		} else {
 			_openJobButton.setEnabled(true);

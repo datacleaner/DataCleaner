@@ -34,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -321,5 +322,22 @@ public class DCTable extends JXTable implements MouseListener {
 
 	public void setAlignment(int column, Alignment alignment) {
 		_tableCellRenderer.setAlignment(column, alignment);
+	}
+
+	public void selectRows(int... rowIndexes) {
+		ListSelectionModel selectionModel = getSelectionModel();
+		selectionModel.setValueIsAdjusting(true);
+		for (int i = 0; i < rowIndexes.length; i++) {
+			int rowIndex = rowIndexes[i];
+			if (i == 0) {
+				setRowSelectionInterval(rowIndex, rowIndex);
+			} else {
+				addRowSelectionInterval(rowIndex, rowIndex);
+			}
+		}
+		selectionModel.setValueIsAdjusting(false);
+		getColumnModel().getSelectionModel().setValueIsAdjusting(true);
+		setColumnSelectionInterval(0, getColumnCount() - 1);
+		getColumnModel().getSelectionModel().setValueIsAdjusting(false);
 	}
 }

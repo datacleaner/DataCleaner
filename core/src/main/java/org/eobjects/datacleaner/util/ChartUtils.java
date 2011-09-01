@@ -41,7 +41,7 @@ import org.jfree.ui.RectangleInsets;
 import org.jfree.util.UnitType;
 
 /**
- * Contains features related to layout and styling of Charts.
+ * Contains features related to layout and styling of JFreeChart based charts.
  * 
  * @author Kasper Sørensen
  */

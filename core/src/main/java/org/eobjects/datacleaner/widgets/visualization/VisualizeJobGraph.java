@@ -46,6 +46,7 @@ import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -58,8 +59,6 @@ import edu.uci.ics.jung.graph.util.Context;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
-import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
-import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 
 public final class VisualizeJobGraph {
 
@@ -117,12 +116,9 @@ public final class VisualizeJobGraph {
 		final VisualizationViewer<Object, VisualizeJobLink> visualizationViewer = new VisualizationViewer<Object, VisualizeJobLink>(
 				layout);
 		visualizationViewer.setSize(preferredSize);
+		GraphUtils.applyStyles(visualizationViewer);
 
 		final RenderContext<Object, VisualizeJobLink> renderContext = visualizationViewer.getRenderContext();
-
-		final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>();
-		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
-		visualizationViewer.setGraphMouse(graphMouse);
 
 		// render labels
 		renderContext.setVertexLabelTransformer(new Transformer<Object, String>() {

@@ -1,0 +1,82 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+package org.eobjects.datacleaner.util;
+
+import java.awt.BasicStroke;
+import java.awt.Font;
+import java.awt.Paint;
+import java.awt.Stroke;
+
+import org.apache.commons.collections15.Transformer;
+
+import edu.uci.ics.jung.visualization.RenderContext;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
+import edu.uci.ics.jung.visualization.renderers.DefaultEdgeLabelRenderer;
+import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
+
+/**
+ * Contains features related to layout and styling of JUNG based graphs.
+ * 
+ * @author Kasper Sørensen
+ */
+public class GraphUtils {
+
+	private static final BasicStroke stroke = new BasicStroke(1.2f);
+
+	private GraphUtils() {
+		// prevent instantiation
+	}
+
+	public static <V, E> void applyStyles(VisualizationViewer<V, E> visualizationViewer) {
+		final RenderContext<V, E> renderContext = visualizationViewer.getRenderContext();
+		renderContext.setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM, false));
+		renderContext.setEdgeStrokeTransformer(new Transformer<E, Stroke>() {
+			@Override
+			public Stroke transform(E input) {
+				return stroke;
+			}
+		});
+		renderContext.setEdgeDrawPaintTransformer(new Transformer<E, Paint>() {
+			@Override
+			public Paint transform(E input) {
+				return WidgetUtils.BG_COLOR_MEDIUM;
+			}
+		});
+		renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+		renderContext.setEdgeFontTransformer(new Transformer<E, Font>() {
+			@Override
+			public Font transform(E input) {
+				return WidgetUtils.FONT_SMALL;
+			}
+		});
+		renderContext.setVertexFontTransformer(new Transformer<V, Font>() {
+			@Override
+			public Font transform(V input) {
+				return WidgetUtils.FONT_SMALL;
+			}
+		});
+
+		final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>();
+		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+		visualizationViewer.setGraphMouse(graphMouse);
+	}
+}

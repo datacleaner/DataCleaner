@@ -23,6 +23,7 @@ import java.awt.Color;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 import org.eobjects.datacleaner.util.WidgetUtils;
 
@@ -60,6 +61,7 @@ public class DCLabel extends JLabel {
 		if (icon != null) {
 			setIcon(icon);
 		}
+		setVerticalAlignment(SwingConstants.TOP);
 	}
 
 	@Override

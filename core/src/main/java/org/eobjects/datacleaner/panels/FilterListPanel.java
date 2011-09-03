@@ -62,7 +62,6 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 		super(ImageManager.getInstance().getImage("images/window/filters-tab-background.png"), 95, 95,
 				WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_componentJobBuilderPresenterRendererFactory = componentJobBuilderPresenterRendererFactory;
-		setLayout(new BorderLayout());
 		_taskPanes = new IdentityHashMap<FilterJobBuilder<?, ?>, JXTaskPane>();
 		_presenters = new IdentityHashMap<FilterJobBuilder<?, ?>, FilterJobBuilderPresenter>();
 		_analysisJobBuilder = analysisJobBuilder;
@@ -80,11 +79,11 @@ public class FilterListPanel extends DCPanel implements FilterChangeListener {
 				_analysisJobBuilder, this, usageLogger));
 		toolBar.add(addFilterButton);
 
-		add(toolBar, BorderLayout.NORTH);
-
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_taskPaneContainer.setOpaque(false);
 
+		setLayout(new BorderLayout());
+		add(toolBar, BorderLayout.NORTH);
 		add(_taskPaneContainer, BorderLayout.CENTER);
 	}
 

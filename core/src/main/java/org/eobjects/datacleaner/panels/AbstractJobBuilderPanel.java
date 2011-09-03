@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,8 +27,6 @@ import java.util.TreeSet;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -43,6 +40,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCTaskPaneContainer;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetPanel;
 import org.jdesktop.swingx.JXTaskPane;
 
 public abstract class AbstractJobBuilderPanel extends DCPanel implements ComponentJobBuilderPresenter {
@@ -71,6 +69,11 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 	public final JComponent createJComponent() {
 		init();
 		return decorate(this);
+	}
+
+	@Override
+	public AbstractBeanJobBuilder<?, ?, ?> getJobBuilder() {
+		return _beanJobBuilder;
 	}
 
 	/**
@@ -114,35 +117,25 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		if (!properties.isEmpty()) {
-			DCPanel panel = new DCPanel();
-			int i = 0;
-			for (ConfiguredPropertyDescriptor propertyDescriptor : properties) {
-				JLabel nameLabel = new JLabel(propertyDescriptor.getName());
-				WidgetUtils.addToGridBag(nameLabel, panel, 0, i, 1, 1, GridBagConstraints.NORTHEAST, 4);
+			final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
 
-				String description = propertyDescriptor.getDescription();
-				if (description != null) {
-					description = description.replaceAll("\n", "</p><p>");
-					description = "<html><p>" + description + "</p></html>";
-					JLabel descLabel = new JLabel(description);
-					descLabel.setFont(WidgetUtils.FONT_SMALL);
-					descLabel.setBorder(new EmptyBorder(0, 4, 4, 0));
-					WidgetUtils.addToGridBag(descLabel, panel, 0, i + 1, 1, 1, GridBagConstraints.NORTHEAST, 0);
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+					PropertyWidget<?> propertyWidget = createPropertyWidget(_beanJobBuilder, propertyDescriptor);
+					getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
+					return propertyWidget;
 				}
-
-				PropertyWidget<?> propertyWidget = createPropertyWidget(beanJobBuilder, propertyDescriptor);
-				getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
-				WidgetUtils.addToGridBag(propertyWidget.getWidget(), panel, 1, i, 1, 2, GridBagConstraints.NORTHWEST, 4);
-				i = i + 2;
-			}
+			};
+			panel.addProperties(properties);
 			addTaskPane(icon, title, panel);
 		}
 	}
 
 	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		PropertyWidget<?> propertyWidget = getPropertyWidgetFactory().create(propertyDescriptor);
-		return propertyWidget;
+		return getPropertyWidgetFactory().create(propertyDescriptor);
 	}
 
 	protected void addTaskPane(Icon icon, String title, JComponent content) {

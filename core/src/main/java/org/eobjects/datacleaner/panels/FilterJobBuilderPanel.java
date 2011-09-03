@@ -19,29 +19,28 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import java.awt.GridBagConstraints;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.datacleaner.actions.DisplayOutputWritersForFilterOutcomeActionListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
-import org.jdesktop.swingx.VerticalLayout;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidgetPanel;
 
 public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPresenter {
 
@@ -54,6 +53,8 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 	private final FilterBeanDescriptor<?, ?> _descriptor;
 
 	public FilterJobBuilderPanel(FilterJobBuilder<?, ?> filterJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
+		super();
+
 		_filterJobBuilder = filterJobBuilder;
 		_propertyWidgetFactory = propertyWidgetFactory;
 
@@ -69,37 +70,17 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 			}
 		});
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new VerticalLayout(4));
-		buttonPanel.add(_requirementButton);
-		buttonPanel.add(removeButton);
+		final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
+			private static final long serialVersionUID = 1L;
 
-		int buttonPanelHeight = _descriptor.getConfiguredProperties().size();
-		if (buttonPanelHeight == 0) {
-			buttonPanelHeight = 1;
-		}
-
-		WidgetUtils.addToGridBag(buttonPanel, this, 2, 0, 1, buttonPanelHeight, GridBagConstraints.NORTHEAST, 4);
-
-		int i = 0;
-		for (ConfiguredPropertyDescriptor propertyDescriptor : _descriptor.getConfiguredProperties()) {
-			JLabel nameLabel = new JLabel(propertyDescriptor.getName());
-			WidgetUtils.addToGridBag(nameLabel, this, 0, i, 1, 1, GridBagConstraints.NORTHEAST, 4);
-
-			String description = propertyDescriptor.getDescription();
-			if (description != null) {
-				description = description.replaceAll("\n", "</p><p>");
-				description = "<html><p>" + description + "</p></html>";
-				JLabel descLabel = new JLabel(description);
-				descLabel.setBorder(new EmptyBorder(0, 4, 4, 0));
-				descLabel.setFont(WidgetUtils.FONT_SMALL);
-				WidgetUtils.addToGridBag(descLabel, this, 0, i + 1, 1, 1, GridBagConstraints.NORTHEAST, 0);
+			@Override
+			protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+				PropertyWidget<?> propertyWidget = createPropertyWidget(_filterJobBuilder, propertyDescriptor);
+				getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
+				return propertyWidget;
 			}
-
-			PropertyWidget<?> propertyWidget = _propertyWidgetFactory.create(propertyDescriptor);
-			WidgetUtils.addToGridBag(propertyWidget.getWidget(), this, 1, i, 1, 2, GridBagConstraints.NORTHWEST, 4);
-			i = i + 2;
-		}
+		};
+		panel.addProperties(_descriptor.getConfiguredProperties());
 
 		final DCPanel outcomePanel = new DCPanel();
 		outcomePanel.setBorder(new TitledBorder("Outcomes"));
@@ -114,7 +95,17 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 			outcomePanel.add(outcomeButton);
 		}
 
-		WidgetUtils.addToGridBag(outcomePanel, this, 1, i, 2, 1, GridBagConstraints.NORTHWEST, 4);
+		final DCPanel buttonPanel = DCPanel.flow(Alignment.RIGHT, removeButton, _requirementButton);
+
+		setLayout(new BorderLayout());
+		add(buttonPanel, BorderLayout.NORTH);
+		add(panel, BorderLayout.CENTER);
+		add(DCPanel.flow(Alignment.CENTER, outcomePanel), BorderLayout.SOUTH);
+	}
+
+	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			ConfiguredPropertyDescriptor propertyDescriptor) {
+		return getPropertyWidgetFactory().create(propertyDescriptor);
 	}
 
 	public PropertyWidgetFactory getPropertyWidgetFactory() {

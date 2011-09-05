@@ -5,4 +5,55 @@
 
 	<title>Synonyms (aka. Synonym catalogs)</title>
 
+	<para>Synonym catalogs are used to replace and standardize values to
+		their master terms, in order to avoid multiple terms for the same real
+		world thing.
+	</para>
+
+	<para>There are many real life examples of synonyms that make for messy
+		data, for example:
+	</para>
+
+	<orderedlist>
+		<listitem>
+			<para>Company and brand names, like "Coca-Cola", "Coca cola" and
+				"Coke".
+			</para>
+		</listitem>
+		<listitem>
+			<para>Titles, like "Doctor", "Dr." and "Doc"</para>
+		</listitem>
+	</orderedlist>
+
+	<para>In the following sections we will describe how to set up synonym
+		catalogs that can be used in a variety of ways to standardize your
+		database.
+	</para>
+
+	<section>
+		<title>Text file synonym catalog</title>
+		<para>A text file synonym catalog is the easiest and often also the
+			fastest way to perform synonym replacement. Simply create a text file
+			with content in a format, where the master term is succeeded with a
+			comma-separated list of synonyms, like this:
+		</para>
+		<programlisting>
+			M,Male,Man,Guy,Boy
+			F,Female,Woman,Girl
+		</programlisting>
+		<para>In the above example, most typical gender tokens will be
+			replaced with either "M" or "F".
+		</para>
+	</section>
+
+	<section>
+		<title>Datastore synonym catalog</title>
+		<para>If your synonyms are located in a database or another type of
+			datastore, then you can also create synonym catalogs based on this.
+		</para>
+		<para>Datastore synonym catalogs allow you to specify a single master
+			term column and multiple synonym columns. The synonym catalog will
+			look then find synonym matches by searching/querying the datastore.
+		</para>
+	</section>
 </chapter>

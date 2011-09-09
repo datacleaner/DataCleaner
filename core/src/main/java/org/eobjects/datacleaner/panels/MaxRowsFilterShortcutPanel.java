@@ -35,6 +35,7 @@ import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
 import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -127,12 +128,15 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 			protected void onChange(DocumentEvent event) {
 				final FilterJobBuilder<MaxRowsFilter, ValidationCategory> fjb = getJobBuilder();
 				if (fjb != null) {
-					try {
-						int maxRows = Integer.parseInt(_textField.getText());
-						fjb.setConfiguredProperty("Max rows", maxRows);
-					} catch (NumberFormatException e) {
-						WidgetUtils.showErrorMessage("Cannot read number",
-								"The entered value could not be read as a number.", e);
+					String text = _textField.getText();
+					if (!StringUtils.isNullOrEmpty(text)) {
+						try {
+							int maxRows = Integer.parseInt(text);
+							fjb.setConfiguredProperty("Max rows", maxRows);
+						} catch (NumberFormatException e) {
+							WidgetUtils.showErrorMessage("Cannot read number",
+									"The entered value could not be read as a number.", e);
+						}
 					}
 				}
 			}

@@ -26,6 +26,7 @@ import javax.swing.table.TableModel;
 import junit.framework.TestCase;
 
 import org.eobjects.analyzer.beans.standardize.EmailStandardizerTransformer;
+import org.eobjects.analyzer.beans.standardize.TokenizerTransformer;
 import org.eobjects.analyzer.beans.transform.StringLengthTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -78,7 +79,7 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 		assertEquals("classicmodelcars.com", tableModel.getValueAt(1, 2).toString());
 	}
 
-	public void testChainedTransformer() throws Exception {
+	public void testChainedTransformers() throws Exception {
 		TransformerJobBuilder<StringLengthTransformer> lengthTransformerBuilder = analysisJobBuilder
 				.addTransformer(StringLengthTransformer.class);
 		lengthTransformerBuilder.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
@@ -105,5 +106,32 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 
 		assertEquals("mpatterso", tableModel.getValueAt(1, 0).toString());
 		assertEquals("9", tableModel.getValueAt(1, 1).toString());
+		
+		// add a multi-row transformer
+		TransformerJobBuilder<TokenizerTransformer> tokenizer = analysisJobBuilder.addTransformer(TokenizerTransformer.class);
+		tokenizer.addInputColumn(emailTransformerBuilder.getOutputColumnByName("Username"));
+		tokenizer.setConfiguredProperty("Token target", TokenizerTransformer.TokenTarget.ROWS);
+		tokenizer.setConfiguredProperty("Number of tokens", 50);
+		tokenizer.setConfiguredProperty("Delimiters", new char[] {'p'});
+		assertTrue(tokenizer.isConfigured());
+		
+		action = new PreviewTransformedDataActionListener(null, null,
+				analysisJobBuilder, tokenizer, configuration);
+		tableModel = action.call();
+		
+		// rows changed from 23 -> 29
+		assertEquals(29, tableModel.getRowCount());
+
+		assertEquals("dmurphy", tableModel.getValueAt(0, 0).toString());
+		assertEquals("dmur", tableModel.getValueAt(0, 1).toString());
+		
+		assertEquals("dmurphy", tableModel.getValueAt(1, 0).toString());
+		assertEquals("hy", tableModel.getValueAt(1, 1).toString());
+
+		assertEquals("mpatterso", tableModel.getValueAt(2, 0).toString());
+		assertEquals("m", tableModel.getValueAt(2, 1).toString());
+		
+		assertEquals("mpatterso", tableModel.getValueAt(3, 0).toString());
+		assertEquals("atterso", tableModel.getValueAt(3, 1).toString());
 	}
 }

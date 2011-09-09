@@ -40,6 +40,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -172,7 +173,15 @@ public final class ColumnListTable extends DCPanel {
 			} else {
 				model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
 			}
-			model.setValueAt(column.getDataTypeFamily(), i, 1);
+
+			final DataTypeFamily dataTypeFamily = column.getDataTypeFamily();
+			final String dataTypeString;
+			if (dataTypeFamily == null || dataTypeFamily == DataTypeFamily.UNDEFINED) {
+				dataTypeString = column.getDataType().getSimpleName();
+			} else {
+				dataTypeString = dataTypeFamily.toString();
+			}
+			model.setValueAt(dataTypeString, i, 1);
 
 			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove column from source");
@@ -206,7 +215,7 @@ public final class ColumnListTable extends DCPanel {
 		JButton button = WidgetFactory.createSmallButton("images/actions/reset.png");
 		button.setToolTipText("Reset output column name");
 		button.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				textField.setText(mutableInputColumn.getInitialName());

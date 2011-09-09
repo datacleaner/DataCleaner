@@ -215,6 +215,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 		if (_checkBoxes.isEmpty()) {
 			DCCheckBox<InputColumn<?>> checkBox = new DCCheckBox<InputColumn<?>>("- no columns available -", false);
+			checkBox.setEnabled(false);
 			_checkBoxes.add(checkBox);
 			add(decorateCheckBox(checkBox));
 		} else {

@@ -19,8 +19,6 @@
  */
 package org.eobjects.datacleaner.actions;
 
-import java.io.File;
-
 import javax.swing.table.TableModel;
 
 import junit.framework.TestCase;
@@ -29,9 +27,12 @@ import org.eobjects.analyzer.beans.standardize.EmailStandardizerTransformer;
 import org.eobjects.analyzer.beans.standardize.TokenizerTransformer;
 import org.eobjects.analyzer.beans.transform.StringLengthTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
+import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.datacleaner.guice.DCModule;
 
 public class PreviewTransformedDataActionListenerTest extends TestCase {
 
@@ -43,7 +44,9 @@ public class PreviewTransformedDataActionListenerTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		configuration = new DCModule(new File(".")).getConfiguration();
+		final JdbcDatastore datastore = new JdbcDatastore("orderdb", "jdbc:hsqldb:res:orderdb;readonly=true", "org.hsqldb.jdbcDriver");
+		final DatastoreCatalog datastoreCatalog = new DatastoreCatalogImpl(datastore);
+		configuration = new AnalyzerBeansConfigurationImpl().replace(datastoreCatalog);
 
 		analysisJobBuilder = new AnalysisJobBuilder(configuration);
 		analysisJobBuilder.setDatastore("orderdb");

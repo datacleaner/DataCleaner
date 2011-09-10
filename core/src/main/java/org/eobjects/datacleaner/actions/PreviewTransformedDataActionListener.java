@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -30,17 +32,12 @@ import javax.swing.table.TableModel;
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
 import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.data.MetaModelInputColumn;
 import org.eobjects.analyzer.descriptors.Descriptors;
-import org.eobjects.analyzer.job.InputColumnSinkJob;
-import org.eobjects.analyzer.job.InputColumnSourceJob;
-import org.eobjects.analyzer.job.Outcome;
-import org.eobjects.analyzer.job.OutcomeSinkJob;
-import org.eobjects.analyzer.job.OutcomeSourceJob;
+import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.job.JaxbJobReader;
+import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
@@ -94,27 +91,29 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 			_transformerJobBuilderPresenter.applyPropertyValues();
 		}
 
-		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+		final AnalysisJobBuilder ajb = copy(_analysisJobBuilder);
 
-		// a copy of the current job builder, which will include only components
-		// preceding the transformer to preview.
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_analysisJobBuilder.getConfiguration());
-		ajb.setDataContextProvider(_analysisJobBuilder.getDataContextProvider());
+		TransformerJobBuilder<?> tjb = findTransformerJobBuilder(ajb, _transformerJobBuilder);
+
+		// remove all analyzers, except the dummy
+		ajb.removeAllAnalyzers();
+
+		// add the result collector (a dummy analyzer)
+		final RowProcessingAnalyzerJobBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
+				.addRowProcessingAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
+				.addInputColumns(tjb.getInputColumns()).addInputColumns(tjb.getOutputColumns());
+
+		if (tjb.getRequirement() != null) {
+			rowCollector.setRequirement(tjb.getRequirement());
+		}
 
 		// add a max rows filter
 		final FilterJobBuilder<MaxRowsFilter, ValidationCategory> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
 		maxRowFilter.getConfigurableBean().setMaxRows(DEFAULT_PREVIEW_ROWS);
 		ajb.setDefaultRequirement(maxRowFilter, ValidationCategory.VALID);
 
-		// add all components preceding the transformer
-		sourceColumnFinder.addSources(_analysisJobBuilder);
-		addPrecedingComponents(ajb, sourceColumnFinder, _transformerJobBuilder);
-
-		// add the result collector (a dummy analyzer)
-		final RowProcessingAnalyzerJobBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
-				.addRowProcessingAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
-				.addInputColumns(_transformerJobBuilder.getInputColumns())
-				.addInputColumns(_transformerJobBuilder.getOutputColumns());
+		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
+		sourceColumnFinder.addSources(ajb);
 
 		final String[] columnNames = new String[rowCollector.getInputColumns().size()];
 		for (int i = 0; i < columnNames.length; i++) {
@@ -154,46 +153,28 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		return tableModel;
 	}
 
-	private void addPrecedingComponents(AnalysisJobBuilder ajb, SourceColumnFinder sourceColumnFinder,
-			Object componentBuilder) {
-		if (componentBuilder == null) {
-			return;
-		} else if (componentBuilder instanceof TransformerJobBuilder) {
-			TransformerJobBuilder<?> transformerJobBuilder = (TransformerJobBuilder<?>) componentBuilder;
-			ajb.addTransformer(transformerJobBuilder);
-		} else if (componentBuilder instanceof FilterJobBuilder) {
-			FilterJobBuilder<?, ?> filterJobBuilder = (FilterJobBuilder<?, ?>) componentBuilder;
-			ajb.addFilter(filterJobBuilder);
-		} else if (componentBuilder instanceof RowProcessingAnalyzerJobBuilder) {
-			RowProcessingAnalyzerJobBuilder<?> rowProcessingAnalyzerJobBuilder = (RowProcessingAnalyzerJobBuilder<?>) componentBuilder;
-			ajb.addRowProcessingAnalyzer(rowProcessingAnalyzerJobBuilder);
-		} else if (componentBuilder instanceof MergedOutcomeJobBuilder) {
-			MergedOutcomeJobBuilder mergedOutcomeJobBuilder = (MergedOutcomeJobBuilder) componentBuilder;
-			ajb.addMergedOutcomeJobBuilder(mergedOutcomeJobBuilder);
-		} else {
-			throw new UnsupportedOperationException("Unsupported component type: " + componentBuilder.getClass());
-		}
-
-		if (componentBuilder instanceof OutcomeSinkJob) {
-			OutcomeSinkJob outcomeSinkJob = (OutcomeSinkJob) componentBuilder;
-			Outcome[] reqs = outcomeSinkJob.getRequirements();
-			for (Outcome req : reqs) {
-				OutcomeSourceJob source = sourceColumnFinder.findOutcomeSource(req);
-				addPrecedingComponents(ajb, sourceColumnFinder, source);
-			}
-		}
-
-		if (componentBuilder instanceof InputColumnSinkJob) {
-			InputColumnSinkJob inputColumnSink = (InputColumnSinkJob) componentBuilder;
-			InputColumn<?>[] inputColumns = inputColumnSink.getInput();
-			for (InputColumn<?> inputColumn : inputColumns) {
-				if (inputColumn.isPhysicalColumn()) {
-					ajb.addSourceColumn((MetaModelInputColumn) inputColumn);
-				} else {
-					InputColumnSourceJob source = sourceColumnFinder.findInputColumnSource(inputColumn);
-					addPrecedingComponents(ajb, sourceColumnFinder, source);
+	private TransformerJobBuilder<?> findTransformerJobBuilder(AnalysisJobBuilder ajb,
+			TransformerJobBuilder<?> transformerJobBuilder) {
+		List<TransformerJobBuilder<?>> list = ajb.getTransformerJobBuilders();
+		for (TransformerJobBuilder<?> tjb : list) {
+			if (tjb.getDescriptor().equals(transformerJobBuilder.getDescriptor())) {
+				if (tjb.toTransformerJob().equals(transformerJobBuilder.toTransformerJob())) {
+					return tjb;
 				}
 			}
 		}
+		throw new IllegalStateException("Could not find transformer in the AnalysisJobBuilder copy");
+	}
+
+	private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {
+		// the easiest way to copy a job is by writing and reading it using the
+		// JAXB reader/writers.
+		final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
+
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		new JaxbJobWriter().write(analysisJob, baos);
+		AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(baos
+				.toByteArray()));
+		return ajb;
 	}
 }

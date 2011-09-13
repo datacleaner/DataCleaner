@@ -36,6 +36,7 @@ import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.JaxbJobWriter;
+import org.eobjects.analyzer.job.TransformerJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
@@ -158,7 +159,9 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		List<TransformerJobBuilder<?>> list = ajb.getTransformerJobBuilders();
 		for (TransformerJobBuilder<?> tjb : list) {
 			if (tjb.getDescriptor().equals(transformerJobBuilder.getDescriptor())) {
-				if (tjb.toTransformerJob().equals(transformerJobBuilder.toTransformerJob())) {
+				TransformerJob transformerJob1 = tjb.toTransformerJob();
+				TransformerJob transformerJob2 = transformerJobBuilder.toTransformerJob();
+				if (transformerJob1.equalsIgnoreColumnIds(transformerJob2)) {
 					return tjb;
 				}
 			}

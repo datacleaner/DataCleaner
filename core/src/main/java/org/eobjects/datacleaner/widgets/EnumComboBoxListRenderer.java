@@ -26,6 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.metamodel.util.HasName;
+
 public class EnumComboBoxListRenderer extends DefaultListCellRenderer implements ListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
@@ -36,6 +39,11 @@ public class EnumComboBoxListRenderer extends DefaultListCellRenderer implements
 		JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		if (value == null) {
 			result.setText("- none -");
+		} else if (value instanceof HasName) {
+			String name = ((HasName) value).getName();
+			if (!StringUtils.isNullOrEmpty(name)) {
+				result.setText(name);
+			}
 		}
 
 		return result;

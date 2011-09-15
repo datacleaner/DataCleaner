@@ -127,11 +127,15 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 		if (resultFuture.isErrornous()) {
 			List<Throwable> errors = resultFuture.getErrors();
-			logger.error("Error occurred while running preview data job: {}", errors.get(0).getMessage());
+			Throwable firstError = errors.get(0);
+			logger.error("Error occurred while running preview data job: {}", firstError.getMessage());
 			for (Throwable throwable : errors) {
 				logger.info("Preview data error", throwable);
 			}
-			return null;
+			if (firstError instanceof Exception) {
+				throw (Exception) firstError;
+			}
+			throw new IllegalStateException(firstError);
 		}
 
 		final List<AnalyzerResult> results = resultFuture.getResults();

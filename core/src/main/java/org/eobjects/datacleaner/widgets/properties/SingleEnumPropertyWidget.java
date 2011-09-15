@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
 import org.eobjects.metamodel.util.CollectionUtils;
 
 public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>> {
@@ -46,6 +47,7 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
 		}
 
 		_comboBox = new JComboBox(enumConstants);
+		_comboBox.setRenderer(new EnumComboBoxListRenderer());
 
 		Object currentValue = beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		_comboBox.setSelectedItem(currentValue);

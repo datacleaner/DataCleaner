@@ -36,7 +36,6 @@ import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.JaxbJobWriter;
-import org.eobjects.analyzer.job.TransformerJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
@@ -156,17 +155,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 
 	private TransformerJobBuilder<?> findTransformerJobBuilder(AnalysisJobBuilder ajb,
 			TransformerJobBuilder<?> transformerJobBuilder) {
-		List<TransformerJobBuilder<?>> list = ajb.getTransformerJobBuilders();
-		for (TransformerJobBuilder<?> tjb : list) {
-			if (tjb.getDescriptor().equals(transformerJobBuilder.getDescriptor())) {
-				TransformerJob transformerJob1 = tjb.toTransformerJob();
-				TransformerJob transformerJob2 = transformerJobBuilder.toTransformerJob();
-				if (transformerJob1.equalsIgnoreColumnIds(transformerJob2)) {
-					return tjb;
-				}
-			}
-		}
-		throw new IllegalStateException("Could not find transformer in the AnalysisJobBuilder copy");
+		int transformerIndex = _analysisJobBuilder.getTransformerJobBuilders().indexOf(_transformerJobBuilder);
+		return ajb.getTransformerJobBuilders().get(transformerIndex);
 	}
 
 	private AnalysisJobBuilder copy(final AnalysisJobBuilder original) {

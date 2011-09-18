@@ -60,6 +60,8 @@ public class DatabaseDriverCatalog implements Serializable {
 	public static final String DATABASE_NAME_INGRES = "Ingres";
 	public static final String DATABASE_NAME_DB2 = "DB2";
 	public static final String DATABASE_NAME_MYSQL = "MySQL";
+	public static final String DATABASE_NAME_PENTAHO_DATA_INTEGRATION = "Pentaho Data Integration";
+	public static final String DATABASE_NAME_LUCIDDB = "LucidDB";
 
 	private static final List<DatabaseDriverDescriptor> _databaseDrivers;
 
@@ -117,6 +119,13 @@ public class DatabaseDriverCatalog implements Serializable {
 				"http://repo1.maven.org/maven2/com/h2database/h2/1.2.145/h2-1.2.145.jar", "jdbc:h2:<path/to/database>");
 		add(DATABASE_NAME_TERADATA, "images/datastore-types/databases/teradata.png", "com.teradata.jdbc.TeraDriver", null,
 				"jdbc:teradata:<hostname>", "jdbc:teradata:<hostname>/database=<database>");
+		add(DATABASE_NAME_LUCIDDB,
+				"images/datastore-types/databases/luciddb.png",
+				"org.luciddb.jdbc.LucidDbClientDriver",
+				"http://repository.pentaho.org/artifactory/third-party/luciddb/LucidDbClient-minimal/0.9.4/LucidDbClient-minimal-0.9.4.jar",
+				"jdbc:luciddb:http://<hostname>");
+		add(DATABASE_NAME_PENTAHO_DATA_INTEGRATION, "images/datastore-types/databases/kettle.png",
+				"org.pentaho.di.jdbc.JDBCKettleDriver", null, "jdbc:kettle:file://<filename>");
 		add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png", "sun.jdbc.odbc.JdbcOdbcDriver",
 				null, "jdbc:odbc:<data-source-name>");
 

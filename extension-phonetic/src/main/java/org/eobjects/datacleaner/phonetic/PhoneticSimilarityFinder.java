@@ -29,11 +29,11 @@ import javax.inject.Inject;
 import org.apache.commons.codec.language.Metaphone;
 import org.apache.commons.codec.language.RefinedSoundex;
 import org.apache.commons.codec.language.Soundex;
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Provided;
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.result.SimilarityGroup;
@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 @AnalyzerBean("Phonetic similarity finder")
 @Description("Find similar sounding values using phonetic checking.\nThis analyzer uses the Soundex, Refined Soundex and Metaphone algorithms to determine the phonetic similarity of String values.")
-public class PhoneticSimilarityFinder implements RowProcessingAnalyzer<SimilarityResult> {
+public class PhoneticSimilarityFinder implements Analyzer<SimilarityResult> {
 
 	public static enum MatchMode {
 		STRICT, LOOSE

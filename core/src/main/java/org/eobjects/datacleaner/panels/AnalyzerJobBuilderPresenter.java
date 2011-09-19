@@ -23,11 +23,11 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 
 /**
  * Interface for presenter widgets that present
- * {@link RowProcessingAnalyzerJobBuilder} objects.
+ * {@link AnalyzerJobBuilder} objects.
  * 
  * @author Kasper Sørensen
  */
-public interface RowProcessingAnalyzerJobBuilderPresenter extends ComponentJobBuilderPresenter {
+public interface AnalyzerJobBuilderPresenter extends ComponentJobBuilderPresenter {
 
 	/**
 	 * {@inheritDoc}

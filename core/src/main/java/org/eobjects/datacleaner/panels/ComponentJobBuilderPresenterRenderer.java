@@ -69,7 +69,7 @@ public class ComponentJobBuilderPresenterRenderer implements
 			return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
 		} else if (renderable instanceof AnalyzerJobBuilder) {
 			AnalyzerJobBuilder<?> ajb = (AnalyzerJobBuilder<?>) renderable;
-			return new RowProcessingAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);
+			return new AnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);
 		}
 		throw new UnsupportedOperationException();
 	}

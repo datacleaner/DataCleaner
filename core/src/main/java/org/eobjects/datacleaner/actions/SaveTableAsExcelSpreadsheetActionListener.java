@@ -36,7 +36,7 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.output.beans.ExcelOutputAnalyzer;
-import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
+import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -94,7 +94,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, excelOutputAnalyzerBuilder).getInstance(
 				PropertyWidgetFactory.class);
 
-		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
+		final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(
 				excelOutputAnalyzerBuilder, false, propertyWidgetFactory);
 
 		final AbstractDialog dialog = new AbstractDialog(_windowContext) {

@@ -36,7 +36,7 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
-import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPanel;
+import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -92,7 +92,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, csvOutputAnalyzerBuilder).getInstance(
 				PropertyWidgetFactory.class);
 
-		final RowProcessingAnalyzerJobBuilderPanel presenter = new RowProcessingAnalyzerJobBuilderPanel(
+		final AnalyzerJobBuilderPanel presenter = new AnalyzerJobBuilderPanel(
 				csvOutputAnalyzerBuilder, false, propertyWidgetFactory);
 
 		final AbstractDialog dialog = new AbstractDialog(_windowContext) {

@@ -32,8 +32,8 @@ import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyW
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
-public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements
-		RowProcessingAnalyzerJobBuilderPresenter {
+public class AnalyzerJobBuilderPanel extends AbstractJobBuilderPanel implements
+		AnalyzerJobBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
@@ -41,12 +41,12 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	private final ChangeRequirementButton _requirementButton;
 	private final DCPanel _buttonPanel;
 
-	public RowProcessingAnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder,
+	public AnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder,
 			PropertyWidgetFactory propertyWidgetFactory) {
 		this(analyzerJobBuilder, true, propertyWidgetFactory);
 	}
 
-	public RowProcessingAnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder,
+	public AnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder,
 			boolean displayRequirementButton, PropertyWidgetFactory propertyWidgetFactory) {
 		super("images/window/analyzer-tab-background.png", analyzerJobBuilder, propertyWidgetFactory);
 		_analyzerJobBuilder = analyzerJobBuilder;

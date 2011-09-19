@@ -85,7 +85,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoreListPanel;
 import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.panels.MetadataPanel;
-import org.eobjects.datacleaner.panels.RowProcessingAnalyzerJobBuilderPresenter;
+import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
@@ -140,7 +140,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private static final int METADATA_TAB = 1;
 	private static final int FILTERS_TAB = 2;
 
-	private final Map<AnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter> _rowProcessingTabPresenters = new LinkedHashMap<AnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter>();
+	private final Map<AnalyzerJobBuilder<?>, AnalyzerJobBuilderPresenter> _rowProcessingTabPresenters = new LinkedHashMap<AnalyzerJobBuilder<?>, AnalyzerJobBuilderPresenter>();
 	private final Map<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> _transformerPresenters = new LinkedHashMap<TransformerJobBuilder<?>, TransformerJobBuilderPresenter>();
 	private final Map<ComponentJobBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<ComponentJobBuilderPresenter, JComponent>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
@@ -616,7 +616,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			presenter.applyPropertyValues();
 		}
 
-		for (RowProcessingAnalyzerJobBuilderPresenter presenter : _rowProcessingTabPresenters.values()) {
+		for (AnalyzerJobBuilderPresenter presenter : _rowProcessingTabPresenters.values()) {
 			presenter.applyPropertyValues();
 		}
 	}
@@ -689,9 +689,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
 		if (panel != null) {
 			// if panel was a row processing analyzer panel
-			for (Iterator<RowProcessingAnalyzerJobBuilderPresenter> it = _rowProcessingTabPresenters.values().iterator(); it
+			for (Iterator<AnalyzerJobBuilderPresenter> it = _rowProcessingTabPresenters.values().iterator(); it
 					.hasNext();) {
-				RowProcessingAnalyzerJobBuilderPresenter analyzerPresenter = it.next();
+				AnalyzerJobBuilderPresenter analyzerPresenter = it.next();
 				if (_jobBuilderTabs.get(analyzerPresenter) == panel) {
 					_analysisJobBuilder.removeAnalyzer(analyzerPresenter.getJobBuilder());
 					return;
@@ -723,7 +723,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		@SuppressWarnings("unchecked")
 		final Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
 				.getRenderer(analyzerJobBuilder, ComponentJobBuilderRenderingFormat.class);
-		RowProcessingAnalyzerJobBuilderPresenter presenter = (RowProcessingAnalyzerJobBuilderPresenter) renderer
+		AnalyzerJobBuilderPresenter presenter = (AnalyzerJobBuilderPresenter) renderer
 				.render(analyzerJobBuilder);
 
 		_rowProcessingTabPresenters.put(analyzerJobBuilder, presenter);
@@ -746,7 +746,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
 	@Override
 	public void onRemove(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-		RowProcessingAnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.remove(analyzerJobBuilder);
+		AnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.remove(analyzerJobBuilder);
 		JComponent comp = _jobBuilderTabs.remove(presenter);
 		_tabbedPane.remove(comp);
 		updateStatusLabel();
@@ -848,7 +848,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
 	@Override
 	public void onConfigurationChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-		RowProcessingAnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.get(analyzerJobBuilder);
+		AnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.get(analyzerJobBuilder);
 		if (presenter != null) {
 			presenter.onConfigurationChanged();
 		}
@@ -857,7 +857,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
 	@Override
 	public void onRequirementChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
-		RowProcessingAnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.get(analyzerJobBuilder);
+		AnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.get(analyzerJobBuilder);
 		if (presenter != null) {
 			presenter.onRequirementChanged();
 		}

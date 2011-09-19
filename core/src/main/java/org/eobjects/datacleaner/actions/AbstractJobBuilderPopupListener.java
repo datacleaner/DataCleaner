@@ -29,9 +29,9 @@ import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.ExploringAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.ExplorerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -81,14 +81,14 @@ public abstract class AbstractJobBuilderPopupListener {
 		removeMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (_jobBuilder instanceof RowProcessingAnalyzerJobBuilder) {
-					_analysisJobBuilder.removeAnalyzer((RowProcessingAnalyzerJobBuilder<?>) _jobBuilder);
+				if (_jobBuilder instanceof AnalyzerJobBuilder) {
+					_analysisJobBuilder.removeAnalyzer((AnalyzerJobBuilder<?>) _jobBuilder);
 				} else if (_jobBuilder instanceof TransformerJobBuilder) {
 					_analysisJobBuilder.removeTransformer((TransformerJobBuilder<?>) _jobBuilder);
 				} else if (_jobBuilder instanceof FilterJobBuilder) {
 					_analysisJobBuilder.removeFilter((FilterJobBuilder<?, ?>) _jobBuilder);
-				} else if (_jobBuilder instanceof ExploringAnalyzerJobBuilder) {
-					_analysisJobBuilder.removeAnalyzer((ExploringAnalyzerJobBuilder<?>) _jobBuilder);
+				} else if (_jobBuilder instanceof ExplorerJobBuilder) {
+					_analysisJobBuilder.removeExplorer((ExplorerJobBuilder<?>) _jobBuilder);
 				} else {
 					throw new IllegalStateException("Unexpected component type: " + _jobBuilder);
 				}

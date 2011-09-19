@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
@@ -37,16 +37,16 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 
 	private static final long serialVersionUID = 1L;
 
-	private final RowProcessingAnalyzerJobBuilder<?> _analyzerJobBuilder;
+	private final AnalyzerJobBuilder<?> _analyzerJobBuilder;
 	private final ChangeRequirementButton _requirementButton;
 	private final DCPanel _buttonPanel;
 
-	public RowProcessingAnalyzerJobBuilderPanel(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder,
+	public RowProcessingAnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder,
 			PropertyWidgetFactory propertyWidgetFactory) {
 		this(analyzerJobBuilder, true, propertyWidgetFactory);
 	}
 
-	public RowProcessingAnalyzerJobBuilderPanel(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder,
+	public RowProcessingAnalyzerJobBuilderPanel(AnalyzerJobBuilder<?> analyzerJobBuilder,
 			boolean displayRequirementButton, PropertyWidgetFactory propertyWidgetFactory) {
 		super("images/window/analyzer-tab-background.png", analyzerJobBuilder, propertyWidgetFactory);
 		_analyzerJobBuilder = analyzerJobBuilder;
@@ -89,7 +89,7 @@ public class RowProcessingAnalyzerJobBuilderPanel extends AbstractJobBuilderPane
 	}
 
 	@Override
-	public RowProcessingAnalyzerJobBuilder<?> getJobBuilder() {
+	public AnalyzerJobBuilder<?> getJobBuilder() {
 		return _analyzerJobBuilder;
 	}
 

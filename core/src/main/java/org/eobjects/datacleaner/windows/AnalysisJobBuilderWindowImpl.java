@@ -55,11 +55,11 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerChangeListener;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
-import org.eobjects.analyzer.job.builder.ExploringAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.ExplorerChangeListener;
+import org.eobjects.analyzer.job.builder.ExplorerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterChangeListener;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -125,8 +125,8 @@ import com.google.inject.Injector;
  */
 @Singleton
 public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implements AnalysisJobBuilderWindow,
-		AnalyzerChangeListener, TransformerChangeListener, FilterChangeListener, SourceColumnChangeListener,
-		TabCloseListener {
+		AnalyzerChangeListener, ExplorerChangeListener, TransformerChangeListener, FilterChangeListener,
+		SourceColumnChangeListener, TabCloseListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -140,7 +140,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private static final int METADATA_TAB = 1;
 	private static final int FILTERS_TAB = 2;
 
-	private final Map<RowProcessingAnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter> _rowProcessingTabPresenters = new LinkedHashMap<RowProcessingAnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter>();
+	private final Map<AnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter> _rowProcessingTabPresenters = new LinkedHashMap<AnalyzerJobBuilder<?>, RowProcessingAnalyzerJobBuilderPresenter>();
 	private final Map<TransformerJobBuilder<?>, TransformerJobBuilderPresenter> _transformerPresenters = new LinkedHashMap<TransformerJobBuilder<?>, TransformerJobBuilderPresenter>();
 	private final Map<ComponentJobBuilderPresenter, JComponent> _jobBuilderTabs = new HashMap<ComponentJobBuilderPresenter, JComponent>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
@@ -642,14 +642,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
 		List<AnalyzerJobBuilder<?>> analyzerJobBuilders = _analysisJobBuilder.getAnalyzerJobBuilders();
 		for (AnalyzerJobBuilder<?> ajb : analyzerJobBuilders) {
-			if (ajb instanceof RowProcessingAnalyzerJobBuilder<?>) {
-				onAdd((RowProcessingAnalyzerJobBuilder<?>) ajb);
-			} else if (ajb instanceof ExploringAnalyzerJobBuilder<?>) {
-				onAdd((ExploringAnalyzerJobBuilder<?>) ajb);
-			} else {
-				throw new IllegalStateException("Unknown analyzer type: " + ajb);
-			}
+			onAdd((AnalyzerJobBuilder<?>) ajb);
 		}
+
+		// TODO: Support for explorers
 
 		onSourceColumnsChanged();
 	}
@@ -716,16 +712,16 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	}
 
 	@Override
-	public void onAdd(ExploringAnalyzerJobBuilder<?> analyzerJobBuilder) {
-		_tabbedPane.addTab(LabelUtils.getLabel(analyzerJobBuilder), new JLabel("TODO: Exploring analyzer"));
+	public void onAdd(ExplorerJobBuilder<?> explorerJobBuilder) {
+		_tabbedPane.addTab(LabelUtils.getLabel(explorerJobBuilder), new JLabel("TODO: Exploring analyzer"));
 		_tabbedPane.setSelectedIndex(_tabbedPane.getTabCount() - 1);
 		updateStatusLabel();
 	}
 
 	@Override
-	public void onAdd(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public void onAdd(AnalyzerJobBuilder<?> analyzerJobBuilder) {
 		@SuppressWarnings("unchecked")
-		final Renderer<RowProcessingAnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<RowProcessingAnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
+		final Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
 				.getRenderer(analyzerJobBuilder, ComponentJobBuilderRenderingFormat.class);
 		RowProcessingAnalyzerJobBuilderPresenter presenter = (RowProcessingAnalyzerJobBuilderPresenter) renderer
 				.render(analyzerJobBuilder);
@@ -743,13 +739,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	}
 
 	@Override
-	public void onRemove(ExploringAnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public void onRemove(ExplorerJobBuilder<?> explorerJobBuilder) {
 		// TODO
 		updateStatusLabel();
 	}
 
 	@Override
-	public void onRemove(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public void onRemove(AnalyzerJobBuilder<?> analyzerJobBuilder) {
 		RowProcessingAnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.remove(analyzerJobBuilder);
 		JComponent comp = _jobBuilderTabs.remove(presenter);
 		_tabbedPane.remove(comp);
@@ -846,12 +842,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	}
 
 	@Override
-	public void onConfigurationChanged(ExploringAnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public void onConfigurationChanged(ExplorerJobBuilder<?> explorerJobBuilder) {
 		updateStatusLabel();
 	}
 
 	@Override
-	public void onConfigurationChanged(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public void onConfigurationChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
 		RowProcessingAnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.get(analyzerJobBuilder);
 		if (presenter != null) {
 			presenter.onConfigurationChanged();
@@ -860,7 +856,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	}
 
 	@Override
-	public void onRequirementChanged(RowProcessingAnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public void onRequirementChanged(AnalyzerJobBuilder<?> analyzerJobBuilder) {
 		RowProcessingAnalyzerJobBuilderPresenter presenter = _rowProcessingTabPresenters.get(analyzerJobBuilder);
 		if (presenter != null) {
 			presenter.onRequirementChanged();

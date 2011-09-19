@@ -31,7 +31,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
@@ -82,8 +82,8 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		ajb.setDatastore(_datastore);
 		ajb.addSourceColumns(_table.getColumns());
 
-		final RowProcessingAnalyzerJobBuilder<CsvOutputAnalyzer> csvOutputAnalyzerBuilder = ajb
-				.addRowProcessingAnalyzer(CsvOutputAnalyzer.class);
+		final AnalyzerJobBuilder<CsvOutputAnalyzer> csvOutputAnalyzerBuilder = ajb
+				.addAnalyzer(CsvOutputAnalyzer.class);
 		csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
 		File directory = _userPreferences.getConfiguredFileDirectory();
 		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));

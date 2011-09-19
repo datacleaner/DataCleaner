@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.panels;
 
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 
 /**
  * Interface for presenter widgets that present
@@ -33,7 +33,7 @@ public interface RowProcessingAnalyzerJobBuilderPresenter extends ComponentJobBu
 	 * {@inheritDoc}
 	 */
 	@Override
-	public RowProcessingAnalyzerJobBuilder<?> getJobBuilder();
+	public AnalyzerJobBuilder<?> getJobBuilder();
 
 	/**
 	 * Invoked when the requirement for this transformer changes.

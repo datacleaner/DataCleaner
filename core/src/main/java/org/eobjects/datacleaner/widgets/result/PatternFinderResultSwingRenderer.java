@@ -36,7 +36,7 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabResult;
@@ -169,10 +169,10 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getLiteralColumns());
-		ajb.addRowProcessingAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
+		ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())
 				.setName("Ungrouped pattern finders");
 
-		final RowProcessingAnalyzerJobBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addRowProcessingAnalyzer(
+		final AnalyzerJobBuilder<PatternFinderAnalyzer> groupedPatternFinder = ajb.addAnalyzer(
 				PatternFinderAnalyzer.class).setName("Grouped PF");
 		ajb.addSourceColumns("PUBLIC.OFFICES.CITY", "PUBLIC.OFFICES.TERRITORY");
 		groupedPatternFinder.addInputColumn(ajb.getSourceColumnByName("PUBLIC.OFFICES.CITY"));

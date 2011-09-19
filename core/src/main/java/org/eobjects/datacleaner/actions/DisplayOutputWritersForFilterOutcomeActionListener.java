@@ -19,11 +19,11 @@
  */
 package org.eobjects.datacleaner.actions;
 
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
 
 /**
@@ -44,9 +44,8 @@ public class DisplayOutputWritersForFilterOutcomeActionListener extends Abstract
 	}
 
 	@Override
-	protected void configure(AnalysisJobBuilder analysisJobBuilder,
-			RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder) {
-		RowProcessingAnalyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
+	protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
+		Analyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
 		if (analyzer instanceof AbstractOutputWriterAnalyzer) {
 			((AbstractOutputWriterAnalyzer) analyzer).configureForFilterOutcome(analysisJobBuilder,
 					_filterJobBuilder.getDescriptor(), _categoryName);

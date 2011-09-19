@@ -21,11 +21,11 @@ package org.eobjects.datacleaner.actions;
 
 import java.util.List;
 
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
 
@@ -45,9 +45,8 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Abstra
 	}
 
 	@Override
-	protected void configure(AnalysisJobBuilder analysisJobBuilder,
-			RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder) {
-		RowProcessingAnalyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
+	protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
+		Analyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
 		if (analyzer instanceof AbstractOutputWriterAnalyzer) {
 			((AbstractOutputWriterAnalyzer) analyzer).configureForTransformedData(analysisJobBuilder,
 					_transformerJobBuilder.getDescriptor());

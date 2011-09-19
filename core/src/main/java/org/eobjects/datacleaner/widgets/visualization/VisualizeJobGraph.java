@@ -42,7 +42,6 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -82,12 +81,7 @@ public final class VisualizeJobGraph {
 
 		final List<AnalyzerJobBuilder<?>> ajbs = analysisJobBuilder.getAnalyzerJobBuilders();
 		for (AnalyzerJobBuilder<?> ajb : ajbs) {
-			if (ajb instanceof RowProcessingAnalyzerJobBuilder) {
-				RowProcessingAnalyzerJobBuilder<?> rpajb = (RowProcessingAnalyzerJobBuilder<?>) ajb;
-				addGraphNodes(graph, sourceColumnFinder, rpajb, displayColumns, displayOutcomes);
-			} else {
-				// TODO: Add support for explorers
-			}
+			addGraphNodes(graph, sourceColumnFinder, ajb, displayColumns, displayOutcomes);
 		}
 
 		final List<FilterJobBuilder<?, ?>> fjbs = analysisJobBuilder.getFilterJobBuilders();

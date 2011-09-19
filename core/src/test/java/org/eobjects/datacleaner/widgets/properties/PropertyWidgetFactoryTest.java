@@ -56,7 +56,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
 
 		assertEquals(26, descriptor.getConfiguredProperties().size());
 
-		AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ajb.addRowProcessingAnalyzer(descriptor);
+		AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = ajb.addAnalyzer(descriptor);
 
 		PropertyWidgetFactory propertyWidgetFactory = injector.getInstance(InjectorBuilder.class)
 				.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, beanJobBuilder).createInjector()

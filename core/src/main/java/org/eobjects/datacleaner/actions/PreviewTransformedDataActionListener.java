@@ -37,8 +37,8 @@ import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
@@ -99,8 +99,8 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		ajb.removeAllAnalyzers();
 
 		// add the result collector (a dummy analyzer)
-		final RowProcessingAnalyzerJobBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
-				.addRowProcessingAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
+		final AnalyzerJobBuilder<PreviewTransformedDataAnalyzer> rowCollector = ajb
+				.addAnalyzer(Descriptors.ofAnalyzer(PreviewTransformedDataAnalyzer.class))
 				.addInputColumns(tjb.getInputColumns()).addInputColumns(tjb.getOutputColumns());
 
 		if (tjb.getRequirement() != null) {

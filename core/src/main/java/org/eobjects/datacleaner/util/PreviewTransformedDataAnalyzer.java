@@ -22,9 +22,9 @@ package org.eobjects.datacleaner.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.result.ListResult;
@@ -38,7 +38,7 @@ import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
  * @author Kasper Sørensen
  */
 @AnalyzerBean("Preview transformed data collector")
-public class PreviewTransformedDataAnalyzer implements RowProcessingAnalyzer<ListResult<Object[]>> {
+public class PreviewTransformedDataAnalyzer implements Analyzer<ListResult<Object[]>> {
 
 	@Configured
 	InputColumn<?>[] columns;

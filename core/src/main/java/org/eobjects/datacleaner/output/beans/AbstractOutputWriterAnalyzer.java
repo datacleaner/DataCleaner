@@ -21,9 +21,9 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Initialize;
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
@@ -32,7 +32,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 
-public abstract class AbstractOutputWriterAnalyzer implements RowProcessingAnalyzer<OutputAnalyzerResult> {
+public abstract class AbstractOutputWriterAnalyzer implements Analyzer<OutputAnalyzerResult> {
 
 	private final AtomicInteger rowCount = new AtomicInteger(0);
 

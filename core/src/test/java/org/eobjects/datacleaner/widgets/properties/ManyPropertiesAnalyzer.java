@@ -22,9 +22,9 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.io.File;
 import java.util.regex.Pattern;
 
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
 import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
@@ -36,7 +36,7 @@ import org.junit.Ignore;
 
 @Ignore
 @AnalyzerBean("Many properties!!!")
-public class ManyPropertiesAnalyzer implements RowProcessingAnalyzer<NumberResult> {
+public class ManyPropertiesAnalyzer implements Analyzer<NumberResult> {
 
 	@Configured
 	int intProperty;

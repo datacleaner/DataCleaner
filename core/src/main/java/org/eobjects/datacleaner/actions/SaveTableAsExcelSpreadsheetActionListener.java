@@ -31,7 +31,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
@@ -83,8 +83,8 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 		ajb.setDatastore(_datastore);
 		ajb.addSourceColumns(_table.getColumns());
 
-		final RowProcessingAnalyzerJobBuilder<ExcelOutputAnalyzer> excelOutputAnalyzerBuilder = ajb
-				.addRowProcessingAnalyzer(ExcelOutputAnalyzer.class);
+		final AnalyzerJobBuilder<ExcelOutputAnalyzer> excelOutputAnalyzerBuilder = ajb
+				.addAnalyzer(ExcelOutputAnalyzer.class);
 		excelOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
 		File directory = _userPreferences.getConfiguredFileDirectory();
 		excelOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _datastore.getName() + ".xlsx"));

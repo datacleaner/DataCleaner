@@ -29,11 +29,11 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
@@ -49,7 +49,7 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
 	}
-	
+
 	@Override
 	public final void actionPerformed(ActionEvent e) {
 		JPopupMenu popup = new JPopupMenu();
@@ -57,14 +57,11 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 		for (final AnalyzerBeanDescriptor<?> descriptor : getDescriptors()) {
 			JMenuItem outputWriterMenuItem = new DescriptorMenuItem(descriptor);
 			outputWriterMenuItem.addActionListener(new ActionListener() {
-				@SuppressWarnings("unchecked")
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Class<? extends RowProcessingAnalyzer<?>> beanClass = (Class<? extends RowProcessingAnalyzer<?>>) descriptor
-							.getComponentClass();
+					Class<? extends Analyzer<?>> beanClass = descriptor.getComponentClass();
 
-					RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> ajb = _analysisJobBuilder
-							.addRowProcessingAnalyzer(beanClass);
+					AnalyzerJobBuilder<?> ajb = _analysisJobBuilder.addAnalyzer(beanClass);
 
 					configure(_analysisJobBuilder, ajb);
 
@@ -79,7 +76,7 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 	}
 
 	protected abstract void configure(AnalysisJobBuilder analysisJobBuilder,
-			RowProcessingAnalyzerJobBuilder<? extends RowProcessingAnalyzer<?>> analyzerJobBuilder);
+			AnalyzerJobBuilder<?> analyzerJobBuilder);
 
 	protected List<AnalyzerBeanDescriptor<?>> getDescriptors() {
 		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
@@ -88,7 +85,7 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 
 		for (Iterator<AnalyzerBeanDescriptor<?>> it = result.iterator(); it.hasNext();) {
 			AnalyzerBeanDescriptor<?> descriptor = it.next();
-			if (!descriptor.isRowProcessingAnalyzer() || descriptor.getAnnotation(OutputWriterAnalyzer.class) == null) {
+			if (descriptor.getAnnotation(OutputWriterAnalyzer.class) == null) {
 				it.remove();
 			}
 		}

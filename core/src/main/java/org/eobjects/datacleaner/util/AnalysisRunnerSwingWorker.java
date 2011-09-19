@@ -24,6 +24,7 @@ import javax.swing.SwingWorker;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
+import org.eobjects.analyzer.job.ExplorerJob;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.TransformerJob;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
@@ -150,5 +151,21 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 				_resultFuture.cancel();
 			}
 		}
+	}
+
+	@Override
+	public void explorerBegin(AnalysisJob job, ExplorerJob explorerJob) {
+		_progressInformationPanel.addUserLog("Starting explorer '" + LabelUtils.getLabel(explorerJob) + "'");
+	}
+
+	@Override
+	public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob, AnalyzerResult result) {
+		_progressInformationPanel.addUserLog("Explorer '" + LabelUtils.getLabel(explorerJob) + "' finished");
+	}
+
+	@Override
+	public void errorInExplorer(AnalysisJob job, ExplorerJob explorerJob, Throwable throwable) {
+		_progressInformationPanel.addUserLog("An error occurred in the explorer: " + LabelUtils.getLabel(explorerJob),
+				throwable, true);
 	}
 }

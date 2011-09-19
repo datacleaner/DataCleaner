@@ -28,8 +28,7 @@ import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import org.eobjects.analyzer.beans.api.ExploringAnalyzer;
-import org.eobjects.analyzer.beans.api.RowProcessingAnalyzer;
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -66,21 +65,12 @@ public final class AddAnalyzerActionListener implements ActionListener {
 				if (descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {
 					return null;
 				}
-				if (descriptor.isExploringAnalyzer()) {
-					return null;
-				}
 				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
 				menuItem.addActionListener(new ActionListener() {
-					@SuppressWarnings("unchecked")
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Class<?> analyzerClass = descriptor.getComponentClass();
-						if (descriptor.isExploringAnalyzer()) {
-							_analysisJobBuilder.addExploringAnalyzer((Class<? extends ExploringAnalyzer<?>>) analyzerClass);
-						} else {
-							_analysisJobBuilder
-									.addRowProcessingAnalyzer((Class<? extends RowProcessingAnalyzer<?>>) analyzerClass);
-						}
+						Class<? extends Analyzer<?>> analyzerClass = descriptor.getComponentClass();
+						_analysisJobBuilder.addAnalyzer(analyzerClass);
 
 						_usageLogger.log("Add analyzer: " + descriptor.getDisplayName());
 					}

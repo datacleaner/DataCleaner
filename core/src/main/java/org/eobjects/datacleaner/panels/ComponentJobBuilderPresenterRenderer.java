@@ -26,8 +26,8 @@ import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
@@ -67,8 +67,8 @@ public class ComponentJobBuilderPresenterRenderer implements
 		} else if (renderable instanceof TransformerJobBuilder) {
 			TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
 			return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
-		} else if (renderable instanceof RowProcessingAnalyzerJobBuilder) {
-			RowProcessingAnalyzerJobBuilder<?> ajb = (RowProcessingAnalyzerJobBuilder<?>) renderable;
+		} else if (renderable instanceof AnalyzerJobBuilder) {
+			AnalyzerJobBuilder<?> ajb = (AnalyzerJobBuilder<?>) renderable;
 			return new RowProcessingAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);
 		}
 		throw new UnsupportedOperationException();

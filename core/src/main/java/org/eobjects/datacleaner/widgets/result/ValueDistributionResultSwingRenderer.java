@@ -35,7 +35,7 @@ import org.eobjects.analyzer.connection.DataContextProvider;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.analyzer.job.builder.RowProcessingAnalyzerJobBuilder;
+import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
@@ -185,11 +185,11 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		SchemaNavigator sn = dcp.getSchemaNavigator();
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE").getColumns());
-		ajb.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns());
+		ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
 		ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
-		RowProcessingAnalyzerJobBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
-				.addRowProcessingAnalyzer(ValueDistributionAnalyzer.class);
+		AnalyzerJobBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
+				.addAnalyzer(ValueDistributionAnalyzer.class);
 		groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
 		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 

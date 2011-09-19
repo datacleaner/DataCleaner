@@ -153,7 +153,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getNumberColumns());
-		ajb.addRowProcessingAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
+		ajb.addAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());
 
 		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);

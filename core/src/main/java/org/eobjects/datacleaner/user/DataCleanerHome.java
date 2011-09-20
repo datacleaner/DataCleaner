@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
+import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.util.ResourceManager;
@@ -59,7 +60,7 @@ public final class DataCleanerHome {
 		}
 
 		if (!isUsable(candidate)) {
-			if (ResourceManager.IS_WEB_START) {
+			if (ClassLoaderUtils.IS_WEB_START) {
 				// in web start, the default folder will be in user.home
 				String userHomePath = System.getProperty("user.home");
 				if (userHomePath == null) {

@@ -30,16 +30,13 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ResourceManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
-
-	// to find out if web start is running, use system property
-	// http://lopica.sourceforge.net/faq.html#under
-	public static final boolean IS_WEB_START = System.getProperty("javawebstart.version") != null;
 
 	private static ResourceManager instance = new ResourceManager();
 
@@ -66,7 +63,7 @@ public final class ResourceManager {
 	}
 
 	public ClassLoader createClassLoader(final URL[] urls) {
-		final ClassLoader parentClassLoader = getParentClassLoader();
+		final ClassLoader parentClassLoader = ClassLoaderUtils.getParentClassLoader();
 
 		// removing the security manager is nescesary for classes in
 		// external jar files to have privileges to do eg. system property
@@ -82,17 +79,9 @@ public final class ResourceManager {
 		return newClassLoader;
 	}
 
-	private ClassLoader getParentClassLoader() {
-		if (IS_WEB_START) {
-			return Thread.currentThread().getContextClassLoader();
-		} else {
-			return getClass().getClassLoader();
-		}
-	}
-
 	public List<URL> getUrls(String path, ClassLoader... classLoaders) {
 		if (classLoaders == null || classLoaders.length == 0) {
-			classLoaders = new ClassLoader[] { getParentClassLoader() };
+			classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader() };
 		} else {
 			logger.debug("Custom classloaders specified: {}", classLoaders);
 		}

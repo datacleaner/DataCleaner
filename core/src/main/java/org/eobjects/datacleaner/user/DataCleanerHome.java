@@ -59,10 +59,7 @@ public final class DataCleanerHome {
 		}
 
 		if (!isUsable(candidate)) {
-			// to find out if web start is running, use system property
-			// http://lopica.sourceforge.net/faq.html#under
-			boolean webstartMode = System.getProperty("javawebstart.version") != null;
-			if (webstartMode) {
+			if (ResourceManager.IS_WEB_START) {
 				// in web start, the default folder will be in user.home
 				String userHomePath = System.getProperty("user.home");
 				if (userHomePath == null) {

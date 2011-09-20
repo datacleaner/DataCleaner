@@ -37,6 +37,10 @@ public final class ResourceManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
 
+	// to find out if web start is running, use system property
+	// http://lopica.sourceforge.net/faq.html#under
+	public static final boolean IS_WEB_START = System.getProperty("javawebstart.version") != null;
+
 	private static ResourceManager instance = new ResourceManager();
 
 	public static ResourceManager getInstance() {
@@ -79,7 +83,11 @@ public final class ResourceManager {
 	}
 
 	private ClassLoader getParentClassLoader() {
-		return Thread.currentThread().getContextClassLoader();
+		if (IS_WEB_START) {
+			return Thread.currentThread().getContextClassLoader();
+		} else {
+			return getClass().getClassLoader();
+		}
 	}
 
 	public List<URL> getUrls(String path, ClassLoader... classLoaders) {

@@ -125,7 +125,7 @@ public class DatabaseDriverCatalog implements Serializable {
 				"http://repository.pentaho.org/artifactory/third-party/luciddb/LucidDbClient-minimal/0.9.4/LucidDbClient-minimal-0.9.4.jar",
 				"jdbc:luciddb:http://<hostname>");
 		add(DATABASE_NAME_PENTAHO_DATA_INTEGRATION, "images/datastore-types/databases/kettle.png",
-				"org.pentaho.di.jdbc.JDBCKettleDriver", null, "jdbc:kettle:file://<filename>");
+				"org.pentaho.di.jdbc.KettleDriver", null, "jdbc:kettle:file://<filename>");
 		add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png", "sun.jdbc.odbc.JdbcOdbcDriver",
 				null, "jdbc:odbc:<data-source-name>");
 

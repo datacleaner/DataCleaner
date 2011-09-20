@@ -76,7 +76,10 @@ public final class Bootstrap {
 
 		if (cliMode) {
 			// hide splash screen
-			SplashScreen.getSplashScreen().close();
+			SplashScreen splashScreen = SplashScreen.getSplashScreen();
+			if (splashScreen != null) {
+				splashScreen.close();
+			}
 
 			final CliArguments arguments = _options.getCommandLineArguments();
 

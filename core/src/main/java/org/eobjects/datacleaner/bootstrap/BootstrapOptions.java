@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.bootstrap;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.metamodel.DataContext;
 
 /**
  * Defines the bootstrapping options used to start up and initialize
@@ -66,6 +68,22 @@ public interface BootstrapOptions {
 	 * @return the datastore to show initially.
 	 */
 	public Datastore getSingleDatastore(DatastoreCatalog datastoreCatalog);
+
+	/**
+	 * Method that is invoked after selecting the single datastore mode (see
+	 * {@link #isSingleDatastoreMode()}). This method enables the bootstrap to
+	 * be initialized with eg. certain columns selected and/or certain analyzers
+	 * added to the job.
+	 * 
+	 * @param analysisJobBuilder
+	 *            the {@link AnalysisJobBuilder} object which is represented in
+	 *            the main window of DataCleaner.
+	 * @param the
+	 *            DataContext that is active in the window. This will provide
+	 *            convenient access to traversing the schema for finding
+	 *            relevant columns etc.
+	 */
+	public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext);
 
 	/**
 	 * Gets an {@link ExitActionListener} implementation suitable for receiving

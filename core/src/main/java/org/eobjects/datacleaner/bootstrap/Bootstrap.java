@@ -30,6 +30,7 @@ import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
@@ -129,9 +130,10 @@ public final class Bootstrap {
 			// run in GUI mode
 			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
+			final Datastore singleDatastore;
 			if (_options.isSingleDatastoreMode()) {
 				DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
-				Datastore singleDatastore = _options.getSingleDatastore(datastoreCatalog);
+				singleDatastore = _options.getSingleDatastore(datastoreCatalog);
 				if (singleDatastore == null) {
 					logger.info("Single datastore mode was enabled, but datastore was null!");
 				} else {
@@ -139,8 +141,20 @@ public final class Bootstrap {
 				}
 				analysisJobBuilderWindow.setDatastoreSelectionEnabled(false);
 				analysisJobBuilderWindow.setDatastore(singleDatastore, true);
+			} else {
+				singleDatastore = null;
 			}
+
+			// show the window
 			analysisJobBuilderWindow.open();
+
+			if (singleDatastore != null) {
+				// this part has to be done after displaying the window (a lot
+				// of initialization goes on there)
+				AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
+				_options.initializeSingleDatastoreJob(analysisJobBuilder, singleDatastore.getDataContextProvider()
+						.getDataContext());
+			}
 
 			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
 			final WindowContext windowContext = injector.getInstance(WindowContext.class);

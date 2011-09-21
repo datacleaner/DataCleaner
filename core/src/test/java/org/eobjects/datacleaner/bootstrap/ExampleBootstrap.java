@@ -19,7 +19,11 @@
  */
 package org.eobjects.datacleaner.bootstrap;
 
+import java.awt.Image;
+import java.net.URL;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.eobjects.analyzer.beans.BooleanAnalyzer;
 import org.eobjects.analyzer.beans.DateAndTimeAnalyzer;
@@ -31,6 +35,7 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.schema.Column;
 import org.junit.Ignore;
@@ -102,6 +107,17 @@ public class ExampleBootstrap {
 			@Override
 			public CliArguments getCommandLineArguments() {
 				return null;
+			}
+
+			@Override
+			public Image getWelcomeImage() {
+				try {
+					URL url = ResourceManager.getInstance().getUrl("images/pdi_dc_banner.png");
+					return ImageIO.read(url);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
 			}
 		}).run();
 	}

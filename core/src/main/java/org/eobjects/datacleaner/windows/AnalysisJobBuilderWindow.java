@@ -104,5 +104,4 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
 	 * @return
 	 */
 	public String getStatusLabelText();
-
 }

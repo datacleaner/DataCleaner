@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.bootstrap;
 
+import java.awt.Image;
+
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -84,6 +86,15 @@ public interface BootstrapOptions {
 	 *            relevant columns etc.
 	 */
 	public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext);
+
+	/**
+	 * Optionally fetches a welcome image for displaying when the application
+	 * window shows up.
+	 * 
+	 * @return an image to show when the application start, or null if this
+	 *         feature should be disabled.
+	 */
+	public Image getWelcomeImage();
 
 	/**
 	 * Gets an {@link ExitActionListener} implementation suitable for receiving

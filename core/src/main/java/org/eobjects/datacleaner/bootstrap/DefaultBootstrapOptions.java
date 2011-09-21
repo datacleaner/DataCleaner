@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.bootstrap;
 
+import java.awt.Image;
+
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -64,5 +66,10 @@ public class DefaultBootstrapOptions implements BootstrapOptions {
 	@Override
 	public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext) {
 		// do nothing
+	}
+	
+	@Override
+	public Image getWelcomeImage() {
+		return null;
 	}
 }

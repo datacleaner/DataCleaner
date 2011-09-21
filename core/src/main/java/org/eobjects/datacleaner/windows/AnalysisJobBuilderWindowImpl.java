@@ -269,7 +269,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		_leftPanel.setCollapsed(true);
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 	}
-
+	
 	private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
 		JButton button = new JButton(text, imageManager.getImageIcon(iconPath));
 		button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);

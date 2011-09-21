@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.bootstrap;
 
+import java.awt.Image;
 import java.awt.SplashScreen;
 import java.io.Closeable;
 import java.io.File;
@@ -44,6 +45,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.WelcomeDialog;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,6 +156,12 @@ public final class Bootstrap {
 				AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
 				_options.initializeSingleDatastoreJob(analysisJobBuilder, singleDatastore.getDataContextProvider()
 						.getDataContext());
+
+				Image welcomeImage = _options.getWelcomeImage();
+				if (welcomeImage != null) {
+					WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
+					welcomeDialog.setVisible(true);
+				}
 			}
 
 			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);

@@ -69,7 +69,7 @@ public final class FileFilters {
 	public static final ExtensionFilter CSV = new ExtensionFilter("Comma-separated files (.csv)", ".csv");
 	public static final ExtensionFilter TSV = new ExtensionFilter("Tab-separated files (.tsv)", ".tsv");
 	public static final ExtensionFilter DAT = new ExtensionFilter("Data files (.dat)", ".dat");
-	public static final ExtensionFilter TXT = new ExtensionFilter("Text files (.csv)", ".txt");
+	public static final ExtensionFilter TXT = new ExtensionFilter("Text files (.txt)", ".txt");
 	public static final ExtensionFilter XLS = new ExtensionFilter("Excel 97-2003 spreadsheet (.xls)", ".xls");
 	public static final ExtensionFilter XLSX = new ExtensionFilter("Excel spreadsheet (.xlsx)", ".xlsx");
 	public static final ExtensionFilter MDB = new ExtensionFilter("Access 97-2003 database (.mdb)", ".mdb");

@@ -105,7 +105,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
 			@Override
 			protected int getDialogWidth() {
-				return 500;
+				return 600;
 			}
 
 			@Override

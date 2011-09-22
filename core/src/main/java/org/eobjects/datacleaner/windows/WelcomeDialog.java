@@ -53,10 +53,11 @@ public class WelcomeDialog extends JDialog {
 
 		final JLabel banner = new JLabel(new ImageIcon(welcomeImage));
 		banner.setPreferredSize(new Dimension(welcomeImage.getWidth(this), welcomeImage.getHeight(this)));
+		final DCPanel shadowedBanner = WidgetUtils.decorateWithShadow(banner, true, 5);
 
-		final DCPanel panel = new DCPanel();
+		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
 		panel.setLayout(new BorderLayout());
-		panel.add(banner, BorderLayout.CENTER);
+		panel.add(shadowedBanner, BorderLayout.CENTER);
 
 		final ImageManager imageManager = ImageManager.getInstance();
 

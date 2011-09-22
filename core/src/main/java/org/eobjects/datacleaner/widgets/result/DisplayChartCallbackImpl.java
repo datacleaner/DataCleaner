@@ -47,8 +47,8 @@ public class DisplayChartCallbackImpl implements DisplayChartCallback {
 
 		_chartContainer.getContentPane().removeAll();
 		_chartContainer.getContentPane().add(chart);
-		_chartContainer.updateUI();
 		_chartContainer.setCollapsed(false);
+		_chartContainer.updateUI();
 
 		if (_allowAnimations && !showing) {
 			_chartContainer.setAnimated(true);

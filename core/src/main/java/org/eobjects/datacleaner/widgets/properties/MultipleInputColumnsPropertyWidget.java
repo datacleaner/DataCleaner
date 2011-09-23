@@ -173,7 +173,9 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private void updateComponents(InputColumn<?>[] value) {
 		removeAll();
-		final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(_dataTypeFamily);
+		Class<?> typeArgument = getPropertyDescriptor().getTypeArgument(0);
+		final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(_dataTypeFamily,
+				typeArgument);
 		_checkBoxes.clear();
 
 		if (value != null) {

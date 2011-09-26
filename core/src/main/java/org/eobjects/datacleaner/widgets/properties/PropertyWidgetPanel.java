@@ -25,6 +25,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Collection;
 
+import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -59,35 +60,45 @@ public abstract class PropertyWidgetPanel extends DCPanel {
 
 	public void addProperties(Collection<ConfiguredPropertyDescriptor> properties) {
 		for (ConfiguredPropertyDescriptor propertyDescriptor : properties) {
-			String propertyName = propertyDescriptor.getName();
-			if (!propertyName.endsWith(":")) {
-				propertyName += ":";
-			}
-
-			final DCLabel propertyLabel = DCLabel.dark(propertyName);
-			propertyLabel.setFont(WidgetUtils.FONT_SMALL);
-
-			add(propertyLabel, new GridBagConstraints(0, _rowCounter, 1, 1, 0d, 0d, GridBagConstraints.NORTHWEST,
-					GridBagConstraints.BOTH, insets, 0, 0));
-
-			final String description = propertyDescriptor.getDescription();
-			if (!StringUtils.isNullOrEmpty(description)) {
-				final JXLabel descriptionLabel = new JXLabel(description);
-				descriptionLabel.setLineWrap(true);
-				descriptionLabel.setFont(WidgetUtils.FONT_SMALL);
-				descriptionLabel.setBorder(new EmptyBorder(0, 4, 0, 0));
-				descriptionLabel.setVerticalAlignment(JXLabel.TOP);
-				descriptionLabel.setPreferredSize(new Dimension(FIELD_LABEL_WIDTH - 4, 0));
-				add(descriptionLabel, new GridBagConstraints(0, _rowCounter + 1, 1, 1, 0d, 1d, GridBagConstraints.NORTHWEST,
-						GridBagConstraints.BOTH, insets, 0, 0));
-			}
-
 			final PropertyWidget<?> propertyWidget = getPropertyWidget(propertyDescriptor);
-			add(propertyWidget.getWidget(), new GridBagConstraints(1, _rowCounter, 1, 2, 1d, 1d,
-					GridBagConstraints.NORTHEAST, GridBagConstraints.BOTH, insets, 0, 0));
 
-			// each property spans two "rows"
-			_rowCounter = _rowCounter + 2;
+			// some properties may not have a PropertyWidget
+			if (propertyWidget != null) {
+				JComponent component = propertyWidget.getWidget();
+
+				// some properties may have a PropertyWidget implementation that
+				// is "invisible", ie. the JComponent is not returned
+				if (component != null) {
+					String propertyName = propertyDescriptor.getName();
+					if (!propertyName.endsWith(":")) {
+						propertyName += ":";
+					}
+
+					final DCLabel propertyLabel = DCLabel.dark(propertyName);
+					propertyLabel.setFont(WidgetUtils.FONT_SMALL);
+
+					add(propertyLabel, new GridBagConstraints(0, _rowCounter, 1, 1, 0d, 0d, GridBagConstraints.NORTHWEST,
+							GridBagConstraints.BOTH, insets, 0, 0));
+
+					final String description = propertyDescriptor.getDescription();
+					if (!StringUtils.isNullOrEmpty(description)) {
+						final JXLabel descriptionLabel = new JXLabel(description);
+						descriptionLabel.setLineWrap(true);
+						descriptionLabel.setFont(WidgetUtils.FONT_SMALL);
+						descriptionLabel.setBorder(new EmptyBorder(0, 4, 0, 0));
+						descriptionLabel.setVerticalAlignment(JXLabel.TOP);
+						descriptionLabel.setPreferredSize(new Dimension(FIELD_LABEL_WIDTH - 4, 0));
+						add(descriptionLabel, new GridBagConstraints(0, _rowCounter + 1, 1, 1, 0d, 1d,
+								GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH, insets, 0, 0));
+					}
+
+					add(component, new GridBagConstraints(1, _rowCounter, 1, 2, 1d, 1d, GridBagConstraints.NORTHEAST,
+							GridBagConstraints.BOTH, insets, 0, 0));
+
+					// each property spans two "rows"
+					_rowCounter = _rowCounter + 2;
+				}
+			}
 		}
 	}
 

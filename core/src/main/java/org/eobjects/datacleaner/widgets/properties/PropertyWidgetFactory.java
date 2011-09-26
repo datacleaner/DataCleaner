@@ -180,7 +180,11 @@ public final class PropertyWidgetFactory {
 	 * @param widget
 	 */
 	public void registerWidget(ConfiguredPropertyDescriptor propertyDescriptor, PropertyWidget<?> widget) {
-		_widgets.put(propertyDescriptor, widget);
+		if (widget == null) {
+			_widgets.remove(propertyDescriptor);
+		} else{
+			_widgets.put(propertyDescriptor, widget);
+		}
 	}
 
 	public void onConfigurationChanged() {

@@ -24,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import org.eobjects.datacleaner.panels.DCGlassPane;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -53,8 +54,9 @@ public class DCPopupBubble {
 			label.setIcon(imageManager.getImageIcon(iconPath));
 		}
 		label.setFont(WidgetUtils.FONT_SMALL);
-		label.setSize(240, 50);
-		label.setLocation(5, 25);
+		label.setSize(240, 60);
+		label.setLocation(5, 20);
+		label.setVerticalAlignment(JLabel.CENTER);
 
 		_panel.setLayout(null);
 		_panel.setSize(250, 81);

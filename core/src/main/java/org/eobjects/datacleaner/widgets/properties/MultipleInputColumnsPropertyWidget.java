@@ -161,8 +161,16 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			_buttonPanel.add(reorderColumnsButton);
 		}
 
-		updateComponents();
+	}
+
+	@Override
+	public void initialize(InputColumn<?>[] value) {
+		updateComponents(value);
 		_firstUpdate = false;
+	}
+	
+	protected boolean isAllInputColumnsSelectedIfNoValueExist(){
+		return true;
 	}
 
 	private void updateComponents() {

@@ -184,6 +184,10 @@ public final class PropertyWidgetFactory {
 			_widgets.remove(propertyDescriptor);
 		} else{
 			_widgets.put(propertyDescriptor, widget);
+			@SuppressWarnings("unchecked")
+			PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
+			Object value = _beanJobBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
+			objectWidget.initialize(value);
 		}
 	}
 

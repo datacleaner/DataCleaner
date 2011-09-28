@@ -59,4 +59,8 @@ public class DummyPropertyWidget implements PropertyWidget<Object> {
 	public void onValueTouched(Object value) {
 		_value = value;
 	}
+
+	@Override
+	public void initialize(Object value) {
+	}
 }

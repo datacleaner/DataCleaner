@@ -61,6 +61,9 @@ public abstract class AbstractPropertyWidget<E> extends DCPanel implements Prope
 		_propertyDescriptor = propertyDescriptor;
 		setLayout(new GridLayout(1, 1));
 	}
+	
+	@Override
+	public void initialize(E value) {};
 
 	@Override
 	public final ConfiguredPropertyDescriptor getPropertyDescriptor() {

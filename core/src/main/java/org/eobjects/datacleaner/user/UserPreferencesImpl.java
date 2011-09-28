@@ -44,7 +44,7 @@ public class UserPreferencesImpl implements UserPreferences {
 
 	private static final long serialVersionUID = 6L;
 
-	private static final Logger logger = LoggerFactory.getLogger(UserPreferences.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserPreferencesImpl.class);
 
 	private transient File _userPreferencesFile;
 	private transient List<LoginChangeListener> loginChangeListeners;
@@ -79,14 +79,19 @@ public class UserPreferencesImpl implements UserPreferences {
 	}
 
 	public static UserPreferences load(final File userPreferencesFile, final boolean loadDatabaseDrivers) {
+		if (userPreferencesFile == null || !userPreferencesFile.exists()) {
+			logger.info("User preferences file does not exist");
+			return new UserPreferencesImpl(userPreferencesFile);
+		}
+		
 		ChangeAwareObjectInputStream inputStream = null;
 		try {
 			inputStream = new ChangeAwareObjectInputStream(new FileInputStream(userPreferencesFile));
 			inputStream.addRenamedClass("org.eobjects.datacleaner.user.UserPreferences", UserPreferencesImpl.class);
 			UserPreferencesImpl result = (UserPreferencesImpl) inputStream.readObject();
 
-			List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
 			if (loadDatabaseDrivers) {
+				List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
 				for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
 					try {
 						userDatabaseDriver.loadDriver();

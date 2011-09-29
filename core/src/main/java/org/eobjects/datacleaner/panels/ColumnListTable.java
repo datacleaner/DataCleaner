@@ -25,10 +25,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import javax.swing.Box;
 import javax.swing.Icon;
@@ -67,7 +67,14 @@ public final class ColumnListTable extends DCPanel {
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final Table _table;
 	private final DCTable _columnTable;
-	private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>(new InputColumnComparator());
+
+	// private final SortedSet<InputColumn<?>> _columns = new
+	// TreeSet<InputColumn<?>>(new InputColumnComparator());
+
+	// TODO: Temporary patch to ensure correct ordering. Replace with previous
+	// SortedSet when comparator is working.
+	private final List<InputColumn<?>> _columns = new ArrayList<InputColumn<?>>();
+
 	private final WindowContext _windowContext;
 
 	public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
@@ -170,7 +177,7 @@ public final class ColumnListTable extends DCPanel {
 				panel.add(new JLabel(icon));
 				panel.add(textField);
 				panel.add(resetButton);
-				
+
 				model.setValueAt(panel, i, 0);
 			} else {
 				model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
@@ -231,7 +238,12 @@ public final class ColumnListTable extends DCPanel {
 	}
 
 	public void addColumn(InputColumn<?> column) {
-		_columns.add(column);
+		// TODO: Temporary patch to ensure correct ordering. Remove the
+		// if-sentence when comparator is working for transformed columns
+		if (!_columns.contains(column)) {
+			_columns.add(column);
+			Collections.sort(_columns, new InputColumnComparator());
+		}
 		updateComponents();
 	}
 

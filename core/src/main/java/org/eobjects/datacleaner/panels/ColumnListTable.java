@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -164,11 +163,14 @@ public final class ColumnListTable extends DCPanel {
 						}
 					}
 				});
-				DCPanel panel = new DCPanel();
+
+				final JButton resetButton = getResetButton(textField, mutableInputColumn);
+				final DCPanel panel = new DCPanel();
 				panel.setLayout(new HorizontalLayout(4));
 				panel.add(new JLabel(icon));
 				panel.add(textField);
-				panel.add(getResetButton(textField, mutableInputColumn));
+				panel.add(resetButton);
+				
 				model.setValueAt(panel, i, 0);
 			} else {
 				model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
@@ -211,7 +213,7 @@ public final class ColumnListTable extends DCPanel {
 		columnExt.setPreferredWidth(30);
 	}
 
-	private Component getResetButton(final JXTextField textField, final MutableInputColumn<?> mutableInputColumn) {
+	private JButton getResetButton(final JXTextField textField, final MutableInputColumn<?> mutableInputColumn) {
 		JButton button = WidgetFactory.createSmallButton("images/actions/reset.png");
 		button.setToolTipText("Reset output column name");
 		button.addActionListener(new ActionListener() {

@@ -258,7 +258,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 				ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
 				if (componentDescriptor instanceof BeanDescriptor<?>) {
 					if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput(false).size() == 1) {
-						return true;
+						return isAllInputColumnsSelectedIfNoValueExist();
 					}
 				}
 				return false;

@@ -30,11 +30,11 @@ final class ExcelOutputWriter extends AbstractMetaModelOutputWriter {
 	private final Table _table;
 
 	public ExcelOutputWriter(UpdateableDataContext dataContext, String filename, Table table, InputColumn<?>[] columns) {
-		super(dataContext, columns, -1);
+		super(dataContext, columns, 2000);
 		_filename = filename;
 		_table = table;
 	}
-
+	
 	@Override
 	public void afterClose() {
 		ExcelOutputWriterFactory.release(_filename);

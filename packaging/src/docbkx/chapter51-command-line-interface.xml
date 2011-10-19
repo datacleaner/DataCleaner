@@ -7,12 +7,14 @@
 
 	<para>DataCleaner offers a Command-Line Interface (CLI) for performing
 		various tasks, including executing analysis jobs, via simple commands
-		that can be invoked eg. as a scheduled tasks.</para>
+		that can be invoked eg. as a scheduled tasks.
+	</para>
 
 	<section>
 		<title>Executables</title>
 		<para>Depending on your distribution of DataCleaner, you will have one
-			of these CLI executables included:</para>
+			of these CLI executables included:
+		</para>
 		<orderedlist>
 			<listitem>
 				<para>
@@ -35,7 +37,8 @@
 			</listitem>
 			<listitem>
 				<para>If you're running DataCleaner in Java Webstart mode, then
-					there is no Command-Line Interface!</para>
+					there is no Command-Line Interface!
+				</para>
 			</listitem>
 		</orderedlist>
 	</section>
@@ -95,7 +98,8 @@
 	<section>
 		<title>Executing an analysis job</title>
 		<para>Here's how to execute an analysis job - we'll use the bundled
-			example job "employees.analysis.xml":</para>
+			example job "employees.analysis.xml":
+		</para>
 		<programlisting>
 			&gt;&#160;datacleaner-console.exe&#160;-job&#160;examples/employees.analysis.xml
 			SUCCESS!
@@ -253,6 +257,79 @@
 
 			...
 		</programlisting>
+	</section>
+
+	<section>
+		<title>Parameterizable jobs</title>
+		<para>If you want to make a part of a job parameterizable/variable,
+			then it is possible to do so. Currently this is a feature only
+			supported by means of editing the .analysis.xml files though, since
+			the DataCleaner graphical user interface does not store job variables
+			when saving jobs.
+		</para>
+		<para>In the source section of your job, you can add variables which
+			are key/value pairs that will be referenced throughout your job. Each
+			variable can have a default value which will be used in case the
+			variable value is not specified. Here's a simple example:
+		</para>
+		<programlisting>
+			...
+
+			&lt;source&gt;
+			&#160;&#160;&lt;data-context&#160;ref="my_datastore"&#160;/&gt;
+			&#160;&#160;&lt;columns&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="column1"&#160;id="col_1"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="column2"&#160;id="col_2"&#160;/&gt;
+			&#160;&#160;&lt;/columns&gt;
+			&#160;&#160;&lt;variables&gt;
+			&#160;&#160;&#160;&#160;&lt;variable&#160;id="filename"&#160;value="/output/dc_output.csv"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;variable&#160;id="separator"&#160;value=","&#160;/&gt;
+			&#160;&#160;&lt;/variables&gt;
+			&lt;/source&gt;
+
+			...
+		</programlisting>
+		<para>
+			In the example we've defined two variables:
+			<emphasis>filename</emphasis>
+			and
+			<emphasis>separator</emphasis>
+			. These we can refer to for specific property values, further down in
+			our job:
+		</para>
+
+		<programlisting>
+			...
+
+			&lt;analyzer&gt;
+			&#160;&#160;&lt;descriptor&#160;ref="Write&#160;to&#160;CSV&#160;file"/&gt;
+			&#160;&#160;&lt;properties&gt;
+			&#160;&#160;&#160;&#160;&lt;property&#160;name="File"&#160;ref="filename"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;property&#160;name="Quote&#160;char"&#160;value="&amp;quot;"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;property&#160;name="Separator&#160;char"&#160;ref="separator"&#160;/&gt;
+			&#160;&#160;&lt;/properties&gt;
+			&#160;&#160;&lt;input&#160;ref="col_1"&#160;/&gt;
+			&#160;&#160;&lt;input&#160;ref="col_2"&#160;/&gt;
+			&lt;/analyzer&gt;
+
+			...
+		</programlisting>
+
+		<para>
+			Now the property values of the
+			<emphasis>File</emphasis>
+			and
+			<emphasis>Separator char</emphasis>
+			properties in the
+			<emphasis>Write to CSV file</emphasis>
+			have been made parameterizable. To execute the job with new variable
+			values, use
+			<emphasis>-var</emphasis>
+			parameters from the command line, like this:
+		</para>
+
+		<programlisting>
+			DataCleaner-console.exe&#160;-job&#160;my_job.analysis.xml&#160;-var&#160;filename=/output/my_file.csv&#160;-var&#160;separator=;</programlisting>
 	</section>
 
 </chapter>

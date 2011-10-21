@@ -79,8 +79,7 @@ public abstract class TestToolAnalyzer implements
 	}
 
 	private String createEmailBody() {
-		// TODO Auto-generated method stub
-		return null;
+		return "TODO: This is the email body!";
 	}
 
 	protected abstract boolean isValid(InputRow row);

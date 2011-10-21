@@ -40,11 +40,18 @@ public class MailUtils {
 				props.setProperty("mail.smtp.starttls.enable", "true");
 			}
 			props.setProperty("mail.smtp.host", configuration.getSmtpHostname());
-			props.setProperty("mail.smtp.port", configuration.getSmtpPort()
-					+ "");
+			final String port = configuration.getSmtpPort() + "";
+			props.setProperty("mail.smtp.port", port);
+
+			if (configuration.isSslEnabled()) {
+				props.put("mail.smtp.socketFactory.port", port);
+				props.put("mail.smtp.socketFactory.class",
+						"javax.net.ssl.SSLSocketFactory");
+			}
 
 			final Session session;
 			if (configuration.getSmtpUsername() != null) {
+				props.setProperty("mail.smtp.auth", "true");
 				session = Session.getDefaultInstance(props,
 						new Authenticator() {
 							@Override

@@ -19,8 +19,15 @@
  */
 package org.eobjects.datacleaner.testtools;
 
-public class EmailConfiguration {
+import java.io.Serializable;
 
+import org.eobjects.metamodel.util.HasName;
+
+public class EmailConfiguration implements Serializable, HasName {
+
+	private static final long serialVersionUID = 1L;
+
+	private final String name;
 	private final boolean sendEmailOnSuccess;
 	private final String from;
 	private final String to;
@@ -29,19 +36,33 @@ public class EmailConfiguration {
 	private final int smtpPort;
 	private final String smtpUsername;
 	private final String smtpPassword;
+	private final boolean sslEnabled;
 
-	public EmailConfiguration(boolean sendEmailOnSuccess, String from, String to, boolean tlsEnabled, String smtpHostname, int smtpPort,
-			String smtpUsername, String smtpPassword) {
+	public EmailConfiguration(String name, boolean sendEmailOnSuccess,
+			String from, String to, boolean tlsEnabled, boolean sslEnabled,
+			String smtpHostname, int smtpPort, String smtpUsername,
+			String smtpPassword) {
+		this.name = name;
 		this.sendEmailOnSuccess = sendEmailOnSuccess;
 		this.from = from;
 		this.to = to;
 		this.tlsEnabled = tlsEnabled;
+		this.sslEnabled = sslEnabled;
 		this.smtpHostname = smtpHostname;
 		this.smtpPort = smtpPort;
 		this.smtpUsername = smtpUsername;
 		this.smtpPassword = smtpPassword;
 	}
-	
+
+	public boolean isSslEnabled() {
+		return sslEnabled;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
 	public boolean isSendEmailOnSuccess() {
 		return sendEmailOnSuccess;
 	}
@@ -53,7 +74,7 @@ public class EmailConfiguration {
 	public String getTo() {
 		return to;
 	}
-	
+
 	public boolean isTlsEnabled() {
 		return tlsEnabled;
 	}

@@ -1,20 +1,34 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
 package org.eobjects.datacleaner.testtools;
 
-import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.analyzer.result.AnnotatedRowsResult;
-import org.eobjects.analyzer.storage.RowAnnotation;
-import org.eobjects.analyzer.storage.RowAnnotationFactory;
 import org.eobjects.metamodel.util.EqualsBuilder;
 
 @AnalyzerBean("Assert not equals")
 @Categorized(TestToolsCategory.class)
-public class AssertNotEqualsAnalyzer implements Analyzer<AnnotatedRowsResult> {
+public class AssertNotEqualsAnalyzer extends TestToolAnalyzer {
 
 	@Configured
 	InputColumn<?> column1;
@@ -22,25 +36,15 @@ public class AssertNotEqualsAnalyzer implements Analyzer<AnnotatedRowsResult> {
 	@Configured
 	InputColumn<?> column2;
 
-	@Provided
-	RowAnnotation annotation;
-
-	@Provided
-	RowAnnotationFactory annotationFactory;
-
 	@Override
-	public void run(InputRow row, int distinctCount) {
+	protected boolean isValid(InputRow row) {
 		Object value1 = row.getValue(column1);
 		Object value2 = row.getValue(column2);
-		if (EqualsBuilder.equals(value1, value2)) {
-			annotationFactory.annotate(row, distinctCount, annotation);
-		}
+		return !EqualsBuilder.equals(value1, value2);
 	}
 
 	@Override
-	public AnnotatedRowsResult getResult() {
-		return new AnnotatedRowsResult(annotation, annotationFactory, column1,
-				column2);
+	protected InputColumn<?>[] getColumnsOfInterest() {
+		return new InputColumn[] { column1, column2 };
 	}
-
 }

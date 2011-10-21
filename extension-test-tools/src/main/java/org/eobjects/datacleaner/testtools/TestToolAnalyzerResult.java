@@ -40,6 +40,10 @@ public class TestToolAnalyzerResult implements AnalyzerResult {
 		this.errorRowsResult = new AnnotatedRowsResult(errornousRowAnnotation,
 				annotationFactory, columnsOfInterest);
 	}
+	
+	public boolean isSuccesfull() {
+		return errorRowsResult.getRowCount() == 0;
+	}
 
 	public AnnotatedRowsResult getErrorRowsResult() {
 		return errorRowsResult;

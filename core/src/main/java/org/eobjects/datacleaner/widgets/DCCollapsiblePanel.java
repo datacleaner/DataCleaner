@@ -53,7 +53,7 @@ public class DCCollapsiblePanel {
 
 	private final JXCollapsiblePane _collapsiblePane;
 	private final DCLabel _label;
-	private final Ref<JComponent> _componentRef;
+	private final Ref<? extends JComponent> _componentRef;
 	private String _collapsedText;
 	private String _expandedText;
 	private boolean _rendered = false;
@@ -62,7 +62,7 @@ public class DCCollapsiblePanel {
 		this(null, null, true, null);
 	}
 
-	public DCCollapsiblePanel(String collapsedText, String expandedText, boolean collapsed, Ref<JComponent> componentRef) {
+	public DCCollapsiblePanel(String collapsedText, String expandedText, boolean collapsed, Ref<? extends JComponent> componentRef) {
 		_collapsedText = collapsedText;
 		_expandedText = expandedText;
 		_collapsiblePane = WidgetFactory.createCollapsiblePane(Direction.DOWN);

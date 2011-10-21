@@ -44,6 +44,8 @@ import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 
 public class SaveDataSetActionListener implements ActionListener {
@@ -74,7 +76,8 @@ public class SaveDataSetActionListener implements ActionListener {
 
 	@Override
 	public void actionPerformed(final ActionEvent event) {
-		JMenuItem saveAsDatastoreItem = new JMenuItem("As datastore");
+		final JMenuItem saveAsDatastoreItem = new JMenuItem("As datastore");
+		saveAsDatastoreItem.setIcon(IconUtils.getDatastoreIcon(null));
 		saveAsDatastoreItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -91,7 +94,8 @@ public class SaveDataSetActionListener implements ActionListener {
 			}
 		});
 
-		JMenuItem saveAsCsvItem = new JMenuItem("As CSV file");
+		final JMenuItem saveAsCsvItem = new JMenuItem("As CSV file");
+		saveAsCsvItem.setIcon(ImageManager.getInstance().getImageIcon(IconUtils.CSV_IMAGEPATH));
 		saveAsCsvItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -113,6 +117,8 @@ public class SaveDataSetActionListener implements ActionListener {
 				}
 			}
 		});
+
+		// TODO: Save as excel
 
 		JPopupMenu popup = new JPopupMenu();
 		popup.add(saveAsDatastoreItem);

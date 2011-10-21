@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.testtools.ui;
 
 import javax.inject.Inject;
 import javax.swing.JComponent;
+import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
@@ -30,6 +31,7 @@ import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.testtools.TestToolAnalyzerResult;
+import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCCollapsiblePanel;
 import org.eobjects.datacleaner.widgets.DCLabel;
@@ -56,8 +58,12 @@ public class TestToolAnalyzerSwingResultRenderer implements
 
 		DCLabel label = DCLabel.dark("Test was succesfull!");
 		label.setFont(WidgetUtils.FONT_HEADER1);
+		label.setIcon(ImageManager.getInstance().getImageIcon(
+				"images/status/valid.png"));
 		if (!result.isSuccesfull()) {
 			label.setText("Test failed!");
+			label.setIcon(ImageManager.getInstance().getImageIcon(
+					"images/status/error.png"));
 		}
 		panel.add(label);
 
@@ -73,7 +79,9 @@ public class TestToolAnalyzerSwingResultRenderer implements
 					text, text, false,
 					ImmutableRef.<JComponent> of(errorRowsPanel));
 
-			panel.add(errorCollapsiblePanel.toPanel());
+			DCPanel innerPanel = errorCollapsiblePanel.toPanel();
+			innerPanel.setBorder(new EmptyBorder(4, 10, 4, 10));
+			panel.add(innerPanel);
 		}
 
 		return panel;

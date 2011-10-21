@@ -56,9 +56,9 @@ public final class IconUtils {
 	public static int ICON_SIZE_LARGE = 32;
 	public static int ICON_SIZE_MEDIUM = 22;
 	public static int ICON_SIZE_SMALL = 16;
-	
+
 	public static final String MENU_OPTIONS = "images/menu/options.png";
-	
+
 	public static final String STATUS_INFO = "images/status/info.png";
 	public static final String STATUS_WARNING = "images/status/warning.png";
 	public static final String STATUS_ERROR = "images/status/error.png";
@@ -300,7 +300,9 @@ public final class IconUtils {
 
 	protected static String getDatastoreImagePath(Datastore datastore) {
 		String imagePath = GENERIC_DATASTORE_IMAGEPATH;
-		if (datastore instanceof JdbcDatastore) {
+		if (datastore == null) {
+			return imagePath;
+		} else if (datastore instanceof JdbcDatastore) {
 			JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
 			if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
 				imagePath = "images/datastore-types/orderdb.png";

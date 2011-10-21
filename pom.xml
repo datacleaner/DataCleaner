@@ -26,6 +26,7 @@
 		<module>extension-phonetic</module>
 		<module>extension-sample</module>
 		<module>extension-regex-parser</module>
+		<module>extension-test-tools</module>
 		<module>packaging</module>
 	</modules>
 	<organization>

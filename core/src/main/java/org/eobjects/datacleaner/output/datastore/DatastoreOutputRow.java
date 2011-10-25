@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.datacleaner.output.OutputRow;
@@ -57,8 +58,11 @@ final class DatastoreOutputRow implements OutputRow {
 		if (index == -1) {
 			throw new IllegalArgumentException("Column '" + inputColumn + "' is not being written");
 		}
-
-		_parameters.put(index + 1, value);
+		if (value != null && inputColumn.getDataTypeFamily() == DataTypeFamily.UNDEFINED) {
+			_parameters.put(index + 1, value.toString());
+		} else {
+			_parameters.put(index + 1, value);
+		}
 		return this;
 	}
 

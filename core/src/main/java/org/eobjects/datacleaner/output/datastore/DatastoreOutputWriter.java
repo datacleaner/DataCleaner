@@ -27,6 +27,7 @@ import java.sql.SQLException;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.storage.H2StorageProvider;
 import org.eobjects.analyzer.storage.SqlDatabaseUtils;
@@ -117,7 +118,11 @@ final class DatastoreOutputWriter implements OutputWriter {
 				InputColumn<?> column = columns[i];
 				createStatementBuilder.append(DatastoreOutputUtils.safeName(column.getName()));
 				createStatementBuilder.append(' ');
+				if (column.getDataTypeFamily() == DataTypeFamily.UNDEFINED) {
+					createStatementBuilder.append(SqlDatabaseUtils.getSqlType(String.class));
+				} else {
 				createStatementBuilder.append(SqlDatabaseUtils.getSqlType(column.getDataType()));
+				}
 			}
 			createStatementBuilder.append(')');
 			SqlDatabaseUtils.performUpdate(_connection, createStatementBuilder.toString());
@@ -147,7 +152,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 	public OutputRow createRow() {
 		return new DatastoreOutputRow(_insertStatement, _columns);
 	}
-	
+
 	public String getTableName() {
 		return _tableName;
 	}

@@ -69,6 +69,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 	private final WindowContext _windowContext;
+	private final AnalyzerBeansConfiguration _configuration;
 
 	public PreviewTransformedDataActionListener(WindowContext windowContext,
 			TransformerJobBuilderPresenter transformerJobBuilderPresenter, AnalysisJobBuilder analysisJobBuilder,
@@ -77,6 +78,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		_transformerJobBuilderPresenter = transformerJobBuilderPresenter;
 		_analysisJobBuilder = analysisJobBuilder;
 		_transformerJobBuilder = transformerJobBuilder;
+		_configuration = configuration;
 	}
 
 	@Override
@@ -169,7 +171,7 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		final AnalysisJob analysisJob = original.withoutListeners().toAnalysisJob(false);
 
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		new JaxbJobWriter().write(analysisJob, baos);
+		new JaxbJobWriter(_configuration).write(analysisJob, baos);
 		AnalysisJobBuilder ajb = new JaxbJobReader(original.getConfiguration()).create(new ByteArrayInputStream(baos
 				.toByteArray()));
 		return ajb;

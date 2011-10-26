@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobMetadataFactoryImpl;
 import org.eobjects.analyzer.job.JaxbJobWriter;
@@ -48,14 +49,16 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 	private final AnalysisJobBuilderWindow _window;
 	private final UserPreferences _userPreferences;
 	private final UsageLogger _usageLogger;
+	private final AnalyzerBeansConfiguration _configuration;
 
 	@Inject
 	protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
-			UserPreferences userPreferences, UsageLogger usageLogger) {
+			UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration) {
 		_window = window;
 		_analysisJobBuilder = analysisJobBuilder;
 		_userPreferences = userPreferences;
 		_usageLogger = usageLogger;
+		_configuration = configuration;
 	}
 
 	@Override
@@ -100,8 +103,8 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 			String jobDescription = "Created with DataCleaner " + Main.VERSION;
 			String jobVersion = null;
 
-			final JaxbJobWriter writer = new JaxbJobWriter(new JaxbJobMetadataFactoryImpl(author, jobName, jobDescription,
-					jobVersion));
+			final JaxbJobWriter writer = new JaxbJobWriter(_configuration, new JaxbJobMetadataFactoryImpl(author, jobName,
+					jobDescription, jobVersion));
 
 			BufferedOutputStream outputStream = null;
 			try {

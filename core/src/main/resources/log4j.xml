@@ -7,6 +7,9 @@
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%-5p %d{HH:mm:ss} %c{1} - %m%n" />
 		</layout>
+		<filter class="org.apache.log4j.varia.LevelRangeFilter">
+			<param name="levelMin" value="WARN" />
+		</filter>
 	</appender>
 
 	<appender name="fileAppender" class="org.apache.log4j.DailyRollingFileAppender">
@@ -16,7 +19,7 @@
 			<param name="ConversionPattern" value="%-5p %d{HH:mm:ss.SSS} %c{1} - %m%n" />
 		</layout>
 	</appender>
-	
+
 	<logger name="org.eobjects.metamodel">
 		<level value="info" />
 	</logger>

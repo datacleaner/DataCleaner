@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.PropertyDescriptor;
@@ -157,6 +158,8 @@ public final class PropertyWidgetFactory {
 				widgetClass = SingleFilePropertyWidget.class;
 			} else if (type == Pattern.class) {
 				widgetClass = SinglePatternPropertyWidget.class;
+			} else if (type == Datastore.class) {
+				widgetClass = SingleDatastorePropertyWidget.class;
 			} else {
 				// not yet implemented
 				widgetClass = DummyPropertyWidget.class;
@@ -182,7 +185,7 @@ public final class PropertyWidgetFactory {
 	public void registerWidget(ConfiguredPropertyDescriptor propertyDescriptor, PropertyWidget<?> widget) {
 		if (widget == null) {
 			_widgets.remove(propertyDescriptor);
-		} else{
+		} else {
 			_widgets.put(propertyDescriptor, widget);
 			@SuppressWarnings("unchecked")
 			PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;

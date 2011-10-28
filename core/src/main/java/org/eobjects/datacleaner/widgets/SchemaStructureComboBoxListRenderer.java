@@ -27,6 +27,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.border.EmptyBorder;
 
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -49,13 +50,13 @@ public class SchemaStructureComboBoxListRenderer extends DefaultListCellRenderer
 			boolean cellHasFocus) {
 		JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
+		int indent = 0;
+		Icon icon = null;
+
 		if (value == null) {
 			result.setText(getNullText());
 		} else if (value instanceof NamedStructure) {
 			result.setText(((NamedStructure) value).getName());
-
-			int indent = 0;
-			Icon icon = null;
 			if (value instanceof Schema) {
 				icon = imageManager.getImageIcon("images/model/schema.png", IconUtils.ICON_SIZE_SMALL);
 				if (SchemaComparator.isInformationSchema((Schema) value)) {
@@ -70,16 +71,20 @@ public class SchemaStructureComboBoxListRenderer extends DefaultListCellRenderer
 				icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
 				indent = 20;
 			}
-
-			if (icon != null) {
-				result.setIcon(icon);
-			}
-			if (isIndentEnabled()) {
-				result.setBorder(new EmptyBorder(0, indent, 0, 0));
-			}
+		} else if (value instanceof Datastore) {
+			Datastore datastore = (Datastore) value;
+			icon = IconUtils.getDatastoreIcon(datastore, IconUtils.ICON_SIZE_SMALL);
+			result.setText(datastore.getName());
 		} else if (value instanceof InputColumn<?>) {
 			result.setText(((InputColumn<?>) value).getName());
-			result.setIcon(imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL));
+			icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
+		}
+
+		if (icon != null) {
+			result.setIcon(icon);
+		}
+		if (isIndentEnabled()) {
+			result.setBorder(new EmptyBorder(0, indent, 0, 0));
 		}
 
 		return result;

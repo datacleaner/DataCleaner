@@ -59,7 +59,7 @@ public final class ExtensionPackage implements Serializable {
 	private final String _name;
 	private final String _scanPackage;
 	private final boolean _scanRecursive;
-	private Map<String, String> additionalProperties = new HashMap<String, String>();
+	private final Map<String, String> _additionalProperties;
 
 	public ExtensionPackage(String name, String scanPackage, boolean scanRecursive, File[] files) {
 		_name = name;
@@ -69,6 +69,7 @@ public final class ExtensionPackage implements Serializable {
 		_scanPackage = scanPackage;
 		_scanRecursive = scanRecursive;
 		_files = files;
+		_additionalProperties = new HashMap<String, String>();
 	}
 
 	public File[] getFiles() {
@@ -101,7 +102,7 @@ public final class ExtensionPackage implements Serializable {
 			int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();
 			int filtersBefore = classpathScanner.getFilterBeanDescriptors().size();
 
-			classpathScanner.scanPackage(_scanPackage, _scanRecursive, classLoader);
+			classpathScanner.scanPackage(_scanPackage, _scanRecursive, classLoader, true);
 
 			_loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;
 			_loadedTransformers = classpathScanner.getTransformerBeanDescriptors().size() - transformersBefore;
@@ -116,10 +117,7 @@ public final class ExtensionPackage implements Serializable {
 	}
 
 	public Map<String, String> getAdditionalProperties() {
-		if (additionalProperties == null) {
-			additionalProperties = new HashMap<String, String>();
-		}
-		return additionalProperties;
+		return _additionalProperties;
 	}
 
 	public boolean isLoaded() {

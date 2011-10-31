@@ -37,12 +37,15 @@ class DCExitActionListener implements ExitActionListener {
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {
 				}
+
+				// TODO: Print information about all alive, non-daemon threads
+				
 				logger.warn("Invoking system.exit({})", statusCode);
 				System.exit(statusCode);
 			}
 		};
 		thread.setDaemon(true);
-
+		
 		logger.info("Scheduling shutdown thread");
 		thread.start();
 	}

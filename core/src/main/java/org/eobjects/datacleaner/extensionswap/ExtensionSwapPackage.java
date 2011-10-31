@@ -31,11 +31,13 @@ public final class ExtensionSwapPackage {
 	private final String _id;
 	private final int _version;
 	private final String _name;
+	private final String _packageName;
 
-	public ExtensionSwapPackage(String id, int version, String name) {
+	public ExtensionSwapPackage(String id, int version, String name, String packageName) {
 		_id = id;
 		_version = version;
 		_name = name;
+		_packageName = packageName;
 	}
 
 	public int getVersion() {
@@ -48,5 +50,9 @@ public final class ExtensionSwapPackage {
 
 	public String getName() {
 		return _name;
+	}
+	
+	public String getPackageName() {
+		return _packageName;
 	}
 }

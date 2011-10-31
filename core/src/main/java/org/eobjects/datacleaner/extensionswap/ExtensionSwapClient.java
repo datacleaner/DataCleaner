@@ -66,7 +66,10 @@ public final class ExtensionSwapClient {
 	}
 
 	public ExtensionPackage registerExtensionPackage(ExtensionSwapPackage extensionSwapPackage, File jarFile) {
-		String packageName = ExtensionPackage.autoDetectPackageName(jarFile);
+		String packageName = extensionSwapPackage.getPackageName();
+		if (packageName == null) {
+			packageName = ExtensionPackage.autoDetectPackageName(jarFile);
+		}
 		ExtensionPackage extensionPackage = new ExtensionPackage(extensionSwapPackage.getName(), packageName, true,
 				new File[] { jarFile });
 		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_ID_PROPERTY, extensionSwapPackage.getId());
@@ -81,7 +84,8 @@ public final class ExtensionSwapClient {
 		final Element rootNode = HttpXmlUtils.getRootNode(_httpClient, _baseUrl + id);
 		final String name = HttpXmlUtils.getChildNodeText(rootNode, "name");
 		final int version = Integer.parseInt(HttpXmlUtils.getChildNodeText(rootNode, "version"));
-		return new ExtensionSwapPackage(id, version, name);
+		final String packageName = HttpXmlUtils.getChildNodeText(rootNode, "package");
+		return new ExtensionSwapPackage(id, version, name, packageName);
 	}
 
 	public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final String username) {

@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.JComboBox;
@@ -29,9 +31,12 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.reference.SynonymCatalog;
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
+import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
  * {@link PropertyWidget} for single datastore properties. Shown as a combo box.
@@ -44,20 +49,35 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
 	private final DatastoreCatalog _datastoreCatalog;
 	private final JComboBox _comboBox;
+	private final Class<?> _datastoreClass;
 
 	@Inject
 	public SingleDatastorePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
+			ConfiguredPropertyDescriptor propertyDescriptor, DatastoreCatalog datastoreCatalog) {
 		super(beanJobBuilder, propertyDescriptor);
-
-		_datastoreCatalog = beanJobBuilder.getAnalysisJobBuilder().getConfiguration().getDatastoreCatalog();
+		_datastoreCatalog = datastoreCatalog;
+		_datastoreClass = propertyDescriptor.getBaseType();
 
 		String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
-		Object[] items = new Object[datastoreNames.length];
-		for (int i = 0; i < items.length; i++) {
-			items[i] = _datastoreCatalog.getDatastore(datastoreNames[i]);
+		List<Datastore> list = new ArrayList<Datastore>();
+		
+		if (!propertyDescriptor.isRequired()) {
+			list.add(null);
 		}
-		_comboBox = new JComboBox(items);
+		
+		for (int i = 0; i < datastoreNames.length; i++) {
+			Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
+			if (ReflectionUtils.is(datastore.getClass(), _datastoreClass)) {
+				// only include correct subtypes of datastore, it may be eg. a
+				// CsvDatastore property.
+				list.add(datastore);
+			}
+		}
+		_comboBox = new JComboBox(new ListComboBoxModel<Datastore>(list));
+		
+		SynonymCatalog currentValue = (SynonymCatalog) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		_comboBox.setSelectedItem(currentValue);
+		
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
 		_comboBox.addItemListener(new ItemListener() {
 			@Override
@@ -91,12 +111,16 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
 	@Override
 	protected void setValue(Datastore value) {
+		_comboBox.setEditable(true);
 		_comboBox.setSelectedItem(value);
+		_comboBox.setEditable(false);
 	}
 
 	@Override
 	public void onAdd(Datastore datastore) {
-		_comboBox.addItem(datastore);
+		if (ReflectionUtils.is(datastore.getClass(), _datastoreClass)) {
+			_comboBox.addItem(datastore);
+		}
 	}
 
 	@Override

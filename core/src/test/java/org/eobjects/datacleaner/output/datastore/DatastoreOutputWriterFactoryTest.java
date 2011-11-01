@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.output.OutputWriter;
@@ -100,7 +100,7 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 		assertEquals(9, datastoreCount.get());
 
 		assertNotNull(_datastore);
-		DataContextProvider dataContextProvider = _datastore.getDataContextProvider();
+		DatastoreConnection dataContextProvider = _datastore.openConnection();
 		DataContext dc = dataContextProvider.getDataContext();
 		dc.refreshSchemas();
 		String[] tableNames = dc.getDefaultSchema().getTableNames();
@@ -119,8 +119,8 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 				_datastoreCreated = true;
 				assertEquals("my datastore", datastore.getName());
 
-				DataContextProvider dcp = datastore.getDataContextProvider();
-				DataContext dc = dcp.getDataContext();
+				DatastoreConnection con = datastore.openConnection();
+				DataContext dc = con.getDataContext();
 
 				Table table = dc.getDefaultSchema().getTables()[0];
 				Query q = dc.query().from(table).select(table.getColumns()).toQuery();
@@ -128,7 +128,7 @@ public class DatastoreOutputWriterFactoryTest extends TestCase {
 
 				scenarioHelper.performAssertions(dataSet, true);
 
-				dcp.close();
+				con.close();
 			}
 		};
 		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore",

@@ -147,7 +147,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview table",
 						"images/actions/preview_data.png");
 				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
-						_analysisJobBuilder.getDataContextProvider(), columns));
+						_analysisJobBuilder.getDatastoreConnection(), columns));
 				popup.add(previewMenuItem);
 
 				popup.show((Component) e.getSource(), e.getX(), e.getY());

@@ -154,7 +154,7 @@ public final class Bootstrap {
 				// this part has to be done after displaying the window (a lot
 				// of initialization goes on there)
 				AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
-				_options.initializeSingleDatastoreJob(analysisJobBuilder, singleDatastore.getDataContextProvider()
+				_options.initializeSingleDatastoreJob(analysisJobBuilder, singleDatastore.openConnection()
 						.getDataContext());
 
 				Image welcomeImage = _options.getWelcomeImage();

@@ -32,7 +32,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -165,8 +165,8 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 		// run a small job
 		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
 		Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
+		DatastoreConnection con = ds.openConnection();
+		Table table = con.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getLiteralColumns());
 		ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumns(ajb.getSourceColumns())

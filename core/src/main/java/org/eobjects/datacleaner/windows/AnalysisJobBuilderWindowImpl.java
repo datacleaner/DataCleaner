@@ -46,7 +46,7 @@ import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
@@ -170,7 +170,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private final DCPanel _sourceTabOuterPanel;
 	private String _jobFilename;
 	private Datastore _datastore;
-	private DataContextProvider _dataContextProvider;
+	private DatastoreConnection _dataContextProvider;
 	private boolean _datastoreSelectionEnabled;
 	private final MetadataPanel _metadataPanel;
 
@@ -198,9 +198,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			_analysisJobBuilder = new AnalysisJobBuilder(_configuration);
 		} else {
 			_analysisJobBuilder = analysisJobBuilder;
-			DataContextProvider dcp = _analysisJobBuilder.getDataContextProvider();
-			if (dcp != null) {
-				_datastore = dcp.getDatastore();
+			DatastoreConnection con = _analysisJobBuilder.getDatastoreConnection();
+			if (con != null) {
+				_datastore = con.getDatastore();
 			}
 		}
 
@@ -311,18 +311,18 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	 */
 	@Override
 	public void setDatastore(final Datastore datastore, boolean expandTree) {
-		final DataContextProvider dcp;
+		final DatastoreConnection con;
 		if (datastore == null) {
-			dcp = null;
+			con = null;
 		} else {
-			dcp = datastore.getDataContextProvider();
+			con = datastore.openConnection();
 		}
 
 		_datastore = datastore;
 		if (_dataContextProvider != null) {
 			_dataContextProvider.close();
 		}
-		_dataContextProvider = dcp;
+		_dataContextProvider = con;
 		_analysisJobBuilder.setDatastore(datastore);
 		_schemaTreePanel.setDatastore(datastore, expandTree);
 

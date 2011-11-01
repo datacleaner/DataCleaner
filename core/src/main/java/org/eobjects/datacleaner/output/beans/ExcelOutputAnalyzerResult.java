@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.io.File;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.ExcelDatastore;
@@ -53,9 +53,9 @@ class ExcelOutputAnalyzerResult implements OutputAnalyzerResult {
 
 	@Override
 	public Table getPreviewTable(Datastore datastore) {
-		DataContextProvider dcp = datastore.getDataContextProvider();
-		Table table = dcp.getDataContext().getDefaultSchema().getTableByName(_sheetName);
-		dcp.close();
+		DatastoreConnection con = datastore.openConnection();
+		Table table = con.getDataContext().getDefaultSchema().getTableByName(_sheetName);
+		con.close();
 		return table;
 	}
 

@@ -45,7 +45,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.util.ImmutableEntry;
@@ -402,8 +402,8 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
 			return null;
 		}
 		D datastore = getPreviewDatastore(filename);
-		DataContextProvider dcp = datastore.getDataContextProvider();
-		DataContext dc = dcp.getDataContext();
+		DatastoreConnection con = datastore.openConnection();
+		DataContext dc = con.getDataContext();
 		Table table = getPreviewTable(dc);
 		Column[] columns = table.getColumns();
 		if (columns.length > getPreviewColumns()) {
@@ -415,7 +415,7 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
 
 		DataSet dataSet = dc.executeQuery(q);
 
-		dcp.close();
+		con.close();
 
 		return dataSet;
 	}

@@ -46,7 +46,7 @@ import javax.swing.event.DocumentEvent;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
@@ -137,7 +137,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
 						// open the connection here, to make any connection
 						// issues apparent early
-						DataContextProvider dataContextProvider = datastore.getDataContextProvider();
+						DatastoreConnection dataContextProvider = datastore.openConnection();
 						dataContextProvider.getDataContext().getSchemaNames();
 						_analysisJobBuilderWindow.setDatastore(datastore);
 						dataContextProvider.close();

@@ -39,7 +39,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -158,7 +158,7 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 
 			Datastore datastore = _datastoreCatalog.getDatastore(datastoreName);
 			if (datastore != null) {
-				DataContextProvider dataContextProvider = datastore.getDataContextProvider();
+				DatastoreConnection dataContextProvider = datastore.openConnection();
 				try {
 					SchemaNavigator sn = dataContextProvider.getSchemaNavigator();
 

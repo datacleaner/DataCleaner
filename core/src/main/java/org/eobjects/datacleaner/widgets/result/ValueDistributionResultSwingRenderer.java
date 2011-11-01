@@ -31,7 +31,7 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -181,8 +181,8 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		// run a small job
 		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
 		Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-		DataContextProvider dcp = ds.getDataContextProvider();
-		SchemaNavigator sn = dcp.getSchemaNavigator();
+		DatastoreConnection con = ds.openConnection();
+		SchemaNavigator sn = con.getSchemaNavigator();
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE").getColumns());
 		ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns());

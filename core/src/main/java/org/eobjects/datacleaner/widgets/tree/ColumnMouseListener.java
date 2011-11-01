@@ -94,7 +94,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				createDictionaryItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						String datastoreName = _analysisJobBuilder.getDataContextProvider().getDatastore().getName();
+						String datastoreName = _analysisJobBuilder.getDatastoreConnection().getDatastore().getName();
 						DatastoreDictionary dictionary = new DatastoreDictionary(column.getName(), datastoreName, column
 								.getQualifiedLabel());
 
@@ -118,7 +118,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
 						"images/actions/preview_data.png");
 				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
-						_analysisJobBuilder.getDataContextProvider(), column));
+						_analysisJobBuilder.getDatastoreConnection(), column));
 
 				final JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(column.getName());

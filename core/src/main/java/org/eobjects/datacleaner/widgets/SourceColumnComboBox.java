@@ -27,7 +27,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.util.SchemaComparator;
 import org.eobjects.metamodel.schema.Column;
@@ -49,7 +49,7 @@ public class SourceColumnComboBox extends JComboBox {
 	private static final long serialVersionUID = 1L;
 
 	private final SchemaStructureComboBoxListRenderer _renderer;
-	private volatile DataContextProvider _dataContextProvider;
+	private volatile DatastoreConnection _dataContextProvider;
 	private volatile Table _table;
 
 	public SourceColumnComboBox() {
@@ -78,9 +78,9 @@ public class SourceColumnComboBox extends JComboBox {
 		setTable(table);
 
 		if (datastore == null) {
-			setDataContextProvider(null);
+			setDatastoreConnection(null);
 		} else {
-			setDataContextProvider(datastore.getDataContextProvider());
+			setDatastoreConnection(datastore.openConnection());
 		}
 		if (table == null) {
 			setModel(new DefaultComboBoxModel(new String[1]));
@@ -113,18 +113,18 @@ public class SourceColumnComboBox extends JComboBox {
 		setTable(null);
 
 		if (datastore == null) {
-			setDataContextProvider(null);
+			setDatastoreConnection(null);
 			setModel(new DefaultComboBoxModel(new String[1]));
 		} else {
 
-			DataContextProvider dcp = setDataContextProvider(datastore.getDataContextProvider());
+			DatastoreConnection con = setDatastoreConnection(datastore.openConnection());
 
 			int selectedIndex = 0;
 
 			List<Object> comboBoxList = new ArrayList<Object>();
 			comboBoxList.add(null);
 
-			Schema[] schemas = dcp.getSchemaNavigator().getSchemas();
+			Schema[] schemas = con.getSchemaNavigator().getSchemas();
 			Arrays.sort(schemas, new SchemaComparator());
 
 			for (Schema schema : schemas) {
@@ -161,7 +161,7 @@ public class SourceColumnComboBox extends JComboBox {
 		return _table;
 	}
 
-	private DataContextProvider setDataContextProvider(DataContextProvider dataContextProvider) {
+	private DatastoreConnection setDatastoreConnection(DatastoreConnection dataContextProvider) {
 		if (_dataContextProvider != null) {
 			// close the previous data context provider
 			_dataContextProvider.close();

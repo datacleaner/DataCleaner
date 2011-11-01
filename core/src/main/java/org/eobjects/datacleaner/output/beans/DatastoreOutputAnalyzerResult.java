@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.util.Arrays;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.metamodel.DataContext;
@@ -58,8 +58,8 @@ class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
 
 	@Override
 	public Table getPreviewTable(Datastore datastore) {
-		final DataContextProvider dcp = datastore.getDataContextProvider();
-		final DataContext dc = dcp.getDataContext();
+		final DatastoreConnection con = datastore.openConnection();
+		final DataContext dc = con.getDataContext();
 
 		// It is likely that schemas are cached, and since it is likely a new
 		// table, we refresh the schema.
@@ -73,7 +73,7 @@ class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
 			logger.warn("Available tables are: {}", Arrays.toString(schema.getTableNames()));
 		}
 
-		dcp.close();
+		con.close();
 		return table;
 	}
 }

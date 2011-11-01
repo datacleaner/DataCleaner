@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.output.beans;
 import java.io.File;
 
 import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 
@@ -57,9 +57,9 @@ class CsvOutputAnalyzerResult implements OutputAnalyzerResult {
 
 	@Override
 	public Table getPreviewTable(Datastore datastore) {
-		DataContextProvider dcp = datastore.getDataContextProvider();
-		Table table = dcp.getDataContext().getDefaultSchema().getTables()[0];
-		dcp.close();
+		DatastoreConnection con = datastore.openConnection();
+		Table table = con.getDataContext().getDefaultSchema().getTables()[0];
+		con.close();
 		return table;
 	}
 }

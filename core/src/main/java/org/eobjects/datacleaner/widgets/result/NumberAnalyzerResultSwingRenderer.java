@@ -26,7 +26,7 @@ import java.io.File;
 
 import org.eobjects.analyzer.beans.NumberAnalyzer;
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
@@ -149,8 +149,8 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 		// run a small job
 		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
 		Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
-		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
+		DatastoreConnection con = ds.openConnection();
+		Table table = con.getSchemaNavigator().convertToTable("PUBLIC.CUSTOMERS");
 		ajb.setDatastore(ds);
 		ajb.addSourceColumns(table.getNumberColumns());
 		ajb.addAnalyzer(NumberAnalyzer.class).addInputColumns(ajb.getSourceColumns());

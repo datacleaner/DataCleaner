@@ -44,7 +44,7 @@ import org.eobjects.analyzer.beans.DateGapAnalyzer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.convert.ConvertToStringTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
@@ -294,8 +294,8 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 		final AnalysisRunner runner = new AnalysisRunnerImpl(conf);
 
 
-		DataContextProvider dcp = ds.getDataContextProvider();
-		Table table = dcp.getSchemaNavigator().convertToTable("PUBLIC.ORDERS");
+		DatastoreConnection con = ds.openConnection();
+		Table table = con.getSchemaNavigator().convertToTable("PUBLIC.ORDERS");
 
 		ajb.addSourceColumn(table.getColumnByName("ORDERDATE"));
 		ajb.addSourceColumn(table.getColumnByName("SHIPPEDDATE"));

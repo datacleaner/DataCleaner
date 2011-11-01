@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.DataSetWindow;
@@ -37,12 +37,12 @@ import org.eobjects.metamodel.schema.Table;
 public class PreviewSourceDataActionListener implements ActionListener {
 
 	private static final int PAGE_SIZE = 35;
-	private final DataContextProvider _dataContextProvider;
+	private final DatastoreConnection _dataContextProvider;
 	private final Column[] _columns;
 	private final Collection<? extends InputColumn<?>> _inputColumns;
 	private final WindowContext _windowContext;
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DataContextProvider dataContextProvider,
+	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection dataContextProvider,
 			Column... columns) {
 		_windowContext = windowContext;
 		_dataContextProvider = dataContextProvider;
@@ -50,11 +50,11 @@ public class PreviewSourceDataActionListener implements ActionListener {
 		_inputColumns = null;
 	}
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DataContextProvider dataContextProvider, Table table) {
+	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection dataContextProvider, Table table) {
 		this(windowContext, dataContextProvider, table.getColumns());
 	}
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DataContextProvider dataContextProvider,
+	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection dataContextProvider,
 			Collection<? extends InputColumn<?>> inputColumns) {
 		_windowContext = windowContext;
 		_dataContextProvider = dataContextProvider;

@@ -48,14 +48,14 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
-		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
+		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
 		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName
 				+ ".csv");
 	}
 
 	@Override
 	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
-		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
+		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
 		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + ".csv");
 	}
 

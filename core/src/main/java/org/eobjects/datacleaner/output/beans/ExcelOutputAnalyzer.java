@@ -44,13 +44,13 @@ public class ExcelOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
-		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
+		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
 		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
 	}
 
 	@Override
 	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
-		final String dsName = ajb.getDataContextProvider().getDatastore().getName();
+		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
 		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName();
 	}
 

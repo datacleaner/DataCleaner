@@ -37,7 +37,7 @@ import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -68,7 +68,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
 	public static final String ROOT_NODE_STRING = "Schemas";
 
-	private final DataContextProvider _dataContextProvider;
+	private final DatastoreConnection _dataContextProvider;
 	private final TreeCellRenderer _rendererDelegate;
 	private final WindowContext _windowContext;
 	private final AnalysisJobBuilder _analysisJobBuilder;
@@ -84,7 +84,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		_windowContext = windowContext;
 		_analysisJobBuilder = analysisJobBuilder;
 		_injectorBuilder = injectorBuilder;
-		_dataContextProvider = datastore.getDataContextProvider();
+		_dataContextProvider = datastore.openConnection();
 		_rendererDelegate = new DefaultTreeRenderer();
 		setCellRenderer(this);
 		setOpaque(false);

@@ -32,7 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.connection.DataContextProvider;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
@@ -136,13 +136,13 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 			previewButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					final DataContextProvider dcp = datastore.getDataContextProvider();
+					final DatastoreConnection con = datastore.openConnection();
 					final Table previewTable = result.getPreviewTable(datastore);
 					if (previewTable == null) {
 						throw new IllegalStateException("Result did not return any preview table: " + result);
 					} else {
 						final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-								windowContext, dcp, previewTable);
+								windowContext, con, previewTable);
 						actionListener.actionPerformed(null);
 					}
 				}

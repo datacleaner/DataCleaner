@@ -107,7 +107,7 @@ public final class ColumnListTable extends DCPanel {
 			JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
 			previewButton.setToolTipText("Preview table rows");
 			previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
-					.getDataContextProvider(), _columns));
+					.getDatastoreConnection(), _columns));
 
 			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove table from source");

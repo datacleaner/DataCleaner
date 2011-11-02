@@ -26,10 +26,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverState;
 import org.eobjects.datacleaner.database.DriverWrapper;
-import org.eobjects.datacleaner.util.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public final class UserDatabaseDriver implements Serializable {
 
 	public UserDatabaseDriver loadDriver() throws IllegalStateException {
 		if (!_loaded) {
-			ClassLoader driverClassLoader = ResourceManager.getInstance().createClassLoader(_files);
+			ClassLoader driverClassLoader = ClassLoaderUtils.createClassLoader(_files);
 
 			final Class<?> loadedClass;
 			try {

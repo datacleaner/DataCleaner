@@ -21,11 +21,7 @@ package org.eobjects.datacleaner.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +30,13 @@ import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provides service methods related to resources on the classpath or the file
+ * system.
+ * 
+ * @author kasper
+ * 
+ */
 public final class ResourceManager {
 
 	private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
@@ -46,37 +49,6 @@ public final class ResourceManager {
 
 	private ResourceManager() {
 		// only a single instance
-	}
-
-	public ClassLoader createClassLoader(File[] files) {
-		try {
-			final URL[] urls = new URL[files.length];
-			for (int i = 0; i < urls.length; i++) {
-				URL url = files[i].toURI().toURL();
-				logger.debug("Using URL: {}", url);
-				urls[i] = url;
-			}
-			return createClassLoader(urls);
-		} catch (MalformedURLException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-
-	public ClassLoader createClassLoader(final URL[] urls) {
-		final ClassLoader parentClassLoader = ClassLoaderUtils.getParentClassLoader();
-
-		// removing the security manager is nescesary for classes in
-		// external jar files to have privileges to do eg. system property
-		// lookups etc.
-		System.setSecurityManager(null);
-
-		final URLClassLoader newClassLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-			@Override
-			public URLClassLoader run() {
-				return new URLClassLoader(urls, parentClassLoader);
-			}
-		});
-		return newClassLoader;
 	}
 
 	public List<URL> getUrls(String path, ClassLoader... classLoaders) {

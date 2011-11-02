@@ -33,7 +33,7 @@ import java.util.jar.JarFile;
 
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
-import org.eobjects.datacleaner.util.ResourceManager;
+import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,13 +96,13 @@ public final class ExtensionPackage implements Serializable {
 			}
 			ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
 
-			ClassLoader classLoader = ResourceManager.getInstance().createClassLoader(_files);
+			ClassLoader classLoader = ClassLoaderUtils.createClassLoader(_files);
 
 			int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors().size();
 			int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();
 			int filtersBefore = classpathScanner.getFilterBeanDescriptors().size();
 
-			classpathScanner.scanPackage(_scanPackage, _scanRecursive, classLoader, true);
+			classpathScanner = classpathScanner.scanPackage(_scanPackage, _scanRecursive, classLoader, true, _files);
 
 			_loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;
 			_loadedTransformers = classpathScanner.getTransformerBeanDescriptors().size() - transformersBefore;

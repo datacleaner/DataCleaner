@@ -31,7 +31,6 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
@@ -75,7 +74,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 		}
 		_comboBox = new JComboBox(new ListComboBoxModel<Datastore>(list));
 		
-		SynonymCatalog currentValue = (SynonymCatalog) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Datastore currentValue = (Datastore) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		_comboBox.setSelectedItem(currentValue);
 		
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());

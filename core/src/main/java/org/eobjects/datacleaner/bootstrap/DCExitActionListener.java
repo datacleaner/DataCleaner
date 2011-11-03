@@ -38,15 +38,50 @@ class DCExitActionListener implements ExitActionListener {
 				} catch (InterruptedException e) {
 				}
 
-				// TODO: Print information about all alive, non-daemon threads
-				
-				logger.warn("Invoking system.exit({})", statusCode);
+				if (logger.isWarnEnabled()) {
+					logger.warn("Some threads are still running:");
+
+					ThreadGroup topLevelThreadGroup = null;
+					{
+						ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+						while (threadGroup != null) {
+							topLevelThreadGroup = threadGroup;
+							threadGroup = threadGroup.getParent();
+						}
+					}
+					printThreadInformation(topLevelThreadGroup, "");
+
+					logger.warn("Invoking system.exit({})", statusCode);
+				}
+
 				System.exit(statusCode);
 			}
 		};
 		thread.setDaemon(true);
-		
+
 		logger.info("Scheduling shutdown thread");
 		thread.start();
+	}
+
+	protected void printThreadInformation(ThreadGroup threadGroup, String prefix) {
+		logger.warn("Thread group: " + threadGroup);
+
+		ThreadGroup[] groups = new ThreadGroup[threadGroup.activeGroupCount() + 2];
+		int groupCount = threadGroup.enumerate(groups);
+		for (int i = 0; i < groupCount; i++) {
+			ThreadGroup group = groups[i];
+			printThreadInformation(group, prefix + "  ");
+		}
+
+		Thread[] threads = new Thread[threadGroup.activeCount() + 4];
+		int threadCount = threadGroup.enumerate(threads);
+
+		for (int i = 0; i < threadCount; i++) {
+			Thread thread = threads[i];
+			if (thread != null) {
+				logger.warn(prefix + "thread #" + (i + 1) + " (" + (thread.isAlive() ? "alive" : "dead")
+						+ (thread.isDaemon() ? ",daemon" : "") + ")" + ": " + thread);
+			}
+		}
 	}
 }

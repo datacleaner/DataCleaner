@@ -45,6 +45,10 @@ public class SchemaStructureComboBoxListRenderer extends DefaultListCellRenderer
 	private boolean indentEnabled;
 	private String nullText = "- none -";
 
+	public SchemaStructureComboBoxListRenderer() {
+		indentEnabled = true;
+	}
+
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
 			boolean cellHasFocus) {

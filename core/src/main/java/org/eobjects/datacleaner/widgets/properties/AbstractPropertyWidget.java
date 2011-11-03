@@ -19,17 +19,15 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 
 import javax.swing.JComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.metamodel.util.EqualsBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of the PropertyWidget interface. An implementing
@@ -45,78 +43,63 @@ import org.slf4j.LoggerFactory;
  * 
  * @param <E>
  */
-public abstract class AbstractPropertyWidget<E> extends DCPanel implements PropertyWidget<E> {
+public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(AbstractPropertyWidget.class);
-
-	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
-	private final ConfiguredPropertyDescriptor _propertyDescriptor;
+	private final DCPanel _panel;
 
 	public AbstractPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super();
-		_beanJobBuilder = beanJobBuilder;
-		_propertyDescriptor = propertyDescriptor;
+		super(beanJobBuilder, propertyDescriptor);
+		_panel = new DCPanel() {
+			private static final long serialVersionUID = 1L;
+
+			public void addNotify() {
+				super.addNotify();
+				onPanelAdd();
+			};
+
+			public void removeNotify() {
+				super.removeNotify();
+				onPanelRemove();
+			};
+		};
 		setLayout(new GridLayout(1, 1));
 	}
-	
-	@Override
-	public void initialize(E value) {};
 
-	@Override
-	public final ConfiguredPropertyDescriptor getPropertyDescriptor() {
-		return _propertyDescriptor;
+	protected void setLayout(LayoutManager layout) {
+		_panel.setLayout(layout);
 	}
 
-	public final AbstractBeanJobBuilder<?, ?, ?> getBeanJobBuilder() {
-		return _beanJobBuilder;
+	protected void removeAll() {
+		_panel.removeAll();
 	}
 
-	@Override
-	public boolean isSet() {
-		return getValue() != null;
+	protected void onPanelAdd() {
+	}
+
+	protected void onPanelRemove() {
+	}
+
+	protected void add(Component component) {
+		_panel.add(component);
+	}
+
+	protected void add(Component component, Object constraints) {
+		_panel.add(component, constraints);
+	}
+
+	protected void remove(Component component) {
+		_panel.remove(component);
+	}
+
+	protected void updateUI() {
+		_panel.updateUI();
 	}
 
 	@Override
 	public final JComponent getWidget() {
-		return this;
+		return _panel;
 	}
-
-	protected final void fireValueChanged() {
-		fireValueChanged(getValue());
-	}
-
-	protected final void fireValueChanged(Object newValue) {
-		try {
-			_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
-		} catch (Exception e) {
-			// an exception will be thrown here if setting an invalid property
-			// value (which may just be work in progress, so we don't make a
-			// fuzz about it)
-			if (logger.isWarnEnabled()) {
-				logger.warn("Exception thrown when setting configured property " + _propertyDescriptor, e);
-			}
-		}
-	}
-
-	protected final AnalysisJobBuilder getAnalysisJobBuilder() {
-		return _beanJobBuilder.getAnalysisJobBuilder();
-	}
-
-	@Override
-	public void removeNotify() {
-		super.removeNotify();
-	}
-
-	public void onValueTouched(E value) {
-		E existingValue = getValue();
-		if (EqualsBuilder.equals(value, existingValue)) {
-			return;
-		}
-		setValue(value);
-	}
-
-	protected abstract void setValue(E value);
 }

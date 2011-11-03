@@ -48,7 +48,7 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 				fireValueChanged();
 			}
 		});
-		Date currentValue = (Date) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Date currentValue = getCurrentValue();
 		if (currentValue != null) {
 			_datePicker.setDate(currentValue);
 		}

@@ -49,7 +49,7 @@ public class SourceColumnComboBox extends JComboBox {
 	private static final long serialVersionUID = 1L;
 
 	private final SchemaStructureComboBoxListRenderer _renderer;
-	private volatile DatastoreConnection _dataContextProvider;
+	private volatile DatastoreConnection _datastoreConnection;
 	private volatile Table _table;
 
 	public SourceColumnComboBox() {
@@ -152,6 +152,18 @@ public class SourceColumnComboBox extends JComboBox {
 		}
 	}
 
+	@Override
+	public void setSelectedItem(Object value) {
+		if (value instanceof String) {
+			if (_table == null) {
+				value = _datastoreConnection.getSchemaNavigator().convertToColumn((String) value);
+			} else {
+				value = _table.getColumnByName((String) value);
+			}
+		}
+		super.setSelectedItem(value);
+	}
+
 	private void setTable(Table table) {
 		_table = table;
 		_renderer.setIndentEnabled(table == null);
@@ -161,13 +173,13 @@ public class SourceColumnComboBox extends JComboBox {
 		return _table;
 	}
 
-	private DatastoreConnection setDatastoreConnection(DatastoreConnection dataContextProvider) {
-		if (_dataContextProvider != null) {
+	private DatastoreConnection setDatastoreConnection(DatastoreConnection datastoreConnection) {
+		if (_datastoreConnection != null) {
 			// close the previous data context provider
-			_dataContextProvider.close();
+			_datastoreConnection.close();
 		}
-		_dataContextProvider = dataContextProvider;
-		return _dataContextProvider;
+		_datastoreConnection = datastoreConnection;
+		return _datastoreConnection;
 	}
 
 	@Override
@@ -182,9 +194,9 @@ public class SourceColumnComboBox extends JComboBox {
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
-		if (_dataContextProvider != null) {
+		if (_datastoreConnection != null) {
 			// close the data context provider when the widget is removed
-			_dataContextProvider.close();
+			_datastoreConnection.close();
 		}
 	}
 }

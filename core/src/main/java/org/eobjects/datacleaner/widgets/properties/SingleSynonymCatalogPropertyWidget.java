@@ -69,7 +69,7 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 			_comboBox.addItem(referenceDataCatalog.getSynonymCatalog(name));
 		}
 
-		SynonymCatalog currentValue = (SynonymCatalog) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		SynonymCatalog currentValue = getCurrentValue();
 		_comboBox.setSelectedItem(currentValue);
 
 		_comboBox.addActionListener(new ActionListener() {
@@ -99,14 +99,14 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 	}
 
 	@Override
-	public void addNotify() {
-		super.addNotify();
+	public void onPanelAdd() {
+		super.onPanelAdd();
 		_referenceDataCatalog.addSynonymCatalogListener(this);
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		_referenceDataCatalog.removeSynonymCatalogListener(this);
 	}
 

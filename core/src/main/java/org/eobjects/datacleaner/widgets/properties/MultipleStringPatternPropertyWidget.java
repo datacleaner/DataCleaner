@@ -54,14 +54,14 @@ public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckbo
 	}
 
 	@Override
-	public void addNotify() {
-		super.addNotify();
+	public void onPanelAdd() {
+		super.onPanelAdd();
 		_referenceDataCatalog.addStringPatternListener(this);
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		_referenceDataCatalog.removeStringPatternListener(this);
 	}
 

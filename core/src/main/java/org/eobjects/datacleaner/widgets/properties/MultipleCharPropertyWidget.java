@@ -53,7 +53,7 @@ public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));
 
-		char[] currentValue = (char[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		char[] currentValue = getCurrentValue();
 		if (currentValue == null) {
 			currentValue = new char[1];
 		}

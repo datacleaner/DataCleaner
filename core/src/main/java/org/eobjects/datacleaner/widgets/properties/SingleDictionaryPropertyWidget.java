@@ -69,7 +69,7 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 			_comboBox.addItem(referenceDataCatalog.getDictionary(name));
 		}
 
-		Dictionary currentValue = (Dictionary) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Dictionary currentValue = getCurrentValue();
 		_comboBox.setSelectedItem(currentValue);
 
 		_comboBox.addActionListener(new ActionListener() {
@@ -99,14 +99,14 @@ public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dicti
 	}
 
 	@Override
-	public void addNotify() {
-		super.addNotify();
+	public void onPanelAdd() {
+		super.onPanelAdd();
 		_referenceDataCatalog.addSynonymCatalogListener(this);
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		_referenceDataCatalog.removeSynonymCatalogListener(this);
 	}
 

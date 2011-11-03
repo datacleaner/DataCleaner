@@ -174,8 +174,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	private void updateComponents() {
-		InputColumn<?>[] currentValue = (InputColumn<?>[]) getBeanJobBuilder()
-				.getConfiguredProperty(getPropertyDescriptor());
+		InputColumn<?>[] currentValue = getCurrentValue();
 		updateComponents(currentValue);
 	}
 
@@ -337,8 +336,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
 	}
 

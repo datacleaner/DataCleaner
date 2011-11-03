@@ -42,7 +42,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
-		Boolean currentValue = (Boolean) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Boolean currentValue = getCurrentValue();
 		
 		boolean useCheckBox = propertyDescriptor.isRequired() || propertyDescriptor.getBaseType().isPrimitive();
 

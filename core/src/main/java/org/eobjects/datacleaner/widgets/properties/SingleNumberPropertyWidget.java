@@ -46,7 +46,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 
 		_textField.setDocument(new NumberDocument(isDecimalAllowed()));
 		_primitive = propertyDescriptor.getType().isPrimitive();
-		Number currentValue = (Number) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Number currentValue = getCurrentValue();
 		if (currentValue != null) {
 			_textField.setText(currentValue.toString());
 		}

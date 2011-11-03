@@ -49,7 +49,7 @@ public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern>
 		super(beanJobBuilder, propertyDescriptor);
 		_textField = WidgetFactory.createTextField(propertyDescriptor.getName());
 		_textField.getDocument().addDocumentListener(this);
-		Pattern currentValue = (Pattern) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Pattern currentValue = getCurrentValue();
 		setValue(currentValue);
 		updateColor();
 		add(_textField);

@@ -67,7 +67,7 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
 			_comboBox.addItem(referenceDataCatalog.getStringPattern(name));
 		}
 
-		StringPattern currentValue = (StringPattern) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		StringPattern currentValue = getCurrentValue();
 		_comboBox.setSelectedItem(currentValue);
 
 		_comboBox.addActionListener(new ActionListener() {
@@ -97,14 +97,14 @@ public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<St
 	}
 
 	@Override
-	public void addNotify() {
-		super.addNotify();
+	public void onPanelAdd() {
+		super.onPanelAdd();
 		_referenceDataCatalog.addStringPatternListener(this);
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		_referenceDataCatalog.removeStringPatternListener(this);
 	}
 

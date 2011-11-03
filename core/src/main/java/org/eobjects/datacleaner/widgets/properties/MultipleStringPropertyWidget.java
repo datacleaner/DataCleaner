@@ -58,7 +58,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));
 
-		String[] currentValue = (String[]) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		String[] currentValue = getCurrentValue();
 		updateComponents(currentValue);
 
 		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");

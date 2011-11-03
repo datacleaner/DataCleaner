@@ -82,7 +82,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 			_filenameField.setSelectedFileFilter(FileFilters.ALL);
 		}
 
-		File currentValue = (File) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		File currentValue = getCurrentValue();
 		if (currentValue != null) {
 			_filenameField.setFile(currentValue);
 		}

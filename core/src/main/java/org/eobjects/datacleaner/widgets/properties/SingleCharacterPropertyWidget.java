@@ -44,7 +44,7 @@ public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Charac
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 		_textField = new CharTextField();
-		Character currentValue = (Character) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Character currentValue = getCurrentValue();
 		setValue(currentValue);
 
 		_textField.addDocumentListener(_listener);

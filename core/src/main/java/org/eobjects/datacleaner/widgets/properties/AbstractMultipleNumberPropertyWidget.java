@@ -63,8 +63,7 @@ public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPr
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));
 
-		@SuppressWarnings("unchecked")
-		N currentValue = (N) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		N currentValue = getCurrentValue();
 		updateComponents(currentValue);
 
 		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");

@@ -92,7 +92,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 			_inputColumns.removeAll(outputColumns);
 		}
 
-		InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		InputColumn<?> currentValue = getCurrentValue();
 		if (currentValue != null) {
 			if (!_inputColumns.contains(currentValue)) {
 				_inputColumns.add(currentValue);
@@ -155,8 +155,8 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		_analysisJobBuilder.getSourceColumnListeners().remove(this);
 		_analysisJobBuilder.getTransformerChangeListeners().remove(this);
 	}

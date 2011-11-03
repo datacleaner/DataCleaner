@@ -128,7 +128,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 	}
 
 	private void updateComponents() {
-		InputColumn<?> currentValue = (InputColumn<?>) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		InputColumn<?> currentValue = getCurrentValue();
 		updateComponents(currentValue);
 	}
 
@@ -245,8 +245,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		_analysisJobBuilder.getSourceColumnListeners().remove(this);
 		_analysisJobBuilder.getTransformerChangeListeners().remove(this);
 	}

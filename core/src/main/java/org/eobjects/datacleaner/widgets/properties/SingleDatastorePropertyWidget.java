@@ -86,18 +86,26 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 		});
 		add(_comboBox);
 	}
+	
+	public void addComboItemListener(ItemListener listener) {
+		_comboBox.addItemListener(listener);
+	}
+	
+	public void removeComboItemListener(ItemListener listener) {
+		_comboBox.removeItemListener(listener);
+	}
 
 	@Override
-	public void addNotify() {
-		super.addNotify();
+	public void onPanelAdd() {
+		super.onPanelAdd();
 		if (_datastoreCatalog instanceof MutableDatastoreCatalog) {
 			((MutableDatastoreCatalog) _datastoreCatalog).addListener(this);
 		}
 	}
 
 	@Override
-	public void removeNotify() {
-		super.removeNotify();
+	public void onPanelRemove() {
+		super.onPanelRemove();
 		if (_datastoreCatalog instanceof MutableDatastoreCatalog) {
 			((MutableDatastoreCatalog) _datastoreCatalog).removeListener(this);
 		}

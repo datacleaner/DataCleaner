@@ -46,7 +46,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
 		StringProperty stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
 		_textComponent = getTextComponent(propertyDescriptor, stringPropertyAnnotation);
-		String currentValue = (String) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		String currentValue = getCurrentValue();
 		if (currentValue != null) {
 			_textComponent.setText(currentValue);
 		}

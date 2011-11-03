@@ -49,7 +49,7 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
 		_comboBox = new JComboBox(enumConstants);
 		_comboBox.setRenderer(new EnumComboBoxListRenderer());
 
-		Object currentValue = beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		Enum<?> currentValue = getCurrentValue();
 		_comboBox.setSelectedItem(currentValue);
 
 		_comboBox.addActionListener(new ActionListener() {

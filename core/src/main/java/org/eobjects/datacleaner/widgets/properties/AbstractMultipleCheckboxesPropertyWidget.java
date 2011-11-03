@@ -120,16 +120,15 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 	}
 
 	@Override
-	public void addNotify() {
-		super.addNotify();
+	public void onPanelAdd() {
+		super.onPanelAdd();
 		updateComponents();
 	}
 
 	protected abstract E[] getAvailableValues();
 
 	protected void updateComponents() {
-		@SuppressWarnings("unchecked")
-		E[] currentValues = (E[]) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
+		E[] currentValues = getCurrentValue();
 		updateComponents(currentValues);
 	}
 

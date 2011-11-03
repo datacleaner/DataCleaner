@@ -1,0 +1,19 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<artifactId>DataCleaner</artifactId>
+		<version>2.4-SNAPSHOT</version>
+	</parent>
+	<artifactId>DataCleaner-extensions</artifactId>
+	<description>A collection of extensions, typically shared through the online extension swap.</description>
+	<url>http://datacleaner.eobjects.org/extensions</url>
+	<packaging>pom</packaging>
+	<modules>
+		<module>phonetic</module>
+		<module>regex-parser</module>
+		<module>sample</module>
+		<module>test-tools</module>
+		<module>network-tools</module>
+	</modules>
+</project>

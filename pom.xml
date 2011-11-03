@@ -23,10 +23,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>core</module>
-		<module>extension-phonetic</module>
-		<module>extension-sample</module>
-		<module>extension-regex-parser</module>
-		<module>extension-test-tools</module>
+		<module>extensions</module>
 		<module>packaging</module>
 	</modules>
 	<organization>

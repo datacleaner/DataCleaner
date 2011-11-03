@@ -27,7 +27,7 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
-import org.eobjects.analyzer.beans.transform.DatastoreLookupTransformer;
+import org.eobjects.analyzer.beans.transform.TableLookupTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -43,22 +43,22 @@ import org.jdesktop.swingx.JXTextField;
 
 /**
  * Specialized {@link TransformerJobBuilderPresenter} for the
- * {@link DatastoreLookupTransformer}.
+ * {@link TableLookupTransformer}.
  * 
  * @author Kasper Sørensen
  */
-public class DatastoreLookupTransformerJobBuilderPresenter extends TransformerJobBuilderPanel {
+public class TableLookupTransformerJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 	
 	private final Map<InputColumn<?>, JXTextField> _textFields = new HashMap<InputColumn<?>, JXTextField>();
 
-	public DatastoreLookupTransformerJobBuilderPresenter(TransformerJobBuilder<?> transformerJobBuilder,
+	public TableLookupTransformerJobBuilderPresenter(TransformerJobBuilder<?> transformerJobBuilder,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
 			AnalyzerBeansConfiguration configuration) {
 		super(transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
 
-		assert transformerJobBuilder.getDescriptor().getComponentClass() == DatastoreLookupTransformer.class;
+		assert transformerJobBuilder.getDescriptor().getComponentClass() == TableLookupTransformer.class;
 	}
 
 	@Override

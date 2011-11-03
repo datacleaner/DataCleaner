@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
-import org.eobjects.analyzer.beans.transform.DatastoreLookupTransformer;
+import org.eobjects.analyzer.beans.transform.TableLookupTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -33,13 +33,13 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 /**
  * Specialized {@link Renderer} for a {@link TransformerJobBuilderPresenter} for
- * {@link DatastoreLookupTransformer}.
+ * {@link TableLookupTransformer}.
  * 
  * @author Kasper Sørensen
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
-public class DatastoreLookupTransformerJobBuilderPresenterRenderer implements
-		Renderer<TransformerJobBuilder<DatastoreLookupTransformer>, TransformerJobBuilderPresenter> {
+public class TableLookupTransformerJobBuilderPresenterRenderer implements
+		Renderer<TransformerJobBuilder<TableLookupTransformer>, TransformerJobBuilderPresenter> {
 
 	@Inject
 	WindowContext windowContext;
@@ -51,19 +51,19 @@ public class DatastoreLookupTransformerJobBuilderPresenterRenderer implements
 	InjectorBuilder injectorBuilder;
 
 	@Override
-	public RendererPrecedence getPrecedence(TransformerJobBuilder<DatastoreLookupTransformer> tjb) {
-		if (tjb.getDescriptor().getComponentClass() == DatastoreLookupTransformer.class) {
+	public RendererPrecedence getPrecedence(TransformerJobBuilder<TableLookupTransformer> tjb) {
+		if (tjb.getDescriptor().getComponentClass() == TableLookupTransformer.class) {
 			return RendererPrecedence.HIGH;
 		}
 		return RendererPrecedence.NOT_CAPABLE;
 	}
 
 	@Override
-	public TransformerJobBuilderPresenter render(TransformerJobBuilder<DatastoreLookupTransformer> tjb) {
+	public TransformerJobBuilderPresenter render(TransformerJobBuilder<TableLookupTransformer> tjb) {
 		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
 				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, tjb).getInstance(PropertyWidgetFactory.class);
 
-		return new DatastoreLookupTransformerJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
+		return new TableLookupTransformerJobBuilderPresenter(tjb, windowContext, propertyWidgetFactory, configuration);
 	}
 
 }

@@ -29,6 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.beans.api.ComponentCategory;
+import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
@@ -64,12 +65,12 @@ public abstract class DescriptorPopupMenu<E extends BeanDescriptor<?>> extends J
 			for (E descriptor : _descriptors) {
 				Set<ComponentCategory> componentCategories = descriptor.getComponentCategories();
 				for (ComponentCategory componentCategory : componentCategories) {
-					DescriptorMenu menu = descriptorMenus.get(componentCategory);
-					if (menu == null) {
-						menu = new DescriptorMenu(componentCategory);
-						descriptorMenus.put(componentCategory, menu);
-					}
-					menu.addComponentClass(descriptor.getComponentClass());
+						DescriptorMenu menu = descriptorMenus.get(componentCategory);
+						if (menu == null) {
+							menu = new DescriptorMenu(componentCategory);
+							descriptorMenus.put(componentCategory, menu);
+						}
+						menu.addComponentClass(descriptor.getComponentClass());
 				}
 			}
 		}
@@ -116,6 +117,12 @@ public abstract class DescriptorPopupMenu<E extends BeanDescriptor<?>> extends J
 					}
 				}
 			}
+		}
+		
+		// disregard WriteDataCategory
+		DescriptorMenu writeDataMenu = descriptorMenus.get(new WriteDataCategory());
+		if (writeDataMenu != null) {
+			remove(writeDataMenu);
 		}
 	}
 

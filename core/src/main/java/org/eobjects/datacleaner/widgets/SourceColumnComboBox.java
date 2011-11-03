@@ -154,7 +154,7 @@ public class SourceColumnComboBox extends JComboBox {
 
 	private void setTable(Table table) {
 		_table = table;
-		_renderer.setIndentEnabled(table != null);
+		_renderer.setIndentEnabled(table == null);
 	}
 
 	public Table getTable() {

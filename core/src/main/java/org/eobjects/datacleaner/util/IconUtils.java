@@ -22,11 +22,13 @@ package org.eobjects.datacleaner.util;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import org.eobjects.analyzer.beans.api.ComponentCategory;
+import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
@@ -43,7 +45,6 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
-import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 
 /**
  * Contains utility methods concerned with icons, primarily datastore and
@@ -163,7 +164,8 @@ public final class IconUtils {
 			return "images/component-types/plugin.png";
 		}
 
-		if (descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {
+		Set<ComponentCategory> categories = descriptor.getComponentCategories();
+		if (categories.contains(new WriteDataCategory())) {
 			return "images/component-types/type_output_writer.png";
 		}
 

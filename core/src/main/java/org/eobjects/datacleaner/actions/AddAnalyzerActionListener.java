@@ -32,7 +32,6 @@ import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
@@ -62,9 +61,6 @@ public final class AddAnalyzerActionListener implements ActionListener {
 
 			@Override
 			protected JMenuItem createMenuItem(final AnalyzerBeanDescriptor<?> descriptor) {
-				if (descriptor.getAnnotation(OutputWriterAnalyzer.class) != null) {
-					return null;
-				}
 				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
 				menuItem.addActionListener(new ActionListener() {
 					@Override

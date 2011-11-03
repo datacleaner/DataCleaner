@@ -24,18 +24,20 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.beans.api.Analyzer;
+import org.eobjects.analyzer.beans.api.ComponentCategory;
+import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.util.CollectionUtils2;
-import org.eobjects.datacleaner.output.beans.OutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 
@@ -75,8 +77,7 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 		popup.show(component, 0, component.getHeight());
 	}
 
-	protected abstract void configure(AnalysisJobBuilder analysisJobBuilder,
-			AnalyzerJobBuilder<?> analyzerJobBuilder);
+	protected abstract void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder);
 
 	protected List<AnalyzerBeanDescriptor<?>> getDescriptors() {
 		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
@@ -85,7 +86,8 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 
 		for (Iterator<AnalyzerBeanDescriptor<?>> it = result.iterator(); it.hasNext();) {
 			AnalyzerBeanDescriptor<?> descriptor = it.next();
-			if (descriptor.getAnnotation(OutputWriterAnalyzer.class) == null) {
+			Set<ComponentCategory> categories = descriptor.getComponentCategories();
+			if (!categories.contains(new WriteDataCategory())) {
 				it.remove();
 			}
 		}

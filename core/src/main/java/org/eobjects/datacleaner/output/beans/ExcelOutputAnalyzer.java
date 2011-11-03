@@ -22,9 +22,12 @@ package org.eobjects.datacleaner.output.beans;
 import java.io.File;
 
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
+import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.FileProperty;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
+import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -32,7 +35,8 @@ import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.excel.ExcelOutputWriterFactory;
 
 @AnalyzerBean("Write to Excel spreadsheet")
-@OutputWriterAnalyzer
+@Description("Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Excel.")
+@Categorized(WriteDataCategory.class)
 public class ExcelOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Configured

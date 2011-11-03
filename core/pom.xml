@@ -21,6 +21,11 @@
 			<version>0.8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-writers</artifactId>
+			<version>0.8-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 			<version>3.0</version>

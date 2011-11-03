@@ -156,7 +156,8 @@ public class SourceColumnComboBox extends JComboBox {
 	public void setSelectedItem(Object value) {
 		if (value instanceof String) {
 			if (_table == null) {
-				value = _datastoreConnection.getSchemaNavigator().convertToColumn((String) value);
+				// cannot string convert to column without a table.
+				value = null;
 			} else {
 				value = _table.getColumnByName((String) value);
 			}

@@ -42,6 +42,7 @@ import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyW
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.EqualsBuilder;
 import org.eobjects.metamodel.util.MutableRef;
 
 /**
@@ -165,6 +166,9 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 
 			@Override
 			protected void setValue(String[] value) {
+				if (EqualsBuilder.equals(value, getValue())) {
+					return;
+				}
 				InputColumn<?>[] inputColumns = TableLookupInputColumnsPropertyWidget.this.getCurrentValue();
 				assert inputColumns.length == value.length;
 				for (int i = 0; i < inputColumns.length; i++) {

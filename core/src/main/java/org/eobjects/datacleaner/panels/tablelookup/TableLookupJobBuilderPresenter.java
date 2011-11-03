@@ -46,9 +46,9 @@ import org.eobjects.datacleaner.widgets.properties.SingleDatastorePropertyWidget
 public class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
-	
+
 	public TableLookupJobBuilderPresenter(TransformerJobBuilder<TableLookupTransformer> transformerJobBuilder,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
 			AnalyzerBeansConfiguration configuration) {
@@ -57,14 +57,15 @@ public class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 		final TransformerBeanDescriptor<?> descriptor = transformerJobBuilder.getDescriptor();
 
 		assert descriptor.getComponentClass() == TableLookupTransformer.class;
-		
+
 		_overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
-		
+
 		// the Datastore property
 		final ConfiguredPropertyDescriptor datastoreProperty = descriptor.getConfiguredProperty("Datastore");
 		assert datastoreProperty != null;
 		assert datastoreProperty.getType() == Datastore.class;
-		final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(transformerJobBuilder, datastoreProperty, configuration.getDatastoreCatalog());
+		final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
+				transformerJobBuilder, datastoreProperty, configuration.getDatastoreCatalog());
 		_overriddenPropertyWidgets.put(datastoreProperty, datastorePropertyWidget);
 
 		// the InputColumn<?>[] property
@@ -77,19 +78,20 @@ public class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 		assert columnNameArrayProperty != null;
 		assert columnNameArrayProperty.getType() == String[].class;
 
-		final TableLookupInputColumnsPropertyWidget inputColumnsPropertyWidget = new TableLookupInputColumnsPropertyWidget(transformerJobBuilder, inputColumnArrayProperty, columnNameArrayProperty, datastorePropertyWidget);
-		
+		final TableLookupInputColumnsPropertyWidget inputColumnsPropertyWidget = new TableLookupInputColumnsPropertyWidget(
+				transformerJobBuilder, inputColumnArrayProperty, columnNameArrayProperty, datastorePropertyWidget);
+
 		_overriddenPropertyWidgets.put(inputColumnArrayProperty, inputColumnsPropertyWidget);
-		_overriddenPropertyWidgets.put(columnNameArrayProperty, inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
+		_overriddenPropertyWidgets.put(columnNameArrayProperty,
+				inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
 	}
 
 	@Override
 	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
-		PropertyWidget<?> propertyWidget = _overriddenPropertyWidgets.get(propertyDescriptor);
-		if (propertyWidget == null) {
-			return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
+		if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
+			return _overriddenPropertyWidgets.get(propertyDescriptor);
 		}
-		return propertyWidget;
+		return super.createPropertyWidget(beanJobBuilder, propertyDescriptor);
 	}
 }

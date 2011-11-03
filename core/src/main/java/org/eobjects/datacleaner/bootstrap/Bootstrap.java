@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.bootstrap;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SplashScreen;
 import java.io.Closeable;
@@ -56,7 +57,7 @@ import com.google.inject.Injector;
 /**
  * Bootstraps an instance of DataCleaner into a running state. The initial state
  * of the application will be dependent on specified options (or defaults).
- * 
+ *
  * @author Kasper Sørensen
  */
 public final class Bootstrap {
@@ -78,10 +79,13 @@ public final class Bootstrap {
 		logger.info("CLI mode={}, use -usage to view usage options", cliMode);
 
 		if (cliMode) {
-			// hide splash screen
-			SplashScreen splashScreen = SplashScreen.getSplashScreen();
-			if (splashScreen != null) {
-				splashScreen.close();
+
+			if (!GraphicsEnvironment.isHeadless()) {
+				// hide splash screen
+				SplashScreen splashScreen = SplashScreen.getSplashScreen();
+				if (splashScreen != null) {
+					splashScreen.close();
+				}
 			}
 
 			final CliArguments arguments = _options.getCommandLineArguments();
@@ -154,8 +158,7 @@ public final class Bootstrap {
 				// this part has to be done after displaying the window (a lot
 				// of initialization goes on there)
 				AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
-				_options.initializeSingleDatastoreJob(analysisJobBuilder, singleDatastore.openConnection()
-						.getDataContext());
+				_options.initializeSingleDatastoreJob(analysisJobBuilder, singleDatastore.openConnection().getDataContext());
 
 				Image welcomeImage = _options.getWelcomeImage();
 				if (welcomeImage != null) {

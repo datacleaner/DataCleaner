@@ -30,7 +30,6 @@ import java.util.WeakHashMap;
 import javax.swing.JComponent;
 
 import org.eobjects.analyzer.beans.transform.TableLookupTransformer;
-import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
@@ -40,7 +39,6 @@ import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
-import org.eobjects.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.EqualsBuilder;
 import org.eobjects.metamodel.util.MutableRef;
@@ -55,48 +53,47 @@ import org.eobjects.metamodel.util.MutableRef;
 public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
 	private final WeakHashMap<InputColumn<?>, SourceColumnComboBox> _mappedColumnComboBoxes;
-	private final SingleDatastorePropertyWidget _datastorePropertyWidget;
-	private final ItemListener _datastoreItemListener;
-	private final MutableRef<Datastore> _datastoreRef;
 	private final MutableRef<Table> _tableRef;
 	private final ConfiguredPropertyDescriptor _mappedColumnsProperty;
 	private final MinimalPropertyWidget<String[]> _mappedColumnNamesPropertyWidget;
 
 	/**
 	 * Constructs the property widget
-	 * @param transformerJobBuilder the transformer job builder for the table lookup
-	 * @param inputColumnsProperty the property represeting the columns to use for settig up conditional lookup (InputColumn[])
-	 * @param mappedColumnsProperty the property representing the mapped columns in the datastore (String[])
-	 * @param datastorePropertyWidget the property widget for selecting the datastore
+	 * 
+	 * @param transformerJobBuilder
+	 *            the transformer job builder for the table lookup
+	 * @param inputColumnsProperty
+	 *            the property represeting the columns to use for settig up
+	 *            conditional lookup (InputColumn[])
+	 * @param mappedColumnsProperty
+	 *            the property representing the mapped columns in the datastore
+	 *            (String[])
+	 * @param datastorePropertyWidget
+	 *            the property widget for selecting the datastore
 	 */
 	public TableLookupInputColumnsPropertyWidget(TransformerJobBuilder<TableLookupTransformer> transformerJobBuilder,
-			ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty, SingleDatastorePropertyWidget datastorePropertyWidget) {
+			ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty) {
 		super(transformerJobBuilder, inputColumnsProperty);
 		_mappedColumnComboBoxes = new WeakHashMap<InputColumn<?>, SourceColumnComboBox>();
-		_datastorePropertyWidget = datastorePropertyWidget;
 		_mappedColumnsProperty = mappedColumnsProperty;
 
 		_tableRef = new MutableRef<Table>();
-		_datastoreRef = new MutableRef<Datastore>(_datastorePropertyWidget.getValue());
-		_datastoreItemListener = new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				_datastoreRef.set(_datastorePropertyWidget.getValue());
-				updateMappedColumns();
-			}
-		};
-		_datastorePropertyWidget.addComboItemListener(_datastoreItemListener);
 		_mappedColumnNamesPropertyWidget = createMappedColumnNamesPropertyWidget();
 	}
 
-	protected void updateMappedColumns() {
+	public void setTable(Table table) {
+		_tableRef.set(table);
+		updateMappedColumns();
+	}
+
+	private void updateMappedColumns() {
 		Collection<SourceColumnComboBox> values = _mappedColumnComboBoxes.values();
 		for (SourceColumnComboBox sourceColumnComboBox : values) {
 			Table table = _tableRef.get();
 			if (table == null) {
-				sourceColumnComboBox.setModel(_datastoreRef.get());
+				sourceColumnComboBox.setEmptyModel();
 			} else {
-				sourceColumnComboBox.setModel(_datastoreRef.get(), table);
+				sourceColumnComboBox.setModel(table);
 			}
 		}
 	}
@@ -117,7 +114,7 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 		});
 		sourceColumnComboBox.setVisible(checkBox.isSelected());
 		_mappedColumnComboBoxes.put(checkBox.getValue(), sourceColumnComboBox);
-		
+
 		sourceColumnComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -131,7 +128,7 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 		panel.add(sourceColumnComboBox, BorderLayout.EAST);
 		return panel;
 	}
-	
+
 	public PropertyWidget<String[]> getMappedColumnNamesPropertyWidget() {
 		return _mappedColumnNamesPropertyWidget;
 	}
@@ -167,12 +164,18 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 				if (EqualsBuilder.equals(value, getValue())) {
 					return;
 				}
-				InputColumn<?>[] inputColumns = TableLookupInputColumnsPropertyWidget.this.getCurrentValue();
-				assert inputColumns.length == value.length;
+				final InputColumn<?>[] inputColumns = TableLookupInputColumnsPropertyWidget.this.getValue();
 				for (int i = 0; i < inputColumns.length; i++) {
-					InputColumn<?> inputColumn = inputColumns[i];
-					String mappedColumnName = value[i];
-					SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
+					final InputColumn<?> inputColumn = inputColumns[i];
+					final String mappedColumnName;
+					if (value == null) {
+						mappedColumnName = null;
+					} else if (i < value.length) {
+						mappedColumnName = value[i];
+					} else {
+						mappedColumnName = null;
+					}
+					final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
 					comboBox.setEditable(true);
 					comboBox.setSelectedItem(mappedColumnName);
 					comboBox.setEditable(false);
@@ -180,7 +183,7 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 			}
 		};
 	}
-	
+
 	private String[] getMappedColumnNames() {
 		final InputColumn<?>[] inputColumns = TableLookupInputColumnsPropertyWidget.this.getValue();
 		final String[] result = new String[inputColumns.length];

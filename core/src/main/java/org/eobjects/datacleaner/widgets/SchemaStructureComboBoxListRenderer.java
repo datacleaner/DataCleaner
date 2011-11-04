@@ -46,7 +46,11 @@ public class SchemaStructureComboBoxListRenderer extends DefaultListCellRenderer
 	private String nullText = "- none -";
 
 	public SchemaStructureComboBoxListRenderer() {
-		indentEnabled = true;
+		this(true);
+	}
+	
+	public SchemaStructureComboBoxListRenderer(boolean indentsEnabled) {
+		indentEnabled = indentsEnabled;
 	}
 
 	@Override

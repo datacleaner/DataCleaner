@@ -57,11 +57,11 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
 		String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
 		List<Datastore> list = new ArrayList<Datastore>();
-		
+
 		if (!propertyDescriptor.isRequired()) {
 			list.add(null);
 		}
-		
+
 		for (int i = 0; i < datastoreNames.length; i++) {
 			Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
 			if (ReflectionUtils.is(datastore.getClass(), _datastoreClass)) {
@@ -71,10 +71,10 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 			}
 		}
 		_comboBox = new JComboBox(new ListComboBoxModel<Datastore>(list));
-		
+
 		Datastore currentValue = (Datastore) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 		_comboBox.setSelectedItem(currentValue);
-		
+
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
 		_comboBox.addItemListener(new ItemListener() {
 			@Override
@@ -84,13 +84,9 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 		});
 		add(_comboBox);
 	}
-	
+
 	public void addComboItemListener(ItemListener listener) {
 		_comboBox.addItemListener(listener);
-	}
-	
-	public void removeComboItemListener(ItemListener listener) {
-		_comboBox.removeItemListener(listener);
 	}
 
 	@Override
@@ -111,11 +107,16 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
 	@Override
 	public Datastore getValue() {
-		return (Datastore) _comboBox.getSelectedItem();
+		Object selectedItem = _comboBox.getSelectedItem();
+		return (Datastore) selectedItem;
 	}
 
 	@Override
 	protected void setValue(Datastore value) {
+		if (getValue() == value) {
+			return;
+		}
+
 		_comboBox.setEditable(true);
 		_comboBox.setSelectedItem(value);
 		_comboBox.setEditable(false);

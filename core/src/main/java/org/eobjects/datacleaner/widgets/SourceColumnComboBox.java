@@ -69,6 +69,10 @@ public class SourceColumnComboBox extends JComboBox {
 		setModel(datastore, table);
 	}
 
+	public void setEmptyModel() {
+		setModel(null, null);
+	}
+
 	public void setModel(Datastore datastore, Table table) {
 		final Column previousItem = getSelectedItem();
 
@@ -105,6 +109,10 @@ public class SourceColumnComboBox extends JComboBox {
 
 	public void setModel(Datastore datastore) {
 		setModel(datastore, true);
+	}
+
+	public void setModel(Table table) {
+		setModel(null, table);
 	}
 
 	public void setModel(Datastore datastore, boolean retainSelection) {
@@ -167,7 +175,11 @@ public class SourceColumnComboBox extends JComboBox {
 
 	private void setTable(Table table) {
 		_table = table;
-		_renderer.setIndentEnabled(table == null);
+		setIndentation();
+	}
+
+	private void setIndentation() {
+		_renderer.setIndentEnabled(_table == null && _datastoreConnection != null);
 	}
 
 	public Table getTable() {
@@ -180,6 +192,7 @@ public class SourceColumnComboBox extends JComboBox {
 			_datastoreConnection.close();
 		}
 		_datastoreConnection = datastoreConnection;
+		setIndentation();
 		return _datastoreConnection;
 	}
 

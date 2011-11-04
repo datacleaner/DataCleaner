@@ -58,19 +58,27 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 		});
 		add(_comboBox);
 		_schemaRef = new MutableRef<Schema>();
+
+		setValue(getCurrentValue());
 	}
-	
+
 	public void addComboItemListener(ItemListener itemListener) {
 		_comboBox.addItemListener(itemListener);
 	}
 
 	public void setSchema(Schema schema) {
+		String previousValue = getValue();
 		_schemaRef.set(schema);
 		if (schema == null) {
 			_comboBox.setModel(new DefaultComboBoxModel(new Object[1]));
 		} else {
 			Table[] tables = schema.getTables();
 			_comboBox.setModel(new DefaultComboBoxModel(tables));
+
+			if (previousValue != null) {
+				Table table = schema.getTableByName(previousValue);
+				_comboBox.setSelectedItem(table);
+			}
 		}
 	}
 
@@ -82,7 +90,6 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 		}
 		return table.getName();
 	}
-	
 
 	public Table getTable() {
 		return (Table) _comboBox.getSelectedItem();
@@ -93,7 +100,7 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 		if (getValue() == value) {
 			return;
 		}
-		
+
 		final Schema schema = _schemaRef.get();
 		final Table table;
 		if (value == null) {
@@ -108,5 +115,4 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 		_comboBox.setSelectedItem(table);
 		_comboBox.setEditable(false);
 	}
-
 }

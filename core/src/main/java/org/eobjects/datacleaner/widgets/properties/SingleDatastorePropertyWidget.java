@@ -29,6 +29,7 @@ import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.ReflectionUtils;
@@ -47,6 +48,7 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 	private final DatastoreCatalog _datastoreCatalog;
 	private final JComboBox _comboBox;
 	private final Class<?> _datastoreClass;
+	private volatile DatastoreConnection _connection;
 
 	@Inject
 	public SingleDatastorePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
@@ -71,17 +73,18 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 			}
 		}
 		_comboBox = new JComboBox(new ListComboBoxModel<Datastore>(list));
-
-		Datastore currentValue = (Datastore) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
-		_comboBox.setSelectedItem(currentValue);
-
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
 		_comboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+				openConnection(getValue());
 				fireValueChanged();
 			}
 		});
+
+		Datastore currentValue = (Datastore) beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+		setValue(currentValue);
+
 		add(_comboBox);
 	}
 
@@ -103,12 +106,15 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 		if (_datastoreCatalog instanceof MutableDatastoreCatalog) {
 			((MutableDatastoreCatalog) _datastoreCatalog).removeListener(this);
 		}
+		openConnection(null);
 	}
 
 	@Override
 	public Datastore getValue() {
 		Object selectedItem = _comboBox.getSelectedItem();
-		return (Datastore) selectedItem;
+		Datastore datastore = (Datastore) selectedItem;
+		openConnection(datastore);
+		return datastore;
 	}
 
 	@Override
@@ -117,9 +123,24 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 			return;
 		}
 
+		openConnection(value);
+
 		_comboBox.setEditable(true);
 		_comboBox.setSelectedItem(value);
 		_comboBox.setEditable(false);
+	}
+
+	private void openConnection(Datastore datastore) {
+		if (_connection != null && _connection.getDatastore() == datastore) {
+			return;
+		}
+		if (_connection != null) {
+			_connection.close();
+			_connection = null;
+		}
+		if (datastore != null) {
+			_connection = datastore.openConnection();
+		}
 	}
 
 	@Override
@@ -133,5 +154,4 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 	public void onRemove(Datastore datastore) {
 		_comboBox.removeItem(datastore);
 	}
-
 }

@@ -59,9 +59,12 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 		});
 		add(_comboBox);
 		_datastoreRef = new MutableRef<Datastore>();
+		
+		setValue(getCurrentValue());
 	}
 
 	public void setDatastore(Datastore datastore) {
+		String previousValue = getValue();
 		_datastoreRef.set(datastore);
 		if (datastore == null) {
 			_comboBox.setModel(new DefaultComboBoxModel(new Object[1]));
@@ -70,6 +73,14 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 			try {
 				Schema[] schemas = con.getSchemaNavigator().getSchemas();
 				_comboBox.setModel(new DefaultComboBoxModel(schemas));
+				Schema newValue = null;
+				if (previousValue != null) {
+					newValue = con.getSchemaNavigator().getSchemaByName(previousValue);
+				}
+				if (newValue == null) {
+					newValue = con.getSchemaNavigator().getDefaultSchema();
+				}
+				_comboBox.setSelectedItem(newValue);
 			} finally {
 				con.close();
 			}
@@ -84,7 +95,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 		}
 		return schema.getName();
 	}
-	
+
 	public Schema getSchema() {
 		Schema schema = (Schema) _comboBox.getSelectedItem();
 		return schema;
@@ -95,7 +106,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 		if (getValue() == value) {
 			return;
 		}
-		
+
 		final Schema schema;
 		Datastore datastore = _datastoreRef.get();
 		if (value == null) {
@@ -119,5 +130,4 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 	public void addComboItemListener(ItemListener itemListener) {
 		_comboBox.addItemListener(itemListener);
 	}
-
 }

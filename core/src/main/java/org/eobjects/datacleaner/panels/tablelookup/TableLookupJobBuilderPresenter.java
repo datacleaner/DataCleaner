@@ -45,6 +45,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.SchemaNamePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.SingleDatastorePropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.TableNamePropertyWidget;
+import org.eobjects.metamodel.schema.Table;
 
 /**
  * Specialized {@link TransformerJobBuilderPresenter} for the
@@ -74,22 +75,12 @@ public class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 		final TransformerBeanDescriptor<?> descriptor = transformerJobBuilder.getDescriptor();
 		assert descriptor.getComponentClass() == TableLookupTransformer.class;
 
+		_datastoreProperty = descriptor.getConfiguredProperty("Datastore");
 		_schemaNameProperty = descriptor.getConfiguredProperty("Schema name");
 		_tableNameProperty = descriptor.getConfiguredProperty("Table name");
-		_datastoreProperty = descriptor.getConfiguredProperty("Datastore");
 		_inputColumnArrayProperty = descriptor.getConfiguredProperty("Condition values");
 		_columnNameArrayProperty = descriptor.getConfiguredProperty("Condition columns");
 		_outputColumnsProperty = descriptor.getConfiguredProperty("Output columns");
-
-		// The schema name (String) property
-		final SchemaNamePropertyWidget schemaNamePropertyWidget = new SchemaNamePropertyWidget(transformerJobBuilder,
-				_schemaNameProperty);
-		_overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
-
-		// The table name (String) property
-		final TableNamePropertyWidget tableNamePropertyWidget = new TableNamePropertyWidget(transformerJobBuilder,
-				_tableNameProperty);
-		_overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
 
 		// the Datastore property
 		assert _datastoreProperty != null;
@@ -98,11 +89,30 @@ public class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 				transformerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog());
 		_overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
+		// The schema name (String) property
+		final SchemaNamePropertyWidget schemaNamePropertyWidget = new SchemaNamePropertyWidget(transformerJobBuilder,
+				_schemaNameProperty);
+		schemaNamePropertyWidget.setDatastore(datastorePropertyWidget.getValue());
+		_overriddenPropertyWidgets.put(_schemaNameProperty, schemaNamePropertyWidget);
+
+		// The table name (String) property
+		final TableNamePropertyWidget tableNamePropertyWidget = new TableNamePropertyWidget(transformerJobBuilder,
+				_tableNameProperty);
+		tableNamePropertyWidget.setSchema(schemaNamePropertyWidget.getSchema());
+		_overriddenPropertyWidgets.put(_tableNameProperty, tableNamePropertyWidget);
+
+		// the output columns (String[]) property
+		final TableLookupOutputColumnsPropertyWidget outputColumnsPropertyWidget = new TableLookupOutputColumnsPropertyWidget(
+				transformerJobBuilder, _outputColumnsProperty);
+		outputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
+		_overriddenPropertyWidgets.put(_outputColumnsProperty, outputColumnsPropertyWidget);
+
 		// the InputColumn<?>[] property
 		assert _inputColumnArrayProperty != null;
 		assert _inputColumnArrayProperty.getType() == InputColumn[].class;
 		final TableLookupInputColumnsPropertyWidget inputColumnsPropertyWidget = new TableLookupInputColumnsPropertyWidget(
 				transformerJobBuilder, _inputColumnArrayProperty, _columnNameArrayProperty);
+		inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
 		_overriddenPropertyWidgets.put(_inputColumnArrayProperty, inputColumnsPropertyWidget);
 
 		// the String[] property
@@ -130,7 +140,9 @@ public class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				// update the column combo boxes when the table is selected
-				inputColumnsPropertyWidget.setTable(tableNamePropertyWidget.getTable());
+				final Table table = tableNamePropertyWidget.getTable();
+				inputColumnsPropertyWidget.setTable(table);
+				outputColumnsPropertyWidget.setTable(table);
 			}
 		});
 	}

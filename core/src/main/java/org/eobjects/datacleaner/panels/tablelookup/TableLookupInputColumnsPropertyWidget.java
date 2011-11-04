@@ -79,6 +79,11 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 
 		_tableRef = new MutableRef<Table>();
 		_mappedColumnNamesPropertyWidget = createMappedColumnNamesPropertyWidget();
+
+		InputColumn<?>[] currentValue = getCurrentValue();
+		if (currentValue != null) {
+			setValue(currentValue);
+		}
 	}
 
 	public void setTable(Table table) {
@@ -87,13 +92,13 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 	}
 
 	private void updateMappedColumns() {
-		Collection<SourceColumnComboBox> values = _mappedColumnComboBoxes.values();
-		for (SourceColumnComboBox sourceColumnComboBox : values) {
+		Collection<SourceColumnComboBox> comboBoxes = _mappedColumnComboBoxes.values();
+		for (SourceColumnComboBox comboBox : comboBoxes) {
 			Table table = _tableRef.get();
 			if (table == null) {
-				sourceColumnComboBox.setEmptyModel();
+				comboBox.setEmptyModel();
 			} else {
-				sourceColumnComboBox.setModel(table);
+				comboBox.setModel(table);
 			}
 		}
 	}
@@ -112,6 +117,12 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 				sourceColumnComboBox.setVisible(checkBox.isSelected());
 			}
 		});
+
+		Table table = _tableRef.get();
+		if (table != null) {
+			sourceColumnComboBox.setModel(table);
+		}
+
 		sourceColumnComboBox.setVisible(checkBox.isSelected());
 		_mappedColumnComboBoxes.put(checkBox.getValue(), sourceColumnComboBox);
 
@@ -124,7 +135,7 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());
-		panel.add(checkBox, BorderLayout.WEST);
+		panel.add(checkBox, BorderLayout.CENTER);
 		panel.add(sourceColumnComboBox, BorderLayout.EAST);
 		return panel;
 	}

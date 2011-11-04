@@ -32,7 +32,6 @@ import org.eobjects.metamodel.util.CollectionUtils;
 
 public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>> {
 
-	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
 
 	@Inject

@@ -45,8 +45,6 @@ import org.eobjects.datacleaner.panels.DCPanel;
  */
 public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final DCPanel _panel;
 
 	public AbstractPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,

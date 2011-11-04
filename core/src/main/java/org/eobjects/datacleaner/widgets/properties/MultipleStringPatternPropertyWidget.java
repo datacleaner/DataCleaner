@@ -39,8 +39,6 @@ import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 public class MultipleStringPatternPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<StringPattern> implements
 		StringPatternChangeListener {
 
-	private static final long serialVersionUID = 1L;
-
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 

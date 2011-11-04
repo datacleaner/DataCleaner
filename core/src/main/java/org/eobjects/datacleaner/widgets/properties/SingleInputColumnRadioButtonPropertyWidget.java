@@ -59,7 +59,6 @@ import org.jdesktop.swingx.VerticalLayout;
 public class SingleInputColumnRadioButtonPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
-	private static final long serialVersionUID = 1L;
 	private final JXRadioGroup<JRadioButton> _radioGroup = new JXRadioGroup<JRadioButton>();
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;

@@ -32,8 +32,6 @@ import org.eobjects.datacleaner.util.LabelUtils;
 
 public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final JCheckBox _checkBox;
 	private final JComboBox _comboBox;
 

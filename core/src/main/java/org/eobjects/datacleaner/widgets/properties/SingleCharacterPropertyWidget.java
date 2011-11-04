@@ -29,8 +29,6 @@ import org.eobjects.datacleaner.widgets.CharTextField;
 
 public class SingleCharacterPropertyWidget extends AbstractPropertyWidget<Character> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final CharTextField _textField;
 	private final DCDocumentListener _listener = new DCDocumentListener() {
 		@Override

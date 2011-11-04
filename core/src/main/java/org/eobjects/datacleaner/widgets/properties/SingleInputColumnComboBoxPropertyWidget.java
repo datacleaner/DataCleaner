@@ -48,7 +48,6 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
-	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;

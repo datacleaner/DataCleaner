@@ -31,8 +31,6 @@ import org.jdesktop.swingx.JXDatePicker;
 
 public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final JXDatePicker _datePicker;
 
 	@Inject

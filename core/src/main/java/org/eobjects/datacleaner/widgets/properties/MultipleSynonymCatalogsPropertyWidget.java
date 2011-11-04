@@ -39,7 +39,6 @@ import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 public class MultipleSynonymCatalogsPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<SynonymCatalog>
 		implements SynonymCatalogChangeListener {
 
-	private static final long serialVersionUID = 1L;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 

@@ -44,8 +44,6 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  */
 public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datastore> implements DatastoreChangeListener {
 
-	private static final long serialVersionUID = 1L;
-
 	private final DatastoreCatalog _datastoreCatalog;
 	private final JComboBox _comboBox;
 	private final Class<?> _datastoreClass;

@@ -42,7 +42,6 @@ import org.jdesktop.swingx.VerticalLayout;
 
 public class MultipleCharPropertyWidget extends AbstractPropertyWidget<char[]> {
 
-	private static final long serialVersionUID = 1L;
 	private final DCPanel _textFieldPanel;
 
 	@Inject

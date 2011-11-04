@@ -41,8 +41,6 @@ import org.eobjects.datacleaner.widgets.FilenameTextField;
 
 public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final FilenameTextField _filenameField;
 	private final UserPreferences _userPreferences;
 

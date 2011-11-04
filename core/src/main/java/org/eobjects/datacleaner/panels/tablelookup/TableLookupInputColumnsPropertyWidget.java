@@ -54,8 +54,6 @@ import org.eobjects.metamodel.util.MutableRef;
  */
 public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
-	private static final long serialVersionUID = 1L;
-
 	private final WeakHashMap<InputColumn<?>, SourceColumnComboBox> _mappedColumnComboBoxes;
 	private final SingleDatastorePropertyWidget _datastorePropertyWidget;
 	private final ItemListener _datastoreItemListener;

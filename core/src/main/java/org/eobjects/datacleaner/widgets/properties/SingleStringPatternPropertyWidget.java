@@ -42,7 +42,6 @@ import org.jdesktop.swingx.HorizontalLayout;
 public class SingleStringPatternPropertyWidget extends AbstractPropertyWidget<StringPattern> implements
 		StringPatternChangeListener {
 
-	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;

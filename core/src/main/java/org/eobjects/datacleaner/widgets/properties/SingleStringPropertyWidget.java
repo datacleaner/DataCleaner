@@ -32,8 +32,6 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 
 public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
-	private static final long serialVersionUID = 1L;
-
 	private static final String[] MONOSPACE_MIME_TYPES = { "text/x-java-source", "application/x-javascript",
 			"text/javascript" };
 

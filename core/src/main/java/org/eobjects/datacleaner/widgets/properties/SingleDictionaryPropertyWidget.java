@@ -43,7 +43,6 @@ import org.jdesktop.swingx.HorizontalLayout;
 public class SingleDictionaryPropertyWidget extends AbstractPropertyWidget<Dictionary> implements
 		SynonymCatalogChangeListener {
 
-	private static final long serialVersionUID = 1L;
 	private final JComboBox _comboBox;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;

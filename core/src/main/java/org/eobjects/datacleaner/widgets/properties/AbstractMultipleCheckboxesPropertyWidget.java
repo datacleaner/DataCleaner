@@ -48,8 +48,6 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends AbstractPropertyWidget<E[]> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final ActionListener CHANGE_LISTENER = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {

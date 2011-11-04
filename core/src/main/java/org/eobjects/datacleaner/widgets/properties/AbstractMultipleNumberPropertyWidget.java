@@ -51,8 +51,6 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPropertyWidget<N> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final NumberFormat _numberFormat = NumberFormat.getInstance();
 	private final DCPanel _textFieldPanel;
 

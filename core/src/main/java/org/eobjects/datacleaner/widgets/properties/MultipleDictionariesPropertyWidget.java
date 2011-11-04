@@ -39,7 +39,6 @@ import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Dictionary> implements
 		DictionaryChangeListener {
 
-	private static final long serialVersionUID = 1L;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 

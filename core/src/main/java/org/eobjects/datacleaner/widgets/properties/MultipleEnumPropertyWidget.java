@@ -33,8 +33,6 @@ public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesProper
 		super(beanJobBuilder, propertyDescriptor, (Class<Enum<?>>) propertyDescriptor.getBaseType());
 	}
 
-	private static final long serialVersionUID = 1L;
-
 	@Override
 	protected Enum<?>[] getAvailableValues() {
 		@SuppressWarnings("unchecked")

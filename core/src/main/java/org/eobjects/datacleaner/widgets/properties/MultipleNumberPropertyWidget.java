@@ -26,8 +26,6 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 
 public class MultipleNumberPropertyWidget extends AbstractMultipleNumberPropertyWidget<Number[]> {
 
-	private static final long serialVersionUID = 1L;
-
 	@Inject
 	public MultipleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {

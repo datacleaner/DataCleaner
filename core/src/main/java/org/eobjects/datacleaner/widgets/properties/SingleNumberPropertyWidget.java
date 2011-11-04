@@ -33,8 +33,6 @@ import org.eobjects.datacleaner.util.NumberDocument;
 
 public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 
-	private static final long serialVersionUID = 1L;
-
 	private final boolean _primitive;
 	private final JTextField _textField;
 

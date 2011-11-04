@@ -39,8 +39,6 @@ import org.jdesktop.swingx.JXTextField;
  */
 public class SinglePatternPropertyWidget extends AbstractPropertyWidget<Pattern> implements DocumentListener {
 
-	private static final long serialVersionUID = 1L;
-
 	private final JXTextField _textField;
 
 	@Inject

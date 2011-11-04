@@ -63,8 +63,6 @@ import org.jdesktop.swingx.VerticalLayout;
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
-	private static final long serialVersionUID = 1L;
-
 	private final ActionListener checkBoxActionListener = new ActionListener() {
 
 		@Override

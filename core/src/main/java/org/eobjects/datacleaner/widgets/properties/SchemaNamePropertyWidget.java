@@ -19,16 +19,14 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.eobjects.metamodel.schema.MutableSchema;
 import org.eobjects.metamodel.schema.Schema;
@@ -42,25 +40,29 @@ import org.eobjects.metamodel.util.MutableRef;
  */
 public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 
-	private final JComboBox _comboBox;
+	private final DCComboBox<Schema> _comboBox;
 	private final MutableRef<Datastore> _datastoreRef;
 
 	public SchemaNamePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_comboBox = new JComboBox();
+		_comboBox = new DCComboBox<Schema>();
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
 		_comboBox.setEditable(false);
-		_comboBox.addItemListener(new ItemListener() {
+		addComboListener(new Listener<Schema>() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void onItemSelected(Schema item) {
 				fireValueChanged();
 			}
 		});
 		add(_comboBox);
 		_datastoreRef = new MutableRef<Datastore>();
-		
+
 		setValue(getCurrentValue());
+	}
+
+	public void addComboListener(Listener<Schema> listener) {
+		_comboBox.addListener(listener);
 	}
 
 	public void setDatastore(Datastore datastore) {
@@ -97,7 +99,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 	}
 
 	public Schema getSchema() {
-		Schema schema = (Schema) _comboBox.getSelectedItem();
+		Schema schema = _comboBox.getSelectedItem();
 		return schema;
 	}
 
@@ -112,7 +114,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 				con.close();
 			}
 		}
-		
+
 		if (getValue() == value) {
 			return;
 		}
@@ -136,7 +138,4 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 		_comboBox.setEditable(false);
 	}
 
-	public void addComboItemListener(ItemListener itemListener) {
-		_comboBox.addItemListener(itemListener);
-	}
 }

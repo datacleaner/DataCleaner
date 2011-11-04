@@ -19,14 +19,12 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.eobjects.metamodel.schema.MutableTable;
 import org.eobjects.metamodel.schema.Schema;
@@ -41,18 +39,18 @@ import org.eobjects.metamodel.util.MutableRef;
  */
 public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 
-	private final JComboBox _comboBox;
+	private final DCComboBox<Table> _comboBox;
 	private final MutableRef<Schema> _schemaRef;
 
 	public TableNamePropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_comboBox = new JComboBox();
+		_comboBox = new DCComboBox<Table>();
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer(false));
 		_comboBox.setEditable(false);
-		_comboBox.addItemListener(new ItemListener() {
+		addComboListener(new Listener<Table>() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void onItemSelected(Table item) {
 				fireValueChanged();
 			}
 		});
@@ -61,9 +59,10 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 
 		setValue(getCurrentValue());
 	}
+	
 
-	public void addComboItemListener(ItemListener itemListener) {
-		_comboBox.addItemListener(itemListener);
+	public void addComboListener(Listener<Table> listener) {
+		_comboBox.addListener(listener);
 	}
 
 	public void setSchema(Schema schema) {

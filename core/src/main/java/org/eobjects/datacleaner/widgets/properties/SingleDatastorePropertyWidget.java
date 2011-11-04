@@ -19,13 +19,10 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
@@ -35,8 +32,9 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.user.DatastoreChangeListener;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
-import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
  * {@link PropertyWidget} for single datastore properties. Shown as a combo box.
@@ -46,7 +44,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datastore> implements DatastoreChangeListener {
 
 	private final DatastoreCatalog _datastoreCatalog;
-	private final JComboBox _comboBox;
+	private final DCComboBox<Datastore> _comboBox;
 	private final Class<?> _datastoreClass;
 	private volatile DatastoreConnection _connection;
 
@@ -72,12 +70,13 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 				list.add(datastore);
 			}
 		}
-		_comboBox = new JComboBox(new ListComboBoxModel<Datastore>(list));
+		_comboBox = new DCComboBox<Datastore>(list);
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
-		_comboBox.addItemListener(new ItemListener() {
+
+		addComboListener(new Listener<Datastore>() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
-				openConnection(getValue());
+			public void onItemSelected(Datastore item) {
+				openConnection(item);
 				fireValueChanged();
 			}
 		});
@@ -88,8 +87,8 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 		add(_comboBox);
 	}
 
-	public void addComboItemListener(ItemListener listener) {
-		_comboBox.addItemListener(listener);
+	public void addComboListener(Listener<Datastore> listener) {
+		_comboBox.addListener(listener);
 	}
 
 	@Override

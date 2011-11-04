@@ -88,6 +88,16 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 	}
 
 	private final void init() {
+		final ImageManager imageManager = ImageManager.getInstance();
+		final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
+		for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
+			buildTaskPane(propertyTaskPane.getProperties(),
+					imageManager.getImageIcon(propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL),
+					propertyTaskPane.getTitle(), _beanJobBuilder);
+		}
+	}
+
+	protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
 		Set<ConfiguredPropertyDescriptor> configuredProperties = new TreeSet<ConfiguredPropertyDescriptor>(
 				_descriptor.getConfiguredProperties());
 
@@ -105,13 +115,12 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 			}
 		}
 
-		ImageManager imageManager = ImageManager.getInstance();
-		buildTaskPane(inputProperties, imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL),
-				"Input columns", _beanJobBuilder);
-		buildTaskPane(requiredProperties, imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL),
-				"Required properties", _beanJobBuilder);
-		buildTaskPane(optionalProperties, imageManager.getImageIcon("images/actions/edit.png", IconUtils.ICON_SIZE_SMALL),
-				"Optional properties", _beanJobBuilder);
+		final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
+		result.add(new ConfiguredPropertyTaskPane("Input columns", "images/model/column.png", inputProperties));
+		result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
+		result.add(new ConfiguredPropertyTaskPane("Optional properties", "images/actions/edit.png", optionalProperties));
+
+		return result;
 	}
 
 	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,

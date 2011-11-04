@@ -103,12 +103,21 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 
 	@Override
 	protected void setValue(String value) {
+		final Datastore datastore = _datastoreRef.get();
+		if (value == null && datastore != null) {
+			DatastoreConnection con = datastore.openConnection();
+			try {
+				value = con.getSchemaNavigator().getDefaultSchema().getName();
+			} finally {
+				con.close();
+			}
+		}
+		
 		if (getValue() == value) {
 			return;
 		}
 
 		final Schema schema;
-		Datastore datastore = _datastoreRef.get();
 		if (value == null) {
 			schema = null;
 		} else if (datastore == null) {

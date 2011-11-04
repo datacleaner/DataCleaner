@@ -185,9 +185,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 		if (value != null) {
 			for (InputColumn<?> col : value) {
-				DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(col.getName(), isEnabled(col, value));
-				cb.setValue(col);
-				_checkBoxes.add(cb);
+				if (col != null) {
+					DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(col.getName(), isEnabled(col, value));
+					cb.setValue(col);
+					_checkBoxes.add(cb);
+				}
 			}
 		}
 

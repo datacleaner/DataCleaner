@@ -39,6 +39,8 @@ import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.properties.MinimalPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.MutableColumn;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.EqualsBuilder;
 import org.eobjects.metamodel.util.MutableRef;
@@ -84,6 +86,16 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 		if (currentValue != null) {
 			setValue(currentValue);
 		}
+
+		String[] currentMappedColumnsValue = (String[]) transformerJobBuilder.getConfiguredProperty(mappedColumnsProperty);
+		if (currentValue != null && currentMappedColumnsValue != null) {
+			int minLength = Math.min(currentValue.length, currentMappedColumnsValue.length);
+			for (int i = 0; i < minLength; i++) {
+				InputColumn<?> inputColumn = currentValue[i];
+				String mappedColumnName = currentMappedColumnsValue[i];
+				createComboBox(inputColumn, new MutableColumn(mappedColumnName));
+			}
+		}
 	}
 
 	public void setTable(Table table) {
@@ -108,9 +120,31 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 		return false;
 	}
 
+	private SourceColumnComboBox createComboBox(InputColumn<?> inputColumn, Column mappedColumn) {
+		final SourceColumnComboBox sourceColumnComboBox = new SourceColumnComboBox();
+		sourceColumnComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				_mappedColumnNamesPropertyWidget.fireValueChanged();
+			}
+		});
+		_mappedColumnComboBoxes.put(inputColumn, sourceColumnComboBox);
+		if (mappedColumn != null) {
+			sourceColumnComboBox.setEditable(true);
+			sourceColumnComboBox.setSelectedItem(mappedColumn);
+			sourceColumnComboBox.setEditable(false);
+		}
+		return sourceColumnComboBox;
+	}
+
 	@Override
 	protected JComponent decorateCheckBox(final DCCheckBox<InputColumn<?>> checkBox) {
-		final SourceColumnComboBox sourceColumnComboBox = new SourceColumnComboBox();
+		final SourceColumnComboBox sourceColumnComboBox;
+		if (_mappedColumnComboBoxes.containsKey(checkBox.getValue())) {
+			sourceColumnComboBox = _mappedColumnComboBoxes.get(checkBox.getValue());
+		} else {
+			sourceColumnComboBox = createComboBox(checkBox.getValue(), null);
+		}
 		checkBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -124,14 +158,6 @@ public class TableLookupInputColumnsPropertyWidget extends MultipleInputColumnsP
 		}
 
 		sourceColumnComboBox.setVisible(checkBox.isSelected());
-		_mappedColumnComboBoxes.put(checkBox.getValue(), sourceColumnComboBox);
-
-		sourceColumnComboBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				_mappedColumnNamesPropertyWidget.fireValueChanged();
-			}
-		});
 
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());

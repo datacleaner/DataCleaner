@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.apache.commons.lang.ArrayUtils;
 import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.OdbDatastore;
+import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MockInputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
@@ -145,7 +145,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
 						new TextFileSynonymCatalog("foo", new File("foo"), true, "UTF8"),
 						new TextFileSynonymCatalog("bar", new File("bar"), true, "UTF8") });
 
-		performAssertions(propertyWidgetFactory, "Datastore property", SingleDatastorePropertyWidget.class, null, new OdbDatastore("bar", "bar.odb"));
+		performAssertions(propertyWidgetFactory, "Datastore property", SingleDatastorePropertyWidget.class, null, new ExcelDatastore("my ds", "target/foobar.xlsx"));
 		
 		performAssertions(propertyWidgetFactory, "Updateable datastore property", SingleDatastorePropertyWidget.class, null, new CsvDatastore("foo", "foo.csv"));
 	}

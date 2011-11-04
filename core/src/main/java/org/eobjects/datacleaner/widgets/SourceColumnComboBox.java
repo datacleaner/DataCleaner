@@ -74,7 +74,13 @@ public class SourceColumnComboBox extends JComboBox {
 	}
 
 	public void setModel(Datastore datastore, Table table) {
+		final String previousColumnName;
 		final Column previousItem = getSelectedItem();
+		if (previousItem == null) {
+			previousColumnName = null;
+		} else {
+			previousColumnName = previousItem.getName();
+		}
 
 		if (getTable() == table) {
 			return;
@@ -97,7 +103,7 @@ public class SourceColumnComboBox extends JComboBox {
 			Column[] columns = table.getColumns();
 			for (Column column : columns) {
 				comboBoxList.add(column);
-				if (column == previousItem) {
+				if (column.getName().equals(previousColumnName)) {
 					selectedIndex = comboBoxList.size() - 1;
 				}
 			}

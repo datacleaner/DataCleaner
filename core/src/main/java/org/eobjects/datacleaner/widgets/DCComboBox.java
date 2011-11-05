@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
@@ -57,6 +58,10 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 
 	public DCComboBox(List<E> items) {
 		this(new ListComboBoxModel<E>(items));
+	}
+	
+	public DCComboBox(Collection<E> items) {
+		this(new ArrayList<E>(items));
 	}
 
 	public DCComboBox(E[] items) {

@@ -52,6 +52,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.metamodel.csv.CsvConfiguration;
@@ -184,9 +185,9 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 				onSettingsUpdated(false, false);
 			}
 		});
-		_encodingComboBox.addItemListener(new ItemListener() {
+		_encodingComboBox.addListener(new Listener<String>() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void onItemSelected(String item) {
 				onSettingsUpdated(true, false);
 			}
 		});

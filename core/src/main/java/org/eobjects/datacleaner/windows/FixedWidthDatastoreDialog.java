@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +51,7 @@ import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
@@ -103,9 +102,9 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		});
 
 		_encodingComboBox = new CharSetEncodingComboBox();
-		_encodingComboBox.addItemListener(new ItemListener() {
+		_encodingComboBox.addListener(new Listener<String>() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void onItemSelected(String item) {
 				onSettingsUpdated(false);
 			}
 		});

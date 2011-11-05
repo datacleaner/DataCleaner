@@ -23,8 +23,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComboBox;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +34,7 @@ import com.ibm.icu.text.CharsetMatch;
  * 
  * @author Kasper Sørensen
  */
-public class CharSetEncodingComboBox extends JComboBox {
+public class CharSetEncodingComboBox extends DCComboBox<String> {
 
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(CharSetEncodingComboBox.class);

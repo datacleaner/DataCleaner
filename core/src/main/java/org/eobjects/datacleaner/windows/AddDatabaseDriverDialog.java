@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -49,6 +48,8 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
@@ -66,7 +67,7 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 	private final ImageManager imageManager = ImageManager.getInstance();
 	private final List<FilenameTextField> _filenameTextFields;
 	private final DCPanel _filesPanel;
-	private final JComboBox _driverClassNameComboBox;
+	private final DCComboBox<String> _driverClassNameComboBox;
 	private final DatabaseDriverCatalog _databaseDriverCatalog;
 	private final JButton _addDriverButton;
 	private final DCLabel _statusLabel = DCLabel.bright("");
@@ -89,11 +90,11 @@ public class AddDatabaseDriverDialog extends AbstractDialog {
 		for (DatabaseDriverDescriptor dd : drivers) {
 			classNames.add(dd.getDriverClassName());
 		}
-		_driverClassNameComboBox = new JComboBox(classNames.toArray());
+		_driverClassNameComboBox = new DCComboBox<String>(classNames);
 		_driverClassNameComboBox.setEditable(true);
-		_driverClassNameComboBox.addActionListener(new ActionListener() {
+		_driverClassNameComboBox.addListener(new Listener<String>() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void onItemSelected(String item) {
 				updateStatus();
 			}
 		});

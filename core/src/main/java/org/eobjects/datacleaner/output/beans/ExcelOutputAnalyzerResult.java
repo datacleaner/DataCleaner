@@ -21,13 +21,14 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.io.File;
 
-import org.eobjects.analyzer.connection.DatastoreConnection;
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.metamodel.schema.Table;
 
-class ExcelOutputAnalyzerResult implements OutputAnalyzerResult {
+class ExcelOutputAnalyzerResult implements WriteDataResult {
 
 	private static final long serialVersionUID = 1L;
 

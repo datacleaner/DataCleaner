@@ -27,6 +27,7 @@ import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
@@ -38,9 +39,9 @@ import org.eobjects.datacleaner.output.datastore.DatastoreOutputWriterFactory;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
 
-@AnalyzerBean("Write to DataCleaner storage")
+@AnalyzerBean("Create staging table")
 @Alias("Write to Datastore")
-@Description("Write data to DataCleaner's embedded database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
+@Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
 @Categorized(WriteDataCategory.class)
 public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
@@ -102,7 +103,7 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	}
 
 	@Override
-	protected OutputAnalyzerResult getResultInternal(int rowCount) {
+	protected WriteDataResult getResultInternal(int rowCount) {
 		return new DatastoreOutputAnalyzerResult(rowCount, datastoreName, tableName);
 	}
 

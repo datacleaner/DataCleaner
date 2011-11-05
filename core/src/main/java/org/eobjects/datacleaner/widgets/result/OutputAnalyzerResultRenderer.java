@@ -32,15 +32,15 @@ import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.connection.DatastoreConnection;
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
-import org.eobjects.datacleaner.output.beans.OutputAnalyzerResult;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -54,7 +54,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 @RendererBean(SwingRenderingFormat.class)
-public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyzerResult, JComponent> {
+public class OutputAnalyzerResultRenderer extends AbstractRenderer<WriteDataResult, JComponent> {
 
 	private final ImageManager imageManager = ImageManager.getInstance();
 
@@ -68,7 +68,7 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 	DatastoreCatalog _datastoreCatalog;
 
 	@Override
-	public JComponent render(OutputAnalyzerResult result) {
+	public JComponent render(WriteDataResult result) {
 		final EmptyBorder border = new EmptyBorder(10, 10, 10, 10);
 
 		int rowCount = result.getWrittenRowCount();
@@ -91,7 +91,7 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<OutputAnalyze
 		}
 	}
 
-	private DCPanel createButtonPanel(final OutputAnalyzerResult result) {
+	private DCPanel createButtonPanel(final WriteDataResult result) {
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 4));
 

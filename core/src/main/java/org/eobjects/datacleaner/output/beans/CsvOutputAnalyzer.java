@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.io.File;
 
+import org.eobjects.analyzer.beans.api.Alias;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
@@ -28,6 +29,7 @@ import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.FileProperty;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -35,7 +37,8 @@ import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 
-@AnalyzerBean("Write to CSV file")
+@AnalyzerBean("Create CSV file")
+@Alias("Write to CSV file")
 @Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
 @Categorized(WriteDataCategory.class)
 public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
@@ -73,7 +76,7 @@ public class CsvOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 	}
 
 	@Override
-	protected OutputAnalyzerResult getResultInternal(int rowCount) {
+	protected WriteDataResult getResultInternal(int rowCount) {
 		CsvOutputAnalyzerResult result = new CsvOutputAnalyzerResult(file, separatorChar, quoteChar, rowCount);
 		return result;
 	}

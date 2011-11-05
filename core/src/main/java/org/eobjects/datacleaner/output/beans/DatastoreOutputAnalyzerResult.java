@@ -21,16 +21,17 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.util.Arrays;
 
-import org.eobjects.analyzer.connection.DatastoreConnection;
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DatastoreOutputAnalyzerResult implements OutputAnalyzerResult {
+class DatastoreOutputAnalyzerResult implements WriteDataResult {
 
 	private static final long serialVersionUID = 1L;
 

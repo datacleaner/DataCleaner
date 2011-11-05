@@ -19,38 +19,17 @@
  */
 package org.eobjects.datacleaner.output.beans;
 
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.metamodel.schema.Table;
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 
 /**
  * Represents the output of an output analyzer, which is an analyzer that writes
  * data to a target destination.
  * 
  * @author Kasper Sørensen
+ * 
+ * @deprecated use {@link WriteDataResult} instead.
  */
-public interface OutputAnalyzerResult extends AnalyzerResult {
+@Deprecated
+public interface OutputAnalyzerResult extends WriteDataResult {
 
-	/**
-	 * @return the amount of rows that was written.
-	 */
-	public int getWrittenRowCount();
-
-	/**
-	 * @param datastoreCatalog
-	 *            the datastore catalog that the user has configured.
-	 * @return a datastore that can be used to access the target destination, or
-	 *         null of it is not available (eg. destination not reachable or no
-	 *         rows written).
-	 */
-	public Datastore getDatastore(DatastoreCatalog datastoreCatalog);
-
-	/**
-	 * @param datastore
-	 *            the datastore that was returned by
-	 *            {@link #getDatastore(DatastoreCatalog)}.
-	 * @return a table that can be used for previewing the data written.
-	 */
-	public Table getPreviewTable(Datastore datastore);
 }

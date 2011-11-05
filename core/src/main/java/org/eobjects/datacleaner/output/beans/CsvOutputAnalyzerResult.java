@@ -21,15 +21,15 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.io.File;
 
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
-
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.FileHelper;
 
-class CsvOutputAnalyzerResult implements OutputAnalyzerResult {
+class CsvOutputAnalyzerResult implements WriteDataResult {
 
 	private static final long serialVersionUID = 1L;
 	private final int _rowCount;

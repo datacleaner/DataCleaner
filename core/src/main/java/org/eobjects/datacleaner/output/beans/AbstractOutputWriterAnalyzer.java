@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Initialize;
+import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
@@ -32,7 +33,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 
-public abstract class AbstractOutputWriterAnalyzer implements Analyzer<OutputAnalyzerResult> {
+public abstract class AbstractOutputWriterAnalyzer implements Analyzer<WriteDataResult> {
 
 	private final AtomicInteger rowCount = new AtomicInteger(0);
 
@@ -47,12 +48,12 @@ public abstract class AbstractOutputWriterAnalyzer implements Analyzer<OutputAna
 	}
 
 	@Override
-	public final OutputAnalyzerResult getResult() {
+	public final WriteDataResult getResult() {
 		outputWriter.close();
 		return getResultInternal(rowCount.get());
 	}
 
-	protected abstract OutputAnalyzerResult getResultInternal(int rowCount);
+	protected abstract WriteDataResult getResultInternal(int rowCount);
 
 	public abstract OutputWriter createOutputWriter();
 

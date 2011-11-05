@@ -152,9 +152,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 		List<String> result = new ArrayList<String>();
 		for (SourceColumnComboBox comboBox : _comboBoxes) {
 			Column column = comboBox.getSelectedItem();
-			if (column == null) {
-				result.add(null);
-			} else {
+			if (column != null) {
 				result.add(column.getName());
 			}
 		}

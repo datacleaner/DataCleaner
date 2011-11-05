@@ -22,7 +22,9 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
@@ -121,6 +123,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 		sourceColumnComboBox.addListener(new Listener<Column>() {
 			@Override
 			public void onItemSelected(Column item) {
+				fireValueChanged();
 				_mappedColumnNamesPropertyWidget.fireValueChanged();
 			}
 		});
@@ -217,17 +220,50 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 		};
 	}
 
-	private String[] getMappedColumnNames() {
-		final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
-		final String[] result = new String[inputColumns.length];
-		for (int i = 0; i < result.length; i++) {
-			SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumns[i]);
-			try {
-				result[i] = comboBox.getSelectedItem().getName();
-			} catch (NullPointerException e) {
-				// both comboBox or selected item might be null, ignore it
+	@Override
+	public InputColumn<?>[] getValue() {
+		InputColumn<?>[] checkedInputColumns = super.getValue();
+		List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+		for (InputColumn<?> inputColumn : checkedInputColumns) {
+			// exclude input columns that have not been mapped yet
+			final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
+			if (comboBox != null) {
+				if (comboBox.getSelectedItem() != null) {
+					result.add(inputColumn);
+				}
 			}
 		}
-		return result;
+		return result.toArray(new InputColumn[result.size()]);
+	}
+
+	private String[] getMappedColumnNames() {
+		final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
+		final List<String> result = new ArrayList<String>();
+		for (InputColumn<?> inputColumn : inputColumns) {
+			SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
+			if (comboBox != null) {
+				Column column = comboBox.getSelectedItem();
+				if (column != null) {
+					result.add(column.getName());
+				}
+			}
+		}
+		return result.toArray(new String[result.size()]);
+	}
+	
+	@Override
+	protected void selectAll() {
+		for (SourceColumnComboBox sourceColumnComboBox  : _mappedColumnComboBoxes.values()) {
+			sourceColumnComboBox.setVisible(true);
+		}
+		super.selectAll();
+	}
+	
+	@Override
+	protected void selectNone() {
+		for (SourceColumnComboBox sourceColumnComboBox  : _mappedColumnComboBoxes.values()) {
+			sourceColumnComboBox.setVisible(false);
+		}
+		super.selectNone();
 	}
 }

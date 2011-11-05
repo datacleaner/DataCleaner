@@ -64,7 +64,6 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		SourceColumnChangeListener, TransformerChangeListener {
 
 	private final ActionListener checkBoxActionListener = new ActionListener() {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			fireValueChanged();
@@ -74,22 +73,14 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	private final ActionListener selectAllActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			for (JCheckBox cb : _checkBoxes) {
-				if (cb.isEnabled()) {
-					cb.setSelected(true);
-				}
-			}
-			fireValueChanged();
+			selectAll();
 		}
 	};
 
 	private final ActionListener selectNoneActionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			for (JCheckBox cb : _checkBoxes) {
-				cb.setSelected(false);
-			}
-			fireValueChanged();
+			selectNone();
 		}
 	};
 
@@ -353,5 +344,22 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	protected void setValue(InputColumn<?>[] value) {
 		updateComponents(value);
 		updateUI();
+	}
+	
+	protected void selectAll() {
+		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes) {
+			if (cb.isEnabled()) {
+				cb.setSelected(true);
+			}
+		}
+		fireValueChanged();
+	}
+	
+	protected void selectNone() {
+		fireValueChanged();
+		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes) {
+			cb.setSelected(false);
+		}
+		fireValueChanged();
 	}
 }

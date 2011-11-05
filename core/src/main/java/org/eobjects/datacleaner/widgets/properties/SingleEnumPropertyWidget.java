@@ -19,20 +19,18 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.inject.Inject;
-import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
 import org.eobjects.metamodel.util.CollectionUtils;
 
 public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<?>> {
 
-	private final JComboBox _comboBox;
+	private final DCComboBox<Enum<?>> _comboBox;
 
 	@Inject
 	public SingleEnumPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
@@ -45,15 +43,15 @@ public final class SingleEnumPropertyWidget extends AbstractPropertyWidget<Enum<
 			enumConstants = CollectionUtils.array(new Enum<?>[] { null }, enumConstants);
 		}
 
-		_comboBox = new JComboBox(enumConstants);
+		_comboBox = new DCComboBox<Enum<?>>(enumConstants);
 		_comboBox.setRenderer(new EnumComboBoxListRenderer());
 
 		Enum<?> currentValue = getCurrentValue();
 		_comboBox.setSelectedItem(currentValue);
 
-		_comboBox.addActionListener(new ActionListener() {
+		_comboBox.addListener(new Listener<Enum<?>>() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void onItemSelected(Enum<?> item) {
 				fireValueChanged();
 			}
 		});

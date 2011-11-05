@@ -19,13 +19,10 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
@@ -39,6 +36,8 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.table.ColumnHighlighter;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -74,11 +73,11 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 		buttonPanel.setLayout(new HorizontalLayout(4));
 
 		if (highlightedColumns.length == 1 && inputColumns.size() > 1) {
-			final JComboBox comboBox = new JComboBox(VIEWS);
-			comboBox.addActionListener(new ActionListener() {
+			final DCComboBox<String> comboBox = new DCComboBox<String>(VIEWS);
+			comboBox.addListener(new Listener<String>() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (comboBox.getSelectedItem() == VIEWS[0]) {
+				public void onItemSelected(String item) {
+					if (item == VIEWS[0]) {
 						applyDetailedView(table, result);
 					} else {
 						applyDistinctValuesView(table, result);

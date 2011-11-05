@@ -24,16 +24,17 @@ import java.awt.event.ActionListener;
 
 import javax.inject.Inject;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.util.LabelUtils;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 
 public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean> {
 
 	private final JCheckBox _checkBox;
-	private final JComboBox _comboBox;
+	private final DCComboBox<String> _comboBox;
 
 	@Inject
 	public SingleBooleanPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
@@ -60,7 +61,7 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 			add(_checkBox);
 		} else {
 			_checkBox = null;
-			_comboBox = new JComboBox(new String[] { "true", "false", LabelUtils.NULL_LABEL });
+			_comboBox = new DCComboBox<String>(new String[] { "true", "false", LabelUtils.NULL_LABEL });
 
 			if (currentValue == null) {
 				_comboBox.setSelectedItem(LabelUtils.NULL_LABEL);
@@ -68,9 +69,9 @@ public class SingleBooleanPropertyWidget extends AbstractPropertyWidget<Boolean>
 				_comboBox.setSelectedItem(currentValue.toString());
 			}
 
-			_comboBox.addActionListener(new ActionListener() {
+			_comboBox.addListener(new Listener<String>() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void onItemSelected(String item) {
 					fireValueChanged();
 				}
 			});

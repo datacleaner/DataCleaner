@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -35,6 +34,8 @@ import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.SynonymCatalogChangeListener;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.ReferenceDataComboBoxListRenderer;
 import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -42,7 +43,7 @@ import org.jdesktop.swingx.HorizontalLayout;
 public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<SynonymCatalog> implements
 		SynonymCatalogChangeListener {
 
-	private final JComboBox _comboBox;
+	private final DCComboBox<SynonymCatalog> _comboBox;
 	private final MutableReferenceDataCatalog _referenceDataCatalog;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 
@@ -54,7 +55,7 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 		_referenceDataCatalog = referenceDataCatalog;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 
-		_comboBox = new JComboBox();
+		_comboBox = new DCComboBox<SynonymCatalog>();
 		_comboBox.setRenderer(new ReferenceDataComboBoxListRenderer());
 		_comboBox.setEditable(false);
 
@@ -70,9 +71,9 @@ public class SingleSynonymCatalogPropertyWidget extends AbstractPropertyWidget<S
 		SynonymCatalog currentValue = getCurrentValue();
 		_comboBox.setSelectedItem(currentValue);
 
-		_comboBox.addActionListener(new ActionListener() {
+		_comboBox.addListener(new Listener<SynonymCatalog>() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void onItemSelected(SynonymCatalog item) {
 				fireValueChanged();
 			}
 		});

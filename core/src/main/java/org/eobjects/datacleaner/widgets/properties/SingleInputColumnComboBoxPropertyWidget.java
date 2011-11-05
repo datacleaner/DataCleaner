@@ -19,13 +19,10 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.JComboBox;
 
 import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
@@ -36,6 +33,8 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerChangeListener;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
@@ -48,7 +47,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWidget<InputColumn<?>> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
-	private final JComboBox _comboBox;
+	private final DCComboBox<InputColumn<?>> _comboBox;
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DataTypeFamily _dataTypeFamily;
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
@@ -59,11 +58,11 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 	public SingleInputColumnComboBoxPropertyWidget(AnalysisJobBuilder analysisJobBuilder,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_comboBox = new JComboBox();
+		_comboBox = new DCComboBox<InputColumn<?>>();
 		_comboBox.setRenderer(new SchemaStructureComboBoxListRenderer());
-		_comboBox.addItemListener(new ItemListener() {
+		_comboBox.addListener(new Listener<InputColumn<?>>() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void onItemSelected(InputColumn<?> item) {
 				fireValueChanged();
 			}
 		});

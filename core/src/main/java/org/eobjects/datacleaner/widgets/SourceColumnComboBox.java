@@ -25,10 +25,9 @@ import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.util.SchemaComparator;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Schema;
@@ -44,7 +43,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  * 
  * @author Kasper Sørensen
  */
-public class SourceColumnComboBox extends JComboBox {
+public class SourceColumnComboBox extends DCComboBox<Column> {
 
 	private static final long serialVersionUID = 1L;
 

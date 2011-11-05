@@ -22,8 +22,6 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Collection;
 import java.util.WeakHashMap;
 
@@ -34,6 +32,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.MutableColumn;
@@ -119,9 +118,9 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
 	private SourceColumnComboBox createComboBox(InputColumn<?> inputColumn, Column mappedColumn) {
 		final SourceColumnComboBox sourceColumnComboBox = new SourceColumnComboBox();
-		sourceColumnComboBox.addItemListener(new ItemListener() {
+		sourceColumnComboBox.addListener(new Listener<Column>() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
+			public void onItemSelected(Column item) {
 				_mappedColumnNamesPropertyWidget.fireValueChanged();
 			}
 		});

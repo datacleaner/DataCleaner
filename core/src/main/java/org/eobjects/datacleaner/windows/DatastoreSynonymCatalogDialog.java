@@ -24,8 +24,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -39,9 +37,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.util.SchemaNavigator;
@@ -54,6 +52,7 @@ import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.tree.SchemaTree;
@@ -108,14 +107,18 @@ public final class DatastoreSynonymCatalogDialog extends AbstractDialog {
 				if (datastoreName != null) {
 					_datastore = _datastoreCatalog.getDatastore(datastoreName);
 					_masterTermColumnComboBox.setModel(_datastore);
-					_masterTermColumnComboBox.addItemListener(new ItemListener() {
+					_masterTermColumnComboBox.addListener(new Listener<Column>() {
 
 						@Override
-						public void itemStateChanged(ItemEvent itemEvent) {
-							Table table = _masterTermColumnComboBox.getSelectedItem().getTable();
+						public void onItemSelected(Column column) {
+							final Table table;
+							if (column == null) {
+								table = null;
+							} else {
+								table = column.getTable();
+							}
 							_synonymColumnsPanel.updateSourceComboBoxes(_datastore, table);
 							_synonymColumnsPanel.updateUI();
-
 						}
 					});
 

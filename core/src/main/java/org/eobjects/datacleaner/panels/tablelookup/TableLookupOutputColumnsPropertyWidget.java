@@ -33,6 +33,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.eobjects.metamodel.schema.Column;
@@ -110,6 +111,12 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 
 	protected void addComboBox(String value, boolean updateUI) {
 		SourceColumnComboBox comboBox = new SourceColumnComboBox();
+		comboBox.addListener(new Listener<Column>() {
+			@Override
+			public void onItemSelected(Column item) {
+				fireValueChanged();
+			}
+		});
 		final Column column;
 		Table table = _tableRef.get();
 		if (value == null) {
@@ -157,7 +164,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 	@Override
 	protected void setValue(String[] values) {
 		if (values == null) {
-			values = new String[2];
+			values = new String[1];
 		}
 		final String[] previousValues = getValue();
 		if (!EqualsBuilder.equals(values, previousValues)) {

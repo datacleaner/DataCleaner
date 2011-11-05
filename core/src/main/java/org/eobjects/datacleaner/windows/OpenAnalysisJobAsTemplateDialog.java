@@ -53,6 +53,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.metamodel.schema.Column;
@@ -137,10 +138,10 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 			final SourceColumnComboBox comboBox = new SourceColumnComboBox();
 			comboBox.setEnabled(false);
 			comboBox.setName(columnPath);
-			comboBox.addActionListener(new ActionListener() {
+			comboBox.addListener(new Listener<Column>() {
+
 				@Override
-				public void actionPerformed(ActionEvent e) {
-					Column col = comboBox.getSelectedItem();
+				public void onItemSelected(Column col) {
 					if (col != null) {
 						// make sure all comboboxes in a group use the same
 						// table

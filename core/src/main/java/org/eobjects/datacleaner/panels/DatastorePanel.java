@@ -42,6 +42,7 @@ import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
@@ -285,6 +286,10 @@ public class DatastorePanel extends DCPanel {
 				return jdbcUrl;
 			}
 			return datasourceJndiUrl;
+		} else if (datastore instanceof MongoDbDatastore) {
+			MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
+			return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - "
+					+ mongoDbDatastore.getDatabaseName();
 		} else if (datastore instanceof CompositeDatastore) {
 			List<? extends Datastore> datastores = ((CompositeDatastore) datastore).getDatastores();
 			StringBuilder sb = new StringBuilder();

@@ -163,7 +163,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 
 	@Override
 	protected void setValue(String[] values) {
-		if (values == null) {
+		if (values == null || values.length == 0) {
 			values = new String[1];
 		}
 		final String[] previousValues = getValue();

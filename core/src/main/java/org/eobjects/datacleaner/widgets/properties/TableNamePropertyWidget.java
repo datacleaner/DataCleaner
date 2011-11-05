@@ -29,6 +29,7 @@ import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.eobjects.metamodel.schema.MutableTable;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.MutableRef;
 
 /**
@@ -72,6 +73,7 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 			_comboBox.setModel(new DefaultComboBoxModel(new Object[1]));
 		} else {
 			Table[] tables = schema.getTables();
+			tables = CollectionUtils.array(new Table[1], tables);
 			_comboBox.setModel(new DefaultComboBoxModel(tables));
 
 			if (previousValue != null) {

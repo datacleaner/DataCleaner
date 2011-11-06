@@ -28,6 +28,7 @@ import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
+import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
@@ -43,7 +44,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 @Alias("Write to Datastore")
 @Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
 @Categorized(WriteDataCategory.class)
-public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
+public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	/**
 	 * Write mode for the datastore output analyzer. Determines if the datastore
@@ -104,7 +105,8 @@ public class DatastoreOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Override
 	protected WriteDataResult getResultInternal(int rowCount) {
-		return new DatastoreOutputAnalyzerResult(rowCount, datastoreName, tableName);
+		WriteDataResult result = new WriteDataResultImpl(rowCount, datastoreName, null, tableName);
+		return result;
 	}
 
 	public String getDatastoreName() {

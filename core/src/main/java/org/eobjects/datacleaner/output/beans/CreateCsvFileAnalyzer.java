@@ -30,35 +30,44 @@ import org.eobjects.analyzer.beans.api.FileProperty;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
+import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
+import org.eobjects.analyzer.connection.CsvDatastore;
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
-import org.eobjects.datacleaner.output.excel.ExcelOutputWriterFactory;
+import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
+import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.metamodel.util.FileHelper;
 
-@AnalyzerBean("Create Excel spreadsheet")
-@Alias("Write to Excel spreadsheet")
-@Description("Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
+@AnalyzerBean("Create CSV file")
+@Alias("Write to CSV file")
+@Description("Write data to a CSV file on your harddrive. CSV file writing is extremely fast and the file format is commonly used in many tools. But CSV files do not preserve data types.")
 @Categorized(WriteDataCategory.class)
-public class ExcelOutputAnalyzer extends AbstractOutputWriterAnalyzer {
+public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Configured
-	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "xls", "xlsx" })
-	File file = new File("DataCleaner-staging.xlsx");
+	char separatorChar = ',';
 
 	@Configured
-	String sheetName;
+	char quoteChar = '"';
+
+	@Configured
+	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
+	File file;
 
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
 		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName;
+		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName
+				+ ".csv");
 	}
 
 	@Override
 	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
 		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-		sheetName = "output-" + dsName + "-" + descriptor.getDisplayName();
+		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + ".csv");
 	}
 
 	@Override
@@ -67,20 +76,16 @@ public class ExcelOutputAnalyzer extends AbstractOutputWriterAnalyzer {
 		for (int i = 0; i < headers.length; i++) {
 			headers[i] = columns[i].getName();
 		}
-		return ExcelOutputWriterFactory.getWriter(file.getPath(), sheetName, columns);
+		return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, columns);
 	}
 
 	@Override
 	protected WriteDataResult getResultInternal(int rowCount) {
-		ExcelOutputAnalyzerResult result = new ExcelOutputAnalyzerResult(file, sheetName, rowCount);
-		return result;
+		Datastore datastore = new CsvDatastore(file.getName(), file.getAbsolutePath(), quoteChar, separatorChar, FileHelper.DEFAULT_ENCODING);
+		return new WriteDataResultImpl(rowCount, datastore, null, null);
 	}
 
 	public void setFile(File file) {
 		this.file = file;
-	}
-
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
 	}
 }

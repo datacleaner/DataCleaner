@@ -35,7 +35,7 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.output.beans.CsvOutputAnalyzer;
+import org.eobjects.datacleaner.output.beans.CreateCsvFileAnalyzer;
 import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -82,8 +82,8 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 		ajb.setDatastore(_datastore);
 		ajb.addSourceColumns(_table.getColumns());
 
-		final AnalyzerJobBuilder<CsvOutputAnalyzer> csvOutputAnalyzerBuilder = ajb
-				.addAnalyzer(CsvOutputAnalyzer.class);
+		final AnalyzerJobBuilder<CreateCsvFileAnalyzer> csvOutputAnalyzerBuilder = ajb
+				.addAnalyzer(CreateCsvFileAnalyzer.class);
 		csvOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
 		File directory = _userPreferences.getConfiguredFileDirectory();
 		csvOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _table.getName() + ".csv"));
@@ -110,7 +110,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
 			@Override
 			protected JComponent getDialogContent() {
-				final AnalyzerBeanDescriptor<CsvOutputAnalyzer> descriptor = csvOutputAnalyzerBuilder.getDescriptor();
+				final AnalyzerBeanDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder.getDescriptor();
 				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
 				tabbedPane.addTab(descriptor.getDisplayName(),
 						IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE), presenter.createJComponent());

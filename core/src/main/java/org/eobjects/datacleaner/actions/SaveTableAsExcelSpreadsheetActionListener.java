@@ -35,7 +35,7 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.output.beans.ExcelOutputAnalyzer;
+import org.eobjects.datacleaner.output.beans.CreateExcelSpreadsheetAnalyzer;
 import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -83,8 +83,8 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 		ajb.setDatastore(_datastore);
 		ajb.addSourceColumns(_table.getColumns());
 
-		final AnalyzerJobBuilder<ExcelOutputAnalyzer> excelOutputAnalyzerBuilder = ajb
-				.addAnalyzer(ExcelOutputAnalyzer.class);
+		final AnalyzerJobBuilder<CreateExcelSpreadsheetAnalyzer> excelOutputAnalyzerBuilder = ajb
+				.addAnalyzer(CreateExcelSpreadsheetAnalyzer.class);
 		excelOutputAnalyzerBuilder.addInputColumns(ajb.getSourceColumns());
 		File directory = _userPreferences.getConfiguredFileDirectory();
 		excelOutputAnalyzerBuilder.getConfigurableBean().setFile(new File(directory, _datastore.getName() + ".xlsx"));
@@ -112,7 +112,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 
 			@Override
 			protected JComponent getDialogContent() {
-				final AnalyzerBeanDescriptor<ExcelOutputAnalyzer> descriptor = excelOutputAnalyzerBuilder.getDescriptor();
+				final AnalyzerBeanDescriptor<CreateExcelSpreadsheetAnalyzer> descriptor = excelOutputAnalyzerBuilder.getDescriptor();
 				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
 				tabbedPane.addTab(descriptor.getDisplayName(),
 						IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE), presenter.createJComponent());

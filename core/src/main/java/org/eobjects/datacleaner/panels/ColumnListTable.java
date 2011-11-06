@@ -186,7 +186,12 @@ public final class ColumnListTable extends DCPanel {
 			final DataTypeFamily dataTypeFamily = column.getDataTypeFamily();
 			final String dataTypeString;
 			if (dataTypeFamily == null || dataTypeFamily == DataTypeFamily.UNDEFINED) {
-				dataTypeString = column.getDataType().getSimpleName();
+				Class<?> dataType = column.getDataType();
+				if (dataType == null) {
+					dataTypeString = DataTypeFamily.UNDEFINED.toString();
+				}else {
+					dataTypeString = column.getDataType().getSimpleName();
+				}
 			} else {
 				dataTypeString = dataTypeFamily.toString();
 			}

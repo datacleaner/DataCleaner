@@ -74,10 +74,39 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
 		_panel.removeAll();
 	}
 
-	protected void onPanelAdd() {
+	/**
+	 * Notification method added for backwards compatibility
+	 * 
+	 * @deprecated use {@link #onPanelRemove()} instead.
+	 */
+	@Deprecated
+	protected void removeNotify() {
 	}
 
+	/**
+	 * Notification method added for backwards compatibility
+	 * 
+	 * @deprecated use {@link #onPanelAdd()} instead.
+	 */
+	@Deprecated
+	protected void addNotify() {
+	}
+
+	/**
+	 * Notification method invoked when the resulting panel is added to the UI.
+	 */
+	@SuppressWarnings("deprecation")
+	protected void onPanelAdd() {
+		addNotify();
+	}
+
+	/**
+	 * Notification method invoked when the resulting panel is removed from the
+	 * UI.
+	 */
+	@SuppressWarnings("deprecation")
 	protected void onPanelRemove() {
+		removeNotify();
 	}
 
 	protected void add(Component component) {

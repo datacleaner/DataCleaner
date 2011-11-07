@@ -101,12 +101,9 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 		outerPanel.add(buttonPanel, BorderLayout.EAST);
 
 		add(outerPanel);
-	}
-
-	@Override
-	public void initialize(String[] value) {
-		super.initialize(value);
-		setValue(value);
+		
+		String[] currentValue = getCurrentValue();
+		setValue(currentValue);
 	}
 
 	protected void addComboBox(String value, boolean updateUI) {

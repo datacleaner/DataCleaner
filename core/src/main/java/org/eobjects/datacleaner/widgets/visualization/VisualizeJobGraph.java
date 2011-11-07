@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
+import org.eobjects.metamodel.schema.Table;
 
 import edu.uci.ics.jung.algorithms.layout.StaticLayout;
 import edu.uci.ics.jung.graph.DirectedGraph;
@@ -73,7 +74,7 @@ public final class VisualizeJobGraph {
 
 		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
 		sourceColumnFinder.addSources(analysisJobBuilder);
-
+		
 		final List<TransformerJobBuilder<?>> tjbs = analysisJobBuilder.getTransformerJobBuilders();
 		for (TransformerJobBuilder<?> tjb : tjbs) {
 			addGraphNodes(graph, sourceColumnFinder, tjb, displayColumns, displayOutcomes);
@@ -130,6 +131,9 @@ public final class VisualizeJobGraph {
 				if (obj instanceof MergedOutcomeJobBuilder) {
 					return LabelUtils.getLabel((MergedOutcomeJobBuilder) obj);
 				}
+				if (obj instanceof Table) {
+					return ((Table) obj).getName();
+				}
 				return obj.toString();
 			}
 		});
@@ -155,6 +159,9 @@ public final class VisualizeJobGraph {
 				}
 				if (obj instanceof MergedOutcomeJobBuilder) {
 					return imageManager.getImageIcon("images/component-types/merged-outcome.png", IconUtils.ICON_SIZE_SMALL);
+				}
+				if (obj instanceof Table) {
+					return imageManager.getImageIcon("images/model/table.png", IconUtils.ICON_SIZE_MEDIUM);
 				}
 				return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
 			}
@@ -192,6 +199,14 @@ public final class VisualizeJobGraph {
 							if (source != null) {
 								addGraphNodes(g, scf, source, displayColumns, displayFilterOutcomes);
 								addEdge(g, source, item);
+							}
+						}
+						
+						if (inputColumn.isPhysicalColumn()) {
+							Table table = inputColumn.getPhysicalColumn().getTable();
+							if (table != null) {
+								addGraphNodes(g, scf, table, displayColumns, displayFilterOutcomes);
+								addEdge(g, table, item);
 							}
 						}
 					}
@@ -233,6 +248,14 @@ public final class VisualizeJobGraph {
 					if (source != null) {
 						addGraphNodes(g, scf, source, displayColumns, displayFilterOutcomes);
 						addEdge(g, source, item);
+					}
+				}
+
+				if (inputColumn.isPhysicalColumn()) {
+					Table table = inputColumn.getPhysicalColumn().getTable();
+					if (table != null) {
+						addGraphNodes(g, scf, table, displayColumns, displayFilterOutcomes);
+						addEdge(g, table, item);
 					}
 				}
 			}

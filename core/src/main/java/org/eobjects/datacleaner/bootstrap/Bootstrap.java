@@ -57,7 +57,7 @@ import com.google.inject.Injector;
 /**
  * Bootstraps an instance of DataCleaner into a running state. The initial state
  * of the application will be dependent on specified options (or defaults).
- *
+ * 
  * @author Kasper Sørensen
  */
 public final class Bootstrap {
@@ -127,10 +127,16 @@ public final class Bootstrap {
 			CliArguments arguments = _options.getCommandLineArguments();
 
 			final CliRunner runner = new CliRunner(arguments, out);
-			runner.run(configuration);
+			int exitCode = 0;
+			try {
+				runner.run(configuration);
+			} catch (Throwable e) {
+				logger.error("Error occurred while running DataCleaner command line mode", e);
+				exitCode = 1;
+			}
 			out.flush();
 
-			exitCommandLine(configuration, 0);
+			exitCommandLine(configuration, exitCode);
 			return;
 		} else {
 			// run in GUI mode

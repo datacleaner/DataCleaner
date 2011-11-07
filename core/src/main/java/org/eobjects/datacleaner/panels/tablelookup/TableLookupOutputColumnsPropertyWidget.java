@@ -108,12 +108,6 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 
 	protected void addComboBox(String value, boolean updateUI) {
 		SourceColumnComboBox comboBox = new SourceColumnComboBox();
-		comboBox.addListener(new Listener<Column>() {
-			@Override
-			public void onItemSelected(Column item) {
-				fireValueChanged();
-			}
-		});
 		final Column column;
 		Table table = _tableRef.get();
 		if (value == null) {
@@ -128,6 +122,12 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 		comboBox.setEditable(true);
 		comboBox.setSelectedItem(column);
 		comboBox.setEditable(false);
+		comboBox.addListener(new Listener<Column>() {
+			@Override
+			public void onItemSelected(Column item) {
+				fireValueChanged();
+			}
+		});
 
 		_comboBoxes.add(comboBox);
 		_comboBoxPanel.add(comboBox);

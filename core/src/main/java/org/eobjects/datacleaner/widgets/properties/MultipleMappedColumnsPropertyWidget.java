@@ -120,6 +120,12 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
 	private SourceColumnComboBox createComboBox(InputColumn<?> inputColumn, Column mappedColumn) {
 		final SourceColumnComboBox sourceColumnComboBox = new SourceColumnComboBox();
+		_mappedColumnComboBoxes.put(inputColumn, sourceColumnComboBox);
+		if (mappedColumn != null) {
+			sourceColumnComboBox.setEditable(true);
+			sourceColumnComboBox.setSelectedItem(mappedColumn);
+			sourceColumnComboBox.setEditable(false);
+		}
 		sourceColumnComboBox.addListener(new Listener<Column>() {
 			@Override
 			public void onItemSelected(Column item) {
@@ -127,12 +133,6 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 				_mappedColumnNamesPropertyWidget.fireValueChanged();
 			}
 		});
-		_mappedColumnComboBoxes.put(inputColumn, sourceColumnComboBox);
-		if (mappedColumn != null) {
-			sourceColumnComboBox.setEditable(true);
-			sourceColumnComboBox.setSelectedItem(mappedColumn);
-			sourceColumnComboBox.setEditable(false);
-		}
 		return sourceColumnComboBox;
 	}
 

@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.ConfiguredPropertyTaskPane;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.properties.MultipleMappedColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
@@ -64,6 +65,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 	private final ConfiguredPropertyDescriptor _datastoreProperty;
 	private final ConfiguredPropertyDescriptor _inputColumnsProperty;
 	private final ConfiguredPropertyDescriptor _columnNamesProperty;
+	private final ConfiguredPropertyDescriptor _errorHandlingProperty;
 
 	public InsertIntoTableJobBuilderPresenter(AnalyzerJobBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
@@ -79,6 +81,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 		_tableNameProperty = descriptor.getConfiguredProperty("Table name");
 		_inputColumnsProperty = descriptor.getConfiguredProperty("Values");
 		_columnNamesProperty = descriptor.getConfiguredProperty("Column names");
+		_errorHandlingProperty = descriptor.getConfiguredProperty("How to handle insertion errors?");
 
 		// the Datastore property
 		assert _datastoreProperty != null;
@@ -140,13 +143,15 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 
 	@Override
 	protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
-		final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
-
 		final ConfiguredPropertyTaskPane taskPane = new ConfiguredPropertyTaskPane("Insert mapping",
 				"images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
 						_inputColumnsProperty));
-		propertyTaskPanes.add(taskPane);
 
+		final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling", IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty));
+
+		final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
+		propertyTaskPanes.add(taskPane);
+		propertyTaskPanes.add(errorHandlingPane);
 		return propertyTaskPanes;
 	}
 

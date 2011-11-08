@@ -53,7 +53,7 @@ import org.eobjects.metamodel.schema.Table;
  * 
  * @author Kasper Sørensen
  */
-public class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
+class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 

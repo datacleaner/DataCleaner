@@ -54,7 +54,7 @@ import org.eobjects.metamodel.schema.Table;
  * 
  * @author Kasper Sørensen
  */
-public class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
+class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 

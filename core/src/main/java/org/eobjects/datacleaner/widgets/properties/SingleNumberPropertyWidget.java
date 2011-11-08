@@ -69,7 +69,7 @@ public class SingleNumberPropertyWidget extends AbstractPropertyWidget<Number> {
 
 	@Override
 	public boolean isSet() {
-		return true;
+		return getValue() != null;
 	}
 
 	@Override

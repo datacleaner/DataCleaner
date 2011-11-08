@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.widgets.result;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -29,13 +30,16 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
+import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
@@ -48,14 +52,18 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.metamodel.schema.Table;
+import org.jdesktop.swingx.JXEditorPane;
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 @RendererBean(SwingRenderingFormat.class)
-public class OutputAnalyzerResultRenderer extends AbstractRenderer<WriteDataResult, JComponent> {
+public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResult, JComponent> {
 
+	private static final Logger logger = LoggerFactory.getLogger(WriteDataResultSwingRenderer.class);
 	private final ImageManager imageManager = ImageManager.getInstance();
 
 	@Inject
@@ -65,30 +73,75 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<WriteDataResu
 	DCModule _parentModule;
 
 	@Inject
-	DatastoreCatalog _datastoreCatalog;
+	MutableDatastoreCatalog _datastoreCatalog;
 
 	@Override
 	public JComponent render(WriteDataResult result) {
 		final EmptyBorder border = new EmptyBorder(10, 10, 10, 10);
 
+		final DCPanel panel = new DCPanel();
+		panel.setBorder(border);
+		panel.setLayout(new VerticalLayout(4));
+
 		int rowCount = result.getWrittenRowCount();
 		if (rowCount == 0) {
-			JLabel label = new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING), JLabel.LEFT);
-			label.setBorder(border);
-			return label;
+			final JLabel label = new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING),
+					JLabel.LEFT);
+			panel.add(label);
 		} else {
-			final JLabel label = new JLabel(rowCount + " rows written!",
-					imageManager.getImageIcon(IconUtils.STATUS_VALID), JLabel.LEFT);
+			final JLabel label = new JLabel(rowCount + " rows written!", imageManager.getImageIcon(IconUtils.STATUS_VALID),
+					JLabel.LEFT);
 			final DCPanel buttonPanel = createButtonPanel(result);
-
-			final DCPanel panel = new DCPanel();
-			panel.setLayout(new VerticalLayout(4));
 			panel.add(label);
 			panel.add(buttonPanel);
-			panel.setBorder(border);
-
-			return panel;
 		}
+
+		if (result.getErrorRowCount() > 0) {
+			final DCPanel errorRowsPanel = new DCPanel();
+			errorRowsPanel.setLayout(new BorderLayout());
+
+			final JLabel icon = new JLabel(imageManager.getImageIcon(IconUtils.STATUS_ERROR));
+			errorRowsPanel.add(icon, BorderLayout.WEST);
+
+			final FileDatastore errorDatastore = result.getErrorDatastore();
+
+			final JXEditorPane editorPane = new JXEditorPane("text/html", "<b>" + result.getErrorRowCount()
+					+ " records</b> could <i>not</i> be inserted into the table!<br/>"
+					+ "The records were written to <a href=\"http://datacleaner.eobjects.org/preview_datastore\">"
+					+ errorDatastore.getFilename()
+					+ "</a> (<a href=\"http://datacleaner.eobjects.org/register_datastore\">Register as datastore</a>).");
+			editorPane.setEditable(false);
+			editorPane.setOpaque(false);
+			editorPane.addHyperlinkListener(new HyperlinkListener() {
+				@Override
+				public void hyperlinkUpdate(HyperlinkEvent e) {
+					if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+						final String href = e.getDescription();
+						if ("http://datacleaner.eobjects.org/register_datastore".equals(href)) {
+							_datastoreCatalog.addDatastore(errorDatastore);
+							JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
+						} else if ("http://datacleaner.eobjects.org/preview_datastore".equals(href)) {
+							DatastoreConnection errorCon = errorDatastore.openConnection();
+							try {
+								Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
+								PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
+										windowContext, errorCon, table);
+								actionListener.actionPerformed(null);
+							} finally {
+								errorCon.close();
+							}
+						} else {
+							logger.error("Unexpected href: " + href + ". Event was: " + e);
+						}
+					}
+				}
+			});
+			errorRowsPanel.add(editorPane, BorderLayout.CENTER);
+
+			panel.add(errorRowsPanel);
+		}
+
+		return panel;
 	}
 
 	private DCPanel createButtonPanel(final WriteDataResult result) {
@@ -106,8 +159,7 @@ public class OutputAnalyzerResultRenderer extends AbstractRenderer<WriteDataResu
 				addDatastoreButton.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						MutableDatastoreCatalog mutableDatastoreCatalog = (MutableDatastoreCatalog) _datastoreCatalog;
-						mutableDatastoreCatalog.addDatastore(datastore);
+						_datastoreCatalog.addDatastore(datastore);
 						addDatastoreButton.setEnabled(false);
 					}
 				});

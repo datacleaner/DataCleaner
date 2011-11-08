@@ -145,12 +145,16 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 	@Override
 	public void onAdd(Datastore datastore) {
 		if (ReflectionUtils.is(datastore.getClass(), _datastoreClass)) {
+			_comboBox.setEditable(true);
 			_comboBox.addItem(datastore);
+			_comboBox.setEditable(false);
 		}
 	}
 
 	@Override
 	public void onRemove(Datastore datastore) {
+		_comboBox.setEditable(true);
 		_comboBox.removeItem(datastore);
+		_comboBox.setEditable(false);
 	}
 }

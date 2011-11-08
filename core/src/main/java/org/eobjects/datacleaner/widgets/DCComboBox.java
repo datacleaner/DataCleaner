@@ -30,8 +30,6 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
-import org.jdesktop.swingx.combobox.ListComboBoxModel;
-
 /**
  * Defines a common combobox class that has a more convenient listening
  * mechanism (the JComboBox can be quite confusing because of the cycle of
@@ -56,14 +54,10 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 		super.addItemListener(this);
 	}
 
-	public DCComboBox(List<E> items) {
-		this(new ListComboBoxModel<E>(items));
+	public DCComboBox(Collection<E> items) {
+		this(new DefaultComboBoxModel(items.toArray()));
 	}
 	
-	public DCComboBox(Collection<E> items) {
-		this(new ArrayList<E>(items));
-	}
-
 	public DCComboBox(E[] items) {
 		this(new DefaultComboBoxModel(items));
 	}

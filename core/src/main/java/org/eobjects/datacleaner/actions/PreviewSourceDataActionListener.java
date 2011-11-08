@@ -37,27 +37,27 @@ import org.eobjects.metamodel.schema.Table;
 public class PreviewSourceDataActionListener implements ActionListener {
 
 	private static final int PAGE_SIZE = 35;
-	private final DatastoreConnection _dataContextProvider;
+	private final DatastoreConnection _datastoreConnection;
 	private final Column[] _columns;
 	private final Collection<? extends InputColumn<?>> _inputColumns;
 	private final WindowContext _windowContext;
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection dataContextProvider,
+	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection datastoreConnection,
 			Column... columns) {
 		_windowContext = windowContext;
-		_dataContextProvider = dataContextProvider;
+		_datastoreConnection = datastoreConnection;
 		_columns = columns;
 		_inputColumns = null;
 	}
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection dataContextProvider, Table table) {
-		this(windowContext, dataContextProvider, table.getColumns());
+	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection datastoreConnection, Table table) {
+		this(windowContext, datastoreConnection, table.getColumns());
 	}
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection dataContextProvider,
+	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection datastoreConnection,
 			Collection<? extends InputColumn<?>> inputColumns) {
 		_windowContext = windowContext;
-		_dataContextProvider = dataContextProvider;
+		_datastoreConnection = datastoreConnection;
 		_inputColumns = inputColumns;
 		_columns = null;
 	}
@@ -74,7 +74,7 @@ public class PreviewSourceDataActionListener implements ActionListener {
 			}
 			columns = cols.toArray(new Column[cols.size()]);
 		}
-		DataContext dc = _dataContextProvider.getDataContext();
+		DataContext dc = _datastoreConnection.getDataContext();
 		Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
 		DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);

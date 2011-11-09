@@ -60,5 +60,13 @@ public class IpToNumberConverterTest extends TestCase {
 				"168.102.10.36"));
 		assertEquals(1, result.length);
 		assertEquals(2825259556l, result[0].longValue());
+		
+		result = trans.transform(new MockInputRow().put(trans.ipColumn,
+				"192.168.199.1"));
+		assertEquals(1, result.length);
+		assertEquals(3232286465l, result[0].longValue());
+		
+		// backwards check
+		assertEquals("192.168.199.1", new NumberToIpConverter().transform(result[0]));
 	}
 }

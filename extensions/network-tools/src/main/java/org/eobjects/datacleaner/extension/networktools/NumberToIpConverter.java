@@ -45,18 +45,23 @@ public class NumberToIpConverter implements Transformer<String> {
 	public String[] transform(InputRow inputRow) {
 		final String[] result = new String[1];
 		final Number number = inputRow.getValue(ipColumn);
-		if (number == null) {
-			return result;
-		}
+		
+		result[0] = transform(number);
 
+		return result;
+	}
+
+	public String transform(Number number) {
+		if (number == null) {
+			return null;
+		}
 		long l = number.longValue();
 		if (l > 0) {
 			final String str = ((l >> 24) & 0xFF) + "." + ((l >> 16) & 0xFF)
 					+ "." + ((l >> 8) & 0xFF) + "." + (l & 0xFF);
 
-			result[0] = str;
+			return str;
 		}
-
-		return result;
+		return null;
 	}
 }

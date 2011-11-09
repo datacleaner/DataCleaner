@@ -216,6 +216,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 	}
 
 	private void updateDatastores() {
+		Datastore selectedDatastore = getSelectedDatastore();
 		_listPanel.removeAll();
 		_datastorePanels.clear();
 
@@ -232,6 +233,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		headerPanel.add(searchDatastorePanel);
 
 		_listPanel.add(headerPanel);
+		
+		boolean selectFirst = true;
 
 		String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
 		for (int i = 0; i < datastoreNames.length; i++) {
@@ -240,9 +243,36 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 					_analysisJobBuilderWindow.getWindowContext(), _injectorBuilder);
 			_datastorePanels.add(datastorePanel);
 			_listPanel.add(datastorePanel);
+			
+			if (selectedDatastore != null && selectedDatastore.getName().equals(datastore.getName())) {
+				selectFirst = false;
+				setSelectedDatastore(datastore);
+			}
 		}
 
-		selectFirstVisibleDatastore();
+		if (selectFirst) {
+			selectFirstVisibleDatastore();
+		}
+	}
+
+	public void setSelectedDatastore(Datastore datastore) {
+		if (datastore != null) {
+			for (DatastorePanel panel : _datastorePanels) {
+				if (datastore.equals(panel.getDatastore())) {
+					panel.setSelected(true);
+				} else {
+					panel.setSelected(false);
+				}
+			}
+		}
+	}
+
+	public Datastore getSelectedDatastore() {
+		DatastorePanel datastorePanel = getSelectedDatastorePanel();
+		if (datastorePanel == null) {
+			return null;
+		}
+		return datastorePanel.getDatastore();
 	}
 
 	private DCPanel createNewDatastorePanel() {

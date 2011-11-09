@@ -66,6 +66,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 	private final ConfiguredPropertyDescriptor _inputColumnsProperty;
 	private final ConfiguredPropertyDescriptor _columnNamesProperty;
 	private final ConfiguredPropertyDescriptor _errorHandlingProperty;
+	private final ConfiguredPropertyDescriptor _errorFileLocationProperty;
 
 	public InsertIntoTableJobBuilderPresenter(AnalyzerJobBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
@@ -82,6 +83,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 		_inputColumnsProperty = descriptor.getConfiguredProperty("Values");
 		_columnNamesProperty = descriptor.getConfiguredProperty("Column names");
 		_errorHandlingProperty = descriptor.getConfiguredProperty("How to handle insertion errors?");
+		_errorFileLocationProperty = descriptor.getConfiguredProperty("Error log file location");
 
 		// the Datastore property
 		assert _datastoreProperty != null;
@@ -147,7 +149,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 				"images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
 						_inputColumnsProperty));
 
-		final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling", IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty));
+		final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
+				IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty));
 
 		final List<ConfiguredPropertyTaskPane> propertyTaskPanes = new ArrayList<ConfiguredPropertyTaskPane>();
 		propertyTaskPanes.add(taskPane);

@@ -40,6 +40,7 @@ import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
+import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
@@ -333,6 +334,8 @@ public final class IconUtils {
 			imagePath = DBASE_IMAGEPATH;
 		} else if (datastore instanceof SasDatastore) {
 			imagePath = SAS_IMAGEPATH;
+		} else if (datastore instanceof XmlDatastore) {
+			imagePath = XML_IMAGEPATH;
 		} else if (datastore instanceof MongoDbDatastore) {
 			imagePath = MONGODB_IMAGEPATH;
 		} else if (datastore instanceof CompositeDatastore) {

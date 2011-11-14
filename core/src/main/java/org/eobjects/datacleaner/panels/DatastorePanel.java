@@ -61,6 +61,7 @@ import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
+import org.eobjects.datacleaner.windows.MongoDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.SasDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
@@ -249,6 +250,15 @@ public class DatastorePanel extends DCPanel {
 				public void actionPerformed(ActionEvent e) {
 					Injector injector = _injectorBuilder.with(DbaseDatastore.class, datastore).createInjector();
 					DbaseDatastoreDialog dialog = injector.getInstance(DbaseDatastoreDialog.class);
+					dialog.setVisible(true);
+				}
+			});
+		} else if (datastore instanceof MongoDbDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Injector injector = _injectorBuilder.with(MongoDbDatastore.class, datastore).createInjector();
+					MongoDbDatastoreDialog dialog = injector.getInstance(MongoDbDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
 			});

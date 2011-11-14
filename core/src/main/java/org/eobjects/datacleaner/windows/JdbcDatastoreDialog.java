@@ -308,7 +308,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		DCPanel buttonPanel = new DCPanel();
+		final DCPanel buttonPanel = new DCPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
 		buttonPanel.add(testButton);
 		buttonPanel.add(saveButton);

@@ -46,13 +46,13 @@ import javax.swing.event.DocumentEvent;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.DbaseDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
-import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
@@ -70,7 +70,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
-import org.eobjects.datacleaner.windows.AbstractFileBasedDatastoreDialog;
+import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
@@ -79,6 +79,7 @@ import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
 import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
+import org.eobjects.datacleaner.windows.MongoDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 import org.eobjects.datacleaner.windows.SasDatastoreDialog;
@@ -299,6 +300,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				IconUtils.ODB_IMAGEPATH, OdbDatastore.class, OdbDatastoreDialog.class));
 
 		panel.add(Box.createHorizontalStrut(20));
+		
+		panel.add(createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
+				IconUtils.MONGODB_IMAGEPATH, MongoDbDatastore.class, MongoDbDatastoreDialog.class));
 
 		// set of databases that are displayed directly on panel
 		final Set<String> databaseNames = new HashSet<String>();
@@ -382,9 +386,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		}
 	}
 
-	private <D extends FileDatastore> JButton createNewDatastoreButton(final String title, final String description,
+	private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
 			final String imagePath, final Class<D> datastoreClass,
-			final Class<? extends AbstractFileBasedDatastoreDialog<D>> dialogClass) {
+			final Class<? extends AbstractDialog> dialogClass) {
 		final ImageIcon icon = imageManager.getImageIcon(imagePath);
 		final JButton button = WidgetFactory.createImageButton(icon);
 
@@ -396,7 +400,7 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				Injector injectorWithNullDatastore = _injectorBuilder.with(datastoreClass, null).createInjector();
-				AbstractFileBasedDatastoreDialog<D> dialog = injectorWithNullDatastore.getInstance(dialogClass);
+				AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
 				dialog.setVisible(true);
 			}
 		});

@@ -116,7 +116,7 @@ public final class Bootstrap {
 		}
 
 		// log usage
-		UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
+		final UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
 		usageLogger.logApplicationStartup();
 
 		if (cliMode) {
@@ -124,19 +124,18 @@ public final class Bootstrap {
 			final PrintWriter out = new PrintWriter(System.out);
 			// run in CLI mode
 
-			CliArguments arguments = _options.getCommandLineArguments();
-
-			final CliRunner runner = new CliRunner(arguments, out);
 			int exitCode = 0;
 			try {
+				final CliArguments arguments = _options.getCommandLineArguments();
+				final CliRunner runner = new CliRunner(arguments, out);
 				runner.run(configuration);
 			} catch (Throwable e) {
 				logger.error("Error occurred while running DataCleaner command line mode", e);
 				exitCode = 1;
+			} finally {
+				out.flush();
+				exitCommandLine(configuration, exitCode);
 			}
-			out.flush();
-
-			exitCommandLine(configuration, exitCode);
 			return;
 		} else {
 			// run in GUI mode

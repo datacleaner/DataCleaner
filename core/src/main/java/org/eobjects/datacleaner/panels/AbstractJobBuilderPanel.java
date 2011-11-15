@@ -93,7 +93,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 		for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
 			buildTaskPane(propertyTaskPane.getProperties(),
 					imageManager.getImageIcon(propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL),
-					propertyTaskPane.getTitle(), _beanJobBuilder);
+					propertyTaskPane.getTitle(), _beanJobBuilder, propertyTaskPane.isExpanded());
 		}
 	}
 
@@ -122,9 +122,14 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 
 		return result;
 	}
-
+	
 	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+		buildTaskPane(properties, icon, title, beanJobBuilder, true);
+	}
+
+	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, boolean expanded) {
 		if (!properties.isEmpty()) {
 			final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
 
@@ -138,7 +143,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 				}
 			};
 			panel.addProperties(properties);
-			addTaskPane(icon, title, panel);
+			addTaskPane(icon, title, panel, expanded);
 		}
 	}
 
@@ -146,10 +151,17 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		return getPropertyWidgetFactory().create(propertyDescriptor);
 	}
-
+	
 	protected void addTaskPane(Icon icon, String title, JComponent content) {
+		addTaskPane(icon, title, content, true);
+	}
+
+	protected void addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
 		JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
 		taskPane.add(content);
+		if (!expanded) {
+			taskPane.setCollapsed(true);
+		}
 		_taskPaneContainer.add(taskPane);
 	}
 

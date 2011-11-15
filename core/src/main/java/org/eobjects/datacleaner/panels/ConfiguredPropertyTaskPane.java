@@ -31,14 +31,25 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
  */
 public final class ConfiguredPropertyTaskPane {
 
+	private final boolean _expanded;
 	private final String _title;
 	private final String _iconImagePath;
 	private final List<ConfiguredPropertyDescriptor> _properties;
 
 	public ConfiguredPropertyTaskPane(String title, String iconImagePath, List<ConfiguredPropertyDescriptor> properties) {
+		this(title, iconImagePath, properties, true);
+	}
+
+	public ConfiguredPropertyTaskPane(String title, String iconImagePath, List<ConfiguredPropertyDescriptor> properties,
+			boolean expanded) {
 		_title = title;
 		_iconImagePath = iconImagePath;
 		_properties = properties;
+		_expanded = expanded;
+	}
+
+	public boolean isExpanded() {
+		return _expanded;
 	}
 
 	public List<ConfiguredPropertyDescriptor> getProperties() {

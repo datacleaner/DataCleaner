@@ -68,8 +68,6 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 	 * @param mappedColumnsProperty
 	 *            the property representing the mapped columns in the datastore
 	 *            (String[])
-	 * @param datastorePropertyWidget
-	 *            the property widget for selecting the datastore
 	 */
 	public MultipleMappedColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty) {

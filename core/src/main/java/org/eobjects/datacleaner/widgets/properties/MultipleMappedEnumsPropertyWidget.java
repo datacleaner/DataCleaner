@@ -20,8 +20,6 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,10 +127,11 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 		} else {
 			comboBox = createComboBox(checkBox.getValue(), null);
 		}
-		checkBox.addActionListener(new ActionListener() {
+		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				comboBox.setVisible(checkBox.isSelected());
+			public void onItemSelected(InputColumn<?> item, boolean selected) {
+				comboBox.setVisible(selected);
+				_mappedEnumsPropertyWidget.fireValueChanged();
 			}
 		});
 

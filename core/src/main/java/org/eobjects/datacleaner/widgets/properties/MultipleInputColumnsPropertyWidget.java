@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
+import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
@@ -63,9 +64,9 @@ import org.jdesktop.swingx.VerticalLayout;
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
-	private final ActionListener checkBoxActionListener = new ActionListener() {
+	private final Listener<InputColumn<?>> checkBoxActionListener = new Listener<InputColumn<?>>() {
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void onItemSelected(InputColumn<?> item, boolean selected) {
 			fireValueChanged();
 		}
 	};
@@ -220,7 +221,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			add(decorateCheckBox(checkBox));
 		} else {
 			for (DCCheckBox<InputColumn<?>> checkBox : _checkBoxes) {
-				checkBox.addActionListener(checkBoxActionListener);
+				checkBox.addListener(checkBoxActionListener);
 				add(decorateCheckBox(checkBox));
 			}
 		}

@@ -20,8 +20,6 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -119,10 +117,10 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
 		} else {
 			textField = createTextField(checkBox.getValue(), null);
 		}
-		checkBox.addActionListener(new ActionListener() {
+		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				textField.setVisible(checkBox.isSelected());
+			public void onItemSelected(InputColumn<?> item, boolean selected) {
+				textField.setVisible(selected);
 			}
 		});
 

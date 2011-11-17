@@ -20,8 +20,6 @@
 package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -142,10 +140,10 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 		} else {
 			sourceColumnComboBox = createComboBox(checkBox.getValue(), null);
 		}
-		checkBox.addActionListener(new ActionListener() {
+		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				sourceColumnComboBox.setVisible(checkBox.isSelected());
+			public void onItemSelected(InputColumn<?> item, boolean selected) {
+				sourceColumnComboBox.setVisible(selected);
 			}
 		});
 

@@ -42,11 +42,12 @@ import javax.swing.JComboBox;
  */
 public class DCComboBox<E> extends JComboBox implements ItemListener {
 
+	private static final long serialVersionUID = 1L;
+
 	public static interface Listener<E> {
 		public void onItemSelected(E item);
 	}
 
-	private static final long serialVersionUID = 1L;
 	private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
 
 	public DCComboBox() {
@@ -94,17 +95,16 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated use {@link #addListener(Listener)} instead
 	 */
 	@Deprecated
 	@Override
 	public void addItemListener(ItemListener aListener) {
-		// TODO Auto-generated method stub
 		super.addItemListener(aListener);
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated use {@link #addListener(Listener)} instead
 	 */
 	@Deprecated
 	@Override

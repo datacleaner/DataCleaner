@@ -35,6 +35,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
+import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -48,9 +49,9 @@ import org.jdesktop.swingx.VerticalLayout;
  */
 public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends AbstractPropertyWidget<E[]> {
 
-	private final ActionListener CHANGE_LISTENER = new ActionListener() {
+	private final Listener<E> CHANGE_LISTENER = new Listener<E>() {
 		@Override
-		public void actionPerformed(ActionEvent e) {
+		public void onItemSelected(E item, boolean selected) {
 			fireValueChanged();
 		}
 	};
@@ -171,13 +172,13 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 		checkBox = new DCCheckBox<E>(getName(item), checked);
 		checkBox.setValue(item);
 		checkBox.setOpaque(false);
-		checkBox.addActionListener(CHANGE_LISTENER);
+		checkBox.addListener(CHANGE_LISTENER);
 		_checkBoxes.put(getName(item), checkBox);
 		add(checkBox);
 
 		_notAvailableCheckBox.setVisible(_checkBoxes.isEmpty());
 		updateUI();
-		
+
 		return checkBox;
 	}
 

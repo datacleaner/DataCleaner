@@ -39,19 +39,21 @@ public class DCBannerPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final int BANNER_BG_WIDTH = 150;
-	private static final int BANNER_HEIGHT = 80;
-	private static final Image BANNER_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
-	private final int _bannerImageWidth;
-	private final Image _bannerImage;
+	private static final Image DEFAULT_LEFT_IMAGE = ImageManager.getInstance().getImage("images/window/banner-logo.png");
+	private static final Image DEFAULT_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
+
+	private final int _titleIndent;
+	private final Image _leftImage;
+	private final Image _rightImage;
+	private final Image _bgImage;
 	private final String _title;
 
 	public DCBannerPanel() {
-		this(null, null);
+		this((String) null);
 	}
 
 	public DCBannerPanel(String title) {
-		this(null, title);
+		this(DEFAULT_LEFT_IMAGE, title);
 	}
 
 	public DCBannerPanel(Image bannerImage) {
@@ -59,20 +61,26 @@ public class DCBannerPanel extends JPanel {
 	}
 
 	public DCBannerPanel(Image bannerImage, String title) {
+		this(bannerImage, DEFAULT_BG_IMAGE, null, title);
+	}
+
+	public DCBannerPanel(Image leftImage, Image bgImage, Image rightImage, String title) {
 		super();
-		if (bannerImage == null) {
-			_bannerImage = ImageManager.getInstance().getImage("images/window/banner-logo.png");
-		} else {
-			_bannerImage = bannerImage;
-		}
-		_bannerImageWidth = _bannerImage.getWidth(null);
+		_leftImage = leftImage;
+		_bgImage = bgImage;
+		_rightImage = rightImage;
 		_title = title;
+		if (leftImage == null) {
+			_titleIndent = 0;
+		} else {
+			_titleIndent = leftImage.getWidth(this);
+		}
 		setOpaque(false);
 	}
 
 	@Override
 	public int getHeight() {
-		return BANNER_HEIGHT;
+		return _bgImage.getHeight(this);
 	}
 
 	@Override
@@ -84,15 +92,22 @@ public class DCBannerPanel extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		final int x = getX();
-		final int y = getY();
+		final int y = 0;
 		final int w = getWidth();
 
-		g.drawImage(_bannerImage, x, y, this);
+		if (_leftImage != null) {
+			g.drawImage(_leftImage, x, y, this);
+		}
 
-		int offset = _bannerImageWidth;
+		int offset = _titleIndent;
 		while (offset < w) {
-			g.drawImage(BANNER_BG_IMAGE, x + offset, y, this);
-			offset += BANNER_BG_WIDTH;
+			g.drawImage(_bgImage, x + offset, y, this);
+			offset += _bgImage.getWidth(this);
+		}
+
+		if (_rightImage != null) {
+			int rightImageWidth = _rightImage.getWidth(this);
+			g.drawImage(_rightImage, x + w - rightImageWidth, y, this);
 		}
 
 		super.paint(g);
@@ -107,8 +122,8 @@ public class DCBannerPanel extends JPanel {
 			if (g instanceof Graphics2D) {
 				((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			}
-			
-			final int titleX = _bannerImageWidth + 10;
+
+			final int titleX = _titleIndent + 10;
 
 			for (int i = 0; i < titleLines.length; i++) {
 				g.setFont(WidgetUtils.FONT_BANNER);

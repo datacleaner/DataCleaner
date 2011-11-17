@@ -381,6 +381,8 @@ public final class WidgetUtils {
 	 * DCPanel, which actually has the border.
 	 * 
 	 * @param comp
+	 * @param outline
+	 * @param margin
 	 * @return
 	 */
 	public static DCPanel decorateWithShadow(JComponent comp, boolean outline, int margin) {

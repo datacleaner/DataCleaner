@@ -69,12 +69,12 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 	protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
 		_bottomBackgroundColor = bottomBackgroundColor;
 	}
-	
+
 	@Override
 	public void open() {
 		setVisible(true);
 	}
-	
+
 	@Override
 	public void close() {
 		if (isVisible()) {
@@ -135,15 +135,27 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 	protected final JComponent getWindowContent() {
 		DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
 		panel.setLayout(new BorderLayout());
-		DCBannerPanel bannerPanel = new DCBannerPanel(_bannerImage, getBannerTitle());
-		panel.add(bannerPanel, BorderLayout.NORTH);
+
+		JComponent banner = getBanner();
+
+		final int bannerHeight;
+		if (banner == null) {
+			bannerHeight = 0;
+		} else {
+			panel.add(banner, BorderLayout.NORTH);
+			bannerHeight = banner.getPreferredSize().height;
+		}
 		JComponent dialogContent = getDialogContent();
 		panel.add(dialogContent, BorderLayout.CENTER);
 
-		panel.setPreferredSize(getDialogWidth(), bannerPanel.getPreferredSize().height
-				+ dialogContent.getPreferredSize().height);
+		panel.setPreferredSize(getDialogWidth(), bannerHeight + dialogContent.getPreferredSize().height);
 
 		return panel;
+	}
+
+	protected JComponent getBanner() {
+		DCBannerPanel bannerPanel = new DCBannerPanel(_bannerImage, getBannerTitle());
+		return bannerPanel;
 	}
 
 	protected abstract String getBannerTitle();
@@ -169,7 +181,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 		_windowContext.onDispose(this);
 		super.dispose();
 	}
-	
+
 	@Override
 	public WindowContext getWindowContext() {
 		return _windowContext;
@@ -198,7 +210,7 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 	}
-	
+
 	@Override
 	public Component toComponent() {
 		return this;

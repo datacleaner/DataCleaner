@@ -95,22 +95,30 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 	}
 
 	private DCComboBox<E> createComboBox(InputColumn<?> inputColumn, E mappedEnum) {
-		final DCComboBox<E> comboBox = new DCComboBox<E>();
+		if (mappedEnum == null && inputColumn != null) {
+			mappedEnum = getSuggestedValue(inputColumn);
+		}
+
+		@SuppressWarnings("unchecked")
+		final E[] enumConstants = (E[]) _mappedEnumsProperty.getBaseType().getEnumConstants();
+
+		final DCComboBox<E> comboBox = new DCComboBox<E>(enumConstants);
 		comboBox.setRenderer(new EnumComboBoxListRenderer());
 		_mappedEnumComboBoxes.put(inputColumn, comboBox);
 		if (mappedEnum != null) {
-			comboBox.setEditable(true);
 			comboBox.setSelectedItem(mappedEnum);
-			comboBox.setEditable(false);
 		}
 		comboBox.addListener(new Listener<E>() {
 			@Override
 			public void onItemSelected(E item) {
-				fireValueChanged();
 				_mappedEnumsPropertyWidget.fireValueChanged();
 			}
 		});
 		return comboBox;
+	}
+
+	protected E getSuggestedValue(InputColumn<?> inputColumn) {
+		return null;
 	}
 
 	@Override
@@ -152,19 +160,20 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 
 			@Override
 			public boolean isSet() {
-				final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
-				for (InputColumn<?> inputColumn : inputColumns) {
-					DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-					if (comboBox.getSelectedItem() == null) {
+				final E[] enumValues = getValue();
+				for (E enumValue : enumValues) {
+					if (enumValue == null) {
 						return false;
 					}
 				}
-				return true;
+
+				final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
+				return enumValues.length == inputColumns.length;
 			}
 
 			@Override
 			public E[] getValue() {
-				return getMappedStrings();
+				return getMappedEnums();
 			}
 
 			@Override
@@ -184,40 +193,24 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 						mappedEnum = null;
 					}
 					final DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-					comboBox.setEditable(true);
-					comboBox.setSelectedItem(mappedEnum);
-					comboBox.setEditable(false);
+					if (mappedEnum != null) {
+						comboBox.setSelectedItem(mappedEnum);
+					}
 				}
 			}
 		};
 	}
 
-	@Override
-	public InputColumn<?>[] getValue() {
-		InputColumn<?>[] checkedInputColumns = super.getValue();
-		List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-		for (InputColumn<?> inputColumn : checkedInputColumns) {
-			// exclude input columns that have not been mapped yet
-			final DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-			if (comboBox != null) {
-				if (comboBox.getSelectedItem() != null) {
-					result.add(inputColumn);
-				}
-			}
-		}
-		return result.toArray(new InputColumn[result.size()]);
-	}
-
-	private E[] getMappedStrings() {
+	private E[] getMappedEnums() {
 		final InputColumn<?>[] inputColumns = MultipleMappedEnumsPropertyWidget.this.getValue();
 		final List<E> result = new ArrayList<E>();
 		for (InputColumn<?> inputColumn : inputColumns) {
 			DCComboBox<E> comboBox = _mappedEnumComboBoxes.get(inputColumn);
-			if (comboBox != null) {
+			if (comboBox == null) {
+				result.add(null);
+			} else {
 				E value = comboBox.getSelectedItem();
-				if (value != null) {
-					result.add(value);
-				}
+				result.add(value);
 			}
 		}
 

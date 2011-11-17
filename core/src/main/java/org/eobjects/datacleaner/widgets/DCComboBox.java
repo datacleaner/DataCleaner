@@ -75,6 +75,10 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 	
 	@Override
 	public void setSelectedItem(Object anObject) {
+		if (getSelectedItem() == anObject) {
+			return;
+		}
+		
 		@SuppressWarnings("unchecked")
 		E item = (E) anObject;
 		super.setSelectedItem(item);

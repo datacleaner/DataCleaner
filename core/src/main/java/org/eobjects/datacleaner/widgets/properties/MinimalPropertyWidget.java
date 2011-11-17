@@ -65,7 +65,8 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 	}
 
 	public final void fireValueChanged() {
-		fireValueChanged(getValue());
+		final E value = getValue();
+		fireValueChanged(value);
 	}
 
 	protected final AnalysisJobBuilder getAnalysisJobBuilder() {

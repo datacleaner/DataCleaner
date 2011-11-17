@@ -22,7 +22,12 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -30,7 +35,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eobjects.analyzer.data.DataTypeFamily;
+import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
@@ -50,7 +57,6 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
-import org.eobjects.metamodel.util.CollectionUtils;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -64,7 +70,7 @@ import org.jdesktop.swingx.VerticalLayout;
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
-	private final Listener<InputColumn<?>> checkBoxActionListener = new Listener<InputColumn<?>>() {
+	private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
 		@Override
 		public void onItemSelected(InputColumn<?> item, boolean selected) {
 			fireValueChanged();
@@ -86,9 +92,11 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	};
 
 	private final DataTypeFamily _dataTypeFamily;
-	private final List<DCCheckBox<InputColumn<?>>> _checkBoxes;
+	private final Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> _checkBoxes;
+	private final Map<DCCheckBox<InputColumn<?>>, JComponent> _checkBoxDecorations;
 	private final DCPanel _buttonPanel;
 	private final JXTextField _searchDatastoreTextField;
+	private final DCCheckBox<InputColumn<?>> _notAvailableCheckBox;
 
 	private volatile boolean _firstUpdate;
 
@@ -96,7 +104,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	public MultipleInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
-		_checkBoxes = new ArrayList<DCCheckBox<InputColumn<?>>>();
+		_checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
+		_checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
 		_firstUpdate = true;
 		_dataTypeFamily = propertyDescriptor.getInputColumnDataTypeFamily();
 		getAnalysisJobBuilder().getSourceColumnListeners().add(this);
@@ -111,19 +120,22 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 				String text = _searchDatastoreTextField.getText();
 				if (StringUtils.isNullOrEmpty(text)) {
 					// when there is no search query, set all datastores visible
-					for (JCheckBox cb : _checkBoxes) {
+					for (JCheckBox cb : _checkBoxes.values()) {
 						cb.setVisible(true);
 					}
 				} else {
 					// do a case insensitive search
 					text = text.trim().toLowerCase();
-					for (JCheckBox cb : _checkBoxes) {
+					for (JCheckBox cb : _checkBoxes.values()) {
 						String name = cb.getText().toLowerCase();
 						cb.setVisible(name.indexOf(text) != -1);
 					}
 				}
 			}
 		});
+
+		_notAvailableCheckBox = new DCCheckBox<InputColumn<?>>("- no columns available -", false);
+		_notAvailableCheckBox.setEnabled(false);
 
 		_buttonPanel = new DCPanel();
 		_buttonPanel.setLayout(new HorizontalLayout(2));
@@ -151,6 +163,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			_buttonPanel.add(reorderColumnsButton);
 		}
 
+		add(_buttonPanel);
+		add(_searchDatastoreTextField);
 	}
 
 	@Override
@@ -158,32 +172,16 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		updateComponents(value);
 		_firstUpdate = false;
 	}
-	
-	protected boolean isAllInputColumnsSelectedIfNoValueExist(){
+
+	protected boolean isAllInputColumnsSelectedIfNoValueExist() {
 		return true;
 	}
 
-	private void updateComponents() {
-		InputColumn<?>[] currentValue = getCurrentValue();
-		updateComponents(currentValue);
-	}
-
 	private void updateComponents(InputColumn<?>[] value) {
-		removeAll();
+		// fetch available input columns
 		Class<?> typeArgument = getPropertyDescriptor().getTypeArgument(0);
 		final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(_dataTypeFamily,
 				typeArgument);
-		_checkBoxes.clear();
-
-		if (value != null) {
-			for (InputColumn<?> col : value) {
-				if (col != null) {
-					DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(col.getName(), isEnabled(col, value));
-					cb.setValue(col);
-					_checkBoxes.add(cb);
-				}
-			}
-		}
 
 		if (getBeanJobBuilder() instanceof TransformerJobBuilder) {
 			// remove all the columns that are generated by the transformer
@@ -193,40 +191,44 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			availableColumns.removeAll(outputColumns);
 		}
 
-		for (InputColumn<?> col : availableColumns) {
-			boolean found = false;
-			for (DCCheckBox<InputColumn<?>> cb : _checkBoxes) {
-				if (cb.getValue().equals(col)) {
-					found = true;
-					break;
+		Set<InputColumn<?>> inputColumnsToBeRemoved = new HashSet<InputColumn<?>>();
+		inputColumnsToBeRemoved.addAll(_checkBoxes.keySet());
+
+		if (value != null) {
+			// retain selected expression based input columns
+			for (InputColumn<?> col : value) {
+				if (col instanceof ExpressionBasedInputColumn) {
+					inputColumnsToBeRemoved.remove(col);
 				}
 			}
+		}
 
-			if (!found) {
-				DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(col.getName(), isEnabled(col, value));
-				cb.setValue(col);
-				_checkBoxes.add(cb);
+		for (InputColumn<?> col : availableColumns) {
+			inputColumnsToBeRemoved.remove(col);
+			DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.get(col);
+			if (checkBox == null) {
+				addAvailableInputColumn(col, isEnabled(col, value));
+			} else {
+				// handle updated names from transformed columns.
+				checkBox.setText(col.getName());
 			}
 		}
 
-		_searchDatastoreTextField.setVisible(_checkBoxes.size() > 5);
-
-		add(_buttonPanel);
-		add(_searchDatastoreTextField);
-
-		if (_checkBoxes.isEmpty()) {
-			DCCheckBox<InputColumn<?>> checkBox = new DCCheckBox<InputColumn<?>>("- no columns available -", false);
-			checkBox.setEnabled(false);
-			_checkBoxes.add(checkBox);
-			add(decorateCheckBox(checkBox));
-		} else {
-			for (DCCheckBox<InputColumn<?>> checkBox : _checkBoxes) {
-				checkBox.addListener(checkBoxActionListener);
-				add(decorateCheckBox(checkBox));
-			}
+		for (InputColumn<?> col : inputColumnsToBeRemoved) {
+			removeAvailableInputColumn(col);
 		}
 
+		updateVisibility();
 		fireValueChanged();
+	}
+
+	private void updateVisibility() {
+		_searchDatastoreTextField.setVisible(_checkBoxes.size() > 5);
+		if (_checkBoxes.isEmpty()) {
+			add(_notAvailableCheckBox);
+		} else {
+			remove(_notAvailableCheckBox);
+		}
 	}
 
 	/**
@@ -265,7 +267,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	@Override
 	public boolean isSet() {
-		for (JCheckBox checkBox : _checkBoxes) {
+		for (JCheckBox checkBox : _checkBoxes.values()) {
 			if (checkBox.isSelected()) {
 				return true;
 			}
@@ -276,7 +278,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	@Override
 	public InputColumn<?>[] getValue() {
 		List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes) {
+		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
 			if (cb.isSelected()) {
 				InputColumn<?> value = cb.getValue();
 				if (value != null) {
@@ -290,23 +292,15 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	@Override
 	public void onAdd(InputColumn<?> sourceColumn) {
 		if (_dataTypeFamily == DataTypeFamily.UNDEFINED || _dataTypeFamily == sourceColumn.getDataTypeFamily()) {
-			updateComponents();
-			updateUI();
+			addAvailableInputColumn(sourceColumn);
+			updateVisibility();
 		}
 	}
 
 	@Override
 	public void onRemove(InputColumn<?> sourceColumn) {
-		if (_dataTypeFamily == DataTypeFamily.UNDEFINED || _dataTypeFamily == sourceColumn.getDataTypeFamily()) {
-			InputColumn<?>[] currentValue = (InputColumn<?>[]) getBeanJobBuilder().getConfiguredProperty(
-					getPropertyDescriptor());
-			if (currentValue != null) {
-				currentValue = CollectionUtils.arrayRemove(currentValue, sourceColumn);
-				getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), currentValue);
-			}
-			updateComponents();
-			updateUI();
-		}
+		removeAvailableInputColumn(sourceColumn);
+		updateVisibility();
 	}
 
 	@Override
@@ -317,10 +311,10 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder, List<MutableInputColumn<?>> outputColumns) {
 		// we need to save the current value before we update the components
 		// here. Otherwise any previous selections will be lost.
-		getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), getValue());
+		final InputColumn<?>[] value = getValue();
+		getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
 
-		updateComponents();
-		updateUI();
+		updateComponents(value);
 	}
 
 	@Override
@@ -343,24 +337,60 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	@Override
 	protected void setValue(InputColumn<?>[] value) {
-		updateComponents(value);
-		updateUI();
+		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+			if (ArrayUtils.contains(value, cb.getValue())) {
+				cb.setSelected(true);
+			} else {
+				cb.setSelected(false);
+			}
+		}
 	}
-	
+
 	protected void selectAll() {
-		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes) {
+		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
 			if (cb.isEnabled()) {
 				cb.setSelected(true);
 			}
 		}
 		fireValueChanged();
 	}
-	
+
 	protected void selectNone() {
 		fireValueChanged();
-		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes) {
+		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
 			cb.setSelected(false);
 		}
 		fireValueChanged();
+	}
+
+	private void addAvailableInputColumn(InputColumn<?> col) {
+		addAvailableInputColumn(col, false);
+	}
+
+	private void addAvailableInputColumn(InputColumn<?> col, boolean selected) {
+		final String name = col.getName();
+		final DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(name, selected);
+		cb.addListener(checkBoxListener);
+		cb.setValue(col);
+		_checkBoxes.put(col, cb);
+		JComponent decoration = decorateCheckBox(cb);
+		_checkBoxDecorations.put(cb, decoration);
+		add(decoration);
+	}
+
+	private void removeAvailableInputColumn(InputColumn<?> col) {
+		boolean valueChanged = false;
+		DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.remove(col);
+		if (checkBox != null) {
+			if (checkBox.isSelected()) {
+				valueChanged = true;
+			}
+			final JComponent decoration = _checkBoxDecorations.remove(checkBox);
+			remove(decoration);
+		}
+
+		if (valueChanged) {
+			fireValueChanged();
+		}
 	}
 }

@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -52,9 +53,14 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final BeanDescriptor<?> _descriptor;
 
-	protected AbstractJobBuilderPanel(String backgroundImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected AbstractJobBuilderPanel(String watermarkImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			PropertyWidgetFactory propertyWidgetFactory) {
-		super(ImageManager.getInstance().getImage(backgroundImagePath), 95, 95, WidgetUtils.BG_COLOR_BRIGHT,
+		this(ImageManager.getInstance().getImage(watermarkImagePath), 95, 95, beanJobBuilder, propertyWidgetFactory);
+	}
+
+	protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition, int watermarkVerticalPosition,
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, PropertyWidgetFactory propertyWidgetFactory) {
+		super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
 				WidgetUtils.BG_COLOR_BRIGHTEST);
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_beanJobBuilder = beanJobBuilder;
@@ -122,7 +128,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 
 		return result;
 	}
-	
+
 	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		buildTaskPane(properties, icon, title, beanJobBuilder, true);
@@ -151,7 +157,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		return getPropertyWidgetFactory().create(propertyDescriptor);
 	}
-	
+
 	protected void addTaskPane(Icon icon, String title, JComponent content) {
 		addTaskPane(icon, title, content, true);
 	}

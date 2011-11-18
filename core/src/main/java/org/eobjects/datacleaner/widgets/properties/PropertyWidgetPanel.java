@@ -82,6 +82,8 @@ public abstract class PropertyWidgetPanel extends DCPanel {
 
 					final String description = propertyDescriptor.getDescription();
 					if (!StringUtils.isNullOrEmpty(description)) {
+						propertyLabel.setToolTipText(description);
+						
 						final JXLabel descriptionLabel = new JXLabel(description);
 						descriptionLabel.setLineWrap(true);
 						descriptionLabel.setFont(WidgetUtils.FONT_SMALL);

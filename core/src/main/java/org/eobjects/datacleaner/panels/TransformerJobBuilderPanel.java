@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.panels;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private static final long serialVersionUID = 1L;
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final Image WATERMARK_IMAGE = imageManager.getImage("images/window/transformer-tab-background.png");
 
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 	private final ColumnListTable _outputColumnsTable;
@@ -55,7 +57,14 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 
 	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
 			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
-		super("images/window/transformer-tab-background.png", transformerJobBuilder, propertyWidgetFactory);
+		this(WATERMARK_IMAGE, 95, 95, transformerJobBuilder, windowContext, propertyWidgetFactory, configuration);
+	}
+
+	protected TransformerJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+			int watermarkVerticalPosition, TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
+			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
+		super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, transformerJobBuilder,
+				propertyWidgetFactory);
 		_transformerJobBuilder = transformerJobBuilder;
 		_windowContext = windowContext;
 

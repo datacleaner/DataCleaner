@@ -71,6 +71,10 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
 
+	protected DCTaskPaneContainer getTaskPaneContainer() {
+		return _taskPaneContainer;
+	}
+
 	@Override
 	public final JComponent createJComponent() {
 		init();

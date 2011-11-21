@@ -60,7 +60,6 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 
 		setValue(getCurrentValue());
 	}
-	
 
 	public void addComboListener(Listener<Table> listener) {
 		_comboBox.addListener(listener);
@@ -76,7 +75,14 @@ public class TableNamePropertyWidget extends AbstractPropertyWidget<String> {
 			tables = CollectionUtils.array(new Table[1], tables);
 			_comboBox.setModel(new DefaultComboBoxModel(tables));
 
-			if (previousValue != null) {
+			if (previousValue == null) {
+				if (schema.getTableCount() == 1) {
+					// if there is only 1 table, select that
+					Table table = schema.getTables()[0];
+					_comboBox.setSelectedItem(table);
+				}
+			} else {
+				// select table by name
 				Table table = schema.getTableByName(previousValue);
 				_comboBox.setSelectedItem(table);
 			}

@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
 import org.eobjects.metamodel.schema.MutableSchema;
 import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.MutableRef;
 
 /**
@@ -74,6 +75,7 @@ public class SchemaNamePropertyWidget extends AbstractPropertyWidget<String> {
 			final DatastoreConnection con = datastore.openConnection();
 			try {
 				Schema[] schemas = con.getSchemaNavigator().getSchemas();
+				schemas = CollectionUtils.array(new Schema[1], schemas);
 				_comboBox.setModel(new DefaultComboBoxModel(schemas));
 				Schema newValue = null;
 				if (previousValue != null) {

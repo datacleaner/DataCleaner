@@ -336,9 +336,18 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	@Override
-	protected void setValue(InputColumn<?>[] value) {
+	protected void setValue(InputColumn<?>[] values) {
+		// if checkBoxes is empty it means that the value is being set before
+		// initializing the widget. This can occur in subclasses and automatic
+		// creating of checkboxes should be done.
+		if (_checkBoxes.isEmpty()) {
+			for (InputColumn<?> value : values) {
+				addAvailableInputColumn(value, true);
+			}
+		}
+
 		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
-			if (ArrayUtils.contains(value, cb.getValue())) {
+			if (ArrayUtils.contains(values, cb.getValue())) {
 				cb.setSelected(true);
 			} else {
 				cb.setSelected(false);

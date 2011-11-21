@@ -76,19 +76,21 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 		_tableRef = new MutableRef<Table>();
 		_mappedColumnNamesPropertyWidget = createMappedColumnNamesPropertyWidget();
 
-		InputColumn<?>[] currentValue = getCurrentValue();
-		if (currentValue != null) {
-			setValue(currentValue);
-		}
-
-		String[] currentMappedColumnsValue = (String[]) beanJobBuilder.getConfiguredProperty(mappedColumnsProperty);
+		final InputColumn<?>[] currentValue = getCurrentValue();
+		final String[] currentMappedColumnsValue = (String[]) beanJobBuilder.getConfiguredProperty(mappedColumnsProperty);
 		if (currentValue != null && currentMappedColumnsValue != null) {
-			int minLength = Math.min(currentValue.length, currentMappedColumnsValue.length);
+			// first create combo's, then set value (so combo is ready before it
+			// is requested)
+
+			_mappedColumnNamesPropertyWidget.setValue(currentMappedColumnsValue);
+			final int minLength = Math.min(currentValue.length, currentMappedColumnsValue.length);
 			for (int i = 0; i < minLength; i++) {
-				InputColumn<?> inputColumn = currentValue[i];
-				String mappedColumnName = currentMappedColumnsValue[i];
+				final InputColumn<?> inputColumn = currentValue[i];
+				final String mappedColumnName = currentMappedColumnsValue[i];
 				createComboBox(inputColumn, new MutableColumn(mappedColumnName));
 			}
+
+			setValue(currentValue);
 		}
 	}
 
@@ -246,18 +248,18 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 		}
 		return result.toArray(new String[result.size()]);
 	}
-	
+
 	@Override
 	protected void selectAll() {
-		for (SourceColumnComboBox sourceColumnComboBox  : _mappedColumnComboBoxes.values()) {
+		for (SourceColumnComboBox sourceColumnComboBox : _mappedColumnComboBoxes.values()) {
 			sourceColumnComboBox.setVisible(true);
 		}
 		super.selectAll();
 	}
-	
+
 	@Override
 	protected void selectNone() {
-		for (SourceColumnComboBox sourceColumnComboBox  : _mappedColumnComboBoxes.values()) {
+		for (SourceColumnComboBox sourceColumnComboBox : _mappedColumnComboBoxes.values()) {
 			sourceColumnComboBox.setVisible(false);
 		}
 		super.selectNone();

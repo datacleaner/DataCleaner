@@ -50,10 +50,13 @@ public final class ExtensionPackage implements Serializable {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
 
+	private static ClassLoader _classLoader = ClassLoaderUtils.getParentClassLoader();
+
 	private transient boolean _loaded = false;
 	private transient int _loadedAnalyzers;
 	private transient int _loadedTransformers;
 	private transient int _loadedFilters;
+	private transient int _loadedRenderers;
 
 	private final File[] _files;
 	private final String _name;
@@ -96,22 +99,32 @@ public final class ExtensionPackage implements Serializable {
 			}
 			ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
 
-			ClassLoader classLoader = ClassLoaderUtils.createClassLoader(_files);
+			synchronized (ExtensionPackage.class) {
+				// each loaded extension package is loaded within it's own
+				// classloader which is a child of the previous extension's
+				// classloader. This mechanism ensures that classes occurring in
+				// several extensions are only loaded once.
+				_classLoader = ClassLoaderUtils.createClassLoader(_files, _classLoader);
+			}
 
 			int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors().size();
 			int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();
 			int filtersBefore = classpathScanner.getFilterBeanDescriptors().size();
+			int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
 
-			classpathScanner = classpathScanner.scanPackage(_scanPackage, _scanRecursive, classLoader, true, _files);
+			classpathScanner = classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, _files);
 
 			_loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;
 			_loadedTransformers = classpathScanner.getTransformerBeanDescriptors().size() - transformersBefore;
 			_loadedFilters = classpathScanner.getFilterBeanDescriptors().size() - filtersBefore;
+			_loadedRenderers = classpathScanner.getRendererBeanDescriptors().size() - renderersBefore;
 
 			_loaded = true;
 
-			logger.info("Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters",
-					new Object[] { getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters() });
+			logger.info(
+					"Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters, {} renderers",
+					new Object[] { getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(),
+							getLoadedRenderers() });
 		}
 		return this;
 	}
@@ -122,6 +135,10 @@ public final class ExtensionPackage implements Serializable {
 
 	public boolean isLoaded() {
 		return _loaded;
+	}
+
+	public int getLoadedRenderers() {
+		return _loadedRenderers;
 	}
 
 	public int getLoadedAnalyzers() {

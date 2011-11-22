@@ -153,7 +153,10 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 				}
 			};
 			panel.addProperties(properties);
-			addTaskPane(icon, title, panel, expanded);
+
+			if (!panel.isEmpty()) {
+				addTaskPane(icon, title, panel, expanded);
+			}
 		}
 	}
 

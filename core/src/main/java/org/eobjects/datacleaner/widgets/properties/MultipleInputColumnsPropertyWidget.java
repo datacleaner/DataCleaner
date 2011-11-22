@@ -423,13 +423,15 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	 * @param sortedValue
 	 */
 	public void reorderValue(final InputColumn<?>[] sortedValue) {
+		// the offset represents the search textfield and the button panel
+		final int offset = 2;
 
 		// reorder the visual components
 		for (int i = 0; i < sortedValue.length; i++) {
 			InputColumn<?> inputColumn = sortedValue[i];
 			DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.get(inputColumn);
 			JComponent decoration = _checkBoxDecorations.get(checkBox);
-			add(decoration, i);
+			add(decoration, i + offset);
 		}
 		updateUI();
 

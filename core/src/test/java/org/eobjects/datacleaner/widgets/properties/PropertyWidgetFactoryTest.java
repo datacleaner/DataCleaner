@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eobjects.analyzer.beans.filter.ValidationCategory;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.ExcelDatastore;
 import org.eobjects.analyzer.data.InputColumn;
@@ -34,14 +35,15 @@ import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.reference.Dictionary;
-import org.eobjects.analyzer.reference.RegexStringPattern;
 import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.analyzer.reference.SimpleStringPattern;
+import org.eobjects.analyzer.reference.SimpleSynonymCatalog;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.metamodel.util.EqualsBuilder;
 
 import com.google.inject.Guice;
@@ -49,8 +51,33 @@ import com.google.inject.Injector;
 
 public class PropertyWidgetFactoryTest extends TestCase {
 
+	private SimpleDictionary dict1 = new SimpleDictionary("dict1");
+	private SimpleDictionary dict2 = new SimpleDictionary("dict2");
+	private SimpleDictionary dict3 = new SimpleDictionary("dict3");
+	private SimpleSynonymCatalog syn1 = new SimpleSynonymCatalog("syn1");
+	private SimpleSynonymCatalog syn2 = new SimpleSynonymCatalog("syn2");
+	private SimpleSynonymCatalog syn3 = new SimpleSynonymCatalog("syn3");
+	private SimpleStringPattern stringPattern1 = new SimpleStringPattern("sp1", "");
+	private SimpleStringPattern stringPattern2 = new SimpleStringPattern("sp2", "");
+	private SimpleStringPattern stringPattern3 = new SimpleStringPattern("sp3", "");
+
 	public void testCreateAllPropertyTypes() throws Exception {
 		Injector injector = Guice.createInjector(new DCModule(new File(".")));
+		AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
+		MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) configuration
+				.getReferenceDataCatalog();
+		referenceDataCatalog.addDictionary(dict1);
+		referenceDataCatalog.addDictionary(dict2);
+		referenceDataCatalog.addDictionary(dict3);
+		referenceDataCatalog.addStringPattern(stringPattern1);
+		referenceDataCatalog.addStringPattern(stringPattern2);
+		referenceDataCatalog.addStringPattern(stringPattern3);
+		referenceDataCatalog.addSynonymCatalog(syn1);
+		referenceDataCatalog.addSynonymCatalog(syn2);
+		referenceDataCatalog.addSynonymCatalog(syn3);
+
+		injector = injector.getInstance(InjectorBuilder.class).with(AnalyzerBeansConfiguration.class, configuration)
+				.createInjector();
 
 		AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
 
@@ -123,35 +150,33 @@ public class PropertyWidgetFactoryTest extends TestCase {
 				new InputColumn[0], new InputColumn[] { new MockInputColumn<String>("foo", String.class),
 						new MockInputColumn<String>("bar", String.class) });
 
-		performAssertions(propertyWidgetFactory, "String pattern property", SingleStringPatternPropertyWidget.class, null,
-				new SimpleStringPattern("foo", "aaa"));
-
-		performAssertions(propertyWidgetFactory, "String pattern array property", MultipleStringPatternPropertyWidget.class,
-				new StringPattern[0], new StringPattern[] { new SimpleStringPattern("foo", "aaa"),
-						new RegexStringPattern("bar", "aaa", true) });
-
 		performAssertions(propertyWidgetFactory, "Dictionary property", SingleDictionaryPropertyWidget.class, null,
 				new SimpleDictionary("foo", "foobar"));
 
 		performAssertions(propertyWidgetFactory, "Dictionary array property", MultipleDictionariesPropertyWidget.class,
-				new Dictionary[0], new Dictionary[] { new SimpleDictionary("f", "fo", "foo"),
-						new SimpleDictionary("b", "ba", "bar") });
+				new Dictionary[0], new Dictionary[] { dict1, dict3 });
+
+		performAssertions(propertyWidgetFactory, "String pattern property", SingleStringPatternPropertyWidget.class, null,
+				new SimpleStringPattern("foo", "aaa"));
+
+		performAssertions(propertyWidgetFactory, "String pattern array property", MultipleStringPatternPropertyWidget.class,
+				new StringPattern[0], new StringPattern[] { stringPattern1, stringPattern3 });
 
 		performAssertions(propertyWidgetFactory, "Synonym catalog property", SingleSynonymCatalogPropertyWidget.class, null,
 				new TextFileSynonymCatalog("foo", new File("foobar"), true, "UTF8"));
 
 		performAssertions(propertyWidgetFactory, "Synonym catalog array property",
-				MultipleSynonymCatalogsPropertyWidget.class, new SynonymCatalog[0], new SynonymCatalog[] {
-						new TextFileSynonymCatalog("foo", new File("foo"), true, "UTF8"),
-						new TextFileSynonymCatalog("bar", new File("bar"), true, "UTF8") });
+				MultipleSynonymCatalogsPropertyWidget.class, new SynonymCatalog[0], new SynonymCatalog[] { syn1, syn3 });
 
-		performAssertions(propertyWidgetFactory, "Datastore property", SingleDatastorePropertyWidget.class, null, new ExcelDatastore("my ds", "target/foobar.xlsx"));
-		
-		performAssertions(propertyWidgetFactory, "Updateable datastore property", SingleDatastorePropertyWidget.class, null, new CsvDatastore("foo", "foo.csv"));
+		performAssertions(propertyWidgetFactory, "Datastore property", SingleDatastorePropertyWidget.class, null,
+				new ExcelDatastore("my ds", "target/foobar.xlsx"));
+
+		performAssertions(propertyWidgetFactory, "Updateable datastore property", SingleDatastorePropertyWidget.class, null,
+				new CsvDatastore("foo", "foo.csv"));
 	}
 
 	private void performAssertions(PropertyWidgetFactory propertyWidgetFactory, String propertyName,
-			Class<? extends PropertyWidget<?>> widgetClass, Object initialValue, Object setValue) {
+			Class<? extends PropertyWidget<?>> widgetClass, Object initialValue, final Object setValue) {
 		@SuppressWarnings("unchecked")
 		PropertyWidget<Object> widget = (PropertyWidget<Object>) propertyWidgetFactory.create(propertyName);
 		assertNotNull(widget);

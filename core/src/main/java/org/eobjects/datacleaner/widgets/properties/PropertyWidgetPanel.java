@@ -58,6 +58,10 @@ public abstract class PropertyWidgetPanel extends DCPanel {
 		_rowCounter = 0;
 	}
 
+	public boolean isEmpty() {
+		return getComponentCount() == 0;
+	}
+
 	public void addProperties(Collection<ConfiguredPropertyDescriptor> properties) {
 		for (ConfiguredPropertyDescriptor propertyDescriptor : properties) {
 			final PropertyWidget<?> propertyWidget = getPropertyWidget(propertyDescriptor);
@@ -83,7 +87,7 @@ public abstract class PropertyWidgetPanel extends DCPanel {
 					final String description = propertyDescriptor.getDescription();
 					if (!StringUtils.isNullOrEmpty(description)) {
 						propertyLabel.setToolTipText(description);
-						
+
 						final JXLabel descriptionLabel = new JXLabel(description);
 						descriptionLabel.setLineWrap(true);
 						descriptionLabel.setFont(WidgetUtils.FONT_SMALL);

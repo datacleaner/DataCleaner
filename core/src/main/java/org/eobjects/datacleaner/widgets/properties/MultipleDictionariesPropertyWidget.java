@@ -109,7 +109,7 @@ public class MultipleDictionariesPropertyWidget extends AbstractMultipleCheckbox
 
 	@Override
 	protected String getNotAvailableText() {
-		return "- no dictionaries available - ";
+		return "- no dictionaries available -";
 	}
 
 }

@@ -27,6 +27,7 @@ import org.eobjects.analyzer.reference.DatastoreDictionary;
 import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
+import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.StringUtils;
@@ -53,6 +54,24 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<StringPatternChangeListener>();
 	private final ReferenceDataCatalog _immutableDelegate;
 
+	/**
+	 * No-args constructor, mostly usable for testing code.
+	 */
+	public MutableReferenceDataCatalog() {
+		_immutableDelegate = new ReferenceDataCatalogImpl();
+		_datastoreCatalog = null;
+		_dictionaries = new ArrayList<Dictionary>();
+		_synonymCatalogs = new ArrayList<SynonymCatalog>();
+		_stringPatterns = new ArrayList<StringPattern>();
+	}
+
+	/**
+	 * Main constructor for {@link MutableReferenceDataCatalog}.
+	 * 
+	 * @param immutableDelegate
+	 * @param datastoreCatalog
+	 * @param userPreferences
+	 */
 	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, DatastoreCatalog datastoreCatalog,
 			UserPreferences userPreferences) {
 		_immutableDelegate = immutableDelegate;

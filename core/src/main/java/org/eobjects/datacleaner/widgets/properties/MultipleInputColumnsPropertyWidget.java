@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
@@ -65,7 +66,6 @@ import org.jdesktop.swingx.VerticalLayout;
  * Property widget for multiple input columns. Displays these as checkboxes.
  * 
  * @author Kasper Sørensen
- * 
  */
 public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
 		SourceColumnChangeListener, TransformerChangeListener {
@@ -153,13 +153,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 				final JButton expressionColumnButton = WidgetFactory
 						.createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
 				expressionColumnButton.setToolTipText("Create expression/value based column");
-				expressionColumnButton.addActionListener(new AddExpressionBasedColumnActionListener(this));
+				expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener.forMultipleColumns(this));
 				_buttonPanel.add(expressionColumnButton);
 			}
 
 			final JButton reorderColumnsButton = WidgetFactory.createSmallButton(IconUtils.BUTTON_REORDER_COLUMN_IMAGEPATH);
 			reorderColumnsButton.setToolTipText("Reorder columns");
-			reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(propertyDescriptor, beanJobBuilder));
+			reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(this));
 			_buttonPanel.add(reorderColumnsButton);
 		}
 
@@ -171,13 +171,16 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	public void initialize(InputColumn<?>[] value) {
 		updateComponents(value);
 		_firstUpdate = false;
+		if (value != null && value.length > 0) {
+			reorderValue(value);
+		}
 	}
 
 	protected boolean isAllInputColumnsSelectedIfNoValueExist() {
 		return true;
 	}
 
-	private void updateComponents(InputColumn<?>[] value) {
+	private void updateComponents(final InputColumn<?>[] value) {
 		// fetch available input columns
 		Class<?> typeArgument = getPropertyDescriptor().getTypeArgument(0);
 		final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(_dataTypeFamily,
@@ -199,6 +202,7 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			for (InputColumn<?> col : value) {
 				if (col instanceof ExpressionBasedInputColumn) {
 					inputColumnsToBeRemoved.remove(col);
+					availableColumns.add(col);
 				}
 			}
 		}
@@ -346,6 +350,14 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			}
 		}
 
+		// add expression based input columns if needed.
+		for (InputColumn<?> inputColumn : values) {
+			if (inputColumn instanceof ExpressionBasedInputColumn && !_checkBoxes.containsKey(inputColumn)) {
+				addAvailableInputColumn(inputColumn, true);
+			}
+		}
+
+		// update selections in checkboxes
 		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
 			if (ArrayUtils.contains(values, cb.getValue())) {
 				cb.setSelected(true);
@@ -353,6 +365,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 				cb.setSelected(false);
 			}
 		}
+
+		updateUI();
 	}
 
 	protected void selectAll() {
@@ -401,5 +415,31 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		if (valueChanged) {
 			fireValueChanged();
 		}
+	}
+
+	/**
+	 * Reorders the values
+	 * 
+	 * @param sortedValue
+	 */
+	public void reorderValue(final InputColumn<?>[] sortedValue) {
+
+		// reorder the visual components
+		for (int i = 0; i < sortedValue.length; i++) {
+			InputColumn<?> inputColumn = sortedValue[i];
+			DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.get(inputColumn);
+			JComponent decoration = _checkBoxDecorations.get(checkBox);
+			add(decoration, i);
+		}
+		updateUI();
+
+		// recreate the _checkBoxes map
+		final TreeMap<InputColumn<?>, DCCheckBox<InputColumn<?>>> checkBoxesCopy = new TreeMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>(
+				_checkBoxes);
+		_checkBoxes.clear();
+		for (InputColumn<?> inputColumn : sortedValue) {
+			_checkBoxes.put(inputColumn, checkBoxesCopy.get(inputColumn));
+		}
+		_checkBoxes.putAll(checkBoxesCopy);
 	}
 }

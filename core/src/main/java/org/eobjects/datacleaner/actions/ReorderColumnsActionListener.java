@@ -37,12 +37,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.properties.MultipleInputColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,18 +49,16 @@ import org.slf4j.LoggerFactory;
 public class ReorderColumnsActionListener implements ActionListener {
 
 	private static final Logger logger = LoggerFactory.getLogger(ReorderColumnsActionListener.class);
-	private final ConfiguredPropertyDescriptor _propertyDescriptor;
-	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 
-	public ReorderColumnsActionListener(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		_propertyDescriptor = propertyDescriptor;
-		_beanJobBuilder = beanJobBuilder;
+	private final MultipleInputColumnsPropertyWidget _propertyWidget;
+
+	public ReorderColumnsActionListener(MultipleInputColumnsPropertyWidget propertyWidget) {
+		_propertyWidget = propertyWidget;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		InputColumn<?>[] currentValue = (InputColumn[]) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+		InputColumn<?>[] currentValue = _propertyWidget.getValue();
 		if (currentValue == null || currentValue.length == 0) {
 			WidgetUtils.showErrorMessage("No columns selected", "Cannot reorder columns, when none is selected.", null);
 			return;
@@ -173,10 +170,10 @@ public class ReorderColumnsActionListener implements ActionListener {
 		table.setModel(tableModel);
 	}
 
-	private void saveReorderedValue(List<InputColumn<?>> list) {
+	public void saveReorderedValue(List<InputColumn<?>> list) {
 		logger.info("Saving reordered columns: {}", list);
 
 		final InputColumn<?>[] newValue = list.toArray(new InputColumn[list.size()]);
-		_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
+		_propertyWidget.reorderValue(newValue);
 	}
 }

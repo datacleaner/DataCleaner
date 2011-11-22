@@ -109,6 +109,14 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
 		removeNotify();
 	}
 
+	protected void add(Component component, int index) {
+		_panel.add(component, index);
+	}
+
+	protected Component[] getComponents() {
+		return _panel.getComponents();
+	}
+
 	protected void add(Component component) {
 		_panel.add(component);
 	}

@@ -22,16 +22,14 @@ package org.eobjects.datacleaner.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.data.ConstantInputColumn;
 import org.eobjects.analyzer.data.ELInputColumn;
+import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
+import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.metamodel.util.CollectionUtils;
 
 /**
@@ -41,39 +39,58 @@ import org.eobjects.metamodel.util.CollectionUtils;
  */
 public class AddExpressionBasedColumnActionListener implements ActionListener {
 
-	private final JComponent _parentComponent;
-	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
-	private final ConfiguredPropertyDescriptor _propertyDescriptor;
+	private final PropertyWidget<InputColumn<?>> _singlePropertyWidget;
+	private final PropertyWidget<InputColumn<?>[]> _multiplePropertyWidget;
 
-	public AddExpressionBasedColumnActionListener(AbstractPropertyWidget<?> propertyWidget) {
-		_parentComponent = propertyWidget.getWidget();
-		_beanJobBuilder = propertyWidget.getBeanJobBuilder();
-		_propertyDescriptor = propertyWidget.getPropertyDescriptor();
+	public static AddExpressionBasedColumnActionListener forSingleColumn(PropertyWidget<InputColumn<?>> singlePropertyWidget) {
+		return new AddExpressionBasedColumnActionListener(singlePropertyWidget, null);
+	}
+
+	public static AddExpressionBasedColumnActionListener forMultipleColumns(
+			PropertyWidget<InputColumn<?>[]> multiplePropertyWidget) {
+		return new AddExpressionBasedColumnActionListener(null, multiplePropertyWidget);
+	}
+
+	private AddExpressionBasedColumnActionListener(PropertyWidget<InputColumn<?>> singlePropertyWidget,
+			PropertyWidget<InputColumn<?>[]> multiplePropertyWidget) {
+		_singlePropertyWidget = singlePropertyWidget;
+		_multiplePropertyWidget = multiplePropertyWidget;
+	}
+
+	public PropertyWidget<?> getPropertyWidget() {
+		return _singlePropertyWidget == null ? _multiplePropertyWidget : _singlePropertyWidget;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String expression = JOptionPane.showInputDialog(_parentComponent,
+		String expression = JOptionPane.showInputDialog(getPropertyWidget().getWidget(),
 				"In stead of referencing a column you can also enter an expression.\n"
 						+ "An expression may either be a constant string or an EL-expression\n"
 						+ "that can access the other columns using the #{column_name} syntax.", "");
+		addExpressionBasedInputColumn(expression);
+	}
 
+	public void addExpressionBasedInputColumn(String expression) {
 		if (!StringUtils.isNullOrEmpty(expression)) {
-			Object newValue;
+			ExpressionBasedInputColumn<?> expressionBasedInputColumn;
 			if (expression.indexOf("#{") != -1) {
-				newValue = new ELInputColumn(expression);
+				expressionBasedInputColumn = new ELInputColumn(expression);
 			} else {
-				newValue = new ConstantInputColumn(expression);
+				expressionBasedInputColumn = new ConstantInputColumn(expression);
 			}
 
-			if (_propertyDescriptor.isArray()) {
-				InputColumn<?>[] currentValue = (InputColumn[]) _beanJobBuilder.getConfiguredProperty(_propertyDescriptor);
+			if (_multiplePropertyWidget != null) {
+				InputColumn<?>[] currentValue = _multiplePropertyWidget.getValue();
 				if (currentValue == null) {
 					currentValue = new InputColumn[0];
 				}
-				newValue = CollectionUtils.array(currentValue, newValue);
+
+				@SuppressWarnings("unchecked")
+				final InputColumn<?>[] newValue = CollectionUtils.array(currentValue, expressionBasedInputColumn);
+				_multiplePropertyWidget.onValueTouched(newValue);
+			} else {
+				_singlePropertyWidget.onValueTouched(expressionBasedInputColumn);
 			}
-			_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
 		}
 	}
 }

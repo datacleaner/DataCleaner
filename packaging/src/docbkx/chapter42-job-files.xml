@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Analysis job files</title>
+
+	<section>
+		<title>XML schema</title>
+		<para>Analysis job files are written in an XML format pertaining to
+			the XML namespace
+			"http://eobjects.org/analyzerbeans/job/1.0".
+		</para>
+		<para>
+			For XML-savvy readers, who prefer to use XML schema aware editors to
+			edit their XML files, you can find the XML schema for this namespace
+			here:
+			<link
+				xl:href="http://eobjects.org/svn/AnalyzerBeans/trunk/src/main/resources/job.xsd">http://eobjects.org/svn/AnalyzerBeans/trunk/src/main/resources/job.xsd
+			</link>
+			.
+		</para>
+	</section>
 
 </chapter>

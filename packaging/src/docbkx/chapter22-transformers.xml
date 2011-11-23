@@ -5,6 +5,36 @@
 
 	<title>Transformers</title>
 
+	<section id="table_lookup_transformer">
+		<title>Table lookup</title>
+		<para>The table lookup transformer allows you to look up values in a
+			different table. Any amount of columns can be used for mapping
+			(lookup conditioning) and for outputting (the outcome of the lookup).
+		</para>
+		<para>The configuration screen for the table lookup transformer looks
+			like this:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="transformer_reference_table_lookup.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>To make the mapping you need to select the target datastore,
+			schema and table names. Once selected you will be able to select
+			which columns to use for condition setting when looking up values.
+		</para>
+		<para>The semantics of the Table lookup are close to the semantics
+			of a
+			LEFT JOIN. If no lookup value is found, nulls will be returned.
+			However, if multiple records are found to match the conditions, only
+			the first will be returned.
+		</para>
+		<para>Note that the Table lookup will use a cache for looking up
+			values, to avoid querying the target table for every incoming value.
+		</para>
+	</section>
+
 	<section id="javascript_transformer">
 		<title>JavaScript transformer</title>
 		<para>The JavaScript transformer allows the user to define his/her own
@@ -13,10 +43,12 @@
 			looping. It can also be
 			used as a
 			useful way to express small business
-			rules.</para>
+			rules.
+		</para>
 		<para>For this documentation, a complete reference of JavaScript is
 			out of scope. But we will show a few examples and more importantly
-			talk about the available variables and their types.</para>
+			talk about the available variables and their types.
+		</para>
 		<para>The JavaScript transformer returns a single string. The entered
 			script should provide this string as the last line of the script.
 			This is why the template script is as follows (so you can just
@@ -44,16 +76,19 @@
 						<entry>values</entry>
 						<entry>
 							<para>An array of all values in the row (as mapped by the
-								"Columns" property).</para>
+								"Columns" property).
+							</para>
 							<para>Using "values" you can reference eg. the first and third
-								values like this:</para>
+								values like this:
+							</para>
 							<programlisting>
 								var first = values[0];
 								var third = values[2];
 							</programlisting>
 							<para>Note that JavaScript arrays are 0-based.</para>
 							<para>Instead of indexes you can also reference by column name,
-								like this:</para>
+								like this:
+							</para>
 							<programlisting>
 								var idValue = values["id"];
 							</programlisting>
@@ -83,7 +118,8 @@
 						<entry>
 							<para>A reference to the system console's "out" stream. If
 								running DataCleaner with the console visible, you can print
-								messages to the console, like this:</para>
+								messages to the console, like this:
+							</para>
 							<programlisting>out.println("Value: " + values[0]);
 							</programlisting>
 						</entry>
@@ -94,7 +130,8 @@
 							<para>A reference to the logging subsystem. Logging can be
 								configured and log messages are stored in files, which makes it
 								a bit more flexible than simply using "out". Here's how you
-								write a few log messages with varying severities:</para>
+								write a few log messages with varying severities:
+							</para>
 							<programlisting>
 								log.debug("This&#160;is&#160;a&#160;DEBUG&#160;message,&#160;it&#160;will&#160;probably&#160;be&#160;disregarded");
 								log.info("This&#160;is&#160;a&#160;INFO&#160;message,&#160;it&#160;will&#160;probably&#160;be&#160;written&#160;to&#160;the&#160;logs");
@@ -122,7 +159,8 @@
 						<entry>STRING</entry>
 						<entry>
 							<para>String values are represented as JavaScript strings, which
-								means that they have (among others) methods like:</para>
+								means that they have (among others) methods like:
+							</para>
 							<programlisting>
 								var str = values[0];
 
@@ -197,11 +235,30 @@
 					<row>
 						<entry>BOOLEAN</entry>
 						<entry>Boolean (true/false) values are simply booleans, no sugar
-							coating added :)</entry>
+							coating added :)
+						</entry>
 					</row>
 				</tbody>
 			</tgroup>
 		</table>
+	</section>
+
+	<section id="easydq_transformers">
+		<title>EasyDQ services</title>
+		<para>
+			<link xl:href="http://www.easydq.com">EasyDataQuality</link>
+			is an on-demand service for data quality functions.
+			DataCleaner
+			provides access to the EasyDQ services, but the core
+			functionality is
+			provided by Human Inference.
+		</para>
+		<para>
+			Please refer to the
+			<link xl:href="http://help.easydq.com/datacleaner">EasyDQ for DataCleaner documentation</link>
+			for
+			detailed information about the services provided through EasyDQ.
+		</para>
 	</section>
 
 </chapter>

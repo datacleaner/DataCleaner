@@ -31,13 +31,19 @@
 			the
 			userpreferences.dat file.
 		</para>
+		<para>
+			Throughout the configuration file you can specify various file
+			paths. These can either be absolute or relative to the root directory
+			of DataCleaner.
+		</para>
 	</chapterinfo>
 
 	<section>
 		<title>XML schema</title>
 		<para>The configuration file (conf.xml) is an XML file pertaining to
 			the XML namespace
-			"http://eobjects.org/analyzerbeans/configuration/1.0".</para>
+			"http://eobjects.org/analyzerbeans/configuration/1.0".
+		</para>
 		<para>
 			For XML-savvy readers, who prefer to use XML schema aware editors to
 			edit their XML files, you can find the XML schema for this namespace
@@ -54,7 +60,8 @@
 		<para>Datastores can be configured in the configuration file under
 			the
 			element &lt;datastore-catalog&gt;. The following sections will go
-			into further details with particular types of datastores.</para>
+			into further details with particular types of datastores.
+		</para>
 	</section>
 
 	<section>
@@ -69,7 +76,8 @@
 				connection
 				properties. It's a good place to start if you don't know
 				these
-				properties already.</para>
+				properties already.
+			</para>
 		</tip>
 
 		<para>MySQL</para>
@@ -111,8 +119,7 @@
 			&#160;&lt;encoding&gt;UTF-8&lt;/encoding&gt;
 			&#160;&lt;failOnInconsistencies&gt;true&lt;/failOnInconsistencies&gt;
 			&#160;&lt;headerLineNumber&gt;0&lt;/headerLineNumber&gt;
-			&lt;/csv-datastore&gt;
-		</programlisting>
+			&lt;/csv-datastore&gt; </programlisting>
 	</section>
 
 	<section>
@@ -134,14 +141,15 @@
 		<title>Task runner</title>
 		<para>The task runner defines how DataCleaner's will engine will
 			execute the tasks of an analysis job. Typically you shouldn't edit
-			this element. However, here are the two options:</para>
-		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt;
-		</programlisting>
+			this element. However, here are the two options:
+		</para>
+		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt; </programlisting>
 		<para>Defines a multi threaded task runner with a thread pool of 30
 			available threads. Beware that although 30 might seem like a high
 			number that too small a pool of threads might cause issues because
 			some tasks schedule additional tasks and thus there's a risk of dead
-			lock when thread count is very low.</para>
+			lock when thread count is very low.
+		</para>
 
 		<programlisting>&lt;singlethreaded-taskrunner /&gt;</programlisting>
 		<para>Defines a single threaded task runner. On legacy hardware or
@@ -159,9 +167,11 @@
 			that have been marked with a specific
 			category which
 			will be of
-			interest to the user.</para>
+			interest to the user.
+		</para>
 		<para>To explain the storage provider configuration let's look at the
-			default element:</para>
+			default element:
+		</para>
 		<programlisting>
 			&lt;storage-provider&gt;
 			&#160;&lt;combined&gt;
@@ -204,7 +214,8 @@
 			<para>The MongoDB storage provider solution has shown very good
 				performance metrics, but does add more complexity to the
 				installation, which is why it is still considered experimental and
-				only for savvy users.</para>
+				only for savvy users.
+			</para>
 		</sect2>
 	</section>
 </chapter>

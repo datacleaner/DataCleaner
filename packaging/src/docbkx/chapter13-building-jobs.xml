@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Building jobs</title>
@@ -8,7 +8,8 @@
 	<section id="adding_components">
 		<title>Adding components to the job</title>
 		<para>There are three kinds of components that you can add to your
-			job:</para>
+			job:
+		</para>
 		<orderedlist>
 			<listitem>
 				<para>
@@ -53,14 +54,16 @@
 			them to the job. Analyzers and transformers are added by clicking
 			their respective buttons in the top of the screen. Each of these
 			components will get their own tab, from where you can configure them.
-			Filters are added and configured in the "Filters" tab.</para>
+			Filters are added and configured in the "Filters" tab.
+		</para>
 	</section>
 
 	<section id="wiring_components">
 		<title>Wiring components together</title>
 		<para>Simply adding a transformer or filter actually doesn't change
 			your job as such! This is because these components only have an
-			impact if you wire them together somehow.</para>
+			impact if you wire them together somehow.
+		</para>
 		<para>To wire a transformer you simply need to use it's output column.
 			DataCleaner will automatically build the flow so that a transformer
 			is executed before components that depend on it's output columns.
@@ -70,11 +73,13 @@
 			outcomes in their top-right corners. Click this button to select a
 			filter outcome to depend on. If you have multiple filters you can
 			chain these simply by having dependent outcomes of the individual
-			filters.</para>
+			filters.
+		</para>
 		<para>To get an overview of your current job flow, you can click the
 			"Visualize" button, which will present the job's contents in an
 			interactive flow
-			diagram:</para>
+			diagram:
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="visualize_job.png" format="PNG"
@@ -87,10 +92,12 @@
 		<title>Executing jobs</title>
 		<para>When a job has been built you can execute it. To check whether
 			your job is correctly configured and ready to execute, check the
-			status bar in the bottom of the job building window.</para>
+			status bar in the bottom of the job building window.
+		</para>
 		<para>To execute the job, simply click the "Run analysis" button in
 			the top-right corner of the window. This will bring up the result
-			window, which contains:</para>
+			window, which contains:
+		</para>
 		<orderedlist>
 			<listitem>
 				<para>
@@ -103,7 +110,8 @@
 			<listitem>
 				<para>Additional tabs for each table that is being processed in the
 					job. Results for the individual analyzers will be shown in these
-					tabs.</para>
+					tabs.
+				</para>
 			</listitem>
 		</orderedlist>
 		<para>Here's an example of an analysis result window:</para>
@@ -119,23 +127,28 @@
 		<title>Saving and opening jobs</title>
 		<para>You can save your jobs in order to reuse them at a later time.
 			Saving a job is simple: Simply click the "Save analysis job" button
-			in the top-left corner of the window.</para>
+			in the top-left corner of the window.
+		</para>
 		<para>Analysis jobs are saved in files with the ".analysis.xml"
 			extension. These files are XML files that are readable and editable
-			using any XML editor.</para>
+			using any XML editor.
+		</para>
 		<para>Opening jobs can be done using the "File -> Open analysis
 			job..." menu item. Opening a job will restore a job building window
-			from where you can edit and run the job.</para>
+			from where you can edit and run the job.
+		</para>
 	</section>
 
 	<section id="template_jobs">
 		<title>Template jobs</title>
 		<para>DataCleaner contains a feature where you can reuse a job for
 			multiple datastores or just multiple columns in the same datastore.
-			We call this feature 'template jobs'.</para>
+			We call this feature 'template jobs'.
+		</para>
 		<para>When opening a job you are presented with a file chooser. When
 			you select a job file a panel will appear, containing some
-			information about the job as well as available actions:</para>
+			information about the job as well as available actions:
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="template_job_01_filechooser.jpg"
@@ -144,7 +157,8 @@
 		</mediaobject>
 		<para>If you click the 'Open as template' button you will be presented
 			with a dialog where you can map the job's original columns to a new
-			set of columns:</para>
+			set of columns:
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="template_job_02_mapping.jpg" format="JPG"
@@ -154,18 +168,22 @@
 		<para>First you need to specify the datastore to use. On the left side
 			you see the name of the original datastore, but the job is not
 			restricted to use only this datastore. Select a datastore from the
-			list and the fields below for the columns will become active.</para>
+			list and the fields below for the columns will become active.
+		</para>
 		<para>Then you need to map individual columns. If you have two
 			datastore that have the same column names, you can click the "Map
 			automatically" button and they will be automatically assigned.
 			Otherwise you need to map the columns from the new datastore's
-			availabel columns.</para>
+			availabel columns.
+		</para>
 		<para>Finally your job may contain 'Job-level variables'. These are
 			configurable properties of the job that you might also want to fill
-			out.</para>
+			out.
+		</para>
 		<para>Once these 2-3 steps have been completed, click the "Open job"
 			button, and DataCleaner will be ready for executing the job on a new
-			set of columns!</para>
+			set of columns!
+		</para>
 	</section>
 
 	<section id="writing-cleansed-data">
@@ -174,7 +192,8 @@
 			during such analysis you will find yourself actually improving data
 			by means of applying transformers and filters on it. When this is the
 			case, obviously you will want to export the improved/cleansed data so
-			you can utilize it in other situations than the analysis.</para>
+			you can utilize it in other situations than the analysis.
+		</para>
 		<para>
 			Writing cleansed data is archieved by wiring the job together
 			with an
@@ -225,6 +244,15 @@
 					Excel. A disadvantage is that
 					for very large data sets it is less
 					performant.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Insert into table</emphasis>
+					. Using this writer you can insert your data into a table of an
+					existing datastore. If you already have a table layout ready or if
+					you want to append to eg. a database table, then this writing
+					option is the right one for you.
 				</para>
 			</listitem>
 		</orderedlist>

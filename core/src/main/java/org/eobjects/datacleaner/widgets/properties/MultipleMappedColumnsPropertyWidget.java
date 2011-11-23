@@ -21,8 +21,9 @@ package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.swing.JComponent;
@@ -95,18 +96,32 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 	}
 
 	public void setTable(Table table) {
-		_tableRef.set(table);
-		updateMappedColumns();
+		if (table != _tableRef.get()) {
+			_tableRef.set(table);
+			updateMappedColumns();
+		}
 	}
 
 	private void updateMappedColumns() {
-		Collection<SourceColumnComboBox> comboBoxes = _mappedColumnComboBoxes.values();
-		for (SourceColumnComboBox comboBox : comboBoxes) {
-			Table table = _tableRef.get();
+		final Table table = _tableRef.get();
+		final Set<Entry<InputColumn<?>, SourceColumnComboBox>> entrySet = _mappedColumnComboBoxes.entrySet();
+
+		for (Entry<InputColumn<?>, SourceColumnComboBox> entry : entrySet) {
+			InputColumn<?> inputColumn = entry.getKey();
+			SourceColumnComboBox comboBox = entry.getValue();
+
 			if (table == null) {
 				comboBox.setEmptyModel();
 			} else {
 				comboBox.setModel(table);
+				if (comboBox.getSelectedItem() == null) {
+					Column column = getDefaultMappedColumn(inputColumn, table);
+					if (column != null) {
+						comboBox.setEditable(true);
+						comboBox.setSelectedItem(column);
+						comboBox.setEditable(false);
+					}
+				}
 			}
 		}
 	}
@@ -119,6 +134,12 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 	private SourceColumnComboBox createComboBox(InputColumn<?> inputColumn, Column mappedColumn) {
 		final SourceColumnComboBox sourceColumnComboBox = new SourceColumnComboBox();
 		_mappedColumnComboBoxes.put(inputColumn, sourceColumnComboBox);
+
+		Table table = _tableRef.get();
+		if (mappedColumn == null && table != null) {
+			mappedColumn = getDefaultMappedColumn(inputColumn, table);
+		}
+
 		if (mappedColumn != null) {
 			sourceColumnComboBox.setEditable(true);
 			sourceColumnComboBox.setSelectedItem(mappedColumn);
@@ -132,6 +153,11 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 			}
 		});
 		return sourceColumnComboBox;
+	}
+
+	protected Column getDefaultMappedColumn(InputColumn<?> inputColumn, Table table) {
+		// automatically select a column by name, if it exists
+		return table.getColumnByName(inputColumn.getName());
 	}
 
 	@Override

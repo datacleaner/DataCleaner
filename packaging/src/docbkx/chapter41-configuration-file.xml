@@ -31,19 +31,13 @@
 			the
 			userpreferences.dat file.
 		</para>
-		<para>
-			Throughout the configuration file you can specify various file
-			paths. These can either be absolute or relative to the root directory
-			of DataCleaner.
-		</para>
 	</chapterinfo>
 
 	<section>
 		<title>XML schema</title>
 		<para>The configuration file (conf.xml) is an XML file pertaining to
 			the XML namespace
-			"http://eobjects.org/analyzerbeans/configuration/1.0".
-		</para>
+			"http://eobjects.org/analyzerbeans/configuration/1.0".</para>
 		<para>
 			For XML-savvy readers, who prefer to use XML schema aware editors to
 			edit their XML files, you can find the XML schema for this namespace
@@ -60,8 +54,7 @@
 		<para>Datastores can be configured in the configuration file under
 			the
 			element &lt;datastore-catalog&gt;. The following sections will go
-			into further details with particular types of datastores.
-		</para>
+			into further details with particular types of datastores.</para>
 	</section>
 
 	<section>
@@ -76,8 +69,7 @@
 				connection
 				properties. It's a good place to start if you don't know
 				these
-				properties already.
-			</para>
+				properties already.</para>
 		</tip>
 
 		<para>MySQL</para>
@@ -132,6 +124,96 @@
 	</section>
 
 	<section>
+		<title>XML file datastores</title>
+		<para>Defining XML datastores can be done in both a simple
+			(automatically mapped) way, or an advanced (and more performant and
+			memory effective way).</para>
+		<para>The simple way is just to define a xml-datastore with a
+			filename, like this:</para>
+		<programlisting>
+			&lt;xml-datastore&#160;name="my_xml_datastore"&gt;
+			&#160;&lt;filename&gt;/path/to/file.xml&lt;/filename&gt;
+			&lt;/xml-datastore&gt; </programlisting>
+		<para>This kind of XML datastore works find when the file size is
+			small and the hierarchy is not too complex. The downside to it is
+			that it tries to automatically detect a table structure that is
+			fitting to represent the XML contents (which is a tree structure, not
+			really a table).</para>
+		<para>To get around this problem you can also define your own table
+			structure in which you specify the XPaths that make up your rows and
+			the values within your rows. Here's an example:</para>
+		<programlisting>
+			&lt;xml-datastore&#160;name="my_xml_datastore"&gt;
+			&#160;&lt;filename&gt;/path/to/file.xml&lt;/filename&gt;
+			&#160;&lt;table-def&gt;
+			&#160;&#160;&#160;&lt;rowXpath&gt;/greetings/greeting&lt;/rowXpath&gt;
+			&#160;&#160;&#160;&lt;valueXpath&gt;/greetings/greeting/how&lt;/valueXpath&gt;
+			&#160;&#160;&#160;&lt;valueXpath&gt;/greetings/greeting/what&lt;/valueXpath&gt;
+			&#160;&lt;/table-def&gt;
+			&lt;/xml-datastore&gt; </programlisting>
+		<para>The datastore defines a single table, where each record is
+			defined as the element which matches the XPath "/greetings/greeting".
+			The table has two columns, which are represented by the "how" and
+			"what" elements that are child elements to the row's path.
+		</para>
+		<para>
+			For more details on the XPath expressions that define the table model
+			of XML datastores, please refer to
+			<link xl:href="http://metamodel.eobjects.org/example_xml_mapping.html">MetaModel's tutorial on the topic</link>
+			(MetaModel is the data access library used to read data in
+			DataCleaner).
+		</para>
+	</section>
+
+	<section>
+		<title>MongoDB databases</title>
+		<para>This is an example of a fully specified MongoDB datastore, with
+			an example table structure based on two collections.
+		</para>
+		<programlisting>
+			&lt;mongodb-datastore&#160;name="my_mongodb_datastore"&gt;
+			&#160;&lt;hostname&gt;localhost&lt;/hostname&gt;
+			&#160;&lt;port&gt;27017&lt;/port&gt;
+			&#160;&lt;database-name&gt;my_database&lt;/database-name&gt;
+			&#160;&lt;username&gt;user&lt;/username&gt;
+			&#160;&lt;password&gt;pass&lt;/password&gt;
+			&#160;&lt;table-def&gt;
+			&#160;&#160;&#160;&lt;collection&gt;company_collection&lt;/collection&gt;
+			&#160;&#160;&#160;&lt;property&gt;
+			&#160;&#160;&#160;&#160;&lt;name&gt;company_name&lt;/name&gt;
+			&#160;&#160;&#160;&#160;&lt;type&gt;VARCHAR&lt;/type&gt;
+			&#160;&#160;&#160;&lt;/property&gt;
+			&#160;&#160;&#160;&lt;property&gt;
+			&#160;&#160;&#160;&#160;&lt;name&gt;customer&lt;/name&gt;
+			&#160;&#160;&#160;&#160;&lt;type&gt;BOOLEAN&lt;/type&gt;
+			&#160;&#160;&#160;&lt;/property&gt;
+			&#160;&#160;&#160;&lt;property&gt;
+			&#160;&#160;&#160;&#160;&lt;name&gt;num_employees&lt;/name&gt;
+			&#160;&#160;&#160;&#160;&lt;type&gt;INTEGER&lt;/type&gt;
+			&#160;&#160;&#160;&lt;/property&gt;
+			&#160;&lt;/table-def&gt;
+			&#160;&lt;table-def&gt;
+			&#160;&#160;&#160;&lt;collection&gt;person_collection&lt;/collection&gt;
+			&#160;&#160;&#160;&lt;property&gt;
+			&#160;&#160;&#160;&#160;&lt;name&gt;person_name&lt;/name&gt;
+			&#160;&#160;&#160;&#160;&lt;type&gt;VARCHAR&lt;/type&gt;
+			&#160;&#160;&#160;&lt;/property&gt;
+			&#160;&#160;&#160;&lt;property&gt;
+			&#160;&#160;&#160;&#160;&lt;name&gt;birthdate&lt;/name&gt;
+			&#160;&#160;&#160;&#160;&lt;type&gt;DATE&lt;/type&gt;
+			&#160;&#160;&#160;&lt;/property&gt;
+			&#160;&lt;/table-def&gt;
+			&lt;/mongodb-datastore&gt; </programlisting>
+		<para>If the hostname and port elements are left out, localhost:27017
+			will be assumed.</para>
+		<para>If the username and password elements are left out, an anonymous
+			connection will be made.</para>
+		<para>If there are no table-def elements, the database will be
+			inspected and table definitions will be auto-detected based on the
+			first 1000 documents of each collection.</para>
+	</section>
+
+	<section>
 		<title>Reference data</title>
 		<para>Reference data are defined in the configuration file in the
 			element &lt;reference-data-catalog&gt;.</para>
@@ -141,15 +223,14 @@
 		<title>Task runner</title>
 		<para>The task runner defines how DataCleaner's will engine will
 			execute the tasks of an analysis job. Typically you shouldn't edit
-			this element. However, here are the two options:
-		</para>
-		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt; </programlisting>
+			this element. However, here are the two options:</para>
+		<programlisting>&lt;multithreaded-taskrunner max-threads="30" /&gt;
+		</programlisting>
 		<para>Defines a multi threaded task runner with a thread pool of 30
 			available threads. Beware that although 30 might seem like a high
 			number that too small a pool of threads might cause issues because
 			some tasks schedule additional tasks and thus there's a risk of dead
-			lock when thread count is very low.
-		</para>
+			lock when thread count is very low.</para>
 
 		<programlisting>&lt;singlethreaded-taskrunner /&gt;</programlisting>
 		<para>Defines a single threaded task runner. On legacy hardware or
@@ -167,11 +248,9 @@
 			that have been marked with a specific
 			category which
 			will be of
-			interest to the user.
-		</para>
+			interest to the user.</para>
 		<para>To explain the storage provider configuration let's look at the
-			default element:
-		</para>
+			default element:</para>
 		<programlisting>
 			&lt;storage-provider&gt;
 			&#160;&lt;combined&gt;
@@ -214,8 +293,7 @@
 			<para>The MongoDB storage provider solution has shown very good
 				performance metrics, but does add more complexity to the
 				installation, which is why it is still considered experimental and
-				only for savvy users.
-			</para>
+				only for savvy users.</para>
 		</sect2>
 	</section>
 </chapter>

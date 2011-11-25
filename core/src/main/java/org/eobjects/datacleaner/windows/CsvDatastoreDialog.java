@@ -412,9 +412,19 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 	}
 
 	@Override
+	protected CsvDatastore getPreviewDatastore(String filename) {
+		return createDatastore("Preview", filename, false);
+	}
+
+	@Override
 	protected CsvDatastore createDatastore(String name, String filename) {
+		boolean failOnInconsistentRecords = _failOnInconsistenciesCheckBox.isSelected();
+		return createDatastore(name, filename, failOnInconsistentRecords);
+	}
+
+	private CsvDatastore createDatastore(String name, String filename, boolean failOnInconsistentRecords) {
 		return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEncoding(),
-				_failOnInconsistenciesCheckBox.isSelected(), getHeaderLine());
+				failOnInconsistentRecords, getHeaderLine());
 	}
 
 	@Override

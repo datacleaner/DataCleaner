@@ -168,10 +168,16 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 		} else {
 			sourceColumnComboBox = createComboBox(checkBox.getValue(), null);
 		}
-		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
+		checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
 			public void onItemSelected(InputColumn<?> item, boolean selected) {
 				sourceColumnComboBox.setVisible(selected);
+			}
+		});
+		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
+			@Override
+			public void onItemSelected(InputColumn<?> item, boolean selected) {
+				_mappedColumnNamesPropertyWidget.fireValueChanged();
 			}
 		});
 

@@ -160,10 +160,12 @@ public final class DCWindowContext implements WindowContext {
 
 	@Override
 	public void exit() {
+		// ensure that exit actions only occur once.
 		if (_exiting) {
 			return;
 		}
 		_exiting = true;
+		
 		_userPreferences.save();
 		_usageLogger.logApplicationShutdown();
 		if (_configuration != null) {

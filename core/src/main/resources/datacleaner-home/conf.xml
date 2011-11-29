@@ -77,6 +77,7 @@
 		<package>org.eobjects.datacleaner.output.beans</package>
 		<package>org.eobjects.datacleaner.panels</package>
 		<package recursive="true">org.eobjects.datacleaner.widgets.result</package>
+		<package recursive="true">com.hi</package>
 	</classpath-scanner>
 
 </configuration>

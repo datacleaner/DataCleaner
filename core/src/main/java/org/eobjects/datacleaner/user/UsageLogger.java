@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -34,6 +33,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,18 +52,12 @@ public final class UsageLogger {
 
 	private final UserPreferences _userPreferences;
 	private final HttpXmlUtils _httpXmlUtils;
-	private ExecutorService _executorService;
+	private final ExecutorService _executorService;
 
 	public UsageLogger(UserPreferences userPreferences, HttpXmlUtils httpXmlUtils) {
 		_userPreferences = userPreferences;
 		_httpXmlUtils = httpXmlUtils;
-	}
-
-	private ExecutorService getExecutorService() {
-		if (_executorService == null || _executorService.isShutdown()) {
-			_executorService = Executors.newSingleThreadExecutor();
-		}
-		return _executorService;
+		_executorService = SharedExecutorService.get();
 	}
 
 	public void logApplicationStartup() {
@@ -72,7 +66,7 @@ public final class UsageLogger {
 
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
-		getExecutorService().submit(runnable);
+		_executorService.submit(runnable);
 	}
 
 	private String getUsername() {
@@ -89,13 +83,13 @@ public final class UsageLogger {
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
 		try {
-			getExecutorService().submit(runnable).get();
+			_executorService.submit(runnable).get();
 		} catch (Exception e) {
 			logger.warn("Exception occurred sending shutdown message", e);
 		}
 
 		// order the executor service to shut down.
-		getExecutorService().shutdown();
+		_executorService.shutdown();
 	}
 
 	public void log(final String action) {
@@ -107,7 +101,7 @@ public final class UsageLogger {
 		final String username = getUsername();
 		logger.debug("Logging '{}'", action);
 		final Runnable runnable = new UsageLoggerRunnable(username, action);
-		getExecutorService().submit(runnable);
+		_executorService.submit(runnable);
 	}
 
 	/**

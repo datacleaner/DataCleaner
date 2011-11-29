@@ -79,8 +79,16 @@ class DCExitActionListener implements ExitActionListener {
 		for (int i = 0; i < threadCount; i++) {
 			Thread thread = threads[i];
 			if (thread != null) {
-				logger.warn(prefix + "thread #" + (i + 1) + " (" + (thread.isAlive() ? "alive" : "dead")
-						+ (thread.isDaemon() ? ",daemon" : "") + ")" + ": " + thread);
+				boolean alive = thread.isAlive();
+				boolean daemon = thread.isDaemon();
+				logger.warn(prefix + "thread #" + (i + 1) + " (" + (alive ? "alive" : "dead") + (daemon ? ",daemon" : "")
+						+ ")" + ": " + thread);
+				if (alive && !daemon) {
+					StackTraceElement[] stackTrace = thread.getStackTrace();
+					for (int j = stackTrace.length - 1; j >= 0; j--) {
+						logger.warn(prefix + " | stack " + (j + 1) + ": " + stackTrace[j]);
+					}
+				}
 			}
 		}
 	}

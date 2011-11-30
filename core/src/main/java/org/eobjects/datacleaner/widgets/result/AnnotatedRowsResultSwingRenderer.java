@@ -47,6 +47,100 @@ import org.jdesktop.swingx.decorator.Highlighter;
 @RendererBean(SwingRenderingFormat.class)
 public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<AnnotatedRowsResult, DCPanel> {
 
+	public static class AnnotatedRowResultPanel extends DCPanel {
+
+		private static final long serialVersionUID = 1L;
+		private final AnnotatedRowsResult _result;
+		private final UsageLogger _usageLogger;
+		private final UserPreferences _userPreferences;
+		private final DatastoreCatalog _datastoreCatalog;
+		private final DCTable _table;
+
+		public AnnotatedRowResultPanel(final AnnotatedRowsResult result, final UsageLogger usageLogger,
+				final UserPreferences userPreferences, final DatastoreCatalog datastoreCatalog) {
+			super();
+			_result = result;
+			_usageLogger = usageLogger;
+			_userPreferences = userPreferences;
+			_datastoreCatalog = datastoreCatalog;
+
+			setLayout(new VerticalLayout(4));
+
+			_table = new DCTable();
+			_table.setColumnControlVisible(false);
+
+			InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
+			List<InputColumn<?>> inputColumns = result.getInputColumns();
+
+			DCPanel buttonPanel = new DCPanel();
+			buttonPanel.setLayout(new HorizontalLayout(4));
+
+			if (highlightedColumns.length == 1 && inputColumns.size() > 1) {
+				final DCComboBox<String> comboBox = new DCComboBox<String>(VIEWS);
+				comboBox.addListener(new Listener<String>() {
+					@Override
+					public void onItemSelected(String item) {
+						if (item == VIEWS[0]) {
+							applyDetailedView();
+						} else {
+							applyDistinctValuesView();
+						}
+					}
+				});
+				comboBox.setSelectedItem(VIEWS[0]);
+				comboBox.notifyListeners();
+
+				buttonPanel.add(comboBox);
+			} else {
+				applyDetailedView();
+			}
+
+			final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
+					"images/actions/save.png"));
+			saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(), result.getRows(),
+					_userPreferences, _datastoreCatalog, _usageLogger));
+			buttonPanel.add(saveToFileButton);
+
+			add(buttonPanel);
+			add(_table.toPanel());
+		}
+
+		public void applyDistinctValuesView() {
+			InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
+			TableModel tableModel = _result.toDistinctValuesTableModel(highlightedColumns[0]);
+			_table.setModel(tableModel);
+			_table.setHighlighters(new Highlighter[0]);
+		}
+
+		public void applyDetailedView() {
+			_table.setModel(_result.toTableModel());
+			InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
+			List<InputColumn<?>> inputColumns = _result.getInputColumns();
+
+			if (inputColumns.size() > highlightedColumns.length) {
+				// if there's context information available (columns
+				// besides the actual columns of interest) then highlight the
+				// columns of interest.
+				if (highlightedColumns.length > 0) {
+					int[] highligthedColumnIndexes = new int[highlightedColumns.length];
+					for (int i = 0; i < highligthedColumnIndexes.length; i++) {
+						highligthedColumnIndexes[i] = _result.getColumnIndex(highlightedColumns[i]);
+					}
+
+					_table.addHighlighter(new ColumnHighlighter(highligthedColumnIndexes));
+				}
+			}
+		}
+
+		public DCTable getTable() {
+			return _table;
+		}
+
+		public AnnotatedRowsResult getResult() {
+			return _result;
+		}
+	}
+
 	private static final String[] VIEWS = new String[] { "View detailed rows", "View distinct values" };
 
 	@Inject
@@ -56,76 +150,11 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 	DatastoreCatalog datastoreCatalog;
 
 	@Inject
-	UsageLogger _usageLogger;
+	UsageLogger usageLogger;
 
 	@Override
-	public DCPanel render(final AnnotatedRowsResult result) {
-		DCPanel panel = new DCPanel();
-		panel.setLayout(new VerticalLayout(4));
-
-		final DCTable table = new DCTable();
-		table.setColumnControlVisible(false);
-
-		InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
-		List<InputColumn<?>> inputColumns = result.getInputColumns();
-
-		DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new HorizontalLayout(4));
-
-		if (highlightedColumns.length == 1 && inputColumns.size() > 1) {
-			final DCComboBox<String> comboBox = new DCComboBox<String>(VIEWS);
-			comboBox.addListener(new Listener<String>() {
-				@Override
-				public void onItemSelected(String item) {
-					if (item == VIEWS[0]) {
-						applyDetailedView(table, result);
-					} else {
-						applyDistinctValuesView(table, result);
-					}
-				}
-			});
-			comboBox.setSelectedItem(VIEWS[0]);
-
-			buttonPanel.add(comboBox);
-		} else {
-			applyDetailedView(table, result);
-		}
-
-		final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
-				"images/actions/save.png"));
-		saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(), result.getRows(),
-				userPreferences, datastoreCatalog, _usageLogger));
-		buttonPanel.add(saveToFileButton);
-
-		panel.add(buttonPanel);
-		panel.add(table.toPanel());
+	public AnnotatedRowResultPanel render(final AnnotatedRowsResult result) {
+		AnnotatedRowResultPanel panel = new AnnotatedRowResultPanel(result, usageLogger, userPreferences, datastoreCatalog);
 		return panel;
-	}
-
-	private void applyDistinctValuesView(DCTable table, AnnotatedRowsResult result) {
-		InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
-		TableModel tableModel = result.toDistinctValuesTableModel(highlightedColumns[0]);
-		table.setModel(tableModel);
-		table.setHighlighters(new Highlighter[0]);
-	}
-
-	private void applyDetailedView(DCTable table, AnnotatedRowsResult result) {
-		table.setModel(result.toTableModel());
-		InputColumn<?>[] highlightedColumns = result.getHighlightedColumns();
-		List<InputColumn<?>> inputColumns = result.getInputColumns();
-
-		if (inputColumns.size() > highlightedColumns.length) {
-			// if there's context information available (columns
-			// besides the actual columns of interest) then highlight the
-			// columns of interest.
-			if (highlightedColumns.length > 0) {
-				int[] highligthedColumnIndexes = new int[highlightedColumns.length];
-				for (int i = 0; i < highligthedColumnIndexes.length; i++) {
-					highligthedColumnIndexes[i] = result.getColumnIndex(highlightedColumns[i]);
-				}
-
-				table.addHighlighter(new ColumnHighlighter(highligthedColumnIndexes));
-			}
-		}
 	}
 }

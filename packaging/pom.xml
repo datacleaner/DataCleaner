@@ -294,6 +294,18 @@
 			<artifactId>DataCleaner-core</artifactId>
 			<version>2.4-SNAPSHOT</version>
 		</dependency>
+		
+		<!-- Extensions in libext -->
+		<dependency>
+			<groupId>com.hi.easydq</groupId>
+			<artifactId>EasyDQ-cleansing-DataCleaner</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.hi.easydq</groupId>
+			<artifactId>EasyDQ-dedup-DataCleaner</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 		<!-- Default database drivers -->
 		<dependency>

@@ -224,7 +224,7 @@ public abstract class AbstractMultipleCheckboxesPropertyWidget<E> extends Abstra
 		// if checkBoxes is empty it means that the value is being set before
 		// initializing the widget. This can occur in subclasses and automatic
 		// creating of checkboxes should be done.
-		if (_checkBoxes.isEmpty()) {
+		if (_checkBoxes.isEmpty() && values != null) {
 			for (E value : values) {
 				addCheckBox(value, true);
 			}

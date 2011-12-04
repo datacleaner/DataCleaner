@@ -72,7 +72,7 @@
 				properties already.</para>
 		</tip>
 
-		<para>MySQL</para>
+		<para><emphasis>MySQL</emphasis></para>
 		<programlisting lang="xml">
 			&lt;jdbc-datastore&#160;name="MySQL&#160;datastore"&gt;
 			&#160;&lt;url&gt;jdbc:mysql://hostname:3306/database&lt;/url&gt;
@@ -81,7 +81,7 @@
 			&#160;&lt;password&gt;password&lt;/password&gt;
 			&lt;/jdbc-datastore&gt; </programlisting>
 
-		<para>Oracle</para>
+		<para><emphasis>Oracle</emphasis></para>
 		<programlisting lang="xml">
 			&lt;jdbc-datastore&#160;name="Oracle&#160;datastore"&gt;
 			&#160;&lt;url&gt;jdbc:oracle:thin:@hostname:1521:sid&lt;/url&gt;
@@ -90,7 +90,8 @@
 			&#160;&lt;password&gt;password&lt;/password&gt;
 			&lt;/jdbc-datastore&gt; </programlisting>
 
-		<para>Microsoft SQL Server</para>
+		<para><emphasis>Microsoft SQL Server</emphasis></para>
+		<para>A typical connection to Microsoft SQL server will look like this:</para>
 		<programlisting lang="xml">
 			&lt;jdbc-datastore&#160;name="MS&#160;SQL&#160;Server&#160;datastore"&gt;
 			&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt;
@@ -98,6 +99,10 @@
 			&#160;&lt;username&gt;username&lt;/username&gt;
 			&#160;&lt;password&gt;password&lt;/password&gt;
 			&lt;/jdbc-datastore&gt; </programlisting>
+		<para>However, if you want to use an instance name based connection, then the SQL Server Browser service MUST BE RUNNING and then you can include the instance parameter: Here's an example for connecting to a SQLEXPRESS instance:</para>
+		<programlisting lang="xml">
+			&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;instance=SQLEXPRESS;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt;
+		</programlisting>
 	</section>
 
 	<section>

@@ -68,7 +68,7 @@ public class DatabaseDriverCatalog implements Serializable {
 	static {
 		_databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
 		add(DATABASE_NAME_MYSQL, "images/datastore-types/databases/mysql.png", "com.mysql.jdbc.Driver",
-				"http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.13/mysql-connector-java-5.1.13.jar",
+				"http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.18/mysql-connector-java-5.1.18.jar",
 				"jdbc:mysql://<hostname>:3306/<database>");
 		add(DATABASE_NAME_DB2, "images/datastore-types/databases/db2.png", "com.ibm.db2.jcc.DB2Driver", null,
 				"jdbc:db2://<hostname>:<port>/<database>", "jdbc:db2j:net://<hostname>:<port>/<database>");
@@ -85,27 +85,27 @@ public class DatabaseDriverCatalog implements Serializable {
 		add(DATABASE_NAME_SAP_DB, "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB", null,
 				"jdbc:sapdb://<hostname>/<database>");
 		add(DATABASE_NAME_POSTGRESQL, "images/datastore-types/databases/postgresql.png", "org.postgresql.Driver",
-				"http://repo1.maven.org/maven2/postgresql/postgresql/8.4-702.jdbc4/postgresql-8.4-702.jdbc4.jar",
+				"http://repo1.maven.org/maven2/postgresql/postgresql/9.1-901.jdbc4/postgresql-9.1-901.jdbc4.jar",
 				"jdbc:postgresql://<hostname>:5432/<database>");
 		add(DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, "images/datastore-types/databases/microsoft.png",
 				"net.sourceforge.jtds.jdbc.Driver",
 				"http://repo1.maven.org/maven2/net/sourceforge/jtds/jtds/1.2.4/jtds-1.2.4.jar",
-				"jdbc:jtds:sqlserver://<hostname>;useUnicode=true;characterEncoding=UTF-8",
 				"jdbc:jtds:sqlserver://<hostname>/<database>;useUnicode=true;characterEncoding=UTF-8",
-				"jdbc:jtds:sybase://<hostname>/<database>");
+				"jdbc:jtds:sqlserver://<hostname>/<database>;instance=<instance>;useUnicode=true;characterEncoding=UTF-8",
+				"jdbc:jtds:sqlserver://<hostname>;useUnicode=true;characterEncoding=UTF-8");
 		add(DATABASE_NAME_SYBASE, "images/datastore-types/databases/sybase.png", "net.sourceforge.jtds.jdbc.Driver",
 				"http://repo1.maven.org/maven2/net/sourceforge/jtds/jtds/1.2.4/jtds-1.2.4.jar",
 				"jdbc:jtds:sybase://<hostname>/<database>");
 		add(DATABASE_NAME_SQLITE, "images/datastore-types/databases/sqlite.png", "org.sqlite.JDBC",
-				"http://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.6.20/sqlite-jdbc-3.6.20.jar",
+				"http://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.7.2/sqlite-jdbc-3.7.2.jar",
 				"jdbc:sqlite:<path/to/database>.db");
 		add(DATABASE_NAME_APACHE_DERBY_CLIENT, "images/datastore-types/databases/derby.png",
 				"org.apache.derby.jdbc.ClientDriver",
-				"http://repo1.maven.org/maven2/org/apache/derby/derbyclient/10.6.2.1/derbyclient-10.6.2.1.jar",
+				"http://repo1.maven.org/maven2/org/apache/derby/derbyclient/10.8.2.2/derbyclient-10.8.2.2.jar",
 				"jdbc:derby://<hostname>:1527/<path/to/database>");
 		add(DATABASE_NAME_APACHE_DERBY_EMBEDDED, "images/datastore-types/databases/derby.png",
 				"org.apache.derby.jdbc.EmbeddedDriver",
-				"http://repo1.maven.org/maven2/org/apache/derby/derby/10.6.2.1/derby-10.6.2.1.jar", "jdbc:derby:<database>");
+				"http://repo1.maven.org/maven2/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar", "jdbc:derby:<database>");
 		add(DATABASE_NAME_ORACLE, "images/datastore-types/databases/oracle.png", "oracle.jdbc.OracleDriver", null,
 				"jdbc:oracle:thin:@<hostname>:1521:<sid>");
 		add(DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL, "images/datastore-types/databases/microsoft.png",
@@ -116,7 +116,7 @@ public class DatabaseDriverCatalog implements Serializable {
 				"http://repo1.maven.org/maven2/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar",
 				"jdbc:hsqldb:hsql://<hostname>:9001/<database>", "jdbc:hsqldb:file:<path/to/database>");
 		add(DATABASE_NAME_H2, "images/datastore-types/databases/h2.png", "org.h2.Driver",
-				"http://repo1.maven.org/maven2/com/h2database/h2/1.2.145/h2-1.2.145.jar", "jdbc:h2:<path/to/database>");
+				"http://repo1.maven.org/maven2/com/h2database/h2/1.3.162/h2-1.3.162.jar", "jdbc:h2:<path/to/database>");
 		add(DATABASE_NAME_TERADATA, "images/datastore-types/databases/teradata.png", "com.teradata.jdbc.TeraDriver", null,
 				"jdbc:teradata:<hostname>", "jdbc:teradata:<hostname>/database=<database>");
 		add(DATABASE_NAME_LUCIDDB,

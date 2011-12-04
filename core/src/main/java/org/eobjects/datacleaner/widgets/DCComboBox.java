@@ -58,7 +58,7 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 	public DCComboBox(Collection<E> items) {
 		this(new DefaultComboBoxModel(items.toArray()));
 	}
-	
+
 	public DCComboBox(E[] items) {
 		this(new DefaultComboBoxModel(items));
 	}
@@ -73,17 +73,20 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 	public E getSelectedItem() {
 		return (E) super.getSelectedItem();
 	}
-	
+
 	@Override
-	public void setSelectedItem(Object anObject) {
-		if (getSelectedItem() == anObject) {
+	public void setSelectedItem(Object newItem) {
+		final E previousItem = getSelectedItem();
+		if (previousItem == newItem) {
 			return;
 		}
-		
+
 		@SuppressWarnings("unchecked")
-		E item = (E) anObject;
+		E item = (E) newItem;
+
+		// super.setSelectedItem(...) will notify all listeners (through of the
+		// item listener)
 		super.setSelectedItem(item);
-		notifyListeners(item);
 	}
 
 	public void addListener(Listener<E> listener) {
@@ -116,8 +119,8 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 			@SuppressWarnings("unchecked")
-			E item = (E) e.getItem();
-			notifyListeners(item);
+			final E newItem = (E) e.getItem();
+			notifyListeners(newItem);
 		}
 	}
 

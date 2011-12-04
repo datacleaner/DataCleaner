@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.windows;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -35,12 +36,13 @@ import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
@@ -56,6 +58,8 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.JXTextField;
 
@@ -74,8 +78,11 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private final JXTextField _connectionStringTextField;
 	private final JXTextField _usernameTextField;
 	private final JPasswordField _passwordField;
-	private final JComboBox _databaseDriverComboBox;
+	private final DCComboBox<Object> _databaseDriverComboBox;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
+	private final JButton _connectionStringTemplateButton;
+
+	private volatile String[] _connectionUrls;
 
 	@Inject
 	protected JdbcDatastoreDialog(@Nullable JdbcDatastore datastore, MutableDatastoreCatalog catalog,
@@ -92,6 +99,31 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_connectionStringTextField = WidgetFactory.createTextField("Connection string / URL");
 		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
+		_connectionStringTemplateButton = new JButton(imageManager.getImageIcon("images/widgets/help.png",
+				IconUtils.ICON_SIZE_SMALL));
+		_connectionStringTemplateButton.setMargin(new Insets(0, 0, 0, 0));
+		_connectionStringTemplateButton.setOpaque(false);
+		_connectionStringTemplateButton.setBorder(null);
+		_connectionStringTemplateButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (_connectionUrls != null) {
+					final JPopupMenu menu = new JPopupMenu();
+					for (final String connectionUrl : _connectionUrls) {
+						final JMenuItem menuItem = new JMenuItem(connectionUrl);
+						menuItem.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								_connectionStringTextField.setText(connectionUrl);
+								getNextTemplateItemAction().actionPerformed(null);
+							}
+						});
+						menu.add(menuItem);
+					}
+					menu.show(_connectionStringTemplateButton, 0, 0);
+				}
+			}
+		});
 
 		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getInstalledWorkingDatabaseDrivers();
 		final Object[] comboBoxModel = new Object[databaseDrivers.size() + 3];
@@ -102,7 +134,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		comboBoxModel[comboBoxModel.length - 2] = new JSeparator(JSeparator.HORIZONTAL);
 		comboBoxModel[comboBoxModel.length - 1] = MANAGE_DATABASE_DRIVERS;
 
-		_databaseDriverComboBox = new JComboBox(comboBoxModel);
+		_databaseDriverComboBox = new DCComboBox<Object>(comboBoxModel);
 		_databaseDriverComboBox.setRenderer(new DefaultListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
@@ -129,9 +161,9 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 				return result;
 			}
 		});
-		_databaseDriverComboBox.addActionListener(new ActionListener() {
+		_databaseDriverComboBox.addListener(new Listener<Object>() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void onItemSelected(Object item) {
 				Object value = _databaseDriverComboBox.getSelectedItem();
 				if (value instanceof DatabaseDriverDescriptor) {
 					DatabaseDriverDescriptor driver = (DatabaseDriverDescriptor) value;
@@ -239,13 +271,22 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	}
 
 	private void setConnectionUrlTemplates(String[] connectionUrls) {
+		_connectionUrls = connectionUrls;
+		boolean selectable = false;
+
 		if (connectionUrls != null && connectionUrls.length > 0) {
+			if (connectionUrls.length > 1) {
+				selectable = true;
+			}
+
 			_connectionStringTextField.setFocusTraversalKeysEnabled(false);
 			String url = connectionUrls[0];
 			_connectionStringTextField.setText(url);
 
 			getNextTemplateItemAction().actionPerformed(null);
 		}
+
+		_connectionStringTemplateButton.setVisible(selectable);
 	}
 
 	@Override
@@ -267,6 +308,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		row++;
 		WidgetUtils.addToGridBag(DCLabel.bright("Connection string:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_connectionStringTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(_connectionStringTemplateButton, panel, 2, row, 0.0d, 0.0d);
 
 		row++;
 		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), panel, 0, row);
@@ -313,7 +355,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		buttonPanel.add(testButton);
 		buttonPanel.add(saveButton);
 
-		WidgetUtils.addToGridBag(buttonPanel, panel, 1, row, 2, 1);
+		WidgetUtils.addToGridBag(buttonPanel, panel, 1, row, 3, 1);
 
 		return panel;
 	}

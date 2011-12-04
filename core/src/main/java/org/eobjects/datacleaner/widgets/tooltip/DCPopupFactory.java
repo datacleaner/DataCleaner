@@ -26,6 +26,11 @@ import javax.swing.JComponent;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
+/**
+ * Specialized {@link PopupFactory} for {@link DCToolTip}s.
+ * 
+ * @author Kasper Sørensen
+ */
 public class DCPopupFactory extends PopupFactory {
 
 	@Override
@@ -33,7 +38,7 @@ public class DCPopupFactory extends PopupFactory {
 		if (contents instanceof DCToolTip) {
 			DCToolTip toolTip = (DCToolTip) contents;
 			JComponent tooltipComponent = toolTip.getTooltipComponent();
-			
+
 			x = MouseInfo.getPointerInfo().getLocation().x;
 
 			return super.getPopup(owner, tooltipComponent, x, y);

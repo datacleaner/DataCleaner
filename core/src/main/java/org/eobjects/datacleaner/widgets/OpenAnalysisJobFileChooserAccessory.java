@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.inject.Provider;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -66,6 +67,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 
 	private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
 	private static final ImageManager imageManager = ImageManager.getInstance();
+	private static final ImageIcon ICON_APP = ImageManager.getInstance().getImageIcon("images/window/app-icon.png");
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCFileChooser _fileChooser;
@@ -94,7 +96,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		setLayout(new BorderLayout());
 		setVisible(false);
 
-		final JLabel iconLabel = new JLabel(ImageManager.getInstance().getImageIcon("images/window/app-icon.png"));
+		final JLabel iconLabel = new JLabel(ICON_APP);
 
 		final JLabel headerLabel = new JLabel("DataCleaner analysis job:");
 		headerLabel.setFont(WidgetUtils.FONT_HEADER1);

@@ -94,9 +94,13 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_optionsDialogProvider = optionsDialogProvider;
 		_databaseDriverCatalog = databaseDriverCatalog;
 
-		_datastoreNameTextField = WidgetFactory.createTextField("Name");
-		_driverClassNameTextField = WidgetFactory.createTextField("Driver class name");
-		_connectionStringTextField = WidgetFactory.createTextField("Connection string / URL");
+		final int textFieldWidth = 30;
+		_datastoreNameTextField = WidgetFactory.createTextField("Name", textFieldWidth);
+		_driverClassNameTextField = WidgetFactory.createTextField("Driver class name", textFieldWidth);
+		_connectionStringTextField = WidgetFactory.createTextField("Connection string / URL", textFieldWidth);
+		_usernameTextField = WidgetFactory.createTextField("Username", textFieldWidth);
+		_passwordField = new JPasswordField(textFieldWidth);
+		
 		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
 		_connectionStringTemplateButton = new JButton(imageManager.getImageIcon("images/widgets/help.png",
@@ -182,9 +186,6 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 				}
 			}
 		});
-
-		_usernameTextField = WidgetFactory.createTextField("Username");
-		_passwordField = new JPasswordField(17);
 
 		if (_originalDatastore != null) {
 			// the database driver has to be set as the first thing, because the

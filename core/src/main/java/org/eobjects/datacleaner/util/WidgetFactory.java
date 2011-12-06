@@ -165,8 +165,12 @@ public final class WidgetFactory {
 	}
 
 	public static JXTextField createTextField(String promptText) {
+		return createTextField(promptText, 17);
+	}
+	
+	public static JXTextField createTextField(String promptText, int columns) {
 		JXTextField tf = new JXTextField(promptText);
-		tf.setColumns(17);
+		tf.setColumns(columns);
 		if (promptText != null) {
 			tf.setFocusBehavior(FocusBehavior.SHOW_PROMPT);
 		}

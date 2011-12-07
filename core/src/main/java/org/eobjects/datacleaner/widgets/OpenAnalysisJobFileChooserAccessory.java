@@ -68,6 +68,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 	private static final Logger logger = LoggerFactory.getLogger(OpenAnalysisJobFileChooserAccessory.class);
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private static final ImageIcon ICON_APP = ImageManager.getInstance().getImageIcon("images/window/app-icon.png");
+	private static final int WIDTH = 220;
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final DCFileChooser _fileChooser;
@@ -90,7 +91,7 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		_openJobButton = getOpenJobButton();
 		_openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
 
-		setPreferredSize(220, 10);
+		setPreferredSize(WIDTH, 10);
 
 		setBorder(new EmptyBorder(0, 10, 0, 0));
 		setLayout(new BorderLayout());
@@ -199,7 +200,9 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
 		final String jobDescription = _metadata.getJobDescription();
 		if (jobDescription != null) {
 			_centerPanel.add(new JLabel("<html><b>Job description:</b></html>"));
-			_centerPanel.add(DCLabel.darkMultiLine(jobDescription));
+			DCLabel descriptionLabel = DCLabel.darkMultiLine(jobDescription);
+			descriptionLabel.setMaximumWidth(WIDTH);
+			_centerPanel.add(descriptionLabel);
 			_centerPanel.add(Box.createVerticalStrut(separatorHeight));
 		}
 		final String jobVersion = _metadata.getJobVersion();

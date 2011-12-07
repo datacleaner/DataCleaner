@@ -82,4 +82,14 @@ public class DCLabel extends JLabel {
 		}
 		super.setText(text);
 	}
+
+	public void setMaximumWidth(int width) {
+		String text = getText();
+		if (text.startsWith("<html>") && text.endsWith("</html>")) {
+			// remove <html> tags since that will be added below also
+			text = text.substring(6, text.length() - 7);
+		}
+		super.setText("<html><table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"" + width + "\"><tr><td>"
+				+ text + "</td></tr></table></html>");
+	}
 }

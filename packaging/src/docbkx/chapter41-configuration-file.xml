@@ -114,8 +114,8 @@
 			&#160;&lt;quote-char&gt;"&lt;/quote-char&gt;
 			&#160;&lt;separator-char&gt;;&lt;/separator-char&gt;
 			&#160;&lt;encoding&gt;UTF-8&lt;/encoding&gt;
-			&#160;&lt;failOnInconsistencies&gt;true&lt;/failOnInconsistencies&gt;
-			&#160;&lt;headerLineNumber&gt;0&lt;/headerLineNumber&gt;
+			&#160;&lt;fail-on-inconsistencies&gt;true&lt;/fail-on-inconsistencies&gt;
+			&#160;&lt;header-line-number&gt;0&lt;/header-line-number&gt;
 			&lt;/csv-datastore&gt; </programlisting>
 	</section>
 

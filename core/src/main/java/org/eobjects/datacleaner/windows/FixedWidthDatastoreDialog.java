@@ -54,6 +54,8 @@ import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
+import org.eobjects.datacleaner.widgets.HeaderLineComboBox;
+import org.eobjects.metamodel.fixedwidth.FixedWidthConfiguration;
 import org.jdesktop.swingx.JXTextField;
 
 public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreDialog<FixedWidthDatastore> {
@@ -65,6 +67,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	private final List<JXTextField> _valueWidthTextFields;
 	private final DCPanel _valueWidthsPanel;
 	private final DCLabel _lineWidthLabel;
+	private final HeaderLineComboBox _headerLineComboBox;
 	private final JButton _addValueWidthButton;
 	private final JButton _removeValueWidthButton;
 	private final DocumentListener _updatePreviewTableDocumentListener;
@@ -85,29 +88,11 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		_valueWidthsPanel = new DCPanel();
 		_valueWidthsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
 		_valueWidthTextFields = new ArrayList<JXTextField>();
-
-		_addValueWidthButton = WidgetFactory.createSmallButton("images/actions/add.png");
-		_addValueWidthButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				addValueWidthTextField();
-			}
-		});
-		_removeValueWidthButton = WidgetFactory.createSmallButton("images/actions/remove.png");
-		_removeValueWidthButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				removeValueWidthTextField();
-			}
-		});
-
 		_encodingComboBox = new CharSetEncodingComboBox();
-		_encodingComboBox.addListener(new Listener<String>() {
-			@Override
-			public void onItemSelected(String item) {
-				onSettingsUpdated(false);
-			}
-		});
+		_addValueWidthButton = WidgetFactory.createSmallButton("images/actions/add.png");
+		_removeValueWidthButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+
+		_headerLineComboBox = new HeaderLineComboBox();
 
 		_failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent line length", true);
 		_failOnInconsistenciesCheckBox.setOpaque(false);
@@ -122,12 +107,40 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 				addValueWidthTextField(valueWidth);
 			}
 
+			_headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber() + 1);
+
 			onSettingsUpdated(false);
 		} else {
 			addValueWidthTextField();
 			addValueWidthTextField();
 			addValueWidthTextField();
 		}
+
+		_addValueWidthButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				addValueWidthTextField();
+			}
+		});
+
+		_removeValueWidthButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				removeValueWidthTextField();
+			}
+		});
+		_encodingComboBox.addListener(new Listener<String>() {
+			@Override
+			public void onItemSelected(String item) {
+				onSettingsUpdated(false);
+			}
+		});
+		_headerLineComboBox.addListener(new Listener<Integer>() {
+			@Override
+			public void onItemSelected(Integer item) {
+				onSettingsUpdated(false);
+			}
+		});
 	}
 
 	@Override
@@ -258,6 +271,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		final List<Entry<String, JComponent>> result = super.getFormElements();
 		result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
 		result.add(new ImmutableEntry<String, JComponent>("Column widths", valueWidthConfigurationPanel));
+		result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
 		result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
 		return result;
 	}
@@ -292,7 +306,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		int[] valueWidths = getValueWidths(true);
 		try {
 			return new FixedWidthDatastore(name, filename, _encodingComboBox.getSelectedItem().toString(), valueWidths,
-					failOnInconsistencies);
+					failOnInconsistencies, getHeaderLine());
 		} catch (NumberFormatException e) {
 			throw new IllegalStateException("Value width must be a valid number.");
 		}
@@ -317,5 +331,20 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 	@Override
 	protected String getDatastoreIconPath() {
 		return IconUtils.FIXEDWIDTH_IMAGEPATH;
+	}
+
+	public int getHeaderLine() {
+		Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
+		if (headerLineComboValue != null) {
+			int intComboValue = headerLineComboValue.intValue();
+			if (intComboValue <= 0) {
+				return FixedWidthConfiguration.NO_COLUMN_NAME_LINE;
+			} else {
+				// MetaModel's headerline number is 0-based
+				return intComboValue - 1;
+			}
+		} else {
+			return FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE;
+		}
 	}
 }

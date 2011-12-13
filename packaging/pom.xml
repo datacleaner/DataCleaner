@@ -204,6 +204,7 @@
 						<phase>site</phase>
 						<configuration>
 							<chunkedOutput>true</chunkedOutput>
+							<chunkFirstSections>1</chunkFirstSections>
 							<postProcess>
 								<move todir="${project.basedir}/target/site/reference/html">
 									<fileset dir="${project.basedir}/target/docbkx/html/index">

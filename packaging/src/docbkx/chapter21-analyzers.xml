@@ -7,19 +7,46 @@
 
 	<para>This chapter deals with one of the most important concepts in
 		DataCleaner: Analyzers. Analyzers are the endpoints of any analysis
-		job, meaning that a job requires at least on analyzer.</para>
+		job, meaning that a job requires at least on analyzer.
+	</para>
 	<para>An analyzer consumes a (set of) column(s) and generates an
-		analysis result based on the values in the consumed columns.</para>
+		analysis result based on the values in the consumed columns.
+	</para>
 	<para>Here is an example of a configuration panel pertaining to an
-		analyzer:</para>
+		analyzer:
+	</para>
 	<mediaobject>
 		<imageobject>
-			<imagedata fileref="analysis_job_04_analyzer.jpg" format="JPG" scalefit="1" />
+			<imagedata fileref="analysis_job_04_analyzer.jpg" format="JPG"
+				scalefit="1" />
 		</imageobject>
 	</mediaobject>
 	<para>In the panel there will always be one or more selections of
 		columns. The configuration panel may also contain additional
-		properties for configuration.</para>
+		properties for configuration.
+	</para>
+
+	<section id="easydq_dedup">
+		<title>EasyDQ matching and deduplication</title>
+		<para>
+			<link xl:href="http://www.easydq.com">EasyDataQuality</link>
+			is an on-demand service for data quality functions.
+			DataCleaner
+			provides access to the EasyDQ services, including the deduplication
+			service which is used to provide
+			<emphasis>Duplicate detection</emphasis>
+			and
+			<emphasis>Inter-Dataset matching</emphasis>
+			, but the core
+			functionality is provided by Human Inference.
+		</para>
+		<para>
+			Please refer to the
+			<link xl:href="http://help.easydq.com/datacleaner">EasyDQ for DataCleaner documentation</link>
+			for
+			detailed information about the services provided through EasyDQ.
+		</para>
+	</section>
 
 	<section id="boolean_analyzer">
 		<title>Boolean analyzer</title>
@@ -30,20 +57,24 @@
 			frequencies of the combinations. The combination matrix makes the
 			Boolean analyzer a handy analyzer for use with combinations of
 			matching transformers and other transformers that yield boolean
-			values.</para>
+			values.
+		</para>
 		<para>Boolean analyzer has no configuration parameters, except for the
-			input columns.</para>
+			input columns.
+		</para>
 	</section>
 
 	<section id="character_set_distribution">
 		<title>Character set distribution</title>
 		<para>The Character set distribution analyzer inspects and maps text
 			characters according to character set affinity, such as Latin,
-			Hebrew, Cyrillic, Chinese and more.</para>
+			Hebrew, Cyrillic, Chinese and more.
+		</para>
 		<para>Such analysis is convenient for getting insight into the
 			international aspects of your data. Are you able to read and
 			understand all your data? Will it work in your non-internationalized
-			systems?</para>
+			systems?
+		</para>
 	</section>
 
 	<section id="date_dap_analyzer">
@@ -69,9 +100,11 @@
 	<section id="pattern_finder">
 		<title>Pattern finder</title>
 		<para>The pattern finder is one of the more advanced, but also very
-			popular analyzers of DataCleaner.</para>
+			popular analyzers of DataCleaner.
+		</para>
 		<para>Here is a screenshot of the configuration panel of the Pattern
-			finder:</para>
+			finder:
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="analyzer_reference_pattern_finder.jpg"
@@ -79,7 +112,8 @@
 			</imageobject>
 		</mediaobject>
 		<para>From the screenshot we can see that the Pattern finder has these
-			configuration properties:</para>
+			configuration properties:
+		</para>
 		<table>
 			<title>Pattern finder properties</title>
 			<tgroup cols="2">
@@ -113,12 +147,14 @@
 					<row>
 						<entry>Discriminate negative numbers</entry>
 						<entry>When parsing numbers, this property defines if negative
-							numbers should be discriminated from positive numbers.</entry>
+							numbers should be discriminated from positive numbers.
+						</entry>
 					</row>
 					<row>
 						<entry>Discriminate decimals</entry>
 						<entry>When parsing numbers, this property defines if decimal
-							numbers should be discriminated from integers.</entry>
+							numbers should be discriminated from integers.
+						</entry>
 					</row>
 					<row>
 						<entry>Enable mixed tokens</entry>
@@ -127,7 +163,8 @@
 								both letters and digits as "mixed", or alternatively as two
 								separate tokens. Mixed tokens are represented using questionmark
 								('?')
-								symbols.</para>
+								symbols.
+							</para>
 							<para>This is one of the more important configuration properties.
 								For example if mixed tokens are enabled (default), all these
 								values will
@@ -135,13 +172,15 @@
 								foobar123, foo123bar. If mixed tokens are NOT enabled only
 								foo123 and foobar123 will be matched (because 123foo and
 								foo123bar represent different combinations of letter and digit
-								tokens).</para>
+								tokens).
+							</para>
 						</entry>
 					</row>
 					<row>
 						<entry>Ignore repeated spaces</entry>
 						<entry>Defines whether or not to discriminate based on amount of
-							whitespaces.</entry>
+							whitespaces.
+						</entry>
 					</row>
 					<row>
 						<entry>Upper case patterns expand in size</entry>
@@ -151,7 +190,8 @@
 							type of token, but with a different size. The default
 							configuration for upper case characters is false (ie. ABC is
 							not
-							matched with ABCD).</entry>
+							matched with ABCD).
+						</entry>
 					</row>
 					<row>
 						<entry>Lower case patterns expand in size</entry>
@@ -166,7 +206,8 @@
 								size. The default configuration for lower case
 								characters is
 								true
-								(ie. 'abc' is not matched with 'abc').</para>
+								(ie. 'abc' is not matched with 'abc').
+							</para>
 							<para>The defaults in the two "expandability" configuration
 								properties mean that eg. name pattern recognition is meaningful:
 								'James' and 'John' both pertain to the same pattern ('Aaaaa'),
@@ -181,13 +222,15 @@
 							regular expressions. Typically this is used if the values contain
 							some additional parts which you want to manually define a
 							matching category for. The 'Predefined token name' property
-							defines the name of such a category.</entry>
+							defines the name of such a category.
+						</entry>
 					</row>
 					<row>
 						<entry>Predefined token regexes</entry>
 						<entry>Defines a number of string values and/or regular
 							expressions which are used to match values against the
-							(pre)defined token category.</entry>
+							(pre)defined token category.
+						</entry>
 					</row>
 					<row>
 						<entry>Decimal separator</entry>
@@ -217,7 +260,8 @@
 		<title>Value distribution</title>
 		<para>TODO</para>
 		<para>Here are the configuration properties for the value distribution
-			analyzer:</para>
+			analyzer:
+		</para>
 		<table>
 			<title>Value distribution properties</title>
 			<tgroup cols="2">
@@ -247,14 +291,16 @@
 							issues if your analyzed columns contains a LOT of unique values
 							(eg. if it's a unique key). If the actual unique values are not
 							of interest, then uncheck this checkbox to only count (but not
-							save for inspection) the unique values.</entry>
+							save for inspection) the unique values.
+						</entry>
 					</row>
 					<row>
 						<entry>Top n most frequent vales</entry>
 						<entry>An optional number used if the analysis should only display
 							eg. the "top 5 most frequent values". The result of the analysis
 							will only contain top/bottom n most frequent values, if this
-							property is supplied.</entry>
+							property is supplied.
+						</entry>
 					</row>
 					<row>
 						<entry>Bottom n most frequent values</entry>
@@ -263,7 +309,8 @@
 							analysis
 							will only contain top/bottom n most frequent values, if
 							this
-							property is supplied.</entry>
+							property is supplied.
+						</entry>
 					</row>
 				</tbody>
 			</tgroup>

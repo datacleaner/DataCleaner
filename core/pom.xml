@@ -13,17 +13,17 @@
 		<dependency>
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans-cli</artifactId>
-			<version>0.8-SNAPSHOT</version>
+			<version>${analyzerbeans.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans-h2</artifactId>
-			<version>0.8-SNAPSHOT</version>
+			<version>${analyzerbeans.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans-writers</artifactId>
-			<version>0.8-SNAPSHOT</version>
+			<version>${analyzerbeans.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>

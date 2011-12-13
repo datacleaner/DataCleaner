@@ -10,7 +10,8 @@
 		<para>DataCleaner requires practically no installation. The
 			application is not dependent on any particular operating system and
 			does not need to "register" in any registration database or something
-			like that.</para>
+			like that.
+		</para>
 		<para>The only two requirements of DataCleaner are:</para>
 		<orderedlist>
 			<listitem>
@@ -36,7 +37,8 @@
 
 				<para>Unpackage the distributable in a directory of your own choice.
 					DataCleaner will save it's configuration within this same
-					directory.</para>
+					directory.
+				</para>
 			</listitem>
 			<listitem>
 				<para>
@@ -49,7 +51,8 @@
 					application cache. Each time you start the application it will
 					automatically check for updates to the application. DataCleaner's
 					configuration will be stored in your "home"-directory in a folder
-					called .datacleaner/[version].</para>
+					called .datacleaner/[version].
+				</para>
 			</listitem>
 		</orderedlist>
 	</section>
@@ -61,7 +64,8 @@
 			presented when launching DataCleaner, containing a list of
 			datastores. Above the list you will see a set of icons, each
 			representing a type of datastore. Click either of the icons to
-			register your own datastore.</para>
+			register your own datastore.
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="analysis_job_01_datastore_list.jpg"
@@ -70,7 +74,19 @@
 		</mediaobject>
 		<para>Once you've registered ('created') your own datastore, you can
 			select it from the list and click 'Analyze!' to start working with
-			it!</para>
+			it!
+		</para>
+
+		<tip>
+			<para>
+				You can also configure your datastore by means of the
+				configuration
+				file, which has both some pros and some cons. For more information,
+				read the
+				<link linkend="chapter_configuration_file">configuration file chapter</link>
+				.
+			</para>
+		</tip>
 	</section>
 
 </chapter>

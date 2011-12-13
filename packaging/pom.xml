@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner</artifactId>
-		<version>2.4-SNAPSHOT</version>
+		<version>2.4</version>
 	</parent>
 	<artifactId>DataCleaner-packaging</artifactId>
 	<packaging>jar</packaging>
@@ -233,9 +232,7 @@
 						<configuration>
 							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
-								<move file="${project.basedir}/target/docbkx/html/index.html"
-									tofile="${project.basedir}/target/site/reference/html_single/index.html"
-									failonerror="false" />
+								<move file="${project.basedir}/target/docbkx/html/index.html" tofile="${project.basedir}/target/site/reference/html_single/index.html" failonerror="false" />
 								<copy todir="${project.basedir}/target/site/reference/html_single">
 									<fileset dir="${project.basedir}/src/docbkx/resources">
 										<include name="**/*.css" />
@@ -263,9 +260,7 @@
 										<include name="**/*.pdf" />
 									</fileset>
 								</copy>
-								<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
-									tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
-									failonerror="false" />
+								<move file="${project.basedir}/target/site/reference/pdf/index.pdf" tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf" failonerror="false" />
 							</postProcess>
 						</configuration>
 					</execution>
@@ -298,7 +293,7 @@
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-core</artifactId>
-			<version>2.4-SNAPSHOT</version>
+			<version>2.4</version>
 		</dependency>
 
 		<!-- Extensions in libext -->

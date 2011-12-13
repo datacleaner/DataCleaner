@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-extensions</artifactId>
-		<version>2.4</version>
+		<version>2.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-test-tools</artifactId>
 	<packaging>jar</packaging>
@@ -46,7 +46,7 @@
 			<!-- Include DataCleaner as a provided dependency -->
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-core</artifactId>
-			<version>2.4</version>
+			<version>2.5-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 

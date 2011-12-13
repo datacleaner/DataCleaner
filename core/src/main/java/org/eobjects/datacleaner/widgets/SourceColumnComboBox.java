@@ -33,6 +33,8 @@ import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A combobox that makes it easy to display and select source coumns from a
@@ -46,6 +48,8 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 public class SourceColumnComboBox extends DCComboBox<Column> {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = LoggerFactory.getLogger(SourceColumnComboBox.class);
 
 	private final SchemaStructureComboBoxListRenderer _renderer;
 	private volatile DatastoreConnection _datastoreConnection;
@@ -145,13 +149,22 @@ public class SourceColumnComboBox extends DCComboBox<Column> {
 				if (!SchemaComparator.isInformationSchema(schema)) {
 					Table[] tables = schema.getTables();
 					for (Table table : tables) {
-						comboBoxList.add(table);
-						Column[] columns = table.getColumns();
-						for (Column column : columns) {
-							comboBoxList.add(column);
-							if (column == previousItem) {
-								selectedIndex = comboBoxList.size() - 1;
+						try {
+							Column[] columns = table.getColumns();
+							if (columns != null && columns.length > 0) {
+								comboBoxList.add(table);
+								for (Column column : columns) {
+									comboBoxList.add(column);
+									if (column == previousItem) {
+										selectedIndex = comboBoxList.size() - 1;
+									}
+								}
 							}
+						} catch (Exception e) {
+							// errors can occur for experimental datastores (or
+							// something like SAS datastores where not all SAS
+							// files are supported). Ignore.
+							logger.error("Error occurred getting columns of table: {}", table);
 						}
 					}
 				}

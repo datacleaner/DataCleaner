@@ -16,7 +16,7 @@
 		<param name="File" value="log/datacleaner.log" />
 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%-5p %d{HH:mm:ss.SSS} %c{1} - %m%n" />
+			<param name="ConversionPattern" value="%-5p %d{HH:mm:ss.SSS} [%t] %c{1} - %m%n" />
 		</layout>
 	</appender>
 

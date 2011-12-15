@@ -27,6 +27,7 @@ import javax.swing.SwingWorker;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.ExplorerJob;
@@ -122,14 +123,14 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 		InputColumn<?> tableInputColumn = null;
 		for (InputColumn<?> inputColumn : inputColumns) {
 			// cannot find origin based on expression based column
-			if (!(inputColumn instanceof ExpressionBasedInputColumn))  {
+			if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
 				tableInputColumn = inputColumn;
 				break;
 			}
 		}
-		
+
 		assert tableInputColumn != null;
-		
+
 		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
 		sourceColumnFinder.addSources(job);
 		final Table table = sourceColumnFinder.findOriginatingTable(tableInputColumn);
@@ -140,19 +141,19 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	}
 
 	@Override
-	public void errorInFilter(AnalysisJob job, final FilterJob filterJob, final Throwable throwable) {
+	public void errorInFilter(AnalysisJob job, final FilterJob filterJob, InputRow row, final Throwable throwable) {
 		_progressInformationPanel.addUserLog("An error occurred in the filter: " + LabelUtils.getLabel(filterJob),
 				throwable, true);
 	}
 
 	@Override
-	public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, final Throwable throwable) {
+	public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row, final Throwable throwable) {
 		_progressInformationPanel.addUserLog("An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob),
 				throwable, true);
 	}
 
 	@Override
-	public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, final Throwable throwable) {
+	public void errorInAnalyzer(AnalysisJob job, final AnalyzerJob analyzerJob, InputRow row, final Throwable throwable) {
 		_progressInformationPanel.addUserLog("An error occurred in the analyzer: " + LabelUtils.getLabel(analyzerJob),
 				throwable, true);
 	}

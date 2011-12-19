@@ -74,6 +74,11 @@ public class PreviewSourceDataActionListener implements ActionListener {
 			}
 			columns = cols.toArray(new Column[cols.size()]);
 		}
+
+		if (columns.length == 0) {
+			throw new IllegalStateException("No columns found - could not determine which columns to query");
+		}
+
 		DataContext dc = _datastoreConnection.getDataContext();
 		Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 

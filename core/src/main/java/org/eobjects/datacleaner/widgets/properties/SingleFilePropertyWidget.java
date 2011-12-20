@@ -104,6 +104,10 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
 		add(_filenameField);
 	}
+	
+	public FilenameTextField getFilenameField() {
+		return _filenameField;
+	}
 
 	@Override
 	public File getValue() {

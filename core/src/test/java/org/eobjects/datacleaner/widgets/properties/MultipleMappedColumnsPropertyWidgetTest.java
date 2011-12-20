@@ -37,6 +37,8 @@ import org.eobjects.metamodel.schema.ColumnType;
 import org.eobjects.metamodel.schema.MutableColumn;
 import org.eobjects.metamodel.schema.MutableTable;
 
+import cern.colt.Arrays;
+
 public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 
 	public void testCustomMutableTable() throws Exception {
@@ -84,11 +86,34 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 		assertEquals(null, comboBoxes.get(source3).getSelectedItem());
 		assertEquals(0, comboBoxes.get(source3).getModel().getSize());
 
+		// still the value should be an empty array, since no combo item has
+		// been selected
+		assertEquals(0, propertyWidget.getValue().length);
+
 		// set a table on the widget
 		propertyWidget.setTable(new MutableTable("some_table").addColumn(new MutableColumn("foo")).addColumn(
 				new MutableColumn("bar")));
 
 		assertEquals(null, comboBoxes.get(source3).getSelectedItem());
 		assertEquals(3, comboBoxes.get(source3).getModel().getSize());
+		assertEquals(null, comboBoxes.get(source3).getModel().getElementAt(0));
+		assertEquals(
+				"Column[name=foo,columnNumber=0,type=null,nullable=null,indexed=false,nativeType=null,columnSize=null]",
+				comboBoxes.get(source3).getModel().getElementAt(1).toString());
+		assertEquals(
+				"Column[name=bar,columnNumber=0,type=null,nullable=null,indexed=false,nativeType=null,columnSize=null]",
+				comboBoxes.get(source3).getModel().getElementAt(2).toString());
+
+		// still the value should be an empty array, since no combo item has
+		// been selected
+		assertEquals(0, propertyWidget.getValue().length);
+
+		comboBoxes.get(source3).setSelectedIndex(1);
+		assertEquals("foo", comboBoxes.get(source3).getSelectedItem().getName());
+
+		// now the values should be non-empty
+		assertEquals(1, propertyWidget.getValue().length);
+		assertEquals("[MetaModelInputColumn[source3]]", Arrays.toString(propertyWidget.getValue()));
+		assertEquals("[foo]", Arrays.toString(propertyWidget.getMappedColumnNamesPropertyWidget().getValue()));
 	}
 }

@@ -157,7 +157,8 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 
 		// now there should be 2 values
 		assertEquals(2, propertyWidget.getValue().length);
-		assertEquals("[MetaModelInputColumn[source3], MetaModelInputColumn[source4]]", Arrays.toString(propertyWidget.getValue()));
+		assertEquals("[MetaModelInputColumn[source3], MetaModelInputColumn[source4]]",
+				Arrays.toString(propertyWidget.getValue()));
 		assertEquals("[foo, bar]", Arrays.toString(propertyWidget.getMappedColumnNamesPropertyWidget().getValue()));
 	}
 }

@@ -196,6 +196,7 @@ public final class PropertyWidgetFactory {
 
 	public void onConfigurationChanged() {
 		Collection<PropertyWidget<?>> widgets = getWidgets();
+
 		for (PropertyWidget<?> widget : widgets) {
 			@SuppressWarnings("unchecked")
 			PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;

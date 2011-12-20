@@ -104,7 +104,7 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 
 		add(_filenameField);
 	}
-	
+
 	public FilenameTextField getFilenameField() {
 		return _filenameField;
 	}
@@ -125,6 +125,12 @@ public final class SingleFilePropertyWidget extends AbstractPropertyWidget<File>
 			_filenameField.setFilename("");
 			return;
 		}
+
+		File existingFile = _filenameField.getFile();
+		if (existingFile != null && existingFile.getAbsoluteFile().equals(value.getAbsoluteFile())) {
+			return;
+		}
+
 		_filenameField.setFilename(value.getAbsolutePath());
 	}
 }

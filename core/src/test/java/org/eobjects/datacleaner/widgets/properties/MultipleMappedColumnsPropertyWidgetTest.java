@@ -52,10 +52,14 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(new AnalyzerBeansConfigurationImpl());
 		ajb.addSourceColumns(new MutableColumn("source1").setType(ColumnType.VARCHAR),
 				new MutableColumn("source2").setType(ColumnType.INTEGER),
-				new MutableColumn("source3").setType(ColumnType.VARCHAR));
+				new MutableColumn("source3").setType(ColumnType.VARCHAR),
+				new MutableColumn("source4").setType(ColumnType.VARCHAR),
+				new MutableColumn("source5").setType(ColumnType.VARCHAR));
 		final InputColumn<?> source1 = ajb.getSourceColumnByName("source1");
 		final InputColumn<?> source2 = ajb.getSourceColumnByName("source2");
 		final InputColumn<?> source3 = ajb.getSourceColumnByName("source3");
+		final InputColumn<?> source4 = ajb.getSourceColumnByName("source4");
+		final InputColumn<?> source5 = ajb.getSourceColumnByName("source5");
 		final TransformerJobBuilder<MockMultipleMappedColumnsTransformer> tjb = ajb
 				.addTransformer(MockMultipleMappedColumnsTransformer.class);
 
@@ -68,14 +72,20 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 		// initial state should be that source1 and source3 are available, but
 		// not checked
 		Set<InputColumn<?>> inputColumns = checkBoxes.keySet();
-		assertEquals(2, inputColumns.size());
+		assertEquals(4, inputColumns.size());
 		assertTrue(inputColumns.contains(source1));
 		assertFalse(inputColumns.contains(source2));
 		assertTrue(inputColumns.contains(source3));
+		assertTrue(inputColumns.contains(source4));
+		assertTrue(inputColumns.contains(source5));
 		assertFalse(checkBoxes.get(source1).isSelected());
 		assertFalse(comboBoxes.get(source1).isVisible());
 		assertFalse(checkBoxes.get(source3).isSelected());
 		assertFalse(comboBoxes.get(source3).isVisible());
+		assertFalse(checkBoxes.get(source4).isSelected());
+		assertFalse(comboBoxes.get(source4).isVisible());
+		assertFalse(checkBoxes.get(source5).isSelected());
+		assertFalse(comboBoxes.get(source5).isVisible());
 
 		// check source3's checkbox
 		checkBoxes.get(source3).doClick();
@@ -83,6 +93,10 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 		assertFalse(comboBoxes.get(source1).isVisible());
 		assertTrue(checkBoxes.get(source3).isSelected());
 		assertTrue(comboBoxes.get(source3).isVisible());
+		assertFalse(checkBoxes.get(source4).isSelected());
+		assertFalse(comboBoxes.get(source4).isVisible());
+		assertFalse(checkBoxes.get(source5).isSelected());
+		assertFalse(comboBoxes.get(source5).isVisible());
 		assertEquals(null, comboBoxes.get(source3).getSelectedItem());
 		assertEquals(0, comboBoxes.get(source3).getModel().getSize());
 
@@ -108,6 +122,7 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 		// been selected
 		assertEquals(0, propertyWidget.getValue().length);
 
+		// make a combo box selection
 		comboBoxes.get(source3).setSelectedIndex(1);
 		assertEquals("foo", comboBoxes.get(source3).getSelectedItem().getName());
 
@@ -115,5 +130,34 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 		assertEquals(1, propertyWidget.getValue().length);
 		assertEquals("[MetaModelInputColumn[source3]]", Arrays.toString(propertyWidget.getValue()));
 		assertEquals("[foo]", Arrays.toString(propertyWidget.getMappedColumnNamesPropertyWidget().getValue()));
+
+		// check source4's combo
+		checkBoxes.get(source4).doClick();
+		assertFalse(checkBoxes.get(source1).isSelected());
+		assertFalse(comboBoxes.get(source1).isVisible());
+		assertTrue(checkBoxes.get(source3).isSelected());
+		assertTrue(comboBoxes.get(source3).isVisible());
+		assertTrue(checkBoxes.get(source4).isSelected());
+		assertTrue(comboBoxes.get(source4).isVisible());
+		assertFalse(checkBoxes.get(source5).isSelected());
+		assertFalse(comboBoxes.get(source5).isVisible());
+		assertEquals(3, comboBoxes.get(source3).getModel().getSize());
+		assertEquals(3, comboBoxes.get(source4).getModel().getSize());
+
+		// the values should be unchanged, since we still did not make any
+		// combobox selection
+		assertEquals(1, propertyWidget.getValue().length);
+		assertEquals("[MetaModelInputColumn[source3]]", Arrays.toString(propertyWidget.getValue()));
+		assertEquals("[foo]", Arrays.toString(propertyWidget.getMappedColumnNamesPropertyWidget().getValue()));
+
+		// make a combo box selection
+		comboBoxes.get(source4).setSelectedIndex(2);
+		assertEquals("foo", comboBoxes.get(source3).getSelectedItem().getName());
+		assertEquals("bar", comboBoxes.get(source4).getSelectedItem().getName());
+
+		// now there should be 2 values
+		assertEquals(2, propertyWidget.getValue().length);
+		assertEquals("[MetaModelInputColumn[source3], MetaModelInputColumn[source4]]", Arrays.toString(propertyWidget.getValue()));
+		assertEquals("[foo, bar]", Arrays.toString(propertyWidget.getMappedColumnNamesPropertyWidget().getValue()));
 	}
 }

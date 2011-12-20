@@ -57,6 +57,9 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 	private final MutableRef<Table> _tableRef;
 	private final ConfiguredPropertyDescriptor _mappedColumnsProperty;
 	private final MinimalPropertyWidget<String[]> _mappedColumnNamesPropertyWidget;
+	
+	// indicates whether there is currently undergoing a source column listener action
+	private volatile boolean _sourceColumnUpdating;
 
 	/**
 	 * Constructs the property widget
@@ -78,6 +81,7 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
 		_tableRef = new MutableRef<Table>();
 		_mappedColumnNamesPropertyWidget = createMappedColumnNamesPropertyWidget();
+		_sourceColumnUpdating = false;
 
 		final InputColumn<?>[] currentValue = getCurrentValue();
 		final String[] currentMappedColumnsValue = (String[]) beanJobBuilder.getConfiguredProperty(mappedColumnsProperty);
@@ -150,8 +154,10 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 		sourceColumnComboBox.addListener(new Listener<Column>() {
 			@Override
 			public void onItemSelected(Column item) {
+				_sourceColumnUpdating = true;
 				fireValueChanged();
 				_mappedColumnNamesPropertyWidget.fireValueChanged();
+				_sourceColumnUpdating = false;
 			}
 		});
 		return sourceColumnComboBox;
@@ -229,6 +235,12 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 
 			@Override
 			protected void setValue(String[] value) {
+				if (_sourceColumnUpdating) {
+					// setValue of the mapped columns will be called prematurely
+					// (with previous value) by change notifications of the
+					// input columns property.
+					return;
+				}
 				if (EqualsBuilder.equals(value, getValue())) {
 					return;
 				}

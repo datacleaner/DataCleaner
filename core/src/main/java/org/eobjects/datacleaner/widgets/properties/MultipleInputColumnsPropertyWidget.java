@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
@@ -443,5 +444,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			_checkBoxes.put(inputColumn, checkBoxesCopy.get(inputColumn));
 		}
 		_checkBoxes.putAll(checkBoxesCopy);
+	}
+
+	public Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> getCheckBoxes() {
+		return Collections.unmodifiableMap(_checkBoxes);
+	}
+
+	public Map<DCCheckBox<InputColumn<?>>, JComponent> getCheckBoxDecorations() {
+		return Collections.unmodifiableMap(_checkBoxDecorations);
 	}
 }

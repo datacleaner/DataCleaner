@@ -21,7 +21,9 @@ package org.eobjects.datacleaner.widgets.properties;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -279,6 +281,10 @@ public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPro
 			}
 		}
 		return result.toArray(new String[result.size()]);
+	}
+
+	public Map<InputColumn<?>, SourceColumnComboBox> getMappedColumnComboBoxes() {
+		return Collections.unmodifiableMap(_mappedColumnComboBoxes);
 	}
 
 	@Override

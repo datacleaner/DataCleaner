@@ -43,6 +43,7 @@ import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.storage.InMemoryStorageProvider;
 import org.eobjects.analyzer.storage.StorageProvider;
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.AuthenticationService;
@@ -233,13 +234,15 @@ public class DCModule extends AbstractModule {
 		bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
 		bind(AuthenticationService.class).to(DCAuthenticationService.class);
 
-		// @Provided variants
-		bind(WindowContext.class).annotatedWith(Provided.class).toProvider(new Provider<WindowContext>() {
-			@Override
-			public WindowContext get() {
-				return getWindowContext();
-			}
-		});
+		synchronized (ReflectionUtils.ANNOTATION_REFLECTION_LOCK) {
+			// @Provided variants
+			bind(WindowContext.class).annotatedWith(Provided.class).toProvider(new Provider<WindowContext>() {
+				@Override
+				public WindowContext get() {
+					return getWindowContext();
+				}
+			});
+		}
 	}
 
 	@Provides

@@ -301,7 +301,7 @@ public class AboutDialog extends AbstractDialog {
 			throw new IllegalStateException("Could not find dependencies file");
 		}
 		try {
-			DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"', false);
+			DataContext dc = DataContextFactory.createCsvDataContext(url.openStream(), ',', '"');
 			Table table = dc.getDefaultSchema().getTables()[0];
 			Column projectColumn = table.getColumnByName("Project");
 			Column websiteColumn = table.getColumnByName("Website");

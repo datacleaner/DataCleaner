@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +42,7 @@ import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 
-public abstract class AbstractDisplayOutputWritersActionListener implements ActionListener {
+public class AbstractDisplayOutputWritersActionListener implements ActionListener {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final AnalyzerBeansConfiguration _configuration;
@@ -56,6 +57,17 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 	public final void actionPerformed(ActionEvent e) {
 		JPopupMenu popup = new JPopupMenu();
 
+		List<JMenuItem> menuItems = createMenuItems();
+		for (JMenuItem menuItem : menuItems) {
+			popup.add(menuItem);
+		}
+
+		JComponent component = (JComponent) e.getSource();
+		popup.show(component, 0, component.getHeight());
+	}
+
+	public List<JMenuItem> createMenuItems() {
+		List<JMenuItem> result = new ArrayList<JMenuItem>();
 		for (final AnalyzerBeanDescriptor<?> descriptor : getDescriptors()) {
 			JMenuItem outputWriterMenuItem = new DescriptorMenuItem(descriptor);
 			outputWriterMenuItem.addActionListener(new ActionListener() {
@@ -70,14 +82,13 @@ public abstract class AbstractDisplayOutputWritersActionListener implements Acti
 					ajb.onConfigurationChanged();
 				}
 			});
-			popup.add(outputWriterMenuItem);
+			result.add(outputWriterMenuItem);
 		}
-
-		JComponent component = (JComponent) e.getSource();
-		popup.show(component, 0, component.getHeight());
+		return result;
 	}
 
-	protected abstract void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder);
+	protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
+	}
 
 	protected List<AnalyzerBeanDescriptor<?>> getDescriptors() {
 		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()

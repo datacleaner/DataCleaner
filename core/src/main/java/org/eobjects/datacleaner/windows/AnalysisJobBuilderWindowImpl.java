@@ -46,8 +46,8 @@ import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -78,6 +78,7 @@ import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.guice.JobFilename;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
+import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.DCGlassPane;
@@ -85,7 +86,6 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.DatastoreListPanel;
 import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.panels.MetadataPanel;
-import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPresenter;
 import org.eobjects.datacleaner.panels.SchemaTreePanel;
 import org.eobjects.datacleaner.panels.SourceColumnsPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
@@ -157,7 +157,6 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private final JButton _addTransformerButton;
 	private final JButton _addAnalyzerButton;
 	private final JButton _runButton;
-	private final Provider<DCWindowMenuBar> _windowMenuBarProvider;
 	private final Provider<RunAnalysisActionListener> _runAnalysisActionProvider;
 	private final Provider<SaveAnalysisJobActionListener> _saveAnalysisJobActionListenerProvider;
 	private final Provider<AddAnalyzerActionListener> _addAnalyzerActionListenerProvider;
@@ -166,6 +165,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private final Ref<DatastoreListPanel> _datastoreListPanelRef;
 	private final UserPreferences _userPreferences;
 	private final Injector _injectorWithGlassPane;
+	private final DCWindowMenuBar _windowMenuBar;
 	private volatile AbstractJobBuilderPanel _latestPanel = null;
 	private final DCPanel _sourceTabOuterPanel;
 	private String _jobFilename;
@@ -179,15 +179,14 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			Provider<DCRendererInitializer> rendererInitializerProvider, SchemaTreePanel schemaTreePanel,
 			SourceColumnsPanel sourceColumnsPanel, Provider<RunAnalysisActionListener> runAnalysisActionProvider,
 			MetadataPanel metadataPanel, AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder,
-			UserPreferences userPreferences, @Nullable @JobFilename String jobFilename,
-			Provider<DCWindowMenuBar> windowMenuBarProvider,
+			UserPreferences userPreferences, @Nullable @JobFilename String jobFilename, DCWindowMenuBar windowMenuBar,
 			Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
 			Provider<AddAnalyzerActionListener> addAnalyzerActionListenerProvider,
 			Provider<AddTransformerActionListener> addTransformerActionListenerProvider, UsageLogger usageLogger) {
 		super(windowContext);
 		_jobFilename = jobFilename;
 		_configuration = configuration;
-		_windowMenuBarProvider = windowMenuBarProvider;
+		_windowMenuBar = windowMenuBar;
 		_runAnalysisActionProvider = runAnalysisActionProvider;
 		_saveAnalysisJobActionListenerProvider = saveAnalysisJobActionListenerProvider;
 		_addAnalyzerActionListenerProvider = addAnalyzerActionListenerProvider;
@@ -203,6 +202,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 				_datastore = con.getDatastore();
 			}
 		}
+		_windowMenuBar.setAnalysisJobBuilder(_analysisJobBuilder);
 
 		_datastoreSelectionEnabled = true;
 		_componentJobBuilderPresenterRendererFactory = new RendererFactory(_configuration.getDescriptorProvider(),
@@ -269,7 +269,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		_leftPanel.setCollapsed(true);
 		_schemaTreePanel.setUpdatePanel(_leftPanel);
 	}
-	
+
 	private JButton createToolbarButton(String text, String iconPath, String popupDescription) {
 		JButton button = new JButton(text, imageManager.getImageIcon(iconPath));
 		button.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -513,7 +513,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			setDatastore(_datastore);
 		}
 
-		setJMenuBar(_windowMenuBarProvider.get());
+		setJMenuBar(_windowMenuBar);
 
 		_sourceTabOuterPanel.add(_datastoreListPanelRef.get());
 		_sourceTabOuterPanel.add(_sourceColumnsPanel);
@@ -666,6 +666,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		_visualizeButton.setEnabled(everythingEnabled);
 		_addTransformerButton.setEnabled(everythingEnabled);
 		_addAnalyzerButton.setEnabled(everythingEnabled);
+		_windowMenuBar.getWriteDataMenu().setEnabled(everythingEnabled);
 	}
 
 	@Override
@@ -689,8 +690,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
 		if (panel != null) {
 			// if panel was a row processing analyzer panel
-			for (Iterator<AnalyzerJobBuilderPresenter> it = _rowProcessingTabPresenters.values().iterator(); it
-					.hasNext();) {
+			for (Iterator<AnalyzerJobBuilderPresenter> it = _rowProcessingTabPresenters.values().iterator(); it.hasNext();) {
 				AnalyzerJobBuilderPresenter analyzerPresenter = it.next();
 				if (_jobBuilderTabs.get(analyzerPresenter) == panel) {
 					_analysisJobBuilder.removeAnalyzer(analyzerPresenter.getJobBuilder());
@@ -723,8 +723,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		@SuppressWarnings("unchecked")
 		final Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
 				.getRenderer(analyzerJobBuilder, ComponentJobBuilderRenderingFormat.class);
-		AnalyzerJobBuilderPresenter presenter = (AnalyzerJobBuilderPresenter) renderer
-				.render(analyzerJobBuilder);
+		AnalyzerJobBuilderPresenter presenter = (AnalyzerJobBuilderPresenter) renderer.render(analyzerJobBuilder);
 
 		_rowProcessingTabPresenters.put(analyzerJobBuilder, presenter);
 		JComponent comp = presenter.createJComponent();

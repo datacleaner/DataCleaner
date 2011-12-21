@@ -32,6 +32,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.actions.AbstractDisplayOutputWritersActionListener;
 import org.eobjects.datacleaner.actions.NewAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -57,14 +60,18 @@ public class DCWindowMenuBar extends JMenuBar {
 	private final ActionListener _windowListener;
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
+	private final JMenu _writeDataMenu;
+	private final Provider<AnalyzerBeansConfiguration> _configurationProvider;
 
 	@Inject
 	protected DCWindowMenuBar(final WindowContext windowContext,
 			final Provider<ReferenceDataDialog> referenceDataDialogProvider,
 			NewAnalysisJobActionListener newAnalysisJobActionListener,
+			Provider<AnalyzerBeansConfiguration> configurationProvider,
 			OpenAnalysisJobActionListener openAnalysisJobActionListener, Provider<OptionsDialog> optionsDialogProvider) {
 		super();
 		_windowContext = windowContext;
+		_configurationProvider = configurationProvider;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 		_optionsDialogProvider = optionsDialogProvider;
 		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
@@ -149,6 +156,8 @@ public class DCWindowMenuBar extends JMenuBar {
 		referenceDataMenu.add(synonymCatalogsMenuItem);
 		referenceDataMenu.add(stringPatternsMenuItem);
 
+		_writeDataMenu = WidgetFactory.createMenu("Write data", 'W');
+
 		final JMenu windowMenu = WidgetFactory.createMenu("Window", 'W');
 		windowMenu.add(optionsMenuItem);
 		windowMenu.addSeparator();
@@ -186,8 +195,13 @@ public class DCWindowMenuBar extends JMenuBar {
 
 		add(fileMenu);
 		add(referenceDataMenu);
+		add(_writeDataMenu);
 		add(windowMenu);
 		add(helpMenu);
+	}
+
+	public JMenu getWriteDataMenu() {
+		return _writeDataMenu;
 	}
 
 	@Override
@@ -200,5 +214,14 @@ public class DCWindowMenuBar extends JMenuBar {
 	public void removeNotify() {
 		super.removeNotify();
 		_windowContext.removeWindowListener(_windowListener);
+	}
+
+	public void setAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder) {
+		List<JMenuItem> menuItems = new AbstractDisplayOutputWritersActionListener(_configurationProvider.get(),
+				analysisJobBuilder).createMenuItems();
+		_writeDataMenu.removeAll();
+		for (JMenuItem menuItem : menuItems) {
+			_writeDataMenu.add(menuItem);
+		}
 	}
 }

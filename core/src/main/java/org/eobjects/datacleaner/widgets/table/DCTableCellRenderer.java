@@ -36,6 +36,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.slf4j.Logger;
@@ -60,6 +61,13 @@ public class DCTableCellRenderer implements TableCellRenderer {
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
 			int row, int column) {
 		logger.debug("getTableCellRendererComponent({},{})", row, column);
+
+		if (value != null) {
+			if (value.getClass().isArray()) {
+				// arrays are printed nicely this way
+				value = ArrayUtils.toString(value);
+			}
+		}
 
 		// icons are displayed as labels
 		if (value instanceof Icon) {

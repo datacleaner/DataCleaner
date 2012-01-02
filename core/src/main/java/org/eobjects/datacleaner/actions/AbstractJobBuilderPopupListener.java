@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -33,8 +32,6 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.ExplorerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 
 /**
@@ -63,17 +60,10 @@ public abstract class AbstractJobBuilderPopupListener {
 
 	public void showPopup(Component parentComponent, int x, int y) {
 		JMenuItem renameMenuItem = WidgetFactory.createMenuItem("Rename component", "images/actions/rename.png");
-		renameMenuItem.addActionListener(new ActionListener() {
+		renameMenuItem.addActionListener(new RenameComponentActionListener(_jobBuilder) {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				final String originalValue = LabelUtils.getLabel(_jobBuilder);
-				final String newValue = JOptionPane.showInputDialog("Name:", originalValue);
-				if (!StringUtils.isNullOrEmpty(newValue)) {
-					if (!originalValue.equals(newValue)) {
-						_jobBuilder.setName(newValue);
-						onNameChanged();
-					}
-				}
+			protected void onNameChanged() {
+				AbstractJobBuilderPopupListener.this.onNameChanged();
 			}
 		});
 

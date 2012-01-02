@@ -70,10 +70,19 @@ class CloseableTabbedPaneMouseListener extends MouseAdapter implements MouseMoti
 
 		// regular left click
 		if (button == MouseEvent.BUTTON1) {
-
 			// only allow closing windows on the same run (row of tabs) as the
 			// selected tab
 			int selectedIndex = _pane.getSelectedIndex();
+
+			// check for double clicks
+			if (e.getClickCount() > 1) {
+				ActionListener doubleClickActionListener = _pane.getDoubleClickActionListener(selectedIndex);
+				if (doubleClickActionListener != null) {
+					doubleClickActionListener.actionPerformed(new ActionEvent(e, clickedTabIndex, "double-click"));
+					return;
+				}
+			}
+
 			int runIndexOfSelectedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), selectedIndex);
 			int runIndexOfClickedTab = _tabbedPaneUI.getRunForTab(_pane.getTabCount(), clickedTabIndex);
 			if (runIndexOfClickedTab != runIndexOfSelectedTab) {

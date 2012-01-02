@@ -70,7 +70,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 			final Column column = (Column) userObject;
 			int button = e.getButton();
 
-			if (button == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+			if (button == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
 				// double click = toggle column
 				toggleColumn(column);
 			} else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {

@@ -53,6 +53,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	private final List<TabCloseListener> _closeListeners = new LinkedList<TabCloseListener>();
 	private final List<Integer> _unclosables = new LinkedList<Integer>();
 	private final List<Integer> _separators = new LinkedList<Integer>();
+	private final Map<Integer, ActionListener> _doubleClickActionListeners = new HashMap<Integer, ActionListener>();
 	private final Map<Integer, ActionListener> _rightClickActionListeners = new HashMap<Integer, ActionListener>();
 
 	private int _marginSize = 4;
@@ -162,16 +163,33 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	public void remove(int removedIndex) {
 		super.remove(removedIndex);
 		_rightClickActionListeners.remove(removedIndex);
+		_doubleClickActionListeners.remove(removedIndex);
 
 		// move all right click listeners for tabs above this index down
-		Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
-		keySet.addAll(_rightClickActionListeners.keySet());
-		for (Integer key : keySet) {
-			int curIndex = key.intValue();
-			if (curIndex > removedIndex) {
-				ActionListener actionListener = _rightClickActionListeners.get(curIndex);
-				_rightClickActionListeners.remove(curIndex);
-				_rightClickActionListeners.put(curIndex - 1, actionListener);
+		{
+			Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
+			keySet.addAll(_rightClickActionListeners.keySet());
+			for (Integer key : keySet) {
+				int curIndex = key.intValue();
+				if (curIndex > removedIndex) {
+					ActionListener actionListener = _rightClickActionListeners.get(curIndex);
+					_rightClickActionListeners.remove(curIndex);
+					_rightClickActionListeners.put(curIndex - 1, actionListener);
+				}
+			}
+		}
+
+		// move all double click listeners for tabs above this index down
+		{
+			Set<Integer> keySet = new TreeSet<Integer>(Collections.reverseOrder());
+			keySet.addAll(_doubleClickActionListeners.keySet());
+			for (Integer key : keySet) {
+				int curIndex = key.intValue();
+				if (curIndex > removedIndex) {
+					ActionListener actionListener = _doubleClickActionListeners.get(curIndex);
+					_doubleClickActionListeners.remove(curIndex);
+					_doubleClickActionListeners.put(curIndex - 1, actionListener);
+				}
 			}
 		}
 	}
@@ -207,6 +225,14 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
 	public ActionListener getRightClickActionListener(int index) {
 		return _rightClickActionListeners.get(index);
+	}
+
+	public void setDoubleClickActionListener(int index, ActionListener actionListener) {
+		_doubleClickActionListeners.put(index, actionListener);
+	}
+
+	public ActionListener getDoubleClickActionListener(int index) {
+		return _doubleClickActionListeners.get(index);
 	}
 
 	@Override

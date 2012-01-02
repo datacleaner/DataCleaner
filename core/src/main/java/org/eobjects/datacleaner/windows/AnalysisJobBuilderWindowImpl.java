@@ -71,6 +71,7 @@ import org.eobjects.datacleaner.actions.AddAnalyzerActionListener;
 import org.eobjects.datacleaner.actions.AddTransformerActionListener;
 import org.eobjects.datacleaner.actions.HideTabTextActionListener;
 import org.eobjects.datacleaner.actions.JobBuilderTabTextActionListener;
+import org.eobjects.datacleaner.actions.RenameComponentActionListener;
 import org.eobjects.datacleaner.actions.RunAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -719,7 +720,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	}
 
 	@Override
-	public void onAdd(AnalyzerJobBuilder<?> analyzerJobBuilder) {
+	public void onAdd(final AnalyzerJobBuilder<?> analyzerJobBuilder) {
 		@SuppressWarnings("unchecked")
 		final Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<AnalyzerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
 				.getRenderer(analyzerJobBuilder, ComponentJobBuilderRenderingFormat.class);
@@ -733,6 +734,13 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		final int tabIndex = _tabbedPane.getTabCount() - 1;
 		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
 				analyzerJobBuilder, tabIndex, _tabbedPane));
+		_tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(analyzerJobBuilder) {
+			@Override
+			protected void onNameChanged() {
+				_tabbedPane.setTitleAt(tabIndex, LabelUtils.getLabel(analyzerJobBuilder));
+			}
+		});
+
 		_tabbedPane.setSelectedIndex(tabIndex);
 		updateStatusLabel();
 	}
@@ -752,7 +760,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	}
 
 	@Override
-	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
+	public void onAdd(final TransformerJobBuilder<?> transformerJobBuilder) {
 		@SuppressWarnings("unchecked")
 		final Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter> renderer = (Renderer<TransformerJobBuilder<?>, ? extends ComponentJobBuilderPresenter>) _componentJobBuilderPresenterRendererFactory
 				.getRenderer(transformerJobBuilder, ComponentJobBuilderRenderingFormat.class);
@@ -768,6 +776,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		_tabbedPane.setSelectedIndex(tabIndex);
 		_tabbedPane.setRightClickActionListener(tabIndex, new JobBuilderTabTextActionListener(_analysisJobBuilder,
 				transformerJobBuilder, tabIndex, _tabbedPane));
+		_tabbedPane.setDoubleClickActionListener(tabIndex, new RenameComponentActionListener(transformerJobBuilder) {
+			@Override
+			protected void onNameChanged() {
+				_tabbedPane.setTitleAt(tabIndex, LabelUtils.getLabel(transformerJobBuilder));
+			}
+		});
 		updateStatusLabel();
 	}
 

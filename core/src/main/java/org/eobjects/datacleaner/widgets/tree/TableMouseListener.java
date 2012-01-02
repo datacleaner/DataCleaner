@@ -71,7 +71,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
 
 			int button = e.getButton();
 
-			if (button == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+			if (button == MouseEvent.BUTTON1 && e.getClickCount() > 2) {
 				// double click = add table
 				addTable(table);
 			} else if (button == MouseEvent.BUTTON2 || button == MouseEvent.BUTTON3) {

@@ -3,7 +3,7 @@
 		<javadoc.version>2.8</javadoc.version>
 		<sshwagon.version>1.0-beta-7</sshwagon.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<analyzerbeans.version>0.9-SNAPSHOT</analyzerbeans.version>
+		<analyzerbeans.version>0.9</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->

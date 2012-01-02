@@ -107,7 +107,7 @@ public final class ColumnListTable extends DCPanel {
 			JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
 			previewButton.setToolTipText("Preview table rows");
 			previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
-					.getDatastoreConnection(), _columns));
+					.getDatastore(), _columns));
 
 			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
 			removeButton.setToolTipText("Remove table from source");
@@ -189,7 +189,7 @@ public final class ColumnListTable extends DCPanel {
 				Class<?> dataType = column.getDataType();
 				if (dataType == null) {
 					dataTypeString = DataTypeFamily.UNDEFINED.toString();
-				}else {
+				} else {
 					dataTypeString = column.getDataType().getSimpleName();
 				}
 			} else {

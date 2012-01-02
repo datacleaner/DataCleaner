@@ -40,6 +40,7 @@ import javax.swing.tree.TreePath;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.guice.Nullable;
@@ -68,7 +69,8 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 	public static final String UNNAMED_SCHEMA_STRING = "(unnamed schema)";
 	public static final String ROOT_NODE_STRING = "Schemas";
 
-	private final DatastoreConnection _dataContextProvider;
+	private final Datastore _datastore;
+	private final DatastoreConnection _datastoreConnection;
 	private final TreeCellRenderer _rendererDelegate;
 	private final WindowContext _windowContext;
 	private final AnalysisJobBuilder _analysisJobBuilder;
@@ -81,10 +83,11 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		if (datastore == null) {
 			throw new IllegalArgumentException("Datastore cannot be null");
 		}
+		_datastore = datastore;
 		_windowContext = windowContext;
 		_analysisJobBuilder = analysisJobBuilder;
 		_injectorBuilder = injectorBuilder;
-		_dataContextProvider = datastore.openConnection();
+		_datastoreConnection = datastore.openConnection();
 		_rendererDelegate = new DefaultTreeRenderer();
 		setCellRenderer(this);
 		setOpaque(false);
@@ -112,7 +115,7 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		for (MouseListener mouseListener : mouseListeners) {
 			removeMouseListener(mouseListener);
 		}
-		_dataContextProvider.close();
+		_datastoreConnection.close();
 	}
 
 	public WindowContext getWindowContext() {
@@ -121,8 +124,10 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 
 	private void updateTree() {
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
-		rootNode.setUserObject(_dataContextProvider.getDatastore());
-		Schema[] schemas = _dataContextProvider.getSchemaNavigator().getSchemas();
+		rootNode.setUserObject(_datastoreConnection.getDatastore());
+		SchemaNavigator schemaNavigator = _datastoreConnection.getSchemaNavigator();
+		schemaNavigator.refreshSchemas();
+		Schema[] schemas = schemaNavigator.getSchemas();
 
 		// make sure that information schemas are arranged at the top
 		Arrays.sort(schemas, new SchemaComparator());
@@ -289,5 +294,9 @@ public class SchemaTree extends JXTree implements TreeWillExpandListener, TreeCe
 		}
 
 		return component;
+	}
+
+	public Datastore getDatastore() {
+		return _datastore;
 	}
 }

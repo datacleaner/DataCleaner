@@ -118,7 +118,7 @@ final class ColumnMouseListener extends MouseAdapter implements MouseListener {
 				final JMenuItem previewMenuItem = WidgetFactory.createMenuItem("Preview column",
 						"images/actions/preview_data.png");
 				previewMenuItem.addActionListener(new PreviewSourceDataActionListener(_schemaTree.getWindowContext(),
-						_analysisJobBuilder.getDatastoreConnection(), column));
+						_schemaTree.getDatastore(), column));
 
 				final JPopupMenu popup = new JPopupMenu();
 				popup.setLabel(column.getName());

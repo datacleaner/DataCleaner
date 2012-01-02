@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -37,27 +38,26 @@ import org.eobjects.metamodel.schema.Table;
 public class PreviewSourceDataActionListener implements ActionListener {
 
 	private static final int PAGE_SIZE = 35;
-	private final DatastoreConnection _datastoreConnection;
+	private final Datastore _datastore;
 	private final Column[] _columns;
 	private final Collection<? extends InputColumn<?>> _inputColumns;
 	private final WindowContext _windowContext;
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection datastoreConnection,
-			Column... columns) {
+	public PreviewSourceDataActionListener(WindowContext windowContext, Datastore datastore, Column... columns) {
 		_windowContext = windowContext;
-		_datastoreConnection = datastoreConnection;
+		_datastore = datastore;
 		_columns = columns;
 		_inputColumns = null;
 	}
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection datastoreConnection, Table table) {
-		this(windowContext, datastoreConnection, table.getColumns());
+	public PreviewSourceDataActionListener(WindowContext windowContext, Datastore datastore, Table table) {
+		this(windowContext, datastore, table.getColumns());
 	}
 
-	public PreviewSourceDataActionListener(WindowContext windowContext, DatastoreConnection datastoreConnection,
+	public PreviewSourceDataActionListener(WindowContext windowContext, Datastore datastore,
 			Collection<? extends InputColumn<?>> inputColumns) {
 		_windowContext = windowContext;
-		_datastoreConnection = datastoreConnection;
+		_datastore = datastore;
 		_inputColumns = inputColumns;
 		_columns = null;
 	}
@@ -79,10 +79,15 @@ public class PreviewSourceDataActionListener implements ActionListener {
 			throw new IllegalStateException("No columns found - could not determine which columns to query");
 		}
 
-		DataContext dc = _datastoreConnection.getDataContext();
-		Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
+		final DatastoreConnection con = _datastore.openConnection();
+		try {
+			DataContext dc = con.getDataContext();
+			Query q = dc.query().from(columns[0].getTable()).select(columns).toQuery();
 
-		DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
-		window.setVisible(true);
+			DataSetWindow window = new DataSetWindow(q, dc, PAGE_SIZE, _windowContext);
+			window.setVisible(true);
+		} finally {
+			con.close();
+		}
 	}
 }

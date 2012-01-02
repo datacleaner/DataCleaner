@@ -171,7 +171,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 	private final DCPanel _sourceTabOuterPanel;
 	private String _jobFilename;
 	private Datastore _datastore;
-	private DatastoreConnection _dataContextProvider;
+	private DatastoreConnection _datastoreConnection;
 	private boolean _datastoreSelectionEnabled;
 	private final MetadataPanel _metadataPanel;
 
@@ -320,12 +320,12 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 		}
 
 		_datastore = datastore;
-		if (_dataContextProvider != null) {
-			_dataContextProvider.close();
+		if (_datastoreConnection != null) {
+			_datastoreConnection.close();
 		}
-		_dataContextProvider = con;
 		_analysisJobBuilder.setDatastore(datastore);
 		_schemaTreePanel.setDatastore(datastore, expandTree);
+		_datastoreConnection = con;
 
 		if (datastore == null) {
 			_analysisJobBuilder.reset();
@@ -453,8 +453,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			_analysisJobBuilder.getFilterChangeListeners().remove(this);
 			_analysisJobBuilder.getSourceColumnListeners().remove(this);
 			_analysisJobBuilder.close();
-			if (_dataContextProvider != null) {
-				_dataContextProvider.close();
+			if (_datastoreConnection != null) {
+				_datastoreConnection.close();
 			}
 			getContentPane().removeAll();
 		}

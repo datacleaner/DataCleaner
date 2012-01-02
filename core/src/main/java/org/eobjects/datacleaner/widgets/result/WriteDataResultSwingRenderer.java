@@ -125,7 +125,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
 							try {
 								Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
 								PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-										windowContext, errorCon, table);
+										windowContext, errorDatastore, table);
 								actionListener.actionPerformed(null);
 							} finally {
 								errorCon.close();
@@ -189,13 +189,18 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					final DatastoreConnection con = datastore.openConnection();
-					final Table previewTable = result.getPreviewTable(datastore);
-					if (previewTable == null) {
-						throw new IllegalStateException("Result did not return any preview table: " + result);
-					} else {
-						final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-								windowContext, con, previewTable);
-						actionListener.actionPerformed(null);
+					try {
+						con.getSchemaNavigator().refreshSchemas();
+						final Table previewTable = result.getPreviewTable(datastore);
+						if (previewTable == null) {
+							throw new IllegalStateException("Result did not return any preview table: " + result);
+						} else {
+							final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
+									windowContext, datastore, previewTable);
+							actionListener.actionPerformed(null);
+						}
+					} finally {
+						con.close();
 					}
 				}
 			});

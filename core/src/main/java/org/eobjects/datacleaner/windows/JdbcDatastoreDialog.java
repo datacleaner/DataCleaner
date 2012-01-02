@@ -328,7 +328,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			public void actionPerformed(ActionEvent event) {
 				JdbcDatastore datastore = createDatastore();
 				try {
-					Connection connection = datastore.createConnection();
+					Connection connection = datastore.createDataSource().getConnection();
 					connection.close();
 					JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
 				} catch (Throwable e) {

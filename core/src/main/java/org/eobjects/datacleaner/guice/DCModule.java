@@ -29,6 +29,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
+import org.eobjects.analyzer.configuration.InjectionManagerImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreCatalogImpl;
@@ -38,6 +39,7 @@ import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.concurrent.SingleThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
@@ -200,7 +202,8 @@ public class DCModule extends AbstractModule {
 				final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog(),
 						userPreferences);
 				final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
-						c.getReferenceDataCatalog(), datastoreCatalog, userPreferences);
+						c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(new InjectionManagerImpl(
+								datastoreCatalog, null, null), null));
 				final DescriptorProvider descriptorProvider = c.getDescriptorProvider();
 
 				final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();

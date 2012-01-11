@@ -22,9 +22,9 @@ package org.eobjects.datacleaner.user;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.reference.DatastoreDictionary;
-import org.eobjects.analyzer.reference.DatastoreSynonymCatalog;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
+import org.eobjects.analyzer.descriptors.Descriptors;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
@@ -45,7 +45,6 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 
 	private static final long serialVersionUID = 1L;
 
-	private final DatastoreCatalog _datastoreCatalog;
 	private final List<Dictionary> _dictionaries;
 	private final List<DictionaryChangeListener> _dictionaryListeners = new ArrayList<DictionaryChangeListener>();
 	private final List<SynonymCatalog> _synonymCatalogs;
@@ -53,13 +52,14 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	private final List<StringPattern> _stringPatterns;
 	private final List<StringPatternChangeListener> _stringPatternListeners = new ArrayList<StringPatternChangeListener>();
 	private final ReferenceDataCatalog _immutableDelegate;
+	private final LifeCycleHelper _lifeCycleHelper;
 
 	/**
 	 * No-args constructor, mostly usable for testing code.
 	 */
 	public MutableReferenceDataCatalog() {
 		_immutableDelegate = new ReferenceDataCatalogImpl();
-		_datastoreCatalog = null;
+		_lifeCycleHelper = new LifeCycleHelper(null, null);
 		_dictionaries = new ArrayList<Dictionary>();
 		_synonymCatalogs = new ArrayList<SynonymCatalog>();
 		_stringPatterns = new ArrayList<StringPattern>();
@@ -72,10 +72,10 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	 * @param datastoreCatalog
 	 * @param userPreferences
 	 */
-	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, DatastoreCatalog datastoreCatalog,
-			UserPreferences userPreferences) {
+	public MutableReferenceDataCatalog(final ReferenceDataCatalog immutableDelegate, final UserPreferences userPreferences,
+			LifeCycleHelper lifeCycleHelper) {
 		_immutableDelegate = immutableDelegate;
-		_datastoreCatalog = datastoreCatalog;
+		_lifeCycleHelper = lifeCycleHelper;
 		_dictionaries = userPreferences.getUserDictionaries();
 		_synonymCatalogs = userPreferences.getUserSynonymCatalogs();
 		_stringPatterns = userPreferences.getUserStringPatterns();
@@ -106,6 +106,17 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 				_stringPatterns.remove(getStringPattern(name));
 			}
 			addStringPattern(_immutableDelegate.getStringPattern(name));
+		}
+
+		assignProvidedProperties(_dictionaries.toArray());
+		assignProvidedProperties(_synonymCatalogs.toArray());
+		assignProvidedProperties(_stringPatterns.toArray());
+	}
+
+	private void assignProvidedProperties(Object... objects) {
+		for (Object object : objects) {
+			ComponentDescriptor<?> descriptor = Descriptors.ofComponent(object.getClass());
+			_lifeCycleHelper.assignProvidedProperties(descriptor, object);
 		}
 	}
 
@@ -167,13 +178,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 				throw new IllegalArgumentException("Dictionary name '" + name + "' is not unique!");
 			}
 		}
-
-		if (dict instanceof DatastoreDictionary) {
-			// deserialization of datastore dictionaries is insufficient, it
-			// requires also a reference to the datastore catalog
-			((DatastoreDictionary) dict).setDatastoreCatalog(_datastoreCatalog);
-		}
-
+		assignProvidedProperties(dict);
 		_dictionaries.add(dict);
 		for (DictionaryChangeListener listener : _dictionaryListeners) {
 			listener.onAdd(dict);
@@ -201,6 +206,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 				throw new IllegalArgumentException("StringPattern name '" + name + "' is not unique!");
 			}
 		}
+		assignProvidedProperties(sp);
 		_stringPatterns.add(sp);
 		for (StringPatternChangeListener listener : _stringPatternListeners) {
 			listener.onAdd(sp);
@@ -250,10 +256,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 			}
 		}
 
-		if (sc instanceof DatastoreSynonymCatalog) {
-			((DatastoreSynonymCatalog) sc).setDatastoreCatalog(_datastoreCatalog);
-		}
-
+		assignProvidedProperties(sc);
 		_synonymCatalogs.add(sc);
 		for (SynonymCatalogChangeListener listener : _synonymCatalogListeners) {
 			listener.onAdd(sc);

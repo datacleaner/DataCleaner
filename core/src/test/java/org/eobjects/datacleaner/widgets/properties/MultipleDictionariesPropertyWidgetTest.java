@@ -28,9 +28,11 @@ import junit.framework.TestCase;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
+import org.eobjects.analyzer.configuration.InjectionManagerImpl;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.SimpleDictionary;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -45,31 +47,33 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 	private AnalyzerJobBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
 	private ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
 			"Dictionary array property");
+	private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(new InjectionManagerImpl(
+			configuration.getDatastoreCatalog(), null, null), null);
 	private MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
-			configuration.getReferenceDataCatalog(), configuration.getDatastoreCatalog(), new UserPreferencesImpl(null));
+			configuration.getReferenceDataCatalog(), new UserPreferencesImpl(null), lifeCycleHelper);
 	private Provider<ReferenceDataDialog> referenceDataDialogProvider = null;
 
 	public void testInitialSelection() throws Exception {
 		assertEquals(Dictionary.class, property.getBaseType());
-		
+
 		referenceDataCatalog.addDictionary(new SimpleDictionary("numbers", "1", "2", "3"));
 		referenceDataCatalog.addDictionary(new SimpleDictionary("names", "Jane", "Joe"));
 
 		MultipleDictionariesPropertyWidget widget = new MultipleDictionariesPropertyWidget(analyzerJobBuilder, property,
 				referenceDataCatalog, referenceDataDialogProvider);
-		widget.initialize(new Dictionary[] {referenceDataCatalog.getDictionary("numbers")});
+		widget.initialize(new Dictionary[] { referenceDataCatalog.getDictionary("numbers") });
 		widget.onPanelAdd();
-		
+
 		assertEquals("SimpleDictionary[name=numbers],SimpleDictionary[name=names]", getAvailableCheckboxValues(widget));
 		assertEquals("[SimpleDictionary[name=numbers]]", Arrays.toString(widget.getValue()));
-		
+
 		referenceDataCatalog.removeDictionary(referenceDataCatalog.getDictionary("numbers"));
-		
+
 		assertEquals("SimpleDictionary[name=names]", getAvailableCheckboxValues(widget));
 		assertEquals("[]", Arrays.toString(widget.getValue()));
-		
+
 		referenceDataCatalog.removeDictionary(referenceDataCatalog.getDictionary("names"));
-		
+
 		assertEquals("- no dictionaries available -", getAvailableCheckboxValues(widget));
 		assertEquals("[]", Arrays.toString(widget.getValue()));
 	}

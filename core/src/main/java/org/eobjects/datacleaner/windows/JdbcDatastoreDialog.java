@@ -26,7 +26,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -36,6 +36,7 @@ import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -46,7 +47,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.UpdateableDatastoreConnection;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
@@ -67,6 +70,12 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Number of connections to try to create (in case of non-multiple
+	 * connections, this is just the number of handles to the same connection).
+	 */
+	private static final int TEST_CONNECTION_COUNT = 20;
+
 	private static final String MANAGE_DATABASE_DRIVERS = "Manage database drivers...";
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
@@ -78,6 +87,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private final JXTextField _connectionStringTextField;
 	private final JXTextField _usernameTextField;
 	private final JPasswordField _passwordField;
+	private final JCheckBox _multipleConnectionsCheckBox;
 	private final DCComboBox<Object> _databaseDriverComboBox;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
 	private final JButton _connectionStringTemplateButton;
@@ -94,13 +104,22 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_optionsDialogProvider = optionsDialogProvider;
 		_databaseDriverCatalog = databaseDriverCatalog;
 
+		_multipleConnectionsCheckBox = new JCheckBox("Allow multiple concurrent connections", true);
+		_multipleConnectionsCheckBox
+				.setToolTipText("Indicates whether multiple connections (aka. connection pooling) may be created or not. "
+						+ "Connection pooling is preferred for performance reasons, but can safely be disabled if not desired. "
+						+ "The max number of connections cannot be configured, "
+						+ "but no more connections than the number of threads in the task runner should be expected.");
+		_multipleConnectionsCheckBox.setOpaque(false);
+		_multipleConnectionsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+
 		final int textFieldWidth = 30;
 		_datastoreNameTextField = WidgetFactory.createTextField("Name", textFieldWidth);
 		_driverClassNameTextField = WidgetFactory.createTextField("Driver class name", textFieldWidth);
 		_connectionStringTextField = WidgetFactory.createTextField("Connection string / URL", textFieldWidth);
 		_usernameTextField = WidgetFactory.createTextField("Username", textFieldWidth);
 		_passwordField = new JPasswordField(textFieldWidth);
-		
+
 		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
 		_connectionStringTemplateButton = new JButton(imageManager.getImageIcon("images/widgets/help.png",
@@ -188,6 +207,8 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		});
 
 		if (_originalDatastore != null) {
+			_multipleConnectionsCheckBox.setSelected(_originalDatastore.isMultipleConnections());
+
 			// the database driver has to be set as the first thing, because the
 			// combobox's action listener will set other field's values as well.
 			DatabaseDriverDescriptor databaseDriver = DatabaseDriverCatalog
@@ -312,6 +333,9 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(_connectionStringTemplateButton, panel, 2, row, 0.0d, 0.0d);
 
 		row++;
+		WidgetUtils.addToGridBag(_multipleConnectionsCheckBox, panel, 1, row, 2, 1);
+
+		row++;
 		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row);
 
@@ -327,13 +351,22 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JdbcDatastore datastore = createDatastore();
+				final List<DatastoreConnection> connections = new ArrayList<DatastoreConnection>();
 				try {
-					Connection connection = datastore.createDataSource().getConnection();
-					connection.close();
-					JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
+					for (int i = 0; i < TEST_CONNECTION_COUNT; i++) {
+						UpdateableDatastoreConnection connection = datastore.openConnection();
+						connections.add(connection);
+					}
 				} catch (Throwable e) {
 					WidgetUtils.showErrorMessage("Could not establish connection", e);
+					return;
+				} finally {
+					for (DatastoreConnection connection : connections) {
+						connection.close();
+					}
 				}
+
+				JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
 			}
 		});
 
@@ -368,9 +401,13 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		}
 
 		final String driverClass = _driverClassNameTextField.getText();
+		final String connectionString = _connectionStringTextField.getText();
+		final String username = _usernameTextField.getText();
+		final char[] password = _passwordField.getPassword();
+		final boolean multipleConnections = _multipleConnectionsCheckBox.isSelected();
 
-		JdbcDatastore datastore = new JdbcDatastore(datastoreName, _connectionStringTextField.getText(), driverClass,
-				_usernameTextField.getText(), new String(_passwordField.getPassword()));
+		JdbcDatastore datastore = new JdbcDatastore(datastoreName, connectionString, driverClass, username, new String(
+				password), multipleConnections);
 
 		return datastore;
 	}

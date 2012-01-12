@@ -121,7 +121,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 				if (column.getDataTypeFamily() == DataTypeFamily.UNDEFINED) {
 					createStatementBuilder.append(SqlDatabaseUtils.getSqlType(String.class));
 				} else {
-				createStatementBuilder.append(SqlDatabaseUtils.getSqlType(column.getDataType()));
+					createStatementBuilder.append(SqlDatabaseUtils.getSqlType(column.getDataType()));
 				}
 			}
 			createStatementBuilder.append(')');
@@ -163,7 +163,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 
 		DatastoreOutputWriterFactory.release(this);
 
-		Datastore datastore = new JdbcDatastore(_datastoreName, _jdbcUrl, DRIVER_CLASS_NAME, "SA", "");
+		Datastore datastore = new JdbcDatastore(_datastoreName, _jdbcUrl, DRIVER_CLASS_NAME, "SA", "", true);
 		_datastoreCreationDelegate.createDatastore(datastore);
 	}
 

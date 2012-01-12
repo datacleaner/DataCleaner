@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -59,11 +60,11 @@ public class ProgressInformationPanel extends DCPanel {
 	private final DCPanel _progressBarPanel;
 	private final Map<Table, DCProgressBar> _progressBars = new IdentityHashMap<Table, DCProgressBar>();
 	private final JScrollPane _textAreaScroll;
-	private volatile boolean _verboseLogging = false;
 	private final Map<Table, Integer> _verboseCounter = new IdentityHashMap<Table, Integer>();
 	private final JButton _stopButton;
 	private final LoadingIcon _loadingIcon;
 	private final DCLabel _loadingLabel;
+	private volatile boolean _verboseLogging = false;
 
 	public ProgressInformationPanel() {
 		super();
@@ -111,6 +112,10 @@ public class ProgressInformationPanel extends DCPanel {
 		add(splitPane, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);
 	}
+	
+	public String getTextAreaText() {
+		return _textArea.getText();
+	}
 
 	public void addStopActionListener(ActionListener actionListener) {
 		_stopButton.addActionListener(actionListener);
@@ -130,7 +135,8 @@ public class ProgressInformationPanel extends DCPanel {
 			stringWriter.append(throwable.getMessage());
 		} else {
 			stringWriter.append('\n');
-			throwable.printStackTrace(new PrintWriter(stringWriter));
+			PrintWriter printWriter = new PrintWriter(stringWriter);
+			printStackTrace(printWriter, throwable);
 		}
 		appendMessage(stringWriter.toString());
 
@@ -144,6 +150,29 @@ public class ProgressInformationPanel extends DCPanel {
 				progressBar.setEnabled(false);
 				progressBar.setString("Stopped!");
 			}
+		}
+	}
+
+	/**
+	 * Prints stacktraces to the string writer, and investigates the throwable
+	 * hierarchy to check if there's any {@link SQLException}s which also has
+	 * "next" exceptions.
+	 * 
+	 * @param stringWriter
+	 * @param throwable
+	 */
+	protected void printStackTrace(PrintWriter printWriter, Throwable throwable) {
+		throwable.printStackTrace(printWriter);
+		Throwable cause = throwable.getCause();
+		while (cause != null) {
+			if (cause instanceof SQLException) {
+				SQLException nextException = ((SQLException) cause).getNextException();
+				if (nextException != null) {
+					printWriter.print("Next exception: ");
+					printStackTrace(printWriter, nextException);
+				}
+			}
+			cause = cause.getCause();
 		}
 	}
 

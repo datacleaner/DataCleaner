@@ -26,17 +26,18 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.sql.DataSource;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -47,9 +48,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.JdbcDatastore;
-import org.eobjects.analyzer.connection.UpdateableDatastoreConnection;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
@@ -61,9 +60,11 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 
 public class JdbcDatastoreDialog extends AbstractDialog {
@@ -87,7 +88,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private final JXTextField _connectionStringTextField;
 	private final JXTextField _usernameTextField;
 	private final JPasswordField _passwordField;
-	private final JCheckBox _multipleConnectionsCheckBox;
+	private final DCCheckBox<Object> _multipleConnectionsCheckBox;
 	private final DCComboBox<Object> _databaseDriverComboBox;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
 	private final JButton _connectionStringTemplateButton;
@@ -104,7 +105,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_optionsDialogProvider = optionsDialogProvider;
 		_databaseDriverCatalog = databaseDriverCatalog;
 
-		_multipleConnectionsCheckBox = new JCheckBox("Allow multiple concurrent connections", true);
+		_multipleConnectionsCheckBox = new DCCheckBox<Object>("Allow multiple concurrent connections", true);
 		_multipleConnectionsCheckBox
 				.setToolTipText("Indicates whether multiple connections (aka. connection pooling) may be created or not. "
 						+ "Connection pooling is preferred for performance reasons, but can safely be disabled if not desired. "
@@ -345,28 +346,42 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 		row++;
 
-		final JButton testButton = WidgetFactory.createButton("Test connection", "images/actions/refresh.png");
+		final JButton testButton = WidgetFactory.createButton(getTestButtonText(), "images/actions/refresh.png");
 		testButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JdbcDatastore datastore = createDatastore();
-				final List<DatastoreConnection> connections = new ArrayList<DatastoreConnection>();
+
+				final List<Connection> connections = new ArrayList<Connection>();
+
 				try {
-					for (int i = 0; i < TEST_CONNECTION_COUNT; i++) {
-						UpdateableDatastoreConnection connection = datastore.openConnection();
-						connections.add(connection);
+					if (datastore.isMultipleConnections()) {
+						DataSource ds = datastore.createDataSource();
+						for (int i = 0; i < TEST_CONNECTION_COUNT; i++) {
+							Connection connection = ds.getConnection();
+							connections.add(connection);
+						}
+					} else {
+						Connection connnection = datastore.createConnection();
+						connections.add(connnection);
 					}
 				} catch (Throwable e) {
 					WidgetUtils.showErrorMessage("Could not establish connection", e);
 					return;
 				} finally {
-					for (DatastoreConnection connection : connections) {
-						connection.close();
+					for (Connection connection : connections) {
+						FileHelper.safeClose(connection);
 					}
 				}
 
 				JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
+			}
+		});
+		_multipleConnectionsCheckBox.addListener(new DCCheckBox.Listener<Object>() {
+			@Override
+			public void onItemSelected(Object item, boolean selected) {
+				testButton.setText(getTestButtonText());
 			}
 		});
 
@@ -392,6 +407,13 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		WidgetUtils.addToGridBag(buttonPanel, panel, 1, row, 3, 1);
 
 		return panel;
+	}
+
+	private String getTestButtonText() {
+		if (_multipleConnectionsCheckBox.isSelected()) {
+			return "Test connections";
+		}
+		return "Test connection";
 	}
 
 	private JdbcDatastore createDatastore() {

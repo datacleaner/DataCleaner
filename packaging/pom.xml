@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
@@ -232,7 +233,9 @@
 						<configuration>
 							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
-								<move file="${project.basedir}/target/docbkx/html/index.html" tofile="${project.basedir}/target/site/reference/html_single/index.html" failonerror="false" />
+								<move file="${project.basedir}/target/docbkx/html/index.html"
+									tofile="${project.basedir}/target/site/reference/html_single/index.html"
+									failonerror="false" />
 								<copy todir="${project.basedir}/target/site/reference/html_single">
 									<fileset dir="${project.basedir}/src/docbkx/resources">
 										<include name="**/*.css" />
@@ -260,7 +263,9 @@
 										<include name="**/*.pdf" />
 									</fileset>
 								</copy>
-								<move file="${project.basedir}/target/site/reference/pdf/index.pdf" tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf" failonerror="false" />
+								<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
+									tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
+									failonerror="false" />
 							</postProcess>
 						</configuration>
 					</execution>
@@ -278,6 +283,45 @@
 					<xincludeSupported>true</xincludeSupported>
 					<htmlStylesheet>style.css</htmlStylesheet>
 				</configuration>
+			</plugin>
+			<plugin>
+				<!-- build mac os x bundle -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>osxappbundle-maven-plugin</artifactId>
+				<version>1.0-alpha-2</version>
+				<configuration>
+					<mainClass>${mainClass}</mainClass>
+					<jvmVersion>1.6+</jvmVersion>
+					<iconFile>${basedir}/src/main/macosx/app-icon.icns</iconFile>
+					<bundleName>DataCleaner</bundleName>
+					<vmOptions>-Dcom.apple.macos.useScreenMenuBar=true</vmOptions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>build-mac-osx-bundle-32-bit</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>bundle</goal>
+						</goals>
+						<configuration>
+							<javaApplicationStub>${basedir}/src/main/macosx/JavaApplicationStub_32bit</javaApplicationStub>
+							<buildDirectory>${project.build.directory}/DataCleaner/macos-32bit/DataCleaner</buildDirectory>
+							<diskImageFile>${project.build.directory}/DataCleaner-32bit.dmg</diskImageFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build-mac-osx-bundle-64-bit</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>bundle</goal>
+						</goals>
+						<configuration>
+							<javaApplicationStub>${basedir}/src/main/macosx/JavaApplicationStub_64bit</javaApplicationStub>
+							<buildDirectory>${project.build.directory}/DataCleaner/macos-64bit/DataCleaner</buildDirectory>
+							<diskImageFile>${project.build.directory}/DataCleaner-64bit.dmg</diskImageFile>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

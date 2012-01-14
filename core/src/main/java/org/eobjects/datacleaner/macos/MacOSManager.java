@@ -28,8 +28,8 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.AboutDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 import org.simplericity.macify.eawt.Application;
-import org.simplericity.macify.eawt.ApplicationAdapter;
 import org.simplericity.macify.eawt.ApplicationEvent;
+import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,39 +64,56 @@ public class MacOSManager {
 			logger.debug("Omitting Mac OS initialization, since operating system is not Mac OS");
 			return;
 		}
-		
+
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+
 		app.addAboutMenuItem();
 		app.setEnabledAboutMenu(true);
 		app.addPreferencesMenuItem();
 		app.setEnabledPreferencesMenu(true);
-		app.addApplicationListener(new ApplicationAdapter() {
-			@Override
-			public void handleAbout(ApplicationEvent event) {
-				AboutDialog dialog = new AboutDialog(_windowContext);
-				dialog.setVisible(true);
-				event.setHandled(true);
-			}
+		app.addApplicationListener(new DCApplicationListener());
+	}
 
-			@Override
-			public void handleOpenFile(ApplicationEvent event) {
-				final String filename = event.getFilename();
-				final OpenAnalysisJobActionListener actionListener = _openAnalysisJobActionListenerProvider.get();
-				actionListener.openFile(new File(filename));
-			}
+	public class DCApplicationListener implements ApplicationListener {
 
-			@Override
-			public void handlePreferences(ApplicationEvent event) {
-				OptionsDialog dialog = _optionsDialogProvider.get();
-				dialog.setVisible(true);
-			}
+		@Override
+		public void handleAbout(ApplicationEvent event) {
+			AboutDialog dialog = new AboutDialog(_windowContext);
+			dialog.setVisible(true);
+			event.setHandled(true);
+		}
 
-			@Override
-			public void handleQuit(ApplicationEvent event) {
-				if (_windowContext.showExitDialog()) {
-					_windowContext.exit();
-				}
-				event.setHandled(true);
+		@Override
+		public void handleOpenFile(ApplicationEvent event) {
+			final String filename = event.getFilename();
+			final OpenAnalysisJobActionListener actionListener = _openAnalysisJobActionListenerProvider.get();
+			actionListener.openFile(new File(filename));
+		}
+
+		@Override
+		public void handlePreferences(ApplicationEvent event) {
+			OptionsDialog dialog = _optionsDialogProvider.get();
+			dialog.setVisible(true);
+		}
+
+		@Override
+		public void handleQuit(ApplicationEvent event) {
+			if (_windowContext.showExitDialog()) {
+				_windowContext.exit();
 			}
-		});
+			event.setHandled(true);
+		}
+
+		@Override
+		public void handleOpenApplication(ApplicationEvent event) {
+		}
+
+		@Override
+		public void handlePrintFile(ApplicationEvent event) {
+		}
+
+		@Override
+		public void handleReOpenApplication(ApplicationEvent event) {
+		}
 	}
 }

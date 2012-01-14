@@ -139,6 +139,10 @@ public final class Bootstrap {
 			}
 			return;
 		} else {
+			// initialize Mac OS specific settings
+			final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
+			macOsManager.init();
+			
 			// run in GUI mode
 			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
@@ -177,10 +181,6 @@ public final class Bootstrap {
 			final WindowContext windowContext = injector.getInstance(WindowContext.class);
 
 			final HttpClient httpClient = injector.getInstance(HttpClient.class);
-
-			// initialize Mac OS specific settings
-			final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
-			macOsManager.init();
 
 			// set up HTTP service for ExtensionSwap installation
 			loadExtensionSwapService(userPreferences, windowContext, configuration, httpClient, usageLogger);

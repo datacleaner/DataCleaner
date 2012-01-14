@@ -38,6 +38,7 @@ import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.macos.MacOSManager;
 import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -176,6 +177,10 @@ public final class Bootstrap {
 			final WindowContext windowContext = injector.getInstance(WindowContext.class);
 
 			final HttpClient httpClient = injector.getInstance(HttpClient.class);
+
+			// initialize Mac OS specific settings
+			final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
+			macOsManager.init();
 
 			// set up HTTP service for ExtensionSwap installation
 			loadExtensionSwapService(userPreferences, windowContext, configuration, httpClient, usageLogger);

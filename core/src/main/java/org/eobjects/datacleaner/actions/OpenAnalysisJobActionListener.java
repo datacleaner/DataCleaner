@@ -25,7 +25,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -46,6 +45,7 @@ import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.util.Providers;
 
 /**
  * ActionListener that will display an "Open file" dialog which allows the user
@@ -61,19 +61,16 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilderWindow _parentWindow;
 	private final WindowContext _windowContext;
-	private final Provider<OpenAnalysisJobActionListener> _openAnalysisJobActionListenerProvider;
 	private final DCModule _parentModule;
 	private final UserPreferences _userPreferences;
 	private final UsageLogger _usageLogger;
 
 	@Inject
 	protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider,
-			DCModule parentModule, UserPreferences userPreferences, UsageLogger usageLogger) {
+			WindowContext windowContext, DCModule parentModule, UserPreferences userPreferences, UsageLogger usageLogger) {
 		_parentWindow = parentWindow;
 		_configuration = configuration;
 		_windowContext = windowContext;
-		_openAnalysisJobActionListenerProvider = openAnalysisJobActionListenerProvider;
 		_parentModule = parentModule;
 		_userPreferences = userPreferences;
 		_usageLogger = usageLogger;
@@ -86,7 +83,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 
 		OpenAnalysisJobFileChooserAccessory accessory = new OpenAnalysisJobFileChooserAccessory(_windowContext,
-				_configuration, fileChooser, _openAnalysisJobActionListenerProvider);
+				_configuration, fileChooser, Providers.of(this));
 		fileChooser.setAccessory(accessory);
 
 		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
@@ -101,11 +98,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	/**
 	 * Opens a job file
 	 * 
-	 * @param parentWindow
-	 *            the parent window that invoked this open call, or null if none
-	 *            exists
 	 * @param file
-	 * @param configuration
 	 */
 	public void openFile(File file) {
 		JaxbJobReader reader = new JaxbJobReader(_configuration);
@@ -120,7 +113,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 			if (result == JOptionPane.OK_OPTION) {
 				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext, _configuration,
-						file, metadata, _openAnalysisJobActionListenerProvider);
+						file, metadata, Providers.of(this));
 				dialog.setVisible(true);
 			}
 		}
@@ -130,7 +123,6 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	 * Opens a job builder
 	 * 
 	 * @param file
-	 * @param configuration
 	 * @param ajb
 	 */
 	public void openJob(final File file, final AnalysisJobBuilder ajb) {

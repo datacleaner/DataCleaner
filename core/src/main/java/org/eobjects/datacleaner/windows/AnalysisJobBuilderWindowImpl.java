@@ -709,7 +709,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 			}
 			// TODO also handle exploring analyzers
 		}
-		logger.warn("Could not handle removal of tab {}, containing {}", ev.getTabIndex(), panel);
+		logger.info("Could not handle removal of tab {}, containing {}", ev.getTabIndex(), panel);
 	}
 
 	@Override

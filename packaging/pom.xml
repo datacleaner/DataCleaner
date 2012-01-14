@@ -297,6 +297,8 @@
 					<vmOptions>-Dcom.apple.macos.useScreenMenuBar=true</vmOptions>
 				</configuration>
 				<executions>
+				<!-- 32 bit mac build disabled, no longer common -->
+				<!-- 
 					<execution>
 						<id>build-mac-osx-bundle-32-bit</id>
 						<phase>verify</phase>
@@ -309,6 +311,7 @@
 							<diskImageFile>${project.build.directory}/DataCleaner-32bit.dmg</diskImageFile>
 						</configuration>
 					</execution>
+				 -->
 					<execution>
 						<id>build-mac-osx-bundle-64-bit</id>
 						<phase>verify</phase>

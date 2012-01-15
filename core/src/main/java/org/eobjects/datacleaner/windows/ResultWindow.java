@@ -27,17 +27,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalyzerJob;
+import org.eobjects.analyzer.job.ComponentJob;
+import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.StringUtils;
@@ -48,11 +52,11 @@ import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.util.AnalysisRunnerSwingWorker;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
-
 import org.eobjects.metamodel.schema.Table;
 
 public final class ResultWindow extends AbstractWindow {
@@ -62,7 +66,7 @@ public final class ResultWindow extends AbstractWindow {
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final CloseableTabbedPane _tabbedPane = new CloseableTabbedPane();
-	private final Map<Table, ResultListPanel> _resultPanels = new HashMap<Table, ResultListPanel>();
+	private final Map<Object, ResultListPanel> _resultPanels = new HashMap<Object, ResultListPanel>();
 	private final AnalysisJob _job;
 	private final AnalyzerBeansConfiguration _configuration;
 	private final ProgressInformationPanel _progressInformationPanel;
@@ -70,9 +74,20 @@ public final class ResultWindow extends AbstractWindow {
 	private final String _jobFilename;
 	private final AnalysisRunnerSwingWorker _worker;
 
+	/**
+	 * 
+	 * @param configuration
+	 * @param job
+	 *            either this or result must be available
+	 * @param result
+	 *            either this or job must be available
+	 * @param jobFilename
+	 * @param windowContext
+	 * @param rendererInitializerProvider
+	 */
 	@Inject
-	protected ResultWindow(AnalyzerBeansConfiguration configuration, AnalysisJob job,
-			@Nullable @JobFilename String jobFilename, WindowContext windowContext,
+	protected ResultWindow(AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job,
+			@Nullable AnalysisResult result, @Nullable @JobFilename String jobFilename, WindowContext windowContext,
 			Provider<DCRendererInitializer> rendererInitializerProvider) {
 		super(windowContext);
 		_configuration = configuration;
@@ -80,19 +95,35 @@ public final class ResultWindow extends AbstractWindow {
 		_jobFilename = jobFilename;
 		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), rendererInitializerProvider.get());
 
-		_progressInformationPanel = new ProgressInformationPanel();
-		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
-				_progressInformationPanel);
-		_tabbedPane.setUnclosableTab(0);
+		if (result == null) {
+			// set up a progress information panel, and run the job in a swing
+			// worker
+			_progressInformationPanel = new ProgressInformationPanel();
+			_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
+					_progressInformationPanel);
+			_tabbedPane.setUnclosableTab(0);
 
-		_worker = new AnalysisRunnerSwingWorker(_configuration, _job, this, _progressInformationPanel);
+			_worker = new AnalysisRunnerSwingWorker(_configuration, _job, this, _progressInformationPanel);
 
-		_progressInformationPanel.addStopActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_worker.cancelIfRunning();
+			_progressInformationPanel.addStopActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					_worker.cancelIfRunning();
+				}
+			});
+		} else {
+			// don't add the progress information, simply render the job asap
+			_progressInformationPanel = null;
+			_worker = null;
+
+			Map<ComponentJob, AnalyzerResult> map = result.getResultMap();
+			for (Entry<ComponentJob, AnalyzerResult> entry : map.entrySet()) {
+				ComponentJob componentJob = entry.getKey();
+				AnalyzerResult analyzerResult = entry.getValue();
+				
+				addResult(componentJob, analyzerResult);
 			}
-		});
+		}
 	}
 
 	public void startAnalysis() {
@@ -100,20 +131,46 @@ public final class ResultWindow extends AbstractWindow {
 	}
 
 	private void addTableResultPanel(final Table table) {
-		final String tableName = table.getName();
+		final String name = table.getName();
 		final ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
-		final ImageIcon tableIcon = imageManager.getImageIcon("images/model/table.png");
+		final ImageIcon icon = imageManager.getImageIcon("images/model/table.png");
 		_resultPanels.put(table, panel);
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				_tabbedPane.addTab(tableName, tableIcon, panel);
+				_tabbedPane.addTab(name, icon, panel);
 				if (_tabbedPane.getTabCount() == 2) {
 					// switch to the first available result panel
 					_tabbedPane.setSelectedIndex(1);
 				}
 			}
 		});
+	}
+
+	private void addDescriptorResultPanel(ComponentDescriptor<?> descriptor) {
+		final ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
+		final String name = descriptor.getDisplayName();
+		final Icon icon = IconUtils.getDescriptorIcon(descriptor);
+		_resultPanels.put(descriptor, panel);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				_tabbedPane.addTab(name, icon, panel);
+				if (_tabbedPane.getTabCount() == 2) {
+					// switch to the first available result panel
+					_tabbedPane.setSelectedIndex(1);
+				}
+			}
+		});
+	}
+
+	private ResultListPanel getDescriptorResultPanel(ComponentDescriptor<?> descriptor) {
+		synchronized (_resultPanels) {
+			if (!_resultPanels.containsKey(descriptor)) {
+				addDescriptorResultPanel(descriptor);
+			}
+			return _resultPanels.get(descriptor);
+		}
 	}
 
 	private ResultListPanel getTableResultPanel(Table table) {
@@ -125,9 +182,15 @@ public final class ResultWindow extends AbstractWindow {
 		}
 	}
 
-	public void addResult(Table table, AnalyzerJob analyzerJob, AnalyzerResult result) {
+	public void addResult(ComponentJob componentJob, AnalyzerResult result) {
+		ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
+		ResultListPanel resultListPanel = getDescriptorResultPanel(descriptor);
+		resultListPanel.addResult(componentJob, result);
+	}
+
+	public void addResult(Table table, ComponentJob componentJob, AnalyzerResult result) {
 		ResultListPanel resultListPanel = getTableResultPanel(table);
-		resultListPanel.addResult(analyzerJob, result);
+		resultListPanel.addResult(componentJob, result);
 	}
 
 	@Override

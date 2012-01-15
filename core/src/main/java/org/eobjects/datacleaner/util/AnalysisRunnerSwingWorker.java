@@ -147,7 +147,8 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	}
 
 	@Override
-	public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row, final Throwable throwable) {
+	public void errorInTransformer(AnalysisJob job, final TransformerJob transformerJob, InputRow row,
+			final Throwable throwable) {
 		_progressInformationPanel.addUserLog("An error occurred in the transformer: " + LabelUtils.getLabel(transformerJob),
 				throwable, true);
 	}
@@ -179,6 +180,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	@Override
 	public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob, AnalyzerResult result) {
 		_progressInformationPanel.addUserLog("Explorer '" + LabelUtils.getLabel(explorerJob) + "' finished");
+		_resultWindow.addResult(explorerJob, result);
 	}
 
 	@Override

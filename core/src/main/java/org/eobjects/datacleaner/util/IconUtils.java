@@ -42,6 +42,7 @@ import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.util.StringUtils;
@@ -107,13 +108,13 @@ public final class IconUtils {
 		// prevent instantiation
 	}
 
-	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor, int newWidth) {
+	public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
 		final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
 		String imagePath = getDescriptorImagePath(descriptor, classLoader);
 		return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
 	}
 
-	public static Icon getDescriptorIcon(BeanDescriptor<?> descriptor) {
+	public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor) {
 		return getDescriptorIcon(descriptor, ICON_SIZE_MEDIUM);
 	}
 
@@ -154,7 +155,7 @@ public final class IconUtils {
 		return new ImageIcon(bufferedImage);
 	}
 
-	protected static String getDescriptorImagePath(BeanDescriptor<?> descriptor, ClassLoader classLoader) {
+	protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader) {
 		final Class<?> componentClass = descriptor.getComponentClass();
 		final String bundledIconPath = componentClass.getName().replaceAll("\\.", "/") + ".png";
 		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath, classLoader);
@@ -167,9 +168,17 @@ public final class IconUtils {
 			return "images/component-types/plugin.png";
 		}
 
-		Set<ComponentCategory> categories = descriptor.getComponentCategories();
-		if (categories.contains(new WriteDataCategory())) {
-			return "images/component-types/type_output_writer.png";
+		final String displayName;
+
+		if (descriptor instanceof BeanDescriptor) {
+			BeanDescriptor<?> beanDescriptor = (BeanDescriptor<?>) descriptor;
+			Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
+			displayName = beanDescriptor.getDisplayName().toLowerCase();
+			if (categories.contains(new WriteDataCategory())) {
+				return "images/component-types/type_output_writer.png";
+			}
+		} else {
+			displayName = "";
 		}
 
 		String imagePath;
@@ -181,7 +190,6 @@ public final class IconUtils {
 			imagePath = ANALYZER_IMAGEPATH;
 		}
 
-		String displayName = descriptor.getDisplayName().toLowerCase();
 		if (displayName.indexOf("boolean") != -1) {
 			imagePath = "images/component-types/type_boolean.png";
 		}

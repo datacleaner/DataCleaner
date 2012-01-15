@@ -28,8 +28,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.beans.api.Renderer;
-import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.job.AnalyzerJob;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
+import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
@@ -69,11 +69,11 @@ public class ResultListPanel extends DCPanel {
 		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
 	}
 
-	public void addResult(final AnalyzerJob analyzerJob, final AnalyzerResult result) {
-		final AnalyzerBeanDescriptor<?> descriptor = analyzerJob.getDescriptor();
+	public void addResult(final ComponentJob componentJob, final AnalyzerResult result) {
+		final ComponentDescriptor<?> descriptor = componentJob.getDescriptor();
 		final Icon icon = IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE);
 
-		final String resultLabel = LabelUtils.getLabel(analyzerJob);
+		final String resultLabel = LabelUtils.getLabel(componentJob);
 
 		final JXTaskPane taskPane = WidgetFactory.createTaskPane(resultLabel, icon);
 

@@ -79,6 +79,6 @@ public final class FileFilters {
 	public static final ExtensionFilter XML = new ExtensionFilter("Extensible Markup Language (.xml)", ".xml");
 
 	public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)", ".analysis.xml");
-	public static final ExtensionFilter ANALYSIS_RESULT_SER = new ExtensionFilter("Analysis result (.analysis.result.ser)", ".analysis.result.ser");
+	public static final ExtensionFilter ANALYSIS_RESULT_SER = new ExtensionFilter("Analysis result (.analysis.result.dat)", ".analysis.result.dat");
 
 }

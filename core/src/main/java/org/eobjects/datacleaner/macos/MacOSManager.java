@@ -87,7 +87,7 @@ public class MacOSManager {
 		public void handleOpenFile(ApplicationEvent event) {
 			final String filename = event.getFilename();
 			final OpenAnalysisJobActionListener actionListener = _openAnalysisJobActionListenerProvider.get();
-			actionListener.openAnalysisJob(new File(filename));
+			actionListener.openFile(new File(filename));
 		}
 
 		@Override

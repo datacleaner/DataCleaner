@@ -103,7 +103,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		}
 	}
 
-	private void openFile(File file) {
+	public void openFile(File file) {
 		if (file.getName().toLowerCase().endsWith(FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
 			openAnalysisResult(file);
 		} else {

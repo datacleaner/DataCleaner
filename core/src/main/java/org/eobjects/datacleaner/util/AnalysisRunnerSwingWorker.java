@@ -180,6 +180,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	@Override
 	public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob, AnalyzerResult result) {
 		_progressInformationPanel.addUserLog("Explorer '" + LabelUtils.getLabel(explorerJob) + "' finished");
+		_progressInformationPanel.addUserLog("Adding result to tab of " + explorerJob.getDescriptor().getDisplayName());
 		_resultWindow.addResult(explorerJob, result);
 	}
 

@@ -42,6 +42,7 @@ import org.eobjects.analyzer.job.concurrent.TaskRunner;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
+import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.storage.InMemoryStorageProvider;
 import org.eobjects.analyzer.storage.StorageProvider;
@@ -291,6 +292,11 @@ public class DCModule extends AbstractModule {
 	@Provides
 	public final DCModule getModule() {
 		return this;
+	}
+
+	@Provides
+	public AnalysisResult getAnalysisResult() {
+		return null;
 	}
 
 	@Provides

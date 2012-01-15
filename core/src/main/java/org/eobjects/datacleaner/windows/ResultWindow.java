@@ -94,15 +94,13 @@ public final class ResultWindow extends AbstractWindow {
 		_job = job;
 		_jobFilename = jobFilename;
 		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), rendererInitializerProvider.get());
+		_progressInformationPanel = new ProgressInformationPanel();
+		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
+				_progressInformationPanel);
+		_tabbedPane.setUnclosableTab(0);
 
 		if (result == null) {
-			// set up a progress information panel, and run the job in a swing
-			// worker
-			_progressInformationPanel = new ProgressInformationPanel();
-			_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
-					_progressInformationPanel);
-			_tabbedPane.setUnclosableTab(0);
-
+			// run the job in a swing worker
 			_worker = new AnalysisRunnerSwingWorker(_configuration, _job, this, _progressInformationPanel);
 
 			_progressInformationPanel.addStopActionListener(new ActionListener() {
@@ -113,16 +111,16 @@ public final class ResultWindow extends AbstractWindow {
 			});
 		} else {
 			// don't add the progress information, simply render the job asap
-			_progressInformationPanel = null;
 			_worker = null;
 
 			Map<ComponentJob, AnalyzerResult> map = result.getResultMap();
 			for (Entry<ComponentJob, AnalyzerResult> entry : map.entrySet()) {
 				ComponentJob componentJob = entry.getKey();
 				AnalyzerResult analyzerResult = entry.getValue();
-				
+
 				addResult(componentJob, analyzerResult);
 			}
+			_progressInformationPanel.onSuccess();
 		}
 	}
 
@@ -240,7 +238,9 @@ public final class ResultWindow extends AbstractWindow {
 	protected boolean onWindowClosing() {
 		boolean closing = super.onWindowClosing();
 		if (closing) {
-			_worker.cancelIfRunning();
+			if (_worker != null) {
+				_worker.cancelIfRunning();
+			}
 		}
 		return closing;
 	}

@@ -23,16 +23,20 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import javax.inject.Inject;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.user.UsageLogger;
@@ -42,6 +46,7 @@ import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.widgets.OpenAnalysisJobFileChooserAccessory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
+import org.eobjects.datacleaner.windows.ResultWindow;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -86,7 +91,10 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 				_configuration, fileChooser, Providers.of(this));
 		fileChooser.setAccessory(accessory);
 
-		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
+		fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_XML);
+		fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_RESULT_SER);
+		fileChooser.setFileFilter(FileFilters.combined("DataCleaner analysis files", FileFilters.ANALYSIS_XML,
+				FileFilters.ANALYSIS_RESULT_SER));
 		int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
 
 		if (openFileResult == JFileChooser.APPROVE_OPTION) {
@@ -95,17 +103,53 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		}
 	}
 
+	private void openFile(File file) {
+		if (file.getName().toLowerCase().endsWith(FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
+			openAnalysisResult(file);
+		} else {
+			openAnalysisJob(file);
+		}
+	}
+
+	public void openAnalysisResult(final File file) {
+		final AnalysisResult analysisResult;
+		try {
+			analysisResult = (AnalysisResult) SerializationUtils.deserialize(new FileInputStream(file));
+		} catch (FileNotFoundException e) {
+			throw new IllegalStateException(e);
+		}
+
+		Injector injector = Guice.createInjector(new DCModule(_parentModule, null) {
+			public String getJobFilename() {
+				return file.getName();
+			};
+
+			@Override
+			public AnalysisResult getAnalysisResult() {
+				return analysisResult;
+			}
+
+			@Override
+			public AnalysisJobBuilder getAnalysisJobBuilder() {
+				return null;
+			}
+		});
+
+		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+		resultWindow.setVisible(true);
+	}
+
 	/**
 	 * Opens a job file
 	 * 
 	 * @param file
 	 */
-	public void openFile(File file) {
+	public void openAnalysisJob(File file) {
 		JaxbJobReader reader = new JaxbJobReader(_configuration);
 		try {
 			AnalysisJobBuilder ajb = reader.create(file);
 
-			openJob(file, ajb);
+			openAnalysisJob(file, ajb);
 		} catch (NoSuchDatastoreException e) {
 			AnalysisJobMetadata metadata = reader.readMetadata(file);
 			int result = JOptionPane.showConfirmDialog(null, e.getMessage()
@@ -125,7 +169,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	 * @param file
 	 * @param ajb
 	 */
-	public void openJob(final File file, final AnalysisJobBuilder ajb) {
+	public void openAnalysisJob(final File file, final AnalysisJobBuilder ajb) {
 		_userPreferences.setAnalysisJobDirectory(file.getParentFile());
 		_userPreferences.addRecentJobFile(file);
 

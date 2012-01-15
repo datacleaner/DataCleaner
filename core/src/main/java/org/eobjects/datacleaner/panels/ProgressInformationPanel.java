@@ -261,6 +261,8 @@ public class ProgressInformationPanel extends DCPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				_loadingIcon.setVisible(false);
+				_loadingLabel.setVisible(false);
 				_stopButton.setEnabled(false);
 				Collection<DCProgressBar> progressBars = _progressBars.values();
 				for (DCProgressBar progressBar : progressBars) {

@@ -116,7 +116,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 							sourceColumnMapping, variableOverrides);
 					
 					OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider.get();
-					openAnalysisJobActionListener.openJob(_file, ajb);
+					openAnalysisJobActionListener.openAnalysisJob(_file, ajb);
 					
 					OpenAnalysisJobAsTemplateDialog.this.dispose();
 				} catch (Exception e1) {

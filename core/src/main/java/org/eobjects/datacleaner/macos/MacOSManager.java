@@ -98,10 +98,7 @@ public class MacOSManager {
 
 		@Override
 		public void handleQuit(ApplicationEvent event) {
-			if (_windowContext.showExitDialog()) {
-				_windowContext.exit();
-			}
-			event.setHandled(true);
+			_windowContext.exit();
 		}
 
 		@Override

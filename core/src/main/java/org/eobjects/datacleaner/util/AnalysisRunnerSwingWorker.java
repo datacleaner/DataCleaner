@@ -33,10 +33,14 @@ import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.ExplorerJob;
 import org.eobjects.analyzer.job.FilterJob;
 import org.eobjects.analyzer.job.TransformerJob;
+import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
+import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
+import org.eobjects.analyzer.job.runner.ExplorerMetrics;
+import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
@@ -77,20 +81,22 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	}
 
 	@Override
-	public void jobBegin(AnalysisJob job) {
+	public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
 		String now = new DateTime().toString(DateTimeFormat.fullTime());
 		_progressInformationPanel.addUserLog("Job begin (" + now + ")");
 	}
 
 	@Override
-	public void jobSuccess(AnalysisJob job) {
+	public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
 		String now = new DateTime().toString(DateTimeFormat.fullTime());
 		_progressInformationPanel.addUserLog("Job success (" + now + ")");
 		_progressInformationPanel.onSuccess();
 	}
 
 	@Override
-	public void rowProcessingBegin(final AnalysisJob job, final Table table, final int expectedRows) {
+	public void rowProcessingBegin(final AnalysisJob job, final RowProcessingMetrics metrics) {
+		final int expectedRows = metrics.getExpectedRows();
+		final Table table = metrics.getTable();
 		if (expectedRows == -1) {
 			_progressInformationPanel.addUserLog("Starting row processing for " + table.getQualifiedLabel());
 		} else {
@@ -101,19 +107,19 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	}
 
 	@Override
-	public void rowProcessingProgress(AnalysisJob job, final Table table, final int currentRow) {
-		_progressInformationPanel.updateProgress(table, currentRow);
+	public void rowProcessingProgress(AnalysisJob job, final RowProcessingMetrics metrics, final int currentRow) {
+		_progressInformationPanel.updateProgress(metrics.getTable(), currentRow);
 	}
 
 	@Override
-	public void rowProcessingSuccess(AnalysisJob job, final Table table) {
+	public void rowProcessingSuccess(AnalysisJob job, final RowProcessingMetrics metrics) {
 		String now = new DateTime().toString(DateTimeFormat.fullTime());
-		_progressInformationPanel.addUserLog("Row processing for " + table.getQualifiedLabel() + " finished (" + now
-				+ "). Generating results ...");
+		_progressInformationPanel.addUserLog("Row processing for " + metrics.getTable().getQualifiedLabel() + " finished ("
+				+ now + "). Generating results ...");
 	}
 
 	@Override
-	public void analyzerBegin(AnalysisJob job, final AnalyzerJob analyzerJob) {
+	public void analyzerBegin(AnalysisJob job, final AnalyzerJob analyzerJob, AnalyzerMetrics metrics) {
 		_progressInformationPanel.addUserLog("Starting analyzer '" + LabelUtils.getLabel(analyzerJob) + "'");
 	}
 
@@ -173,7 +179,7 @@ public final class AnalysisRunnerSwingWorker extends SwingWorker<AnalysisResultF
 	}
 
 	@Override
-	public void explorerBegin(AnalysisJob job, ExplorerJob explorerJob) {
+	public void explorerBegin(AnalysisJob job, ExplorerJob explorerJob, ExplorerMetrics metrics) {
 		_progressInformationPanel.addUserLog("Starting explorer '" + LabelUtils.getLabel(explorerJob) + "'");
 	}
 

@@ -71,8 +71,8 @@
 						<goals>
 							<goal>unpack-dependencies</goal>
 						</goals>
-						<!-- linked with generate-resources phase -->
-						<phase>generate-resources</phase>
+						<!-- linked with pre-site phase -->
+						<phase>pre-site</phase>
 						<configuration>
 							<outputDirectory>${project.build.directory}/docbook-resources</outputDirectory>
 							<includeGroupIds>net.sf.docbook</includeGroupIds>
@@ -83,92 +83,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<!-- Java Web start JNLP file generation -->
-				<groupId>org.codehaus.mojo.webstart</groupId>
-				<artifactId>webstart-maven-plugin</artifactId>
-				<version>1.0-beta-1</version>
-				<configuration>
-					<templateFilename>template.vm</templateFilename>
-					<jnlp>
-						<outputFile>datacleaner.jnlp</outputFile>
-						<mainClass>${mainClass}</mainClass>
-					</jnlp>
-					<outputJarVersions>false</outputJarVersions>
-					<verbose>true</verbose>
-				</configuration>
-				<executions>
-					<execution>
-						<id>jnlp-on-verify</id>
-						<goals>
-							<goal>jnlp</goal>
-						</goals>
-						<phase>verify</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- Create win32 executable -->
-				<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
-				<artifactId>launch4j-plugin</artifactId>
-				<version>1.5.0.0</version>
-				<executions>
-					<execution>
-						<id>launch4j-gui</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<dontWrapJar>true</dontWrapJar>
-							<headerType>gui</headerType>
-							<jar>DataCleaner.jar</jar>
-							<outfile>target/DataCleaner.exe</outfile>
-							<errTitle>DataCleaner</errTitle>
-							<priority>normal</priority>
-							<downloadUrl>http://java.com/download</downloadUrl>
-							<supportUrl>http://datacleaner.eobjects.org</supportUrl>
-							<customProcName>true</customProcName>
-							<stayAlive>false</stayAlive>
-							<icon>src/main/assembly/app-icon.ico</icon>
-							<jre>
-								<path />
-								<minVersion>1.6.0</minVersion>
-								<maxVersion />
-								<initialHeapSize>256</initialHeapSize>
-								<maxHeapSize>1024</maxHeapSize>
-							</jre>
-						</configuration>
-					</execution>
-					<execution>
-						<id>launch4j-cli</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>launch4j</goal>
-						</goals>
-						<configuration>
-							<dontWrapJar>true</dontWrapJar>
-							<headerType>console</headerType>
-							<jar>DataCleaner.jar</jar>
-							<outfile>target/DataCleaner-console.exe</outfile>
-							<errTitle>DataCleaner</errTitle>
-							<priority>normal</priority>
-							<downloadUrl>http://java.com/download</downloadUrl>
-							<supportUrl>http://datacleaner.eobjects.org</supportUrl>
-							<customProcName>true</customProcName>
-							<stayAlive>false</stayAlive>
-							<icon>src/main/assembly/app-icon.ico</icon>
-							<jre>
-								<path />
-								<minVersion>1.6.0</minVersion>
-								<maxVersion />
-								<initialHeapSize>256</initialHeapSize>
-								<maxHeapSize>1024</maxHeapSize>
-							</jre>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+
 			<plugin>
 				<!-- Assembly which creates the zip and tar.gz distributables -->
 				<groupId>org.apache.maven.plugins</groupId>
@@ -177,7 +92,6 @@
 				<configuration>
 					<descriptors>
 						<descriptor>src/main/assembly/all.xml</descriptor>
-						<descriptor>src/main/assembly/win32.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
@@ -284,50 +198,169 @@
 					<htmlStylesheet>style.css</htmlStylesheet>
 				</configuration>
 			</plugin>
-			<plugin>
-				<!-- build mac os x bundle -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>osxappbundle-maven-plugin</artifactId>
-				<version>1.0-alpha-2</version>
-				<configuration>
-					<mainClass>${mainClass}</mainClass>
-					<jvmVersion>1.6+</jvmVersion>
-					<iconFile>${basedir}/src/main/macosx/app-icon.icns</iconFile>
-					<bundleName>DataCleaner</bundleName>
-					<vmOptions>-Dcom.apple.macos.useScreenMenuBar=true</vmOptions>
-				</configuration>
-				<executions>
-				<!-- 32 bit mac build disabled, no longer common -->
-				<!-- 
-					<execution>
-						<id>build-mac-osx-bundle-32-bit</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>bundle</goal>
-						</goals>
-						<configuration>
-							<javaApplicationStub>${basedir}/src/main/macosx/JavaApplicationStub_32bit</javaApplicationStub>
-							<buildDirectory>${project.build.directory}/DataCleaner/macos-32bit/DataCleaner</buildDirectory>
-							<diskImageFile>${project.build.directory}/DataCleaner-32bit.dmg</diskImageFile>
-						</configuration>
-					</execution>
-				 -->
-					<execution>
-						<id>build-mac-osx-bundle-64-bit</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>bundle</goal>
-						</goals>
-						<configuration>
-							<javaApplicationStub>${basedir}/src/main/macosx/JavaApplicationStub_64bit</javaApplicationStub>
-							<buildDirectory>${project.build.directory}/DataCleaner/macos-64bit/DataCleaner</buildDirectory>
-							<diskImageFile>${project.build.directory}/DataCleaner-64bit.dmg</diskImageFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>windows</id>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- Assembly which creates the zip and tar.gz distributables -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.2</version>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/windows.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<!-- Create win32 executable -->
+						<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+						<artifactId>launch4j-plugin</artifactId>
+						<version>1.5.0.0</version>
+						<executions>
+							<execution>
+								<id>launch4j-gui</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>launch4j</goal>
+								</goals>
+								<configuration>
+									<dontWrapJar>true</dontWrapJar>
+									<headerType>gui</headerType>
+									<jar>DataCleaner.jar</jar>
+									<outfile>target/DataCleaner.exe</outfile>
+									<errTitle>DataCleaner</errTitle>
+									<priority>normal</priority>
+									<downloadUrl>http://java.com/download</downloadUrl>
+									<supportUrl>http://datacleaner.eobjects.org</supportUrl>
+									<customProcName>true</customProcName>
+									<stayAlive>false</stayAlive>
+									<icon>src/main/assembly/app-icon.ico</icon>
+									<jre>
+										<path />
+										<minVersion>1.6.0</minVersion>
+										<maxVersion />
+										<initialHeapSize>256</initialHeapSize>
+										<maxHeapSize>1024</maxHeapSize>
+									</jre>
+								</configuration>
+							</execution>
+							<execution>
+								<id>launch4j-cli</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>launch4j</goal>
+								</goals>
+								<configuration>
+									<dontWrapJar>true</dontWrapJar>
+									<headerType>console</headerType>
+									<jar>DataCleaner.jar</jar>
+									<outfile>target/DataCleaner-console.exe</outfile>
+									<errTitle>DataCleaner</errTitle>
+									<priority>normal</priority>
+									<downloadUrl>http://java.com/download</downloadUrl>
+									<supportUrl>http://datacleaner.eobjects.org</supportUrl>
+									<customProcName>true</customProcName>
+									<stayAlive>false</stayAlive>
+									<icon>src/main/assembly/app-icon.ico</icon>
+									<jre>
+										<path />
+										<minVersion>1.6.0</minVersion>
+										<maxVersion />
+										<initialHeapSize>256</initialHeapSize>
+										<maxHeapSize>1024</maxHeapSize>
+									</jre>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jnlp</id>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- Java Web start JNLP file generation -->
+						<groupId>org.codehaus.mojo.webstart</groupId>
+						<artifactId>webstart-maven-plugin</artifactId>
+						<version>1.0-beta-1</version>
+						<configuration>
+							<templateFilename>template.vm</templateFilename>
+							<jnlp>
+								<outputFile>datacleaner.jnlp</outputFile>
+								<mainClass>${mainClass}</mainClass>
+							</jnlp>
+							<outputJarVersions>false</outputJarVersions>
+							<verbose>true</verbose>
+						</configuration>
+						<executions>
+							<execution>
+								<id>jnlp-on-verify</id>
+								<goals>
+									<goal>jnlp</goal>
+								</goals>
+								<phase>verify</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>macos</id>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- build mac os x bundle -->
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>osxappbundle-maven-plugin</artifactId>
+						<version>1.0-alpha-2</version>
+						<configuration>
+							<mainClass>${mainClass}</mainClass>
+							<jvmVersion>1.6+</jvmVersion>
+							<iconFile>${basedir}/src/main/macosx/app-icon.icns</iconFile>
+							<bundleName>DataCleaner</bundleName>
+							<vmOptions>-Dcom.apple.macos.useScreenMenuBar=true</vmOptions>
+						</configuration>
+						<executions>
+							<!-- 32 bit mac build disabled, no longer common -->
+							<!-- <execution> <id>build-mac-osx-bundle-32-bit</id> <phase>verify</phase> 
+								<goals> <goal>bundle</goal> </goals> <configuration> <javaApplicationStub>${basedir}/src/main/macosx/JavaApplicationStub_32bit</javaApplicationStub> 
+								<buildDirectory>${project.build.directory}/DataCleaner/macos-32bit/DataCleaner</buildDirectory> 
+								<diskImageFile>${project.build.directory}/DataCleaner-32bit.dmg</diskImageFile> 
+								</configuration> </execution> -->
+							<execution>
+								<id>build-mac-osx-bundle-64-bit</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>bundle</goal>
+								</goals>
+								<configuration>
+									<javaApplicationStub>${basedir}/src/main/macosx/JavaApplicationStub_64bit</javaApplicationStub>
+									<buildDirectory>${project.build.directory}/DataCleaner/macos-64bit/DataCleaner</buildDirectory>
+									<diskImageFile>${project.build.directory}/DataCleaner-64bit.dmg</diskImageFile>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<repositories>
 		<repository>
 			<!-- Custom repository containing jar files that are not available via 

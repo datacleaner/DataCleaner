@@ -206,25 +206,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<!-- Assembly which creates the zip and tar.gz distributables -->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.2</version>
-						<configuration>
-							<descriptors>
-								<descriptor>src/main/assembly/windows.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>verify</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
 						<!-- Create win32 executable -->
 						<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
 						<artifactId>launch4j-plugin</artifactId>
@@ -283,6 +264,25 @@
 										<maxHeapSize>1024</maxHeapSize>
 									</jre>
 								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<!-- Assembly which creates the zip and tar.gz distributables -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.2</version>
+						<configuration>
+							<descriptors>
+								<descriptor>src/main/assembly/windows.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
 							</execution>
 						</executions>
 					</plugin>

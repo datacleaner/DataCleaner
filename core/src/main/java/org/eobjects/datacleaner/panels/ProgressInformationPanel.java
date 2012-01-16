@@ -112,7 +112,7 @@ public class ProgressInformationPanel extends DCPanel {
 		add(splitPane, BorderLayout.CENTER);
 		add(bottomPanel, BorderLayout.SOUTH);
 	}
-	
+
 	public String getTextAreaText() {
 		return _textArea.getText();
 	}
@@ -266,7 +266,8 @@ public class ProgressInformationPanel extends DCPanel {
 				_stopButton.setEnabled(false);
 				Collection<DCProgressBar> progressBars = _progressBars.values();
 				for (DCProgressBar progressBar : progressBars) {
-					progressBar.setValue(progressBar.getMaximum());
+					int maximum = progressBar.getMaximum();
+					progressBar.setValue(maximum);
 				}
 			}
 		});

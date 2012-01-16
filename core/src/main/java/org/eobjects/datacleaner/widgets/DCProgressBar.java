@@ -38,10 +38,6 @@ public class DCProgressBar extends JProgressBar {
 		setOpaque(false);
 	}
 
-	public DCProgressBar() {
-		this(0, 100);
-	}
-
 	/**
 	 * 
 	 * @param currentRow
@@ -65,7 +61,7 @@ public class DCProgressBar extends JProgressBar {
 			SwingUtilities.invokeLater(runnable);
 		}
 	}
-
+	
 	protected int getBarWidth(final int value) {
 		final int minimum = getMinimum();
 		if (minimum > value) {

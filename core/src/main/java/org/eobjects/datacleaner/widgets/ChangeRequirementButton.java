@@ -104,12 +104,15 @@ public class ChangeRequirementButton extends JButton implements ActionListener {
 				filterMenuItem.setIcon(unconfiguredFilterIcon);
 				filterMenuItem.setEnabled(false);
 				filterMenuItem.setToolTipText("Filter is not correctly configured");
+			} else if (!_jobBuilder.validateRequirementSource(fjb)) {
+				filterMenuItem.setEnabled(false);
+				filterMenuItem.setToolTipText("Requirement not possible");
 			} else {
 				FilterBeanDescriptor<?, ?> fjbDescriptor = fjb.getDescriptor();
 				Set<String> categoryNames = fjbDescriptor.getOutcomeCategoryNames();
 				for (final String category : categoryNames) {
 					JMenuItem categoryMenuItem = new JMenuItem(category);
-
+					
 					if (currentRequirement != null && currentRequirement instanceof FilterOutcome) {
 						FilterOutcome filterOutcome = (FilterOutcome) currentRequirement;
 						// put an icon on the currently configured requirement

@@ -49,6 +49,7 @@ public abstract class DescriptorPopupMenu<E extends BeanDescriptor<?>> extends J
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LoggerFactory.getLogger(DescriptorPopupMenu.class);
+	
 	private final List<? extends E> _descriptors;
 
 	public DescriptorPopupMenu(Collection<? extends E> descriptors) {

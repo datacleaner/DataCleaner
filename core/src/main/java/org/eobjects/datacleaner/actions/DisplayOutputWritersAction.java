@@ -34,7 +34,6 @@ import javax.swing.JPopupMenu;
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
@@ -42,19 +41,15 @@ import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.datacleaner.util.DisplayNameComparator;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 
-public class AbstractDisplayOutputWritersActionListener implements ActionListener {
+public class DisplayOutputWritersAction {
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final AnalyzerBeansConfiguration _configuration;
 
-	public AbstractDisplayOutputWritersActionListener(AnalyzerBeansConfiguration configuration,
-			AnalysisJobBuilder analysisJobBuilder) {
-		_configuration = configuration;
+	public DisplayOutputWritersAction(AnalysisJobBuilder analysisJobBuilder) {
 		_analysisJobBuilder = analysisJobBuilder;
 	}
 
-	@Override
-	public final void actionPerformed(ActionEvent e) {
+	public final void showPopup(JComponent component) {
 		JPopupMenu popup = new JPopupMenu();
 
 		List<JMenuItem> menuItems = createMenuItems();
@@ -62,7 +57,6 @@ public class AbstractDisplayOutputWritersActionListener implements ActionListene
 			popup.add(menuItem);
 		}
 
-		JComponent component = (JComponent) e.getSource();
 		popup.show(component, 0, component.getHeight());
 	}
 
@@ -91,7 +85,7 @@ public class AbstractDisplayOutputWritersActionListener implements ActionListene
 	}
 
 	protected List<AnalyzerBeanDescriptor<?>> getDescriptors() {
-		Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
+		Collection<AnalyzerBeanDescriptor<?>> descriptors = _analysisJobBuilder.getConfiguration().getDescriptorProvider()
 				.getAnalyzerBeanDescriptors();
 		List<AnalyzerBeanDescriptor<?>> result = CollectionUtils2.sorted(descriptors, new DisplayNameComparator());
 

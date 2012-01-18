@@ -37,7 +37,7 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
  */
 public final class Main {
 
-	public static final String VERSION = "2.4.1";
+	public static final String VERSION = "2.4.2";
 
 	public static void main(String[] args) {
 		initializeLogging();

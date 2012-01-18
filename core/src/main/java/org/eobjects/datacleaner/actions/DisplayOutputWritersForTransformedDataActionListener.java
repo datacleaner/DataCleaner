@@ -19,7 +19,11 @@
  */
 package org.eobjects.datacleaner.actions;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+
+import javax.swing.JComponent;
 
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.data.InputColumn;
@@ -34,13 +38,13 @@ import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
  * 
  * @author Kasper Sørensen
  */
-public class DisplayOutputWritersForTransformedDataActionListener extends AbstractDisplayOutputWritersActionListener {
+public class DisplayOutputWritersForTransformedDataActionListener extends DisplayOutputWritersAction implements
+		ActionListener {
 
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 
 	public DisplayOutputWritersForTransformedDataActionListener(TransformerJobBuilder<?> transformerJobBuilder) {
-		super(transformerJobBuilder.getAnalysisJobBuilder().getConfiguration(), transformerJobBuilder
-				.getAnalysisJobBuilder());
+		super(transformerJobBuilder.getAnalysisJobBuilder());
 		_transformerJobBuilder = transformerJobBuilder;
 	}
 
@@ -56,6 +60,12 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Abstra
 		analyzerJobBuilder.clearInputColumns();
 		analyzerJobBuilder.addInputColumns(inputColumns);
 		analyzerJobBuilder.addInputColumns(outputColumns);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JComponent component = (JComponent) e.getSource();
+		showPopup(component);
 	}
 
 }

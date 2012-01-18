@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.widgets;
 
 import java.awt.BorderLayout;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
 import javax.swing.ToolTipManager;
@@ -39,11 +40,17 @@ public final class HelpIcon extends JLabel {
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private final String _helpMessage;
+	private final Icon _tooltipIcon;
 
-	public HelpIcon(String helpMessage) {
+	public HelpIcon(String helpMessage, Icon tooltipIcon) {
 		super(imageManager.getImageIcon("images/widgets/help.png", IconUtils.ICON_SIZE_SMALL));
+		_tooltipIcon = tooltipIcon;
 		_helpMessage = helpMessage;
 		ToolTipManager.sharedInstance().registerComponent(this);
+	}
+
+	public HelpIcon(String helpMessage) {
+		this(helpMessage, imageManager.getImageIcon("images/widgets/help.png"));
 	}
 
 	@Override
@@ -58,7 +65,7 @@ public final class HelpIcon extends JLabel {
 		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
 
 		panel.setLayout(new BorderLayout());
-		panel.add(new JLabel(imageManager.getImageIcon("images/widgets/help.png")), BorderLayout.WEST);
+		panel.add(new JLabel(_tooltipIcon), BorderLayout.WEST);
 
 		DCLabel descriptionLabel = DCLabel.brightMultiLine(_helpMessage);
 		panel.add(descriptionLabel, BorderLayout.CENTER);

@@ -24,6 +24,7 @@ import java.awt.GridLayout;
 import java.awt.LayoutManager;
 
 import javax.swing.JComponent;
+import javax.swing.border.Border;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -131,6 +132,10 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
 
 	protected void updateUI() {
 		_panel.updateUI();
+	}
+
+	protected void setBorder(Border border) {
+		_panel.setBorder(border);
 	}
 
 	@Override

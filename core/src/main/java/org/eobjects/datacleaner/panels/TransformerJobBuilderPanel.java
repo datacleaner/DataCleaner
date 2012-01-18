@@ -52,7 +52,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	private final ColumnListTable _outputColumnsTable;
 	private final ChangeRequirementButton _requirementButton;
 	private final JButton _previewButton;
-	private final JButton _writeOutputButton;
+	private final JButton _writeDataButton;
 	private final WindowContext _windowContext;
 
 	public TransformerJobBuilderPanel(TransformerJobBuilder<?> transformerJobBuilder, WindowContext windowContext,
@@ -76,9 +76,9 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		}
 		_outputColumnsTable = new ColumnListTable(outputColumns, getAnalysisJobBuilder(), false, _windowContext);
 
-		_writeOutputButton = new JButton("Write data",
+		_writeDataButton = new JButton("Write data",
 				imageManager.getImageIcon("images/component-types/type_output_writer.png"));
-		_writeOutputButton
+		_writeDataButton
 				.addActionListener(new DisplayOutputWritersForTransformedDataActionListener(_transformerJobBuilder));
 
 		_previewButton = new JButton("Preview data", imageManager.getImageIcon("images/actions/preview_data.png"));
@@ -89,7 +89,7 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 
 		final DCPanel bottomButtonPanel = new DCPanel();
 		bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-		bottomButtonPanel.add(_writeOutputButton);
+		bottomButtonPanel.add(_writeDataButton);
 		bottomButtonPanel.add(_previewButton);
 		_outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
 

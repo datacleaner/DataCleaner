@@ -32,9 +32,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.actions.AbstractDisplayOutputWritersActionListener;
+import org.eobjects.datacleaner.actions.DisplayOutputWritersAction;
 import org.eobjects.datacleaner.actions.NewAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -61,17 +60,14 @@ public class DCWindowMenuBar extends JMenuBar {
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
 	private final JMenu _writeDataMenu;
-	private final Provider<AnalyzerBeansConfiguration> _configurationProvider;
 
 	@Inject
 	protected DCWindowMenuBar(final WindowContext windowContext,
 			final Provider<ReferenceDataDialog> referenceDataDialogProvider,
 			NewAnalysisJobActionListener newAnalysisJobActionListener,
-			Provider<AnalyzerBeansConfiguration> configurationProvider,
 			OpenAnalysisJobActionListener openAnalysisJobActionListener, Provider<OptionsDialog> optionsDialogProvider) {
 		super();
 		_windowContext = windowContext;
-		_configurationProvider = configurationProvider;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 		_optionsDialogProvider = optionsDialogProvider;
 		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
@@ -217,8 +213,7 @@ public class DCWindowMenuBar extends JMenuBar {
 	}
 
 	public void setAnalysisJobBuilder(AnalysisJobBuilder analysisJobBuilder) {
-		List<JMenuItem> menuItems = new AbstractDisplayOutputWritersActionListener(_configurationProvider.get(),
-				analysisJobBuilder).createMenuItems();
+		List<JMenuItem> menuItems = new DisplayOutputWritersAction(analysisJobBuilder).createMenuItems();
 		_writeDataMenu.removeAll();
 		for (JMenuItem menuItem : menuItems) {
 			_writeDataMenu.add(menuItem);

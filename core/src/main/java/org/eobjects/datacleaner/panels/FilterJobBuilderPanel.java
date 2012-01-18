@@ -32,8 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
 
-import org.eobjects.analyzer.beans.filter.NotNullFilter;
-import org.eobjects.analyzer.beans.filter.ValidationCategory;
+import org.eobjects.analyzer.beans.filter.NullCheckFilter;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -194,7 +193,7 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 		ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER");
 		ajb.addSourceColumns("PUBLIC.EMPLOYEES.EMAIL");
 
-		FilterJobBuilder<NotNullFilter, ValidationCategory> fjb = ajb.addFilter(NotNullFilter.class);
+		FilterJobBuilder<NullCheckFilter, NullCheckFilter.NullCheckCategory> fjb = ajb.addFilter(NullCheckFilter.class);
 		InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
 		PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
 				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, fjb).getInstance(PropertyWidgetFactory.class);

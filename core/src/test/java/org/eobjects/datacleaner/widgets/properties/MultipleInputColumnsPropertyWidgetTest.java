@@ -124,7 +124,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
 		ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
 		ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
-		ajb.addSourceColumn(new MutableColumn("baz", ColumnType.CLOB));
+		ajb.addSourceColumn(new MutableColumn("baz", ColumnType.NVARCHAR));
 
 		AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
 		ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().iterator()
@@ -145,7 +145,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 		AnalysisJobBuilder ajb = new AnalysisJobBuilder(configuration);
 		ajb.addSourceColumn(new MutableColumn("foo", ColumnType.VARCHAR));
 		ajb.addSourceColumn(new MutableColumn("bar", ColumnType.VARCHAR));
-		ajb.addSourceColumn(new MutableColumn("baz", ColumnType.CLOB));
+		ajb.addSourceColumn(new MutableColumn("baz", ColumnType.LONGVARCHAR));
 
 		AnalyzerJobBuilder<StringAnalyzer> beanJobBuilder = ajb.addAnalyzer(StringAnalyzer.class);
 		ConfiguredPropertyDescriptor property = beanJobBuilder.getDescriptor().getConfiguredPropertiesForInput().iterator()

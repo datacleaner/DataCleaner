@@ -3,10 +3,11 @@
   <groupId>com.oracle</groupId>
   <artifactId>ojdbc6</artifactId>
   <versioning>
-    <release>11.2.0.2.0</release>
+    <release>11.2.0.3</release>
     <versions>
       <version>11.2.0.2.0</version>
+      <version>11.2.0.3</version>
     </versions>
-    <lastUpdated>20110314102042</lastUpdated>
+    <lastUpdated>20120118232254</lastUpdated>
   </versioning>
 </metadata>

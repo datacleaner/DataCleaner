@@ -93,7 +93,11 @@ public final class Bootstrap {
 
 			if (arguments.isUsageMode()) {
 				final PrintWriter out = new PrintWriter(System.out);
-				CliArguments.printUsage(out);
+				try {
+					CliArguments.printUsage(out);
+				} finally {
+					FileHelper.safeClose(out);
+				}
 
 				exitCommandLine(null, 1);
 				return;
@@ -122,19 +126,18 @@ public final class Bootstrap {
 
 		if (cliMode) {
 
-			final PrintWriter out = new PrintWriter(System.out);
 			// run in CLI mode
 
 			int exitCode = 0;
+			final CliArguments arguments = _options.getCommandLineArguments();
+			final CliRunner runner = new CliRunner(arguments);
 			try {
-				final CliArguments arguments = _options.getCommandLineArguments();
-				final CliRunner runner = new CliRunner(arguments, out);
 				runner.run(configuration);
 			} catch (Throwable e) {
 				logger.error("Error occurred while running DataCleaner command line mode", e);
 				exitCode = 1;
 			} finally {
-				out.flush();
+				runner.close();
 				exitCommandLine(configuration, exitCode);
 			}
 			return;
@@ -142,7 +145,7 @@ public final class Bootstrap {
 			// initialize Mac OS specific settings
 			final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
 			macOsManager.init();
-			
+
 			// run in GUI mode
 			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 

@@ -30,6 +30,8 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import org.eobjects.analyzer.beans.filter.NullCheckFilter;
@@ -96,7 +98,8 @@ public class FilterJobBuilderPanel extends DCPanel implements FilterJobBuilderPr
 		panel.addProperties(_descriptor.getConfiguredProperties());
 
 		final DCPanel outcomePanel = new DCPanel();
-		outcomePanel.setBorder(new TitledBorder("This filter categorizes records as:"));
+		outcomePanel.setBorder(new CompoundBorder(new EmptyBorder(0, 10, 0, 10), new TitledBorder(
+				"This filter categorizes records as:")));
 
 		final Set<String> categoryNames = _descriptor.getOutcomeCategoryNames();
 		for (final String categoryName : categoryNames) {

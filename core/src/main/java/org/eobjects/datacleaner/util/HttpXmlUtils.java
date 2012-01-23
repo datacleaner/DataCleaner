@@ -91,14 +91,19 @@ public final class HttpXmlUtils {
 			final String proxyHostname = _userPreferences.getProxyHostname();
 			final int proxyPort = _userPreferences.getProxyPort();
 
-			final HttpHost proxy = new HttpHost(proxyHostname, proxyPort);
-			httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+			try {
+				final HttpHost proxy = new HttpHost(proxyHostname, proxyPort);
+				httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
-			if (_userPreferences.isProxyAuthenticationEnabled()) {
-				final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
-				final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-						_userPreferences.getProxyUsername(), _userPreferences.getProxyPassword());
-				httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+				if (_userPreferences.isProxyAuthenticationEnabled()) {
+					final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
+					final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
+							_userPreferences.getProxyUsername(), _userPreferences.getProxyPassword());
+					httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+				}
+			} catch (Exception e) {
+				// ignore proxy creation and return http client without it
+				logger.error("Unexpected error occurred while initializing HTTP proxy", e);
 			}
 		}
 

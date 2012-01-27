@@ -17,12 +17,23 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.extension.networktools;
+package org.eobjects.datacleaner.output.beans;
 
-import org.eobjects.analyzer.beans.categories.AbstractComponentCategory;
+import junit.framework.TestCase;
 
-public class NetworkToolsCategory extends AbstractComponentCategory {
+public class CreateExcelSpreadsheetAnalyzerTest extends TestCase {
 
-    private static final long serialVersionUID = 1L;
-
+	public void testValidateSheetName() throws Exception {
+		CreateExcelSpreadsheetAnalyzer analyzer = new CreateExcelSpreadsheetAnalyzer();
+		analyzer.sheetName = "foo";
+		analyzer.validate();
+		
+		analyzer.sheetName = "foo.bar";
+		try {
+			analyzer.validate();
+			fail("Exception expected");
+		} catch (Exception e) {
+			assertEquals("Sheet name cannot contain dots (.)", e.getMessage());
+		}
+	}
 }

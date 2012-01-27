@@ -27,6 +27,7 @@ import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.FileProperty;
+import org.eobjects.analyzer.beans.api.Validate;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
@@ -51,6 +52,13 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
 	@Configured
 	String sheetName;
+
+	@Validate
+	public void validate() {
+		if (sheetName.indexOf(".") != -1) {
+			throw new IllegalStateException("Sheet name cannot contain dots (.)");
+		}
+	}
 
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {

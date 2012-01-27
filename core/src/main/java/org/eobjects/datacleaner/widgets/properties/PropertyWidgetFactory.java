@@ -194,6 +194,10 @@ public final class PropertyWidgetFactory {
 		}
 	}
 
+	/**
+	 * Invoked whenever a configured property within this widget factory is
+	 * changed.
+	 */
 	public void onConfigurationChanged() {
 		Collection<PropertyWidget<?>> widgets = getWidgets();
 

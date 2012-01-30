@@ -160,6 +160,8 @@ public final class PropertyWidgetFactory {
 				widgetClass = SinglePatternPropertyWidget.class;
 			} else if (ReflectionUtils.is(type, Datastore.class)) {
 				widgetClass = SingleDatastorePropertyWidget.class;
+			} else if (type == Class.class) {
+				widgetClass = SingleClassPropertyWidget.class;
 			} else {
 				// not yet implemented
 				widgetClass = DummyPropertyWidget.class;

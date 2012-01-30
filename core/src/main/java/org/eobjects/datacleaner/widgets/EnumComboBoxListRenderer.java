@@ -24,12 +24,11 @@ import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.ListCellRenderer;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.metamodel.util.HasName;
 
-public class EnumComboBoxListRenderer extends DefaultListCellRenderer implements ListCellRenderer {
+public class EnumComboBoxListRenderer extends DefaultListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 

@@ -35,10 +35,10 @@ import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
 import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
@@ -102,20 +102,15 @@ public class QuickAnalysisActionListener implements ActionListener {
 		for (Column column : getColumns()) {
 			ajb.addSourceColumn(column);
 			InputColumn<?> inputColumn = ajb.getSourceColumnByName(column.getName());
-			DataTypeFamily dataTypeFamily = inputColumn.getDataTypeFamily();
-			switch (dataTypeFamily) {
-			case BOOLEAN:
+			Class<?> dataType = inputColumn.getDataType();
+			if (ReflectionUtils.isBoolean(dataType)) {
 				booleanColumns.add(inputColumn);
-				break;
-			case NUMBER:
+			} else if (ReflectionUtils.isNumber(dataType)) {
 				numberColumns.add(inputColumn);
-				break;
-			case DATE:
+			} else if (ReflectionUtils.isDate(dataType)) {
 				dateTimeColumns.add(inputColumn);
-				break;
-			case STRING:
+			} else if (ReflectionUtils.isString(dataType)) {
 				stringColumns.add(inputColumn);
-				break;
 			}
 		}
 
@@ -175,7 +170,7 @@ public class QuickAnalysisActionListener implements ActionListener {
 			if (quickAnalysisStrategy.isIncludeValueDistribution()) {
 				ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumn(inputColumn);
 			}
-			if (inputColumn.getDataTypeFamily() == DataTypeFamily.STRING && quickAnalysisStrategy.isIncludePatternFinder()) {
+			if (inputColumn.getDataType() == String.class && quickAnalysisStrategy.isIncludePatternFinder()) {
 				ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumn(inputColumn);
 			}
 			columnCount++;

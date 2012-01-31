@@ -39,7 +39,6 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -183,17 +182,12 @@ public final class ColumnListTable extends DCPanel {
 				model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
 			}
 
-			final DataTypeFamily dataTypeFamily = column.getDataTypeFamily();
+			final Class<?> dataType = column.getDataType();
 			final String dataTypeString;
-			if (dataTypeFamily == null || dataTypeFamily == DataTypeFamily.UNDEFINED) {
-				Class<?> dataType = column.getDataType();
-				if (dataType == null) {
-					dataTypeString = DataTypeFamily.UNDEFINED.toString();
-				} else {
-					dataTypeString = column.getDataType().getSimpleName();
-				}
+			if (dataType == null) {
+				dataTypeString = "<undefined>";
 			} else {
-				dataTypeString = dataTypeFamily.toString();
+				dataTypeString = dataType.getSimpleName();
 			}
 			model.setValueAt(dataTypeString, i, 1);
 

@@ -58,12 +58,15 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 
 		_comboBox = new DCComboBox<Class<?>>(items);
 		_comboBox.setRenderer(new DefaultListCellRenderer() {
+
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
 				if (value instanceof Class) {
 					// render eg. java.lang.String as just "String"
-					value = ((Class) value).getSimpleName();
+					value = ((Class<?>) value).getSimpleName();
 				}
 				return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			}

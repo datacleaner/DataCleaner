@@ -42,8 +42,8 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String[] COLUMN_NAMES = new String[] { "Table", "Column", "Type family", "Type", "Native type",
-			"Size", "Nullable?", "Indexed?" };
+	private static final String[] COLUMN_NAMES = new String[] { "Table", "Column", "Type", "Native type", "Size",
+			"Nullable?", "Indexed?" };
 
 	private final AnalysisJobBuilder _analysisJobBuilder;
 	private final DCTable _table;
@@ -56,9 +56,9 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 
 		_table = new DCTable(COLUMN_NAMES);
-		_table.setAlignment(5, Alignment.RIGHT);
+		_table.setAlignment(4, Alignment.RIGHT);
+		_table.setAlignment(5, Alignment.CENTER);
 		_table.setAlignment(6, Alignment.CENTER);
-		_table.setAlignment(7, Alignment.CENTER);
 
 		setLayout(new BorderLayout());
 		DCPanel tablePanel = _table.toPanel();
@@ -79,23 +79,22 @@ public class MetadataPanel extends DCPanel implements SourceColumnChangeListener
 			Column column = inputColumn.getPhysicalColumn();
 			model.setValueAt(column.getTable().getName(), i, 0);
 			model.setValueAt(column.getName(), i, 1);
-			model.setValueAt(inputColumn.getDataTypeFamily(), i, 2);
-			model.setValueAt(column.getType(), i, 3);
-			model.setValueAt(column.getNativeType(), i, 4);
-			model.setValueAt(column.getColumnSize(), i, 5);
+			model.setValueAt(column.getType(), i, 2);
+			model.setValueAt(column.getNativeType(), i, 3);
+			model.setValueAt(column.getColumnSize(), i, 4);
 
 			Boolean nullable = column.isNullable();
 			if (nullable != null && nullable.booleanValue()) {
-				model.setValueAt(validIcon, i, 6);
+				model.setValueAt(validIcon, i, 5);
 			} else {
-				model.setValueAt("", i, 6);
+				model.setValueAt("", i, 5);
 			}
 
 			boolean indexed = column.isIndexed();
 			if (indexed) {
-				model.setValueAt(validIcon, i, 7);
+				model.setValueAt(validIcon, i, 6);
 			} else {
-				model.setValueAt("", i, 7);
+				model.setValueAt("", i, 6);
 			}
 
 			i++;

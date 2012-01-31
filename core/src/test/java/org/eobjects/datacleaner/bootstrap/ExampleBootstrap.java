@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.bootstrap;
 
 import java.awt.Image;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -32,7 +33,6 @@ import org.eobjects.analyzer.beans.StringAnalyzer;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.util.ResourceManager;
@@ -73,22 +73,22 @@ public class ExampleBootstrap {
 				Column[] customerColumns = dataContext.getTableByQualifiedLabel("PUBLIC.CUSTOMERS").getColumns();
 				analysisJobBuilder.addSourceColumns(customerColumns);
 
-				List<InputColumn<?>> numberColumns = analysisJobBuilder.getAvailableInputColumns(DataTypeFamily.NUMBER);
+				List<InputColumn<?>> numberColumns = analysisJobBuilder.getAvailableInputColumns(Number.class);
 				if (!numberColumns.isEmpty()) {
 					analysisJobBuilder.addAnalyzer(NumberAnalyzer.class).addInputColumns(numberColumns);
 				}
 
-				List<InputColumn<?>> dateColumns = analysisJobBuilder.getAvailableInputColumns(DataTypeFamily.DATE);
+				List<InputColumn<?>> dateColumns = analysisJobBuilder.getAvailableInputColumns(Date.class);
 				if (!dateColumns.isEmpty()) {
 					analysisJobBuilder.addAnalyzer(DateAndTimeAnalyzer.class).addInputColumns(dateColumns);
 				}
 
-				List<InputColumn<?>> booleanColumns = analysisJobBuilder.getAvailableInputColumns(DataTypeFamily.BOOLEAN);
+				List<InputColumn<?>> booleanColumns = analysisJobBuilder.getAvailableInputColumns(Boolean.class);
 				if (!booleanColumns.isEmpty()) {
 					analysisJobBuilder.addAnalyzer(BooleanAnalyzer.class).addInputColumns(booleanColumns);
 				}
 
-				List<InputColumn<?>> stringColumns = analysisJobBuilder.getAvailableInputColumns(DataTypeFamily.STRING);
+				List<InputColumn<?>> stringColumns = analysisJobBuilder.getAvailableInputColumns(String.class);
 				if (!stringColumns.isEmpty()) {
 					analysisJobBuilder.addAnalyzer(StringAnalyzer.class).addInputColumns(stringColumns);
 				}

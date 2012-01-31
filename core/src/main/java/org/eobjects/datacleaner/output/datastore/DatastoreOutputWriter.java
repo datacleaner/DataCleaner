@@ -27,10 +27,10 @@ import java.sql.SQLException;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
-import org.eobjects.analyzer.data.DataTypeFamily;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.storage.H2StorageProvider;
 import org.eobjects.analyzer.storage.SqlDatabaseUtils;
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.output.OutputRow;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.metamodel.DataContext;
@@ -118,7 +118,7 @@ final class DatastoreOutputWriter implements OutputWriter {
 				InputColumn<?> column = columns[i];
 				createStatementBuilder.append(DatastoreOutputUtils.safeName(column.getName()));
 				createStatementBuilder.append(' ');
-				if (column.getDataTypeFamily() == DataTypeFamily.UNDEFINED) {
+				if (!isDirectlyInsertableType(column)) {
 					createStatementBuilder.append(SqlDatabaseUtils.getSqlType(String.class));
 				} else {
 					createStatementBuilder.append(SqlDatabaseUtils.getSqlType(column.getDataType()));
@@ -173,5 +173,10 @@ final class DatastoreOutputWriter implements OutputWriter {
 
 	public Connection getConnection() {
 		return _connection;
+	}
+	
+	public static boolean isDirectlyInsertableType(InputColumn<?> column) {
+		final Class<?> dataType = column.getDataType();
+		return ReflectionUtils.isNumber(dataType) || ReflectionUtils.isDate(dataType) || ReflectionUtils.isBoolean(dataType);
 	}
 }

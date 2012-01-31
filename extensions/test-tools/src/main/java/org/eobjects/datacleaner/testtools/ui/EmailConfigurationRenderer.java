@@ -30,8 +30,7 @@ import org.eobjects.datacleaner.testtools.EmailConfiguration;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 
-public class EmailConfigurationRenderer extends DefaultListCellRenderer
-		implements ListCellRenderer {
+public class EmailConfigurationRenderer extends DefaultListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 

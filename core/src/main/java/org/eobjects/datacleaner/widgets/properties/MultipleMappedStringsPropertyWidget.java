@@ -128,12 +128,12 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
 
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());
-		panel.add(checkBox, BorderLayout.CENTER);
+		panel.add(checkBox, BorderLayout.WEST);
 		panel.add(textField, BorderLayout.EAST);
 		return panel;
 	}
 
-	public PropertyWidget<String[]> getMappedColumnNamesPropertyWidget() {
+	public PropertyWidget<String[]> getMappedStringsPropertyWidget() {
 		return _mappedStringPropertyWidget;
 	}
 
@@ -160,7 +160,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
 
 			@Override
 			public String[] getValue() {
-				return getMappedColumnNames();
+				return getMappedStrings();
 			}
 
 			@Override
@@ -202,7 +202,7 @@ public class MultipleMappedStringsPropertyWidget extends MultipleInputColumnsPro
 		return result.toArray(new InputColumn[result.size()]);
 	}
 
-	private String[] getMappedColumnNames() {
+	private String[] getMappedStrings() {
 		final InputColumn<?>[] inputColumns = MultipleMappedStringsPropertyWidget.this.getValue();
 		final List<String> result = new ArrayList<String>();
 		for (InputColumn<?> inputColumn : inputColumns) {

@@ -45,7 +45,26 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 		super(beanJobBuilder, propertyDescriptor);
 		Collection<Class<?>> items = new ArrayList<Class<?>>();
 
-		if (!propertyDescriptor.isRequired()) {
+		_comboBox = createClassComboBox(propertyDescriptor.isRequired());
+		Class<?> currentValue = getCurrentValue();
+		if (currentValue != null) {
+			_comboBox.setSelectedItem(currentValue);
+		}
+		
+		_comboBox.addListener(new Listener<Class<?>>() {
+			@Override
+			public void onItemSelected(Class<?> item) {
+				fireValueChanged(item);
+			}
+		});
+
+		add(_comboBox);
+	}
+	
+	public static DCComboBox<Class<?>> createClassComboBox(boolean required) {
+		Collection<Class<?>> items = new ArrayList<Class<?>>();
+
+		if (!required) {
 			items.add(null);
 		}
 		items.add(String.class);
@@ -56,8 +75,8 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 		items.add(Map.class);
 		items.add(Object.class);
 
-		_comboBox = new DCComboBox<Class<?>>(items);
-		_comboBox.setRenderer(new DefaultListCellRenderer() {
+		DCComboBox<Class<?>> comboBox = new DCComboBox<Class<?>>(items);
+		comboBox.setRenderer(new DefaultListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
 
@@ -71,14 +90,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 				return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			}
 		});
-		_comboBox.addListener(new Listener<Class<?>>() {
-			@Override
-			public void onItemSelected(Class<?> item) {
-				fireValueChanged(item);
-			}
-		});
-
-		add(_comboBox);
+		return comboBox;
 	}
 
 	@Override

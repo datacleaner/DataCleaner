@@ -23,12 +23,14 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
-import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -48,17 +50,17 @@ import org.jdesktop.swingx.VerticalLayout;
 public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[]> {
 
 	private final DCPanel _textFieldPanel;
+	private final Map<JComponent, JXTextField> _textFieldDecorations;
 
 	@Inject
 	public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
+		_textFieldDecorations = new IdentityHashMap<JComponent, JXTextField>();
+
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));
-
-		String[] currentValue = getCurrentValue();
-		updateComponents(currentValue);
 
 		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
 		addButton.addActionListener(new ActionListener() {
@@ -75,7 +77,7 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			public void actionPerformed(ActionEvent e) {
 				int componentCount = _textFieldPanel.getComponentCount();
 				if (componentCount > 0) {
-					_textFieldPanel.remove(componentCount - 1);
+					removeTextField();
 					_textFieldPanel.updateUI();
 					fireValueChanged();
 				}
@@ -97,6 +99,11 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		add(outerPanel);
 	}
 
+	@Override
+	public void initialize(String[] value) {
+		updateComponents(value);
+	}
+
 	public void updateComponents(String[] values) {
 		if (values == null) {
 			values = new String[2];
@@ -106,7 +113,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			for (int i = 0; i < Math.min(previousValues.length, values.length); i++) {
 				// modify text boxes
 				if (!EqualsBuilder.equals(previousValues[i], values[i])) {
-					JTextComponent component = (JTextComponent) _textFieldPanel.getComponent(i);
+					Component decoration = _textFieldPanel.getComponent(i);
+					JXTextField component = _textFieldDecorations.get(decoration);
 					component.setText(values[i]);
 				}
 			}
@@ -118,11 +126,21 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			}
 
 			while (_textFieldPanel.getComponentCount() > values.length) {
-				// remove text boxes if there are too many
-				_textFieldPanel.remove(_textFieldPanel.getComponentCount() - 1);
+				removeTextField();
 			}
 			_textFieldPanel.updateUI();
 		}
+	}
+
+	private void removeTextField() {
+		int componentCount = _textFieldPanel.getComponentCount();
+		if (componentCount == 0) {
+			return;
+		}
+		int index = componentCount - 1;
+		Component decoration = _textFieldPanel.getComponent(index);
+		_textFieldDecorations.remove(decoration);
+		_textFieldPanel.remove(index);
 	}
 
 	private void addTextField(String value, boolean updateUI) {
@@ -136,10 +154,18 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 				fireValueChanged();
 			}
 		});
-		_textFieldPanel.add(textField);
+
+		JComponent decoration = decorateTextField(textField);
+		_textFieldDecorations.put(decoration, textField);
+
+		_textFieldPanel.add(decoration);
 		if (updateUI) {
 			_textFieldPanel.updateUI();
 		}
+	}
+
+	protected JComponent decorateTextField(JXTextField textField) {
+		return textField;
 	}
 
 	@Override
@@ -147,7 +173,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		Component[] components = _textFieldPanel.getComponents();
 		String[] result = new String[components.length];
 		for (int i = 0; i < components.length; i++) {
-			JXTextField textField = (JXTextField) components[i];
+			Component decoration = components[i];
+			JXTextField textField = _textFieldDecorations.get(decoration);
 			result[i] = textField.getText();
 		}
 		return result;

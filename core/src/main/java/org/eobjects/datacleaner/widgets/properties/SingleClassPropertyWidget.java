@@ -43,7 +43,6 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 	public SingleClassPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
-		Collection<Class<?>> items = new ArrayList<Class<?>>();
 
 		_comboBox = createClassComboBox(propertyDescriptor.isRequired());
 		Class<?> currentValue = getCurrentValue();

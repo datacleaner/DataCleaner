@@ -210,6 +210,10 @@ public class MultipleMappedStringsPropertyWidget extends
 					// input columns property.
 					return;
 				}
+				
+				if (value == null) {
+					value = new String[0];
+				}
 
 				if (EqualsBuilder.equals(value, getValue())) {
 					return;
@@ -217,7 +221,7 @@ public class MultipleMappedStringsPropertyWidget extends
 				final InputColumn<?>[] inputColumns = MultipleMappedStringsPropertyWidget.this
 						.getValue();
 
-				if (value != null && inputColumns.length != value.length) {
+				if (inputColumns.length != value.length) {
 					// disregard this invalid value update
 					return;
 				}

@@ -47,13 +47,15 @@ import org.jdesktop.swingx.VerticalLayout;
  * 
  * @author Kasper Sørensen
  */
-public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[]> {
+public class MultipleStringPropertyWidget extends
+		AbstractPropertyWidget<String[]> {
 
 	private final DCPanel _textFieldPanel;
 	private final Map<JComponent, JXTextField> _textFieldDecorations;
 
 	@Inject
-	public MultipleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+	public MultipleStringPropertyWidget(
+			ConfiguredPropertyDescriptor propertyDescriptor,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(beanJobBuilder, propertyDescriptor);
 
@@ -62,7 +64,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 		_textFieldPanel = new DCPanel();
 		_textFieldPanel.setLayout(new VerticalLayout(2));
 
-		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
+		final JButton addButton = WidgetFactory
+				.createSmallButton("images/actions/add.png");
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -71,7 +74,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			}
 		});
 
-		final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		final JButton removeButton = WidgetFactory
+				.createSmallButton("images/actions/remove.png");
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -114,7 +118,8 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 				// modify text boxes
 				if (!EqualsBuilder.equals(previousValues[i], values[i])) {
 					Component decoration = _textFieldPanel.getComponent(i);
-					JXTextField component = _textFieldDecorations.get(decoration);
+					JXTextField component = _textFieldDecorations
+							.get(decoration);
 					component.setText(values[i]);
 				}
 			}
@@ -178,6 +183,34 @@ public class MultipleStringPropertyWidget extends AbstractPropertyWidget<String[
 			result[i] = textField.getText();
 		}
 		return result;
+	}
+
+	@Override
+	public boolean isSet() {
+		String[] value = getValue();
+		if (value.length == 0) {
+			return false;
+		}
+
+		if (!isEmptyStringValid()) {
+			for (int i = 0; i < value.length; i++) {
+				if (value[i].length() == 0) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Method to be overridden by subclasses in case empty strings inside the
+	 * arrays are not to be tolerated.
+	 * 
+	 * @return
+	 */
+	protected boolean isEmptyStringValid() {
+		return true;
 	}
 
 	@Override

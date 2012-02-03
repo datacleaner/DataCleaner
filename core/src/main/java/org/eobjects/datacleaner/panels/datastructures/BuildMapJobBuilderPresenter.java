@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.eobjects.analyzer.beans.datastructures.BuildMapTransformer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
@@ -45,24 +46,37 @@ public class BuildMapJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 	private final Map<ConfiguredPropertyDescriptor, PropertyWidget<?>> _overriddenPropertyWidgets;
 
-	public BuildMapJobBuilderPresenter(TransformerJobBuilder<BuildMapTransformer> tjb, WindowContext windowContext,
-			PropertyWidgetFactory propertyWidgetFactory, AnalyzerBeansConfiguration configuration) {
+	public BuildMapJobBuilderPresenter(
+			TransformerJobBuilder<BuildMapTransformer> tjb,
+			WindowContext windowContext,
+			PropertyWidgetFactory propertyWidgetFactory,
+			AnalyzerBeansConfiguration configuration) {
 		super(tjb, windowContext, propertyWidgetFactory, configuration);
 
 		_overriddenPropertyWidgets = new HashMap<ConfiguredPropertyDescriptor, PropertyWidget<?>>();
 
-		final TransformerBeanDescriptor<BuildMapTransformer> descriptor = tjb.getDescriptor();
-		final ConfiguredPropertyDescriptor valuesProperty = descriptor.getConfiguredProperty("Values");
-		final ConfiguredPropertyDescriptor keysProperty = descriptor.getConfiguredProperty("Keys");
+		final TransformerBeanDescriptor<BuildMapTransformer> descriptor = tjb
+				.getDescriptor();
+		final ConfiguredPropertyDescriptor valuesProperty = descriptor
+				.getConfiguredProperty("Values");
+		final ConfiguredPropertyDescriptor keysProperty = descriptor
+				.getConfiguredProperty("Keys");
 
-		MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(tjb, valuesProperty,
-				keysProperty);
+		MultipleMappedStringsPropertyWidget propertyWidget = new MultipleMappedStringsPropertyWidget(
+				tjb, valuesProperty, keysProperty) {
+			@Override
+			protected String getDefaultMappedString(InputColumn<?> inputColumn) {
+				return inputColumn.getName();
+			}
+		};
 		_overriddenPropertyWidgets.put(valuesProperty, propertyWidget);
-		_overriddenPropertyWidgets.put(keysProperty, propertyWidget.getMappedStringsPropertyWidget());
+		_overriddenPropertyWidgets.put(keysProperty,
+				propertyWidget.getMappedStringsPropertyWidget());
 	}
 
 	@Override
-	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected PropertyWidget<?> createPropertyWidget(
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		if (_overriddenPropertyWidgets.containsKey(propertyDescriptor)) {
 			return _overriddenPropertyWidgets.get(propertyDescriptor);

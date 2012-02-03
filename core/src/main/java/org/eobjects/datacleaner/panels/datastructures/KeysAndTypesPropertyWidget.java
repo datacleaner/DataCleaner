@@ -47,12 +47,15 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 	private final List<DCComboBox<Class<?>>> _comboBoxes;
 	private final MinimalPropertyWidget<Class<?>[]> _typesPropertyWidget;
 
-	public KeysAndTypesPropertyWidget(ConfiguredPropertyDescriptor keysProperty, ConfiguredPropertyDescriptor typesProperty,
+	public KeysAndTypesPropertyWidget(
+			ConfiguredPropertyDescriptor keysProperty,
+			ConfiguredPropertyDescriptor typesProperty,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		super(keysProperty, beanJobBuilder);
 		_comboBoxes = new ArrayList<DCComboBox<Class<?>>>();
 		_typesProperty = typesProperty;
-		_typesPropertyWidget = new MinimalPropertyWidget<Class<?>[]>(getBeanJobBuilder(), _typesProperty) {
+		_typesPropertyWidget = new MinimalPropertyWidget<Class<?>[]>(
+				getBeanJobBuilder(), _typesProperty) {
 
 			@Override
 			public JComponent getWidget() {
@@ -79,19 +82,20 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 
 	@Override
 	protected JComponent decorateTextField(JXTextField textField) {
-		final DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(textField, BorderLayout.CENTER);
-
-		final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget.createClassComboBox(true);
+		final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget
+				.createClassComboBox(true);
 		comboBox.addListener(new Listener<Class<?>>() {
 			@Override
 			public void onItemSelected(Class<?> item) {
 				_typesPropertyWidget.fireValueChanged();
 			}
 		});
+
 		_comboBoxes.add(comboBox);
 
+		final DCPanel panel = new DCPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(textField, BorderLayout.CENTER);
 		panel.add(comboBox, BorderLayout.EAST);
 
 		return panel;

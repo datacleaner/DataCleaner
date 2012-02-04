@@ -100,7 +100,7 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 	 * @return
 	 */
 	protected boolean isUpdating() {
-		return _updating == 0;
+		return _updating > 0;
 	}
 
 	/**

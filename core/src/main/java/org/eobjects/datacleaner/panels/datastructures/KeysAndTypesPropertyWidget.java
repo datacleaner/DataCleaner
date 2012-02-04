@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.beans.datastructures.SelectFromMapTransformer;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.widgets.DCComboBox;
@@ -48,8 +50,11 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 
 	private final ConfiguredPropertyDescriptor _typesProperty;
 	private final List<DCComboBox<Class<?>>> _comboBoxes;
-	private final MinimalPropertyWidget<Class<?>[]> _typesPropertyWidget;
 
+	@SuppressWarnings("rawtypes")
+	private final MinimalPropertyWidget<Class[]> _typesPropertyWidget;
+
+	@SuppressWarnings("rawtypes")
 	public KeysAndTypesPropertyWidget(
 			ConfiguredPropertyDescriptor keysProperty,
 			ConfiguredPropertyDescriptor typesProperty,
@@ -57,7 +62,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 		super(keysProperty, beanJobBuilder);
 		_comboBoxes = new ArrayList<DCComboBox<Class<?>>>();
 		_typesProperty = typesProperty;
-		_typesPropertyWidget = new MinimalPropertyWidget<Class<?>[]>(
+		_typesPropertyWidget = new MinimalPropertyWidget<Class[]>(
 				getBeanJobBuilder(), _typesProperty) {
 
 			@Override
@@ -66,15 +71,18 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 			}
 
 			@Override
-			public Class<?>[] getValue() {
+			public Class[] getValue() {
 				final String[] keys = KeysAndTypesPropertyWidget.this
 						.getValue();
-				final Class<?>[] result = new Class<?>[keys.length];
-				for (int i = 0; i < result.length; i++) {
-					final DCComboBox<Class<?>> comboBox = _comboBoxes.get(i);
-					result[i] = comboBox.getSelectedItem();
+				final List<Class<?>> result = new ArrayList<Class<?>>();
+				for (int i = 0; i < keys.length; i++) {
+					if (!StringUtils.isNullOrEmpty(keys[i])) {
+						final DCComboBox<Class<?>> comboBox = _comboBoxes
+								.get(i);
+						result.add(comboBox.getSelectedItem());
+					}
 				}
-				return result;
+				return result.toArray(new Class[result.size()]);
 			}
 
 			@Override
@@ -91,7 +99,7 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 			}
 
 			@Override
-			protected void setValue(Class<?>[] value) {
+			protected void setValue(Class[] value) {
 				if (EqualsBuilder.equals(value, getValue())) {
 					return;
 				}
@@ -115,13 +123,42 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 			}
 		};
 
-		// TODO: Initialize value
+		final String[] currentKeysValue = getCurrentValue();
+		final Class[] currentTypesValue = (Class[]) beanJobBuilder
+				.getConfiguredProperty(typesProperty);
+		if (currentTypesValue != null) {
+			// first create textfields, then set keys value
+
+			for (int i = 0; i < currentTypesValue.length; i++) {
+				final Class<?> type = currentTypesValue[i];
+				createComboBox(type);
+			}
+
+			setValue(currentKeysValue);
+			_typesPropertyWidget.onValueTouched(currentTypesValue);
+		}
+	}
+
+	private DCComboBox<Class<?>> createComboBox(Class<?> type) {
+		final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget
+				.createClassComboBox(true);
+		if (type != null) {
+			comboBox.setSelectedItem(type);
+		}
+		_comboBoxes.add(comboBox);
+		return comboBox;
 	}
 
 	@Override
-	protected JComponent decorateTextField(JXTextField textField) {
-		final DCComboBox<Class<?>> comboBox = SingleClassPropertyWidget
-				.createClassComboBox(true);
+	protected JComponent decorateTextField(JXTextField textField, int index) {
+		final DCComboBox<Class<?>> comboBox;
+
+		if (index < _comboBoxes.size()) {
+			comboBox = _comboBoxes.get(index);
+		} else {
+			comboBox = createComboBox(null);
+		}
+
 		comboBox.addListener(new Listener<Class<?>>() {
 			@Override
 			public void onItemSelected(Class<?> item) {
@@ -132,11 +169,18 @@ public class KeysAndTypesPropertyWidget extends MultipleStringPropertyWidget {
 		textField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {
-				_typesPropertyWidget.fireValueChanged();
+				// invoke later, because document events are fired before the
+				// textfield.getText() returns the new value
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						setUpdating(true);
+						_typesPropertyWidget.fireValueChanged();
+						setUpdating(false);
+					}
+				});
 			}
 		});
-
-		_comboBoxes.add(comboBox);
 
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());

@@ -201,12 +201,13 @@ public final class PropertyWidgetFactory {
 	 * changed.
 	 */
 	public void onConfigurationChanged() {
-		Collection<PropertyWidget<?>> widgets = getWidgets();
+		final Collection<PropertyWidget<?>> widgets = getWidgets();
 
 		for (PropertyWidget<?> widget : widgets) {
 			@SuppressWarnings("unchecked")
-			PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
-			Object value = _beanJobBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
+			final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
+			final ConfiguredPropertyDescriptor propertyDescriptor = objectWidget.getPropertyDescriptor();
+			final Object value = _beanJobBuilder.getConfiguredProperty(propertyDescriptor);
 			objectWidget.onValueTouched(value);
 		}
 	}

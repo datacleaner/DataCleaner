@@ -30,20 +30,25 @@ import org.slf4j.LoggerFactory;
  * Minimalistic abstract implementation of the {@link PropertyWidget} interface.
  * 
  * @author Kasper Sørensen
- *
+ * 
  * @param <E>
  */
 public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 
-	private static final Logger logger = LoggerFactory.getLogger(AbstractPropertyWidget.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(AbstractPropertyWidget.class);
 
 	private final AbstractBeanJobBuilder<?, ?, ?> _beanJobBuilder;
 	private final ConfiguredPropertyDescriptor _propertyDescriptor;
 
-	public MinimalPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	private transient volatile int _updating;
+
+	public MinimalPropertyWidget(
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		_beanJobBuilder = beanJobBuilder;
 		_propertyDescriptor = propertyDescriptor;
+		_updating = 0;
 	}
 
 	@Override
@@ -75,11 +80,42 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 
 	@Override
 	public void onValueTouched(E value) {
+		if (isUpdating()) {
+			// prevent update loops from a widget's own configuration change
+			// notification
+			return;
+		}
 		E existingValue = getValue();
 		if (EqualsBuilder.equals(value, existingValue)) {
 			return;
 		}
 		setValue(value);
+	}
+
+	/**
+	 * Determines whether a property widget is currently updating/setting it's
+	 * property value. When true, this property will not treat incoming
+	 * notifications, since they will be triggered by itself.
+	 * 
+	 * @return
+	 */
+	protected boolean isUpdating() {
+		return _updating == 0;
+	}
+
+	/**
+	 * Provides a method for setting the "updating" flag (see
+	 * {@link #isUpdating()}).
+	 * 
+	 * @param updating
+	 */
+	protected void setUpdating(boolean updating) {
+		if (updating) {
+			_updating++;
+		} else {
+			assert _updating > 0;
+			_updating--;
+		}
 	}
 
 	/**
@@ -89,21 +125,28 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 	 */
 	@SuppressWarnings("unchecked")
 	protected E getCurrentValue() {
-		return (E) getBeanJobBuilder().getConfiguredProperty(getPropertyDescriptor());
+		return (E) getBeanJobBuilder().getConfiguredProperty(
+				getPropertyDescriptor());
 	}
 
 	protected abstract void setValue(E value);
 
 	protected final void fireValueChanged(Object newValue) {
+		setUpdating(true);
 		try {
-			_beanJobBuilder.setConfiguredProperty(_propertyDescriptor, newValue);
+			_beanJobBuilder
+					.setConfiguredProperty(_propertyDescriptor, newValue);
 		} catch (Exception e) {
 			// an exception will be thrown here if setting an invalid property
 			// value (which may just be work in progress, so we don't make a
 			// fuzz about it)
 			if (logger.isWarnEnabled()) {
-				logger.warn("Exception thrown when setting configured property " + _propertyDescriptor, e);
+				logger.warn(
+						"Exception thrown when setting configured property "
+								+ _propertyDescriptor, e);
 			}
+		} finally {
+			setUpdating(false);
 		}
 	}
 }

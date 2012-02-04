@@ -23,7 +23,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -160,7 +162,8 @@ public class MultipleStringPropertyWidget extends
 			}
 		});
 
-		JComponent decoration = decorateTextField(textField);
+		final int index = _textFieldPanel.getComponentCount();
+		final JComponent decoration = decorateTextField(textField, index);
 		_textFieldDecorations.put(decoration, textField);
 
 		_textFieldPanel.add(decoration);
@@ -169,20 +172,23 @@ public class MultipleStringPropertyWidget extends
 		}
 	}
 
-	protected JComponent decorateTextField(JXTextField textField) {
+	protected JComponent decorateTextField(JXTextField textField, int index) {
 		return textField;
 	}
 
 	@Override
 	public String[] getValue() {
 		Component[] components = _textFieldPanel.getComponents();
-		String[] result = new String[components.length];
+		List<String> result = new ArrayList<String>();
 		for (int i = 0; i < components.length; i++) {
-			Component decoration = components[i];
-			JXTextField textField = _textFieldDecorations.get(decoration);
-			result[i] = textField.getText();
+			final Component decoration = components[i];
+			final JXTextField textField = _textFieldDecorations.get(decoration);
+			final String text = textField.getText();
+			if (isEmptyStringValid() || text.length() != 0) {
+				result.add(text);
+			}
 		}
-		return result;
+		return result.toArray(new String[result.size()]);
 	}
 
 	@Override

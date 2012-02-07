@@ -51,7 +51,8 @@ import org.jdesktop.swingx.JXTextField;
  * 
  * @author Kasper Sørensen
  */
-public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuilderPresenter {
+public class MaxRowsFilterShortcutPanel extends DCPanel implements
+		FilterJobBuilderPresenter {
 
 	public static final String FILTER_NAME = "Limit analysis (Max rows)";
 
@@ -79,7 +80,8 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 		this(analysisJobBuilder, null);
 	}
 
-	public MaxRowsFilterShortcutPanel(AnalysisJobBuilder analysisJobBuilder, FilterJobBuilder<?, ?> filterJobBuilder) {
+	public MaxRowsFilterShortcutPanel(AnalysisJobBuilder analysisJobBuilder,
+			FilterJobBuilder<?, ?> filterJobBuilder) {
 		super();
 		_analysisJobBuilder = analysisJobBuilder;
 		_checkBox = new JCheckBox();
@@ -115,7 +117,8 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 
 				if (selected) {
 					_analysisJobBuilder.addFilter(maxRowsFilterJobBuilder);
-					_analysisJobBuilder.setDefaultRequirement(maxRowsFilterJobBuilder, ValidationCategory.VALID);
+					_analysisJobBuilder.setDefaultRequirement(
+							maxRowsFilterJobBuilder, ValidationCategory.VALID);
 				} else {
 					_analysisJobBuilder.removeFilter(maxRowsFilterJobBuilder);
 				}
@@ -134,8 +137,11 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 							int maxRows = Integer.parseInt(text);
 							fjb.setConfiguredProperty("Max rows", maxRows);
 						} catch (NumberFormatException e) {
-							WidgetUtils.showErrorMessage("Cannot read number",
-									"The entered value could not be read as a number.", e);
+							WidgetUtils
+									.showErrorMessage(
+											"Cannot read number",
+											"The entered value could not be read as a number.",
+											e);
 						}
 					}
 				}
@@ -143,7 +149,9 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 		});
 
 		setLayout(new FlowLayout(FlowLayout.LEFT));
-		add(new JLabel(ImageManager.getInstance().getImageIcon(IconUtils.MAX_ROWS_IMAGEPATH)));
+		final String imagePath = IconUtils.getImagePathForClass(MaxRowsFilter.class);
+		add(new JLabel(ImageManager.getInstance().getImageIcon(
+				imagePath)));
 		add(_checkBox);
 		add(_prefixLabel);
 		add(_textField);
@@ -159,9 +167,12 @@ public class MaxRowsFilterShortcutPanel extends DCPanel implements FilterJobBuil
 		if (_maxRowsFilterJobBuilder == null) {
 			// Lazy initializing getter (to postpone the call to
 			// DCConfiguration.
-			_maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, ValidationCategory>(_analysisJobBuilder,
-					_analysisJobBuilder.getConfiguration().getDescriptorProvider()
-							.getFilterBeanDescriptorForClass(MaxRowsFilter.class));
+			_maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, ValidationCategory>(
+					_analysisJobBuilder, _analysisJobBuilder
+							.getConfiguration()
+							.getDescriptorProvider()
+							.getFilterBeanDescriptorForClass(
+									MaxRowsFilter.class));
 			_maxRowsFilterJobBuilder.setName(FILTER_NAME);
 		}
 		return _maxRowsFilterJobBuilder;

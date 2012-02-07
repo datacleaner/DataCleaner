@@ -100,16 +100,18 @@ public final class IconUtils {
 	public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
 	public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
 	public static final String FILTER_IMAGEPATH = "images/component-types/filter.png";
-	public static final String MAX_ROWS_IMAGEPATH = "images/component-types/type_max_rows.png";
 
-	private static final ImageManager _imageManager = ImageManager.getInstance();
+	private static final ImageManager _imageManager = ImageManager
+			.getInstance();
 
 	private IconUtils() {
 		// prevent instantiation
 	}
 
-	public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor, int newWidth) {
-		final ClassLoader classLoader = descriptor.getComponentClass().getClassLoader();
+	public static Icon getDescriptorIcon(ComponentDescriptor<?> descriptor,
+			int newWidth) {
+		final ClassLoader classLoader = descriptor.getComponentClass()
+				.getClassLoader();
 		String imagePath = getDescriptorImagePath(descriptor, classLoader);
 		return _imageManager.getImageIcon(imagePath, newWidth, classLoader);
 	}
@@ -130,40 +132,61 @@ public final class IconUtils {
 
 	public static Icon getComponentCategoryIcon(ComponentCategory category) {
 		Class<? extends ComponentCategory> categoryClass = category.getClass();
-		final ClassLoader classLoader = categoryClass.getClassLoader();
-		final String bundledIconPath = categoryClass.getName().replaceAll("\\.", "/") + ".png";
-		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath, classLoader);
+
+		final String bundledIconPath = getImagePathForClass(categoryClass);
 
 		final int totalSize = ICON_SIZE_MEDIUM;
 		final Image decoration;
 		final int decorationSize = ICON_SIZE_SMALL;
-		if (url == null) {
+		if (bundledIconPath == null) {
 			decoration = null;
 		} else {
-			decoration = _imageManager.getImage(bundledIconPath, decorationSize, classLoader);
+			final ClassLoader classLoader = categoryClass.getClassLoader();
+			decoration = _imageManager.getImage(bundledIconPath,
+					decorationSize, classLoader);
 		}
 
-		final Image folderIcon = _imageManager.getImage("images/filetypes/folder.png", totalSize);
+		final Image folderIcon = _imageManager.getImage(
+				"images/filetypes/folder.png", totalSize);
 
 		if (decoration == null) {
 			return new ImageIcon(folderIcon);
 		}
 
-		final BufferedImage bufferedImage = new BufferedImage(totalSize, totalSize, BufferedImage.TYPE_INT_ARGB);
+		final BufferedImage bufferedImage = new BufferedImage(totalSize,
+				totalSize, BufferedImage.TYPE_INT_ARGB);
 		bufferedImage.getGraphics().drawImage(folderIcon, 0, 0, null);
-		bufferedImage.getGraphics().drawImage(decoration, totalSize - decorationSize, totalSize - decorationSize, null);
+		bufferedImage.getGraphics().drawImage(decoration,
+				totalSize - decorationSize, totalSize - decorationSize, null);
 		return new ImageIcon(bufferedImage);
 	}
 
-	protected static String getDescriptorImagePath(ComponentDescriptor<?> descriptor, ClassLoader classLoader) {
+	public static String getImagePathForClass(Class<?> cls) {
+		return getImagePathForClass(cls, cls.getClassLoader());
+	}
+
+	public static String getImagePathForClass(Class<?> cls,
+			ClassLoader classLoader) {
+		final String iconPath = cls.getName().replaceAll("\\.", "/") + ".png";
+		final URL url = ResourceManager.getInstance().getUrl(iconPath,
+				classLoader);
+		if (url == null) {
+			return null;
+		}
+		return iconPath;
+	}
+
+	protected static String getDescriptorImagePath(
+			ComponentDescriptor<?> descriptor, ClassLoader classLoader) {
 		final Class<?> componentClass = descriptor.getComponentClass();
-		final String bundledIconPath = componentClass.getName().replaceAll("\\.", "/") + ".png";
-		final URL url = ResourceManager.getInstance().getUrl(bundledIconPath, classLoader);
-		if (url != null) {
+		final String bundledIconPath = getImagePathForClass(componentClass,
+				classLoader);
+		if (bundledIconPath != null) {
 			return bundledIconPath;
 		}
 
-		if (!descriptor.getComponentClass().getPackage().getName().startsWith("org.eobjects")) {
+		if (!descriptor.getComponentClass().getPackage().getName()
+				.startsWith("org.eobjects")) {
 			// plugins get a special icon
 			return "images/component-types/plugin.png";
 		}
@@ -172,7 +195,8 @@ public final class IconUtils {
 
 		if (descriptor instanceof BeanDescriptor) {
 			BeanDescriptor<?> beanDescriptor = (BeanDescriptor<?>) descriptor;
-			Set<ComponentCategory> categories = beanDescriptor.getComponentCategories();
+			Set<ComponentCategory> categories = beanDescriptor
+					.getComponentCategories();
 			displayName = beanDescriptor.getDisplayName().toLowerCase();
 			if (categories.contains(new WriteDataCategory())) {
 				return "images/component-types/type_output_writer.png";
@@ -196,17 +220,22 @@ public final class IconUtils {
 		if (displayName.indexOf("validat") != -1) {
 			imagePath = "images/component-types/type_validate.png";
 		}
-		if (displayName.indexOf("internet") != -1 || displayName.indexOf("url") != -1) {
+		if (displayName.indexOf("internet") != -1
+				|| displayName.indexOf("url") != -1) {
 			imagePath = "images/component-types/type_internet.png";
 		}
-		if (displayName.indexOf("identity") != -1 || displayName.indexOf("name") != -1) {
+		if (displayName.indexOf("identity") != -1
+				|| displayName.indexOf("name") != -1) {
 			imagePath = "images/component-types/type_identity.png";
 		}
-		if (displayName.indexOf("string") != -1 || displayName.indexOf("word") != -1 || displayName.indexOf("token") != -1
+		if (displayName.indexOf("string") != -1
+				|| displayName.indexOf("word") != -1
+				|| displayName.indexOf("token") != -1
 				|| displayName.indexOf("whitespace") != -1) {
 			imagePath = "images/component-types/type_string.png";
 		}
-		if (displayName.indexOf("time") != -1 || displayName.indexOf("date") != -1) {
+		if (displayName.indexOf("time") != -1
+				|| displayName.indexOf("date") != -1) {
 			imagePath = "images/component-types/type_time.png";
 		}
 		if (displayName.indexOf("number") != -1) {
@@ -224,10 +253,12 @@ public final class IconUtils {
 		if (displayName.indexOf("compare") != -1) {
 			imagePath = "images/component-types/type_compare.png";
 		}
-		if (displayName.indexOf("sound") != -1 || displayName.indexOf("phonetic") != -1) {
+		if (displayName.indexOf("sound") != -1
+				|| displayName.indexOf("phonetic") != -1) {
 			imagePath = "images/component-types/type_sound.png";
 		}
-		if (displayName.indexOf("pattern") != -1 || displayName.indexOf("expression") != -1
+		if (displayName.indexOf("pattern") != -1
+				|| displayName.indexOf("expression") != -1
 				|| displayName.indexOf("regex") != -1) {
 			imagePath = "images/component-types/type_expression.png";
 		}
@@ -269,27 +300,6 @@ public final class IconUtils {
 		if (displayName.equals("date gap analyzer")) {
 			imagePath = "images/component-types/type_date_gap_analyzer.png";
 		}
-		if (displayName.equals("number range")) {
-			imagePath = "images/component-types/type_number_range.png";
-		}
-		if (displayName.equals("equals")) {
-			imagePath = "images/component-types/type_equals.png";
-		}
-		if (displayName.equals("max rows")) {
-			imagePath = MAX_ROWS_IMAGEPATH;
-		}
-		if (displayName.equals("not null")) {
-			imagePath = "images/component-types/type_not_null.png";
-		}
-		if (displayName.equals("string length range")) {
-			imagePath = "images/component-types/type_string_length_range.png";
-		}
-		if (displayName.equals("string value range")) {
-			imagePath = "images/component-types/type_string_value_range.png";
-		}
-		if (displayName.equals("single word")) {
-			imagePath = "images/component-types/type_single_word.png";
-		}
 		if (displayName.equals("pattern finder")) {
 			imagePath = "images/component-types/type_pattern_finder.png";
 		}
@@ -317,12 +327,14 @@ public final class IconUtils {
 			return imagePath;
 		} else if (datastore instanceof JdbcDatastore) {
 			JdbcDatastore jdbcDatastore = (JdbcDatastore) datastore;
-			if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore.getJdbcUrl())) {
+			if ("jdbc:hsqldb:res:orderdb;readonly=true".equals(jdbcDatastore
+					.getJdbcUrl())) {
 				imagePath = "images/datastore-types/orderdb.png";
 			} else {
 				String driverClass = jdbcDatastore.getDriverClass();
 				if (!StringUtils.isNullOrEmpty(driverClass)) {
-					DatabaseDriverDescriptor driver = DatabaseDriverCatalog.getDatabaseDriverByDriverClassName(driverClass);
+					DatabaseDriverDescriptor driver = DatabaseDriverCatalog
+							.getDatabaseDriverByDriverClassName(driverClass);
 					if (driver != null) {
 						imagePath = driver.getIconImagePath();
 					}

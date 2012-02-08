@@ -52,8 +52,10 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 	private final AnalyzerBeansConfiguration _configuration;
 
 	@Inject
-	protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
-			UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration) {
+	protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window,
+			AnalysisJobBuilder analysisJobBuilder,
+			UserPreferences userPreferences, UsageLogger usageLogger,
+			AnalyzerBeansConfiguration configuration) {
 		_window = window;
 		_analysisJobBuilder = analysisJobBuilder;
 		_userPreferences = userPreferences;
@@ -70,13 +72,14 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 			_window.applyPropertyValues();
 			analysisJob = _analysisJobBuilder.toAnalysisJob();
 		} catch (Exception e) {
-			WidgetUtils
-					.showErrorMessage("Errors in job", "Please fix the errors that exist in the job before saving it:\n\n"
-							+ _window.getStatusLabelText(), null);
+			WidgetUtils.showErrorMessage("Errors in job",
+					"Please fix the errors that exist in the job before saving it:\n\n"
+							+ _window.getStatusLabelText(), e);
 			return;
 		}
 
-		DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
+		DCFileChooser fileChooser = new DCFileChooser(
+				_userPreferences.getAnalysisJobDirectory());
 		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
 
 		int result = fileChooser.showSaveDialog(_window.toComponent());
@@ -84,13 +87,16 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 			File file = fileChooser.getSelectedFile();
 
 			if (!file.getName().endsWith(".xml")) {
-				file = new File(file.getParentFile(), file.getName() + FileFilters.ANALYSIS_XML.getExtension());
+				file = new File(file.getParentFile(), file.getName()
+						+ FileFilters.ANALYSIS_XML.getExtension());
 			}
 
 			if (file.exists()) {
-				int overwrite = JOptionPane.showConfirmDialog(_window.toComponent(),
-						"Are you sure you want to overwrite the file '" + file.getName() + "'?", "Overwrite existing file?",
-						JOptionPane.YES_NO_OPTION);
+				int overwrite = JOptionPane.showConfirmDialog(
+						_window.toComponent(),
+						"Are you sure you want to overwrite the file '"
+								+ file.getName() + "'?",
+						"Overwrite existing file?", JOptionPane.YES_NO_OPTION);
 				if (overwrite != JOptionPane.YES_OPTION) {
 					return;
 				}
@@ -103,12 +109,14 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
 			String jobDescription = "Created with DataCleaner " + Main.VERSION;
 			String jobVersion = null;
 
-			final JaxbJobWriter writer = new JaxbJobWriter(_configuration, new JaxbJobMetadataFactoryImpl(author, jobName,
-					jobDescription, jobVersion));
+			final JaxbJobWriter writer = new JaxbJobWriter(_configuration,
+					new JaxbJobMetadataFactoryImpl(author, jobName,
+							jobDescription, jobVersion));
 
 			BufferedOutputStream outputStream = null;
 			try {
-				outputStream = new BufferedOutputStream(new FileOutputStream(file));
+				outputStream = new BufferedOutputStream(new FileOutputStream(
+						file));
 				writer.write(analysisJob, outputStream);
 				outputStream.flush();
 				outputStream.close();

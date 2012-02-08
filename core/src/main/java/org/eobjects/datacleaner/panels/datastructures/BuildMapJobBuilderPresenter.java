@@ -40,7 +40,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
  * Spectialized {@link TransformerJobBuilderPresenter} for the
  * {@link BuildMapTransformer}.
  */
-public class BuildMapJobBuilderPresenter extends TransformerJobBuilderPanel {
+final class BuildMapJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 

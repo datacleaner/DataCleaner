@@ -24,59 +24,59 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
 
+import javax.inject.Inject;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
+import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.panels.FilterListPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.widgets.DescriptorMenuItem;
 import org.eobjects.datacleaner.widgets.DescriptorPopupMenu;
 
-public final class AddFilterActionListener implements ActionListener {
+public final class AnalyzeButtonActionListener implements ActionListener {
 
 	private final AnalyzerBeansConfiguration _configuration;
 	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final FilterListPanel _filterListPanel;
 	private final UsageLogger _usageLogger;
 
-	public AddFilterActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
-			FilterListPanel filterListPanel, UsageLogger usageLogger) {
+	@Inject
+	protected AnalyzeButtonActionListener(AnalyzerBeansConfiguration configuration, AnalysisJobBuilder analysisJobBuilder,
+			UsageLogger usageLogger) {
 		_configuration = configuration;
 		_analysisJobBuilder = analysisJobBuilder;
-		_filterListPanel = filterListPanel;
 		_usageLogger = usageLogger;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		final Collection<FilterBeanDescriptor<?, ?>> descriptors = _configuration.getDescriptorProvider()
-				.getFilterBeanDescriptors();
+		final Collection<AnalyzerBeanDescriptor<?>> descriptors = _configuration.getDescriptorProvider()
+				.getAnalyzerBeanDescriptors();
 
-		final JPopupMenu popup = new DescriptorPopupMenu<FilterBeanDescriptor<?, ?>>(descriptors) {
+		final JPopupMenu popup = new DescriptorPopupMenu<AnalyzerBeanDescriptor<?>>(descriptors) {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected JMenuItem createMenuItem(final FilterBeanDescriptor<?, ?> descriptor) {
+			protected JMenuItem createMenuItem(final AnalyzerBeanDescriptor<?> descriptor) {
 				JMenuItem menuItem = new DescriptorMenuItem(descriptor);
 				menuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						_analysisJobBuilder.addFilter(descriptor);
+						Class<? extends Analyzer<?>> analyzerClass = descriptor.getComponentClass();
+						_analysisJobBuilder.addAnalyzer(analyzerClass);
 
-						_usageLogger.log("Add filter: " + descriptor.getDisplayName());
-
-						_filterListPanel.updateUI();
+						_usageLogger.log("Add analyzer: " + descriptor.getDisplayName());
 					}
 				});
+
 				return menuItem;
 			}
 		};
 
-		final Component source = (Component) e.getSource();
+		Component source = (Component) e.getSource();
 		popup.show(source, 0, source.getHeight());
 	}
 }

@@ -52,21 +52,26 @@ public class ComponentJobBuilderPresenterRenderer implements
 	InjectorBuilder injectorBuilder;
 
 	@Override
-	public RendererPrecedence getPrecedence(AbstractBeanJobBuilder<?, ?, ?> renderable) {
+	public RendererPrecedence getPrecedence(
+			AbstractBeanJobBuilder<?, ?, ?> renderable) {
 		return RendererPrecedence.LOW;
 	}
 
 	@Override
-	public ComponentJobBuilderPresenter render(AbstractBeanJobBuilder<?, ?, ?> renderable) {
-		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
-				PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, renderable).getInstance(PropertyWidgetFactory.class);
+	public ComponentJobBuilderPresenter render(
+			AbstractBeanJobBuilder<?, ?, ?> renderable) {
+		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder
+				.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER,
+						renderable).getInstance(PropertyWidgetFactory.class);
 
 		if (renderable instanceof FilterJobBuilder) {
 			FilterJobBuilder<?, ?> fjb = (FilterJobBuilder<?, ?>) renderable;
-			return new FilterJobBuilderPanel(fjb, propertyWidgetFactory);
+			return new FilterJobBuilderPanel(fjb, windowContext,
+					propertyWidgetFactory);
 		} else if (renderable instanceof TransformerJobBuilder) {
 			TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) renderable;
-			return new TransformerJobBuilderPanel(tjb, windowContext, propertyWidgetFactory, configuration);
+			return new TransformerJobBuilderPanel(tjb, windowContext,
+					propertyWidgetFactory, configuration);
 		} else if (renderable instanceof AnalyzerJobBuilder) {
 			AnalyzerJobBuilder<?> ajb = (AnalyzerJobBuilder<?>) renderable;
 			return new AnalyzerJobBuilderPanel(ajb, propertyWidgetFactory);

@@ -31,14 +31,12 @@ import javax.swing.JComponent;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MutableInputColumn;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.actions.DisplayOutputWritersForTransformedDataActionListener;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.widgets.ChangeRequirementButton;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implements TransformerJobBuilderPresenter {
@@ -50,7 +48,6 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 
 	private final TransformerJobBuilder<?> _transformerJobBuilder;
 	private final ColumnListTable _outputColumnsTable;
-	private final ChangeRequirementButton _requirementButton;
 	private final JButton _previewButton;
 	private final JButton _writeDataButton;
 	private final WindowContext _windowContext;
@@ -85,18 +82,12 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		_previewButton.addActionListener(new PreviewTransformedDataActionListener(_windowContext, this,
 				getAnalysisJobBuilder(), _transformerJobBuilder, configuration));
 
-		_requirementButton = new ChangeRequirementButton(transformerJobBuilder);
 
 		final DCPanel bottomButtonPanel = new DCPanel();
 		bottomButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
 		bottomButtonPanel.add(_writeDataButton);
 		bottomButtonPanel.add(_previewButton);
 		_outputColumnsTable.add(bottomButtonPanel, BorderLayout.SOUTH);
-
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-		buttonPanel.add(_requirementButton);
-		add(buttonPanel, BorderLayout.NORTH);
 	}
 
 	public WindowContext getWindowContext() {
@@ -109,11 +100,6 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 		addTaskPane(imageManager.getImageIcon("images/model/source.png", IconUtils.ICON_SIZE_SMALL), "Output columns",
 				_outputColumnsTable);
 		return result;
-	}
-
-	@Override
-	protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
-		_transformerJobBuilder.setConfiguredProperty(propertyDescriptor, value);
 	}
 
 	public void setOutputColumns(List<? extends InputColumn<?>> outputColumns) {
@@ -134,15 +120,5 @@ public class TransformerJobBuilderPanel extends AbstractJobBuilderPanel implemen
 	@Override
 	public void onOutputChanged(List<MutableInputColumn<?>> outputColumns) {
 		_outputColumnsTable.setColumns(outputColumns);
-	}
-
-	@Override
-	public void onRequirementChanged() {
-		_requirementButton.updateText();
-	}
-
-	@Override
-	public void onConfigurationChanged() {
-		getPropertyWidgetFactory().onConfigurationChanged();
 	}
 }

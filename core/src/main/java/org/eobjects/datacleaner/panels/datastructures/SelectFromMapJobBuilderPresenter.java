@@ -38,7 +38,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
  * Spectialized {@link TransformerJobBuilderPresenter} for the
  * {@link SelectFromMapTransformer}.
  */
-public class SelectFromMapJobBuilderPresenter extends TransformerJobBuilderPanel {
+final class SelectFromMapJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 	private static final long serialVersionUID = 1L;
 	

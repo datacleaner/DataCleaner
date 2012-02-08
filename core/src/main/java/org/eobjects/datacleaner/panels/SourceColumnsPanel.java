@@ -32,6 +32,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.panels.maxrows.MaxRowsFilterShortcutPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
@@ -44,7 +45,8 @@ import org.jdesktop.swingx.VerticalLayout;
  * 
  * @author Kasper Sørensen
  */
-public final class SourceColumnsPanel extends DCPanel implements SourceColumnChangeListener {
+public final class SourceColumnsPanel extends DCPanel implements
+		SourceColumnChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -55,19 +57,22 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 	private final WindowContext _windowContext;
 
 	@Inject
-	protected SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
+	protected SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder,
+			WindowContext windowContext) {
 		super();
 		_analysisJobBuilder = analysisJobBuilder;
 		_windowContext = windowContext;
 
 		_maxRowsFilterShortcutPanel = createMaxRowsFilterShortcutPanel();
 
-		_hintLabel = DCLabel.darkMultiLine("Please select the source columns of your job in the tree to the left.\n\n"
-				+ "Source columns define where to retrieve the input of your analysis.");
+		_hintLabel = DCLabel
+				.darkMultiLine("Please select the source columns of your job in the tree to the left.\n\n"
+						+ "Source columns define where to retrieve the input of your analysis.");
 		_hintLabel.setFont(WidgetUtils.FONT_HEADER2);
 		_hintLabel.setBorder(new EmptyBorder(20, 20, 20, 20));
 		_hintLabel.setIconTextGap(20);
-		_hintLabel.setIcon(ImageManager.getInstance().getImageIcon("images/model/column.png"));
+		_hintLabel.setIcon(ImageManager.getInstance().getImageIcon(
+				"images/model/column.png"));
 
 		_analysisJobBuilder.getSourceColumnListeners().add(this);
 		setBorder(WidgetUtils.BORDER_EMPTY);
@@ -77,7 +82,8 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		add(_hintLabel);
 		add(Box.createVerticalStrut(10));
 
-		List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns();
+		List<MetaModelInputColumn> sourceColumns = analysisJobBuilder
+				.getSourceColumns();
 		for (InputColumn<?> column : sourceColumns) {
 			onAdd(column);
 		}
@@ -85,15 +91,18 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 
 	private MaxRowsFilterShortcutPanel createMaxRowsFilterShortcutPanel() {
 		MaxRowsFilterShortcutPanel maxRowsFilterShortcutPanel = null;
-		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
+		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder
+				.getFilterJobBuilders();
 		for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
 			if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
-				maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder, filterJobBuilder);
+				maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(
+						_analysisJobBuilder, filterJobBuilder);
 				break;
 			}
 		}
 		if (maxRowsFilterShortcutPanel == null) {
-			maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder);
+			maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(
+					_analysisJobBuilder);
 		}
 		maxRowsFilterShortcutPanel.setEnabled(false);
 		return maxRowsFilterShortcutPanel;
@@ -142,7 +151,8 @@ public final class SourceColumnsPanel extends DCPanel implements SourceColumnCha
 		}
 
 		if (sourceColumnTable == null) {
-			sourceColumnTable = new ColumnListTable(table, _analysisJobBuilder, true, _windowContext);
+			sourceColumnTable = new ColumnListTable(table, _analysisJobBuilder,
+					true, _windowContext);
 			this.add(sourceColumnTable);
 			_sourceColumnTables.add(sourceColumnTable);
 			updateUI();

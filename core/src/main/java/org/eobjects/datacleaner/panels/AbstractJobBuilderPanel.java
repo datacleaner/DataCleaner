@@ -181,7 +181,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 		result.add(new ConfiguredPropertyTaskPane("Required properties",
 				IconUtils.MENU_OPTIONS, requiredProperties));
 		result.add(new ConfiguredPropertyTaskPane("Optional properties",
-				"images/actions/edit.png", optionalProperties));
+				"images/actions/edit.png", optionalProperties, false));
 
 		return result;
 	}
@@ -282,8 +282,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 		AbstractBeanJobBuilder<?, ?, ?> jobBuilder = getJobBuilder();
 		_visualizationPanel.removeAll();
 		if (jobBuilder.isConfigured()) {
-			JComponent visualization = VisualizeJobGraph.create(jobBuilder,
-					true, true);
+			JComponent visualization = VisualizeJobGraph.create(jobBuilder);
 			_visualizationPanel.add(visualization, BorderLayout.CENTER);
 		}
 		_visualizationPanel.updateUI();

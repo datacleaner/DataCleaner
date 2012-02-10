@@ -21,8 +21,11 @@ package org.eobjects.datacleaner.widgets.visualization;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -31,6 +34,7 @@ import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
 import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.FilterOutcome;
 import org.eobjects.analyzer.job.InputColumnSinkJob;
@@ -44,12 +48,16 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.MergedOutcomeJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.result.AnalyzerResult;
+import org.eobjects.analyzer.result.HasAnalyzerResult;
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.GraphUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
+import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.metamodel.schema.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +81,17 @@ public final class VisualizeJobGraph {
 	private static final Logger logger = LoggerFactory
 			.getLogger(VisualizeJobGraph.class);
 
-	private VisualizeJobGraph() {
-		// prevent instantiation
+	private final DirectedGraph<Object, VisualizeJobLink> _graph;
+	private final Set<Object> _highlighedVertexes;
+
+	public VisualizeJobGraph(DirectedGraph<Object, VisualizeJobLink> graph) {
+		_graph = graph;
+		_highlighedVertexes = new HashSet<Object>();
+	}
+
+	public VisualizeJobGraph highlightVertex(Object vertex) {
+		_highlighedVertexes.add(vertex);
+		return this;
 	}
 
 	/**
@@ -87,17 +104,53 @@ public final class VisualizeJobGraph {
 	 * @return
 	 */
 	public static JComponent create(
-			final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			final boolean displayColumns, final boolean displayOutcomes) {
+			final AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		final DirectedGraph<Object, VisualizeJobLink> graph = new DirectedSparseGraph<Object, VisualizeJobLink>();
 
 		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
 		sourceColumnFinder.addSources(beanJobBuilder.getAnalysisJobBuilder());
 
-		addGraphNodes(graph, sourceColumnFinder, beanJobBuilder,
-				displayColumns, displayOutcomes, 2);
+		addGraphNodes(graph, sourceColumnFinder, beanJobBuilder, false, true, 2);
 
-		return renderGraph(graph);
+		// add output outcomes
+		if (beanJobBuilder instanceof OutcomeSourceJob) {
+			Outcome[] outcomes = ((OutcomeSourceJob) beanJobBuilder)
+					.getOutcomes();
+			for (Outcome outcome : outcomes) {
+				addGraphNodes(graph, null, outcome, true, true, 0);
+				addEdge(graph, beanJobBuilder, outcome);
+			}
+		}
+
+		// add output columns
+		if (beanJobBuilder instanceof InputColumnSourceJob) {
+			InputColumn<?>[] outputColumns = ((InputColumnSourceJob) beanJobBuilder)
+					.getOutput();
+			for (InputColumn<?> outputColumn : outputColumns) {
+				addGraphNodes(graph, null, outputColumn, true, true, 0);
+				addEdge(graph, beanJobBuilder, outputColumn);
+			}
+		}
+
+		BeanDescriptor<?> descriptor = beanJobBuilder.getDescriptor();
+		Class<?> componentClass = descriptor.getComponentClass();
+		if (ReflectionUtils.is(componentClass, HasAnalyzerResult.class)) {
+			// this approach is maybe a bit dodgy - not so error safe
+			try {
+				Class<?> typeParameter = ReflectionUtils.getTypeParameter(
+						componentClass, HasAnalyzerResult.class, 0);
+				addGraphNodes(graph, null, typeParameter, true, true, 0);
+				addEdge(graph, beanJobBuilder, typeParameter);
+			} catch (Exception e) {
+				logger.warn(
+						"Could not retrieve and present analyzer result type",
+						e);
+			}
+		}
+
+		final VisualizeJobGraph visualizeJobGraph = new VisualizeJobGraph(graph);
+		visualizeJobGraph.highlightVertex(beanJobBuilder);
+		return visualizeJobGraph.renderGraph();
 	}
 
 	/**
@@ -138,24 +191,24 @@ public final class VisualizeJobGraph {
 					displayOutcomes, -1);
 		}
 
-		return renderGraph(graph);
+		final VisualizeJobGraph visualizeJobGraph = new VisualizeJobGraph(graph);
+		return visualizeJobGraph.renderGraph();
 	}
 
-	private static JComponent renderGraph(
-			final DirectedGraph<Object, VisualizeJobLink> graph) {
-		final int vertexCount = graph.getVertexCount();
+	public JComponent renderGraph() {
+		final int vertexCount = _graph.getVertexCount();
 		if (vertexCount == 0) {
-			graph.addVertex("No components in job");
+			_graph.addVertex("No components in job");
 		}
 		logger.debug("Rendering graph with {} vertices", vertexCount);
 
 		final VisualizeJobLayoutTransformer layoutTransformer = new VisualizeJobLayoutTransformer(
-				graph);
+				_graph);
 		final Dimension preferredSize = layoutTransformer.getPreferredSize();
 		final StaticLayout<Object, VisualizeJobLink> layout = new StaticLayout<Object, VisualizeJobLink>(
-				graph, layoutTransformer, preferredSize);
+				_graph, layoutTransformer, preferredSize);
 
-		Collection<Object> vertices = graph.getVertices();
+		Collection<Object> vertices = _graph.getVertices();
 		for (Object vertex : vertices) {
 			// manually initialize all vertices
 			layout.transform(vertex);
@@ -172,6 +225,22 @@ public final class VisualizeJobGraph {
 
 		final RenderContext<Object, VisualizeJobLink> renderContext = visualizationViewer
 				.getRenderContext();
+
+		// render fonts (some may be highlighted)
+		renderContext.setVertexFontTransformer(new Transformer<Object, Font>() {
+
+			private final Font normalFont = WidgetUtils.FONT_SMALL;
+			private final Font highlighedFont = normalFont
+					.deriveFont(Font.BOLD);
+
+			@Override
+			public Font transform(Object vertex) {
+				if (_highlighedVertexes.contains(vertex)) {
+					return highlighedFont;
+				}
+				return normalFont;
+			}
+		});
 
 		// render labels
 		renderContext
@@ -194,6 +263,13 @@ public final class VisualizeJobGraph {
 						}
 						if (obj instanceof Table) {
 							return ((Table) obj).getName();
+						}
+						if (obj instanceof Class) {
+							Class<?> cls = (Class<?>) obj;
+							if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
+								return "Analyzer result";
+							}
+							return cls.getSimpleName();
 						}
 						return obj.toString();
 					}
@@ -231,6 +307,14 @@ public final class VisualizeJobGraph {
 				if (obj instanceof Table) {
 					return imageManager.getImageIcon("images/model/table.png",
 							IconUtils.ICON_SIZE_MEDIUM);
+				}
+				if (obj instanceof Class) {
+					Class<?> cls = (Class<?>) obj;
+					if (ReflectionUtils.is(cls, AnalyzerResult.class)) {
+						return imageManager.getImageIcon(
+								"images/model/result.png",
+								IconUtils.ICON_SIZE_MEDIUM);
+					}
 				}
 				return imageManager.getImageIcon(IconUtils.STATUS_ERROR);
 			}

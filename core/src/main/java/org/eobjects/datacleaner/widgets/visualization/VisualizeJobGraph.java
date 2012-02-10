@@ -33,6 +33,7 @@ import javax.swing.JComponent;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 import org.apache.commons.collections15.functors.TruePredicate;
+import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -133,18 +134,27 @@ public final class VisualizeJobGraph {
 		}
 
 		BeanDescriptor<?> descriptor = beanJobBuilder.getDescriptor();
-		Class<?> componentClass = descriptor.getComponentClass();
-		if (ReflectionUtils.is(componentClass, HasAnalyzerResult.class)) {
-			// this approach is maybe a bit dodgy - not so error safe
-			try {
-				Class<?> typeParameter = ReflectionUtils.getTypeParameter(
-						componentClass, HasAnalyzerResult.class, 0);
-				addGraphNodes(graph, null, typeParameter, true, true, 0);
-				addEdge(graph, beanJobBuilder, typeParameter);
-			} catch (Exception e) {
-				logger.warn(
-						"Could not retrieve and present analyzer result type",
-						e);
+		if (descriptor.getComponentCategories().contains(
+				new WriteDataCategory())) {
+			logger.debug(
+					"Not rendering analyzer result for {} because it is a data writer",
+					descriptor);
+		} else {
+			final Class<?> componentClass = descriptor.getComponentClass();
+			if (ReflectionUtils.is(componentClass, HasAnalyzerResult.class)) {
+
+				// this approach is maybe a bit dodgy - not so error safe
+				try {
+					final Class<?> typeParameter = ReflectionUtils
+							.getTypeParameter(componentClass,
+									HasAnalyzerResult.class, 0);
+					addGraphNodes(graph, null, typeParameter, true, true, 0);
+					addEdge(graph, beanJobBuilder, typeParameter);
+				} catch (Exception e) {
+					logger.warn(
+							"Could not retrieve and present analyzer result type",
+							e);
+				}
 			}
 		}
 

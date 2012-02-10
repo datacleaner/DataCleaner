@@ -152,6 +152,9 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 	}
 
 	private void buildVisualizationTaskPane() {
+		if (!showContextVisualization()) {
+			return;
+		}
 		ImageIcon icon = imageManager.getImageIcon(
 				"images/actions/visualize.png", IconUtils.ICON_SIZE_SMALL);
 		addTaskPane(icon, "Context visualization", _visualizationPanel);
@@ -279,16 +282,23 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 
 	public void onConfigurationChanged() {
 		getPropertyWidgetFactory().onConfigurationChanged();
-		AbstractBeanJobBuilder<?, ?, ?> jobBuilder = getJobBuilder();
-		_visualizationPanel.removeAll();
-		if (jobBuilder.isConfigured()) {
-			JComponent visualization = VisualizeJobGraph.create(jobBuilder);
-			_visualizationPanel.add(visualization, BorderLayout.CENTER);
+
+		if (showContextVisualization()) {
+			final AbstractBeanJobBuilder<?, ?, ?> jobBuilder = getJobBuilder();
+			_visualizationPanel.removeAll();
+			if (jobBuilder.isConfigured()) {
+				JComponent visualization = VisualizeJobGraph.create(jobBuilder);
+				_visualizationPanel.add(visualization, BorderLayout.CENTER);
+			}
+			_visualizationPanel.updateUI();
 		}
-		_visualizationPanel.updateUI();
 	}
 
 	public void onRequirementChanged() {
 		_requirementButton.updateText();
+	}
+
+	protected boolean showContextVisualization() {
+		return true;
 	}
 }

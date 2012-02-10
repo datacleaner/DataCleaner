@@ -72,16 +72,21 @@ import org.jdesktop.swingx.VerticalLayout;
  * 
  * @author Kasper Sørensen
  */
-public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
+public class MultipleInputColumnsPropertyWidget extends
+		AbstractPropertyWidget<InputColumn<?>[]> implements
 		SourceColumnChangeListener, TransformerChangeListener {
 
 	// border for the button panel and search box to make them "indented"
 	// similar to the check boxes.
-	private static final EmptyBorder _indentBorder = new MatteBorder(1, 17, 0, 1, WidgetUtils.BG_COLOR_BRIGHT);
+	private static final EmptyBorder _indentBorder = new MatteBorder(1, 17, 0,
+			1, WidgetUtils.BG_COLOR_BRIGHT);
 
 	private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
 		@Override
 		public void onItemSelected(InputColumn<?> item, boolean selected) {
+			if (_batchUpdate) {
+				return;
+			}
 			fireValueChanged();
 		}
 	};
@@ -108,43 +113,51 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	private final DCCheckBox<InputColumn<?>> _notAvailableCheckBox;
 
 	private volatile boolean _firstUpdate;
+	private volatile boolean _batchUpdate;
 
 	@Inject
-	public MultipleInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	public MultipleInputColumnsPropertyWidget(
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		_checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
 		_checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
 		_firstUpdate = true;
+		_batchUpdate = false;
 		_dataType = propertyDescriptor.getTypeArgument(0);
 		getAnalysisJobBuilder().getSourceColumnListeners().add(this);
 		getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
 		setLayout(new VerticalLayout(2));
 
-		_searchDatastoreTextField = WidgetFactory.createTextField("Search/filter columns");
-		_searchDatastoreTextField.setBorder(new CompoundBorder(_indentBorder, WidgetUtils.BORDER_THIN));
-		_searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent event) {
-				String text = _searchDatastoreTextField.getText();
-				if (StringUtils.isNullOrEmpty(text)) {
-					// when there is no search query, set all datastores visible
-					for (JCheckBox cb : _checkBoxes.values()) {
-						cb.setVisible(true);
+		_searchDatastoreTextField = WidgetFactory
+				.createTextField("Search/filter columns");
+		_searchDatastoreTextField.setBorder(new CompoundBorder(_indentBorder,
+				WidgetUtils.BORDER_THIN));
+		_searchDatastoreTextField.getDocument().addDocumentListener(
+				new DCDocumentListener() {
+					@Override
+					protected void onChange(DocumentEvent event) {
+						String text = _searchDatastoreTextField.getText();
+						if (StringUtils.isNullOrEmpty(text)) {
+							// when there is no search query, set all datastores
+							// visible
+							for (JCheckBox cb : _checkBoxes.values()) {
+								cb.setVisible(true);
+							}
+						} else {
+							// do a case insensitive search
+							text = text.trim().toLowerCase();
+							for (JCheckBox cb : _checkBoxes.values()) {
+								String name = cb.getText().toLowerCase();
+								cb.setVisible(name.indexOf(text) != -1);
+							}
+						}
 					}
-				} else {
-					// do a case insensitive search
-					text = text.trim().toLowerCase();
-					for (JCheckBox cb : _checkBoxes.values()) {
-						String name = cb.getText().toLowerCase();
-						cb.setVisible(name.indexOf(text) != -1);
-					}
-				}
-			}
-		});
+				});
 
-		_notAvailableCheckBox = new DCCheckBox<InputColumn<?>>("- no columns available -", false);
+		_notAvailableCheckBox = new DCCheckBox<InputColumn<?>>(
+				"- no columns available -", false);
 		_notAvailableCheckBox.setEnabled(false);
 
 		_buttonPanel = new DCPanel();
@@ -165,14 +178,19 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 			if (_dataType == String.class || _dataType == Object.class) {
 				final JButton expressionColumnButton = WidgetFactory
 						.createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
-				expressionColumnButton.setToolTipText("Create expression/value based column");
-				expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener.forMultipleColumns(this));
+				expressionColumnButton
+						.setToolTipText("Create expression/value based column");
+				expressionColumnButton
+						.addActionListener(AddExpressionBasedColumnActionListener
+								.forMultipleColumns(this));
 				_buttonPanel.add(expressionColumnButton);
 			}
 
-			final JButton reorderColumnsButton = WidgetFactory.createSmallButton(IconUtils.BUTTON_REORDER_COLUMN_IMAGEPATH);
+			final JButton reorderColumnsButton = WidgetFactory
+					.createSmallButton(IconUtils.BUTTON_REORDER_COLUMN_IMAGEPATH);
 			reorderColumnsButton.setToolTipText("Reorder columns");
-			reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(this));
+			reorderColumnsButton
+					.addActionListener(new ReorderColumnsActionListener(this));
 			_buttonPanel.add(reorderColumnsButton);
 		}
 
@@ -195,7 +213,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private void updateComponents(final InputColumn<?>[] value) {
 		// fetch available input columns
-		final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(_dataType);
+		final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder()
+				.getAvailableInputColumns(_dataType);
 
 		if (getBeanJobBuilder() instanceof TransformerJobBuilder) {
 			// remove all the columns that are generated by the transformer
@@ -258,14 +277,17 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 		return checkBox;
 	}
 
-	private boolean isEnabled(InputColumn<?> inputColumn, InputColumn<?>[] currentValue) {
+	private boolean isEnabled(InputColumn<?> inputColumn,
+			InputColumn<?>[] currentValue) {
 		if (_firstUpdate) {
 			if (currentValue == null || currentValue.length == 0) {
 				// set all to true if this is the only required inputcolumn
 				// property
-				ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
+				ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor()
+						.getComponentDescriptor();
 				if (componentDescriptor instanceof BeanDescriptor<?>) {
-					if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput(false).size() == 1) {
+					if (((BeanDescriptor<?>) componentDescriptor)
+							.getConfiguredPropertiesForInput(false).size() == 1) {
 						return isAllInputColumnsSelectedIfNoValueExist();
 					}
 				}
@@ -306,7 +328,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	@Override
 	public void onAdd(InputColumn<?> sourceColumn) {
-		if (_dataType == Object.class || ReflectionUtils.is(sourceColumn.getDataType(), _dataType)) {
+		if (_dataType == Object.class
+				|| ReflectionUtils.is(sourceColumn.getDataType(), _dataType)) {
 			addAvailableInputColumn(sourceColumn);
 			updateVisibility();
 		}
@@ -323,11 +346,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	@Override
-	public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder, List<MutableInputColumn<?>> outputColumns) {
+	public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+			List<MutableInputColumn<?>> outputColumns) {
 		// we need to save the current value before we update the components
 		// here. Otherwise any previous selections will be lost.
 		final InputColumn<?>[] value = getValue();
-		getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
+		getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(),
+				value);
 
 		updateComponents(value);
 	}
@@ -343,11 +368,13 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	@Override
-	public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+	public void onConfigurationChanged(
+			TransformerJobBuilder<?> transformerJobBuilder) {
 	}
 
 	@Override
-	public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+	public void onRequirementChanged(
+			TransformerJobBuilder<?> transformerJobBuilder) {
 	}
 
 	@Override
@@ -363,7 +390,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 		// add expression based input columns if needed.
 		for (InputColumn<?> inputColumn : values) {
-			if (inputColumn instanceof ExpressionBasedInputColumn && !_checkBoxes.containsKey(inputColumn)) {
+			if (inputColumn instanceof ExpressionBasedInputColumn
+					&& !_checkBoxes.containsKey(inputColumn)) {
 				addAvailableInputColumn(inputColumn, true);
 			}
 		}
@@ -381,19 +409,22 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 	}
 
 	protected void selectAll() {
+		_batchUpdate = true;
 		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
 			if (cb.isEnabled()) {
 				cb.setSelected(true);
 			}
 		}
+		_batchUpdate = false;
 		fireValueChanged();
 	}
 
 	protected void selectNone() {
-		fireValueChanged();
+		_batchUpdate = true;
 		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
 			cb.setSelected(false);
 		}
+		_batchUpdate = false;
 		fireValueChanged();
 	}
 
@@ -403,7 +434,8 @@ public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<I
 
 	private void addAvailableInputColumn(InputColumn<?> col, boolean selected) {
 		final String name = col.getName();
-		final DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(name, selected);
+		final DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(
+				name, selected);
 		cb.addListener(checkBoxListener);
 		cb.setValue(col);
 		_checkBoxes.put(col, cb);

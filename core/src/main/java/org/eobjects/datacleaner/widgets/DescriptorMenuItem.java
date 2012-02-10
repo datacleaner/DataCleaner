@@ -19,14 +19,13 @@
  */
 package org.eobjects.datacleaner.widgets;
 
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
 import javax.swing.JToolTip;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
@@ -56,7 +55,7 @@ public class DescriptorMenuItem extends JMenuItem {
 		_descriptor = descriptor;
 		ToolTipManager.sharedInstance().registerComponent(this);
 	}
-	
+
 	@Override
 	public Icon getIcon() {
 		return IconUtils.getDescriptorIcon(_descriptor);
@@ -69,11 +68,17 @@ public class DescriptorMenuItem extends JMenuItem {
 
 	@Override
 	public JToolTip createToolTip() {
+		JToolTip toolTip = new DCToolTip(this, createToolTipPanel());
+		return toolTip;
+	}
+
+	protected JComponent createToolTipPanel() {
 		DCPanel panel = new DCPanel();
 		panel.setOpaque(true);
 		panel.setBackground(WidgetUtils.BG_COLOR_DARK);
 
-		JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor, IconUtils.ICON_SIZE_LARGE));
+		JLabel iconLabel = new JLabel(IconUtils.getDescriptorIcon(_descriptor,
+				IconUtils.ICON_SIZE_LARGE));
 		iconLabel.setBorder(new EmptyBorder(0, 0, 0, 10));
 		iconLabel.setOpaque(false);
 
@@ -92,7 +97,8 @@ public class DescriptorMenuItem extends JMenuItem {
 		} else {
 			String[] lines = description.split("\n");
 
-			WidgetUtils.addToGridBag(iconLabel, panel, 0, 0, 1, lines.length + 1, GridBagConstraints.WEST);
+			WidgetUtils.addToGridBag(iconLabel, panel, 0, 0, 1,
+					lines.length + 1, GridBagConstraints.WEST);
 			WidgetUtils.addToGridBag(nameLabel, panel, 1, 0);
 
 			int width = 0;
@@ -100,34 +106,26 @@ public class DescriptorMenuItem extends JMenuItem {
 
 			for (int i = 0; i < lines.length; i++) {
 				String line = lines[i];
-				JTextArea textArea = new JTextArea();
-				textArea.setText(line.trim());
-				textArea.setEditable(false);
-				textArea.setLineWrap(true);
-				textArea.setWrapStyleWord(true);
-				textArea.setOpaque(false);
-				textArea.setBorder(null);
-				textArea.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				textArea.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-				textArea.setColumns(30);
 
-				Dimension ps = textArea.getPreferredSize();
+				DCLabel label = DCLabel.brightMultiLine(line);
+				label.setMaximumWidth(350);
+
+				Dimension ps = label.getPreferredSize();
 				height += ps.height + 8;
 				width = Math.max(ps.width, width);
 
-				WidgetUtils.addToGridBag(textArea, panel, 1, i + 1);
+				WidgetUtils.addToGridBag(label, panel, 1, i + 1);
 			}
 
-			// TODO: Make a more accurate width/height calculation
-			width += iconLabel.getPreferredSize().width + 50;
-			height += nameLabel.getPreferredSize().height + 50;
+			width += iconLabel.getPreferredSize().width + 30;
+			height += nameLabel.getPreferredSize().height + 30;
+
 			panel.setPreferredSize(new Dimension(width, height));
 		}
 
-		Border border = new CompoundBorder(WidgetUtils.BORDER_THIN, WidgetUtils.BORDER_EMPTY);
+		Border border = new CompoundBorder(WidgetUtils.BORDER_THIN,
+				WidgetUtils.BORDER_EMPTY);
 		panel.setBorder(border);
-
-		JToolTip toolTip = new DCToolTip(this, panel);
-		return toolTip;
+		return panel;
 	}
 }

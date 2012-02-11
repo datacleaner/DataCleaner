@@ -21,10 +21,13 @@ package org.eobjects.datacleaner.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,9 +36,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
@@ -43,6 +50,7 @@ import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
+import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -51,10 +59,15 @@ import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.AnalysisRunnerSwingWorker;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
+import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.schema.Table;
@@ -73,6 +86,9 @@ public final class ResultWindow extends AbstractWindow {
 	private final RendererFactory _rendererFactory;
 	private final String _jobFilename;
 	private final AnalysisRunnerSwingWorker _worker;
+	private final UserPreferences _userPreferences;
+
+	private AnalysisResult _result;
 
 	/**
 	 * 
@@ -86,31 +102,41 @@ public final class ResultWindow extends AbstractWindow {
 	 * @param rendererInitializerProvider
 	 */
 	@Inject
-	protected ResultWindow(AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job,
-			@Nullable AnalysisResult result, @Nullable @JobFilename String jobFilename, WindowContext windowContext,
+	protected ResultWindow(AnalyzerBeansConfiguration configuration,
+			@Nullable AnalysisJob job, @Nullable AnalysisResult result,
+			@Nullable @JobFilename String jobFilename,
+			WindowContext windowContext, UserPreferences userPreferences,
 			Provider<DCRendererInitializer> rendererInitializerProvider) {
 		super(windowContext);
 		_configuration = configuration;
 		_job = job;
 		_jobFilename = jobFilename;
-		_rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), rendererInitializerProvider.get());
+		_userPreferences = userPreferences;
+		_rendererFactory = new RendererFactory(
+				configuration.getDescriptorProvider(),
+				rendererInitializerProvider.get());
 		_progressInformationPanel = new ProgressInformationPanel();
-		_tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
+		_tabbedPane.addTab("Progress information", imageManager
+				.getImageIcon("images/model/progress_information.png"),
 				_progressInformationPanel);
 		_tabbedPane.setUnclosableTab(0);
 
 		if (result == null) {
 			// run the job in a swing worker
-			_worker = new AnalysisRunnerSwingWorker(_configuration, _job, this, _progressInformationPanel);
+			_result = null;
+			_worker = new AnalysisRunnerSwingWorker(_configuration, _job, this,
+					_progressInformationPanel);
 
-			_progressInformationPanel.addStopActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					_worker.cancelIfRunning();
-				}
-			});
+			_progressInformationPanel
+					.addStopActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							_worker.cancelIfRunning();
+						}
+					});
 		} else {
 			// don't add the progress information, simply render the job asap
+			_result = result;
 			_worker = null;
 
 			Map<ComponentJob, AnalyzerResult> map = result.getResultMap();
@@ -124,14 +150,25 @@ public final class ResultWindow extends AbstractWindow {
 		}
 	}
 
+	/**
+	 * Sets the result, when it is ready for eg. saving
+	 * 
+	 * @param result
+	 */
+	public void setResult(AnalysisResult result) {
+		_result = result;
+	}
+
 	public void startAnalysis() {
 		_worker.execute();
 	}
 
 	private void addTableResultPanel(final Table table) {
 		final String name = table.getName();
-		final ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
-		final ImageIcon icon = imageManager.getImageIcon("images/model/table.png");
+		final ResultListPanel panel = new ResultListPanel(_rendererFactory,
+				_progressInformationPanel);
+		final ImageIcon icon = imageManager
+				.getImageIcon("images/model/table.png");
 		_resultPanels.put(table, panel);
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -146,7 +183,8 @@ public final class ResultWindow extends AbstractWindow {
 	}
 
 	private void addDescriptorResultPanel(ComponentDescriptor<?> descriptor) {
-		final ResultListPanel panel = new ResultListPanel(_rendererFactory, _progressInformationPanel);
+		final ResultListPanel panel = new ResultListPanel(_rendererFactory,
+				_progressInformationPanel);
 		final String name = descriptor.getDisplayName();
 		final Icon icon = IconUtils.getDescriptorIcon(descriptor);
 		_resultPanels.put(descriptor, panel);
@@ -162,7 +200,8 @@ public final class ResultWindow extends AbstractWindow {
 		});
 	}
 
-	private ResultListPanel getDescriptorResultPanel(ComponentDescriptor<?> descriptor) {
+	private ResultListPanel getDescriptorResultPanel(
+			ComponentDescriptor<?> descriptor) {
 		synchronized (_resultPanels) {
 			if (!_resultPanels.containsKey(descriptor)) {
 				addDescriptorResultPanel(descriptor);
@@ -186,7 +225,8 @@ public final class ResultWindow extends AbstractWindow {
 		resultListPanel.addResult(componentJob, result);
 	}
 
-	public void addResult(Table table, ComponentJob componentJob, AnalyzerResult result) {
+	public void addResult(Table table, ComponentJob componentJob,
+			AnalyzerResult result) {
 		ResultListPanel resultListPanel = getTableResultPanel(table);
 		resultListPanel.addResult(componentJob, result);
 	}
@@ -247,7 +287,8 @@ public final class ResultWindow extends AbstractWindow {
 
 	@Override
 	protected JComponent getWindowContent() {
-		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+		DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK,
+				WidgetUtils.BG_COLOR_DARK);
 		panel.setLayout(new BorderLayout());
 
 		String bannerTitle = "Analysis results";
@@ -260,8 +301,77 @@ public final class ResultWindow extends AbstractWindow {
 			}
 		}
 
-		panel.add(new DCBannerPanel(imageManager.getImage("images/window/banner-results.png"), bannerTitle),
-				BorderLayout.NORTH);
+		final DCBannerPanel banner = new DCBannerPanel(
+				imageManager.getImage("images/window/banner-results.png"),
+				bannerTitle);
+		banner.setLayout(new FlowLayout(Alignment.RIGHT
+				.getFlowLayoutAlignment()));
+
+		final JButton saveButton = WidgetFactory.createButton("Save result",
+				"images/actions/save.png");
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				if (_result == null) {
+					WidgetUtils
+							.showErrorMessage(
+									"Result not ready",
+									"Please wait for the job to finish before saving the result",
+									null);
+					return;
+				}
+
+				DCFileChooser fileChooser = new DCFileChooser(_userPreferences
+						.getAnalysisJobDirectory());
+				fileChooser.setFileFilter(FileFilters.ANALYSIS_RESULT_SER);
+
+				int result = fileChooser.showSaveDialog(ResultWindow.this);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+
+					if (!file.getName().endsWith(
+							FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
+						file = new File(file.getParentFile(), file.getName()
+								+ FileFilters.ANALYSIS_RESULT_SER
+										.getExtension());
+					}
+
+					if (file.exists()) {
+						int overwrite = JOptionPane.showConfirmDialog(
+								ResultWindow.this,
+								"Are you sure you want to overwrite the file '"
+										+ file.getName() + "'?",
+								"Overwrite existing file?",
+								JOptionPane.YES_NO_OPTION);
+						if (overwrite != JOptionPane.YES_OPTION) {
+							return;
+						}
+					}
+
+					_userPreferences.setAnalysisJobDirectory(file
+							.getParentFile());
+
+					final SimpleAnalysisResult analysisResult;
+					if (_result instanceof SimpleAnalysisResult) {
+						analysisResult = (SimpleAnalysisResult) _result;
+					} else {
+						analysisResult = new SimpleAnalysisResult(_result
+								.getResultMap());
+					}
+
+					try {
+						SerializationUtils.serialize(analysisResult,
+								new FileOutputStream(file));
+					} catch (Exception e) {
+						WidgetUtils.showErrorMessage(
+								"Error writing result to file", e);
+					}
+				}
+			}
+		});
+		banner.add(saveButton);
+
+		panel.add(banner, BorderLayout.NORTH);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

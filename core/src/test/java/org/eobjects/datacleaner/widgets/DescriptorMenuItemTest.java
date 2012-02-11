@@ -33,6 +33,7 @@ public class DescriptorMenuItemTest extends TestCase {
 				Descriptors.ofTransformer(EmailStandardizerTransformer.class));
 
 		JComponent toolTipPanel = menuItem.createToolTipPanel();
-		assertEquals("", toolTipPanel.getPreferredSize().toString());
+		assertTrue(1000 > toolTipPanel.getPreferredSize().width);
+		assertTrue(1000 > toolTipPanel.getPreferredSize().height);
 	}
 }

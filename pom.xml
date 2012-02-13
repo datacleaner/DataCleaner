@@ -182,10 +182,10 @@
 					<links>
 						<link>http://analyzerbeans.eobjects.org/apidocs/</link>
 						<link>http://metamodel.eobjects.org/apidocs/</link>
+						<link>http://sassyreader.eobjects.org/apidocs/</link>
 					</links>
 				</configuration>
 			</plugin>
-
 		</plugins>
 
 		<extensions>

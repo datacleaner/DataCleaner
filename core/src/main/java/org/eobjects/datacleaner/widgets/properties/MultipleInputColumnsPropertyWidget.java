@@ -495,4 +495,8 @@ public class MultipleInputColumnsPropertyWidget extends
 	public Map<DCCheckBox<InputColumn<?>>, JComponent> getCheckBoxDecorations() {
 		return Collections.unmodifiableMap(_checkBoxDecorations);
 	}
+	
+	public DCPanel getButtonPanel() {
+		return _buttonPanel;
+	}
 }

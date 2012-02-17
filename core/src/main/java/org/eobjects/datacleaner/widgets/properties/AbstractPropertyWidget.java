@@ -29,6 +29,8 @@ import javax.swing.border.Border;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of the PropertyWidget interface. An implementing
@@ -44,13 +46,23 @@ import org.eobjects.datacleaner.panels.DCPanel;
  * 
  * @param <E>
  */
-public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E> {
+public abstract class AbstractPropertyWidget<E> extends
+		MinimalPropertyWidget<E> {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(AbstractPropertyWidget.class);
 
 	private final DCPanel _panel;
 
-	public AbstractPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	// counter which is used to indicate whether a "UI batchupdate" is running
+	// or not". Subclasses can fire batch
+	private volatile int _batchUpdateCounter;
+
+	public AbstractPropertyWidget(
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		super(beanJobBuilder, propertyDescriptor);
+		_batchUpdateCounter = 0;
 		_panel = new DCPanel() {
 			private static final long serialVersionUID = 1L;
 
@@ -65,6 +77,41 @@ public abstract class AbstractPropertyWidget<E> extends MinimalPropertyWidget<E>
 			};
 		};
 		setLayout(new GridLayout(1, 1));
+	}
+
+	/**
+	 * Executes a "widget batch update". Listeners and other effects of updating
+	 * individual parts of a widget may be turned off during batch updates.
+	 * 
+	 * @param action
+	 *            the action to execute
+	 */
+	public final void batchUpdateWidget(Runnable action) {
+		_batchUpdateCounter++;
+		try {
+			action.run();
+		} catch (Exception e) {
+			logger.error(
+					"Exception occurred in widget batch update, fireValueChanged() will not be invoked",
+					e);
+			if (e instanceof RuntimeException) {
+				throw (RuntimeException) e;
+			}
+			throw new IllegalStateException(e);
+		} finally {
+			_batchUpdateCounter--;
+		}
+		if (_batchUpdateCounter == 0) {
+			onBatchFinished();
+		}
+	}
+
+	protected void onBatchFinished() {
+		fireValueChanged();
+	}
+
+	public final boolean isBatchUpdating() {
+		return _batchUpdateCounter > 0;
 	}
 
 	protected void setLayout(LayoutManager layout) {

@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.widgets.properties;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -84,7 +85,7 @@ public class MultipleInputColumnsPropertyWidget extends
 	private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
 		@Override
 		public void onItemSelected(InputColumn<?> item, boolean selected) {
-			if (_batchUpdate) {
+			if (isBatchUpdating()) {
 				return;
 			}
 			fireValueChanged();
@@ -113,7 +114,6 @@ public class MultipleInputColumnsPropertyWidget extends
 	private final DCCheckBox<InputColumn<?>> _notAvailableCheckBox;
 
 	private volatile boolean _firstUpdate;
-	private volatile boolean _batchUpdate;
 
 	@Inject
 	public MultipleInputColumnsPropertyWidget(
@@ -124,7 +124,6 @@ public class MultipleInputColumnsPropertyWidget extends
 		_checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
 		_checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
 		_firstUpdate = true;
-		_batchUpdate = false;
 		_dataType = propertyDescriptor.getTypeArgument(0);
 		getAnalysisJobBuilder().getSourceColumnListeners().add(this);
 		getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
@@ -315,7 +314,9 @@ public class MultipleInputColumnsPropertyWidget extends
 	@Override
 	public InputColumn<?>[] getValue() {
 		List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+		Collection<DCCheckBox<InputColumn<?>>> checkBoxes = _checkBoxes
+				.values();
+		for (DCCheckBox<InputColumn<?>> cb : checkBoxes) {
 			if (cb.isSelected()) {
 				InputColumn<?> value = cb.getValue();
 				if (value != null) {
@@ -409,23 +410,27 @@ public class MultipleInputColumnsPropertyWidget extends
 	}
 
 	protected void selectAll() {
-		_batchUpdate = true;
-		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
-			if (cb.isEnabled()) {
-				cb.setSelected(true);
+		batchUpdateWidget(new Runnable() {
+			@Override
+			public void run() {
+				for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+					if (cb.isEnabled()) {
+						cb.setSelected(true);
+					}
+				}
 			}
-		}
-		_batchUpdate = false;
-		fireValueChanged();
+		});
 	}
 
 	protected void selectNone() {
-		_batchUpdate = true;
-		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
-			cb.setSelected(false);
-		}
-		_batchUpdate = false;
-		fireValueChanged();
+		batchUpdateWidget(new Runnable() {
+			@Override
+			public void run() {
+				for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+					cb.setSelected(false);
+				}
+			}
+		});
 	}
 
 	private void addAvailableInputColumn(InputColumn<?> col) {

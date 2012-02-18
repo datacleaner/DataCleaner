@@ -64,7 +64,9 @@ public final class PropertyWidgetFactory {
 	private final InjectorBuilder _injectorBuilder;
 
 	@Inject
-	protected PropertyWidgetFactory(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, InjectorBuilder injectorBuilder) {
+	protected PropertyWidgetFactory(
+			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			InjectorBuilder injectorBuilder) {
 		_beanJobBuilder = beanJobBuilder;
 		_injectorBuilder = injectorBuilder;
 	}
@@ -73,7 +75,8 @@ public final class PropertyWidgetFactory {
 		return _widgets.values();
 	}
 
-	public PropertyWidget<?> getWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+	public PropertyWidget<?> getWidget(
+			ConfiguredPropertyDescriptor propertyDescriptor) {
 		return _widgets.get(propertyDescriptor);
 	}
 
@@ -81,17 +84,21 @@ public final class PropertyWidgetFactory {
 		return _beanJobBuilder;
 	}
 
-	public Injector getInjectorForPropertyWidgets(ConfiguredPropertyDescriptor propertyDescriptor) {
+	public Injector getInjectorForPropertyWidgets(
+			ConfiguredPropertyDescriptor propertyDescriptor) {
 		return _injectorBuilder.inherit(TYPELITERAL_BEAN_JOB_BUILDER)
 				.with(ConfiguredPropertyDescriptor.class, propertyDescriptor)
-				.with(PropertyDescriptor.class, propertyDescriptor).createInjector();
+				.with(PropertyDescriptor.class, propertyDescriptor)
+				.createInjector();
 	}
 
 	public PropertyWidget<?> create(String propertyName) {
 		BeanDescriptor<?> descriptor = _beanJobBuilder.getDescriptor();
-		ConfiguredPropertyDescriptor propertyDescriptor = descriptor.getConfiguredProperty(propertyName);
+		ConfiguredPropertyDescriptor propertyDescriptor = descriptor
+				.getConfiguredProperty(propertyName);
 		if (propertyDescriptor == null) {
-			throw new IllegalArgumentException("No such property: " + propertyName);
+			throw new IllegalArgumentException("No such property: "
+					+ propertyName);
 		}
 		return create(propertyDescriptor);
 	}
@@ -103,7 +110,8 @@ public final class PropertyWidgetFactory {
 	 * @param propertyDescriptor
 	 * @return
 	 */
-	public PropertyWidget<?> create(ConfiguredPropertyDescriptor propertyDescriptor) {
+	public PropertyWidget<?> create(
+			ConfiguredPropertyDescriptor propertyDescriptor) {
 		final Class<?> type = propertyDescriptor.getBaseType();
 
 		final Class<? extends PropertyWidget<?>> widgetClass;
@@ -131,9 +139,14 @@ public final class PropertyWidgetFactory {
 		} else {
 
 			if (propertyDescriptor.isInputColumn()) {
-				if (propertyDescriptor.isRequired()) {
+				if (_beanJobBuilder.getDescriptor()
+						.getConfiguredPropertiesForInput().size() == 1) {
+					// if there is only a single input column property, it will
+					// be displayed using radiobuttons.
 					widgetClass = SingleInputColumnRadioButtonPropertyWidget.class;
 				} else {
+					// if there are multiple input column properties, they will
+					// be displayed using combo boxes.
 					widgetClass = SingleInputColumnComboBoxPropertyWidget.class;
 				}
 			} else if (ReflectionUtils.isCharacter(type)) {
@@ -184,14 +197,16 @@ public final class PropertyWidgetFactory {
 	 * @param propertyDescriptor
 	 * @param widget
 	 */
-	public void registerWidget(ConfiguredPropertyDescriptor propertyDescriptor, PropertyWidget<?> widget) {
+	public void registerWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+			PropertyWidget<?> widget) {
 		if (widget == null) {
 			_widgets.remove(propertyDescriptor);
 		} else {
 			_widgets.put(propertyDescriptor, widget);
 			@SuppressWarnings("unchecked")
 			PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
-			Object value = _beanJobBuilder.getConfiguredProperty(objectWidget.getPropertyDescriptor());
+			Object value = _beanJobBuilder.getConfiguredProperty(objectWidget
+					.getPropertyDescriptor());
 			objectWidget.initialize(value);
 		}
 	}
@@ -206,8 +221,10 @@ public final class PropertyWidgetFactory {
 		for (PropertyWidget<?> widget : widgets) {
 			@SuppressWarnings("unchecked")
 			final PropertyWidget<Object> objectWidget = (PropertyWidget<Object>) widget;
-			final ConfiguredPropertyDescriptor propertyDescriptor = objectWidget.getPropertyDescriptor();
-			final Object value = _beanJobBuilder.getConfiguredProperty(propertyDescriptor);
+			final ConfiguredPropertyDescriptor propertyDescriptor = objectWidget
+					.getPropertyDescriptor();
+			final Object value = _beanJobBuilder
+					.getConfiguredProperty(propertyDescriptor);
 			objectWidget.onValueTouched(value);
 		}
 	}

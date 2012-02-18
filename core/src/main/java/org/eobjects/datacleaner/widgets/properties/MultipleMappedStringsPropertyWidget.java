@@ -118,6 +118,9 @@ public class MultipleMappedStringsPropertyWidget extends
 		textField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {
+				if (isBatchUpdating()) {
+					return;
+				}
 				_stringsUpdating = true;
 				fireValueChanged();
 				_mappedStringPropertyWidget.fireValueChanged();
@@ -157,6 +160,9 @@ public class MultipleMappedStringsPropertyWidget extends
 		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
 			public void onItemSelected(InputColumn<?> item, boolean selected) {
+				if (isBatchUpdating()) {
+					return;
+				}
 				_mappedStringPropertyWidget.fireValueChanged();
 			}
 		});

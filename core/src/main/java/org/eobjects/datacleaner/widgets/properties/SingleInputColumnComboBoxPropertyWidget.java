@@ -79,6 +79,11 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 	}
 
 	private void updateComponents() {
+		InputColumn<?> currentValue = getCurrentValue();
+		updateComponents(currentValue);
+	}
+	
+	private void updateComponents(InputColumn<?> currentValue) {
 		_inputColumns = _analysisJobBuilder.getAvailableInputColumns(_dataType);
 
 		if (_beanJobBuilder instanceof TransformerJobBuilder) {
@@ -89,7 +94,6 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 			_inputColumns.removeAll(outputColumns);
 		}
 
-		InputColumn<?> currentValue = getCurrentValue();
 		if (currentValue != null) {
 			if (!_inputColumns.contains(currentValue)) {
 				_inputColumns.add(currentValue);
@@ -173,7 +177,7 @@ public class SingleInputColumnComboBoxPropertyWidget extends AbstractPropertyWid
 
 	@Override
 	protected void setValue(InputColumn<?> value) {
-		updateComponents();
+		updateComponents(value);
 		updateUI();
 	}
 }

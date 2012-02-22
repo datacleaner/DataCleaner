@@ -39,6 +39,7 @@
 							</addDefaultSpecificationEntries>
 							<classpathPrefix>lib</classpathPrefix>
 							<mainClass>${mainClass}</mainClass>
+							<useUniqueVersions>false</useUniqueVersions>
 						</manifest>
 						<manifestEntries>
 							<SplashScreen-Image>images/splash.png</SplashScreen-Image>

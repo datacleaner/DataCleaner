@@ -62,8 +62,10 @@ public class DatabaseDriverCatalog implements Serializable {
 	public static final String DATABASE_NAME_MYSQL = "MySQL";
 	public static final String DATABASE_NAME_PENTAHO_DATA_INTEGRATION = "Pentaho Data Integration";
 	public static final String DATABASE_NAME_LUCIDDB = "LucidDB";
+	private static final String DATABASE_NAME_PERVASIVE = "Pervasive";
 
 	private static final List<DatabaseDriverDescriptor> _databaseDrivers;
+
 
 	static {
 		_databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
@@ -118,6 +120,8 @@ public class DatabaseDriverCatalog implements Serializable {
 				"http://repo1.maven.org/maven2/com/h2database/h2/1.3.162/h2-1.3.162.jar", "jdbc:h2:<path/to/database>");
 		add(DATABASE_NAME_TERADATA, "images/datastore-types/databases/teradata.png", "com.teradata.jdbc.TeraDriver", null,
 				"jdbc:teradata:<hostname>", "jdbc:teradata:<hostname>/database=<database>");
+		add(DATABASE_NAME_PERVASIVE, "images/datastore-types/databases/pervasive.png",
+				"com.pervasive.jdbc.v2.Driver", null, "jdbc:pervasive://<hostname>:1583/<datasource>");
 		add(DATABASE_NAME_LUCIDDB,
 				"images/datastore-types/databases/luciddb.png",
 				"org.luciddb.jdbc.LucidDbClientDriver",

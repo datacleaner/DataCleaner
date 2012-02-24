@@ -195,6 +195,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 		checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
 			public void onItemSelected(InputColumn<?> item, boolean selected) {
+				_sourceColumnUpdating = true;
 				sourceColumnComboBox.setVisible(selected);
 			}
 		});
@@ -205,6 +206,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 					return;
 				}
 				_mappedColumnNamesPropertyWidget.fireValueChanged();
+				_sourceColumnUpdating=false;
 			}
 		});
 

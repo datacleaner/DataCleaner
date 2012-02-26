@@ -56,8 +56,10 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+
 		final TransformerBeanDescriptor<MockMultipleMappedColumnsTransformer> descriptor = Descriptors
 				.ofTransformer(MockMultipleMappedColumnsTransformer.class);
+
 		inputColumnsProperty = descriptor
 				.getConfiguredProperty("Input columns");
 		assertNotNull(inputColumnsProperty);
@@ -84,7 +86,41 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 				inputColumnsProperty, mappedColumnsProperty);
 		mappedColumnNamesPropertyWidget = propertyWidget
 				.getMappedColumnNamesPropertyWidget();
+
 		propertyWidget.initialize(null);
+
+		// TODO: set up property widget factory, which is listening on "tjb".
+	}
+
+	public void testRemoveColumnRemovesString() throws Exception {
+		MutableTable table = new MutableTable();
+		table.addColumn(new MutableColumn("source1").setTable(table));
+		table.addColumn(new MutableColumn("source2").setTable(table));
+		table.addColumn(new MutableColumn("source3").setTable(table));
+		table.addColumn(new MutableColumn("source4").setTable(table));
+		table.addColumn(new MutableColumn("source5").setTable(table));
+		propertyWidget.setTable(table);
+
+		propertyWidget.selectAll();
+
+		// all string columns selected now
+		assertEquals(4, propertyWidget.getValue().length);
+		assertEquals(
+				"[MetaModelInputColumn[source1], MetaModelInputColumn[source3], MetaModelInputColumn[source4], MetaModelInputColumn[source5]]",
+				Arrays.toString(propertyWidget.getValue()));
+
+		Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> checkBoxes = propertyWidget
+				.getCheckBoxes();
+
+		// uncheck one of the columns (remove it)
+		checkBoxes.get(source4).doClick();
+
+		assertEquals(
+				"[MetaModelInputColumn[source1], MetaModelInputColumn[source3], MetaModelInputColumn[source5]]",
+				Arrays.toString(propertyWidget.getValue()));
+		assertEquals("[source1, source3, source5]",
+				Arrays.toString(propertyWidget
+						.getMappedColumnNamesPropertyWidget().getValue()));
 	}
 
 	public void testSetTableAndThenSelectAll() throws Exception {
@@ -99,14 +135,16 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 
 		InputColumn<?>[] value = propertyWidget.getValue();
 		assertEquals(2, value.length);
-		
-		Map<InputColumn<?>, SourceColumnComboBox> mappedColumnComboBoxes = propertyWidget.getMappedColumnComboBoxes();
+
+		Map<InputColumn<?>, SourceColumnComboBox> mappedColumnComboBoxes = propertyWidget
+				.getMappedColumnComboBoxes();
 		for (SourceColumnComboBox comboBox : mappedColumnComboBoxes.values()) {
 			assertTrue(comboBox.isVisible());
 		}
 	}
 
 	public void testCustomMutableTable() throws Exception {
+		propertyWidget.initialize(null);
 		final Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> checkBoxes = propertyWidget
 				.getCheckBoxes();
 		final Map<InputColumn<?>, SourceColumnComboBox> comboBoxes = propertyWidget

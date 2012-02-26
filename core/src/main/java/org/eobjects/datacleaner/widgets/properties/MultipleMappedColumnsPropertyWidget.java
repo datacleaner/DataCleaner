@@ -43,6 +43,8 @@ import org.eobjects.metamodel.schema.MutableColumn;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.EqualsBuilder;
 import org.eobjects.metamodel.util.MutableRef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A specialized property widget for multiple input columns that are mapped to
@@ -54,6 +56,9 @@ import org.eobjects.metamodel.util.MutableRef;
  */
 public class MultipleMappedColumnsPropertyWidget extends
 		MultipleInputColumnsPropertyWidget {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(MultipleMappedColumnsPropertyWidget.class);
 
 	private final WeakHashMap<InputColumn<?>, SourceColumnComboBox> _mappedColumnComboBoxes;
 	private final MutableRef<Table> _tableRef;
@@ -121,24 +126,30 @@ public class MultipleMappedColumnsPropertyWidget extends
 		final Set<Entry<InputColumn<?>, SourceColumnComboBox>> entrySet = _mappedColumnComboBoxes
 				.entrySet();
 
-		for (Entry<InputColumn<?>, SourceColumnComboBox> entry : entrySet) {
-			InputColumn<?> inputColumn = entry.getKey();
-			SourceColumnComboBox comboBox = entry.getValue();
+		batchUpdateWidget(new Runnable() {
+			@Override
+			public void run() {
+				for (Entry<InputColumn<?>, SourceColumnComboBox> entry : entrySet) {
+					InputColumn<?> inputColumn = entry.getKey();
+					SourceColumnComboBox comboBox = entry.getValue();
 
-			if (table == null) {
-				comboBox.setEmptyModel();
-			} else {
-				comboBox.setModel(table);
-				if (comboBox.getSelectedItem() == null) {
-					Column column = getDefaultMappedColumn(inputColumn, table);
-					if (column != null) {
-						comboBox.setEditable(true);
-						comboBox.setSelectedItem(column);
-						comboBox.setEditable(false);
+					if (table == null) {
+						comboBox.setEmptyModel();
+					} else {
+						comboBox.setModel(table);
+						if (comboBox.getSelectedItem() == null) {
+							Column column = getDefaultMappedColumn(inputColumn,
+									table);
+							if (column != null) {
+								comboBox.setEditable(true);
+								comboBox.setSelectedItem(column);
+								comboBox.setEditable(false);
+							}
+						}
 					}
 				}
 			}
-		}
+		});
 	}
 
 	@Override
@@ -156,7 +167,9 @@ public class MultipleMappedColumnsPropertyWidget extends
 			mappedColumn = getDefaultMappedColumn(inputColumn, table);
 		}
 
-		if (mappedColumn != null) {
+		if (mappedColumn == null) {
+			logger.info("No default mapping found for column: {}", inputColumn);
+		} else {
 			sourceColumnComboBox.setEditable(true);
 			sourceColumnComboBox.setSelectedItem(mappedColumn);
 			sourceColumnComboBox.setEditable(false);
@@ -206,7 +219,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 					return;
 				}
 				_mappedColumnNamesPropertyWidget.fireValueChanged();
-				_sourceColumnUpdating=false;
+				_sourceColumnUpdating = false;
 			}
 		});
 

@@ -47,12 +47,15 @@ import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.result.ValueDistributionGroupResult;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jfree.chart.ChartFactory;
@@ -95,13 +98,17 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 	private final int _maxSlices;
 	private final String _groupOrColumnName;
 	private final DCTable _table;
+	private final RendererFactory _rendererFactory;
+	private final WindowContext _windowContext;
 
 	/**
 	 * Default constructor
 	 */
 	public ValueDistributionResultSwingRendererGroupDelegate(
-			String groupOrColumnName) {
-		this(groupOrColumnName, DEFAULT_PREFERRED_SLICES, DEFAULT_MAX_SLICES);
+			String groupOrColumnName, RendererFactory rendererFactory,
+			WindowContext windowContext) {
+		this(groupOrColumnName, DEFAULT_PREFERRED_SLICES, DEFAULT_MAX_SLICES,
+				rendererFactory, windowContext);
 	}
 
 	/**
@@ -110,12 +117,16 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 	 * 
 	 * @param preferredSlices
 	 * @param maxSlices
+	 * @param windowContext
 	 */
 	public ValueDistributionResultSwingRendererGroupDelegate(
-			String groupOrColumnName, int preferredSlices, int maxSlices) {
+			String groupOrColumnName, int preferredSlices, int maxSlices,
+			RendererFactory rendererFactory, WindowContext windowContext) {
 		_groupOrColumnName = groupOrColumnName;
 		_preferredSlices = preferredSlices;
 		_maxSlices = maxSlices;
+		_rendererFactory = rendererFactory;
+		_windowContext = windowContext;
 		_table = new DCTable("Value", LabelUtils.COUNT_LABEL);
 		_table.setRowHeight(22);
 
@@ -137,7 +148,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		_valueColorMap.put("NOT_PROCESSED", WidgetUtils.BG_COLOR_LESS_DARK);
 	}
 
-	public JSplitPane renderGroupResult(ValueDistributionGroupResult result) {
+	public JSplitPane renderGroupResult(
+			final ValueDistributionGroupResult result) {
 		// create a special group for the unique values
 		final int uniqueCount = result.getUniqueCount();
 		final int distinctCount = result.getDistinctCount();
@@ -167,9 +179,6 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 					.getValueCounts();
 			final List<ValueCount> bottomValueCounts = result.getBottomValues()
 					.getValueCounts();
-
-			// result can be GC'ed now
-			result = null;
 
 			// if the user has specified the values of interest then show the
 			// graph correspondingly without any grouping
@@ -231,7 +240,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		}
 
 		logger.info("Rendering with {} slices", _dataset.getItemCount());
-		drillToOverview();
+		drillToOverview(result);
 
 		// chart for display of the dataset
 		final JFreeChart chart = ChartFactory.createPieChart(
@@ -323,7 +332,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 					String sectionKey = (String) pieSectionEntity
 							.getSectionKey();
 					if (_groups.containsKey(sectionKey)) {
-						drillToGroup(sectionKey, true);
+						drillToGroup(result, sectionKey, true);
 					}
 				}
 			}
@@ -337,7 +346,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		_backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				drillToOverview();
+				drillToOverview(result);
 			}
 		});
 
@@ -364,7 +373,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		return _dataset;
 	}
 
-	private void drillToOverview() {
+	private void drillToOverview(final ValueDistributionGroupResult result) {
 		final TableModel model = new DefaultTableModel(new String[] { "Value",
 				LabelUtils.COUNT_LABEL }, _dataset.getItemCount());
 		for (int i = 0; i < _dataset.getItemCount(); i++) {
@@ -382,7 +391,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 				button.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						drillToGroup(key, true);
+						drillToGroup(result, key, true);
 					}
 				});
 
@@ -392,14 +401,38 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
 				model.setValueAt(panel, i, 1);
 			} else {
-				model.setValueAt(count, i, 1);
+				setCountValue(result, model, i, count);
 			}
 		}
 		_table.setModel(model);
 		_backButton.setVisible(false);
 	}
 
-	private void drillToGroup(String groupName, boolean showBackButton) {
+	private void setCountValue(ValueDistributionGroupResult result,
+			final TableModel model, int i, final int count) {
+		if (result.isAnnotationsEnabled()) {
+			ActionListener action = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent action) {
+					// TODO
+					WidgetUtils.showErrorMessage("Not implemented yet", null);
+				}
+			};
+			
+			DCPanel panel = AbstractCrosstabResultSwingRenderer
+					.createActionableValuePanel(
+							count,
+							Alignment.LEFT,
+							action,
+							AbstractCrosstabResultSwingRenderer.IMAGE_PATH_DRILL_TO_DETAIL);
+			
+			model.setValueAt(panel, i, 1);
+		} else {
+			model.setValueAt(count, i, 1);
+		}
+	}
+
+	private void drillToGroup(ValueDistributionGroupResult result, String groupName, boolean showBackButton) {
 		final PieSliceGroup group = _groups.get(groupName);
 		final TableModel model = new DefaultTableModel(new String[] {
 				groupName + " value", LabelUtils.COUNT_LABEL }, group.size());
@@ -409,7 +442,8 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		while (valueCounts.hasNext()) {
 			ValueCount vc = valueCounts.next();
 			model.setValueAt(LabelUtils.getLabel(vc.getValue()), i, 0);
-			model.setValueAt(vc.getCount(), i, 1);
+			int count = vc.getCount();
+			setCountValue(result, model, i, count);
 			i++;
 		}
 		_table.setModel(model);

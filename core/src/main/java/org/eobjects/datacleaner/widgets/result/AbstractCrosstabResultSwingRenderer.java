@@ -61,6 +61,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
 
+	public static final String IMAGE_PATH_BAR_CHART = "images/chart-types/bar.png";
+	public static final String IMAGE_PATH_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
+
 	@Inject
 	WindowContext _windowContext;
 
@@ -178,7 +181,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 			}
 		};
 
-		final DCPanel panel = createActionableValuePanel(measureName, Alignment.LEFT, action, "images/chart-types/bar.png");
+		final DCPanel panel = createActionableValuePanel(measureName, Alignment.LEFT, action, IMAGE_PATH_BAR_CHART);
 		table.setValueAt(panel, row, 0);
 	}
 
@@ -246,7 +249,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 					_drillToDetailsCallback.drillToDetails(sb.toString(), drillToDetailResultProducer);
 				}
 			};
-			resultValue = createActionableValuePanel(value, alignment, action, "images/actions/drill-to-detail.png");
+			resultValue = createActionableValuePanel(value, alignment, action, IMAGE_PATH_DRILL_TO_DETAIL);
 		} else {
 			resultValue = value;
 		}

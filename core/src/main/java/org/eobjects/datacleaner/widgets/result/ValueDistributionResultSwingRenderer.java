@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
@@ -31,16 +32,18 @@ import javax.swing.border.EmptyBorder;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.result.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.ValueDistributionResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
+import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.analyzer.util.SchemaNavigator;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.LabelUtils;
@@ -63,7 +66,14 @@ import com.google.inject.Injector;
  * @author Kasper Sørensen
  */
 @RendererBean(SwingRenderingFormat.class)
-public class ValueDistributionResultSwingRenderer extends AbstractRenderer<ValueDistributionResult, JComponent> {
+public class ValueDistributionResultSwingRenderer extends
+		AbstractRenderer<ValueDistributionResult, JComponent> {
+
+	@Inject
+	RendererFactory _rendererFactory;
+
+	@Inject
+	WindowContext _windowContext;
 
 	@Override
 	public JComponent render(ValueDistributionResult result) {
@@ -71,15 +81,17 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 			return renderGroupedResult(result);
 		} else {
 			ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
-					result.getColumnName());
-			return delegate.renderGroupResult(result.getSingleValueDistributionResult());
+					result.getColumnName(), _rendererFactory, _windowContext);
+			return delegate.renderGroupResult(result
+					.getSingleValueDistributionResult());
 		}
 	}
 
 	public JComponent renderGroupedResult(ValueDistributionResult result) {
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new VerticalLayout(0));
-		Set<ValueDistributionGroupResult> results = result.getGroupedValueDistributionResults();
+		Set<ValueDistributionGroupResult> results = result
+				.getGroupedValueDistributionResults();
 		for (final ValueDistributionGroupResult res : results) {
 			if (panel.getComponentCount() != 0) {
 				panel.add(Box.createVerticalStrut(10));
@@ -89,23 +101,29 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 				@Override
 				protected JComponent fetch() {
 					ValueDistributionResultSwingRendererGroupDelegate delegate = new ValueDistributionResultSwingRendererGroupDelegate(
-							res.getGroupName());
-					final JComponent renderedResult = delegate.renderGroupResult(res);
+							res.getGroupName(), _rendererFactory,
+							_windowContext);
+					final JComponent renderedResult = delegate
+							.renderGroupResult(res);
 					final DCPanel decoratedPanel = createDecoration(renderedResult);
 					return decoratedPanel;
 				}
 			};
 
-			final String label = "Value distribution for group '" + LabelUtils.getLabel(res.getGroupName()) + "'";
+			final String label = "Value distribution for group '"
+					+ LabelUtils.getLabel(res.getGroupName()) + "'";
 
 			final ValueCount distinctValue = getDistinctValueCount(res);
 			final DCCollapsiblePanel collapsiblePanel;
 			if (distinctValue == null) {
-				collapsiblePanel = new DCCollapsiblePanel(label, label, false, componentRef);
+				collapsiblePanel = new DCCollapsiblePanel(label, label, false,
+						componentRef);
 			} else {
-				final String collapsedLabel = label + ": " + LabelUtils.getLabel(distinctValue.getValue()) + "="
+				final String collapsedLabel = label + ": "
+						+ LabelUtils.getLabel(distinctValue.getValue()) + "="
 						+ distinctValue.getCount() + "";
-				collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, label, true, componentRef);
+				collapsiblePanel = new DCCollapsiblePanel(collapsedLabel,
+						label, true, componentRef);
 			}
 			panel.add(collapsiblePanel.toPanel());
 		}
@@ -124,7 +142,8 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		ValueCount valueCount = null;
 		if (res.getNullCount() > 0) {
 			distinctValueCounter++;
-			valueCount = new ValueCount(LabelUtils.NULL_LABEL, res.getNullCount());
+			valueCount = new ValueCount(LabelUtils.NULL_LABEL,
+					res.getNullCount());
 		}
 		int uniqueCount = res.getUniqueCount();
 		if (uniqueCount > 0) {
@@ -179,19 +198,25 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 		Injector injector = Guice.createInjector(new DCModule(new File(".")));
 
 		// run a small job
-		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);
-		Datastore ds = injector.getInstance(DatastoreCatalog.class).getDatastore("orderdb");
+		final AnalysisJobBuilder ajb = injector
+				.getInstance(AnalysisJobBuilder.class);
+		Datastore ds = injector.getInstance(DatastoreCatalog.class)
+				.getDatastore("orderdb");
 		DatastoreConnection con = ds.openConnection();
 		SchemaNavigator sn = con.getSchemaNavigator();
 		ajb.setDatastore(ds);
-		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE").getColumns());
-		ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(ajb.getSourceColumns());
+		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE")
+				.getColumns());
+		ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(
+				ajb.getSourceColumns());
 
 		ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
 		AnalyzerJobBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
 				.addAnalyzer(ValueDistributionAnalyzer.class);
-		groupedValueDist.addInputColumn(ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
-		groupedValueDist.setConfiguredProperty("Group column", ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
+		groupedValueDist.addInputColumn(ajb
+				.getSourceColumnByName("PUBLIC.CUSTOMERS.CITY"));
+		groupedValueDist.setConfiguredProperty("Group column",
+				ajb.getSourceColumnByName("PUBLIC.CUSTOMERS.COUNTRY"));
 
 		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
 		resultWindow.setVisible(true);

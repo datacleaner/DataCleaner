@@ -6,6 +6,7 @@
 		<version>2.5-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-extensions</artifactId>
+	<name>DataCleaner-extensions</name>
 	<description>A collection of extensions, typically shared through the online extension swap.</description>
 	<url>http://datacleaner.eobjects.org/extensions</url>
 	<packaging>pom</packaging>

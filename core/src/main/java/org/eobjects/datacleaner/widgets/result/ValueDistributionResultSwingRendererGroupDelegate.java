@@ -46,6 +46,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
+import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -57,6 +58,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.DCTable;
+import org.eobjects.datacleaner.windows.DetailsResultWindow;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -401,38 +403,44 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
 				model.setValueAt(panel, i, 1);
 			} else {
-				setCountValue(result, model, i, count);
+				setCountValue(result, model, i, new ValueCount(key, count));
 			}
 		}
 		_table.setModel(model);
 		_backButton.setVisible(false);
 	}
 
-	private void setCountValue(ValueDistributionGroupResult result,
-			final TableModel model, int i, final int count) {
+	private void setCountValue(final ValueDistributionGroupResult result,
+			final TableModel model, int i, final ValueCount vc) {
 		if (result.isAnnotationsEnabled()) {
 			ActionListener action = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent action) {
-					// TODO
-					WidgetUtils.showErrorMessage("Not implemented yet", null);
+					String title = "Detailed results for [" + vc.getValue()
+							+ "]";
+					List<AnalyzerResult> results = new ArrayList<AnalyzerResult>();
+					results.add(result.getAnnotatedRows(vc.getValue()));
+					DetailsResultWindow window = new DetailsResultWindow(title,
+							results, _windowContext, _rendererFactory);
+					window.setVisible(true);
 				}
 			};
-			
+
 			DCPanel panel = AbstractCrosstabResultSwingRenderer
 					.createActionableValuePanel(
-							count,
+							vc.getCount(),
 							Alignment.LEFT,
 							action,
 							AbstractCrosstabResultSwingRenderer.IMAGE_PATH_DRILL_TO_DETAIL);
-			
+
 			model.setValueAt(panel, i, 1);
 		} else {
-			model.setValueAt(count, i, 1);
+			model.setValueAt(vc.getCount(), i, 1);
 		}
 	}
 
-	private void drillToGroup(ValueDistributionGroupResult result, String groupName, boolean showBackButton) {
+	private void drillToGroup(ValueDistributionGroupResult result,
+			String groupName, boolean showBackButton) {
 		final PieSliceGroup group = _groups.get(groupName);
 		final TableModel model = new DefaultTableModel(new String[] {
 				groupName + " value", LabelUtils.COUNT_LABEL }, group.size());
@@ -442,8 +450,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 		while (valueCounts.hasNext()) {
 			ValueCount vc = valueCounts.next();
 			model.setValueAt(LabelUtils.getLabel(vc.getValue()), i, 0);
-			int count = vc.getCount();
-			setCountValue(result, model, i, count);
+			setCountValue(result, model, i, vc);
 			i++;
 		}
 		_table.setModel(model);

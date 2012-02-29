@@ -145,7 +145,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 			buildTaskPane(propertyTaskPane.getProperties(),
 					imageManager.getImageIcon(
 							propertyTaskPane.getIconImagePath(),
-							IconUtils.ICON_SIZE_SMALL),
+							IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
 					propertyTaskPane.getTitle(), _beanJobBuilder,
 					propertyTaskPane.isExpanded());
 		}

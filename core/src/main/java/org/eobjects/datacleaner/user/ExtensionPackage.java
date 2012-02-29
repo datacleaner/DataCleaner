@@ -48,9 +48,11 @@ public final class ExtensionPackage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(ExtensionPackage.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(ExtensionPackage.class);
 
-	private static ClassLoader _classLoader = ClassLoaderUtils.getParentClassLoader();
+	private static ClassLoader _classLoader = ClassLoaderUtils
+			.getParentClassLoader();
 
 	private transient boolean _loaded = false;
 	private transient int _loadedAnalyzers;
@@ -64,7 +66,8 @@ public final class ExtensionPackage implements Serializable {
 	private final boolean _scanRecursive;
 	private final Map<String, String> _additionalProperties;
 
-	public ExtensionPackage(String name, String scanPackage, boolean scanRecursive, File[] files) {
+	public ExtensionPackage(String name, String scanPackage,
+			boolean scanRecursive, File[] files) {
 		_name = name;
 		if (scanPackage == null) {
 			scanPackage = "";
@@ -91,7 +94,8 @@ public final class ExtensionPackage implements Serializable {
 		return _scanRecursive;
 	}
 
-	public ExtensionPackage loadExtension(DescriptorProvider descriptorProvider) throws IllegalStateException {
+	public ExtensionPackage loadExtension(DescriptorProvider descriptorProvider)
+			throws IllegalStateException {
 		if (!_loaded) {
 			if (!(descriptorProvider instanceof ClasspathScanDescriptorProvider)) {
 				throw new IllegalStateException(
@@ -104,26 +108,38 @@ public final class ExtensionPackage implements Serializable {
 				// classloader which is a child of the previous extension's
 				// classloader. This mechanism ensures that classes occurring in
 				// several extensions are only loaded once.
-				_classLoader = ClassLoaderUtils.createClassLoader(_files, _classLoader);
+				_classLoader = ClassLoaderUtils.createClassLoader(_files,
+						_classLoader);
 			}
 
-			int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors().size();
-			int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();
-			int filtersBefore = classpathScanner.getFilterBeanDescriptors().size();
-			int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
+			int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors()
+					.size();
+			int transformersBefore = classpathScanner
+					.getTransformerBeanDescriptors().size();
+			int filtersBefore = classpathScanner.getFilterBeanDescriptors()
+					.size();
+			int renderersBefore = classpathScanner.getRendererBeanDescriptors()
+					.size();
 
-			classpathScanner = classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, _files);
+			classpathScanner = classpathScanner.scanPackage(_scanPackage,
+					_scanRecursive, _classLoader, true, _files);
 
-			_loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;
-			_loadedTransformers = classpathScanner.getTransformerBeanDescriptors().size() - transformersBefore;
-			_loadedFilters = classpathScanner.getFilterBeanDescriptors().size() - filtersBefore;
-			_loadedRenderers = classpathScanner.getRendererBeanDescriptors().size() - renderersBefore;
+			_loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors()
+					.size() - analyzersBefore;
+			_loadedTransformers = classpathScanner
+					.getTransformerBeanDescriptors().size()
+					- transformersBefore;
+			_loadedFilters = classpathScanner.getFilterBeanDescriptors().size()
+					- filtersBefore;
+			_loadedRenderers = classpathScanner.getRendererBeanDescriptors()
+					.size() - renderersBefore;
 
 			_loaded = true;
 
 			logger.info(
 					"Succesfully loaded extension '{}' containing {} analyzers, {} transformers, {} filters, {} renderers",
-					new Object[] { getName(), getLoadedAnalyzers(), getLoadedTransformers(), getLoadedFilters(),
+					new Object[] { getName(), getLoadedAnalyzers(),
+							getLoadedTransformers(), getLoadedFilters(),
 							getLoadedRenderers() });
 		}
 		return this;
@@ -177,7 +193,8 @@ public final class ExtensionPackage implements Serializable {
 				return null;
 			}
 
-			logger.info("Found {} packages in extension jar: {}", packageNames.size(), packageNames);
+			logger.info("Found {} packages in extension jar: {}",
+					packageNames.size(), packageNames);
 
 			// find the longest common prefix of all the package names
 			Iterator<String> it = packageNames.iterator();
@@ -201,7 +218,8 @@ public final class ExtensionPackage implements Serializable {
 		}
 	}
 
-	protected static String longestCommonPrefix(String str1, String str2, char tokenizerChar) {
+	protected static String longestCommonPrefix(String str1, String str2,
+			char tokenizerChar) {
 		StringBuilder result = new StringBuilder();
 		String[] tokens1 = str1.split("\\" + tokenizerChar);
 		String[] tokens2 = str2.split("\\" + tokenizerChar);
@@ -215,5 +233,15 @@ public final class ExtensionPackage implements Serializable {
 			result.append(tokens1[i]);
 		}
 		return result.toString();
+	}
+
+	/**
+	 * Gets the classloader that represents the currently loaded extensions'
+	 * classes.
+	 * 
+	 * @return
+	 */
+	public static ClassLoader getExtensionClassLoader() {
+		return _classLoader;
 	}
 }

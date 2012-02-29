@@ -24,21 +24,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 import javax.inject.Inject;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -114,8 +114,10 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	public void openAnalysisResult(final File file) {
 		final AnalysisResult analysisResult;
 		try {
-			analysisResult = (AnalysisResult) SerializationUtils.deserialize(new FileInputStream(file));
-		} catch (FileNotFoundException e) {
+			ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file));
+			is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
+			analysisResult = (AnalysisResult) is.readObject();
+		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
 

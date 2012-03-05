@@ -5,4 +5,31 @@
 
 	<title>Dictionaries</title>
 
+	<para>Dictionaries are reference data lists used for verifying or
+		categorizing values against certain black- or whitelists. Dictionaries
+		are generally enumerable and finite, whereas eg. string patterns are
+		dynamic and evaluated each time.
+	</para>
+	<para>Examples of meaningful dictionaries are:</para>
+	<orderedlist>
+		<listitem>
+			<para>A dictionary of product types like "jewelry", "menswear",
+				"sportswear" etc.
+			</para>
+		</listitem>
+		<listitem>
+			<para>A dictionary of gender symbols like "M", "F" and maybe
+				"UNKNOWN".
+			</para>
+		</listitem>
+		<listitem>
+			<para>A dictionary of age group names (eg. infant, child, young,
+				mature, senior)</para>
+		</listitem>
+		<listitem>
+			<para>Two dictionaries for male and female given names (in order to
+				determine gender of persons)</para>
+		</listitem>
+	</orderedlist>
+
 </chapter>

@@ -1,8 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>String patterns</title>
+
+	<para>String patterns define a "template" for string values which they
+		may or may not conform to.
+	</para>
+	<para>DataCleaner currently supports two type of popular string
+		formats:
+	</para>
+
+	<orderedlist>
+		<listitem>
+			<para>
+				<emphasis>Regular expressions</emphasis>
+				, which is a general purpose string pattern matching language
+				popular in computer science. Regular expressions does take a bit of
+				time to learn, but are very powerful once harnessed.
+			</para>
+			<para>
+				Explaining the syntax of regular expressions is definately
+				outside
+				the scope of the DataCleaner documentation. We recommend the
+				<link xl:href="http://docs.oracle.com/javase/tutorial/essential/regex/">Java Regular Expressions lesson</link>
+				if you are looking for a resource on this.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<emphasis>Simple string patterns</emphasis>
+				, which use the same syntax as the Pattern finder analyzer. Patterns
+				such as "aaaa@aaaa.aaa"
+				could for example be used to match typical
+				email addresses.
+			</para>
+		</listitem>
+	</orderedlist>
 
 </chapter>

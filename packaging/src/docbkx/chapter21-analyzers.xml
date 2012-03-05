@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="analyzers"
 	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
@@ -79,22 +79,36 @@
 
 	<section id="date_dap_analyzer">
 		<title>Date gap analyzer</title>
-		<para>TODO</para>
+		<para>The Date gap analyzer is used to identify gaps in recorded time
+			series. This analyzer is useful for example if you have employee time
+			registration systems which record FROM and TO dates. It will allow
+			you to identify if there are unexpected gaps in the data.
+		</para>
 	</section>
 
 	<section id="date_time_analyzer">
 		<title>Date/time analyzer</title>
-		<para>TODO</para>
+		<para>The Date/time analyzer provides general purpose profiling
+			metrics for temporal column types such as DATE, TIME and TIMESTAMP
+			columns.
+		</para>
 	</section>
 
 	<section id="matching_analyzer">
 		<title>Matching analyzer</title>
-		<para>TODO</para>
+		<para>The matching analyzer provides an easy means to match several
+			columns against several dictionaries and/or several string patterns.
+			The result is a matrix of match information for all columns and all
+			matched resources.
+		</para>
 	</section>
 
 	<section id="number_analyzer">
 		<title>Number analyzer</title>
-		<para>TODO</para>
+		<para>The number analyzer provides general purpose profiling
+			metrics
+			for numerical column types.
+		</para>
 	</section>
 
 	<section id="pattern_finder">
@@ -253,12 +267,22 @@
 
 	<section id="string_analyzer">
 		<title>String analyzer</title>
-		<para>TODO</para>
+		<para>The string analyzer provides general purpose profiling
+			metrics
+			for string column types. Of special concern to the string analyzer is
+			the amount of words, characters, special signs, diacritics and other
+			metrics that are virtal to understanding what kind of string values
+			occur in the data.
+		</para>
 	</section>
 
 	<section id="value_distribution">
 		<title>Value distribution</title>
-		<para>TODO</para>
+		<para>The value distribution (often also referred to as 'Frequency
+			analysis') allows you to identify all the values of a particular
+			column. Furthermore you can investigate which rows pertain to
+			specific values.
+		</para>
 		<para>Here are the configuration properties for the value distribution
 			analyzer:
 		</para>
@@ -319,7 +343,10 @@
 
 	<section id="weekday_distribution">
 		<title>Weekday distribution</title>
-		<para>TODO</para>
+		<para>The weekday distribution provides a frequency analysis for date
+			columns, where you can easily identify which weekdays a date field
+			represents.
+		</para>
 	</section>
 
 </chapter>

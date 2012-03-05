@@ -1,9 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	id="transformations" xmlns="http://www.oasis-open.org/docbook/4.5"
+	xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
-	<title>Transformers</title>
+	<title>Transformations</title>
+
+	<para>With transformations (accessible through the 'Transform' button
+		in the main window) you can pre- and postprocess your data as part of
+		your DQ project.
+	</para>
+	<para>Technically speaking there are two kinds of transformations:
+		Transformers and Filters. Transformers are used to extract, generate
+		or refine data (new columns and sometimes also new rows), whereas
+		filters are used to limit the dataset. In previous version (2.0 -
+		2.4)
+		of DataCleaner filters and transformers were completely
+		separated
+		concepts, also in the user interface.
+	</para>
+	<para>There's quite a lot of transformations available in DataCleaner,
+		more than will be feasible to describe all in detail. This chapter
+		provides a documentation for some of the essential ones.
+	</para>
 
 	<section id="table_lookup_transformer">
 		<title>Table lookup</title>
@@ -249,15 +268,85 @@
 			<link xl:href="http://www.easydq.com">EasyDataQuality</link>
 			is an on-demand service for data quality functions.
 			DataCleaner
-			provides access to the EasyDQ services, but the core
-			functionality is
+			provides access to the EasyDQ services,
+			but the core functionality is
 			provided by Human Inference.
 		</para>
 		<para>
 			Please refer to the
 			<link xl:href="http://help.easydq.com/datacleaner">EasyDQ for DataCleaner documentation</link>
-			for
-			detailed information about the services provided through EasyDQ.
+			for detailed information about the services provided through EasyDQ.
+		</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="transformer_reference_table_easydq_documentation.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+
+	</section>
+
+	<section id="equals_filter">
+		<title>Equals</title>
+		<para>
+			The
+			<emphasis>Equals</emphasis>
+			filter provides a way to make a simple filtering condition based on a
+			white list / valid list of values. Simply enter a list of values that
+			you accept for a given column, and then you can map your flow to the
+			VALID outcome of the filter.
+		</para>
+		<para>Here's an example of an Equals filter configuration where valid
+			Gender values are being checked.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="filter_reference_equals.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>Use the plus/minus buttons to grow or shrink the list of values
+			you want to accept.
+		</para>
+		<para>If placed as the first component in a flow, the Equals filter is
+			optimizable in a way where it will modify your originating query.
+			This means that it is also an appropriate filter to use if you just
+			want to sample the data used in your job.
+		</para>
+	</section>
+
+	<section id="max_rows_filter">
+		<title>Max rows</title>
+		<para>
+			The
+			<emphasis>Max rows</emphasis>
+			filter is used to limit the amount of records that
+			are passed further
+			on in the job's flow.
+		</para>
+		<para>If placed as the first component in a flow, the Max rows filter
+			is
+			optimizable in a way where it will modify your originating query.
+			This means that it is also an appropriate filter to use if you just
+			want to sample the data used in your job.
+		</para>
+	</section>
+
+	<section id="not_null_filter">
+		<title>Not null</title>
+		<para>
+			The
+			<emphasis>Not null</emphasis>
+			filter is a simple filter that can be used to exclude null values
+			from your flow. Additionally you can select whether or not you want
+			to accept empty strings ("") or not.
+		</para>
+		<para>If placed as the first component in a flow, the Not null filter
+			is
+			optimizable in a way where it will modify your originating query.
+			This means that it is also an appropriate filter to use if you just
+			want to sample the data used in your job.
 		</para>
 	</section>
 

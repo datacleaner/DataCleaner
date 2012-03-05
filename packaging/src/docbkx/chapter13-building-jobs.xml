@@ -7,7 +7,8 @@
 
 	<section id="adding_components">
 		<title>Adding components to the job</title>
-		<para>There are three kinds of components that you can add to your
+		<para>There are a few different kinds of components that you can add
+			to your
 			job:
 		</para>
 		<orderedlist>
@@ -50,11 +51,23 @@
 				</para>
 			</listitem>
 		</orderedlist>
-		<para>Each of these components have "Add" buttons that are used to add
-			them to the job. Analyzers and transformers are added by clicking
-			their respective buttons in the top of the screen. Each of these
-			components will get their own tab, from where you can configure them.
-			Filters are added and configured in the "Filters" tab.
+		<para>Each of these
+			components will get their own tab, from where you
+			can configure them.
+		</para>
+		<para>
+			Transformers and filters are added to your job using the "Transform"
+			button. Please refer to the reference chapter
+			<link linkend="transformations">Transformations</link>
+			for more
+			information on specific transformers and filters.
+		</para>
+		<para>
+			Analyzers are added to your job using the "Analyze" button. Please
+			refer to the reference chapter
+			<link linkend="analyzers">Analyzers</link>
+			for more
+			information on specific analyzers.
 		</para>
 	</section>
 
@@ -195,66 +208,10 @@
 			you can utilize it in other situations than the analysis.
 		</para>
 		<para>
-			Writing cleansed data is archieved by wiring the job together
-			with an
-			<emphasis>output writer</emphasis>
-			instead of (or in addition to) an analyzer. Adding an output writer
-			is done by clicking either your filter's outcome buttons or your
-			transformer's "Save transformed data" button and selecting an
-			appropriate output format:
+			Please refer to the reference chapter
+			<link linkend="writers">Writers</link>
+			for more
+			information on writing cleansed data.
 		</para>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="write_cleansed_data_options.jpg"
-					format="JPG" scalefit="1" />
-			</imageobject>
-		</mediaobject>
-		<para>The available options are:</para>
-		<orderedlist>
-			<listitem>
-				<para>
-					<emphasis>CSV file</emphasis>
-					. Writes a data set to an Comma Separated Values file.
-					CSV files are
-					a popular choise for interoperability with other
-					systems and loading
-					of data into databases.
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<emphasis>Datastore</emphasis>
-					. Writes a data set to an embedded relational database, which
-					DataCleaner manages. This option is primarily used for staging data
-					for further analysis. The advantage of using the feature is that it
-					retains column type information, it can handle a lot of data and
-					multiple data sets can be written to the same datastore. A
-					disadvantage is that the data is not easily readable by third party
-					applications (unless exported again).
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<emphasis>Excel spreadsheet</emphasis>
-					. Writes a data set to an Excel spreadsheet.
-					An advantage of this
-					approach is that a single file can contain
-					multiple sheets, and that
-					it is easily navigatable in Microsoft
-					Excel. A disadvantage is that
-					for very large data sets it is less
-					performant.
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					<emphasis>Insert into table</emphasis>
-					. Using this writer you can insert your data into a table of an
-					existing datastore. If you already have a table layout ready or if
-					you want to append to eg. a database table, then this writing
-					option is the right one for you.
-				</para>
-			</listitem>
-		</orderedlist>
 	</section>
 </chapter>

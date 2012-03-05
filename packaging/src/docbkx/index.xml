@@ -35,8 +35,8 @@
 			<title>Analysis component reference</title>
 		</partinfo>
 		<xi:include href="chapter21-analyzers.xml" />
-		<xi:include href="chapter22-transformers.xml" />
-		<xi:include href="chapter23-filters.xml" />
+		<xi:include href="chapter22-transformations.xml" />
+		<xi:include href="chapter23-writers.xml" />
 	</part>
 
 	<part>

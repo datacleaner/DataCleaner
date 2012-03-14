@@ -25,6 +25,7 @@ import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.metamodel.DataContext;
 
 /**
@@ -80,12 +81,16 @@ public interface BootstrapOptions {
 	 * @param analysisJobBuilder
 	 *            the {@link AnalysisJobBuilder} object which is represented in
 	 *            the main window of DataCleaner.
-	 * @param the
-	 *            DataContext that is active in the window. This will provide
-	 *            convenient access to traversing the schema for finding
-	 *            relevant columns etc.
+	 * @param dataContext
+	 *            the {@link DataContext} that is active in the window. This
+	 *            will provide convenient access to traversing the schema for
+	 *            finding relevant columns etc.
+	 * @param injectorBuilder
+	 *            an {@link InjectorBuilder} which provides access to injectable
+	 *            and shared resources.
 	 */
-	public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext);
+	public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext,
+			InjectorBuilder injectorBuilder);
 
 	/**
 	 * Optionally fetches a welcome image for displaying when the application

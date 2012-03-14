@@ -35,6 +35,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.schema.Column;
@@ -61,7 +62,8 @@ public class ExampleBootstrap {
 			}
 
 			@Override
-			public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext) {
+			public void initializeSingleDatastoreJob(AnalysisJobBuilder analysisJobBuilder, DataContext dataContext,
+					InjectorBuilder injectorBuilder) {
 
 				// add a few columns by path name
 				analysisJobBuilder.addSourceColumns("PUBLIC.EMPLOYEES.EMPLOYEENUMBER");

@@ -71,8 +71,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	private final UsageLogger _usageLogger;
 
 	@Inject
-	protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext, DCModule parentModule, UserPreferences userPreferences, UsageLogger usageLogger) {
+	protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow,
+			AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule,
+			UserPreferences userPreferences, UsageLogger usageLogger) {
 		_parentWindow = parentWindow;
 		_configuration = configuration;
 		_windowContext = windowContext;
@@ -101,6 +102,13 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 			File file = fileChooser.getSelectedFile();
 			openFile(file);
 		}
+	}
+
+	public static AnalysisJobBuilderWindow open(File file, AnalyzerBeansConfiguration configuration, Injector injector) {
+		UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
+		OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
+				configuration, null, injector.getInstance(DCModule.class), userPreferences, null);
+		return openAnalysisJobActionListener.openAnalysisJob(file);
 	}
 
 	public void openFile(File file) {
@@ -145,23 +153,25 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	 * Opens a job file
 	 * 
 	 * @param file
+	 * @return
 	 */
-	public void openAnalysisJob(File file) {
+	public AnalysisJobBuilderWindow openAnalysisJob(File file) {
 		JaxbJobReader reader = new JaxbJobReader(_configuration);
 		try {
 			AnalysisJobBuilder ajb = reader.create(file);
 
-			openAnalysisJob(file, ajb);
+			return openAnalysisJob(file, ajb);
 		} catch (NoSuchDatastoreException e) {
 			AnalysisJobMetadata metadata = reader.readMetadata(file);
 			int result = JOptionPane.showConfirmDialog(null, e.getMessage()
 					+ "\n\nDo you wish to open this job as a template?", "Error: " + e.getMessage(),
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 			if (result == JOptionPane.OK_OPTION) {
-				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext, _configuration,
-						file, metadata, Providers.of(this));
+				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext,
+						_configuration, file, metadata, Providers.of(this));
 				dialog.setVisible(true);
 			}
+			return null;
 		}
 	}
 
@@ -170,8 +180,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 	 * 
 	 * @param file
 	 * @param ajb
+	 * @return
 	 */
-	public void openAnalysisJob(final File file, final AnalysisJobBuilder ajb) {
+	public AnalysisJobBuilderWindow openAnalysisJob(final File file, final AnalysisJobBuilder ajb) {
 		_userPreferences.setAnalysisJobDirectory(file.getParentFile());
 		_userPreferences.addRecentJobFile(file);
 
@@ -187,5 +198,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
 			_parentWindow.close();
 		}
+
+		return window;
 	}
 }

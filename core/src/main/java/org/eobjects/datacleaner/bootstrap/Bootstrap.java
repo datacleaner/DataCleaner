@@ -32,12 +32,15 @@ import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.macos.MacOSManager;
 import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DataCleanerHome;
@@ -106,7 +109,7 @@ public final class Bootstrap {
 
 		final File dataCleanerHome = DataCleanerHome.get();
 
-		final Injector injector = Guice.createInjector(new DCModule(dataCleanerHome));
+		Injector injector = Guice.createInjector(new DCModule(dataCleanerHome));
 
 		// configuration loading can be multithreaded, so begin early
 		final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
@@ -142,12 +145,20 @@ public final class Bootstrap {
 			}
 			return;
 		} else {
+			// run in GUI mode
+			final AnalysisJobBuilderWindow analysisJobBuilderWindow;
+
 			// initialize Mac OS specific settings
 			final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
 			macOsManager.init();
 
-			// run in GUI mode
-			final AnalysisJobBuilderWindow analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
+			// check for job file
+			final File jobFile = _options.getCommandLineArguments().getJobFile();
+			if (jobFile == null) {
+				analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
+			} else {
+				analysisJobBuilderWindow = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
+			}
 
 			final Datastore singleDatastore;
 			if (_options.isSingleDatastoreMode()) {
@@ -170,14 +181,20 @@ public final class Bootstrap {
 			if (singleDatastore != null) {
 				// this part has to be done after displaying the window (a lot
 				// of initialization goes on there)
-				AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
-				_options.initializeSingleDatastoreJob(analysisJobBuilder, singleDatastore.openConnection().getDataContext());
-
-				Image welcomeImage = _options.getWelcomeImage();
-				if (welcomeImage != null) {
-					WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
-					welcomeDialog.setVisible(true);
+				final AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
+				final DatastoreConnection con = singleDatastore.openConnection();
+				final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
+				try {
+					_options.initializeSingleDatastoreJob(analysisJobBuilder, con.getDataContext(), injectorBuilder);
+				} finally {
+					con.close();
 				}
+			}
+
+			final Image welcomeImage = _options.getWelcomeImage();
+			if (welcomeImage != null) {
+				final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
+				welcomeDialog.setVisible(true);
 			}
 
 			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
@@ -227,8 +244,8 @@ public final class Bootstrap {
 			extensionSwapClient = new ExtensionSwapClient(httpClient, websiteHostname, windowContext, userPreferences,
 					configuration);
 		}
-		ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(extensionSwapClient,
-				userPreferences, usageLogger);
+		ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(
+				extensionSwapClient, userPreferences, usageLogger);
 
 		final Closeable closeableConnection = container.initialize();
 		if (closeableConnection != null) {

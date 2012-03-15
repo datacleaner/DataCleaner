@@ -162,6 +162,12 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
 			return openAnalysisJob(file, ajb);
 		} catch (NoSuchDatastoreException e) {
+			if (_windowContext == null) {
+				// This can happen in case of single-datastore + job file
+				// bootstrapping of DC
+				throw e;
+			}
+
 			AnalysisJobMetadata metadata = reader.readMetadata(file);
 			int result = JOptionPane.showConfirmDialog(null, e.getMessage()
 					+ "\n\nDo you wish to open this job as a template?", "Error: " + e.getMessage(),

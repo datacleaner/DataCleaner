@@ -283,7 +283,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 	public static void main(String[] args) throws Throwable {
 		LookAndFeelManager.getInstance().init();
 
-		Injector injector = Guice.createInjector(new DCModule(new File(".")));
+		Injector injector = Guice.createInjector(new DCModule(new File("."), null));
 
 		// run a small job
 		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);

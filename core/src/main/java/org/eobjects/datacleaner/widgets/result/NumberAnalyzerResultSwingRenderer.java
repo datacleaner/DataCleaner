@@ -144,7 +144,7 @@ public class NumberAnalyzerResultSwingRenderer extends AbstractCrosstabResultSwi
 	public static void main(String[] args) {
 		LookAndFeelManager.getInstance().init();
 		
-		Injector injector = Guice.createInjector(new DCModule(new File(".")));
+		Injector injector = Guice.createInjector(new DCModule(new File("."), null));
 
 		// run a small job
 		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);

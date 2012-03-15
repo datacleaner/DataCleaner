@@ -160,7 +160,7 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 	public static void main(String[] args) {
 		LookAndFeelManager.getInstance().init();
 
-		Injector injector = Guice.createInjector(new DCModule(new File(".")));
+		Injector injector = Guice.createInjector(new DCModule(new File("."), null));
 
 		// run a small job
 		final AnalysisJobBuilder ajb = injector.getInstance(AnalysisJobBuilder.class);

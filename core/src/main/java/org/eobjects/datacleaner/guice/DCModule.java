@@ -115,15 +115,24 @@ public class DCModule extends AbstractModule {
 		_windowContextRef = parent._windowContextRef;
 		_userPreferencesRef = parent._userPreferencesRef;
 	}
+	
+	public DCModule(final File dataCleanerHome) {
+		this(dataCleanerHome, null);
+	}
 
 	/**
 	 * Constructs a new DCModule based only on a DataCleaner home directory. New
 	 * window contexts and analysis job builder will be created. Thus this
 	 * constructor should only be used to create a completely new environment
 	 * (at bootstrap time).
+	 * 
+	 * @param dataCleanerHome
+	 * @param configurationFile
+	 *            a configuration file override, or null if not requested
+	 * 
 	 */
-	public DCModule(final File dataCleanerHome) {
-		_configurationRef = createConfigurationRef(dataCleanerHome);
+	public DCModule(final File dataCleanerHome, File configurationFile) {
+		_configurationRef = createConfigurationRef(dataCleanerHome, configurationFile);
 		_userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
 		_analysisJobBuilderRef = new LazyRef<AnalysisJobBuilder>() {
 			@Override
@@ -169,7 +178,8 @@ public class DCModule extends AbstractModule {
 		};
 	}
 
-	private Ref<AnalyzerBeansConfiguration> createConfigurationRef(final File dataCleanerHome) {
+	private Ref<AnalyzerBeansConfiguration> createConfigurationRef(final File dataCleanerHome,
+			final File configurationFile) {
 		return new LazyRef<AnalyzerBeansConfiguration>() {
 			@Override
 			protected AnalyzerBeansConfiguration fetch() {
@@ -178,22 +188,28 @@ public class DCModule extends AbstractModule {
 				final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
 						new DataCleanerConfigurationReaderInterceptor(dataCleanerHome));
 
+				final File file;
+				if (configurationFile == null) {
+					file = new File(dataCleanerHome, "conf.xml");
+				} else {
+					file = configurationFile;
+				}
+
 				AnalyzerBeansConfiguration c;
 				try {
-					File file = new File(dataCleanerHome, "conf.xml");
 					c = configurationReader.create(file);
 					logger.info("Succesfully read configuration from {}", file.getAbsolutePath());
 				} catch (Exception ex1) {
 					logger.warn("Unexpected error while reading conf.xml from DataCleanerHome!", ex1);
 					try {
-						c = configurationReader.create(ResourceManager.getInstance().getUrl("datacleaner-home/conf.xml")
-								.openStream());
+						c = configurationReader.create(ResourceManager.getInstance()
+								.getUrl("datacleaner-home/conf.xml").openStream());
 					} catch (Exception ex2) {
 						logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
 						logger.warn("Creating a bare-minimum configuration because of previous errors!");
-						c = new AnalyzerBeansConfigurationImpl(new DatastoreCatalogImpl(), new ReferenceDataCatalogImpl(),
-								new SimpleDescriptorProvider(), new SingleThreadedTaskRunner(),
-								new InMemoryStorageProvider());
+						c = new AnalyzerBeansConfigurationImpl(new DatastoreCatalogImpl(),
+								new ReferenceDataCatalogImpl(), new SimpleDescriptorProvider(),
+								new SingleThreadedTaskRunner(), new InMemoryStorageProvider());
 					}
 				}
 
@@ -214,8 +230,8 @@ public class DCModule extends AbstractModule {
 
 				final StorageProvider storageProvider = c.getStorageProvider();
 
-				final InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl(datastoreCatalog,
-						referenceDataCatalog, storageProvider) {
+				final InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl(
+						datastoreCatalog, referenceDataCatalog, storageProvider) {
 					@Override
 					public InjectionManager getInjectionManager(AnalysisJob job) {
 						InjectionManager injectionManager = super.getInjectionManager(job);

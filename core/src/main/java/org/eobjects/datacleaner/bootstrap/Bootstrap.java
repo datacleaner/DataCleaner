@@ -79,6 +79,7 @@ public final class Bootstrap {
 
 		// determine whether to run in command line interface mode
 		final boolean cliMode = _options.isCommandLineMode();
+		final CliArguments arguments = _options.getCommandLineArguments();
 
 		logger.info("CLI mode={}, use -usage to view usage options", cliMode);
 
@@ -91,8 +92,6 @@ public final class Bootstrap {
 					splashScreen.close();
 				}
 			}
-
-			final CliArguments arguments = _options.getCommandLineArguments();
 
 			if (arguments.isUsageMode()) {
 				final PrintWriter out = new PrintWriter(System.out);
@@ -109,7 +108,7 @@ public final class Bootstrap {
 
 		final File dataCleanerHome = DataCleanerHome.get();
 
-		Injector injector = Guice.createInjector(new DCModule(dataCleanerHome));
+		Injector injector = Guice.createInjector(new DCModule(dataCleanerHome, arguments.getConfigurationFile()));
 
 		// configuration loading can be multithreaded, so begin early
 		final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
@@ -132,7 +131,6 @@ public final class Bootstrap {
 			// run in CLI mode
 
 			int exitCode = 0;
-			final CliArguments arguments = _options.getCommandLineArguments();
 			final CliRunner runner = new CliRunner(arguments);
 			try {
 				runner.run(configuration);

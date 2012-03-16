@@ -111,7 +111,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 			@Override
 			protected JComponent getDialogContent() {
 				final AnalyzerBeanDescriptor<CreateCsvFileAnalyzer> descriptor = csvOutputAnalyzerBuilder.getDescriptor();
-				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
+				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
 				tabbedPane.addTab(descriptor.getDisplayName(),
 						IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE), presenter.createJComponent());
 				tabbedPane.setUnclosableTab(0);

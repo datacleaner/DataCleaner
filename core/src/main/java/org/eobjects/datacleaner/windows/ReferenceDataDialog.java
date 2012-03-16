@@ -61,7 +61,7 @@ public final class ReferenceDataDialog extends AbstractDialog {
 	protected ReferenceDataDialog(WindowContext windowContext, InjectorBuilder injectorBuilder) {
 		super(windowContext, imageManager.getImage("images/window/banner-reference-data.png"));
 		_glassPane = new DCGlassPane(this);
-		_tabbedPane = new CloseableTabbedPane();
+		_tabbedPane = new CloseableTabbedPane(true);
 		_tabbedPane.bindTabTitleToBanner(getBanner());
 		_injectorBuilder = injectorBuilder;
 	}

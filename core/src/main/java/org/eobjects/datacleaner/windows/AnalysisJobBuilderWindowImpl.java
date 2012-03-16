@@ -258,7 +258,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow
 
 		_sourceColumnsPanel = sourceColumnsPanel;
 
-		_tabbedPane = new CloseableTabbedPane();
+		_tabbedPane = new CloseableTabbedPane(false);
 		_tabbedPane.addTabCloseListener(this);
 		_tabbedPane.addChangeListener(new ChangeListener() {
 			@Override

@@ -82,7 +82,7 @@ public class OptionsDialog extends AbstractWindow {
 		super(windowContext);
 		_userPreferences = userPreferences;
 		_configuration = configuration;
-		_tabbedPane = new CloseableTabbedPane();
+		_tabbedPane = new CloseableTabbedPane(true);
 
 		_tabbedPane.addTab("General", imageManager.getImageIcon(IconUtils.MENU_OPTIONS), getGeneralTab());
 		_tabbedPane

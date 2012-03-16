@@ -35,7 +35,6 @@ import java.util.TreeSet;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -59,8 +58,6 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	private final Map<Integer, ActionListener> _doubleClickActionListeners = new HashMap<Integer, ActionListener>();
 	private final Map<Integer, ActionListener> _rightClickActionListeners = new HashMap<Integer, ActionListener>();
 
-	private int _marginSize = 4;
-
 	private Color unselectedTabTopColor = WidgetUtils.BG_COLOR_DARKEST;
 	private Color unselectedTabBottomColor = WidgetUtils.BG_COLOR_DARKEST;
 	private Color selectedTabTopColor = WidgetUtils.BG_COLOR_BRIGHTEST;
@@ -70,12 +67,15 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	/**
 	 * Create a tabbed pane
 	 */
-	public CloseableTabbedPane() {
+	public CloseableTabbedPane(boolean addBorder) {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 		setUI(new CloseableTabbedPaneUI(this));
 		setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 		setBackground(WidgetUtils.BG_COLOR_DARK);
 		setOpaque(true);
+		if (addBorder) {
+			setBorder(WidgetUtils.BORDER_WIDE);
+		}
 	}
 
 	/**
@@ -260,20 +260,6 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	@Override
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		updateBorder();
-	}
-
-	private void updateBorder() {
-		setBorder(new LineBorder(getBackground(), getMarginSize()));
-	}
-
-	public int getMarginSize() {
-		return _marginSize;
-	}
-
-	public void setMarginSize(int marginSize) {
-		_marginSize = marginSize;
-		updateBorder();
 	}
 
 	public Color getUnselectedTabTopColor() {

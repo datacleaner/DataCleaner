@@ -52,7 +52,6 @@ public class SchemaTreePanel extends DCPanel {
 				WidgetUtils.BG_COLOR_BRIGHT);
 		_injectorBuilder = injectorBuilder;
 		setLayout(new BorderLayout());
-		setBorder(WidgetUtils.BORDER_WIDE);
 		setDatastore(null, false);
 	}
 

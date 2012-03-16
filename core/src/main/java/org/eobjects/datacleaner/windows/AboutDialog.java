@@ -46,6 +46,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -112,7 +113,7 @@ public class AboutDialog extends AbstractDialog {
 
 	@Override
 	protected JComponent getDialogContent() {
-		CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
+		CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
 
 		tabbedPane.addTab("About DataCleaner",
 				imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_LARGE), getAboutPanel(),
@@ -355,5 +356,9 @@ public class AboutDialog extends AbstractDialog {
 				}
 			}
 		}
+	}
+	
+	public static void main(String[] args) {
+		new AboutDialog(new DCWindowContext(null, null, null)).setVisible(true);
 	}
 }

@@ -113,7 +113,7 @@ public final class SaveTableAsExcelSpreadsheetActionListener implements ActionLi
 			@Override
 			protected JComponent getDialogContent() {
 				final AnalyzerBeanDescriptor<CreateExcelSpreadsheetAnalyzer> descriptor = excelOutputAnalyzerBuilder.getDescriptor();
-				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
+				final CloseableTabbedPane tabbedPane = new CloseableTabbedPane(true);
 				tabbedPane.addTab(descriptor.getDisplayName(),
 						IconUtils.getDescriptorIcon(descriptor, IconUtils.ICON_SIZE_LARGE), presenter.createJComponent());
 				tabbedPane.setUnclosableTab(0);

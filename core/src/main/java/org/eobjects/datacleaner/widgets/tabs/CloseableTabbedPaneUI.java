@@ -30,6 +30,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 
 import javax.swing.Icon;
+import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import org.eobjects.datacleaner.util.IconUtils;
@@ -41,11 +42,10 @@ import org.eobjects.datacleaner.util.ImageManager;
  */
 final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 
-	private static final int HACK_HEIGHT_OF_TABS_AREA = 500;
-
 	// the close image(s)
 	private static final Image CLOSE_IMAGE = ImageManager.getInstance().getImage("images/widgets/tab_close.png");
-	private static final Image CLOSE_IMAGE_HOVER = ImageManager.getInstance().getImage("images/widgets/tab_close_hover.png");
+	private static final Image CLOSE_IMAGE_HOVER = ImageManager.getInstance().getImage(
+			"images/widgets/tab_close_hover.png");
 
 	// the width of the close images
 	private static final int CLOSE_ICON_WIDTH = IconUtils.ICON_SIZE_LARGE;
@@ -57,7 +57,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	private static final int TAB_CORNER_RADIUS = 4;
 
 	// the insets for a single tab
-	private static final Insets TAB_INSETS = new Insets(0, 1, 0, 5);
+	private static final Insets TAB_INSETS = new Insets(1, 2, 1, 3);
 
 	// the width of a separator
 	private static final int SEPARATOR_WIDTH = 10;
@@ -80,10 +80,37 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		return TAB_INSETS;
 	}
 
+	@Override
+	protected Insets getSelectedTabPadInsets(int tabPlacement) {
+		return TAB_INSETS;
+	}
+
+	@Override
+	protected Insets getContentBorderInsets(int tabPlacement) {
+		return new Insets(2, 2, 2, 2);
+	}
+
+	@Override
+	protected Insets getTabAreaInsets(int tabPlacement) {
+		return new Insets(0, 0, 0, 0);
+	}
+
+	protected int getTabLabelShiftY(int tabPlacement, int tabIndex, boolean isSelected) {
+		return 0;
+	};
+
 	// increases the visibility of the getRunForTab(...) method
 	public int getRunForTab(int tabCount, int tabIndex) {
 		return super.getRunForTab(tabCount, tabIndex);
 	};
+
+	private Insets getBorderInsets() {
+		Border border = _pane.getBorder();
+		if (border == null) {
+			return new Insets(0, 0, 0, 0);
+		}
+		return border.getBorderInsets(_pane);
+	}
 
 	/**
 	 * Helper-method to get a rectangle definition for the close-icon
@@ -114,10 +141,25 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		}
 		return width;
 	}
-	
+
 	@Override
 	protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
-		return CLOSE_ICON_TOP_MARGIN + 4 + _pane.getMarginSize() + (horizRunCount * CLOSE_ICON_WIDTH);
+		int result = CLOSE_ICON_TOP_MARGIN;
+
+		Insets insets = getBorderInsets();
+		result += insets.top + insets.bottom;
+
+		result += (horizRunCount * CLOSE_ICON_WIDTH);
+
+		result = Math.min(result, maxTabHeight * horizRunCount + insets.top);
+		return result;
+	}
+
+	@Override
+	protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+		// subtract 2, since this is being added by super
+		int result = super.calculateTabHeight(tabPlacement, tabIndex, fontHeight) - 2;
+		return result;
 	}
 
 	@Override
@@ -131,7 +173,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	}
 
 	@Override
-	protected void paintIcon(Graphics g, int tabPlacement, int tabIndex, Icon icon, Rectangle iconRect, boolean isSelected) {
+	protected void paintIcon(Graphics g, int tabPlacement, int tabIndex, Icon icon, Rectangle iconRect,
+			boolean isSelected) {
 		Rectangle r = new Rectangle(iconRect);
 		if (!_pane.getUnclosables().contains(tabIndex)) {
 			r.x -= CLOSE_ICON_WIDTH - (CLOSE_ICON_WIDTH / 2);
@@ -140,7 +183,8 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	}
 
 	@Override
-	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h,
+			boolean isSelected) {
 		if (!isSelected) {
 			g.setColor(_pane.getTabBorderColor());
 
@@ -148,10 +192,10 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 			g.drawLine(x + TAB_CORNER_RADIUS, y, x + w - TAB_CORNER_RADIUS, y);
 
 			// left line
-			g.drawLine(x, y + TAB_CORNER_RADIUS, x, y + h + HACK_HEIGHT_OF_TABS_AREA);
+			g.drawLine(x, y + TAB_CORNER_RADIUS, x, y + h);
 
 			// right line
-			g.drawLine(x + w, y + TAB_CORNER_RADIUS, x + w, y + h + HACK_HEIGHT_OF_TABS_AREA);
+			g.drawLine(x + w, y + TAB_CORNER_RADIUS, x + w, y + h);
 
 			// the left arc
 			g.drawLine(x, y + TAB_CORNER_RADIUS, x + TAB_CORNER_RADIUS, y);
@@ -182,15 +226,12 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 			g.setColor(bottomColor);
 		}
 
-		g.fillRoundRect(x, y, w, TAB_CORNER_RADIUS * 2, TAB_CORNER_RADIUS, TAB_CORNER_RADIUS);
-		g.fillRect(x, y + TAB_CORNER_RADIUS, w, h);
+		// height of filled rectangle needs to fill many tab runs and the
+		// potential "empty space" generated by separators
+		final int height = h * 4;
 
-		if (!isSelected) {
-			// The selected tab is larger than the other ones. This little hack
-			// will make the unselected tabs fill out the space below them.
-			g.setColor(bottomColor);
-			g.fillRect(x, y + h, w, HACK_HEIGHT_OF_TABS_AREA);
-		}
+		g.fillRoundRect(x, y, w, TAB_CORNER_RADIUS * 2, TAB_CORNER_RADIUS, TAB_CORNER_RADIUS);
+		g.fillRect(x, y + TAB_CORNER_RADIUS, w, height);
 
 		if (!_pane.getUnclosables().contains(tabIndex)) {
 			Image image = _mouseListener.getClosedIndex() != tabIndex ? CLOSE_IMAGE : CLOSE_IMAGE_HOVER;
@@ -208,7 +249,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		// Modification of BasicTabbedPaneUI's paintContentBorder method
 		final int width = tabPane.getWidth();
 		final int height = tabPane.getHeight();
-		Insets tabAreaInsets = getTabAreaInsets(tabPlacement);
+		final Insets tabAreaInsets = getTabAreaInsets(tabPlacement);
 
 		final int x = 0;
 		final int y = calculateTabAreaHeight(tabPlacement, runCount, maxTabHeight) + tabAreaInsets.bottom;
@@ -239,7 +280,7 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	}
 
 	@Override
-	protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect,
-			Rectangle textRect, boolean isSelected) {
+	protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
+			Rectangle iconRect, Rectangle textRect, boolean isSelected) {
 	}
 }

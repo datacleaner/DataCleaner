@@ -65,7 +65,18 @@ public final class CloseableTabbedPane extends JTabbedPane {
 	private Color _tabBorderColor = WidgetUtils.BG_COLOR_LESS_DARK;
 
 	/**
+	 * Create a tabbed pane using defaults
+	 */
+	public CloseableTabbedPane() {
+		//
+		this(true);
+	}
+
+	/**
 	 * Create a tabbed pane
+	 * 
+	 * @param addBorder
+	 *            add a small border around the tabbed pane?
 	 */
 	public CloseableTabbedPane(boolean addBorder) {
 		super(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
@@ -320,7 +331,7 @@ public final class CloseableTabbedPane extends JTabbedPane {
 			}
 		};
 		addChangeListener(changeListener);
-		
+
 		// trigger an initial update
 		changeListener.stateChanged(null);
 	}

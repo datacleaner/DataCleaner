@@ -115,7 +115,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 							final String extensionName = extensionNameBuilder.toString();
 							final ExtensionPackage userExtensionPackage = new ExtensionPackage(extensionName, packageName,
 									true, files);
-							userExtensionPackage.loadExtension(_configuration.getDescriptorProvider());
+							userExtensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
 							extensionPackages.add(userExtensionPackage);
 
 							updateComponents();

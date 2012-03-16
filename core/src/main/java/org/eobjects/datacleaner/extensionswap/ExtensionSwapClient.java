@@ -75,7 +75,7 @@ public final class ExtensionSwapClient {
 		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_ID_PROPERTY, extensionSwapPackage.getId());
 		extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_VERSION_PROPERTY,
 				Integer.toString(extensionSwapPackage.getVersion()));
-		extensionPackage.loadExtension(_configuration.getDescriptorProvider());
+		extensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
 		_userPreferences.getExtensionPackages().add(extensionPackage);
 		return extensionPackage;
 	}
@@ -98,7 +98,8 @@ public final class ExtensionSwapClient {
 		});
 	}
 
-	private void downloadJarFile(ExtensionSwapPackage extensionSwapPackage, String username, FileDownloadListener listener) {
+	private void downloadJarFile(ExtensionSwapPackage extensionSwapPackage, String username,
+			FileDownloadListener listener) {
 		String url = _baseUrl + extensionSwapPackage.getId() + "/jarfile";
 		if (!StringUtils.isNullOrEmpty(username)) {
 			url = url + "?username=" + username;

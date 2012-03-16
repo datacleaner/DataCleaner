@@ -38,7 +38,7 @@ public class ExtensionPackageTest extends TestCase {
 		assertFalse(extensionPackage.isLoaded());
 
 		ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider();
-		extensionPackage.loadExtension(descriptorProvider);
+		extensionPackage.loadDescriptors(descriptorProvider);
 
 		assertTrue(extensionPackage.isLoaded());
 		assertEquals(1, extensionPackage.getLoadedAnalyzers());

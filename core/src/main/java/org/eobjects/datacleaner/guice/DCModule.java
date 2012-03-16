@@ -184,6 +184,15 @@ public class DCModule extends AbstractModule {
 			@Override
 			protected AnalyzerBeansConfiguration fetch() {
 
+				// load user preferences first, since we need it while reading
+				// the configuration (some custom elements may refer to classes
+				// within the extensions)
+				final UserPreferences userPreferences = getUserPreferences();
+				final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
+				for (ExtensionPackage extensionPackage : extensionPackages) {
+					extensionPackage.loadExtension();
+				}
+
 				// load the configuration file
 				final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
 						new DataCleanerConfigurationReaderInterceptor(dataCleanerHome));
@@ -214,8 +223,6 @@ public class DCModule extends AbstractModule {
 					}
 				}
 
-				final UserPreferences userPreferences = getUserPreferences();
-
 				// make the configuration mutable
 				final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog(),
 						userPreferences);
@@ -224,9 +231,8 @@ public class DCModule extends AbstractModule {
 								datastoreCatalog, null, null), null));
 				final DescriptorProvider descriptorProvider = c.getDescriptorProvider();
 
-				final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
 				for (ExtensionPackage extensionPackage : extensionPackages) {
-					extensionPackage.loadExtension(descriptorProvider);
+					extensionPackage.loadDescriptors(descriptorProvider);
 				}
 
 				final StorageProvider storageProvider = c.getStorageProvider();
@@ -240,8 +246,10 @@ public class DCModule extends AbstractModule {
 					}
 				};
 
-				return new AnalyzerBeansConfigurationImpl(datastoreCatalog, referenceDataCatalog, descriptorProvider,
-						c.getTaskRunner(), storageProvider, injectionManagerFactory);
+				AnalyzerBeansConfiguration configuration = new AnalyzerBeansConfigurationImpl(datastoreCatalog,
+						referenceDataCatalog, descriptorProvider, c.getTaskRunner(), storageProvider,
+						injectionManagerFactory);
+				return configuration;
 			}
 		};
 	}

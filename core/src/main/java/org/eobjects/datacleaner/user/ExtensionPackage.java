@@ -51,7 +51,7 @@ public final class ExtensionPackage implements Serializable {
 	private static final Logger logger = LoggerFactory
 			.getLogger(ExtensionPackage.class);
 
-	private static ClassLoader _classLoader = ClassLoaderUtils
+	private static ClassLoader _latestClassLoader = ClassLoaderUtils
 			.getParentClassLoader();
 
 	private transient boolean _loaded = false;
@@ -59,6 +59,7 @@ public final class ExtensionPackage implements Serializable {
 	private transient int _loadedTransformers;
 	private transient int _loadedFilters;
 	private transient int _loadedRenderers;
+	private transient ClassLoader _classLoader;
 
 	private final File[] _files;
 	private final String _name;
@@ -93,8 +94,20 @@ public final class ExtensionPackage implements Serializable {
 	public boolean isScanRecursive() {
 		return _scanRecursive;
 	}
+	
+	public void loadExtension() {
+		synchronized (ExtensionPackage.class) {
+			// each loaded extension package is loaded within it's own
+			// classloader which is a child of the previous extension's
+			// classloader. This mechanism ensures that classes occurring in
+			// several extensions are only loaded once.
+			_latestClassLoader = ClassLoaderUtils.createClassLoader(_files,
+					_latestClassLoader);
+			_classLoader = _latestClassLoader;
+		}
+	}
 
-	public ExtensionPackage loadExtension(DescriptorProvider descriptorProvider)
+	public ExtensionPackage loadDescriptors(DescriptorProvider descriptorProvider)
 			throws IllegalStateException {
 		if (!_loaded) {
 			if (!(descriptorProvider instanceof ClasspathScanDescriptorProvider)) {
@@ -102,15 +115,6 @@ public final class ExtensionPackage implements Serializable {
 						"Can only load user extensions when descriptor provider is of classpath scanner type.");
 			}
 			ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
-
-			synchronized (ExtensionPackage.class) {
-				// each loaded extension package is loaded within it's own
-				// classloader which is a child of the previous extension's
-				// classloader. This mechanism ensures that classes occurring in
-				// several extensions are only loaded once.
-				_classLoader = ClassLoaderUtils.createClassLoader(_files,
-						_classLoader);
-			}
 
 			int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors()
 					.size();
@@ -120,6 +124,10 @@ public final class ExtensionPackage implements Serializable {
 					.size();
 			int renderersBefore = classpathScanner.getRendererBeanDescriptors()
 					.size();
+			
+			if (_classLoader == null) {
+				loadExtension();
+			}
 
 			classpathScanner = classpathScanner.scanPackage(_scanPackage,
 					_scanRecursive, _classLoader, true, _files);
@@ -242,6 +250,6 @@ public final class ExtensionPackage implements Serializable {
 	 * @return
 	 */
 	public static ClassLoader getExtensionClassLoader() {
-		return _classLoader;
+		return _latestClassLoader;
 	}
 }

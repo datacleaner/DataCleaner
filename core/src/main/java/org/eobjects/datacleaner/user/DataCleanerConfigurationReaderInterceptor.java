@@ -43,6 +43,12 @@ public class DataCleanerConfigurationReaderInterceptor implements ConfigurationR
 	}
 
 	@Override
+	public Class<?> loadClass(String className) throws ClassNotFoundException {
+		ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
+		return Class.forName(className, true, classLoader);
+	}
+
+	@Override
 	public String createFilename(String filename) {
 		if (filename == null) {
 			return null;

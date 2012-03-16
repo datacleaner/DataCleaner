@@ -72,7 +72,7 @@ public final class WidgetUtils {
 		}
 	}
 
-	public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 25);
+	public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 18);
 	public static final Font FONT_HEADER1 = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
 	public static final Font FONT_HEADER2 = new FontUIResource("Verdana", Font.BOLD, 13);
 	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);

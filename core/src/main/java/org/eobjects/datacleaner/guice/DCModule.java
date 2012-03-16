@@ -115,7 +115,7 @@ public class DCModule extends AbstractModule {
 		_windowContextRef = parent._windowContextRef;
 		_userPreferencesRef = parent._userPreferencesRef;
 	}
-	
+
 	public DCModule(final File dataCleanerHome) {
 		this(dataCleanerHome, null);
 	}
@@ -201,6 +201,7 @@ public class DCModule extends AbstractModule {
 					logger.info("Succesfully read configuration from {}", file.getAbsolutePath());
 				} catch (Exception ex1) {
 					logger.warn("Unexpected error while reading conf.xml from DataCleanerHome!", ex1);
+					logger.info("Reading conf.xml from classpath");
 					try {
 						c = configurationReader.create(ResourceManager.getInstance()
 								.getUrl("datacleaner-home/conf.xml").openStream());

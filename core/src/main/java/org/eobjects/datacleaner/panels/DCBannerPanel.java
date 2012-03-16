@@ -39,14 +39,20 @@ public class DCBannerPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Image DEFAULT_LEFT_IMAGE = ImageManager.getInstance().getImage("images/window/banner-logo.png");
+	private static final Image DEFAULT_LEFT_IMAGE = ImageManager.getInstance()
+			.getImage("images/window/banner-logo.png");
 	private static final Image DEFAULT_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
+	private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.getInstance().getImage(
+			"images/window/banner-right.png");
+
+	private static final int DEFAULT_HEIGHT = 80;
 
 	private final int _titleIndent;
 	private final Image _leftImage;
 	private final Image _rightImage;
 	private final Image _bgImage;
-	private final String _title;
+	private final String _title1;
+	private String _title2;
 
 	public DCBannerPanel() {
 		this((String) null);
@@ -61,15 +67,26 @@ public class DCBannerPanel extends JPanel {
 	}
 
 	public DCBannerPanel(Image bannerImage, String title) {
-		this(bannerImage, DEFAULT_BG_IMAGE, null, title);
+		this(bannerImage, DEFAULT_BG_IMAGE, DEFAULT_RIGHT_IMAGE, title);
 	}
 
 	public DCBannerPanel(Image leftImage, Image bgImage, Image rightImage, String title) {
-		super();
 		_leftImage = leftImage;
 		_bgImage = bgImage;
 		_rightImage = rightImage;
-		_title = title;
+		if (title == null) {
+			_title1 = null;
+			_title2 = null;
+		} else {
+			int linebreak = title.indexOf('\n');
+			if (linebreak == -1) {
+				_title1 = title;
+				_title2 = null;
+			} else {
+				_title1 = title.substring(0, linebreak - 1);
+				_title2 = title.substring(linebreak);
+			}
+		}
 		if (leftImage == null) {
 			_titleIndent = 0;
 		} else {
@@ -78,9 +95,30 @@ public class DCBannerPanel extends JPanel {
 		setOpaque(false);
 	}
 
+	public String getTitle1() {
+		return _title1;
+	}
+
+	public String getTitle2() {
+		return _title2;
+	}
+
+	public void setTitle2(String title2) {
+		_title2 = title2;
+	}
+
 	@Override
 	public int getHeight() {
-		return _bgImage.getHeight(this);
+		if (_bgImage != null) {
+			return _bgImage.getHeight(this);
+		}
+		if (_leftImage != null) {
+			return _leftImage.getHeight(this);
+		}
+		if (_rightImage != null) {
+			return _rightImage.getHeight(this);
+		}
+		return DEFAULT_HEIGHT;
 	}
 
 	@Override
@@ -95,14 +133,14 @@ public class DCBannerPanel extends JPanel {
 		final int y = 0;
 		final int w = getWidth();
 
-		if (_leftImage != null) {
-			g.drawImage(_leftImage, x, y, this);
-		}
-
-		int offset = _titleIndent;
+		int offset = 0;
 		while (offset < w) {
 			g.drawImage(_bgImage, x + offset, y, this);
 			offset += _bgImage.getWidth(this);
+		}
+
+		if (_leftImage != null) {
+			g.drawImage(_leftImage, x, y, this);
 		}
 
 		if (_rightImage != null) {
@@ -112,11 +150,10 @@ public class DCBannerPanel extends JPanel {
 
 		super.paint(g);
 
-		if (_title != null) {
+		if (_title1 != null) {
 			int titleY = 45;
-			final String[] titleLines = _title.split("\n");
-			if (titleLines.length > 1) {
-				titleY = 30;
+			if (_title2 != null) {
+				titleY = 35;
 			}
 
 			if (g instanceof Graphics2D) {
@@ -125,14 +162,16 @@ public class DCBannerPanel extends JPanel {
 
 			final int titleX = _titleIndent + 10;
 
-			for (int i = 0; i < titleLines.length; i++) {
-				g.setFont(WidgetUtils.FONT_BANNER);
-				g.setColor(WidgetUtils.BG_COLOR_BLUE_DARK);
-				g.drawString(titleLines[i], titleX + 2, titleY + 2);
-				g.setFont(WidgetUtils.FONT_BANNER);
-				g.setColor(WidgetUtils.BG_COLOR_BLUE_BRIGHT);
-				g.drawString(titleLines[i], titleX, titleY);
-				titleY += 30;
+			// draw title 1
+			g.setFont(WidgetUtils.FONT_BANNER);
+			g.setColor(WidgetUtils.BG_COLOR_DARK);
+			g.drawString(_title1, titleX, titleY);
+
+			if (_title2 != null) {
+				titleY += g.getFontMetrics().getHeight();
+				g.setFont(WidgetUtils.FONT_HEADER1);
+				g.setColor(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+				g.drawString(_title2, titleX, titleY);
 			}
 		}
 	}

@@ -294,7 +294,7 @@ public final class ResultWindow extends AbstractWindow {
 		String bannerTitle = "Analysis results";
 		String datastoreName = getDatastoreName();
 		if (!StringUtils.isNullOrEmpty(datastoreName)) {
-			bannerTitle = bannerTitle + "\n" + datastoreName;
+			bannerTitle = bannerTitle + " | " + datastoreName;
 
 			if (!StringUtils.isNullOrEmpty(_jobFilename)) {
 				bannerTitle = bannerTitle + " | " + _jobFilename;
@@ -305,7 +305,8 @@ public final class ResultWindow extends AbstractWindow {
 				imageManager.getImage("images/window/banner-results.png"),
 				bannerTitle);
 		banner.setLayout(new FlowLayout(Alignment.RIGHT
-				.getFlowLayoutAlignment()));
+				.getFlowLayoutAlignment(), 10, 30));
+		_tabbedPane.bindTabTitleToBanner(banner);
 
 		final JButton saveButton = WidgetFactory.createButton("Save result",
 				"images/actions/save.png");

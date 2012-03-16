@@ -425,9 +425,12 @@ public class OptionsDialog extends AbstractWindow {
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
+		final DCBannerPanel banner = new DCBannerPanel("Options");
+		_tabbedPane.bindTabTitleToBanner(banner);
+
 		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
 		panel.setLayout(new BorderLayout());
-		panel.add(new DCBannerPanel("Options"), BorderLayout.NORTH);
+		panel.add(banner, BorderLayout.NORTH);
 		panel.add(_tabbedPane, BorderLayout.CENTER);
 		panel.add(toolBarPanel, BorderLayout.SOUTH);
 		panel.setPreferredSize(500, 500);

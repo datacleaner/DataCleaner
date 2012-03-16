@@ -36,7 +36,10 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -315,5 +318,24 @@ public final class CloseableTabbedPane extends JTabbedPane {
 
 	public Rectangle getTabBounds(int tabIndex) {
 		return getUI().getTabBounds(this, tabIndex);
+	}
+
+	public void bindTabTitleToBanner(final DCBannerPanel bannerPanel) {
+		ChangeListener changeListener = new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				int selectedIndex = getSelectedIndex();
+				if (selectedIndex == -1) {
+					return;
+				}
+				String title = getTitleAt(selectedIndex);
+				bannerPanel.setTitle2(title);
+				bannerPanel.updateUI();
+			}
+		};
+		addChangeListener(changeListener);
+		
+		// trigger an initial update
+		changeListener.stateChanged(null);
 	}
 }

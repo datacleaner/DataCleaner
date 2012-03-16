@@ -40,8 +40,8 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 	private static final long serialVersionUID = 1L;
 
 	private volatile boolean initialized = false;
-	private final Image _bannerImage;
 	private final WindowContext _windowContext;
+	private final DCBannerPanel _banner;
 	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 
@@ -58,8 +58,12 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		addWindowListener(this);
 		setResizable(isWindowResizable());
-		_bannerImage = bannerImage;
 		_windowContext = windowContext;
+		_banner = createBanner(bannerImage);
+	}
+	
+	protected DCBannerPanel getBanner() {
+		return _banner;
 	}
 
 	protected void setTopBackgroundColor(Color topBackgroundColor) {
@@ -136,14 +140,12 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 		DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
 		panel.setLayout(new BorderLayout());
 
-		JComponent banner = getBanner();
-
 		final int bannerHeight;
-		if (banner == null) {
+		if (_banner == null) {
 			bannerHeight = 0;
 		} else {
-			panel.add(banner, BorderLayout.NORTH);
-			bannerHeight = banner.getPreferredSize().height;
+			panel.add(_banner, BorderLayout.NORTH);
+			bannerHeight = _banner.getPreferredSize().height;
 		}
 		JComponent dialogContent = getDialogContent();
 		panel.add(dialogContent, BorderLayout.CENTER);
@@ -153,9 +155,13 @@ public abstract class AbstractDialog extends JDialog implements DCWindow, Window
 		return panel;
 	}
 
-	protected JComponent getBanner() {
-		DCBannerPanel bannerPanel = new DCBannerPanel(_bannerImage, getBannerTitle());
-		return bannerPanel;
+	private DCBannerPanel createBanner(Image bannerImage) {
+		if (bannerImage == null) {
+			return null;
+		} else {
+			final DCBannerPanel bannerPanel = new DCBannerPanel(bannerImage, getBannerTitle());
+			return bannerPanel;
+		}
 	}
 
 	protected abstract String getBannerTitle();

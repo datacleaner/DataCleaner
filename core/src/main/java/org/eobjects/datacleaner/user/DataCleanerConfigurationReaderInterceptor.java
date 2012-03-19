@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eobjects.analyzer.configuration.ConfigurationReaderInterceptor;
+import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,8 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-public class DataCleanerConfigurationReaderInterceptor implements ConfigurationReaderInterceptor {
+public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor implements
+		ConfigurationReaderInterceptor {
 
 	private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationReaderInterceptor.class);
 

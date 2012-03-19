@@ -20,6 +20,10 @@
 package org.eobjects.datacleaner;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -40,6 +44,8 @@ public final class Main {
 	public static final String VERSION = "2.5-RC2";
 
 	public static void main(String[] args) {
+		initializeSystemProperties(args);
+
 		initializeLogging();
 
 		BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
@@ -47,18 +53,47 @@ public final class Main {
 		bootstrap.run();
 	}
 
-	private static void initializeLogging() {
+	/**
+	 * Initializes system properties based on the arguments passed
+	 * @param args
+	 * @return
+	 */
+	protected static Map<String, String> initializeSystemProperties(String[] args) {
+		Map<String, String> result = new HashMap<String, String>();
+		Pattern pattern = Pattern.compile("-D(.+)=(.+)");
+		for (String arg : args) {
+			Matcher matcher = pattern.matcher(arg);
+			if (matcher.matches()) {
+				String key = matcher.group(1);
+				String value = matcher.group(2);
+				result.put(key, value);
+				System.setProperty(key, value);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Initializes logging, specifically by looking for log4j.xml or
+	 * log4j.properties file in DataCleaner's home directory.
+	 * 
+	 * @return true if a logging configuration file was found, or false
+	 *         otherwise
+	 */
+	protected static boolean initializeLogging() {
 		final File dataCleanerHome = DataCleanerHome.get();
 		final File xmlConfigurationFile = new File(dataCleanerHome, "log4j.xml");
 		if (xmlConfigurationFile.exists() && xmlConfigurationFile.isFile()) {
 			DOMConfigurator.configure(xmlConfigurationFile.getAbsolutePath());
-			return;
+			return true;
 		}
 
 		final File propertiesConfigurationFile = new File(dataCleanerHome, "log4j.properties");
 		if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.isFile()) {
 			PropertyConfigurator.configure(propertiesConfigurationFile.getAbsolutePath());
-			return;
+			return true;
 		}
+
+		return false;
 	}
 }

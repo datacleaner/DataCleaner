@@ -19,20 +19,18 @@
  */
 package org.eobjects.datacleaner;
 
-import org.eobjects.datacleaner.bootstrap.SystemProperties;
-import org.junit.Ignore;
+import java.util.Map;
 
-@Ignore
-public class MainTest {
+import junit.framework.TestCase;
 
-	/**
-	 * Example of starting DC with a loaded job
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		System.setProperty(SystemProperties.UI_VISIBLE, "true");
-		System.setProperty(SystemProperties.EMBED_CLIENT, "Kettle");
-		Main.main("-ds orderdb -job examples\\employees.analysis.xml".split(" "));
+public class MainTest extends TestCase {
+
+	public void testInitializeSystemProperties() throws Exception {
+		Map<String, String> properties = Main
+				.initializeSystemProperties("-job hey.xml -Dfoo=bar -Dfoo=bar -DdatastoreCatalog.orderdb.url=foobar -hello world"
+						.split(" "));
+		assertEquals(2, properties.size());
+		assertEquals("foobar", properties.get("datastoreCatalog.orderdb.url"));
+		assertEquals("bar", properties.get("foo"));
 	}
 }

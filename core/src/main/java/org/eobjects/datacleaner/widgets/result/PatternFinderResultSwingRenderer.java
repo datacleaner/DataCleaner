@@ -126,12 +126,14 @@ public class PatternFinderResultSwingRenderer extends AbstractRenderer<PatternFi
 					return decoratedPanel;
 				}
 			};
-			final String expandedLabel = "Pattern finder for group '" + LabelUtils.getLabel(entry.getKey() + "'");
+
 			final int patternCount = crosstab.getDimension(
 					crosstab.getDimensionIndex(PatternFinderAnalyzer.DIMENSION_NAME_PATTERN)).getCategoryCount();
-			final String collapsedLabel = expandedLabel + ": " + patternCount + " patterns";
-			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, expandedLabel, collapsed,
-					componentRef);
+			final String expandedLabel = (patternCount == 1 ? "1 pattern" : patternCount + " patterns") + " in group '"
+					+ LabelUtils.getLabel(entry.getKey() + "'");
+			final String collapsedLabel = expandedLabel;
+			final DCCollapsiblePanel collapsiblePanel = new DCCollapsiblePanel(collapsedLabel, expandedLabel,
+					collapsed, componentRef);
 			panel.add(collapsiblePanel.toPanel());
 		}
 		return panel;

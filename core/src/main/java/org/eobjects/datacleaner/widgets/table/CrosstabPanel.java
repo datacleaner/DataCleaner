@@ -47,7 +47,19 @@ public class CrosstabPanel extends DCPanel {
 	private final DisplayChartCallback _displayChartCallback;
 	private final DCTable _table;
 
+	/**
+	 * 
+	 * @param table
+	 * @param allowAnimations
+	 * 
+	 * @deprecated use {@link #CrosstabPanel(DCTable)} instead
+	 */
+	@Deprecated
 	public CrosstabPanel(DCTable table, boolean allowAnimations) {
+		this(table);
+	}
+
+	public CrosstabPanel(DCTable table) {
 		super();
 		_table = table;
 
@@ -62,11 +74,8 @@ public class CrosstabPanel extends DCPanel {
 
 		JXCollapsiblePane chartContainer = WidgetFactory.createCollapsiblePane(Direction.UP);
 		chartContainer.setCollapsed(true);
-		if (!allowAnimations) {
-			chartContainer.setAnimated(false);
-		}
 
-		_displayChartCallback = new DisplayChartCallbackImpl(chartContainer, allowAnimations);
+		_displayChartCallback = new DisplayChartCallbackImpl(chartContainer);
 
 		add(chartContainer, BorderLayout.NORTH);
 		add(tableComponent, BorderLayout.CENTER);

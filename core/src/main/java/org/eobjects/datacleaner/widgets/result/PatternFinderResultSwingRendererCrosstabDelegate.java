@@ -61,8 +61,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
 	private final MutableReferenceDataCatalog _catalog;
 
-	public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext, RendererFactory rendererFactory,
-			MutableReferenceDataCatalog referenceDataCatalog) {
+	public PatternFinderResultSwingRendererCrosstabDelegate(WindowContext windowContext,
+			RendererFactory rendererFactory, MutableReferenceDataCatalog referenceDataCatalog) {
 		super(windowContext, rendererFactory);
 		_catalog = referenceDataCatalog;
 	}
@@ -75,7 +75,7 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
 	@Override
 	public JComponent render(CrosstabResult result) {
-		final CrosstabPanel crosstabPanel = super.renderInternal(result, false);
+		final CrosstabPanel crosstabPanel = super.renderInternal(result);
 		final DCTable table = crosstabPanel.getTable();
 		if (isInitiallyCharted(table) || isTooLimitedToChart(table)) {
 			return crosstabPanel;
@@ -118,8 +118,8 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 			dataset.addValue(count, expression, "");
 		}
 
-		JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, true, true,
-				false);
+		JFreeChart chart = ChartFactory.createBarChart("", "", "Match count", dataset, PlotOrientation.VERTICAL, true,
+				true, false);
 		ChartUtils.applyStyles(chart);
 		displayChartCallback.displayChart(new ChartPanel(chart));
 	}

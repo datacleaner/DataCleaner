@@ -59,7 +59,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends AbstractRenderer<R, JComponent> {
+public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResult> extends
+		AbstractRenderer<R, JComponent> {
 
 	public static final String IMAGE_PATH_BAR_CHART = "images/chart-types/bar.png";
 	public static final String IMAGE_PATH_DRILL_TO_DETAIL = "images/actions/drill-to-detail.png";
@@ -94,12 +95,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
 	@Override
 	public JComponent render(R result) {
-		return renderInternal(result, true);
+		return renderInternal(result);
 	};
-
-	protected CrosstabPanel renderInternal(R result) {
-		return renderInternal(result, true);
-	}
 
 	public RendererFactory getRendererFactory() {
 		if (_rendererFactory == null) {
@@ -109,19 +106,28 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 	}
 
 	/**
+	 * @deprecated use {@link #renderInternal(CrosstabResult)} instead.
+	 */
+	@Deprecated
+	protected CrosstabPanel renderInternal(R result, boolean allowAnimations) {
+		return renderInternal(result);
+	}
+
+	/**
 	 * Alternative render method, provided to have a more precise return type
 	 * (while still allowing this class to be extended and only have a
 	 * {@link JComponent} return type.
 	 * 
 	 * @param result
+	 * @param allowAnimations
 	 * @return
 	 */
-	protected CrosstabPanel renderInternal(R result, boolean allowAnimations) {
+	protected CrosstabPanel renderInternal(R result) {
 		_drillToDetailsCallback = new DrillToDetailsCallbackImpl(_windowContext, getRendererFactory());
 
 		final DCTable table = renderTable(result.getCrosstab());
 
-		final CrosstabPanel crosstabPanel = new CrosstabPanel(table, allowAnimations);
+		final CrosstabPanel crosstabPanel = new CrosstabPanel(table);
 
 		decorate(result, table, crosstabPanel.getDisplayChartCallback());
 
@@ -159,8 +165,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 		}
 	}
 
-	protected void addDefaultBarChart(final DCTable table, final DisplayChartCallback displayChartCallback, final int row,
-			final String measureName) {
+	protected void addDefaultBarChart(final DCTable table, final DisplayChartCallback displayChartCallback,
+			final int row, final String measureName) {
 		final ActionListener action = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -173,8 +179,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 					dataset.setValue(value, table.getColumnName(j), "");
 				}
 
-				final JFreeChart chart = ChartFactory.createBarChart("", "", measureName, dataset, PlotOrientation.VERTICAL,
-						true, true, false);
+				final JFreeChart chart = ChartFactory.createBarChart("", "", measureName, dataset,
+						PlotOrientation.VERTICAL, true, true, false);
 				ChartUtils.applyStyles(chart);
 				final ChartPanel chartPanel = new ChartPanel(chart);
 				displayChartCallback.displayChart(chartPanel);
@@ -219,8 +225,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 		}
 	}
 
-	protected void valueCell(Object value, final ResultProducer drillToDetailResultProducer, TableModel tableModel, int row,
-			int col, boolean headersIncluded, Alignment alignment) {
+	protected void valueCell(Object value, final ResultProducer drillToDetailResultProducer, TableModel tableModel,
+			int row, int col, boolean headersIncluded, Alignment alignment) {
 		final Object resultValue;
 
 		ActionListener action = null;
@@ -339,8 +345,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
 		@Override
 		public void valueCell(Object value, final ResultProducer drillToDetailResultProducer) {
-			AbstractCrosstabResultSwingRenderer.this.valueCell(value, drillToDetailResultProducer, _tableModel, _row, _col,
-					headersIncluded, _alignment);
+			AbstractCrosstabResultSwingRenderer.this.valueCell(value, drillToDetailResultProducer, _tableModel, _row,
+					_col, headersIncluded, _alignment);
 			_col++;
 		}
 

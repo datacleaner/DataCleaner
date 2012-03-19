@@ -55,13 +55,13 @@ public class BooleanAnalyzerResultSwingRenderer extends AbstractRenderer<Boolean
 		Crosstab<Number> valueCombinationCrosstab = result.getValueCombinationCrosstab();
 
 		CrosstabPanel columnStatisticsPanel = crosstabResultSwingRenderer.renderInternal(new CrosstabResult(
-				columnStatisticsCrosstab), true);
+				columnStatisticsCrosstab));
 		if (valueCombinationCrosstab == null) {
 			return columnStatisticsPanel;
 		}
 
 		CrosstabPanel valueCombinationPanel = crosstabResultSwingRenderer.renderInternal(new CrosstabResult(
-				valueCombinationCrosstab), true);
+				valueCombinationCrosstab));
 
 		DCPanel panel = new DCPanel();
 		panel.setLayout(new VerticalLayout(4));

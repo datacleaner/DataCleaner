@@ -32,6 +32,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.bootstrap.SystemProperties;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
@@ -61,7 +62,9 @@ public final class UsageLogger {
 	}
 
 	public void logApplicationStartup() {
-		final String action = "Startup";
+		final String embeddedClient = System.getProperty(SystemProperties.EMBED_CLIENT);
+
+		final String action = embeddedClient == null ? "Startup" : "Startup (embedded in " + embeddedClient + ")";
 		final String username = getUsername();
 
 		logger.debug("Logging '{}'", action);

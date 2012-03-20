@@ -24,6 +24,7 @@
 			<quote-char>"</quote-char>
 			<separator-char>;</separator-char>
 			<encoding>ISO-8859-1</encoding>
+			<fail-on-inconsistencies>false</fail-on-inconsistencies>
 		</csv-datastore>
 	</datastore-catalog>
 
@@ -43,6 +44,9 @@
 				<synonym-column-path>ISO 3166-3</synonym-column-path>
 				<synonym-column-path>ISO Numeric</synonym-column-path>
 				<synonym-column-path>Country name</synonym-column-path>
+				<synonym-column-path>Synonym1</synonym-column-path>
+				<synonym-column-path>Synonym2</synonym-column-path>
+				<synonym-column-path>Synonym3</synonym-column-path>
 			</datastore-synonym-catalog>
 
 			<datastore-synonym-catalog name="Country code (3 letter)"
@@ -52,6 +56,9 @@
 				<synonym-column-path>ISO 3166-2</synonym-column-path>
 				<synonym-column-path>ISO Numeric</synonym-column-path>
 				<synonym-column-path>Country name</synonym-column-path>
+				<synonym-column-path>Synonym1</synonym-column-path>
+				<synonym-column-path>Synonym2</synonym-column-path>
+				<synonym-column-path>Synonym3</synonym-column-path>
 			</datastore-synonym-catalog>
 		</synonym-catalogs>
 	</reference-data-catalog>

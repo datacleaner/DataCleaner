@@ -1,4 +1,4 @@
-Country name;ISO 3166-2;ISO 3166-3;ISO Numeric;Linked to country:
+Country name;ISO 3166-2;ISO 3166-3;ISO Numeric;Linked to country;Synonym1;Synonym2;Synonym3
 Abkhazia;;;;Georgia
 Afganistan;AF;AFG;004;
 Åland Islands;AX;ALA;248;Finland
@@ -58,7 +58,7 @@ Cuba;CU;CUB;192;
 Curaçao;CW;CUW;531;Netherlands
 Cyprus;CY;CYP;196;
 Czech Republic;CZ;CZE;203;
-Denmark;DK;DNK;208;
+Denmark;DK;DNK;208;;Danmark;Danemark;
 Djibouti;DJ;DJI;262;
 Dominica;DM;DMA;212;
 Dominican Republic;DO;DOM;214;
@@ -79,7 +79,7 @@ French Guiana;GF;GUF;254;France
 French Polynesia;PF;PYF;258;France
 French Southern Territories;TF;ATF;260;France
 Gabon;GA;GAB;266;
-Gambia, The;GM;GMB;270;
+Gambia, The;GM;GMB;270;;The Gambia;Gambia
 Georgia;GE;GEO;268;
 Germany;DE;DEU;276;
 Ghana;GH;GHA;288;
@@ -156,7 +156,7 @@ Namibia;NA;NAM;516;
 Nauru;NR;NRU;520;
 Nepal;NP;NPL;524;
 Netherlands Antilles;AN;ANT;530;
-Netherlands, The;NL;NLD;528;
+Netherlands, The;NL;NLD;528;;Netherlands;Holland;The Netherlands
 New Caledonia;NC;NCL;540;France
 New Zealand;NZ;NZL;554;
 Nicaragua;NI;NIC;558;
@@ -216,12 +216,12 @@ South Georgia & The South Sandwish Islands;GS;SGS;239;United Kingdom
 South Korea;KR;KOR;418;
 South Ossetia;;;;Georgia
 South Sudan;;;;
-Spain;ES;ESP;724;
+Spain;ES;ESP;724;;Espana
 Sri Lanka;LK;LKA;144;
 Sudan;SD;SDN;736;
 Suriname;SR;SUR;740;
 Swaziland;SZ;SWZ;748;
-Sweden;SE;SWE;752;
+Sweden;SE;SWE;752;;Sverige
 Switzerland;CH;CHE;756;
 Syria;SY;SYR;760;
 Taiwan;TW;TWN;158;China
@@ -241,8 +241,8 @@ Tuvalu;TV;TUV;798;
 Uganda;UG;UGA;800;
 Ukraine;UA;UKR;804;
 United Arab Emirates;AE;ARE;784;
-United Kingdom;GB;GBR;826;
-United States;US;USA;840;
+United Kingdom;GB;GBR;826;;UK;England
+United States;US;USA;840;;United States of America
 United States Virgin Islands;VI;VIR;850;United States of America
 Uruguay;UY;URY;858;
 Uzbekistan;UZ;UZB;860;

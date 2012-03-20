@@ -208,7 +208,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 
 		char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
 
-		if (StringUtils.indexOf('\n', sampleChars) == -1) {
+		if (StringUtils.indexOf('\n', sampleChars) == -1 && StringUtils.indexOf('\r', sampleChars) == -1) {
 			warnings.add("No newline in first " + sampleChars.length + " chars");
 			// don't show the preview if no newlines where found (it may try
 			// to treat the whole file as a single row)

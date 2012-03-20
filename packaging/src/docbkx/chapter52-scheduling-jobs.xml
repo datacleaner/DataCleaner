@@ -5,4 +5,53 @@
 
 	<title>Scheduling jobs</title>
 
+	<para>
+		Scheduling DataCleaner jobs can be done via any third party scheduler
+		in combination with the
+		<link linkend="command_line_interface">command line interface</link>
+		. Typical options are:
+	</para>
+
+	<orderedlist>
+		<listitem>
+			<para>
+				<emphasis>Pentaho Data Integration job entry</emphasis>
+				. If you want to have DataCleaner scheduled and integrated into an
+				environment where you can eg. iterate over files in a folder etc.,
+				then you can use Pentaho Data Integration (PDI), which is an open
+				source
+				ETL tool that includes a scheduler.
+			</para>
+			<para>Construct a PDI "job" (ie. not a "transformation") and add the
+				DataCleaner job entry. The configuration dialog will look like this:
+			</para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="dc_job_entry.png" format="PNG"
+						scalefit="1" />
+				</imageobject>
+			</mediaobject>
+			<para>The most tricky part is to fill out the executable and the job
+				filename. Note that all configuration options can contain PDI
+				variables, like it is the case with ${user.home} in the screenshot
+				above. This is useful if you want to eg. timestamp your resulting
+				files etc.</para>
+		</listitem>
+		<listitem>
+			<para>
+				<emphasis>Cron jobs</emphasis>
+				. Typically on Linux and other Unix variants. Simply configure a
+				cron entry which invokes datacleaner.sh with the desired parameters.
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<emphasis>Scheduled tasks</emphasis>
+				. On Windows based machines, using "Scheduled tasks" (aka "Task
+				Scheduler" on newer versions of Windows) can be used similarly to
+				cron jobs.
+			</para>
+		</listitem>
+	</orderedlist>
+
 </chapter>

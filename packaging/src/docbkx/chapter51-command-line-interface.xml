@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<chapter id="command_line_interface" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://www.oasis-open.org/docbook/4.5"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
@@ -329,7 +329,42 @@
 		</para>
 
 		<programlisting>
-			DataCleaner-console.exe&#160;-job&#160;my_job.analysis.xml&#160;-var&#160;filename=/output/my_file.csv&#160;-var&#160;separator=;</programlisting>
+			DataCleaner-console.exe&#160;-job&#160;my_job.analysis.xml&#160;-var&#160;filename=/output/my_file.csv&#160;-var&#160;separator=;
+		</programlisting>
+	</section>
+
+	<section>
+		<title>Dynamically overriding configuration elements</title>
+		<para>
+			Since version 2.5 of DataCleaner it is possible to override elements
+			in the
+			<link linkend="chapter_configuration_file">configuration file</link>
+			dynamically from the command line. This is a feature which can be
+			useful in scenarios where you want the to invoke the same job but
+			with slightly different configuration details.
+		</para>
+		<para>For example, you might want to reuse the same job to be executed
+			on several similar CSV files, or similar database environments.
+			Let us
+			assume that you have a CSV datastore that is defined like this:
+		</para>
+		<programlisting>
+			&lt;/datastore-catalog&gt;
+			&#160;&#160;&lt;csv-datastore&#160;name="My csv file"&gt;
+			&#160;&#160;&#160;&#160;&lt;filename&gt;/path/to/file.csv&lt;/filename&gt;
+			&#160;&#160;&lt;/csv-datastore&gt;
+			&lt;/datastore-catalog&gt;</programlisting>
+		<para>To override the filename dynamically, you have to specify the
+			property path (datastore catalog, then datastore name, then property
+			name) with a '-D' parameter on the command line. Furthermore any
+			spaces or dashes are removed and the succeeding character is
+			uppercased. In the end it will look like "camelCase" strings, like
+			this:
+		</para>
+		<programlisting>DataCleaner-console.exe&#160;...&#160;-DdatastoreCatalog.myCsvFile.filename=anotherfile.csv
+		</programlisting>
+		<para>This mechanism can be used for any configuration property within
+			the datastore catalog and reference data catalog.</para>
 	</section>
 
 </chapter>

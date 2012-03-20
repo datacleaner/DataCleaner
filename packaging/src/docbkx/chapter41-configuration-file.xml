@@ -223,7 +223,7 @@
 		<para>Reference data are defined in the configuration file in the
 			element &lt;reference-data-catalog&gt;.</para>
 	</section>
-
+	
 	<section>
 		<title>Task runner</title>
 		<para>The task runner defines how DataCleaner's will engine will

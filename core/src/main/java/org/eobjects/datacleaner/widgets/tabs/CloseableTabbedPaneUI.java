@@ -33,7 +33,6 @@ import javax.swing.Icon;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
-import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 
 /**
@@ -48,10 +47,9 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 			"images/widgets/tab_close_hover.png");
 
 	// the width of the close images
-	private static final int CLOSE_ICON_WIDTH = IconUtils.ICON_SIZE_LARGE;
+	private static final int CLOSE_ICON_WIDTH = 22;
 
 	// the top-margin of a close icon
-	private static final int CLOSE_ICON_TOP_MARGIN = 8;
 	private static final int CLOSE_ICON_RIGHT_MARGIN = 4;
 
 	private static final int TAB_CORNER_RADIUS = 4;
@@ -118,10 +116,10 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 	 * @param tabIndex
 	 * @return
 	 */
-	Rectangle closeRectFor(int tabIndex) {
+	public Rectangle closeRectFor(int tabIndex) {
 		Rectangle rect = rects[tabIndex];
 		final int x = rect.x + rect.width - CLOSE_ICON_WIDTH - CLOSE_ICON_RIGHT_MARGIN;
-		final int y = rect.y + CLOSE_ICON_TOP_MARGIN;
+		final int y = rect.y + (rect.height - CLOSE_ICON_WIDTH) / 2;
 		final int width = CLOSE_ICON_WIDTH;
 		final int height = width;
 		return new Rectangle(x, y, width, height);
@@ -144,14 +142,9 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 
 	@Override
 	protected int calculateTabAreaHeight(int tabPlacement, int horizRunCount, int maxTabHeight) {
-		int result = CLOSE_ICON_TOP_MARGIN;
-
 		Insets insets = getBorderInsets();
-		result += insets.top + insets.bottom;
 
-		result += (horizRunCount * CLOSE_ICON_WIDTH);
-
-		result = Math.min(result, maxTabHeight * horizRunCount + insets.top);
+		int result = maxTabHeight * horizRunCount + insets.top;
 		return result;
 	}
 
@@ -234,10 +227,10 @@ final class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
 		g.fillRect(x, y + TAB_CORNER_RADIUS, w, height);
 
 		if (!_pane.getUnclosables().contains(tabIndex)) {
+			Rectangle closeRect = closeRectFor(tabIndex);
+
 			Image image = _mouseListener.getClosedIndex() != tabIndex ? CLOSE_IMAGE : CLOSE_IMAGE_HOVER;
-			int imageX = x + w - CLOSE_ICON_WIDTH - CLOSE_ICON_RIGHT_MARGIN;
-			int imageY = y + CLOSE_ICON_TOP_MARGIN;
-			g.drawImage(image, imageX, imageY, _pane);
+			g.drawImage(image, closeRect.x, closeRect.y, _pane);
 		}
 	}
 

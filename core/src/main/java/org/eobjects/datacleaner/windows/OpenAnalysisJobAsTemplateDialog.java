@@ -90,7 +90,7 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
 
 	public OpenAnalysisJobAsTemplateDialog(WindowContext windowContext, AnalyzerBeansConfiguration configuration, File file,
 			AnalysisJobMetadata metadata, Provider<OpenAnalysisJobActionListener> openAnalysisJobActionListenerProvider) {
-		super(windowContext);
+		super(windowContext, imageManager.getImage("images/window/banner-logo.png"));
 		_configuration = configuration;
 		_file = file;
 		_metadata = metadata;

@@ -145,7 +145,7 @@ public final class LookAndFeelManager {
 		UIManager.put("ToolTip.border", WidgetUtils.BORDER_THIN);
 
 		// task pane colors
-		UIManager.put("TaskPane.font", WidgetUtils.FONT_HEADER2);
+		UIManager.put("TaskPane.font", WidgetUtils.FONT_NORMAL);
 		UIManager.put("TaskPaneContainer.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TaskPane.titleForeground", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TaskPane.titleBackgroundGradientStart", WidgetUtils.BG_COLOR_DARKEST);

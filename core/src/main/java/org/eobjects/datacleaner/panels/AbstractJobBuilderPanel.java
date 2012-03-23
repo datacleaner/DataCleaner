@@ -49,8 +49,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetPanel;
 import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 import org.jdesktop.swingx.JXTaskPane;
 
-public abstract class AbstractJobBuilderPanel extends DCPanel implements
-		ComponentJobBuilderPresenter {
+public abstract class AbstractJobBuilderPanel extends DCPanel implements ComponentJobBuilderPresenter {
 
 	private static final long serialVersionUID = 1L;
 
@@ -62,19 +61,15 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 	private final ChangeRequirementButton _requirementButton;
 	private final DCPanel _visualizationPanel;
 
-	protected AbstractJobBuilderPanel(String watermarkImagePath,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected AbstractJobBuilderPanel(String watermarkImagePath, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			PropertyWidgetFactory propertyWidgetFactory) {
-		this(ImageManager.getInstance().getImage(watermarkImagePath), 95, 95,
-				beanJobBuilder, propertyWidgetFactory);
+		this(ImageManager.getInstance().getImage(watermarkImagePath), 95, 95, beanJobBuilder, propertyWidgetFactory);
 	}
 
-	protected AbstractJobBuilderPanel(Image watermarkImage,
-			int watermarkHorizontalPosition, int watermarkVerticalPosition,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected AbstractJobBuilderPanel(Image watermarkImage, int watermarkHorizontalPosition,
+			int watermarkVerticalPosition, AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			PropertyWidgetFactory propertyWidgetFactory) {
-		super(watermarkImage, watermarkHorizontalPosition,
-				watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
+		super(watermarkImage, watermarkHorizontalPosition, watermarkVerticalPosition, WidgetUtils.BG_COLOR_BRIGHT,
 				WidgetUtils.BG_COLOR_BRIGHTEST);
 		_taskPaneContainer = WidgetFactory.createTaskPaneContainer();
 		_beanJobBuilder = beanJobBuilder;
@@ -142,12 +137,9 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 	private final void init() {
 		final List<ConfiguredPropertyTaskPane> propertyTaskPanes = createPropertyTaskPanes();
 		for (ConfiguredPropertyTaskPane propertyTaskPane : propertyTaskPanes) {
-			buildTaskPane(propertyTaskPane.getProperties(),
-					imageManager.getImageIcon(
-							propertyTaskPane.getIconImagePath(),
-							IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
-					propertyTaskPane.getTitle(), _beanJobBuilder,
-					propertyTaskPane.isExpanded());
+			buildTaskPane(propertyTaskPane.getProperties(), imageManager.getImageIcon(
+					propertyTaskPane.getIconImagePath(), IconUtils.ICON_SIZE_SMALL, getClass().getClassLoader()),
+					propertyTaskPane.getTitle(), _beanJobBuilder, propertyTaskPane.isExpanded());
 		}
 	}
 
@@ -155,8 +147,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 		if (!showContextVisualization()) {
 			return;
 		}
-		ImageIcon icon = imageManager.getImageIcon(
-				"images/actions/visualize.png", IconUtils.ICON_SIZE_SMALL);
+		ImageIcon icon = imageManager.getImageIcon("images/actions/visualize.png", IconUtils.ICON_SIZE_SMALL);
 		addTaskPane(icon, "Context visualization", _visualizationPanel);
 	}
 
@@ -179,24 +170,20 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 		}
 
 		final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
-		result.add(new ConfiguredPropertyTaskPane("Input columns",
-				"images/model/column.png", inputProperties));
-		result.add(new ConfiguredPropertyTaskPane("Required properties",
-				IconUtils.MENU_OPTIONS, requiredProperties));
-		result.add(new ConfiguredPropertyTaskPane("Optional properties",
+		result.add(new ConfiguredPropertyTaskPane("Input columns", "images/model/column.png", inputProperties));
+		result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
+		result.add(new ConfiguredPropertyTaskPane("Optional properties (" + optionalProperties.size() + ")",
 				"images/actions/edit.png", optionalProperties, false));
 
 		return result;
 	}
 
-	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties,
-			Icon icon, String title,
+	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
 		buildTaskPane(properties, icon, title, beanJobBuilder, true);
 	}
 
-	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties,
-			Icon icon, String title,
+	protected void buildTaskPane(List<ConfiguredPropertyDescriptor> properties, Icon icon, String title,
 			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder, boolean expanded) {
 		if (!properties.isEmpty()) {
 			final PropertyWidgetPanel panel = new PropertyWidgetPanel() {
@@ -204,12 +191,9 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 				private static final long serialVersionUID = 1L;
 
 				@Override
-				protected PropertyWidget<?> getPropertyWidget(
-						ConfiguredPropertyDescriptor propertyDescriptor) {
-					PropertyWidget<?> propertyWidget = createPropertyWidget(
-							_beanJobBuilder, propertyDescriptor);
-					getPropertyWidgetFactory().registerWidget(
-							propertyDescriptor, propertyWidget);
+				protected PropertyWidget<?> getPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor) {
+					PropertyWidget<?> propertyWidget = createPropertyWidget(_beanJobBuilder, propertyDescriptor);
+					getPropertyWidgetFactory().registerWidget(propertyDescriptor, propertyWidget);
 					return propertyWidget;
 				}
 			};
@@ -221,8 +205,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 		}
 	}
 
-	protected PropertyWidget<?> createPropertyWidget(
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+	protected PropertyWidget<?> createPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
 			ConfiguredPropertyDescriptor propertyDescriptor) {
 		return getPropertyWidgetFactory().create(propertyDescriptor);
 	}
@@ -231,8 +214,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 		addTaskPane(icon, title, content, true);
 	}
 
-	protected void addTaskPane(Icon icon, String title, JComponent content,
-			boolean expanded) {
+	protected void addTaskPane(Icon icon, String title, JComponent content, boolean expanded) {
 		JXTaskPane taskPane = WidgetFactory.createTaskPane(title, icon);
 		taskPane.add(content);
 		if (!expanded) {
@@ -251,17 +233,14 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 	 *            case some of the applied properties are missing or errornous
 	 */
 	public final void applyPropertyValues(boolean errorAware) {
-		for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory()
-				.getWidgets()) {
-			ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget
-					.getPropertyDescriptor();
+		for (PropertyWidget<?> propertyWidget : getPropertyWidgetFactory().getWidgets()) {
+			ConfiguredPropertyDescriptor propertyDescriptor = propertyWidget.getPropertyDescriptor();
 			if (propertyWidget.isSet()) {
 				Object value = propertyWidget.getValue();
 				setConfiguredProperty(propertyDescriptor, value);
 			} else {
 				if (errorAware && propertyDescriptor.isRequired()) {
-					throw new UnconfiguredConfiguredPropertyException(
-							_beanJobBuilder, propertyDescriptor);
+					throw new UnconfiguredConfiguredPropertyException(_beanJobBuilder, propertyDescriptor);
 				}
 			}
 		}
@@ -275,8 +254,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements
 		return _beanJobBuilder.getAnalysisJobBuilder();
 	}
 
-	protected void setConfiguredProperty(
-			ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
+	protected void setConfiguredProperty(ConfiguredPropertyDescriptor propertyDescriptor, Object value) {
 		_beanJobBuilder.setConfiguredProperty(propertyDescriptor, value);
 	}
 

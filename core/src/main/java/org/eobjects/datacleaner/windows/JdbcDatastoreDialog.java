@@ -151,7 +151,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getInstalledWorkingDatabaseDrivers();
 		final Object[] comboBoxModel = new Object[databaseDrivers.size() + 3];
-		comboBoxModel[0] = "";
+		comboBoxModel[0] = null;
 		for (int i = 0; i < databaseDrivers.size(); i++) {
 			comboBoxModel[i + 1] = databaseDrivers.get(i);
 		}
@@ -166,6 +166,10 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
+				if (value == null) {
+					value = "- select -";
+				}
+				
 				JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
 				if (value instanceof DatabaseDriverDescriptor) {

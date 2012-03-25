@@ -95,7 +95,8 @@ import com.google.inject.Injector;
  * 
  * @author Kasper Sørensen
  */
-public class DatastoreListPanel extends DCPanel implements DatastoreChangeListener {
+public class DatastoreListPanel extends DCPanel implements
+		DatastoreChangeListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -113,11 +114,14 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
 	@Inject
 	protected DatastoreListPanel(AnalyzerBeansConfiguration configuration,
-			AnalysisJobBuilderWindow analysisJobBuilderWindow, DCGlassPane glassPane,
-			Provider<OptionsDialog> optionsDialogProvider, InjectorBuilder injectorBuilder,
+			AnalysisJobBuilderWindow analysisJobBuilderWindow,
+			DCGlassPane glassPane,
+			Provider<OptionsDialog> optionsDialogProvider,
+			InjectorBuilder injectorBuilder,
 			DatabaseDriverCatalog databaseDriverCatalog) {
 		super();
-		_datastoreCatalog = (MutableDatastoreCatalog) configuration.getDatastoreCatalog();
+		_datastoreCatalog = (MutableDatastoreCatalog) configuration
+				.getDatastoreCatalog();
 		_analysisJobBuilderWindow = analysisJobBuilderWindow;
 		_glassPane = glassPane;
 		_optionsDialogProvider = optionsDialogProvider;
@@ -127,7 +131,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		_datastoreCatalog.addListener(this);
 
 		// initialize "analyze" button
-		_analyzeButton = new JButton("Analyze!", imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+		_analyzeButton = new JButton("Analyze!",
+				imageManager.getImageIcon("images/filetypes/analysis_job.png"));
 		_analyzeButton.setMargin(new Insets(1, 1, 1, 1));
 		_analyzeButton.addActionListener(new ActionListener() {
 			@Override
@@ -138,7 +143,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
 						// open the connection here, to make any connection
 						// issues apparent early
-						DatastoreConnection dataContextProvider = datastore.openConnection();
+						DatastoreConnection dataContextProvider = datastore
+								.openConnection();
 						dataContextProvider.getDataContext().getSchemaNames();
 						_analysisJobBuilderWindow.setDatastore(datastore);
 						dataContextProvider.close();
@@ -149,29 +155,34 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		});
 
 		// initialize search text field
-		_searchDatastoreTextField = WidgetFactory.createTextField("Search/filter datastores");
-		_searchDatastoreTextField.setBorder(new CompoundBorder(new EmptyBorder(4, 0, 0, 0), WidgetUtils.BORDER_THIN));
+		_searchDatastoreTextField = WidgetFactory
+				.createTextField("Search/filter datastores");
+		_searchDatastoreTextField.setBorder(new CompoundBorder(new EmptyBorder(
+				4, 0, 0, 0), WidgetUtils.BORDER_THIN));
 		_searchDatastoreTextField.setOpaque(false);
-		_searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent event) {
-				String text = _searchDatastoreTextField.getText();
-				if (StringUtils.isNullOrEmpty(text)) {
-					// when there is no search query, set all datastores visible
-					for (DatastorePanel datastorePanel : _datastorePanels) {
-						datastorePanel.setVisible(true);
+		_searchDatastoreTextField.getDocument().addDocumentListener(
+				new DCDocumentListener() {
+					@Override
+					protected void onChange(DocumentEvent event) {
+						String text = _searchDatastoreTextField.getText();
+						if (StringUtils.isNullOrEmpty(text)) {
+							// when there is no search query, set all datastores
+							// visible
+							for (DatastorePanel datastorePanel : _datastorePanels) {
+								datastorePanel.setVisible(true);
+							}
+						} else {
+							// do a case insensitive search
+							text = text.trim().toLowerCase();
+							for (DatastorePanel datastorePanel : _datastorePanels) {
+								String name = datastorePanel.getDatastore()
+										.getName().toLowerCase();
+								datastorePanel.setVisible(name.indexOf(text) != -1);
+							}
+							selectFirstVisibleDatastore();
+						}
 					}
-				} else {
-					// do a case insensitive search
-					text = text.trim().toLowerCase();
-					for (DatastorePanel datastorePanel : _datastorePanels) {
-						String name = datastorePanel.getDatastore().getName().toLowerCase();
-						datastorePanel.setVisible(name.indexOf(text) != -1);
-					}
-					selectFirstVisibleDatastore();
-				}
-			}
-		});
+				});
 		_searchDatastoreTextField.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -187,11 +198,13 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
 		setLayout(new VerticalLayout(4));
 
-		final DCLabel headerLabel = DCLabel.dark("Select datastore for analysis");
+		final DCLabel headerLabel = DCLabel
+				.dark("Select datastore for analysis");
 		headerLabel.setFont(WidgetUtils.FONT_HEADER1);
 		add(headerLabel);
 
-		final DCLabel createNewDatastoreLabel = DCLabel.dark("Create a new datastore:");
+		final DCLabel createNewDatastoreLabel = DCLabel
+				.dark("Create a new datastore:");
 		createNewDatastoreLabel.setFont(WidgetUtils.FONT_HEADER1);
 
 		final DCPanel newDatastorePanel = new DCPanel();
@@ -221,31 +234,38 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		_listPanel.removeAll();
 		_datastorePanels.clear();
 
-		final DCLabel existingDatastoresLabel = DCLabel.dark("Analyze an existing datastore:");
+		final DCLabel existingDatastoresLabel = DCLabel
+				.dark("Analyze an existing datastore:");
 		existingDatastoresLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		final DCPanel searchDatastorePanel = DCPanel.around(_searchDatastoreTextField);
+		final DCPanel searchDatastorePanel = DCPanel
+				.around(_searchDatastoreTextField);
 		searchDatastorePanel.setBorder(WidgetUtils.BORDER_SHADOW);
 
 		final DCPanel headerPanel = new DCPanel();
-		headerPanel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 0));
+		headerPanel.setLayout(new FlowLayout(Alignment.LEFT
+				.getFlowLayoutAlignment(), 0, 0));
 		headerPanel.add(existingDatastoresLabel);
 		headerPanel.add(Box.createHorizontalStrut(20));
 		headerPanel.add(searchDatastorePanel);
 
 		_listPanel.add(headerPanel);
-		
+
 		boolean selectFirst = true;
 
 		String[] datastoreNames = _datastoreCatalog.getDatastoreNames();
 		for (int i = 0; i < datastoreNames.length; i++) {
-			final Datastore datastore = _datastoreCatalog.getDatastore(datastoreNames[i]);
-			DatastorePanel datastorePanel = new DatastorePanel(datastore, _datastoreCatalog, this,
-					_analysisJobBuilderWindow.getWindowContext(), _injectorBuilder);
+			final Datastore datastore = _datastoreCatalog
+					.getDatastore(datastoreNames[i]);
+			DatastorePanel datastorePanel = new DatastorePanel(datastore,
+					_datastoreCatalog, this,
+					_analysisJobBuilderWindow.getWindowContext(),
+					_injectorBuilder);
 			_datastorePanels.add(datastorePanel);
 			_listPanel.add(datastorePanel);
-			
-			if (selectedDatastore != null && selectedDatastore.getName().equals(datastore.getName())) {
+
+			if (selectedDatastore != null
+					&& selectedDatastore.getName().equals(datastore.getName())) {
 				selectFirst = false;
 				setSelectedDatastore(datastore);
 			}
@@ -280,29 +300,46 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		final DCPanel panel = new DCPanel();
 		panel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		panel.add(createNewDatastoreButton("CSV file", "Comma-separated values (CSV) file (or file with other separators)",
-				IconUtils.CSV_IMAGEPATH, CsvDatastore.class, CsvDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("Excel spreadsheet",
-				"Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.", IconUtils.EXCEL_IMAGEPATH,
-				ExcelDatastore.class, ExcelDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("Access database", "Microsoft Access database file (.mdb).",
-				IconUtils.ACCESS_IMAGEPATH, AccessDatastore.class, AccessDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("SAS library", "A directory of SAS library files (.sas7bdat).",
-				IconUtils.SAS_IMAGEPATH, SasDatastore.class, SasDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("DBase database", "DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
+		panel.add(createNewDatastoreButton(
+				"CSV file",
+				"Comma-separated values (CSV) file (or file with other separators)",
+				IconUtils.CSV_IMAGEPATH, CsvDatastore.class,
+				CsvDatastoreDialog.class));
+		panel.add(createNewDatastoreButton(
+				"Excel spreadsheet",
+				"Microsoft Excel spreadsheet. Either .xls (97-2003) or .xlsx (2007+) format.",
+				IconUtils.EXCEL_IMAGEPATH, ExcelDatastore.class,
+				ExcelDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("Access database",
+				"Microsoft Access database file (.mdb).",
+				IconUtils.ACCESS_IMAGEPATH, AccessDatastore.class,
+				AccessDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("SAS library",
+				"A directory of SAS library files (.sas7bdat).",
+				IconUtils.SAS_IMAGEPATH, SasDatastore.class,
+				SasDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("DBase database",
+				"DBase database file (.dbf)", IconUtils.DBASE_IMAGEPATH,
 				DbaseDatastore.class, DbaseDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("Fixed width file",
+		panel.add(createNewDatastoreButton(
+				"Fixed width file",
 				"Text file with fixed width values. Each value spans a fixed amount of text characters.",
-				IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastore.class, FixedWidthDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("XML file", "Extensible Markup Language file (.xml)", IconUtils.XML_IMAGEPATH,
-				XmlDatastore.class, XmlDatastoreDialog.class));
-		panel.add(createNewDatastoreButton("OpenOffice.org Base database", "OpenOffice.org Base database file (.odb)",
-				IconUtils.ODB_IMAGEPATH, OdbDatastore.class, OdbDatastoreDialog.class));
+				IconUtils.FIXEDWIDTH_IMAGEPATH, FixedWidthDatastore.class,
+				FixedWidthDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("XML file",
+				"Extensible Markup Language file (.xml)",
+				IconUtils.XML_IMAGEPATH, XmlDatastore.class,
+				XmlDatastoreDialog.class));
+		panel.add(createNewDatastoreButton("OpenOffice.org Base database",
+				"OpenOffice.org Base database file (.odb)",
+				IconUtils.ODB_IMAGEPATH, OdbDatastore.class,
+				OdbDatastoreDialog.class));
 
 		panel.add(Box.createHorizontalStrut(20));
-		
-		panel.add(createNewDatastoreButton("MongoDB database", "Connect to a MongoDB database",
-				IconUtils.MONGODB_IMAGEPATH, MongoDbDatastore.class, MongoDbDatastoreDialog.class));
+
+		panel.add(createNewDatastoreButton("MongoDB database",
+				"Connect to a MongoDB database", IconUtils.MONGODB_IMAGEPATH,
+				MongoDbDatastore.class, MongoDbDatastoreDialog.class));
 
 		// set of databases that are displayed directly on panel
 		final Set<String> databaseNames = new HashSet<String>();
@@ -316,31 +353,53 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 			public void actionPerformed(ActionEvent e) {
 				final JPopupMenu popup = new JPopupMenu();
 
+				// installed databases
 				final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
 						.getInstalledWorkingDatabaseDrivers();
 				for (DatabaseDriverDescriptor databaseDriver : databaseDrivers) {
 					final String databaseName = databaseDriver.getDisplayName();
 					if (!databaseNames.contains(databaseName)) {
-						final String imagePath = databaseDriver.getIconImagePath();
-						final ImageIcon icon = imageManager.getImageIcon(imagePath, IconUtils.ICON_SIZE_SMALL);
-						final JMenuItem menuItem = WidgetFactory.createMenuItem(databaseName, icon);
+						final String imagePath = databaseDriver
+								.getIconImagePath();
+						final ImageIcon icon = imageManager.getImageIcon(
+								imagePath, IconUtils.ICON_SIZE_SMALL);
+						final JMenuItem menuItem = WidgetFactory
+								.createMenuItem(databaseName, icon);
 						menuItem.addActionListener(createJdbcActionListener(databaseName));
 						popup.add(menuItem);
 					}
 				}
 
-				final JMenuItem compositeMenuItem = WidgetFactory.createMenuItem("Composite datastore",
-						imageManager.getImageIcon(IconUtils.COMPOSITE_IMAGEPATH, IconUtils.ICON_SIZE_SMALL));
+				// custom/other jdbc connection
+				{
+					final ImageIcon icon = imageManager.getImageIcon(
+							IconUtils.GENERIC_DATASTORE_IMAGEPATH,
+							IconUtils.ICON_SIZE_SMALL);
+					final JMenuItem menuItem = WidgetFactory.createMenuItem(
+							"Other database", icon);
+					menuItem.addActionListener(createJdbcActionListener(null));
+					popup.add(menuItem);
+				}
+
+				// composite datastore
+				final JMenuItem compositeMenuItem = WidgetFactory
+						.createMenuItem("Composite datastore", imageManager
+								.getImageIcon(IconUtils.COMPOSITE_IMAGEPATH,
+										IconUtils.ICON_SIZE_SMALL));
 				compositeMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						new CompositeDatastoreDialog(_datastoreCatalog, _analysisJobBuilderWindow.getWindowContext())
+						new CompositeDatastoreDialog(_datastoreCatalog,
+								_analysisJobBuilderWindow.getWindowContext())
 								.setVisible(true);
 					}
 				});
 
-				final JMenuItem databaseDriversMenuItem = WidgetFactory.createMenuItem("Manage database drivers...",
-						imageManager.getImageIcon(IconUtils.MENU_OPTIONS, IconUtils.ICON_SIZE_SMALL));
+				final JMenuItem databaseDriversMenuItem = WidgetFactory
+						.createMenuItem("Manage database drivers...",
+								imageManager.getImageIcon(
+										IconUtils.MENU_OPTIONS,
+										IconUtils.ICON_SIZE_SMALL));
 				databaseDriversMenuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -355,7 +414,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 				popup.add(compositeMenuItem);
 				popup.setBorder(WidgetUtils.BORDER_THIN);
 
-				popup.show(moreDatastoreTypesButton, 0, moreDatastoreTypesButton.getHeight());
+				popup.show(moreDatastoreTypesButton, 0,
+						moreDatastoreTypesButton.getHeight());
 			}
 		});
 
@@ -365,49 +425,68 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		return panel;
 	}
 
-	private void createDefaultDatabaseButtons(DCPanel panel, Set<String> databaseNames) {
-		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
-			panel.add(createNewJdbcDatastoreButton("MySQL connection", "Connect to a MySQL database",
-					"images/datastore-types/databases/mysql.png", DatabaseDriverCatalog.DATABASE_NAME_MYSQL, databaseNames));
+	private void createDefaultDatabaseButtons(DCPanel panel,
+			Set<String> databaseNames) {
+		if (_databaseDriverCatalog
+				.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL)) {
+			panel.add(createNewJdbcDatastoreButton("MySQL connection",
+					"Connect to a MySQL database",
+					"images/datastore-types/databases/mysql.png",
+					DatabaseDriverCatalog.DATABASE_NAME_MYSQL, databaseNames));
 		}
-		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
-			panel.add(createNewJdbcDatastoreButton("PostgreSQL connection", "Connect to a PostgreSQL database",
-					"images/datastore-types/databases/postgresql.png", DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
+		if (_databaseDriverCatalog
+				.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL)) {
+			panel.add(createNewJdbcDatastoreButton("PostgreSQL connection",
+					"Connect to a PostgreSQL database",
+					"images/datastore-types/databases/postgresql.png",
+					DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL,
 					databaseNames));
 		}
-		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
-			panel.add(createNewJdbcDatastoreButton("Oracle connection", "Connect to a Oracle database",
-					"images/datastore-types/databases/oracle.png", DatabaseDriverCatalog.DATABASE_NAME_ORACLE, databaseNames));
+		if (_databaseDriverCatalog
+				.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_ORACLE)) {
+			panel.add(createNewJdbcDatastoreButton("Oracle connection",
+					"Connect to a Oracle database",
+					"images/datastore-types/databases/oracle.png",
+					DatabaseDriverCatalog.DATABASE_NAME_ORACLE, databaseNames));
 		}
-		if (_databaseDriverCatalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
-			panel.add(createNewJdbcDatastoreButton("Microsoft SQL Server connection",
-					"Connect to a Microsoft SQL Server database", "images/datastore-types/databases/microsoft.png",
-					DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS, databaseNames));
+		if (_databaseDriverCatalog
+				.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS)) {
+			panel.add(createNewJdbcDatastoreButton(
+					"Microsoft SQL Server connection",
+					"Connect to a Microsoft SQL Server database",
+					"images/datastore-types/databases/microsoft.png",
+					DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS,
+					databaseNames));
 		}
 	}
 
-	private <D extends Datastore> JButton createNewDatastoreButton(final String title, final String description,
+	private <D extends Datastore> JButton createNewDatastoreButton(
+			final String title, final String description,
 			final String imagePath, final Class<D> datastoreClass,
 			final Class<? extends AbstractDialog> dialogClass) {
 		final ImageIcon icon = imageManager.getImageIcon(imagePath);
 		final JButton button = WidgetFactory.createImageButton(icon);
 
-		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description
-				+ "</html>", 0, 0, imagePath);
+		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane,
+				"<html><b>" + title + "</b><br/>" + description + "</html>", 0,
+				0, imagePath);
 		popupBubble.attachTo(button);
 
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Injector injectorWithNullDatastore = _injectorBuilder.with(datastoreClass, null).createInjector();
-				AbstractDialog dialog = injectorWithNullDatastore.getInstance(dialogClass);
+				Injector injectorWithNullDatastore = _injectorBuilder.with(
+						datastoreClass, null).createInjector();
+				AbstractDialog dialog = injectorWithNullDatastore
+						.getInstance(dialogClass);
 				dialog.setVisible(true);
 			}
 		});
 		return button;
 	}
 
-	private JButton createNewJdbcDatastoreButton(final String title, final String description, final String imagePath,
+	private JButton createNewJdbcDatastoreButton(final String title,
+			final String description, final String imagePath,
 			final String databaseName, Set<String> databaseNames) {
 
 		databaseNames.add(databaseName);
@@ -415,8 +494,9 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		final ImageIcon icon = imageManager.getImageIcon(imagePath);
 		final JButton button = WidgetFactory.createImageButton(icon);
 
-		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane, "<html><b>" + title + "</b><br/>" + description
-				+ "</html>", 0, 0, imagePath);
+		final DCPopupBubble popupBubble = new DCPopupBubble(_glassPane,
+				"<html><b>" + title + "</b><br/>" + description + "</html>", 0,
+				0, imagePath);
 		popupBubble.attachTo(button);
 
 		button.addActionListener(createJdbcActionListener(databaseName));
@@ -428,8 +508,10 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, null).createInjector();
-				JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
+				Injector injectorWithDatastore = _injectorBuilder.with(
+						JdbcDatastore.class, null).createInjector();
+				JdbcDatastoreDialog dialog = injectorWithDatastore
+						.getInstance(JdbcDatastoreDialog.class);
 				dialog.setSelectedDatabase(databaseName);
 				dialog.setVisible(true);
 			}

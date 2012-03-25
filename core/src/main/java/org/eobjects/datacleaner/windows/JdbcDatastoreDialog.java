@@ -19,13 +19,11 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,20 +31,16 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
-import javax.swing.KeyStroke;
+import javax.swing.JToolBar;
 
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.util.StringUtils;
@@ -64,12 +58,22 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
+import org.eobjects.datacleaner.widgets.database.DatabaseConnectionPresenter;
+import org.eobjects.datacleaner.widgets.database.DefaultDatabaseConnectionPresenter;
+import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JdbcDatastoreDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final Logger logger = LoggerFactory.getLogger(JdbcDatastoreDialog.class);
+
+	public static final int TEXT_FIELD_WIDTH = 30;
 
 	/**
 	 * Number of connections to try to create (in case of non-multiple
@@ -85,15 +89,11 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 	private final MutableDatastoreCatalog _catalog;
 	private final JXTextField _datastoreNameTextField;
 	private final JXTextField _driverClassNameTextField;
-	private final JXTextField _connectionStringTextField;
-	private final JXTextField _usernameTextField;
-	private final JPasswordField _passwordField;
 	private final DCCheckBox<Object> _multipleConnectionsCheckBox;
 	private final DCComboBox<Object> _databaseDriverComboBox;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
-	private final JButton _connectionStringTemplateButton;
-
-	private volatile String[] _connectionUrls;
+	private final CloseableTabbedPane _tabbedPane;
+	private final DatabaseConnectionPresenter[] _connectionPresenters;
 
 	@Inject
 	protected JdbcDatastoreDialog(@Nullable JdbcDatastore datastore, MutableDatastoreCatalog catalog,
@@ -105,6 +105,17 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_optionsDialogProvider = optionsDialogProvider;
 		_databaseDriverCatalog = databaseDriverCatalog;
 
+		// there will always be 2 connection presenters, but the second is
+		// optional
+		_connectionPresenters = new DatabaseConnectionPresenter[2];
+		_connectionPresenters[0] = new DefaultDatabaseConnectionPresenter();
+
+		_tabbedPane = new CloseableTabbedPane(true);
+		_tabbedPane.addTab("Generic connection parameters",
+				imageManager.getImageIcon(IconUtils.GENERIC_DATASTORE_IMAGEPATH, IconUtils.ICON_SIZE_MEDIUM),
+				_connectionPresenters[0].getWidget());
+		_tabbedPane.setUnclosableTab(0);
+
 		_multipleConnectionsCheckBox = new DCCheckBox<Object>("Allow multiple concurrent connections", true);
 		_multipleConnectionsCheckBox
 				.setToolTipText("Indicates whether multiple connections (aka. connection pooling) may be created or not. "
@@ -114,44 +125,13 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		_multipleConnectionsCheckBox.setOpaque(false);
 		_multipleConnectionsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-		final int textFieldWidth = 30;
-		_datastoreNameTextField = WidgetFactory.createTextField("Name", textFieldWidth);
-		_driverClassNameTextField = WidgetFactory.createTextField("Driver class name", textFieldWidth);
-		_connectionStringTextField = WidgetFactory.createTextField("Connection string / URL", textFieldWidth);
-		_usernameTextField = WidgetFactory.createTextField("Username", textFieldWidth);
-		_passwordField = new JPasswordField(textFieldWidth);
+		_datastoreNameTextField = WidgetFactory.createTextField("Name", TEXT_FIELD_WIDTH);
+		_driverClassNameTextField = WidgetFactory.createTextField("Driver class name", TEXT_FIELD_WIDTH);
 
-		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
-		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
-		_connectionStringTemplateButton = new JButton(imageManager.getImageIcon("images/widgets/help.png",
-				IconUtils.ICON_SIZE_SMALL));
-		_connectionStringTemplateButton.setMargin(new Insets(0, 0, 0, 0));
-		_connectionStringTemplateButton.setOpaque(false);
-		_connectionStringTemplateButton.setBorder(null);
-		_connectionStringTemplateButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (_connectionUrls != null) {
-					final JPopupMenu menu = new JPopupMenu();
-					for (final String connectionUrl : _connectionUrls) {
-						final JMenuItem menuItem = new JMenuItem(connectionUrl);
-						menuItem.addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								_connectionStringTextField.setText(connectionUrl);
-								getNextTemplateItemAction().actionPerformed(null);
-							}
-						});
-						menu.add(menuItem);
-					}
-					menu.show(_connectionStringTemplateButton, 0, 0);
-				}
-			}
-		});
-
-		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog.getInstalledWorkingDatabaseDrivers();
+		final List<DatabaseDriverDescriptor> databaseDrivers = _databaseDriverCatalog
+				.getInstalledWorkingDatabaseDrivers();
 		final Object[] comboBoxModel = new Object[databaseDrivers.size() + 3];
-		comboBoxModel[0] = null;
+		comboBoxModel[0] = "";
 		for (int i = 0; i < databaseDrivers.size(); i++) {
 			comboBoxModel[i + 1] = databaseDrivers.get(i);
 		}
@@ -166,11 +146,12 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
 					boolean cellHasFocus) {
-				if (value == null) {
+				if ("".equals(value)) {
 					value = "- select -";
 				}
-				
-				JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+				JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+						cellHasFocus);
 
 				if (value instanceof DatabaseDriverDescriptor) {
 					DatabaseDriverDescriptor databaseDriver = (DatabaseDriverDescriptor) value;
@@ -189,17 +170,19 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 				return result;
 			}
 		});
+
 		_databaseDriverComboBox.addListener(new Listener<Object>() {
 			@Override
-			public void onItemSelected(Object item) {
-				Object value = _databaseDriverComboBox.getSelectedItem();
-				if (value instanceof DatabaseDriverDescriptor) {
+			public void onItemSelected(Object value) {
+				if ("".equals(value)) {
+					setSelectedDatabase((DatabaseDriverDescriptor) null);
+					_driverClassNameTextField.setText("");
+				} else if (value instanceof DatabaseDriverDescriptor) {
 					DatabaseDriverDescriptor driver = (DatabaseDriverDescriptor) value;
 
-					_driverClassNameTextField.setText(driver.getDriverClassName());
+					setSelectedDatabase(driver);
 
-					String[] connectionUrls = driver.getConnectionUrlTemplates();
-					setConnectionUrlTemplates(connectionUrls);
+					_driverClassNameTextField.setText(driver.getDriverClassName());
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
 					OptionsDialog optionsDialog = _optionsDialogProvider.get();
 					optionsDialog.selectDatabaseDriversTab();
@@ -211,7 +194,10 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		if (_originalDatastore != null) {
+		if (_originalDatastore == null) {
+			// remove connection url templates
+			setSelectedDatabase((DatabaseDriverDescriptor) null);
+		} else {
 			_multipleConnectionsCheckBox.setSelected(_originalDatastore.isMultipleConnections());
 
 			// the database driver has to be set as the first thing, because the
@@ -222,10 +208,10 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 			_datastoreNameTextField.setText(_originalDatastore.getName());
 			_datastoreNameTextField.setEnabled(false);
-			_connectionStringTextField.setText(_originalDatastore.getJdbcUrl());
+
+			_connectionPresenters[0].initialize(_originalDatastore);
+
 			_driverClassNameTextField.setText(_originalDatastore.getDriverClass());
-			_usernameTextField.setText(_originalDatastore.getUsername());
-			_passwordField.setText(_originalDatastore.getPassword());
 		}
 	}
 
@@ -237,54 +223,56 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 	public void setSelectedDatabase(DatabaseDriverDescriptor databaseDriverDescriptor) {
 		_databaseDriverComboBox.setSelectedItem(databaseDriverDescriptor);
+
+		if (_tabbedPane.getTabCount() > 1) {
+			_tabbedPane.removeTabAt(1);
+			_connectionPresenters[1] = null;
+		}
+
+		final DatabaseConnectionPresenter customPresenter = createDatabaseConnectionPresenter(databaseDriverDescriptor);
+
+		if (customPresenter != null) {
+
+			// init if original datastore is available
+			if (_originalDatastore != null) {
+				customPresenter.initialize(_originalDatastore);
+			}
+
+			_tabbedPane.setUnclosableTab(1);
+			_tabbedPane.addTab(databaseDriverDescriptor.getDisplayName() + " connection", imageManager.getImageIcon(
+					databaseDriverDescriptor.getIconImagePath(), IconUtils.ICON_SIZE_MEDIUM, customPresenter.getClass()
+							.getClassLoader()), customPresenter.getWidget());
+			_tabbedPane.setSelectedIndex(1);
+		}
+
+		for (DatabaseConnectionPresenter connectionPresenter : _connectionPresenters) {
+			if (connectionPresenter != null) {
+				connectionPresenter.setSelectedDatabaseDriver(databaseDriverDescriptor);
+			}
+		}
+	}
+
+	public DatabaseConnectionPresenter createDatabaseConnectionPresenter(
+			DatabaseDriverDescriptor databaseDriverDescriptor) {
+		if (databaseDriverDescriptor == null) {
+			return null;
+		}
+		final String databaseName = databaseDriverDescriptor.getDisplayName();
+		if (DatabaseDriverCatalog.DATABASE_NAME_MYSQL.equals(databaseName)) {
+			// TODO: Create specific presenter
+		} else if (DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL.equals(databaseName)) {
+			// TODO: Create specific presenter
+		} else if (DatabaseDriverCatalog.DATABASE_NAME_ORACLE.equals(databaseName)) {
+			// TODO: Create specific presenter
+		} else if (DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS.equals(databaseName)) {
+			// TODO: Create specific presenter
+		}
+		return null;
 	}
 
 	@Override
 	protected boolean isWindowResizable() {
 		return true;
-	}
-
-	/**
-	 * @return an action listener that will set the correct focus, either inside
-	 *         a template connection url or the next text field.
-	 */
-	private Action getNextTemplateItemAction() {
-		return new AbstractAction() {
-
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String text = _connectionStringTextField.getText();
-				int selectionEnd = _connectionStringTextField.getSelectionEnd();
-				int selectionStart = text.indexOf('<', selectionEnd);
-				if (selectionStart != -1) {
-					selectionEnd = text.indexOf('>', selectionStart);
-				}
-
-				if (selectionStart != -1 && selectionEnd != -1) {
-					_connectionStringTextField.setSelectionStart(selectionStart);
-					_connectionStringTextField.setSelectionEnd(selectionEnd + 1);
-					_connectionStringTextField.requestFocus();
-				} else {
-					selectionStart = text.indexOf('<');
-					if (selectionStart != -1) {
-						selectionEnd = text.indexOf('>', selectionStart);
-						if (selectionEnd != -1) {
-							_connectionStringTextField.setSelectionStart(selectionStart);
-							_connectionStringTextField.setSelectionEnd(selectionEnd + 1);
-							_connectionStringTextField.requestFocus();
-						} else {
-							_usernameTextField.requestFocus();
-						}
-					} else {
-						_usernameTextField.requestFocus();
-					}
-				}
-
-				_connectionStringTextField.getHorizontalVisibility().setValue(0);
-			}
-		};
 	}
 
 	@Override
@@ -297,58 +285,25 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		return 500;
 	}
 
-	private void setConnectionUrlTemplates(String[] connectionUrls) {
-		_connectionUrls = connectionUrls;
-		boolean selectable = false;
-
-		if (connectionUrls != null && connectionUrls.length > 0) {
-			if (connectionUrls.length > 1) {
-				selectable = true;
-			}
-
-			_connectionStringTextField.setFocusTraversalKeysEnabled(false);
-			String url = connectionUrls[0];
-			_connectionStringTextField.setText(url);
-
-			getNextTemplateItemAction().actionPerformed(null);
-		}
-
-		_connectionStringTemplateButton.setVisible(selectable);
-	}
-
 	@Override
 	protected JComponent getDialogContent() {
-		DCPanel panel = new DCPanel();
+		final DCPanel panel = new DCPanel();
+		{
+			int row = 0;
+			WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), panel, 0, row);
+			WidgetUtils.addToGridBag(_datastoreNameTextField, panel, 1, row);
 
-		int row = 0;
-		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_datastoreNameTextField, panel, 1, row);
+			row++;
+			WidgetUtils.addToGridBag(DCLabel.bright("Database:"), panel, 0, row);
+			WidgetUtils.addToGridBag(_databaseDriverComboBox, panel, 1, row);
 
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Database:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_databaseDriverComboBox, panel, 1, row);
+			row++;
+			WidgetUtils.addToGridBag(DCLabel.bright("Driver class name:"), panel, 0, row);
+			WidgetUtils.addToGridBag(_driverClassNameTextField, panel, 1, row);
 
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Driver class name:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_driverClassNameTextField, panel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Connection string:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_connectionStringTextField, panel, 1, row);
-		WidgetUtils.addToGridBag(_connectionStringTemplateButton, panel, 2, row, 0.0d, 0.0d);
-
-		row++;
-		WidgetUtils.addToGridBag(_multipleConnectionsCheckBox, panel, 1, row, 2, 1);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.bright("Password:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_passwordField, panel, 1, row);
-
-		row++;
+			row++;
+			WidgetUtils.addToGridBag(_multipleConnectionsCheckBox, panel, 1, row);
+		}
 
 		final JButton testButton = WidgetFactory.createButton(getTestButtonText(), "images/actions/refresh.png");
 		testButton.addActionListener(new ActionListener() {
@@ -382,18 +337,12 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 				JOptionPane.showMessageDialog(JdbcDatastoreDialog.this, "Connection successful!");
 			}
 		});
-		_multipleConnectionsCheckBox.addListener(new DCCheckBox.Listener<Object>() {
-			@Override
-			public void onItemSelected(Object item, boolean selected) {
-				testButton.setText(getTestButtonText());
-			}
-		});
 
 		final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JdbcDatastore datastore = createDatastore();
+				final JdbcDatastore datastore = createDatastore();
 
 				if (_originalDatastore != null) {
 					_catalog.removeDatastore(_originalDatastore);
@@ -403,14 +352,30 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			}
 		});
 
-		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
-		buttonPanel.add(testButton);
-		buttonPanel.add(saveButton);
+		_multipleConnectionsCheckBox.addListener(new DCCheckBox.Listener<Object>() {
+			@Override
+			public void onItemSelected(Object item, boolean selected) {
+				testButton.setText(getTestButtonText());
+			}
+		});
 
-		WidgetUtils.addToGridBag(buttonPanel, panel, 1, row, 3, 1);
+		final JToolBar toolBar = WidgetFactory.createToolBar();
+		toolBar.add(new HumanInferenceToolbarButton());
+		toolBar.add(WidgetFactory.createToolBarSeparator());
+		toolBar.add(testButton);
+		toolBar.add(Box.createHorizontalStrut(4));
+		toolBar.add(saveButton);
 
-		return panel;
+		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+		toolBarPanel.setLayout(new BorderLayout());
+		toolBarPanel.add(toolBar, BorderLayout.CENTER);
+
+		final DCPanel outerPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+		outerPanel.setLayout(new BorderLayout());
+		outerPanel.add(panel, BorderLayout.NORTH);
+		outerPanel.add(_tabbedPane, BorderLayout.CENTER);
+		outerPanel.add(toolBarPanel, BorderLayout.SOUTH);
+		return outerPanel;
 	}
 
 	private String getTestButtonText() {
@@ -426,14 +391,20 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			throw new IllegalStateException("No datastore name");
 		}
 
+		final int connectionPresenterIndex = _tabbedPane.getSelectedIndex();
+		final DatabaseConnectionPresenter connectionPresenter = _connectionPresenters[connectionPresenterIndex];
+
+		logger.info("Creating datastore using connection presenter ({}): {}", connectionPresenterIndex,
+				connectionPresenter);
+
 		final String driverClass = _driverClassNameTextField.getText();
-		final String connectionString = _connectionStringTextField.getText();
-		final String username = _usernameTextField.getText();
-		final char[] password = _passwordField.getPassword();
+		final String connectionString = connectionPresenter.getJdbcUrl();
+		final String username = connectionPresenter.getUsername();
+		final String password = connectionPresenter.getPassword();
 		final boolean multipleConnections = _multipleConnectionsCheckBox.isSelected();
 
-		JdbcDatastore datastore = new JdbcDatastore(datastoreName, connectionString, driverClass, username, new String(
-				password), multipleConnections);
+		final JdbcDatastore datastore = new JdbcDatastore(datastoreName, connectionString, driverClass, username,
+				password, multipleConnections);
 
 		return datastore;
 	}

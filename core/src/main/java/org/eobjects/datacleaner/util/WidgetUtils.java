@@ -118,8 +118,8 @@ public final class WidgetUtils {
 
 	public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
 	public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
-	public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH,
-			WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
+	public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
+			WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
 	public static final Border BORDER_THIN = new LineBorder(BG_COLOR_MEDIUM);
 	public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM);
 
@@ -159,12 +159,13 @@ public final class WidgetUtils {
 	 * @param height
 	 * @param anchor
 	 */
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+			int anchor) {
 		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, DEFAULT_PADDING);
 	}
 
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
-			int padding) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+			int anchor, int padding) {
 		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, 0.0, 0.0);
 	}
 
@@ -180,8 +181,8 @@ public final class WidgetUtils {
 	 * @param anchor
 	 * @param padding
 	 */
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height, int anchor,
-			int padding, double weightx, double weighty) {
+	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+			int anchor, int padding, double weightx, double weighty) {
 		LayoutManager layout = panel.getLayout();
 		if (!(layout instanceof GridBagLayout)) {
 			layout = new GridBagLayout();
@@ -216,7 +217,8 @@ public final class WidgetUtils {
 		addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
 	}
 
-	public static void addToGridBag(Component comp, JPanel panel, int x, int y, int anchor, double weightx, double weighty) {
+	public static void addToGridBag(Component comp, JPanel panel, int x, int y, int anchor, double weightx,
+			double weighty) {
 		addToGridBag(comp, panel, x, y, 1, 1, anchor, DEFAULT_PADDING, weightx, weighty);
 	}
 
@@ -255,11 +257,12 @@ public final class WidgetUtils {
 		container.add(component);
 	}
 
-	public static void showErrorMessage(final String shortMessage, final String detailedMessage, final Throwable exception) {
+	public static void showErrorMessage(final String shortMessage, final String detailedMessage,
+			final Throwable exception) {
 		JXErrorPane.setDefaultLocale(Locale.ENGLISH);
 		final JXErrorPane errorPane = new JXErrorPane();
-		final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception, ErrorLevel.SEVERE,
-				null);
+		final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception,
+				ErrorLevel.SEVERE, null);
 		errorPane.setErrorInfo(info);
 		final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
 		centerOnScreen(dialog);
@@ -316,7 +319,8 @@ public final class WidgetUtils {
 	 */
 	public static Color slightlyDarker(Color color) {
 		return new Color(Math.max((int) (color.getRed() * COLOR_SCALE_FACTOR), 0), Math.max(
-				(int) (color.getGreen() * COLOR_SCALE_FACTOR), 0), Math.max((int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
+				(int) (color.getGreen() * COLOR_SCALE_FACTOR), 0), Math.max(
+				(int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
 	}
 
 	/**
@@ -437,8 +441,8 @@ public final class WidgetUtils {
 		Font font = label.getFont();
 		int canDisplay = font.canDisplayUpTo(text);
 		if (canDisplay != -1) {
-			logger.warn("Default font ('{}') was unable to display text ('{}'), searching for alternative.", font.getName(),
-					text);
+			logger.warn("Default font ('{}') was unable to display text ('{}'), searching for alternative.",
+					font.getName(), text);
 
 			// if the label contains undisplayable characters, look for a
 			// different font able of displaying the characters.

@@ -35,6 +35,7 @@ import org.eobjects.datacleaner.actions.SaveDataSetActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
@@ -96,7 +97,7 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 			}
 
 			final JButton saveToFileButton = new JButton("Save dataset", ImageManager.getInstance().getImageIcon(
-					"images/actions/save.png"));
+					"images/actions/save.png", IconUtils.ICON_SIZE_MEDIUM));
 			saveToFileButton.addActionListener(new SaveDataSetActionListener(result.getInputColumns(), result.getRows(),
 					_userPreferences, _datastoreCatalog, _usageLogger));
 			buttonPanel.add(saveToFileButton);

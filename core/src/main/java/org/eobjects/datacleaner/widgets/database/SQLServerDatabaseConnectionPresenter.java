@@ -43,7 +43,7 @@ public class SQLServerDatabaseConnectionPresenter extends UrlTemplateDatabaseCon
 
 	@Override
 	protected int getDefaultPort() {
-		return 1521;
+		return 1433;
 	}
 
 	@Override

@@ -27,9 +27,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JMenuItem;
-import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 
@@ -48,13 +46,11 @@ import org.jdesktop.swingx.JXTextField;
  * Default implementation of {@link DatabaseConnectionPresenter}, which simply
  * presents each field as a text box.
  */
-public class DefaultDatabaseConnectionPresenter implements DatabaseConnectionPresenter {
+public class DefaultDatabaseConnectionPresenter extends AbstractDatabaseConnectionPresenter {
 
 	private static final ImageManager imageManager = ImageManager.getInstance();
 
 	private final JXTextField _connectionStringTextField;
-	private final JXTextField _usernameTextField;
-	private final JPasswordField _passwordField;
 	private final JButton _connectionStringTemplateButton;
 
 	private volatile String[] _connectionUrls;
@@ -62,8 +58,6 @@ public class DefaultDatabaseConnectionPresenter implements DatabaseConnectionPre
 	public DefaultDatabaseConnectionPresenter() {
 		_connectionStringTextField = WidgetFactory.createTextField("Connection string / URL",
 				JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
-		_usernameTextField = WidgetFactory.createTextField("Username", JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
-		_passwordField = new JPasswordField(JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
 
 		_connectionStringTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "nextTemplateItem");
 		_connectionStringTextField.getActionMap().put("nextTemplateItem", getNextTemplateItemAction());
@@ -95,44 +89,25 @@ public class DefaultDatabaseConnectionPresenter implements DatabaseConnectionPre
 	}
 
 	@Override
-	public void initialize(JdbcDatastore datastore) {
+	public boolean initialize(JdbcDatastore datastore) {
+		super.initialize(datastore);
 		_connectionStringTextField.setText(datastore.getJdbcUrl());
-		_usernameTextField.setText(datastore.getUsername());
-		_passwordField.setText(datastore.getPassword());
+		return true;
 	}
 
 	@Override
-	public JComponent getWidget() {
-		DCPanel panel = new DCPanel();
+	protected int layoutGridBagAboveCredentials(DCPanel panel) {
 		int row = 0;
 		WidgetUtils.addToGridBag(DCLabel.dark("Connection string:"), panel, 0, row);
 		WidgetUtils.addToGridBag(_connectionStringTextField, panel, 1, row);
 		WidgetUtils.addToGridBag(_connectionStringTemplateButton, panel, 2, row, 1.0d, 0.0d);
 
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.dark("Username:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row, 1.0, 0.0);
-
-		row++;
-		WidgetUtils.addToGridBag(DCLabel.dark("Password:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_passwordField, panel, 1, row, 1.0, 0.0);
-
-		return panel;
+		return row;
 	}
 
 	@Override
 	public String getJdbcUrl() {
 		return _connectionStringTextField.getText();
-	}
-
-	@Override
-	public String getUsername() {
-		return _usernameTextField.getText();
-	}
-
-	@Override
-	public String getPassword() {
-		return new String(_passwordField.getPassword());
 	}
 
 	/**
@@ -166,10 +141,10 @@ public class DefaultDatabaseConnectionPresenter implements DatabaseConnectionPre
 							_connectionStringTextField.setSelectionEnd(selectionEnd + 1);
 							_connectionStringTextField.requestFocus();
 						} else {
-							_usernameTextField.requestFocus();
+							getUsernameTextField().requestFocus();
 						}
 					} else {
-						_usernameTextField.requestFocus();
+						getUsernameTextField().requestFocus();
 					}
 				}
 

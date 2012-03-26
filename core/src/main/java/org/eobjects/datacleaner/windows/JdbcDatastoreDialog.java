@@ -61,6 +61,10 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.database.DatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.DefaultDatabaseConnectionPresenter;
+import org.eobjects.datacleaner.widgets.database.MysqlDatabaseConnectionPresenter;
+import org.eobjects.datacleaner.widgets.database.OracleDatabaseConnectionPresenter;
+import org.eobjects.datacleaner.widgets.database.PostgresqlDatabaseConnectionPresenter;
+import org.eobjects.datacleaner.widgets.database.SQLServerDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
@@ -177,12 +181,14 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 				if ("".equals(value)) {
 					setSelectedDatabase((DatabaseDriverDescriptor) null);
 					_driverClassNameTextField.setText("");
+					_driverClassNameTextField.setEnabled(true);
 				} else if (value instanceof DatabaseDriverDescriptor) {
 					DatabaseDriverDescriptor driver = (DatabaseDriverDescriptor) value;
 
 					setSelectedDatabase(driver);
 
 					_driverClassNameTextField.setText(driver.getDriverClassName());
+					_driverClassNameTextField.setEnabled(false);
 				} else if (MANAGE_DATABASE_DRIVERS.equals(value)) {
 					OptionsDialog optionsDialog = _optionsDialogProvider.get();
 					optionsDialog.selectDatabaseDriversTab();
@@ -226,23 +232,31 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 
 		if (_tabbedPane.getTabCount() > 1) {
 			_tabbedPane.removeTabAt(1);
-			_connectionPresenters[1] = null;
 		}
 
+		// register the presenter
 		final DatabaseConnectionPresenter customPresenter = createDatabaseConnectionPresenter(databaseDriverDescriptor);
+		_connectionPresenters[1] = customPresenter;
 
 		if (customPresenter != null) {
+			boolean accepted = true;
 
 			// init if original datastore is available
 			if (_originalDatastore != null) {
-				customPresenter.initialize(_originalDatastore);
+				accepted = customPresenter.initialize(_originalDatastore);
 			}
 
-			_tabbedPane.setUnclosableTab(1);
-			_tabbedPane.addTab(databaseDriverDescriptor.getDisplayName() + " connection", imageManager.getImageIcon(
-					databaseDriverDescriptor.getIconImagePath(), IconUtils.ICON_SIZE_MEDIUM, customPresenter.getClass()
-							.getClassLoader()), customPresenter.getWidget());
-			_tabbedPane.setSelectedIndex(1);
+			if (accepted) {
+
+				_tabbedPane.setUnclosableTab(1);
+				_tabbedPane.addTab(databaseDriverDescriptor.getDisplayName() + " connection", imageManager
+						.getImageIcon(databaseDriverDescriptor.getIconImagePath(), IconUtils.ICON_SIZE_MEDIUM,
+								customPresenter.getClass().getClassLoader()), customPresenter.getWidget());
+				_tabbedPane.setSelectedIndex(1);
+			} else {
+				// unregister the presenter
+				_connectionPresenters[1] = null;
+			}
 		}
 
 		for (DatabaseConnectionPresenter connectionPresenter : _connectionPresenters) {
@@ -258,16 +272,22 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			return null;
 		}
 		final String databaseName = databaseDriverDescriptor.getDisplayName();
+
+		final DatabaseConnectionPresenter result;
+		
 		if (DatabaseDriverCatalog.DATABASE_NAME_MYSQL.equals(databaseName)) {
-			// TODO: Create specific presenter
+			result = new MysqlDatabaseConnectionPresenter();
 		} else if (DatabaseDriverCatalog.DATABASE_NAME_POSTGRESQL.equals(databaseName)) {
-			// TODO: Create specific presenter
+			result = new PostgresqlDatabaseConnectionPresenter();
 		} else if (DatabaseDriverCatalog.DATABASE_NAME_ORACLE.equals(databaseName)) {
-			// TODO: Create specific presenter
+			result = new OracleDatabaseConnectionPresenter();
 		} else if (DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS.equals(databaseName)) {
-			// TODO: Create specific presenter
+			result = new SQLServerDatabaseConnectionPresenter();
+		} else {
+			result = null;
 		}
-		return null;
+		
+		return result;
 	}
 
 	@Override
@@ -294,7 +314,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			WidgetUtils.addToGridBag(_datastoreNameTextField, panel, 1, row);
 
 			row++;
-			WidgetUtils.addToGridBag(DCLabel.bright("Database:"), panel, 0, row);
+			WidgetUtils.addToGridBag(DCLabel.bright("Database driver:"), panel, 0, row);
 			WidgetUtils.addToGridBag(_databaseDriverComboBox, panel, 1, row);
 
 			row++;

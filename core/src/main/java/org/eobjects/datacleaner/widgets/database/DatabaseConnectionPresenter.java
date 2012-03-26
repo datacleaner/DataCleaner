@@ -34,7 +34,15 @@ import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
  */
 public interface DatabaseConnectionPresenter {
 
-	public void initialize(JdbcDatastore datastore);
+	/**
+	 * Initializes the presenter with data from a given datastore.
+	 * 
+	 * @param datastore
+	 * @return true if the datastore is accepted and presentable by this
+	 *         {@link DatabaseConnectionPresenter}, or false if the presenter is
+	 *         not able to present it.
+	 */
+	public boolean initialize(JdbcDatastore datastore);
 
 	public JComponent getWidget();
 

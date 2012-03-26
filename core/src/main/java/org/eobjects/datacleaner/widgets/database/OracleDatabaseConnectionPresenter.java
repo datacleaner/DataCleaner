@@ -32,7 +32,7 @@ public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnec
 	@Override
 	protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
 			String param3, String param4) {
-		return "jdbc:oracle:thin:@" + hostname + ":" + port + "/" + database;
+		return "jdbc:oracle:thin:@" + hostname + ":" + port + ":" + database;
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>com.hi.easydq</groupId>
-  <artifactId>EasyDQ-cleansing-datacleaner</artifactId>
+  <artifactId>EasyDQ-cleansing-DataCleaner</artifactId>
   <versioning>
     <release>1.3</release>
     <versions>

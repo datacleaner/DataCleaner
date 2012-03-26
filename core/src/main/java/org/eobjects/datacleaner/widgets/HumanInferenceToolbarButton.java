@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.widgets;
 
+import java.awt.Cursor;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
@@ -39,6 +41,7 @@ public class HumanInferenceToolbarButton extends JButton {
 		addActionListener(new OpenBrowserAction("http://eobjects.org/humaninference"));
 		setOpaque(false);
 		setBorder(new EmptyBorder(4, 4, 4, 4));
+		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		setToolTipText("Powered by Human Inference");
 	}
 }

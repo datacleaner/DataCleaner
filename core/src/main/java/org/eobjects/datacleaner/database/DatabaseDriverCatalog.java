@@ -62,10 +62,10 @@ public class DatabaseDriverCatalog implements Serializable {
 	public static final String DATABASE_NAME_MYSQL = "MySQL";
 	public static final String DATABASE_NAME_PENTAHO_DATA_INTEGRATION = "Pentaho Data Integration";
 	public static final String DATABASE_NAME_LUCIDDB = "LucidDB";
-	private static final String DATABASE_NAME_PERVASIVE = "Pervasive";
+	public static final String DATABASE_NAME_PERVASIVE = "Pervasive";
+	public static final String DATABASE_NAME_CUBRID = "Cubrid";
 
 	private static final List<DatabaseDriverDescriptor> _databaseDrivers;
-
 
 	static {
 		_databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
@@ -84,8 +84,8 @@ public class DatabaseDriverCatalog implements Serializable {
 				new String[] { "http://repo1.maven.org/maven2/org/firebirdsql/jdbc/jaybird/2.1.6/jaybird-2.1.6.jar",
 						"http://repo1.maven.org/maven2/geronimo-spec/geronimo-spec-j2ee/1.4-rc4/geronimo-spec-j2ee-1.4-rc4.jar" },
 				new String[] { "jdbc:firebirdsql:<hostname>:<path/to/database>.fdb" });
-		add(DATABASE_NAME_SAP_DB, "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB", null,
-				"jdbc:sapdb://<hostname>/<database>");
+		add(DATABASE_NAME_SAP_DB, "images/datastore-types/databases/sapdb.png", "com.sap.dbtech.jdbc.DriverSapDB",
+				null, "jdbc:sapdb://<hostname>/<database>");
 		add(DATABASE_NAME_POSTGRESQL, "images/datastore-types/databases/postgresql.png", "org.postgresql.Driver",
 				"http://repo1.maven.org/maven2/postgresql/postgresql/9.1-901.jdbc4/postgresql-9.1-901.jdbc4.jar",
 				"jdbc:postgresql://<hostname>:5432/<database>");
@@ -106,7 +106,8 @@ public class DatabaseDriverCatalog implements Serializable {
 				"jdbc:derby://<hostname>:1527/<path/to/database>");
 		add(DATABASE_NAME_APACHE_DERBY_EMBEDDED, "images/datastore-types/databases/derby.png",
 				"org.apache.derby.jdbc.EmbeddedDriver",
-				"http://repo1.maven.org/maven2/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar", "jdbc:derby:<database>");
+				"http://repo1.maven.org/maven2/org/apache/derby/derby/10.8.2.2/derby-10.8.2.2.jar",
+				"jdbc:derby:<database>");
 		add(DATABASE_NAME_ORACLE, "images/datastore-types/databases/oracle.png", "oracle.jdbc.OracleDriver", null,
 				"jdbc:oracle:thin:@<hostname>:1521:<sid>", "jdbc:oracle:thin:@<hostname>:<port>:<sid>");
 		add(DATABASE_NAME_MICROSOFT_SQL_SERVER_OFFICIAL, "images/datastore-types/databases/microsoft.png",
@@ -118,10 +119,13 @@ public class DatabaseDriverCatalog implements Serializable {
 				"jdbc:hsqldb:hsql://<hostname>:9001/<database>", "jdbc:hsqldb:file:<path/to/database>");
 		add(DATABASE_NAME_H2, "images/datastore-types/databases/h2.png", "org.h2.Driver",
 				"http://repo1.maven.org/maven2/com/h2database/h2/1.3.162/h2-1.3.162.jar", "jdbc:h2:<path/to/database>");
-		add(DATABASE_NAME_TERADATA, "images/datastore-types/databases/teradata.png", "com.teradata.jdbc.TeraDriver", null,
-				"jdbc:teradata:<hostname>", "jdbc:teradata:<hostname>/database=<database>");
-		add(DATABASE_NAME_PERVASIVE, "images/datastore-types/databases/pervasive.png",
-				"com.pervasive.jdbc.v2.Driver", null, "jdbc:pervasive://<hostname>:1583/<datasource>");
+		add(DATABASE_NAME_TERADATA, "images/datastore-types/databases/teradata.png", "com.teradata.jdbc.TeraDriver",
+				null, "jdbc:teradata:<hostname>", "jdbc:teradata:<hostname>/database=<database>");
+		add(DATABASE_NAME_PERVASIVE, "images/datastore-types/databases/pervasive.png", "com.pervasive.jdbc.v2.Driver",
+				null, "jdbc:pervasive://<hostname>:1583/<datasource>");
+		add(DATABASE_NAME_CUBRID, "images/datastore-types/databases/cubrid.png", "cubrid.jdbc.driver.CUBRIDDriver",
+				"http://clojars.org/repo/cubrid/cubrid-jdbc/8.4.1.0564/cubrid-jdbc-8.4.1.0564.jar",
+				"jdbc:cubrid:<hostname>:30000:<database>:::");
 		add(DATABASE_NAME_LUCIDDB,
 				"images/datastore-types/databases/luciddb.png",
 				"org.luciddb.jdbc.LucidDbClientDriver",
@@ -129,8 +133,8 @@ public class DatabaseDriverCatalog implements Serializable {
 				"jdbc:luciddb:http://<hostname>");
 		add(DATABASE_NAME_PENTAHO_DATA_INTEGRATION, "images/datastore-types/databases/kettle.png",
 				"org.pentaho.di.jdbc.KettleDriver", null, "jdbc:kettle:file://<filename>");
-		add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png", "sun.jdbc.odbc.JdbcOdbcDriver",
-				null, "jdbc:odbc:<data-source-name>");
+		add(DATABASE_NAME_JDBC_ODBC_BRIDGE, "images/datastore-types/databases/odbc.png",
+				"sun.jdbc.odbc.JdbcOdbcDriver", null, "jdbc:odbc:<data-source-name>");
 
 		Collections.sort(_databaseDrivers);
 	}
@@ -173,7 +177,8 @@ public class DatabaseDriverCatalog implements Serializable {
 		} else {
 			urls = new String[] { downloadUrl };
 		}
-		_databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, urls, urlTemplates));
+		_databaseDrivers.add(new DatabaseDescriptorImpl(databaseName, iconImagePath, driverClassName, urls,
+				urlTemplates));
 	}
 
 	public DatabaseDriverState getState(DatabaseDriverDescriptor databaseDescriptor) {

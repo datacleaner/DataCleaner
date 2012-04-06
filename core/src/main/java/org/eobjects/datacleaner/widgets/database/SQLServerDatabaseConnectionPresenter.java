@@ -22,8 +22,7 @@ package org.eobjects.datacleaner.widgets.database;
 /**
  * {@link DatabaseConnectionPresenter} for MS SQL Server database connections
  */
-public class SQLServerDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter implements
-		DatabaseConnectionPresenter {
+public class SQLServerDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
 	public SQLServerDatabaseConnectionPresenter() {
 		super("jdbc:jtds:sqlserver://HOSTNAME:PORT/DATABASE;instance=PARAM1;useUnicode=true;characterEncoding=UTF-8",

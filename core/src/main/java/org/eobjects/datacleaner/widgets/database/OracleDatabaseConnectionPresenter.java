@@ -22,8 +22,7 @@ package org.eobjects.datacleaner.widgets.database;
 /**
  * {@link DatabaseConnectionPresenter} for Oracle database connections
  */
-public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter implements
-		DatabaseConnectionPresenter {
+public class OracleDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
 	public OracleDatabaseConnectionPresenter() {
 		super("jdbc:oracle:thin:@HOSTNAME:PORT:DATABASE");

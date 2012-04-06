@@ -59,6 +59,7 @@ import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
+import org.eobjects.datacleaner.widgets.database.CubridDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.DatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.DefaultDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.MysqlDatabaseConnectionPresenter;
@@ -283,6 +284,8 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 			result = new OracleDatabaseConnectionPresenter();
 		} else if (DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS.equals(databaseName)) {
 			result = new SQLServerDatabaseConnectionPresenter();
+		} else if (DatabaseDriverCatalog.DATABASE_NAME_CUBRID.equals(databaseName)) {
+			result = new CubridDatabaseConnectionPresenter();
 		} else {
 			result = null;
 		}

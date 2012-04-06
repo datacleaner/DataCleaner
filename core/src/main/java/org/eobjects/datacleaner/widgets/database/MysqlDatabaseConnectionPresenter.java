@@ -22,8 +22,7 @@ package org.eobjects.datacleaner.widgets.database;
 /**
  * {@link DatabaseConnectionPresenter} for MySQL database connections
  */
-public class MysqlDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter implements
-		DatabaseConnectionPresenter {
+public class MysqlDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
 	public MysqlDatabaseConnectionPresenter() {
 		super("jdbc:mysql://HOSTNAME:PORT/DATABASE");

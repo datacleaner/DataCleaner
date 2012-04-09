@@ -72,8 +72,12 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 	private static final String QUOTE_SINGLE_QUOTE = "Single quote (')";
 	private static final String QUOTE_NONE = "(None)";
 
+	private static final String ESCAPE_BACKSLASH = "Backslash (\\)";
+	private static final String ESCAPE_NONE = "(None)";
+
 	private final JComboBox _separatorCharField;
 	private final JComboBox _quoteCharField;
+	private final JComboBox _escapeCharField;
 	private final HeaderLineComboBox _headerLineComboBox;
 	private final CharSetEncodingComboBox _encodingComboBox;
 	private final JCheckBox _failOnInconsistenciesCheckBox;
@@ -90,6 +94,10 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 
 		_quoteCharField = new JComboBox(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
 		_quoteCharField.setEditable(true);
+
+		_escapeCharField = new JComboBox(new String[] { ESCAPE_NONE, ESCAPE_BACKSLASH });
+		_escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
+		_escapeCharField.setEditable(true);
 
 		_encodingComboBox = new CharSetEncodingComboBox();
 
@@ -142,6 +150,21 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 			}
 			_quoteCharField.setSelectedItem(quote);
 
+			Character escapeChar = _originalDatastore.getEscapeChar();
+			final String escape;
+			if (escapeChar == null) {
+				escape = ESCAPE_NONE;
+			} else {
+				if (escapeChar.charValue() == CsvDatastore.NOT_A_CHAR) {
+					escape = ESCAPE_NONE;
+				} else if (escapeChar.charValue() == '\\') {
+					escape = ESCAPE_BACKSLASH;
+				} else {
+					escape = escapeChar.toString();
+				}
+			}
+			_escapeCharField.setSelectedItem(escape);
+
 			onSettingsUpdated(false, false);
 		}
 
@@ -153,6 +176,12 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 			}
 		});
 		_quoteCharField.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				onSettingsUpdated(false, false);
+			}
+		});
+		_escapeCharField.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				onSettingsUpdated(false, false);
@@ -313,6 +342,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 		result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
 		result.add(new ImmutableEntry<String, JComponent>("Separator", _separatorCharField));
 		result.add(new ImmutableEntry<String, JComponent>("Quote char", _quoteCharField));
+		result.add(new ImmutableEntry<String, JComponent>("Escape char", _escapeCharField));
 		result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
 		result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
 		return result;
@@ -369,6 +399,17 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 		}
 	}
 
+	public Character getEscapeChar() {
+		Object escapeItem = _escapeCharField.getSelectedItem();
+		if (ESCAPE_NONE.equals(escapeItem)) {
+			return CsvDatastore.NOT_A_CHAR;
+		} else if (ESCAPE_BACKSLASH.equals(escapeItem)) {
+			return '\\';
+		} else {
+			return escapeItem.toString().charAt(0);
+		}
+	}
+
 	@Override
 	protected boolean isWindowResizable() {
 		return true;
@@ -396,7 +437,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 	}
 
 	private CsvDatastore createDatastore(String name, String filename, boolean failOnInconsistentRecords) {
-		return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEncoding(),
+		return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEscapeChar(), getEncoding(),
 				failOnInconsistentRecords, getHeaderLine());
 	}
 

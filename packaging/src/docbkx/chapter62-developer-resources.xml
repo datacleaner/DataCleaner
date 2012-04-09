@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="chapter_developer_resources"
 	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Developer resources</title>
 
-	<section>
+	<section id="section_development_tutorials">
 		<title>Extension development tutorials</title>
 		<para>
 			There are many useful resources for those who engage in
@@ -30,6 +30,12 @@
 				<para>
 					<link
 						xl:href="http://kasper.eobjects.org/2010/09/developing-analyzer-using-analyzerbeans.html">Tutorial: Developing an analyzer</link>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<link
+						xl:href="http://kasper.eobjects.org/2012/04/implementing-custom-datastore-in.html">Tutorial: Implementing a custom datastore</link>
 				</para>
 			</listitem>
 			<listitem>

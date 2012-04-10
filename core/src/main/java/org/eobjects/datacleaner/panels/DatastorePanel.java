@@ -77,6 +77,8 @@ import com.google.inject.Injector;
 public class DatastorePanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final int LABEL_MAX_WIDTH = 450;
 
 	private final Datastore _datastore;
 	private final MutableDatastoreCatalog _datastoreCatalog;
@@ -118,6 +120,7 @@ public class DatastorePanel extends DCPanel {
 		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description + "</html>");
 		datastoreNameLabel.setIconTextGap(10);
 		datastoreNameLabel.setIcon(icon);
+		datastoreNameLabel.setMaximumWidth(LABEL_MAX_WIDTH);
 		MouseAdapter invokeCheckBoxMouseListener = new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

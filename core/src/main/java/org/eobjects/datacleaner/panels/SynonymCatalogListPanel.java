@@ -47,6 +47,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.DatastoreSynonymCatalogDialog;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.eobjects.datacleaner.windows.TextFileSynonymCatalogDialog;
 import org.jdesktop.swingx.VerticalLayout;
 
@@ -95,7 +96,8 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 
 	private DCPanel createNewSynonymCatalogsPanel() {
 
-		final JButton textFileSynonymCatalogButton = createButton(IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH,
+		final JButton textFileSynonymCatalogButton = createButton(
+				IconUtils.SYNONYM_CATALOG_TEXTFILE_IMAGEPATH,
 				"<html><b>Text file synonym catalog</b><br/>Synonyms from a file with master terms and comma-separated synonyms.</html>");
 		textFileSynonymCatalogButton.addActionListener(new ActionListener() {
 			@Override
@@ -151,6 +153,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			final DCLabel synonymCatalogLabel = DCLabel.dark("<html><b>" + name + "</b><br/>"
 					+ getDescription(synonymCatalog) + "</html>");
 			synonymCatalogLabel.setIcon(icon);
+			synonymCatalogLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit synonym catalog");
@@ -171,7 +174,8 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 					public void actionPerformed(ActionEvent e) {
 						Injector injector = _injectorBuilder.with(DatastoreSynonymCatalog.class, synonymCatalog)
 								.createInjector();
-						DatastoreSynonymCatalogDialog dialog = injector.getInstance(DatastoreSynonymCatalogDialog.class);
+						DatastoreSynonymCatalogDialog dialog = injector
+								.getInstance(DatastoreSynonymCatalogDialog.class);
 						dialog.setVisible(true);
 					}
 				});
@@ -221,7 +225,8 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 			return ((TextFileSynonymCatalog) synonymCatalog).getFilename();
 		} else if (synonymCatalog instanceof DatastoreSynonymCatalog) {
 			DatastoreSynonymCatalog datastoreSynonymCatalog = (DatastoreSynonymCatalog) synonymCatalog;
-			return datastoreSynonymCatalog.getDatastoreName() + ": " + datastoreSynonymCatalog.getMasterTermColumnPath();
+			return datastoreSynonymCatalog.getDatastoreName() + ": "
+					+ datastoreSynonymCatalog.getMasterTermColumnPath();
 		}
 		return "";
 	}

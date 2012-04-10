@@ -48,6 +48,8 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import com.google.inject.Injector;
 
 public final class ReferenceDataDialog extends AbstractDialog {
+	
+	public static final int REFERENCE_DATA_ITEM_MAX_WIDTH = 280;
 
 	private static final long serialVersionUID = 1L;
 	private static final ImageManager imageManager = ImageManager.getInstance();

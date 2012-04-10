@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.HelpIcon;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.eobjects.datacleaner.windows.RegexStringPatternDialog;
 import org.eobjects.datacleaner.windows.SimpleStringPatternDialog;
 import org.jdesktop.swingx.VerticalLayout;
@@ -158,6 +159,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 			final DCLabel stringPatternLabel = DCLabel.dark("<html><b>" + name + "</b><br/>" + getDescription(stringPattern)
 					+ "</html>");
 			stringPatternLabel.setIcon(icon);
+			stringPatternLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit string pattern");

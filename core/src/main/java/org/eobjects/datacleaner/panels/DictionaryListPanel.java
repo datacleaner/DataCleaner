@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DCPopupBubble;
 import org.eobjects.datacleaner.widgets.HelpIcon;
 import org.eobjects.datacleaner.windows.DatastoreDictionaryDialog;
+import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.eobjects.datacleaner.windows.SimpleDictionaryDialog;
 import org.eobjects.datacleaner.windows.TextFileDictionaryDialog;
 import org.jdesktop.swingx.VerticalLayout;
@@ -165,6 +166,7 @@ public class DictionaryListPanel extends DCPanel implements DictionaryChangeList
 			final DCLabel dictLabel = DCLabel
 					.dark("<html><b>" + name + "</b><br/>" + getDescription(dictionary) + "</html>");
 			dictLabel.setIcon(icon);
+			dictLabel.setMaximumWidth(ReferenceDataDialog.REFERENCE_DATA_ITEM_MAX_WIDTH);
 
 			final JButton editButton = WidgetFactory.createSmallButton("images/actions/edit.png");
 			editButton.setToolTipText("Edit dictionary");

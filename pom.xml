@@ -25,6 +25,7 @@
 	<modules>
 		<module>core</module>
 		<module>packaging</module>
+		<module>extensions</module>
 	</modules>
 	<profiles>
 		<profile>

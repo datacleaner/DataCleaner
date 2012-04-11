@@ -3,7 +3,7 @@ Version: [[version]]
 Section: database
 Priority: extra
 Architecture: all
-Maintainer: Human Inference and the DataCleaner community <datacleaner-dev@googlegroups.com>
+Maintainer: Human Inference <datacleaner-dev@googlegroups.com>
 Description: DataCleaner - open source data quality
  DataCleaner is a data quality analysis application and a solution platform for DQ solutions. It's core is a strong data profiling engine, which is extensible and thereby adds data cleansing, transformations, enrichment, deduplication, matching and merging.
 Distribution: development

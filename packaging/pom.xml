@@ -212,6 +212,7 @@
 						<version>0.10</version>
 						<configuration>
 							<dataSet>
+							<!-- starter script -->
 								<data>
 									<src>src/deb/datacleaner</src>
 									<type>file</type>
@@ -221,6 +222,8 @@
 										<filemode>755</filemode>
 									</mapper>
 								</data>
+								
+								<!-- the JAR files -->
 								<data>
 									<src>${project.build.directory}/${project.build.finalName}.jar</src>
 									<type>file</type>
@@ -235,6 +238,24 @@
 									<mapper>
 										<type>perm</type>
 										<prefix>/usr/share/datacleaner/lib</prefix>
+									</mapper>
+								</data>
+								
+								<!-- GNOME menu launcher and icon -->
+								<data>
+									<src>src/deb/applications</src>
+									<type>directory</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/applications</prefix>
+									</mapper>
+								</data>
+								<data>
+									<src>src/deb/icons</src>
+									<type>directory</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/icons</prefix>
 									</mapper>
 								</data>
 							</dataSet>

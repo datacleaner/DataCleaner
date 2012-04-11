@@ -1,0 +1,10 @@
+Package: datacleaner
+Version: [[version]]
+Section: database
+Priority: optional
+Architecture: all
+Maintainer: Kasper Sørensen <kasper@eobjects.org>
+Description: DataCleaner - open source data quality
+ DataCleaner is a data quality analysis application and a solution platform for DQ solutions. It's core is a strong data profiling engine, which is extensible and thereby adds data cleansing, transformations, enrichment, deduplication, matching and merging.
+Distribution: development
+Homepage: http://datacleaner.eobjects.org

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
@@ -147,7 +148,9 @@
 						<configuration>
 							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
-								<move file="${project.basedir}/target/docbkx/html/index.html" tofile="${project.basedir}/target/site/reference/html_single/index.html" failonerror="false" />
+								<move file="${project.basedir}/target/docbkx/html/index.html"
+									tofile="${project.basedir}/target/site/reference/html_single/index.html"
+									failonerror="false" />
 								<copy todir="${project.basedir}/target/site/reference/html_single">
 									<fileset dir="${project.basedir}/src/docbkx/resources">
 										<include name="**/*.css" />
@@ -175,7 +178,9 @@
 										<include name="**/*.pdf" />
 									</fileset>
 								</copy>
-								<move file="${project.basedir}/target/site/reference/pdf/index.pdf" tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf" failonerror="false" />
+								<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
+									tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
+									failonerror="false" />
 							</postProcess>
 						</configuration>
 					</execution>
@@ -197,6 +202,55 @@
 		</plugins>
 	</build>
 	<profiles>
+		<profile>
+			<id>debian</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>jdeb</artifactId>
+						<groupId>org.vafer</groupId>
+						<version>0.10</version>
+						<configuration>
+							<dataSet>
+								<data>
+									<src>src/deb/datacleaner</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/bin</prefix>
+										<filemode>755</filemode>
+									</mapper>
+								</data>
+								<data>
+									<src>${project.build.directory}/${project.build.finalName}.jar</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/datacleaner</prefix>
+									</mapper>
+								</data>
+								<data>
+									<src>${project.build.directory}/lib</src>
+									<type>directory</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/share/datacleaner/lib</prefix>
+									</mapper>
+								</data>
+							</dataSet>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jdeb</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>windows</id>
 			<build>

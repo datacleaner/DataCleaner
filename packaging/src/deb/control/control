@@ -6,5 +6,7 @@ Architecture: all
 Maintainer: Human Inference <datacleaner-dev@googlegroups.com>
 Description: DataCleaner - open source data quality
  DataCleaner is a data quality analysis application and a solution platform for DQ solutions. It's core is a strong data profiling engine, which is extensible and thereby adds data cleansing, transformations, enrichment, deduplication, matching and merging.
+ The application connects to many different databases and file formats, for example: CSV files, Excel spreadsheets, NoSQL databases such as MongoDB, as well as relational databases such as Oracle, MySQL, PostgreSQL, Microsoft SQL Server, Ingres, IBM DB2 and more.
+ Use the graphical user interface to orchestrate your data quality jobs and perform one-time DQ audits, or the command line interface to execute and schedule them for continuous monitoring of your data's quality.
 Distribution: development
 Homepage: http://datacleaner.eobjects.org

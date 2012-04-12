@@ -45,6 +45,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.AccessDatastore;
+import org.eobjects.analyzer.connection.CouchDbDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
@@ -74,6 +75,7 @@ import org.eobjects.datacleaner.windows.AbstractDialog;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
+import org.eobjects.datacleaner.windows.CouchDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
 import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
@@ -340,6 +342,10 @@ public class DatastoreListPanel extends DCPanel implements
 		panel.add(createNewDatastoreButton("MongoDB database",
 				"Connect to a MongoDB database", IconUtils.MONGODB_IMAGEPATH,
 				MongoDbDatastore.class, MongoDbDatastoreDialog.class));
+		
+		panel.add(createNewDatastoreButton("CouchDB database",
+				"Connect to a CouchDB database", IconUtils.COUCHDB_IMAGEPATH,
+				CouchDbDatastore.class, CouchDbDatastoreDialog.class));
 
 		// set of databases that are displayed directly on panel
 		final Set<String> databaseNames = new HashSet<String>();

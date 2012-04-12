@@ -35,6 +35,7 @@ import javax.swing.event.ChangeListener;
 
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
+import org.eobjects.analyzer.connection.CouchDbDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
@@ -56,6 +57,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.windows.AccessDatastoreDialog;
 import org.eobjects.datacleaner.windows.CompositeDatastoreDialog;
+import org.eobjects.datacleaner.windows.CouchDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.CsvDatastoreDialog;
 import org.eobjects.datacleaner.windows.DbaseDatastoreDialog;
 import org.eobjects.datacleaner.windows.ExcelDatastoreDialog;
@@ -77,7 +79,7 @@ import com.google.inject.Injector;
 public class DatastorePanel extends DCPanel {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final int LABEL_MAX_WIDTH = 450;
 
 	private final Datastore _datastore;
@@ -117,7 +119,8 @@ public class DatastorePanel extends DCPanel {
 			}
 		});
 		String datastoreName = datastore.getName();
-		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description + "</html>");
+		final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description
+				+ "</html>");
 		datastoreNameLabel.setIconTextGap(10);
 		datastoreNameLabel.setIcon(icon);
 		datastoreNameLabel.setMaximumWidth(LABEL_MAX_WIDTH);
@@ -141,7 +144,8 @@ public class DatastorePanel extends DCPanel {
 
 		setBorder(WidgetUtils.BORDER_LIST_ITEM);
 
-		WidgetUtils.addToGridBag(DCPanel.flow(_checkBox, datastoreNameLabel), this, 0, 0, GridBagConstraints.WEST, 1.0, 1.0);
+		WidgetUtils.addToGridBag(DCPanel.flow(_checkBox, datastoreNameLabel), this, 0, 0, GridBagConstraints.WEST, 1.0,
+				1.0);
 		WidgetUtils.addToGridBag(editButton, this, 1, 0, GridBagConstraints.EAST);
 		WidgetUtils.addToGridBag(removeButton, this, 2, 0, GridBagConstraints.EAST);
 	}
@@ -179,7 +183,8 @@ public class DatastorePanel extends DCPanel {
 			editButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, datastore).createInjector();
+					Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, datastore)
+							.createInjector();
 					JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
 					dialog.setVisible(true);
 				}
@@ -256,6 +261,15 @@ public class DatastorePanel extends DCPanel {
 					dialog.setVisible(true);
 				}
 			});
+		} else if (datastore instanceof CouchDbDatastore) {
+			editButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Injector injector = _injectorBuilder.with(CouchDbDatastore.class, datastore).createInjector();
+					CouchDbDatastoreDialog dialog = injector.getInstance(CouchDbDatastoreDialog.class);
+					dialog.setVisible(true);
+				}
+			});
 		} else if (datastore instanceof MongoDbDatastore) {
 			editButton.addActionListener(new ActionListener() {
 				@Override
@@ -303,6 +317,10 @@ public class DatastorePanel extends DCPanel {
 			MongoDbDatastore mongoDbDatastore = (MongoDbDatastore) datastore;
 			return mongoDbDatastore.getHostname() + ":" + mongoDbDatastore.getPort() + " - "
 					+ mongoDbDatastore.getDatabaseName();
+		} else if (datastore instanceof CouchDbDatastore) {
+			CouchDbDatastore couchDbDatastore = (CouchDbDatastore) datastore;
+			return (couchDbDatastore.isSslEnabled() ? "https://" : "http://") + couchDbDatastore.getHostname() + ":"
+					+ couchDbDatastore.getPort();
 		} else if (datastore instanceof CompositeDatastore) {
 			List<? extends Datastore> datastores = ((CompositeDatastore) datastore).getDatastores();
 			StringBuilder sb = new StringBuilder();

@@ -31,6 +31,7 @@ import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.connection.AccessDatastore;
 import org.eobjects.analyzer.connection.CompositeDatastore;
+import org.eobjects.analyzer.connection.CouchDbDatastore;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DbaseDatastore;
@@ -96,6 +97,7 @@ public final class IconUtils {
 	public static final String ODB_IMAGEPATH = "images/datastore-types/odb.png";
 	public static final String COMPOSITE_IMAGEPATH = "images/datastore-types/composite.png";
 	public static final String MONGODB_IMAGEPATH = "images/datastore-types/mongodb.png";
+	public static final String COUCHDB_IMAGEPATH = "images/datastore-types/couchdb.png";
 
 	public static final String TRANSFORMER_IMAGEPATH = "images/component-types/transformer.png";
 	public static final String ANALYZER_IMAGEPATH = "images/component-types/analyzer.png";
@@ -356,6 +358,8 @@ public final class IconUtils {
 			imagePath = SAS_IMAGEPATH;
 		} else if (datastore instanceof XmlDatastore) {
 			imagePath = XML_IMAGEPATH;
+		} else if (datastore instanceof CouchDbDatastore) {
+			imagePath = COUCHDB_IMAGEPATH;
 		} else if (datastore instanceof MongoDbDatastore) {
 			imagePath = MONGODB_IMAGEPATH;
 		} else if (datastore instanceof CompositeDatastore) {

@@ -63,149 +63,163 @@ import com.google.inject.Injector;
 @RendererBean(SwingRenderingFormat.class)
 public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResult, JComponent> {
 
-	private static final Logger logger = LoggerFactory.getLogger(WriteDataResultSwingRenderer.class);
-	private final ImageManager imageManager = ImageManager.getInstance();
+    private static final Logger logger = LoggerFactory.getLogger(WriteDataResultSwingRenderer.class);
+    private final ImageManager imageManager = ImageManager.getInstance();
 
-	@Inject
-	WindowContext windowContext;
+    @Inject
+    WindowContext windowContext;
 
-	@Inject
-	DCModule _parentModule;
+    @Inject
+    DCModule _parentModule;
 
-	@Inject
-	MutableDatastoreCatalog _datastoreCatalog;
+    @Inject
+    MutableDatastoreCatalog _datastoreCatalog;
 
-	@Override
-	public JComponent render(WriteDataResult result) {
-		final EmptyBorder border = new EmptyBorder(10, 10, 10, 10);
+    @Override
+    public JComponent render(WriteDataResult result) {
+        final EmptyBorder border = new EmptyBorder(10, 10, 10, 10);
 
-		final DCPanel panel = new DCPanel();
-		panel.setBorder(border);
-		panel.setLayout(new VerticalLayout(4));
+        final DCPanel panel = new DCPanel();
+        panel.setBorder(border);
+        panel.setLayout(new VerticalLayout(4));
 
-		int rowCount = result.getWrittenRowCount();
-		if (rowCount == 0) {
-			final JLabel label = new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING),
-					JLabel.LEFT);
-			panel.add(label);
-		} else {
-			final JLabel label = new JLabel(rowCount + " rows written!", imageManager.getImageIcon(IconUtils.STATUS_VALID),
-					JLabel.LEFT);
-			final DCPanel buttonPanel = createButtonPanel(result);
-			panel.add(label);
-			panel.add(buttonPanel);
-		}
+        int insertCount = result.getWrittenRowCount();
+        int updateCount = result.getUpdatedRowCount();
+        if (insertCount == 0 && updateCount == 0) {
+            final JLabel label = new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING),
+                    JLabel.LEFT);
+            panel.add(label);
+        } else {
 
-		if (result.getErrorRowCount() > 0) {
-			final DCPanel errorRowsPanel = new DCPanel();
-			errorRowsPanel.setLayout(new BorderLayout());
+            if (insertCount != 0) {
+                final JLabel label = new JLabel(insertCount + " rows inserted!",
+                        imageManager.getImageIcon(IconUtils.STATUS_VALID), JLabel.LEFT);
+                panel.add(label);
+            }
 
-			final JLabel icon = new JLabel(imageManager.getImageIcon(IconUtils.STATUS_ERROR));
-			errorRowsPanel.add(icon, BorderLayout.WEST);
+            if (updateCount != 0) {
+                final JLabel label = new JLabel(updateCount + " rows updated!",
+                        imageManager.getImageIcon(IconUtils.STATUS_VALID), JLabel.LEFT);
+                panel.add(label);
+            }
 
-			final FileDatastore errorDatastore = result.getErrorDatastore();
+            final DCPanel buttonPanel = createButtonPanel(result);
+            panel.add(buttonPanel);
+        }
 
-			final JXEditorPane editorPane = new JXEditorPane("text/html", "<b>" + result.getErrorRowCount()
-					+ " records</b> could <i>not</i> be inserted into the table!<br/>"
-					+ "The records were written to <a href=\"http://datacleaner.eobjects.org/preview_datastore\">"
-					+ errorDatastore.getFilename()
-					+ "</a> (<a href=\"http://datacleaner.eobjects.org/register_datastore\">Register as datastore</a>).");
-			editorPane.setEditable(false);
-			editorPane.setOpaque(false);
-			editorPane.addHyperlinkListener(new HyperlinkListener() {
-				@Override
-				public void hyperlinkUpdate(HyperlinkEvent e) {
-					if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-						final String href = e.getDescription();
-						if ("http://datacleaner.eobjects.org/register_datastore".equals(href)) {
-							_datastoreCatalog.addDatastore(errorDatastore);
-							JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
-						} else if ("http://datacleaner.eobjects.org/preview_datastore".equals(href)) {
-							DatastoreConnection errorCon = errorDatastore.openConnection();
-							try {
-								Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
-								PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-										windowContext, errorDatastore, table);
-								actionListener.actionPerformed(null);
-							} finally {
-								errorCon.close();
-							}
-						} else {
-							logger.error("Unexpected href: " + href + ". Event was: " + e);
-						}
-					}
-				}
-			});
-			errorRowsPanel.add(editorPane, BorderLayout.CENTER);
+        if (result.getErrorRowCount() > 0) {
+            final DCPanel errorRowsPanel = new DCPanel();
+            errorRowsPanel.setLayout(new BorderLayout());
 
-			panel.add(errorRowsPanel);
-		}
+            final JLabel icon = new JLabel(imageManager.getImageIcon(IconUtils.STATUS_ERROR));
+            errorRowsPanel.add(icon, BorderLayout.WEST);
 
-		return panel;
-	}
+            final FileDatastore errorDatastore = result.getErrorDatastore();
 
-	private DCPanel createButtonPanel(final WriteDataResult result) {
-		final DCPanel panel = new DCPanel();
-		panel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 4));
+            final JXEditorPane editorPane = new JXEditorPane(
+                    "text/html",
+                    "<b>"
+                            + result.getErrorRowCount()
+                            + " records</b> could <i>not</i> be written to the table!<br/>"
+                            + "The records were written to <a href=\"http://datacleaner.eobjects.org/preview_datastore\">"
+                            + errorDatastore.getFilename()
+                            + "</a> (<a href=\"http://datacleaner.eobjects.org/register_datastore\">Register as datastore</a>).");
+            editorPane.setEditable(false);
+            editorPane.setOpaque(false);
+            editorPane.addHyperlinkListener(new HyperlinkListener() {
+                @Override
+                public void hyperlinkUpdate(HyperlinkEvent e) {
+                    if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
+                        final String href = e.getDescription();
+                        if ("http://datacleaner.eobjects.org/register_datastore".equals(href)) {
+                            _datastoreCatalog.addDatastore(errorDatastore);
+                            JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
+                        } else if ("http://datacleaner.eobjects.org/preview_datastore".equals(href)) {
+                            DatastoreConnection errorCon = errorDatastore.openConnection();
+                            try {
+                                Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];
+                                PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
+                                        windowContext, errorDatastore, table);
+                                actionListener.actionPerformed(null);
+                            } finally {
+                                errorCon.close();
+                            }
+                        } else {
+                            logger.error("Unexpected href: " + href + ". Event was: " + e);
+                        }
+                    }
+                }
+            });
+            errorRowsPanel.add(editorPane, BorderLayout.CENTER);
 
-		final Datastore datastore = result.getDatastore(_datastoreCatalog);
-		final Insets buttonMargin = new Insets(1, 4, 1, 4);
-		if (datastore != null && datastore.getName() != null) {
-			final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
-			if (!datastore.equals(ds)) {
-				final JButton addDatastoreButton = new JButton("Add to datastores",
-						imageManager.getImageIcon("images/actions/add.png"));
-				addDatastoreButton.setMargin(buttonMargin);
-				addDatastoreButton.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						_datastoreCatalog.addDatastore(datastore);
-						addDatastoreButton.setEnabled(false);
-					}
-				});
-				panel.add(addDatastoreButton);
-				panel.add(Box.createHorizontalStrut(4));
-			}
+            panel.add(errorRowsPanel);
+        }
 
-			final JButton analyzeButton = new JButton("Analyze this datastore",
-					imageManager.getImageIcon("images/filetypes/analysis_job.png"));
-			analyzeButton.setMargin(buttonMargin);
-			analyzeButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Injector injector = Guice.createInjector(new DCModule(_parentModule, null));
-					AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-					window.setDatastore(datastore);
-					window.open();
-				}
-			});
-			panel.add(analyzeButton);
-			panel.add(Box.createHorizontalStrut(4));
+        return panel;
+    }
 
-			final JButton previewButton = new JButton("Preview table",
-					imageManager.getImageIcon("images/actions/preview_data.png"));
-			previewButton.setMargin(buttonMargin);
-			previewButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					final DatastoreConnection con = datastore.openConnection();
-					try {
-						con.getSchemaNavigator().refreshSchemas();
-						final Table previewTable = result.getPreviewTable(datastore);
-						if (previewTable == null) {
-							throw new IllegalStateException("Result did not return any preview table: " + result);
-						} else {
-							final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
-									windowContext, datastore, previewTable);
-							actionListener.actionPerformed(null);
-						}
-					} finally {
-						con.close();
-					}
-				}
-			});
-			panel.add(previewButton);
-		}
-		return panel;
-	}
+    private DCPanel createButtonPanel(final WriteDataResult result) {
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new FlowLayout(Alignment.LEFT.getFlowLayoutAlignment(), 0, 4));
+
+        final Datastore datastore = result.getDatastore(_datastoreCatalog);
+        final Insets buttonMargin = new Insets(1, 4, 1, 4);
+        if (datastore != null && datastore.getName() != null) {
+            final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
+            if (!datastore.equals(ds)) {
+                final JButton addDatastoreButton = new JButton("Add to datastores",
+                        imageManager.getImageIcon("images/actions/add.png"));
+                addDatastoreButton.setMargin(buttonMargin);
+                addDatastoreButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        _datastoreCatalog.addDatastore(datastore);
+                        addDatastoreButton.setEnabled(false);
+                    }
+                });
+                panel.add(addDatastoreButton);
+                panel.add(Box.createHorizontalStrut(4));
+            }
+
+            final JButton analyzeButton = new JButton("Analyze this datastore",
+                    imageManager.getImageIcon("images/filetypes/analysis_job.png"));
+            analyzeButton.setMargin(buttonMargin);
+            analyzeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = Guice.createInjector(new DCModule(_parentModule, null));
+                    AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+                    window.setDatastore(datastore);
+                    window.open();
+                }
+            });
+            panel.add(analyzeButton);
+            panel.add(Box.createHorizontalStrut(4));
+
+            final JButton previewButton = new JButton("Preview table",
+                    imageManager.getImageIcon("images/actions/preview_data.png"));
+            previewButton.setMargin(buttonMargin);
+            previewButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    final DatastoreConnection con = datastore.openConnection();
+                    try {
+                        con.getSchemaNavigator().refreshSchemas();
+                        final Table previewTable = result.getPreviewTable(datastore);
+                        if (previewTable == null) {
+                            throw new IllegalStateException("Result did not return any preview table: " + result);
+                        } else {
+                            final PreviewSourceDataActionListener actionListener = new PreviewSourceDataActionListener(
+                                    windowContext, datastore, previewTable);
+                            actionListener.actionPerformed(null);
+                        }
+                    } finally {
+                        con.close();
+                    }
+                }
+            });
+            panel.add(previewButton);
+        }
+        return panel;
+    }
 }

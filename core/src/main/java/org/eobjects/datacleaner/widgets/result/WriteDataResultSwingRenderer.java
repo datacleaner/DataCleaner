@@ -84,7 +84,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
         panel.setLayout(new VerticalLayout(4));
 
         int insertCount = result.getWrittenRowCount();
-        int updateCount = result.getUpdatedRowCount();
+        int updateCount = result.getUpdatesCount();
         if (insertCount == 0 && updateCount == 0) {
             final JLabel label = new JLabel("No rows written!", imageManager.getImageIcon(IconUtils.STATUS_WARNING),
                     JLabel.LEFT);
@@ -92,13 +92,13 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
         } else {
 
             if (insertCount != 0) {
-                final JLabel label = new JLabel(insertCount + " rows inserted!",
+                final JLabel label = new JLabel(insertCount + " inserts executed!",
                         imageManager.getImageIcon(IconUtils.STATUS_VALID), JLabel.LEFT);
                 panel.add(label);
             }
 
             if (updateCount != 0) {
-                final JLabel label = new JLabel(updateCount + " rows updated!",
+                final JLabel label = new JLabel(updateCount + " updates executed!",
                         imageManager.getImageIcon(IconUtils.STATUS_VALID), JLabel.LEFT);
                 panel.add(label);
             }

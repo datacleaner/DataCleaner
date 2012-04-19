@@ -54,11 +54,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-public class MultipleMappedColumnsPropertyWidget extends
-		MultipleInputColumnsPropertyWidget {
+public class MultipleMappedColumnsPropertyWidget extends MultipleInputColumnsPropertyWidget {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(MultipleMappedColumnsPropertyWidget.class);
+	private static final Logger logger = LoggerFactory.getLogger(MultipleMappedColumnsPropertyWidget.class);
 
 	private final WeakHashMap<InputColumn<?>, SourceColumnComboBox> _mappedColumnComboBoxes;
 	private final MutableRef<Table> _tableRef;
@@ -81,10 +79,8 @@ public class MultipleMappedColumnsPropertyWidget extends
 	 *            the property representing the mapped columns in the datastore
 	 *            (String[])
 	 */
-	public MultipleMappedColumnsPropertyWidget(
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor inputColumnsProperty,
-			ConfiguredPropertyDescriptor mappedColumnsProperty) {
+	public MultipleMappedColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+			ConfiguredPropertyDescriptor inputColumnsProperty, ConfiguredPropertyDescriptor mappedColumnsProperty) {
 		super(beanJobBuilder, inputColumnsProperty);
 		_mappedColumnComboBoxes = new WeakHashMap<InputColumn<?>, SourceColumnComboBox>();
 		_mappedColumnsProperty = mappedColumnsProperty;
@@ -100,10 +96,8 @@ public class MultipleMappedColumnsPropertyWidget extends
 			// first create combo's, then set value (so combo is ready before it
 			// is requested)
 
-			_mappedColumnNamesPropertyWidget
-					.setValue(currentMappedColumnsValue);
-			final int minLength = Math.min(currentValue.length,
-					currentMappedColumnsValue.length);
+			_mappedColumnNamesPropertyWidget.setValue(currentMappedColumnsValue);
+			final int minLength = Math.min(currentValue.length, currentMappedColumnsValue.length);
 			for (int i = 0; i < minLength; i++) {
 				final InputColumn<?> inputColumn = currentValue[i];
 				final String mappedColumnName = currentMappedColumnsValue[i];
@@ -123,8 +117,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 
 	private void updateMappedColumns() {
 		final Table table = _tableRef.get();
-		final Set<Entry<InputColumn<?>, SourceColumnComboBox>> entrySet = _mappedColumnComboBoxes
-				.entrySet();
+		final Set<Entry<InputColumn<?>, SourceColumnComboBox>> entrySet = _mappedColumnComboBoxes.entrySet();
 
 		batchUpdateWidget(new Runnable() {
 			@Override
@@ -138,8 +131,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 					} else {
 						comboBox.setModel(table);
 						if (comboBox.getSelectedItem() == null) {
-							Column column = getDefaultMappedColumn(inputColumn,
-									table);
+							Column column = getDefaultMappedColumn(inputColumn, table);
 							if (column != null) {
 								comboBox.setEditable(true);
 								comboBox.setSelectedItem(column);
@@ -157,8 +149,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 		return false;
 	}
 
-	private SourceColumnComboBox createComboBox(InputColumn<?> inputColumn,
-			Column mappedColumn) {
+	private SourceColumnComboBox createComboBox(InputColumn<?> inputColumn, Column mappedColumn) {
 		final SourceColumnComboBox sourceColumnComboBox = new SourceColumnComboBox();
 		_mappedColumnComboBoxes.put(inputColumn, sourceColumnComboBox);
 
@@ -189,27 +180,28 @@ public class MultipleMappedColumnsPropertyWidget extends
 		return sourceColumnComboBox;
 	}
 
-	protected Column getDefaultMappedColumn(InputColumn<?> inputColumn,
-			Table table) {
+	protected Column getDefaultMappedColumn(InputColumn<?> inputColumn, Table table) {
 		// automatically select a column by name, if it exists
 		return table.getColumnByName(inputColumn.getName());
 	}
 
 	@Override
-	protected JComponent decorateCheckBox(
-			final DCCheckBox<InputColumn<?>> checkBox) {
+	protected JComponent decorateCheckBox(final DCCheckBox<InputColumn<?>> checkBox) {
 		final SourceColumnComboBox sourceColumnComboBox;
-		if (_mappedColumnComboBoxes.containsKey(checkBox.getValue())) {
-			sourceColumnComboBox = _mappedColumnComboBoxes.get(checkBox
-					.getValue());
+		final InputColumn<?> inputColumn = checkBox.getValue();
+		if (_mappedColumnComboBoxes.containsKey(inputColumn)) {
+			sourceColumnComboBox = _mappedColumnComboBoxes.get(inputColumn);
 		} else {
-			sourceColumnComboBox = createComboBox(checkBox.getValue(), null);
+			sourceColumnComboBox = createComboBox(inputColumn, null);
 		}
+
+		final JComponent decoratedSourceColumnComboBox = decorateSourceColumnComboBox(inputColumn, sourceColumnComboBox);
+
 		checkBox.addListenerToHead(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
 			public void onItemSelected(InputColumn<?> item, boolean selected) {
 				_sourceColumnUpdating = true;
-				sourceColumnComboBox.setVisible(selected);
+				decoratedSourceColumnComboBox.setVisible(selected);
 			}
 		});
 		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
@@ -228,13 +220,26 @@ public class MultipleMappedColumnsPropertyWidget extends
 			sourceColumnComboBox.setModel(table);
 		}
 
-		sourceColumnComboBox.setVisible(checkBox.isSelected());
+		decoratedSourceColumnComboBox.setVisible(checkBox.isSelected());
 
 		final DCPanel panel = new DCPanel();
 		panel.setLayout(new BorderLayout());
 		panel.add(checkBox, BorderLayout.CENTER);
-		panel.add(sourceColumnComboBox, BorderLayout.EAST);
+		panel.add(decoratedSourceColumnComboBox, BorderLayout.EAST);
 		return panel;
+	}
+
+	/**
+	 * Method which decorates the UI component of an inserted
+	 * {@link SourceColumnComboBox}. Subclasses can override this method if eg.
+	 * additional widgets should be added.
+	 * 
+	 * @param sourceColumnComboBox
+	 * @return
+	 */
+	protected JComponent decorateSourceColumnComboBox(InputColumn<?> inputColumn,
+			SourceColumnComboBox sourceColumnComboBox) {
+		return sourceColumnComboBox;
 	}
 
 	public PropertyWidget<String[]> getMappedColumnNamesPropertyWidget() {
@@ -242,8 +247,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 	}
 
 	private MinimalPropertyWidget<String[]> createMappedColumnNamesPropertyWidget() {
-		return new MinimalPropertyWidget<String[]>(getBeanJobBuilder(),
-				_mappedColumnsProperty) {
+		return new MinimalPropertyWidget<String[]>(getBeanJobBuilder(), _mappedColumnsProperty) {
 
 			@Override
 			public JComponent getWidget() {
@@ -253,11 +257,9 @@ public class MultipleMappedColumnsPropertyWidget extends
 
 			@Override
 			public boolean isSet() {
-				final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this
-						.getValue();
+				final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
 				for (InputColumn<?> inputColumn : inputColumns) {
-					SourceColumnComboBox comboBox = _mappedColumnComboBoxes
-							.get(inputColumn);
+					SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
 					if (comboBox.getSelectedItem() == null) {
 						return false;
 					}
@@ -281,8 +283,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 				if (EqualsBuilder.equals(value, getValue())) {
 					return;
 				}
-				final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this
-						.getValue();
+				final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
 				for (int i = 0; i < inputColumns.length; i++) {
 					final InputColumn<?> inputColumn = inputColumns[i];
 					final String mappedColumnName;
@@ -293,8 +294,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 					} else {
 						mappedColumnName = null;
 					}
-					final SourceColumnComboBox comboBox = _mappedColumnComboBoxes
-							.get(inputColumn);
+					final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
 					comboBox.setEditable(true);
 					comboBox.setSelectedItem(mappedColumnName);
 					comboBox.setEditable(false);
@@ -309,8 +309,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 		final List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
 		for (InputColumn<?> inputColumn : checkedInputColumns) {
 			// exclude input columns that have not been mapped yet
-			final SourceColumnComboBox comboBox = _mappedColumnComboBoxes
-					.get(inputColumn);
+			final SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
 			if (comboBox != null) {
 				if (comboBox.getSelectedItem() != null) {
 					result.add(inputColumn);
@@ -321,12 +320,10 @@ public class MultipleMappedColumnsPropertyWidget extends
 	}
 
 	private String[] getMappedColumnNames() {
-		final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this
-				.getValue();
+		final InputColumn<?>[] inputColumns = MultipleMappedColumnsPropertyWidget.this.getValue();
 		final List<String> result = new ArrayList<String>();
 		for (InputColumn<?> inputColumn : inputColumns) {
-			SourceColumnComboBox comboBox = _mappedColumnComboBoxes
-					.get(inputColumn);
+			SourceColumnComboBox comboBox = _mappedColumnComboBoxes.get(inputColumn);
 			if (comboBox != null) {
 				Column column = comboBox.getSelectedItem();
 				if (column != null) {
@@ -346,8 +343,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 		batchUpdateWidget(new Runnable() {
 			@Override
 			public void run() {
-				Collection<SourceColumnComboBox> comboBoxes = _mappedColumnComboBoxes
-						.values();
+				Collection<SourceColumnComboBox> comboBoxes = _mappedColumnComboBoxes.values();
 				for (SourceColumnComboBox comboBox : comboBoxes) {
 					comboBox.setVisible(true);
 				}
@@ -358,8 +354,7 @@ public class MultipleMappedColumnsPropertyWidget extends
 
 	@Override
 	protected void selectNone() {
-		for (SourceColumnComboBox sourceColumnComboBox : _mappedColumnComboBoxes
-				.values()) {
+		for (SourceColumnComboBox sourceColumnComboBox : _mappedColumnComboBoxes.values()) {
 			sourceColumnComboBox.setVisible(false);
 		}
 		super.selectNone();

@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.properties.MultipleMappedColumnsPropertyWidget;
+import org.eobjects.datacleaner.widgets.properties.MultipleMappedPrefixedColumnsPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 import org.eobjects.datacleaner.widgets.properties.SchemaNamePropertyWidget;
@@ -92,8 +93,8 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 		// the Datastore property
 		assert _datastoreProperty != null;
 		assert _datastoreProperty.getType() == Datastore.class;
-		final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(analyzerJobBuilder,
-				_datastoreProperty, configuration.getDatastoreCatalog());
+		final SingleDatastorePropertyWidget datastorePropertyWidget = new SingleDatastorePropertyWidget(
+				analyzerJobBuilder, _datastoreProperty, configuration.getDatastoreCatalog());
 		_overriddenPropertyWidgets.put(_datastoreProperty, datastorePropertyWidget);
 
 		// The schema name (String) property
@@ -109,15 +110,15 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 		// the InputColumn<?>[] property
 		assert _inputColumnsProperty != null;
 		assert _inputColumnsProperty.getType() == InputColumn[].class;
-		final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedColumnsPropertyWidget(
-				analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty);
+		final MultipleMappedColumnsPropertyWidget inputColumnsPropertyWidget = new MultipleMappedPrefixedColumnsPropertyWidget(
+				analyzerJobBuilder, _inputColumnsProperty, _columnNamesProperty, " -> ");
 		_overriddenPropertyWidgets.put(_inputColumnsProperty, inputColumnsPropertyWidget);
 
 		// the String[] property
 		assert _columnNamesProperty != null;
 		assert _columnNamesProperty.getType() == String[].class;
-		_overriddenPropertyWidgets
-				.put(_columnNamesProperty, inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
+		_overriddenPropertyWidgets.put(_columnNamesProperty,
+				inputColumnsPropertyWidget.getMappedColumnNamesPropertyWidget());
 
 		// chain combo boxes
 		datastorePropertyWidget.addComboListener(new Listener<Datastore>() {

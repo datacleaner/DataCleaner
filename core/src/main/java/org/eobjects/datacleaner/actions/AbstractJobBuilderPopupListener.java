@@ -32,6 +32,7 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.ExplorerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 
 /**
@@ -67,7 +68,7 @@ public abstract class AbstractJobBuilderPopupListener {
 			}
 		});
 
-		JMenuItem removeMenuItem = WidgetFactory.createMenuItem("Remove component", "images/actions/remove.png");
+		JMenuItem removeMenuItem = WidgetFactory.createMenuItem("Remove component", IconUtils.ACTION_REMOVE);
 		removeMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

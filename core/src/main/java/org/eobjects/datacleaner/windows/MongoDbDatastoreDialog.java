@@ -29,18 +29,24 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 
 import org.eobjects.analyzer.connection.MongoDbDatastore;
+import org.eobjects.analyzer.connection.UpdateableDatastoreConnection;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.NumberDocument;
+import org.eobjects.datacleaner.util.SchemaFactory;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
+import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.util.SimpleTableDef;
 import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.VerticalLayout;
 
-public class MongoDbDatastoreDialog extends AbstractDialog {
+public class MongoDbDatastoreDialog extends AbstractDialog implements SchemaFactory {
 
 	private static final long serialVersionUID = 1L;
 
@@ -55,6 +61,7 @@ public class MongoDbDatastoreDialog extends AbstractDialog {
 	private final JXTextField _usernameTextField;
 	private final JPasswordField _passwordField;
 	private final JXTextField _datastoreNameTextField;
+	private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
 	@Inject
 	public MongoDbDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
@@ -74,6 +81,7 @@ public class MongoDbDatastoreDialog extends AbstractDialog {
 		if (_originalDatastore == null) {
 			_hostnameTextField.setText("localhost");
 			_portTextField.setText("27017");
+			_tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
 		} else {
 			_datastoreNameTextField.setText(_originalDatastore.getName());
 			_datastoreNameTextField.setEnabled(false);
@@ -82,6 +90,8 @@ public class MongoDbDatastoreDialog extends AbstractDialog {
 			_databaseNameTextField.setText(_originalDatastore.getDatabaseName());
 			_usernameTextField.setText(_originalDatastore.getUsername());
 			_passwordField.setText(new String(_originalDatastore.getPassword()));
+			final SimpleTableDef[] tableDefs = _originalDatastore.getTableDefs();
+			_tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, tableDefs);
 		}
 	}
 
@@ -96,36 +106,47 @@ public class MongoDbDatastoreDialog extends AbstractDialog {
 	}
 
 	@Override
+	protected boolean isWindowResizable() {
+		return true;
+	}
+
+	@Override
 	protected int getDialogWidth() {
 		return 400;
 	}
 
 	@Override
 	protected JComponent getDialogContent() {
-		final DCPanel panel = new DCPanel();
-		int row = 0;
-		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_datastoreNameTextField, panel, 1, row);
-		row++;
+		final DCPanel formPanel = new DCPanel();
+		formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
 		
-		WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_hostnameTextField, panel, 1, row);
+		int row = 0;
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_datastoreNameTextField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Port:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_portTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_hostnameTextField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Database name:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_databaseNameTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Database name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_databaseNameTextField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Password:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_passwordField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_usernameTextField, formPanel, 1, row);
+		row++;
+
+		WidgetUtils.addToGridBag(DCLabel.bright("Password:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_passwordField, formPanel, 1, row);
+		row++;
+
+		WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
 		row++;
 
 		final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
@@ -146,17 +167,34 @@ public class MongoDbDatastoreDialog extends AbstractDialog {
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
 		buttonPanel.add(saveButton);
 
-		WidgetUtils.addToGridBag(buttonPanel, panel, 1, row, 2, 1);
-		return panel;
+		final DCPanel centerPanel = new DCPanel();
+		centerPanel.setLayout(new VerticalLayout(4));
+		centerPanel.add(formPanel);
+		centerPanel.add(buttonPanel);
+
+		return centerPanel;
 	}
 
 	protected MongoDbDatastore createDatastore() {
-		String name = _datastoreNameTextField.getText();
-		String hostname = _hostnameTextField.getText();
-		Integer port = Integer.parseInt(_portTextField.getText());
-		String databaseName = _databaseNameTextField.getText();
-		String username = _usernameTextField.getText();
-		char[] password = _passwordField.getPassword();
-		return new MongoDbDatastore(name, hostname, port, databaseName, username, password);
+		final String name = _datastoreNameTextField.getText();
+		final String hostname = _hostnameTextField.getText();
+		final Integer port = Integer.parseInt(_portTextField.getText());
+		final String databaseName = _databaseNameTextField.getText();
+		final String username = _usernameTextField.getText();
+		final char[] password = _passwordField.getPassword();
+		final SimpleTableDef[] tableDefs = _tableDefinitionWidget.getTableDefs();
+		return new MongoDbDatastore(name, hostname, port, databaseName, username, password, tableDefs);
+	}
+
+	@Override
+	public Schema createSchema() {
+		final MongoDbDatastore datastore = createDatastore();
+		final UpdateableDatastoreConnection con = datastore.openConnection();
+		try {
+			final Schema schema = con.getDataContext().getDefaultSchema();
+			return schema;
+		} finally {
+			con.close();
+		}
 	}
 }

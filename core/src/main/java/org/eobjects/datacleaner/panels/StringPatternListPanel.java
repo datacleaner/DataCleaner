@@ -186,7 +186,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 				editButton.setEnabled(false);
 			}
 
-			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 			removeButton.setToolTipText("Remove string pattern");
 			removeButton.addActionListener(new ActionListener() {
 				@Override

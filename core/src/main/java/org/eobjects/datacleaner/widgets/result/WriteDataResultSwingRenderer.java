@@ -168,7 +168,7 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
             final Datastore ds = _datastoreCatalog.getDatastore(datastore.getName());
             if (!datastore.equals(ds)) {
                 final JButton addDatastoreButton = new JButton("Add to datastores",
-                        imageManager.getImageIcon("images/actions/add.png"));
+                        imageManager.getImageIcon(IconUtils.ACTION_ADD));
                 addDatastoreButton.setMargin(buttonMargin);
                 addDatastoreButton.addActionListener(new ActionListener() {
                     @Override

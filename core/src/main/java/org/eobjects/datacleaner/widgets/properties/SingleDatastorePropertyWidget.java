@@ -118,6 +118,11 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 
 	@Override
 	protected void setValue(Datastore value) {
+		if (value == null) {
+			_comboBox.setSelectedItem(null);
+			return;
+		}
+		
 		if (getValue() == value) {
 			return;
 		}

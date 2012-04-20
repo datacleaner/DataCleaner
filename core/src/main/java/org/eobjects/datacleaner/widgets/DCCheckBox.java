@@ -43,8 +43,7 @@ import org.eobjects.datacleaner.util.WidgetUtils;
  * 
  * @param <E>
  */
-public class DCCheckBox<E> extends JCheckBox implements MouseListener,
-		ItemListener {
+public class DCCheckBox<E> extends JCheckBox implements MouseListener, ItemListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -52,8 +51,7 @@ public class DCCheckBox<E> extends JCheckBox implements MouseListener,
 		public void onItemSelected(E item, boolean selected);
 	}
 
-	private static final Border HOVER_BORDER = new LineBorder(
-			WidgetUtils.BG_COLOR_LESS_BRIGHT, 1);
+	private static final Border HOVER_BORDER = new LineBorder(WidgetUtils.BG_COLOR_LESS_BRIGHT, 1);
 	private static final Border REGULAR_BORDER = new EmptyBorder(1, 1, 1, 1);
 
 	private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();

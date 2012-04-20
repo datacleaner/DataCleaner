@@ -110,7 +110,7 @@ public class DatabaseDriversPanel extends DCPanel {
 		toolBar.add(WidgetFactory.createToolBarSeparator());
 
 		final JButton addDriverButton = new JButton("Add database driver",
-				imageManager.getImageIcon("images/actions/add.png"));
+				imageManager.getImageIcon(IconUtils.ACTION_ADD));
 		addDriverButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

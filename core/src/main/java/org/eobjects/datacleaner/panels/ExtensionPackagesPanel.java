@@ -80,7 +80,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 		final List<ExtensionPackage> extensionPackages = _userPreferences.getExtensionPackages();
 
 		final JButton addExtensionButton = new JButton("Add extension package",
-				imageManager.getImageIcon("images/actions/add.png"));
+				imageManager.getImageIcon(IconUtils.ACTION_ADD));
 		addExtensionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -163,7 +163,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 				extensionLabel.setIcon(errorIcon);
 			}
 
-			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 			removeButton.setToolTipText("Remove extension");
 			removeButton.addActionListener(new ActionListener() {
 				@Override

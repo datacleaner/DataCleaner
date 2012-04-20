@@ -183,7 +183,7 @@ public final class SynonymCatalogListPanel extends DCPanel implements SynonymCat
 				editButton.setEnabled(false);
 			}
 
-			final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 			removeButton.setToolTipText("Remove synonym catalog");
 			removeButton.addActionListener(new ActionListener() {
 				@Override

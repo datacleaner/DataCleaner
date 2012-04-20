@@ -33,6 +33,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
 import org.eobjects.metamodel.schema.Column;
@@ -55,8 +56,8 @@ public class MultiSourceColumnComboBoxPanel extends DCPanel {
 		_sourceComboBoxPanel.setLayout(new VerticalLayout());
 		_sourceColumnComboBoxes = new ArrayList<SourceColumnComboBox>();
 
-		JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
-		JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
+		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 
 		_buttonPanel.setBorder(new EmptyBorder(0, 4, 0, 0));
 		_buttonPanel.setLayout(new VerticalLayout(2));

@@ -156,7 +156,7 @@ public class DatastorePanel extends DCPanel {
 
 	private JButton createRemoveButton(final Datastore datastore) {
 		final String name = datastore.getName();
-		final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 		removeButton.setToolTipText("Remove datastore");
 		removeButton.addActionListener(new ActionListener() {
 			@Override

@@ -111,7 +111,7 @@ public class OptionsDialog extends AbstractWindow {
 		usernameTextField.setText(username);
 		usernameTextField.setEnabled(false);
 
-		final JButton logoutButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		final JButton logoutButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 		logoutButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

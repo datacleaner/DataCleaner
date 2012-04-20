@@ -32,6 +32,7 @@ import org.eobjects.analyzer.beans.transform.TableLookupTransformer;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SourceColumnComboBox;
@@ -66,7 +67,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 		_comboBoxPanel = new DCPanel();
 		_comboBoxPanel.setLayout(new VerticalLayout(2));
 
-		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
+		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -75,7 +76,7 @@ public class TableLookupOutputColumnsPropertyWidget extends AbstractPropertyWidg
 			}
 		});
 
-		final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

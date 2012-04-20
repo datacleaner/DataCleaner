@@ -30,18 +30,24 @@ import javax.swing.JComponent;
 import javax.swing.JPasswordField;
 
 import org.eobjects.analyzer.connection.CouchDbDatastore;
+import org.eobjects.analyzer.connection.UpdateableDatastoreConnection;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.NumberDocument;
+import org.eobjects.datacleaner.util.SchemaFactory;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.TableDefinitionOptionSelectionPanel;
+import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.util.SimpleTableDef;
 import org.jdesktop.swingx.JXTextField;
+import org.jdesktop.swingx.VerticalLayout;
 
-public class CouchDbDatastoreDialog extends AbstractDialog {
+public class CouchDbDatastoreDialog extends AbstractDialog implements SchemaFactory {
 
 	private static final long serialVersionUID = 1L;
 
@@ -56,6 +62,7 @@ public class CouchDbDatastoreDialog extends AbstractDialog {
 	private final JPasswordField _passwordField;
 	private final JXTextField _datastoreNameTextField;
 	private final JCheckBox _sslCheckBox;
+	private final TableDefinitionOptionSelectionPanel _tableDefinitionWidget;
 
 	@Inject
 	public CouchDbDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog catalog,
@@ -78,6 +85,7 @@ public class CouchDbDatastoreDialog extends AbstractDialog {
 		if (_originalDatastore == null) {
 			_hostnameTextField.setText("localhost");
 			_portTextField.setText("" + CouchDbDatastore.DEFAULT_PORT);
+			_tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this, null);
 		} else {
 			_datastoreNameTextField.setText(_originalDatastore.getName());
 			_datastoreNameTextField.setEnabled(false);
@@ -86,6 +94,8 @@ public class CouchDbDatastoreDialog extends AbstractDialog {
 			_sslCheckBox.setSelected(_originalDatastore.isSslEnabled());
 			_usernameTextField.setText(_originalDatastore.getUsername());
 			_passwordField.setText(new String(_originalDatastore.getPassword()));
+			_tableDefinitionWidget = new TableDefinitionOptionSelectionPanel(windowContext, this,
+					_originalDatastore.getTableDefs());
 		}
 	}
 
@@ -106,29 +116,35 @@ public class CouchDbDatastoreDialog extends AbstractDialog {
 
 	@Override
 	protected JComponent getDialogContent() {
-		final DCPanel panel = new DCPanel();
+		final DCPanel formPanel = new DCPanel();
+		formPanel.setBorder(WidgetUtils.BORDER_EMPTY);
+		
 		int row = 0;
-		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_datastoreNameTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Datastore name:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_datastoreNameTextField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_hostnameTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Hostname:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_hostnameTextField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Port:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_portTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Port:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_portTextField, formPanel, 1, row);
+		row++;
+		
+		WidgetUtils.addToGridBag(_sslCheckBox, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_usernameTextField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Username:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_usernameTextField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(DCLabel.bright("Password:"), panel, 0, row);
-		WidgetUtils.addToGridBag(_passwordField, panel, 1, row);
+		WidgetUtils.addToGridBag(DCLabel.bright("Password:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_passwordField, formPanel, 1, row);
 		row++;
 
-		WidgetUtils.addToGridBag(_sslCheckBox, panel, 0, row, 2, 1);
+		WidgetUtils.addToGridBag(DCLabel.bright("Schema model:"), formPanel, 0, row);
+		WidgetUtils.addToGridBag(_tableDefinitionWidget, formPanel, 1, row);
 		row++;
 
 		final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
@@ -149,17 +165,34 @@ public class CouchDbDatastoreDialog extends AbstractDialog {
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 0));
 		buttonPanel.add(saveButton);
 
-		WidgetUtils.addToGridBag(buttonPanel, panel, 1, row, 2, 1);
-		return panel;
+		final DCPanel centerPanel = new DCPanel();
+		centerPanel.setLayout(new VerticalLayout(4));
+		centerPanel.add(formPanel);
+		centerPanel.add(buttonPanel);
+
+		return centerPanel;
 	}
 
 	protected CouchDbDatastore createDatastore() {
-		String name = _datastoreNameTextField.getText();
-		String hostname = _hostnameTextField.getText();
-		Integer port = Integer.parseInt(_portTextField.getText());
-		boolean sslEnabled = _sslCheckBox.isSelected();
-		String username = _usernameTextField.getText();
-		String password = new String(_passwordField.getPassword());
-		return new CouchDbDatastore(name, hostname, port, username, password, sslEnabled, null);
+		final String name = _datastoreNameTextField.getText();
+		final String hostname = _hostnameTextField.getText();
+		final Integer port = Integer.parseInt(_portTextField.getText());
+		final boolean sslEnabled = _sslCheckBox.isSelected();
+		final String username = _usernameTextField.getText();
+		final String password = new String(_passwordField.getPassword());
+		final SimpleTableDef[] tableDefs = _tableDefinitionWidget.getTableDefs();
+		return new CouchDbDatastore(name, hostname, port, username, password, sslEnabled, tableDefs);
+	}
+
+	@Override
+	public Schema createSchema() {
+		final CouchDbDatastore datastore = createDatastore();
+		final UpdateableDatastoreConnection con = datastore.openConnection();
+		try {
+			Schema schema = con.getDataContext().getDefaultSchema();
+			return schema;
+		} finally {
+			con.close();
+		}
 	}
 }

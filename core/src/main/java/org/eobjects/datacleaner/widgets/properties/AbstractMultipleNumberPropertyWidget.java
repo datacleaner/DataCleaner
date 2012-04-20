@@ -38,6 +38,7 @@ import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
@@ -64,7 +65,7 @@ public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPr
 		N currentValue = getCurrentValue();
 		updateComponents(currentValue);
 
-		final JButton addButton = WidgetFactory.createSmallButton("images/actions/add.png");
+		final JButton addButton = WidgetFactory.createSmallButton(IconUtils.ACTION_ADD);
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -73,7 +74,7 @@ public abstract class AbstractMultipleNumberPropertyWidget<N> extends AbstractPr
 			}
 		});
 
-		final JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+		final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

@@ -108,7 +108,7 @@ public final class ColumnListTable extends DCPanel {
 			previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
 					.getDatastore(), _columns));
 
-			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 			removeButton.setToolTipText("Remove table from source");
 			removeButton.addActionListener(new ActionListener() {
 				@Override
@@ -191,7 +191,7 @@ public final class ColumnListTable extends DCPanel {
 			}
 			model.setValueAt(dataTypeString, i, 1);
 
-			JButton removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+			JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
 			removeButton.setToolTipText("Remove column from source");
 			removeButton.addActionListener(new ActionListener() {
 				@Override

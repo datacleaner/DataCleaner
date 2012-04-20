@@ -38,6 +38,7 @@ import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.metamodel.util.EqualsBuilder;
 import org.jdesktop.swingx.JXTextField;
@@ -67,7 +68,7 @@ public class MultipleStringPropertyWidget extends
 		_textFieldPanel.setLayout(new VerticalLayout(2));
 
 		final JButton addButton = WidgetFactory
-				.createSmallButton("images/actions/add.png");
+				.createSmallButton(IconUtils.ACTION_ADD);
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -77,7 +78,7 @@ public class MultipleStringPropertyWidget extends
 		});
 
 		final JButton removeButton = WidgetFactory
-				.createSmallButton("images/actions/remove.png");
+				.createSmallButton(IconUtils.ACTION_REMOVE);
 		removeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

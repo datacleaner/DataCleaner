@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.widgets;
 
 import java.awt.Component;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
@@ -40,7 +39,7 @@ import org.eobjects.datacleaner.regexswap.RegexSwapStringPattern;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 
-public class ReferenceDataComboBoxListRenderer extends DefaultListCellRenderer {
+public class ReferenceDataComboBoxListRenderer extends DCListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 	private static final ImageManager imageManager = ImageManager.getInstance();

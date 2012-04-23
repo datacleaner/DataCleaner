@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
+import org.eobjects.datacleaner.widgets.DCListCellRenderer;
 
 public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> {
 
@@ -49,7 +49,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 		if (currentValue != null) {
 			_comboBox.setSelectedItem(currentValue);
 		}
-		
+
 		_comboBox.addListener(new Listener<Class<?>>() {
 			@Override
 			public void onItemSelected(Class<?> item) {
@@ -59,7 +59,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 
 		add(_comboBox);
 	}
-	
+
 	public static DCComboBox<Class<?>> createClassComboBox(boolean required) {
 		Collection<Class<?>> items = new ArrayList<Class<?>>();
 
@@ -75,7 +75,7 @@ public class SingleClassPropertyWidget extends AbstractPropertyWidget<Class<?>> 
 		items.add(Object.class);
 
 		DCComboBox<Class<?>> comboBox = new DCComboBox<Class<?>>(items);
-		comboBox.setRenderer(new DefaultListCellRenderer() {
+		comboBox.setRenderer(new DCListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
 

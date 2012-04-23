@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -55,6 +54,7 @@ import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCListCellRenderer;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.DataContext;
@@ -154,7 +154,7 @@ public class AboutDialog extends AbstractDialog {
 		final JComboBox librariesComboBox = new JComboBox();
 		final JButton visitProjectButton = WidgetFactory.createSmallButton("images/actions/website.png");
 
-		librariesComboBox.setRenderer(new DefaultListCellRenderer() {
+		librariesComboBox.setRenderer(new DCListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
 
@@ -357,7 +357,7 @@ public class AboutDialog extends AbstractDialog {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		new AboutDialog(new DCWindowContext(null, null, null)).setVisible(true);
 	}

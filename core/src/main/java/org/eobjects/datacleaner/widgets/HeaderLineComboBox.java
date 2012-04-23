@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.widgets;
 import java.awt.Component;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.text.JTextComponent;
 
@@ -44,7 +43,7 @@ public class HeaderLineComboBox extends DCComboBox<Integer> {
 		setEditable(true);
 		setModel(new DefaultComboBoxModel(new Integer[] { 0, 1 }));
 		setSelectedItem(1);
-		setRenderer(new DefaultListCellRenderer() {
+		setRenderer(new DCListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
 

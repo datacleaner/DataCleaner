@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.widgets;
 
 import java.awt.Component;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -37,7 +36,7 @@ import org.eobjects.metamodel.schema.NamedStructure;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 
-public class SchemaStructureComboBoxListRenderer extends DefaultListCellRenderer {
+public class SchemaStructureComboBoxListRenderer extends DCListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 	private static final ImageManager imageManager = ImageManager.getInstance();

@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.EnumComboBoxListRenderer;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.schema.ColumnType;
 import org.eobjects.metamodel.util.SimpleTableDef;
@@ -54,6 +55,7 @@ public class SimpleTableDefPanel extends DCPanel {
 		}
 
 		_table = new DCTable(_tableModel);
+		_table.setSortable(false);
 
 		setLayout(new BorderLayout());
 		add(createButtonPanel(), BorderLayout.NORTH);
@@ -94,6 +96,7 @@ public class SimpleTableDefPanel extends DCPanel {
 			columnType = ColumnType.VARCHAR;
 		}
 		final DCComboBox<ColumnType> typeComboBox = new DCComboBox<ColumnType>(getAvailableColumnTypes());
+		typeComboBox.setRenderer(new EnumComboBoxListRenderer());
 		typeComboBox.setSelectedItem(columnType);
 
 		_tableModel.addRow(new Object[] { nameTextField, typeComboBox });

@@ -118,7 +118,7 @@ public final class LookAndFeelManager {
 		UIManager.put("MenuBar.border", emptyBorder);
 		UIManager.put("MenuBar.background", WidgetUtils.BG_COLOR_DARKEST);
 		UIManager.put("MenuBar.foreground", WidgetUtils.BG_COLOR_BRIGHTEST);
-
+		
 		// white background for input components
 		UIManager.put("Tree.background", WidgetUtils.BG_COLOR_BRIGHTEST);
 		UIManager.put("TextArea.background", WidgetUtils.BG_COLOR_BRIGHTEST);

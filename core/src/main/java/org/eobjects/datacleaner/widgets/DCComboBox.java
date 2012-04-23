@@ -51,8 +51,7 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
 	private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
 
 	public DCComboBox() {
-		super();
-		super.addItemListener(this);
+		this(new DefaultComboBoxModel());
 	}
 
 	public DCComboBox(Collection<E> items) {

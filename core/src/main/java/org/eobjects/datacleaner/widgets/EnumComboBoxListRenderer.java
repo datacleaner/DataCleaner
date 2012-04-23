@@ -19,23 +19,37 @@
  */
 package org.eobjects.datacleaner.widgets;
 
-import java.awt.Component;
-
-import javax.swing.DefaultListCellRenderer;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.metamodel.util.HasName;
 
-public class EnumComboBoxListRenderer extends DefaultListCellRenderer {
+/**
+ * {@link ListCellRenderer} for enums in a combobox.
+ */
+public class EnumComboBoxListRenderer extends DCListCellRenderer {
 
 	private static final long serialVersionUID = 1L;
 
+	private final Icon _icon;
+
+	public EnumComboBoxListRenderer() {
+		this(null);
+	}
+
+	public EnumComboBoxListRenderer(Icon icon) {
+		super();
+		_icon = icon;
+	}
+
 	@Override
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+	public JLabel getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
 			boolean cellHasFocus) {
-		JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		final JLabel result = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
 		if (value == null) {
 			result.setText("- none -");
 		} else if (value instanceof HasName) {
@@ -43,6 +57,10 @@ public class EnumComboBoxListRenderer extends DefaultListCellRenderer {
 			if (!StringUtils.isNullOrEmpty(name)) {
 				result.setText(name);
 			}
+		}
+
+		if (_icon != null) {
+			result.setIcon(_icon);
 		}
 
 		return result;

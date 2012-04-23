@@ -32,7 +32,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.sql.DataSource;
 import javax.swing.Box;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -58,6 +57,7 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DCListCellRenderer;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.database.CubridDatabaseConnectionPresenter;
 import org.eobjects.datacleaner.widgets.database.DatabaseConnectionPresenter;
@@ -145,7 +145,7 @@ public class JdbcDatastoreDialog extends AbstractDialog {
 		comboBoxModel[comboBoxModel.length - 1] = MANAGE_DATABASE_DRIVERS;
 
 		_databaseDriverComboBox = new DCComboBox<Object>(comboBoxModel);
-		_databaseDriverComboBox.setRenderer(new DefaultListCellRenderer() {
+		_databaseDriverComboBox.setRenderer(new DCListCellRenderer() {
 
 			private static final long serialVersionUID = 1L;
 

@@ -129,6 +129,7 @@ public final class ColumnListTable extends DCPanel {
 		}
 
 		_columnTable = new DCTable(headers);
+		_columnTable.setSortable(false);
 		_columnTable.setColumnControlVisible(false);
 		_columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 

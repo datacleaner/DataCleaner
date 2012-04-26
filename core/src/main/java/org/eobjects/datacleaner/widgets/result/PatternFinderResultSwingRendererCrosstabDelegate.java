@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.util.ChartUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.table.CrosstabPanel;
@@ -134,23 +135,24 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 
 		for (int i = 0; i < rowCount; i++) {
 			final Object expressionObject = table.getValueAt(i, 0);
-			final String expression = extractString(expressionObject);
+			final String label = extractString(expressionObject);
+			final String expression = extractExpression(label);
 
-			final String synonymCatalogName = "PF: " + expression;
+			final String stringPatternName = "PF: " + label;
 
-			if (!_catalog.containsSynonymCatalog(synonymCatalogName)) {
+			if (!_catalog.containsStringPattern(stringPatternName)) {
 				DCPanel panel = new DCPanel();
 				panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
 				panel.add(Box.createHorizontalStrut(4));
-				panel.add(new JLabel(expression));
+				panel.add(new JLabel(label));
 
 				final JButton button = WidgetFactory.createSmallButton("images/actions/save.png");
 				button.setToolTipText("Save as string pattern");
 				button.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						_catalog.addStringPattern(new SimpleStringPattern(synonymCatalogName, expression));
+						_catalog.addStringPattern(new SimpleStringPattern(stringPatternName, expression));
 						button.setEnabled(false);
 					}
 				});
@@ -164,6 +166,13 @@ class PatternFinderResultSwingRendererCrosstabDelegate extends AbstractCrosstabR
 		if (isInitiallyCharted(table)) {
 			displayChart(table, displayChartCallback);
 		}
+	}
+
+	private String extractExpression(String string) {
+		if (LabelUtils.BLANK_LABEL.equals(string)) {
+			return "";
+		}
+		return string;
 	}
 
 	private boolean isInitiallyCharted(DCTable table) {

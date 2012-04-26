@@ -215,13 +215,13 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 
 	protected void horizontalHeaderCell(String category, TableModel tableModel, int row, int col) {
 		if (row >= 0) {
-			tableModel.setValueAt(category, row, col);
+			tableModel.setValueAt(getLabelText(category), row, col);
 		}
 	}
 
 	protected void verticalHeaderCell(String category, TableModel tableModel, int row, int col) {
 		if (row >= 0) {
-			tableModel.setValueAt(category, row, col);
+			tableModel.setValueAt(getLabelText(category), row, col);
 		}
 	}
 
@@ -257,7 +257,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 			};
 			resultValue = createActionableValuePanel(value, alignment, action, IMAGE_PATH_DRILL_TO_DETAIL);
 		} else {
-			resultValue = value;
+			resultValue = getLabelText(value);
 		}
 
 		tableModel.setValueAt(resultValue, row, col);
@@ -367,6 +367,8 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 	private static String getLabelText(Object value) {
 		if (value == null) {
 			return LabelUtils.NULL_LABEL;
+		} else if ("".equals(value)) {
+			return LabelUtils.BLANK_LABEL;
 		} else if (value instanceof Double || value instanceof Float) {
 			return NumberFormat.getInstance().format(value);
 		} else {

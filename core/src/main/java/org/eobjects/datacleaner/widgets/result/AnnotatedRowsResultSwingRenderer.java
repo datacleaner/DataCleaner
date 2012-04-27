@@ -110,11 +110,13 @@ public class AnnotatedRowsResultSwingRenderer extends AbstractRenderer<Annotated
 			InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
 			TableModel tableModel = _result.toDistinctValuesTableModel(highlightedColumns[0]);
 			_table.setModel(tableModel);
+			_table.autoSetHorizontalScrollEnabled();
 			_table.setHighlighters(new Highlighter[0]);
 		}
 
 		public void applyDetailedView() {
 			_table.setModel(_result.toTableModel());
+			_table.autoSetHorizontalScrollEnabled();
 			InputColumn<?>[] highlightedColumns = _result.getHighlightedColumns();
 			List<InputColumn<?>> inputColumns = _result.getInputColumns();
 

@@ -340,4 +340,12 @@ public class DCTable extends JXTable implements MouseListener {
 		setColumnSelectionInterval(0, getColumnCount() - 1);
 		getColumnModel().getSelectionModel().setValueIsAdjusting(false);
 	}
+
+	public void autoSetHorizontalScrollEnabled() {
+		if (getColumnCount() >= 9) {
+			setHorizontalScrollEnabled(true);
+		} else {
+			setHorizontalScrollEnabled(false);
+		}
+	}
 }

@@ -205,9 +205,7 @@ public abstract class AbstractCrosstabResultSwingRenderer<R extends CrosstabResu
 			table.setAlignment(i, alignment);
 		}
 
-		if (columnCount >= 10) {
-			table.setHorizontalScrollEnabled(true);
-		}
+		table.autoSetHorizontalScrollEnabled();
 
 		table.setRowHeight(22);
 		return table;

@@ -206,7 +206,7 @@
 						<groupId>org.vafer</groupId>
 						<version>0.10</version>
 						<configuration>
-							<deb>${project.build.directory}/DataCleaner-${version}.deb</deb>
+							<deb>${project.build.directory}/DataCleaner-linux.deb</deb>
 							<dataSet>
 							<!-- starter script -->
 								<data>

@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.tidy.Tidy;
 
 @Controller
 @RequestMapping("/{tenant}")
@@ -48,7 +50,7 @@ public class RepositoryBrowserController {
     @Autowired
     ConfigurationCache _configurationCache;
 
-    @RequestMapping(value = "/results", produces = "text/html")
+    @RequestMapping(value = "/results", produces = "text/html;charset=UTF-8")
     @ResponseBody
     public String resultsFolderHtml(@PathVariable("tenant") String tenant) {
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
@@ -82,16 +84,29 @@ public class RepositoryBrowserController {
         final RepositoryFolder resultsFolder = tenantFolder.getFolder("results");
         final RepositoryFile resultFile = resultsFolder.getFile(id);
 
-        final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
-        final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter();
-        final StringWriter stringWriter = new StringWriter();
-        try {
-            htmlWriter.write(analysisResult, _configurationCache.getAnalyzerBeansConfiguration(tenant),
-                    new ImmutableRef<Writer>(stringWriter), null);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        final String rawAnalysisResult;
+        {
+            final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
+            final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter();
+            final StringWriter writer = new StringWriter();
+            try {
+                htmlWriter.write(analysisResult, _configurationCache.getAnalyzerBeansConfiguration(tenant),
+                        new ImmutableRef<Writer>(writer), null);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+            rawAnalysisResult = writer.toString();
         }
 
-        return stringWriter.toString();
+        final String tidyResult;
+        {
+            final Tidy tidy = new Tidy();
+            tidy.setHideComments(true);
+            final StringWriter writer = new StringWriter();
+            tidy.parse(new StringReader(rawAnalysisResult), writer);
+            tidyResult = writer.toString();
+        }
+
+        return tidyResult;
     }
 }

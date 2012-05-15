@@ -21,21 +21,16 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.Date;
 
-import org.eobjects.datacleaner.monitor.util.DCRequestBuilder;
-import org.eobjects.datacleaner.monitor.util.DCRequestCallback;
-
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -58,7 +53,7 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
     public DrillToProfilingResultSelectHandler(CoreChart chart, AbstractDataTable data) {
         _chart = chart;
         _data = data;
-        _popup = new PopupPanel(false, true);
+        _popup = new PopupPanel(true, true);
         _popup.addStyleName("DrillToProfilingResultPopupPanel");
         _popup.setGlassEnabled(true);
     }
@@ -89,13 +84,10 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
         showResultButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                DCRequestBuilder rb = new DCRequestBuilder(RequestBuilder.GET, "../repository" + resultFilePath);
-                rb.send("", new DCRequestCallback() {
-                    @Override
-                    protected void onSuccess(Request request, Response response) {
-                        _popup.setWidget(new HTML(response.getText()));
-                    }
-                });
+                Frame frame = new Frame("../repository" + resultFilePath);
+                frame.setPixelSize(800, 500);
+                _popup.setWidget(frame);
+                _popup.center();
             }
         });
 

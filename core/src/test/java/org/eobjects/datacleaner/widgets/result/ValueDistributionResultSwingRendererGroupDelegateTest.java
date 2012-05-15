@@ -26,9 +26,9 @@ import junit.framework.TestCase;
 
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.beans.valuedist.ValueCountListImpl;
+import org.eobjects.analyzer.beans.valuedist.ValueDistributionGroupResult;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MockInputColumn;
-import org.eobjects.analyzer.result.ValueDistributionGroupResult;
 import org.jfree.data.general.DefaultPieDataset;
 
 public class ValueDistributionResultSwingRendererGroupDelegateTest extends

@@ -24,8 +24,8 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import org.eobjects.analyzer.beans.BooleanAnalyzerResult;
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.result.BooleanAnalyzerResult;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;

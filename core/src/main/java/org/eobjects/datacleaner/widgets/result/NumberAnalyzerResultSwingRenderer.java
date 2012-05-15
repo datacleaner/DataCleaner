@@ -25,15 +25,15 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import org.eobjects.analyzer.beans.NumberAnalyzer;
+import org.eobjects.analyzer.beans.NumberAnalyzerResult;
 import org.eobjects.analyzer.beans.api.RendererBean;
-import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabNavigator;
-import org.eobjects.analyzer.result.NumberAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.panels.DCPanel;

@@ -46,8 +46,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
+import org.eobjects.analyzer.beans.valuedist.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;

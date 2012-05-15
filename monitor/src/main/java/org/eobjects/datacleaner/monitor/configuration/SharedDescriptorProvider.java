@@ -28,6 +28,7 @@ import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RenderingFormat;
 import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
+import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.descriptors.ExplorerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.FilterBeanDescriptor;
@@ -51,7 +52,16 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     public DescriptorProvider getDelegate() {
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            _delegate = applicationContext.getBean(DescriptorProvider.class);
+            if (applicationContext == null) {
+                // use a hard-coded descriptor provider (will only occur in test scenarios)
+                ClasspathScanDescriptorProvider scanner = new ClasspathScanDescriptorProvider();
+                scanner.scanPackage("org.eobjects.analyzer.beans", true);
+                scanner.scanPackage("org.eobjects.analyzer.result.renderer", false);
+                scanner.scanPackage("com.hi", true);
+                _delegate = scanner;
+            } else {
+                _delegate = applicationContext.getBean(DescriptorProvider.class);
+            }
         }
         return _delegate;
     }

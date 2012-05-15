@@ -173,4 +173,12 @@ public final class LabelUtils {
 		}
 		return text;
 	}
+
+    public static String getDataTypeLabel(Class<?> dataType) {
+        if (dataType == null) {
+            return "<undefined>";
+        } else {
+            return dataType.getSimpleName();
+        }
+    }
 }

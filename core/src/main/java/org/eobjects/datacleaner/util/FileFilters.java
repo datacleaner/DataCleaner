@@ -80,5 +80,6 @@ public final class FileFilters {
 
 	public static final ExtensionFilter ANALYSIS_XML = new ExtensionFilter("Analysis job (.analysis.xml)", ".analysis.xml");
 	public static final ExtensionFilter ANALYSIS_RESULT_SER = new ExtensionFilter("Analysis result (.analysis.result.dat)", ".analysis.result.dat");
+	public static final ExtensionFilter ANALYSIS_TIMELINE_XML = new ExtensionFilter("Analysis timeline (.analysis.timeline.xml)", ".analysis.timeline.xml");
 
 }

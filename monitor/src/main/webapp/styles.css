@@ -1,0 +1,59 @@
+/**
+ * Major page elements
+ */
+body {
+	text-align: center;
+}
+
+div.pageContainer {
+	margin-left: auto;
+	margin-right: auto;
+	width: 894px;
+	text-align: left;
+}
+
+div.pageHeader {
+	height: 110px;
+	background-image: url("http://datacleaner.eobjects.org/resources/header-bg.png");
+}
+
+div.pageContent {
+}
+
+/**
+ * Shared widgets
+ */
+div.loader {
+	width: 100%;
+	background: url("images/loader.gif") no-repeat center center;
+	height: 32px;
+}
+
+/**
+ * Error dialog styling
+ */
+.ErrorDialog {
+	text-align: left;
+}
+
+.ErrorDialog .Caption {
+}
+
+.ErrorDialog .dialogContent {
+	width: 500px;
+}
+
+.ErrorDialog .Message {
+	
+}
+
+.ErrorDialog .Details, .ErrorDialog .AdditionalMessageDetails {
+	padding: 5px;
+	margin: 5px;
+	width: 450px;
+	white-space: pre;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	height: 250px;
+	overflow: auto;
+}

@@ -48,6 +48,7 @@ import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.table.DCTable;
@@ -151,8 +152,8 @@ public final class ColumnListTable extends DCPanel {
 	private void updateComponents() {
 		TableModel model = new DefaultTableModel(headers, _columns.size());
 		int i = 0;
-		Icon icon = imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
 		for (final InputColumn<?> column : _columns) {
+		    final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_SMALL);
 			if (column instanceof MutableInputColumn<?>) {
 				final JXTextField textField = WidgetFactory.createTextField("Column name");
 				textField.setText(column.getName());
@@ -184,12 +185,7 @@ public final class ColumnListTable extends DCPanel {
 			}
 
 			final Class<?> dataType = column.getDataType();
-			final String dataTypeString;
-			if (dataType == null) {
-				dataTypeString = "<undefined>";
-			} else {
-				dataTypeString = dataType.getSimpleName();
-			}
+			final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
 			model.setValueAt(dataTypeString, i, 1);
 
 			JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);

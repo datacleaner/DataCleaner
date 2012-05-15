@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/datacleaner/timeline/1.0"
+	xmlns:dc="http://eobjects.org/datacleaner/timeline/1.0"
+	elementFormDefault="qualified">
+
+	<element name="timeline">
+		<complexType>
+			<sequence>
+				<element name="timeline-metadata" minOccurs="0" maxOccurs="1"
+					type="dc:timelineMetadataType" />
+				<element name="job-path" minOccurs="1" maxOccurs="1" type="string" />
+				<element name="metrics" minOccurs="1" maxOccurs="1"
+					type="dc:metricsType" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="timelineMetadataType">
+		<sequence>
+			<element name="timeline-name" minOccurs="0" maxOccurs="1"
+				type="string" />
+		</sequence>
+	</complexType>
+
+	<complexType name="metricsType">
+		<sequence>
+			<element name="metric" minOccurs="1" maxOccurs="unbounded"
+				type="dc:metricType" />
+		</sequence>
+	</complexType>
+
+	<complexType name="metricType">
+		<sequence>
+			<element name="analyzer-descriptor-name" minOccurs="1"
+				maxOccurs="1" type="string" />
+			<element name="analyzer-name" minOccurs="0" maxOccurs="1"
+				type="string" />
+			<element name="analyzer-input" minOccurs="0" maxOccurs="1"
+				type="string" />
+			<element name="metric-descriptor-name" minOccurs="1"
+				maxOccurs="1" type="string" />
+			<element name="metric-param-query-string" minOccurs="0"
+				maxOccurs="1" type="string" />
+			<element name="metric-param-column-name" minOccurs="0"
+				maxOccurs="1" type="string" />
+		</sequence>
+	</complexType>
+
+</schema>

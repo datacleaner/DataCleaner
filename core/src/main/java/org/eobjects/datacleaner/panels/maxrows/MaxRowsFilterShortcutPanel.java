@@ -64,7 +64,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 	private final DCCheckBox<Object> _checkBox;
 	private final DCLabel _suffixLabel;
 	private final DCLabel _prefixLabel;
-	private FilterJobBuilder<MaxRowsFilter, ValidationCategory> _maxRowsFilterJobBuilder;
+	private FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> _maxRowsFilterJobBuilder;
 
 	/**
 	 * Checks if the given filter is in fact the filter specified by this
@@ -118,7 +118,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 
 		if (filterJobBuilder != null) {
 			@SuppressWarnings("unchecked")
-			FilterJobBuilder<MaxRowsFilter, ValidationCategory> maxRowFilterJobBuilder = (FilterJobBuilder<MaxRowsFilter, ValidationCategory>) filterJobBuilder;
+			FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilterJobBuilder = (FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category>) filterJobBuilder;
 			_maxRowsFilterJobBuilder = maxRowFilterJobBuilder;
 			_checkBox.setSelected(true);
 		}
@@ -126,7 +126,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 		_checkBox.addListener(new Listener<Object>() {
 			@Override
 			public void onItemSelected(Object item, boolean selected) {
-				FilterJobBuilder<MaxRowsFilter, ValidationCategory> maxRowsFilterJobBuilder = getJobBuilder();
+				FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowsFilterJobBuilder = getJobBuilder();
 
 				if (selected) {
 					_analysisJobBuilder.addFilter(maxRowsFilterJobBuilder);
@@ -143,7 +143,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 		_textField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {
-				final FilterJobBuilder<MaxRowsFilter, ValidationCategory> fjb = getJobBuilder();
+				final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb = getJobBuilder();
 				if (fjb != null) {
 					String text = _textField.getText();
 					if (!StringUtils.isNullOrEmpty(text)) {
@@ -177,11 +177,11 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 		setBorder(WidgetUtils.BORDER_LIST_ITEM);
 	}
 
-	public FilterJobBuilder<MaxRowsFilter, ValidationCategory> getJobBuilder() {
+	public FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> getJobBuilder() {
 		if (_maxRowsFilterJobBuilder == null) {
 			// Lazy initializing getter (to postpone the call to
 			// DCConfiguration.
-			_maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, ValidationCategory>(
+			_maxRowsFilterJobBuilder = new FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category>(
 					_analysisJobBuilder, _analysisJobBuilder
 							.getConfiguration()
 							.getDescriptorProvider()

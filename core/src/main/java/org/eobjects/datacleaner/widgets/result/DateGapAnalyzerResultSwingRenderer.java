@@ -324,7 +324,7 @@ public class DateGapAnalyzerResultSwingRenderer extends AbstractRenderer<DateGap
 		}
 
 		List<AnalyzerResult> list = Collections.emptyList();
-		RendererFactory rendererFactory = new RendererFactory(conf.getDescriptorProvider(), null);
+		RendererFactory rendererFactory = new RendererFactory(conf.getDescriptorProvider());
 		DetailsResultWindow window = new DetailsResultWindow("Example", list, injector.getInstance(WindowContext.class),
 				rendererFactory);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

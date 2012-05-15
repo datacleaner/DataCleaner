@@ -25,7 +25,6 @@ import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
-import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -42,37 +41,32 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
  * @author Kasper Sørensen
  */
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
-public class MaxRowsFilterJobBuilderPresenterRenderer
-		implements
-		Renderer<FilterJobBuilder<MaxRowsFilter, ValidationCategory>, FilterJobBuilderPresenter> {
+public class MaxRowsFilterJobBuilderPresenterRenderer implements
+        Renderer<FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category>, FilterJobBuilderPresenter> {
 
-	@Inject
-	WindowContext windowContext;
+    @Inject
+    WindowContext windowContext;
 
-	@Inject
-	AnalyzerBeansConfiguration configuration;
+    @Inject
+    AnalyzerBeansConfiguration configuration;
 
-	@Inject
-	InjectorBuilder injectorBuilder;
+    @Inject
+    InjectorBuilder injectorBuilder;
 
-	@Override
-	public RendererPrecedence getPrecedence(
-			FilterJobBuilder<MaxRowsFilter, ValidationCategory> fjb) {
-		if (MaxRowsFilterShortcutPanel.isFilter(fjb)) {
-			return RendererPrecedence.HIGHEST;
-		}
-		return RendererPrecedence.NOT_CAPABLE;
-	}
+    @Override
+    public RendererPrecedence getPrecedence(FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb) {
+        if (MaxRowsFilterShortcutPanel.isFilter(fjb)) {
+            return RendererPrecedence.HIGHEST;
+        }
+        return RendererPrecedence.NOT_CAPABLE;
+    }
 
-	@Override
-	public FilterJobBuilderPresenter render(
-			FilterJobBuilder<MaxRowsFilter, ValidationCategory> fjb) {
-		final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder
-				.with(PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, fjb)
-				.getInstance(PropertyWidgetFactory.class);
+    @Override
+    public FilterJobBuilderPresenter render(FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> fjb) {
+        final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
+                PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, fjb).getInstance(PropertyWidgetFactory.class);
 
-		return new MaxRowsFilterShortcutJobBuilderPanel(fjb, windowContext,
-				propertyWidgetFactory);
-	}
+        return new MaxRowsFilterShortcutJobBuilderPanel(fjb, windowContext, propertyWidgetFactory);
+    }
 
 }

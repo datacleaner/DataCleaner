@@ -44,6 +44,7 @@ import org.eobjects.datacleaner.actions.AddExpressionBasedColumnActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.jdesktop.swingx.JXRadioGroup;
@@ -157,7 +158,8 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 		}
 		if (_inputColumns.isEmpty()) {
 			_radioButtons = new JRadioButton[1];
-			JRadioButton radioButton = new JRadioButton("- no columns available -");
+			JRadioButton radioButton = new JRadioButton("<html><font color=\"gray\\\"\\\">- no <i>"
+	                + LabelUtils.getDataTypeLabel(_dataType) + "</i> columns available -</font></html>");
 			radioButton.setOpaque(false);
 			radioButton.setEnabled(false);
 			_radioButtons[0] = radioButton;

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<bean name="repository"
+		class="org.eobjects.datacleaner.repository.file.FileRepository">
+		<constructor-arg type="java.io.File" value="repository" />
+	</bean>
+
+	<bean name="configurationCache"
+		class="org.eobjects.datacleaner.monitor.configuration.ConfigurationCache">
+		<constructor-arg name="repository" ref="repository" />
+	</bean>
+
+	<bean name="timelineService"
+		class="org.eobjects.datacleaner.monitor.server.TimelineServiceImpl">
+		<constructor-arg name="repository" ref="repository" />
+		<constructor-arg name="configurationCache" ref="configurationCache" />
+	</bean>
+</beans>

@@ -30,7 +30,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
-import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -44,7 +43,6 @@ import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.ListResult;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
@@ -110,9 +108,9 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		}
 
 		// add a max rows filter
-		final FilterJobBuilder<MaxRowsFilter, ValidationCategory> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
+		final FilterJobBuilder<MaxRowsFilter, MaxRowsFilter.Category> maxRowFilter = ajb.addFilter(MaxRowsFilter.class);
 		maxRowFilter.getConfigurableBean().setMaxRows(DEFAULT_PREVIEW_ROWS);
-		ajb.setDefaultRequirement(maxRowFilter, ValidationCategory.VALID);
+		ajb.setDefaultRequirement(maxRowFilter, MaxRowsFilter.Category.VALID);
 
 		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
 		sourceColumnFinder.addSources(ajb);
@@ -143,10 +141,9 @@ public final class PreviewTransformedDataActionListener implements ActionListene
 		final List<AnalyzerResult> results = resultFuture.getResults();
 		assert results.size() == 1;
 
-		@SuppressWarnings("unchecked")
-		final ListResult<Object[]> result = (ListResult<Object[]>) results.get(0);
+		final PreviewTransformedDataAnalyzer result = (PreviewTransformedDataAnalyzer) results.get(0);
 
-		final List<Object[]> rows = result.getValues();
+		final List<Object[]> rows = result.getList();
 		final DefaultTableModel tableModel = new DefaultTableModel(columnNames, rows.size());
 		int rowIndex = 0;
 		for (Object[] row : rows) {

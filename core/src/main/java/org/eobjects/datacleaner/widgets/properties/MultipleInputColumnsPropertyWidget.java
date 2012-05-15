@@ -61,6 +61,7 @@ import org.eobjects.datacleaner.actions.ReorderColumnsActionListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.LabelUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCCheckBox;
@@ -74,439 +75,419 @@ import org.jdesktop.swingx.VerticalLayout;
  * 
  * @author Kasper Sørensen
  */
-public class MultipleInputColumnsPropertyWidget extends
-		AbstractPropertyWidget<InputColumn<?>[]> implements
-		SourceColumnChangeListener, TransformerChangeListener {
+public class MultipleInputColumnsPropertyWidget extends AbstractPropertyWidget<InputColumn<?>[]> implements
+        SourceColumnChangeListener, TransformerChangeListener {
 
-	// border for the button panel and search box to make them "indented"
-	// similar to the check boxes.
-	private static final EmptyBorder _indentBorder = new MatteBorder(1, 17, 0,
-			1, WidgetUtils.BG_COLOR_BRIGHT);
+    // border for the button panel and search box to make them "indented"
+    // similar to the check boxes.
+    private static final EmptyBorder _indentBorder = new MatteBorder(1, 17, 0, 1, WidgetUtils.BG_COLOR_BRIGHT);
 
-	private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
-		@Override
-		public void onItemSelected(InputColumn<?> item, boolean selected) {
-			if (isBatchUpdating()) {
-				return;
-			}
-			fireValueChanged();
-		}
-	};
+    private final Listener<InputColumn<?>> checkBoxListener = new Listener<InputColumn<?>>() {
+        @Override
+        public void onItemSelected(InputColumn<?> item, boolean selected) {
+            if (isBatchUpdating()) {
+                return;
+            }
+            fireValueChanged();
+        }
+    };
 
-	private final ActionListener selectAllActionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			selectAll();
-		}
-	};
+    private final ActionListener selectAllActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectAll();
+        }
+    };
 
-	private final ActionListener selectNoneActionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			selectNone();
-		}
-	};
+    private final ActionListener selectNoneActionListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            selectNone();
+        }
+    };
 
-	private final Class<?> _dataType;
-	private final Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> _checkBoxes;
-	private final Map<DCCheckBox<InputColumn<?>>, JComponent> _checkBoxDecorations;
-	private final DCPanel _buttonPanel;
-	private final JXTextField _searchDatastoreTextField;
-	private final DCCheckBox<InputColumn<?>> _notAvailableCheckBox;
+    private final Class<?> _dataType;
+    private final Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> _checkBoxes;
+    private final Map<DCCheckBox<InputColumn<?>>, JComponent> _checkBoxDecorations;
+    private final DCPanel _buttonPanel;
+    private final JXTextField _searchDatastoreTextField;
+    private final DCCheckBox<InputColumn<?>> _notAvailableCheckBox;
 
-	private volatile boolean _firstUpdate;
+    private volatile boolean _firstUpdate;
 
-	@Inject
-	public MultipleInputColumnsPropertyWidget(
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-			ConfiguredPropertyDescriptor propertyDescriptor) {
-		super(beanJobBuilder, propertyDescriptor);
-		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
-		_checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
-		_checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
-		_firstUpdate = true;
-		_dataType = propertyDescriptor.getTypeArgument(0);
-		getAnalysisJobBuilder().getSourceColumnListeners().add(this);
-		getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
-		setLayout(new VerticalLayout(2));
+    @Inject
+    public MultipleInputColumnsPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
+            ConfiguredPropertyDescriptor propertyDescriptor) {
+        super(beanJobBuilder, propertyDescriptor);
+        setBorder(new EtchedBorder(EtchedBorder.LOWERED));
+        _checkBoxes = new LinkedHashMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>();
+        _checkBoxDecorations = new IdentityHashMap<DCCheckBox<InputColumn<?>>, JComponent>();
+        _firstUpdate = true;
+        _dataType = propertyDescriptor.getTypeArgument(0);
+        getAnalysisJobBuilder().getSourceColumnListeners().add(this);
+        getAnalysisJobBuilder().getTransformerChangeListeners().add(this);
+        setLayout(new VerticalLayout(2));
 
-		_searchDatastoreTextField = WidgetFactory
-				.createTextField("Search/filter columns");
-		_searchDatastoreTextField.setBorder(new CompoundBorder(_indentBorder,
-				WidgetUtils.BORDER_THIN));
-		_searchDatastoreTextField.getDocument().addDocumentListener(
-				new DCDocumentListener() {
-					@Override
-					protected void onChange(DocumentEvent event) {
-						String text = _searchDatastoreTextField.getText();
-						if (StringUtils.isNullOrEmpty(text)) {
-							// when there is no search query, set all datastores
-							// visible
-							for (JCheckBox cb : _checkBoxes.values()) {
-								cb.setVisible(true);
-							}
-						} else {
-							// do a case insensitive search
-							text = text.trim().toLowerCase();
-							for (JCheckBox cb : _checkBoxes.values()) {
-								String name = cb.getText().toLowerCase();
-								cb.setVisible(name.indexOf(text) != -1);
-							}
-						}
-					}
-				});
+        _searchDatastoreTextField = WidgetFactory.createTextField("Search/filter columns");
+        _searchDatastoreTextField.setBorder(new CompoundBorder(_indentBorder, WidgetUtils.BORDER_THIN));
+        _searchDatastoreTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent event) {
+                String text = _searchDatastoreTextField.getText();
+                if (StringUtils.isNullOrEmpty(text)) {
+                    // when there is no search query, set all datastores
+                    // visible
+                    for (JCheckBox cb : _checkBoxes.values()) {
+                        cb.setVisible(true);
+                    }
+                } else {
+                    // do a case insensitive search
+                    text = text.trim().toLowerCase();
+                    for (JCheckBox cb : _checkBoxes.values()) {
+                        String name = cb.getText().toLowerCase();
+                        cb.setVisible(name.indexOf(text) != -1);
+                    }
+                }
+            }
+        });
 
-		_notAvailableCheckBox = new DCCheckBox<InputColumn<?>>(
-				"- no columns available -", false);
-		_notAvailableCheckBox.setEnabled(false);
+        _notAvailableCheckBox = new DCCheckBox<InputColumn<?>>("<html><font color=\"gray\">- no <i>"
+                + LabelUtils.getDataTypeLabel(_dataType) + "</i> columns available -</font></html>", false);
+        _notAvailableCheckBox.setEnabled(false);
 
-		_buttonPanel = new DCPanel();
-		_buttonPanel.setLayout(new HorizontalLayout(2));
-		_buttonPanel.setBorder(_indentBorder);
+        _buttonPanel = new DCPanel();
+        _buttonPanel.setLayout(new HorizontalLayout(2));
+        _buttonPanel.setBorder(_indentBorder);
 
-		JButton selectAllButton = new JButton("Select all");
-		selectAllButton.setFont(WidgetUtils.FONT_SMALL);
-		selectAllButton.addActionListener(selectAllActionListener);
-		_buttonPanel.add(selectAllButton);
+        JButton selectAllButton = new JButton("Select all");
+        selectAllButton.setFont(WidgetUtils.FONT_SMALL);
+        selectAllButton.addActionListener(selectAllActionListener);
+        _buttonPanel.add(selectAllButton);
 
-		JButton selectNoneButton = new JButton("Select none");
-		selectNoneButton.setFont(WidgetUtils.FONT_SMALL);
-		selectNoneButton.addActionListener(selectNoneActionListener);
-		_buttonPanel.add(selectNoneButton);
+        JButton selectNoneButton = new JButton("Select none");
+        selectNoneButton.setFont(WidgetUtils.FONT_SMALL);
+        selectNoneButton.addActionListener(selectNoneActionListener);
+        _buttonPanel.add(selectNoneButton);
 
-		if (propertyDescriptor.isArray()) {
-			if (_dataType == String.class || _dataType == Object.class) {
-				final JButton expressionColumnButton = WidgetFactory
-						.createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
-				expressionColumnButton
-						.setToolTipText("Create expression/value based column");
-				expressionColumnButton
-						.addActionListener(AddExpressionBasedColumnActionListener
-								.forMultipleColumns(this));
-				_buttonPanel.add(expressionColumnButton);
-			}
+        if (propertyDescriptor.isArray()) {
+            if (_dataType == String.class || _dataType == Object.class) {
+                final JButton expressionColumnButton = WidgetFactory
+                        .createSmallButton(IconUtils.BUTTON_EXPRESSION_COLUMN_IMAGEPATH);
+                expressionColumnButton.setToolTipText("Create expression/value based column");
+                expressionColumnButton.addActionListener(AddExpressionBasedColumnActionListener
+                        .forMultipleColumns(this));
+                _buttonPanel.add(expressionColumnButton);
+            }
 
-			final JButton reorderColumnsButton = WidgetFactory
-					.createSmallButton(IconUtils.BUTTON_REORDER_COLUMN_IMAGEPATH);
-			reorderColumnsButton.setToolTipText("Reorder columns");
-			reorderColumnsButton
-					.addActionListener(new ReorderColumnsActionListener(this));
-			_buttonPanel.add(reorderColumnsButton);
-		}
+            final JButton reorderColumnsButton = WidgetFactory
+                    .createSmallButton(IconUtils.BUTTON_REORDER_COLUMN_IMAGEPATH);
+            reorderColumnsButton.setToolTipText("Reorder columns");
+            reorderColumnsButton.addActionListener(new ReorderColumnsActionListener(this));
+            _buttonPanel.add(reorderColumnsButton);
+        }
 
-		add(_buttonPanel);
-		add(_searchDatastoreTextField);
-	}
+        add(_buttonPanel);
+        add(_searchDatastoreTextField);
+    }
 
-	@Override
-	public void initialize(InputColumn<?>[] value) {
-		updateComponents(value);
-		_firstUpdate = false;
-		if (value != null && value.length > 0) {
-			reorderValue(value);
-		}
-	}
+    @Override
+    public void initialize(InputColumn<?>[] value) {
+        updateComponents(value);
+        _firstUpdate = false;
+        if (value != null && value.length > 0) {
+            reorderValue(value);
+        }
+    }
 
-	protected boolean isAllInputColumnsSelectedIfNoValueExist() {
-		AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = getBeanJobBuilder();
-		if (beanJobBuilder instanceof AnalyzerJobBuilder) {
-			return true;
-		}
-		return false;
-	}
+    protected boolean isAllInputColumnsSelectedIfNoValueExist() {
+        AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder = getBeanJobBuilder();
+        if (beanJobBuilder instanceof AnalyzerJobBuilder) {
+            return true;
+        }
+        return false;
+    }
 
-	private void updateComponents(final InputColumn<?>[] value) {
-		// fetch available input columns
-		final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder()
-				.getAvailableInputColumns(_dataType);
+    private void updateComponents(final InputColumn<?>[] value) {
+        // fetch available input columns
+        final List<InputColumn<?>> availableColumns = getAnalysisJobBuilder().getAvailableInputColumns(_dataType);
 
-		if (getBeanJobBuilder() instanceof TransformerJobBuilder) {
-			// remove all the columns that are generated by the transformer
-			// itself!
-			TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) getBeanJobBuilder();
-			List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
-			availableColumns.removeAll(outputColumns);
-		}
+        if (getBeanJobBuilder() instanceof TransformerJobBuilder) {
+            // remove all the columns that are generated by the transformer
+            // itself!
+            TransformerJobBuilder<?> tjb = (TransformerJobBuilder<?>) getBeanJobBuilder();
+            List<MutableInputColumn<?>> outputColumns = tjb.getOutputColumns();
+            availableColumns.removeAll(outputColumns);
+        }
 
-		Set<InputColumn<?>> inputColumnsToBeRemoved = new HashSet<InputColumn<?>>();
-		inputColumnsToBeRemoved.addAll(_checkBoxes.keySet());
+        Set<InputColumn<?>> inputColumnsToBeRemoved = new HashSet<InputColumn<?>>();
+        inputColumnsToBeRemoved.addAll(_checkBoxes.keySet());
 
-		if (value != null) {
-			// retain selected expression based input columns
-			for (InputColumn<?> col : value) {
-				if (col instanceof ExpressionBasedInputColumn) {
-					inputColumnsToBeRemoved.remove(col);
-					availableColumns.add(col);
-				}
-			}
-		}
+        if (value != null) {
+            // retain selected expression based input columns
+            for (InputColumn<?> col : value) {
+                if (col instanceof ExpressionBasedInputColumn) {
+                    inputColumnsToBeRemoved.remove(col);
+                    availableColumns.add(col);
+                }
+            }
+        }
 
-		for (InputColumn<?> col : availableColumns) {
-			inputColumnsToBeRemoved.remove(col);
-			DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.get(col);
-			if (checkBox == null) {
-				addAvailableInputColumn(col, isEnabled(col, value));
-			} else {
-				// handle updated names from transformed columns.
-				checkBox.setText(col.getName());
-			}
-		}
+        for (InputColumn<?> col : availableColumns) {
+            inputColumnsToBeRemoved.remove(col);
+            DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.get(col);
+            if (checkBox == null) {
+                addAvailableInputColumn(col, isEnabled(col, value));
+            } else {
+                // handle updated names from transformed columns.
+                checkBox.setText(col.getName());
+            }
+        }
 
-		for (InputColumn<?> col : inputColumnsToBeRemoved) {
-			removeAvailableInputColumn(col);
-		}
+        for (InputColumn<?> col : inputColumnsToBeRemoved) {
+            removeAvailableInputColumn(col);
+        }
 
-		updateVisibility();
-		fireValueChanged();
-	}
+        updateVisibility();
+        fireValueChanged();
+    }
 
-	private void updateVisibility() {
-		_searchDatastoreTextField.setVisible(_checkBoxes.size() > 5);
-		if (_checkBoxes.isEmpty()) {
-			add(_notAvailableCheckBox);
-		} else {
-			remove(_notAvailableCheckBox);
-		}
-	}
+    private void updateVisibility() {
+        _searchDatastoreTextField.setVisible(_checkBoxes.size() > 5);
+        if (_checkBoxes.isEmpty()) {
+            add(_notAvailableCheckBox);
+        } else {
+            remove(_notAvailableCheckBox);
+        }
+    }
 
-	/**
-	 * Method that allows decorating a checkbox for an input column. Subclasses
-	 * can eg. wrap the checkbox in a panel, in order to make additional widgets
-	 * available.
-	 * 
-	 * @param checkBox
-	 * @return a {@link JComponent} to add to the widget's parent.
-	 */
-	protected JComponent decorateCheckBox(DCCheckBox<InputColumn<?>> checkBox) {
-		return checkBox;
-	}
+    /**
+     * Method that allows decorating a checkbox for an input column. Subclasses
+     * can eg. wrap the checkbox in a panel, in order to make additional widgets
+     * available.
+     * 
+     * @param checkBox
+     * @return a {@link JComponent} to add to the widget's parent.
+     */
+    protected JComponent decorateCheckBox(DCCheckBox<InputColumn<?>> checkBox) {
+        return checkBox;
+    }
 
-	private boolean isEnabled(InputColumn<?> inputColumn,
-			InputColumn<?>[] currentValue) {
-		if (_firstUpdate) {
-			if (currentValue == null || currentValue.length == 0) {
-				// set all to true if this is the only required inputcolumn
-				// property
-				ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor()
-						.getComponentDescriptor();
-				if (componentDescriptor instanceof BeanDescriptor<?>) {
-					if (((BeanDescriptor<?>) componentDescriptor)
-							.getConfiguredPropertiesForInput(false).size() == 1) {
-						return isAllInputColumnsSelectedIfNoValueExist();
-					}
-				}
-				return false;
-			}
-		}
-		for (InputColumn<?> col : currentValue) {
-			if (inputColumn == col) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean isEnabled(InputColumn<?> inputColumn, InputColumn<?>[] currentValue) {
+        if (_firstUpdate) {
+            if (currentValue == null || currentValue.length == 0) {
+                // set all to true if this is the only required inputcolumn
+                // property
+                ComponentDescriptor<?> componentDescriptor = getPropertyDescriptor().getComponentDescriptor();
+                if (componentDescriptor instanceof BeanDescriptor<?>) {
+                    if (((BeanDescriptor<?>) componentDescriptor).getConfiguredPropertiesForInput(false).size() == 1) {
+                        return isAllInputColumnsSelectedIfNoValueExist();
+                    }
+                }
+                return false;
+            }
+        }
+        for (InputColumn<?> col : currentValue) {
+            if (inputColumn == col) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public boolean isSet() {
-		for (JCheckBox checkBox : _checkBoxes.values()) {
-			if (checkBox.isSelected()) {
-				return true;
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean isSet() {
+        for (JCheckBox checkBox : _checkBoxes.values()) {
+            if (checkBox.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public InputColumn<?>[] getValue() {
-		List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
-		Collection<DCCheckBox<InputColumn<?>>> checkBoxes = _checkBoxes
-				.values();
-		for (DCCheckBox<InputColumn<?>> cb : checkBoxes) {
-			if (cb.isSelected()) {
-				InputColumn<?> value = cb.getValue();
-				if (value != null) {
-					result.add(value);
-				}
-			}
-		}
-		return result.toArray(new InputColumn<?>[result.size()]);
-	}
+    @Override
+    public InputColumn<?>[] getValue() {
+        List<InputColumn<?>> result = new ArrayList<InputColumn<?>>();
+        Collection<DCCheckBox<InputColumn<?>>> checkBoxes = _checkBoxes.values();
+        for (DCCheckBox<InputColumn<?>> cb : checkBoxes) {
+            if (cb.isSelected()) {
+                InputColumn<?> value = cb.getValue();
+                if (value != null) {
+                    result.add(value);
+                }
+            }
+        }
+        return result.toArray(new InputColumn<?>[result.size()]);
+    }
 
-	@Override
-	public void onAdd(InputColumn<?> sourceColumn) {
-		if (_dataType == Object.class
-				|| ReflectionUtils.is(sourceColumn.getDataType(), _dataType)) {
-			addAvailableInputColumn(sourceColumn);
-			updateVisibility();
-		}
-	}
+    @Override
+    public void onAdd(InputColumn<?> sourceColumn) {
+        if (_dataType == Object.class || ReflectionUtils.is(sourceColumn.getDataType(), _dataType)) {
+            addAvailableInputColumn(sourceColumn);
+            updateVisibility();
+        }
+    }
 
-	@Override
-	public void onRemove(InputColumn<?> sourceColumn) {
-		removeAvailableInputColumn(sourceColumn);
-		updateVisibility();
-	}
+    @Override
+    public void onRemove(InputColumn<?> sourceColumn) {
+        removeAvailableInputColumn(sourceColumn);
+        updateVisibility();
+    }
 
-	@Override
-	public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
-	}
+    @Override
+    public void onAdd(TransformerJobBuilder<?> transformerJobBuilder) {
+    }
 
-	@Override
-	public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
-			List<MutableInputColumn<?>> outputColumns) {
-		// we need to save the current value before we update the components
-		// here. Otherwise any previous selections will be lost.
-		final InputColumn<?>[] value = getValue();
-		getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(),
-				value);
+    @Override
+    public void onOutputChanged(TransformerJobBuilder<?> transformerJobBuilder,
+            List<MutableInputColumn<?>> outputColumns) {
+        // we need to save the current value before we update the components
+        // here. Otherwise any previous selections will be lost.
+        final InputColumn<?>[] value = getValue();
+        getBeanJobBuilder().setConfiguredProperty(getPropertyDescriptor(), value);
 
-		updateComponents(value);
-	}
+        updateComponents(value);
+    }
 
-	@Override
-	public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
-	}
+    @Override
+    public void onRemove(TransformerJobBuilder<?> transformerJobBuilder) {
+    }
 
-	@Override
-	public void onPanelRemove() {
-		super.onPanelRemove();
-		getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
-	}
+    @Override
+    public void onPanelRemove() {
+        super.onPanelRemove();
+        getAnalysisJobBuilder().getSourceColumnListeners().remove(this);
+    }
 
-	@Override
-	public void onConfigurationChanged(
-			TransformerJobBuilder<?> transformerJobBuilder) {
-	}
+    @Override
+    public void onConfigurationChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    }
 
-	@Override
-	public void onRequirementChanged(
-			TransformerJobBuilder<?> transformerJobBuilder) {
-	}
+    @Override
+    public void onRequirementChanged(TransformerJobBuilder<?> transformerJobBuilder) {
+    }
 
-	@Override
-	protected void setValue(InputColumn<?>[] values) {
-		// if checkBoxes is empty it means that the value is being set before
-		// initializing the widget. This can occur in subclasses and automatic
-		// creating of checkboxes should be done.
-		if (_checkBoxes.isEmpty()) {
-			for (InputColumn<?> value : values) {
-				addAvailableInputColumn(value, true);
-			}
-		}
+    @Override
+    protected void setValue(InputColumn<?>[] values) {
+        // if checkBoxes is empty it means that the value is being set before
+        // initializing the widget. This can occur in subclasses and automatic
+        // creating of checkboxes should be done.
+        if (_checkBoxes.isEmpty()) {
+            for (InputColumn<?> value : values) {
+                addAvailableInputColumn(value, true);
+            }
+        }
 
-		// add expression based input columns if needed.
-		for (InputColumn<?> inputColumn : values) {
-			if (inputColumn instanceof ExpressionBasedInputColumn
-					&& !_checkBoxes.containsKey(inputColumn)) {
-				addAvailableInputColumn(inputColumn, true);
-			}
-		}
+        // add expression based input columns if needed.
+        for (InputColumn<?> inputColumn : values) {
+            if (inputColumn instanceof ExpressionBasedInputColumn && !_checkBoxes.containsKey(inputColumn)) {
+                addAvailableInputColumn(inputColumn, true);
+            }
+        }
 
-		// update selections in checkboxes
-		for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
-			if (ArrayUtils.contains(values, cb.getValue())) {
-				cb.setSelected(true);
-			} else {
-				cb.setSelected(false);
-			}
-		}
+        // update selections in checkboxes
+        for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+            if (ArrayUtils.contains(values, cb.getValue())) {
+                cb.setSelected(true);
+            } else {
+                cb.setSelected(false);
+            }
+        }
 
-		updateUI();
-	}
+        updateUI();
+    }
 
-	protected void selectAll() {
-		batchUpdateWidget(new Runnable() {
-			@Override
-			public void run() {
-				for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
-					if (cb.isEnabled()) {
-						cb.setSelected(true);
-					}
-				}
-			}
-		});
-	}
+    protected void selectAll() {
+        batchUpdateWidget(new Runnable() {
+            @Override
+            public void run() {
+                for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+                    if (cb.isEnabled()) {
+                        cb.setSelected(true);
+                    }
+                }
+            }
+        });
+    }
 
-	protected void selectNone() {
-		batchUpdateWidget(new Runnable() {
-			@Override
-			public void run() {
-				for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
-					cb.setSelected(false);
-				}
-			}
-		});
-	}
+    protected void selectNone() {
+        batchUpdateWidget(new Runnable() {
+            @Override
+            public void run() {
+                for (DCCheckBox<InputColumn<?>> cb : _checkBoxes.values()) {
+                    cb.setSelected(false);
+                }
+            }
+        });
+    }
 
-	private void addAvailableInputColumn(InputColumn<?> col) {
-		addAvailableInputColumn(col, false);
-	}
+    private void addAvailableInputColumn(InputColumn<?> col) {
+        addAvailableInputColumn(col, false);
+    }
 
-	private void addAvailableInputColumn(InputColumn<?> col, boolean selected) {
-		final String name = col.getName();
-		final DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(
-				name, selected);
-		cb.addListener(checkBoxListener);
-		cb.setValue(col);
-		_checkBoxes.put(col, cb);
-		JComponent decoration = decorateCheckBox(cb);
-		_checkBoxDecorations.put(cb, decoration);
-		add(decoration);
-	}
+    private void addAvailableInputColumn(InputColumn<?> col, boolean selected) {
+        final String name = col.getName();
+        final DCCheckBox<InputColumn<?>> cb = new DCCheckBox<InputColumn<?>>(name, selected);
+        cb.addListener(checkBoxListener);
+        cb.setValue(col);
+        _checkBoxes.put(col, cb);
+        JComponent decoration = decorateCheckBox(cb);
+        _checkBoxDecorations.put(cb, decoration);
+        add(decoration);
+    }
 
-	private void removeAvailableInputColumn(InputColumn<?> col) {
-		boolean valueChanged = false;
-		DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.remove(col);
-		if (checkBox != null) {
-			if (checkBox.isSelected()) {
-				valueChanged = true;
-			}
-			final JComponent decoration = _checkBoxDecorations.remove(checkBox);
-			remove(decoration);
-		}
+    private void removeAvailableInputColumn(InputColumn<?> col) {
+        boolean valueChanged = false;
+        DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.remove(col);
+        if (checkBox != null) {
+            if (checkBox.isSelected()) {
+                valueChanged = true;
+            }
+            final JComponent decoration = _checkBoxDecorations.remove(checkBox);
+            remove(decoration);
+        }
 
-		if (valueChanged) {
-			fireValueChanged();
-		}
-	}
+        if (valueChanged) {
+            fireValueChanged();
+        }
+    }
 
-	/**
-	 * Reorders the values
-	 * 
-	 * @param sortedValue
-	 */
-	public void reorderValue(final InputColumn<?>[] sortedValue) {
-		// the offset represents the search textfield and the button panel
-		final int offset = 2;
+    /**
+     * Reorders the values
+     * 
+     * @param sortedValue
+     */
+    public void reorderValue(final InputColumn<?>[] sortedValue) {
+        // the offset represents the search textfield and the button panel
+        final int offset = 2;
 
-		// reorder the visual components
-		for (int i = 0; i < sortedValue.length; i++) {
-			InputColumn<?> inputColumn = sortedValue[i];
-			DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.get(inputColumn);
-			JComponent decoration = _checkBoxDecorations.get(checkBox);
-			add(decoration, i + offset);
-		}
-		updateUI();
+        // reorder the visual components
+        for (int i = 0; i < sortedValue.length; i++) {
+            InputColumn<?> inputColumn = sortedValue[i];
+            DCCheckBox<InputColumn<?>> checkBox = _checkBoxes.get(inputColumn);
+            JComponent decoration = _checkBoxDecorations.get(checkBox);
+            add(decoration, i + offset);
+        }
+        updateUI();
 
-		// recreate the _checkBoxes map
-		final TreeMap<InputColumn<?>, DCCheckBox<InputColumn<?>>> checkBoxesCopy = new TreeMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>(
-				_checkBoxes);
-		_checkBoxes.clear();
-		for (InputColumn<?> inputColumn : sortedValue) {
-			_checkBoxes.put(inputColumn, checkBoxesCopy.get(inputColumn));
-		}
-		_checkBoxes.putAll(checkBoxesCopy);
-	}
+        // recreate the _checkBoxes map
+        final TreeMap<InputColumn<?>, DCCheckBox<InputColumn<?>>> checkBoxesCopy = new TreeMap<InputColumn<?>, DCCheckBox<InputColumn<?>>>(
+                _checkBoxes);
+        _checkBoxes.clear();
+        for (InputColumn<?> inputColumn : sortedValue) {
+            _checkBoxes.put(inputColumn, checkBoxesCopy.get(inputColumn));
+        }
+        _checkBoxes.putAll(checkBoxesCopy);
+    }
 
-	public Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> getCheckBoxes() {
-		return Collections.unmodifiableMap(_checkBoxes);
-	}
+    public Map<InputColumn<?>, DCCheckBox<InputColumn<?>>> getCheckBoxes() {
+        return Collections.unmodifiableMap(_checkBoxes);
+    }
 
-	public Map<DCCheckBox<InputColumn<?>>, JComponent> getCheckBoxDecorations() {
-		return Collections.unmodifiableMap(_checkBoxDecorations);
-	}
-	
-	public DCPanel getButtonPanel() {
-		return _buttonPanel;
-	}
+    public Map<DCCheckBox<InputColumn<?>>, JComponent> getCheckBoxDecorations() {
+        return Collections.unmodifiableMap(_checkBoxDecorations);
+    }
+
+    public DCPanel getButtonPanel() {
+        return _buttonPanel;
+    }
 }

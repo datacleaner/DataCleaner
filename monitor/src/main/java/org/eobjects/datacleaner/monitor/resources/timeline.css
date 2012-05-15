@@ -1,0 +1,126 @@
+/**
+ * eobjects.org DataCleaner
+ * Copyright (C) 2010 eobjects.org
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ * Boston, MA  02110-1301  USA
+ */
+
+/*
+ * GWT built-in style modifications 
+ */
+.gwt-PopupPanel .popupContent {
+	padding: 10px;
+	max-height: 600px;
+	overflow: auto;
+}
+
+.gwt-Button {
+	margin: 5px;
+}
+
+.gwt-TabPanel {
+	width: 100%;
+}
+
+.gwt-TabBar {
+	background-color: #333;
+}
+
+/*
+ * General purpose style modifiers
+ */
+.HeadingLabel {
+	color: #377FCF;
+	font-size: 1.2em;
+	margin-bottom: 10px;
+}
+
+/*
+ * Specific panels
+ */
+.DrillToProfilingResultPopupPanel {
+}
+
+.DrillToProfilingResultPopupPanel .ButtonPanel {
+	text-align: center;
+	padding: 10px;
+}
+
+.TimelineListPanel {
+}
+
+.TimelinePanel {
+}
+
+.TimelinePanel .TimelineButtonPanel {
+	text-align: right;
+}
+
+.TimelinePanel .TimelineChart {
+	text-align: center;
+}
+
+.CreateTimelinePopupPanel {
+	min-width: 500px;
+	min-height: 500px;
+}
+
+.CustomizeTimelinePopupPanel {
+	min-width: 500px;
+	min-height: 500px;
+}
+
+.CustomizeTimelinePopupPanel .gwt-TabPanel {
+	width: 100%;
+}
+
+.CustomizeTimelinePopupPanel .ButtonPanel {
+	text-align: center;
+	padding: 10px;
+}
+
+.CustomizeMetricsPanel {
+}
+
+.CustomizeMetricsPanel .MetricGroupPanel {
+	margin-top: 10px;
+	padding: 10px;
+	background-color: #fdfdfd;
+	border: 1px solid #f0f0f0;
+}
+
+.MetricGroupPanel .UnparameterizedMetricsPresenter {
+	clear: both;
+}
+
+.MetricGroupPanel .ColumnParameterizedMetricsPresenter {
+	clear: both;
+}
+
+.MetricGroupPanel .ColumnParameterizedMetricsPresenter .gwt-Label {
+	float: left;
+	width: 100px;
+}
+
+.MetricGroupPanel .StringParameterizedMetricsPresenter {
+	clear: both;
+}
+
+
+.MetricGroupPanel .StringParameterizedMetricsPresenter .gwt-Label {
+	float: left;
+	width: 100px;
+}

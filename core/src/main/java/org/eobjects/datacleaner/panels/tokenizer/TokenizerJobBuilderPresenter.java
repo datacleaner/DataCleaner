@@ -19,8 +19,8 @@
  */
 package org.eobjects.datacleaner.panels.tokenizer;
 
-import org.eobjects.analyzer.beans.standardize.TokenizerTransformer;
-import org.eobjects.analyzer.beans.standardize.TokenizerTransformer.TokenTarget;
+import org.eobjects.analyzer.beans.transform.TokenizerTransformer;
+import org.eobjects.analyzer.beans.transform.TokenizerTransformer.TokenTarget;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;

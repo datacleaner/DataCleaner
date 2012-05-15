@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0">
+
+	<timeline-metadata>
+		<timeline-name>Customer content</timeline-name>
+	</timeline-metadata>
+
+	<job-path>/DC/jobs/customers.analysis.xml</job-path>
+
+	<metrics>
+
+		<metric>
+			<analyzer-descriptor-name>Pattern finder</analyzer-descriptor-name>
+			<analyzer-input>CONTACTLASTNAME</analyzer-input>
+			<metric-descriptor-name>Pattern count</metric-descriptor-name>
+		</metric>
+
+		<metric>
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>CITY</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Madrid</metric-param-query-string>
+		</metric>
+
+		<metric>
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>CITY</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>NYC</metric-param-query-string>
+		</metric>
+
+		<metric>
+			<analyzer-descriptor-name>String analyzer</analyzer-descriptor-name>
+			<metric-descriptor-name>Digit chars</metric-descriptor-name>
+			<metric-param-column-name>CITY</metric-param-column-name>
+		</metric>
+
+	</metrics>
+</timeline>

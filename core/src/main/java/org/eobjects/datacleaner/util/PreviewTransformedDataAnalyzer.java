@@ -27,7 +27,7 @@ import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.analyzer.result.ListResult;
+import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 
 /**
@@ -38,9 +38,11 @@ import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
  * @author Kasper Sørensen
  */
 @AnalyzerBean("Preview transformed data collector")
-public class PreviewTransformedDataAnalyzer implements Analyzer<ListResult<Object[]>> {
+public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransformedDataAnalyzer>, AnalyzerResult {
 
-	@Configured
+    private static final long serialVersionUID = 1L;
+
+    @Configured
 	InputColumn<?>[] columns;
 
 	private final List<Object[]> list = new ArrayList<Object[]>();
@@ -53,10 +55,13 @@ public class PreviewTransformedDataAnalyzer implements Analyzer<ListResult<Objec
 		}
 		list.add(result);
 	}
+	
+	public List<Object[]> getList() {
+        return list;
+    }
 
 	@Override
-	public ListResult<Object[]> getResult() {
-		return new ListResult<Object[]>(list);
+	public PreviewTransformedDataAnalyzer getResult() {
+		return this;
 	}
-
 }

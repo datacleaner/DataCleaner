@@ -110,6 +110,8 @@ public final class WidgetUtils {
 	// additional colors, only intended for special widget coloring such as
 	// charts etc.
 	public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new ColorUIResource(123, 207, 38);
+	
+	// Red: #d32424
 	public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(211, 36, 36);
 	public static final Color ADDITIONAL_COLOR_PURPLE_BRIGHT = new ColorUIResource(211, 36, 156);
 	public static final Color ADDITIONAL_COLOR_CYAN_BRIGHT = new ColorUIResource(36, 209, 211);

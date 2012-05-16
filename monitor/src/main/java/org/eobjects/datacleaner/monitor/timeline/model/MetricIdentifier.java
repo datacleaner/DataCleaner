@@ -224,6 +224,9 @@ public class MetricIdentifier implements IsSerializable {
         if (_paramQueryString != null) {
             return _metricDescriptorName + ": " + _paramQueryString;
         }
+        if (_analyzerInputName != null) {
+            return _metricDescriptorName + " (" + _analyzerInputName + ")";
+        }
         return _metricDescriptorName;
     }
 }

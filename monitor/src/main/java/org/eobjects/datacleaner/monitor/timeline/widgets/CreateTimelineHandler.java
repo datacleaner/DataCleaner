@@ -31,7 +31,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * Handles the action that the user wants to create a new timeline.
@@ -51,9 +50,8 @@ public class CreateTimelineHandler implements ClickHandler {
 
     @Override
     public void onClick(ClickEvent event) {
-        final PopupPanel popup = new PopupPanel(false, true);
+        final DCPopupPanel popup = new DCPopupPanel("Create timeline");
         popup.addStyleName("CreateTimelinePopupPanel");
-        popup.setGlassEnabled(true);
 
         final SelectJobPanel selectJobPanel = new SelectJobPanel(_service, _tenant) {
             @Override
@@ -63,11 +61,13 @@ public class CreateTimelineHandler implements ClickHandler {
         };
 
         popup.setWidget(selectJobPanel);
+        popup.addButton(selectJobPanel.createSelectButton());
+        popup.addButton(new CancelPopupButton(popup));
         popup.center();
         popup.show();
     }
 
-    private void setJob(final PopupPanel popup, final JobIdentifier job) {
+    private void setJob(final DCPopupPanel popup, final JobIdentifier job) {
         final TimelineDefinition timelineDefinition = new TimelineDefinition();
         timelineDefinition.setJobIdentifier(job);
 
@@ -75,8 +75,14 @@ public class CreateTimelineHandler implements ClickHandler {
         timelinePanel.setTimelineDefinition(timelineDefinition, false);
 
         final CustomizeMetricsPanel customizeMetricsPanel = new CustomizeMetricsPanel(_service, _tenant,
-                timelineDefinition);
-        
+                timelineDefinition) {
+            @Override
+            protected void onMetricsLoaded() {
+                super.onMetricsLoaded();
+                popup.center();
+            }
+        };
+
         final Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
@@ -90,10 +96,14 @@ public class CreateTimelineHandler implements ClickHandler {
         });
 
         final FlowPanel mainPanel = new FlowPanel();
+        mainPanel.add(new HeadingLabel("Select metrics to monitor"));
         mainPanel.add(customizeMetricsPanel);
-        mainPanel.add(saveButton);
 
         popup.setWidget(mainPanel);
+        popup.removeButtons();
+        popup.addButton(saveButton);
+        popup.addButton(new CancelPopupButton(popup));
+
         popup.center();
     }
 }

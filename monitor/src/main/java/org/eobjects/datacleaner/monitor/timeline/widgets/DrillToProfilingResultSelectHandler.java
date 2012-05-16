@@ -29,11 +29,8 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
@@ -48,14 +45,13 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
 
     private final CoreChart _chart;
     private final AbstractDataTable _data;
-    private final PopupPanel _popup;
+    private final DCPopupPanel _popup;
 
     public DrillToProfilingResultSelectHandler(CoreChart chart, AbstractDataTable data) {
         _chart = chart;
         _data = data;
-        _popup = new PopupPanel(true, true);
+        _popup = new DCPopupPanel("Inspect profiling result?");
         _popup.addStyleName("DrillToProfilingResultPopupPanel");
-        _popup.setGlassEnabled(true);
     }
 
     @Override
@@ -91,30 +87,16 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
             }
         });
 
-        final Button cancelButton = new Button("Cancel");
-        cancelButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                _popup.hide();
-            }
-        });
-
-        final FlowPanel buttonPanel = new FlowPanel();
-        buttonPanel.addStyleName("ButtonPanel");
-        buttonPanel.add(showResultButton);
-        buttonPanel.add(cancelButton);
-
         final SafeHtml labelHtml = new SafeHtmlBuilder()
                 .appendHtmlConstant("Do you wish to inspect the profiling result for ").appendEscaped(metricLabel)
                 .appendEscapedLines("\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?")
                 .toSafeHtml();
 
-        final VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(new HeadingLabel("Inspect profiling result?"));
-        verticalPanel.add(new HTML(labelHtml));
-        verticalPanel.add(buttonPanel);
-
-        _popup.setWidget(verticalPanel);
+        
+        _popup.setWidget(new HTML(labelHtml));
+        _popup.removeButtons();
+        _popup.addButton(showResultButton);
+        _popup.addButton(new CancelPopupButton(_popup));
         _popup.center();
         _popup.show();
     }

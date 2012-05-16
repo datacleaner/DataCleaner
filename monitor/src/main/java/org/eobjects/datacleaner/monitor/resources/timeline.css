@@ -22,9 +22,8 @@
  * GWT built-in style modifications 
  */
 .gwt-PopupPanel .popupContent {
-	padding: 10px;
-	max-height: 600px;
-	overflow: auto;
+	text-align: left;
+	padding: 5px;
 }
 
 .gwt-Button {
@@ -42,31 +41,40 @@
 /*
  * General purpose style modifiers
  */
+ .DCPopupPanelContent {
+ 	max-height: 600px;
+	overflow: auto;
+ }
+ 
 .HeadingLabel {
 	color: #377FCF;
 	font-size: 1.2em;
 	margin-bottom: 10px;
 }
 
-/*
- * Specific panels
- */
-.DrillToProfilingResultPopupPanel {
-}
-
-.DrillToProfilingResultPopupPanel .ButtonPanel {
+.ButtonPanel {
 	text-align: center;
 	padding: 10px;
 }
+/*
+ * Specific panels
+ */
+
+.DrillToProfilingResultPopupPanel {
+	
+}
 
 .TimelineListPanel {
+	
 }
 
 .TimelinePanel {
+	
 }
 
-.TimelinePanel .TimelineButtonPanel {
+.TimelinePanel .ButtonPanel {
 	text-align: right;
+	padding: 0;
 }
 
 .TimelinePanel .TimelineChart {
@@ -75,7 +83,7 @@
 
 .CreateTimelinePopupPanel {
 	min-width: 500px;
-	min-height: 500px;
+	vertical-align: middle;
 }
 
 .CustomizeTimelinePopupPanel {
@@ -87,12 +95,8 @@
 	width: 100%;
 }
 
-.CustomizeTimelinePopupPanel .ButtonPanel {
-	text-align: center;
-	padding: 10px;
-}
-
 .CustomizeMetricsPanel {
+	
 }
 
 .CustomizeMetricsPanel .MetricGroupPanel {
@@ -118,7 +122,6 @@
 .MetricGroupPanel .StringParameterizedMetricsPresenter {
 	clear: both;
 }
-
 
 .MetricGroupPanel .StringParameterizedMetricsPresenter .gwt-Label {
 	float: left;

@@ -40,13 +40,18 @@ public abstract class SelectJobPanel extends FlowPanel {
 
     private final TimelineServiceAsync _service;
     private final TenantIdentifier _tenant;
+    private final LoadingIndicator _loadingIndicator;
+    private ListBox _listBox;
 
     public SelectJobPanel(TimelineServiceAsync service, TenantIdentifier tenant) {
         _service = service;
         _tenant = tenant;
+        _loadingIndicator = new LoadingIndicator();
+        _listBox = new ListBox(false);
         addStyleName("SelectJobPanel");
 
-        add(new LoadingIndicator());
+        add(new HeadingLabel("Select job to build timeline from"));
+        add(_loadingIndicator);
 
         _service.getSavedJobs(_tenant, new DCAsyncCallback<List<JobIdentifier>>() {
             @Override
@@ -57,28 +62,30 @@ public abstract class SelectJobPanel extends FlowPanel {
     }
 
     public void setAvailableJobs(List<JobIdentifier> availableJobs) {
-        clear();
+        remove(_loadingIndicator);
 
-        final ListBox listBox = new ListBox(false);
+        _listBox.clear();
+
         for (JobIdentifier job : availableJobs) {
-            listBox.addItem(job.getName(), job.getPath());
+            _listBox.addItem(job.getName(), job.getPath());
         }
 
-        add(listBox);
+        add(_listBox);
+    }
 
+    public Button createSelectButton() {
         final Button button = new Button("Select job");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final int index = listBox.getSelectedIndex();
-                final String name = listBox.getItemText(index);
-                final String path = listBox.getValue(index);
+                final int index = _listBox.getSelectedIndex();
+                final String name = _listBox.getItemText(index);
+                final String path = _listBox.getValue(index);
                 final JobIdentifier job = new JobIdentifier(name, path);
                 onJobSelected(job);
             }
         });
-
-        add(button);
+        return button;
     }
 
     public abstract void onJobSelected(JobIdentifier job);

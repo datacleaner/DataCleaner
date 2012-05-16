@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.monitor.util;
 
 import java.util.Set;
 
+import org.eobjects.datacleaner.monitor.timeline.widgets.ButtonPanel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -148,8 +150,7 @@ public class ErrorHandler {
             }
         });
         
-        final FlowPanel buttonPanel = new FlowPanel();
-        buttonPanel.addStyleName("ButtonPanel");
+        final ButtonPanel buttonPanel = new ButtonPanel();
         buttonPanel.add(closeButton);
         panel.add(buttonPanel);
 

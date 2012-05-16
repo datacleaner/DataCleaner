@@ -25,11 +25,8 @@ import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Handler of the user interaction when customizing a timeline
@@ -39,7 +36,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
     private final TimelineServiceAsync _service;
     private final TimelinePanel _timelinePanel;
 
-    private final PopupPanel _popup;
+    private final DCPopupPanel _popup;
 
     private CustomizeMetricsPanel _customizeMetricsPanel;
     private CustomizeChartOptionsPanel _customizeChartOptionsPanel;
@@ -48,9 +45,8 @@ public class CustomizeTimelineHandler implements ClickHandler {
         _service = service;
         _timelinePanel = timelinePanel;
 
-        _popup = new PopupPanel(false, true);
+        _popup = new DCPopupPanel("Customize timeline");
         _popup.addStyleName("CustomizeTimelinePopupPanel");
-        _popup.setGlassEnabled(true);
     }
 
     @Override
@@ -60,16 +56,13 @@ public class CustomizeTimelineHandler implements ClickHandler {
 
     public void showPopup() {
         _popup.setWidget(createPopupContent());
+        _popup.addButton(createSaveButton());
+        _popup.addButton(new CancelPopupButton(_popup));
         _popup.center();
         _popup.show();
     }
 
-    private Panel createPopupContent() {
-        _customizeMetricsPanel = new CustomizeMetricsPanel(_service, _timelinePanel.getTenantIdentifier(),
-                _timelinePanel.getTimelineDefinition());
-        _customizeChartOptionsPanel = new CustomizeChartOptionsPanel(_timelinePanel.getTimelineDefinition()
-                .getChartOptions());
-
+    private Button createSaveButton() {
         final Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
             @Override
@@ -84,33 +77,29 @@ public class CustomizeTimelineHandler implements ClickHandler {
                 _popup.hide();
             }
         });
+        return saveButton;
+    }
 
-        final Button cancelButton = new Button("Cancel");
-        cancelButton.addClickHandler(new ClickHandler() {
+    private Widget createPopupContent() {
+        _customizeMetricsPanel = new CustomizeMetricsPanel(_service, _timelinePanel.getTenantIdentifier(),
+                _timelinePanel.getTimelineDefinition()) {
             @Override
-            public void onClick(ClickEvent event) {
-                _popup.hide();
+            protected void onMetricsLoaded() {
+                super.onMetricsLoaded();
+                _popup.center();
             }
-        });
-
-        final FlowPanel buttonPanel = new FlowPanel();
-        buttonPanel.addStyleName("ButtonPanel");
-        buttonPanel.add(saveButton);
-        buttonPanel.add(cancelButton);
-
-        final Label label = new Label("Customize timeline");
-        label.addStyleName("heading");
+        };
+        _customizeChartOptionsPanel = new CustomizeChartOptionsPanel(_timelinePanel.getTimelineDefinition()
+                .getChartOptions()) {
+            
+        };
 
         final TabPanel tabPanel = new TabPanel();
         tabPanel.add(_customizeMetricsPanel, "Metrics");
         tabPanel.add(_customizeChartOptionsPanel, "Chart options");
         tabPanel.selectTab(0);
 
-        final FlowPanel mainPanel = new FlowPanel();
-        mainPanel.add(label);
-        mainPanel.add(tabPanel);
-        mainPanel.add(buttonPanel);
-        return mainPanel;
+        return tabPanel;
     }
 
 }

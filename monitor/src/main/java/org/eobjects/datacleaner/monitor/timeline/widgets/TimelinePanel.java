@@ -162,7 +162,7 @@ public class TimelinePanel extends FlowPanel {
         return _timelineData;
     }
 
-    private FlowPanel createButtonPanel() {
+    private ButtonPanel createButtonPanel() {
         final Button customizeButton = new Button("Customize");
         customizeButton.addClickHandler(new CustomizeTimelineHandler(_service, this));
 
@@ -183,8 +183,7 @@ public class TimelinePanel extends FlowPanel {
             saveButton.setEnabled(false);
         }
 
-        final FlowPanel buttonPanel = new FlowPanel();
-        buttonPanel.addStyleName("TimelineButtonPanel");
+        final ButtonPanel buttonPanel = new ButtonPanel();
         buttonPanel.add(customizeButton);
         buttonPanel.add(copyButton);
         buttonPanel.add(saveButton);

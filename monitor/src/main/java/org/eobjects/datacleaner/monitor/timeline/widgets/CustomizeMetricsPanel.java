@@ -50,22 +50,30 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
         addStyleName("CustomizeMetricsPanel");
         add(new LoadingIndicator());
-        
-        _service.getJobMetrics(_tenantIdentifier, _timelineDefinition.getJobIdentifier(), new DCAsyncCallback<JobMetrics>() {
 
-            @Override
-            public void onSuccess(JobMetrics jobMetrics) {
-                setJobMetrics(jobMetrics);
-            }
-        });
+        _service.getJobMetrics(_tenantIdentifier, _timelineDefinition.getJobIdentifier(),
+                new DCAsyncCallback<JobMetrics>() {
+
+                    @Override
+                    public void onSuccess(JobMetrics jobMetrics) {
+                        setJobMetrics(jobMetrics);
+                    }
+                });
     }
 
-    protected void setJobMetrics(JobMetrics jobMetrics) {
+    private void setJobMetrics(JobMetrics jobMetrics) {
         clear();
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
         for (MetricGroup metricGroup : metricGroups) {
             add(createMetricGroupPanel(metricGroup));
         }
+        onMetricsLoaded();
+    }
+
+    /**
+     * Overrideable method invoked when metrics have been loaded
+     */
+    protected void onMetricsLoaded() {
     }
 
     private FlowPanel createMetricGroupPanel(MetricGroup metricGroup) {

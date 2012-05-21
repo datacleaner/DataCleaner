@@ -29,6 +29,7 @@ import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.border.EmptyBorder;
 
+import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
@@ -70,9 +71,11 @@ public class ValueDistributionResultSwingRenderer extends
 		AbstractRenderer<ValueDistributionResult, JComponent> {
 
 	@Inject
+	@Provided
 	RendererFactory _rendererFactory;
 
 	@Inject
+	@Provided
 	WindowContext _windowContext;
 
 	@Override

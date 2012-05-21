@@ -227,8 +227,7 @@ public class DCModule extends AbstractModule {
 				final MutableDatastoreCatalog datastoreCatalog = new MutableDatastoreCatalog(c.getDatastoreCatalog(),
 						userPreferences);
 				final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
-						c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(new InjectionManagerImpl(
-								datastoreCatalog, null, null), null));
+						c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(new InjectionManagerImpl(c), null));
 				final DescriptorProvider descriptorProvider = c.getDescriptorProvider();
 
 				for (ExtensionPackage extensionPackage : extensionPackages) {
@@ -236,12 +235,13 @@ public class DCModule extends AbstractModule {
 				}
 
 				final StorageProvider storageProvider = c.getStorageProvider();
+				
+				// TODO: 'c' does not have the new/improved catalogs in it at this point.
 
-				final InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl(
-						datastoreCatalog, referenceDataCatalog, storageProvider) {
+				final InjectionManagerFactory injectionManagerFactory = new InjectionManagerFactoryImpl() {
 					@Override
-					public InjectionManager getInjectionManager(AnalysisJob job) {
-						InjectionManager injectionManager = super.getInjectionManager(job);
+					public InjectionManager getInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job) {
+						InjectionManager injectionManager = super.getInjectionManager(configuration, job);
 						return new DCInjectionManager(injectionManager, DCModule.this);
 					}
 				};

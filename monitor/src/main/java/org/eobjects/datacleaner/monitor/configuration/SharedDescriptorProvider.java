@@ -53,7 +53,8 @@ public class SharedDescriptorProvider implements DescriptorProvider {
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
             if (applicationContext == null) {
-                // use a hard-coded descriptor provider (will only occur in test scenarios)
+                // use a hard-coded descriptor provider (will only occur in test
+                // scenarios)
                 ClasspathScanDescriptorProvider scanner = new ClasspathScanDescriptorProvider();
                 scanner.scanPackage("org.eobjects.analyzer.beans", true);
                 scanner.scanPackage("org.eobjects.analyzer.result.renderer", false);
@@ -113,17 +114,17 @@ public class SharedDescriptorProvider implements DescriptorProvider {
     }
 
     @Override
-    public RendererBeanDescriptor getRendererBeanDescriptorForClass(Class<? extends Renderer<?, ?>> arg0) {
+    public <R extends Renderer<?, ?>> RendererBeanDescriptor<R> getRendererBeanDescriptorForClass(Class<R> arg0) {
         return getDelegate().getRendererBeanDescriptorForClass(arg0);
     }
 
     @Override
-    public Collection<RendererBeanDescriptor> getRendererBeanDescriptors() {
+    public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptors() {
         return getDelegate().getRendererBeanDescriptors();
     }
 
     @Override
-    public Collection<RendererBeanDescriptor> getRendererBeanDescriptorsForRenderingFormat(
+    public Collection<RendererBeanDescriptor<?>> getRendererBeanDescriptorsForRenderingFormat(
             Class<? extends RenderingFormat<?>> arg0) {
         return getDelegate().getRendererBeanDescriptorsForRenderingFormat(arg0);
     }

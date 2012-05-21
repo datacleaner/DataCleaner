@@ -22,23 +22,24 @@ package org.eobjects.datacleaner.widgets.result;
 import javax.inject.Inject;
 
 import org.eobjects.analyzer.beans.api.Renderer;
+import org.eobjects.analyzer.descriptors.RendererBeanDescriptor;
 import org.eobjects.analyzer.result.renderer.RendererInitializer;
 
 import com.google.inject.Injector;
 
 public class DCRendererInitializer implements RendererInitializer {
 
-	private final Injector _injector;
+    private final Injector _injector;
 
-	@Inject
-	protected DCRendererInitializer(Injector injector) {
-		_injector = injector;
-	}
+    @Inject
+    protected DCRendererInitializer(Injector injector) {
+        _injector = injector;
+    }
 
-	@Override
-	public void initialize(Renderer<?, ?> renderer) {
-		// use google guice to perform the injections
-		_injector.injectMembers(renderer);
-	}
+    @Override
+    public void initialize(RendererBeanDescriptor<?> descriptor, Renderer<?, ?> renderer) {
+        // use google guice to perform the injections
+        _injector.injectMembers(renderer);
+    }
 
 }

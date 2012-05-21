@@ -28,7 +28,6 @@ import junit.framework.TestCase;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
-import org.eobjects.analyzer.configuration.InjectionManagerImpl;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
@@ -47,8 +46,7 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 	private AnalyzerJobBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
 	private ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
 			"Dictionary array property");
-	private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(new InjectionManagerImpl(
-			configuration.getDatastoreCatalog(), null, null), null);
+	private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration.getInjectionManager(null), null);
 	private MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
 			configuration.getReferenceDataCatalog(), new UserPreferencesImpl(null), lifeCycleHelper);
 	private Provider<ReferenceDataDialog> referenceDataDialogProvider = null;

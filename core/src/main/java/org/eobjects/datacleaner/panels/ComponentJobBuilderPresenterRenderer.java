@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.panels;
 
 import javax.inject.Inject;
 
+import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
@@ -43,12 +44,15 @@ public class ComponentJobBuilderPresenterRenderer implements
 		Renderer<AbstractBeanJobBuilder<?, ?, ?>, ComponentJobBuilderPresenter> {
 
 	@Inject
+	@Provided
 	WindowContext windowContext;
 
 	@Inject
+	@Provided
 	AnalyzerBeansConfiguration configuration;
 
 	@Inject
+	@Provided
 	InjectorBuilder injectorBuilder;
 
 	@Override

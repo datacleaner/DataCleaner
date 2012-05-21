@@ -60,7 +60,6 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
 import org.eobjects.datacleaner.util.ResourceManager;
-import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 import org.eobjects.metamodel.util.ImmutableRef;
@@ -298,9 +297,8 @@ public class DCModule extends AbstractModule {
 	}
 
 	@Provides
-	public RendererFactory getRendererFactory(DescriptorProvider descriptorProvider,
-			DCRendererInitializer rendererInitializer) {
-		return new RendererFactory(descriptorProvider, rendererInitializer);
+	public RendererFactory getRendererFactory(AnalyzerBeansConfiguration configuration) {
+		return new RendererFactory(configuration);
 	}
 
 	@Provides

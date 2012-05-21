@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -68,7 +67,6 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
-import org.eobjects.datacleaner.widgets.result.DCRendererInitializer;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.schema.Table;
 
@@ -104,13 +102,13 @@ public final class ResultWindow extends AbstractWindow {
     @Inject
     protected ResultWindow(AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job,
             @Nullable AnalysisResult result, @Nullable @JobFilename String jobFilename, WindowContext windowContext,
-            UserPreferences userPreferences, Provider<DCRendererInitializer> rendererInitializerProvider) {
+            UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
         _userPreferences = userPreferences;
-        _rendererFactory = new RendererFactory(configuration.getDescriptorProvider(), rendererInitializerProvider.get());
+        _rendererFactory = rendererFactory;
         _progressInformationPanel = new ProgressInformationPanel();
         _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
                 _progressInformationPanel);

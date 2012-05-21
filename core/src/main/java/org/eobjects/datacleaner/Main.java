@@ -41,7 +41,7 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
  */
 public final class Main {
 
-	public static final String VERSION = "2.5.2";
+	public static final String VERSION = "3.0-SNAPSHOT";
 
 	public static void main(String[] args) {
 		initializeSystemProperties(args);

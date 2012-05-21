@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -63,7 +64,8 @@ public final class HttpXmlUtils {
 
 	private final UserPreferences _userPreferences;
 
-	public HttpXmlUtils(UserPreferences userPreferences) {
+	@Inject
+	protected HttpXmlUtils(UserPreferences userPreferences) {
 		_userPreferences = userPreferences;
 	}
 

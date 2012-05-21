@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import javax.inject.Inject;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -55,7 +57,8 @@ public final class UsageLogger {
 	private final HttpXmlUtils _httpXmlUtils;
 	private final ExecutorService _executorService;
 
-	public UsageLogger(UserPreferences userPreferences, HttpXmlUtils httpXmlUtils) {
+	@Inject
+	protected UsageLogger(UserPreferences userPreferences, HttpXmlUtils httpXmlUtils) {
 		_userPreferences = userPreferences;
 		_httpXmlUtils = httpXmlUtils;
 		_executorService = SharedExecutorService.get();

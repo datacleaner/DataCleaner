@@ -128,8 +128,8 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-
-		Injector injector = Guice.createInjector(new DCModule(_parentModule, null) {
+		
+		final Injector injector = Guice.createInjector(new DCModule(_parentModule, null) {
 			public String getJobFilename() {
 				return file.getName();
 			};
@@ -140,8 +140,8 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 			}
 
 			@Override
-			public AnalysisJobBuilder getAnalysisJobBuilder() {
-				return null;
+			public AnalysisJobBuilder getAnalysisJobBuilder(AnalyzerBeansConfiguration configuration) {
+			    return null;
 			}
 		});
 

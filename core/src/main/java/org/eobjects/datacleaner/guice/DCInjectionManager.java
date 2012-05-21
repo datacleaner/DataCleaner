@@ -19,41 +19,34 @@
  */
 package org.eobjects.datacleaner.guice;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManager;
+import org.eobjects.analyzer.configuration.InjectionManagerImpl;
 import org.eobjects.analyzer.configuration.InjectionPoint;
-import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.analyzer.job.AnalysisJob;
 
 /**
- * Wraps a standard {@link InjectionManager} and adds support for certain types
- * of DataCleaner that should be available to eg. Output writing analyzers.
+ * Wraps a standard {@link InjectionManager} and adds support for all Guice based injections (only triggered in case the standard {@link InjectionManager} is not useful 
  * 
  * @author Kasper Sørensen
- * 
  */
-final class DCInjectionManager implements InjectionManager {
+final class DCInjectionManager extends InjectionManagerImpl {
 
-	private final InjectionManager _delegate;
-	private final DCModule _module;
+    private final InjectorBuilder _injectorBuilder;
 
-	public DCInjectionManager(InjectionManager delegate, DCModule module) {
-		_delegate = delegate;
-		_module = module;
-	}
+    public DCInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job, InjectorBuilder injectorBuilder) {
+        super(configuration, job);
+        _injectorBuilder = injectorBuilder;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <E> E getInstance(InjectionPoint<E> injectionPoint) {
-		E instance = _delegate.getInstance(injectionPoint);
-		if (instance == null) {
-			Class<E> baseType = injectionPoint.getBaseType();
-			if (baseType == UserPreferences.class) {
-				instance = (E) _module.getUserPreferences();
-			} else if (baseType == WindowContext.class) {
-				instance = (E) _module.getWindowContext();
-			}
-		}
-		return instance;
-	}
+    @Override
+    public <E> E getInstance(InjectionPoint<E> injectionPoint) {
+        E instance = super.getInstance(injectionPoint);
+        if (instance == null) {
+            Class<E> baseType = injectionPoint.getBaseType();
+            instance = _injectorBuilder.getInstance(baseType);
+        }
+        return instance;
+    }
 
 }

@@ -26,7 +26,9 @@ import org.eobjects.analyzer.configuration.InjectionPoint;
 import org.eobjects.analyzer.job.AnalysisJob;
 
 /**
- * Wraps a standard {@link InjectionManager} and adds support for all Guice based injections (only triggered in case the standard {@link InjectionManager} is not useful 
+ * Wraps a standard {@link InjectionManager} and adds support for all Guice
+ * based injections (only triggered in case the standard
+ * {@link InjectionManager} is not useful
  * 
  * @author Kasper Sørensen
  */
@@ -40,10 +42,10 @@ final class DCInjectionManager extends InjectionManagerImpl {
     }
 
     @Override
-    public <E> E getInstance(InjectionPoint<E> injectionPoint) {
-        E instance = super.getInstance(injectionPoint);
+    protected Object getInstanceInternal(InjectionPoint<?> injectionPoint) {
+        Object instance = super.getInstanceInternal(injectionPoint);
         if (instance == null) {
-            Class<E> baseType = injectionPoint.getBaseType();
+            Class<?> baseType = injectionPoint.getBaseType();
             instance = _injectorBuilder.getInstance(baseType);
         }
         return instance;

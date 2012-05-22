@@ -63,151 +63,149 @@ import com.google.inject.util.Providers;
  */
 public class OpenAnalysisJobActionListener implements ActionListener {
 
-	private final AnalyzerBeansConfiguration _configuration;
-	private final AnalysisJobBuilderWindow _parentWindow;
-	private final WindowContext _windowContext;
-	private final DCModule _parentModule;
-	private final UserPreferences _userPreferences;
-	private final UsageLogger _usageLogger;
+    private final AnalyzerBeansConfiguration _configuration;
+    private final AnalysisJobBuilderWindow _parentWindow;
+    private final WindowContext _windowContext;
+    private final DCModule _parentModule;
+    private final UserPreferences _userPreferences;
+    private final UsageLogger _usageLogger;
 
-	@Inject
-	protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow,
-			AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule,
-			UserPreferences userPreferences, UsageLogger usageLogger) {
-		_parentWindow = parentWindow;
-		_configuration = configuration;
-		_windowContext = windowContext;
-		_parentModule = parentModule;
-		_userPreferences = userPreferences;
-		_usageLogger = usageLogger;
-	}
+    @Inject
+    protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow,
+            AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule,
+            UserPreferences userPreferences, UsageLogger usageLogger) {
+        _parentWindow = parentWindow;
+        _configuration = configuration;
+        _windowContext = windowContext;
+        _parentModule = parentModule;
+        _userPreferences = userPreferences;
+        _usageLogger = usageLogger;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		_usageLogger.log("Open analysis job");
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        _usageLogger.log("Open analysis job");
 
-		DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
+        DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
 
-		OpenAnalysisJobFileChooserAccessory accessory = new OpenAnalysisJobFileChooserAccessory(_windowContext,
-				_configuration, fileChooser, Providers.of(this));
-		fileChooser.setAccessory(accessory);
+        OpenAnalysisJobFileChooserAccessory accessory = new OpenAnalysisJobFileChooserAccessory(_windowContext,
+                _configuration, fileChooser, Providers.of(this));
+        fileChooser.setAccessory(accessory);
 
-		fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_XML);
-		fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_RESULT_SER);
-		fileChooser.setFileFilter(FileFilters.combined("DataCleaner analysis files", FileFilters.ANALYSIS_XML,
-				FileFilters.ANALYSIS_RESULT_SER));
-		int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
+        fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_XML);
+        fileChooser.addChoosableFileFilter(FileFilters.ANALYSIS_RESULT_SER);
+        fileChooser.setFileFilter(FileFilters.combined("DataCleaner analysis files", FileFilters.ANALYSIS_XML,
+                FileFilters.ANALYSIS_RESULT_SER));
+        int openFileResult = fileChooser.showOpenDialog((Component) event.getSource());
 
-		if (openFileResult == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			openFile(file);
-		}
-	}
+        if (openFileResult == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            openFile(file);
+        }
+    }
 
-	public static AnalysisJobBuilderWindow open(File file, AnalyzerBeansConfiguration configuration, Injector injector) {
-		UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
-		OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
-				configuration, null, injector.getInstance(DCModule.class), userPreferences, null);
-		return openAnalysisJobActionListener.openAnalysisJob(file);
-	}
+    public static AnalysisJobBuilderWindow open(File file, AnalyzerBeansConfiguration configuration, Injector injector) {
+        UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
+        OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
+                configuration, null, injector.getInstance(DCModule.class), userPreferences, null);
+        return openAnalysisJobActionListener.openAnalysisJob(file);
+    }
 
-	public void openFile(File file) {
-		if (file.getName().toLowerCase().endsWith(FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
-			openAnalysisResult(file, _parentModule, true);
-		} else {
-			openAnalysisJob(file);
-		}
-	}
+    public void openFile(File file) {
+        if (file.getName().toLowerCase().endsWith(FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
+            openAnalysisResult(file, _parentModule);
+        } else {
+            openAnalysisJob(file);
+        }
+    }
 
-	public static ResultWindow openAnalysisResult(final File file, DCModule parentModule, boolean setVisible) {
-		final AnalysisResult analysisResult;
-		try {
-			ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file));
-			is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
-			analysisResult = (AnalysisResult) is.readObject();
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-		
-		final Injector injector = Guice.createInjector(new DCModule(parentModule, null) {
-			public String getJobFilename() {
-				return file.getName();
-			};
+    public static ResultWindow openAnalysisResult(final File file, DCModule parentModule) {
+        final AnalysisResult analysisResult;
+        try {
+            ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file));
+            is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
+            analysisResult = (AnalysisResult) is.readObject();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
 
-			@Override
-			public AnalysisResult getAnalysisResult() {
-				return analysisResult;
-			}
+        final Injector injector = Guice.createInjector(new DCModule(parentModule, null) {
+            public String getJobFilename() {
+                return file.getName();
+            };
 
-			@Override
-			public AnalysisJobBuilder getAnalysisJobBuilder(AnalyzerBeansConfiguration configuration) {
-			    return null;
-			}
-		});
+            @Override
+            public AnalysisResult getAnalysisResult() {
+                return analysisResult;
+            }
 
-		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
-		if (setVisible) {
-		    resultWindow.setVisible(true);
-		}
-		return resultWindow;
-	}
+            @Override
+            public AnalysisJobBuilder getAnalysisJobBuilder(AnalyzerBeansConfiguration configuration) {
+                return null;
+            }
+        });
 
-	/**
-	 * Opens a job file
-	 * 
-	 * @param file
-	 * @return
-	 */
-	public AnalysisJobBuilderWindow openAnalysisJob(File file) {
-		JaxbJobReader reader = new JaxbJobReader(_configuration);
-		try {
-			AnalysisJobBuilder ajb = reader.create(file);
+        ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
+        resultWindow.open();
+        return resultWindow;
+    }
 
-			return openAnalysisJob(file, ajb);
-		} catch (NoSuchDatastoreException e) {
-			if (_windowContext == null) {
-				// This can happen in case of single-datastore + job file
-				// bootstrapping of DC
-				throw e;
-			}
+    /**
+     * Opens a job file
+     * 
+     * @param file
+     * @return
+     */
+    public AnalysisJobBuilderWindow openAnalysisJob(File file) {
+        JaxbJobReader reader = new JaxbJobReader(_configuration);
+        try {
+            AnalysisJobBuilder ajb = reader.create(file);
 
-			AnalysisJobMetadata metadata = reader.readMetadata(file);
-			int result = JOptionPane.showConfirmDialog(null, e.getMessage()
-					+ "\n\nDo you wish to open this job as a template?", "Error: " + e.getMessage(),
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-			if (result == JOptionPane.OK_OPTION) {
-				OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext,
-						_configuration, file, metadata, Providers.of(this));
-				dialog.setVisible(true);
-			}
-			return null;
-		}
-	}
+            return openAnalysisJob(file, ajb);
+        } catch (NoSuchDatastoreException e) {
+            if (_windowContext == null) {
+                // This can happen in case of single-datastore + job file
+                // bootstrapping of DC
+                throw e;
+            }
 
-	/**
-	 * Opens a job builder
-	 * 
-	 * @param file
-	 * @param ajb
-	 * @return
-	 */
-	public AnalysisJobBuilderWindow openAnalysisJob(final File file, final AnalysisJobBuilder ajb) {
-		_userPreferences.setAnalysisJobDirectory(file.getParentFile());
-		_userPreferences.addRecentJobFile(file);
+            AnalysisJobMetadata metadata = reader.readMetadata(file);
+            int result = JOptionPane.showConfirmDialog(null, e.getMessage()
+                    + "\n\nDo you wish to open this job as a template?", "Error: " + e.getMessage(),
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                OpenAnalysisJobAsTemplateDialog dialog = new OpenAnalysisJobAsTemplateDialog(_windowContext,
+                        _configuration, file, metadata, Providers.of(this));
+                dialog.setVisible(true);
+            }
+            return null;
+        }
+    }
 
-		Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb) {
-			public String getJobFilename() {
-				return file.getName();
-			};
-		});
+    /**
+     * Opens a job builder
+     * 
+     * @param file
+     * @param ajb
+     * @return
+     */
+    public AnalysisJobBuilderWindow openAnalysisJob(final File file, final AnalysisJobBuilder ajb) {
+        _userPreferences.setAnalysisJobDirectory(file.getParentFile());
+        _userPreferences.addRecentJobFile(file);
 
-		AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-		window.open();
+        Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb) {
+            public String getJobFilename() {
+                return file.getName();
+            };
+        });
 
-		if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
-			_parentWindow.close();
-		}
+        AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+        window.open();
 
-		return window;
-	}
+        if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
+            _parentWindow.close();
+        }
+
+        return window;
+    }
 }

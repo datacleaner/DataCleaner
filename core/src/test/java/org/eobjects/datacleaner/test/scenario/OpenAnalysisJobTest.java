@@ -24,6 +24,7 @@ import java.io.File;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 import com.google.inject.Guice;
@@ -32,6 +33,12 @@ import com.google.inject.Injector;
 import junit.framework.TestCase;
 
 public class OpenAnalysisJobTest extends TestCase {
+    
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        System.setProperty(AbstractWindow.SYSTEM_PROPERTY_HIDE_WINDOWS, "true");
+    }
 
     /**
      * A very broad integration test which opens a job with (more or less) all

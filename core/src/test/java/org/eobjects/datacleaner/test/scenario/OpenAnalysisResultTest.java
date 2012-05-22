@@ -25,9 +25,16 @@ import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
 public class OpenAnalysisResultTest extends TestCase {
+    
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        System.setProperty(AbstractWindow.SYSTEM_PROPERTY_HIDE_WINDOWS, "true");
+    }
 
     /**
      * A very broad integration test which opens a result with (more or less)
@@ -40,7 +47,7 @@ public class OpenAnalysisResultTest extends TestCase {
 
         File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
 
-        ResultWindow window = OpenAnalysisJobActionListener.openAnalysisResult(file, module, false);
+        ResultWindow window = OpenAnalysisJobActionListener.openAnalysisResult(file, module);
         assertNotNull(window);
 
         assertEquals("all_analyzers.analysis.result.dat | Analysis results", window.getWindowTitle());

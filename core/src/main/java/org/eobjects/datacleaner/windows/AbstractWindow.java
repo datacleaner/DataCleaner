@@ -33,160 +33,172 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 
 public abstract class AbstractWindow extends JFrame implements DCWindow, WindowListener {
 
-	private static final long serialVersionUID = 1L;
-	private volatile boolean initialized = false;
-	private final WindowContext _windowContext;
+    /**
+     * System property (see {@link System#setProperty(String, String)} which can
+     * be set to "true" in case windows should not be opened when
+     * {@link #open()} is called. This can be useful for eg. testing.
+     */
+    public static final String SYSTEM_PROPERTY_HIDE_WINDOWS = "DataCleaner.Windows.Hide";
 
-	public AbstractWindow(WindowContext windowContext) {
-		_windowContext = windowContext;
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(this);
-		getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
-	}
+    private static final long serialVersionUID = 1L;
+    private volatile boolean initialized = false;
+    private final WindowContext _windowContext;
 
-	protected void initialize() {
-		updateWindowTitle();
-		setIconImage(getWindowIcon());
-		setResizable(isWindowResizable());
+    public AbstractWindow(WindowContext windowContext) {
+        _windowContext = windowContext;
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(this);
+        getContentPane().setBackground(WidgetUtils.BG_COLOR_BRIGHT);
+    }
 
-		JComponent content = getWindowContent();
-		getContentPane().add(content);
+    protected void initialize() {
+        updateWindowTitle();
+        setIconImage(getWindowIcon());
+        setResizable(isWindowResizable());
 
-		autoSetSize(content);
+        JComponent content = getWindowContent();
+        getContentPane().add(content);
 
-		_windowContext.onShow(this);
-	}
+        autoSetSize(content);
 
-	public Dimension autoSetSize() {
-		return autoSetSize(getContentPane().getComponent(0));
-	}
-	
-	@Override
-	public void open() {
-		setVisible(true);
-	}
+        _windowContext.onShow(this);
+    }
 
-	@Override
-	public void close() {
-		if (isVisible()) {
-			dispose();
-		}
-	}
+    public Dimension autoSetSize() {
+        return autoSetSize(getContentPane().getComponent(0));
+    }
 
-	public Dimension autoSetSize(Component content) {
+    @Override
+    public void open() {
+        if ("true".equals(System.getProperty(SYSTEM_PROPERTY_HIDE_WINDOWS))) {
+            // simulate that the window has opened.
+            initialize();
+            return;
+        }
+        setVisible(true);
+    }
 
-		Dimension preferredSize = content.getPreferredSize();
+    @Override
+    public void close() {
+        if (isVisible()) {
+            dispose();
+        }
+    }
 
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
+    public Dimension autoSetSize(Component content) {
 
-		int maxWidth = toolkit.getScreenSize().width - 30;
-		int maxHeight = toolkit.getScreenSize().height - 30;
-		preferredSize.width = Math.min(preferredSize.width, maxWidth);
-		preferredSize.height = Math.min(preferredSize.height, maxHeight);
+        Dimension preferredSize = content.getPreferredSize();
 
-		if (isVisible()) {
-			Dimension currentSize = getContentPane().getSize();
-			preferredSize.width = Math.max(preferredSize.width, currentSize.width);
-			preferredSize.width = Math.max(preferredSize.height, currentSize.height);
-		}
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
 
-		getContentPane().setPreferredSize(preferredSize);
-		pack();
+        int maxWidth = toolkit.getScreenSize().width - 30;
+        int maxHeight = toolkit.getScreenSize().height - 30;
+        preferredSize.width = Math.min(preferredSize.width, maxWidth);
+        preferredSize.height = Math.min(preferredSize.height, maxHeight);
 
-		if (isCentered()) {
-			centerOnScreen();
-		}
+        if (isVisible()) {
+            Dimension currentSize = getContentPane().getSize();
+            preferredSize.width = Math.max(preferredSize.width, currentSize.width);
+            preferredSize.width = Math.max(preferredSize.height, currentSize.height);
+        }
 
-		return preferredSize;
-	}
+        getContentPane().setPreferredSize(preferredSize);
+        pack();
 
-	protected abstract boolean isWindowResizable();
+        if (isCentered()) {
+            centerOnScreen();
+        }
 
-	protected abstract boolean isCentered();
+        return preferredSize;
+    }
 
-	@Override
-	public final void setVisible(boolean b) {
-		if (b == false) {
-			throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
-		}
-		if (!initialized) {
-			initialized = true;
-			initialize();
-		}
-		super.setVisible(true);
-		onWindowVisible();
-	}
+    protected abstract boolean isWindowResizable();
 
-	protected void onWindowVisible() {
-	}
+    protected abstract boolean isCentered();
 
-	protected void updateWindowTitle() {
-		String windowTitle = getWindowTitle();
-		if (windowTitle == null) {
-			windowTitle = "DataCleaner";
-		} else {
-			if (windowTitle.indexOf("DataCleaner") == -1) {
-				windowTitle = windowTitle + " | DataCleaner";
-			}
-		}
-		setTitle(windowTitle);
-	}
+    @Override
+    public final void setVisible(boolean b) {
+        if (b == false) {
+            throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
+        }
+        if (!initialized) {
+            initialized = true;
+            initialize();
+        }
+        super.setVisible(true);
+        onWindowVisible();
+    }
 
-	protected abstract JComponent getWindowContent();
+    protected void onWindowVisible() {
+    }
 
-	public void centerOnScreen() {
-		WidgetUtils.centerOnScreen(this);
-	}
+    protected void updateWindowTitle() {
+        String windowTitle = getWindowTitle();
+        if (windowTitle == null) {
+            windowTitle = "DataCleaner";
+        } else {
+            if (windowTitle.indexOf("DataCleaner") == -1) {
+                windowTitle = windowTitle + " | DataCleaner";
+            }
+        }
+        setTitle(windowTitle);
+    }
 
-	@Override
-	public void windowOpened(WindowEvent e) {
-	}
+    protected abstract JComponent getWindowContent();
 
-	@Override
-	public final void windowClosing(WindowEvent e) {
-		boolean dispose = onWindowClosing();
-		if (dispose) {
-			dispose();
-		}
-	}
+    public void centerOnScreen() {
+        WidgetUtils.centerOnScreen(this);
+    }
 
-	@Override
-	public void dispose() {
-		_windowContext.onDispose(this);
-		super.dispose();
-	}
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
 
-	@Override
-	public WindowContext getWindowContext() {
-		return _windowContext;
-	}
+    @Override
+    public final void windowClosing(WindowEvent e) {
+        boolean dispose = onWindowClosing();
+        if (dispose) {
+            dispose();
+        }
+    }
 
-	protected boolean onWindowClosing() {
-		return true;
-	}
+    @Override
+    public void dispose() {
+        _windowContext.onDispose(this);
+        super.dispose();
+    }
 
-	@Override
-	public void windowClosed(WindowEvent e) {
-	}
+    @Override
+    public WindowContext getWindowContext() {
+        return _windowContext;
+    }
 
-	@Override
-	public void windowIconified(WindowEvent e) {
-	}
+    protected boolean onWindowClosing() {
+        return true;
+    }
 
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-	}
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
 
-	@Override
-	public void windowActivated(WindowEvent e) {
-	}
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
 
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-	}
-	
-	@Override
-	public Component toComponent() {
-		return this;
-	}
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+    }
+
+    @Override
+    public Component toComponent() {
+        return this;
+    }
 }

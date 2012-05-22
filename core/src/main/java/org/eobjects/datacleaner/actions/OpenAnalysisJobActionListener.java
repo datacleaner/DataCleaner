@@ -113,13 +113,13 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
 	public void openFile(File file) {
 		if (file.getName().toLowerCase().endsWith(FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
-			openAnalysisResult(file);
+			openAnalysisResult(file, _parentModule, true);
 		} else {
 			openAnalysisJob(file);
 		}
 	}
 
-	public void openAnalysisResult(final File file) {
+	public static ResultWindow openAnalysisResult(final File file, DCModule parentModule, boolean setVisible) {
 		final AnalysisResult analysisResult;
 		try {
 			ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file));
@@ -129,7 +129,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 			throw new IllegalStateException(e);
 		}
 		
-		final Injector injector = Guice.createInjector(new DCModule(_parentModule, null) {
+		final Injector injector = Guice.createInjector(new DCModule(parentModule, null) {
 			public String getJobFilename() {
 				return file.getName();
 			};
@@ -146,7 +146,10 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 		});
 
 		ResultWindow resultWindow = injector.getInstance(ResultWindow.class);
-		resultWindow.setVisible(true);
+		if (setVisible) {
+		    resultWindow.setVisible(true);
+		}
+		return resultWindow;
 	}
 
 	/**

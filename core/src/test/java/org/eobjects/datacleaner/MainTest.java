@@ -32,5 +32,9 @@ public class MainTest extends TestCase {
 		assertEquals(2, properties.size());
 		assertEquals("foobar", properties.get("datastoreCatalog.orderdb.url"));
 		assertEquals("bar", properties.get("foo"));
+		
+		// clean up
+		System.clearProperty("datastoreCatalog.orderdb.url");
+		System.clearProperty("foo");
 	}
 }

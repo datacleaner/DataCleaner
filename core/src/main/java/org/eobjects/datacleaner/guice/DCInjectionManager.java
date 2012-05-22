@@ -24,6 +24,8 @@ import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.configuration.InjectionManagerImpl;
 import org.eobjects.analyzer.configuration.InjectionPoint;
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wraps a standard {@link InjectionManager} and adds support for all Guice
@@ -33,6 +35,8 @@ import org.eobjects.analyzer.job.AnalysisJob;
  * @author Kasper Sørensen
  */
 final class DCInjectionManager extends InjectionManagerImpl {
+
+    private static final Logger logger = LoggerFactory.getLogger(DCInjectionManager.class);
 
     private final InjectorBuilder _injectorBuilder;
 
@@ -46,7 +50,11 @@ final class DCInjectionManager extends InjectionManagerImpl {
         Object instance = super.getInstanceInternal(injectionPoint);
         if (instance == null) {
             Class<?> baseType = injectionPoint.getBaseType();
-            instance = _injectorBuilder.getInstance(baseType);
+            try {
+                instance = _injectorBuilder.getInstance(baseType);
+            } catch (Exception e) {
+                logger.warn("Error occurred while getting guice instance for injection point: " + injectionPoint, e);
+            }
         }
         return instance;
     }

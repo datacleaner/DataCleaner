@@ -49,9 +49,9 @@ public class OpenAnalysisJobTest extends TestCase {
     public void testOpenJobWithAllAnalyzers() throws Exception {
         DCModule module = new DCModule(new File("."));
         Injector injector = Guice.createInjector(module);
+        AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
         File file = new File("src/test/resources/all_analyzers.analysis.xml");
-        AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
         AnalysisJobBuilderWindow window = OpenAnalysisJobActionListener.open(file, configuration, injector);
         assertNotNull(window);

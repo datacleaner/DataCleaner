@@ -177,6 +177,7 @@ public class TimelinePanel extends FlowPanel {
         });
 
         final Button saveButton = new Button("Save");
+        saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
         if (_timelineIdentifier != null) {
             // initially does not make sense to save an (unchanged) and
             // identifyable timeline.

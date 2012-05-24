@@ -28,6 +28,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
@@ -75,15 +76,24 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
         final Date date = _data.getValueDate(row, 0);
         final String resultFilePath = _data.getProperty(row, 0, PROPERTY_NAME_RESULT_FILE);
         final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
+        final String url = "../repository" + resultFilePath;
 
         final Button showResultButton = new Button("Show results");
         showResultButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                Frame frame = new Frame("../repository" + resultFilePath);
+                Frame frame = new Frame(url);
                 frame.setPixelSize(800, 500);
                 _popup.setWidget(frame);
                 _popup.center();
+            }
+        });
+
+        final Button showResultFullPageButton = new Button("Show results (new window)");
+        showResultFullPageButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open(url, "_blank", null);
             }
         });
 
@@ -92,10 +102,10 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
                 .appendEscapedLines("\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?")
                 .toSafeHtml();
 
-        
         _popup.setWidget(new HTML(labelHtml));
         _popup.removeButtons();
         _popup.addButton(showResultButton);
+        _popup.addButton(showResultFullPageButton);
         _popup.addButton(new CancelPopupButton(_popup));
         _popup.center();
         _popup.show();

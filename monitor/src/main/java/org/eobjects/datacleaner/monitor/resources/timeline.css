@@ -121,9 +121,14 @@
 
 .MetricGroupPanel .StringParameterizedMetricsPresenter {
 	clear: both;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	margin-left: 15px;
+	padding: 4px;
+	border: 1px solid #f0f0f0;
 }
 
-.MetricGroupPanel .StringParameterizedMetricsPresenter .gwt-Label {
-	float: left;
-	width: 100px;
+.MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricPresenterAddButton {
+	float: right;
+	margin-top: -10px;
 }

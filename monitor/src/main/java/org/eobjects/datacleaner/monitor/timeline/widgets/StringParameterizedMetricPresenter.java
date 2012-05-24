@@ -26,6 +26,7 @@ import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -39,45 +40,77 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
     private final MetricIdentifier _metricIdentifier;
     private final List<MetricIdentifier> _activeMetrics;
     private final FlowPanel _panel;
-    private final List<MetricIdentifier> _selectedMetrics;
+    private final List<MetricPanel> _selectedMetricPanels;
+
+    public final class MetricPanel extends FlowPanel {
+        private final CheckBox _checkBox;
+        private final StringParameterizedMetricTextBox _suggestBox;
+
+        public MetricPanel(final MetricIdentifier metric) {
+            super();
+            addStyleName("StringParameterizedMetricPresenterMetricPanel");
+            _checkBox = new CheckBox();
+            _checkBox.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    if (_checkBox.getValue().booleanValue()) {
+                        _selectedMetricPanels.add(MetricPanel.this);
+                    } else {
+                        _selectedMetricPanels.remove(MetricPanel.this);
+                    }
+                }
+            });
+            if (isActiveMetric(metric)) {
+                _checkBox.setValue(true);
+                _selectedMetricPanels.add(MetricPanel.this);
+            } else {
+                _checkBox.setValue(false);
+            }
+            _suggestBox = new StringParameterizedMetricTextBox(metric.getParamQueryString());
+            add(_checkBox);
+            add(_suggestBox);
+        }
+
+        public MetricIdentifier createMetricIdentifier() {
+            MetricIdentifier copy = _metricIdentifier.copy();
+            copy.setParamQueryString(_suggestBox.getText());
+            return copy;
+        }
+    }
 
     public StringParameterizedMetricPresenter(MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics) {
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
-        _selectedMetrics = new ArrayList<MetricIdentifier>();
+        _selectedMetricPanels = new ArrayList<MetricPanel>();
         _panel = new FlowPanel();
         _panel.addStyleName("StringParameterizedMetricsPresenter");
 
-        _panel.add(new Label(_metricIdentifier.getMetricDescriptorName() + ":"));
-
-        for (MetricIdentifier activeMetric : activeMetrics) {
-            if (activeMetric.equalsIgnoreParameterValues(metricIdentifier)) {
-                Widget widget = createMetricWidget(activeMetric);
-                _panel.add(widget);
-            }
-        }
-        // TODO: Also provide option to add new metrics with parameters
-    }
-
-    private Widget createMetricWidget(final MetricIdentifier metric) {
-        final CheckBox checkBox = new CheckBox(metric.getParamQueryString());
-        checkBox.addClickHandler(new ClickHandler() {
+        final Button addButton = new Button("Add");
+        addButton.addStyleName("StringParameterizedMetricPresenterAddButton");
+        addButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if (checkBox.getValue().booleanValue()) {
-                    _selectedMetrics.add(metric);
-                } else {
-                    _selectedMetrics.remove(metric);
-                }
+                addMetricPanel(_metricIdentifier);
             }
         });
-        if (isActiveMetric(metric)) {
-            checkBox.setValue(true);
-            _selectedMetrics.add(metric);
-        } else {
-            checkBox.setValue(false);
+
+        _panel.add(new Label(_metricIdentifier.getMetricDescriptorName() + ":"));
+        _panel.add(addButton);
+
+        for (MetricIdentifier activeMetric : activeMetrics) {
+            if (activeMetric.equalsIgnoreParameterValues(_metricIdentifier)) {
+                addMetricPanel(activeMetric);
+            }
         }
-        return checkBox;
+
+        if (_selectedMetricPanels.isEmpty()) {
+            addMetricPanel(_metricIdentifier);
+        }
+    }
+
+    private void addMetricPanel(MetricIdentifier metric) {
+        Widget widget = new MetricPanel(metric);
+        _panel.add(widget);
     }
 
     private boolean isActiveMetric(MetricIdentifier metric) {
@@ -96,7 +129,12 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
 
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
-        return _selectedMetrics;
+        List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
+        for (MetricPanel panel : _selectedMetricPanels) {
+            MetricIdentifier metricIdentifier = panel.createMetricIdentifier();
+            result.add(metricIdentifier);
+        }
+        return result;
     }
 
 }

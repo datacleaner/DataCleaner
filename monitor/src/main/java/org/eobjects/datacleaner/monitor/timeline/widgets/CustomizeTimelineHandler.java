@@ -47,6 +47,8 @@ public class CustomizeTimelineHandler implements ClickHandler {
 
         _popup = new DCPopupPanel("Customize timeline");
         _popup.addStyleName("CustomizeTimelinePopupPanel");
+        _popup.addButton(createSaveButton());
+        _popup.addButton(new CancelPopupButton(_popup));
     }
 
     @Override
@@ -56,8 +58,6 @@ public class CustomizeTimelineHandler implements ClickHandler {
 
     public void showPopup() {
         _popup.setWidget(createPopupContent());
-        _popup.addButton(createSaveButton());
-        _popup.addButton(new CancelPopupButton(_popup));
         _popup.center();
         _popup.show();
     }

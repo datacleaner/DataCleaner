@@ -26,6 +26,14 @@
 	padding: 5px;
 }
 
+.gwt-SuggestBoxPopup {
+	background-color: white;
+}
+
+.gwt-SuggestBoxPopup .suggestPopupContent {
+	text-align: left;
+}
+
 .gwt-Button {
 	margin: 5px;
 }
@@ -131,4 +139,8 @@
 .MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricPresenterAddButton {
 	float: right;
 	margin-top: -10px;
+}
+
+.MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricTextBox {
+	font-size: 0.8em;
 }

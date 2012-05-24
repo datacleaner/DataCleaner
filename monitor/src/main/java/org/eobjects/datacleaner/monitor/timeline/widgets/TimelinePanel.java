@@ -50,11 +50,12 @@ import com.google.gwt.visualization.client.visualizations.corechart.Options;
 public class TimelinePanel extends FlowPanel {
 
     private final TimelineServiceAsync _service;
-    private final TimelineIdentifier _timelineIdentifier;
     private final TimelineListPanel _listPanel;
     private final LoadingIndicator _loadingIndicator;
     private final TenantIdentifier _tenant;
+    private final Button _saveButton;
 
+    private TimelineIdentifier _timelineIdentifier;
     private TimelineDefinition _timelineDefinition;
     private TimelineData _timelineData;
 
@@ -67,6 +68,21 @@ public class TimelinePanel extends FlowPanel {
         _listPanel = listPanel;
         _loadingIndicator = new LoadingIndicator();
         _loadingIndicator.setHeight((DefaultHeighOption.HEIGHT + 4) + "px");
+        
+        _saveButton = new Button("Save");
+        _saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
+        _saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // disable button once saved
+                _saveButton.setEnabled(false);
+            }
+        });
+        if (_timelineIdentifier != null) {
+            // initially does not make sense to save an (unchanged) and
+            // identifyable timeline.
+            _saveButton.setEnabled(false);
+        }
 
         addStyleName("TimelinePanel");
         add(createButtonPanel());
@@ -100,6 +116,17 @@ public class TimelinePanel extends FlowPanel {
     public TimelineIdentifier getTimelineIdentifier() {
         return _timelineIdentifier;
     }
+    
+    public void setTimelineIdentifier(TimelineIdentifier timelineIdentifier) {
+        if (timelineIdentifier.equals(_timelineIdentifier)) {
+            return;
+        }
+        _timelineIdentifier = timelineIdentifier;
+        if (_timelineData != null) {
+            setLoading();
+            renderChart();
+        }
+    }
 
     public TenantIdentifier getTenantIdentifier() {
         return _tenant;
@@ -111,6 +138,9 @@ public class TimelinePanel extends FlowPanel {
         }
         _timelineDefinition = timelineDefinition;
         if (fireEvents) {
+            if (timelineDefinition.isChanged()) {
+                _saveButton.setEnabled(true);
+            }
             setLoading();
             _service.getTimelineData(_tenant, timelineDefinition, new DCAsyncCallback<TimelineData>() {
                 @Override
@@ -134,7 +164,11 @@ public class TimelinePanel extends FlowPanel {
             return;
         }
         _timelineData = timelineData;
+        
+        renderChart();
+    }
 
+    private void renderChart() {
         final Runnable lineChartRunnable = new Runnable() {
             @Override
             public void run() {
@@ -145,7 +179,7 @@ public class TimelinePanel extends FlowPanel {
                     options.setTitle(_timelineIdentifier.getName());
                 }
 
-                final AbstractDataTable dataTable = createDataTable(_timelineDefinition, timelineData);
+                final AbstractDataTable dataTable = createDataTable(_timelineDefinition, _timelineData);
 
                 final LineChart chart = new LineChart(dataTable, options);
                 chart.addSelectHandler(new DrillToProfilingResultSelectHandler(chart, dataTable));
@@ -155,7 +189,7 @@ public class TimelinePanel extends FlowPanel {
                 add(chart);
             }
         };
-        VisualizationUtils.loadVisualizationApi(lineChartRunnable, LineChart.PACKAGE);
+        VisualizationUtils.loadVisualizationApi(lineChartRunnable, LineChart.PACKAGE);        
     }
 
     public TimelineData getTimelineData() {
@@ -176,18 +210,10 @@ public class TimelinePanel extends FlowPanel {
             }
         });
 
-        final Button saveButton = new Button("Save");
-        saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
-        if (_timelineIdentifier != null) {
-            // initially does not make sense to save an (unchanged) and
-            // identifyable timeline.
-            saveButton.setEnabled(false);
-        }
-
         final ButtonPanel buttonPanel = new ButtonPanel();
         buttonPanel.add(customizeButton);
         buttonPanel.add(copyButton);
-        buttonPanel.add(saveButton);
+        buttonPanel.add(_saveButton);
 
         return buttonPanel;
     }

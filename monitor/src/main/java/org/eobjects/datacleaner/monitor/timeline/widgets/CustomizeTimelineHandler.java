@@ -68,7 +68,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
             @Override
             public void onClick(ClickEvent event) {
 
-                final TimelineDefinition timelineDefinition = new TimelineDefinition();
+                final TimelineDefinition timelineDefinition = new TimelineDefinition(true);
                 timelineDefinition.setJobIdentifier(_timelinePanel.getTimelineDefinition().getJobIdentifier());
                 timelineDefinition.setMetrics(_customizeMetricsPanel.getSelectedMetrics());
                 timelineDefinition.setChartOptions(_customizeChartOptionsPanel.getChartOptions());

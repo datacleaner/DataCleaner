@@ -19,10 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.timeline;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
@@ -47,9 +49,12 @@ public interface TimelineServiceAsync {
     public void getJobMetrics(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<JobMetrics> callback);
 
     public void updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition,
-            AsyncCallback<Void> callback);
+            AsyncCallback<TimelineIdentifier> callback);
 
     public void createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition,
-            AsyncCallback<Void> callback);
+            AsyncCallback<TimelineIdentifier> callback);
+
+    public void getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
+            MetricIdentifier metric, AsyncCallback<Collection<String>> callback);
 
 }

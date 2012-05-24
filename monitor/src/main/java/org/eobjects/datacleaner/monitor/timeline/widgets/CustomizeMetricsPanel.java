@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
@@ -98,7 +99,9 @@ public class CustomizeMetricsPanel extends FlowPanel {
         if (metricIdentifier.isParameterizedByColumnName()) {
             return new ColumnParameterizedMetricPresenter(metricIdentifier, activeMetrics, metricGroup);
         } else if (metricIdentifier.isParameterizedByQueryString()) {
-            return new StringParameterizedMetricPresenter(metricIdentifier, activeMetrics);
+            final JobIdentifier jobIdentifier = _timelineDefinition.getJobIdentifier();
+            return new StringParameterizedMetricPresenter(_tenantIdentifier, jobIdentifier, metricIdentifier,
+                    activeMetrics, _service);
         } else {
             return new UnparameterizedMetricPresenter(metricIdentifier, activeMetrics);
         }

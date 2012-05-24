@@ -19,10 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.timeline;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
@@ -75,16 +77,20 @@ public interface TimelineService extends RemoteService {
      * 
      * @param timeline
      * @param timelineDefinition
+     * 
+     * @return the persisted timeline identifier
      */
-    public void updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition);
+    public TimelineIdentifier updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition);
 
     /**
      * Creates a new timeline definition
      * 
      * @param timeline
      * @param timelineDefinition
+     * 
+     * @return the persisted timeline identifier
      */
-    public void createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition);
+    public TimelineIdentifier createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition);
 
     /**
      * Materializes the data needed to draw a particular timeline
@@ -94,4 +100,13 @@ public interface TimelineService extends RemoteService {
      * @return
      */
     public TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline);
+
+    /**
+     * Gets suggestions for parameter values of a particular metric
+     * 
+     * @param tenant
+     * @param metric
+     * @return
+     */
+    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier, MetricIdentifier metric);
 }

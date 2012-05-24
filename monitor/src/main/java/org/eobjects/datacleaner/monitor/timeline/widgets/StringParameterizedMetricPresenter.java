@@ -20,9 +20,14 @@
 package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -40,7 +45,10 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
     private final MetricIdentifier _metricIdentifier;
     private final List<MetricIdentifier> _activeMetrics;
     private final FlowPanel _panel;
-    private final List<MetricPanel> _selectedMetricPanels;
+    private final List<MetricPanel> _metricPanels;
+    private final Collection<String> _parameterSuggestions;
+    private final TenantIdentifier _tenantIdentifier;
+    private final JobIdentifier _jobIdentifier;
 
     public final class MetricPanel extends FlowPanel {
         private final CheckBox _checkBox;
@@ -50,23 +58,13 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
             super();
             addStyleName("StringParameterizedMetricPresenterMetricPanel");
             _checkBox = new CheckBox();
-            _checkBox.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    if (_checkBox.getValue().booleanValue()) {
-                        _selectedMetricPanels.add(MetricPanel.this);
-                    } else {
-                        _selectedMetricPanels.remove(MetricPanel.this);
-                    }
-                }
-            });
             if (isActiveMetric(metric)) {
                 _checkBox.setValue(true);
-                _selectedMetricPanels.add(MetricPanel.this);
             } else {
                 _checkBox.setValue(false);
             }
-            _suggestBox = new StringParameterizedMetricTextBox(metric.getParamQueryString());
+            _suggestBox = new StringParameterizedMetricTextBox(metric.getParamQueryString(), _checkBox,
+                    _parameterSuggestions);
             add(_checkBox);
             add(_suggestBox);
         }
@@ -76,12 +74,20 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
             copy.setParamQueryString(_suggestBox.getText());
             return copy;
         }
+        
+        public boolean isSelected() {
+            return _checkBox.getValue().booleanValue();
+        }
     }
 
-    public StringParameterizedMetricPresenter(MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics) {
+    public StringParameterizedMetricPresenter(TenantIdentifier tenantIdentifier, JobIdentifier jobIdentifier, MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics,
+            TimelineServiceAsync service) {
+        _tenantIdentifier = tenantIdentifier;
+        _jobIdentifier = jobIdentifier;
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
-        _selectedMetricPanels = new ArrayList<MetricPanel>();
+        _parameterSuggestions = new ArrayList<String>();
+        _metricPanels = new ArrayList<MetricPanel>();
         _panel = new FlowPanel();
         _panel.addStyleName("StringParameterizedMetricsPresenter");
 
@@ -103,14 +109,30 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
             }
         }
 
-        if (_selectedMetricPanels.isEmpty()) {
+        if (_metricPanels.isEmpty()) {
             addMetricPanel(_metricIdentifier);
         }
+
+        service.getMetricParameterSuggestions(_tenantIdentifier, _jobIdentifier, _metricIdentifier, new DCAsyncCallback<Collection<String>>() {
+            @Override
+            public void onSuccess(Collection<String> result) {
+                if (result == null) {
+                    return;
+                }
+
+                // add the suggestion to the existing list which is
+                // referenced/shared between all the text boxes.
+                for (String suggestion : result) {
+                    _parameterSuggestions.add(suggestion);
+                }
+            }
+        });
     }
 
     private void addMetricPanel(MetricIdentifier metric) {
-        Widget widget = new MetricPanel(metric);
+        MetricPanel widget = new MetricPanel(metric);
         _panel.add(widget);
+        _metricPanels.add(widget);
     }
 
     private boolean isActiveMetric(MetricIdentifier metric) {
@@ -130,9 +152,11 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
     @Override
     public List<MetricIdentifier> getSelectedMetrics() {
         List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
-        for (MetricPanel panel : _selectedMetricPanels) {
-            MetricIdentifier metricIdentifier = panel.createMetricIdentifier();
-            result.add(metricIdentifier);
+        for (MetricPanel panel : _metricPanels) {
+            if (panel.isSelected()) {
+                MetricIdentifier metricIdentifier = panel.createMetricIdentifier();
+                result.add(metricIdentifier);
+            }
         }
         return result;
     }

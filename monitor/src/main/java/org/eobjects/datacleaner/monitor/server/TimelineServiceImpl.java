@@ -503,16 +503,18 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     @Override
-    public void updateTimelineDefinition(final TimelineIdentifier timelineIdentifier,
+    public TimelineIdentifier updateTimelineDefinition(final TimelineIdentifier timelineIdentifier,
             final TimelineDefinition timelineDefinition) {
         final RepositoryFile file = (RepositoryFile) _repository.getRepositoryNode(timelineIdentifier.getPath());
 
         file.writeFile(new WriteTimelineAction(timelineDefinition));
         logger.info("Updated timeline definition in file: {}", file);
+        return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath());
     }
 
     @Override
-    public void createTimelineDefinition(TimelineIdentifier timelineIdentifier, TimelineDefinition timelineDefinition) {
+    public TimelineIdentifier createTimelineDefinition(TimelineIdentifier timelineIdentifier,
+            TimelineDefinition timelineDefinition) {
         final String path = timelineIdentifier.getPath();
 
         final int lastSlash = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
@@ -528,5 +530,31 @@ public class TimelineServiceImpl implements TimelineService {
 
         final RepositoryFile file = folder.createFile(fileName, new WriteTimelineAction(timelineDefinition));
         logger.info("Created timeline definition in file: {}", file);
+
+        return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath());
+    }
+
+    @Override
+    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job,
+            MetricIdentifier metric) {
+        final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
+        final AnalyzerBeanDescriptor<?> analyzerDescriptor = configuration.getDescriptorProvider()
+                .getAnalyzerBeanDescriptorByDisplayName(metric.getAnalyzerDescriptorName());
+        final MetricDescriptor metricDescriptor = analyzerDescriptor.getResultMetric(metric.getMetricDescriptorName());
+
+        if (!metricDescriptor.isParameterizedByString()) {
+            return null;
+        }
+
+        final List<RepositoryFile> resultFiles = getResultFilesForJob(job);
+        final RepositoryFile resultFile = resultFiles.get(resultFiles.size() - 1);
+        final AnalysisResult analysisResult = readAnalysisResult(resultFile);
+
+        final AnalysisJob analysisJob = readAnalysisJob(tenant, job);
+        final AnalyzerJob analyzerJob = getAnalyzerJob(metric, analysisJob);
+
+        final AnalyzerResult result = getResult(analysisResult, analyzerJob, metric);
+
+        return metricDescriptor.getMetricParameterSuggestions(result);
     }
 }

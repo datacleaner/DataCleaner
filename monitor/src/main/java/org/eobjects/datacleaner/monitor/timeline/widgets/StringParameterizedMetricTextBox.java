@@ -19,14 +19,34 @@
  */
 package org.eobjects.datacleaner.monitor.timeline.widgets;
 
+import java.util.Collection;
+
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.SuggestBox;
 
+/**
+ * A textbox with suggestions which the user uses to express string metric
+ * parameters.
+ */
 public class StringParameterizedMetricTextBox extends SuggestBox {
 
-    public StringParameterizedMetricTextBox(String text) {
-        super();
+    public StringParameterizedMetricTextBox(String text, final CheckBox checkBoxToActivate, Collection<String> suggestions) {
+        super(new StringParameterizedMetricSuggestOracle(suggestions));
         addStyleName("StringParameterizedMetricTextBox");
         setText(text);
+        
+        addKeyUpHandler(new KeyUpHandler() {
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
+                final String text = getText();
+                if (text != null && !"".equals(text)) {
+                    // activate checkbox whenever something is written.
+                    checkBoxToActivate.setValue(true);
+                }
+            }
+        });
     }
 
 }

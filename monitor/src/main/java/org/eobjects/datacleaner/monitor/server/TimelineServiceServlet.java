@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -26,6 +27,7 @@ import javax.servlet.ServletException;
 import org.eobjects.datacleaner.monitor.timeline.TimelineService;
 import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
@@ -94,13 +96,17 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     }
 
     @Override
-    public void updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
-        _delegate.updateTimelineDefinition(timeline, timelineDefinition);
+    public TimelineIdentifier updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
+        return _delegate.updateTimelineDefinition(timeline, timelineDefinition);
     }
 
     @Override
-    public void createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
-        _delegate.createTimelineDefinition(timeline, timelineDefinition);
+    public TimelineIdentifier createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
+        return _delegate.createTimelineDefinition(timeline, timelineDefinition);
     }
 
+    @Override
+    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
+        return _delegate.getMetricParameterSuggestions(tenant, job, metric);
+    }
 }

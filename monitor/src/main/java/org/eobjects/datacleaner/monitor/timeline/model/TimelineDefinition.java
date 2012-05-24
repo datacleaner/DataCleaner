@@ -35,14 +35,31 @@ public class TimelineDefinition implements IsSerializable {
     private List<MetricIdentifier> _metrics;
     private JobIdentifier _jobIdentifier;
     private ChartOptions _chartOptions;
+    private boolean _changed;
+    
+    public TimelineDefinition(boolean changed) {
+        _changed = changed;
+    }
+    
+    public TimelineDefinition() {
+        this(false);
+    }
 
+    public void setChanged(boolean changed) {
+        _changed = changed;
+    }
+    
+    public boolean isChanged() {
+        return _changed;
+    }
+    
     public List<MetricIdentifier> getMetrics() {
         if (_metrics == null) {
             return new ArrayList<MetricIdentifier>(0);
         }
         return _metrics;
     }
-
+    
     public void setMetrics(List<MetricIdentifier> metrics) {
         _metrics = metrics;
     }

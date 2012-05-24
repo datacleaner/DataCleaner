@@ -26,6 +26,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.PrintWriter;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
@@ -66,193 +68,200 @@ import com.google.inject.Injector;
  */
 public final class Bootstrap {
 
-	private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
+    private static final Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 
-	private final BootstrapOptions _options;
+    private final BootstrapOptions _options;
 
-	public Bootstrap(BootstrapOptions options) {
-		_options = options;
-	}
+    public Bootstrap(BootstrapOptions options) {
+        _options = options;
+    }
 
-	public void run() {
-		logger.info("Welcome to DataCleaner {}", Main.VERSION);
+    public void run() {
+        logger.info("Welcome to DataCleaner {}", Main.VERSION);
 
-		// determine whether to run in command line interface mode
-		final boolean cliMode = _options.isCommandLineMode();
-		final CliArguments arguments = _options.getCommandLineArguments();
+        // determine whether to run in command line interface mode
+        final boolean cliMode = _options.isCommandLineMode();
+        final CliArguments arguments = _options.getCommandLineArguments();
 
-		logger.info("CLI mode={}, use -usage to view usage options", cliMode);
+        logger.info("CLI mode={}, use -usage to view usage options", cliMode);
 
-		if (cliMode) {
+        if (cliMode) {
 
-			if (!GraphicsEnvironment.isHeadless()) {
-				// hide splash screen
-				SplashScreen splashScreen = SplashScreen.getSplashScreen();
-				if (splashScreen != null) {
-					splashScreen.close();
-				}
-			}
+            if (!GraphicsEnvironment.isHeadless()) {
+                // hide splash screen
+                SplashScreen splashScreen = SplashScreen.getSplashScreen();
+                if (splashScreen != null) {
+                    splashScreen.close();
+                }
+            }
 
-			if (arguments.isUsageMode()) {
-				final PrintWriter out = new PrintWriter(System.out);
-				try {
-					CliArguments.printUsage(out);
-				} finally {
-					FileHelper.safeClose(out);
-				}
+            if (arguments.isUsageMode()) {
+                final PrintWriter out = new PrintWriter(System.out);
+                try {
+                    CliArguments.printUsage(out);
+                } finally {
+                    FileHelper.safeClose(out);
+                }
 
-				exitCommandLine(null, 1);
-				return;
-			}
-		}
+                exitCommandLine(null, 1);
+                return;
+            }
+        }
 
-		final File dataCleanerHome = DataCleanerHome.get();
+        final File dataCleanerHome = DataCleanerHome.get();
 
-		Injector injector = Guice.createInjector(new DCModule(dataCleanerHome, arguments.getConfigurationFile()));
+        Injector injector = Guice.createInjector(new DCModule(dataCleanerHome, arguments.getConfigurationFile()));
 
-		// configuration loading can be multithreaded, so begin early
-		final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
+        // configuration loading can be multithreaded, so begin early
+        final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
-		if (!cliMode) {
-			// set up error handling that displays an error dialog
-			final DCUncaughtExceptionHandler exceptionHandler = new DCUncaughtExceptionHandler();
-			Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
+        if (!cliMode) {
+            // set up error handling that displays an error dialog
+            final DCUncaughtExceptionHandler exceptionHandler = new DCUncaughtExceptionHandler();
+            Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
 
-			// init the look and feel
-			LookAndFeelManager.getInstance().init();
-		}
+            // init the look and feel
+            LookAndFeelManager.getInstance().init();
+        }
 
-		// log usage
-		final UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
-		usageLogger.logApplicationStartup();
+        // log usage
+        final UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
+        usageLogger.logApplicationStartup();
 
-		if (cliMode) {
+        if (cliMode) {
 
-			// run in CLI mode
+            // run in CLI mode
 
-			int exitCode = 0;
-			final CliRunner runner = new CliRunner(arguments);
-			try {
-				runner.run(configuration);
-			} catch (Throwable e) {
-				logger.error("Error occurred while running DataCleaner command line mode", e);
-				exitCode = 1;
-			} finally {
-				runner.close();
-				exitCommandLine(configuration, exitCode);
-			}
-			return;
-		} else {
-			// run in GUI mode
-			final AnalysisJobBuilderWindow analysisJobBuilderWindow;
+            int exitCode = 0;
+            final CliRunner runner = new CliRunner(arguments);
+            try {
+                runner.run(configuration);
+            } catch (Throwable e) {
+                logger.error("Error occurred while running DataCleaner command line mode", e);
+                exitCode = 1;
+            } finally {
+                runner.close();
+                exitCommandLine(configuration, exitCode);
+            }
+            return;
+        } else {
+            // run in GUI mode
+            final AnalysisJobBuilderWindow analysisJobBuilderWindow;
 
-			// initialize Mac OS specific settings
-			final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
-			macOsManager.init();
+            // initialize Mac OS specific settings
+            final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
+            macOsManager.init();
 
-			// check for job file
-			final File jobFile = _options.getCommandLineArguments().getJobFile();
-			if (jobFile == null) {
-				analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
-			} else {
-				analysisJobBuilderWindow = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
-			}
+            // check for job file
+            final File jobFile = _options.getCommandLineArguments().getJobFile();
+            if (jobFile == null) {
+                analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
+            } else {
+                analysisJobBuilderWindow = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
+            }
 
-			final Datastore singleDatastore;
-			if (_options.isSingleDatastoreMode()) {
-				DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
-				singleDatastore = _options.getSingleDatastore(datastoreCatalog);
-				if (singleDatastore == null) {
-					logger.info("Single datastore mode was enabled, but datastore was null!");
-				} else {
-					logger.info("Initializing single datastore mode with {}", singleDatastore);
-				}
-				analysisJobBuilderWindow.setDatastoreSelectionEnabled(false);
-				analysisJobBuilderWindow.setDatastore(singleDatastore, true);
-			} else {
-				singleDatastore = null;
-			}
+            final Datastore singleDatastore;
+            if (_options.isSingleDatastoreMode()) {
+                DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
+                singleDatastore = _options.getSingleDatastore(datastoreCatalog);
+                if (singleDatastore == null) {
+                    logger.info("Single datastore mode was enabled, but datastore was null!");
+                } else {
+                    logger.info("Initializing single datastore mode with {}", singleDatastore);
+                }
+                analysisJobBuilderWindow.setDatastoreSelectionEnabled(false);
+                analysisJobBuilderWindow.setDatastore(singleDatastore, true);
+            } else {
+                singleDatastore = null;
+            }
 
-			// show the window
-			analysisJobBuilderWindow.open();
+            // show the window
+            analysisJobBuilderWindow.open();
 
-			if (singleDatastore != null) {
-				// this part has to be done after displaying the window (a lot
-				// of initialization goes on there)
-				final AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
-				final DatastoreConnection con = singleDatastore.openConnection();
-				final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
-				try {
-					_options.initializeSingleDatastoreJob(analysisJobBuilder, con.getDataContext(), injectorBuilder);
-				} finally {
-					con.close();
-				}
-			}
+            if (singleDatastore != null) {
+                // this part has to be done after displaying the window (a lot
+                // of initialization goes on there)
+                final AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
+                final DatastoreConnection con = singleDatastore.openConnection();
+                final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
+                try {
+                    _options.initializeSingleDatastoreJob(analysisJobBuilder, con.getDataContext(), injectorBuilder);
+                } finally {
+                    con.close();
+                }
+            }
 
-			final Image welcomeImage = _options.getWelcomeImage();
-			if (welcomeImage != null) {
-				final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
-				welcomeDialog.setVisible(true);
-			}
+            final Image welcomeImage = _options.getWelcomeImage();
+            if (welcomeImage != null) {
+                // Ticket #834: make sure to show welcome dialog in swing's
+                // dispatch thread.
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        final WelcomeDialog welcomeDialog = new WelcomeDialog(analysisJobBuilderWindow, welcomeImage);
+                        welcomeDialog.setVisible(true);
+                    }
+                });
+            }
 
-			final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
-			final WindowContext windowContext = injector.getInstance(WindowContext.class);
+            final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
+            final WindowContext windowContext = injector.getInstance(WindowContext.class);
 
-			final HttpClient httpClient = injector.getInstance(HttpClient.class);
+            final HttpClient httpClient = injector.getInstance(HttpClient.class);
 
-			// set up HTTP service for ExtensionSwap installation
-			loadExtensionSwapService(userPreferences, windowContext, configuration, httpClient, usageLogger);
+            // set up HTTP service for ExtensionSwap installation
+            loadExtensionSwapService(userPreferences, windowContext, configuration, httpClient, usageLogger);
 
-			// load regex swap regexes if logged in
-			final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
-					(MutableReferenceDataCatalog) configuration.getReferenceDataCatalog(), httpClient, usageLogger);
-			userPreferences.addLoginChangeListener(regexSwapHandler);
+            // load regex swap regexes if logged in
+            final RegexSwapUserPreferencesHandler regexSwapHandler = new RegexSwapUserPreferencesHandler(
+                    (MutableReferenceDataCatalog) configuration.getReferenceDataCatalog(), httpClient, usageLogger);
+            userPreferences.addLoginChangeListener(regexSwapHandler);
 
-			final ExitActionListener exitActionListener = _options.getExitActionListener();
-			if (exitActionListener != null) {
-				windowContext.addExitActionListener(exitActionListener);
-			}
-		}
-	}
+            final ExitActionListener exitActionListener = _options.getExitActionListener();
+            if (exitActionListener != null) {
+                windowContext.addExitActionListener(exitActionListener);
+            }
+        }
+    }
 
-	private void exitCommandLine(AnalyzerBeansConfiguration configuration, int statusCode) {
-		if (configuration != null) {
-			logger.debug("Shutting down task runner");
-			configuration.getTaskRunner().shutdown();
-		}
-		ExitActionListener exitActionListener = _options.getExitActionListener();
-		if (exitActionListener != null) {
-			exitActionListener.exit(statusCode);
-		}
-	}
+    private void exitCommandLine(AnalyzerBeansConfiguration configuration, int statusCode) {
+        if (configuration != null) {
+            logger.debug("Shutting down task runner");
+            configuration.getTaskRunner().shutdown();
+        }
+        ExitActionListener exitActionListener = _options.getExitActionListener();
+        if (exitActionListener != null) {
+            exitActionListener.exit(statusCode);
+        }
+    }
 
-	private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext,
-			AnalyzerBeansConfiguration configuration, HttpClient httpClient, UsageLogger usageLogger) {
-		String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
-		if (StringUtils.isNullOrEmpty(websiteHostname)) {
-			websiteHostname = System.getProperty("extensionswap.hostname");
-		}
+    private void loadExtensionSwapService(UserPreferences userPreferences, WindowContext windowContext,
+            AnalyzerBeansConfiguration configuration, HttpClient httpClient, UsageLogger usageLogger) {
+        String websiteHostname = userPreferences.getAdditionalProperties().get("extensionswap.hostname");
+        if (StringUtils.isNullOrEmpty(websiteHostname)) {
+            websiteHostname = System.getProperty("extensionswap.hostname");
+        }
 
-		final ExtensionSwapClient extensionSwapClient;
-		if (StringUtils.isNullOrEmpty(websiteHostname)) {
-			logger.info("Using default ExtensionSwap website hostname");
-			extensionSwapClient = new ExtensionSwapClient(httpClient, windowContext, userPreferences, configuration);
-		} else {
-			logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
-			extensionSwapClient = new ExtensionSwapClient(httpClient, websiteHostname, windowContext, userPreferences,
-					configuration);
-		}
-		ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(
-				extensionSwapClient, userPreferences, usageLogger);
+        final ExtensionSwapClient extensionSwapClient;
+        if (StringUtils.isNullOrEmpty(websiteHostname)) {
+            logger.info("Using default ExtensionSwap website hostname");
+            extensionSwapClient = new ExtensionSwapClient(httpClient, windowContext, userPreferences, configuration);
+        } else {
+            logger.info("Using custom ExtensionSwap website hostname: {}", websiteHostname);
+            extensionSwapClient = new ExtensionSwapClient(httpClient, websiteHostname, windowContext, userPreferences,
+                    configuration);
+        }
+        ExtensionSwapInstallationHttpContainer container = new ExtensionSwapInstallationHttpContainer(
+                extensionSwapClient, userPreferences, usageLogger);
 
-		final Closeable closeableConnection = container.initialize();
-		if (closeableConnection != null) {
-			windowContext.addExitActionListener(new ExitActionListener() {
-				@Override
-				public void exit(int statusCode) {
-					FileHelper.safeClose(closeableConnection);
-				}
-			});
-		}
-	}
+        final Closeable closeableConnection = container.initialize();
+        if (closeableConnection != null) {
+            windowContext.addExitActionListener(new ExitActionListener() {
+                @Override
+                public void exit(int statusCode) {
+                    FileHelper.safeClose(closeableConnection);
+                }
+            });
+        }
+    }
 }

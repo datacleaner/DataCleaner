@@ -81,7 +81,7 @@ public class SimpleTableDefPanel extends DCPanel {
 			}
 		});
 
-		final DCPanel buttonPanel = DCPanel.flow(Alignment.RIGHT, addButton, removeButton);
+		final DCPanel buttonPanel = DCPanel.flow(Alignment.RIGHT, 10, 10, addButton, removeButton);
 		return buttonPanel;
 	}
 

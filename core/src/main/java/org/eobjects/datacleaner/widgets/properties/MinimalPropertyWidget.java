@@ -19,6 +19,9 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
@@ -72,6 +75,15 @@ public abstract class MinimalPropertyWidget<E> implements PropertyWidget<E> {
 	public final void fireValueChanged() {
 		final E value = getValue();
 		fireValueChanged(value);
+	}
+	
+	protected ActionListener fireValueChangedActionListener() {
+	    return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fireValueChanged();
+            }
+        };
 	}
 
 	protected final AnalysisJobBuilder getAnalysisJobBuilder() {

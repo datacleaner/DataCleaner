@@ -46,41 +46,41 @@ import org.jdesktop.swingx.action.OpenBrowserAction;
  */
 public class WelcomeDialog extends JDialog {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public WelcomeDialog(AnalysisJobBuilderWindow window, Image welcomeImage) {
-		super((Window) window, "Welcome to DataCleaner");
+    public WelcomeDialog(AnalysisJobBuilderWindow window, Image welcomeImage) {
+        super((Window) window, "Welcome to DataCleaner");
 
-		final JLabel banner = new JLabel(new ImageIcon(welcomeImage));
-		banner.setPreferredSize(new Dimension(welcomeImage.getWidth(this), welcomeImage.getHeight(this)));
-		final DCPanel shadowedBanner = WidgetUtils.decorateWithShadow(banner, true, 5);
+        final JLabel banner = new JLabel(new ImageIcon(welcomeImage));
+        banner.setPreferredSize(new Dimension(welcomeImage.getWidth(this), welcomeImage.getHeight(this)));
+        final DCPanel shadowedBanner = WidgetUtils.decorateWithShadow(banner, true, 5);
 
-		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
-		panel.setLayout(new BorderLayout());
-		panel.add(shadowedBanner, BorderLayout.CENTER);
+        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_LESS_BRIGHT, WidgetUtils.BG_COLOR_BRIGHT);
+        panel.setLayout(new BorderLayout());
+        panel.add(shadowedBanner, BorderLayout.CENTER);
 
-		final ImageManager imageManager = ImageManager.getInstance();
+        final ImageManager imageManager = ImageManager.getInstance();
 
-		final JButton closeButton = new JButton("Continue", imageManager.getImageIcon("images/actions/execute.png",
-				IconUtils.ICON_SIZE_MEDIUM));
-		closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				WelcomeDialog.this.setVisible(false);
-			}
-		});
+        final JButton closeButton = new JButton("Continue", imageManager.getImageIcon("images/actions/execute.png",
+                IconUtils.ICON_SIZE_MEDIUM));
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WelcomeDialog.this.setVisible(false);
+            }
+        });
 
-		final JButton websiteButton = new JButton("Visit the DataCleaner website", imageManager.getImageIcon(
-				"images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
-		websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
+        final JButton websiteButton = new JButton("Visit the DataCleaner website", imageManager.getImageIcon(
+                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
+        websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
 
-		panel.add(DCPanel.flow(Alignment.RIGHT, websiteButton, closeButton), BorderLayout.SOUTH);
+        panel.add(DCPanel.flow(Alignment.RIGHT, 10, 10, websiteButton, closeButton), BorderLayout.SOUTH);
 
-		getContentPane().add(panel);
-		pack();
-		setResizable(false);
-		WidgetUtils.centerOnScreen(this);
-		setModal(true);
-	}
+        getContentPane().add(panel);
+        pack();
+        setResizable(false);
+        WidgetUtils.centerOnScreen(this);
+        setModal(true);
+    }
 
 }

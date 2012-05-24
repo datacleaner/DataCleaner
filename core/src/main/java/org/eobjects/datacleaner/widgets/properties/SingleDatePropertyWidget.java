@@ -19,47 +19,90 @@
  */
 package org.eobjects.datacleaner.widgets.properties;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
 import java.util.Date;
 
 import javax.inject.Inject;
+import javax.swing.ButtonGroup;
+import javax.swing.JRadioButton;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.util.convert.NowDate;
+import org.eobjects.analyzer.util.convert.TodayDate;
+import org.eobjects.analyzer.util.convert.YesterdayDate;
+import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.widgets.Alignment;
 import org.jdesktop.swingx.JXDatePicker;
 
 public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
 
-	private final JXDatePicker _datePicker;
+    private final JXDatePicker _datePicker;
+    private final JRadioButton _dateCustomRadio;
+    private final JRadioButton _dateNowRadio;
+    private final JRadioButton _dateTodayRadio;
+    private final JRadioButton _dateYesterdayRadio;
 
-	@Inject
-	public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
-		_datePicker = new JXDatePicker();
-		_datePicker.setFormats("yyyy-MM-dd");
-		_datePicker.addActionListener(new ActionListener() {
+    @Inject
+    public SingleDatePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+        super(beanJobBuilder, propertyDescriptor);
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fireValueChanged();
-			}
-		});
-		Date currentValue = getCurrentValue();
-		if (currentValue != null) {
-			_datePicker.setDate(currentValue);
-		}
-		add(_datePicker);
-	}
+        _datePicker = new JXDatePicker();
+        _datePicker.setFormats("yyyy-MM-dd");
 
-	@Override
-	public Date getValue() {
-		return _datePicker.getDate();
-	}
+        _dateCustomRadio = new JRadioButton("Select: ");
+        _dateNowRadio = new JRadioButton("Now");
+        _dateTodayRadio = new JRadioButton("Today");
+        _dateYesterdayRadio = new JRadioButton("Yesterday");
 
-	@Override
-	protected void setValue(Date value) {
-		_datePicker.setDate(value);
-	}
+        _datePicker.addActionListener(fireValueChangedActionListener());
+        _dateCustomRadio.addActionListener(fireValueChangedActionListener());
+        _dateNowRadio.addActionListener(fireValueChangedActionListener());
+        _dateTodayRadio.addActionListener(fireValueChangedActionListener());
+        _dateYesterdayRadio.addActionListener(fireValueChangedActionListener());
+
+        final ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(_dateCustomRadio);
+        buttonGroup.add(_dateNowRadio);
+        buttonGroup.add(_dateTodayRadio);
+        buttonGroup.add(_dateYesterdayRadio);
+
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _dateCustomRadio, _datePicker), BorderLayout.CENTER);
+        panel.add(DCPanel.flow(Alignment.LEFT, 4, 0, _dateNowRadio, _dateTodayRadio, _dateYesterdayRadio),
+                BorderLayout.SOUTH);
+
+        add(panel);
+
+        Date currentValue = getCurrentValue();
+        setValue(currentValue);
+    }
+
+    @Override
+    public Date getValue() {
+        if (_dateNowRadio.isSelected()) {
+            return new NowDate();
+        } else if (_dateTodayRadio.isSelected()) {
+            return new TodayDate();
+        } else if (_dateYesterdayRadio.isSelected()) {
+            return new YesterdayDate();
+        } else {
+            return _datePicker.getDate();
+        }
+    }
+
+    @Override
+    protected void setValue(Date value) {
+        if (value instanceof NowDate) {
+            _dateNowRadio.setSelected(true);
+        } else if (value == null || value instanceof TodayDate) {
+            _dateTodayRadio.setSelected(true);
+        } else if (value instanceof YesterdayDate) {
+            _dateYesterdayRadio.setSelected(true);
+        } else {
+            _datePicker.setDate(value);
+        }
+    }
 }

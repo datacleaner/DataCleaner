@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.Collection;
 
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -37,7 +39,14 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
         addStyleName("StringParameterizedMetricTextBox");
         setText(text);
         
-        addKeyUpHandler(new KeyUpHandler() {
+        getTextBox().addFocusHandler(new FocusHandler() {
+            @Override
+            public void onFocus(FocusEvent event) {
+                showSuggestionList();
+            }
+        });
+        
+        getTextBox().addKeyUpHandler(new KeyUpHandler() {
             @Override
             public void onKeyUp(KeyUpEvent event) {
                 final String text = getText();

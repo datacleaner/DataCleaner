@@ -37,6 +37,8 @@ public class JettyRunner {
         webApp.setWar("src/main/webapp");
         server.setHandler(webApp);
         server.start();
+        System.out.println("Jetty running now!");
+
         server.join();
     }
 }

@@ -44,6 +44,11 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
         public String getReplacementString() {
             return _string;
         }
+
+        @Override
+        public String toString() {
+            return _string;
+        }
     }
 
     private Collection<String> _suggestions;
@@ -53,14 +58,25 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
     }
 
     @Override
-    public void requestSuggestions(Request request, Callback callback) {
-        List<Suggestion> suggestions = new ArrayList<Suggestion>();
+    public void requestDefaultSuggestions(Request request, Callback callback) {
+        requestSuggestions("", request, callback);
+    }
 
+    @Override
+    public void requestSuggestions(Request request, Callback callback) {
         String query = request.getQuery();
-        if ("".equals(query)) {
-            suggestions.add(new Suggestion("IN " + suggestions.toString()));
-            suggestions.add(new Suggestion("NOT IN " + suggestions.toString()));
-        }
+        requestSuggestions(query, request, callback);
+    }
+
+    private void requestSuggestions(String query, Request request, Callback callback) {
+        final List<Suggestion> suggestions = new ArrayList<Suggestion>();
+
+        // TODO: Activate when "supportsInClause" is working properly
+
+        // if ("".equals(query) && !_suggestions.isEmpty()) {
+        // suggestions.add(new Suggestion("IN " + _suggestions.toString()));
+        // suggestions.add(new Suggestion("NOT IN " + _suggestions.toString()));
+        // }
 
         for (String suggestionWord : _suggestions) {
             if (suggestionWord.toLowerCase().startsWith(query.toLowerCase())) {
@@ -68,7 +84,7 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
             }
         }
 
-        Response response = new Response(suggestions);
+        final Response response = new Response(suggestions);
         callback.onSuggestionsReady(request, response);
-    }
+    };
 }

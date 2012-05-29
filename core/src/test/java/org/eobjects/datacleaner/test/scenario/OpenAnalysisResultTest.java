@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.test.scenario;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 
 import junit.framework.TestCase;
@@ -29,7 +30,7 @@ import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
 public class OpenAnalysisResultTest extends TestCase {
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -43,6 +44,11 @@ public class OpenAnalysisResultTest extends TestCase {
      * @throws Exception
      */
     public void testOpenJobWithAllAnalyzers() throws Exception {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("!!! Skipping test because environment is headless: " + getName());
+            return;
+        }
+
         DCModule module = new DCModule(new File("."));
 
         File file = new File("src/test/resources/all_analyzers.analysis.result.dat");

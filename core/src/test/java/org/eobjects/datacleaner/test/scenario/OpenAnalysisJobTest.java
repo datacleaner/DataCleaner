@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.test.scenario;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -47,6 +48,11 @@ public class OpenAnalysisJobTest extends TestCase {
      * @throws Exception
      */
     public void testOpenJobWithAllAnalyzers() throws Exception {
+        if (GraphicsEnvironment.isHeadless()) {
+            System.out.println("!!! Skipping test because environment is headless: " + getName());
+            return;
+        }
+        
         DCModule module = new DCModule(new File("."));
         Injector injector = Guice.createInjector(module);
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);

@@ -42,6 +42,7 @@ import org.eobjects.analyzer.job.runner.AnalyzerMetrics;
 import org.eobjects.analyzer.job.runner.ExplorerMetrics;
 import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalyzerResult;
+import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.SourceColumnFinder;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.windows.ResultWindow;

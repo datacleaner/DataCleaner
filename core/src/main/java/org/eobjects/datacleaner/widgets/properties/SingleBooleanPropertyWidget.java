@@ -27,7 +27,7 @@ import javax.swing.JCheckBox;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
-import org.eobjects.datacleaner.util.LabelUtils;
+import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 

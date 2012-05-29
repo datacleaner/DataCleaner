@@ -24,7 +24,7 @@ import java.awt.event.MouseListener;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.util.LabelUtils;
+import org.eobjects.analyzer.util.LabelUtils;
 import org.jdesktop.swingx.JXTaskPane;
 
 /**

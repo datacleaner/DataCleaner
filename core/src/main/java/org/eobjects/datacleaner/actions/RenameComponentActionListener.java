@@ -25,8 +25,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.util.LabelUtils;
 
 /**
  * {@link ActionListener} used when renaming a component, such as an analyzer, a

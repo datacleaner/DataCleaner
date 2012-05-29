@@ -42,9 +42,9 @@ import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AbstractBeanWithInputColumnsBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.LazyFilterOutcome;
+import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
-import org.eobjects.datacleaner.util.LabelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

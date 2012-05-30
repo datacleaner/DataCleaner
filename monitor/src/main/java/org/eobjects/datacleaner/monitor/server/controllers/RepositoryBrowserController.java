@@ -102,6 +102,7 @@ public class RepositoryBrowserController {
         {
             final Tidy tidy = new Tidy();
             tidy.setHideComments(true);
+            tidy.setTrimEmptyElements(false);
             final StringWriter writer = new StringWriter();
             tidy.parse(new StringReader(rawAnalysisResult), writer);
             tidyResult = writer.toString();

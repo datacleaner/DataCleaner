@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.util.Urls;
+
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -76,7 +78,7 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
         final Date date = _data.getValueDate(row, 0);
         final String resultFilePath = _data.getProperty(row, 0, PROPERTY_NAME_RESULT_FILE);
         final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
-        final String url = "../repository" + resultFilePath;
+        final String url = Urls.createRelativeUrl("repository" + resultFilePath);
 
         final Button showResultButton = new Button("Show results");
         showResultButton.addClickHandler(new ClickHandler() {

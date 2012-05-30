@@ -54,7 +54,7 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
 
         _panel.add(new Label(_metricIdentifier.getMetricDescriptorName() + ":"));
 
-        List<String> columnNames = _metricGroup.getColumnNames();
+        final List<String> columnNames = _metricGroup.getColumnNames();
         for (String columnName : columnNames) {
             // create a copy of the metric for each column name
             MetricIdentifier clone = _metricIdentifier.copy();
@@ -65,7 +65,8 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
     }
 
     private Widget createMetricWidget(final MetricIdentifier metric) {
-        final CheckBox checkBox = new CheckBox(metric.getParamColumnName());
+        final CheckBox checkBox = new CheckBox();
+        checkBox.setTitle(metric.getDisplayName());
         checkBox.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

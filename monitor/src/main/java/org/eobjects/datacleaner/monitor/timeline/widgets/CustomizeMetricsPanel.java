@@ -85,19 +85,33 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
+        final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics = new MultipleColumnParameterizedMetricsPresenter(metricGroup);
         for (MetricIdentifier metricIdentifier : availableMetrics) {
-            MetricPresenter presenter = createMetricPresenter(metricGroup, metricIdentifier, activeMetrics);
-            _metricPresenters.add(presenter);
-            panel.add(presenter);
+            final MetricPresenter presenter = createMetricPresenter(columnParameterizedMetrics, metricGroup,
+                    metricIdentifier, activeMetrics);
+            if (presenter != null) {
+                _metricPresenters.add(presenter);
+                panel.add(presenter);
+            }
+        }
+
+        if (!columnParameterizedMetrics.isEmpty()) {
+            _metricPresenters.add(columnParameterizedMetrics);
+            panel.add(columnParameterizedMetrics);
         }
 
         return panel;
     }
 
-    private MetricPresenter createMetricPresenter(MetricGroup metricGroup, MetricIdentifier metricIdentifier,
-            List<MetricIdentifier> activeMetrics) {
+    private MetricPresenter createMetricPresenter(
+            MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics, MetricGroup metricGroup,
+            MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics) {
         if (metricIdentifier.isParameterizedByColumnName()) {
-            return new ColumnParameterizedMetricPresenter(metricIdentifier, activeMetrics, metricGroup);
+            final ColumnParameterizedMetricPresenter presenter = new ColumnParameterizedMetricPresenter(
+                    metricIdentifier, activeMetrics, metricGroup);
+            columnParameterizedMetrics.add(presenter);
+            // null will be treated as a presenter not added immediately
+            return null;
         } else if (metricIdentifier.isParameterizedByQueryString()) {
             final JobIdentifier jobIdentifier = _timelineDefinition.getJobIdentifier();
             return new StringParameterizedMetricPresenter(_tenantIdentifier, jobIdentifier, metricIdentifier,

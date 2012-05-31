@@ -26,8 +26,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,11 +36,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.apache.commons.lang.SerializationUtils;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
@@ -50,9 +45,10 @@ import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.actions.ExportResultToHtmlActionListener;
+import org.eobjects.datacleaner.actions.SaveAnalysisResultActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.JobFilename;
 import org.eobjects.datacleaner.guice.Nullable;
@@ -61,14 +57,13 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.AnalysisRunnerSwingWorker;
-import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.Alignment;
-import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.Ref;
 
 public final class ResultWindow extends AbstractWindow {
 
@@ -290,61 +285,28 @@ public final class ResultWindow extends AbstractWindow {
                 bannerTitle);
         banner.setLayout(null);
         _tabbedPane.bindTabTitleToBanner(banner);
+        
+        final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
+            @Override
+            public AnalysisResult get() {
+                return _result;
+            }
+        };
 
         final JButton saveButton = new JButton("Save result", imageManager.getImageIcon("images/actions/save.png",
                 IconUtils.ICON_SIZE_MEDIUM));
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (_result == null) {
-                    WidgetUtils.showErrorMessage("Result not ready",
-                            "Please wait for the job to finish before saving the result", null);
-                    return;
-                }
-
-                DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
-                fileChooser.setFileFilter(FileFilters.ANALYSIS_RESULT_SER);
-
-                int result = fileChooser.showSaveDialog(ResultWindow.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
-
-                    if (!file.getName().endsWith(FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
-                        file = new File(file.getParentFile(), file.getName()
-                                + FileFilters.ANALYSIS_RESULT_SER.getExtension());
-                    }
-
-                    if (file.exists()) {
-                        int overwrite = JOptionPane.showConfirmDialog(ResultWindow.this,
-                                "Are you sure you want to overwrite the file '" + file.getName() + "'?",
-                                "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
-                        if (overwrite != JOptionPane.YES_OPTION) {
-                            return;
-                        }
-                    }
-
-                    _userPreferences.setAnalysisJobDirectory(file.getParentFile());
-
-                    final SimpleAnalysisResult analysisResult;
-                    if (_result instanceof SimpleAnalysisResult) {
-                        analysisResult = (SimpleAnalysisResult) _result;
-                    } else {
-                        analysisResult = new SimpleAnalysisResult(_result.getResultMap());
-                    }
-
-                    try {
-                        SerializationUtils.serialize(analysisResult, new FileOutputStream(file));
-                    } catch (Exception e) {
-                        WidgetUtils.showErrorMessage("Error writing result to file", e);
-                    }
-                }
-            }
-        });
-
         saveButton.setOpaque(false);
-        FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
+        saveButton.addActionListener(new SaveAnalysisResultActionListener(resultRef, _userPreferences));
+
+        final JButton exportButton = new JButton("Export to HTML", imageManager.getImageIcon(
+                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
+        exportButton.setOpaque(false);
+        exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
+
+        final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
         layout.setAlignOnBaseline(true);
         banner.setLayout(layout);
+        banner.add(exportButton);
         banner.add(saveButton);
         banner.add(Box.createHorizontalStrut(10));
 

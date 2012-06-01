@@ -29,9 +29,9 @@ import java.io.Writer;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.eobjects.analyzer.cli.HtmlAnalysisResultWriter;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.WidgetUtils;

@@ -162,6 +162,40 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.0-beta-1</version>
+				<executions>
+					<execution>
+						<id>tomcat-run</id>
+						<goals>
+							<goal>exec-war-only</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<extraDependencies>
+								<!-- Default database drivers -->
+								<dependency>
+									<groupId>postgresql</groupId>
+									<artifactId>postgresql</artifactId>
+									<version>9.1-901-1.jdbc4</version>
+								</dependency>
+								<dependency>
+									<groupId>mysql</groupId>
+									<artifactId>mysql-connector-java</artifactId>
+									<version>5.1.18</version>
+								</dependency>
+								<dependency>
+									<groupId>net.sourceforge.jtds</groupId>
+									<artifactId>jtds</artifactId>
+									<version>1.2.4</version>
+								</dependency>
+							</extraDependencies>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
 		<pluginManagement>
@@ -242,13 +276,6 @@
 			<groupId>com.google.gwt.google-apis</groupId>
 			<artifactId>gwt-visualization</artifactId>
 			<version>1.1.2</version>
-		</dependency>
-
-		<!-- JTidy to make analysis result HTML renderings pretty -->
-		<dependency>
-			<groupId>net.sf.jtidy</groupId>
-			<artifactId>jtidy</artifactId>
-			<version>r938</version>
 		</dependency>
 
 		<!-- Optional JDBC drivers -->

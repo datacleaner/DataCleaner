@@ -54,6 +54,10 @@ public class DCPopupPanel extends PopupPanel {
     public void addButton(Button button) {
         getButtonPanel().addButton(button);
     }
+    
+    public void removeButton(Button button) {
+        getButtonPanel().removeButton(button);
+    }
 
     public ButtonPanel getButtonPanel() {
         return _buttonPanel;

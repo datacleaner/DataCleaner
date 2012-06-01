@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
@@ -38,7 +37,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.w3c.tidy.Tidy;
 
 @Controller
 @RequestMapping("/{tenant}")
@@ -88,6 +86,8 @@ public class RepositoryBrowserController {
         {
             final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
             final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter();
+            
+            // TODO: Replace with request's writer
             final StringWriter writer = new StringWriter();
             try {
                 htmlWriter.write(analysisResult, _configurationCache.getAnalyzerBeansConfiguration(tenant),
@@ -97,17 +97,7 @@ public class RepositoryBrowserController {
             }
             rawAnalysisResult = writer.toString();
         }
-
-        final String tidyResult;
-        {
-            final Tidy tidy = new Tidy();
-            tidy.setHideComments(true);
-            tidy.setTrimEmptyElements(false);
-            final StringWriter writer = new StringWriter();
-            tidy.parse(new StringReader(rawAnalysisResult), writer);
-            tidyResult = writer.toString();
-        }
-
-        return tidyResult;
+        
+        return rawAnalysisResult;
     }
 }

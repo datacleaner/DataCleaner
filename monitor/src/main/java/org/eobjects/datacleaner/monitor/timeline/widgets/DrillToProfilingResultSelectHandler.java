@@ -59,14 +59,14 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
 
     @Override
     public void onSelect(SelectEvent event) {
-        JsArray<Selection> selections = _chart.getSelections();
+        final JsArray<Selection> selections = _chart.getSelections();
 
         if (selections == null || selections.length() != 1) {
             // this handler only reacts to single cell selections
             return;
         }
 
-        Selection selection = selections.get(0);
+        final Selection selection = selections.get(0);
         if (!selection.isCell()) {
             // this handler only reacts to single cell selections
             return;
@@ -87,6 +87,7 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
                 Frame frame = new Frame(url);
                 frame.setPixelSize(800, 500);
                 _popup.setWidget(frame);
+                _popup.removeButton(showResultButton);
                 _popup.center();
             }
         });

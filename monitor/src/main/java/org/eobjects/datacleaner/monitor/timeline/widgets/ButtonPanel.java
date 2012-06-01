@@ -35,4 +35,8 @@ public class ButtonPanel extends FlowPanel {
     public void addButton(Button button) {
         add(button);
     }
+
+    public void removeButton(Button button) {
+        remove(button);
+    }
 }

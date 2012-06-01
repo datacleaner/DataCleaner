@@ -73,6 +73,9 @@ public class TimelineDefinition implements IsSerializable {
     }
 
     public ChartOptions getChartOptions() {
+        if (_chartOptions == null) {
+            return new ChartOptions();
+        }
         return _chartOptions;
     }
 

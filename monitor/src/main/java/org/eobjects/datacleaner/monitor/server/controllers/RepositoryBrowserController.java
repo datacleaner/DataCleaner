@@ -23,8 +23,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
-import org.eobjects.analyzer.cli.HtmlAnalysisResultWriter;
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.server.TimelineServiceImpl;
 import org.eobjects.datacleaner.repository.Repository;

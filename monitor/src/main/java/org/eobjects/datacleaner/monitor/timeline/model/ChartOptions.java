@@ -29,13 +29,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ChartOptions implements IsSerializable {
 
     /**
-     * Defines options pertaining to the height of the chart.
-     */
-    public static interface HeightOption extends IsSerializable {
-        public Integer getHeight();
-    }
-
-    /**
      * Defines options pertaining to the horizontal axis (time dimension) of the
      * chart.
      */
@@ -50,37 +43,41 @@ public class ChartOptions implements IsSerializable {
      * chart.
      */
     public static interface VerticalAxisOption extends IsSerializable {
+        /**
+         * Gets the height (in pixels) of the chart
+         * 
+         * @return
+         */
+        public int getHeight();
+
         public Integer getMinimumValue();
 
         public Integer getMaximumValue();
+        
+        public boolean isLogarithmicScale();
     }
 
-    private HeightOption _height;
-    private HorizontalAxisOption _horizontalAxisOption;
-    private VerticalAxisOption _verticalAxisOption;
+    private final HorizontalAxisOption _horizontalAxisOption;
+    private final VerticalAxisOption _verticalAxisOption;
 
-    public HeightOption getHeight() {
-        return _height;
+    public ChartOptions() {
+        this(new DefaultHAxisOption(), new DefaultVAxisOption());
     }
 
-    public void setHeight(HeightOption height) {
-        _height = height;
+    public ChartOptions(Date begin, Date end, Integer height, Integer minimumValue, Integer maximumValue, boolean logarithmicScale) {
+        this(new DefaultHAxisOption(begin, end), new DefaultVAxisOption(height, minimumValue, maximumValue, logarithmicScale));
+    }
+
+    public ChartOptions(HorizontalAxisOption horizontalAxisOption, VerticalAxisOption verticalAxisOption) {
+        _horizontalAxisOption = horizontalAxisOption;
+        _verticalAxisOption = verticalAxisOption;
     }
 
     public HorizontalAxisOption getHorizontalAxisOption() {
         return _horizontalAxisOption;
     }
 
-    public void setHorizontalAxisOption(HorizontalAxisOption horizontalAxisOption) {
-        _horizontalAxisOption = horizontalAxisOption;
-    }
-
     public VerticalAxisOption getVerticalAxisOption() {
         return _verticalAxisOption;
     }
-
-    public void setVerticalAxisOption(VerticalAxisOption verticalAxisOption) {
-        _verticalAxisOption = verticalAxisOption;
-    }
-
 }

@@ -21,16 +21,28 @@ package org.eobjects.datacleaner.monitor.timeline.model;
 
 import java.util.Date;
 
-public class DefaultVerticalAxisOption implements ChartOptions.HorizontalAxisOption {
+public class DefaultHAxisOption implements ChartOptions.HorizontalAxisOption {
+
+    private final Date _endDate;
+    private final Date _beginDate;
+
+    public DefaultHAxisOption() {
+        this(null, null);
+    }
+
+    public DefaultHAxisOption(Date beginDate, Date endDate) {
+        _beginDate = beginDate;
+        _endDate = endDate;
+    }
 
     @Override
     public Date getBeginDate() {
-        return null;
+        return _beginDate;
     }
 
     @Override
     public Date getEndDate() {
-        return null;
+        return _endDate;
     }
 
 }

@@ -33,7 +33,7 @@ div.pageContent {
 	text-align: left;
 }
 
-.gwt-TabBar {
+.MainTabPanel .gwt-TabBar {
 	background-color: transparent !important;
 }
 

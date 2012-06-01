@@ -23,7 +23,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
-import org.eobjects.datacleaner.monitor.timeline.model.DefaultHeighOption;
+import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions;
+import org.eobjects.datacleaner.monitor.timeline.model.DefaultVAxisOption;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
@@ -41,6 +42,7 @@ import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
 
@@ -67,8 +69,8 @@ public class TimelinePanel extends FlowPanel {
         _timelineIdentifier = timelineIdentifier;
         _listPanel = listPanel;
         _loadingIndicator = new LoadingIndicator();
-        _loadingIndicator.setHeight((DefaultHeighOption.HEIGHT + 4) + "px");
-        
+        _loadingIndicator.setHeight((DefaultVAxisOption.HEIGHT + 4) + "px");
+
         _saveButton = new Button("Save");
         _saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
         _saveButton.addClickHandler(new ClickHandler() {
@@ -116,7 +118,7 @@ public class TimelinePanel extends FlowPanel {
     public TimelineIdentifier getTimelineIdentifier() {
         return _timelineIdentifier;
     }
-    
+
     public void setTimelineIdentifier(TimelineIdentifier timelineIdentifier) {
         if (timelineIdentifier.equals(_timelineIdentifier)) {
             return;
@@ -164,7 +166,7 @@ public class TimelinePanel extends FlowPanel {
             return;
         }
         _timelineData = timelineData;
-        
+
         renderChart();
     }
 
@@ -174,7 +176,29 @@ public class TimelinePanel extends FlowPanel {
             public void run() {
                 final Options options = Options.create();
                 options.setWidth(880);
-                options.setHeight(DefaultHeighOption.HEIGHT);
+
+                final ChartOptions chartOptions = _timelineDefinition.getChartOptions();
+
+                final Integer height = chartOptions.getVerticalAxisOption().getHeight();
+                final Integer maximumValue = chartOptions.getVerticalAxisOption().getMaximumValue();
+                final Integer minimumValue = chartOptions.getVerticalAxisOption().getMinimumValue();
+                final boolean logarithmicScale = chartOptions.getVerticalAxisOption().isLogarithmicScale();
+
+                options.setHeight(height);
+                if (logarithmicScale || maximumValue != null || minimumValue != null) {
+                    final AxisOptions axisOptions = AxisOptions.create();
+                    if (minimumValue != null) {
+                        axisOptions.setMinValue(minimumValue);
+                    }
+                    if (maximumValue != null) {
+                        axisOptions.setMaxValue(maximumValue);
+                    }
+
+                    axisOptions.setIsLogScale(logarithmicScale);
+
+                    options.setVAxisOptions(axisOptions);
+                }
+
                 if (_timelineIdentifier != null) {
                     options.setTitle(_timelineIdentifier.getName());
                 }
@@ -189,7 +213,7 @@ public class TimelinePanel extends FlowPanel {
                 add(chart);
             }
         };
-        VisualizationUtils.loadVisualizationApi(lineChartRunnable, LineChart.PACKAGE);        
+        VisualizationUtils.loadVisualizationApi(lineChartRunnable, LineChart.PACKAGE);
     }
 
     public TimelineData getTimelineData() {

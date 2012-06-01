@@ -42,6 +42,7 @@ import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.timeline.TimelineService;
+import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
 import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricGroup;
@@ -126,27 +127,33 @@ public class TimelineServiceImpl implements TimelineService {
         final List<RepositoryFile> resultFiles = getResultFilesForJob(timeline.getJobIdentifier());
         final List<TimelineDataRow> rows = new ArrayList<TimelineDataRow>();
 
+        final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
+
         for (RepositoryFile resultFile : resultFiles) {
+
             final AnalysisResult analysisResult = readAnalysisResult(resultFile);
+
             final Date date = analysisResult.getCreationDate();
 
-            final TimelineDataRow row = new TimelineDataRow(date, resultFile.getQualifiedPath());
+            if (isInRange(date, horizontalAxisOption)) {
+                final TimelineDataRow row = new TimelineDataRow(date, resultFile.getQualifiedPath());
 
-            final List<Number> metricValues = new ArrayList<Number>(metricCount);
-            for (int i = 0; i < metricCount; i++) {
-                final MetricIdentifier metricIdentifier = metricIdentifiers.get(i);
-                final AnalyzerJob job = analyzerJobs.get(i);
-                final MetricDescriptor metric = metricDescriptors.get(i);
-                final MetricParameters parameters = metricParameters.get(i);
+                final List<Number> metricValues = new ArrayList<Number>(metricCount);
+                for (int i = 0; i < metricCount; i++) {
+                    final MetricIdentifier metricIdentifier = metricIdentifiers.get(i);
+                    final AnalyzerJob job = analyzerJobs.get(i);
+                    final MetricDescriptor metric = metricDescriptors.get(i);
+                    final MetricParameters parameters = metricParameters.get(i);
 
-                final AnalyzerResult analyzerResult = getResult(analysisResult, job, metricIdentifier);
+                    final AnalyzerResult analyzerResult = getResult(analysisResult, job, metricIdentifier);
 
-                final Number metricValue = metric.getValue(analyzerResult, parameters);
-                metricValues.add(metricValue);
+                    final Number metricValue = metric.getValue(analyzerResult, parameters);
+                    metricValues.add(metricValue);
+                }
+                row.setMetricValues(metricValues);
+
+                rows.add(row);
             }
-            row.setMetricValues(metricValues);
-
-            rows.add(row);
         }
 
         // sort rows to ensure correct date order
@@ -156,6 +163,20 @@ public class TimelineServiceImpl implements TimelineService {
         timelineData.setRows(rows);
 
         return timelineData;
+    }
+
+    private boolean isInRange(Date date, HorizontalAxisOption horizontalAxisOption) {
+        final Date beginDate = horizontalAxisOption.getBeginDate();
+        final Date endDate = horizontalAxisOption.getEndDate();
+
+        if (beginDate != null && beginDate.before(date)) {
+            return false;
+        }
+        if (endDate != null && endDate.after(date)) {
+            return false;
+        }
+
+        return true;
     }
 
     private AnalyzerResult getResult(final AnalysisResult analysisResult, final AnalyzerJob analyzerJob,

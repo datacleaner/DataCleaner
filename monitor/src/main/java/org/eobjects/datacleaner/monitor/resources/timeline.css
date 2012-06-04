@@ -194,7 +194,10 @@ body,table td,select,button {
 }
 
 .CustomizeMetricsPanel {
-	
+}
+
+.CustomizeMetricsPanel .HeadingLabel {
+	cursor: pointer;
 }
 
 .CustomizeMetricsPanel .MetricGroupPanel {

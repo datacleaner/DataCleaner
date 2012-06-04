@@ -65,10 +65,7 @@ public class TimelineServiceImplTest extends TestCase {
         assertEquals("MetricGroup[String analyzer (CITY,CONTACTLASTNAME,CONTACTFIRSTNAME)]", metricGroups.get(3).toString());
 
         List<MetricIdentifier> metrics = metricGroups.get(2).getMetrics();
-        assertEquals("[MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Distinct count], "
-                + "MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Null count], "
-                + "MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Unique count], "
-                + "MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Value count]]", metrics.toString());
+        assertEquals("[MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Distinct count], MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Null count], MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Total count], MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Unique count], MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Value count]]", metrics.toString());
         
         metrics = metricGroups.get(3).getMetrics();
         // 20 metrics in the String analyzer

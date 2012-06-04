@@ -64,6 +64,10 @@ body,table td,select,button {
 	-webkit-filter: grayscale(1); /* Google Chrome & Webkit Nightlies */
 }
 
+.gwt-Frame {
+	border: none;
+}
+
 /*
  * General purpose style modifiers
  */

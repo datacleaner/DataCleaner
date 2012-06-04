@@ -32,6 +32,8 @@ import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.LoadingIndicator;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 public class CustomizeMetricsPanel extends FlowPanel {
@@ -78,10 +80,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
     }
 
     private FlowPanel createMetricGroupPanel(MetricGroup metricGroup) {
-        final FlowPanel panel = new FlowPanel();
-        panel.addStyleName("MetricGroupPanel");
-
-        panel.add(new HeadingLabel(metricGroup.getName()));
+        final FlowPanel innerPanel = new FlowPanel();
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
@@ -91,15 +90,28 @@ public class CustomizeMetricsPanel extends FlowPanel {
                     metricIdentifier, activeMetrics);
             if (presenter != null) {
                 _metricPresenters.add(presenter);
-                panel.add(presenter);
+                innerPanel.add(presenter);
             }
         }
 
         if (!columnParameterizedMetrics.isEmpty()) {
             _metricPresenters.add(columnParameterizedMetrics);
-            panel.add(columnParameterizedMetrics);
+            innerPanel.add(columnParameterizedMetrics);
         }
 
+        
+        HeadingLabel heading = new HeadingLabel(metricGroup.getName());
+        heading.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // toggle visibility
+                innerPanel.setVisible(!innerPanel.isVisible());
+            }
+        });
+        final FlowPanel panel = new FlowPanel();
+        panel.addStyleName("MetricGroupPanel");
+        panel.add(heading);
+        panel.add(innerPanel);
         return panel;
     }
 

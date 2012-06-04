@@ -31,18 +31,30 @@ import com.google.gwt.user.client.ui.FlowPanel;
  */
 public class TimelineListPanel extends FlowPanel {
 
+    private final TenantIdentifier _tenant;
+    private final TimelineServiceAsync _service;
+    private final WelcomePanel _welcomePanel;
+
     public TimelineListPanel(TimelineServiceAsync service, TenantIdentifier tenant) {
         super();
+        _tenant = tenant;
+        _service = service;
         addStyleName("TimelineListPanel");
-        
+
         add(new HeadingLabel("Timelines"));
-        
-        final Button newTimelineButton = new Button("New timeline");
-        newTimelineButton.addClickHandler(new CreateTimelineHandler(service, tenant, this));
-        add(newTimelineButton);
+
+        _welcomePanel = new WelcomePanel();
+        Button newTimelineButton = _welcomePanel.getNewTimelineButton();
+        newTimelineButton.addClickHandler(new CreateTimelineHandler(_service, _tenant, this));
+        add(_welcomePanel);
     }
-    
+
     public void addTimelinePanel(TimelinePanel timelinePanel) {
         add(timelinePanel);
+        _welcomePanel.setWelcomeTextVisible(false);
+    }
+
+    public void removeTimelinePanel(TimelinePanel timelinePanel) {
+        remove(timelinePanel);
     }
 }

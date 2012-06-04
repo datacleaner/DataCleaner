@@ -61,20 +61,22 @@ public class SaveTimelineClickHandler implements ClickHandler {
         TimelineDefinition timelineDefinition = _timelinePanel.getTimelineDefinition();
 
         if (create) {
-            _service.createTimelineDefinition(timelineIdentifier, timelineDefinition, new DCAsyncCallback<TimelineIdentifier>() {
-                @Override
-                public void onSuccess(TimelineIdentifier result) {
-                    _timelinePanel.setTimelineIdentifier(result);
-                    Window.alert("Saved timeline '" + result.getName() + "'");
-                }
-            });
+            _service.createTimelineDefinition(_tenantIdentifier, timelineIdentifier, timelineDefinition,
+                    new DCAsyncCallback<TimelineIdentifier>() {
+                        @Override
+                        public void onSuccess(TimelineIdentifier result) {
+                            _timelinePanel.setTimelineIdentifier(result);
+                            Window.alert("Saved timeline '" + result.getName() + "'");
+                        }
+                    });
         } else {
-            _service.updateTimelineDefinition(timelineIdentifier, timelineDefinition, new DCAsyncCallback<TimelineIdentifier>() {
-                @Override
-                public void onSuccess(TimelineIdentifier result) {
-                    Window.alert("Saved timeline '" + result.getName() + "'");
-                }
-            });
+            _service.updateTimelineDefinition(_tenantIdentifier, timelineIdentifier, timelineDefinition,
+                    new DCAsyncCallback<TimelineIdentifier>() {
+                        @Override
+                        public void onSuccess(TimelineIdentifier result) {
+                            Window.alert("Saved timeline '" + result.getName() + "'");
+                        }
+                    });
         }
     }
 

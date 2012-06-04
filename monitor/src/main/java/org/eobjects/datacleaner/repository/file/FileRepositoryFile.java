@@ -111,4 +111,12 @@ final class FileRepositoryFile implements RepositoryFile {
     public String toString() {
         return "RepositoryFile[" + getName() + "]";
     }
+
+    @Override
+    public void delete() throws IllegalStateException {
+        final boolean success = _file.delete();
+        if (!success) {
+            throw new IllegalStateException("Could not delete file: " + _file);
+        }
+    }
 }

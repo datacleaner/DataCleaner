@@ -67,30 +67,35 @@ public interface TimelineService extends RemoteService {
     /**
      * Gets the definition (incl. metric references) of a timeline
      * 
+     * @param tenant
      * @param timeline
      * @return
      */
-    public TimelineDefinition getTimelineDefinition(TimelineIdentifier timeline);
+    public TimelineDefinition getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline);
 
     /**
      * Updates a timeline definition
      * 
+     * @param tenant
      * @param timeline
      * @param timelineDefinition
      * 
      * @return the persisted timeline identifier
      */
-    public TimelineIdentifier updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition);
+    public TimelineIdentifier updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+            TimelineDefinition timelineDefinition);
 
     /**
      * Creates a new timeline definition
      * 
+     * @param tenant
      * @param timeline
      * @param timelineDefinition
      * 
      * @return the persisted timeline identifier
      */
-    public TimelineIdentifier createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition);
+    public TimelineIdentifier createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+            TimelineDefinition timelineDefinition);
 
     /**
      * Materializes the data needed to draw a particular timeline
@@ -108,5 +113,15 @@ public interface TimelineService extends RemoteService {
      * @param metric
      * @return
      */
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier, MetricIdentifier metric);
+    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
+            MetricIdentifier metric);
+
+    /**
+     * Deletes a timeline from the repository
+     * 
+     * @param tenant
+     * @param timeline
+     * @return
+     */
+    public Boolean deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline);
 }

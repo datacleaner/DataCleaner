@@ -56,6 +56,7 @@ public class TimelinePanel extends FlowPanel {
     private final LoadingIndicator _loadingIndicator;
     private final TenantIdentifier _tenant;
     private final Button _saveButton;
+    private final Button _deleteButton;
 
     private TimelineIdentifier _timelineIdentifier;
     private TimelineDefinition _timelineDefinition;
@@ -71,7 +72,10 @@ public class TimelinePanel extends FlowPanel {
         _loadingIndicator = new LoadingIndicator();
         _loadingIndicator.setHeight((DefaultVAxisOption.HEIGHT + 4) + "px");
 
-        _saveButton = new Button("Save");
+        _saveButton = new Button("");
+        _saveButton.addStyleDependentName("ImageButton");
+        _saveButton.setTitle("Save timeline");
+        _saveButton.addStyleName("SaveButton");
         _saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
         _saveButton.addClickHandler(new ClickHandler() {
             @Override
@@ -80,18 +84,38 @@ public class TimelinePanel extends FlowPanel {
                 _saveButton.setEnabled(false);
             }
         });
+        
         if (_timelineIdentifier != null) {
             // initially does not make sense to save an (unchanged) and
             // identifyable timeline.
             _saveButton.setEnabled(false);
         }
+        
+        _deleteButton = new Button();
+        _deleteButton.addStyleDependentName("ImageButton");
+        _deleteButton.setTitle("Delete timeline");
+        _deleteButton.addStyleName("DeleteButton");
+        _deleteButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (_timelineIdentifier != null) {
+                    _service.deleteTimeline(_tenant, _timelineIdentifier, new DCAsyncCallback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            // do nothing
+                        }
+                    });
+                }
+                _listPanel.removeTimelinePanel(TimelinePanel.this);
+            }
+        });
 
         addStyleName("TimelinePanel");
         add(createButtonPanel());
         setLoading();
 
         if (_timelineIdentifier != null) {
-            _service.getTimelineDefinition(_timelineIdentifier, new DCAsyncCallback<TimelineDefinition>() {
+            _service.getTimelineDefinition(_tenant, _timelineIdentifier, new DCAsyncCallback<TimelineDefinition>() {
                 @Override
                 public void onSuccess(final TimelineDefinition definition) {
                     setTimelineDefinition(definition);
@@ -221,10 +245,16 @@ public class TimelinePanel extends FlowPanel {
     }
 
     private ButtonPanel createButtonPanel() {
-        final Button customizeButton = new Button("Customize");
+        final Button customizeButton = new Button("");
+        customizeButton.addStyleDependentName("ImageButton");
+        customizeButton.setTitle("Customize timeline");
+        customizeButton.addStyleName("CustomizeButton");
         customizeButton.addClickHandler(new CustomizeTimelineHandler(_service, this));
 
-        final Button copyButton = new Button("Copy");
+        final Button copyButton = new Button("");
+        copyButton.addStyleDependentName("ImageButton");
+        copyButton.setTitle("Copy timeline");
+        copyButton.addStyleName("CopyButton");
         copyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -238,6 +268,7 @@ public class TimelinePanel extends FlowPanel {
         buttonPanel.add(customizeButton);
         buttonPanel.add(copyButton);
         buttonPanel.add(_saveButton);
+        buttonPanel.add(_deleteButton);
 
         return buttonPanel;
     }

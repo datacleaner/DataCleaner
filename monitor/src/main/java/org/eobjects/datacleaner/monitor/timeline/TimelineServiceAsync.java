@@ -39,7 +39,8 @@ public interface TimelineServiceAsync {
 
     public void getSavedTimelines(TenantIdentifier tenant, AsyncCallback<List<TimelineIdentifier>> callback);
 
-    public void getTimelineDefinition(TimelineIdentifier identifier, AsyncCallback<TimelineDefinition> callback);
+    public void getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier identifier,
+            AsyncCallback<TimelineDefinition> callback);
 
     public void getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline,
             AsyncCallback<TimelineData> callback);
@@ -48,13 +49,15 @@ public interface TimelineServiceAsync {
 
     public void getJobMetrics(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<JobMetrics> callback);
 
-    public void updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition,
-            AsyncCallback<TimelineIdentifier> callback);
+    public void updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+            TimelineDefinition timelineDefinition, AsyncCallback<TimelineIdentifier> callback);
 
-    public void createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition,
-            AsyncCallback<TimelineIdentifier> callback);
+    public void createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+            TimelineDefinition timelineDefinition, AsyncCallback<TimelineIdentifier> callback);
 
     public void getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
             MetricIdentifier metric, AsyncCallback<Collection<String>> callback);
+
+    void deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
 
 }

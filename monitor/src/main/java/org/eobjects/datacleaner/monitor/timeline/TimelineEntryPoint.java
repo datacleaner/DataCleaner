@@ -49,9 +49,10 @@ public class TimelineEntryPoint implements EntryPoint {
 
         final TabPanel tabPanel = new TabPanel();
         tabPanel.addStyleName("MainTabPanel");
-        tabPanel.add(timelineListPanel, "Timelines");
-        tabPanel.add(new Label("TODO"), "Repository");
-        tabPanel.add(new Label("TODO"), "Datastores");
+        tabPanel.add(timelineListPanel, "<span class=\"TimelinesTabTitle\">Timelines</span>", true);
+        tabPanel.add(new Label("TODO"), "<span class=\"AlertsTabTitle\">Alerts</span>", true);
+        tabPanel.add(new Label("TODO"), "<span class=\"RepositoryTabTitle\">Repository</span>", true);
+        tabPanel.add(new Label("TODO"), "<span class=\"DatastoresTabTitle\">Datastores</span>", true);
         tabPanel.selectTab(0);
         
         final RootPanel rootPanel = RootPanel.get("RootPanelTarget");

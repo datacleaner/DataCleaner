@@ -21,6 +21,10 @@
 /*
  * GWT built-in style modifications 
  */
+body,table td,select,button {
+	font-family: "Trebuchet MS", sans-serif;
+}
+
 .gwt-PopupPanel .popupContent {
 	text-align: left;
 	padding: 5px;
@@ -46,14 +50,36 @@
 	background-color: #333;
 }
 
+.gwt-Button-ImageButton {
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 30px;
+	height: 30px;
+	background-color: #f1f1f1;
+}
+
+.gwt-Button-ImageButton[disabled] {
+	filter: url(filters.svg#grayscale); /* Firefox 3.5+ */
+	filter: gray; /* IE6-9 */
+	-webkit-filter: grayscale(1); /* Google Chrome & Webkit Nightlies */
+}
+
 /*
  * General purpose style modifiers
  */
- .DCPopupPanelContent {
- 	max-height: 600px;
+.blue {
+	color: #5594dd;
+}
+
+.orange {
+	color: #ffa800;
+}
+
+.DCPopupPanelContent {
+	max-height: 600px;
 	overflow: auto;
- }
- 
+}
+
 .HeadingLabel {
 	color: #377FCF;
 	font-size: 1.2em;
@@ -64,16 +90,60 @@
 	text-align: center;
 	padding: 10px;
 }
+
+/*
+* Tab headers
+*/
+.TimelinesTabTitle {
+	padding-left: 26px;
+	background-image: url("timelines.png");
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+.AlertsTabTitle {
+	padding-left: 26px;
+	background-image: url("alerts.png");
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
 /*
  * Specific panels
  */
-
 .DrillToProfilingResultPopupPanel {
 	
 }
 
 .TimelineListPanel {
 	
+}
+
+.TimelineListPanel .welcomeTextPanel {
+	margin: 40px;
+	margin-top: 5px;
+	padding: 40px;
+	border: 4px dashed #f1f1f1;
+	border-radius: 20px;
+}
+
+.TimelineListPanel .toggleWelcomeTextButton {
+	cursor: pointer;
+	width: 30px;
+	height: 20px;
+	background-color: #f1f1f1;
+	border-radius: 4px;
+	border: none;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.TimelineListPanel .toggleWelcomeTextButton.collapsed {
+	background-image: url("expand.png");
+}
+
+.TimelineListPanel .toggleWelcomeTextButton.expanded {
+	background-image: url("collapse.png");
 }
 
 .TimelinePanel {
@@ -83,6 +153,22 @@
 .TimelinePanel .ButtonPanel {
 	text-align: right;
 	padding: 0;
+}
+
+.TimelinePanel .SaveButton {
+	background-image: url("save.png");
+}
+
+.TimelinePanel .CustomizeButton {
+	background-image: url("customize.png");
+}
+
+.TimelinePanel .CopyButton {
+	background-image: url("copy.png");
+}
+
+.TimelinePanel .DeleteButton {
+	background-image: url("delete.png");
 }
 
 .TimelinePanel .TimelineChart {
@@ -136,11 +222,13 @@
 	border: 1px solid #f0f0f0;
 }
 
-.MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricPresenterAddButton {
+.MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricPresenterAddButton
+	{
 	float: right;
 	margin-top: -10px;
 }
 
-.MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricTextBox {
+.MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricTextBox
+	{
 	font-size: 0.8em;
 }

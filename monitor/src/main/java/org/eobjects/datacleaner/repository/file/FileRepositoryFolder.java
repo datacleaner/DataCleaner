@@ -121,7 +121,7 @@ class FileRepositoryFolder implements RepositoryFolder {
         }
 
         File file = new File(_file, name);
-        
+
         if (!file.exists()) {
             return null;
         }
@@ -168,5 +168,13 @@ class FileRepositoryFolder implements RepositoryFolder {
         repositoryFile.writeFile(writeCallback);
 
         return repositoryFile;
+    }
+
+    @Override
+    public void delete() throws IllegalStateException {
+        final boolean success = _file.delete();
+        if (!success) {
+            throw new IllegalStateException("Could not delete directory: " + _file);
+        }
     }
 }

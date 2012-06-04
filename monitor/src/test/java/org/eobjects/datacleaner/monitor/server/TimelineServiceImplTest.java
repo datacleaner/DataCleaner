@@ -84,7 +84,7 @@ public class TimelineServiceImplTest extends TestCase {
                 "TimelineIdentifier[name=customer_patterns,path=/DC/timelines/customer_patterns.analysis.timeline.xml]",
                 timelineIdentifier.toString());
 
-        final TimelineDefinition timelineDefinition = service.getTimelineDefinition(timelineIdentifier);
+        final TimelineDefinition timelineDefinition = service.getTimelineDefinition(tenant, timelineIdentifier);
         assertEquals("TimelineDefinition[job=JobIdentifier[name=null,path=/DC/jobs/customers.analysis.xml],metrics=["
                 + "MetricIdentifier[analyzerInputName=CONTACTLASTNAME,metricDescriptorName=Pattern count], "
                 + "MetricIdentifier[analyzerInputName=CITY,metricDescriptorName=Value count,paramQueryString=Madrid], "

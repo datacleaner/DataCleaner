@@ -86,8 +86,8 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     }
 
     @Override
-    public TimelineDefinition getTimelineDefinition(TimelineIdentifier timeline) {
-        return _delegate.getTimelineDefinition(timeline);
+    public TimelineDefinition getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline) {
+        return _delegate.getTimelineDefinition(tenant, timeline);
     }
 
     @Override
@@ -96,17 +96,22 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     }
 
     @Override
-    public TimelineIdentifier updateTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
-        return _delegate.updateTimelineDefinition(timeline, timelineDefinition);
+    public TimelineIdentifier updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
+        return _delegate.updateTimelineDefinition(tenant, timeline, timelineDefinition);
     }
 
     @Override
-    public TimelineIdentifier createTimelineDefinition(TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
-        return _delegate.createTimelineDefinition(timeline, timelineDefinition);
+    public TimelineIdentifier createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
+        return _delegate.createTimelineDefinition(tenant, timeline, timelineDefinition);
     }
 
     @Override
     public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
         return _delegate.getMetricParameterSuggestions(tenant, job, metric);
+    }
+    
+    @Override
+    public Boolean deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
+        return _delegate.deleteTimeline(tenant, timeline);
     }
 }

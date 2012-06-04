@@ -409,7 +409,7 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     @Override
-    public TimelineDefinition getTimelineDefinition(final TimelineIdentifier timeline) {
+    public TimelineDefinition getTimelineDefinition(final TenantIdentifier tenant, final TimelineIdentifier timeline) {
         final String path = timeline.getPath();
 
         logger.info("Reading timeline from file: {}", path);
@@ -524,8 +524,8 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     @Override
-    public TimelineIdentifier updateTimelineDefinition(final TimelineIdentifier timelineIdentifier,
-            final TimelineDefinition timelineDefinition) {
+    public TimelineIdentifier updateTimelineDefinition(final TenantIdentifier tenant,
+            final TimelineIdentifier timelineIdentifier, final TimelineDefinition timelineDefinition) {
         final RepositoryFile file = (RepositoryFile) _repository.getRepositoryNode(timelineIdentifier.getPath());
 
         file.writeFile(new WriteTimelineAction(timelineDefinition));
@@ -534,8 +534,8 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     @Override
-    public TimelineIdentifier createTimelineDefinition(TimelineIdentifier timelineIdentifier,
-            TimelineDefinition timelineDefinition) {
+    public TimelineIdentifier createTimelineDefinition(final TenantIdentifier tenant,
+            final TimelineIdentifier timelineIdentifier, final TimelineDefinition timelineDefinition) {
         final String path = timelineIdentifier.getPath();
 
         final int lastSlash = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
@@ -577,5 +577,28 @@ public class TimelineServiceImpl implements TimelineService {
         final AnalyzerResult result = getResult(analysisResult, analyzerJob, metric);
 
         return metricDescriptor.getMetricParameterSuggestions(result);
+    }
+
+    @Override
+    public Boolean deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
+        if (timeline == null) {
+            return false;
+        }
+
+        final String path = timeline.getPath();
+        final RepositoryNode node = _repository.getRepositoryNode(path);
+        
+        if (node == null) {
+            return false;
+        }
+
+        try {
+            node.delete();
+        } catch (IllegalStateException e) {
+            logger.warn("Attempt to delete node failed: " + node, e);
+            return false;
+        }
+
+        return true;
     }
 }

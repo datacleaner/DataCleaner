@@ -47,4 +47,13 @@ public interface RepositoryNode extends Serializable {
      * @return the qualified path of this node.
      */
     public String getQualifiedPath();
+
+    /**
+     * Attempts to delete the repository node.
+     * 
+     * @throws IllegalStateException
+     *             if the node is not deletable, eg. if it is a read-only file,
+     *             a non-empty directory or similar.
+     */
+    public void delete() throws IllegalStateException;
 }

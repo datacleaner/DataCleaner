@@ -138,7 +138,8 @@ body,table td,select,button {
 	display: block;
 	width: 140px;
 	line-height: 2em;
-	padding-left: 10px; background-color : #f0f0f0;
+	padding-left: 10px;
+	background-color: #f0f0f0;
 	overflow: hidden;
 	background-color: #f0f0f0;
 }
@@ -256,13 +257,36 @@ body,table td,select,button {
 	clear: both;
 }
 
-.MetricGroupPanel .ColumnParameterizedMetricsPresenter {
+.MetricGroupPanel .MultipleColumnParameterizedMetricsPresenter {
 	clear: both;
+	display: table;
+}
+
+.MetricGroupPanel .MultipleColumnParameterizedMetricsPresenter .ColumnHeaders
+	{
+	display: table-row;
+}
+
+.MetricGroupPanel .MultipleColumnParameterizedMetricsPresenter .ColumnHeader
+	{
+	display: table-cell;
+	padding-left: 4px;
+	text-align: center;
+}
+
+.MetricGroupPanel .ColumnParameterizedMetricsPresenter {
+	display: table-row;
+}
+
+.MetricGroupPanel .ColumnParameterizedMetricsPresenter span.gwt-CheckBox
+	{
+	display: table-cell;
+	text-align: center;
 }
 
 .MetricGroupPanel .ColumnParameterizedMetricsPresenter .gwt-Label {
-	float: left;
-	width: 100px;
+	display: table-cell;
+	width: 150px;
 }
 
 .MetricGroupPanel .StringParameterizedMetricsPresenter {
@@ -283,4 +307,50 @@ body,table td,select,button {
 .MetricGroupPanel .StringParameterizedMetricsPresenter .StringParameterizedMetricTextBox
 	{
 	font-size: 0.8em;
+}
+
+.CustomizeChartOptionsPanel {
+	width: 610px;
+}
+
+.CustomizeChartOptionsPanel .gwt-RadioButton {
+	float: left;
+	clear: both;
+}
+
+.CustomizeChartOptionsPanel .TimelineRadioSpecPanel .gwt-Label {
+	float: left;
+	margin-right: 1em;
+	padding: 2px;
+}
+
+.CustomizeChartOptionsPanel .TimelineRadioSpecPanel input {
+	float: left;
+	font-size: small;
+	padding: 1px;
+	width: 100px;
+}
+
+.CustomizeChartOptionsPanel .TimelineRadioSpecPanel {
+	float: left;
+	clear: both;
+	border-left: 2px solid #f0f0f0;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	padding-left: 20px;
+}
+
+.CustomizeChartOptionsPanel .DateSelectionWidget {
+	padding: 2px;
+	background-color: #f0f0f0;
+}
+
+.CustomizeChartOptionsPanel .HorizontalAxisOptionPanel {
+	float: left;
+	width: 300px;
+}
+
+.CustomizeChartOptionsPanel .VerticalAxisOptionPanel {
+	float: right;
+	width: 300px;
 }

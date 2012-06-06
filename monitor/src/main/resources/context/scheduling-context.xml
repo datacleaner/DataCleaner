@@ -8,6 +8,33 @@
 				 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.9.0.xsd">
 
-	<bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent" />
+	<bean name="exampleJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="org.eobjects.datacleaner.monitor.scheduling.ExecuteJob" />
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="DataCleaner.tenant.id" value="DC" />
+				<entry key="DataCleaner.job.name" value="product_profiling" />
+			</map>
+		</property>
+		<property name="applicationContextJobDataKey" value="applicationContext" />
+	</bean>
+
+	<bean id="exampleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<!-- see the example of method invoking job above -->
+		<property name="jobDetail" ref="exampleJobDetail" />
+		<!-- 2 seconds delay -->
+		<property name="startDelay" value="2000" />
+		<!-- repeat every 50 seconds -->
+		<property name="repeatInterval" value="50000" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+		 		<ref bean="exampleTrigger" />
+			</list>
+		</property>
+	</bean>
 
 </beans>

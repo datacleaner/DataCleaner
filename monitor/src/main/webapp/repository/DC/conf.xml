@@ -13,6 +13,9 @@
 
 	<reference-data-catalog>
 		<dictionaries>
+			<text-file-dictionary name="vendor whitelist">
+				<filename>reference-data/vendor_dictionary.txt</filename>
+			</text-file-dictionary>
 		</dictionaries>
 		<synonym-catalogs>
 		</synonym-catalogs>

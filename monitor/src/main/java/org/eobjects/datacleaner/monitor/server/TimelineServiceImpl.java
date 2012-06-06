@@ -73,9 +73,9 @@ import org.slf4j.LoggerFactory;
  */
 public class TimelineServiceImpl implements TimelineService {
 
-    private static final String PATH_JOBS = "jobs";
-    private static final String PATH_RESULTS = "results";
-    private static final String PATH_TIMELINES = "timelines";
+    public static final String PATH_JOBS = "jobs";
+    public static final String PATH_RESULTS = "results";
+    public static final String PATH_TIMELINES = "timelines";
 
     private static final Logger logger = LoggerFactory.getLogger(TimelineServiceImpl.class);
 

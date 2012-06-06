@@ -232,7 +232,7 @@ public class TimelineServiceImpl implements TimelineService {
             final MetricIdentifier metricIdentifier) {
         AnalyzerResult result = analysisResult.getResult(analyzerJob);
         if (result == null) {
-            logger.warn("Could not resolve AnalyzerResult using key={}, reiterating using non-exact matching",
+            logger.info("Could not resolve AnalyzerResult using key={}, reiterating using non-exact matching",
                     analyzerJob);
 
             Collection<ComponentJob> componentJobs = analysisResult.getResultMap().keySet();

@@ -29,6 +29,7 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 
 /**
  * Container panel for a group of timelines. Each timeline will be presented in
@@ -57,6 +58,11 @@ public class TimelineGroupPanel extends FlowPanel {
             add(_welcomePanel);
         } else {
             add(new HeadingLabel(group.getName()));
+            
+            if (group.getDescription() != null) {
+                add(new Label(group.getDescription()));
+            }
+            
             _welcomePanel = null;
             newTimelineButton = new Button("New timeline");
             add(newTimelineButton);

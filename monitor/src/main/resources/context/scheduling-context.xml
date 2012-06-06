@@ -23,10 +23,10 @@
 	<bean id="exampleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<!-- see the example of method invoking job above -->
 		<property name="jobDetail" ref="exampleJobDetail" />
-		<!-- 2 seconds delay -->
-		<property name="startDelay" value="2000" />
-		<!-- repeat every 50 seconds -->
-		<property name="repeatInterval" value="50000" />
+		<!-- 2 minute delay -->
+		<property name="startDelay" value="120000" />
+		<!-- repeat every 120 seconds -->
+		<property name="repeatInterval" value="120000" />
 	</bean>
 
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">

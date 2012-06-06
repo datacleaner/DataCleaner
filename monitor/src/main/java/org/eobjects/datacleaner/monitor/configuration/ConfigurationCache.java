@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.configuration;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
 import org.eobjects.metamodel.util.FileHelper;
 
 /**
@@ -45,7 +47,7 @@ public class ConfigurationCache {
         _repository = repository;
         _analyzerBeansConfigurations = new HashMap<String, AnalyzerBeansConfiguration>();
     }
-    
+
     public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(String tenantId) {
         AnalyzerBeansConfiguration conf = _analyzerBeansConfigurations.get(tenantId);
         if (conf == null) {
@@ -64,7 +66,7 @@ public class ConfigurationCache {
         return getAnalyzerBeansConfiguration(tenantId);
     }
 
-    private AnalyzerBeansConfiguration readConfiguration(String tenantId) {
+    private AnalyzerBeansConfiguration readConfiguration(final String tenantId) {
         final RepositoryFolder tenantFolder = _repository.getFolder(tenantId);
         if (tenantFolder == null) {
             throw new IllegalStateException("No tenant folder: " + tenantId);
@@ -78,7 +80,11 @@ public class ConfigurationCache {
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor() {
             @Override
             public String createFilename(String filename) {
-                // TODO: Point to file repository?
+                if (tenantFolder instanceof FileRepositoryFolder) {
+                    File file = ((FileRepositoryFolder) tenantFolder).getFile();
+                    return file.getAbsolutePath() + File.separatorChar + filename;
+                }
+                // TODO: What about other repos?
                 return super.createFilename(filename);
             }
         });

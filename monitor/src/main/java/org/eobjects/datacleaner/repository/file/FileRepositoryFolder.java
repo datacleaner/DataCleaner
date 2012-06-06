@@ -34,7 +34,7 @@ import org.eobjects.metamodel.util.Func;
 /**
  * {@link RepositoryFolder} implementation based on a local directory.
  */
-class FileRepositoryFolder implements RepositoryFolder {
+public class FileRepositoryFolder implements RepositoryFolder {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,7 +52,7 @@ class FileRepositoryFolder implements RepositoryFolder {
         _file = file;
     }
 
-    protected File getFile() {
+    public File getFile() {
         return _file;
     }
 

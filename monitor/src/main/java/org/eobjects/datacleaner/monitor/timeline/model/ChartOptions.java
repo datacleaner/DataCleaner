@@ -80,4 +80,6 @@ public class ChartOptions implements IsSerializable {
     public VerticalAxisOption getVerticalAxisOption() {
         return _verticalAxisOption;
     }
+    
+    
 }

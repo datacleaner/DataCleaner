@@ -218,10 +218,10 @@ public class TimelineServiceImpl implements TimelineService {
         final Date beginDate = horizontalAxisOption.getBeginDate();
         final Date endDate = horizontalAxisOption.getEndDate();
 
-        if (beginDate != null && beginDate.before(date)) {
+        if (beginDate != null && date.before(beginDate)) {
             return false;
         }
-        if (endDate != null && endDate.after(date)) {
+        if (endDate != null && date.after(endDate)) {
             return false;
         }
 

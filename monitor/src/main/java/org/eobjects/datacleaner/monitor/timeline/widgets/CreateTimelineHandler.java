@@ -37,12 +37,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
  */
 public class CreateTimelineHandler implements ClickHandler {
 
-    private final TimelineListPanel _timelineListPanel;
+    private final TimelineGroupPanel _timelineListPanel;
     private final TimelineServiceAsync _service;
     private final TenantIdentifier _tenant;
 
     public CreateTimelineHandler(TimelineServiceAsync service, TenantIdentifier tenant,
-            TimelineListPanel timelineListPanel) {
+            TimelineGroupPanel timelineListPanel) {
         _service = service;
         _tenant = tenant;
         _timelineListPanel = timelineListPanel;

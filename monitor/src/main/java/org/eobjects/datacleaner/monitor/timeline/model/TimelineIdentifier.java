@@ -28,14 +28,20 @@ public class TimelineIdentifier implements IsSerializable {
 
     private String _name;
     private String _path;
+    private TimelineGroup _group;
 
-    public TimelineIdentifier(String name, String path) {
+    public TimelineIdentifier(String name, String path, TimelineGroup group) {
         _name = name;
         _path = path;
+        _group = group;
     }
 
     public TimelineIdentifier() {
-        this(null, null);
+        this(null, null, null);
+    }
+    
+    public TimelineGroup getGroup() {
+        return _group;
     }
 
     public String getPath() {

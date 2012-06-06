@@ -28,6 +28,7 @@ import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.timeline.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -45,7 +46,7 @@ public interface TimelineService extends RemoteService {
      * @param tenant
      * @return
      */
-    public List<JobIdentifier> getSavedJobs(TenantIdentifier tenant);
+    public List<JobIdentifier> getJobs(TenantIdentifier tenant);
 
     /**
      * Gets all available metrics for a job
@@ -57,12 +58,23 @@ public interface TimelineService extends RemoteService {
     public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job);
 
     /**
+     * Gets the available timeline groups
+     * 
+     * @param tenant
+     * 
+     * @return
+     */
+    public List<TimelineGroup> getTimelineGroups(TenantIdentifier tenant);
+
+    /**
      * Gets the saved timeline identifiers of a tenant
      * 
      * @param tenant
+     * @param group
+     *            optionally a timeline group to narrow the search
      * @return
      */
-    public List<TimelineIdentifier> getSavedTimelines(TenantIdentifier tenant);
+    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, TimelineGroup group);
 
     /**
      * Gets the definition (incl. metric references) of a timeline

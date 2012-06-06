@@ -112,18 +112,57 @@ body,table td,select,button {
 	background-position: center left;
 }
 
+.RepositoryTabTitle {
+	padding-left: 26px;
+	background-image: url("repository.png");
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+.DatastoresTabTitle {
+	padding-left: 26px;
+	background-image: url("datastores.png");
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
 /*
  * Specific panels
  */
-.DrillToProfilingResultPopupPanel {
-	
+.TimelineGroupSelectionPanel {
+	width: 150px;
+	float: left;
 }
 
-.TimelineListPanel {
-	
+.TimelineGroupSelectionPanel a {
+	display: block;
+	width: 140px;
+	line-height: 2em;
+	padding-left: 10px; background-color : #f0f0f0;
+	overflow: hidden;
+	background-color: #f0f0f0;
 }
 
-.TimelineListPanel .welcomeTextPanel {
+.TimelineGroupSelectionPanel a:hover {
+	background-color: #ddd;
+}
+
+.TimelineGroupSelectionPanel a.selected {
+	background-color: #377FCF;
+	color: white;
+}
+
+.TimelineGroupSelectionPanel a.selected:hover {
+	cursor: default;
+	text-decoration: none;
+}
+
+.TimelineGroupPanel {
+	width: 720px;
+	float: right;
+}
+
+.TimelineGroupPanel .welcomeTextPanel {
 	margin: 40px;
 	margin-top: 5px;
 	padding: 40px;
@@ -131,7 +170,7 @@ body,table td,select,button {
 	border-radius: 20px;
 }
 
-.TimelineListPanel .toggleWelcomeTextButton {
+.TimelineGroupPanel .toggleWelcomeTextButton {
 	cursor: pointer;
 	width: 30px;
 	height: 20px;
@@ -142,21 +181,26 @@ body,table td,select,button {
 	background-repeat: no-repeat;
 }
 
-.TimelineListPanel .toggleWelcomeTextButton.collapsed {
+.TimelineGroupPanel .toggleWelcomeTextButton.collapsed {
 	background-image: url("expand.png");
 }
 
-.TimelineListPanel .toggleWelcomeTextButton.expanded {
+.TimelineGroupPanel .toggleWelcomeTextButton.expanded {
 	background-image: url("collapse.png");
 }
 
 .TimelinePanel {
-	
+	margin-top: 15px;
+	margin-bottom: 15px;
 }
 
 .TimelinePanel .ButtonPanel {
 	text-align: right;
 	padding: 0;
+}
+
+.TimelinePanel .ButtonPanel .HeadingLabel {
+	float: left;
 }
 
 .TimelinePanel .SaveButton {
@@ -194,6 +238,7 @@ body,table td,select,button {
 }
 
 .CustomizeMetricsPanel {
+	
 }
 
 .CustomizeMetricsPanel .HeadingLabel {

@@ -40,6 +40,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
+import com.google.gwt.visualization.client.ChartArea;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
@@ -51,10 +52,16 @@ import com.google.gwt.visualization.client.visualizations.corechart.Options;
  */
 public class TimelinePanel extends FlowPanel {
 
+    /**
+     * The width of the full panel, minus the width of the group selection
+     * panel, minus 10 px margin
+     */
+    private static final int WIDTH = 880 - 150 - 10;
+
     private final TimelineServiceAsync _service;
-    private final TimelineListPanel _listPanel;
     private final LoadingIndicator _loadingIndicator;
     private final TenantIdentifier _tenant;
+    private final TimelineGroupPanel _timelineGroupPanel;
     private final Button _saveButton;
     private final Button _deleteButton;
 
@@ -63,14 +70,14 @@ public class TimelinePanel extends FlowPanel {
     private TimelineData _timelineData;
 
     public TimelinePanel(TenantIdentifier tenant, TimelineServiceAsync service, TimelineIdentifier timelineIdentifier,
-            TimelineListPanel listPanel) {
+            TimelineGroupPanel timelineGroupPanel) {
         super();
         _tenant = tenant;
         _service = service;
         _timelineIdentifier = timelineIdentifier;
-        _listPanel = listPanel;
+        _timelineGroupPanel = timelineGroupPanel;
         _loadingIndicator = new LoadingIndicator();
-        _loadingIndicator.setHeight((DefaultVAxisOption.HEIGHT + 4) + "px");
+        _loadingIndicator.setHeight((DefaultVAxisOption.DEFAULT_HEIGHT + 4) + "px");
 
         _saveButton = new Button("");
         _saveButton.addStyleDependentName("ImageButton");
@@ -84,13 +91,13 @@ public class TimelinePanel extends FlowPanel {
                 _saveButton.setEnabled(false);
             }
         });
-        
+
         if (_timelineIdentifier != null) {
             // initially does not make sense to save an (unchanged) and
             // identifyable timeline.
             _saveButton.setEnabled(false);
         }
-        
+
         _deleteButton = new Button();
         _deleteButton.addStyleDependentName("ImageButton");
         _deleteButton.setTitle("Delete timeline");
@@ -106,7 +113,7 @@ public class TimelinePanel extends FlowPanel {
                         }
                     });
                 }
-                _listPanel.removeTimelinePanel(TimelinePanel.this);
+                _timelineGroupPanel.removeTimelinePanel(TimelinePanel.this);
             }
         });
 
@@ -199,7 +206,6 @@ public class TimelinePanel extends FlowPanel {
             @Override
             public void run() {
                 final Options options = Options.create();
-                options.setWidth(880);
 
                 final ChartOptions chartOptions = _timelineDefinition.getChartOptions();
 
@@ -208,7 +214,16 @@ public class TimelinePanel extends FlowPanel {
                 final Integer minimumValue = chartOptions.getVerticalAxisOption().getMinimumValue();
                 final boolean logarithmicScale = chartOptions.getVerticalAxisOption().isLogarithmicScale();
 
+                final ChartArea chartArea = ChartArea.create();
+                chartArea.setLeft(0d);
+                chartArea.setTop(0d);
+                chartArea.setWidth(WIDTH * 0.8d);
+                chartArea.setHeight(height * 0.8d);
+                options.setChartArea(chartArea);
+
+                options.setWidth(WIDTH);
                 options.setHeight(height);
+
                 if (logarithmicScale || maximumValue != null || minimumValue != null) {
                     final AxisOptions axisOptions = AxisOptions.create();
                     if (minimumValue != null) {
@@ -258,13 +273,15 @@ public class TimelinePanel extends FlowPanel {
         copyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _listPanel);
+                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel);
                 copyPanel.setTimelineDefinition(_timelineDefinition);
-                _listPanel.add(copyPanel);
+                _timelineGroupPanel.add(copyPanel);
             }
         });
 
         final ButtonPanel buttonPanel = new ButtonPanel();
+        buttonPanel.add(new HeadingLabel((_timelineIdentifier == null ? "<new timeline>" : _timelineIdentifier
+                .getName())));
         buttonPanel.add(customizeButton);
         buttonPanel.add(copyButton);
         buttonPanel.add(_saveButton);
@@ -306,5 +323,20 @@ public class TimelinePanel extends FlowPanel {
         }
 
         return data;
+    }
+
+    public TimelineGroupPanel getTimelineGroupPanel() {
+        return _timelineGroupPanel;
+    }
+
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+
+        // (re) attaching charts needs re-rendering
+        if (_timelineDefinition != null && _timelineData != null) {
+            setLoading();
+            renderChart();
+        }
     }
 }

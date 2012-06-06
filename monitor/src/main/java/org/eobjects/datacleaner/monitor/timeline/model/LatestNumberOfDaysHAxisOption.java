@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.timeline.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
@@ -28,13 +27,11 @@ import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAx
  * A {@link HorizontalAxisOption} implementation which allows the user to select
  * a timeline range with the meaning of eg. "the latest 30 days".
  */
-public class LatestNumberOfDaysHAxisOption implements HorizontalAxisOption, Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class LatestNumberOfDaysHAxisOption implements HorizontalAxisOption {
 
     public static final int DEFAULT_NUMBER_OF_DAYS = 30;
     
-    private final int _latestNumberOfDays;
+    private int _latestNumberOfDays;
     
     public LatestNumberOfDaysHAxisOption() {
         this(DEFAULT_NUMBER_OF_DAYS);

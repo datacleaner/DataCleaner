@@ -53,7 +53,7 @@ public abstract class SelectJobPanel extends FlowPanel {
         add(new HeadingLabel("Select job to build timeline from"));
         add(_loadingIndicator);
 
-        _service.getSavedJobs(_tenant, new DCAsyncCallback<List<JobIdentifier>>() {
+        _service.getJobs(_tenant, new DCAsyncCallback<List<JobIdentifier>>() {
             @Override
             public void onSuccess(List<JobIdentifier> result) {
                 setAvailableJobs(result);

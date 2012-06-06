@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,6 +53,7 @@ import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.timeline.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -59,6 +62,7 @@ import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.RepositoryNode;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.HasNameMapper;
 import org.eobjects.metamodel.util.Predicate;
 import org.slf4j.Logger;
@@ -84,17 +88,62 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     @Override
-    public List<TimelineIdentifier> getSavedTimelines(final TenantIdentifier tenant) {
+    public List<TimelineGroup> getTimelineGroups(final TenantIdentifier tenant) {
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
         final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
-        final List<RepositoryFile> files = timelinesFolder.getFiles();
+        final List<RepositoryFolder> folders = timelinesFolder.getFolders();
+        final List<TimelineGroup> groups = new ArrayList<TimelineGroup>();
+        for (RepositoryFolder folder : folders) {
+            final TimelineGroup group = new TimelineGroup(folder.getName());
+
+            final RepositoryFile descriptionFile = folder.getFile("description.txt");
+            if (descriptionFile == null) {
+                logger.debug("No description file for timeline group: {}", group);
+            } else {
+                final BufferedReader reader = new BufferedReader(new InputStreamReader(descriptionFile.readFile()));
+                final StringBuilder sb = new StringBuilder();
+                try {
+                    boolean first = false;
+                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            sb.append('\n');
+                        }
+                        sb.append(line);
+                    }
+                    group.setDescription(sb.toString());
+                } catch (Exception e) {
+                    logger.error("Error while reading timeline group description file: " + descriptionFile, e);
+                } finally {
+                    FileHelper.safeClose(reader);
+                }
+            }
+
+            groups.add(group);
+        }
+        return groups;
+    }
+
+    @Override
+    public List<TimelineIdentifier> getTimelines(final TenantIdentifier tenant, final TimelineGroup group) {
+        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
+        final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
+        final List<RepositoryFile> files;
+        final String groupName = (group == null ? null : group.getName());
+        if (group == null || groupName == null || "".equals(groupName)) {
+            files = timelinesFolder.getFiles();
+        } else {
+            RepositoryFolder groupFolder = timelinesFolder.getFolder(groupName);
+            files = groupFolder.getFiles();
+        }
 
         final List<TimelineIdentifier> result = new ArrayList<TimelineIdentifier>();
         for (RepositoryFile file : files) {
             if (file.getType() == Type.TIMELINE_SPEC) {
                 String timelineName = file.getName().substring(0,
                         file.getName().length() - FileFilters.ANALYSIS_TIMELINE_XML.getExtension().length());
-                TimelineIdentifier timeline = new TimelineIdentifier(timelineName, file.getQualifiedPath());
+                TimelineIdentifier timeline = new TimelineIdentifier(timelineName, file.getQualifiedPath(), group);
                 result.add(timeline);
             }
         }
@@ -422,7 +471,7 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     @Override
-    public List<JobIdentifier> getSavedJobs(final TenantIdentifier tenant) {
+    public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
         final List<JobIdentifier> result = new ArrayList<JobIdentifier>();
 
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
@@ -530,29 +579,28 @@ public class TimelineServiceImpl implements TimelineService {
 
         file.writeFile(new WriteTimelineAction(timelineDefinition));
         logger.info("Updated timeline definition in file: {}", file);
-        return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath());
+        return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath(),
+                timelineIdentifier.getGroup());
     }
 
     @Override
     public TimelineIdentifier createTimelineDefinition(final TenantIdentifier tenant,
             final TimelineIdentifier timelineIdentifier, final TimelineDefinition timelineDefinition) {
-        final String path = timelineIdentifier.getPath();
+        final String name = timelineIdentifier.getName();
+        final TimelineGroup group = timelineIdentifier.getGroup();
 
-        final int lastSlash = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
         final RepositoryFolder folder;
-        final String fileName;
-        if (lastSlash != -1) {
-            folder = (RepositoryFolder) _repository.getRepositoryNode(path.substring(0, lastSlash));
-            fileName = path.substring(lastSlash + 1);
+        if (group == null) {
+            folder = _repository.getFolder(tenant.getId()).getFolder(PATH_TIMELINES);
         } else {
-            folder = _repository;
-            fileName = path;
+            folder = _repository.getFolder(tenant.getId()).getFolder(PATH_TIMELINES).getFolder(group.getName());
         }
+        final String fileName = name + FileFilters.ANALYSIS_TIMELINE_XML.getExtension();
 
         final RepositoryFile file = folder.createFile(fileName, new WriteTimelineAction(timelineDefinition));
         logger.info("Created timeline definition in file: {}", file);
 
-        return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath());
+        return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath(), group);
     }
 
     @Override
@@ -576,7 +624,13 @@ public class TimelineServiceImpl implements TimelineService {
 
         final AnalyzerResult result = getResult(analysisResult, analyzerJob, metric);
 
-        return metricDescriptor.getMetricParameterSuggestions(result);
+        final Collection<String> suggestions = metricDescriptor.getMetricParameterSuggestions(result);
+
+        // make sure we can send it across the GWT-RPC wire.
+        if (suggestions instanceof ArrayList) {
+            return suggestions;
+        }
+        return new ArrayList<String>(suggestions);
     }
 
     @Override
@@ -587,7 +641,7 @@ public class TimelineServiceImpl implements TimelineService {
 
         final String path = timeline.getPath();
         final RepositoryNode node = _repository.getRepositoryNode(path);
-        
+
         if (node == null) {
             return false;
         }

@@ -46,7 +46,7 @@ public class TimelineServiceImplTest extends TestCase {
         final TenantIdentifier tenant = new TenantIdentifier("DC");
         assertEquals("TenantIdentifier[DC]", tenant.toString());
 
-        final List<JobIdentifier> jobs = service.getSavedJobs(tenant);
+        final List<JobIdentifier> jobs = service.getJobs(tenant);
         assertEquals(1, jobs.size());
 
         final JobIdentifier job = jobs.get(0);
@@ -73,7 +73,7 @@ public class TimelineServiceImplTest extends TestCase {
         assertEquals(null, metrics.get(0).getAnalyzerInputName());
         assertEquals("Avg chars", metrics.get(0).getMetricDescriptorName());
 
-        final List<TimelineIdentifier> timelines = service.getSavedTimelines(tenant);
+        final List<TimelineIdentifier> timelines = service.getTimelines(tenant, null);
         assertEquals(1, timelines.size());
 
         final TimelineIdentifier timelineIdentifier = timelines.get(0);

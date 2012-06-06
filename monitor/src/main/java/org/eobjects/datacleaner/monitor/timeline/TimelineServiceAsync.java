@@ -28,6 +28,7 @@ import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.timeline.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -37,7 +38,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface TimelineServiceAsync {
 
-    public void getSavedTimelines(TenantIdentifier tenant, AsyncCallback<List<TimelineIdentifier>> callback);
+    public void getTimelines(TenantIdentifier tenant, TimelineGroup group,
+            AsyncCallback<List<TimelineIdentifier>> callback);
 
     public void getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier identifier,
             AsyncCallback<TimelineDefinition> callback);
@@ -45,7 +47,7 @@ public interface TimelineServiceAsync {
     public void getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline,
             AsyncCallback<TimelineData> callback);
 
-    public void getSavedJobs(TenantIdentifier tenant, AsyncCallback<List<JobIdentifier>> callback);
+    public void getJobs(TenantIdentifier tenant, AsyncCallback<List<JobIdentifier>> callback);
 
     public void getJobMetrics(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<JobMetrics> callback);
 
@@ -58,6 +60,8 @@ public interface TimelineServiceAsync {
     public void getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
             MetricIdentifier metric, AsyncCallback<Collection<String>> callback);
 
-    void deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
+    public void deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
+
+    public void getTimelineGroups(TenantIdentifier tenant, AsyncCallback<List<TimelineGroup>> callback);
 
 }

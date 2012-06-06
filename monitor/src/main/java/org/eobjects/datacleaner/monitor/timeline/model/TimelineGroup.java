@@ -19,30 +19,38 @@
  */
 package org.eobjects.datacleaner.monitor.timeline.model;
 
-import java.util.Date;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class DefaultHAxisOption implements ChartOptions.HorizontalAxisOption {
+/**
+ * Represents a logical grouping of timelines
+ */
+public class TimelineGroup implements IsSerializable {
 
-    private Date _endDate;
-    private Date _beginDate;
+    private String _name;
+    private String _description;
 
-    public DefaultHAxisOption() {
-        this(null, null);
+    public TimelineGroup() {
+        this(null);
     }
 
-    public DefaultHAxisOption(Date beginDate, Date endDate) {
-        _beginDate = beginDate;
-        _endDate = endDate;
+    public TimelineGroup(String name) {
+        _name = name;
+    }
+
+    public String getDescription() {
+        return _description;
+    }
+
+    public void setDescription(String description) {
+        _description = description;
+    }
+
+    public String getName() {
+        return _name;
     }
 
     @Override
-    public Date getBeginDate() {
-        return _beginDate;
+    public String toString() {
+        return "TimelineGroup[" + _name + "]";
     }
-
-    @Override
-    public Date getEndDate() {
-        return _endDate;
-    }
-
 }

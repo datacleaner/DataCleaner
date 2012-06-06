@@ -19,19 +19,16 @@
  */
 package org.eobjects.datacleaner.monitor.timeline;
 
-import java.util.List;
-
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.widgets.TimelineListPanel;
-import org.eobjects.datacleaner.monitor.timeline.widgets.TimelinePanel;
-import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.timeline.widgets.TimelineGroupSelectionPanel;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
 /**
@@ -45,32 +42,26 @@ public class TimelineEntryPoint implements EntryPoint {
         final TimelineServiceAsync service = GWT.create(TimelineService.class);
         final TenantIdentifier tenant = new TenantIdentifier("DC");
 
-        final TimelineListPanel timelineListPanel = new TimelineListPanel(service, tenant);
+        final FlowPanel timelinesSplitPanel = new FlowPanel();
+        timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
+        {
+            final SimplePanel targetPanel = new SimplePanel();
+            final TimelineGroupSelectionPanel selectionPanel = new TimelineGroupSelectionPanel(tenant, service,
+                    targetPanel);
+
+            timelinesSplitPanel.add(selectionPanel);
+            timelinesSplitPanel.add(targetPanel);
+        }
 
         final TabPanel tabPanel = new TabPanel();
         tabPanel.addStyleName("MainTabPanel");
-        tabPanel.add(timelineListPanel, "<span class=\"TimelinesTabTitle\">Timelines</span>", true);
+        tabPanel.add(timelinesSplitPanel, "<span class=\"TimelinesTabTitle\">Timelines</span>", true);
         tabPanel.add(new Label("TODO"), "<span class=\"AlertsTabTitle\">Alerts</span>", true);
         tabPanel.add(new Label("TODO"), "<span class=\"RepositoryTabTitle\">Repository</span>", true);
         tabPanel.add(new Label("TODO"), "<span class=\"DatastoresTabTitle\">Datastores</span>", true);
         tabPanel.selectTab(0);
-        
+
         final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
         rootPanel.add(tabPanel);
-
-        service.getSavedTimelines(tenant, new DCAsyncCallback<List<TimelineIdentifier>>() {
-            @Override
-            public void onSuccess(List<TimelineIdentifier> result) {
-                for (TimelineIdentifier identifier : result) {
-                    showTimeline(tenant, identifier, service, timelineListPanel);
-                }
-            }
-        });
-    }
-
-    private void showTimeline(TenantIdentifier tenant, TimelineIdentifier identifier, TimelineServiceAsync service,
-            TimelineListPanel timelineListPanel) {
-        final TimelinePanel timelinePanel = new TimelinePanel(tenant, service, identifier, timelineListPanel);
-        timelineListPanel.addTimelinePanel(timelinePanel);
     }
 }

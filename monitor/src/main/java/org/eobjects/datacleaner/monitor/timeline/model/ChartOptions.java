@@ -57,8 +57,8 @@ public class ChartOptions implements IsSerializable {
         public boolean isLogarithmicScale();
     }
 
-    private final HorizontalAxisOption _horizontalAxisOption;
-    private final VerticalAxisOption _verticalAxisOption;
+    private HorizontalAxisOption _horizontalAxisOption;
+    private VerticalAxisOption _verticalAxisOption;
 
     public ChartOptions() {
         this(new DefaultHAxisOption(), new DefaultVAxisOption());

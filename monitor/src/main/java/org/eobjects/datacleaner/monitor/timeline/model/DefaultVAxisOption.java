@@ -21,12 +21,12 @@ package org.eobjects.datacleaner.monitor.timeline.model;
 
 public class DefaultVAxisOption implements ChartOptions.VerticalAxisOption {
 
-    public static final int HEIGHT = 400;
+    public static final int DEFAULT_HEIGHT = 350;
 
-    private final Integer _height;
-    private final Integer _minimumValue;
-    private final Integer _maximumValue;
-    private final boolean _logarithmicScale;
+    private Integer _height;
+    private Integer _minimumValue;
+    private Integer _maximumValue;
+    private boolean _logarithmicScale;
 
     public DefaultVAxisOption(Integer height, Integer minimumValue, Integer maximumValue, boolean logarithmicScale) {
         _height = height;
@@ -52,7 +52,7 @@ public class DefaultVAxisOption implements ChartOptions.VerticalAxisOption {
     @Override
     public int getHeight() {
         if (_height == null) {
-            return HEIGHT;
+            return DEFAULT_HEIGHT;
         }
         return _height;
     }

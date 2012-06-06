@@ -31,6 +31,7 @@ import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.timeline.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -51,7 +52,7 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     @Override
     public void init() throws ServletException {
         super.init();
-        
+
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
             TimelineService delegate = applicationContext.getBean(TimelineService.class);
@@ -71,8 +72,8 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     }
 
     @Override
-    public List<JobIdentifier> getSavedJobs(TenantIdentifier tenant) {
-        return _delegate.getSavedJobs(tenant);
+    public List<JobIdentifier> getJobs(TenantIdentifier tenant) {
+        return _delegate.getJobs(tenant);
     }
 
     @Override
@@ -81,8 +82,8 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     }
 
     @Override
-    public List<TimelineIdentifier> getSavedTimelines(TenantIdentifier tenant) {
-        return _delegate.getSavedTimelines(tenant);
+    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, TimelineGroup group) {
+        return _delegate.getTimelines(tenant, group);
     }
 
     @Override
@@ -96,22 +97,30 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     }
 
     @Override
-    public TimelineIdentifier updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
+    public TimelineIdentifier updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+            TimelineDefinition timelineDefinition) {
         return _delegate.updateTimelineDefinition(tenant, timeline, timelineDefinition);
     }
 
     @Override
-    public TimelineIdentifier createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline, TimelineDefinition timelineDefinition) {
+    public TimelineIdentifier createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
+            TimelineDefinition timelineDefinition) {
         return _delegate.createTimelineDefinition(tenant, timeline, timelineDefinition);
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
+    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job,
+            MetricIdentifier metric) {
         return _delegate.getMetricParameterSuggestions(tenant, job, metric);
     }
-    
+
     @Override
     public Boolean deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
         return _delegate.deleteTimeline(tenant, timeline);
+    }
+
+    @Override
+    public List<TimelineGroup> getTimelineGroups(final TenantIdentifier tenant) {
+        return _delegate.getTimelineGroups(tenant);
     }
 }

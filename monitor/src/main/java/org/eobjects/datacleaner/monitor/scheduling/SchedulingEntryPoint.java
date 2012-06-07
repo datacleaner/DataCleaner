@@ -20,6 +20,8 @@
 package org.eobjects.datacleaner.monitor.scheduling;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * GWT Entry point for the Scheduling module
@@ -28,7 +30,8 @@ public class SchedulingEntryPoint implements EntryPoint {
 
     @Override
     public void onModuleLoad() {
-        
+        RootPanel rootPanel = RootPanel.get("RootPanelTarget");
+        rootPanel.add(new Label("Hello scheduling world"));
     }
 
 }

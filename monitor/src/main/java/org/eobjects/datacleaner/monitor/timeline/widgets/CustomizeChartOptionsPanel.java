@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions;
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.VerticalAxisOption;

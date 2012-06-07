@@ -36,7 +36,7 @@ import org.eobjects.datacleaner.timeline.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.timeline.jaxb.Timeline;
 
 /**
- * Jaxb based {@link TimelineReader} of .analysis.timeline.xml files.
+ * JAXB based {@link TimelineReader} of .analysis.timeline.xml files.
  */
 public class JaxbTimelineReader implements TimelineReader {
 

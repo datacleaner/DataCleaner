@@ -126,7 +126,7 @@
 				<version>1.1.1</version>
 				<executions>
 					<execution>
-						<id>source</id>
+						<id>timeline-jaxb-source</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
@@ -136,6 +136,27 @@
 							<generatePackage>org.eobjects.datacleaner.timeline.jaxb</generatePackage>
 							<includeSchemas>
 								<includeSchema>**/timeline.xsd</includeSchema>
+							</includeSchemas>
+							<includeBindings>
+								<includeBinding>*.xjb</includeBinding>
+							</includeBindings>
+							<forceRegenerate>false</forceRegenerate>
+							<removeOldOutput>true</removeOldOutput>
+							<strict>true</strict>
+							<verbose>true</verbose>
+						</configuration>
+					</execution>
+					<execution>
+						<id>schedule-jaxb-source</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<generateDirectory>${project.build.directory}/generated/schedule-src</generateDirectory>
+							<generatePackage>org.eobjects.datacleaner.schedule.jaxb</generatePackage>
+							<includeSchemas>
+								<includeSchema>**/schedule.xsd</includeSchema>
 							</includeSchemas>
 							<includeBindings>
 								<includeBinding>*.xjb</includeBinding>
@@ -161,6 +182,7 @@
 						<configuration>
 							<sources>
 								<source>${project.build.directory}/generated/timeline-src</source>
+								<source>${project.build.directory}/generated/schedule-src</source>
 							</sources>
 						</configuration>
 					</execution>

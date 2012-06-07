@@ -36,9 +36,9 @@ public class TimelineEntryPoint implements EntryPoint {
 
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
+        final TenantIdentifier tenant = new TenantIdentifier("DC");
 
         final TimelineServiceAsync service = GWT.create(TimelineService.class);
-        final TenantIdentifier tenant = new TenantIdentifier("DC");
 
         final FlowPanel timelinesSplitPanel = new FlowPanel();
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");

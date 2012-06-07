@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.util;
 
 import java.util.Set;
 
-import org.eobjects.datacleaner.monitor.timeline.widgets.ButtonPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.widgets;
+package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import com.google.gwt.user.client.ui.Label;
 

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.timeline.widgets;
 
+import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 

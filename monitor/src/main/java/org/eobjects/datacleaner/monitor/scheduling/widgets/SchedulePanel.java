@@ -17,23 +17,25 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling;
+package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
-import java.util.List;
-
+import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 
 /**
- * Service interface for the scheduling module
+ * A panel which presents a schedule
  */
-@RemoteServiceRelativePath("schedulingService")
-public interface SchedulingService extends RemoteService {
+public class SchedulePanel extends FlowPanel {
 
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant);
+    public SchedulePanel(TenantIdentifier tenant, ScheduleDefinition schedule, SchedulingServiceAsync service) {
+        super();
+        addStyleName("SchedulePanel");
+        
+        add(new Label(schedule.getJob().getName()));
+    }
 
-    public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition);
 }

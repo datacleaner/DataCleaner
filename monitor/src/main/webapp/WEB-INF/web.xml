@@ -62,15 +62,25 @@
 		<url-pattern>/repository/*</url-pattern>
 	</filter-mapping>
 
+	<!-- GWT RPC servlets -->
 	<servlet>
 		<servlet-name>TimelineService</servlet-name>
 		<servlet-class>org.eobjects.datacleaner.monitor.server.TimelineServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>TimelineService</servlet-name>
 		<url-pattern>/timeline/timelineService</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SchedulingService</servlet-name>
+		<servlet-class>org.eobjects.datacleaner.monitor.server.SchedulingServiceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SchedulingService</servlet-name>
+		<url-pattern>/scheduling/schedulingService</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

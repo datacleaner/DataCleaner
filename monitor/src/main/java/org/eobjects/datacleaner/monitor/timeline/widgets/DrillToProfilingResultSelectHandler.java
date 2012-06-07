@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.JsArray;

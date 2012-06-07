@@ -19,9 +19,20 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling;
 
+import java.util.List;
+
+import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 /**
  * Async variant of {@link SchedulingService}.
  */
 public interface SchedulingServiceAsync {
+
+    void getSchedules(TenantIdentifier tenant, AsyncCallback<List<ScheduleDefinition>> callback);
+
+    void updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition, AsyncCallback<ScheduleDefinition> callback);
 
 }

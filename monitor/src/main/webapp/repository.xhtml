@@ -8,7 +8,18 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<div id="RootPanelTarget"></div>
+		<ul>
+			<ui:repeat var="folder" value="#{repository.folders}">
+				<li>
+					#{folder.name}
+					<ul>
+						<ui:repeat var="subfolder" value="#{folder.folders}">
+						<li>#{subfolder.name}</li>
+						</ui:repeat>
+					</ul>
+				</li>
+			</ui:repeat>
+		</ul>
 	</ui:define>
 
 </ui:composition>

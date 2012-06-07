@@ -7,6 +7,12 @@
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 				 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.9.0.xsd">
+				
+	<bean name="schedulingService"
+		class="org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl">
+		<constructor-arg name="timelineService" ref="timelineService" />
+		<constructor-arg name="repository" ref="repository" />
+	</bean>
 
 	<bean name="exampleJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
 		<property name="jobClass"

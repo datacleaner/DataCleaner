@@ -22,7 +22,10 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
@@ -35,7 +38,15 @@ public class SchedulePanel extends FlowPanel {
         super();
         addStyleName("SchedulePanel");
         
-        add(new Label(schedule.getJob().getName()));
+        final ButtonPanel buttonPanel = new ButtonPanel();
+        buttonPanel.add(new Button(""));
+        
+        add(new HeadingLabel("Job: " + schedule.getJob().getName()));
+        if (schedule.isActive()) {
+            add(new Label("Schedule: " + schedule.getScheduleExpression()));
+        } else {
+            add(new Label("Schedule: Not scheduled"));
+        }
     }
 
 }

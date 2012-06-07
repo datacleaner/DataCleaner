@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+    	<job-name>Random number generation</job-name>
+        <job-description>Created with DataCleaner 2.5.2</job-description>
+        <updated-date>2012-06-07+02:00</updated-date>
+    </job-metadata>
+    <source>
+        <data-context ref="orderdb"/>
+        <columns>
+            <column path="PUBLIC.CUSTOMERS.CUSTOMERNUMBER" id="col_0"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer>
+            <descriptor ref="JavaScript transformer"/>
+            <properties>
+                <property value="NUMBER" name="Return type"/>
+                <property value="function eval() {&#xA;  return values&amp;#91;0&amp;#93; * Math.random();&#xA;}&#xA;&#xA;eval();" name="Source code"/>
+            </properties>
+            <input ref="col_0"/>
+            <output id="col_1" name="Random number"/>
+        </transformer>
+    </transformation>
+    <analysis>
+        <analyzer>
+            <descriptor ref="Number analyzer"/>
+            <properties/>
+            <input ref="col_1"/>
+        </analyzer>
+    </analysis>
+</job>

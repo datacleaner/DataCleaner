@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -33,6 +34,10 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.schedule.jaxb.Schedule;
 import org.eobjects.metamodel.util.FileHelper;
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerFactory;
 
 public class SchedulingServiceImpl implements SchedulingService {
 
@@ -40,10 +45,13 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     private final TimelineService _timelineService;
     private final Repository _repository;
+    private final SchedulerFactory _schedulerFactory;
 
-    public SchedulingServiceImpl(TimelineService timelineService, Repository repository) {
+    public SchedulingServiceImpl(TimelineService timelineService, Repository repository,
+            SchedulerFactory schedulerFactory) {
         _timelineService = timelineService;
         _repository = repository;
+        _schedulerFactory = schedulerFactory;
     }
 
     @Override
@@ -86,8 +94,28 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Override
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition) {
-        // TODO Auto-generated method stub
-        return null;
+
+        final String quartzJobName = scheduleDefinition.getJob().getName();
+        final String quartzJobGroupName = tenant.getId();
+
+        try {
+            final Scheduler scheduler = _schedulerFactory.getScheduler();
+            scheduler.deleteJob(quartzJobName, quartzJobGroupName);
+
+            if (scheduleDefinition.isActive()) {
+                final JobDetail jobDetail = new JobDetail(quartzJobName, quartzJobGroupName, ExecuteJob.class);
+                final CronTrigger trigger = new CronTrigger();
+                trigger.setCronExpression(scheduleDefinition.getScheduleExpression());
+
+                scheduler.scheduleJob(jobDetail, trigger);
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not configure job scheduling", e);
+        }
+        
+        // TODO: Write to schedule file
+
+        return scheduleDefinition;
     }
 
 }

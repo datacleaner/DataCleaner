@@ -24,6 +24,7 @@ import java.util.List;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.widgets.SchedulePanel;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
@@ -51,8 +52,10 @@ public class SchedulingEntryPoint implements EntryPoint {
             @Override
             public void onSuccess(List<ScheduleDefinition> schedules) {
                 rootPanel.clear();
+                rootPanel.add(new HeadingLabel("Scheduling"));
                 for (ScheduleDefinition schedule : schedules) {
-                    rootPanel.add(new SchedulePanel(tenant, schedule, service));
+                    final SchedulePanel schedulePanel = new SchedulePanel(tenant, schedule, service);
+                    rootPanel.add(schedulePanel);
                 }
             }
         });

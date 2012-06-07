@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 
 /**
- * Entry point classes define <code>onModuleLoad()</code>.
+ * GWT Entry point for the Timeline module 
  */
 public class TimelineEntryPoint implements EntryPoint {
 

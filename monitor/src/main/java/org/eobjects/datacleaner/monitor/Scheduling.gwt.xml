@@ -20,18 +20,18 @@
     Boston, MA  02110-1301  USA
 
 -->
-<module rename-to='timeline'>
+<module rename-to='scheduling'>
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
-	<inherits name='com.google.gwt.visualization.Visualization' />
 
 	<entry-point
-		class='org.eobjects.datacleaner.monitor.timeline.TimelineEntryPoint' />
+		class='org.eobjects.datacleaner.monitor.scheduling.SchedulingEntryPoint' />
 
-	<source path='timeline' />
+	<source path='scheduling' />
 	<source path='util' />
 	
-	<stylesheet src="timeline.css" />
+	<stylesheet src="shared.css" />
+	<stylesheet src="scheduling.css" />
 	
 	<public path="resources" />
 

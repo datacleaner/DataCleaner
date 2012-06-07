@@ -32,7 +32,9 @@
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
+			<!-- 
 		 		<ref bean="exampleTrigger" />
+			 -->
 			</list>
 		</property>
 	</bean>

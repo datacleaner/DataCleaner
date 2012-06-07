@@ -17,44 +17,46 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.model;
-
-import java.util.List;
-
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+package org.eobjects.datacleaner.monitor.shared.model;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Represents the available metrics of a specific job.
+ * Identifies a job in the repository.
  */
-public class JobMetrics implements IsSerializable {
+public class JobIdentifier implements IsSerializable {
 
-    private JobIdentifier _job;
-    private List<MetricGroup> _metricGroups;
+    private String _name;
+    private String _path;
 
-    public JobIdentifier getJob() {
-        return _job;
+    public JobIdentifier(String name, String path) {
+        _name = name;
+        _path = path;
     }
-
-    public void setJob(JobIdentifier job) {
-        _job = job;
-    }
-
-    public List<MetricGroup> getMetricGroups() {
-        return _metricGroups;
-    }
-
-    public void setMetricGroups(List<MetricGroup> metricGroups) {
-        _metricGroups = metricGroups;
+    
+    public JobIdentifier() {
+        this(null, null);
     }
 
     public String getName() {
-        return _job.getName() + " metrics";
+        return _name;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getPath() {
+        return _path;
+    }
+
+    public void setPath(String path) {
+        _path = path;
     }
 
     @Override
     public String toString() {
-        return "JobMetrics[" + getName() + "]";
+        return "JobIdentifier[name=" + _name + ",path=" + _path + "]";
     }
+
 }

@@ -17,35 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.model;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
+package org.eobjects.datacleaner.monitor.scheduling;
 
 /**
- * Identifier object for a Tenant of the DataCleaner monitor web app.
+ * Async variant of {@link SchedulingService}.
  */
-public class TenantIdentifier implements IsSerializable {
+public interface SchedulingServiceAsync {
 
-    private String _id;
-
-    public TenantIdentifier() {
-        this(null);
-    }
-
-    public TenantIdentifier(String id) {
-        _id = id;
-    }
-
-    public String getId() {
-        return _id;
-    }
-
-    public void setId(String id) {
-        _id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "TenantIdentifier[" + getId() + "]";
-    }
 }

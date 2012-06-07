@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.timeline;
 
-import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.widgets.TimelineGroupSelectionPanel;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 

@@ -28,6 +28,7 @@
 		class='org.eobjects.datacleaner.monitor.scheduling.SchedulingEntryPoint' />
 
 	<source path='scheduling' />
+	<source path='shared' />
 	<source path='util' />
 	
 	<stylesheet src="shared.css" />

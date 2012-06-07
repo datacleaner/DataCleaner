@@ -28,7 +28,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
-import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 import org.eobjects.datacleaner.timeline.jaxb.MetricType;

@@ -22,10 +22,10 @@ package org.eobjects.datacleaner.monitor.timeline;
 import java.util.Collection;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineGroup;

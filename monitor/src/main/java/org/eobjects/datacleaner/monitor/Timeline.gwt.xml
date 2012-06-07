@@ -29,6 +29,7 @@
 		class='org.eobjects.datacleaner.monitor.timeline.TimelineEntryPoint' />
 
 	<source path='timeline' />
+	<source path='shared' />
 	<source path='util' />
 	
 	<stylesheet src="shared.css" />

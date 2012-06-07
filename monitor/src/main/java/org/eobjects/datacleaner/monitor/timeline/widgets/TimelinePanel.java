@@ -22,11 +22,11 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 import java.util.Date;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions;
 import org.eobjects.datacleaner.monitor.timeline.model.DefaultVAxisOption;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;

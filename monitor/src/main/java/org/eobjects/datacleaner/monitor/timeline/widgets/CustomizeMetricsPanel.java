@@ -22,12 +22,12 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
-import org.eobjects.datacleaner.monitor.timeline.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.LoadingIndicator;

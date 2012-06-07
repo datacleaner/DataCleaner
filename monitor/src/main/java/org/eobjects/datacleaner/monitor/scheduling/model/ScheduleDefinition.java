@@ -17,44 +17,48 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.model;
-
-import java.util.List;
+package org.eobjects.datacleaner.monitor.scheduling.model;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/**
- * Represents the available metrics of a specific job.
- */
-public class JobMetrics implements IsSerializable {
+public class ScheduleDefinition implements IsSerializable {
 
+    private TenantIdentifier _tenant;
     private JobIdentifier _job;
-    private List<MetricGroup> _metricGroups;
+    private String _scheduleExpression;
+    private boolean _active;
+
+    // no-args constructor
+    public ScheduleDefinition() {
+    }
+
+    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String scheduleExpression, boolean active) {
+        _tenant = tenant;
+        _job = job;
+        _scheduleExpression = scheduleExpression;
+        _active = active;
+    }
+
+    public TenantIdentifier getTenant() {
+        return _tenant;
+    }
 
     public JobIdentifier getJob() {
         return _job;
     }
 
-    public void setJob(JobIdentifier job) {
-        _job = job;
+    public String getScheduleExpression() {
+        return _scheduleExpression;
     }
 
-    public List<MetricGroup> getMetricGroups() {
-        return _metricGroups;
+    public boolean isActive() {
+        return _active;
     }
 
-    public void setMetricGroups(List<MetricGroup> metricGroups) {
-        _metricGroups = metricGroups;
-    }
-
-    public String getName() {
-        return _job.getName() + " metrics";
-    }
-
-    @Override
-    public String toString() {
-        return "JobMetrics[" + getName() + "]";
+    public void setActive(boolean active) {
+        _active = active;
     }
 }

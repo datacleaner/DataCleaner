@@ -21,8 +21,8 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
-import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;

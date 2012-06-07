@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.timeline.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 

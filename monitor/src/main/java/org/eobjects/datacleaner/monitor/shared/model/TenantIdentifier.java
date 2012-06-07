@@ -17,46 +17,35 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.model;
+package org.eobjects.datacleaner.monitor.shared.model;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Identifies a job in the repository.
+ * Identifier object for a Tenant of the DataCleaner monitor web app.
  */
-public class JobIdentifier implements IsSerializable {
+public class TenantIdentifier implements IsSerializable {
 
-    private String _name;
-    private String _path;
+    private String _id;
 
-    public JobIdentifier(String name, String path) {
-        _name = name;
-        _path = path;
-    }
-    
-    public JobIdentifier() {
-        this(null, null);
+    public TenantIdentifier() {
+        this(null);
     }
 
-    public String getName() {
-        return _name;
+    public TenantIdentifier(String id) {
+        _id = id;
     }
 
-    public void setName(String name) {
-        _name = name;
+    public String getId() {
+        return _id;
     }
 
-    public String getPath() {
-        return _path;
-    }
-
-    public void setPath(String path) {
-        _path = path;
+    public void setId(String id) {
+        _id = id;
     }
 
     @Override
     public String toString() {
-        return "JobIdentifier[name=" + _name + ",path=" + _path + "]";
+        return "TenantIdentifier[" + getId() + "]";
     }
-
 }

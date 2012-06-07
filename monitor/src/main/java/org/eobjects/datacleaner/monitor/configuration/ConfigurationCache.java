@@ -27,7 +27,7 @@ import java.util.Map;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
-import org.eobjects.datacleaner.monitor.timeline.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;

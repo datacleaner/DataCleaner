@@ -217,7 +217,7 @@ public class TimelinePanel extends FlowPanel {
                 final ChartArea chartArea = ChartArea.create();
                 chartArea.setLeft(50d);
                 chartArea.setTop(10d);
-                chartArea.setWidth(WIDTH * 0.8d);
+                chartArea.setWidth(WIDTH * 0.72d);
                 chartArea.setHeight(height * 0.8d);
                 options.setChartArea(chartArea);
 

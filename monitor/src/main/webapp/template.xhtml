@@ -21,16 +21,46 @@
 		<div class="pageContainer">
 			<div class="pageHeader">
 				<span class="logo"> </span>
+
+				<ul id="nav">
+					<li class="#{ (view.viewId == '/dashboard.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="dashboard.jsf" styleClass="DashboardTabTitle">
+							<h:outputText value="Dashboard" />
+							<c:if test="#{param['gwt.codesvr'] != null}">
+								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+							</c:if>
+						</h:outputLink></li>
+						
+					<li class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="scheduling.jsf" styleClass="SchedulingTabTitle">
+							<h:outputText value="Scheduling" />
+							<c:if test="#{param['gwt.codesvr'] != null}">
+								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+							</c:if>
+						</h:outputLink></li>
+						
+					<li class="#{ (view.viewId == '/alerts.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="alerts.jsf" styleClass="AlertsTabTitle">
+							<h:outputText value="Alerts" />
+							<c:if test="#{param['gwt.codesvr'] != null}">
+								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+							</c:if>
+						</h:outputLink></li>
+						
+					<li class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="repository.jsf" styleClass="RepositoryTabTitle">
+							<h:outputText value="Repository" />
+							<c:if test="#{param['gwt.codesvr'] != null}">
+								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+							</c:if>
+						</h:outputLink></li>
+						
+					<li class="#{ (view.viewId == '/datastores.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="datastores.jsf" styleClass="DatastoresTabTitle">
+							<h:outputText value="Datastores" />
+							<c:if test="#{param['gwt.codesvr'] != null}">
+								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+							</c:if>
+						</h:outputLink></li>
+				</ul>
 			</div>
 
 			<div class="pageContent">
-				<noscript>
-					<div
-						style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
-						Your web browser must have JavaScript enabled in order for this
-						application to display correctly.</div>
-				</noscript>
-
 				<ui:insert name="content" />
 			</div>
 		</div>

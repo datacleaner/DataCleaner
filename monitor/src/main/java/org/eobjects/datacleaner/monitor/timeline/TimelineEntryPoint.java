@@ -26,13 +26,11 @@ import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TabPanel;
 
 /**
- * GWT Entry point for the Timeline module 
+ * GWT Entry point for the Timeline module
  */
 public class TimelineEntryPoint implements EntryPoint {
 
@@ -53,15 +51,7 @@ public class TimelineEntryPoint implements EntryPoint {
             timelinesSplitPanel.add(targetPanel);
         }
 
-        final TabPanel tabPanel = new TabPanel();
-        tabPanel.addStyleName("MainTabPanel");
-        tabPanel.add(timelinesSplitPanel, "<span class=\"TimelinesTabTitle\">Timelines</span>", true);
-        tabPanel.add(new Label("TODO"), "<span class=\"AlertsTabTitle\">Alerts</span>", true);
-        tabPanel.add(new Label("TODO"), "<span class=\"RepositoryTabTitle\">Repository</span>", true);
-        tabPanel.add(new Label("TODO"), "<span class=\"DatastoresTabTitle\">Datastores</span>", true);
-        tabPanel.selectTab(0);
-
         final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
-        rootPanel.add(tabPanel);
+        rootPanel.add(timelinesSplitPanel);
     }
 }

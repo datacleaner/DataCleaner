@@ -4,6 +4,16 @@
 body {
 	text-align: center;
 	margin: 0 !important;
+	padding: 0px;
+}
+
+body,table td,select,button {
+	font-family: "Trebuchet MS", sans-serif;
+	font-size: small;
+}
+
+a {
+	color: #5594DD
 }
 
 div.pageContainer {
@@ -26,15 +36,77 @@ div.pageHeader span.logo {
 }
 
 div.pageContent {
-	margin-top: -32px;
+	margin-top: 10px;
 	margin-left: auto;
 	margin-right: auto;
 	width: 894px;
 	text-align: left;
 }
 
-.MainTabPanel .gwt-TabBar {
-	background-color: transparent !important;
+/*
+* Navigation menu and tab headers
+*/
+#nav {
+	list-style-type: none;
+	margin: 0px;
+	margin-top: -2px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0px;
+	width: 894px;
+	height: 22px;
+}
+
+#nav li {
+	margin: 0px;
+	margin-right: 10px;
+	padding: 3px;
+	padding-left: 4px;
+	padding-right: 4px;
+	float: left;
+	background-color: #8E8E8E;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+#nav li.selected {
+	background-color: white;
+}
+
+#nav li a {
+	color: white;
+	text-decoration: none;
+	font-family: 'Arial Unicode MS', Arial, sans-serif;
+	font-size: 13px;
+	font-weight: normal;
+	padding-left: 26px;
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+#nav li.selected a {
+	background-color: white;
+	color: black;
+}
+
+.DashboardTabTitle {
+	background-image: url("images/dashboard.png");
+}
+
+.SchedulingTabTitle {
+	background-image: url("images/scheduling.png");
+}
+
+.AlertsTabTitle {
+	background-image: url("images/alerts.png");
+}
+
+.RepositoryTabTitle {
+	background-image: url("images/repository.png");
+}
+
+.DatastoresTabTitle {
+	background-image: url("images/datastores.png");
 }
 
 /**
@@ -44,6 +116,14 @@ div.loader {
 	width: 100%;
 	background: url("images/loader.gif") no-repeat center center;
 	height: 32px;
+}
+
+.blue {
+	color: #5594dd;
+}
+
+.orange {
+	color: #ffa800;
 }
 
 /**

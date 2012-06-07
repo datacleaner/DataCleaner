@@ -42,14 +42,6 @@ body,table td,select,button {
 	margin: 5px;
 }
 
-.gwt-TabPanel {
-	width: 100%;
-}
-
-.gwt-TabBar {
-	background-color: #333;
-}
-
 .gwt-Button-ImageButton {
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -71,14 +63,6 @@ body,table td,select,button {
 /*
  * General purpose style modifiers
  */
-.blue {
-	color: #5594dd;
-}
-
-.orange {
-	color: #ffa800;
-}
-
 .DCPopupPanelContent {
 	max-height: 600px;
 	overflow: auto;
@@ -93,35 +77,4 @@ body,table td,select,button {
 .ButtonPanel {
 	text-align: center;
 	padding: 10px;
-}
-
-/*
-* Tab headers
-*/
-.TimelinesTabTitle {
-	padding-left: 26px;
-	background-image: url("timelines.png");
-	background-repeat: no-repeat;
-	background-position: center left;
-}
-
-.AlertsTabTitle {
-	padding-left: 26px;
-	background-image: url("alerts.png");
-	background-repeat: no-repeat;
-	background-position: center left;
-}
-
-.RepositoryTabTitle {
-	padding-left: 26px;
-	background-image: url("repository.png");
-	background-repeat: no-repeat;
-	background-position: center left;
-}
-
-.DatastoresTabTitle {
-	padding-left: 26px;
-	background-image: url("datastores.png");
-	background-repeat: no-repeat;
-	background-position: center left;
 }

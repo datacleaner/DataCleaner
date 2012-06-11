@@ -48,9 +48,9 @@ public class TimelineServiceImplTest extends TestCase {
         assertEquals("TenantIdentifier[DC]", tenant.toString());
 
         final List<JobIdentifier> jobs = service.getJobs(tenant);
-        assertEquals(1, jobs.size());
+        assertEquals(2, jobs.size());
 
-        final JobIdentifier job = jobs.get(0);
+        final JobIdentifier job = jobs.get(1);
         assertEquals("JobIdentifier[name=product_profiling,path=/DC/jobs/product_profiling.analysis.xml]",
                 job.toString());
 

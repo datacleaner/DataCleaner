@@ -37,32 +37,24 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
  * Quartz job which encapsulates the process of executing a DataCleaner job and
  * writes the result to the repository.
  */
-public class ExecuteJob extends QuartzJobBean implements Job {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExecuteJob.class);
+public class ExecuteJob extends AbstractQuartzJob {
 
     public static final String DETAIL_TENANT_ID = "DataCleaner.tenant.id";
     public static final String DETAIL_JOB_NAME = "DataCleaner.job.name";
-    public static final String APPLICATION_CONTEXT = "applicationContext";
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         logger.debug("executeInternal({})", context);
-
+        
         final ApplicationContext applicationContext = getApplicationContext(context);
 
         final Repository repository = applicationContext.getBean(Repository.class);
@@ -71,26 +63,19 @@ public class ExecuteJob extends QuartzJobBean implements Job {
         final JobDetail jobDetail = context.getJobDetail();
         final String tenantId = jobDetail.getJobDataMap().getString(DETAIL_TENANT_ID);
         if (tenantId == null) {
-            throw new JobExecutionException("No tenant id defined", false);
+            throw new IllegalArgumentException("No tenant id defined");
         }
 
         final String jobName = jobDetail.getJobDataMap().getString(DETAIL_JOB_NAME);
         if (jobName == null) {
-            throw new JobExecutionException("No job path defined", false);
+            throw new IllegalArgumentException("No job path defined");
         }
 
         final Date fireTime = context.getFireTime();
+        
+        logger.info("Tenant {} executing job {}", tenantId, jobName);
 
         executeJob(tenantId, jobName, fireTime, repository, configurationCache);
-    }
-
-    private ApplicationContext getApplicationContext(JobExecutionContext context) {
-        final JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-        final Object object = jobDataMap.get(APPLICATION_CONTEXT);
-        if (object == null) {
-            logger.warn("Could not find ApplicationContext in JobDataMap. Available keys: {}", jobDataMap.keySet());
-        }
-        return (ApplicationContext) object;
     }
 
     public static void executeJob(String tenantId, String jobName, Date fireTime, Repository repository,

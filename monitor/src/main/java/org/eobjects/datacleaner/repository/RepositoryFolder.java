@@ -53,6 +53,16 @@ public interface RepositoryFolder extends RepositoryNode {
     public List<RepositoryFile> getFiles();
 
     /**
+     * Gets files in this folder which have a particular extension.
+     * 
+     * @param extension
+     *            the filename extension to look for, eg. ".analysis.xml".
+     * 
+     * @return files in this folder.
+     */
+    public List<RepositoryFile> getFiles(String extension);
+
+    /**
      * Gets a file in this folder, by name.
      * 
      * @param name

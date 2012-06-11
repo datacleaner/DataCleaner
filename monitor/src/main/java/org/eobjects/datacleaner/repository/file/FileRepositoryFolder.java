@@ -73,7 +73,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
         }
         return _parent.getQualifiedPath() + "/" + getName();
     }
-
+    
     @Override
     public List<RepositoryFolder> getFolders() {
         File[] directories = _file.listFiles(new FileFilter() {
@@ -93,14 +93,18 @@ public class FileRepositoryFolder implements RepositoryFolder {
             }
         });
     }
-
+    
     @Override
-    public List<RepositoryFile> getFiles() {
+    public List<RepositoryFile> getFiles(final String extension) {
         File[] files = _file.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
                 if (file.isFile() && !file.isHidden()) {
-                    return true;
+                    if (extension == null) {
+                        return true;
+                    } else {
+                        return file.getName().endsWith(extension);
+                    }
                 }
                 return false;
             }
@@ -112,6 +116,11 @@ public class FileRepositoryFolder implements RepositoryFolder {
                 return new FileRepositoryFile(FileRepositoryFolder.this, file);
             }
         });
+    }
+
+    @Override
+    public List<RepositoryFile> getFiles() {
+        return getFiles(null);
     }
 
     @Override

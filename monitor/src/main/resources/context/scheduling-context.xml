@@ -8,34 +8,10 @@
 				 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.9.0.xsd">
 
-	<bean name="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-	</bean>
-				
 	<bean name="schedulingService"
-		class="org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl">
+		class="org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl" init-method="initialize">
 		<constructor-arg name="timelineService" ref="timelineService" />
 		<constructor-arg name="repository" ref="repository" />
-		<constructor-arg name="schedulerFactory" ref="schedulerFactory" />
 	</bean>
-
-<!-- 
-	<bean name="exampleJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
-		<property name="jobClass"
-			value="org.eobjects.datacleaner.monitor.scheduling.ExecuteJob" />
-		<property name="jobDataAsMap">
-			<map>
-				<entry key="DataCleaner.tenant.id" value="DC" />
-				<entry key="DataCleaner.job.name" value="product_profiling" />
-			</map>
-		</property>
-		<property name="applicationContextJobDataKey" value="applicationContext" />
-	</bean>
-
-	<bean id="exampleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="exampleJobDetail" />
-		<property name="startDelay" value="120000" />
-		<property name="repeatInterval" value="120000" />
-	</bean>
- -->
 
 </beans>

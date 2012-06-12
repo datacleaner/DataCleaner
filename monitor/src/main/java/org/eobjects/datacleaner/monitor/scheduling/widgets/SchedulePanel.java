@@ -25,12 +25,20 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
+import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -55,26 +63,44 @@ public class SchedulePanel extends Composite {
     @UiField
     Label latestExecutionLabel;
 
-    public SchedulePanel(TenantIdentifier tenant, ScheduleDefinition schedule, SchedulingServiceAsync service) {
+    @UiField
+    Button triggerNowButton;
+
+    public SchedulePanel(final TenantIdentifier tenant, final ScheduleDefinition schedule,
+            final SchedulingServiceAsync service) {
         super();
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        headerPanel.add(new HeadingLabel("Job: " + schedule.getJob().getName()));
+        final JobIdentifier job = schedule.getJob();
+        headerPanel.add(new HeadingLabel("Job: " + job.getName()));
 
-        if (schedule.isActive()) {
-            final JobIdentifier scheduleAfterJob = schedule.getScheduleAfterJob();
-            if (scheduleAfterJob == null) {
-                scheduleLabel.setText(schedule.getScheduleExpression());
-            } else {
-                scheduleLabel.setText("Runs after " + scheduleAfterJob.getName());
-            }
-        } else {
-            scheduleLabel.setText("Not scheduled");
+        scheduleLabel.setText(schedule.getScheduleSummary());
+        if (!schedule.isActive()) {
             scheduleLabel.addStyleName("discrete");
         }
 
-        service.getLatestExecution(tenant, schedule.getJob(), new DCAsyncCallback<HistoricExecution>() {
+        triggerNowButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final DCPopupPanel popupPanel = new DCPopupPanel("Execute job");
+                popupPanel.setWidget(new LoadingIndicator());
+                popupPanel.addButton(new CancelPopupButton(popupPanel, "Close"));
+                popupPanel.center();
+                popupPanel.show();
+
+                service.triggerExecution(tenant, job, new DCAsyncCallback<HistoricExecution>() {
+                    @Override
+                    public void onSuccess(HistoricExecution result) {
+                        HistoricExecutionPanel panel = new HistoricExecutionPanel(result);
+                        popupPanel.setWidget(panel);
+                        popupPanel.center();
+                    }
+                });
+            }
+        });
+
+        service.getLatestExecution(tenant, job, new DCAsyncCallback<HistoricExecution>() {
             @Override
             public void onSuccess(HistoricExecution result) {
                 if (result == null) {
@@ -93,7 +119,9 @@ public class SchedulePanel extends Composite {
                         break;
                     }
 
-                    sb.append(result.getJobBeginDate());
+                    final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
+
+                    sb.append(format.format(result.getJobBeginDate()));
 
                     latestExecutionLabel.setText(sb.toString());
                 }

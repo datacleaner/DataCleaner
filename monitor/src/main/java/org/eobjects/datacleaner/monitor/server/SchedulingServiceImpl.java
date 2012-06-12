@@ -26,12 +26,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.scheduling.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineService;
@@ -65,13 +68,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     private final TimelineService _timelineService;
     private final Repository _repository;
+    private final ConfigurationCache _configurationCache;
     private final Scheduler _scheduler;
 
     private ApplicationContext _applicationContext;
 
-    public SchedulingServiceImpl(TimelineService timelineService, Repository repository) {
+    public SchedulingServiceImpl(TimelineService timelineService, Repository repository, ConfigurationCache configurationCache) {
         _timelineService = timelineService;
         _repository = repository;
+        _configurationCache = configurationCache;
         _scheduler = createScheduler();
     }
 
@@ -274,8 +279,18 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        _applicationContext = applicationContext;
+    public HistoricExecution triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
+        final Date beginTime = new Date();
+        final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
+        ExecuteJob.executeJob(tenant.getId(), job.getName(), beginTime, _repository, configuration);
+        final Date endTime = new Date();
+        
+        final String logOutput = null;
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "@now", true);
+        
+        final HistoricExecution historicExecution = new HistoricExecution(schedule, TriggerType.MANUAL, logOutput , beginTime, endTime);
+
+        return historicExecution;
     }
 
     @Override
@@ -288,6 +303,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public List<HistoricExecution> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
         // TODO: Not implemented
         return null;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        _applicationContext = applicationContext;
     }
 
 }

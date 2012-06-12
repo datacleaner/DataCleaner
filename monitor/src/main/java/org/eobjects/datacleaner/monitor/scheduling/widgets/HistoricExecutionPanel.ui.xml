@@ -22,19 +22,21 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
-	<g:HTMLPanel styleName="SchedulePanel">
+	<g:HTMLPanel styleName="HistoricExecutionPanel">
 	
-		<g:FlowPanel ui:field="headerPanel" />
-		
 		<div class="FormRow">
-			<g:Button text="Trigger now" ui:field="triggerNowButton" />
-			<span class="FormKey">Schedule:</span>
-			<g:Label styleName="FormValue" ui:field="scheduleLabel" />
+			<span class="FormKey">Begin time:</span>
+			<g:Label styleName="FormValue" ui:field="beginTimeLabel" />
 		</div>
 		
 		<div class="FormRow">
-			<span class="FormKey">Latest execution:</span>
-			<g:Label styleName="FormValue" ui:field="latestExecutionLabel" />
+			<span class="FormKey">End time:</span>
+			<g:Label styleName="FormValue" ui:field="endTimeLabel" />
+		</div>
+		
+		<div class="FormRow">
+			<span class="FormKey">Trigger:</span>
+			<g:Label styleName="FormValue" ui:field="triggerLabel" />
 		</div>
 		
 	</g:HTMLPanel>

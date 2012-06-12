@@ -80,7 +80,7 @@ body,table td,select,button {
 }
 
 .FormRow {
-	clear: both;
+	clear: left;
 }
 
 .FormRow .FormKey {
@@ -90,4 +90,8 @@ body,table td,select,button {
 
 .FormRow .FormValue {
 	float: left;
+}
+
+.FormRow .gwt-Button {
+	float: right;
 }

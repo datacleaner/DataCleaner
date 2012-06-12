@@ -41,4 +41,6 @@ public interface SchedulingServiceAsync {
 
     void getAllExecutions(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<List<HistoricExecution>> callback);
 
+    void triggerExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<HistoricExecution> callback);
+
 }

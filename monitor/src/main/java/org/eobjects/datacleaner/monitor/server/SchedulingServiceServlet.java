@@ -86,4 +86,9 @@ public class SchedulingServiceServlet extends RemoteServiceServlet implements Sc
         return _delegate.getLatestExecution(tenant, job);
     }
 
+    @Override
+    public HistoricExecution triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
+        return _delegate.triggerExecution(tenant, job);
+    }
+
 }

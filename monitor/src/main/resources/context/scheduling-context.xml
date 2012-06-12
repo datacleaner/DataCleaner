@@ -12,6 +12,7 @@
 		class="org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl" init-method="initialize">
 		<constructor-arg name="timelineService" ref="timelineService" />
 		<constructor-arg name="repository" ref="repository" />
+		<constructor-arg name="configurationCache" ref="configurationCache" />
 	</bean>
 
 </beans>

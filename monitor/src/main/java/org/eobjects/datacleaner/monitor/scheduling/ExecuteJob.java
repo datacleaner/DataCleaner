@@ -108,7 +108,6 @@ public class ExecuteJob extends AbstractQuartzJob {
         final RepositoryFile jobFile = jobsFolder.getFile(jobFileName);
         if (jobFile == null) {
             throw new IllegalArgumentException("No such job file: " + jobFileName);
-
         }
 
         final MonitorJobReader jobReader = new MonitorJobReader(configuration, jobFile);

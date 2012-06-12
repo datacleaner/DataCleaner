@@ -38,6 +38,8 @@ public interface SchedulingService extends RemoteService {
     public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant);
 
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition);
+    
+    public HistoricExecution triggerExecution(TenantIdentifier tenant, JobIdentifier job);
 
     public HistoricExecution getLatestExecution(TenantIdentifier tenant, JobIdentifier job);
 

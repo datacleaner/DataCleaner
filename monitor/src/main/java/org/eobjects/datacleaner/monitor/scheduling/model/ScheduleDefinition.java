@@ -45,7 +45,7 @@ public class ScheduleDefinition implements IsSerializable {
         _scheduleExpression = scheduleExpression;
         _active = active;
     }
-    
+
     public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, JobIdentifier scheduleAfterJob, boolean active) {
         _tenant = tenant;
         _job = job;
@@ -72,8 +72,20 @@ public class ScheduleDefinition implements IsSerializable {
     public void setActive(boolean active) {
         _active = active;
     }
-    
+
     public JobIdentifier getScheduleAfterJob() {
         return _scheduleAfterJob;
+    }
+
+    public String getScheduleSummary() {
+        if (!isActive()) {
+            return "Not scheduled";
+        }
+
+        if (_scheduleAfterJob == null) {
+            return getScheduleExpression();
+        } else {
+            return "Run after " + _scheduleAfterJob.getName();
+        }
     }
 }

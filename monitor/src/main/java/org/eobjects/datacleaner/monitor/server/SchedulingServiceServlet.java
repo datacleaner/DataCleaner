@@ -24,7 +24,9 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
+import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -72,6 +74,16 @@ public class SchedulingServiceServlet extends RemoteServiceServlet implements Sc
     @Override
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition) {
         return _delegate.updateSchedule(tenant, scheduleDefinition);
+    }
+    
+    @Override
+    public List<HistoricExecution> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+        return _delegate.getAllExecutions(tenant, job);
+    }
+    
+    @Override
+    public HistoricExecution getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
+        return _delegate.getLatestExecution(tenant, job);
     }
 
 }

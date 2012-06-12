@@ -21,7 +21,9 @@ package org.eobjects.datacleaner.monitor.scheduling;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -34,5 +36,9 @@ public interface SchedulingServiceAsync {
     void getSchedules(TenantIdentifier tenant, AsyncCallback<List<ScheduleDefinition>> callback);
 
     void updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition, AsyncCallback<ScheduleDefinition> callback);
+
+    void getLatestExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<HistoricExecution> callback);
+
+    void getAllExecutions(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<List<HistoricExecution>> callback);
 
 }

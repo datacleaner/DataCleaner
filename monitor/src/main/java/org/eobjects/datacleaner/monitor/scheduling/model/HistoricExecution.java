@@ -21,27 +21,34 @@ package org.eobjects.datacleaner.monitor.scheduling.model;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+/**
+ * Represents an ended execution of a job.
+ */
 public class HistoricExecution implements IsSerializable {
 
     private ScheduleDefinition _schedule;
+    private JobIdentifier _job;
+    private TriggerType _triggerType;
     private String _logOutput;
     private Date _jobBeginDate;
     private Date _jobEndDate;
-    private Date _postProcessingEndDate;
 
     // no-args constructor
     public HistoricExecution() {
     }
 
-    public HistoricExecution(ScheduleDefinition schedule, String logOutput, Date jobBeginDate, Date jobEndDate,
-            Date postProcessingEndDate) {
+    public HistoricExecution(ScheduleDefinition schedule, TriggerType triggerType, String logOutput, Date jobBeginDate,
+            Date jobEndDate) {
         _schedule = schedule;
+        _job = schedule.getJob();
+        _triggerType = triggerType;
         _logOutput = logOutput;
         _jobBeginDate = jobBeginDate;
         _jobEndDate = jobEndDate;
-        _postProcessingEndDate = postProcessingEndDate;
     }
 
     public ScheduleDefinition getSchedule() {
@@ -60,8 +67,11 @@ public class HistoricExecution implements IsSerializable {
         return _jobEndDate;
     }
 
-    public Date getPostProcessingEndDate() {
-        return _postProcessingEndDate;
+    public JobIdentifier getJob() {
+        return _job;
     }
 
+    public TriggerType getTriggerType() {
+        return _triggerType;
+    }
 }

@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.monitor.scheduling.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
+import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -272,6 +273,18 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         _applicationContext = applicationContext;
+    }
+
+    @Override
+    public HistoricExecution getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
+        // TODO: Not implemented
+        return null;
+    }
+
+    @Override
+    public List<HistoricExecution> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+        // TODO: Not implemented
+        return null;
     }
 
 }

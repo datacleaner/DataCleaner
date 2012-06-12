@@ -78,3 +78,16 @@ body,table td,select,button {
 	text-align: center;
 	padding: 10px;
 }
+
+.FormRow {
+	clear: both;
+}
+
+.FormRow .FormKey {
+	float: left;
+	width: 200px;
+}
+
+.FormRow .FormValue {
+	float: left;
+}

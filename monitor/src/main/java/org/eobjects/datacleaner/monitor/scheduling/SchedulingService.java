@@ -21,7 +21,9 @@ package org.eobjects.datacleaner.monitor.scheduling;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -36,4 +38,8 @@ public interface SchedulingService extends RemoteService {
     public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant);
 
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition);
+
+    public HistoricExecution getLatestExecution(TenantIdentifier tenant, JobIdentifier job);
+
+    public List<HistoricExecution> getAllExecutions(TenantIdentifier tenant, JobIdentifier job);
 }

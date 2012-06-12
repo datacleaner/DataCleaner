@@ -126,6 +126,10 @@ div.loader {
 	color: #ffa800;
 }
 
+.discrete {
+	color: #666;
+}
+
 /**
  * Error dialog styling
  */

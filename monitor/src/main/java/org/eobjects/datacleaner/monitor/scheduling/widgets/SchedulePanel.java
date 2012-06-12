@@ -20,33 +20,85 @@
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
+import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * A panel which presents a schedule
  */
-public class SchedulePanel extends FlowPanel {
+public class SchedulePanel extends Composite {
+
+    interface MyUiBinder extends UiBinder<Widget, SchedulePanel> {
+    }
+
+    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+
+    @UiField
+    FlowPanel headerPanel;
+
+    @UiField
+    Label scheduleLabel;
+
+    @UiField
+    Label latestExecutionLabel;
 
     public SchedulePanel(TenantIdentifier tenant, ScheduleDefinition schedule, SchedulingServiceAsync service) {
         super();
-        addStyleName("SchedulePanel");
-        
-        final ButtonPanel buttonPanel = new ButtonPanel();
-        buttonPanel.add(new Button(""));
-        
-        add(new HeadingLabel("Job: " + schedule.getJob().getName()));
+
+        initWidget(uiBinder.createAndBindUi(this));
+
+        headerPanel.add(new HeadingLabel("Job: " + schedule.getJob().getName()));
+
         if (schedule.isActive()) {
-            add(new Label("Schedule: " + schedule.getScheduleExpression()));
+            final JobIdentifier scheduleAfterJob = schedule.getScheduleAfterJob();
+            if (scheduleAfterJob == null) {
+                scheduleLabel.setText(schedule.getScheduleExpression());
+            } else {
+                scheduleLabel.setText("Runs after " + scheduleAfterJob.getName());
+            }
         } else {
-            add(new Label("Schedule: Not scheduled"));
+            scheduleLabel.setText("Not scheduled");
+            scheduleLabel.addStyleName("discrete");
         }
+
+        service.getLatestExecution(tenant, schedule.getJob(), new DCAsyncCallback<HistoricExecution>() {
+            @Override
+            public void onSuccess(HistoricExecution result) {
+                if (result == null) {
+                    latestExecutionLabel.setText("Not available");
+                    latestExecutionLabel.addStyleName("discrete");
+                } else {
+                    StringBuilder sb = new StringBuilder();
+
+                    TriggerType triggerType = result.getTriggerType();
+                    switch (triggerType) {
+                    case MANUAL:
+                        sb.append("Manually triggered: ");
+                        break;
+                    case SCHEDULED:
+                        sb.append("Scheduled run: ");
+                        break;
+                    }
+
+                    sb.append(result.getJobBeginDate());
+
+                    latestExecutionLabel.setText(sb.toString());
+                }
+            }
+        });
     }
 
 }

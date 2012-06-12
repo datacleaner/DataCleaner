@@ -94,7 +94,7 @@ public class JaxbTimelineWriter implements TimelineWriter {
         }
         
         final Timeline timeline = _objectFactory.createTimeline();
-        timeline.setJobPath(timelineDefinition.getJobIdentifier().getPath());
+        timeline.setJobName(timelineDefinition.getJobIdentifier().getName());
         timeline.setMetrics(metricsType);
         
         return timeline;

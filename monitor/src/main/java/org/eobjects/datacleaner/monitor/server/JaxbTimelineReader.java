@@ -71,7 +71,7 @@ public class JaxbTimelineReader implements TimelineReader {
 
     private TimelineDefinition createTimeline(Timeline timeline) {
         final JobIdentifier jobIdentifier = new JobIdentifier();
-        jobIdentifier.setPath(timeline.getJobPath());
+        jobIdentifier.setName(timeline.getJobName());
 
         final TimelineDefinition timelineDefinition = new TimelineDefinition();
         timelineDefinition.setJobIdentifier(jobIdentifier);

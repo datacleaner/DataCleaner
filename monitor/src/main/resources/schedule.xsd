@@ -6,7 +6,9 @@
 	<element name="schedule">
 		<complexType>
 			<sequence>
-				<element name="schedule-expression" minOccurs="1" maxOccurs="1"
+				<element name="schedule-expression" minOccurs="0" maxOccurs="1"
+					type="string" />
+				<element name="schedule-after-job" minOccurs="0" maxOccurs="1"
 					type="string" />
 				<element name="active" minOccurs="1" maxOccurs="1" type="boolean" />
 			</sequence>

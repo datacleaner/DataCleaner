@@ -27,6 +27,7 @@ import javax.xml.bind.Marshaller;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.schedule.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.schedule.jaxb.Schedule;
 
@@ -74,11 +75,16 @@ public class JaxbScheduleWriter {
     }
 
     private Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
-        
+
         final Schedule schedule = _objectFactory.createSchedule();
         schedule.setActive(scheduleDefinition.isActive());
         schedule.setScheduleExpression(scheduleDefinition.getScheduleExpression());
-        
+
+        final JobIdentifier scheduleAfterJob = scheduleDefinition.getScheduleAfterJob();
+        if (scheduleAfterJob != null) {
+            schedule.setScheduleAfterJob(scheduleAfterJob.getName());
+        }
+
         return schedule;
     }
 

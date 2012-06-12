@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.eobjects.datacleaner.monitor.scheduling.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
+import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -96,8 +97,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
             for (ScheduleDefinition schedule : schedules) {
                 if (schedule.isActive()) {
-                    // TODO: Only set up schedule
-                    updateSchedule(tenant, schedule);
+                    initializeSchedule(schedule);
                 }
             }
         }
@@ -126,11 +126,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final RepositoryFolder jobsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
         final RepositoryFile scheduleFile = jobsFolder.getFile(jobIdentifier.getName() + EXTENSION_SCHEDULE_XML);
 
+        final String scheduleAfterJob;
         final String scheduleExpression;
         final boolean active;
 
         if (scheduleFile == null) {
             scheduleExpression = null;
+            scheduleAfterJob = null;
             active = false;
         } else {
             JaxbScheduleReader reader = new JaxbScheduleReader();
@@ -144,53 +146,28 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
             scheduleExpression = schedule.getScheduleExpression();
             active = schedule.isActive();
+            scheduleAfterJob = schedule.getScheduleAfterJob();
         }
-
-        return new ScheduleDefinition(tenant, jobIdentifier, scheduleExpression, active);
+        
+        if (scheduleAfterJob == null) {
+            return new ScheduleDefinition(tenant, jobIdentifier, scheduleExpression, active);
+        } else {
+            final JobIdentifier job = new JobIdentifier(scheduleAfterJob);
+            
+            return new ScheduleDefinition(tenant, jobIdentifier, job, active);
+        }
     }
 
     @Override
     public ScheduleDefinition updateSchedule(final TenantIdentifier tenant, final ScheduleDefinition scheduleDefinition) {
 
-        final String quartzJobName = scheduleDefinition.getJob().getName();
-        final String quartzJobGroupName = tenant.getId();
+        initializeSchedule(scheduleDefinition);
 
-        try {
-            _scheduler.deleteJob(quartzJobName, quartzJobGroupName);
-
-            if (scheduleDefinition.isActive()) {
-                final JobDetail jobDetail = new JobDetail(quartzJobName, quartzJobGroupName, ExecuteJob.class);
-                JobDataMap jobDataMap = jobDetail.getJobDataMap();
-                jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
-                jobDataMap.put(ExecuteJob.DETAIL_JOB_NAME, quartzJobName);
-                jobDataMap.put(ExecuteJob.DETAIL_TENANT_ID, quartzJobGroupName);
-
-                final String scheduleExpression = scheduleDefinition.getScheduleExpression();
-                final CronExpression cronExpression = toCronExpression(scheduleExpression);
-
-                final CronTriggerBean trigger = new CronTriggerBean();
-                trigger.setName(quartzJobName);
-                trigger.setStartTime(new Date());
-                trigger.setCronExpression(cronExpression);
-                trigger.setJobDetail(jobDetail);
-
-                trigger.afterPropertiesSet();
-
-                logger.info("Adding trigger to scheduler: {} | {}", quartzJobName, cronExpression);
-                _scheduler.scheduleJob(jobDetail, trigger);
-            } else {
-                logger.info("Not scheduling job: {} (inactive)", quartzJobName);
-            }
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new IllegalStateException("Could not configure job scheduling", e);
-        }
+        final String jobName = scheduleDefinition.getJob().getName();
 
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
         final RepositoryFolder jobsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
-        final String filename = quartzJobName + EXTENSION_SCHEDULE_XML;
+        final String filename = jobName + EXTENSION_SCHEDULE_XML;
         final RepositoryFile file = jobsFolder.getFile(filename);
 
         final Action<OutputStream> writeAction = new Action<OutputStream>() {
@@ -210,21 +187,74 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return scheduleDefinition;
     }
 
+    private void initializeSchedule(final ScheduleDefinition schedule) {
+        final String tenantId = schedule.getTenant().getId();
+        final String jobName = schedule.getJob().getName();
+        final String jobListenerName = tenantId + "." + jobName;
+
+        try {
+            _scheduler.deleteJob(jobName, tenantId);
+            _scheduler.removeJobListener(jobListenerName);
+
+            if (schedule.isActive()) {
+                final JobDetail jobDetail = new JobDetail(jobName, tenantId, ExecuteJob.class);
+                JobDataMap jobDataMap = jobDetail.getJobDataMap();
+                jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
+                jobDataMap.put(ExecuteJob.DETAIL_JOB_NAME, jobName);
+                jobDataMap.put(ExecuteJob.DETAIL_TENANT_ID, tenantId);
+
+                final JobIdentifier scheduleAfterJob = schedule.getScheduleAfterJob();
+                if (scheduleAfterJob == null) {
+                    // time based trigger
+
+                    final String scheduleExpression = schedule.getScheduleExpression();
+                    final CronExpression cronExpression = toCronExpression(scheduleExpression);
+
+                    final CronTriggerBean trigger = new CronTriggerBean();
+                    trigger.setName(jobName);
+                    trigger.setStartTime(new Date());
+                    trigger.setCronExpression(cronExpression);
+                    trigger.setJobDetail(jobDetail);
+
+                    trigger.afterPropertiesSet();
+
+                    logger.info("Adding trigger to scheduler: {} | {}", jobName, cronExpression);
+                    _scheduler.scheduleJob(jobDetail, trigger);
+                } else {
+                    // event based trigger (via a job listener)
+
+                    _scheduler.addJob(jobDetail, true);
+
+                    final ExecuteJobListener listener = new ExecuteJobListener(jobListenerName, schedule);
+                    _scheduler.addJobListener(listener);
+                    logger.info("Adding listener to scheduler: {}", jobListenerName);
+                }
+            } else {
+                logger.info("Not scheduling job: {} (inactive)", jobName);
+            }
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new IllegalStateException("Could not configure job scheduling", e);
+        }
+    }
+
     private CronExpression toCronExpression(String scheduleExpression) {
         final CronExpression cronExpression;
         scheduleExpression = scheduleExpression.trim();
 
         try {
             if ("@yearly".equals(scheduleExpression) || "@annually".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 1 1 *");
+                cronExpression = new CronExpression("0 0 1 1 * ?");
             } else if ("@monthly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 1 * *");
+                cronExpression = new CronExpression("0 0 1 * * ?");
             } else if ("@weekly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 * * 0");
+                cronExpression = new CronExpression("0 0 * * 0 ?");
             } else if ("@daily".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 * * *");
+                cronExpression = new CronExpression("0 0 * * * ?");
             } else if ("@hourly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 * * * *");
+                cronExpression = new CronExpression("0 * * * * ?");
             } else {
                 cronExpression = new CronExpression(scheduleExpression);
             }

@@ -68,7 +68,7 @@ public abstract class SelectJobPanel extends FlowPanel {
         _listBox.clear();
 
         for (JobIdentifier job : availableJobs) {
-            _listBox.addItem(job.getName(), job.getPath());
+            _listBox.addItem(job.getName(), job.getName());
         }
 
         add(_listBox);
@@ -81,8 +81,7 @@ public abstract class SelectJobPanel extends FlowPanel {
             public void onClick(ClickEvent event) {
                 final int index = _listBox.getSelectedIndex();
                 final String name = _listBox.getItemText(index);
-                final String path = _listBox.getValue(index);
-                final JobIdentifier job = new JobIdentifier(name, path);
+                final JobIdentifier job = new JobIdentifier(name);
                 onJobSelected(job);
             }
         });

@@ -24,10 +24,14 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+/**
+ * Represents information about a scheduled job execution.
+ */
 public class ScheduleDefinition implements IsSerializable {
 
     private TenantIdentifier _tenant;
     private JobIdentifier _job;
+    private JobIdentifier _scheduleAfterJob;
     private String _scheduleExpression;
     private boolean _active;
 
@@ -39,6 +43,13 @@ public class ScheduleDefinition implements IsSerializable {
         _tenant = tenant;
         _job = job;
         _scheduleExpression = scheduleExpression;
+        _active = active;
+    }
+    
+    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, JobIdentifier scheduleAfterJob, boolean active) {
+        _tenant = tenant;
+        _job = job;
+        _scheduleAfterJob = scheduleAfterJob;
         _active = active;
     }
 
@@ -60,5 +71,9 @@ public class ScheduleDefinition implements IsSerializable {
 
     public void setActive(boolean active) {
         _active = active;
+    }
+    
+    public JobIdentifier getScheduleAfterJob() {
+        return _scheduleAfterJob;
     }
 }

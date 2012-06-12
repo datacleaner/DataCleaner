@@ -44,7 +44,7 @@ public class JaxbScheduleReader {
             throw new IllegalStateException(e);
         }
     }
-    
+
     public Schedule unmarshallSchedule(InputStream inputStream) {
         try {
             Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
@@ -55,4 +55,5 @@ public class JaxbScheduleReader {
             throw new IllegalArgumentException(e);
         }
     }
+
 }

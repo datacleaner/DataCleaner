@@ -173,7 +173,7 @@ public class TimelineServiceImpl implements TimelineService {
             metricParameters.add(parameter);
         }
 
-        final List<RepositoryFile> resultFiles = getResultFilesForJob(timeline.getJobIdentifier());
+        final List<RepositoryFile> resultFiles = getResultFilesForJob(tenant, timeline.getJobIdentifier());
         final List<TimelineDataRow> rows = new ArrayList<TimelineDataRow>();
 
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
@@ -354,17 +354,17 @@ public class TimelineServiceImpl implements TimelineService {
         }
     }
 
-    private List<RepositoryFile> getResultFilesForJob(final JobIdentifier jobIdentifier) {
-        final RepositoryNode jobNode = _repository.getRepositoryNode(jobIdentifier.getPath());
-        final RepositoryFolder tenantFolder = jobNode.getParent().getParent();
+    private List<RepositoryFile> getResultFilesForJob(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
+        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
         final RepositoryFolder resultsFolder = tenantFolder.getFolder(PATH_RESULTS);
 
-        final String jobNameWithoutExtension = jobNode.getName().replace(FileFilters.ANALYSIS_XML.getExtension(), "");
-        List<RepositoryFile> files = resultsFolder.getFiles();
+        final String jobName = jobIdentifier.getName();
+
+        List<RepositoryFile> files = resultsFolder.getFiles(FileFilters.ANALYSIS_RESULT_SER.getExtension());
         files = CollectionUtils.filter(files, new Predicate<RepositoryFile>() {
             @Override
             public Boolean eval(RepositoryFile file) {
-                return file.getName().startsWith(jobNameWithoutExtension);
+                return file.getName().startsWith(jobName);
             }
         });
 
@@ -492,7 +492,6 @@ public class TimelineServiceImpl implements TimelineService {
         final JobIdentifier job = new JobIdentifier();
         job.setName(file.getName().substring(0,
                 file.getName().length() - FileFilters.ANALYSIS_XML.getExtension().length()));
-        job.setPath(file.getQualifiedPath());
         return job;
     }
 
@@ -558,15 +557,15 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     private AnalysisJob readAnalysisJob(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final String path = jobIdentifier.getPath();
+        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
+        final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
 
-        logger.info("Reading job from file: {}", path);
-
-        final RepositoryFile jobNode = (RepositoryFile) _repository.getRepositoryNode(path);
+        final RepositoryFile jobFile = jobsFolder.getFile(jobIdentifier.getName()
+                + FileFilters.ANALYSIS_XML.getExtension());
 
         final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
 
-        final MonitorJobReader reader = new MonitorJobReader(configuration, jobNode);
+        final MonitorJobReader reader = new MonitorJobReader(configuration, jobFile);
 
         final AnalysisJob job = reader.readJob();
         return job;
@@ -615,7 +614,7 @@ public class TimelineServiceImpl implements TimelineService {
             return null;
         }
 
-        final List<RepositoryFile> resultFiles = getResultFilesForJob(job);
+        final List<RepositoryFile> resultFiles = getResultFilesForJob(tenant, job);
         final RepositoryFile resultFile = resultFiles.get(resultFiles.size() - 1);
         final AnalysisResult analysisResult = readAnalysisResult(resultFile);
 

@@ -27,15 +27,13 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class JobIdentifier implements IsSerializable {
 
     private String _name;
-    private String _path;
 
-    public JobIdentifier(String name, String path) {
+    public JobIdentifier(String name) {
         _name = name;
-        _path = path;
     }
     
     public JobIdentifier() {
-        this(null, null);
+        this(null);
     }
 
     public String getName() {
@@ -46,17 +44,9 @@ public class JobIdentifier implements IsSerializable {
         _name = name;
     }
 
-    public String getPath() {
-        return _path;
-    }
-
-    public void setPath(String path) {
-        _path = path;
-    }
-
     @Override
     public String toString() {
-        return "JobIdentifier[name=" + _name + ",path=" + _path + "]";
+        return "JobIdentifier[name=" + _name + "]";
     }
 
 }

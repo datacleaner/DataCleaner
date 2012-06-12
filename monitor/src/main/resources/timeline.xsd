@@ -8,7 +8,7 @@
 			<sequence>
 				<element name="timeline-metadata" minOccurs="0" maxOccurs="1"
 					type="dc:timelineMetadataType" />
-				<element name="job-path" minOccurs="1" maxOccurs="1" type="string" />
+				<element name="job-name" minOccurs="1" maxOccurs="1" type="string" />
 				<element name="metrics" minOccurs="1" maxOccurs="1"
 					type="dc:metricsType" />
 			</sequence>

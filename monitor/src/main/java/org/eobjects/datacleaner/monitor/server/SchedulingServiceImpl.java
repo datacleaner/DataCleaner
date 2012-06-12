@@ -149,12 +149,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             active = schedule.isActive();
             scheduleAfterJob = schedule.getScheduleAfterJob();
         }
-        
+
         if (scheduleAfterJob == null) {
             return new ScheduleDefinition(tenant, jobIdentifier, scheduleExpression, active);
         } else {
             final JobIdentifier job = new JobIdentifier(scheduleAfterJob);
-            
+
             return new ScheduleDefinition(tenant, jobIdentifier, job, active);
         }
     }
@@ -241,20 +241,23 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
-    private CronExpression toCronExpression(String scheduleExpression) {
-        final CronExpression cronExpression;
+    protected static CronExpression toCronExpression(String scheduleExpression) {
         scheduleExpression = scheduleExpression.trim();
+
+        final CronExpression cronExpression;
 
         try {
             if ("@yearly".equals(scheduleExpression) || "@annually".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 1 1 * ?");
+                cronExpression = new CronExpression("0 0 0 1 1 ? *");
             } else if ("@monthly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 1 * * ?");
+                cronExpression = new CronExpression("0 0 0 1 * ?");
             } else if ("@weekly".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 * * 0 ?");
+                cronExpression = new CronExpression("0 0 * ? * 1");
             } else if ("@daily".equals(scheduleExpression)) {
-                cronExpression = new CronExpression("0 0 * * * ?");
+                cronExpression = new CronExpression("0 0 0 * * ?");
             } else if ("@hourly".equals(scheduleExpression)) {
+                cronExpression = new CronExpression("0 0 * * * ?");
+            } else if ("@minutely".equals(scheduleExpression) || "@every_minute".equals(scheduleExpression)) {
                 cronExpression = new CronExpression("0 * * * * ?");
             } else {
                 cronExpression = new CronExpression(scheduleExpression);

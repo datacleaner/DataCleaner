@@ -158,7 +158,7 @@ public class SingleInputColumnRadioButtonPropertyWidget extends AbstractProperty
 		}
 		if (_inputColumns.isEmpty()) {
 			_radioButtons = new JRadioButton[1];
-			JRadioButton radioButton = new JRadioButton("<html><font color=\"gray\\\"\\\">- no <i>"
+			JRadioButton radioButton = new JRadioButton("<html><font color=\"gray\">- no <i>"
 	                + LabelUtils.getDataTypeLabel(_dataType) + "</i> columns available -</font></html>");
 			radioButton.setOpaque(false);
 			radioButton.setEnabled(false);

@@ -51,7 +51,7 @@ public class TimelineServiceImplTest extends TestCase {
         assertEquals(2, jobs.size());
 
         final JobIdentifier job = jobs.get(1);
-        assertEquals("JobIdentifier[name=product_profiling,path=/DC/jobs/product_profiling.analysis.xml]",
+        assertEquals("JobIdentifier[name=product_profiling]",
                 job.toString());
 
         final JobMetrics jobMetrics = service.getJobMetrics(tenant, job);
@@ -81,7 +81,7 @@ public class TimelineServiceImplTest extends TestCase {
         assertEquals(0, timelines.size());
 
         final List<TimelineGroup> timelineGroups = service.getTimelineGroups(tenant);
-        assertEquals(1, timelineGroups.size());
+        assertEquals(2, timelineGroups.size());
         
         timelines = service.getTimelines(tenant, timelineGroups.get(0));
         assertEquals(3, timelines.size());
@@ -92,7 +92,7 @@ public class TimelineServiceImplTest extends TestCase {
                 timelineIdentifier.toString());
 
         final TimelineDefinition timelineDefinition = service.getTimelineDefinition(tenant, timelineIdentifier);
-        assertEquals("TimelineDefinition[job=JobIdentifier[name=null,path=/DC/jobs/product_profiling.analysis.xml],metrics=[MetricIdentifier[analyzerInputName=PRODUCTCODE,metricDescriptorName=Pattern count], MetricIdentifier[analyzerInputName=PRODUCTVENDOR,metricDescriptorName=False count,paramQueryString=PRODUCTVENDOR in 'vendor whitelist']]]",
+        assertEquals("TimelineDefinition[job=JobIdentifier[name=product_profiling],metrics=[MetricIdentifier[analyzerInputName=PRODUCTCODE,metricDescriptorName=Pattern count], MetricIdentifier[analyzerInputName=PRODUCTVENDOR,metricDescriptorName=False count,paramQueryString=PRODUCTVENDOR in 'vendor whitelist']]]",
                 timelineDefinition.toString());
 
         final TimelineData timelineData = service.getTimelineData(tenant, timelineDefinition);

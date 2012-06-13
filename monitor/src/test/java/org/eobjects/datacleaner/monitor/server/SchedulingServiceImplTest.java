@@ -69,7 +69,7 @@ public class SchedulingServiceImplTest extends TestCase {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.HOUR_OF_DAY, 0);
-        while (cal.get(Calendar.DAY_OF_WEEK) != cal.getFirstDayOfWeek()) {
+        while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
             cal.add(Calendar.DATE, 1);
         }
 

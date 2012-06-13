@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -49,8 +50,10 @@ public class TimelineServiceImplTest extends TestCase {
 
         final List<JobIdentifier> jobs = service.getJobs(tenant);
         assertEquals(2, jobs.size());
+        
+        Collections.sort(jobs);
 
-        final JobIdentifier job = jobs.get(1);
+        final JobIdentifier job = jobs.get(0);
         assertEquals("JobIdentifier[name=product_profiling]",
                 job.toString());
 

@@ -24,7 +24,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * Identifies a job in the repository.
  */
-public class JobIdentifier implements IsSerializable {
+public class JobIdentifier implements IsSerializable, Comparable<JobIdentifier> {
 
     private String _name;
 
@@ -47,6 +47,11 @@ public class JobIdentifier implements IsSerializable {
     @Override
     public String toString() {
         return "JobIdentifier[name=" + _name + "]";
+    }
+
+    @Override
+    public int compareTo(JobIdentifier o) {
+        return getName().compareTo(o.getName());
     }
 
 }

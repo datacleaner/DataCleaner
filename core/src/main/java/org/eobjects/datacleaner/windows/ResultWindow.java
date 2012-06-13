@@ -26,6 +26,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,8 +39,17 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang.SerializationUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
@@ -45,6 +57,7 @@ import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
+import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.actions.ExportResultToHtmlActionListener;
@@ -55,8 +68,10 @@ import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.panels.ProgressInformationPanel;
+import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.AnalysisRunnerSwingWorker;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
@@ -285,7 +300,7 @@ public final class ResultWindow extends AbstractWindow {
                 bannerTitle);
         banner.setLayout(null);
         _tabbedPane.bindTabTitleToBanner(banner);
-        
+
         final Ref<AnalysisResult> resultRef = new Ref<AnalysisResult>() {
             @Override
             public AnalysisResult get() {
@@ -301,11 +316,59 @@ public final class ResultWindow extends AbstractWindow {
         final JButton exportButton = new JButton("Export to HTML", imageManager.getImageIcon(
                 "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
         exportButton.setOpaque(false);
-        exportButton.addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
+        exportButton
+                .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
+
+        final JButton uploadButton = new JButton("Upload to dq monitor", imageManager.getImageIcon(
+                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
+        uploadButton.setOpaque(false);
+        uploadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
+                if (monitorConnection == null) {
+                    MonitorConnectionDialog dialog = new MonitorConnectionDialog(getWindowContext(), _userPreferences);
+                    dialog.open();
+                } else {
+                    
+                    try {
+                        final String analysisName = "foobar";
+                        
+                        final HttpClient client = new DefaultHttpClient();
+                        final HttpPost request = new HttpPost("http://127.0.0.1:8888/repository/DC/results/" + analysisName);
+                        final AnalysisResult analysisResult = resultRef.get();
+                        
+                        byte[] bytes = SerializationUtils.serialize(new SimpleAnalysisResult(analysisResult.getResultMap()));
+                        
+                        final MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+                        final InputStreamBody uploadFilePart = new InputStreamBody(new ByteArrayInputStream(bytes),
+                                "application/octet-stream", analysisName + FileFilters.ANALYSIS_RESULT_SER.getExtension());
+                        entity.addPart("file", uploadFilePart);
+                        request.setEntity(entity);
+                        
+                        final HttpResponse response = client.execute(request);
+                        final StringBuilder sb = new StringBuilder();
+                        sb.append(" - " + response.getStatusLine() + " - ");
+                        
+                        final BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity()
+                                .getContent()));
+                        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                            sb.append("\n");
+                            sb.append(line);
+                        }
+                        JOptionPane.showMessageDialog(_tabbedPane, sb.toString());
+                        reader.close();
+                    } catch (Exception e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
+            }
+        });
 
         final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
         layout.setAlignOnBaseline(true);
         banner.setLayout(layout);
+        banner.add(uploadButton);
         banner.add(exportButton);
         banner.add(saveButton);
         banner.add(Box.createHorizontalStrut(10));

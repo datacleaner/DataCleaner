@@ -40,295 +40,348 @@ import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Main implementation of {@link UserPreferences}.
+ */
 public class UserPreferencesImpl implements UserPreferences {
 
-	private static final long serialVersionUID = 6L;
+    private static final long serialVersionUID = 6L;
 
-	private static final Logger logger = LoggerFactory.getLogger(UserPreferencesImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserPreferencesImpl.class);
 
-	private transient File _userPreferencesFile;
-	private transient List<LoginChangeListener> loginChangeListeners;
+    private transient File _userPreferencesFile;
+    private transient List<LoginChangeListener> loginChangeListeners;
 
-	private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
-	private List<ExtensionPackage> extensionPackages = new ArrayList<ExtensionPackage>();
-	private List<Datastore> userDatastores = new ArrayList<Datastore>();
-	private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
-	private List<StringPattern> userStringPatterns = new ArrayList<StringPattern>();
-	private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
-	private Map<String, String> additionalProperties = new HashMap<String, String>();
+    private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
+    private List<ExtensionPackage> extensionPackages = new ArrayList<ExtensionPackage>();
+    private List<Datastore> userDatastores = new ArrayList<Datastore>();
+    private List<Dictionary> userDictionaries = new ArrayList<Dictionary>();
+    private List<StringPattern> userStringPatterns = new ArrayList<StringPattern>();
+    private List<SynonymCatalog> userSynonymCatalogs = new ArrayList<SynonymCatalog>();
+    private Map<String, String> additionalProperties = new HashMap<String, String>();
 
-	private String username;
+    private String username;
 
-	private boolean proxyEnabled = false;
-	private boolean proxyAuthenticationEnabled = false;
-	private String proxyHostname;
-	private int proxyPort = 8080;
-	private String proxyUsername;
-	private String proxyPassword;
+    private boolean proxyEnabled = false;
+    private boolean proxyAuthenticationEnabled = false;
+    private String proxyHostname;
+    private int proxyPort = 8080;
+    private String proxyUsername;
+    private String proxyPassword;
 
-	private List<File> recentJobFiles = new ArrayList<File>();
-	private File openDatastoreDirectory;
-	private File configuredFileDirectory;
-	private File analysisJobDirectory;
-	private File saveDatastoreDirectory;
+    private List<File> recentJobFiles = new ArrayList<File>();
+    private File openDatastoreDirectory;
+    private File configuredFileDirectory;
+    private File analysisJobDirectory;
+    private File saveDatastoreDirectory;
 
-	private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
+    private MonitorConnection monitorConnection;
 
-	public UserPreferencesImpl(File userPreferencesFile) {
-		_userPreferencesFile = userPreferencesFile;
-	}
+    private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
 
-	public static UserPreferences load(final File userPreferencesFile, final boolean loadDatabaseDrivers) {
-		if (userPreferencesFile == null || !userPreferencesFile.exists()) {
-			logger.info("User preferences file does not exist");
-			return new UserPreferencesImpl(userPreferencesFile);
-		}
-		
-		ChangeAwareObjectInputStream inputStream = null;
-		try {
-			inputStream = new ChangeAwareObjectInputStream(new FileInputStream(userPreferencesFile));
-			inputStream.addRenamedClass("org.eobjects.datacleaner.user.UserPreferences", UserPreferencesImpl.class);
-			UserPreferencesImpl result = (UserPreferencesImpl) inputStream.readObject();
+    public UserPreferencesImpl(File userPreferencesFile) {
+        _userPreferencesFile = userPreferencesFile;
+    }
 
-			if (loadDatabaseDrivers) {
-				List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
-				for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
-					try {
-						userDatabaseDriver.loadDriver();
-					} catch (IllegalStateException e) {
-						logger.error("Could not load database driver", e);
-					}
-				}
-			}
+    public static UserPreferences load(final File userPreferencesFile, final boolean loadDatabaseDrivers) {
+        if (userPreferencesFile == null || !userPreferencesFile.exists()) {
+            logger.info("User preferences file does not exist");
+            return new UserPreferencesImpl(userPreferencesFile);
+        }
 
-			result._userPreferencesFile = userPreferencesFile;
+        ChangeAwareObjectInputStream inputStream = null;
+        try {
+            inputStream = new ChangeAwareObjectInputStream(new FileInputStream(userPreferencesFile));
+            inputStream.addRenamedClass("org.eobjects.datacleaner.user.UserPreferences", UserPreferencesImpl.class);
+            UserPreferencesImpl result = (UserPreferencesImpl) inputStream.readObject();
 
-			return result;
-		} catch (InvalidClassException e) {
-			logger.warn("User preferences file version does not match application version: {}", e.getMessage());
-			return new UserPreferencesImpl(userPreferencesFile);
-		} catch (Exception e) {
-			logger.warn("Could not read user preferences file", e);
-			return new UserPreferencesImpl(userPreferencesFile);
-		} finally {
-			FileHelper.safeClose(inputStream);
-		}
-	}
+            if (loadDatabaseDrivers) {
+                List<UserDatabaseDriver> installedDatabaseDrivers = result.getDatabaseDrivers();
+                for (UserDatabaseDriver userDatabaseDriver : installedDatabaseDrivers) {
+                    try {
+                        userDatabaseDriver.loadDriver();
+                    } catch (IllegalStateException e) {
+                        logger.error("Could not load database driver", e);
+                    }
+                }
+            }
 
-	public void save() {
-		logger.info("Saving user preferences to {}", _userPreferencesFile.getAbsolutePath());
-		ObjectOutputStream outputStream = null;
-		try {
-			outputStream = new ObjectOutputStream(new FileOutputStream(_userPreferencesFile));
-			outputStream.writeObject(this);
-			outputStream.flush();
-		} catch (Exception e) {
-			logger.warn("Unexpected error while saving user preferences", e);
-			throw new IllegalStateException(e);
-		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (Exception e) {
-					throw new IllegalStateException(e);
-				}
-			}
-		}
-	}
+            result._userPreferencesFile = userPreferencesFile;
 
-	private List<LoginChangeListener> getLoginChangeListeners() {
-		if (loginChangeListeners == null) {
-			loginChangeListeners = new ArrayList<LoginChangeListener>();
-		}
-		return loginChangeListeners;
-	}
+            return result;
+        } catch (InvalidClassException e) {
+            logger.warn("User preferences file version does not match application version: {}", e.getMessage());
+            return new UserPreferencesImpl(userPreferencesFile);
+        } catch (Exception e) {
+            logger.warn("Could not read user preferences file", e);
+            return new UserPreferencesImpl(userPreferencesFile);
+        } finally {
+            FileHelper.safeClose(inputStream);
+        }
+    }
 
-	public void addLoginChangeListener(LoginChangeListener listener) {
-		getLoginChangeListeners().add(listener);
-	}
+    @Override
+    public void save() {
+        logger.info("Saving user preferences to {}", _userPreferencesFile.getAbsolutePath());
+        ObjectOutputStream outputStream = null;
+        try {
+            outputStream = new ObjectOutputStream(new FileOutputStream(_userPreferencesFile));
+            outputStream.writeObject(this);
+            outputStream.flush();
+        } catch (Exception e) {
+            logger.warn("Unexpected error while saving user preferences", e);
+            throw new IllegalStateException(e);
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }
+    }
 
-	public void removeLoginChangeListener(LoginChangeListener listener) {
-		getLoginChangeListeners().add(listener);
-	}
+    private List<LoginChangeListener> getLoginChangeListeners() {
+        if (loginChangeListeners == null) {
+            loginChangeListeners = new ArrayList<LoginChangeListener>();
+        }
+        return loginChangeListeners;
+    }
 
-	public File getOpenDatastoreDirectory() {
-		if (openDatastoreDirectory == null) {
-			openDatastoreDirectory = DataCleanerHome.get();
-		}
-		return openDatastoreDirectory;
-	}
+    @Override
+    public void addLoginChangeListener(LoginChangeListener listener) {
+        getLoginChangeListeners().add(listener);
+    }
 
-	public void setOpenDatastoreDirectory(File openFileDir) {
-		this.openDatastoreDirectory = openFileDir;
-	}
+    @Override
+    public void removeLoginChangeListener(LoginChangeListener listener) {
+        getLoginChangeListeners().add(listener);
+    }
 
-	public File getConfiguredFileDirectory() {
-		if (configuredFileDirectory == null) {
-			configuredFileDirectory = DataCleanerHome.get();
-		}
-		return configuredFileDirectory;
-	}
+    @Override
+    public File getOpenDatastoreDirectory() {
+        if (openDatastoreDirectory == null) {
+            openDatastoreDirectory = DataCleanerHome.get();
+        }
+        return openDatastoreDirectory;
+    }
 
-	public void setConfiguredFileDirectory(File openPropertyFileDirectory) {
-		this.configuredFileDirectory = openPropertyFileDirectory;
-	}
+    @Override
+    public void setOpenDatastoreDirectory(File openFileDir) {
+        this.openDatastoreDirectory = openFileDir;
+    }
 
-	public File getAnalysisJobDirectory() {
-		if (analysisJobDirectory == null) {
-			analysisJobDirectory = DataCleanerHome.get();
-		}
-		return analysisJobDirectory;
-	}
+    @Override
+    public File getConfiguredFileDirectory() {
+        if (configuredFileDirectory == null) {
+            configuredFileDirectory = DataCleanerHome.get();
+        }
+        return configuredFileDirectory;
+    }
 
-	public void setAnalysisJobDirectory(File saveFileDirectory) {
-		this.analysisJobDirectory = saveFileDirectory;
-	}
+    @Override
+    public void setConfiguredFileDirectory(File openPropertyFileDirectory) {
+        this.configuredFileDirectory = openPropertyFileDirectory;
+    }
 
-	public File getSaveDatastoreDirectory() {
-		if (saveDatastoreDirectory == null) {
-			saveDatastoreDirectory = new File(DataCleanerHome.get(), "datastores");
-		}
-		return saveDatastoreDirectory;
-	}
+    @Override
+    public File getAnalysisJobDirectory() {
+        if (analysisJobDirectory == null) {
+            analysisJobDirectory = DataCleanerHome.get();
+        }
+        return analysisJobDirectory;
+    }
 
-	public void setSaveDatastoreDirectory(File saveDatastoreDirectory) {
-		this.saveDatastoreDirectory = saveDatastoreDirectory;
-	}
+    @Override
+    public void setAnalysisJobDirectory(File saveFileDirectory) {
+        this.analysisJobDirectory = saveFileDirectory;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
+    @Override
+    public File getSaveDatastoreDirectory() {
+        if (saveDatastoreDirectory == null) {
+            saveDatastoreDirectory = new File(DataCleanerHome.get(), "datastores");
+        }
+        return saveDatastoreDirectory;
+    }
 
-		List<LoginChangeListener> listeners = getLoginChangeListeners();
-		for (LoginChangeListener listener : listeners) {
-			listener.onLoginStateChanged(isLoggedIn(), username);
-		}
-	}
+    @Override
+    public void setSaveDatastoreDirectory(File saveDatastoreDirectory) {
+        this.saveDatastoreDirectory = saveDatastoreDirectory;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
 
-	public boolean isLoggedIn() {
-		return !StringUtils.isNullOrEmpty(getUsername());
-	}
+        List<LoginChangeListener> listeners = getLoginChangeListeners();
+        for (LoginChangeListener listener : listeners) {
+            listener.onLoginStateChanged(isLoggedIn(), username);
+        }
+    }
 
-	public void addRecentJobFile(File file) {
-		if (recentJobFiles.contains(file)) {
-			recentJobFiles.remove(file);
-		}
-		recentJobFiles.add(0, file);
-	}
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	public List<File> getRecentJobFiles() {
-		return recentJobFiles;
-	}
+    @Override
+    public boolean isLoggedIn() {
+        return !StringUtils.isNullOrEmpty(getUsername());
+    }
 
-	public List<Datastore> getUserDatastores() {
-		if (userDatastores == null) {
-			userDatastores = new ArrayList<Datastore>();
-		}
-		return userDatastores;
-	}
+    @Override
+    public void addRecentJobFile(File file) {
+        if (recentJobFiles.contains(file)) {
+            recentJobFiles.remove(file);
+        }
+        recentJobFiles.add(0, file);
+    }
 
-	public List<Dictionary> getUserDictionaries() {
-		if (userDictionaries == null) {
-			userDictionaries = new ArrayList<Dictionary>();
-		}
-		return userDictionaries;
-	}
+    @Override
+    public List<File> getRecentJobFiles() {
+        return recentJobFiles;
+    }
 
-	public List<SynonymCatalog> getUserSynonymCatalogs() {
-		if (userSynonymCatalogs == null) {
-			userSynonymCatalogs = new ArrayList<SynonymCatalog>();
-		}
-		return userSynonymCatalogs;
-	}
+    @Override
+    public List<Datastore> getUserDatastores() {
+        if (userDatastores == null) {
+            userDatastores = new ArrayList<Datastore>();
+        }
+        return userDatastores;
+    }
 
-	public List<UserDatabaseDriver> getDatabaseDrivers() {
-		if (databaseDrivers == null) {
-			databaseDrivers = new ArrayList<UserDatabaseDriver>();
-		}
-		return databaseDrivers;
-	}
+    @Override
+    public List<Dictionary> getUserDictionaries() {
+        if (userDictionaries == null) {
+            userDictionaries = new ArrayList<Dictionary>();
+        }
+        return userDictionaries;
+    }
 
-	public List<StringPattern> getUserStringPatterns() {
-		if (userStringPatterns == null) {
-			userStringPatterns = new ArrayList<StringPattern>();
-		}
-		return userStringPatterns;
-	}
+    @Override
+    public List<SynonymCatalog> getUserSynonymCatalogs() {
+        if (userSynonymCatalogs == null) {
+            userSynonymCatalogs = new ArrayList<SynonymCatalog>();
+        }
+        return userSynonymCatalogs;
+    }
 
-	public boolean isProxyEnabled() {
-		return proxyEnabled;
-	}
+    @Override
+    public List<UserDatabaseDriver> getDatabaseDrivers() {
+        if (databaseDrivers == null) {
+            databaseDrivers = new ArrayList<UserDatabaseDriver>();
+        }
+        return databaseDrivers;
+    }
 
-	public void setProxyEnabled(boolean proxyEnabled) {
-		this.proxyEnabled = proxyEnabled;
-	}
+    @Override
+    public List<StringPattern> getUserStringPatterns() {
+        if (userStringPatterns == null) {
+            userStringPatterns = new ArrayList<StringPattern>();
+        }
+        return userStringPatterns;
+    }
 
-	public String getProxyHostname() {
-		return proxyHostname;
-	}
+    @Override
+    public boolean isProxyEnabled() {
+        return proxyEnabled;
+    }
 
-	public void setProxyHostname(String proxyHostname) {
-		this.proxyHostname = proxyHostname;
-	}
+    @Override
+    public void setProxyEnabled(boolean proxyEnabled) {
+        this.proxyEnabled = proxyEnabled;
+    }
 
-	public int getProxyPort() {
-		return proxyPort;
-	}
+    @Override
+    public String getProxyHostname() {
+        return proxyHostname;
+    }
 
-	public void setProxyPort(int proxyPort) {
-		this.proxyPort = proxyPort;
-	}
+    @Override
+    public void setProxyHostname(String proxyHostname) {
+        this.proxyHostname = proxyHostname;
+    }
 
-	public String getProxyUsername() {
-		return proxyUsername;
-	}
+    @Override
+    public int getProxyPort() {
+        return proxyPort;
+    }
 
-	public void setProxyUsername(String proxyUsername) {
-		this.proxyUsername = proxyUsername;
-	}
+    @Override
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
 
-	public String getProxyPassword() {
-		return proxyPassword;
-	}
+    @Override
+    public String getProxyUsername() {
+        return proxyUsername;
+    }
 
-	public void setProxyPassword(String proxyPassword) {
-		this.proxyPassword = proxyPassword;
-	}
+    @Override
+    public void setProxyUsername(String proxyUsername) {
+        this.proxyUsername = proxyUsername;
+    }
 
-	public boolean isProxyAuthenticationEnabled() {
-		return proxyAuthenticationEnabled;
-	}
+    @Override
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
 
-	public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled) {
-		this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
-	}
+    @Override
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
+    }
 
-	public QuickAnalysisStrategy getQuickAnalysisStrategy() {
-		return quickAnalysisStrategy;
-	}
+    @Override
+    public boolean isProxyAuthenticationEnabled() {
+        return proxyAuthenticationEnabled;
+    }
 
-	public void setQuickAnalysisStrategy(QuickAnalysisStrategy quickAnalysisStrategy) {
-		this.quickAnalysisStrategy = quickAnalysisStrategy;
-	}
+    @Override
+    public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled) {
+        this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
+    }
 
-	public List<ExtensionPackage> getExtensionPackages() {
-		if (extensionPackages == null) {
-			extensionPackages = new ArrayList<ExtensionPackage>();
-		}
-		return extensionPackages;
-	}
+    @Override
+    public QuickAnalysisStrategy getQuickAnalysisStrategy() {
+        return quickAnalysisStrategy;
+    }
 
-	public void setExtensionPackages(List<ExtensionPackage> extensionPackages) {
-		this.extensionPackages = extensionPackages;
-	}
+    @Override
+    public void setQuickAnalysisStrategy(QuickAnalysisStrategy quickAnalysisStrategy) {
+        this.quickAnalysisStrategy = quickAnalysisStrategy;
+    }
 
-	public Map<String, String> getAdditionalProperties() {
-		if (additionalProperties == null) {
-			additionalProperties = new HashMap<String, String>();
-		}
-		return additionalProperties;
-	}
+    @Override
+    public List<ExtensionPackage> getExtensionPackages() {
+        if (extensionPackages == null) {
+            extensionPackages = new ArrayList<ExtensionPackage>();
+        }
+        return extensionPackages;
+    }
+
+    @Override
+    public void setExtensionPackages(List<ExtensionPackage> extensionPackages) {
+        this.extensionPackages = extensionPackages;
+    }
+
+    @Override
+    public Map<String, String> getAdditionalProperties() {
+        if (additionalProperties == null) {
+            additionalProperties = new HashMap<String, String>();
+        }
+        return additionalProperties;
+    }
+
+    @Override
+    public void setMonitorConnection(MonitorConnection connection) {
+        this.monitorConnection = connection;
+    }
+
+    @Override
+    public MonitorConnection getMonitorConnection() {
+        return monitorConnection;
+    }
 }

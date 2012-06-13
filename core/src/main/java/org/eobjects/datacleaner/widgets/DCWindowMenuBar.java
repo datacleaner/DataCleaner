@@ -41,6 +41,7 @@ import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.windows.AboutDialog;
 import org.eobjects.datacleaner.windows.DCWindow;
+import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 import org.eobjects.datacleaner.windows.ReferenceDataDialog;
 import org.jdesktop.swingx.action.OpenBrowserAction;
@@ -60,16 +61,19 @@ public class DCWindowMenuBar extends JMenuBar {
 	private final Provider<ReferenceDataDialog> _referenceDataDialogProvider;
 	private final Provider<OptionsDialog> _optionsDialogProvider;
 	private final JMenu _writeDataMenu;
+    private final Provider<MonitorConnectionDialog> _monitorConnectionDialogProvider;
 
 	@Inject
 	protected DCWindowMenuBar(final WindowContext windowContext,
 			final Provider<ReferenceDataDialog> referenceDataDialogProvider,
 			NewAnalysisJobActionListener newAnalysisJobActionListener,
-			OpenAnalysisJobActionListener openAnalysisJobActionListener, Provider<OptionsDialog> optionsDialogProvider) {
+			OpenAnalysisJobActionListener openAnalysisJobActionListener, Provider<OptionsDialog> optionsDialogProvider, Provider<MonitorConnectionDialog> monitorConnectionDialogProvider) {
 		super();
 		_windowContext = windowContext;
 		_referenceDataDialogProvider = referenceDataDialogProvider;
 		_optionsDialogProvider = optionsDialogProvider;
+		_monitorConnectionDialogProvider = monitorConnectionDialogProvider;
+		
 		final JMenuItem newJobMenuItem = WidgetFactory.createMenuItem("New analysis job",
 				"images/actions/new_analysis_job.png");
 		newJobMenuItem.addActionListener(newAnalysisJobActionListener);
@@ -93,7 +97,7 @@ public class DCWindowMenuBar extends JMenuBar {
 			public void actionPerformed(ActionEvent e) {
 				ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
 				referenceDataDialog.selectDictionariesTab();
-				referenceDataDialog.setVisible(true);
+				referenceDataDialog.open();
 			}
 		});
 
@@ -103,7 +107,7 @@ public class DCWindowMenuBar extends JMenuBar {
 			public void actionPerformed(ActionEvent e) {
 				ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
 				referenceDataDialog.selectSynonymsTab();
-				referenceDataDialog.setVisible(true);
+				referenceDataDialog.open();
 			}
 		});
 
@@ -115,7 +119,7 @@ public class DCWindowMenuBar extends JMenuBar {
 			public void actionPerformed(ActionEvent e) {
 				ReferenceDataDialog referenceDataDialog = _referenceDataDialogProvider.get();
 				referenceDataDialog.selectStringPatternsTab();
-				referenceDataDialog.setVisible(true);
+				referenceDataDialog.open();
 			}
 		});
 
@@ -124,9 +128,18 @@ public class DCWindowMenuBar extends JMenuBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				OptionsDialog optionsDialog = _optionsDialogProvider.get();
-				optionsDialog.setVisible(true);
+				optionsDialog.open();
 			}
 		});
+		
+		final JMenuItem dqMonitorMenuItem = WidgetFactory.createMenuItem("DataCleaner dq monitor", IconUtils.MENU_DQ_MONITOR);
+		dqMonitorMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
+                dialog.open();
+            }
+        });
 
 		final JMenuItem helpContents = WidgetFactory.createMenuItem("Help contents", "images/widgets/help.png");
 		helpContents.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/docs"));
@@ -156,6 +169,7 @@ public class DCWindowMenuBar extends JMenuBar {
 
 		final JMenu windowMenu = WidgetFactory.createMenu("Window", 'W');
 		windowMenu.add(optionsMenuItem);
+		windowMenu.add(dqMonitorMenuItem);
 		windowMenu.addSeparator();
 
 		final int minimumSize = windowMenu.getMenuComponentCount();

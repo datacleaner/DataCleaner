@@ -30,81 +30,88 @@ import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
 
+/**
+ * Defines the settings provided at runtime by the user in DataCleaner
+ */
 public interface UserPreferences extends Serializable {
 
-	public void save();
+    public void save();
 
-	public void addLoginChangeListener(LoginChangeListener listener);
+    public void addLoginChangeListener(LoginChangeListener listener);
 
-	public void removeLoginChangeListener(LoginChangeListener listener);
+    public void removeLoginChangeListener(LoginChangeListener listener);
 
-	public File getOpenDatastoreDirectory();
+    public File getOpenDatastoreDirectory();
 
-	public void setOpenDatastoreDirectory(File openFileDir);
+    public void setOpenDatastoreDirectory(File openFileDir);
 
-	public File getConfiguredFileDirectory();
+    public File getConfiguredFileDirectory();
 
-	public void setConfiguredFileDirectory(File openPropertyFileDirectory);
+    public void setConfiguredFileDirectory(File openPropertyFileDirectory);
 
-	public File getAnalysisJobDirectory();
+    public File getAnalysisJobDirectory();
 
-	public void setAnalysisJobDirectory(File saveFileDirectory);
+    public void setAnalysisJobDirectory(File saveFileDirectory);
 
-	public File getSaveDatastoreDirectory();
+    public File getSaveDatastoreDirectory();
 
-	public void setSaveDatastoreDirectory(File saveDatastoreDirectory);
+    public void setSaveDatastoreDirectory(File saveDatastoreDirectory);
 
-	public void setUsername(String username);
+    public void setUsername(String username);
 
-	public String getUsername();
+    public String getUsername();
 
-	public boolean isLoggedIn();
+    public boolean isLoggedIn();
 
-	public void addRecentJobFile(File file);
+    public void addRecentJobFile(File file);
 
-	public List<File> getRecentJobFiles();
+    public List<File> getRecentJobFiles();
 
-	public List<Datastore> getUserDatastores();
+    public List<Datastore> getUserDatastores();
 
-	public List<Dictionary> getUserDictionaries();
+    public List<Dictionary> getUserDictionaries();
 
-	public List<SynonymCatalog> getUserSynonymCatalogs();
+    public List<SynonymCatalog> getUserSynonymCatalogs();
 
-	public List<UserDatabaseDriver> getDatabaseDrivers();
+    public List<UserDatabaseDriver> getDatabaseDrivers();
 
-	public List<StringPattern> getUserStringPatterns();
+    public List<StringPattern> getUserStringPatterns();
 
-	public boolean isProxyEnabled();
+    public boolean isProxyEnabled();
 
-	public void setProxyEnabled(boolean proxyEnabled);
+    public void setProxyEnabled(boolean proxyEnabled);
 
-	public String getProxyHostname();
+    public String getProxyHostname();
 
-	public void setProxyHostname(String proxyHostname);
+    public void setProxyHostname(String proxyHostname);
 
-	public int getProxyPort();
+    public int getProxyPort();
 
-	public void setProxyPort(int proxyPort);
+    public void setProxyPort(int proxyPort);
 
-	public String getProxyUsername();
+    public String getProxyUsername();
 
-	public void setProxyUsername(String proxyUsername);
+    public void setProxyUsername(String proxyUsername);
 
-	public String getProxyPassword();
+    public String getProxyPassword();
 
-	public void setProxyPassword(String proxyPassword);
+    public void setProxyPassword(String proxyPassword);
 
-	public boolean isProxyAuthenticationEnabled();
+    public boolean isProxyAuthenticationEnabled();
 
-	public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled);
+    public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled);
 
-	public QuickAnalysisStrategy getQuickAnalysisStrategy();
+    public QuickAnalysisStrategy getQuickAnalysisStrategy();
 
-	public void setQuickAnalysisStrategy(QuickAnalysisStrategy quickAnalysisStrategy);
+    public void setQuickAnalysisStrategy(QuickAnalysisStrategy quickAnalysisStrategy);
 
-	public List<ExtensionPackage> getExtensionPackages();
+    public MonitorConnection getMonitorConnection();
 
-	public void setExtensionPackages(List<ExtensionPackage> extensionPackages);
+    public void setMonitorConnection(MonitorConnection connection);
 
-	public Map<String, String> getAdditionalProperties();
+    public List<ExtensionPackage> getExtensionPackages();
+
+    public void setExtensionPackages(List<ExtensionPackage> extensionPackages);
+
+    public Map<String, String> getAdditionalProperties();
 }

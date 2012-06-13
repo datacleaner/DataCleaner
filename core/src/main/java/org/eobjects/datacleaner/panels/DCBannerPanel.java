@@ -37,142 +37,142 @@ import org.eobjects.datacleaner.util.WidgetUtils;
  */
 public class DCBannerPanel extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Image DEFAULT_LEFT_IMAGE = ImageManager.getInstance()
-			.getImage("images/window/banner-logo.png");
-	private static final Image DEFAULT_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
-	private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.getInstance().getImage(
-			"images/window/banner-right.png");
+    private static final Image DEFAULT_LEFT_IMAGE = ImageManager.getInstance()
+            .getImage("images/window/banner-logo.png");
+    private static final Image DEFAULT_BG_IMAGE = ImageManager.getInstance().getImage("images/window/banner-bg.png");
+    private static final Image DEFAULT_RIGHT_IMAGE = ImageManager.getInstance().getImage(
+            "images/window/banner-right.png");
 
-	private static final int DEFAULT_HEIGHT = 80;
+    private static final int DEFAULT_HEIGHT = 80;
 
-	private final int _titleIndent;
-	private final Image _leftImage;
-	private final Image _rightImage;
-	private final Image _bgImage;
-	private final String _title1;
-	private String _title2;
+    private final int _titleIndent;
+    private final Image _leftImage;
+    private final Image _rightImage;
+    private final Image _bgImage;
+    private final String _title1;
+    private String _title2;
 
-	public DCBannerPanel() {
-		this((String) null);
-	}
+    public DCBannerPanel() {
+        this((String) null);
+    }
 
-	public DCBannerPanel(String title) {
-		this(DEFAULT_LEFT_IMAGE, title);
-	}
+    public DCBannerPanel(String title) {
+        this(DEFAULT_LEFT_IMAGE, title);
+    }
 
-	public DCBannerPanel(Image bannerImage) {
-		this(bannerImage, null);
-	}
+    public DCBannerPanel(Image bannerImage) {
+        this(bannerImage, null);
+    }
 
-	public DCBannerPanel(Image bannerImage, String title) {
-		this(bannerImage, DEFAULT_BG_IMAGE, DEFAULT_RIGHT_IMAGE, title);
-	}
+    public DCBannerPanel(Image bannerImage, String title) {
+        this(bannerImage, DEFAULT_BG_IMAGE, DEFAULT_RIGHT_IMAGE, title);
+    }
 
-	public DCBannerPanel(Image leftImage, Image bgImage, Image rightImage, String title) {
-		_leftImage = leftImage;
-		_bgImage = bgImage;
-		_rightImage = rightImage;
-		if (title == null) {
-			_title1 = null;
-			_title2 = null;
-		} else {
-			int linebreak = title.indexOf('\n');
-			if (linebreak == -1) {
-				_title1 = title;
-				_title2 = null;
-			} else {
-				_title1 = title.substring(0, linebreak - 1);
-				_title2 = title.substring(linebreak);
-			}
-		}
-		if (leftImage == null) {
-			_titleIndent = 0;
-		} else {
-			_titleIndent = leftImage.getWidth(this);
-		}
-		setOpaque(false);
-	}
+    public DCBannerPanel(Image leftImage, Image bgImage, Image rightImage, String title) {
+        _leftImage = leftImage;
+        _bgImage = bgImage;
+        _rightImage = rightImage;
+        if (title == null) {
+            _title1 = null;
+            _title2 = null;
+        } else {
+            int linebreak = title.indexOf('\n');
+            if (linebreak == -1) {
+                _title1 = title;
+                _title2 = null;
+            } else {
+                _title1 = title.substring(0, linebreak);
+                _title2 = title.substring(linebreak + 1);
+            }
+        }
+        if (leftImage == null) {
+            _titleIndent = 0;
+        } else {
+            _titleIndent = leftImage.getWidth(this);
+        }
+        setOpaque(false);
+    }
 
-	public String getTitle1() {
-		return _title1;
-	}
+    public String getTitle1() {
+        return _title1;
+    }
 
-	public String getTitle2() {
-		return _title2;
-	}
+    public String getTitle2() {
+        return _title2;
+    }
 
-	public void setTitle2(String title2) {
-		_title2 = title2;
-	}
+    public void setTitle2(String title2) {
+        _title2 = title2;
+    }
 
-	@Override
-	public int getHeight() {
-		if (_bgImage != null) {
-			return _bgImage.getHeight(this);
-		}
-		if (_leftImage != null) {
-			return _leftImage.getHeight(this);
-		}
-		if (_rightImage != null) {
-			return _rightImage.getHeight(this);
-		}
-		return DEFAULT_HEIGHT;
-	}
+    @Override
+    public int getHeight() {
+        if (_bgImage != null) {
+            return _bgImage.getHeight(this);
+        }
+        if (_leftImage != null) {
+            return _leftImage.getHeight(this);
+        }
+        if (_rightImage != null) {
+            return _rightImage.getHeight(this);
+        }
+        return DEFAULT_HEIGHT;
+    }
 
-	@Override
-	public Dimension getPreferredSize() {
-		Dimension dimension = new Dimension(400, getHeight());
-		return dimension;
-	}
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension dimension = new Dimension(400, getHeight());
+        return dimension;
+    }
 
-	@Override
-	public void paint(Graphics g) {
-		final int x = getX();
-		final int y = 0;
-		final int w = getWidth();
+    @Override
+    public void paint(Graphics g) {
+        final int x = getX();
+        final int y = 0;
+        final int w = getWidth();
 
-		int offset = 0;
-		while (offset < w) {
-			g.drawImage(_bgImage, x + offset, y, this);
-			offset += _bgImage.getWidth(this);
-		}
+        int offset = 0;
+        while (offset < w) {
+            g.drawImage(_bgImage, x + offset, y, this);
+            offset += _bgImage.getWidth(this);
+        }
 
-		if (_leftImage != null) {
-			g.drawImage(_leftImage, x, y, this);
-		}
+        if (_leftImage != null) {
+            g.drawImage(_leftImage, x, y, this);
+        }
 
-		if (_rightImage != null) {
-			int rightImageWidth = _rightImage.getWidth(this);
-			g.drawImage(_rightImage, x + w - rightImageWidth, y, this);
-		}
+        if (_rightImage != null) {
+            int rightImageWidth = _rightImage.getWidth(this);
+            g.drawImage(_rightImage, x + w - rightImageWidth, y, this);
+        }
 
-		super.paint(g);
+        super.paint(g);
 
-		if (_title1 != null) {
-			int titleY = 45;
-			if (_title2 != null) {
-				titleY = 35;
-			}
+        if (_title1 != null) {
+            int titleY = 45;
+            if (_title2 != null) {
+                titleY = 35;
+            }
 
-			if (g instanceof Graphics2D) {
-				((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			}
+            if (g instanceof Graphics2D) {
+                ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            }
 
-			final int titleX = _titleIndent + 10;
+            final int titleX = _titleIndent + 10;
 
-			// draw title 1
-			g.setFont(WidgetUtils.FONT_BANNER);
-			g.setColor(WidgetUtils.BG_COLOR_DARK);
-			g.drawString(_title1, titleX, titleY);
+            // draw title 1
+            g.setFont(WidgetUtils.FONT_BANNER);
+            g.setColor(WidgetUtils.BG_COLOR_DARK);
+            g.drawString(_title1, titleX, titleY);
 
-			if (_title2 != null) {
-				titleY += g.getFontMetrics().getHeight();
-				g.setFont(WidgetUtils.FONT_HEADER1);
-				g.setColor(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
-				g.drawString(_title2, titleX, titleY);
-			}
-		}
-	}
+            if (_title2 != null) {
+                titleY += g.getFontMetrics().getHeight();
+                g.setFont(WidgetUtils.FONT_HEADER1);
+                g.setColor(WidgetUtils.BG_COLOR_BLUE_MEDIUM);
+                g.drawString(_title2, titleX, titleY);
+            }
+        }
+    }
 }

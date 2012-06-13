@@ -65,6 +65,7 @@ public final class IconUtils {
     public static int ICON_SIZE_SMALL = 16;
 
     public static final String MENU_OPTIONS = "images/menu/options.png";
+    public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
 
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";

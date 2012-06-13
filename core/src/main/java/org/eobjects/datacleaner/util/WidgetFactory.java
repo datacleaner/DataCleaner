@@ -105,7 +105,7 @@ public final class WidgetFactory {
 	}
 
 	public static JButton createButton(String text, String imagePath) {
-		return createButton(text, ImageManager.getInstance().getImageIcon(imagePath));
+		return createButton(text, ImageManager.getInstance().getImageIcon(imagePath, IconUtils.ICON_SIZE_MEDIUM));
 	}
 
 	public static JXStatusBar createStatusBar(JComponent comp) {

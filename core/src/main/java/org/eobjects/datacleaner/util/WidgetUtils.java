@@ -61,395 +61,401 @@ import org.slf4j.LoggerFactory;
 
 public final class WidgetUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
 
-	private static final Map<String, Font> fonts;
-	static {
-		Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-		fonts = new HashMap<String, Font>();
-		for (Font font : fontArray) {
-			fonts.put(font.getName(), font);
-		}
-	}
+    private static final Map<String, Font> fonts;
 
-	public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 18);
-	public static final Font FONT_HEADER1 = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
-	public static final Font FONT_HEADER2 = new FontUIResource("Verdana", Font.BOLD, 13);
-	public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
-	public static final Font FONT_NORMAL = new FontUIResource("Verdana", Font.PLAIN, 11);
-	public static final Font FONT_SMALL = new FontUIResource("Verdana", Font.PLAIN, 10);
+    static {
+        Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+        fonts = new HashMap<String, Font>();
+        for (Font font : fontArray) {
+            fonts.put(font.getName(), font);
+        }
+    }
 
-	// the three blue variants in the DataCleaner logo (#5594dd, #235da0,
-	// #023a7c)
-	public static final Color BG_COLOR_BLUE_BRIGHT = new ColorUIResource(85, 148, 221);
-	public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(35, 93, 160);
-	public static final Color BG_COLOR_BLUE_DARK = new ColorUIResource(2, 58, 124);
+    public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 18);
+    public static final Font FONT_HEADER1 = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
+    public static final Font FONT_HEADER2 = new FontUIResource("Verdana", Font.BOLD, 13);
+    public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
+    public static final Font FONT_NORMAL = new FontUIResource("Verdana", Font.PLAIN, 11);
+    public static final Font FONT_SMALL = new FontUIResource("Verdana", Font.PLAIN, 10);
 
-	// the three orange/yellow/brown variants in the DataCleaner logo
-	public static final Color BG_COLOR_ORANGE_BRIGHT = new ColorUIResource(255, 168, 0);
-	public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 102, 5);
-	public static final Color BG_COLOR_ORANGE_DARK = new ColorUIResource(168, 99, 15);
+    // the three blue variants in the DataCleaner logo (#5594dd, #235da0,
+    // #023a7c)
+    public static final Color BG_COLOR_BLUE_BRIGHT = new ColorUIResource(85, 148, 221);
+    public static final Color BG_COLOR_BLUE_MEDIUM = new ColorUIResource(35, 93, 160);
+    public static final Color BG_COLOR_BLUE_DARK = new ColorUIResource(2, 58, 124);
 
-	// #e1e1e1 (silver-ish)
-	public static final Color BG_COLOR_BRIGHT = new ColorUIResource(225, 225, 225);
+    // the three orange/yellow/brown variants in the DataCleaner logo
+    public static final Color BG_COLOR_ORANGE_BRIGHT = new ColorUIResource(255, 168, 0);
+    public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 102, 5);
+    public static final Color BG_COLOR_ORANGE_DARK = new ColorUIResource(168, 99, 15);
 
-	// slightly darker than BRIGHT
-	public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(210, 210, 210);
+    // pale yellow color which work fine for information/help text fields.
+    public static final Color BG_COLOR_PALE_YELLOW = new ColorUIResource(244, 244, 211);
 
-	// white
-	public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
+    // #e1e1e1 (silver-ish)
+    public static final Color BG_COLOR_BRIGHT = new ColorUIResource(225, 225, 225);
 
-	public static final Color BG_COLOR_MEDIUM = new ColorUIResource(150, 150, 150);
+    // slightly darker than BRIGHT
+    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(210, 210, 210);
 
-	public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(95, 95, 95);
+    // white
+    public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
-	public static final Color BG_COLOR_DARK = new ColorUIResource(70, 70, 70);
+    public static final Color BG_COLOR_MEDIUM = new ColorUIResource(150, 150, 150);
 
-	public static final Color BG_COLOR_DARKEST = new ColorUIResource(40, 40, 40);
+    public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(95, 95, 95);
 
-	// additional colors, only intended for special widget coloring such as
-	// charts etc.
-	public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new ColorUIResource(123, 207, 38);
-	
-	// Red: #d32424
-	public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(211, 36, 36);
-	public static final Color ADDITIONAL_COLOR_PURPLE_BRIGHT = new ColorUIResource(211, 36, 156);
-	public static final Color ADDITIONAL_COLOR_CYAN_BRIGHT = new ColorUIResource(36, 209, 211);
+    public static final Color BG_COLOR_DARK = new ColorUIResource(70, 70, 70);
 
-	public static final int BORDER_WIDE_WIDTH = 4;
+    public static final Color BG_COLOR_DARKEST = new ColorUIResource(40, 40, 40);
 
-	public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
-	public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
-	public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
-			WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
-	public static final Border BORDER_THIN = new LineBorder(BG_COLOR_MEDIUM);
-	public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM);
+    // additional colors, only intended for special widget coloring such as
+    // charts etc.
+    public static final Color ADDITIONAL_COLOR_GREEN_BRIGHT = new ColorUIResource(123, 207, 38);
 
-	/**
-	 * A highlighter for coloring odd/even rows in a table
-	 */
-	public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory.createAlternateStriping(
-			colorBetween(BG_COLOR_BRIGHTEST, BG_COLOR_BRIGHT), BG_COLOR_BRIGHTEST);
+    // Red: #d32424
+    public static final Color ADDITIONAL_COLOR_RED_BRIGHT = new ColorUIResource(211, 36, 36);
+    public static final Color ADDITIONAL_COLOR_PURPLE_BRIGHT = new ColorUIResource(211, 36, 156);
+    public static final Color ADDITIONAL_COLOR_CYAN_BRIGHT = new ColorUIResource(36, 209, 211);
 
-	/**
-	 * Slightly moderated version of COLOR.FACTOR
-	 */
-	private static final double COLOR_SCALE_FACTOR = 0.9;
+    public static final int BORDER_WIDE_WIDTH = 4;
 
-	// grid bag contraint defaults
-	public static final int DEFAULT_PADDING = 2;
-	public static final int DEFAULT_ANCHOR = GridBagConstraints.NORTHWEST;
+    public static final Border BORDER_SHADOW = new DropShadowBorder(WidgetUtils.BG_COLOR_DARK, 6);
+    public static final Border BORDER_WIDE = new LineBorder(BG_COLOR_DARK, BORDER_WIDE_WIDTH);
+    public static final Border BORDER_EMPTY = new EmptyBorder(WidgetUtils.BORDER_WIDE_WIDTH,
+            WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH, WidgetUtils.BORDER_WIDE_WIDTH);
+    public static Border BORDER_TOP_PADDING = new EmptyBorder(10, 0, 0, 0);
 
-	private WidgetUtils() {
-		// prevent instantiation
-	}
+    public static final Border BORDER_THIN = new LineBorder(BG_COLOR_MEDIUM);
+    public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM);
 
-	public static void centerOnScreen(Component component) {
-		Dimension paneSize = component.getSize();
-		Dimension screenSize = component.getToolkit().getScreenSize();
-		component.setLocation((screenSize.width - paneSize.width) / 2, (screenSize.height - paneSize.height) / 2);
-	}
+    /**
+     * A highlighter for coloring odd/even rows in a table
+     */
+    public static final Highlighter LIBERELLO_HIGHLIGHTER = HighlighterFactory.createAlternateStriping(
+            colorBetween(BG_COLOR_BRIGHTEST, BG_COLOR_BRIGHT), BG_COLOR_BRIGHTEST);
 
-	/**
-	 * Adds a component to a panel with a grid bag layout
-	 * 
-	 * @param comp
-	 * @param panel
-	 * @param gridx
-	 * @param gridy
-	 * @param width
-	 * @param height
-	 * @param anchor
-	 */
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
-			int anchor) {
-		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, DEFAULT_PADDING);
-	}
+    /**
+     * Slightly moderated version of COLOR.FACTOR
+     */
+    private static final double COLOR_SCALE_FACTOR = 0.9;
 
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
-			int anchor, int padding) {
-		addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, 0.0, 0.0);
-	}
+    // grid bag contraint defaults
+    public static final int DEFAULT_PADDING = 2;
+    public static final int DEFAULT_ANCHOR = GridBagConstraints.NORTHWEST;
 
-	/**
-	 * Adds a component to a panel with a grid bag layout
-	 * 
-	 * @param comp
-	 * @param panel
-	 * @param gridx
-	 * @param gridy
-	 * @param width
-	 * @param height
-	 * @param anchor
-	 * @param padding
-	 */
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
-			int anchor, int padding, double weightx, double weighty) {
-		LayoutManager layout = panel.getLayout();
-		if (!(layout instanceof GridBagLayout)) {
-			layout = new GridBagLayout();
-			panel.setLayout(layout);
-		}
-		GridBagLayout gridBagLayout = (GridBagLayout) layout;
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.gridx = gridx;
-		constraints.gridy = gridy;
-		constraints.gridwidth = width;
-		constraints.gridheight = height;
-		constraints.weightx = weightx;
-		constraints.weighty = weighty;
-		constraints.anchor = anchor;
-		constraints.fill = GridBagConstraints.HORIZONTAL;
-		constraints.insets = new Insets(padding, padding, padding, padding);
-		gridBagLayout.addLayoutComponent(comp, constraints);
-		panel.add(comp);
-	}
+    private WidgetUtils() {
+        // prevent instantiation
+    }
 
-	/**
-	 * Adds a component to a panel with a grid bag layout
-	 * 
-	 * @param comp
-	 * @param panel
-	 * @param gridx
-	 * @param gridy
-	 * @param width
-	 * @param height
-	 */
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height) {
-		addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
-	}
+    public static void centerOnScreen(Component component) {
+        Dimension paneSize = component.getSize();
+        Dimension screenSize = component.getToolkit().getScreenSize();
+        component.setLocation((screenSize.width - paneSize.width) / 2, (screenSize.height - paneSize.height) / 2);
+    }
 
-	public static void addToGridBag(Component comp, JPanel panel, int x, int y, int anchor, double weightx,
-			double weighty) {
-		addToGridBag(comp, panel, x, y, 1, 1, anchor, DEFAULT_PADDING, weightx, weighty);
-	}
+    /**
+     * Adds a component to a panel with a grid bag layout
+     * 
+     * @param comp
+     * @param panel
+     * @param gridx
+     * @param gridy
+     * @param width
+     * @param height
+     * @param anchor
+     */
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+            int anchor) {
+        addToGridBag(comp, panel, gridx, gridy, width, height, anchor, DEFAULT_PADDING);
+    }
 
-	/**
-	 * Adds a component to a panel with a grid bag layout
-	 * 
-	 * @param comp
-	 * @param panel
-	 * @param gridxs
-	 * @param gridy
-	 */
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy) {
-		addToGridBag(comp, panel, gridx, gridy, 1, 1);
-	}
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+            int anchor, int padding) {
+        addToGridBag(comp, panel, gridx, gridy, width, height, anchor, padding, 0.0, 0.0);
+    }
 
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, double weightx, double weighty) {
-		addToGridBag(comp, panel, gridx, gridy, 1, 1, DEFAULT_ANCHOR, DEFAULT_PADDING, weightx, weighty);
-	}
+    /**
+     * Adds a component to a panel with a grid bag layout
+     * 
+     * @param comp
+     * @param panel
+     * @param gridx
+     * @param gridy
+     * @param width
+     * @param height
+     * @param anchor
+     * @param padding
+     */
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height,
+            int anchor, int padding, double weightx, double weighty) {
+        LayoutManager layout = panel.getLayout();
+        if (!(layout instanceof GridBagLayout)) {
+            layout = new GridBagLayout();
+            panel.setLayout(layout);
+        }
+        GridBagLayout gridBagLayout = (GridBagLayout) layout;
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = gridx;
+        constraints.gridy = gridy;
+        constraints.gridwidth = width;
+        constraints.gridheight = height;
+        constraints.weightx = weightx;
+        constraints.weighty = weighty;
+        constraints.anchor = anchor;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.insets = new Insets(padding, padding, padding, padding);
+        gridBagLayout.addLayoutComponent(comp, constraints);
+        panel.add(comp);
+    }
 
-	/**
-	 * Adds a component to a panel with a grid bag layout
-	 * 
-	 * @param comp
-	 * @param panel
-	 * @param gridx
-	 * @param gridy
-	 * @param anchor
-	 */
-	public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int anchor) {
-		addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor);
-	}
+    /**
+     * Adds a component to a panel with a grid bag layout
+     * 
+     * @param comp
+     * @param panel
+     * @param gridx
+     * @param gridy
+     * @param width
+     * @param height
+     */
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int width, int height) {
+        addToGridBag(comp, panel, gridx, gridy, width, height, DEFAULT_ANCHOR);
+    }
 
-	public static void addAligned(Container container, JComponent component) {
-		component.setAlignmentX(Component.LEFT_ALIGNMENT);
-		component.setAlignmentY(Component.TOP_ALIGNMENT);
-		container.add(component);
-	}
+    public static void addToGridBag(Component comp, JPanel panel, int x, int y, int anchor, double weightx,
+            double weighty) {
+        addToGridBag(comp, panel, x, y, 1, 1, anchor, DEFAULT_PADDING, weightx, weighty);
+    }
 
-	public static void showErrorMessage(final String shortMessage, final String detailedMessage,
-			final Throwable exception) {
-		JXErrorPane.setDefaultLocale(Locale.ENGLISH);
-		final JXErrorPane errorPane = new JXErrorPane();
-		final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception,
-				ErrorLevel.SEVERE, null);
-		errorPane.setErrorInfo(info);
-		final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
-		centerOnScreen(dialog);
-		dialog.setLocale(Locale.ENGLISH);
-		dialog.setModal(true);
-		dialog.setTitle(shortMessage);
-		dialog.setVisible(true);
-		dialog.toFront();
-	}
+    /**
+     * Adds a component to a panel with a grid bag layout
+     * 
+     * @param comp
+     * @param panel
+     * @param gridxs
+     * @param gridy
+     */
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy) {
+        addToGridBag(comp, panel, gridx, gridy, 1, 1);
+    }
 
-	public static void showErrorMessage(final String shortMessage, final Throwable exception) {
-		StringBuilder sb = new StringBuilder();
-		Throwable e = exception;
-		while (e != null) {
-			if (sb.length() != 0) {
-				sb.append("\n\n");
-			}
-			String message = e.getMessage();
-			sb.append(message);
-			e = e.getCause();
-		}
-		showErrorMessage(shortMessage, sb.toString(), exception);
-	}
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, double weightx, double weighty) {
+        addToGridBag(comp, panel, gridx, gridy, 1, 1, DEFAULT_ANCHOR, DEFAULT_PADDING, weightx, weighty);
+    }
 
-	public static JScrollPane scrolleable(final JComponent comp) {
-		final JScrollPane scroll = new JScrollPane();
-		if (comp != null) {
-			scroll.setViewportView(comp);
-		}
-		scroll.setOpaque(false);
-		scroll.getViewport().setOpaque(false);
-		return scroll;
-	}
+    /**
+     * Adds a component to a panel with a grid bag layout
+     * 
+     * @param comp
+     * @param panel
+     * @param gridx
+     * @param gridy
+     * @param anchor
+     */
+    public static void addToGridBag(Component comp, JPanel panel, int gridx, int gridy, int anchor) {
+        addToGridBag(comp, panel, gridx, gridy, 1, 1, anchor);
+    }
 
-	/**
-	 * Creates a color that is in between two colors, in terms of RGB balance.
-	 * 
-	 * @param c1
-	 * @param c2
-	 * @return
-	 */
-	public static Color colorBetween(Color c1, Color c2) {
-		int red = (c1.getRed() + c2.getRed()) / 2;
-		int green = (c1.getGreen() + c2.getGreen()) / 2;
-		int blue = (c1.getBlue() + c2.getBlue()) / 2;
-		return new Color(red, green, blue);
-	}
+    public static void addAligned(Container container, JComponent component) {
+        component.setAlignmentX(Component.LEFT_ALIGNMENT);
+        component.setAlignmentY(Component.TOP_ALIGNMENT);
+        container.add(component);
+    }
 
-	/**
-	 * Moderated version of Color.darker()
-	 * 
-	 * @param color
-	 * @return
-	 */
-	public static Color slightlyDarker(Color color) {
-		return new Color(Math.max((int) (color.getRed() * COLOR_SCALE_FACTOR), 0), Math.max(
-				(int) (color.getGreen() * COLOR_SCALE_FACTOR), 0), Math.max(
-				(int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
-	}
+    public static void showErrorMessage(final String shortMessage, final String detailedMessage,
+            final Throwable exception) {
+        JXErrorPane.setDefaultLocale(Locale.ENGLISH);
+        final JXErrorPane errorPane = new JXErrorPane();
+        final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception,
+                ErrorLevel.SEVERE, null);
+        errorPane.setErrorInfo(info);
+        final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
+        centerOnScreen(dialog);
+        dialog.setLocale(Locale.ENGLISH);
+        dialog.setModal(true);
+        dialog.setTitle(shortMessage);
+        dialog.setVisible(true);
+        dialog.toFront();
+    }
 
-	/**
-	 * Moderated version of Color.brighter()
-	 * 
-	 * @param color
-	 * @return
-	 */
-	public static Color slightlyBrighter(Color color) {
-		int r = color.getRed();
-		int g = color.getGreen();
-		int b = color.getBlue();
+    public static void showErrorMessage(final String shortMessage, final Throwable exception) {
+        StringBuilder sb = new StringBuilder();
+        Throwable e = exception;
+        while (e != null) {
+            if (sb.length() != 0) {
+                sb.append("\n\n");
+            }
+            String message = e.getMessage();
+            sb.append(message);
+            e = e.getCause();
+        }
+        showErrorMessage(shortMessage, sb.toString(), exception);
+    }
 
-		/*
-		 * From 2D group: 1. black.brighter() should return grey 2. applying
-		 * brighter to blue will always return blue, brighter 3. non pure color
-		 * (non zero rgb) will eventually return white
-		 */
-		int i = (int) (1.0 / (1.0 - COLOR_SCALE_FACTOR));
-		if (r == 0 && g == 0 && b == 0) {
-			return new Color(i, i, i);
-		}
+    public static JScrollPane scrolleable(final JComponent comp) {
+        final JScrollPane scroll = new JScrollPane();
+        if (comp != null) {
+            scroll.setViewportView(comp);
+        }
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        return scroll;
+    }
 
-		if (r > 0 && r < i)
-			r = i;
-		if (g > 0 && g < i)
-			g = i;
-		if (b > 0 && b < i)
-			b = i;
+    /**
+     * Creates a color that is in between two colors, in terms of RGB balance.
+     * 
+     * @param c1
+     * @param c2
+     * @return
+     */
+    public static Color colorBetween(Color c1, Color c2) {
+        int red = (c1.getRed() + c2.getRed()) / 2;
+        int green = (c1.getGreen() + c2.getGreen()) / 2;
+        int blue = (c1.getBlue() + c2.getBlue()) / 2;
+        return new Color(red, green, blue);
+    }
 
-		return new Color(Math.min((int) (r / COLOR_SCALE_FACTOR), 255), Math.min((int) (g / COLOR_SCALE_FACTOR), 255),
-				Math.min((int) (b / COLOR_SCALE_FACTOR), 255));
-	}
+    /**
+     * Moderated version of Color.darker()
+     * 
+     * @param color
+     * @return
+     */
+    public static Color slightlyDarker(Color color) {
+        return new Color(Math.max((int) (color.getRed() * COLOR_SCALE_FACTOR), 0), Math.max(
+                (int) (color.getGreen() * COLOR_SCALE_FACTOR), 0), Math.max(
+                (int) (color.getBlue() * COLOR_SCALE_FACTOR), 0));
+    }
 
-	public static String extractText(Component comp) {
-		if (comp instanceof JLabel) {
-			return ((JLabel) comp).getText();
-		} else if (comp instanceof JTextComponent) {
-			return ((JTextComponent) comp).getText();
-		} else if (comp instanceof Container) {
-			Component[] children = ((Container) comp).getComponents();
-			StringBuilder sb = new StringBuilder();
-			for (Component child : children) {
-				String text = extractText(child);
-				if (!StringUtils.isNullOrEmpty(text)) {
-					if (sb.length() > 0) {
-						sb.append(' ');
-					}
-					sb.append(text);
-				}
-			}
-			return sb.toString();
-		}
+    /**
+     * Moderated version of Color.brighter()
+     * 
+     * @param color
+     * @return
+     */
+    public static Color slightlyBrighter(Color color) {
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
 
-		logger.warn("Could not extract text from component: {}", comp);
-		return "";
-	}
+        /*
+         * From 2D group: 1. black.brighter() should return grey 2. applying
+         * brighter to blue will always return blue, brighter 3. non pure color
+         * (non zero rgb) will eventually return white
+         */
+        int i = (int) (1.0 / (1.0 - COLOR_SCALE_FACTOR));
+        if (r == 0 && g == 0 && b == 0) {
+            return new Color(i, i, i);
+        }
 
-	/**
-	 * Decorates a JComponent with a nice shadow border. Since not all
-	 * JComponents handle opacity correctly, they will be wrapped inside a
-	 * DCPanel, which actually has the border.
-	 * 
-	 * @param comp
-	 * @param outline
-	 * @param margin
-	 * @return
-	 */
-	public static DCPanel decorateWithShadow(JComponent comp, boolean outline, int margin) {
-		DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		Border border = BORDER_SHADOW;
-		if (outline) {
-			border = new CompoundBorder(border, BORDER_THIN);
-		}
-		if (margin > 0) {
-			border = new CompoundBorder(new EmptyBorder(margin, margin, margin, margin), border);
-		}
-		panel.setBorder(border);
-		panel.add(comp, BorderLayout.CENTER);
-		return panel;
-	}
+        if (r > 0 && r < i)
+            r = i;
+        if (g > 0 && g < i)
+            g = i;
+        if (b > 0 && b < i)
+            b = i;
 
-	/**
-	 * Finds a font that is capable of displaying the provided text.
-	 * 
-	 * @param text
-	 *            the text to display.
-	 * @param fallbackFont
-	 *            the font to fall back to in case no capable font was found
-	 * @return a font suitable for displaying the text
-	 */
-	public static Font findCompatibleFont(String text, Font fallbackFont) {
-		final String[] searchFonts = new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS",
-				"MS UI Gothic", "MS Mincho", "MS Gothic", "Osaka" };
-		for (String fontName : searchFonts) {
-			Font font = fonts.get(fontName);
-			if (font == null) {
-				font = new Font(fontName, fallbackFont.getStyle(), fallbackFont.getSize());
-			}
+        return new Color(Math.min((int) (r / COLOR_SCALE_FACTOR), 255), Math.min((int) (g / COLOR_SCALE_FACTOR), 255),
+                Math.min((int) (b / COLOR_SCALE_FACTOR), 255));
+    }
 
-			if (font.canDisplayUpTo(text) == -1) {
-				logger.info("Font '{}' was capable, returning", fontName);
-				font = font.deriveFont(fallbackFont.getSize2D());
-				return font;
-			}
-		}
+    public static String extractText(Component comp) {
+        if (comp instanceof JLabel) {
+            return ((JLabel) comp).getText();
+        } else if (comp instanceof JTextComponent) {
+            return ((JTextComponent) comp).getText();
+        } else if (comp instanceof Container) {
+            Component[] children = ((Container) comp).getComponents();
+            StringBuilder sb = new StringBuilder();
+            for (Component child : children) {
+                String text = extractText(child);
+                if (!StringUtils.isNullOrEmpty(text)) {
+                    if (sb.length() > 0) {
+                        sb.append(' ');
+                    }
+                    sb.append(text);
+                }
+            }
+            return sb.toString();
+        }
 
-		logger.warn("Didn't find any capable fonts for text '{}'", text);
-		return fallbackFont;
-	}
+        logger.warn("Could not extract text from component: {}", comp);
+        return "";
+    }
 
-	public static void setAppropriateFont(JLabel label) {
-		String text = label.getText();
-		if (text == null) {
-			return;
-		}
-		Font font = label.getFont();
-		int canDisplay = font.canDisplayUpTo(text);
-		if (canDisplay != -1) {
-			logger.warn("Default font ('{}') was unable to display text ('{}'), searching for alternative.",
-					font.getName(), text);
+    /**
+     * Decorates a JComponent with a nice shadow border. Since not all
+     * JComponents handle opacity correctly, they will be wrapped inside a
+     * DCPanel, which actually has the border.
+     * 
+     * @param comp
+     * @param outline
+     * @param margin
+     * @return
+     */
+    public static DCPanel decorateWithShadow(JComponent comp, boolean outline, int margin) {
+        DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        Border border = BORDER_SHADOW;
+        if (outline) {
+            border = new CompoundBorder(border, BORDER_THIN);
+        }
+        if (margin > 0) {
+            border = new CompoundBorder(new EmptyBorder(margin, margin, margin, margin), border);
+        }
+        panel.setBorder(border);
+        panel.add(comp, BorderLayout.CENTER);
+        return panel;
+    }
 
-			// if the label contains undisplayable characters, look for a
-			// different font able of displaying the characters.
-			font = findCompatibleFont(text, font);
-			label.setFont(font);
-		}
-	}
+    /**
+     * Finds a font that is capable of displaying the provided text.
+     * 
+     * @param text
+     *            the text to display.
+     * @param fallbackFont
+     *            the font to fall back to in case no capable font was found
+     * @return a font suitable for displaying the text
+     */
+    public static Font findCompatibleFont(String text, Font fallbackFont) {
+        final String[] searchFonts = new String[] { Font.SANS_SERIF, Font.SERIF, "Verdana", "Arial Unicode MS",
+                "MS UI Gothic", "MS Mincho", "MS Gothic", "Osaka" };
+        for (String fontName : searchFonts) {
+            Font font = fonts.get(fontName);
+            if (font == null) {
+                font = new Font(fontName, fallbackFont.getStyle(), fallbackFont.getSize());
+            }
+
+            if (font.canDisplayUpTo(text) == -1) {
+                logger.info("Font '{}' was capable, returning", fontName);
+                font = font.deriveFont(fallbackFont.getSize2D());
+                return font;
+            }
+        }
+
+        logger.warn("Didn't find any capable fonts for text '{}'", text);
+        return fallbackFont;
+    }
+
+    public static void setAppropriateFont(JLabel label) {
+        String text = label.getText();
+        if (text == null) {
+            return;
+        }
+        Font font = label.getFont();
+        int canDisplay = font.canDisplayUpTo(text);
+        if (canDisplay != -1) {
+            logger.warn("Default font ('{}') was unable to display text ('{}'), searching for alternative.",
+                    font.getName(), text);
+
+            // if the label contains undisplayable characters, look for a
+            // different font able of displaying the characters.
+            font = findCompatibleFont(text, font);
+            label.setFont(font);
+        }
+    }
 }

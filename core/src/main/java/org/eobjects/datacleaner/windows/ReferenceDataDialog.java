@@ -42,132 +42,139 @@ import org.eobjects.datacleaner.panels.SynonymCatalogListPanel;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DescriptionLabel;
 import org.eobjects.datacleaner.widgets.HumanInferenceToolbarButton;
 import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 
 import com.google.inject.Injector;
 
 public final class ReferenceDataDialog extends AbstractDialog {
-	
-	public static final int REFERENCE_DATA_ITEM_MAX_WIDTH = 280;
 
-	private static final long serialVersionUID = 1L;
-	private static final ImageManager imageManager = ImageManager.getInstance();
+    public static final int REFERENCE_DATA_ITEM_MAX_WIDTH = 280;
 
-	private final CloseableTabbedPane _tabbedPane;
-	private final DCGlassPane _glassPane;
-	private final InjectorBuilder _injectorBuilder;
-	private volatile int _selectedTab;
+    private static final long serialVersionUID = 1L;
+    private static final ImageManager imageManager = ImageManager.getInstance();
 
-	@Inject
-	protected ReferenceDataDialog(WindowContext windowContext, InjectorBuilder injectorBuilder) {
-		super(windowContext, imageManager.getImage("images/window/banner-reference-data.png"));
-		_glassPane = new DCGlassPane(this);
-		_tabbedPane = new CloseableTabbedPane(true);
-		_tabbedPane.bindTabTitleToBanner(getBanner());
-		_injectorBuilder = injectorBuilder;
-	}
+    private final CloseableTabbedPane _tabbedPane;
+    private final DCGlassPane _glassPane;
+    private final InjectorBuilder _injectorBuilder;
+    private volatile int _selectedTab;
 
-	private JComponent scrolleable(JComponent comp) {
-		JScrollPane scroll = WidgetUtils.scrolleable(comp);
-		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		return scroll;
-	}
+    @Inject
+    protected ReferenceDataDialog(WindowContext windowContext, InjectorBuilder injectorBuilder) {
+        super(windowContext, imageManager.getImage("images/window/banner-reference-data.png"));
+        _glassPane = new DCGlassPane(this);
+        _tabbedPane = new CloseableTabbedPane(true);
+        _tabbedPane.bindTabTitleToBanner(getBanner());
+        _injectorBuilder = injectorBuilder;
+    }
 
-	public void selectDictionariesTab() {
-		_selectedTab = 0;
-		updateSelectedTab();
-	}
+    private JComponent scrolleable(JComponent comp) {
+        JScrollPane scroll = WidgetUtils.scrolleable(comp);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        return scroll;
+    }
 
-	public void selectSynonymsTab() {
-		_selectedTab = 1;
-		updateSelectedTab();
-	}
+    public void selectDictionariesTab() {
+        _selectedTab = 0;
+        updateSelectedTab();
+    }
 
-	public void selectStringPatternsTab() {
-		_selectedTab = 2;
-		updateSelectedTab();
-	}
+    public void selectSynonymsTab() {
+        _selectedTab = 1;
+        updateSelectedTab();
+    }
 
-	private void updateSelectedTab() {
-		if (_tabbedPane.getTabCount() > _selectedTab) {
-			_tabbedPane.setSelectedIndex(_selectedTab);
-		}
-	}
+    public void selectStringPatternsTab() {
+        _selectedTab = 2;
+        updateSelectedTab();
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "Reference data";
-	}
+    private void updateSelectedTab() {
+        if (_tabbedPane.getTabCount() > _selectedTab) {
+            _tabbedPane.setSelectedIndex(_selectedTab);
+        }
+    }
 
-	@Override
-	protected int getDialogWidth() {
-		return 400;
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "Reference data";
+    }
 
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
-	}
+    @Override
+    protected int getDialogWidth() {
+        return 400;
+    }
 
-	@Override
-	protected JComponent getDialogContent() {
-		Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 
-		final DictionaryListPanel dictionaryListPanel = injectorWithGlassPane.getInstance(DictionaryListPanel.class);
-		final SynonymCatalogListPanel synonymCatalogListPanel = injectorWithGlassPane
-				.getInstance(SynonymCatalogListPanel.class);
-		final StringPatternListPanel stringPatternListPanel = injectorWithGlassPane
-				.getInstance(StringPatternListPanel.class);
+    @Override
+    protected JComponent getDialogContent() {
+        Injector injectorWithGlassPane = _injectorBuilder.with(DCGlassPane.class, _glassPane).createInjector();
 
-		_tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
-				scrolleable(dictionaryListPanel));
-		_tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage("images/model/synonym.png")),
-				scrolleable(synonymCatalogListPanel));
-		_tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage("images/model/stringpattern.png")),
-				scrolleable(stringPatternListPanel));
+        final DictionaryListPanel dictionaryListPanel = injectorWithGlassPane.getInstance(DictionaryListPanel.class);
+        final SynonymCatalogListPanel synonymCatalogListPanel = injectorWithGlassPane
+                .getInstance(SynonymCatalogListPanel.class);
+        final StringPatternListPanel stringPatternListPanel = injectorWithGlassPane
+                .getInstance(StringPatternListPanel.class);
 
-		_tabbedPane.setUnclosableTab(0);
-		_tabbedPane.setUnclosableTab(1);
-		_tabbedPane.setUnclosableTab(2);
+        _tabbedPane.addTab("Dictionaries", new ImageIcon(imageManager.getImage("images/model/dictionary.png")),
+                scrolleable(dictionaryListPanel));
+        _tabbedPane.addTab("Synonyms", new ImageIcon(imageManager.getImage("images/model/synonym.png")),
+                scrolleable(synonymCatalogListPanel));
+        _tabbedPane.addTab("String patterns", new ImageIcon(imageManager.getImage("images/model/stringpattern.png")),
+                scrolleable(stringPatternListPanel));
 
-		updateSelectedTab();
+        _tabbedPane.setUnclosableTab(0);
+        _tabbedPane.setUnclosableTab(1);
+        _tabbedPane.setUnclosableTab(2);
 
-		_tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
+        updateSelectedTab();
 
-		final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
-		closeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ReferenceDataDialog.this.dispose();
-			}
-		});
+        _tabbedPane.setPreferredSize(new Dimension(getDialogWidth(), 550));
 
-		final JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.add(new HumanInferenceToolbarButton());
-		toolBar.add(WidgetFactory.createToolBarSeparator());
-		toolBar.add(closeButton);
+        final JButton closeButton = WidgetFactory.createButton("Close", "images/actions/save.png");
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ReferenceDataDialog.this.dispose();
+            }
+        });
 
-		final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
-		toolBarPanel.setLayout(new BorderLayout());
-		toolBarPanel.add(toolBar, BorderLayout.CENTER);
+        final JToolBar toolBar = WidgetFactory.createToolBar();
+        toolBar.add(new HumanInferenceToolbarButton());
+        toolBar.add(WidgetFactory.createToolBarSeparator());
+        toolBar.add(closeButton);
 
-		final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
-		panel.setLayout(new BorderLayout());
-		panel.add(_tabbedPane, BorderLayout.CENTER);
-		panel.add(toolBarPanel, BorderLayout.SOUTH);
-		panel.setPreferredSize(getDialogWidth(), 500);
-		return panel;
-	}
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        toolBarPanel.setLayout(new BorderLayout());
+        toolBarPanel.add(toolBar, BorderLayout.CENTER);
 
-	@Override
-	public Image getWindowIcon() {
-		return imageManager.getImage("images/model/reference-data.png");
-	}
+        final DCPanel panel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        panel.setLayout(new BorderLayout());
+        panel.add(
+                new DescriptionLabel(
+                        "Reference data is used throughout DataCleaner. In this dialog you can set up your own "
+                                + "reference data items for identifying items in dictionaries (whitelists and blacklists), "
+                                + "synonym catalogs (usually used for replacement) and in string patterns (used for pattern matching)."),
+                BorderLayout.NORTH);
+        panel.add(_tabbedPane, BorderLayout.CENTER);
+        panel.add(toolBarPanel, BorderLayout.SOUTH);
+        panel.setPreferredSize(getDialogWidth(), 500);
+        return panel;
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return getBannerTitle();
-	}
+    @Override
+    public Image getWindowIcon() {
+        return imageManager.getImage("images/model/reference-data.png");
+    }
+
+    @Override
+    public String getWindowTitle() {
+        return getBannerTitle();
+    }
 
 }

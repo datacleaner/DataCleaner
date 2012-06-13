@@ -39,120 +39,125 @@ import org.eobjects.metamodel.util.Predicate;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
+/**
+ * Property widget for a single String property. This widget will take into
+ * account the additional metadata provided by the {@link StringProperty}
+ * annotation.
+ */
 public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
-	private final JTextComponent _textComponent;
+    private final JTextComponent _textComponent;
 
-	@Inject
-	public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(beanJobBuilder, propertyDescriptor);
+    @Inject
+    public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+        super(beanJobBuilder, propertyDescriptor);
 
-		StringProperty stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
-		_textComponent = getTextComponent(propertyDescriptor, stringPropertyAnnotation);
-		String currentValue = getCurrentValue();
-		if (currentValue != null) {
-			_textComponent.setText(currentValue);
-		}
-		add(_textComponent);
-	}
+        StringProperty stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
+        _textComponent = getTextComponent(propertyDescriptor, stringPropertyAnnotation);
+        String currentValue = getCurrentValue();
+        if (currentValue != null) {
+            _textComponent.setText(currentValue);
+        }
+        add(_textComponent);
+    }
 
-	private JTextComponent getTextComponent(ConfiguredPropertyDescriptor propertyDescriptor,
-			StringProperty stringPropertyAnnotation) {
-		final boolean multiline;
-		final String mimeType;
+    protected JTextComponent getTextComponent(ConfiguredPropertyDescriptor propertyDescriptor,
+            StringProperty stringPropertyAnnotation) {
+        final boolean multiline;
+        final String mimeType;
 
-		if (stringPropertyAnnotation == null) {
-			multiline = false;
-			mimeType = null;
-		} else {
-			multiline = stringPropertyAnnotation.multiline();
-			String[] mimeTypes = stringPropertyAnnotation.mimeType();
-			mimeType = getTextAreaMimeType(mimeTypes);
-		}
+        if (stringPropertyAnnotation == null) {
+            multiline = false;
+            mimeType = null;
+        } else {
+            multiline = stringPropertyAnnotation.multiline();
+            String[] mimeTypes = stringPropertyAnnotation.mimeType();
+            mimeType = getTextAreaMimeType(mimeTypes);
+        }
 
-		final JTextComponent textComponent;
-		if (multiline) {
-			if (mimeType != null) {
-				RSyntaxTextArea syntaxArea = new RSyntaxTextArea(8, 17);
-				syntaxArea.setSyntaxEditingStyle(mimeType);
-				textComponent = syntaxArea;
-			} else {
-				textComponent = WidgetFactory.createTextArea(propertyDescriptor.getName());
-			}
-		} else {
-			textComponent = WidgetFactory.createTextField(propertyDescriptor.getName());
-		}
+        final JTextComponent textComponent;
+        if (multiline) {
+            if (mimeType != null) {
+                RSyntaxTextArea syntaxArea = new RSyntaxTextArea(8, 17);
+                syntaxArea.setSyntaxEditingStyle(mimeType);
+                textComponent = syntaxArea;
+            } else {
+                textComponent = WidgetFactory.createTextArea(propertyDescriptor.getName());
+            }
+        } else {
+            textComponent = WidgetFactory.createTextField(propertyDescriptor.getName());
+        }
 
-		textComponent.getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent e) {
-				fireValueChanged();
-			}
-		});
+        textComponent.getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent e) {
+                fireValueChanged();
+            }
+        });
 
-		return textComponent;
-	}
+        return textComponent;
+    }
 
-	/**
-	 * Finds a mimetype that is supported by the {@link RSyntaxTextArea}. These
-	 * are defined in the {@link SyntaxConstants} class.
-	 * 
-	 * @param mimeTypes
-	 * @return
-	 */
-	private String getTextAreaMimeType(String[] mimeTypes) {
-		if (mimeTypes == null) {
-			return null;
-		}
+    /**
+     * Finds a mimetype that is supported by the {@link RSyntaxTextArea}. These
+     * are defined in the {@link SyntaxConstants} class.
+     * 
+     * @param mimeTypes
+     * @return
+     */
+    private String getTextAreaMimeType(String[] mimeTypes) {
+        if (mimeTypes == null) {
+            return null;
+        }
 
-		List<Field> fields = Arrays.asList(SyntaxConstants.class.getFields());
-		fields = CollectionUtils.filter(fields, new Predicate<Field>() {
-			@Override
-			public Boolean eval(Field f) {
-				if (f.getName().startsWith("SYNTAX_STYLE_")) {
-					if (f.getType() == String.class) {
-						final int modifiers = f.getModifiers();
-						final boolean accessible = f.isAccessible() || Modifier.isPublic(modifiers);
-						final boolean isStatic = Modifier.isStatic(modifiers);
-						return accessible && isStatic;
-					}
-				}
-				return false;
-			}
-		});
-		List<String> acceptedMimeTypes = CollectionUtils.map(fields, new Func<Field, String>() {
-			@Override
-			public String eval(Field f) {
-				try {
-					return (String) f.get(null);
-				} catch (Exception e) {
-					return null;
-				}
-			}
-		});
+        List<Field> fields = Arrays.asList(SyntaxConstants.class.getFields());
+        fields = CollectionUtils.filter(fields, new Predicate<Field>() {
+            @Override
+            public Boolean eval(Field f) {
+                if (f.getName().startsWith("SYNTAX_STYLE_")) {
+                    if (f.getType() == String.class) {
+                        final int modifiers = f.getModifiers();
+                        final boolean accessible = f.isAccessible() || Modifier.isPublic(modifiers);
+                        final boolean isStatic = Modifier.isStatic(modifiers);
+                        return accessible && isStatic;
+                    }
+                }
+                return false;
+            }
+        });
+        List<String> acceptedMimeTypes = CollectionUtils.map(fields, new Func<Field, String>() {
+            @Override
+            public String eval(Field f) {
+                try {
+                    return (String) f.get(null);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        });
 
-		for (String mimeType : mimeTypes) {
-			if (acceptedMimeTypes.contains(mimeType)) {
-				return mimeType;
-			}
-		}
+        for (String mimeType : mimeTypes) {
+            if (acceptedMimeTypes.contains(mimeType)) {
+                return mimeType;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public boolean isSet() {
-		return _textComponent.getText() != null && _textComponent.getText().length() > 0;
-	}
+    @Override
+    public boolean isSet() {
+        return _textComponent.getText() != null && _textComponent.getText().length() > 0;
+    }
 
-	@Override
-	public String getValue() {
-		return _textComponent.getText();
-	}
+    @Override
+    public String getValue() {
+        return _textComponent.getText();
+    }
 
-	@Override
-	protected void setValue(String value) {
-		_textComponent.setText(value);
-	}
+    @Override
+    protected void setValue(String value) {
+        _textComponent.setText(value);
+    }
 }

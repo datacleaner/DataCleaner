@@ -40,7 +40,8 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.datacleaner.util.WidgetUtils;
-import org.eobjects.datacleaner.windows.DownloadProgressWindow;
+import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
+import org.eobjects.metamodel.util.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,173 +53,180 @@ import org.slf4j.LoggerFactory;
  */
 public class DownloadFilesActionListener extends SwingWorker<File[], Task> implements ActionListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(DownloadFilesActionListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(DownloadFilesActionListener.class);
 
-	private final String[] _urls;
-	private final File[] _files;
-	private final FileDownloadListener _listener;
-	private final DownloadProgressWindow _downloadProgressWindow;
-	private final HttpClient _httpClient;
-	private volatile boolean _cancelled = false;
+    private final String[] _urls;
+    private final File[] _files;
+    private final FileDownloadListener _listener;
+    private final FileTransferProgressWindow _downloadProgressWindow;
+    private final HttpClient _httpClient;
+    private volatile boolean _cancelled = false;
 
-	public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext,
-			HttpClient httpClient) {
-		this(urls, createTargetFilenames(urls), listener, windowContext, httpClient);
-	}
+    public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext,
+            HttpClient httpClient) {
+        this(urls, createTargetFilenames(urls), listener, windowContext, httpClient);
+    }
 
-	public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener,
-			WindowContext windowContext, HttpClient httpClient) {
-		if (urls == null) {
-			throw new IllegalArgumentException("urls cannot be null");
-		}
-		_urls = urls;
-		_listener = listener;
-		_files = new File[_urls.length];
-		for (int i = 0; i < urls.length; i++) {
-			String filename = targetFilenames[i];
-			_files[i] = new File(DataCleanerHome.get(), filename);
-		}
-		_downloadProgressWindow = new DownloadProgressWindow(this, windowContext);
-		_httpClient = httpClient;
-	}
+    public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener,
+            WindowContext windowContext, HttpClient httpClient) {
+        if (urls == null) {
+            throw new IllegalArgumentException("urls cannot be null");
+        }
+        _urls = urls;
+        _listener = listener;
+        _files = new File[_urls.length];
+        for (int i = 0; i < urls.length; i++) {
+            String filename = targetFilenames[i];
+            _files[i] = new File(DataCleanerHome.get(), filename);
+        }
 
-	private static String[] createTargetFilenames(String[] urls) {
-		String[] filenames = new String[urls.length];
-		for (int i = 0; i < urls.length; i++) {
-			String url = urls[i];
-			if (url == null) {
-				throw new IllegalArgumentException("urls[" + i + "] cannot be null");
-			}
-			String filename = url.substring(url.lastIndexOf('/') + 1);
-			filenames[i] = filename;
-		}
-		return filenames;
-	}
+        final Action<Void> cancelCallback = new Action<Void>() {
+            @Override
+            public void run(Void arg0) throws Exception {
+                cancelDownload();
+            }
+        };
+        _downloadProgressWindow = new FileTransferProgressWindow(windowContext, cancelCallback, targetFilenames);
+        _httpClient = httpClient;
+    }
 
-	public File[] getFiles() {
-		return _files;
-	}
+    private static String[] createTargetFilenames(String[] urls) {
+        String[] filenames = new String[urls.length];
+        for (int i = 0; i < urls.length; i++) {
+            String url = urls[i];
+            if (url == null) {
+                throw new IllegalArgumentException("urls[" + i + "] cannot be null");
+            }
+            String filename = url.substring(url.lastIndexOf('/') + 1);
+            filenames[i] = filename;
+        }
+        return filenames;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		_downloadProgressWindow.setVisible(true);
-		execute();
-	}
+    public File[] getFiles() {
+        return _files;
+    }
 
-	@Override
-	protected void process(final List<Task> chunks) {
-		for (Task task : chunks) {
-			try {
-				task.execute();
-			} catch (Exception e) {
-				WidgetUtils.showErrorMessage("Error processing file chunk: " + task, e);
-			}
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        _downloadProgressWindow.setVisible(true);
+        execute();
+    }
 
-	public void cancelDownload() {
-		logger.info("Cancel of download requested");
-		_cancelled = true;
-	}
+    @Override
+    protected void process(final List<Task> chunks) {
+        for (Task task : chunks) {
+            try {
+                task.execute();
+            } catch (Exception e) {
+                WidgetUtils.showErrorMessage("Error processing file chunk: " + task, e);
+            }
+        }
+    }
 
-	@Override
-	protected void done() {
-		super.done();
-		if (!_cancelled) {
-			try {
-				File[] files = get();
-				_listener.onFilesDownloaded(files);
-			} catch (Throwable e) {
-				WidgetUtils.showErrorMessage("Error processing file!", e);
-			}
-		}
-	}
+    public void cancelDownload() {
+        logger.info("Cancel of download requested");
+        _cancelled = true;
+    }
 
-	@Override
-	protected File[] doInBackground() throws Exception {
-		for (int i = 0; i < _urls.length; i++) {
-			final String url = _urls[i];
-			final File file = _files[i];
+    @Override
+    protected void done() {
+        super.done();
+        if (!_cancelled) {
+            try {
+                File[] files = get();
+                _listener.onFilesDownloaded(files);
+            } catch (Throwable e) {
+                WidgetUtils.showErrorMessage("Error processing file!", e);
+            }
+        }
+    }
 
-			InputStream inputStream = null;
-			OutputStream outputStream = null;
+    @Override
+    protected File[] doInBackground() throws Exception {
+        for (int i = 0; i < _urls.length; i++) {
+            final String url = _urls[i];
+            final File file = _files[i];
 
-			try {
-				byte[] buffer = new byte[1024];
+            InputStream inputStream = null;
+            OutputStream outputStream = null;
 
-				final HttpGet method = new HttpGet(url);
+            try {
+                byte[] buffer = new byte[1024];
 
-				if (!_cancelled) {
-					final HttpResponse response = _httpClient.execute(method);
+                final HttpGet method = new HttpGet(url);
 
-					if (response.getStatusLine().getStatusCode() != 200) {
-						throw new InvalidHttpResponseException(url, response);
-					}
+                if (!_cancelled) {
+                    final HttpResponse response = _httpClient.execute(method);
 
-					final HttpEntity responseEntity = response.getEntity();
-					final long expectedSize = responseEntity.getContentLength();
-					publish(new Task() {
-						@Override
-						public void execute() throws Exception {
-							_downloadProgressWindow.setExpectedSize(file, expectedSize);
-						}
-					});
+                    if (response.getStatusLine().getStatusCode() != 200) {
+                        throw new InvalidHttpResponseException(url, response);
+                    }
 
-					inputStream = responseEntity.getContent();
-					outputStream = new BufferedOutputStream(new FileOutputStream(file));
+                    final HttpEntity responseEntity = response.getEntity();
+                    final long expectedSize = responseEntity.getContentLength();
+                    publish(new Task() {
+                        @Override
+                        public void execute() throws Exception {
+                            _downloadProgressWindow.setExpectedSize(file.getName(), expectedSize);
+                        }
+                    });
 
-					long bytes = 0;
-					for (int numBytes = inputStream.read(buffer); numBytes != -1; numBytes = inputStream.read(buffer)) {
-						if (_cancelled) {
-							break;
-						}
-						outputStream.write(buffer, 0, numBytes);
-						bytes += numBytes;
+                    inputStream = responseEntity.getContent();
+                    outputStream = new BufferedOutputStream(new FileOutputStream(file));
 
-						final long totalBytes = bytes;
-						publish(new Task() {
-							@Override
-							public void execute() throws Exception {
-								_downloadProgressWindow.setProgress(file, totalBytes);
-							}
-						});
-					}
+                    long bytes = 0;
+                    for (int numBytes = inputStream.read(buffer); numBytes != -1; numBytes = inputStream.read(buffer)) {
+                        if (_cancelled) {
+                            break;
+                        }
+                        outputStream.write(buffer, 0, numBytes);
+                        bytes += numBytes;
 
-					if (!_cancelled) {
-						publish(new Task() {
-							@Override
-							public void execute() throws Exception {
-								_downloadProgressWindow.setFinished(file);
-							}
-						});
-					}
-				}
-			} catch (IOException e) {
-				throw new IllegalStateException(e);
-			} finally {
-				if (inputStream != null) {
-					try {
-						inputStream.close();
-					} catch (IOException e) {
-						logger.warn("Could not close input stream: " + e.getMessage(), e);
-					}
-				}
-				if (outputStream != null) {
-					try {
-						outputStream.flush();
-						outputStream.close();
-					} catch (IOException e) {
-						logger.warn("Could not flush & close output stream: " + e.getMessage(), e);
-					}
-				}
-			}
+                        final long totalBytes = bytes;
+                        publish(new Task() {
+                            @Override
+                            public void execute() throws Exception {
+                                _downloadProgressWindow.setProgress(file.getName(), totalBytes);
+                            }
+                        });
+                    }
 
-			if (_cancelled) {
-				logger.info("Deleting non-finished download-file '{}'", file);
-				file.delete();
-			}
-		}
+                    if (!_cancelled) {
+                        publish(new Task() {
+                            @Override
+                            public void execute() throws Exception {
+                                _downloadProgressWindow.setFinished(file.getName());
+                            }
+                        });
+                    }
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        logger.warn("Could not close input stream: " + e.getMessage(), e);
+                    }
+                }
+                if (outputStream != null) {
+                    try {
+                        outputStream.flush();
+                        outputStream.close();
+                    } catch (IOException e) {
+                        logger.warn("Could not flush & close output stream: " + e.getMessage(), e);
+                    }
+                }
+            }
 
-		return _files;
-	}
+            if (_cancelled) {
+                logger.info("Deleting non-finished download-file '{}'", file);
+                file.delete();
+            }
+        }
+
+        return _files;
+    }
 }

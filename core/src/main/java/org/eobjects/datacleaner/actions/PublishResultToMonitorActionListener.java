@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.actions;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.commons.lang.SerializationUtils;
@@ -30,8 +32,10 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.AbstractContentBody;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -39,7 +43,7 @@ import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.UserPreferences;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.metamodel.util.Ref;
 import org.jdesktop.swingx.action.OpenBrowserAction;
@@ -81,11 +85,57 @@ public class PublishResultToMonitorActionListener implements ActionListener {
             final HttpPost request = new HttpPost(uploadUrl);
             final AnalysisResult analysisResult = _resultRef.get();
 
-            byte[] bytes = SerializationUtils.serialize(new SimpleAnalysisResult(analysisResult.getResultMap()));
+            final byte[] bytes = SerializationUtils.serialize(new SimpleAnalysisResult(analysisResult.getResultMap()));
+
+            final FileTransferProgressWindow progressWindow = new FileTransferProgressWindow(_windowContext, null,
+                    new String[] { analysisName });
+            progressWindow.setExpectedSize(analysisName, (long) bytes.length);
+            progressWindow.open();
 
             final MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-            final InputStreamBody uploadFilePart = new InputStreamBody(new ByteArrayInputStream(bytes),
-                    "application/octet-stream", analysisName + FileFilters.ANALYSIS_RESULT_SER.getExtension());
+            final ContentBody uploadFilePart = new AbstractContentBody("application/octet-stream") {
+
+                @Override
+                public String getCharset() {
+                    return null;
+                }
+
+                @Override
+                public String getTransferEncoding() {
+                    return MIME.ENC_BINARY;
+                }
+
+                @Override
+                public long getContentLength() {
+                    return bytes.length;
+                }
+
+                @Override
+                public void writeTo(OutputStream out) throws IOException {
+                    long progress = 0;
+                    final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+                    try {
+                        byte[] tmp = new byte[4096];
+                        int length;
+                        while ((length = in.read(tmp)) != -1) {
+                            out.write(tmp, 0, length);
+
+                            // update the visual progress
+                            progress = progress + length;
+                            progressWindow.setProgress(analysisName, progress);
+                        }
+                        out.flush();
+                    } finally {
+                        in.close();
+                    }
+                }
+
+                @Override
+                public String getFilename() {
+                    return analysisName;
+                }
+            };
+
             entity.addPart("file", uploadFilePart);
             request.setEntity(entity);
 
@@ -94,6 +144,8 @@ public class PublishResultToMonitorActionListener implements ActionListener {
 
                 final HttpResponse response = client.execute(request);
                 final StatusLine statusLine = response.getStatusLine();
+
+                progressWindow.setFinished(analysisName);
 
                 if (statusLine.getStatusCode() != 200) {
                     logger.warn("Upload response status: {}", statusLine);

@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +35,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -50,14 +49,14 @@ import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DescriptionLabel;
 import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 
 public final class RegexStringPatternDialog extends AbstractDialog {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final int NUM_TEST_FIELDS = 10;
+	private static final int NUM_TEST_FIELDS = 6;
 	private static final ImageManager imageManager = ImageManager.getInstance();
 	private static final Icon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL);
 	private static final Icon ICON_SUCCESS = imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL);
@@ -222,16 +221,14 @@ public final class RegexStringPatternDialog extends AbstractDialog {
 			_statusLabels.add(statusLabel);
 		}
 
-		final DCLabel descriptionLabel = DCLabel
-				.brightMultiLine("A regex (regular expression) is a concise and flexible means for identifying strings of text of interest, such as particular characters, words, or patterns of characters. The registered regexes can be used to identify certain types of strings and validate their pattern-correctness.");
-		descriptionLabel.setBorder(new EmptyBorder(10, 10, 10, 20));
-		descriptionLabel.setPreferredSize(new Dimension(300, 100));
+		final DescriptionLabel descriptionLabel = new DescriptionLabel("A regex (regular expression) is a concise and flexible means for identifying strings of text of interest, such as particular characters, words, or patterns of characters. The registered regexes can be used to identify certain types of strings and validate their pattern-correctness.");
 
 		final DCPanel mainPanel = new DCPanel();
-		mainPanel.setLayout(new VerticalLayout(4));
-		mainPanel.add(descriptionLabel);
-		mainPanel.add(formPanel);
-		mainPanel.add(testitPanel);
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(descriptionLabel, BorderLayout.NORTH);
+		mainPanel.add(formPanel, BorderLayout.CENTER);
+		mainPanel.add(testitPanel, BorderLayout.SOUTH);
+		mainPanel.setPreferredSize(getDialogWidth(), 400);
 
 		return mainPanel;
 	}

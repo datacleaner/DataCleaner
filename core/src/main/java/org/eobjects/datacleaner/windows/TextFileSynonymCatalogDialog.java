@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.windows;
 
-import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +31,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.reference.TextFileSynonymCatalog;
@@ -47,10 +46,10 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.CharSetEncodingComboBox;
 import org.eobjects.datacleaner.widgets.DCLabel;
+import org.eobjects.datacleaner.widgets.DescriptionLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.jdesktop.swingx.JXTextField;
-import org.jdesktop.swingx.VerticalLayout;
 
 public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 
@@ -175,19 +174,18 @@ public final class TextFileSynonymCatalogDialog extends AbstractDialog {
 		});
 
 		final DCPanel buttonPanel = new DCPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 4, 4));
 		buttonPanel.add(saveButton);
-		WidgetUtils.addToGridBag(buttonPanel, formPanel, 0, row, 2, 1);
 
-		final DCLabel descriptionLabel = DCLabel
-				.brightMultiLine("A text file synonym catalog is a synonym catalog based on a text file containing comma separated values where the first column represents the master term.");
-		descriptionLabel.setBorder(new EmptyBorder(10, 10, 10, 20));
-		descriptionLabel.setPreferredSize(new Dimension(300, 100));
+		final DescriptionLabel descriptionLabel = new DescriptionLabel("A text file synonym catalog is a synonym catalog based on a text file containing comma separated values where the first column represents the master term.");
 
 		final DCPanel mainPanel = new DCPanel();
-		mainPanel.setLayout(new VerticalLayout(4));
-		mainPanel.add(descriptionLabel);
-		mainPanel.add(formPanel);
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(descriptionLabel, BorderLayout.NORTH);
+		mainPanel.add(formPanel, BorderLayout.CENTER);
+		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+		
+		mainPanel.setPreferredSize(getDialogWidth(), 230);
 
 		return mainPanel;
 	}

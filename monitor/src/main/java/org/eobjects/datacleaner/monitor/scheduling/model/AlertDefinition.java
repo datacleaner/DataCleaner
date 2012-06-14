@@ -17,45 +17,41 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.model;
+package org.eobjects.datacleaner.monitor.scheduling.model;
 
-import java.util.List;
-
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Represents the available metrics of a specific job.
+ * Defines the rules of an alert that the user has configured.
  */
-public class JobMetrics implements IsSerializable {
+public class AlertDefinition implements IsSerializable {
 
-    private JobIdentifier _job;
-    private List<MetricGroup> _metricGroups;
+    private MetricIdentifier _metricIdentifier;
+    private Number _minimumValue;
+    private Number _maximumValue;
 
-    public JobIdentifier getJob() {
-        return _job;
+    // no-args constructor
+    public AlertDefinition() {
+        this(null, null, null);
     }
 
-    public void setJob(JobIdentifier job) {
-        _job = job;
+    public AlertDefinition(MetricIdentifier metricIdentifier, Number minimumValue, Number maximumValue) {
+        _metricIdentifier = metricIdentifier;
+        _minimumValue = minimumValue;
+        _maximumValue = maximumValue;
     }
 
-    public List<MetricGroup> getMetricGroups() {
-        return _metricGroups;
+    public Number getMaximumValue() {
+        return _maximumValue;
     }
 
-    public void setMetricGroups(List<MetricGroup> metricGroups) {
-        _metricGroups = metricGroups;
+    public Number getMinimumValue() {
+        return _minimumValue;
     }
 
-    public String getName() {
-        return _job.getName() + " metrics";
-    }
-
-    @Override
-    public String toString() {
-        return "JobMetrics[" + getName() + "]";
+    public MetricIdentifier getMetricIdentifier() {
+        return _metricIdentifier;
     }
 }

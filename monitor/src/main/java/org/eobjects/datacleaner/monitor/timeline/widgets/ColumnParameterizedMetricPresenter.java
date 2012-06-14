@@ -22,8 +22,8 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.timeline.model.MetricGroup;
-import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

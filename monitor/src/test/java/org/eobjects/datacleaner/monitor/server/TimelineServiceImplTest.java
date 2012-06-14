@@ -26,11 +26,11 @@ import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineService;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.timeline.model.MetricGroup;
-import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;

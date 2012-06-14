@@ -19,6 +19,9 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
@@ -34,6 +37,7 @@ public class ScheduleDefinition implements IsSerializable {
     private JobIdentifier _scheduleAfterJob;
     private String _scheduleExpression;
     private boolean _active;
+    private List<AlertDefinition> _alerts;
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -75,6 +79,17 @@ public class ScheduleDefinition implements IsSerializable {
 
     public JobIdentifier getScheduleAfterJob() {
         return _scheduleAfterJob;
+    }
+    
+    public List<AlertDefinition> getAlerts() {
+        if (_alerts == null) {
+            _alerts = new ArrayList<AlertDefinition>();
+        }
+        return _alerts;
+    }
+    
+    public void setAlerts(List<AlertDefinition> alerts) {
+        _alerts = alerts;
     }
 
     public String getScheduleSummary() {

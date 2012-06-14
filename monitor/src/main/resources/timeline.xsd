@@ -45,5 +45,4 @@
 				maxOccurs="1" type="string" />
 		</sequence>
 	</complexType>
-
 </schema>

@@ -11,7 +11,40 @@
 				<element name="schedule-after-job" minOccurs="0" maxOccurs="1"
 					type="string" />
 				<element name="active" minOccurs="1" maxOccurs="1" type="boolean" />
+				<element name="alerts" minOccurs="0" maxOccurs="1">
+					<complexType>
+						<sequence>
+							<element name="alert" type="schedule:alert" minOccurs="1"
+								maxOccurs="unbounded" />
+						</sequence>
+					</complexType>
+				</element>
 			</sequence>
 		</complexType>
 	</element>
+
+	<complexType name="alert">
+		<sequence>
+			<element name="metric" type="schedule:metricType" />
+			<element name="minimum-value" type="int" />
+			<element name="maximum-value" type="int" />
+		</sequence>
+	</complexType>
+
+	<complexType name="metricType">
+		<sequence>
+			<element name="analyzer-descriptor-name" minOccurs="1"
+				maxOccurs="1" type="string" />
+			<element name="analyzer-name" minOccurs="0" maxOccurs="1"
+				type="string" />
+			<element name="analyzer-input" minOccurs="0" maxOccurs="1"
+				type="string" />
+			<element name="metric-descriptor-name" minOccurs="1"
+				maxOccurs="1" type="string" />
+			<element name="metric-param-query-string" minOccurs="0"
+				maxOccurs="1" type="string" />
+			<element name="metric-param-column-name" minOccurs="0"
+				maxOccurs="1" type="string" />
+		</sequence>
+	</complexType>
 </schema>

@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.timeline.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 import com.google.gwt.user.client.ui.IsWidget;
 

@@ -37,8 +37,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/results")
-public class ResultsFolderController {
+@RequestMapping(value = "/{tenant}/jobs")
+public class JobsFolderController {
 
     @Autowired
     Repository _repository;
@@ -51,14 +51,17 @@ public class ResultsFolderController {
             throw new IllegalArgumentException("No such tenant: " + tenant);
         }
 
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_RESULTS);
+        final RepositoryFolder jobsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
 
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
         {
-            final List<RepositoryFile> files = resultsFolder.getFiles(FileFilters.ANALYSIS_RESULT_SER.getExtension());
+            String extension = FileFilters.ANALYSIS_XML.getExtension();
+            final List<RepositoryFile> files = jobsFolder.getFiles(extension);
             for (RepositoryFile file : files) {
                 Map<String, String> map = new HashMap<String, String>();
+                String jobName = file.getName().substring(0, file.getName().length() - extension.length());
+                map.put("name", jobName);
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());
                 result.add(map);

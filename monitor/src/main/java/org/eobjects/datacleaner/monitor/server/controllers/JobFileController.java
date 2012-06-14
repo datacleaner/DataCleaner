@@ -22,15 +22,10 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.server.TimelineServiceImpl;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -48,21 +43,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/{tenant}/results/{result:.+}")
-public class ResultFileController {
+@RequestMapping("/{tenant}/jobs/{job:.+}")
+public class JobFileController {
 
-    private static final String EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
+    private static final String EXTENSION = FileFilters.ANALYSIS_XML.getExtension();
 
     @Autowired
     Repository _repository;
 
-    @Autowired
-    ConfigurationCache _configurationCache;
-
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public Map<String, String> uploadAnalysisResult(@PathVariable("tenant") String tenant,
-            @PathVariable("result") String resultName, @RequestParam("file") final MultipartFile file) {
+    public Map<String, String> uploadAnalysisJob(@PathVariable("tenant") final String tenant,
+            @PathVariable("job") String jobName, @RequestParam("file") final MultipartFile file) {
         if (file == null) {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
@@ -73,17 +65,17 @@ public class ResultFileController {
             throw new IllegalArgumentException("No such tenant: " + tenant);
         }
 
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_RESULTS);
+        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
 
         final long timestamp = new Date().getTime();
         final String filename;
-        if (resultName.endsWith(EXTENSION)) {
-            filename = resultName.substring(0, resultName.length() - EXTENSION.length()) + "-" + timestamp + EXTENSION;
+        if (jobName.endsWith(EXTENSION)) {
+            filename = jobName.substring(0, jobName.length() - EXTENSION.length()) + "-" + timestamp + EXTENSION;
         } else {
-            filename = resultName + "-" + timestamp + EXTENSION;
+            filename = jobName + "-" + timestamp + EXTENSION;
         }
 
-        final RepositoryFile resultFile = resultsFolder.createFile(filename, new Action<OutputStream>() {
+        final RepositoryFile jobFile = resultsFolder.createFile(filename, new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {
                 final InputStream in = file.getInputStream();
@@ -97,39 +89,37 @@ public class ResultFileController {
 
         final Map<String, String> result = new HashMap<String, String>();
         result.put("status", "Success");
-        result.put("file_type", resultFile.getType().toString());
-        result.put("filename", resultFile.getName());
-        result.put("repository_path", resultFile.getQualifiedPath());
+        result.put("file_type", jobFile.getType().toString());
+        result.put("filename", jobFile.getName());
+        result.put("repository_path", jobFile.getQualifiedPath());
 
         return result;
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = "text/html")
-    public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
-            final Writer out) {
+    @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
+    public void jobXml(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName, final OutputStream out) {
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
         if (tenantFolder == null) {
             throw new IllegalArgumentException("No such tenant: " + tenant);
         }
 
-        if (!resultName.endsWith(EXTENSION)) {
-            resultName = resultName + EXTENSION;
+        if (!jobName.endsWith(EXTENSION)) {
+            jobName = jobName + EXTENSION;
         }
 
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_RESULTS);
-        final RepositoryFile resultFile = resultsFolder.getFile(resultName);
-        if (resultFile == null) {
-            throw new IllegalArgumentException("No such result file: " + resultName);
+        final RepositoryFolder jobsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
+        final RepositoryFile jobFile = jobsFolder.getFile(jobName);
+        if (jobFile == null) {
+            throw new IllegalArgumentException("No such job file: " + jobName);
         }
 
-        final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
-        final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
-        final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter();
-
+        final InputStream in = jobFile.readFile();
         try {
-            htmlWriter.write(analysisResult, configuration, out);
+            FileHelper.copy(in, out);
         } catch (IOException e) {
             throw new IllegalStateException(e);
+        } finally {
+            FileHelper.safeClose(in);
         }
     }
 }

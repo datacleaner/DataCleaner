@@ -15,5 +15,34 @@
 		<!-- Maximum 10 megabyte upload possible -->
 		<property name="maxUploadSize" value="10000000" />
 	</bean>
+	
+	<!-- Message converters -->
+	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/plain</value>
+				<value>text/html</value>
+				<value>application/xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="jsonMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+				<value>application/json</value>
+			</list>
+		</property>
+	</bean>
 
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="jsonMessageConverter" />
+				<ref bean="stringHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
 </beans>

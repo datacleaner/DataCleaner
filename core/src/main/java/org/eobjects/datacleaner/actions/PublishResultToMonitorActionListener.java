@@ -36,7 +36,6 @@ import org.apache.http.entity.mime.MIME;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
@@ -45,11 +44,16 @@ import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
+import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.util.Ref;
 import org.jdesktop.swingx.action.OpenBrowserAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Action listener invoked when the user clicks the "Publish to dq monitor"
+ * button on the {@link ResultWindow}.
+ */
 public class PublishResultToMonitorActionListener implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(PublishResultToMonitorActionListener.class);
@@ -57,19 +61,21 @@ public class PublishResultToMonitorActionListener implements ActionListener {
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
     private final Ref<AnalysisResult> _resultRef;
+    private final HttpClient _httpClient;
 
     public PublishResultToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences,
-            Ref<AnalysisResult> resultRef) {
+            Ref<AnalysisResult> resultRef, HttpClient httpClient) {
         _windowContext = windowContext;
         _userPreferences = userPreferences;
         _resultRef = resultRef;
+        _httpClient = httpClient;
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
         MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
         if (monitorConnection == null) {
-            MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences);
+            MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences, _httpClient);
             dialog.open();
         } else {
 
@@ -81,7 +87,6 @@ public class PublishResultToMonitorActionListener implements ActionListener {
                     + analysisName;
             logger.debug("Upload url: {}", uploadUrl);
 
-            final HttpClient client = new DefaultHttpClient();
             final HttpPost request = new HttpPost(uploadUrl);
             final AnalysisResult analysisResult = _resultRef.get();
 
@@ -142,7 +147,7 @@ public class PublishResultToMonitorActionListener implements ActionListener {
             final Map<?, ?> responseMap;
             try {
 
-                final HttpResponse response = client.execute(request);
+                final HttpResponse response = _httpClient.execute(request);
                 final StatusLine statusLine = response.getStatusLine();
 
                 progressWindow.setFinished(analysisName);

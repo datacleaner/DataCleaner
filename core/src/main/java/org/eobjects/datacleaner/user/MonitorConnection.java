@@ -21,6 +21,9 @@ package org.eobjects.datacleaner.user;
 
 import java.io.Serializable;
 
+import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.util.SecurityUtils;
+
 /**
  * Describes the connection information needed to connect to the DQ monitor
  * application.
@@ -33,12 +36,24 @@ public class MonitorConnection implements Serializable {
     private final int _port;
     private final String _contextPath;
     private final boolean _https;
+    private final String _tenantId;
+    private final String _username;
+    private final String _encodedPassword;
 
-    public MonitorConnection(String hostname, int port, String contextPath, boolean isHttps) {
+    public MonitorConnection(String hostname, int port, String contextPath, boolean isHttps, String tenantId,
+            String username, char[] password) {
+        this(hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils.encodePassword(password));
+    }
+
+    public MonitorConnection(String hostname, int port, String contextPath, boolean isHttps, String tenantId,
+            String username, String encodedPassword) {
         _hostname = hostname;
         _port = port;
         _contextPath = contextPath;
         _https = isHttps;
+        _tenantId = tenantId;
+        _username = username;
+        _encodedPassword = encodedPassword;
     }
 
     public String getHostname() {
@@ -57,8 +72,28 @@ public class MonitorConnection implements Serializable {
         return _contextPath;
     }
 
+    public String getEncodedPassword() {
+        return _encodedPassword;
+    }
+
+    public String getTenantId() {
+        return _tenantId;
+    }
+
+    public String getUsername() {
+        return _username;
+    }
+
     public String getBaseUrl() {
         return "" + (_https ? "https://" : "http://") + _hostname + ":" + _port
-                + (_contextPath == null || _contextPath.length() == 0 ? "" : "/" + _contextPath);
+                + (StringUtils.isNullOrEmpty(_contextPath) ? "" : "/" + _contextPath);
+    }
+
+    public String getRepositoryUrl() {
+        return getBaseUrl() + "/repository" + (StringUtils.isNullOrEmpty(_tenantId) ? "" : "/" + _tenantId);
+    }
+
+    public boolean isAuthenticationEnabled() {
+        return !StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_encodedPassword);
     }
 }

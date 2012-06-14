@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
@@ -81,6 +82,7 @@ public final class ResultWindow extends AbstractWindow {
     private final String _jobFilename;
     private final AnalysisRunnerSwingWorker _worker;
     private final UserPreferences _userPreferences;
+    private final HttpClient _httpClient;
 
     private AnalysisResult _result;
 
@@ -98,13 +100,14 @@ public final class ResultWindow extends AbstractWindow {
     @Inject
     protected ResultWindow(AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job,
             @Nullable AnalysisResult result, @Nullable @JobFilename String jobFilename, WindowContext windowContext,
-            UserPreferences userPreferences, RendererFactory rendererFactory) {
+            UserPreferences userPreferences, RendererFactory rendererFactory, HttpClient httpClient) {
         super(windowContext);
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
+        _httpClient = httpClient;
         _progressInformationPanel = new ProgressInformationPanel();
         _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
                 _progressInformationPanel);
@@ -306,10 +309,10 @@ public final class ResultWindow extends AbstractWindow {
                 .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
 
         final JButton publishButton = new JButton("Publish to dq monitor", imageManager.getImageIcon(
-                "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
+                IconUtils.MENU_DQ_MONITOR, IconUtils.ICON_SIZE_MEDIUM));
         publishButton.setOpaque(false);
         publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
-                resultRef));
+                resultRef, _httpClient));
 
         final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
         layout.setAlignOnBaseline(true);

@@ -190,6 +190,14 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
         final JButton testButton = WidgetFactory.createButton("Test connection", "images/actions/refresh.png");
         // TODO: Make ping available in monitor and invoke it from here.
+        
+        // TODO
+        
+        // TODO
+        
+        // TODO
+        
+        // TODO
 
         final JButton saveButton = WidgetFactory.createButton("Save connection", "images/actions/save.png");
         saveButton.addActionListener(new ActionListener() {

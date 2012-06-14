@@ -93,17 +93,17 @@ public final class WidgetUtils {
 
     // pale yellow color which work fine for information/help text fields.
     public static final Color BG_COLOR_PALE_YELLOW = new ColorUIResource(244, 244, 211);
-
-    // #e1e1e1 (silver-ish)
-    public static final Color BG_COLOR_BRIGHT = new ColorUIResource(225, 225, 225);
-
-    // slightly darker than BRIGHT
-    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(210, 210, 210);
-
+    
     // white
     public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
-    public static final Color BG_COLOR_MEDIUM = new ColorUIResource(150, 150, 150);
+    // #e1e1e1 (silver-ish)
+    public static final Color BG_COLOR_BRIGHT = new ColorUIResource(235, 235, 235);
+
+    // slightly darker than BRIGHT
+    public static final Color BG_COLOR_LESS_BRIGHT = new ColorUIResource(220, 220, 220);
+
+    public static final Color BG_COLOR_MEDIUM = new ColorUIResource(160, 160, 160);
 
     public static final Color BG_COLOR_LESS_DARK = new ColorUIResource(95, 95, 95);
 

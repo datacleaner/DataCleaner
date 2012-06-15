@@ -26,6 +26,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.schedule.jaxb.Alert;
+import org.eobjects.datacleaner.schedule.jaxb.MetricType;
 import org.eobjects.datacleaner.schedule.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.schedule.jaxb.Schedule;
 
@@ -54,6 +58,22 @@ public class JaxbScheduleReader {
         } catch (JAXBException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public AlertDefinition createAlert(Alert alert) {
+        final MetricIdentifier metricIdentifier = new MetricIdentifier();
+        final MetricType metricType = alert.getMetric();
+        metricIdentifier.setAnalyzerDescriptorName(metricType.getAnalyzerDescriptorName());
+        metricIdentifier.setAnalyzerInputName(metricType.getAnalyzerInput());
+        metricIdentifier.setAnalyzerName(metricType.getAnalyzerName());
+        metricIdentifier.setMetricDescriptorName(metricType.getMetricDescriptorName());
+        metricIdentifier.setParamColumnName(metricType.getMetricParamColumnName());
+        metricIdentifier.setParamQueryString(metricType.getMetricParamQueryString());
+        metricIdentifier.setParameterizedByColumnName(metricType.getMetricParamColumnName() != null);
+        metricIdentifier.setParameterizedByQueryString(metricType.getMetricParamQueryString() != null);
+
+        return new AlertDefinition(alert.getDescription(), metricIdentifier, alert.getMinimumValue(),
+                alert.getMaximumValue());
     }
 
 }

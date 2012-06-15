@@ -37,5 +37,12 @@
 			<g:Label styleName="FormValue" ui:field="latestExecutionLabel" />
 		</div>
 		
+		<div class="FormRow">
+			<span class="FormKey">Alerts:</span>
+			<g:FlowPanel styleName="FormValue" ui:field="alertsPanel" />
+		</div>
+		
+		<div style="clear:both;"></div>
+		
 	</g:HTMLPanel>
 </ui:UiBinder>

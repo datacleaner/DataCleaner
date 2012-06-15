@@ -235,7 +235,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
     @Override
     protected int getDialogWidth() {
-        return 420;
+        return 440;
     }
 
     @Override

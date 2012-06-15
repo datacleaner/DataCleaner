@@ -25,6 +25,8 @@
 
 	<complexType name="alert">
 		<sequence>
+			<element name="description" type="string" minOccurs="0"
+				maxOccurs="1" />
 			<element name="metric" type="schedule:metricType" />
 			<element name="minimum-value" type="int" />
 			<element name="maximum-value" type="int" />

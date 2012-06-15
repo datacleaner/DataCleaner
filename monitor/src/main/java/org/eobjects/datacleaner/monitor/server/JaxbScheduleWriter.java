@@ -20,16 +20,22 @@
 package org.eobjects.datacleaner.monitor.server;
 
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.schedule.jaxb.Alert;
+import org.eobjects.datacleaner.schedule.jaxb.MetricType;
 import org.eobjects.datacleaner.schedule.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.schedule.jaxb.Schedule;
+import org.eobjects.datacleaner.schedule.jaxb.Schedule.Alerts;
 
 /**
  * Jaxb based Schedule writer for .schedule.xml files.
@@ -85,7 +91,37 @@ public class JaxbScheduleWriter {
             schedule.setScheduleAfterJob(scheduleAfterJob.getName());
         }
 
+        final Alerts alerts = new Alerts();
+        final List<AlertDefinition> alertDefinitions = scheduleDefinition.getAlerts();
+        for (AlertDefinition alertDefinition : alertDefinitions) {
+            final Alert alert = createAlert(alertDefinition);
+            alerts.getAlert().add(alert);
+        }
+        schedule.setAlerts(alerts);
+
         return schedule;
+    }
+
+    private Alert createAlert(AlertDefinition alertDefinition) {
+        final Alert alert = _objectFactory.createAlert();
+        alert.setDescription(alertDefinition.getDescription());
+        alert.setMinimumValue((alertDefinition.getMinimumValue() == null ? null : alertDefinition.getMinimumValue()
+                .intValue()));
+        alert.setMaximumValue((alertDefinition.getMaximumValue() == null ? null : alertDefinition.getMaximumValue()
+                .intValue()));
+        alert.setMetric(createMetric(alertDefinition.getMetricIdentifier()));
+        return alert;
+    }
+
+    private MetricType createMetric(MetricIdentifier metricIdentifier) {
+        final MetricType metric = _objectFactory.createMetricType();
+        metric.setAnalyzerDescriptorName(metricIdentifier.getAnalyzerDescriptorName());
+        metric.setAnalyzerInput(metricIdentifier.getAnalyzerInputName());
+        metric.setAnalyzerName(metricIdentifier.getAnalyzerName());
+        metric.setMetricDescriptorName(metricIdentifier.getMetricDescriptorName());
+        metric.setMetricParamColumnName(metricIdentifier.getParamColumnName());
+        metric.setMetricParamQueryString(metricIdentifier.getParamQueryString());
+        return metric;
     }
 
 }

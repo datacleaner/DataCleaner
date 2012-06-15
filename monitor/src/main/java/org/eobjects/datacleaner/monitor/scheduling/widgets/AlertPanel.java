@@ -17,28 +17,25 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
+package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
-.SchedulePanel {
-	margin-top: 20px;
-	padding: 40px;
-	border: 4px dashed #f0f0f0;
-	border-radius: 20px;
-}
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 
-.SchedulePanel .HeadingLabel {
-	background-image: url("schedule.png");
-	background-repeat: no-repeat;	
-	background-position: left center;
-	padding-left: 26px;
-}
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 
-.AlertPanel {
-	border-left: 2px solid #f0f0f0;
-	margin-top: 2px;
-	margin-bottom: 2px;
+/**
+ * Presents an alert to the user.
+ */
+public class AlertPanel extends FlowPanel {
 
-	background-image: url("alert.png");
-	background-repeat: no-repeat;
-	background-position: left center;
-	padding-left: 26px;
+    private final AlertDefinition _alert;
+
+    public AlertPanel(AlertDefinition alert) {
+        super();
+        addStyleName("AlertPanel");
+        _alert = alert;
+        
+        add(new Label(_alert.toString()));
+    }
 }

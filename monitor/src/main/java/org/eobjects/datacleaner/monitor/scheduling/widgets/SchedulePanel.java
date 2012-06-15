@@ -19,7 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
+import java.util.List;
+
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
@@ -65,6 +68,9 @@ public class SchedulePanel extends Composite {
 
     @UiField
     Button triggerNowButton;
+    
+    @UiField
+    FlowPanel alertsPanel;
 
     public SchedulePanel(final TenantIdentifier tenant, final ScheduleDefinition schedule,
             final SchedulingServiceAsync service) {
@@ -73,7 +79,7 @@ public class SchedulePanel extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
 
         final JobIdentifier job = schedule.getJob();
-        headerPanel.add(new HeadingLabel("Job: " + job.getName()));
+        headerPanel.add(new HeadingLabel(job.getName()));
 
         scheduleLabel.setText(schedule.getScheduleSummary());
         if (!schedule.isActive()) {
@@ -127,6 +133,12 @@ public class SchedulePanel extends Composite {
                 }
             }
         });
+        
+        final List<AlertDefinition> alerts = schedule.getAlerts();
+        for (AlertDefinition alert : alerts) {
+            AlertPanel alertPanel = new AlertPanel(alert);
+            alertsPanel.add(alertPanel);
+        }
     }
 
 }

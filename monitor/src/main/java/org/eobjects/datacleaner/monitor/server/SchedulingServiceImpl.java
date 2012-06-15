@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import org.eobjects.datacleaner.monitor.scheduling.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
@@ -41,6 +43,7 @@ import org.eobjects.datacleaner.monitor.timeline.TimelineService;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.eobjects.datacleaner.schedule.jaxb.Alert;
 import org.eobjects.datacleaner.schedule.jaxb.Schedule;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
@@ -73,7 +76,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     private ApplicationContext _applicationContext;
 
-    public SchedulingServiceImpl(TimelineService timelineService, Repository repository, ConfigurationCache configurationCache) {
+    public SchedulingServiceImpl(TimelineService timelineService, Repository repository,
+            ConfigurationCache configurationCache) {
         _timelineService = timelineService;
         _repository = repository;
         _configurationCache = configurationCache;
@@ -131,17 +135,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
         final RepositoryFolder jobsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
         final RepositoryFile scheduleFile = jobsFolder.getFile(jobIdentifier.getName() + EXTENSION_SCHEDULE_XML);
+        final JaxbScheduleReader reader = new JaxbScheduleReader();
 
         final String scheduleAfterJob;
         final String scheduleExpression;
         final boolean active;
 
+        final List<Alert> alerts;
+
         if (scheduleFile == null) {
             scheduleExpression = null;
             scheduleAfterJob = null;
             active = false;
+            alerts = Collections.emptyList();
         } else {
-            JaxbScheduleReader reader = new JaxbScheduleReader();
             InputStream inputStream = scheduleFile.readFile();
             final Schedule schedule;
             try {
@@ -150,18 +157,29 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 FileHelper.safeClose(inputStream);
             }
 
+            alerts = schedule.getAlerts().getAlert();
+
             scheduleExpression = schedule.getScheduleExpression();
             active = schedule.isActive();
             scheduleAfterJob = schedule.getScheduleAfterJob();
         }
 
+        final ScheduleDefinition scheduleDefinition;
+
         if (scheduleAfterJob == null) {
-            return new ScheduleDefinition(tenant, jobIdentifier, scheduleExpression, active);
+            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, scheduleExpression, active);
         } else {
             final JobIdentifier job = new JobIdentifier(scheduleAfterJob);
 
-            return new ScheduleDefinition(tenant, jobIdentifier, job, active);
+            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, job, active);
         }
+        
+        for (Alert alert : alerts) {
+            final AlertDefinition alertDefinition = reader.createAlert(alert);
+            scheduleDefinition.getAlerts().add(alertDefinition);
+        }
+
+        return scheduleDefinition;
     }
 
     @Override
@@ -284,11 +302,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
         ExecuteJob.executeJob(tenant.getId(), job.getName(), beginTime, _repository, configuration);
         final Date endTime = new Date();
-        
+
         final String logOutput = null;
         final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "@now", true);
-        
-        final HistoricExecution historicExecution = new HistoricExecution(schedule, TriggerType.MANUAL, logOutput , beginTime, endTime);
+
+        final HistoricExecution historicExecution = new HistoricExecution(schedule, TriggerType.MANUAL, logOutput,
+                beginTime, endTime);
 
         return historicExecution;
     }

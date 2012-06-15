@@ -37,13 +37,6 @@
 							</c:if>
 						</h:outputLink></li>
 						
-					<li class="#{ (view.viewId == '/alerts.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="alerts.jsf" styleClass="AlertsTabTitle">
-							<h:outputText value="Alerts" />
-							<c:if test="#{param['gwt.codesvr'] != null}">
-								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-							</c:if>
-						</h:outputLink></li>
-						
 					<li class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="repository.jsf" styleClass="RepositoryTabTitle">
 							<h:outputText value="Repository" />
 							<c:if test="#{param['gwt.codesvr'] != null}">

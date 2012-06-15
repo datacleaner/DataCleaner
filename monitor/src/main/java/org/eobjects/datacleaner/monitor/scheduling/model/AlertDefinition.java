@@ -29,15 +29,18 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class AlertDefinition implements IsSerializable {
 
     private MetricIdentifier _metricIdentifier;
+    private String _description;
     private Number _minimumValue;
     private Number _maximumValue;
 
     // no-args constructor
     public AlertDefinition() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
-    public AlertDefinition(MetricIdentifier metricIdentifier, Number minimumValue, Number maximumValue) {
+    public AlertDefinition(String description, MetricIdentifier metricIdentifier, Number minimumValue,
+            Number maximumValue) {
+        _description = description;
         _metricIdentifier = metricIdentifier;
         _minimumValue = minimumValue;
         _maximumValue = maximumValue;
@@ -53,5 +56,36 @@ public class AlertDefinition implements IsSerializable {
 
     public MetricIdentifier getMetricIdentifier() {
         return _metricIdentifier;
+    }
+
+    public String getDescription() {
+        if (_description == null) {
+            if (_minimumValue == null && _maximumValue == null) {
+                return _metricIdentifier.getDisplayName();
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Expect ");
+                sb.append(_metricIdentifier.getDisplayName());
+                sb.append(" to be ");
+                if (_minimumValue != null && _maximumValue != null) {
+                    sb.append("between " + _minimumValue + " and " + _maximumValue);
+                } else if (_minimumValue != null) {
+                    sb.append("greater than " + _minimumValue);
+                } else {
+                    sb.append("less than " + _minimumValue);
+                }
+                return sb.toString();
+            }
+        }
+        return _description;
+    }
+
+    public void setDescription(String description) {
+        _description = description;
+    }
+
+    @Override
+    public String toString() {
+        return getDescription();
     }
 }

@@ -89,6 +89,7 @@ public class CustomizeAlertPanel extends Composite {
 
     private RadioButton createRadioButton(String group, String label, AlertSeverity severity) {
         RadioButton radioButton = new RadioButton(group, label);
+        radioButton.addStyleDependentName(severity.toString());
         if (_alert.getSeverity() == severity) {
             radioButton.setValue(true);
         }

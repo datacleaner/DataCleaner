@@ -41,10 +41,13 @@ public class AlertPanel extends FlowPanel {
 
     public AlertPanel(SchedulingServiceAsync service, ScheduleDefinition schedule, AlertDefinition alert) {
         super();
-        addStyleName("AlertPanel");
         _service = service;
         _schedule = schedule;
         _alert = alert;
+
+        setStylePrimaryName("AlertPanel");
+        setStyleDependentName(alert.getSeverity().toString(), true);
+
         _anchor = new Anchor(_alert.toString());
         _anchor.addClickHandler(new CustomizeAlertClickHandler(this));
 
@@ -56,6 +59,7 @@ public class AlertPanel extends FlowPanel {
     }
 
     public void updateAlert() {
+
         _anchor.setText(_alert.toString());
         TenantIdentifier tenant = _schedule.getTenant();
         _service.updateSchedule(tenant, _schedule, new DCAsyncCallback<ScheduleDefinition>() {

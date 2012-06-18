@@ -74,7 +74,11 @@ public class AlertDefinition implements IsSerializable {
                 return _metricIdentifier.getDisplayName();
             } else {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Expect ");
+                if (_severity == AlertSeverity.WARNING || _severity == AlertSeverity.FATAL) {
+                    sb.append("Require ");
+                } else {
+                    sb.append("Expect ");
+                }
                 sb.append(_metricIdentifier.getDisplayName());
                 sb.append(" to be ");
                 if (_minimumValue != null && _maximumValue != null) {

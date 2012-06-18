@@ -35,7 +35,6 @@
 	border-left: 2px solid #f0f0f0;
 	margin-top: 2px;
 	margin-bottom: 2px;
-	background-image: url("alert.png");
 	background-repeat: no-repeat;
 	background-position: left center;
 	padding-left: 26px;
@@ -58,4 +57,23 @@
 
 .CustomizeAlertPanel .gwt-RadioButton {
 	display: block;
+	padding-right: 40px;
+	background-repeat: no-repeat;
+	background-position: right center;
+}
+
+.AlertPanel-INTELLIGENCE, .CustomizeAlertPanel .gwt-RadioButton-INTELLIGENCE {
+	background-image: url("alert-intelligence.png");
+}
+
+.AlertPanel-SURVEILLANCE, .CustomizeAlertPanel .gwt-RadioButton-SURVEILLANCE {
+	background-image: url("alert-surveillance.png");
+}
+
+.AlertPanel-WARNING, .CustomizeAlertPanel .gwt-RadioButton-WARNING {
+	background-image: url("alert-warning.png");
+}
+
+.AlertPanel-FATAL, .CustomizeAlertPanel .gwt-RadioButton-FATAL {
+	background-image: url("alert-fatal.png");
 }

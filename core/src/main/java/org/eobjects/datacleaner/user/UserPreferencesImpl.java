@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Main implementation of {@link UserPreferences}.
  */
-public class UserPreferencesImpl implements UserPreferences {
+public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private static final long serialVersionUID = 6L;
 

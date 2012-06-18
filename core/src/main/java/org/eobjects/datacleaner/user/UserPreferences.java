@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +32,8 @@ import org.eobjects.datacleaner.actions.LoginChangeListener;
 /**
  * Defines the settings provided at runtime by the user in DataCleaner
  */
-public interface UserPreferences extends Serializable {
-
+public interface UserPreferences {
+    
     public void save();
 
     public void addLoginChangeListener(LoginChangeListener listener);

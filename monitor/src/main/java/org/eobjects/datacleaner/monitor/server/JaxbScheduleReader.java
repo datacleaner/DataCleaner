@@ -27,10 +27,12 @@ import javax.xml.bind.Unmarshaller;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.datacleaner.monitor.jaxb.Alert;
+import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
@@ -72,8 +74,28 @@ public class JaxbScheduleReader {
         metricIdentifier.setParameterizedByColumnName(metricType.getMetricParamColumnName() != null);
         metricIdentifier.setParameterizedByQueryString(metricType.getMetricParamQueryString() != null);
 
+        AlertSeverity severity = createSeverity(alert.getSeverity());
+
         return new AlertDefinition(alert.getDescription(), metricIdentifier, alert.getMinimumValue(),
-                alert.getMaximumValue());
+                alert.getMaximumValue(), severity);
+    }
+
+    private AlertSeverity createSeverity(AlertSeverityType severity) {
+        if (severity == null) {
+            return null;
+        }
+        switch (severity) {
+        case INTELLIGENCE:
+            return AlertSeverity.INTELLIGENCE;
+        case SURVEILLANCE:
+            return AlertSeverity.SURVEILLANCE;
+        case WARNING:
+            return AlertSeverity.WARNING;
+        case FATAL:
+            return AlertSeverity.FATAL;
+        default:
+            throw new UnsupportedOperationException("Unsupported severity: " + severity);
+        }
     }
 
 }

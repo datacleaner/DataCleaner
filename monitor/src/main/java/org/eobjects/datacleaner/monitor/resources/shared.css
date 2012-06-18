@@ -18,13 +18,24 @@
  * Boston, MA  02110-1301  USA
  */
 
-/*
- * GWT built-in style modifications 
+/**
+ * Overrides of the "clean" theme for basic elements
  */
 body,table td,select,button {
 	font-family: "Trebuchet MS", sans-serif;
 }
 
+a {
+	color: black;
+}
+
+a:hover {
+	color: #5594DD;
+}
+
+/*
+ * GWT built-in style modifications 
+ */
 .gwt-PopupPanel .popupContent {
 	text-align: left;
 	padding: 5px;

@@ -32,18 +32,20 @@ public class AlertDefinition implements IsSerializable {
     private String _description;
     private Number _minimumValue;
     private Number _maximumValue;
+    private AlertSeverity _severity;
 
     // no-args constructor
     public AlertDefinition() {
-        this(null, null, null, null);
+        this(null, null, null, null, null);
     }
 
     public AlertDefinition(String description, MetricIdentifier metricIdentifier, Number minimumValue,
-            Number maximumValue) {
+            Number maximumValue, AlertSeverity severity) {
         _description = description;
         _metricIdentifier = metricIdentifier;
         _minimumValue = minimumValue;
         _maximumValue = maximumValue;
+        _severity = severity;
     }
 
     public Number getMaximumValue() {
@@ -58,8 +60,16 @@ public class AlertDefinition implements IsSerializable {
         return _metricIdentifier;
     }
 
+    public void setMaximumValue(Number maximumValue) {
+        _maximumValue = maximumValue;
+    }
+
+    public void setMinimumValue(Number minimumValue) {
+        _minimumValue = minimumValue;
+    }
+
     public String getDescription() {
-        if (_description == null) {
+        if (_description == null || _description.trim().isEmpty()) {
             if (_minimumValue == null && _maximumValue == null) {
                 return _metricIdentifier.getDisplayName();
             } else {
@@ -82,6 +92,14 @@ public class AlertDefinition implements IsSerializable {
 
     public void setDescription(String description) {
         _description = description;
+    }
+
+    public AlertSeverity getSeverity() {
+        return _severity;
+    }
+
+    public void setSeverity(AlertSeverity severity) {
+        _severity = severity;
     }
 
     @Override

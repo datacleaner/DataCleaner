@@ -36,9 +36,9 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * A panel which presents a {@link ExecutionLog}
  */
-public class HistoricExecutionPanel extends Composite {
+public class ExecutionLogPanel extends Composite {
 
-    interface MyUiBinder extends UiBinder<Widget, HistoricExecutionPanel> {
+    interface MyUiBinder extends UiBinder<Widget, ExecutionLogPanel> {
     }
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -52,7 +52,7 @@ public class HistoricExecutionPanel extends Composite {
     @UiField
     Label triggerLabel;
 
-    public HistoricExecutionPanel(ExecutionLog historicExecution) {
+    public ExecutionLogPanel(ExecutionLog historicExecution) {
         super();
 
         initWidget(uiBinder.createAndBindUi(this));

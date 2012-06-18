@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.timeline.widgets;
 import java.util.Date;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
+import org.eobjects.datacleaner.monitor.shared.widgets.NumberTextBox;
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions;
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
 import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.VerticalAxisOption;
@@ -31,8 +32,6 @@ import org.eobjects.datacleaner.monitor.timeline.model.LatestNumberOfDaysHAxisOp
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.DatePickerCell;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.cellview.client.CellWidget;
@@ -41,7 +40,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -51,30 +49,17 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
 
     private final CellWidget<Date> _beginDatePicker;
     private final CellWidget<Date> _endDatePicker;
-    private final TextBox _heightBox;
-    private final TextBox _minimumValueBox;
-    private final TextBox _maximumValue;
+    private final NumberTextBox _heightBox;
+    private final NumberTextBox _minimumValueBox;
+    private final NumberTextBox _maximumValue;
 
     // three radio buttons that represent the three types of timeline date
     // selections
     private final RadioButton _timelineAllDatesRadio;
     private final RadioButton _timelineLastDaysRadio;
     private final RadioButton _timelineFromToRadio;
-    private final TextBox _latestNumberOfDaysBox;
+    private final NumberTextBox _latestNumberOfDaysBox;
     private CheckBox _logScaleCheckBox;
-
-    /**
-     * {@link KeyPressHandler} which makes sure only numbers can be entered into
-     * the applied textboxes.
-     */
-    private class NumbersOnly implements KeyPressHandler {
-        @Override
-        public void onKeyPress(KeyPressEvent event) {
-            if (!Character.isDigit(event.getCharCode())) {
-                ((TextBox) event.getSource()).cancelKey();
-            }
-        }
-    }
 
     public CustomizeChartOptionsPanel(ChartOptions chartOptions) {
         super();
@@ -102,23 +87,19 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
         _beginDatePicker = createDatePickerWidget((beginDate == null ? getDefaultBeginDate() : beginDate));
         _endDatePicker = createDatePickerWidget((endDate == null ? new Date() : endDate));
 
-        _latestNumberOfDaysBox = new TextBox();
+        _latestNumberOfDaysBox = new NumberTextBox();
         _latestNumberOfDaysBox.setMaxLength(3);
-        _latestNumberOfDaysBox.addKeyPressHandler(new NumbersOnly());
-        _latestNumberOfDaysBox.setValue(getStringValue(latestNumberOfDays));
+        _latestNumberOfDaysBox.setNumberValue(latestNumberOfDays);
 
         final VerticalAxisOption verticalAxisOption = chartOptions.getVerticalAxisOption();
-        _heightBox = new TextBox();
-        _heightBox.addKeyPressHandler(new NumbersOnly());
-        _heightBox.setValue(getStringValue(verticalAxisOption.getHeight()));
+        _heightBox = new NumberTextBox();
+        _heightBox.setNumberValue(verticalAxisOption.getHeight());
 
-        _minimumValueBox = new TextBox();
-        _minimumValueBox.addKeyPressHandler(new NumbersOnly());
-        _minimumValueBox.setValue(getStringValue(verticalAxisOption.getMinimumValue()));
+        _minimumValueBox = new NumberTextBox();
+        _minimumValueBox.setNumberValue(verticalAxisOption.getMinimumValue());
 
-        _maximumValue = new TextBox();
-        _maximumValue.addKeyPressHandler(new NumbersOnly());
-        _maximumValue.setValue(getStringValue(verticalAxisOption.getMaximumValue()));
+        _maximumValue = new NumberTextBox();
+        _maximumValue.setNumberValue(verticalAxisOption.getMaximumValue());
 
         _logScaleCheckBox = new CheckBox("Logarithmic scale?");
         _logScaleCheckBox.setValue(verticalAxisOption.isLogarithmicScale());
@@ -197,7 +178,7 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
         if (_timelineAllDatesRadio.getValue().booleanValue()) {
             horizontalAxisOption = new DefaultHAxisOption();
         } else if (_timelineLastDaysRadio.getValue().booleanValue()) {
-            final Integer latestNumberOfDays = getIntegerValue(_latestNumberOfDaysBox);
+            final Integer latestNumberOfDays = _latestNumberOfDaysBox.getNumberValue();
             horizontalAxisOption = new LatestNumberOfDaysHAxisOption(latestNumberOfDays);
         } else {
             final Date beginDate = _beginDatePicker.getValue();
@@ -205,29 +186,14 @@ public class CustomizeChartOptionsPanel extends FlowPanel {
             horizontalAxisOption = new DefaultHAxisOption(beginDate, endDate);
         }
 
-        final Integer height = getIntegerValue(_heightBox);
-        final Integer minimumValue = getIntegerValue(_minimumValueBox);
-        final Integer maximumValue = getIntegerValue(_maximumValue);
+        final Integer height = _heightBox.getNumberValue();
+        final Integer minimumValue = _minimumValueBox.getNumberValue();
+        final Integer maximumValue = _maximumValue.getNumberValue();
         final boolean logarithmicScale = _logScaleCheckBox.getValue();
         final VerticalAxisOption verticalAxisOption = new DefaultVAxisOption(height, minimumValue, maximumValue,
                 logarithmicScale);
 
         final ChartOptions chartOptions = new ChartOptions(horizontalAxisOption, verticalAxisOption);
         return chartOptions;
-    }
-
-    private String getStringValue(Integer value) {
-        if (value == null) {
-            return "";
-        }
-        return value + "";
-    }
-
-    private Integer getIntegerValue(TextBox textBox) {
-        final String value = textBox.getValue();
-        if (value == null || value.trim().length() == 0) {
-            return null;
-        }
-        return Integer.parseInt(value);
     }
 }

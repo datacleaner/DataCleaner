@@ -32,9 +32,22 @@
 			<element name="description" type="string" minOccurs="0"
 				maxOccurs="1" />
 			<element ref="shared:metric" minOccurs="1" maxOccurs="1" />
-			<element name="minimum-value" type="int" />
-			<element name="maximum-value" type="int" />
+			<element name="minimum-value" type="int" minOccurs="0"
+				maxOccurs="1" />
+			<element name="maximum-value" type="int" minOccurs="0"
+				maxOccurs="1" />
+			<element name="severity" type="schedule:alertSeverityType"
+				minOccurs="0" maxOccurs="1" />
 		</sequence>
 	</complexType>
+
+	<simpleType name="alertSeverityType">
+		<restriction base="string">
+			<enumeration value="INTELLIGENCE" />
+			<enumeration value="SURVEILLANCE" />
+			<enumeration value="WARNING" />
+			<enumeration value="FATAL" />
+		</restriction>
+	</simpleType>
 
 </schema>

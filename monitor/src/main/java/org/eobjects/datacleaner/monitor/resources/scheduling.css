@@ -17,7 +17,6 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-
 .SchedulePanel {
 	margin-top: 20px;
 	padding: 40px;
@@ -27,7 +26,7 @@
 
 .SchedulePanel .HeadingLabel {
 	background-image: url("schedule.png");
-	background-repeat: no-repeat;	
+	background-repeat: no-repeat;
 	background-position: left center;
 	padding-left: 26px;
 }
@@ -36,9 +35,27 @@
 	border-left: 2px solid #f0f0f0;
 	margin-top: 2px;
 	margin-bottom: 2px;
-
 	background-image: url("alert.png");
 	background-repeat: no-repeat;
 	background-position: left center;
 	padding-left: 26px;
+}
+
+.AlertPanel a {
+	text-decoration: none;
+	color: #333;
+}
+
+.AlertPanel a:hover {
+	text-decoration: underline;
+	color: #5594DD;
+}
+
+.CustomizeAlertPanel {
+	width: 400px;
+	min-height: 200px;
+}
+
+.CustomizeAlertPanel .gwt-RadioButton {
+	display: block;
 }

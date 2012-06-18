@@ -98,7 +98,7 @@ public class SchedulePanel extends Composite {
                 service.triggerExecution(tenant, job, new DCAsyncCallback<ExecutionLog>() {
                     @Override
                     public void onSuccess(ExecutionLog result) {
-                        HistoricExecutionPanel panel = new HistoricExecutionPanel(result);
+                        ExecutionLogPanel panel = new ExecutionLogPanel(result);
                         popupPanel.setWidget(panel);
                         popupPanel.center();
                     }

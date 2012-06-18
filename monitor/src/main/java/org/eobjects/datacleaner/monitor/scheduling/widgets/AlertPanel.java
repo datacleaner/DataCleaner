@@ -21,8 +21,8 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 
 /**
  * Presents an alert to the user.
@@ -30,12 +30,23 @@ import com.google.gwt.user.client.ui.Label;
 public class AlertPanel extends FlowPanel {
 
     private final AlertDefinition _alert;
+    private final Anchor _anchor;
 
     public AlertPanel(AlertDefinition alert) {
         super();
         addStyleName("AlertPanel");
         _alert = alert;
-        
-        add(new Label(_alert.toString()));
+        _anchor = new Anchor(_alert.toString());
+        _anchor.addClickHandler(new CustomizeAlertClickHandler(this));
+
+        add(_anchor);
+    }
+
+    public AlertDefinition getAlert() {
+        return _alert;
+    }
+
+    public void updateLabel() {
+        _anchor.setText(_alert.toString());
     }
 }

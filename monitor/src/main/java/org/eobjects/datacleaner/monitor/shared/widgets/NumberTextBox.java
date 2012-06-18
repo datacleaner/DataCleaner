@@ -49,8 +49,9 @@ public class NumberTextBox extends TextBox {
     public void setNumberValue(Number value) {
         if (value == null) {
             setValue("");
+        } else {
+            setValue(value + "");
         }
-        setValue(value + "");
     }
 
     public Integer getNumberValue() {

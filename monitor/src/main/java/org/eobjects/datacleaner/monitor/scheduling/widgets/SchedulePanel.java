@@ -68,7 +68,7 @@ public class SchedulePanel extends Composite {
 
     @UiField
     Button triggerNowButton;
-    
+
     @UiField
     FlowPanel alertsPanel;
 
@@ -133,10 +133,10 @@ public class SchedulePanel extends Composite {
                 }
             }
         });
-        
+
         final List<AlertDefinition> alerts = schedule.getAlerts();
         for (AlertDefinition alert : alerts) {
-            AlertPanel alertPanel = new AlertPanel(alert);
+            AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
             alertsPanel.add(alertPanel);
         }
     }

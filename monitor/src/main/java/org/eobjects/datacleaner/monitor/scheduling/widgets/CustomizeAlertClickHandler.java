@@ -48,7 +48,7 @@ public class CustomizeAlertClickHandler implements ClickHandler {
             @Override
             public void onClick(ClickEvent event) {
                 customizeAlertPanel.updateAlert();
-                _alertPanel.updateLabel();
+                _alertPanel.updateAlert();
                 popup.hide();
             }
         });

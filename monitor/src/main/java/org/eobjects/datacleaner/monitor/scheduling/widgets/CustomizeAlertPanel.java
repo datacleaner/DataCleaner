@@ -76,6 +76,11 @@ public class CustomizeAlertPanel extends Composite {
         _severityWarningRadio = createRadioButton("alert_severity", "Warning", AlertSeverity.WARNING);
         _severityFatalRadio = createRadioButton("alert_severity", "Fatal", AlertSeverity.FATAL);
 
+        if (getSelectedSeverity() == null) {
+            // set default severity
+            _severityIntelligenceRadio.setValue(true);
+        }
+
         descriptionTextBox.setText(_alert.getDescription());
         metricLabel.setText(_alert.getMetricIdentifier().getDisplayName());
         minimumValueTextBox.setNumberValue(_alert.getMinimumValue());

@@ -23,10 +23,12 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.jaxb.Alert;
+import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -72,7 +74,26 @@ public class JaxbScheduleWriter extends JaxbWriter<Schedule> {
         alert.setMaximumValue((alertDefinition.getMaximumValue() == null ? null : alertDefinition.getMaximumValue()
                 .intValue()));
         alert.setMetric(createMetric(alertDefinition.getMetricIdentifier()));
+        alert.setSeverity(createSeverity(alertDefinition.getSeverity()));
         return alert;
+    }
+
+    private AlertSeverityType createSeverity(AlertSeverity severity) {
+        if (severity == null) {
+            return null;
+        }
+        switch (severity) {
+        case INTELLIGENCE:
+            return AlertSeverityType.INTELLIGENCE;
+        case SURVEILLANCE:
+            return AlertSeverityType.SURVEILLANCE;
+        case WARNING:
+            return AlertSeverityType.WARNING;
+        case FATAL:
+            return AlertSeverityType.FATAL;
+        default:
+            throw new UnsupportedOperationException("Unsupported severity: " + severity);
+        }
     }
 
     private MetricType createMetric(MetricIdentifier metricIdentifier) {

@@ -19,8 +19,13 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
+import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -29,12 +34,16 @@ import com.google.gwt.user.client.ui.FlowPanel;
  */
 public class AlertPanel extends FlowPanel {
 
+    private final ScheduleDefinition _schedule;
+    private final SchedulingServiceAsync _service;
     private final AlertDefinition _alert;
     private final Anchor _anchor;
 
-    public AlertPanel(AlertDefinition alert) {
+    public AlertPanel(SchedulingServiceAsync service, ScheduleDefinition schedule, AlertDefinition alert) {
         super();
         addStyleName("AlertPanel");
+        _service = service;
+        _schedule = schedule;
         _alert = alert;
         _anchor = new Anchor(_alert.toString());
         _anchor.addClickHandler(new CustomizeAlertClickHandler(this));
@@ -46,7 +55,14 @@ public class AlertPanel extends FlowPanel {
         return _alert;
     }
 
-    public void updateLabel() {
+    public void updateAlert() {
         _anchor.setText(_alert.toString());
+        TenantIdentifier tenant = _schedule.getTenant();
+        _service.updateSchedule(tenant, _schedule, new DCAsyncCallback<ScheduleDefinition>() {
+            @Override
+            public void onSuccess(ScheduleDefinition result) {
+                GWT.log("Succesfully updated schedule: " + result);
+            }
+        });
     }
 }

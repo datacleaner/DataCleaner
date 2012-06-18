@@ -289,7 +289,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary());
+            logger.info("Cron expression summary ({}): {}", scheduleExpression, cronExpression.getExpressionSummary()
+                    .replaceAll("\n", ", "));
         }
 
         return cronExpression;
@@ -301,7 +302,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, false);
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
-        
+
         ExecuteJob.executeJob(tenant.getId(), _repository, configuration, execution);
 
         return execution;

@@ -1,1 +1,30 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0"><job-name>random_number_generation</job-name><metrics><metric><analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name><analyzer-input>Random number</analyzer-input><metric-descriptor-name>Geometric mean</metric-descriptor-name><metric-param-column-name>Random number</metric-param-column-name></metric><metric><analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name><analyzer-input>Random number</analyzer-input><metric-descriptor-name>Highest value</metric-descriptor-name><metric-param-column-name>Random number</metric-param-column-name></metric><metric><analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name><analyzer-input>Random number</analyzer-input><metric-descriptor-name>Lowest value</metric-descriptor-name><metric-param-column-name>Random number</metric-param-column-name></metric><metric><analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name><analyzer-input>Random number</analyzer-input><metric-descriptor-name>Mean</metric-descriptor-name><metric-param-column-name>Random number</metric-param-column-name></metric></metrics></timeline>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0">
+	<job-name>random_number_generation</job-name>
+	<metrics>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+			<analyzer-input>Random number</analyzer-input>
+			<metric-descriptor-name>Geometric mean</metric-descriptor-name>
+			<metric-param-column-name>Random number</metric-param-column-name>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+			<analyzer-input>Random number</analyzer-input>
+			<metric-descriptor-name>Highest value</metric-descriptor-name>
+			<metric-param-column-name>Random number</metric-param-column-name>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+			<analyzer-input>Random number</analyzer-input>
+			<metric-descriptor-name>Lowest value</metric-descriptor-name>
+			<metric-param-column-name>Random number</metric-param-column-name>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+			<analyzer-input>Random number</analyzer-input>
+			<metric-descriptor-name>Mean</metric-descriptor-name>
+			<metric-param-column-name>Random number</metric-param-column-name>
+		</metric>
+	</metrics>
+</timeline>

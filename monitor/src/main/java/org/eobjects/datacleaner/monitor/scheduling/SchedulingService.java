@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -39,9 +39,9 @@ public interface SchedulingService extends RemoteService {
 
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition);
     
-    public HistoricExecution triggerExecution(TenantIdentifier tenant, JobIdentifier job);
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job);
 
-    public HistoricExecution getLatestExecution(TenantIdentifier tenant, JobIdentifier job);
+    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job);
 
-    public List<HistoricExecution> getAllExecutions(TenantIdentifier tenant, JobIdentifier job);
+    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job);
 }

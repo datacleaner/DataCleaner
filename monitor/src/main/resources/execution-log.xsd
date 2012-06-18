@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/datacleaner/execution-log/1.0"
+	xmlns:log="http://eobjects.org/datacleaner/execution-log/1.0"
+	xmlns:schedule="http://eobjects.org/datacleaner/schedule/1.0"
+	elementFormDefault="qualified">
+
+	<import id="schedule" namespace="http://eobjects.org/datacleaner/schedule/1.0"
+		schemaLocation="schedule.xsd" />
+
+	<element name="execution-log">
+		<complexType>
+			<sequence>
+				<element ref="schedule:schedule" minOccurs="0" maxOccurs="1" />
+				<element name="job-begin-date" minOccurs="0" maxOccurs="1"
+					type="dateTime" />
+				<element name="job-end-date" minOccurs="0" maxOccurs="1"
+					type="dateTime" />
+				<element name="execution-status" minOccurs="1" maxOccurs="1"
+					type="log:execution-type" />
+				<element name="log-output" type="string" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<simpleType name="trigger-type">
+		<restriction base="string">
+			<enumeration value="SCHEDULED" />
+			<enumeration value="MANUAL" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="execution-type">
+		<restriction base="string">
+			<enumeration value="PENDING" />
+			<enumeration value="RUNNING" />
+			<enumeration value="SUCCESS" />
+			<enumeration value="FAILURE" />
+		</restriction>
+	</simpleType>
+
+</schema>

@@ -6,7 +6,7 @@
 
 	<alerts>
 		<alert>
-			<metric>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 				<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
 				<analyzer-input>Random number</analyzer-input>
 				<metric-descriptor-name>Mean</metric-descriptor-name>
@@ -17,7 +17,7 @@
 		</alert>
 		
 		<alert>
-			<metric>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 				<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
 				<analyzer-input>Random number</analyzer-input>
 				<metric-descriptor-name>Mean</metric-descriptor-name>
@@ -28,7 +28,7 @@
 		</alert>
 		
 		<alert>
-			<metric>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 				<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
 				<analyzer-input>Random number</analyzer-input>
 				<metric-descriptor-name>Mean</metric-descriptor-name>

@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -95,9 +95,9 @@ public class SchedulePanel extends Composite {
                 popupPanel.center();
                 popupPanel.show();
 
-                service.triggerExecution(tenant, job, new DCAsyncCallback<HistoricExecution>() {
+                service.triggerExecution(tenant, job, new DCAsyncCallback<ExecutionLog>() {
                     @Override
-                    public void onSuccess(HistoricExecution result) {
+                    public void onSuccess(ExecutionLog result) {
                         HistoricExecutionPanel panel = new HistoricExecutionPanel(result);
                         popupPanel.setWidget(panel);
                         popupPanel.center();
@@ -106,9 +106,9 @@ public class SchedulePanel extends Composite {
             }
         });
 
-        service.getLatestExecution(tenant, job, new DCAsyncCallback<HistoricExecution>() {
+        service.getLatestExecution(tenant, job, new DCAsyncCallback<ExecutionLog>() {
             @Override
-            public void onSuccess(HistoricExecution result) {
+            public void onSuccess(ExecutionLog result) {
                 if (result == null) {
                     latestExecutionLabel.setText("Not available");
                     latestExecutionLabel.addStyleName("discrete");

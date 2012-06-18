@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -37,10 +37,10 @@ public interface SchedulingServiceAsync {
 
     void updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition, AsyncCallback<ScheduleDefinition> callback);
 
-    void getLatestExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<HistoricExecution> callback);
+    void getLatestExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<ExecutionLog> callback);
 
-    void getAllExecutions(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<List<HistoricExecution>> callback);
+    void getAllExecutions(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<List<ExecutionLog>> callback);
 
-    void triggerExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<HistoricExecution> callback);
+    void triggerExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<ExecutionLog> callback);
 
 }

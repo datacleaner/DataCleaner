@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import java.util.Date;
 
-import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 
 import com.google.gwt.core.client.GWT;
@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * A panel which presents a {@link HistoricExecution}
+ * A panel which presents a {@link ExecutionLog}
  */
 public class HistoricExecutionPanel extends Composite {
 
@@ -52,7 +52,7 @@ public class HistoricExecutionPanel extends Composite {
     @UiField
     Label triggerLabel;
 
-    public HistoricExecutionPanel(HistoricExecution historicExecution) {
+    public HistoricExecutionPanel(ExecutionLog historicExecution) {
         super();
 
         initWidget(uiBinder.createAndBindUi(this));
@@ -60,10 +60,20 @@ public class HistoricExecutionPanel extends Composite {
         final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
 
         final Date beginDate = historicExecution.getJobBeginDate();
-        beginTimeLabel.setText(format.format(beginDate));
+        if (beginDate == null) {
+            beginTimeLabel.setText("not available");
+            beginTimeLabel.addStyleName("discrete");
+        } else {
+            beginTimeLabel.setText(format.format(beginDate));
+        }
 
         final Date endDate = historicExecution.getJobEndDate();
-        endTimeLabel.setText(format.format(endDate));
+        if (endDate == null) {
+            endTimeLabel.setText("not available");
+            endTimeLabel.addStyleName("discrete");
+        } else {
+            endTimeLabel.setText(format.format(endDate));
+        }
 
         TriggerType triggerType = historicExecution.getTriggerType();
         if (triggerType == TriggerType.MANUAL) {

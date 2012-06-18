@@ -26,12 +26,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
+import org.eobjects.datacleaner.monitor.jaxb.Alert;
+import org.eobjects.datacleaner.monitor.jaxb.MetricType;
+import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
+import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.schedule.jaxb.Alert;
-import org.eobjects.datacleaner.schedule.jaxb.MetricType;
-import org.eobjects.datacleaner.schedule.jaxb.ObjectFactory;
-import org.eobjects.datacleaner.schedule.jaxb.Schedule;
 
 /**
  * JAXB based reader of .schedule.xml files

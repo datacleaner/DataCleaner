@@ -22,38 +22,19 @@ package org.eobjects.datacleaner.monitor.server;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import org.eobjects.analyzer.util.JaxbValidationEventHandler;
+import org.eobjects.datacleaner.monitor.jaxb.Alert;
+import org.eobjects.datacleaner.monitor.jaxb.MetricType;
+import org.eobjects.datacleaner.monitor.jaxb.Schedule;
+import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.schedule.jaxb.Alert;
-import org.eobjects.datacleaner.schedule.jaxb.MetricType;
-import org.eobjects.datacleaner.schedule.jaxb.ObjectFactory;
-import org.eobjects.datacleaner.schedule.jaxb.Schedule;
-import org.eobjects.datacleaner.schedule.jaxb.Schedule.Alerts;
 
 /**
  * Jaxb based Schedule writer for .schedule.xml files.
  */
-public class JaxbScheduleWriter {
-
-    private final JAXBContext _jaxbContext;
-    private final ObjectFactory _objectFactory;
-
-    public JaxbScheduleWriter() {
-        _objectFactory = new ObjectFactory();
-        try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                    ObjectFactory.class.getClassLoader());
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+public class JaxbScheduleWriter extends JaxbWriter<Schedule> {
 
     public void write(ScheduleDefinition scheduleDefinition, OutputStream outputStream) {
         Schedule schedule = createSchedule(scheduleDefinition);
@@ -61,28 +42,9 @@ public class JaxbScheduleWriter {
         marshal(schedule, outputStream);
     }
 
-    public void marshal(Schedule schedule, OutputStream outputStream) {
-        Marshaller marshaller = createMarshaller();
-        try {
-            marshaller.marshal(schedule, outputStream);
-        } catch (JAXBException e) {
-            throw new IllegalStateException(e);
-        }
-    }
+    public Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
 
-    private Marshaller createMarshaller() {
-        try {
-            Marshaller marshaller = _jaxbContext.createMarshaller();
-            marshaller.setEventHandler(new JaxbValidationEventHandler());
-            return marshaller;
-        } catch (JAXBException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
-
-        final Schedule schedule = _objectFactory.createSchedule();
+        final Schedule schedule = getObjectFactory().createSchedule();
         schedule.setActive(scheduleDefinition.isActive());
         schedule.setScheduleExpression(scheduleDefinition.getScheduleExpression());
 
@@ -103,7 +65,7 @@ public class JaxbScheduleWriter {
     }
 
     private Alert createAlert(AlertDefinition alertDefinition) {
-        final Alert alert = _objectFactory.createAlert();
+        final Alert alert = getObjectFactory().createAlert();
         alert.setDescription(alertDefinition.getDescription());
         alert.setMinimumValue((alertDefinition.getMinimumValue() == null ? null : alertDefinition.getMinimumValue()
                 .intValue()));
@@ -114,7 +76,7 @@ public class JaxbScheduleWriter {
     }
 
     private MetricType createMetric(MetricIdentifier metricIdentifier) {
-        final MetricType metric = _objectFactory.createMetricType();
+        final MetricType metric = getObjectFactory().createMetricType();
         metric.setAnalyzerDescriptorName(metricIdentifier.getAnalyzerDescriptorName());
         metric.setAnalyzerInput(metricIdentifier.getAnalyzerInputName());
         metric.setAnalyzerName(metricIdentifier.getAnalyzerName());

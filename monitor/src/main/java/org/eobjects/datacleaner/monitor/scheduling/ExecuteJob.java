@@ -19,24 +19,22 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling;
 
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.Date;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
+import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.server.MonitorJobReader;
 import org.eobjects.datacleaner.monitor.server.TimelineServiceImpl;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.Action;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -48,60 +46,53 @@ import org.springframework.context.ApplicationContext;
  */
 public class ExecuteJob extends AbstractQuartzJob {
 
-    public static final String DETAIL_TENANT_ID = "DataCleaner.tenant.id";
-    public static final String DETAIL_JOB_NAME = "DataCleaner.job.name";
+    public static final String DETAIL_SCHEDULE_DEFINITION = "DataCleaner.schedule.definition";
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         logger.debug("executeInternal({})", context);
-        
+
         final ApplicationContext applicationContext = getApplicationContext(context);
 
         final Repository repository = applicationContext.getBean(Repository.class);
         final ConfigurationCache configurationCache = applicationContext.getBean(ConfigurationCache.class);
 
         final JobDetail jobDetail = context.getJobDetail();
-        final String tenantId = jobDetail.getJobDataMap().getString(DETAIL_TENANT_ID);
-        if (tenantId == null) {
-            throw new IllegalArgumentException("No tenant id defined");
+        final ScheduleDefinition schedule = (ScheduleDefinition) jobDetail.getJobDataMap().get(
+                DETAIL_SCHEDULE_DEFINITION);
+        if (schedule == null) {
+            throw new IllegalArgumentException("No schedule definition defined");
         }
 
-        final String jobName = jobDetail.getJobDataMap().getString(DETAIL_JOB_NAME);
-        if (jobName == null) {
-            throw new IllegalArgumentException("No job path defined");
-        }
+        final String tenantId = schedule.getTenant().getId();
+        logger.info("Tenant {} executing job {}", tenantId, schedule.getJob());
 
-        final Date fireTime = context.getFireTime();
-        
-        logger.info("Tenant {} executing job {}", tenantId, jobName);
-
-        executeJob(tenantId, jobName, fireTime, repository, configurationCache);
-    }
-
-    public static void executeJob(String tenantId, String jobName, Date fireTime, Repository repository,
-            ConfigurationCache configurationCache) {
         final AnalyzerBeansConfiguration configuration = configurationCache.getAnalyzerBeansConfiguration(tenantId);
+        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.SCHEDULED);
 
-        executeJob(tenantId, jobName, fireTime, repository, configuration);
+        executeJob(tenantId, repository, configuration, execution);
     }
 
     /**
      * Executes a DataCleaner job in the repository and stores the result
      * 
      * @param tenantId
-     *            the ID of the tenant
-     * @param jobName
-     *            the name of the job (note, NOT the path, and NOT including the
-     *            .analysis.xml extension)
-     * @param fireTime
-     *            the time that the job got fired
+     *            the tenant id
      * @param repository
      *            the repository
      * @param configuration
      *            the configuration to use
+     * @param execution
+     *            the execution log object
+     * 
+     * @return The expected result name, which can be used to get updates about
+     *         execution status etc. at a later state.
      */
-    public static void executeJob(String tenantId, String jobName, Date fireTime, Repository repository,
-            AnalyzerBeansConfiguration configuration) {
+    public static String executeJob(String tenantId, Repository repository, AnalyzerBeansConfiguration configuration,
+            ExecutionLog execution) {
+
+        final String jobName = execution.getJob().getName();
+
         final RepositoryFolder tenantFolder = repository.getFolder(tenantId);
         final RepositoryFolder jobsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
         final String jobFileName = jobName + FileFilters.ANALYSIS_XML.getExtension();
@@ -113,20 +104,18 @@ public class ExecuteJob extends AbstractQuartzJob {
         final MonitorJobReader jobReader = new MonitorJobReader(configuration, jobFile);
         final AnalysisJob job = jobReader.readJob();
 
-        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration);
-        final AnalysisResultFuture resultFuture = runner.run(job);
-
         final RepositoryFolder resultFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_RESULTS);
-        final String resultFilename = jobName + "-" + fireTime.getTime()
-                + FileFilters.ANALYSIS_RESULT_SER.getExtension();
+        final Date timestamp = new Date();
+        final String resultName = jobName + "-" + timestamp.getTime();
 
-        resultFolder.createFile(resultFilename, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                final AnalysisResult result = new SimpleAnalysisResult(resultFuture.getResultMap());
-                final ObjectOutputStream oos = new ObjectOutputStream(out);
-                oos.writeObject(result);
-            }
-        });
+        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, resultName);
+        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration, analysisListener);
+
+        // fire and forget
+        runner.run(job);
+
+        // TODO: Check alerts
+
+        return resultName;
     }
 }

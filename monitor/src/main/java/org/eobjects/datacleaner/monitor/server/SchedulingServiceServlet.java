@@ -24,7 +24,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
-import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -77,17 +77,17 @@ public class SchedulingServiceServlet extends RemoteServiceServlet implements Sc
     }
     
     @Override
-    public List<HistoricExecution> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.getAllExecutions(tenant, job);
     }
     
     @Override
-    public HistoricExecution getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
+    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.getLatestExecution(tenant, job);
     }
 
     @Override
-    public HistoricExecution triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.triggerExecution(tenant, job);
     }
 

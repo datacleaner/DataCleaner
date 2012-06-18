@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0">
+<timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0"
+	xmlns:shared="http://eobjects.org/datacleaner/shared/1.0">
 	<job-name>product_profiling</job-name>
 	<metrics>
-		<metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 			<analyzer-descriptor-name>Pattern finder</analyzer-descriptor-name>
 			<analyzer-input>PRODUCTCODE</analyzer-input>
 			<metric-descriptor-name>Pattern count</metric-descriptor-name>
 		</metric>
-		<metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 			<analyzer-descriptor-name>Reference data matcher</analyzer-descriptor-name>
 			<analyzer-name>Vendor whitelist check</analyzer-name>
 			<analyzer-input>PRODUCTVENDOR</analyzer-input>

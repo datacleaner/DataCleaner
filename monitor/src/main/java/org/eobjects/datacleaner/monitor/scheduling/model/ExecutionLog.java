@@ -26,29 +26,30 @@ import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Represents an ended execution of a job.
+ * Represents a running (or finished) execution of a job.
  */
-public class HistoricExecution implements IsSerializable {
+public class ExecutionLog implements IsSerializable {
 
+    // metadata about the job and the trigger
     private ScheduleDefinition _schedule;
     private JobIdentifier _job;
     private TriggerType _triggerType;
+
+    // execution level output
     private String _logOutput;
     private Date _jobBeginDate;
     private Date _jobEndDate;
+    private ExecutionStatus _executionStatus;
 
     // no-args constructor
-    public HistoricExecution() {
+    public ExecutionLog() {
     }
 
-    public HistoricExecution(ScheduleDefinition schedule, TriggerType triggerType, String logOutput, Date jobBeginDate,
-            Date jobEndDate) {
+    public ExecutionLog(ScheduleDefinition schedule, TriggerType triggerType) {
         _schedule = schedule;
         _job = schedule.getJob();
         _triggerType = triggerType;
-        _logOutput = logOutput;
-        _jobBeginDate = jobBeginDate;
-        _jobEndDate = jobEndDate;
+        _executionStatus = ExecutionStatus.PENDING;
     }
 
     public ScheduleDefinition getSchedule() {
@@ -59,12 +60,24 @@ public class HistoricExecution implements IsSerializable {
         return _logOutput;
     }
 
+    public void setLogOutput(String logOutput) {
+        _logOutput = logOutput;
+    }
+
     public Date getJobBeginDate() {
         return _jobBeginDate;
     }
 
+    public void setJobBeginDate(Date jobBeginDate) {
+        _jobBeginDate = jobBeginDate;
+    }
+
     public Date getJobEndDate() {
         return _jobEndDate;
+    }
+
+    public void setJobEndDate(Date jobEndDate) {
+        _jobEndDate = jobEndDate;
     }
 
     public JobIdentifier getJob() {
@@ -73,5 +86,13 @@ public class HistoricExecution implements IsSerializable {
 
     public TriggerType getTriggerType() {
         return _triggerType;
+    }
+
+    public ExecutionStatus getExecutionStatus() {
+        return _executionStatus;
+    }
+
+    public void setExecutionStatus(ExecutionStatus executionStatus) {
+        _executionStatus = executionStatus;
     }
 }

@@ -29,12 +29,14 @@ import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.jaxb.Alert;
+import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.scheduling.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.HistoricExecution;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -43,8 +45,6 @@ import org.eobjects.datacleaner.monitor.timeline.TimelineService;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.schedule.jaxb.Alert;
-import org.eobjects.datacleaner.schedule.jaxb.Schedule;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.quartz.CronExpression;
@@ -173,7 +173,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
             scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, job, active);
         }
-        
+
         for (Alert alert : alerts) {
             final AlertDefinition alertDefinition = reader.createAlert(alert);
             scheduleDefinition.getAlerts().add(alertDefinition);
@@ -224,8 +224,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 final JobDetail jobDetail = new JobDetail(jobName, tenantId, ExecuteJob.class);
                 JobDataMap jobDataMap = jobDetail.getJobDataMap();
                 jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
-                jobDataMap.put(ExecuteJob.DETAIL_JOB_NAME, jobName);
-                jobDataMap.put(ExecuteJob.DETAIL_TENANT_ID, tenantId);
+                jobDataMap.put(ExecuteJob.DETAIL_SCHEDULE_DEFINITION, schedule);
 
                 final JobIdentifier scheduleAfterJob = schedule.getScheduleAfterJob();
                 if (scheduleAfterJob == null) {
@@ -297,29 +296,25 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     @Override
-    public HistoricExecution triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
-        final Date beginTime = new Date();
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
-        ExecuteJob.executeJob(tenant.getId(), job.getName(), beginTime, _repository, configuration);
-        final Date endTime = new Date();
 
-        final String logOutput = null;
-        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "@now", true);
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, false);
+        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+        
+        ExecuteJob.executeJob(tenant.getId(), _repository, configuration, execution);
 
-        final HistoricExecution historicExecution = new HistoricExecution(schedule, TriggerType.MANUAL, logOutput,
-                beginTime, endTime);
-
-        return historicExecution;
+        return execution;
     }
 
     @Override
-    public HistoricExecution getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
+    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
         // TODO: Not implemented
         return null;
     }
 
     @Override
-    public List<HistoricExecution> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
         // TODO: Not implemented
         return null;
     }

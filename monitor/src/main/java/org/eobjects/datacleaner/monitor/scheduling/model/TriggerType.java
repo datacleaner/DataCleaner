@@ -20,7 +20,7 @@
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
 /**
- * Represents whether a {@link HistoricExecution} was manually or automatically
+ * Represents whether a {@link ExecutionLog} was manually or automatically
  * triggered (scheduled).
  */
 public enum TriggerType {

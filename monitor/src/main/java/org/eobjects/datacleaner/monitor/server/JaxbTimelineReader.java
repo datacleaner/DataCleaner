@@ -28,12 +28,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
+import org.eobjects.datacleaner.monitor.jaxb.MetricType;
+import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
+import org.eobjects.datacleaner.monitor.jaxb.Timeline;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
-import org.eobjects.datacleaner.timeline.jaxb.MetricType;
-import org.eobjects.datacleaner.timeline.jaxb.ObjectFactory;
-import org.eobjects.datacleaner.timeline.jaxb.Timeline;
 
 /**
  * JAXB based {@link TimelineReader} of .analysis.timeline.xml files.

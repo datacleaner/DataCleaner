@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/datacleaner/schedule/1.0"
 	xmlns:schedule="http://eobjects.org/datacleaner/schedule/1.0"
+	xmlns:shared="http://eobjects.org/datacleaner/shared/1.0"
 	elementFormDefault="qualified">
+
+	<import id="shared" namespace="http://eobjects.org/datacleaner/shared/1.0"
+		schemaLocation="shared.xsd" />
 
 	<element name="schedule">
 		<complexType>
@@ -14,7 +18,7 @@
 				<element name="alerts" minOccurs="0" maxOccurs="1">
 					<complexType>
 						<sequence>
-							<element name="alert" type="schedule:alert" minOccurs="1"
+							<element name="alert" type="schedule:alert" minOccurs="0"
 								maxOccurs="unbounded" />
 						</sequence>
 					</complexType>
@@ -27,26 +31,10 @@
 		<sequence>
 			<element name="description" type="string" minOccurs="0"
 				maxOccurs="1" />
-			<element name="metric" type="schedule:metricType" />
+			<element ref="shared:metric" minOccurs="1" maxOccurs="1" />
 			<element name="minimum-value" type="int" />
 			<element name="maximum-value" type="int" />
 		</sequence>
 	</complexType>
 
-	<complexType name="metricType">
-		<sequence>
-			<element name="analyzer-descriptor-name" minOccurs="1"
-				maxOccurs="1" type="string" />
-			<element name="analyzer-name" minOccurs="0" maxOccurs="1"
-				type="string" />
-			<element name="analyzer-input" minOccurs="0" maxOccurs="1"
-				type="string" />
-			<element name="metric-descriptor-name" minOccurs="1"
-				maxOccurs="1" type="string" />
-			<element name="metric-param-query-string" minOccurs="0"
-				maxOccurs="1" type="string" />
-			<element name="metric-param-column-name" minOccurs="0"
-				maxOccurs="1" type="string" />
-		</sequence>
-	</complexType>
 </schema>

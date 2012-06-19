@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0">
+	<job-name>product_profiling</job-name>
+	<metrics>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Classic Cars</metric-param-query-string>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Vintage Cars</metric-param-query-string>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Motorcycles</metric-param-query-string>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Planes</metric-param-query-string>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Trucks and Buses</metric-param-query-string>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Ships</metric-param-query-string>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Trains</metric-param-query-string>
+		</metric>
+	</metrics>
+</timeline>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schedule xmlns="http://eobjects.org/datacleaner/schedule/1.0">
+
+	<schedule-expression>@hourly</schedule-expression>
+	<active>true</active>
+
+	<alerts>
+		<alert>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+				<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+				<analyzer-input>Random number</analyzer-input>
+				<metric-descriptor-name>Mean</metric-descriptor-name>
+				<metric-param-column-name>Random number</metric-param-column-name>
+			</metric>
+			<minimum-value>0</minimum-value>
+			<maximum-value>400</maximum-value>
+			<severity>FATAL</severity>
+		</alert>
+
+		<alert>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+				<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+				<analyzer-input>Random number</analyzer-input>
+				<metric-descriptor-name>Mean</metric-descriptor-name>
+				<metric-param-column-name>Random number</metric-param-column-name>
+			</metric>
+			<minimum-value>5</minimum-value>
+			<maximum-value>300</maximum-value>
+			<severity>WARNING</severity>
+		</alert>
+
+		<alert>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+				<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+				<analyzer-input>Random number</analyzer-input>
+				<metric-descriptor-name>Mean</metric-descriptor-name>
+				<metric-param-column-name>Random number</metric-param-column-name>
+			</metric>
+			<minimum-value>100</minimum-value>
+			<maximum-value>200</maximum-value>
+			<severity>SURVEILLANCE</severity>
+		</alert>
+
+		<alert>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+				<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+				<analyzer-input>Random number</analyzer-input>
+				<metric-descriptor-name>Mean</metric-descriptor-name>
+				<metric-param-column-name>Random number</metric-param-column-name>
+			</metric>
+			<minimum-value>120</minimum-value>
+			<maximum-value>180</maximum-value>
+			<severity>INTELLIGENCE</severity>
+		</alert>
+	</alerts>
+</schedule>

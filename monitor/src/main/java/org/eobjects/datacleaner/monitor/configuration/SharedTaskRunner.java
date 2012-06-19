@@ -19,10 +19,13 @@
  */
 package org.eobjects.datacleaner.monitor.configuration;
 
+import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskListener;
 import org.eobjects.analyzer.job.concurrent.TaskRunnable;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
 import org.eobjects.analyzer.job.tasks.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -31,16 +34,27 @@ import org.springframework.web.context.WebApplicationContext;
  */
 public class SharedTaskRunner implements TaskRunner {
 
+    private static final Logger logger = LoggerFactory.getLogger(SharedTaskRunner.class);
+            
     private TaskRunner _delegate;
     
     public TaskRunner getDelegate() {
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            _delegate = applicationContext.getBean(TaskRunner.class);
+            if (applicationContext == null) {
+                logger.warn("No WebApplicationContext available! Creating a temporary delegate!");
+                return createTemporaryDelegate();
+            } else {
+                _delegate = applicationContext.getBean(TaskRunner.class);
+            }
         }
         return _delegate;
     }
     
+    private TaskRunner createTemporaryDelegate() {
+        return new MultiThreadedTaskRunner(1);
+    }
+
     public void setDelegate(TaskRunner delegate) {
         _delegate = delegate;
     }

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +29,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineService;
@@ -48,7 +52,7 @@ public class SchedulingServiceImplTest extends TestCase {
         TimelineService timelineService = new TimelineServiceImpl(repository, configurationCache);
 
         SchedulingServiceImpl service = new SchedulingServiceImpl(timelineService, repository, configurationCache);
-        
+
         Scheduler scheduler = service.getScheduler();
         assertFalse(scheduler.isStarted());
 
@@ -57,22 +61,59 @@ public class SchedulingServiceImplTest extends TestCase {
         assertTrue(scheduler.isStarted());
         scheduler.pauseAll();
 
-        assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getTriggerGroupNames()));
-        assertEquals("[random_number_generation]", Arrays.toString(scheduler.getTriggerNames("tenant1")));
-        assertEquals("[another_random_job]", Arrays.toString(scheduler.getTriggerNames("tenant2")));
+        final File directory = new File("src/test/resources/example_repo/tenant1/results");
+        final FilenameFilter filenameFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("random_number");
+            }
+        };
 
-        assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getJobGroupNames()));
-        assertEquals("[random_number_generation]", Arrays.toString(scheduler.getJobNames("tenant1")));
-        assertEquals("[another_random_job]", Arrays.toString(scheduler.getJobNames("tenant2")));
-        
-        List<ScheduleDefinition> schedules = service.getSchedules(new TenantIdentifier("tenant1"));
-        assertEquals(2, schedules.size());
-        assertEquals(null, schedules.get(0).getScheduleExpression());
-        assertEquals("@hourly", schedules.get(1).getScheduleExpression());
-        CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");
-        assertEquals("0 0 * * * ?", trigger.getCronExpression());
+        try {
+            assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getTriggerGroupNames()));
+            assertEquals("[random_number_generation]", Arrays.toString(scheduler.getTriggerNames("tenant1")));
+            assertEquals("[another_random_job]", Arrays.toString(scheduler.getTriggerNames("tenant2")));
 
-        scheduler.shutdown();
+            assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getJobGroupNames()));
+            assertEquals("[random_number_generation]", Arrays.toString(scheduler.getJobNames("tenant1")));
+            assertEquals("[another_random_job]", Arrays.toString(scheduler.getJobNames("tenant2")));
+
+            final TenantIdentifier tenant = new TenantIdentifier("tenant1");
+
+            final List<ScheduleDefinition> schedules = service.getSchedules(tenant);
+            assertEquals(2, schedules.size());
+            assertEquals(null, schedules.get(0).getScheduleExpression());
+            ScheduleDefinition randomNumberGenerationSchedule = schedules.get(1);
+            assertEquals("@hourly", randomNumberGenerationSchedule.getScheduleExpression());
+
+            final CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");
+            assertEquals("0 0 * * * ?", trigger.getCronExpression());
+
+            assertEquals(0, directory.listFiles(filenameFilter).length);
+
+            final ExecutionLog execution = service.triggerExecution(tenant, randomNumberGenerationSchedule.getJob());
+            assertEquals(ExecutionStatus.RUNNING, execution.getExecutionStatus());
+            assertNull(execution.getJobEndDate());
+            assertNotNull(execution.getJobBeginDate());
+
+            Thread.sleep(1000);
+
+            assertNotNull(execution.getJobEndDate());
+            assertEquals(ExecutionStatus.SUCCESS, execution.getExecutionStatus());
+            final String logOutput = execution.getLogOutput();
+            assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution BEGIN") != -1);
+            assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution SUCCESS") != -1);
+
+            assertEquals(2, directory.listFiles(filenameFilter).length);
+
+        } finally {
+            scheduler.shutdown();
+
+            File[] files = directory.listFiles(filenameFilter);
+            for (int i = 0; i < files.length; i++) {
+                files[i].delete();
+            }
+        }
     }
 
     public void testToCronExpressionYearly() throws Exception {

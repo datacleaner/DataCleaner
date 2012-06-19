@@ -40,7 +40,9 @@ public class SchedulingServiceImplTest extends TestCase {
         Repository repository = new FileRepository("src/test/resources/example_repo");
         ConfigurationCache configurationCache = new ConfigurationCache(repository);
         TimelineService timelineService = new TimelineServiceImpl(repository, configurationCache);
-        new SchedulingServiceImpl(timelineService, repository, configurationCache);
+        
+        SchedulingServiceImpl service = new SchedulingServiceImpl(timelineService, repository, configurationCache);
+        service.initialize();
     }
     
     public void testToCronExpressionYearly() throws Exception {

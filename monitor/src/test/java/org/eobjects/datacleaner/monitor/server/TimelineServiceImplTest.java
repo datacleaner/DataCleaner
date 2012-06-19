@@ -41,12 +41,12 @@ import org.eobjects.datacleaner.repository.file.FileRepository;
 public class TimelineServiceImplTest extends TestCase {
 
     public void testBasicInteraction() throws Exception {
-        final FileRepository repository = new FileRepository("src/main/webapp/repository");
+        final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         final ConfigurationCache configurationCache = new ConfigurationCache(repository);
         final TimelineService service = new TimelineServiceImpl(repository, configurationCache);
 
-        final TenantIdentifier tenant = new TenantIdentifier("DC");
-        assertEquals("TenantIdentifier[DC]", tenant.toString());
+        final TenantIdentifier tenant = new TenantIdentifier("tenant1");
+        assertEquals("TenantIdentifier[tenant1]", tenant.toString());
 
         final List<JobIdentifier> jobs = service.getJobs(tenant);
         assertEquals(2, jobs.size());
@@ -91,7 +91,7 @@ public class TimelineServiceImplTest extends TestCase {
 
         final TimelineIdentifier timelineIdentifier = timelines.get(0);
         assertEquals(
-                "TimelineIdentifier[name=Product code patterns (the lower the better),path=/DC/timelines/Product data/Product code patterns (the lower the better).analysis.timeline.xml]",
+                "TimelineIdentifier[name=Product code patterns (the lower the better),path=/tenant1/timelines/Product data/Product code patterns (the lower the better).analysis.timeline.xml]",
                 timelineIdentifier.toString());
 
         final TimelineDefinition timelineDefinition = service.getTimelineDefinition(tenant, timelineIdentifier);

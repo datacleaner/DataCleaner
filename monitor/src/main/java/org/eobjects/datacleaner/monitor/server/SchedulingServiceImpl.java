@@ -31,6 +31,7 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.jaxb.Alert;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
+import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.scheduling.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
@@ -97,6 +98,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
+    public Scheduler getScheduler() {
+        return _scheduler;
+    }
+
     public void initialize() {
         final List<RepositoryFolder> tenantFolders = _repository.getFolders();
         for (RepositoryFolder tenantFolder : tenantFolders) {
@@ -149,7 +154,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             active = false;
             alerts = Collections.emptyList();
         } else {
-            InputStream inputStream = scheduleFile.readFile();
+            final InputStream inputStream = scheduleFile.readFile();
             final Schedule schedule;
             try {
                 schedule = reader.unmarshallSchedule(inputStream);
@@ -157,7 +162,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 FileHelper.safeClose(inputStream);
             }
 
-            alerts = schedule.getAlerts().getAlert();
+            final Alerts alertsType = schedule.getAlerts();
+            if (alertsType == null) {
+                alerts = Collections.emptyList();
+            } else {
+                alerts = alertsType.getAlert();
+            }
 
             scheduleExpression = schedule.getScheduleExpression();
             active = schedule.isActive();
@@ -234,6 +244,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     final CronExpression cronExpression = toCronExpression(scheduleExpression);
 
                     final CronTriggerBean trigger = new CronTriggerBean();
+                    trigger.setGroup(tenantId);
                     trigger.setName(jobName);
                     trigger.setStartTime(new Date());
                     trigger.setCronExpression(cronExpression);

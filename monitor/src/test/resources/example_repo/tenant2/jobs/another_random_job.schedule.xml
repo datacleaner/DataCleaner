@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schedule xmlns="http://eobjects.org/datacleaner/schedule/1.0">
+
+	<schedule-expression>@daily</schedule-expression>
+	<active>true</active>
+
+</schedule>

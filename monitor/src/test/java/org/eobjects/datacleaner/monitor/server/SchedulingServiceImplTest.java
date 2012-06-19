@@ -19,32 +19,62 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineService;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.metamodel.util.DateUtils;
 import org.eobjects.metamodel.util.Month;
 import org.quartz.CronExpression;
+import org.quartz.CronTrigger;
+import org.quartz.Scheduler;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
 public class SchedulingServiceImplTest extends TestCase {
-    
+
     public void testScenario() throws Exception {
         Repository repository = new FileRepository("src/test/resources/example_repo");
         ConfigurationCache configurationCache = new ConfigurationCache(repository);
         TimelineService timelineService = new TimelineServiceImpl(repository, configurationCache);
-        
+
         SchedulingServiceImpl service = new SchedulingServiceImpl(timelineService, repository, configurationCache);
+        
+        Scheduler scheduler = service.getScheduler();
+        assertFalse(scheduler.isStarted());
+
         service.initialize();
+
+        assertTrue(scheduler.isStarted());
+        scheduler.pauseAll();
+
+        assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getTriggerGroupNames()));
+        assertEquals("[random_number_generation]", Arrays.toString(scheduler.getTriggerNames("tenant1")));
+        assertEquals("[another_random_job]", Arrays.toString(scheduler.getTriggerNames("tenant2")));
+
+        assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getJobGroupNames()));
+        assertEquals("[random_number_generation]", Arrays.toString(scheduler.getJobNames("tenant1")));
+        assertEquals("[another_random_job]", Arrays.toString(scheduler.getJobNames("tenant2")));
+        
+        List<ScheduleDefinition> schedules = service.getSchedules(new TenantIdentifier("tenant1"));
+        assertEquals(2, schedules.size());
+        assertEquals(null, schedules.get(0).getScheduleExpression());
+        assertEquals("@hourly", schedules.get(1).getScheduleExpression());
+        CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");
+        assertEquals("0 0 * * * ?", trigger.getCronExpression());
+
+        scheduler.shutdown();
     }
-    
+
     public void testToCronExpressionYearly() throws Exception {
         CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@yearly");
         Calendar cal = Calendar.getInstance();
@@ -90,13 +120,13 @@ public class SchedulingServiceImplTest extends TestCase {
 
         callTime = DateUtils.get(2012, Month.MARCH, 21);
         assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
-        
+
         callTime = DateUtils.get(2012, Month.MARCH, 24);
         assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
-        
+
         callTime = DateUtils.get(2012, Month.MARCH, 25);
         assertEquals("2012-03-25", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
-        
+
         callTime = DateUtils.get(2012, Month.MARCH, 26);
         assertEquals("2012-04-01", new SimpleDateFormat("yyyy-MM-dd").format(dailyExpr.getNextValidTimeAfter(callTime)));
     }
@@ -123,7 +153,7 @@ public class SchedulingServiceImplTest extends TestCase {
 
         assertEquals(cal.getTime(), dailyExpr.getNextValidTimeAfter(new Date()));
     }
-    
+
     public void testToCronExpressionMinutely() throws Exception {
         CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@minutely");
         Calendar cal = Calendar.getInstance();

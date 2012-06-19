@@ -24,6 +24,10 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
+import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.timeline.TimelineService;
+import org.eobjects.datacleaner.repository.Repository;
+import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.metamodel.util.DateUtils;
 import org.eobjects.metamodel.util.Month;
 import org.quartz.CronExpression;
@@ -31,6 +35,13 @@ import org.quartz.CronExpression;
 import com.ibm.icu.text.SimpleDateFormat;
 
 public class SchedulingServiceImplTest extends TestCase {
+    
+    public void testScenario() throws Exception {
+        Repository repository = new FileRepository("src/test/resources/example_repo");
+        ConfigurationCache configurationCache = new ConfigurationCache(repository);
+        TimelineService timelineService = new TimelineServiceImpl(repository, configurationCache);
+        new SchedulingServiceImpl(timelineService, repository, configurationCache);
+    }
     
     public void testToCronExpressionYearly() throws Exception {
         CronExpression dailyExpr = SchedulingServiceImpl.toCronExpression("@yearly");

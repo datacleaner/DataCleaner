@@ -106,8 +106,9 @@ public class ResultFileController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
-            final Writer out) {
+            @RequestParam(value = "tabs", required = false) Boolean tabsParam, final Writer out) {
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
+
         if (tenantFolder == null) {
             throw new IllegalArgumentException("No such tenant: " + tenant);
         }
@@ -124,7 +125,8 @@ public class ResultFileController {
 
         final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
         final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
-        final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter();
+        final boolean tabs = (tabsParam == null ? true : tabsParam.booleanValue());
+        final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter(tabs);
 
         try {
             htmlWriter.write(analysisResult, configuration, out);

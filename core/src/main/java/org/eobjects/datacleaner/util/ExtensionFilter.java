@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.util;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.filechooser.FileFilter;
 
@@ -27,7 +28,7 @@ import javax.swing.filechooser.FileFilter;
  * A file filter for JFileChooser's which filters on behalf of the file
  * extension
  */
-public class ExtensionFilter extends FileFilter {
+public class ExtensionFilter extends FileFilter implements FilenameFilter {
 
 	private final String _desc;
 	private final String _extension;
@@ -47,14 +48,18 @@ public class ExtensionFilter extends FileFilter {
 			return false;
 		}
 
-		fileName = fileName.substring(fileName.length() - _extension.length());
-
-		if (fileName.equalsIgnoreCase(_extension)) {
-			return true;
-		}
-
-		return false;
+		return accept(null, fileName);
 	}
+
+    @Override
+    public boolean accept(File dir, String name) {
+        final String extension = name.substring(name.length() - _extension.length());
+        if (extension.equalsIgnoreCase(_extension)) {
+            return true;
+        }
+
+        return false;
+    }
 
 	@Override
 	public String getDescription() {

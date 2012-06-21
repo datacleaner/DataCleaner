@@ -33,7 +33,7 @@ import org.eobjects.datacleaner.actions.LoginChangeListener;
  * Defines the settings provided at runtime by the user in DataCleaner
  */
 public interface UserPreferences {
-    
+
     public void save();
 
     public void addLoginChangeListener(LoginChangeListener listener);
@@ -113,4 +113,8 @@ public interface UserPreferences {
     public void setExtensionPackages(List<ExtensionPackage> extensionPackages);
 
     public Map<String, String> getAdditionalProperties();
+
+    public File getSaveDownloadedFilesDirectory();
+
+    public void setSaveDownloadedFilesDirectory(File directory);
 }

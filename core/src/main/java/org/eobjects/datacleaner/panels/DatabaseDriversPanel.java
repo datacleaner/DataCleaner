@@ -234,7 +234,7 @@ public class DatabaseDriversPanel extends DCPanel {
 	}
 
 	private ActionListener createDownloadActionListener(final DatabaseDriverDescriptor dd) {
-		return new DownloadFilesActionListener(dd.getDownloadUrls(), new FileDownloadListener() {
+		final FileDownloadListener downloadListener = new FileDownloadListener() {
 			@Override
 			public void onFilesDownloaded(File[] files) {
 				final String driverClassName = dd.getDriverClassName();
@@ -251,6 +251,7 @@ public class DatabaseDriversPanel extends DCPanel {
 				}
 				updateDriverList();
 			}
-		}, _windowContext, _httpClient);
+		};
+        return new DownloadFilesActionListener(dd.getDownloadUrls(), downloadListener, _windowContext, _httpClient, _userPreferences);
 	}
 }

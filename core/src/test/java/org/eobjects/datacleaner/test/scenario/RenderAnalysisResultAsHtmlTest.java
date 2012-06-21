@@ -52,7 +52,7 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
      * @throws Exception
      */
     public void testOpenJobWithAllAnalyzers() throws Exception {
-        DCModule module = new DCModule(new File("."));
+        DCModule module = new DCModule();
         Injector injector = Guice.createInjector(module);
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 

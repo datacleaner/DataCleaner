@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileType;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.eobjects.datacleaner.bootstrap.Bootstrap;
@@ -82,18 +84,27 @@ public final class Main {
 	 *         otherwise
 	 */
 	protected static boolean initializeLogging() {
-		final File dataCleanerHome = DataCleanerHome.get();
-		final File xmlConfigurationFile = new File(dataCleanerHome, "log4j.xml");
-		if (xmlConfigurationFile.exists() && xmlConfigurationFile.isFile()) {
-			DOMConfigurator.configure(xmlConfigurationFile.getAbsolutePath());
-			return true;
+		final FileObject dataCleanerHome = DataCleanerHome.get();
+		
+		try {
+		    final FileObject xmlConfigurationFile = dataCleanerHome.resolveFile("log4j.xml");
+		    if (xmlConfigurationFile.exists() && xmlConfigurationFile.getType() == FileType.FILE) {
+		        DOMConfigurator.configure(xmlConfigurationFile.getURL());
+		        return true;
+		    }
+		} catch (FileSystemException e) {
+		    // no xml logging found, ignore
 		}
 
-		final File propertiesConfigurationFile = new File(dataCleanerHome, "log4j.properties");
-		if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.isFile()) {
-			PropertyConfigurator.configure(propertiesConfigurationFile.getAbsolutePath());
-			return true;
-		}
+		try {
+		    final FileObject propertiesConfigurationFile = dataCleanerHome.resolveFile("log4j.properties");
+		    if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.getType() == FileType.FILE) {
+		        PropertyConfigurator.configure(propertiesConfigurationFile.getURL());
+		        return true;
+		    }
+		} catch (FileSystemException e) {
+            // no xml logging found, ignore
+        }
 
 		return false;
 	}

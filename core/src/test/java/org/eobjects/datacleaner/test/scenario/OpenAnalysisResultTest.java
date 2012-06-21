@@ -20,10 +20,11 @@
 package org.eobjects.datacleaner.test.scenario;
 
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.vfs2.FileObject;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.windows.AbstractWindow;
@@ -49,9 +50,9 @@ public class OpenAnalysisResultTest extends TestCase {
             return;
         }
 
-        DCModule module = new DCModule(new File("."));
+        DCModule module = new DCModule();
 
-        File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
+        FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.result.dat");
 
         ResultWindow window = OpenAnalysisJobActionListener.openAnalysisResult(file, module);
         assertNotNull(window);

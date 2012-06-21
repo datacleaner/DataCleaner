@@ -19,11 +19,11 @@
  */
 package org.eobjects.datacleaner.user;
 
-import java.io.File;
-import java.io.IOException;
-
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.configuration.ConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
+import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,43 +34,47 @@ import org.slf4j.LoggerFactory;
  * @author Kasper Sørensen
  */
 public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurationReaderInterceptor implements
-		ConfigurationReaderInterceptor {
+        ConfigurationReaderInterceptor {
 
-	private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationReaderInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationReaderInterceptor.class);
 
-	private final File _dataCleanerHome;
+    private final FileObject _dataCleanerHome;
 
-	public DataCleanerConfigurationReaderInterceptor(File dataCleanerHome) {
-		_dataCleanerHome = dataCleanerHome;
-	}
+    public DataCleanerConfigurationReaderInterceptor(FileObject dataCleanerHome) {
+        _dataCleanerHome = dataCleanerHome;
+    }
 
-	@Override
-	public Class<?> loadClass(String className) throws ClassNotFoundException {
-		ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
-		return Class.forName(className, true, classLoader);
-	}
+    @Override
+    public Class<?> loadClass(String className) throws ClassNotFoundException {
+        ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
+        return Class.forName(className, true, classLoader);
+    }
 
-	@Override
-	public String createFilename(String filename) {
-		if (filename == null) {
-			return null;
-		}
-		File file = new File(filename);
-		if (!file.isAbsolute()) {
-			file = new File(_dataCleanerHome, filename);
-			try {
-				filename = file.getCanonicalPath();
-			} catch (IOException e) {
-				logger.warn("Could not get canonical path for relative file: " + filename, e);
-				filename = file.getAbsolutePath();
-			}
-		}
-		return filename;
-	}
+    @Override
+    public String createFilename(String filename) {
+        if (filename == null) {
+            return null;
+        }
 
-	@Override
-	public String getTemporaryStorageDirectory() {
-		return new File(_dataCleanerHome, "temp").getAbsolutePath();
-	}
+        try {
+            FileObject file = _dataCleanerHome.resolveFile(filename);
+            return file.getName().getPathDecoded();
+        } catch (FileSystemException e) {
+            logger.warn("Could not resolve absolute path using VFS: " + filename, e);
+            return filename;
+        }
+    }
+
+    @Override
+    public String getTemporaryStorageDirectory() {
+        try {
+            if (_dataCleanerHome.isWriteable()) {
+                return _dataCleanerHome.resolveFile("temp").getName().getPathDecoded();
+            }
+        } catch (FileSystemException e) {
+            logger.warn("Could not resolve temp directory", e);
+        }
+        return FileHelper.getTempDir().getAbsolutePath();
+    }
 
 }

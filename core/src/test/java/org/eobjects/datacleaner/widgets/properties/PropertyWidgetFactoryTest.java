@@ -62,7 +62,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
 	private SimpleStringPattern stringPattern3 = new SimpleStringPattern("sp3", "");
 
 	public void testCreateAllPropertyTypes() throws Exception {
-		Injector injector = Guice.createInjector(new DCModule(new File("."), null));
+		Injector injector = Guice.createInjector(new DCModule());
 		AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 		MutableReferenceDataCatalog referenceDataCatalog = (MutableReferenceDataCatalog) configuration
 				.getReferenceDataCatalog();

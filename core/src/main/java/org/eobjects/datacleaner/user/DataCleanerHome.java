@@ -20,16 +20,21 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.FileType;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.util.ResourceManager;
+import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,110 +53,108 @@ import org.slf4j.LoggerFactory;
  */
 public final class DataCleanerHome {
 
-	private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
-	private static final File _dataCleanerHome;
+    private static final Logger logger = LoggerFactory.getLogger(DataCleanerHome.class);
+    private static final FileObject _dataCleanerHome;
 
-	static {
-		File candidate = null;
+    static {
+        try {
+            _dataCleanerHome = findDataCleanerHome();
+        } catch (FileSystemException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+    
+    private static FileObject findDataCleanerHome() throws FileSystemException {
+        final FileSystemManager manager = VFSUtils.getFileSystemManager();
+        
+        FileObject candidate = null;
 
-		String env = System.getenv("DATACLEANER_HOME");
-		if (!StringUtils.isNullOrEmpty(env)) {
-			candidate = new File(env);
-		}
+        final String env = System.getenv("DATACLEANER_HOME");
+        if (!StringUtils.isNullOrEmpty(env)) {
+            candidate = manager.resolveFile(env);
+        }
 
-		if (!isUsable(candidate)) {
-			if (ClassLoaderUtils.IS_WEB_START) {
-				// in web start, the default folder will be in user.home
-				String userHomePath = System.getProperty("user.home");
-				if (userHomePath == null) {
-					throw new IllegalStateException("Could not determine user home directory: " + candidate.getPath());
-				}
-				candidate = new File(userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar + Main.VERSION);
+        if (!isUsable(candidate)) {
+            if (ClassLoaderUtils.IS_WEB_START) {
+                // in web start, the default folder will be in user.home
+                String userHomePath = System.getProperty("user.home");
+                if (userHomePath == null) {
+                    throw new IllegalStateException("Could not determine user home directory: " + candidate);
+                }
 
-			} else {
-				// in normal mode, the default folder will be in the working
-				// directory
-				candidate = new File(".");
-			}
-		}
+                candidate = manager.resolveFile(userHomePath + File.separatorChar + ".datacleaner" + File.separatorChar
+                        + Main.VERSION);
 
-		if (!isUsable(candidate)) {
-			if (!candidate.exists() && !candidate.mkdirs()) {
-				throw new IllegalStateException("Could not create DataCleaner home directory: " + candidate.getPath());
-			}
+            } else {
+                // in normal mode, the default folder will be in the working
+                // directory
+                candidate = manager.resolveFile(".");
+            }
+        }
 
-			copyIfNonExisting(candidate, "conf.xml");
-			copyIfNonExisting(candidate, "examples/countrycodes.csv");
-			copyIfNonExisting(candidate, "examples/employees.analysis.xml");
-			copyIfNonExisting(candidate, "examples/duplicate_customer_detection.analysis.xml");
-			copyIfNonExisting(candidate, "examples/customer_data_cleansing.analysis.xml");
-			copyIfNonExisting(candidate, "examples/write_order_information.analysis.xml");
-		}
+        if (!isUsable(candidate)) {
+            if (!candidate.exists()) {
+                candidate.createFolder();
+            }
 
-		_dataCleanerHome = candidate;
-	}
+            if (candidate.isWriteable()) {
+                copyIfNonExisting(candidate, manager, "conf.xml");
+                copyIfNonExisting(candidate, manager, "examples/countrycodes.csv");
+                copyIfNonExisting(candidate, manager, "examples/employees.analysis.xml");
+                copyIfNonExisting(candidate, manager, "examples/duplicate_customer_detection.analysis.xml");
+                copyIfNonExisting(candidate, manager, "examples/customer_data_cleansing.analysis.xml");
+                copyIfNonExisting(candidate, manager, "examples/write_order_information.analysis.xml");
+            }
+        }
 
-	/**
-	 * @return a file reference to the DataCleaner home folder.
-	 */
-	public static File get() {
-		return _dataCleanerHome;
-	}
+        return candidate;
+    }
 
-	private static void copyIfNonExisting(File directory, String filename) {
-		File file = new File(directory, filename);
-		if (file.exists()) {
-			logger.info("File already exists in DATACLEANER_HOME: " + filename);
-			return;
-		}
-		File parentFile = file.getParentFile();
-		if (!parentFile.exists() && !parentFile.mkdirs()) {
-			logger.warn("Could not create directory for file in DATACLEANER_HOME: " + filename);
-			return;
-		}
-		ResourceManager resourceManager = ResourceManager.getInstance();
-		URL url = resourceManager.getUrl("datacleaner-home/" + filename);
+    /**
+     * @return a file reference to the DataCleaner home folder.
+     */
+    public static FileObject get() {
+        return _dataCleanerHome;
+    }
 
-		InputStream is = null;
-		OutputStream os = null;
-		try {
-			is = url.openStream();
-			os = new FileOutputStream(file);
+    private static void copyIfNonExisting(FileObject candidate, FileSystemManager manager, String filename)
+            throws FileSystemException {
+        FileObject file = candidate.resolveFile(filename);
+        if (file.exists()) {
+            logger.info("File already exists in DATACLEANER_HOME: " + filename);
+            return;
+        }
+        FileObject parentFile = file.getParent();
+        if (!parentFile.exists()) {
+            parentFile.createFolder();
+        }
 
-			final int bufferSize = 1024;
-			byte[] buffer = new byte[bufferSize];
-			for (int read = is.read(buffer); read > 0 && read <= bufferSize; read = is.read(buffer)) {
-				os.write(buffer, 0, read);
-			}
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		} finally {
-			try {
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
-			try {
-				if (os != null) {
-					os.close();
-				}
-			} catch (IOException e) {
-				// do nothing
-			}
-		}
-	}
+        final ResourceManager resourceManager = ResourceManager.getInstance();
+        final URL url = resourceManager.getUrl("datacleaner-home/" + filename);
 
-	private static boolean isUsable(File candidate) {
-		if (candidate != null) {
-			if (candidate.exists() && candidate.isDirectory()) {
-				File conf = new File(candidate, "conf.xml");
-				if (conf.exists() && conf.isFile()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            in = url.openStream();
+            out = file.getContent().getOutputStream();
+
+            FileHelper.copy(in, out);
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        } finally {
+            FileHelper.safeClose(in, out);
+        }
+    }
+
+    private static boolean isUsable(FileObject candidate) throws FileSystemException {
+        if (candidate != null) {
+            if (candidate.exists() && candidate.getType() == FileType.FOLDER) {
+                FileObject conf = candidate.resolveFile("conf.xml");
+                if (conf.exists() && conf.getType() == FileType.FILE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

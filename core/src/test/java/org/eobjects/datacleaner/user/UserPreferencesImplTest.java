@@ -19,19 +19,20 @@
  */
 package org.eobjects.datacleaner.user;
 
-import java.io.File;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.connection.CsvDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
-
-import junit.framework.TestCase;
+import org.eobjects.analyzer.util.VFSUtils;
 
 public class UserPreferencesImplTest extends TestCase {
 
 	public void testDeserialize21preferences() throws Exception {
-		File file = new File("src/test/resources/userpreferences-2.1.dat");
+		FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/userpreferences-2.1.dat");
 		UserPreferences preferences = UserPreferencesImpl.load(file, false);
 		assertNotNull(preferences);
 

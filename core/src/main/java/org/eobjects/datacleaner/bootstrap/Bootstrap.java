@@ -23,11 +23,12 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SplashScreen;
 import java.io.Closeable;
-import java.io.File;
 import java.io.PrintWriter;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
@@ -77,6 +78,14 @@ public final class Bootstrap {
     }
 
     public void run() {
+        try {
+            runInternal();
+        } catch (FileSystemException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private void runInternal() throws FileSystemException {
         logger.info("Welcome to DataCleaner {}", Main.VERSION);
 
         // determine whether to run in command line interface mode
@@ -108,9 +117,17 @@ public final class Bootstrap {
             }
         }
 
-        final File dataCleanerHome = DataCleanerHome.get();
+        final FileObject dataCleanerHome = DataCleanerHome.get();
+        final String configurationFilePath = arguments.getConfigurationFile();
 
-        Injector injector = Guice.createInjector(new DCModule(dataCleanerHome, arguments.getConfigurationFile()));
+        final FileObject configurationFile;
+        if (configurationFilePath == null) {
+            configurationFile = dataCleanerHome.resolveFile("conf.xml");
+        } else {
+            configurationFile = dataCleanerHome.resolveFile(configurationFilePath);
+        }
+
+        Injector injector = Guice.createInjector(new DCModule(dataCleanerHome, configurationFile));
 
         // configuration loading can be multithreaded, so begin early
         final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
@@ -153,10 +170,11 @@ public final class Bootstrap {
             macOsManager.init();
 
             // check for job file
-            final File jobFile = _options.getCommandLineArguments().getJobFile();
-            if (jobFile == null) {
+            final String jobFilePath = _options.getCommandLineArguments().getJobFile();
+            if (jobFilePath == null) {
                 analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
             } else {
+                final FileObject jobFile = dataCleanerHome.resolveFile(jobFilePath);
                 analysisJobBuilderWindow = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
             }
 

@@ -19,9 +19,10 @@
  */
 package org.eobjects.datacleaner.guice;
 
-import java.io.File;
 import java.util.List;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
@@ -38,6 +39,7 @@ import org.eobjects.analyzer.reference.ReferenceDataCatalog;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.storage.StorageProvider;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.AuthenticationService;
@@ -96,7 +98,19 @@ public class DCModule extends AbstractModule {
         }
     }
 
-    public DCModule(final File dataCleanerHome) {
+    public DCModule() {
+        this(defaultDataCleanerHome());
+    }
+
+    private static FileObject defaultDataCleanerHome() {
+        try {
+            return VFSUtils.getFileSystemManager().resolveFile(".");
+        } catch (FileSystemException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public DCModule(final FileObject dataCleanerHome) {
         this(dataCleanerHome, null);
     }
 
@@ -111,7 +125,7 @@ public class DCModule extends AbstractModule {
      *            a configuration file override, or null if not requested
      * 
      */
-    public DCModule(final File dataCleanerHome, File configurationFile) {
+    public DCModule(final FileObject dataCleanerHome, FileObject configurationFile) {
         _userPreferencesRef = createUserPreferencesRef(dataCleanerHome);
         _undecoratedConfigurationRef = new DataCleanerConfigurationReader(dataCleanerHome, configurationFile,
                 _userPreferencesRef);
@@ -120,14 +134,23 @@ public class DCModule extends AbstractModule {
         _windowContext = null;
     }
 
-    private final Ref<UserPreferences> createUserPreferencesRef(final File dataCleanerHome) {
-        return new LazyRef<UserPreferences>() {
-            @Override
-            protected UserPreferences fetch() {
-                final File userPreferencesFile = new File(dataCleanerHome, "userpreferences.dat");
-                return UserPreferencesImpl.load(userPreferencesFile, true);
+    private final Ref<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
+        try {
+            if (dataCleanerHome == null || !dataCleanerHome.exists()) {
+                return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
             }
-        };
+
+            final FileObject userPreferencesFile = dataCleanerHome.resolveFile("userpreferences.dat");
+
+            return new LazyRef<UserPreferences>() {
+                @Override
+                protected UserPreferences fetch() {
+                    return UserPreferencesImpl.load(userPreferencesFile, true);
+                }
+            };
+        } catch (FileSystemException e) {
+            throw new IllegalStateException("Not able to resolve files in DataCleaner home: " + dataCleanerHome, e);
+        }
     }
 
     @Override

@@ -37,7 +37,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
@@ -63,12 +63,12 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
     private volatile boolean _cancelled = false;
 
     public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext,
-            HttpClient httpClient) {
-        this(urls, createTargetFilenames(urls), listener, windowContext, httpClient);
+            HttpClient httpClient, UserPreferences userPreferences) {
+        this(urls, createTargetFilenames(urls), listener, windowContext, httpClient, userPreferences);
     }
 
     public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener,
-            WindowContext windowContext, HttpClient httpClient) {
+            WindowContext windowContext, HttpClient httpClient, UserPreferences userPreferences) {
         if (urls == null) {
             throw new IllegalArgumentException("urls cannot be null");
         }
@@ -77,7 +77,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
         _files = new File[_urls.length];
         for (int i = 0; i < urls.length; i++) {
             String filename = targetFilenames[i];
-            _files[i] = new File(DataCleanerHome.get(), filename);
+            _files[i] = new File(userPreferences.getSaveDownloadedFilesDirectory(), filename);
         }
 
         final Action<Void> cancelCallback = new Action<Void>() {

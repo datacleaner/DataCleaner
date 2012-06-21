@@ -19,9 +19,9 @@
  */
 package org.eobjects.datacleaner.user;
 
-import java.io.File;
 import java.util.List;
 
+import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
@@ -44,15 +44,15 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerConfigurationReader.class);
 
-    private final File dataCleanerHome;
-    private final File configurationFile;
-    private final Ref<UserPreferences> userPreferencesRef;
+    private final FileObject _dataCleanerHome;
+    private final FileObject _configurationFile;
+    private final Ref<UserPreferences> _userPreferencesRef;
 
-    public DataCleanerConfigurationReader(final File dataCleanerHome, final File configurationFile,
+    public DataCleanerConfigurationReader(final FileObject dataCleanerHome, final FileObject configurationFile,
             final Ref<UserPreferences> userPreferencesRef) {
-        this.dataCleanerHome = dataCleanerHome;
-        this.configurationFile = configurationFile;
-        this.userPreferencesRef = userPreferencesRef;
+        _dataCleanerHome = dataCleanerHome;
+        _configurationFile = configurationFile;
+        _userPreferencesRef = userPreferencesRef;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         // load user preferences first, since we need it while reading
         // the configuration (some custom elements may refer to classes
         // within the extensions)
-        UserPreferences userPreferences = userPreferencesRef.get();
+        UserPreferences userPreferences = _userPreferencesRef.get();
         final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
         for (ExtensionPackage extensionPackage : extensionPackages) {
             extensionPackage.loadExtension();
@@ -68,19 +68,12 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
 
         // load the configuration file
         final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
-                new DataCleanerConfigurationReaderInterceptor(dataCleanerHome));
-
-        final File file;
-        if (configurationFile == null) {
-            file = new File(dataCleanerHome, "conf.xml");
-        } else {
-            file = configurationFile;
-        }
+                new DataCleanerConfigurationReaderInterceptor(_dataCleanerHome));
 
         AnalyzerBeansConfiguration c;
         try {
-            c = configurationReader.create(file);
-            logger.info("Succesfully read configuration from {}", file.getAbsolutePath());
+            c = configurationReader.create(_configurationFile.getContent().getInputStream());
+            logger.info("Succesfully read configuration from {}", _configurationFile.getName().getPath());
         } catch (Exception ex1) {
             logger.warn("Unexpected error while reading conf.xml from DataCleanerHome!", ex1);
             logger.info("Reading conf.xml from classpath");
@@ -94,7 +87,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
                         new SimpleDescriptorProvider(), new SingleThreadedTaskRunner(), new InMemoryStorageProvider());
             }
         }
-        
+
         return c;
     }
 

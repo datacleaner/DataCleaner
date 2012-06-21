@@ -21,6 +21,8 @@ package org.eobjects.datacleaner.output.beans;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import org.eobjects.analyzer.beans.api.Alias;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Categorized;
@@ -38,7 +40,7 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.csv.CsvOutputWriterFactory;
-import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.metamodel.util.FileHelper;
 
 @AnalyzerBean("Create CSV file")
@@ -56,18 +58,21 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
 	@Configured
 	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
 	File file;
+	
+	@Inject
+	UserPreferences userPreferences;
 
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
 		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName
+		file = new File(userPreferences.getSaveDatastoreDirectory(), "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName
 				+ ".csv");
 	}
 
 	@Override
 	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
 		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
-		file = new File(DataCleanerHome.get(), "output-" + dsName + "-" + descriptor.getDisplayName() + ".csv");
+		file = new File(userPreferences.getSaveDatastoreDirectory(), "output-" + dsName + "-" + descriptor.getDisplayName() + ".csv");
 	}
 
 	@Override

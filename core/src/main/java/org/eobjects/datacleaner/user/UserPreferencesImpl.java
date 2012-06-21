@@ -20,8 +20,6 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InvalidClassException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -30,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
@@ -50,7 +50,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(UserPreferencesImpl.class);
 
-    private transient File _userPreferencesFile;
+    private transient FileObject _userPreferencesFile;
     private transient List<LoginChangeListener> loginChangeListeners;
 
     private List<UserDatabaseDriver> databaseDrivers = new ArrayList<UserDatabaseDriver>();
@@ -75,24 +75,29 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     private File configuredFileDirectory;
     private File analysisJobDirectory;
     private File saveDatastoreDirectory;
+    private File saveDownloadedFilesDirectory;
 
     private MonitorConnection monitorConnection;
 
     private QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy();
 
-    public UserPreferencesImpl(File userPreferencesFile) {
+    public UserPreferencesImpl(FileObject userPreferencesFile) {
         _userPreferencesFile = userPreferencesFile;
     }
 
-    public static UserPreferences load(final File userPreferencesFile, final boolean loadDatabaseDrivers) {
-        if (userPreferencesFile == null || !userPreferencesFile.exists()) {
-            logger.info("User preferences file does not exist");
-            return new UserPreferencesImpl(userPreferencesFile);
+    public static UserPreferences load(final FileObject userPreferencesFile, final boolean loadDatabaseDrivers) {
+        try {
+            if (userPreferencesFile == null || !userPreferencesFile.exists()) {
+                logger.info("User preferences file does not exist");
+                return new UserPreferencesImpl(userPreferencesFile);
+            }
+        } catch (FileSystemException e1) {
+            logger.debug("Could not determine if file exists: {}", userPreferencesFile);
         }
 
         ChangeAwareObjectInputStream inputStream = null;
         try {
-            inputStream = new ChangeAwareObjectInputStream(new FileInputStream(userPreferencesFile));
+            inputStream = new ChangeAwareObjectInputStream(userPreferencesFile.getContent().getInputStream());
             inputStream.addRenamedClass("org.eobjects.datacleaner.user.UserPreferences", UserPreferencesImpl.class);
             UserPreferencesImpl result = (UserPreferencesImpl) inputStream.readObject();
 
@@ -123,10 +128,10 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     @Override
     public void save() {
-        logger.info("Saving user preferences to {}", _userPreferencesFile.getAbsolutePath());
+        logger.info("Saving user preferences to {}", _userPreferencesFile.getName().getPath());
         ObjectOutputStream outputStream = null;
         try {
-            outputStream = new ObjectOutputStream(new FileOutputStream(_userPreferencesFile));
+            outputStream = new ObjectOutputStream(_userPreferencesFile.getContent().getOutputStream());
             outputStream.writeObject(this);
             outputStream.flush();
         } catch (Exception e) {
@@ -163,7 +168,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getOpenDatastoreDirectory() {
         if (openDatastoreDirectory == null) {
-            openDatastoreDirectory = DataCleanerHome.get();
+            openDatastoreDirectory = new File(".");
         }
         return openDatastoreDirectory;
     }
@@ -176,7 +181,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getConfiguredFileDirectory() {
         if (configuredFileDirectory == null) {
-            configuredFileDirectory = DataCleanerHome.get();
+            configuredFileDirectory = new File(".");
         }
         return configuredFileDirectory;
     }
@@ -189,7 +194,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getAnalysisJobDirectory() {
         if (analysisJobDirectory == null) {
-            analysisJobDirectory = DataCleanerHome.get();
+            analysisJobDirectory = new File(".");
         }
         return analysisJobDirectory;
     }
@@ -202,7 +207,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public File getSaveDatastoreDirectory() {
         if (saveDatastoreDirectory == null) {
-            saveDatastoreDirectory = new File(DataCleanerHome.get(), "datastores");
+            saveDatastoreDirectory = new File("datastores");
         }
         return saveDatastoreDirectory;
     }
@@ -384,5 +389,18 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public MonitorConnection getMonitorConnection() {
         return monitorConnection;
+    }
+    
+    @Override
+    public File getSaveDownloadedFilesDirectory() {
+        if (saveDownloadedFilesDirectory == null) {
+            saveDownloadedFilesDirectory = new File(".");
+        }
+        return saveDownloadedFilesDirectory;
+    }
+    
+    @Override
+    public void setSaveDownloadedFilesDirectory(File directory) {
+        this.saveDownloadedFilesDirectory = directory;
     }
 }

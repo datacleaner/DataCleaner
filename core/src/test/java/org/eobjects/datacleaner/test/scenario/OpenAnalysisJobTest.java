@@ -20,9 +20,12 @@
 package org.eobjects.datacleaner.test.scenario;
 
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 
+import junit.framework.TestCase;
+
+import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.windows.AbstractWindow;
@@ -30,8 +33,6 @@ import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
-import junit.framework.TestCase;
 
 public class OpenAnalysisJobTest extends TestCase {
     
@@ -53,11 +54,11 @@ public class OpenAnalysisJobTest extends TestCase {
             return;
         }
         
-        DCModule module = new DCModule(new File("."));
+        DCModule module = new DCModule();
         Injector injector = Guice.createInjector(module);
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
-        File file = new File("src/test/resources/all_analyzers.analysis.xml");
+        FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.xml");
 
         AnalysisJobBuilderWindow window = OpenAnalysisJobActionListener.open(file, configuration, injector);
         assertNotNull(window);

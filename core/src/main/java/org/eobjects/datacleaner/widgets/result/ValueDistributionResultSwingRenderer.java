@@ -20,7 +20,6 @@
 package org.eobjects.datacleaner.widgets.result;
 
 import java.awt.BorderLayout;
-import java.io.File;
 import java.util.Collection;
 import java.util.Set;
 
@@ -198,7 +197,7 @@ public class ValueDistributionResultSwingRenderer extends
 	public static void main(String[] args) {
 		LookAndFeelManager.getInstance().init();
 
-		Injector injector = Guice.createInjector(new DCModule(new File(".")));
+		Injector injector = Guice.createInjector(new DCModule());
 
 		// run a small job
 		final AnalysisJobBuilder ajb = injector

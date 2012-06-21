@@ -8,7 +8,7 @@
 		<icon href="launch-resources/images/app-icon.png" />
 	</information>
 	<security>
-		<all-permissions />
+		<!-- <all-permissions /> -->
 	</security>
 	<resources>
 		<j2se version="1.6+" initial-heap-size="128m" max-heap-size="1024m" />

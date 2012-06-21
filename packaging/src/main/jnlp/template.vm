@@ -3,7 +3,7 @@
 	href="$outputFile">
 	<information>
 		<title>DataCleaner</title>
-		<vendor>eobjects.org</vendor>
+		<vendor>Human Inference</vendor>
 		<homepage href="http://datacleaner.eobjects.org" />
 		<description>DataCleaner is the premier open source data profiling and
 			data quality application. Use it to
@@ -15,8 +15,8 @@
 		<description kind="one-line">DataCleaner open source data profiler
 			and data quality application.</description>
 		<description kind="short">DataCleaner is the premier open source
-			data profiling and data quality application.</description>
-		<description kind="tooltip">DataCleaner open source data profiler
+			data quality solution.</description>
+		<description kind="tooltip">DataCleaner open source data quality solution
 		</description>
 		<icon href="images/app-icon.png" />
 		<icon kind="splash" href="images/splash.png" />

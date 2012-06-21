@@ -43,7 +43,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/{tenant}/jobs/{job:.+}")
+@RequestMapping("/{tenant}/jobs/{job}.analysis.xml")
 public class JobFileController {
 
     private static final String EXTENSION = FileFilters.ANALYSIS_XML.getExtension();

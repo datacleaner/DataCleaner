@@ -94,13 +94,14 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
     @Override
     public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
-        _execution.setJobEndDate(new Date());
-        _execution.setExecutionStatus(ExecutionStatus.SUCCESS);
-
-        log("Job execution SUCCESS");
-        flushLog();
 
         writeResult();
+
+        log("Job execution SUCCESS");
+        _execution.setJobEndDate(new Date());
+        _execution.setExecutionStatus(ExecutionStatus.SUCCESS);
+        
+        flushLog();
     }
 
     private void writeResult() {

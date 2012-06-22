@@ -484,6 +484,8 @@ public class TimelineServiceImpl implements TimelineService {
                 result.add(job);
             }
         }
+        
+        Collections.sort(result);
 
         return result;
     }

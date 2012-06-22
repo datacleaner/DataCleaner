@@ -30,7 +30,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * Represents information about a scheduled job execution.
  */
-public class ScheduleDefinition implements IsSerializable {
+public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDefinition> {
 
     private TenantIdentifier _tenant;
     private JobIdentifier _job;
@@ -102,5 +102,66 @@ public class ScheduleDefinition implements IsSerializable {
         } else {
             return "Run after " + _scheduleAfterJob.getName();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (_active ? 1231 : 1237);
+        result = prime * result + ((_alerts == null) ? 0 : _alerts.hashCode());
+        result = prime * result + ((_job == null) ? 0 : _job.hashCode());
+        result = prime * result + ((_scheduleAfterJob == null) ? 0 : _scheduleAfterJob.hashCode());
+        result = prime * result + ((_scheduleExpression == null) ? 0 : _scheduleExpression.hashCode());
+        result = prime * result + ((_tenant == null) ? 0 : _tenant.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ScheduleDefinition other = (ScheduleDefinition) obj;
+        if (_active != other._active)
+            return false;
+        if (_alerts == null) {
+            if (other._alerts != null)
+                return false;
+        } else if (!_alerts.equals(other._alerts))
+            return false;
+        if (_job == null) {
+            if (other._job != null)
+                return false;
+        } else if (!_job.equals(other._job))
+            return false;
+        if (_scheduleAfterJob == null) {
+            if (other._scheduleAfterJob != null)
+                return false;
+        } else if (!_scheduleAfterJob.equals(other._scheduleAfterJob))
+            return false;
+        if (_scheduleExpression == null) {
+            if (other._scheduleExpression != null)
+                return false;
+        } else if (!_scheduleExpression.equals(other._scheduleExpression))
+            return false;
+        if (_tenant == null) {
+            if (other._tenant != null)
+                return false;
+        } else if (!_tenant.equals(other._tenant))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int compareTo(ScheduleDefinition o) {
+        int diff = _job.compareTo(o.getJob());
+        if (diff == 0) {
+            diff = hashCode() - o.hashCode();
+        }
+        return diff;
     }
 }

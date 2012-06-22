@@ -81,6 +81,7 @@ public class SchedulingServiceImplTest extends TestCase {
             final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
             final List<ScheduleDefinition> schedules = service.getSchedules(tenant);
+
             assertEquals(2, schedules.size());
             assertEquals(null, schedules.get(0).getScheduleExpression());
             ScheduleDefinition randomNumberGenerationSchedule = schedules.get(1);
@@ -89,14 +90,20 @@ public class SchedulingServiceImplTest extends TestCase {
             final CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");
             assertEquals("0 0 * * * ?", trigger.getCronExpression());
 
-            assertEquals(0, directory.listFiles(filenameFilter).length);
+            File[] files = directory.listFiles(filenameFilter);
+            assertEquals("Unexpected files in " + directory + ": " + Arrays.toString(files), 0, files.length);
 
             final ExecutionLog execution = service.triggerExecution(tenant, randomNumberGenerationSchedule.getJob());
             assertEquals(ExecutionStatus.RUNNING, execution.getExecutionStatus());
             assertNull(execution.getJobEndDate());
             assertNotNull(execution.getJobBeginDate());
 
-            Thread.sleep(1000);
+            for (int i = 0; i < 100; i++) {
+                // spend max 10 seconds waiting for execution
+                if (execution.getExecutionStatus() == ExecutionStatus.RUNNING) {
+                    Thread.sleep(100);
+                }
+            }
 
             assertNotNull(execution.getJobEndDate());
             assertEquals(ExecutionStatus.SUCCESS, execution.getExecutionStatus());
@@ -104,7 +111,9 @@ public class SchedulingServiceImplTest extends TestCase {
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution BEGIN") != -1);
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution SUCCESS") != -1);
 
-            assertEquals(2, directory.listFiles(filenameFilter).length);
+            files = directory.listFiles(filenameFilter);
+            assertEquals("Expected 2 files: analysis result and log file, but found: " + Arrays.toString(files), 2,
+                    files.length);
 
         } finally {
             scheduler.shutdown();

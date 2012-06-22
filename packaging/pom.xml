@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
@@ -147,7 +148,9 @@
 						<configuration>
 							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
-								<move file="${project.basedir}/target/docbkx/html/index.html" tofile="${project.basedir}/target/site/reference/html_single/index.html" failonerror="false" />
+								<move file="${project.basedir}/target/docbkx/html/index.html"
+									tofile="${project.basedir}/target/site/reference/html_single/index.html"
+									failonerror="false" />
 								<copy todir="${project.basedir}/target/site/reference/html_single">
 									<fileset dir="${project.basedir}/src/docbkx/resources">
 										<include name="**/*.css" />
@@ -175,7 +178,9 @@
 										<include name="**/*.pdf" />
 									</fileset>
 								</copy>
-								<move file="${project.basedir}/target/site/reference/pdf/index.pdf" tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf" failonerror="false" />
+								<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
+									tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
+									failonerror="false" />
 							</postProcess>
 						</configuration>
 					</execution>
@@ -208,7 +213,7 @@
 						<configuration>
 							<deb>${project.build.directory}/DataCleaner-linux.deb</deb>
 							<dataSet>
-							<!-- starter script -->
+								<!-- starter script -->
 								<data>
 									<src>src/deb/datacleaner</src>
 									<type>file</type>
@@ -218,7 +223,7 @@
 										<filemode>755</filemode>
 									</mapper>
 								</data>
-								
+
 								<!-- the JAR files -->
 								<data>
 									<src>${project.build.directory}/${project.build.finalName}.jar</src>
@@ -236,7 +241,7 @@
 										<prefix>/usr/share/datacleaner/lib</prefix>
 									</mapper>
 								</data>
-								
+
 								<!-- GNOME menu launcher and icon -->
 								<data>
 									<src>src/deb/applications</src>
@@ -383,6 +388,30 @@
 								<phase>verify</phase>
 							</execution>
 						</executions>
+					</plugin>
+
+					<plugin>
+						<!-- Sign JAR files in jnlp folder -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jarsigner-plugin</artifactId>
+						<version>1.2</version>
+						<executions>
+							<execution>
+								<id>sign</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<keystore>src/main/jnlp/dc_keystore</keystore>
+							<alias>dc_alias</alias>
+							<storepass>dc_password</storepass>
+							<keypass>dc_password</keypass>
+							<archiveDirectory>target/jnlp</archiveDirectory>
+							<processMainArtifact>false</processMainArtifact>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>

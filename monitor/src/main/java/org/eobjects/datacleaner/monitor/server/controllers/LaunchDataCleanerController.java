@@ -20,20 +20,21 @@
 package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.metamodel.util.FileHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +44,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/{tenant}/jobs/{job}.analysis.xml/launch.jnlp")
 public class LaunchDataCleanerController {
+
+    @Autowired
+    LaunchArtifactProvider _launchArtifactProvider;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -81,10 +85,9 @@ public class LaunchDataCleanerController {
     private void insertJarFiles(ServletContext context, Writer out, String templateLine) throws IOException {
         final String jarFolder = "launch-resources/";
 
-        final File libFolder = LaunchResourcesController.getLibFolder(context);
-        final String[] jarFilenames = libFolder.list(FileFilters.JAR);
-        for (String jarFilename : jarFilenames) {
-            final String line = templateLine.replaceAll("\\$JAR_HREF", jarFolder + jarFilename);
+        List<String> jarFilenames = _launchArtifactProvider.getJarFilenames();
+        for (String filename : jarFilenames) {
+            final String line = templateLine.replaceAll("\\$JAR_HREF", jarFolder + filename);
             out.write(line);
             out.write('\n');
         }

@@ -19,19 +19,21 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
+import org.eobjects.datacleaner.repository.Repository;
+import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.util.FileHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +42,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = "/{tenant}/launch-resources")
 public class LaunchResourcesController {
 
-    @RequestMapping("images/app-icon.png")
+    @Autowired
+    LaunchArtifactProvider _launchArtifactProvider;
+
+    @Autowired
+    Repository _repository;
+
+    @RequestMapping("/images/app-icon.png")
     public void fetchAppIcon(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/window/app-icon.png");
     }
@@ -48,8 +56,29 @@ public class LaunchResourcesController {
     private void fetchImage(HttpServletResponse response, String path) throws IOException {
         response.setContentType("image/png");
 
-        URL resource = ResourceManager.getInstance().getUrl(path);
-        InputStream in = resource.openStream();
+        final URL resource = ResourceManager.getInstance().getUrl(path);
+        final InputStream in = resource.openStream();
+        try {
+            FileHelper.copy(in, response.getOutputStream());
+        } finally {
+            FileHelper.safeClose(in);
+        }
+    }
+
+    @RequestMapping("/conf.xml")
+    public void fetchConfigurationFile(@PathVariable("tenant") final String tenant, final HttpServletResponse response)
+            throws IOException {
+        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
+        if (tenantFolder == null) {
+            throw new IllegalArgumentException("No such tenant: " + tenant);
+        }
+
+        final RepositoryFile confFile = tenantFolder.getFile("conf.xml");
+
+        response.setContentType("application/xml");
+
+        final InputStream in = confFile.readFile();
+
         try {
             FileHelper.copy(in, response.getOutputStream());
         } finally {
@@ -65,28 +94,11 @@ public class LaunchResourcesController {
 
         final ServletOutputStream out = response.getOutputStream();
 
-        final ServletContext context = request.getSession().getServletContext();
-        final File libFolder = getLibFolder(context);
-        final String realPath = libFolder.getPath() + '/' + filename + ".jar";
-        final FileInputStream in = new FileInputStream(realPath);
+        final InputStream in = _launchArtifactProvider.readJarFile(filename + ".jar");
         try {
             FileHelper.copy(in, out);
         } finally {
             FileHelper.safeClose(in);
         }
-    }
-
-    public static File getLibFolder(ServletContext context) {
-        final String libPath = context.getRealPath("WEB-INF/lib");
-        final File libFolder = new File(libPath);
-        if (!libFolder.exists()) {
-            // in dev mode the folder does not exist, try with maven built lib
-            // folder
-            final File alternativeFolder = new File("target/DataCleaner-monitor/WEB-INF/lib");
-            if (alternativeFolder.exists()) {
-                return alternativeFolder;
-            }
-        }
-        return libFolder;
     }
 }

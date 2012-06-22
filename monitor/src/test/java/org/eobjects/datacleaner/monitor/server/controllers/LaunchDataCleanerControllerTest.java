@@ -20,9 +20,13 @@
 package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -34,9 +38,27 @@ public class LaunchDataCleanerControllerTest extends TestCase {
     public void testCreateJnlpOutput() throws Exception {
         LaunchDataCleanerController controller = new LaunchDataCleanerController();
 
+        controller._launchArtifactProvider = new LaunchArtifactProvider() {
+            @Override
+            public InputStream readJarFile(String filename) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public List<String> getJarFilenames() {
+                return Arrays.asList("foo.jar", "bar.jar", "baz.jar");
+            }
+
+            @Override
+            public boolean isAvailable() {
+                return true;
+            }
+        };
+
         FileSystemResourceLoader resourceLoader = new FileSystemResourceLoader();
         MockServletContext servletContext = new MockServletContext(resourceLoader);
         MockHttpServletRequest request = new MockHttpServletRequest(servletContext);
+        request.setContextPath("DataCleaner-monitor");
         MockHttpServletResponse response = new MockHttpServletResponse();
         String tenant = "DC";
         String jobName = "my_job";

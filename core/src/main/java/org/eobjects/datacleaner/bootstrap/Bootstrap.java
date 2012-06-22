@@ -38,6 +38,7 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
@@ -124,7 +125,7 @@ public final class Bootstrap {
         if (configurationFilePath == null) {
             configurationFile = dataCleanerHome.resolveFile("conf.xml");
         } else {
-            configurationFile = dataCleanerHome.resolveFile(configurationFilePath);
+            configurationFile = VFSUtils.getFileSystemManager().resolveFile(configurationFilePath);
         }
 
         Injector injector = Guice.createInjector(new DCModule(dataCleanerHome, configurationFile));

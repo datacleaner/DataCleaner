@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.nio.charset.Charset;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -56,15 +55,20 @@ public class LaunchDataCleanerController {
 
         final String baseUrl = createBaseUrl(request, tenant);
         final String jnlpHref = "jobs/" + jobName + ".analysis.xml/launch.jnlp";
+        final String jobUrl = baseUrl + "/jobs/" + jobName + ".analysis.xml";
+        final String confUrl = baseUrl + "/conf.xml";
 
         final InputStream in = getClass().getResourceAsStream("launch-datacleaner-template.xml");
         try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")));
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(in, FileHelper.UTF_8_ENCODING));
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                line = line.replaceAll("\\$BASEURL", baseUrl);
-                line = line.replaceAll("\\$JNLPHREF", jnlpHref);
-                if (line.indexOf("$JARHREF") == -1) {
+                line = line.replaceAll("\\$BASE_URL", baseUrl);
+                line = line.replaceAll("\\$JNLP_HREF", jnlpHref);
+                line = line.replaceAll("\\$JOB_URL", jobUrl);
+                line = line.replaceAll("\\$CONF_URL", confUrl);
+                if (line.indexOf("$JAR_HREF") == -1) {
                     out.write(line);
+                    out.write('\n');
                 } else {
                     insertJarFiles(request.getSession().getServletContext(), out, line);
                 }
@@ -80,8 +84,9 @@ public class LaunchDataCleanerController {
         final File libFolder = LaunchResourcesController.getLibFolder(context);
         final String[] jarFilenames = libFolder.list(FileFilters.JAR);
         for (String jarFilename : jarFilenames) {
-            final String line = templateLine.replaceAll("\\$JARHREF", jarFolder + jarFilename);
+            final String line = templateLine.replaceAll("\\$JAR_HREF", jarFolder + jarFilename);
             out.write(line);
+            out.write('\n');
         }
     }
 

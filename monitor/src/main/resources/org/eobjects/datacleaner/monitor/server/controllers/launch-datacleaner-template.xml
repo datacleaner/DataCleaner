@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
-<jnlp spec="1.0+" codebase="$BASEURL" href="$JNLPHREF">
+<jnlp spec="1.0+" codebase="$BASE_URL" href="$JNLP_HREF">
 	<information>
 		<title>DataCleaner</title>
 		<vendor>Human Inference</vendor>
@@ -8,12 +8,17 @@
 		<icon href="launch-resources/images/app-icon.png" />
 	</information>
 	<security>
-		<!-- <all-permissions /> -->
+		<all-permissions />
 	</security>
 	<resources>
 		<j2se version="1.6+" initial-heap-size="128m" max-heap-size="1024m" />
 
-		<jar href="$JARHREF"/>
+		<jar href="$JAR_HREF"/>
 	</resources>
-	<application-desc main-class="org.eobjects.datacleaner.Main" />
+	<application-desc main-class="org.eobjects.datacleaner.Main">
+		<argument>-conf</argument>
+		<argument>$CONF_URL</argument>
+		<argument>-job</argument>
+		<argument>$JOB_URL</argument>
+	</application-desc>
 </jnlp>

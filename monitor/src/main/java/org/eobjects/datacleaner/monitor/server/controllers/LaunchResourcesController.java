@@ -27,6 +27,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -48,9 +49,17 @@ public class LaunchResourcesController {
     @Autowired
     Repository _repository;
 
+    @Autowired
+    ConfigurationInterceptor _configurationInterceptor;
+
     @RequestMapping("/images/app-icon.png")
     public void fetchAppIcon(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/window/app-icon.png");
+    }
+    
+    @RequestMapping("/images/splash.png")
+    public void fetchSplashImage(HttpServletResponse response) throws IOException {
+        fetchImage(response, "images/splash.png");
     }
 
     private void fetchImage(HttpServletResponse response, String path) throws IOException {
@@ -67,7 +76,7 @@ public class LaunchResourcesController {
 
     @RequestMapping("/conf.xml")
     public void fetchConfigurationFile(@PathVariable("tenant") final String tenant, final HttpServletResponse response)
-            throws IOException {
+            throws Exception {
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
         if (tenantFolder == null) {
             throw new IllegalArgumentException("No such tenant: " + tenant);
@@ -77,10 +86,14 @@ public class LaunchResourcesController {
 
         response.setContentType("application/xml");
 
+        final ServletOutputStream out = response.getOutputStream();
+
         final InputStream in = confFile.readFile();
 
         try {
-            FileHelper.copy(in, response.getOutputStream());
+            // intercept the input stream to decorate it with client-side config
+            // elements.
+            _configurationInterceptor.intercept(tenant, in, out);
         } finally {
             FileHelper.safeClose(in);
         }
@@ -88,13 +101,14 @@ public class LaunchResourcesController {
 
     @RequestMapping(value = "/{filename:.+}.jar")
     public void fetchJarFile(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable("tenant") final String tenant, @PathVariable("filename") String filename) throws IOException {
+            @PathVariable("tenant") final String tenant, @PathVariable("filename") String filename) throws Exception {
 
         response.setContentType("application/x-java-archive");
 
         final ServletOutputStream out = response.getOutputStream();
 
         final InputStream in = _launchArtifactProvider.readJarFile(filename + ".jar");
+
         try {
             FileHelper.copy(in, out);
         } finally {

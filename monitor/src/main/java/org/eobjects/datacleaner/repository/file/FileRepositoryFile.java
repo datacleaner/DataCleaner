@@ -67,7 +67,9 @@ final class FileRepositoryFile implements RepositoryFile {
     @Override
     public InputStream readFile() {
         try {
-            return new BufferedInputStream(new FileInputStream(_file));
+            final FileInputStream in = new FileInputStream(_file);
+            final BufferedInputStream bin = new BufferedInputStream(in);
+            return bin;
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
         }

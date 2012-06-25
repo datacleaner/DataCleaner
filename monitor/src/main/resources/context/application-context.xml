@@ -17,9 +17,16 @@
 				<value>org.eobjects.analyzer.beans</value>
 				<value>org.eobjects.analyzer.result.renderer</value>
 				<value>org.eobjects.datacleaner.output.beans</value>
+				<value>org.eobjects.datacleaner.panels</value>
+				<value>org.eobjects.datacleaner.widgets.result</value>
 				<value>com.hi</value>
 			</list>
 		</property>
+	</bean>
+
+	<bean name="configurationInterceptor"
+		class="org.eobjects.datacleaner.monitor.server.JaxbConfigurationInterceptor">
+		<constructor-arg ref="configurationFactory" />
 	</bean>
 
 	<bean name="taskRunner" factory-bean="configurationFactory"

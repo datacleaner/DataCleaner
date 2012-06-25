@@ -6,6 +6,7 @@
 		<vendor>Human Inference</vendor>
 		<homepage href="http://datacleaner.eobjects.org" />
 		<icon href="launch-resources/images/app-icon.png" />
+		<icon kind="splash" href="launch-resources/images/splash.png" />
 	</information>
 	<security>
 		<all-permissions />

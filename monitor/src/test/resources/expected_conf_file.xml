@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0">
+    <configuration-metadata>
+        <configuration-name>DataCleaner dq monitor configuration for tenant tenant1</configuration-name>
+        <author>Automatically generated</author>
+        <updated-date>2012-06-25+02:00</updated-date>
+    </configuration-metadata>
+    <datastore-catalog>
+        <jdbc-datastore description="DataCleaner example database" name="orderdb">
+            <url>jdbc:hsqldb:res:orderdb;readonly=true</url>
+            <driver>org.hsqldb.jdbcDriver</driver>
+            <username>SA</username>
+            <password></password>
+        </jdbc-datastore>
+    </datastore-catalog>
+    <reference-data-catalog>
+        <dictionaries>
+            <text-file-dictionary name="vendor whitelist">
+                <filename>reference-data/vendor_dictionary.txt</filename>
+            </text-file-dictionary>
+        </dictionaries>
+        <synonym-catalogs/>
+    </reference-data-catalog>
+    <multithreaded-taskrunner max-threads="10"/>
+    <classpath-scanner>
+        <package recursive="true">org.eobjects</package>
+        <package recursive="true">com.hi</package>
+    </classpath-scanner>
+</configuration>

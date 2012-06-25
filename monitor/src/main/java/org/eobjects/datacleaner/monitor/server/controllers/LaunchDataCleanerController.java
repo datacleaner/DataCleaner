@@ -45,6 +45,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/{tenant}/jobs/{job}.analysis.xml/launch.jnlp")
 public class LaunchDataCleanerController {
 
+    private static final String RESOURCES_FOLDER = "launch-resources/";
+
     @Autowired
     LaunchArtifactProvider _launchArtifactProvider;
 
@@ -60,7 +62,7 @@ public class LaunchDataCleanerController {
         final String baseUrl = createBaseUrl(request, tenant);
         final String jnlpHref = "jobs/" + jobName + ".analysis.xml/launch.jnlp";
         final String jobUrl = baseUrl + "/jobs/" + jobName + ".analysis.xml";
-        final String confUrl = baseUrl + "/conf.xml";
+        final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml";
 
         final InputStream in = getClass().getResourceAsStream("launch-datacleaner-template.xml");
         try {
@@ -83,11 +85,9 @@ public class LaunchDataCleanerController {
     }
 
     private void insertJarFiles(ServletContext context, Writer out, String templateLine) throws IOException {
-        final String jarFolder = "launch-resources/";
-
         List<String> jarFilenames = _launchArtifactProvider.getJarFilenames();
         for (String filename : jarFilenames) {
-            final String line = templateLine.replaceAll("\\$JAR_HREF", jarFolder + filename);
+            final String line = templateLine.replaceAll("\\$JAR_HREF", RESOURCES_FOLDER + filename);
             out.write(line);
             out.write('\n');
         }

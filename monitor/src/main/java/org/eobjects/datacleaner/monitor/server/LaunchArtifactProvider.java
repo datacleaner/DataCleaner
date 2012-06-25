@@ -49,6 +49,10 @@ public interface LaunchArtifactProvider {
      * 
      * @param filename
      * @return
+     * @throws IllegalArgumentException
+     *             in case the filename is not found or not valid
+     * @throws IllegalStateException
+     *             in case an error occurred while reading from the file
      */
-    public InputStream readJarFile(String filename);
+    public InputStream readJarFile(String filename) throws IllegalArgumentException, IllegalStateException;
 }

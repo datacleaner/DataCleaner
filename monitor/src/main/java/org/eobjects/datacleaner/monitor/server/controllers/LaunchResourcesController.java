@@ -56,7 +56,7 @@ public class LaunchResourcesController {
     public void fetchAppIcon(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/window/app-icon.png");
     }
-    
+
     @RequestMapping("/images/splash.png")
     public void fetchSplashImage(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/splash.png");
@@ -103,11 +103,18 @@ public class LaunchResourcesController {
     public void fetchJarFile(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("filename") String filename) throws Exception {
 
+        final InputStream in;
+        try {
+            in = _launchArtifactProvider.readJarFile(filename + ".jar");
+        } catch (IllegalArgumentException e) {
+            // file was not found
+            response.sendError(404, e.getMessage());
+            return;
+        }
+
         response.setContentType("application/x-java-archive");
 
         final ServletOutputStream out = response.getOutputStream();
-
-        final InputStream in = _launchArtifactProvider.readJarFile(filename + ".jar");
 
         try {
             FileHelper.copy(in, out);

@@ -28,6 +28,7 @@
 		
 		<div class="FormRow">
 			<g:Button text="Trigger now" ui:field="triggerNowButton" />
+			<g:Button text="Launch client" ui:field="launchButton" />
 			<span class="FormKey">Schedule:</span>
 			<g:Label styleName="FormValue" ui:field="scheduleLabel" />
 		</div>

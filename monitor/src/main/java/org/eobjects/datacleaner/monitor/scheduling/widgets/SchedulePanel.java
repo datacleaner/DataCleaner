@@ -33,6 +33,7 @@ import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -41,6 +42,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -68,6 +70,9 @@ public class SchedulePanel extends Composite {
 
     @UiField
     Button triggerNowButton;
+
+    @UiField
+    Button launchButton;
 
     @UiField
     FlowPanel alertsPanel;
@@ -98,11 +103,20 @@ public class SchedulePanel extends Composite {
                 service.triggerExecution(tenant, job, new DCAsyncCallback<ExecutionLog>() {
                     @Override
                     public void onSuccess(ExecutionLog result) {
-                        ExecutionLogPanel panel = new ExecutionLogPanel(result);
+                        final ExecutionLogPanel panel = new ExecutionLogPanel(result);
                         popupPanel.setWidget(panel);
                         popupPanel.center();
                     }
                 });
+            }
+        });
+
+        launchButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                String url = Urls.createRelativeUrl("repository/" + tenant.getId() + "/jobs/"
+                        + schedule.getJob().getName() + ".analysis.xml/launch.jnlp");
+                Window.open(url, "_blank", null);
             }
         });
 
@@ -140,5 +154,4 @@ public class SchedulePanel extends Composite {
             alertsPanel.add(alertPanel);
         }
     }
-
 }

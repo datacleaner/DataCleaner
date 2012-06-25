@@ -53,7 +53,7 @@ public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider 
     }
 
     @Override
-    public InputStream readJarFile(final String filename) {
+    public InputStream readJarFile(final String filename) throws IllegalArgumentException, IllegalStateException {
         final File file = new File(_libFolder, filename);
         if (file.exists()) {
             try {

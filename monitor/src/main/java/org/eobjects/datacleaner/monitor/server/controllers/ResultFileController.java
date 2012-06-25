@@ -30,7 +30,8 @@ import java.util.Map;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.TimelineServiceImpl;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -57,7 +58,7 @@ public class ResultFileController {
     Repository _repository;
 
     @Autowired
-    ConfigurationCache _configurationCache;
+    TenantContextFactory _tenantContextFactory;
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
@@ -67,13 +68,10 @@ public class ResultFileController {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
+        
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
-
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_RESULTS);
+        final RepositoryFolder resultsFolder = context.getResultFolder();
 
         final long timestamp = new Date().getTime();
         final String filename;
@@ -107,24 +105,22 @@ public class ResultFileController {
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
             @RequestParam(value = "tabs", required = false) Boolean tabsParam, final Writer out) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
+        
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
+        final RepositoryFolder resultsFolder = context.getResultFolder();
 
         if (!resultName.endsWith(EXTENSION)) {
             resultName = resultName + EXTENSION;
         }
 
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_RESULTS);
         final RepositoryFile resultFile = resultsFolder.getFile(resultName);
         if (resultFile == null) {
             throw new IllegalArgumentException("No such result file: " + resultName);
         }
 
         final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
-        final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
+        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final boolean tabs = (tabsParam == null ? true : tabsParam.booleanValue());
         final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter(tabs);
 

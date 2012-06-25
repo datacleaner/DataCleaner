@@ -21,11 +21,13 @@ package org.eobjects.datacleaner.repository;
 
 import java.io.Serializable;
 
+import org.eobjects.metamodel.util.HasName;
+
 /**
  * Represents an abstract node (typically a {@link RepositoryFile} or
  * {@link RepositoryFolder}) in the {@link Repository}.
  */
-public interface RepositoryNode extends Serializable {
+public interface RepositoryNode extends Serializable, HasName {
 
     /**
      * Gets the parent folder of this node.

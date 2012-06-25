@@ -42,7 +42,9 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.analyzer.util.LabelUtils;
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -73,18 +75,17 @@ import org.slf4j.LoggerFactory;
  */
 public class TimelineServiceImpl implements TimelineService {
 
-    public static final String PATH_JOBS = "jobs";
     public static final String PATH_RESULTS = "results";
     public static final String PATH_TIMELINES = "timelines";
 
     private static final Logger logger = LoggerFactory.getLogger(TimelineServiceImpl.class);
 
-    private final ConfigurationCache _configurationCache;
+    private final TenantContextFactory _tenantContextFactory;
     private final Repository _repository;
 
-    protected TimelineServiceImpl(final Repository repository, final ConfigurationCache configurationCache) {
+    protected TimelineServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory) {
         _repository = repository;
-        _configurationCache = configurationCache;
+        _tenantContextFactory = tenantContextFactory;
     }
 
     @Override
@@ -355,8 +356,9 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     private List<RepositoryFile> getResultFilesForJob(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(PATH_RESULTS);
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+
+        final RepositoryFolder resultsFolder = context.getResultFolder();
 
         final String jobName = jobIdentifier.getName();
 
@@ -472,29 +474,17 @@ public class TimelineServiceImpl implements TimelineService {
 
     @Override
     public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
-        final List<JobIdentifier> result = new ArrayList<JobIdentifier>();
+        final List<String> jobNames = _tenantContextFactory.getContext(tenant).getJobNames();
+        final List<JobIdentifier> result = new ArrayList<JobIdentifier>(jobNames.size());
 
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
-        final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
-        final List<RepositoryFile> files = jobsFolder.getFiles();
-
-        for (RepositoryFile file : files) {
-            if (file.getType() == Type.ANALYSIS_JOB) {
-                final JobIdentifier job = createJobIdentifier(file);
-                result.add(job);
-            }
+        for (String jobName : jobNames) {
+            final JobIdentifier job = new JobIdentifier(jobName);
+            result.add(job);
         }
-        
+
         Collections.sort(result);
 
         return result;
-    }
-
-    private JobIdentifier createJobIdentifier(final RepositoryFile file) {
-        final JobIdentifier job = new JobIdentifier();
-        job.setName(file.getName().substring(0,
-                file.getName().length() - FileFilters.ANALYSIS_XML.getExtension().length()));
-        return job;
     }
 
     @Override
@@ -559,17 +549,9 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     private AnalysisJob readAnalysisJob(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
-        final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
-
-        final RepositoryFile jobFile = jobsFolder.getFile(jobIdentifier.getName()
-                + FileFilters.ANALYSIS_XML.getExtension());
-
-        final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
-
-        final MonitorJobReader reader = new MonitorJobReader(configuration, jobFile);
-
-        final AnalysisJob job = reader.readJob();
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+        final JobContext jobContext = context.getJob(jobIdentifier);
+        final AnalysisJob job = jobContext.getAnalysisJob();
         return job;
     }
 
@@ -607,7 +589,9 @@ public class TimelineServiceImpl implements TimelineService {
     @Override
     public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job,
             MetricIdentifier metric) {
-        final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
+
+        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final AnalyzerBeanDescriptor<?> analyzerDescriptor = configuration.getDescriptorProvider()
                 .getAnalyzerBeanDescriptorByDisplayName(metric.getAnalyzerDescriptorName());
         final MetricDescriptor metricDescriptor = analyzerDescriptor.getResultMetric(metric.getMetricDescriptorName());

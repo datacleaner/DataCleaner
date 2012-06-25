@@ -26,6 +26,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.easymock.EasyMock;
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.core.io.FileSystemResourceLoader;
@@ -36,8 +40,18 @@ import org.springframework.mock.web.MockServletContext;
 public class LaunchDataCleanerControllerTest extends TestCase {
 
     public void testCreateJnlpOutput() throws Exception {
-        LaunchDataCleanerController controller = new LaunchDataCleanerController();
+        final TenantContextFactory contextFactoryMock = EasyMock.createMock(TenantContextFactory.class);
+        final TenantContext contextMock = EasyMock.createMock(TenantContext.class);
+        final JobContext jobMock = EasyMock.createMock(JobContext.class);
 
+        EasyMock.expect(contextFactoryMock.getContext("DC")).andReturn(contextMock);
+        EasyMock.expect(contextMock.getJob("my_job")).andReturn(jobMock);
+        EasyMock.expect(jobMock.getSourceDatastoreName()).andReturn("my_datastore");
+
+        EasyMock.replay(contextFactoryMock, contextMock, jobMock);
+
+        LaunchDataCleanerController controller = new LaunchDataCleanerController();
+        controller._contextFactory = contextFactoryMock;
         controller._launchArtifactProvider = new LaunchArtifactProvider() {
             @Override
             public InputStream readJarFile(String filename) {
@@ -69,5 +83,7 @@ public class LaunchDataCleanerControllerTest extends TestCase {
         expected = expected.replaceAll("\r\n", "\n");
 
         assertEquals(expected, response.getContentAsString());
+
+        EasyMock.verify(contextFactoryMock, contextMock, jobMock);
     }
 }

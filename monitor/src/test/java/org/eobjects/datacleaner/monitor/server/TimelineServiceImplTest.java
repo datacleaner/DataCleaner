@@ -25,6 +25,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -43,19 +45,19 @@ public class TimelineServiceImplTest extends TestCase {
     public void testBasicInteraction() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         final ConfigurationCache configurationCache = new ConfigurationCache(repository);
-        final TimelineService service = new TimelineServiceImpl(repository, configurationCache);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
+        final TimelineService service = new TimelineServiceImpl(repository, contextFactory);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
 
         final List<JobIdentifier> jobs = service.getJobs(tenant);
         assertEquals(2, jobs.size());
-        
+
         Collections.sort(jobs);
 
         final JobIdentifier job = jobs.get(0);
-        assertEquals("JobIdentifier[name=product_profiling]",
-                job.toString());
+        assertEquals("JobIdentifier[name=product_profiling]", job.toString());
 
         final JobMetrics jobMetrics = service.getJobMetrics(tenant, job);
         assertEquals("JobMetrics[product_profiling metrics]", jobMetrics.toString());
@@ -85,7 +87,7 @@ public class TimelineServiceImplTest extends TestCase {
 
         final List<TimelineGroup> timelineGroups = service.getTimelineGroups(tenant);
         assertEquals(2, timelineGroups.size());
-        
+
         timelines = service.getTimelines(tenant, timelineGroups.get(0));
         assertEquals(3, timelines.size());
 
@@ -95,7 +97,8 @@ public class TimelineServiceImplTest extends TestCase {
                 timelineIdentifier.toString());
 
         final TimelineDefinition timelineDefinition = service.getTimelineDefinition(tenant, timelineIdentifier);
-        assertEquals("TimelineDefinition[job=JobIdentifier[name=product_profiling],metrics=[MetricIdentifier[analyzerInputName=PRODUCTCODE,metricDescriptorName=Pattern count], MetricIdentifier[analyzerInputName=PRODUCTVENDOR,metricDescriptorName=False count,paramQueryString=PRODUCTVENDOR in 'vendor whitelist']]]",
+        assertEquals(
+                "TimelineDefinition[job=JobIdentifier[name=product_profiling],metrics=[MetricIdentifier[analyzerInputName=PRODUCTCODE,metricDescriptorName=Pattern count], MetricIdentifier[analyzerInputName=PRODUCTVENDOR,metricDescriptorName=False count,paramQueryString=PRODUCTVENDOR in 'vendor whitelist']]]",
                 timelineDefinition.toString());
 
         final TimelineData timelineData = service.getTimelineData(tenant, timelineDefinition);

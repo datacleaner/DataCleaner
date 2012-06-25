@@ -19,14 +19,15 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.server.TimelineServiceImpl;
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -51,6 +52,9 @@ public class JobFileController {
     @Autowired
     Repository _repository;
 
+    @Autowired
+    TenantContextFactory _contextFactory;
+
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, String> uploadAnalysisJob(@PathVariable("tenant") final String tenant,
@@ -60,12 +64,9 @@ public class JobFileController {
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
 
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
+        final TenantContext context = _contextFactory.getContext(tenant);
 
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
+        final RepositoryFolder jobsFolder = context.getJobFolder();
 
         final long timestamp = new Date().getTime();
         final String filename;
@@ -75,7 +76,7 @@ public class JobFileController {
             filename = jobName + "-" + timestamp + EXTENSION;
         }
 
-        final RepositoryFile jobFile = resultsFolder.createFile(filename, new Action<OutputStream>() {
+        final RepositoryFile jobFile = jobsFolder.createFile(filename, new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {
                 final InputStream in = file.getInputStream();
@@ -97,29 +98,11 @@ public class JobFileController {
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
-    public void jobXml(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName, final OutputStream out) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
+    public void jobXml(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
+            final OutputStream out) {
 
-        if (!jobName.endsWith(EXTENSION)) {
-            jobName = jobName + EXTENSION;
-        }
-
-        final RepositoryFolder jobsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_JOBS);
-        final RepositoryFile jobFile = jobsFolder.getFile(jobName);
-        if (jobFile == null) {
-            throw new IllegalArgumentException("No such job file: " + jobName);
-        }
-
-        final InputStream in = jobFile.readFile();
-        try {
-            FileHelper.copy(in, out);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            FileHelper.safeClose(in);
-        }
+        final TenantContext context = _contextFactory.getContext(tenant);
+        JobContext job = context.getJob(jobName);
+        job.toXml(out);
     }
 }

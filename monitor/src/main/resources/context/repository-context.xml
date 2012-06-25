@@ -26,10 +26,16 @@
 		<constructor-arg name="repository" ref="repository" />
 	</bean>
 
+	<bean name="tenantContextFactory"
+		class="org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl">
+		<constructor-arg name="repository" ref="repository" />
+		<constructor-arg name="configurationCache" ref="configurationCache" />
+	</bean>
+
 	<bean name="timelineService"
 		class="org.eobjects.datacleaner.monitor.server.TimelineServiceImpl">
 		<constructor-arg name="repository" ref="repository" />
-		<constructor-arg name="configurationCache" ref="configurationCache" />
+		<constructor-arg name="tenantContextFactory" ref="tenantContextFactory" />
 	</bean>
 
 </beans>

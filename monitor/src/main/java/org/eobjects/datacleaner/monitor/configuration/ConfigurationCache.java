@@ -21,8 +21,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
@@ -40,22 +39,21 @@ import org.eobjects.metamodel.util.FileHelper;
  */
 public class ConfigurationCache {
 
-    private final Map<String, AnalyzerBeansConfiguration> _analyzerBeansConfigurations;
+    private final ConcurrentHashMap<String, AnalyzerBeansConfiguration> _analyzerBeansConfigurations;
     private final Repository _repository;
 
     public ConfigurationCache(Repository repository) {
         _repository = repository;
-        _analyzerBeansConfigurations = new HashMap<String, AnalyzerBeansConfiguration>();
+        _analyzerBeansConfigurations = new ConcurrentHashMap<String, AnalyzerBeansConfiguration>();
     }
 
     public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(String tenantId) {
         AnalyzerBeansConfiguration conf = _analyzerBeansConfigurations.get(tenantId);
         if (conf == null) {
-            synchronized (_analyzerBeansConfigurations) {
-                conf = _analyzerBeansConfigurations.get(tenantId);
-                if (conf == null) {
-                    conf = readConfiguration(tenantId);
-                }
+            final AnalyzerBeansConfiguration newConfiguration = readConfiguration(tenantId);
+            conf = _analyzerBeansConfigurations.putIfAbsent(tenantId, newConfiguration);
+            if (conf == null) {
+                conf = newConfiguration;
             }
         }
         return conf;
@@ -91,7 +89,6 @@ public class ConfigurationCache {
         final InputStream inputStream = configurationFile.readFile();
         try {
             final AnalyzerBeansConfiguration conf = reader.read(inputStream);
-            _analyzerBeansConfigurations.put(tenantId, conf);
             return conf;
         } finally {
             FileHelper.safeClose(inputStream);

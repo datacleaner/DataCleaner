@@ -121,4 +121,9 @@ final class FileRepositoryFile implements RepositoryFile {
             throw new IllegalStateException("Could not delete file: " + _file);
         }
     }
+
+    @Override
+    public long getLastModified() {
+        return _file.lastModified();
+    }
 }

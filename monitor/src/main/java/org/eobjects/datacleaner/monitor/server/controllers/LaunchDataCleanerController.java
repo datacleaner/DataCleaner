@@ -32,6 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +53,16 @@ public class LaunchDataCleanerController {
     @Autowired
     LaunchArtifactProvider _launchArtifactProvider;
 
+    @Autowired
+    TenantContextFactory _contextFactory;
+
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public void launchDataCleaner(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
+
+        final TenantContext context = _contextFactory.getContext(tenant);
+        final JobContext job = context.getJob(jobName);
 
         response.setContentType("application/x-java-jnlp-file");
 
@@ -62,6 +71,7 @@ public class LaunchDataCleanerController {
         final String baseUrl = createBaseUrl(request, tenant);
         final String jnlpHref = "jobs/" + jobName + ".analysis.xml/launch.jnlp";
         final String jobUrl = baseUrl + "/jobs/" + jobName + ".analysis.xml";
+        final String datastoreName = job.getSourceDatastoreName();
         final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml";
 
         final InputStream in = getClass().getResourceAsStream("launch-datacleaner-template.xml");
@@ -71,6 +81,7 @@ public class LaunchDataCleanerController {
                 line = line.replaceAll("\\$BASE_URL", baseUrl);
                 line = line.replaceAll("\\$JNLP_HREF", jnlpHref);
                 line = line.replaceAll("\\$JOB_URL", jobUrl);
+                line = line.replaceAll("\\$DATASTORE_NAME", datastoreName);
                 line = line.replaceAll("\\$CONF_URL", confUrl);
                 if (line.indexOf("$JAR_HREF") == -1) {
                     out.write(line);

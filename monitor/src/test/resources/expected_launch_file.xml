@@ -23,6 +23,8 @@
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/conf.xml</argument>
 		<argument>-job</argument>
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/jobs/my_job.analysis.xml</argument>
+		<argument>-ds</argument>
+		<argument>my_datastore</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>
 		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
 	</application-desc>

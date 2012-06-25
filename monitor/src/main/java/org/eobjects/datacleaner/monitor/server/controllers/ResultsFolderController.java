@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.server.TimelineServiceImpl;
-import org.eobjects.datacleaner.repository.Repository;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -41,17 +41,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ResultsFolderController {
 
     @Autowired
-    Repository _repository;
+    TenantContextFactory _tenantContextFactory;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Map<String, String>> resultsFolderHtml(@PathVariable("tenant") String tenant) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
+        final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final RepositoryFolder resultsFolder = tenantFolder.getFolder(TimelineServiceImpl.PATH_RESULTS);
+        final RepositoryFolder resultsFolder = context.getResultFolder();
 
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 

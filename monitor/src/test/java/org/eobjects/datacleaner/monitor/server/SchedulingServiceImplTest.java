@@ -29,11 +29,12 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.TimelineService;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.metamodel.util.DateUtils;
@@ -47,11 +48,11 @@ import com.ibm.icu.text.SimpleDateFormat;
 public class SchedulingServiceImplTest extends TestCase {
 
     public void testScenario() throws Exception {
-        Repository repository = new FileRepository("src/test/resources/example_repo");
-        ConfigurationCache configurationCache = new ConfigurationCache(repository);
-        TimelineService timelineService = new TimelineServiceImpl(repository, configurationCache);
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final ConfigurationCache configurationCache = new ConfigurationCache(repository);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
 
-        SchedulingServiceImpl service = new SchedulingServiceImpl(timelineService, repository, configurationCache);
+        final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
 
         Scheduler scheduler = service.getScheduler();
         assertFalse(scheduler.isStarted());

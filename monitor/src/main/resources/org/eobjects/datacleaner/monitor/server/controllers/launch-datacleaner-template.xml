@@ -21,6 +21,8 @@
 		<argument>$CONF_URL</argument>
 		<argument>-job</argument>
 		<argument>$JOB_URL</argument>
+		<argument>-ds</argument>
+		<argument>$DATASTORE_NAME</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>
 		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
 	</application-desc>

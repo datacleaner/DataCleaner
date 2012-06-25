@@ -58,4 +58,11 @@ public interface RepositoryFile extends RepositoryNode {
      * @return the type of the file.
      */
     public Type getType();
+
+    /**
+     * Gets the last modified timestamp.
+     * 
+     * @return
+     */
+    public long getLastModified();
 }

@@ -175,7 +175,7 @@ public final class Bootstrap {
             if (jobFilePath == null) {
                 analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
             } else {
-                final FileObject jobFile = dataCleanerHome.resolveFile(jobFilePath);
+                final FileObject jobFile = VFSUtils.getFileSystemManager().resolveFile(jobFilePath);
                 analysisJobBuilderWindow = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
             }
 

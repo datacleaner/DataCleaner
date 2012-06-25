@@ -31,9 +31,9 @@ import java.util.List;
 import org.eobjects.datacleaner.util.FileFilters;
 
 /**
- * {@link LaunchArtifactProvider} implementation based on an external DataCleaner folder
- * which is used to serve JAR files. All JAR files in this folder are assumed to
- * be signed.
+ * {@link LaunchArtifactProvider} implementation based on an external
+ * DataCleaner folder which is used to serve JAR files. All JAR files in this
+ * folder are assumed to be signed.
  */
 public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider {
 
@@ -53,7 +53,7 @@ public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider 
     }
 
     @Override
-    public InputStream readJarFile(String filename) {
+    public InputStream readJarFile(final String filename) {
         final File file = new File(_libFolder, filename);
         if (file.exists()) {
             try {
@@ -63,7 +63,7 @@ public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider 
                 throw new IllegalStateException("Could not read from file: " + file, e);
             }
         }
-        return null;
+        throw new IllegalArgumentException("No such file: " + filename);
     }
 
     @Override

@@ -26,9 +26,12 @@ import java.io.Writer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
@@ -39,6 +42,8 @@ import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Predicate;
+import org.eobjects.metamodel.util.TruePredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,7 +73,7 @@ public class ResultFileController {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
-        
+
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final RepositoryFolder resultsFolder = context.getResultFolder();
@@ -104,8 +109,10 @@ public class ResultFileController {
 
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
-            @RequestParam(value = "tabs", required = false) Boolean tabsParam, final Writer out) {
-        
+            @RequestParam(value = "tabs", required = false) Boolean tabsParam,
+            @RequestParam(value = "comp_name", required = false) String componentParamName,
+            @RequestParam(value = "comp_index", required = false) Integer componentIndexParam, final Writer out) {
+
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final RepositoryFolder resultsFolder = context.getResultFolder();
@@ -122,12 +129,55 @@ public class ResultFileController {
         final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final boolean tabs = (tabsParam == null ? true : tabsParam.booleanValue());
-        final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter(tabs);
+
+        final boolean headers;
+        final Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate;
+        if (org.eobjects.analyzer.util.StringUtils.isNullOrEmpty(componentParamName)) {
+            jobInclusionPredicate = new TruePredicate<Entry<ComponentJob, AnalyzerResult>>();
+            headers = true;
+        } else {
+            jobInclusionPredicate = createInclusionPredicate(componentParamName, componentIndexParam);
+            headers = false;
+        }
+
+        final HtmlAnalysisResultWriter htmlWriter = new HtmlAnalysisResultWriter(tabs, jobInclusionPredicate, headers);
 
         try {
             htmlWriter.write(analysisResult, configuration, out);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private Predicate<Entry<ComponentJob, AnalyzerResult>> createInclusionPredicate(final String componentParamName,
+            final Integer componentIndexParam) {
+        return new Predicate<Map.Entry<ComponentJob, AnalyzerResult>>() {
+
+            private int index = 0;
+
+            @Override
+            public Boolean eval(Entry<ComponentJob, AnalyzerResult> entry) {
+                ComponentJob component = entry.getKey();
+                String name = component.getName();
+                if (name != null && name.equals(componentParamName)) {
+                    return matchesIndex();
+                }
+                String displayName = component.getDescriptor().getDisplayName();
+                if (displayName != null && displayName.equals(componentParamName)) {
+                    return matchesIndex();
+                }
+                return false;
+            }
+
+            protected Boolean matchesIndex() {
+                if (componentIndexParam == null) {
+                    return true;
+                } else {
+                    boolean result = (index == componentIndexParam.intValue());
+                    index++;
+                    return result;
+                }
+            }
+        };
     }
 }

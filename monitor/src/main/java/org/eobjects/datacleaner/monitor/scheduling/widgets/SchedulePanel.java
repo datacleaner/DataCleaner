@@ -115,7 +115,7 @@ public class SchedulePanel extends Composite {
             @Override
             public void onClick(ClickEvent event) {
                 String url = Urls.createRelativeUrl("repository/" + tenant.getId() + "/jobs/"
-                        + schedule.getJob().getName() + ".analysis.xml/launch.jnlp");
+                        + schedule.getJob().getName() + ".launch.jnlp");
                 Window.open(url, "_blank", null);
             }
         });
@@ -154,4 +154,6 @@ public class SchedulePanel extends Composite {
             alertsPanel.add(alertPanel);
         }
     }
+    
+    
 }

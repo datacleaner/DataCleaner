@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.analysis.xml/launch.jnlp")
+@RequestMapping(value = "/{tenant}/jobs/{job}.launch.jnlp")
 public class LaunchDataCleanerController {
 
     private static final String RESOURCES_FOLDER = "launch-resources/";
@@ -69,7 +69,7 @@ public class LaunchDataCleanerController {
         final PrintWriter out = response.getWriter();
 
         final String baseUrl = createBaseUrl(request, tenant);
-        final String jnlpHref = "jobs/" + jobName + ".analysis.xml/launch.jnlp";
+        final String jnlpHref = "jobs/" + jobName + ".launch.jnlp";
         final String jobUrl = baseUrl + "/jobs/" + jobName + ".analysis.xml";
         final String datastoreName = job.getSourceDatastoreName();
         final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml";

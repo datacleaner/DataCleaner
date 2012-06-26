@@ -40,6 +40,7 @@ import org.eobjects.analyzer.configuration.jaxb.MultithreadedTaskrunnerType;
 import org.eobjects.analyzer.configuration.jaxb.ObjectFactory;
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
+import org.eobjects.metamodel.util.Ref;
 
 /**
  * Interceptor class which transforms a tenant's configuration as it is being
@@ -61,11 +62,23 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
     private final JAXBContext _jaxbContext;
     private final ConfigurationFactory _configurationFactory;
+    private final Ref<Date> _dateRef;
 
     public JaxbConfigurationInterceptor(ConfigurationFactory configurationFactory) throws JAXBException {
+        this(configurationFactory, new Ref<Date>() {
+            @Override
+            public Date get() {
+                return new Date();
+            }
+        });
+    }
+
+    public JaxbConfigurationInterceptor(ConfigurationFactory configurationFactory, Ref<Date> dateRef)
+            throws JAXBException {
         _configurationFactory = configurationFactory;
         _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
                 ObjectFactory.class.getClassLoader());
+        _dateRef = dateRef;
     }
 
     public void intercept(final String tenantId, final InputStream in, final OutputStream out) throws Exception {
@@ -93,7 +106,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         final ConfigurationMetadataType configurationMetadata = new ConfigurationMetadataType();
         configurationMetadata.setConfigurationName("DataCleaner dq monitor configuration for tenant " + tenantId);
         configuration.setConfigurationMetadata(configurationMetadata);
-        configurationMetadata.setUpdatedDate(createDate(new Date()));
+        configurationMetadata.setUpdatedDate(createDate(_dateRef.get()));
         configurationMetadata.setAuthor("Automatically generated");
 
         final Marshaller marshaller = createMarshaller();

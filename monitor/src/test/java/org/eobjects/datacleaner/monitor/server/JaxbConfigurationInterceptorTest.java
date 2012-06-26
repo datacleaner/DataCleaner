@@ -23,13 +23,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Date;
 
 import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
+import org.eobjects.metamodel.util.DateUtils;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Month;
+import org.eobjects.metamodel.util.Ref;
 
 public class JaxbConfigurationInterceptorTest extends TestCase {
 
@@ -38,7 +42,13 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         configurationFactory.setNumThreads(10);
         configurationFactory.setScannedPackages(Arrays.asList("org.eobjects", "com.hi"));
 
-        final JaxbConfigurationInterceptor interceptor = new JaxbConfigurationInterceptor(configurationFactory);
+        Ref<Date> dateRef = new Ref<Date>() {
+            @Override
+            public Date get() {
+                return DateUtils.get(2012, Month.JUNE, 26);
+            }
+        };
+        final JaxbConfigurationInterceptor interceptor = new JaxbConfigurationInterceptor(configurationFactory, dateRef);
 
         final FileRepository repo = new FileRepository("src/test/resources/example_repo");
         final RepositoryFile file = (RepositoryFile) repo.getRepositoryNode("/tenant1/conf.xml");

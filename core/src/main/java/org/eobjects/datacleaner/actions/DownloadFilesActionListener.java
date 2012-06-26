@@ -119,7 +119,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
             try {
                 task.execute();
             } catch (Exception e) {
-                WidgetUtils.showErrorMessage("Error processing file chunk: " + task, e);
+                WidgetUtils.showErrorMessage("Error processing transfer chunk: " + task, e);
             }
         }
     }
@@ -137,7 +137,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
                 File[] files = get();
                 _listener.onFilesDownloaded(files);
             } catch (Throwable e) {
-                WidgetUtils.showErrorMessage("Error processing file!", e);
+                WidgetUtils.showErrorMessage("Error transfering file(s)!", e);
             }
         }
     }

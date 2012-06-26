@@ -165,12 +165,14 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 
                     final HttpEntity responseEntity = response.getEntity();
                     final long expectedSize = responseEntity.getContentLength();
-                    publish(new Task() {
-                        @Override
-                        public void execute() throws Exception {
-                            _downloadProgressWindow.setExpectedSize(file.getName(), expectedSize);
-                        }
-                    });
+                    if (expectedSize > 0) {
+                        publish(new Task() {
+                            @Override
+                            public void execute() throws Exception {
+                                _downloadProgressWindow.setExpectedSize(file.getName(), expectedSize);
+                            }
+                        });
+                    }
 
                     inputStream = responseEntity.getContent();
                     outputStream = new BufferedOutputStream(new FileOutputStream(file));

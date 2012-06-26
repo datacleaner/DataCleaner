@@ -413,6 +413,8 @@ public class JdbcDatastoreDialog extends AbstractDialog {
                 + "If you see an additional panel, this provides an alternative means of connecting "
                 + "without having to know the URL format for your specific database type."), BorderLayout.NORTH);
         outerPanel.add(formContainerPanel, BorderLayout.CENTER);
+        
+        outerPanel.setPreferredSize(getDialogWidth(), 500);
 
         return outerPanel;
     }

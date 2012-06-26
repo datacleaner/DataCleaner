@@ -24,7 +24,12 @@
 	<custom-taskrunner
 		class-name="org.eobjects.datacleaner.monitor.configuration.SharedTaskRunner" />
 
+	<storage-provider>
+		<in-memory max-rows-threshold="500" />
+	</storage-provider>
+
 	<custom-descriptor-provider
 		class-name="org.eobjects.datacleaner.monitor.configuration.SharedDescriptorProvider" />
+
 
 </configuration>

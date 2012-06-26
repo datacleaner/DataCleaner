@@ -73,7 +73,7 @@
 				</berkeley-db>
 			</collections-storage>
 			<row-annotation-storage>
-				<in-memory max-rows-threshold="1000" />
+				<in-memory max-rows-threshold="500" />
 			</row-annotation-storage>
 		</combined>
 	</storage-provider>

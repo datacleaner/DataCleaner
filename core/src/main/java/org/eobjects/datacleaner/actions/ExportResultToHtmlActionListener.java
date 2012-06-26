@@ -57,7 +57,8 @@ public class ExportResultToHtmlActionListener implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (_result.get() == null) {
+        final AnalysisResult analysisResult = _result.get();
+        if (analysisResult == null) {
             WidgetUtils.showErrorMessage("Result not ready",
                     "Please wait for the job to finish before saving the result", null);
             return;
@@ -92,7 +93,7 @@ public class ExportResultToHtmlActionListener implements ActionListener {
             HtmlAnalysisResultWriter resultWriter = new HtmlAnalysisResultWriter();
             Writer writer = FileHelper.getBufferedWriter(file);
             try {
-                resultWriter.write(_result.get(), _configuration, writer);
+                resultWriter.write(analysisResult, _configuration, writer);
             } catch (IOException e) {
                 WidgetUtils.showErrorMessage("Error writing result to HTML page", e);
             } finally {

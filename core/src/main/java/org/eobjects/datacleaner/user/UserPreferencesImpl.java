@@ -128,6 +128,11 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     @Override
     public void save() {
+        if (_userPreferencesFile == null) {
+            logger.debug("Not saving user preferences, since no user preferences file has been provided");
+            return;
+        }
+
         logger.info("Saving user preferences to {}", _userPreferencesFile.getName().getPath());
         ObjectOutputStream outputStream = null;
         try {
@@ -390,7 +395,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     public MonitorConnection getMonitorConnection() {
         return monitorConnection;
     }
-    
+
     @Override
     public File getSaveDownloadedFilesDirectory() {
         if (saveDownloadedFilesDirectory == null) {
@@ -398,7 +403,7 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
         }
         return saveDownloadedFilesDirectory;
     }
-    
+
     @Override
     public void setSaveDownloadedFilesDirectory(File directory) {
         this.saveDownloadedFilesDirectory = directory;

@@ -25,5 +25,6 @@
 		<argument>$DATASTORE_NAME</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>
 		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
+		<argument>-Ddatacleaner.sandbox=true</argument>
 	</application-desc>
 </jnlp>

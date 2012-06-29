@@ -41,6 +41,7 @@ import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
+import org.eobjects.datacleaner.bootstrap.SystemProperties;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.DCAuthenticationService;
@@ -58,6 +59,8 @@ import org.eobjects.metamodel.util.ImmutableRef;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.MutableRef;
 import org.eobjects.metamodel.util.Ref;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -69,6 +72,8 @@ import com.google.inject.Provides;
  * @author Kasper Sørensen
  */
 public class DCModule extends AbstractModule {
+
+    private static final Logger logger = LoggerFactory.getLogger(DCModule.class);
 
     private final Ref<AnalyzerBeansConfiguration> _undecoratedConfigurationRef;
     private final Ref<UserPreferences> _userPreferencesRef;
@@ -136,7 +141,11 @@ public class DCModule extends AbstractModule {
 
     private final Ref<UserPreferences> createUserPreferencesRef(final FileObject dataCleanerHome) {
         try {
+            if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
+                return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
+            }
             if (dataCleanerHome == null || !dataCleanerHome.exists()) {
+                logger.info("DataCleaner home was not set or does not exist. Non-persistent user preferences will be applied.");
                 return new ImmutableRef<UserPreferences>(new UserPreferencesImpl(null));
             }
 

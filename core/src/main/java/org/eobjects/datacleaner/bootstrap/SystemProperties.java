@@ -19,20 +19,31 @@
  */
 package org.eobjects.datacleaner.bootstrap;
 
+import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.UserPreferences;
+
 /**
  * Represents commonly referenced system properties which DataCleaner makes use
  * of.
  */
 public class SystemProperties {
 
-	/**
-	 * Property which in case of a "true" value makes the UI visible even with
-	 * command line parameters.
-	 */
-	public static final String UI_VISIBLE = "datacleaner.ui.visible";
+    /**
+     * Property which in case of a "true" value makes the UI visible even with
+     * command line parameters.
+     */
+    public static final String UI_VISIBLE = "datacleaner.ui.visible";
 
-	/**
-	 * Identifies the name of a client that is embedding datacleaner.
-	 */
-	public static final String EMBED_CLIENT = "datacleaner.embed.client";
+    /**
+     * Identifies the name of a client that is embedding datacleaner.
+     */
+    public static final String EMBED_CLIENT = "datacleaner.embed.client";
+
+    /**
+     * Property which in case of a "true" value makes DataCleaner work in
+     * "Sandbox" mode which means that it will not assume there's any
+     * {@link DataCleanerHome} folder and will not attempt to write any
+     * {@link UserPreferences} file etc.
+     */
+    public static final String SANDBOX = "datacleaner.sandbox";
 }

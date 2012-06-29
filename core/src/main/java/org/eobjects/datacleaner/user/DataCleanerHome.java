@@ -33,6 +33,7 @@ import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.bootstrap.SystemProperties;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
@@ -90,6 +91,10 @@ public final class DataCleanerHome {
                 // directory
                 candidate = manager.resolveFile(".");
             }
+        }
+        
+        if ("true".equalsIgnoreCase(System.getProperty(SystemProperties.SANDBOX))) {
+            return candidate;
         }
 
         if (!isUsable(candidate)) {

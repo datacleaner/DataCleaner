@@ -111,9 +111,12 @@ public class LaunchDataCleanerController {
         baseUrl.append(request.getServerName());
         baseUrl.append(':');
         baseUrl.append(request.getServerPort());
-        baseUrl.append('/');
 
         final String contextPath = request.getContextPath();
+        if (!contextPath.startsWith("/")) {
+            baseUrl.append('/');
+        }
+        
         if (!StringUtils.isNullOrEmpty(contextPath) && !"/".equals(contextPath)) {
             baseUrl.append(contextPath);
             if (!contextPath.endsWith("/")) {

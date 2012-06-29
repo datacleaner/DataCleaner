@@ -6,12 +6,1881 @@
         <updated-date>2012-06-26+02:00</updated-date>
     </configuration-metadata>
     <datastore-catalog>
-        <jdbc-datastore description="DataCleaner example database" name="orderdb">
-            <url>jdbc:hsqldb:res:orderdb;readonly=true</url>
-            <driver>org.hsqldb.jdbcDriver</driver>
-            <username>SA</username>
-            <password></password>
-        </jdbc-datastore>
+        <pojo-datastore description="DataCleaner example database" name="orderdb">
+            <schema-name>PUBLIC</schema-name>
+            <table>
+                <name>CUSTOMERS</name>
+                <columns>
+                    <column>
+                        <name>CUSTOMERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CUSTOMERNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CONTACTLASTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CONTACTFIRSTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PHONE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE1</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE2</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CITY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>STATE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>POSTALCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>COUNTRY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>SALESREPEMPLOYEENUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CREDITLIMIT</name>
+                        <type>NUMERIC</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>103</v>
+                        <v>Atelier graphique</v>
+                        <v>Schmitt</v>
+                        <v>Carine</v>
+                        <v>40.32.2555</v>
+                        <v>54, rue Royale</v>
+                        <v>Nantes</v>
+                        <v>44000</v>
+                        <v>France</v>
+                        <v>1370</v>
+                        <v>21000.0</v>
+                    </row>
+                    <row>
+                        <v>112</v>
+                        <v>Signal Gift Stores</v>
+                        <v>King</v>
+                        <v>Sue</v>
+                        <v>7025551838</v>
+                        <v>8489 Strong St.</v>
+                        <v>Las Vegas</v>
+                        <v>NV</v>
+                        <v>83030</v>
+                        <v>USA</v>
+                        <v>1166</v>
+                        <v>71800.0</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>Australian Collectors, Co.</v>
+                        <v>Ferguson</v>
+                        <v>Peter</v>
+                        <v>03 9520 4555</v>
+                        <v>636 St Kilda Road</v>
+                        <v>Level 3</v>
+                        <v>Melbourne</v>
+                        <v>Victoria</v>
+                        <v>3004</v>
+                        <v>Australia</v>
+                        <v>1611</v>
+                        <v>117300.0</v>
+                    </row>
+                    <row>
+                        <v>119</v>
+                        <v>La Rochelle Gifts</v>
+                        <v>Labrune</v>
+                        <v>Janine</v>
+                        <v>40.67.8555</v>
+                        <v>67, rue des Cinquante Otages</v>
+                        <v>Nantes</v>
+                        <v>44000</v>
+                        <v>France</v>
+                        <v>1370</v>
+                        <v>118200.0</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>Baane Mini Imports</v>
+                        <v>Bergulfsen</v>
+                        <v>Jonas</v>
+                        <v>07-98 9555</v>
+                        <v>Erling Skakkes gate 78</v>
+                        <v>Stavern</v>
+                        <v>4110</v>
+                        <v>Norway</v>
+                        <v>1504</v>
+                        <v>81700.0</v>
+                    </row>
+                    <row>
+                        <v>124</v>
+                        <v>Mini Gifts Distributors Ltd.</v>
+                        <v>Nelson</v>
+                        <v>Valarie</v>
+                        <v>4155551450</v>
+                        <v>5677 Strong St.</v>
+                        <v>San Rafael</v>
+                        <v>CA</v>
+                        <v>97562</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>210500.0</v>
+                    </row>
+                    <row>
+                        <v>125</v>
+                        <v>Havel &amp; Zbyszek Co</v>
+                        <v>Piestrzeniewicz</v>
+                        <v>Zbyszek</v>
+                        <v>(26) 642-7555</v>
+                        <v>ul. Filtrowa 68</v>
+                        <v>Warszawa</v>
+                        <v>01-012</v>
+                        <v>Poland</v>
+                        <v>0.0</v>
+                    </row>
+                    <row>
+                        <v>128</v>
+                        <v>Blauer See Auto, Co.</v>
+                        <v>Keitel</v>
+                        <v>Roland</v>
+                        <v>+49 69 66 90 2555</v>
+                        <v>Lyonerstr. 34</v>
+                        <v>Frankfurt</v>
+                        <v>60528</v>
+                        <v>Germany</v>
+                        <v>1504</v>
+                        <v>59700.0</v>
+                    </row>
+                    <row>
+                        <v>129</v>
+                        <v>Mini Wheels Co.</v>
+                        <v>Murphy</v>
+                        <v>Julie</v>
+                        <v>6505555787</v>
+                        <v>5557 North Pendale Street</v>
+                        <v>San Francisco</v>
+                        <v>CA</v>
+                        <v>94217</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>64600.0</v>
+                    </row>
+                    <row>
+                        <v>131</v>
+                        <v>Land of Toys Inc.</v>
+                        <v>Yu</v>
+                        <v>Kwai</v>
+                        <v>2125557818</v>
+                        <v>897 Long Airport Avenue</v>
+                        <v>NYC</v>
+                        <v>NY</v>
+                        <v>10022</v>
+                        <v>USA</v>
+                        <v>1323</v>
+                        <v>114900.0</v>
+                    </row>
+                    <row>
+                        <v>141</v>
+                        <v>Euro+ Shopping Channel</v>
+                        <v>Freyre</v>
+                        <v>Diego</v>
+                        <v>(91) 555 94 44</v>
+                        <v>C/ Moralzarzal, 86</v>
+                        <v>Madrid</v>
+                        <v>28034</v>
+                        <v>Spain</v>
+                        <v>1370</v>
+                        <v>227600.0</v>
+                    </row>
+                    <row>
+                        <v>144</v>
+                        <v>Volvo Model Replicas, Co</v>
+                        <v>Berglund</v>
+                        <v>Christina</v>
+                        <v>0921-12 3555</v>
+                        <v>Berguvsvägen  8</v>
+                        <v>Luleå</v>
+                        <v>S-958 22</v>
+                        <v>Sweden</v>
+                        <v>1504</v>
+                        <v>53100.0</v>
+                    </row>
+                    <row>
+                        <v>145</v>
+                        <v>Danish Wholesale Imports</v>
+                        <v>Petersen</v>
+                        <v>Jytte</v>
+                        <v>31 12 3555</v>
+                        <v>Vinbæltet 34</v>
+                        <v>Kobenhavn</v>
+                        <v>1734</v>
+                        <v>Denmark</v>
+                        <v>1401</v>
+                        <v>83400.0</v>
+                    </row>
+                    <row>
+                        <v>146</v>
+                        <v>Saveley &amp; Henriot, Co.</v>
+                        <v>Saveley</v>
+                        <v>Mary</v>
+                        <v>78.32.5555</v>
+                        <v>2, rue du Commerce</v>
+                        <v>Lyon</v>
+                        <v>69004</v>
+                        <v>France</v>
+                        <v>1337</v>
+                        <v>123900.0</v>
+                    </row>
+                    <row>
+                        <v>148</v>
+                        <v>Dragon Souveniers, Ltd.</v>
+                        <v>Natividad</v>
+                        <v>Eric</v>
+                        <v>+65 221 7555</v>
+                        <v>Bronz Sok., Bronz Apt. 3/6 Tesvikiye</v>
+                        <v>Singapore</v>
+                        <v>079903</v>
+                        <v>Singapore</v>
+                        <v>1621</v>
+                        <v>103800.0</v>
+                    </row>
+                    <row>
+                        <v>151</v>
+                        <v>Muscle Machine Inc</v>
+                        <v>Young</v>
+                        <v>Jeff</v>
+                        <v>2125557413</v>
+                        <v>4092 Furth Circle</v>
+                        <v>Suite 400</v>
+                        <v>NYC</v>
+                        <v>NY</v>
+                        <v>10022</v>
+                        <v>USA</v>
+                        <v>1286</v>
+                        <v>138500.0</v>
+                    </row>
+                    <row>
+                        <v>157</v>
+                        <v>Diecast Classics Inc.</v>
+                        <v>Yu</v>
+                        <v>Kyung</v>
+                        <v>2155551555</v>
+                        <v>7586 Pompton St.</v>
+                        <v>Allentown</v>
+                        <v>PA</v>
+                        <v>70267</v>
+                        <v>USA</v>
+                        <v>1216</v>
+                        <v>100600.0</v>
+                    </row>
+                    <row>
+                        <v>161</v>
+                        <v>Technics Stores Inc.</v>
+                        <v>Hirano</v>
+                        <v>Juri</v>
+                        <v>6505556809</v>
+                        <v>9408 Furth Circle</v>
+                        <v>Burlingame</v>
+                        <v>CA</v>
+                        <v>94217</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>84600.0</v>
+                    </row>
+                    <row>
+                        <v>166</v>
+                        <v>Handji Gifts&amp; Co</v>
+                        <v>Victorino</v>
+                        <v>Wendy</v>
+                        <v>+65 224 1555</v>
+                        <v>Village Close - 106 Linden Road Sandown</v>
+                        <v>2nd Floor</v>
+                        <v>Singapore</v>
+                        <v>069045</v>
+                        <v>Singapore</v>
+                        <v>1612</v>
+                        <v>97900.0</v>
+                    </row>
+                    <row>
+                        <v>167</v>
+                        <v>Herkku Gifts</v>
+                        <v>Oeztan</v>
+                        <v>Veysel</v>
+                        <v>+47 2267 3215</v>
+                        <v>Drammen 121, PR 744 Sentrum</v>
+                        <v>Bergen</v>
+                        <v>N 5804</v>
+                        <v>Norway</v>
+                        <v>1504</v>
+                        <v>96800.0</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>EMPLOYEES</name>
+                <columns>
+                    <column>
+                        <name>EMPLOYEENUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>LASTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>FIRSTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>EXTENSION</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>EMAIL</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>OFFICECODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>REPORTSTO</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>JOBTITLE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>1002</v>
+                        <v>Murphy</v>
+                        <v>Diane</v>
+                        <v>x5800</v>
+                        <v>dmurphy@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>President</v>
+                    </row>
+                    <row>
+                        <v>1056</v>
+                        <v>Patterson</v>
+                        <v>Mary</v>
+                        <v>x4611</v>
+                        <v>mpatterso@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1002</v>
+                        <v>VP Sales</v>
+                    </row>
+                    <row>
+                        <v>1076</v>
+                        <v>Firrelli</v>
+                        <v>Jeff</v>
+                        <v>x9273</v>
+                        <v>jfirrelli@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1002</v>
+                        <v>VP Marketing</v>
+                    </row>
+                    <row>
+                        <v>1088</v>
+                        <v>Patterson</v>
+                        <v>William</v>
+                        <v>x4871</v>
+                        <v>wpatterson@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1056</v>
+                        <v>Sales Manager (JAPAN, APAC)</v>
+                    </row>
+                    <row>
+                        <v>1102</v>
+                        <v>Bondur</v>
+                        <v>Gerard</v>
+                        <v>x5408</v>
+                        <v>athompson@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1056</v>
+                        <v>Sale Manager (EMEA)</v>
+                    </row>
+                    <row>
+                        <v>1143</v>
+                        <v>Bow</v>
+                        <v>Anthony</v>
+                        <v>x5428</v>
+                        <v>bhoward@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1056</v>
+                        <v>Sales Manager (NA)</v>
+                    </row>
+                    <row>
+                        <v>1165</v>
+                        <v>Jennings</v>
+                        <v>Leslie</v>
+                        <v>x3291</v>
+                        <v>ljennings@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1166</v>
+                        <v>Thompson</v>
+                        <v>Leslie</v>
+                        <v>x4065</v>
+                        <v>lthompson@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1188</v>
+                        <v>Firrelli</v>
+                        <v>Julie</v>
+                        <v>x2173</v>
+                        <v>jfirrelli@classicmodelcars.com</v>
+                        <v>2</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1216</v>
+                        <v>Patterson</v>
+                        <v>Steve</v>
+                        <v>x4334</v>
+                        <v>spatterso@classicmodelcars.com</v>
+                        <v>2</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1286</v>
+                        <v>Tseng</v>
+                        <v>Foon Yue</v>
+                        <v>x2248</v>
+                        <v>ftseng@classicmodelcars.com</v>
+                        <v>3</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1323</v>
+                        <v>Vanauf</v>
+                        <v>George</v>
+                        <v>x4102</v>
+                        <v>gvanauf@classicmodelcars.com</v>
+                        <v>3</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1337</v>
+                        <v>Bondur</v>
+                        <v>Loui</v>
+                        <v>x6493</v>
+                        <v>lbondur@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1370</v>
+                        <v>Hernandez</v>
+                        <v>Gerard</v>
+                        <v>x2028</v>
+                        <v>ghernande@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1401</v>
+                        <v>Castillo</v>
+                        <v>Pamela</v>
+                        <v>x2759</v>
+                        <v>pcastillo@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1501</v>
+                        <v>Bott</v>
+                        <v>Larry</v>
+                        <v>x2311</v>
+                        <v>lbott@classicmodelcars.com</v>
+                        <v>7</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1504</v>
+                        <v>Jones</v>
+                        <v>Barry</v>
+                        <v>x102</v>
+                        <v>bjones@classicmodelcars.com</v>
+                        <v>7</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1611</v>
+                        <v>Fixter</v>
+                        <v>Andy</v>
+                        <v>x101</v>
+                        <v>afixter@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1088</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1612</v>
+                        <v>Marsh</v>
+                        <v>Peter</v>
+                        <v>x102</v>
+                        <v>pmarsh@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1088</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1619</v>
+                        <v>King</v>
+                        <v>Tom</v>
+                        <v>x103</v>
+                        <v>tking@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1088</v>
+                        <v>Sales Rep</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>OFFICES</name>
+                <columns>
+                    <column>
+                        <name>OFFICECODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CITY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PHONE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE1</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE2</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>STATE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>COUNTRY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>POSTALCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>TERRITORY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>1</v>
+                        <v>San Francisco</v>
+                        <v>+1 650 219 4782</v>
+                        <v>100 Market Street</v>
+                        <v>Suite 300</v>
+                        <v>CA</v>
+                        <v>USA</v>
+                        <v>94080</v>
+                        <v>NA</v>
+                    </row>
+                    <row>
+                        <v>2</v>
+                        <v>Boston</v>
+                        <v>+1 215 837 0825</v>
+                        <v>1550 Court Place</v>
+                        <v>Suite 102</v>
+                        <v>MA</v>
+                        <v>USA</v>
+                        <v>02107</v>
+                        <v>NA</v>
+                    </row>
+                    <row>
+                        <v>3</v>
+                        <v>NYC</v>
+                        <v>+1 212 555 3000</v>
+                        <v>523 East 53rd Street</v>
+                        <v>apt. 5A</v>
+                        <v>NY</v>
+                        <v>USA</v>
+                        <v>10022</v>
+                        <v>NA</v>
+                    </row>
+                    <row>
+                        <v>4</v>
+                        <v>Paris</v>
+                        <v>+33 14 723 4404</v>
+                        <v>43 Rue Jouffroy D'abbans</v>
+                        <v></v>
+                        <v>France</v>
+                        <v>75017</v>
+                        <v>EMEA</v>
+                    </row>
+                    <row>
+                        <v>5</v>
+                        <v>Tokyo</v>
+                        <v>+81 33 224 5000</v>
+                        <v>4-1 Kioicho</v>
+                        <v>Chiyoda-Ku</v>
+                        <v>Japan</v>
+                        <v>102-8578</v>
+                        <v>Japan</v>
+                    </row>
+                    <row>
+                        <v>6</v>
+                        <v>Sydney</v>
+                        <v>+61 2 9264 2451</v>
+                        <v>5-11 Wentworth Avenue</v>
+                        <v>Floor #2</v>
+                        <v>Australia</v>
+                        <v>NSW 2010</v>
+                        <v>APAC</v>
+                    </row>
+                    <row>
+                        <v>7</v>
+                        <v>London</v>
+                        <v>+44 20 7877 2041</v>
+                        <v>25 Old Broad Street</v>
+                        <v>Level 7</v>
+                        <v>UK</v>
+                        <v>EC2N 1HN</v>
+                        <v>EMEA</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>ORDERDETAILS</name>
+                <columns>
+                    <column>
+                        <name>ORDERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>QUANTITYORDERED</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>PRICEEACH</name>
+                        <type>NUMERIC</type>
+                    </column>
+                    <column>
+                        <name>ORDERLINENUMBER</name>
+                        <type>SMALLINT</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>10100</v>
+                        <v>S18_1749</v>
+                        <v>30</v>
+                        <v>171.7</v>
+                        <v>3</v>
+                    </row>
+                    <row>
+                        <v>10100</v>
+                        <v>S18_2248</v>
+                        <v>50</v>
+                        <v>67.8</v>
+                        <v>2</v>
+                    </row>
+                    <row>
+                        <v>10100</v>
+                        <v>S18_4409</v>
+                        <v>22</v>
+                        <v>86.51</v>
+                        <v>4</v>
+                    </row>
+                    <row>
+                        <v>10100</v>
+                        <v>S24_3969</v>
+                        <v>49</v>
+                        <v>34.47</v>
+                        <v>1</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S18_2325</v>
+                        <v>25</v>
+                        <v>151.28</v>
+                        <v>4</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S18_2795</v>
+                        <v>26</v>
+                        <v>145.13</v>
+                        <v>1</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S24_1937</v>
+                        <v>45</v>
+                        <v>31.2</v>
+                        <v>3</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S24_2022</v>
+                        <v>46</v>
+                        <v>53.76</v>
+                        <v>2</v>
+                    </row>
+                    <row>
+                        <v>10102</v>
+                        <v>S18_1342</v>
+                        <v>39</v>
+                        <v>123.29</v>
+                        <v>2</v>
+                    </row>
+                    <row>
+                        <v>10102</v>
+                        <v>S18_1367</v>
+                        <v>41</v>
+                        <v>50.14</v>
+                        <v>1</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S10_1949</v>
+                        <v>26</v>
+                        <v>207.87</v>
+                        <v>11</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S10_4962</v>
+                        <v>42</v>
+                        <v>128.53</v>
+                        <v>4</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S12_1666</v>
+                        <v>27</v>
+                        <v>125.74</v>
+                        <v>8</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_1097</v>
+                        <v>35</v>
+                        <v>112.0</v>
+                        <v>10</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_2432</v>
+                        <v>22</v>
+                        <v>54.09</v>
+                        <v>2</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_2949</v>
+                        <v>27</v>
+                        <v>83.07</v>
+                        <v>12</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_2957</v>
+                        <v>35</v>
+                        <v>57.46</v>
+                        <v>14</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_3136</v>
+                        <v>25</v>
+                        <v>101.58</v>
+                        <v>13</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_3320</v>
+                        <v>46</v>
+                        <v>104.17</v>
+                        <v>16</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_4600</v>
+                        <v>36</v>
+                        <v>117.45</v>
+                        <v>5</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>ORDERFACT</name>
+                <columns>
+                    <column>
+                        <name>ORDERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>QUANTITYORDERED</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>PRICEEACH</name>
+                        <type>DECIMAL</type>
+                    </column>
+                    <column>
+                        <name>ORDERLINENUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>TOTALPRICE</name>
+                        <type>REAL</type>
+                    </column>
+                    <column>
+                        <name>ORDERDATE</name>
+                        <type>TIMESTAMP</type>
+                    </column>
+                    <column>
+                        <name>REQUIREDDATE</name>
+                        <type>TIMESTAMP</type>
+                    </column>
+                    <column>
+                        <name>SHIPPEDDATE</name>
+                        <type>TIMESTAMP</type>
+                    </column>
+                    <column>
+                        <name>STATUS</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>COMMENTS</name>
+                        <type>LONGVARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CUSTOMERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>TIME_ID</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>QTR_ID</name>
+                        <type>BIGINT</type>
+                    </column>
+                    <column>
+                        <name>MONTH_ID</name>
+                        <type>BIGINT</type>
+                    </column>
+                    <column>
+                        <name>YEAR_ID</name>
+                        <type>BIGINT</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>10100</v>
+                        <v>S18_1749</v>
+                        <v>30</v>
+                        <v>100.0</v>
+                        <v>3</v>
+                        <v>5151.0</v>
+                        <v>2003-01-06 00:00:00.0</v>
+                        <v>2003-01-13 00:00:00.0</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>363</v>
+                        <v>2003-01-06</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10100</v>
+                        <v>S18_2248</v>
+                        <v>50</v>
+                        <v>67.8</v>
+                        <v>2</v>
+                        <v>3390.0</v>
+                        <v>2003-01-06 00:00:00.0</v>
+                        <v>2003-01-13 00:00:00.0</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>363</v>
+                        <v>2003-01-06</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10100</v>
+                        <v>S18_4409</v>
+                        <v>22</v>
+                        <v>86.51</v>
+                        <v>4</v>
+                        <v>1903.22</v>
+                        <v>2003-01-06 00:00:00.0</v>
+                        <v>2003-01-13 00:00:00.0</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>363</v>
+                        <v>2003-01-06</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10100</v>
+                        <v>S24_3969</v>
+                        <v>49</v>
+                        <v>34.47</v>
+                        <v>1</v>
+                        <v>1689.03</v>
+                        <v>2003-01-06 00:00:00.0</v>
+                        <v>2003-01-13 00:00:00.0</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>363</v>
+                        <v>2003-01-06</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S18_2325</v>
+                        <v>25</v>
+                        <v>100.0</v>
+                        <v>4</v>
+                        <v>3782.0</v>
+                        <v>2003-01-09 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-11 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Check on availability.</v>
+                        <v>128</v>
+                        <v>2003-01-09</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S18_2795</v>
+                        <v>26</v>
+                        <v>100.0</v>
+                        <v>1</v>
+                        <v>3773.38</v>
+                        <v>2003-01-09 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-11 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Check on availability.</v>
+                        <v>128</v>
+                        <v>2003-01-09</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S24_1937</v>
+                        <v>45</v>
+                        <v>31.2</v>
+                        <v>3</v>
+                        <v>1404.0</v>
+                        <v>2003-01-09 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-11 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Check on availability.</v>
+                        <v>128</v>
+                        <v>2003-01-09</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>S24_2022</v>
+                        <v>46</v>
+                        <v>53.76</v>
+                        <v>2</v>
+                        <v>2472.96</v>
+                        <v>2003-01-09 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-11 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Check on availability.</v>
+                        <v>128</v>
+                        <v>2003-01-09</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10102</v>
+                        <v>S18_1342</v>
+                        <v>39</v>
+                        <v>100.0</v>
+                        <v>2</v>
+                        <v>4808.31</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-14 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>181</v>
+                        <v>2003-01-10</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10102</v>
+                        <v>S18_1367</v>
+                        <v>41</v>
+                        <v>50.14</v>
+                        <v>1</v>
+                        <v>2055.74</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-14 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>181</v>
+                        <v>2003-01-10</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S10_1949</v>
+                        <v>26</v>
+                        <v>100.0</v>
+                        <v>11</v>
+                        <v>5404.62</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S10_4962</v>
+                        <v>42</v>
+                        <v>100.0</v>
+                        <v>4</v>
+                        <v>5398.26</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S12_1666</v>
+                        <v>27</v>
+                        <v>100.0</v>
+                        <v>8</v>
+                        <v>3394.98</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_1097</v>
+                        <v>35</v>
+                        <v>100.0</v>
+                        <v>10</v>
+                        <v>3920.0</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_2432</v>
+                        <v>22</v>
+                        <v>54.09</v>
+                        <v>2</v>
+                        <v>1189.98</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_2949</v>
+                        <v>27</v>
+                        <v>83.07</v>
+                        <v>12</v>
+                        <v>2242.89</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_2957</v>
+                        <v>35</v>
+                        <v>57.46</v>
+                        <v>14</v>
+                        <v>2011.1</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_3136</v>
+                        <v>25</v>
+                        <v>100.0</v>
+                        <v>13</v>
+                        <v>2539.5</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_3320</v>
+                        <v>46</v>
+                        <v>100.0</v>
+                        <v>16</v>
+                        <v>4791.82</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>S18_4600</v>
+                        <v>36</v>
+                        <v>100.0</v>
+                        <v>5</v>
+                        <v>4228.2</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                        <v>2003-01-29</v>
+                        <v>1</v>
+                        <v>1</v>
+                        <v>2003</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>ORDERS</name>
+                <columns>
+                    <column>
+                        <name>ORDERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>ORDERDATE</name>
+                        <type>TIMESTAMP</type>
+                    </column>
+                    <column>
+                        <name>REQUIREDDATE</name>
+                        <type>TIMESTAMP</type>
+                    </column>
+                    <column>
+                        <name>SHIPPEDDATE</name>
+                        <type>TIMESTAMP</type>
+                    </column>
+                    <column>
+                        <name>STATUS</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>COMMENTS</name>
+                        <type>LONGVARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CUSTOMERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>10100</v>
+                        <v>2003-01-06 00:00:00.0</v>
+                        <v>2003-01-13 00:00:00.0</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>363</v>
+                    </row>
+                    <row>
+                        <v>10101</v>
+                        <v>2003-01-09 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-11 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Check on availability.</v>
+                        <v>128</v>
+                    </row>
+                    <row>
+                        <v>10102</v>
+                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-18 00:00:00.0</v>
+                        <v>2003-01-14 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>181</v>
+                    </row>
+                    <row>
+                        <v>10103</v>
+                        <v>2003-01-29 00:00:00.0</v>
+                        <v>2003-02-07 00:00:00.0</v>
+                        <v>2003-02-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>121</v>
+                    </row>
+                    <row>
+                        <v>10104</v>
+                        <v>2003-01-31 00:00:00.0</v>
+                        <v>2003-02-09 00:00:00.0</v>
+                        <v>2003-02-01 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>141</v>
+                    </row>
+                    <row>
+                        <v>10105</v>
+                        <v>2003-02-11 00:00:00.0</v>
+                        <v>2003-02-21 00:00:00.0</v>
+                        <v>2003-02-12 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>145</v>
+                    </row>
+                    <row>
+                        <v>10106</v>
+                        <v>2003-02-17 00:00:00.0</v>
+                        <v>2003-02-24 00:00:00.0</v>
+                        <v>2003-02-21 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>278</v>
+                    </row>
+                    <row>
+                        <v>10107</v>
+                        <v>2003-02-24 00:00:00.0</v>
+                        <v>2003-03-03 00:00:00.0</v>
+                        <v>2003-02-26 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Difficult to negotiate with customer. We need more marketing materials</v>
+                        <v>131</v>
+                    </row>
+                    <row>
+                        <v>10108</v>
+                        <v>2003-03-03 00:00:00.0</v>
+                        <v>2003-03-12 00:00:00.0</v>
+                        <v>2003-03-08 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>385</v>
+                    </row>
+                    <row>
+                        <v>10109</v>
+                        <v>2003-03-10 00:00:00.0</v>
+                        <v>2003-03-19 00:00:00.0</v>
+                        <v>2003-03-11 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Customer requested that FedEx Ground is used for this shipping</v>
+                        <v>486</v>
+                    </row>
+                    <row>
+                        <v>10110</v>
+                        <v>2003-03-18 00:00:00.0</v>
+                        <v>2003-03-24 00:00:00.0</v>
+                        <v>2003-03-20 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>187</v>
+                    </row>
+                    <row>
+                        <v>10111</v>
+                        <v>2003-03-25 00:00:00.0</v>
+                        <v>2003-03-31 00:00:00.0</v>
+                        <v>2003-03-30 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>129</v>
+                    </row>
+                    <row>
+                        <v>10112</v>
+                        <v>2003-03-24 00:00:00.0</v>
+                        <v>2003-04-03 00:00:00.0</v>
+                        <v>2003-03-29 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Customer requested that ad materials (such as posters, pamphlets) be included in the shippment</v>
+                        <v>144</v>
+                    </row>
+                    <row>
+                        <v>10113</v>
+                        <v>2003-03-26 00:00:00.0</v>
+                        <v>2003-04-02 00:00:00.0</v>
+                        <v>2003-03-27 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>124</v>
+                    </row>
+                    <row>
+                        <v>10114</v>
+                        <v>2003-04-01 00:00:00.0</v>
+                        <v>2003-04-07 00:00:00.0</v>
+                        <v>2003-04-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>172</v>
+                    </row>
+                    <row>
+                        <v>10115</v>
+                        <v>2003-04-04 00:00:00.0</v>
+                        <v>2003-04-12 00:00:00.0</v>
+                        <v>2003-04-07 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>424</v>
+                    </row>
+                    <row>
+                        <v>10116</v>
+                        <v>2003-04-11 00:00:00.0</v>
+                        <v>2003-04-19 00:00:00.0</v>
+                        <v>2003-04-13 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>381</v>
+                    </row>
+                    <row>
+                        <v>10117</v>
+                        <v>2003-04-16 00:00:00.0</v>
+                        <v>2003-04-24 00:00:00.0</v>
+                        <v>2003-04-17 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>148</v>
+                    </row>
+                    <row>
+                        <v>10118</v>
+                        <v>2003-04-21 00:00:00.0</v>
+                        <v>2003-04-29 00:00:00.0</v>
+                        <v>2003-04-26 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>Customer has worked with some of our vendors in the past and is aware of their MSRP</v>
+                        <v>216</v>
+                    </row>
+                    <row>
+                        <v>10119</v>
+                        <v>2003-04-28 00:00:00.0</v>
+                        <v>2003-05-05 00:00:00.0</v>
+                        <v>2003-05-02 00:00:00.0</v>
+                        <v>Shipped</v>
+                        <v>382</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>PAYMENTS</name>
+                <columns>
+                    <column>
+                        <name>CUSTOMERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CHECKNUMBER</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PAYMENTDATE</name>
+                        <type>TIMESTAMP</type>
+                    </column>
+                    <column>
+                        <name>AMOUNT</name>
+                        <type>NUMERIC</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>103</v>
+                        <v>HQ336336</v>
+                        <v>2004-10-19 00:00:00.0</v>
+                        <v>5307.98</v>
+                    </row>
+                    <row>
+                        <v>103</v>
+                        <v>JM555205</v>
+                        <v>2003-06-05 00:00:00.0</v>
+                        <v>16560.3</v>
+                    </row>
+                    <row>
+                        <v>103</v>
+                        <v>OM314933</v>
+                        <v>2004-12-18 00:00:00.0</v>
+                        <v>2311.68</v>
+                    </row>
+                    <row>
+                        <v>112</v>
+                        <v>BO864823</v>
+                        <v>2004-12-17 00:00:00.0</v>
+                        <v>14449.61</v>
+                    </row>
+                    <row>
+                        <v>112</v>
+                        <v>HQ55022</v>
+                        <v>2003-06-06 00:00:00.0</v>
+                        <v>33847.62</v>
+                    </row>
+                    <row>
+                        <v>112</v>
+                        <v>ND748579</v>
+                        <v>2004-08-20 00:00:00.0</v>
+                        <v>34453.85</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>GG31455</v>
+                        <v>2003-05-20 00:00:00.0</v>
+                        <v>50397.66</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>MA765515</v>
+                        <v>2004-12-15 00:00:00.0</v>
+                        <v>85591.32</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>NP603840</v>
+                        <v>2003-05-31 00:00:00.0</v>
+                        <v>9738.18</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>NR27552</v>
+                        <v>2004-03-10 00:00:00.0</v>
+                        <v>49637.57</v>
+                    </row>
+                    <row>
+                        <v>119</v>
+                        <v>DB933704</v>
+                        <v>2004-11-14 00:00:00.0</v>
+                        <v>20719.91</v>
+                    </row>
+                    <row>
+                        <v>119</v>
+                        <v>LN373447</v>
+                        <v>2004-08-08 00:00:00.0</v>
+                        <v>56002.9</v>
+                    </row>
+                    <row>
+                        <v>119</v>
+                        <v>NG94694</v>
+                        <v>2005-02-22 00:00:00.0</v>
+                        <v>59617.44</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>DB889831</v>
+                        <v>2003-02-16 00:00:00.0</v>
+                        <v>54702.0</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>FD317790</v>
+                        <v>2003-10-28 00:00:00.0</v>
+                        <v>1474.66</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>KI831359</v>
+                        <v>2004-11-04 00:00:00.0</v>
+                        <v>19769.68</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>MA302151</v>
+                        <v>2004-11-28 00:00:00.0</v>
+                        <v>40652.85</v>
+                    </row>
+                    <row>
+                        <v>124</v>
+                        <v>AE215433</v>
+                        <v>2005-02-18 00:00:00.0</v>
+                        <v>51826.36</v>
+                    </row>
+                    <row>
+                        <v>124</v>
+                        <v>AQ50522</v>
+                        <v>2005-06-03 00:00:00.0</v>
+                        <v>32194.79</v>
+                    </row>
+                    <row>
+                        <v>124</v>
+                        <v>BG255406</v>
+                        <v>2004-08-28 00:00:00.0</v>
+                        <v>93928.73</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>PRODUCTS</name>
+                <columns>
+                    <column>
+                        <name>PRODUCTCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTLINE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTSCALE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTVENDOR</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTDESCRIPTION</name>
+                        <type>LONGVARCHAR</type>
+                    </column>
+                    <column>
+                        <name>QUANTITYINSTOCK</name>
+                        <type>SMALLINT</type>
+                    </column>
+                    <column>
+                        <name>BUYPRICE</name>
+                        <type>NUMERIC</type>
+                    </column>
+                    <column>
+                        <name>MSRP</name>
+                        <type>NUMERIC</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>S10_1678</v>
+                        <v>1969 Harley Davidson Ultimate Chopper</v>
+                        <v>Motorcycles</v>
+                        <v>1:10</v>
+                        <v>Min Lin Diecast</v>
+                        <v>This replica features working kickstand, front suspension, gear-shift lever, footbrake lever, drive chain, wheels and steering. All parts are particularly delicate due to their precise scale and require special care and attention.</v>
+                        <v>7933</v>
+                        <v>48.81</v>
+                        <v>95.7</v>
+                    </row>
+                    <row>
+                        <v>S10_1949</v>
+                        <v>1952 Alpine Renault 1300</v>
+                        <v>Classic Cars</v>
+                        <v>1:10</v>
+                        <v>Classic Metal Creations</v>
+                        <v>Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>7305</v>
+                        <v>98.58</v>
+                        <v>214.3</v>
+                    </row>
+                    <row>
+                        <v>S10_2016</v>
+                        <v>1996 Moto Guzzi 1100i</v>
+                        <v>Motorcycles</v>
+                        <v>1:10</v>
+                        <v>Highway 66 Mini Classics</v>
+                        <v>Official Moto Guzzi logos and insignias, saddle bags located on side of motorcycle, detailed engine, working steering, working suspension, two leather seats, luggage rack, dual exhaust pipes, small saddle bag located on handle bars, two-tone paint with chrome accents, superior die-cast detail , rotating wheels , working kick stand, diecast metal with plastic parts and baked enamel finish.</v>
+                        <v>6625</v>
+                        <v>68.99</v>
+                        <v>118.94</v>
+                    </row>
+                    <row>
+                        <v>S10_4698</v>
+                        <v>2003 Harley-Davidson Eagle Drag Bike</v>
+                        <v>Motorcycles</v>
+                        <v>1:10</v>
+                        <v>Red Start Diecast</v>
+                        <v>Model features, official Harley Davidson logos and insignias, detachable rear wheelie bar, heavy diecast metal with resin parts, authentic multi-color tampo-printed graphics, separate engine drive belts, free-turning front fork, rotating tires and rear racing slick, certificate of authenticity, detailed engine, display stand&#xD;
+, precision diecast replica, baked enamel finish, 1:10 scale model, removable fender, seat and tank cover piece for displaying the superior detail of the v-twin engine</v>
+                        <v>5582</v>
+                        <v>91.02</v>
+                        <v>193.66</v>
+                    </row>
+                    <row>
+                        <v>S10_4757</v>
+                        <v>1972 Alfa Romeo GTA</v>
+                        <v>Classic Cars</v>
+                        <v>1:10</v>
+                        <v>Motor City Art Classics</v>
+                        <v>Features include: Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>3252</v>
+                        <v>85.68</v>
+                        <v>136.0</v>
+                    </row>
+                    <row>
+                        <v>S10_4962</v>
+                        <v>1962 LanciaA Delta 16V</v>
+                        <v>Classic Cars</v>
+                        <v>1:10</v>
+                        <v>Second Gear Diecast</v>
+                        <v>Features include: Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>6791</v>
+                        <v>103.42</v>
+                        <v>147.74</v>
+                    </row>
+                    <row>
+                        <v>S12_1099</v>
+                        <v>1968 Ford Mustang</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Autoart Studio Design</v>
+                        <v>Hood, doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color dark green.</v>
+                        <v>68</v>
+                        <v>95.34</v>
+                        <v>194.57</v>
+                    </row>
+                    <row>
+                        <v>S12_1108</v>
+                        <v>2001 Ferrari Enzo</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Second Gear Diecast</v>
+                        <v>Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>3619</v>
+                        <v>95.59</v>
+                        <v>207.8</v>
+                    </row>
+                    <row>
+                        <v>S12_1666</v>
+                        <v>1958 Setra Bus</v>
+                        <v>Trucks and Buses</v>
+                        <v>1:12</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>Model features 30 windows, skylights &amp; glare resistant glass, working steering system, original logos</v>
+                        <v>1579</v>
+                        <v>77.9</v>
+                        <v>136.67</v>
+                    </row>
+                    <row>
+                        <v>S12_2823</v>
+                        <v>2002 Suzuki XREO</v>
+                        <v>Motorcycles</v>
+                        <v>1:12</v>
+                        <v>Unimax Art Galleries</v>
+                        <v>Official logos and insignias, saddle bags located on side of motorcycle, detailed engine, working steering, working suspension, two leather seats, luggage rack, dual exhaust pipes, small saddle bag located on handle bars, two-tone paint with chrome accents, superior die-cast detail , rotating wheels , working kick stand, diecast metal with plastic parts and baked enamel finish.</v>
+                        <v>9997</v>
+                        <v>66.27</v>
+                        <v>150.62</v>
+                    </row>
+                    <row>
+                        <v>S12_3148</v>
+                        <v>1969 Corvair Monza</v>
+                        <v>Classic Cars</v>
+                        <v>1:18</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>1:18 scale die-cast about 10 long doors open, hood opens, trunk opens and wheels roll</v>
+                        <v>6906</v>
+                        <v>89.14</v>
+                        <v>151.08</v>
+                    </row>
+                    <row>
+                        <v>S12_3380</v>
+                        <v>1968 Dodge Charger</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>1:12 scale model of a 1968 Dodge Charger. Hood, doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color black</v>
+                        <v>9123</v>
+                        <v>75.16</v>
+                        <v>117.44</v>
+                    </row>
+                    <row>
+                        <v>S12_3891</v>
+                        <v>1969 Ford Falcon</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Second Gear Diecast</v>
+                        <v>Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>1049</v>
+                        <v>83.05</v>
+                        <v>173.02</v>
+                    </row>
+                    <row>
+                        <v>S12_3990</v>
+                        <v>1970 Plymouth Hemi Cuda</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Studio M Art Models</v>
+                        <v>Very detailed 1970 Plymouth Cuda model in 1:12 scale. The Cuda is generally accepted as one of the fastest original muscle cars from the 1970s. This model is a reproduction of one of the orginal 652 cars built in 1970. Red color.</v>
+                        <v>5663</v>
+                        <v>31.92</v>
+                        <v>79.8</v>
+                    </row>
+                    <row>
+                        <v>S12_4473</v>
+                        <v>1957 Chevy Pickup</v>
+                        <v>Trucks and Buses</v>
+                        <v>1:12</v>
+                        <v>Exoto Designs</v>
+                        <v>1:12 scale die-cast about 20 long Hood opens, Rubber wheels</v>
+                        <v>6125</v>
+                        <v>55.7</v>
+                        <v>118.5</v>
+                    </row>
+                    <row>
+                        <v>S12_4675</v>
+                        <v>1969 Dodge Charger</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>Detailed model of the 1969 Dodge Charger. This model includes finely detailed interior and exterior features. Painted in red and white.</v>
+                        <v>7323</v>
+                        <v>58.73</v>
+                        <v>115.16</v>
+                    </row>
+                    <row>
+                        <v>S18_1097</v>
+                        <v>1940 Ford Pickup Truck</v>
+                        <v>Trucks and Buses</v>
+                        <v>1:18</v>
+                        <v>Studio M Art Models</v>
+                        <v>This model features soft rubber tires, working steering, rubber mud guards, authentic Ford logos, detailed undercarriage, opening doors and hood,  removable split rear gate, full size spare mounted in bed, detailed interior with opening glove box</v>
+                        <v>2613</v>
+                        <v>58.33</v>
+                        <v>116.67</v>
+                    </row>
+                    <row>
+                        <v>S18_1129</v>
+                        <v>1993 Mazda RX-7</v>
+                        <v>Classic Cars</v>
+                        <v>1:18</v>
+                        <v>Highway 66 Mini Classics</v>
+                        <v>This model features, opening hood, opening doors, detailed engine, rear spoiler, opening trunk, working steering, tinted windows, baked enamel finish. Color red.</v>
+                        <v>3975</v>
+                        <v>83.51</v>
+                        <v>141.54</v>
+                    </row>
+                    <row>
+                        <v>S18_1342</v>
+                        <v>1937 Lincoln Berline</v>
+                        <v>Vintage Cars</v>
+                        <v>1:18</v>
+                        <v>Motor City Art Classics</v>
+                        <v>Features opening engine cover, doors, trunk, and fuel filler cap. Color black</v>
+                        <v>8693</v>
+                        <v>60.62</v>
+                        <v>102.74</v>
+                    </row>
+                    <row>
+                        <v>S18_1367</v>
+                        <v>1936 Mercedes-Benz 500K Special Roadster</v>
+                        <v>Vintage Cars</v>
+                        <v>1:18</v>
+                        <v>Studio M Art Models</v>
+                        <v>This 1:18 scale replica is constructed of heavy die-cast metal and has all the features of the original: working doors and rumble seat, independent spring suspension, detailed interior, working steering system, and a bifold hood that reveals an engine so accurate that it even includes the wiring. All this is topped off with a baked enamel finish. Color white.</v>
+                        <v>8635</v>
+                        <v>24.26</v>
+                        <v>53.91</v>
+                    </row>
+                </rows>
+            </table>
+        </pojo-datastore>
     </datastore-catalog>
     <reference-data-catalog>
         <dictionaries>

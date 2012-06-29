@@ -31,6 +31,12 @@
 		<constructor-arg name="repository" ref="repository" />
 		<constructor-arg name="configurationCache" ref="configurationCache" />
 	</bean>
+	
+	<bean name="configurationInterceptor"
+		class="org.eobjects.datacleaner.monitor.server.JaxbConfigurationInterceptor">
+		<constructor-arg ref="tenantContextFactory" />
+		<constructor-arg ref="configurationFactory" />
+	</bean>
 
 	<bean name="timelineService"
 		class="org.eobjects.datacleaner.monitor.server.TimelineServiceImpl">

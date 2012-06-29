@@ -24,11 +24,6 @@
 		</property>
 	</bean>
 
-	<bean name="configurationInterceptor"
-		class="org.eobjects.datacleaner.monitor.server.JaxbConfigurationInterceptor">
-		<constructor-arg ref="configurationFactory" />
-	</bean>
-
 	<bean name="taskRunner" factory-bean="configurationFactory"
 		factory-method="createTaskRunner" />
 

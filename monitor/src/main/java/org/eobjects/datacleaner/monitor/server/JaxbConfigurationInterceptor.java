@@ -32,14 +32,34 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.jaxb.AbstractDatastoreType;
 import org.eobjects.analyzer.configuration.jaxb.ClasspathScannerType;
 import org.eobjects.analyzer.configuration.jaxb.ClasspathScannerType.Package;
 import org.eobjects.analyzer.configuration.jaxb.Configuration;
 import org.eobjects.analyzer.configuration.jaxb.ConfigurationMetadataType;
+import org.eobjects.analyzer.configuration.jaxb.DatastoreCatalogType;
 import org.eobjects.analyzer.configuration.jaxb.MultithreadedTaskrunnerType;
 import org.eobjects.analyzer.configuration.jaxb.ObjectFactory;
+import org.eobjects.analyzer.configuration.jaxb.PojoDatastoreType;
+import org.eobjects.analyzer.configuration.jaxb.PojoTableType;
+import org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns;
+import org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.metamodel.DataContext;
+import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.data.Row;
+import org.eobjects.metamodel.query.Query;
+import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.ColumnType;
+import org.eobjects.metamodel.schema.Schema;
+import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.Ref;
 
 /**
@@ -60,12 +80,22 @@ import org.eobjects.metamodel.util.Ref;
  */
 public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
+    private static final Integer MAX_POJO_ROWS = 20;
+
     private final JAXBContext _jaxbContext;
     private final ConfigurationFactory _configurationFactory;
     private final Ref<Date> _dateRef;
+    private final TenantContextFactory _contextFactory;
+    private final boolean _replaceDatastores;
 
-    public JaxbConfigurationInterceptor(ConfigurationFactory configurationFactory) throws JAXBException {
-        this(configurationFactory, new Ref<Date>() {
+    public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory)
+            throws JAXBException {
+        this(contextFactory, configurationFactory, true);
+    }
+
+    public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory,
+            boolean replaceDatastores) throws JAXBException {
+        this(contextFactory, configurationFactory, replaceDatastores, new Ref<Date>() {
             @Override
             public Date get() {
                 return new Date();
@@ -73,18 +103,29 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         });
     }
 
-    public JaxbConfigurationInterceptor(ConfigurationFactory configurationFactory, Ref<Date> dateRef)
-            throws JAXBException {
+    public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory,
+            boolean replaceDatastores, Ref<Date> dateRef) throws JAXBException {
+        _contextFactory = contextFactory;
         _configurationFactory = configurationFactory;
+        _replaceDatastores = replaceDatastores;
         _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
                 ObjectFactory.class.getClassLoader());
         _dateRef = dateRef;
     }
 
     public void intercept(final String tenantId, final InputStream in, final OutputStream out) throws Exception {
+        final TenantContext context = _contextFactory.getContext(tenantId);
 
         final Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
         final Configuration configuration = (Configuration) unmarshaller.unmarshal(in);
+
+        // replace datastore catalog
+        if (_replaceDatastores) {
+            final DatastoreCatalogType originalDatastoreCatalog = configuration.getDatastoreCatalog();
+            final DatastoreCatalogType newDatastoreCatalog = interceptDatastoreCatalog(context,
+                    originalDatastoreCatalog);
+            configuration.setDatastoreCatalog(newDatastoreCatalog);
+        }
 
         // set appropriate descriptor provider
         configuration.setCustomDescriptorProvider(null);
@@ -111,6 +152,110 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
         final Marshaller marshaller = createMarshaller();
         marshaller.marshal(configuration, out);
+    }
+
+    /**
+     * Replaces all "live" datastores with POJO based datastores. This will
+     * allow working with sample data, but not modifying live data on the
+     * server.
+     * 
+     * @param context
+     * 
+     * @param originalDatastoreCatalog
+     * @return
+     */
+    private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context,
+            final DatastoreCatalogType originalDatastoreCatalog) {
+        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+        final DatastoreCatalogType newDatastoreCatalog = new DatastoreCatalogType();
+
+        final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
+
+        for (final String name : datastoreCatalog.getDatastoreNames()) {
+            final Datastore datastore = datastoreCatalog.getDatastore(name);
+            if (datastore != null) {
+                final AbstractDatastoreType pojoDatastoreType = createPojoDatastore(datastore);
+                newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
+            }
+        }
+
+        return newDatastoreCatalog;
+    }
+
+    private AbstractDatastoreType createPojoDatastore(Datastore datastore) {
+        final PojoDatastoreType datastoreType = new PojoDatastoreType();
+        datastoreType.setName(datastore.getName());
+        datastoreType.setDescription(datastore.getDescription());
+
+        final DatastoreConnection con = datastore.openConnection();
+        try {
+            final DataContext dataContext = con.getDataContext();
+            final Schema schema = dataContext.getDefaultSchema();
+            datastoreType.setSchemaName(schema.getName());
+
+            final Table[] tables = schema.getTables();
+            for (Table table : tables) {
+                final PojoTableType tableType = createPojoTable(dataContext, table);
+                datastoreType.getTable().add(tableType);
+            }
+        } finally {
+            con.close();
+        }
+
+        return datastoreType;
+    }
+
+    private PojoTableType createPojoTable(DataContext dataContext, Table table) {
+        final PojoTableType tableType = new PojoTableType();
+        tableType.setName(table.getName());
+
+        // read columns
+        final Columns columnsType = new Columns();
+        final Column[] columns = table.getColumns();
+        for (Column column : columns) {
+            columnsType.getColumn().add(createPojoColumn(column.getName(), column.getType()));
+        }
+        tableType.setColumns(columnsType);
+
+        // read values
+        final Query q = dataContext.query().from(table).select(columns).toQuery();
+        q.setMaxRows(MAX_POJO_ROWS);
+
+        final Rows rowsType = new Rows();
+        final DataSet ds = dataContext.executeQuery(q);
+        try {
+            while (ds.next()) {
+                Row row = ds.getRow();
+                rowsType.getRow().add(createPojoRow(row));
+            }
+        } finally {
+            ds.close();
+        }
+
+        tableType.setRows(rowsType);
+
+        return tableType;
+    }
+
+    private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row) {
+        org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row rowType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row();
+        Object[] values = row.getValues();
+        for (Object value : values) {
+            if (value == null) {
+                rowType.getV().add(null);
+            } else {
+                rowType.getV().add(value.toString());
+            }
+        }
+        return rowType;
+    }
+
+    private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns.Column createPojoColumn(String name,
+            ColumnType type) {
+        org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns.Column columnType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns.Column();
+        columnType.setName(name);
+        columnType.setType(type.toString());
+        return columnType;
     }
 
     private Package newPackage(String packageName, boolean recursive) {

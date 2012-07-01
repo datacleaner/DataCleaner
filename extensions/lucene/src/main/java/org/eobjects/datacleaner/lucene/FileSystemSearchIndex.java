@@ -19,21 +19,39 @@
  */
 package org.eobjects.datacleaner.lucene;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 
 /**
- * A simple search index that is held in memory.
+ * A file based {@link SearchIndex}. Specifically, this is based on the
+ * {@link NIOFSDirectory} implementation from Lucene.
  */
-public class InMemorySearchIndex extends AbstractSearchIndex {
+public class FileSystemSearchIndex extends AbstractSearchIndex {
 
     private static final long serialVersionUID = 1L;
-    
-    private final RAMDirectory _directory;
-    
-    public InMemorySearchIndex(String name) {
+    private final Directory _directory;
+    private final File _file;
+
+    public FileSystemSearchIndex(String name, File directory) {
         super(name);
-        _directory = new RAMDirectory();
+        _file = directory;
+
+        if (!directory.isDirectory()) {
+            throw new IllegalArgumentException("File argument must be a directory");
+        }
+
+        try {
+            _directory = new NIOFSDirectory(directory);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to construct Lucene directory", e);
+        }
+    }
+    
+    public File getFile() {
+        return _file;
     }
 
     @Override

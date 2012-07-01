@@ -29,8 +29,6 @@ import org.eobjects.metamodel.util.Action;
  */
 public interface SearchIndex extends ReferenceData {
 
-    public String[] getFieldNames();
-    
     public IndexSearcher getSearcher();
     
     public void write(Action<IndexWriter> writerAction);

@@ -53,7 +53,6 @@ import org.eobjects.metamodel.util.SimpleTableDef;
 public class LuceneIntegrationTest extends TestCase {
 
     private static final String[] AVAILABLE_FIELD_NAMES = new String[] { "name", "country", "phone" };
-    private static final String[] SEARCHED_FIELD_NAMES = new String[] { "name", "country" };
 
     public void testScenario() throws Exception {
         final Datastore orderdb = new JdbcDatastore("orderdb", "jdbc:hsqldb:res:orderdb;readonly=true",
@@ -65,7 +64,7 @@ public class LuceneIntegrationTest extends TestCase {
         final SearchIndex searchIndex = runWriteSearchIndexJob(conf);
         runSearchIndexAssertions(searchIndex);
 
-        final SimpleTableDef tableDef = new SimpleTableDef("inputtable", SEARCHED_FIELD_NAMES);
+        final SimpleTableDef tableDef = new SimpleTableDef("inputtable", new String[] { "searchinput" });
         final Collection<Map<String, ?>> searchInput = new ArrayList<Map<String, ?>>();
         searchInput.add(createSearchInput("Atelier"));
         searchInput.add(createSearchInput("Foobar"));
@@ -103,14 +102,14 @@ public class LuceneIntegrationTest extends TestCase {
 
     private Map<String, ?> createSearchInput(String text) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", text);
+        map.put("searchinput", text);
         return map;
     }
 
     private void runSearchJob(AnalyzerBeansConfiguration conf, SearchIndex searchIndex) {
         final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(conf);
         analysisJobBuilder.setDatastore("searches");
-        analysisJobBuilder.addSourceColumns("name");
+        analysisJobBuilder.addSourceColumns("searchinput");
 
         final TransformerJobBuilder<SearchTransformer> transformer = analysisJobBuilder
                 .addTransformer(SearchTransformer.class);
@@ -170,7 +169,7 @@ public class LuceneIntegrationTest extends TestCase {
         final AnalyzerJobBuilder<WriteSearchIndexAnalyzer> analyzer = analysisJobBuilder
                 .addAnalyzer(WriteSearchIndexAnalyzer.class);
 
-        final InMemorySearchIndex searchIndex = new InMemorySearchIndex("my index", AVAILABLE_FIELD_NAMES);
+        final InMemorySearchIndex searchIndex = new InMemorySearchIndex("my index");
 
         analyzer.getConfigurableBean().searchFields = AVAILABLE_FIELD_NAMES;
         analyzer.getConfigurableBean().searchIndex = searchIndex;

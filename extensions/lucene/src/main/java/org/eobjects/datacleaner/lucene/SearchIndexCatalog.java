@@ -19,26 +19,14 @@
  */
 package org.eobjects.datacleaner.lucene;
 
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
-
 /**
- * A simple search index that is held in memory.
+ * Represents a catalog of all registered {@link SearchIndex} objects.
  */
-public class InMemorySearchIndex extends AbstractSearchIndex {
+public interface SearchIndexCatalog {
 
-    private static final long serialVersionUID = 1L;
-    
-    private final RAMDirectory _directory;
-    
-    public InMemorySearchIndex(String name) {
-        super(name);
-        _directory = new RAMDirectory();
-    }
+    public String[] getSearchIndexNames();
 
-    @Override
-    protected Directory getDirectory() {
-        return _directory;
-    }
+    public SearchIndex getSearchIndex(String name);
 
+    public void addSearchIndex(SearchIndex searchIndex);
 }

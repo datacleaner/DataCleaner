@@ -11,9 +11,10 @@
 	<url>http://datacleaner.eobjects.org/extensions</url>
 	<packaging>pom</packaging>
 	<modules>
+		<module>sample</module>
+		<module>lucene</module>
 		<module>phonetic</module>
 		<module>regex-parser</module>
-		<module>sample</module>
 		<module>test-tools</module>
 		<module>network-tools</module>
 	</modules>

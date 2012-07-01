@@ -38,16 +38,8 @@ public abstract class AbstractSearchIndex extends AbstractReferenceData implemen
 
     private static final long serialVersionUID = 1L;
 
-    private final String[] _fieldNames;
-
-    public AbstractSearchIndex(String name, String[] fieldNames) {
+    public AbstractSearchIndex(String name) {
         super(name);
-        _fieldNames = fieldNames;
-    }
-
-    @Override
-    public String[] getFieldNames() {
-        return _fieldNames;
     }
 
     protected abstract Directory getDirectory();

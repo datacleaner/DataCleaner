@@ -24,14 +24,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.FuzzyQuery;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
@@ -42,25 +41,20 @@ import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.beans.api.TransformerBean;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
-import org.eobjects.analyzer.util.Percentage;
+import org.eobjects.analyzer.util.StringUtils;
 
 @TransformerBean("Search in Lucene search index")
 public class SearchTransformer implements Transformer<Object> {
 
     @Configured
-    InputColumn<String>[] values;
+    InputColumn<String> searchInput;
 
     // TODO: Add converter
     @Configured
     SearchIndex searchIndex;
 
-    @Configured
-    String[] searchFields;
-
-    @Configured
-    Percentage minimumSimilarity = new Percentage(40);
-
     private IndexSearcher indexSearcher;
+    private QueryParser queryParser;
 
     @Override
     public OutputColumns getOutputColumns() {
@@ -72,44 +66,37 @@ public class SearchTransformer implements Transformer<Object> {
     @Initialize
     public void init() {
         indexSearcher = searchIndex.getSearcher();
+
+        final Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
+        queryParser = new QueryParser(Constants.VERSION, Constants.SEARCH_FIELD_NAME, analyzer);
     }
 
     @Override
     public Object[] transform(InputRow row) {
-        final BooleanQuery outerQuery = new BooleanQuery(true);
+        final Object[] result = new Object[2];
+        result[1] = 0;
 
-        for (int i = 0; i < searchFields.length; i++) {
-            final String field = searchFields[i];
-            final String searchText = row.getValue(values[i]);
-            
-            if (searchText != null) {
-                final Query query;
-                
-                if (searchText.indexOf(" ") != -1) {
-                    PhraseQuery phraseQuery = new PhraseQuery();
-                    phraseQuery.add(new Term(field, searchText));
-                    
-                    query = phraseQuery;
-                } else {
-                    final Term term = new Term(field, searchText);
-                    query = new FuzzyQuery(term, minimumSimilarity.floatValue());
-                }
-                outerQuery.add(query, Occur.SHOULD);
-            }
+        final String searchText = row.getValue(searchInput);
 
+        if (StringUtils.isNullOrEmpty(searchText)) {
+            return result;
+        }
+
+        final Query query;
+        try {
+            query = queryParser.parse(searchText);
+        } catch (ParseException e) {
+            throw new IllegalStateException(e);
         }
 
         final TopDocs searchResult;
         try {
-            searchResult = indexSearcher.search(outerQuery, 1);
+            searchResult = indexSearcher.search(query, 1);
         } catch (IOException e) {
             throw new IllegalStateException("Searching index threw exception", e);
         }
 
-        final Object[] result = new Object[2];
-
         if (searchResult == null || searchResult.totalHits == 0) {
-            result[1] = 0;
             return result;
         }
 

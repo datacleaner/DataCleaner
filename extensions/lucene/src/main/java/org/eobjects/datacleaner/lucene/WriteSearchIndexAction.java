@@ -29,11 +29,11 @@ import org.eobjects.metamodel.util.Action;
 final class WriteSearchIndexAction implements Action<Iterable<Object[]>> {
 
     private final SearchIndex _searchIndex;
-    private final String[] _searchFields;
+    private final String[] _fields;
 
-    public WriteSearchIndexAction(SearchIndex searchIndex, String[] searchFields) {
+    public WriteSearchIndexAction(SearchIndex searchIndex, String[] fields) {
         _searchIndex = searchIndex;
-        _searchFields = searchFields;
+        _fields = fields;
     }
 
     @Override
@@ -45,14 +45,26 @@ final class WriteSearchIndexAction implements Action<Iterable<Object[]>> {
                 while (iterator.hasNext()) {
                     Object[] rowData = iterator.next();
 
+                    final StringBuilder searchText = new StringBuilder();
+
                     Document doc = new Document();
                     for (int i = 0; i < rowData.length; i++) {
                         final Object value = rowData[i];
                         if (value != null) {
-                            final String field = _searchFields[i];
-                            doc.add(new Field(field, value.toString(), Field.Store.YES, Field.Index.ANALYZED));
+                            final String field = _fields[i];
+                            final String stringValue = value.toString().trim();
+
+                            if (searchText.length() != 0) {
+                                searchText.append(' ');
+                            }
+                            searchText.append(stringValue);
+                            
+                            doc.add(new Field(field, stringValue, Field.Store.YES, Field.Index.NOT_ANALYZED));
                         }
                     }
+                    
+                    doc.add(new Field(Constants.SEARCH_FIELD_NAME, searchText.toString(), Field.Store.NO, Field.Index.ANALYZED));
+                    
                     writer.addDocument(doc);
                 }
             }

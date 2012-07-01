@@ -66,14 +66,18 @@ public class LuceneIntegrationTest extends TestCase {
         runSearchIndexAssertions(searchIndex);
 
         final SimpleTableDef tableDef = new SimpleTableDef("inputtable", SEARCHED_FIELD_NAMES);
-        final Collection<Map<String, ?>> maps = new ArrayList<Map<String, ?>>();
-        maps.add(createMap("Atelier graphick", "France"));
-        maps.add(createMap("Foobar", "FOOO"));
-        maps.add(createMap("La Rochelle Gifts", "France"));
-        maps.add(createMap("Land of Toys Inc.", "USA"));
-        maps.add(createMap("Signal Gift Stores", "USA"));
+        final Collection<Map<String, ?>> searchInput = new ArrayList<Map<String, ?>>();
+        searchInput.add(createSearchInput("Atelier"));
+        searchInput.add(createSearchInput("Foobar"));
+        searchInput.add(createSearchInput("Rochelle France"));
+        searchInput.add(createSearchInput("Land of Toys Inc."));
+        searchInput.add(createSearchInput("Signal Gift Stores"));
+        searchInput.add(createSearchInput("Signal"));
+        searchInput.add(createSearchInput("Gift"));
+        searchInput.add(createSearchInput("Atelier Graphick"));
+        searchInput.add(createSearchInput("Ateler Graphick"));
 
-        final TableDataProvider<?> tableDataProvider = new MapTableDataProvider(tableDef, maps);
+        final TableDataProvider<?> tableDataProvider = new MapTableDataProvider(tableDef, searchInput);
         final Datastore searches = new PojoDatastore("searches",
                 Arrays.<TableDataProvider<?>> asList(tableDataProvider));
         conf = conf.replace(new DatastoreCatalogImpl(searches));
@@ -97,22 +101,20 @@ public class LuceneIntegrationTest extends TestCase {
                 SearchTransformer.toMap(reader.document(3)).toString());
     }
 
-    private Map<String, ?> createMap(String name, String country) {
+    private Map<String, ?> createSearchInput(String text) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", name);
-        map.put("country", country);
+        map.put("name", text);
         return map;
     }
 
     private void runSearchJob(AnalyzerBeansConfiguration conf, SearchIndex searchIndex) {
         final AnalysisJobBuilder analysisJobBuilder = new AnalysisJobBuilder(conf);
         analysisJobBuilder.setDatastore("searches");
-        analysisJobBuilder.addSourceColumns(SEARCHED_FIELD_NAMES);
+        analysisJobBuilder.addSourceColumns("name");
 
         final TransformerJobBuilder<SearchTransformer> transformer = analysisJobBuilder
                 .addTransformer(SearchTransformer.class);
         transformer.getConfigurableBean().searchIndex = searchIndex;
-        transformer.getConfigurableBean().searchFields = SEARCHED_FIELD_NAMES;
         transformer.addInputColumns(analysisJobBuilder.getSourceColumns());
         transformer.getOutputColumns().get(0).setName("out1");
         transformer.getOutputColumns().get(1).setName("out2");
@@ -139,16 +141,25 @@ public class LuceneIntegrationTest extends TestCase {
         final PreviewTransformedDataAnalyzer result = (PreviewTransformedDataAnalyzer) results.get(0);
         final List<Object[]> list = result.getList();
 
-        assertEquals(5, list.size());
-        assertEquals(
-                "[Atelier graphick, France, {name=Atelier graphique, country=France, phone=40.32.2555}, 1.2555174]",
+        assertEquals(9, list.size());
+        assertEquals("[Atelier, {name=Atelier graphique, country=France, phone=40.32.2555}, 2.5986009]",
                 Arrays.toString(list.get(0)));
-        assertEquals("[Foobar, FOOO, null, 0]", Arrays.toString(list.get(1)));
-        assertEquals(
-                "[La Rochelle Gifts, France, {name=Atelier graphique, country=France, phone=40.32.2555}, 0.6277587]",
+        assertEquals("[Foobar, null, 0]", Arrays.toString(list.get(1)));
+        assertEquals("[Rochelle France, {name=La Rochelle Gifts, country=France, phone=40.67.8555}, 3.0850117]",
                 Arrays.toString(list.get(2)));
-        assertEquals("[Land of Toys Inc., USA, null, 0]", Arrays.toString(list.get(3)));
-        assertEquals("[Signal Gift Stores, USA, null, 0]", Arrays.toString(list.get(4)));
+        assertEquals("[Land of Toys Inc., {name=Land of Toys Inc., country=USA, phone=2125557818}, 3.7473693]",
+                Arrays.toString(list.get(3)));
+        assertEquals("[Signal Gift Stores, {name=Signal Gift Stores, country=USA, phone=7025551838}, 3.5396461]",
+                Arrays.toString(list.get(4)));
+        assertEquals("[Signal, {name=Signal Gift Stores, country=USA, phone=7025551838}, 2.3958683]",
+                Arrays.toString(list.get(5)));
+        assertEquals("[Gift, {name=Signal Gift Stores, country=USA, phone=7025551838}, 1.7027211]",
+                Arrays.toString(list.get(6)));
+        assertEquals("[Atelier Graphick, {name=Atelier graphique, country=France, phone=40.32.2555}, 0.85963]",
+                Arrays.toString(list.get(7)));
+
+        // TODO: This could be improved
+        assertEquals("[Ateler Graphick, null, 0]", Arrays.toString(list.get(8)));
     }
 
     private SearchIndex runWriteSearchIndexJob(AnalyzerBeansConfiguration conf) {

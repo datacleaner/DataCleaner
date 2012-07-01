@@ -28,7 +28,6 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Version;
 import org.eobjects.analyzer.reference.AbstractReferenceData;
 import org.eobjects.metamodel.util.Action;
 
@@ -36,8 +35,6 @@ import org.eobjects.metamodel.util.Action;
  * An abstract {@link SearchIndex} implementation.
  */
 public abstract class AbstractSearchIndex extends AbstractReferenceData implements SearchIndex {
-
-    public static final Version VERSION = Version.LUCENE_36;
 
     private static final long serialVersionUID = 1L;
 
@@ -73,8 +70,8 @@ public abstract class AbstractSearchIndex extends AbstractReferenceData implemen
     @Override
     public void write(Action<IndexWriter> writerAction) {
         try {
-            Analyzer analyzer = new SimpleAnalyzer(VERSION);
-            IndexWriterConfig conf = new IndexWriterConfig(VERSION, analyzer);
+            Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
+            IndexWriterConfig conf = new IndexWriterConfig(Constants.VERSION, analyzer);
             Directory directory = getDirectory();
             IndexWriter writer = new IndexWriter(directory, conf);
             try {

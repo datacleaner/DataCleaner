@@ -39,7 +39,7 @@ import org.eobjects.analyzer.data.InputRow;
 @Description("Writes data to a Lucene index, making it searchable at a later stage.")
 public class WriteSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
 
-    @Configured(order = 1)
+    @Configured(order = 1, value = "Value(s) and field name(s) in index")
     InputColumn<String>[] values;
 
     @Configured(order = 2)

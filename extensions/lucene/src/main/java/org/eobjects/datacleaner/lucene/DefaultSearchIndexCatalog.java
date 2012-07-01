@@ -38,7 +38,7 @@ public class DefaultSearchIndexCatalog implements SearchIndexCatalog {
     private final Map<String, SearchIndex> _searchIndices;
     private final Map<String, String> _properties;
 
-    protected DefaultSearchIndexCatalog(UserPreferences userPreferences) {
+    public DefaultSearchIndexCatalog(UserPreferences userPreferences) {
         this(userPreferences.getAdditionalProperties());
     }
 

@@ -38,14 +38,14 @@ public class DefaultSearchIndexCatalog implements SearchIndexCatalog {
     private final Map<String, SearchIndex> _searchIndices;
     private final Map<String, String> _properties;
 
-    public DefaultSearchIndexCatalog(UserPreferences userPreferences) {
+    protected DefaultSearchIndexCatalog(UserPreferences userPreferences) {
         this(userPreferences.getAdditionalProperties());
     }
 
-    public DefaultSearchIndexCatalog(Map<String, String> properties) {
+    protected DefaultSearchIndexCatalog(Map<String, String> properties) {
         _properties = properties;
         _searchIndices = new TreeMap<String, SearchIndex>();
-        
+
         initialize();
     }
 

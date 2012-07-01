@@ -62,10 +62,10 @@ public abstract class AbstractSearchIndex extends AbstractReferenceData implemen
     @Override
     public void write(Action<IndexWriter> writerAction) {
         try {
-            Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
-            IndexWriterConfig conf = new IndexWriterConfig(Constants.VERSION, analyzer);
-            Directory directory = getDirectory();
-            IndexWriter writer = new IndexWriter(directory, conf);
+            final Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
+            final IndexWriterConfig conf = new IndexWriterConfig(Constants.VERSION, analyzer);
+            final Directory directory = getDirectory();
+            final IndexWriter writer = new IndexWriter(directory, conf);
             try {
                 writerAction.run(writer);
                 writer.commit();

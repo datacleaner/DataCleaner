@@ -26,6 +26,10 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.eobjects.metamodel.util.Action;
 
+/**
+ * Action performed for each batch of records to be inserted into a Lucene
+ * {@link SearchIndex}.
+ */
 final class WriteSearchIndexAction implements Action<Iterable<Object[]>> {
 
     private final SearchIndex _searchIndex;
@@ -43,11 +47,11 @@ final class WriteSearchIndexAction implements Action<Iterable<Object[]>> {
             public void run(final IndexWriter writer) throws Exception {
                 final Iterator<Object[]> iterator = iterable.iterator();
                 while (iterator.hasNext()) {
-                    Object[] rowData = iterator.next();
+                    final Object[] rowData = iterator.next();
 
                     final StringBuilder searchText = new StringBuilder();
 
-                    Document doc = new Document();
+                    final Document doc = new Document();
                     for (int i = 0; i < rowData.length; i++) {
                         final Object value = rowData[i];
                         if (value != null) {
@@ -58,13 +62,14 @@ final class WriteSearchIndexAction implements Action<Iterable<Object[]>> {
                                 searchText.append(' ');
                             }
                             searchText.append(stringValue);
-                            
+
                             doc.add(new Field(field, stringValue, Field.Store.YES, Field.Index.NOT_ANALYZED));
                         }
                     }
-                    
-                    doc.add(new Field(Constants.SEARCH_FIELD_NAME, searchText.toString(), Field.Store.NO, Field.Index.ANALYZED));
-                    
+
+                    doc.add(new Field(Constants.SEARCH_FIELD_NAME, searchText.toString(), Field.Store.NO,
+                            Field.Index.ANALYZED));
+
                     writer.addDocument(doc);
                 }
             }

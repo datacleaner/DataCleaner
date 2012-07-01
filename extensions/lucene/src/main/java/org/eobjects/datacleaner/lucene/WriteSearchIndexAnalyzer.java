@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Convertable;
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.writers.WriteBuffer;
 import org.eobjects.analyzer.beans.writers.WriteBufferSizeOption;
@@ -33,20 +35,23 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 
-@AnalyzerBean("Write to Lucene search index")
+@AnalyzerBean("Write to Lucene index")
+@Description("Writes data to a Lucene index, making it searchable at a later stage.")
 public class WriteSearchIndexAnalyzer implements Analyzer<WriteDataResult> {
 
-    @Configured
+    @Configured(order = 1)
     InputColumn<String>[] values;
 
-    // TODO: Add converter
-    @Configured
-    SearchIndex searchIndex;
-
-    @Configured
+    @Configured(order = 2)
     String[] searchFields;
 
-    @Configured
+    @Configured(order = 10)
+    @Convertable(SearchIndexConverter.class)
+    @Description("Search index to write to.")
+    SearchIndex searchIndex;
+
+    @Configured(order = 20)
+    @Description("How much data to buffer before committing batches of data. Large batches often perform better, but require more memory.")
     WriteBufferSizeOption bufferSize = WriteBufferSizeOption.LARGE;
 
     private WriteBuffer _writeBuffer;

@@ -35,6 +35,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.eobjects.analyzer.beans.api.Configured;
+import org.eobjects.analyzer.beans.api.Convertable;
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.OutputColumns;
 import org.eobjects.analyzer.beans.api.Transformer;
@@ -43,14 +45,17 @@ import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.util.StringUtils;
 
-@TransformerBean("Search in Lucene search index")
+@TransformerBean("Search Lucene index")
+@Description("Searches a Lucene search index and returns the top result, if any.")
 public class SearchTransformer implements Transformer<Object> {
 
     @Configured
+    @Description("Column containing search term(s) to fire.")
     InputColumn<String> searchInput;
 
-    // TODO: Add converter
     @Configured
+    @Convertable(SearchIndexConverter.class)
+    @Description("Search index to fire searches on.")
     SearchIndex searchIndex;
 
     private IndexSearcher indexSearcher;

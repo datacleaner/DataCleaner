@@ -58,7 +58,7 @@ public class TimelineGroupPanel extends FlowPanel {
         addStyleName("TimelineGroupPanel");
 
         _removeGroupButton = new Button("Remove this group");
-        _removeGroupButton.addStyleDependentName("ImageButton");
+        _removeGroupButton.addStyleDependentName("ImageTextButton");
         _removeGroupButton.addStyleName("RemoveButton");
         _removeGroupButton.setVisible(false);
         _removeGroupButton.addClickHandler(new ClickHandler() {
@@ -100,7 +100,7 @@ public class TimelineGroupPanel extends FlowPanel {
             add(_removeGroupButton);
         }
         
-        newTimelineButton.addStyleDependentName("ImageButton");
+        newTimelineButton.addStyleDependentName("ImageTextButton");
         newTimelineButton.addStyleName("NewDashboardWidgetButton");
         newTimelineButton.addClickHandler(new CreateTimelineHandler(_service, _tenant, this));
 

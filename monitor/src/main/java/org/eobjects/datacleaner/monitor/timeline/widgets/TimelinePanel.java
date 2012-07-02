@@ -38,6 +38,7 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.visualization.client.AbstractDataTable;
@@ -107,15 +108,18 @@ public class TimelinePanel extends FlowPanel {
         _deleteButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if (_timelineIdentifier != null) {
-                    _service.removeTimeline(_tenant, _timelineIdentifier, new DCAsyncCallback<Boolean>() {
-                        @Override
-                        public void onSuccess(Boolean result) {
-                            // do nothing
-                        }
-                    });
+                final boolean confirmation = Window.confirm("Are you sure you wish to delete this timeline?");
+                if (confirmation) {
+                    if (_timelineIdentifier != null) {
+                        _service.removeTimeline(_tenant, _timelineIdentifier, new DCAsyncCallback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean result) {
+                                // do nothing
+                            }
+                        });
+                    }
+                    _timelineGroupPanel.removeTimelinePanel(TimelinePanel.this);
                 }
-                _timelineGroupPanel.removeTimelinePanel(TimelinePanel.this);
             }
         });
 

@@ -94,6 +94,9 @@ public class DefaultSearchIndexCatalog implements SearchIndexCatalog {
 
     @Override
     public SearchIndex getSearchIndex(String name) {
+        if (name == null) {
+            return null;
+        }
         return _searchIndices.get(name);
     }
 

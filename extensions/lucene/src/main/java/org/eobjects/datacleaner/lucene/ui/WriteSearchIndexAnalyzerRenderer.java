@@ -25,9 +25,9 @@ import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.beans.api.RendererBean;
 import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.lucene.DefaultSearchIndexCatalog;
-import org.eobjects.datacleaner.lucene.DefaultSearchIndexCatalogTest;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
 import org.eobjects.datacleaner.lucene.WriteSearchIndexAnalyzer;
 import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPresenter;
@@ -41,6 +41,9 @@ public class WriteSearchIndexAnalyzerRenderer implements
 
     @Inject
     InjectorBuilder injectorBuilder;
+
+    @Inject
+    WindowContext windowContext;
 
     @Inject
     UserPreferences userPreferences;
@@ -59,7 +62,7 @@ public class WriteSearchIndexAnalyzerRenderer implements
 
         final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
                 PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, ajb).getInstance(PropertyWidgetFactory.class);
-        return new WriteSearchIndexAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory, catalog);
+        return new WriteSearchIndexAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory, catalog, windowContext);
     }
 
 }

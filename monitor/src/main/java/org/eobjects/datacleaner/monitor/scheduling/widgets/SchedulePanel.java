@@ -25,12 +25,10 @@ import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
-import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.Urls;
@@ -38,11 +36,10 @@ import org.eobjects.datacleaner.monitor.util.Urls;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -60,13 +57,10 @@ public class SchedulePanel extends Composite {
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiField
-    FlowPanel headerPanel;
+    Label jobLabel;
 
     @UiField
     Label scheduleLabel;
-
-    @UiField
-    Label latestExecutionLabel;
 
     @UiField
     Button triggerNowButton;
@@ -84,7 +78,7 @@ public class SchedulePanel extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
 
         final JobIdentifier job = schedule.getJob();
-        headerPanel.add(new HeadingLabel(job.getName()));
+        jobLabel.setText(job.getName());
 
         scheduleLabel.setText(schedule.getScheduleSummary());
         if (!schedule.isActive()) {
@@ -120,40 +114,49 @@ public class SchedulePanel extends Composite {
             }
         });
 
-        service.getLatestExecution(tenant, job, new DCAsyncCallback<ExecutionLog>() {
+        // service.getLatestExecution(tenant, job, new
+        // DCAsyncCallback<ExecutionLog>() {
+        // @Override
+        // public void onSuccess(ExecutionLog result) {
+        // if (result == null) {
+        // latestExecutionLabel.setText("Not available");
+        // latestExecutionLabel.addStyleName("discrete");
+        // } else {
+        // StringBuilder sb = new StringBuilder();
+        //
+        // TriggerType triggerType = result.getTriggerType();
+        // switch (triggerType) {
+        // case MANUAL:
+        // sb.append("Manually triggered: ");
+        // break;
+        // case SCHEDULED:
+        // sb.append("Scheduled run: ");
+        // break;
+        // }
+        //
+        // final DateTimeFormat format =
+        // DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
+        //
+        // sb.append(format.format(result.getJobBeginDate()));
+        //
+        // latestExecutionLabel.setText(sb.toString());
+        // }
+        // }
+        // });
+
+        final List<AlertDefinition> alerts = schedule.getAlerts();
+        final Anchor expandAlertsAnchor = new Anchor(alerts.size() + " alert(s)");
+        expandAlertsAnchor.addClickHandler(new ClickHandler() {
             @Override
-            public void onSuccess(ExecutionLog result) {
-                if (result == null) {
-                    latestExecutionLabel.setText("Not available");
-                    latestExecutionLabel.addStyleName("discrete");
-                } else {
-                    StringBuilder sb = new StringBuilder();
-
-                    TriggerType triggerType = result.getTriggerType();
-                    switch (triggerType) {
-                    case MANUAL:
-                        sb.append("Manually triggered: ");
-                        break;
-                    case SCHEDULED:
-                        sb.append("Scheduled run: ");
-                        break;
-                    }
-
-                    final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
-
-                    sb.append(format.format(result.getJobBeginDate()));
-
-                    latestExecutionLabel.setText(sb.toString());
+            public void onClick(ClickEvent event) {
+                alertsPanel.clear();
+                for (AlertDefinition alert : alerts) {
+                    AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
+                    alertsPanel.add(alertPanel);
                 }
             }
         });
-
-        final List<AlertDefinition> alerts = schedule.getAlerts();
-        for (AlertDefinition alert : alerts) {
-            AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
-            alertsPanel.add(alertPanel);
-        }
+        alertsPanel.add(expandAlertsAnchor);
     }
-    
-    
+
 }

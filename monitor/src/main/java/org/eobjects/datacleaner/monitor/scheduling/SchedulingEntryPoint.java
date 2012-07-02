@@ -19,14 +19,9 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling;
 
-import java.util.List;
-
-import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.widgets.SchedulePanel;
+import org.eobjects.datacleaner.monitor.scheduling.widgets.SchedulingOverviewPanel;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
-import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -48,15 +43,12 @@ public class SchedulingEntryPoint implements EntryPoint {
         final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
         rootPanel.add(new LoadingIndicator());
 
-        service.getSchedules(tenant, new DCAsyncCallback<List<ScheduleDefinition>>() {
+        final SchedulingOverviewPanel overviewPanel = new SchedulingOverviewPanel(tenant, service);
+        overviewPanel.initialize(new Runnable() {
             @Override
-            public void onSuccess(List<ScheduleDefinition> schedules) {
+            public void run() {
                 rootPanel.clear();
-                rootPanel.add(new HeadingLabel("Scheduling"));
-                for (ScheduleDefinition schedule : schedules) {
-                    final SchedulePanel schedulePanel = new SchedulePanel(tenant, schedule, service);
-                    rootPanel.add(schedulePanel);
-                }
+                rootPanel.add(overviewPanel);
             }
         });
     }

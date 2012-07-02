@@ -17,18 +17,92 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-.SchedulePanel {
-	margin-top: 20px;
-	padding: 40px;
-	border: 4px dashed #f0f0f0;
-	border-radius: 20px;
+.SchedulingOverviewPanel {
+	
 }
 
-.SchedulePanel .HeadingLabel {
+.SchedulingOverviewPanel .EmptyColumn {
+	min-height: 1em;
+	width: 5%;
+	float: left;
+}
+
+.SchedulingOverviewPanel .JobColumn {
+	min-height: 1em;
+	width: 26%;
+	float: left;
+}
+
+.SchedulingOverviewPanel .ScheduleColumn {
+	min-height: 1em;
+	width: 15%;
+	float: left;
+}
+
+.SchedulingOverviewPanel .AlertsColumn {
+	min-height: 1em;
+	width: 26%;
+	float: left;
+}
+
+.SchedulingOverviewPanel .ActionsColumn {
+	min-height: 1em;
+	width: 27%;
+	float: right;
+}
+
+.SchedulingOverviewPanel .ColumnHeaders {
+	font-weight: bold;
+	background-color: #333;
+	color: white;
+	height: 20px;
+	line-height: 20px;
+}
+
+.SchedulingOverviewPanel .ScheduleGroupPanel {
+}
+
+/* a "row" representing a datastore header */
+.SchedulingOverviewPanel .ScheduleGroupPanel .HeadingLabel {
+	clear: both;
+	background-image: url("datastore.png");
+	background-position: 4px center;
+	background-repeat: no-repeat;
+	padding-left: 30px;
+	background-color: #f0f0f0;
+	color: #333;
+	margin-bottom: 0;
+	line-height: 34px;
+}
+
+/* a "row" representing a single scheduled job */
+.SchedulingOverviewPanel .ScheduleGroupPanel .SchedulePanel {
+	border-top: 1px solid #f0f0f0;
+	clear: both;
+}
+
+.TriggerButton {
+	background-image: url("trigger.png");
+}
+
+.LaunchButton {
+	background-image: url("launch.png");
+}
+
+.SchedulePanel .ScheduleColumn .gwt-Label {
 	background-image: url("schedule.png");
 	background-repeat: no-repeat;
 	background-position: left center;
 	padding-left: 26px;
+}
+
+.SchedulePanel .ScheduleColumn .gwt-Label.discrete {
+	background-image: none;
+	padding-left: 0;
+}
+
+.SchedulePanel .ActionsColumn .gwt-Button {
+	margin: 1px;
 }
 
 .AlertPanel {
@@ -47,7 +121,7 @@
 
 .AlertPanel a:hover {
 	text-decoration: underline;
-	color: #5594DD;
+	color: #377FCF;
 }
 
 .CustomizeAlertPanel {
@@ -62,18 +136,20 @@
 	background-position: right center;
 }
 
-.AlertPanel-INTELLIGENCE, .CustomizeAlertPanel .gwt-RadioButton-INTELLIGENCE {
+.AlertPanel-INTELLIGENCE,.CustomizeAlertPanel .gwt-RadioButton-INTELLIGENCE
+	{
 	background-image: url("alert-intelligence.png");
 }
 
-.AlertPanel-SURVEILLANCE, .CustomizeAlertPanel .gwt-RadioButton-SURVEILLANCE {
+.AlertPanel-SURVEILLANCE,.CustomizeAlertPanel .gwt-RadioButton-SURVEILLANCE
+	{
 	background-image: url("alert-surveillance.png");
 }
 
-.AlertPanel-WARNING, .CustomizeAlertPanel .gwt-RadioButton-WARNING {
+.AlertPanel-WARNING,.CustomizeAlertPanel .gwt-RadioButton-WARNING {
 	background-image: url("alert-warning.png");
 }
 
-.AlertPanel-FATAL, .CustomizeAlertPanel .gwt-RadioButton-FATAL {
+.AlertPanel-FATAL,.CustomizeAlertPanel .gwt-RadioButton-FATAL {
 	background-image: url("alert-fatal.png");
 }

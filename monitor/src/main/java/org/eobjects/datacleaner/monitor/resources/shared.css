@@ -26,11 +26,11 @@ body,table td,select,button {
 }
 
 a {
-	color: black;
+	color: #377FCF;
 }
 
 a:hover {
-	color: #5594DD;
+	color: #377FCF;
 }
 
 /*
@@ -61,6 +61,7 @@ a:hover {
 	height: 30px;
 	padding-left: 30px;
 	background-color: #f1f1f1;
+	font-size: 0.9em;
 }
 
 .gwt-Button-ImageButton {

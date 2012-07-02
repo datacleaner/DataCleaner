@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
@@ -141,7 +142,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final RepositoryFile scheduleFile = jobsFolder.getFile(jobName + EXTENSION_SCHEDULE_XML);
         final JaxbScheduleReader reader = new JaxbScheduleReader();
 
-        final String scheduleAfterJob;
+        final String scheduleAfterJobName;
         final String scheduleExpression;
         final boolean active;
 
@@ -149,7 +150,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         if (scheduleFile == null) {
             scheduleExpression = null;
-            scheduleAfterJob = null;
+            scheduleAfterJobName = null;
             active = false;
             alerts = Collections.emptyList();
         } else {
@@ -170,17 +171,23 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
             scheduleExpression = schedule.getScheduleExpression();
             active = schedule.isActive();
-            scheduleAfterJob = schedule.getScheduleAfterJob();
+            scheduleAfterJobName = schedule.getScheduleAfterJob();
         }
 
         final ScheduleDefinition scheduleDefinition;
 
-        if (scheduleAfterJob == null) {
-            scheduleDefinition = new ScheduleDefinition(tenant, new JobIdentifier(jobName), scheduleExpression, active);
-        } else {
-            final JobIdentifier job = new JobIdentifier(scheduleAfterJob);
+        final JobIdentifier jobIdentifier = new JobIdentifier(jobName);
+        final String datastoreName = context.getJob(jobIdentifier).getSourceDatastoreName();
+        final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
 
-            scheduleDefinition = new ScheduleDefinition(tenant, new JobIdentifier(jobName), job, active);
+        if (scheduleAfterJobName == null) {
+            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, scheduleExpression, active,
+                    datastoreIdentifier);
+        } else {
+            final JobIdentifier scheduleAfterJob = new JobIdentifier(scheduleAfterJobName);
+
+            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, scheduleAfterJob, active,
+                    datastoreIdentifier);
         }
 
         for (Alert alert : alerts) {
@@ -311,7 +318,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, false);
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, false, null);
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
         ExecuteJob.executeJob(context, execution);

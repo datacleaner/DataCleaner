@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.scheduling.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
@@ -38,23 +39,28 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
     private String _scheduleExpression;
     private boolean _active;
     private List<AlertDefinition> _alerts;
+    private DatastoreIdentifier _datastore;
 
     // no-args constructor
     public ScheduleDefinition() {
     }
 
-    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String scheduleExpression, boolean active) {
+    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String scheduleExpression, boolean active,
+            DatastoreIdentifier datastoreIdentifier) {
         _tenant = tenant;
         _job = job;
         _scheduleExpression = scheduleExpression;
         _active = active;
+        _datastore = datastoreIdentifier;
     }
 
-    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, JobIdentifier scheduleAfterJob, boolean active) {
+    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, JobIdentifier scheduleAfterJob,
+            boolean active, DatastoreIdentifier datastoreIdentifier) {
         _tenant = tenant;
         _job = job;
         _scheduleAfterJob = scheduleAfterJob;
         _active = active;
+        _datastore = datastoreIdentifier;
     }
 
     public TenantIdentifier getTenant() {
@@ -77,17 +83,25 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
         _active = active;
     }
 
+    public DatastoreIdentifier getDatastore() {
+        return _datastore;
+    }
+
+    public void setDatastore(DatastoreIdentifier datastore) {
+        _datastore = datastore;
+    }
+
     public JobIdentifier getScheduleAfterJob() {
         return _scheduleAfterJob;
     }
-    
+
     public List<AlertDefinition> getAlerts() {
         if (_alerts == null) {
             _alerts = new ArrayList<AlertDefinition>();
         }
         return _alerts;
     }
-    
+
     public void setAlerts(List<AlertDefinition> alerts) {
         _alerts = alerts;
     }
@@ -110,6 +124,7 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
         int result = 1;
         result = prime * result + (_active ? 1231 : 1237);
         result = prime * result + ((_alerts == null) ? 0 : _alerts.hashCode());
+        result = prime * result + ((_datastore == null) ? 0 : _datastore.hashCode());
         result = prime * result + ((_job == null) ? 0 : _job.hashCode());
         result = prime * result + ((_scheduleAfterJob == null) ? 0 : _scheduleAfterJob.hashCode());
         result = prime * result + ((_scheduleExpression == null) ? 0 : _scheduleExpression.hashCode());
@@ -132,6 +147,11 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
             if (other._alerts != null)
                 return false;
         } else if (!_alerts.equals(other._alerts))
+            return false;
+        if (_datastore == null) {
+            if (other._datastore != null)
+                return false;
+        } else if (!_datastore.equals(other._datastore))
             return false;
         if (_job == null) {
             if (other._job != null)

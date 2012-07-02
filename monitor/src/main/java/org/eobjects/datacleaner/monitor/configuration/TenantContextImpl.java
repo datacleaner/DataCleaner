@@ -34,6 +34,7 @@ import org.eobjects.metamodel.util.HasNameMapper;
 
 public class TenantContextImpl implements TenantContext {
 
+    private static final String PATH_TIMELINES = "timelines";
     private static final String PATH_JOBS = "jobs";
     private static final String PATH_RESULTS = "results";
     private static final String EXTENSION_JOB = FileFilters.ANALYSIS_XML.getExtension();
@@ -124,6 +125,19 @@ public class TenantContextImpl implements TenantContext {
             throw new IllegalArgumentException("No result folder for tenant: " + _tenantId);
         }
         return resultsFolder;
+    }
+
+    @Override
+    public RepositoryFolder getTimelineFolder() {
+        final RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
+        if (tenantFolder == null) {
+            throw new IllegalArgumentException("No such tenant: " + _tenantId);
+        }
+        final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
+        if (timelinesFolder == null) {
+            throw new IllegalArgumentException("No timeline folder for tenant: " + _tenantId);
+        }
+        return timelinesFolder;
     }
 
 }

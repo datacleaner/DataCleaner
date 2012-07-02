@@ -75,9 +75,6 @@ import org.slf4j.LoggerFactory;
  */
 public class TimelineServiceImpl implements TimelineService {
 
-    public static final String PATH_RESULTS = "results";
-    public static final String PATH_TIMELINES = "timelines";
-
     private static final Logger logger = LoggerFactory.getLogger(TimelineServiceImpl.class);
 
     private final TenantContextFactory _tenantContextFactory;
@@ -90,8 +87,7 @@ public class TimelineServiceImpl implements TimelineService {
 
     @Override
     public List<TimelineGroup> getTimelineGroups(final TenantIdentifier tenant) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
-        final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
+        final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final List<RepositoryFolder> folders = timelinesFolder.getFolders();
         final List<TimelineGroup> groups = new ArrayList<TimelineGroup>();
         for (RepositoryFolder folder : folders) {
@@ -128,8 +124,7 @@ public class TimelineServiceImpl implements TimelineService {
 
     @Override
     public List<TimelineIdentifier> getTimelines(final TenantIdentifier tenant, final TimelineGroup group) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant.getId());
-        final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
+        final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final List<RepositoryFile> files;
         final String groupName = (group == null ? null : group.getName());
         if (group == null || groupName == null || "".equals(groupName)) {
@@ -572,11 +567,13 @@ public class TimelineServiceImpl implements TimelineService {
         final String name = timelineIdentifier.getName();
         final TimelineGroup group = timelineIdentifier.getGroup();
 
+        final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
+
         final RepositoryFolder folder;
         if (group == null) {
-            folder = _repository.getFolder(tenant.getId()).getFolder(PATH_TIMELINES);
+            folder = timelinesFolder;
         } else {
-            folder = _repository.getFolder(tenant.getId()).getFolder(PATH_TIMELINES).getFolder(group.getName());
+            folder = timelinesFolder.getFolder(group.getName());
         }
         final String fileName = name + FileFilters.ANALYSIS_TIMELINE_XML.getExtension();
 
@@ -619,7 +616,7 @@ public class TimelineServiceImpl implements TimelineService {
     }
 
     @Override
-    public Boolean deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
+    public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
         if (timeline == null) {
             return false;
         }
@@ -639,5 +636,35 @@ public class TimelineServiceImpl implements TimelineService {
         }
 
         return true;
+    }
+
+    @Override
+    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name) {
+        final TimelineGroup group = new TimelineGroup(name);
+
+        final RepositoryFolder timelineFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
+        final RepositoryFolder groupFolder = timelineFolder.createFolder(name);
+
+        assert groupFolder != null;
+
+        return group;
+    }
+
+    @Override
+    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup) {
+        final RepositoryFolder timelineFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
+        final RepositoryFolder groupFolder = timelineFolder.getFolder(timelineGroup.getName());
+
+        if (groupFolder == null) {
+            throw new IllegalArgumentException("Timeline group '" + timelineGroup.getName() + "' does not exist.");
+        }
+
+        try {
+            groupFolder.delete();
+            return true;
+        } catch (Exception e) {
+            logger.warn("Failed to delete timeline group folder: " + timelineGroup.getName(), e);
+            return false;
+        }
     }
 }

@@ -73,7 +73,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
         }
         return _parent.getQualifiedPath() + "/" + getName();
     }
-    
+
     @Override
     public List<RepositoryFolder> getFolders() {
         File[] directories = _file.listFiles(new FileFilter() {
@@ -93,7 +93,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
             }
         });
     }
-    
+
     @Override
     public List<RepositoryFile> getFiles(final String extension) {
         File[] files = _file.listFiles(new FileFilter() {
@@ -185,5 +185,18 @@ public class FileRepositoryFolder implements RepositoryFolder {
         if (!success) {
             throw new IllegalStateException("Could not delete directory: " + _file);
         }
+    }
+
+    @Override
+    public RepositoryFolder createFolder(final String name) {
+        final File file = new File(_file, name);
+        if (file.exists()) {
+            throw new IllegalArgumentException("Folder with name '" + name + "' already exists");
+        }
+        final boolean result = file.mkdir();
+        if (!result) {
+            throw new IllegalStateException("Failed to create directory '" + name + "' within " + _file);
+        }
+        return new FileRepositoryFolder(this, file);
     }
 }

@@ -115,12 +115,22 @@ public class TimelineServiceServlet extends RemoteServiceServlet implements Time
     }
 
     @Override
-    public Boolean deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
-        return _delegate.deleteTimeline(tenant, timeline);
+    public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
+        return _delegate.removeTimeline(tenant, timeline);
     }
 
     @Override
     public List<TimelineGroup> getTimelineGroups(final TenantIdentifier tenant) {
         return _delegate.getTimelineGroups(tenant);
+    }
+
+    @Override
+    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name) {
+        return _delegate.addTimelineGroup(tenant, name);
+    }
+
+    @Override
+    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup) {
+        return _delegate.removeTimelineGroup(tenant, timelineGroup);
     }
 }

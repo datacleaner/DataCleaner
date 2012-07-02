@@ -72,7 +72,7 @@ public interface RepositoryFolder extends RepositoryNode {
     public RepositoryFile getFile(String name);
 
     /**
-     * Creates a new file in particular folder.
+     * Creates a new file in this folder.
      * 
      * @param name
      *            the name of the file.
@@ -81,4 +81,13 @@ public interface RepositoryFolder extends RepositoryNode {
      * @return the {@link RepositoryFile} reference to the newly created file.
      */
     public RepositoryFile createFile(String name, Action<OutputStream> writeCallback);
+
+    /**
+     * Creates a new subfolder in this folder.
+     * 
+     * @param name
+     *            the name of the folder.
+     * @return the resulting {@link RepositoryFolder} object.
+     */
+    public RepositoryFolder createFolder(String name);
 }

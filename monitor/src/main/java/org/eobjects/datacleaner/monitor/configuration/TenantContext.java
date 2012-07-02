@@ -42,6 +42,8 @@ public interface TenantContext {
     public RepositoryFolder getJobFolder();
     
     public RepositoryFolder getResultFolder();
+    
+    public RepositoryFolder getTimelineFolder();
 
     public AnalyzerBeansConfiguration getConfiguration();
 }

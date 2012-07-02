@@ -67,6 +67,25 @@ public interface TimelineService extends RemoteService {
     public List<TimelineGroup> getTimelineGroups(TenantIdentifier tenant);
 
     /**
+     * Adds a timeline group to the tenant's repository.
+     * 
+     * @param tenant
+     * @param name
+     * @return
+     */
+    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name);
+
+    /**
+     * Removes a timeline group from a tenant's repository. All contained
+     * timelines must be removed first, or else the operation will not succeed.
+     * 
+     * @param tenant
+     * @param timelineGroup
+     * @return a boolean indicating if the remove operation went well.
+     */
+    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup);
+
+    /**
      * Gets the saved timeline identifiers of a tenant
      * 
      * @param tenant
@@ -133,7 +152,7 @@ public interface TimelineService extends RemoteService {
      * 
      * @param tenant
      * @param timeline
-     * @return
+     * @return a boolean indicating if the remove operation went well.
      */
-    public Boolean deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline);
+    public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline);
 }

@@ -22,7 +22,16 @@
 	float: left;
 }
 
-.TimelineGroupSelectionPanel a {
+.TimelineGroupSelectionPanel a.CreateNewTimelineGroupAnchor {
+	color: #999;
+	margin-top: 10px;
+	font-size: 0.9em;
+	cursor: pointer;
+	text-align: center;
+	display: block;
+}
+
+.TimelineGroupSelectionPanel .AnchorPanel a {
 	display: block;
 	width: 140px;
 	line-height: 2em;
@@ -32,16 +41,16 @@
 	background-color: #f0f0f0;
 }
 
-.TimelineGroupSelectionPanel a:hover {
+.TimelineGroupSelectionPanel .AnchorPanel a:hover {
 	background-color: #ddd;
 }
 
-.TimelineGroupSelectionPanel a.selected {
+.TimelineGroupSelectionPanel .AnchorPanel a.selected {
 	background-color: #377FCF;
 	color: white;
 }
 
-.TimelineGroupSelectionPanel a.selected:hover {
+.TimelineGroupSelectionPanel .AnchorPanel a.selected:hover {
 	cursor: default;
 	text-decoration: none;
 }

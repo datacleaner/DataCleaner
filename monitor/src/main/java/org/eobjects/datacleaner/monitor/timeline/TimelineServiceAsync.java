@@ -60,8 +60,12 @@ public interface TimelineServiceAsync {
     public void getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
             MetricIdentifier metric, AsyncCallback<Collection<String>> callback);
 
-    public void deleteTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
+    public void removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
 
     public void getTimelineGroups(TenantIdentifier tenant, AsyncCallback<List<TimelineGroup>> callback);
+
+    public void addTimelineGroup(TenantIdentifier tenant, String name, AsyncCallback<TimelineGroup> callback);
+
+    public void removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup, AsyncCallback<Boolean> callback);
 
 }

@@ -108,7 +108,7 @@ public class TimelinePanel extends FlowPanel {
             @Override
             public void onClick(ClickEvent event) {
                 if (_timelineIdentifier != null) {
-                    _service.deleteTimeline(_tenant, _timelineIdentifier, new DCAsyncCallback<Boolean>() {
+                    _service.removeTimeline(_tenant, _timelineIdentifier, new DCAsyncCallback<Boolean>() {
                         @Override
                         public void onSuccess(Boolean result) {
                             // do nothing

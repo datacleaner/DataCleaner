@@ -29,6 +29,7 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -42,6 +43,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
     private final TimelineServiceAsync _service;
     private final SimplePanel _targetPanel;
     private final List<Anchor> _anchors;
+    private final FlowPanel _anchorPanel;
 
     public TimelineGroupSelectionPanel(TenantIdentifier tenant, TimelineServiceAsync service, SimplePanel targetPanel) {
         super();
@@ -50,11 +52,13 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
         _service = service;
         _targetPanel = targetPanel;
         _anchors = new ArrayList<Anchor>();
+        _anchorPanel = new FlowPanel();
+        _anchorPanel.setStyleName("AnchorPanel");
 
         addStyleName("TimelineGroupSelectionPanel");
 
         // add the default/"welcome" group
-        Anchor defaultAnchor = addGroup(null);
+        final Anchor defaultAnchor = addGroup(null);
         defaultAnchor.fireEvent(new ClickEvent() {
         });
 
@@ -67,6 +71,27 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
                 }
             }
         });
+
+        final Anchor createNewGroupAnchor = new Anchor();
+        createNewGroupAnchor.setStyleName("CreateNewTimelineGroupAnchor");
+        createNewGroupAnchor.setText("New group");
+        createNewGroupAnchor.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                String name = Window.prompt("Name of the new group?", "");
+                if (name != null && name.trim().length() > 1) {
+                    _service.addTimelineGroup(_tenant, name, new DCAsyncCallback<TimelineGroup>() {
+                        @Override
+                        public void onSuccess(TimelineGroup result) {
+                            addGroup(result);
+                        }
+                    });
+                }
+            }
+        });
+
+        add(_anchorPanel);
+        add(createNewGroupAnchor);
     }
 
     public Anchor addGroup(final TimelineGroup group) {
@@ -94,7 +119,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
                 _targetPanel.setWidget(panel);
             }
         });
-        add(anchor);
+        _anchorPanel.add(anchor);
 
         _anchors.add(anchor);
         return anchor;

@@ -9,6 +9,113 @@
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
+
+		<pojo-datastore name="Contributors"
+			description="A selection of contributors to DataCleaner">
+			<schema-name>contributors</schema-name>
+			<table>
+				<name>Companies</name>
+				<columns>
+					<column>
+						<name>ID</name>
+						<type>INTEGER</type>
+					</column>
+					<column>
+						<name>Name</name>
+						<type>VARCHAR</type>
+					</column>
+				</columns>
+				<rows>
+					<row>
+						<v>1</v>
+						<v>Human Inference</v>
+					</row>
+					<row>
+						<v>2</v>
+						<v>Xebia</v>
+					</row>
+				</rows>
+			</table>
+			<table>
+				<name>Persons</name>
+				<columns>
+					<column>
+						<name>ID</name>
+						<type>VARCHAR</type>
+					</column>
+					<column>
+						<name>Name</name>
+						<type>VARCHAR</type>
+					</column>
+					<column>
+						<name>Email</name>
+						<type>LIST</type>
+					</column>
+					<column>
+						<name>Country</name>
+						<type>VARCHAR</type>
+					</column>
+					<column>
+						<name>Twitter account</name>
+						<type>VARCHAR</type>
+					</column>
+					<column>
+						<name>Company ID</name>
+						<type>INTEGER</type>
+					</column>
+				</columns>
+				<rows>
+					<row>
+						<v>kasper</v>
+						<v>Kasper Sørensen</v>
+						<v>[kasper@eobjects.org,kasper.sorensen@humaninference.com,i.am.kasper.sorensen@gmail.com]</v>
+						<v>Denmark</v>
+						<v>kaspersor</v>
+						<v>1</v>
+					</row>
+					<row>
+						<v>stefan</v>
+						<v>Stefan Janssen</v>
+						<v>[stefan.janssen@humaninference.com]</v>
+						<v>The Netherlands</v>
+						<v />
+						<v>1</v>
+					</row>
+					<row>
+						<v>ankitk</v>
+						<v>Ankit Kumar</v>
+						<v>[ankit.kumar@humaninference.com]</v>
+						<v>The Netherlands</v>
+						<v />
+						<v>1</v>
+					</row>
+					<row>
+						<v>nancysharma</v>
+						<v>Nancy Sharma</v>
+						<v>[nsharma@xebia.com]</v>
+						<v>India</v>
+						<v />
+						<v>2</v>
+					</row>
+					<row>
+						<v>paritoshranjan</v>
+						<v>Paritosh Ranjan</v>
+						<v>[pranjan@xebia.com]</v>
+						<v>India</v>
+						<v>paritoshranjan</v>
+						<v>2</v>
+					</row>
+					<row>
+						<v>rajneesh</v>
+						<v>Rajneesh Namta</v>
+						<v>[rnamta@xebia.com]</v>
+						<v>India</v>
+						<v>rnamta</v>
+						<v>2</v>
+					</row>
+				</rows>
+			</table>
+		</pojo-datastore>
 	</datastore-catalog>
 
 	<reference-data-catalog>

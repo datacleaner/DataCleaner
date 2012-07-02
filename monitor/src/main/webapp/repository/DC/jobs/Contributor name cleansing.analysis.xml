@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+	<job-metadata>
+		<job-name>Contributor name cleansing</job-name>
+	</job-metadata>
+	<source>
+		<data-context ref="Contributors" />
+		<columns>
+			<column path="Persons.Name" id="col_name" />
+		</columns>
+	</source>
+	<transformation>
+		<transformer>
+			<descriptor ref="EasyDQ Name cleansing" />
+			<properties>
+				<property value="[Representation]" name="Name parts" />
+				<property value="named:easydqconnection" name="Connection" />
+				<property value="TOP_SUGGESTION" name="Suggestion Handling" />
+			</properties>
+			<input ref="col_name" name="Name part columns" />
+			<output id="col_traffic_light" />
+		</transformer>
+	</transformation>
+	<analysis>
+		<analyzer>
+			<descriptor ref="Value distribution" />
+			<properties />
+			<input ref="col_traffic_light" />
+		</analyzer>
+	</analysis>
+</job>

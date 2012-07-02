@@ -55,8 +55,10 @@
 	font-weight: bold;
 	background-color: #333;
 	color: white;
-	height: 20px;
-	line-height: 20px;
+	height: 22px;
+	line-height: 22px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
 }
 
 .SchedulingOverviewPanel .ScheduleGroupPanel {
@@ -79,6 +81,7 @@
 .SchedulingOverviewPanel .ScheduleGroupPanel .SchedulePanel {
 	border-top: 1px solid #f0f0f0;
 	clear: both;
+	line-height: 30px;
 }
 
 .TriggerButton {
@@ -102,7 +105,10 @@
 }
 
 .SchedulePanel .ActionsColumn .gwt-Button {
-	margin: 1px;
+	margin-left: 0px;
+	margin-right: 3px;
+	margin-top: 3px;
+	margin-bottom: 3px;
 }
 
 .AlertPanel {

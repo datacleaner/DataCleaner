@@ -44,10 +44,14 @@ import org.eobjects.analyzer.beans.api.TransformerBean;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @TransformerBean("Search Lucene index")
 @Description("Searches a Lucene search index and returns the top result, if any.")
 public class SearchTransformer implements Transformer<Object> {
+
+    private static final Logger logger = LoggerFactory.getLogger(SearchTransformer.class);
 
     @Configured
     @Description("Column containing search term(s) to fire.")
@@ -59,7 +63,7 @@ public class SearchTransformer implements Transformer<Object> {
     SearchIndex searchIndex;
 
     private IndexSearcher indexSearcher;
-    private QueryParser queryParser;
+    
 
     @Override
     public OutputColumns getOutputColumns() {
@@ -71,9 +75,6 @@ public class SearchTransformer implements Transformer<Object> {
     @Initialize
     public void init() {
         indexSearcher = searchIndex.getSearcher();
-
-        final Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
-        queryParser = new QueryParser(Constants.VERSION, Constants.SEARCH_FIELD_NAME, analyzer);
     }
 
     @Override
@@ -87,11 +88,15 @@ public class SearchTransformer implements Transformer<Object> {
             return result;
         }
 
-        final Query query;
+        Query query;
         try {
+            final Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
+            final QueryParser queryParser = new QueryParser(Constants.VERSION, Constants.SEARCH_FIELD_NAME, analyzer);
             query = queryParser.parse(searchText);
         } catch (ParseException e) {
-            throw new IllegalStateException(e);
+            logger.error("An error occurred while parsing query: " + searchText, e);
+            result[1] = -1;
+            return result;
         }
 
         final TopDocs searchResult;

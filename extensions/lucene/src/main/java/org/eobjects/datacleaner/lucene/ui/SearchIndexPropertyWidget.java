@@ -32,9 +32,12 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.lucene.SearchIndex;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
+import org.eobjects.datacleaner.widgets.DCListCellRenderer;
 import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidget;
 import org.jdesktop.swingx.HorizontalLayout;
@@ -47,21 +50,34 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
     private final DCComboBox<String> _comboBox;
     private final SearchIndexCatalog _catalog;
     private final WindowContext _windowContext;
+    private final UserPreferences _userPreferences;
 
     public SearchIndexPropertyWidget(AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder,
-            ConfiguredPropertyDescriptor propertyDescriptor, SearchIndexCatalog catalog, WindowContext windowContext) {
+            ConfiguredPropertyDescriptor propertyDescriptor, SearchIndexCatalog catalog, WindowContext windowContext,
+            UserPreferences userPreferences) {
         super(beanJobBuilder, propertyDescriptor);
 
         _catalog = catalog;
         _windowContext = windowContext;
+        _userPreferences = userPreferences;
 
         final String[] names = catalog.getSearchIndexNames();
         _comboBox = new DCComboBox<String>(names);
+        _comboBox.setRenderer(new DCListCellRenderer());
 
         final SearchIndex currentValue = getCurrentValue();
         if (currentValue != null) {
             _comboBox.setSelectedItem(currentValue.getName());
+        } else {
+            _comboBox.setSelectedItem(null);
         }
+
+        _comboBox.addListener(new Listener<String>() {
+            @Override
+            public void onItemSelected(String item) {
+                fireValueChanged();
+            }
+        });
 
         final ImageIcon icon = ImageManager.getInstance().getImageIcon("images/search_index.png",
                 IconUtils.ICON_SIZE_MEDIUM, getClass().getClassLoader());
@@ -69,7 +85,8 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final ConfigureSearchIndicesDialog dialog = new ConfigureSearchIndicesDialog(_windowContext, _catalog);
+                final ConfigureSearchIndicesDialog dialog = new ConfigureSearchIndicesDialog(_windowContext, _catalog,
+                        _userPreferences);
                 dialog.open();
             }
         });
@@ -90,7 +107,9 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
 
     @Override
     protected void setValue(SearchIndex value) {
+        if (value == null) {
+            return;
+        }
         _comboBox.setSelectedItem(value.getName());
     }
-
 }

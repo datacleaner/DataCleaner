@@ -24,7 +24,7 @@ import javax.swing.JComponent;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
 import org.eobjects.datacleaner.panels.DCPanel;
-import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 
 /**
@@ -34,11 +34,14 @@ public class ConfigureSearchIndicesDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final ImageManager _imageManager = ImageManager.getInstance();
+    private final SearchIndexCatalog _catalog;
+    private final UserPreferences _userPreferences;
 
-    public ConfigureSearchIndicesDialog(WindowContext windowContext, SearchIndexCatalog catalog) {
-        super(windowContext, _imageManager.getImage("images/banner-search-indices.png",
-                ConfigureSearchIndicesDialog.class.getClassLoader()));
+    public ConfigureSearchIndicesDialog(WindowContext windowContext, SearchIndexCatalog catalog,
+            UserPreferences userPreferences) {
+        super(windowContext, Images.BANNER_IMAGE);
+        _catalog = catalog;
+        _userPreferences = userPreferences;
     }
 
     @Override
@@ -58,10 +61,12 @@ public class ConfigureSearchIndicesDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final DCPanel panel = new DCPanel(
-                _imageManager.getImage("images/lucene_logo.png", getClass().getClassLoader()), 100, 100);
+        final CreateSearchIndexPanel createSearchIndexPanel = new CreateSearchIndexPanel(_catalog, _userPreferences);
 
+        final DCPanel panel = new DCPanel(Images.WATERMARK_IMAGE, 95, 95);
         panel.setPreferredSize(getDialogWidth(), 400);
+
+        panel.add(createSearchIndexPanel);
 
         return panel;
     }

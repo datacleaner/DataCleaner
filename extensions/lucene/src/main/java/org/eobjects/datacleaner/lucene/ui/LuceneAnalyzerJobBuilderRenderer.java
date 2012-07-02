@@ -36,7 +36,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
-public class WriteSearchIndexAnalyzerRenderer implements
+public class LuceneAnalyzerJobBuilderRenderer implements
         Renderer<AnalyzerJobBuilder<WriteSearchIndexAnalyzer>, AnalyzerJobBuilderPresenter> {
 
     @Inject
@@ -62,7 +62,7 @@ public class WriteSearchIndexAnalyzerRenderer implements
 
         final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
                 PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, ajb).getInstance(PropertyWidgetFactory.class);
-        return new WriteSearchIndexAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory, catalog, windowContext);
+        return new WriteSearchIndexAnalyzerJobBuilderPanel(ajb, propertyWidgetFactory, catalog, windowContext, userPreferences);
     }
 
 }

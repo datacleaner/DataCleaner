@@ -55,9 +55,11 @@ a:hover {
 
 .gwt-Button-ImageButton {
 	background-repeat: no-repeat;
-	background-position: center center;
-	width: 30px;
+	background-position: 4px center;
+	background-image: none;
+	min-width: 30px;
 	height: 30px;
+	padding-left: 30px;
 	background-color: #f1f1f1;
 }
 

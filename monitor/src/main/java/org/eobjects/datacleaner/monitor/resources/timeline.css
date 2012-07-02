@@ -27,27 +27,35 @@
 	margin-top: 10px;
 	font-size: 0.9em;
 	cursor: pointer;
-	text-align: center;
 	display: block;
+	padding-left: 30px;
+	background-image: url("new.png");
+	background-position: 4px center;
+	background-repeat: no-repeat;
 }
 
 .TimelineGroupSelectionPanel .AnchorPanel a {
 	display: block;
 	width: 140px;
 	line-height: 2em;
-	padding-left: 10px;
+	padding-left: 30px;
 	background-color: #f0f0f0;
 	overflow: hidden;
 	background-color: #f0f0f0;
+	background-image: url("folder_normal.png");
+	background-position: 4px center;
+	background-repeat: no-repeat;
 }
 
 .TimelineGroupSelectionPanel .AnchorPanel a:hover {
 	background-color: #ddd;
+	background-image: url("folder_hover.png");
 }
 
 .TimelineGroupSelectionPanel .AnchorPanel a.selected {
 	background-color: #377FCF;
 	color: white;
+	background-image: url("folder_hover.png");
 }
 
 .TimelineGroupSelectionPanel .AnchorPanel a.selected:hover {
@@ -58,6 +66,14 @@
 .TimelineGroupPanel {
 	width: 720px;
 	float: right;
+}
+
+.TimelineGroupPanel .RemoveButton {
+	background-image: url("delete.png");
+}
+
+.TimelineGroupPanel .NewDashboardWidgetButton {
+	background-image: url("new.png");
 }
 
 .TimelineGroupPanel .welcomeTextPanel {

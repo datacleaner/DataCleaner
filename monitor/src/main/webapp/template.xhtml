@@ -12,6 +12,14 @@
 		<link rel="stylesheet" type="text/css" href="styles.css" />
 		<link rel="shortcut icon" href="images/favicon.png" />
 
+		<script type="text/javascript">
+		<!--
+			var dq_monitor_client_config = {
+				tenant_id : '#{user.tenant}'
+			}
+		-->
+		</script>
+
 		<ui:insert name="head" />
 	</h:head>
 	<h:body>
@@ -21,10 +29,12 @@
 		<div class="pageContainer">
 			<div class="pageHeader">
 				<div class="logo">
-					<div id="user_panel">
-						<span>Welcome <span class="username">#{user.username}</span>
-							<span class="tenant">(#{user.tenant})</span></span>
-					</div>
+					<c:if test="#{user.loggedIn}">
+						<div id="user_panel">
+							<span>Welcome <span class="username">#{user.username}</span>
+								<span class="tenant">(#{user.tenant})</span></span>
+						</div>
+					</c:if>
 				</div>
 
 				<ul id="nav">
@@ -40,14 +50,14 @@
 					</c:if>
 
 					<c:if test="#{user.hasRole('ROLE_SCHEDULE_EDITOR')}">
-					<li
-						class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
-							value="scheduling.jsf" styleClass="SchedulingTabTitle">
-							<h:outputText value="Scheduling" />
-							<c:if test="#{param['gwt.codesvr'] != null}">
-								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-							</c:if>
-						</h:outputLink></li>
+						<li
+							class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+								value="scheduling.jsf" styleClass="SchedulingTabTitle">
+								<h:outputText value="Scheduling" />
+								<c:if test="#{param['gwt.codesvr'] != null}">
+									<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+								</c:if>
+							</h:outputLink></li>
 					</c:if>
 
 					<c:if test="#{user.hasRole('ROLE_JOB_EDITOR')}">

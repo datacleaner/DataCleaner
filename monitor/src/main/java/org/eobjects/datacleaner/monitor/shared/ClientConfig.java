@@ -17,18 +17,15 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.security;
+package org.eobjects.datacleaner.monitor.shared;
+
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 /**
- * Defines the interface of a dq monitor user.
+ * Represents the configuration on the client side. Typically provided using the
+ * {@link DictionaryClientConfig} class.
  */
-public interface User {
-    
-    public boolean isLoggedIn();
+public interface ClientConfig {
 
-    public String getUsername();
-
-    public String getTenant();
-
-    public boolean hasRole(String role);
+    public TenantIdentifier getTenant();
 }

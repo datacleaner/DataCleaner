@@ -31,4 +31,5 @@ public interface SecurityRoles {
 
     // super roles
     public static final String ADMIN = "ROLE_ADMIN";
+    public static final String ENGINEER = "ROLE_ENGINEER";
 }

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.timeline;
 
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.widgets.TimelineGroupSelectionPanel;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
@@ -36,7 +38,9 @@ public class TimelineEntryPoint implements EntryPoint {
 
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
-        final TenantIdentifier tenant = new TenantIdentifier("DC");
+        
+        final ClientConfig clientConfig = new DictionaryClientConfig();
+        final TenantIdentifier tenant = clientConfig.getTenant();
 
         final TimelineServiceAsync service = GWT.create(TimelineService.class);
 

@@ -18,7 +18,7 @@
  * Boston, MA  02110-1301  USA
  */
 .SchedulingOverviewPanel {
-	
+	border-bottom: 7px solid #333;
 }
 
 .SchedulingOverviewPanel .EmptyColumn {
@@ -62,6 +62,7 @@
 }
 
 .SchedulingOverviewPanel .ScheduleGroupPanel {
+	margin-bottom: 30px;
 }
 
 /* a "row" representing a datastore header */

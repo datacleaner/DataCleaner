@@ -23,8 +23,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,7 +56,8 @@ public class UserBean implements User {
     public void updateUser(final Authentication authentication) {
         _roles.clear();
 
-        if (authentication == null) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
             _username = null;
             _tenant = null;
         } else {
@@ -82,12 +85,13 @@ public class UserBean implements User {
             updateUser();
         }
 
-        if (_roles.contains("ROLE_ADMIN")) {
+        if (_roles.contains(SecurityRoles.ADMIN)) {
             return true;
         }
 
-        if ("ROLE_SCHEDULE_EDITOR".equals(role) || "ROLE_JOB_EDITOR".equals(role)) {
-            if (_roles.contains("ROLE_ENGINEER")) {
+        if (SecurityRoles.VIEWER.equals(role) || SecurityRoles.SCHEDULE_EDITOR.equals(role)
+                || SecurityRoles.JOB_EDITOR.equals(role)) {
+            if (_roles.contains(SecurityRoles.ENGINEER)) {
                 // ENGINEER is a super-role of SCHEDULE_EDITOR and JOB_EDITOR
                 return true;
             }
@@ -102,6 +106,11 @@ public class UserBean implements User {
             updateUser();
         }
         return _tenant;
+    }
+    
+    @Override
+    public boolean isLoggedIn() {
+        return getUsername() != null;
     }
 
     @Override

@@ -1,0 +1,55 @@
+<ui:composition template="template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:define name="head">
+		<style type="text/css">
+<!--
+.form-columns {
+	padding: 20px;
+}
+
+.column {
+	float: left;
+}
+
+.column p {
+	margin: 0px;
+}
+-->
+</style>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h2>Please enter your credentials to log into the dq monitor</h2>
+		<form action="j_spring_security_check" method="POST">
+			<div class="form-columns">
+				<div class="column">
+					<p>Username:</p>
+					<p>
+						<input name="j_username" type="text" size="20" />
+					</p>
+				</div>
+
+				<div class="column">
+					<p>Password:</p>
+					<p>
+						<input name="j_password" type="password" size="20" />
+					</p>
+				</div>
+			</div>
+			<div class="column">
+				<p>
+					<h:outputText value="&#160;" />
+				</p>
+				<p>
+					<input type="submit" value="Log in" />
+				</p>
+			</div>
+		</form>
+
+	</ui:define>
+</ui:composition>

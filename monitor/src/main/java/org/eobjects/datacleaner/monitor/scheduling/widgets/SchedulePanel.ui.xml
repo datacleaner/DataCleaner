@@ -31,6 +31,8 @@
 			<g:Button text="Trigger now" ui:field="triggerNowButton" styleName="gwt-Button gwt-Button-ImageTextButton TriggerButton" />
 			<g:Button text="Open job" ui:field="launchButton" styleName="gwt-Button gwt-Button-ImageTextButton LaunchButton" />
 		</div>
+		
+		<div style="clear:both"></div>
 
 	</g:HTMLPanel>
 </ui:UiBinder>

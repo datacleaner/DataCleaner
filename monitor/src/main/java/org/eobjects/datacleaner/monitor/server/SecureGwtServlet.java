@@ -19,10 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.security.Principal;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
@@ -31,6 +33,8 @@ import org.eobjects.datacleaner.monitor.server.security.User;
 import org.eobjects.datacleaner.monitor.server.security.UserBean;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -56,6 +60,8 @@ public class SecureGwtServlet extends RemoteServiceServlet {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger logger = LoggerFactory.getLogger(SecureGwtServlet.class);
+
     protected TenantResolver getTenantResolver() {
         WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
         TenantResolver tenantResolver = applicationContext.getBean(TenantResolver.class);
@@ -63,6 +69,21 @@ public class SecureGwtServlet extends RemoteServiceServlet {
             throw new IllegalStateException("No TenantResolver found in application context!");
         }
         return tenantResolver;
+    }
+
+    @Override
+    protected void doUnexpectedFailure(Throwable exception) {
+        if (exception instanceof DCSecurityException) {
+            final HttpServletResponse response = getThreadLocalResponse();
+            try {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+                return;
+            } catch (IOException e) {
+                logger.error("Failed to send error: " + exception.getMessage(), e);
+            }
+        }
+
+        super.doUnexpectedFailure(exception);
     }
 
     @Override
@@ -86,7 +107,7 @@ public class SecureGwtServlet extends RemoteServiceServlet {
         final RolesAllowed rolesAllowedAnnotation = ReflectionUtils.getAnnotation(method, RolesAllowed.class);
         if (rolesAllowedAnnotation != null) {
             String[] rolesAllowed = rolesAllowedAnnotation.value();
-            checkRoles(user, rolesAllowed);
+            checkRoles(user, rolesAllowed, method);
         }
 
         final Class<?>[] parameterTypes = method.getParameterTypes();
@@ -109,13 +130,13 @@ public class SecureGwtServlet extends RemoteServiceServlet {
         }
     }
 
-    private void checkRoles(User user, String[] rolesAllowed) {
+    private void checkRoles(User user, String[] rolesAllowed, Method method) {
         for (String role : rolesAllowed) {
             if (user.hasRole(role)) {
                 // authorized
                 return;
             }
         }
-        throw new DCSecurityException("User " + user.getUsername() + " is not authorized to access this service");
+        throw new DCSecurityException("User " + user.getUsername() + " is not authorized to invoke " + method);
     }
 }

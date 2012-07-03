@@ -20,6 +20,8 @@
 package org.eobjects.datacleaner.monitor.scheduling;
 
 import org.eobjects.datacleaner.monitor.scheduling.widgets.SchedulingOverviewPanel;
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
@@ -36,7 +38,9 @@ public class SchedulingEntryPoint implements EntryPoint {
     @Override
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
-        final TenantIdentifier tenant = new TenantIdentifier("DC");
+
+        final ClientConfig clientConfig = new DictionaryClientConfig();
+        final TenantIdentifier tenant = clientConfig.getTenant();
 
         final SchedulingServiceAsync service = GWT.create(SchedulingService.class);
 

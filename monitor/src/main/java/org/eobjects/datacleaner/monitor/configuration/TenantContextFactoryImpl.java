@@ -24,10 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Factory and tenant-wise cache for {@link TenantContext} objects.
  */
+@Component("tenantContextFactory")
 public class TenantContextFactoryImpl implements TenantContextFactory {
 
     private final ConcurrentHashMap<String, TenantContext> _contexts;

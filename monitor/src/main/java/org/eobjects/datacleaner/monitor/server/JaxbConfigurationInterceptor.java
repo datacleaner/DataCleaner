@@ -61,6 +61,8 @@ import org.eobjects.metamodel.schema.ColumnType;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.Ref;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Interceptor class which transforms a tenant's configuration as it is being
@@ -78,6 +80,7 @@ import org.eobjects.metamodel.util.Ref;
  * descriptor provider is used for all tenants).</li>
  * </ul>
  */
+@Component("configurationInterceptor")
 public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
     private static final Integer MAX_POJO_ROWS = 20;
@@ -88,6 +91,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     private final TenantContextFactory _contextFactory;
     private final boolean _replaceDatastores;
 
+    @Autowired
     public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory)
             throws JAXBException {
         this(contextFactory, configurationFactory, true);
@@ -139,8 +143,9 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         // set appropriate task runner
         configuration.setCustomTaskrunner(null);
         configuration.setSinglethreadedTaskrunner(null);
+
         final MultithreadedTaskrunnerType taskRunner = new MultithreadedTaskrunnerType();
-        taskRunner.setMaxThreads((short) _configurationFactory.getNumThreads());
+        taskRunner.setMaxThreads(_configurationFactory.getNumThreads().shortValue());
         configuration.setMultithreadedTaskrunner(taskRunner);
 
         // set a configuration metadata element with the tenants name

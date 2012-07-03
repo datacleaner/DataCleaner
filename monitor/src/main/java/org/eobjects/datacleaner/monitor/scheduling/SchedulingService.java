@@ -21,9 +21,13 @@ package org.eobjects.datacleaner.monitor.scheduling;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -35,13 +39,19 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("schedulingService")
 public interface SchedulingService extends RemoteService {
 
-    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant);
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) throws DCSecurityException;
 
-    public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition);
-    
-    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job);
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
+    public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition)
+            throws DCSecurityException;
 
-    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job);
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
+    public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
-    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job);
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
+
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
+    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 }

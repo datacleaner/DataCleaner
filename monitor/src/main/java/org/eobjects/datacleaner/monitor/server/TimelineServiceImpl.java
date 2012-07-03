@@ -69,10 +69,13 @@ import org.eobjects.metamodel.util.HasNameMapper;
 import org.eobjects.metamodel.util.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Main implementation of the {@link TimelineService} interface.
  */
+@Component("timelineService")
 public class TimelineServiceImpl implements TimelineService {
 
     private static final Logger logger = LoggerFactory.getLogger(TimelineServiceImpl.class);
@@ -80,7 +83,8 @@ public class TimelineServiceImpl implements TimelineService {
     private final TenantContextFactory _tenantContextFactory;
     private final Repository _repository;
 
-    protected TimelineServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory) {
+    @Autowired
+    public TimelineServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory) {
         _repository = repository;
         _tenantContextFactory = tenantContextFactory;
     }

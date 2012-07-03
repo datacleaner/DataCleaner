@@ -6,12 +6,8 @@
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<import resource="classpath:context/repository-context.xml" />
-	<import resource="classpath:context/scheduling-context.xml" />
-
-	<bean name="configurationFactory"
+	<bean name="configurationFactory" lazy-init="false"
 		class="org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory">
-		<property name="numThreads" value="30" />
 		<property name="scannedPackages">
 			<list>
 				<value>org.eobjects.analyzer.beans</value>
@@ -22,14 +18,15 @@
 				<value>com.hi</value>
 			</list>
 		</property>
+		<property name="numThreads" value="30" />
 	</bean>
 
-	<bean name="taskRunner" factory-bean="configurationFactory"
-		factory-method="createTaskRunner" />
+	<context:component-scan base-package="org.eobjects.datacleaner.monitor.server" />
+	<context:component-scan
+		base-package="org.eobjects.datacleaner.monitor.configuration" />
 
-	<bean name="descriptorProvider" factory-bean="configurationFactory"
-		factory-method="createDescriptorProvider">
-		<constructor-arg ref="taskRunner" />
-	</bean>
+	<import resource="classpath:context/repository-context.xml" />
+	<import resource="classpath:context/scheduling-context.xml" />
+	<import resource="classpath:context/security-context.xml" />
 
 </beans>

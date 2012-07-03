@@ -28,19 +28,24 @@ import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 /**
  * Bean factory for {@link AnalyzerBeansConfiguration} elements in the DC
  * monitor application, like the {@link TaskRunner} and
  * {@link DescriptorProvider}.
+ * 
+ * Since the scannedPackages property (and to some extent also the numThreads
+ * property) is meant to be externalized, this class is NOT annotated with
+ * {@link Component}. Add it in the spring beans xml file.
  */
 public class ConfigurationFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationFactory.class);
 
     private List<String> _scannedPackages;
-    private int _numThreads;
+    private Integer _numThreads;
 
     public List<String> getScannedPackages() {
         return _scannedPackages;
@@ -50,20 +55,24 @@ public class ConfigurationFactory {
         _scannedPackages = scannedPackages;
     }
 
-    public int getNumThreads() {
+    public Integer getNumThreads() {
         return _numThreads;
     }
 
-    public void setNumThreads(int numThreads) {
+    public void setNumThreads(Integer numThreads) {
         _numThreads = numThreads;
     }
 
+    @Bean(name = "taskRunner")
     public TaskRunner createTaskRunner() {
+        if (_numThreads == null) {
+            throw new IllegalStateException("Number of threads have not been configured.");
+        }
         logger.info("Creating shared task runner with {} threads", _numThreads);
         return new MultiThreadedTaskRunner(_numThreads);
     }
 
-    @Autowired
+    @Bean(name = "descriptorProvider")
     public DescriptorProvider createDescriptorProvider(TaskRunner taskRunner) {
         logger.info("Creating shared descriptor provider with packages: {}", _scannedPackages);
         ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner);

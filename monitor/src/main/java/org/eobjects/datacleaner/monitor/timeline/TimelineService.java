@@ -22,8 +22,12 @@ package org.eobjects.datacleaner.monitor.timeline;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+
+import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
@@ -46,7 +50,8 @@ public interface TimelineService extends RemoteService {
      * @param tenant
      * @return
      */
-    public List<JobIdentifier> getJobs(TenantIdentifier tenant);
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public List<JobIdentifier> getJobs(TenantIdentifier tenant) throws DCSecurityException;
 
     /**
      * Gets all available metrics for a job
@@ -55,7 +60,8 @@ public interface TimelineService extends RemoteService {
      * @param job
      * @return
      */
-    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job);
+    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
+    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     /**
      * Gets the available timeline groups
@@ -64,7 +70,8 @@ public interface TimelineService extends RemoteService {
      * 
      * @return
      */
-    public List<TimelineGroup> getTimelineGroups(TenantIdentifier tenant);
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public List<TimelineGroup> getTimelineGroups(TenantIdentifier tenant) throws DCSecurityException;
 
     /**
      * Adds a timeline group to the tenant's repository.
@@ -73,7 +80,8 @@ public interface TimelineService extends RemoteService {
      * @param name
      * @return
      */
-    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name);
+    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
+    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name) throws DCSecurityException;
 
     /**
      * Removes a timeline group from a tenant's repository. All contained
@@ -83,7 +91,8 @@ public interface TimelineService extends RemoteService {
      * @param timelineGroup
      * @return a boolean indicating if the remove operation went well.
      */
-    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup);
+    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
+    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup) throws DCSecurityException;
 
     /**
      * Gets the saved timeline identifiers of a tenant
@@ -93,7 +102,9 @@ public interface TimelineService extends RemoteService {
      *            optionally a timeline group to narrow the search
      * @return
      */
-    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, TimelineGroup group);
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, TimelineGroup group)
+            throws DCSecurityException;
 
     /**
      * Gets the definition (incl. metric references) of a timeline
@@ -102,7 +113,9 @@ public interface TimelineService extends RemoteService {
      * @param timeline
      * @return
      */
-    public TimelineDefinition getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline);
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public TimelineDefinition getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline)
+            throws DCSecurityException;
 
     /**
      * Updates a timeline definition
@@ -113,8 +126,9 @@ public interface TimelineService extends RemoteService {
      * 
      * @return the persisted timeline identifier
      */
+    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
     public TimelineIdentifier updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
-            TimelineDefinition timelineDefinition);
+            TimelineDefinition timelineDefinition) throws DCSecurityException;
 
     /**
      * Creates a new timeline definition
@@ -125,8 +139,9 @@ public interface TimelineService extends RemoteService {
      * 
      * @return the persisted timeline identifier
      */
+    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
     public TimelineIdentifier createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
-            TimelineDefinition timelineDefinition);
+            TimelineDefinition timelineDefinition) throws DCSecurityException;
 
     /**
      * Materializes the data needed to draw a particular timeline
@@ -135,7 +150,9 @@ public interface TimelineService extends RemoteService {
      * @param timeline
      * @return
      */
-    public TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline);
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline)
+            throws DCSecurityException;
 
     /**
      * Gets suggestions for parameter values of a particular metric
@@ -144,8 +161,9 @@ public interface TimelineService extends RemoteService {
      * @param metric
      * @return
      */
+    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
     public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
-            MetricIdentifier metric);
+            MetricIdentifier metric) throws DCSecurityException;
 
     /**
      * Deletes a timeline from the repository
@@ -154,5 +172,6 @@ public interface TimelineService extends RemoteService {
      * @param timeline
      * @return a boolean indicating if the remove operation went well.
      */
-    public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline);
+    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
+    public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) throws DCSecurityException;
 }

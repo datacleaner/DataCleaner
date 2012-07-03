@@ -32,16 +32,20 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
 import org.eobjects.metamodel.util.FileHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Caches configuration objects per tenant in order to avoid recreating it every
  * time it is needed.
  */
+@Component("configurationCache")
 public class ConfigurationCache {
 
     private final ConcurrentHashMap<String, AnalyzerBeansConfiguration> _analyzerBeansConfigurations;
     private final Repository _repository;
 
+    @Autowired
     public ConfigurationCache(Repository repository) {
         _repository = repository;
         _analyzerBeansConfigurations = new ConcurrentHashMap<String, AnalyzerBeansConfiguration>();

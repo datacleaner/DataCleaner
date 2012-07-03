@@ -57,13 +57,16 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.CronTriggerBean;
+import org.springframework.stereotype.Component;
 
 /**
  * Main implementation of the {@link SchedulingService} interface.
  */
+@Component("schedulingService")
 public class SchedulingServiceImpl implements SchedulingService, ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulingServiceImpl.class);
@@ -76,6 +79,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     private ApplicationContext _applicationContext;
 
+    @Autowired
     public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory) {
         _repository = repository;
         _tenantContextFactory = tenantContextFactory;

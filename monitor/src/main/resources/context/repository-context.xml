@@ -13,35 +13,12 @@
 
 	<!-- Development mode launch artifact provider. Will only work if dev mode 
 		finds JAR files in directories relative to the build structure. -->
-	<bean name="launchArtifactProvider"
+	<bean name="launchArtifactProvider" lazy-init="true"
 		class="org.eobjects.datacleaner.monitor.server.DevModeLaunchArtifactProvider" />
 
 	<!-- Example launch artifact provider based on external folder -->
-	<!-- <bean name="launchArtifactProvider" class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"> -->
+	<!-- <bean name="launchArtifactProvider" lazy-init="true" class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"> -->
 	<!-- <constructor-arg type="java.io.File" value="C:\dev\eclipse\workspace\DataCleaner\packaging\target\jnlp"/> -->
 	<!-- </bean> -->
-
-	<bean name="configurationCache"
-		class="org.eobjects.datacleaner.monitor.configuration.ConfigurationCache">
-		<constructor-arg name="repository" ref="repository" />
-	</bean>
-
-	<bean name="tenantContextFactory"
-		class="org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl">
-		<constructor-arg name="repository" ref="repository" />
-		<constructor-arg name="configurationCache" ref="configurationCache" />
-	</bean>
-	
-	<bean name="configurationInterceptor"
-		class="org.eobjects.datacleaner.monitor.server.JaxbConfigurationInterceptor">
-		<constructor-arg ref="tenantContextFactory" />
-		<constructor-arg ref="configurationFactory" />
-	</bean>
-
-	<bean name="timelineService"
-		class="org.eobjects.datacleaner.monitor.server.TimelineServiceImpl">
-		<constructor-arg name="repository" ref="repository" />
-		<constructor-arg name="tenantContextFactory" ref="tenantContextFactory" />
-	</bean>
 
 </beans>

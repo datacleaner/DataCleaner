@@ -12,8 +12,9 @@
 
 	<properties>
 		<gwt.version>2.4.0</gwt.version>
-		<spring.version>3.1.1.RELEASE</spring.version>
-		<camel.version>2.9.2</camel.version>
+		<spring.core.version>3.1.1.RELEASE</spring.core.version>
+		<spring.security.version>3.1.0.RELEASE</spring.security.version>
+		<quartz.version>1.8.6</quartz.version>
 	</properties>
 
 	<build>
@@ -277,11 +278,11 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Middleware: Spring, Camel, Quartz -->
+		<!-- Middleware: Spring, Quartz etc. -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.core.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
@@ -292,22 +293,22 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
+			<version>${spring.core.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-			<version>${camel.version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-			<version>${camel.version}</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-quartz</artifactId>
-			<version>${camel.version}</version>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>${quartz.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>

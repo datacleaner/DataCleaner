@@ -20,36 +20,57 @@
 
 		<div class="pageContainer">
 			<div class="pageHeader">
-				<span class="logo"> </span>
+				<div class="logo">
+					<div id="user_panel">
+						<span>Welcome <span class="username">#{user.username}</span>
+							<span class="tenant">(#{user.tenant})</span></span>
+					</div>
+				</div>
 
 				<ul id="nav">
-					<li class="#{ (view.viewId == '/dashboard.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="dashboard.jsf" styleClass="DashboardTabTitle">
-							<h:outputText value="Dashboard" />
-							<c:if test="#{param['gwt.codesvr'] != null}">
-								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-							</c:if>
-						</h:outputLink></li>
-						
-					<li class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="scheduling.jsf" styleClass="SchedulingTabTitle">
+					<c:if test="#{user.hasRole('ROLE_VIEWER')}">
+						<li
+							class="#{ (view.viewId == '/dashboard.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+								value="dashboard.jsf" styleClass="DashboardTabTitle">
+								<h:outputText value="Dashboard" />
+								<c:if test="#{param['gwt.codesvr'] != null}">
+									<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+								</c:if>
+							</h:outputLink></li>
+					</c:if>
+
+					<c:if test="#{user.hasRole('ROLE_SCHEDULE_EDITOR')}">
+					<li
+						class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+							value="scheduling.jsf" styleClass="SchedulingTabTitle">
 							<h:outputText value="Scheduling" />
 							<c:if test="#{param['gwt.codesvr'] != null}">
 								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
 							</c:if>
 						</h:outputLink></li>
-						
-					<li class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="repository.jsf" styleClass="RepositoryTabTitle">
-							<h:outputText value="Repository" />
-							<c:if test="#{param['gwt.codesvr'] != null}">
-								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-							</c:if>
-						</h:outputLink></li>
-						
-					<li class="#{ (view.viewId == '/datastores.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink value="datastores.jsf" styleClass="DatastoresTabTitle">
-							<h:outputText value="Datastores" />
-							<c:if test="#{param['gwt.codesvr'] != null}">
-								<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-							</c:if>
-						</h:outputLink></li>
+					</c:if>
+
+					<c:if test="#{user.hasRole('ROLE_JOB_EDITOR')}">
+						<li
+							class="#{ (view.viewId == '/datastores.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+								value="datastores.jsf" styleClass="DatastoresTabTitle">
+								<h:outputText value="Datastores" />
+								<c:if test="#{param['gwt.codesvr'] != null}">
+									<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+								</c:if>
+							</h:outputLink></li>
+					</c:if>
+
+					<c:if test="#{user.hasRole('ROLE_ADMIN')}">
+						<li
+							class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+								value="repository.jsf" styleClass="RepositoryTabTitle">
+								<h:outputText value="Repository" />
+								<c:if test="#{param['gwt.codesvr'] != null}">
+									<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+								</c:if>
+							</h:outputLink></li>
+					</c:if>
 				</ul>
 			</div>
 

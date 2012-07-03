@@ -31,14 +31,12 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 /**
  * Servlet wrapper/proxy for the {@link SchedulingService}. Passes all service
  * requests on to a delegate, see {@link #setDelegate(SchedulingService)} and
  * {@link #getDelegate()}.
  */
-public class SchedulingServiceServlet extends RemoteServiceServlet implements SchedulingService {
+public class SchedulingServiceServlet extends SecureGwtServlet implements SchedulingService {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,7 +63,7 @@ public class SchedulingServiceServlet extends RemoteServiceServlet implements Sc
     public void setDelegate(SchedulingService delegate) {
         _delegate = delegate;
     }
-
+    
     @Override
     public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) {
         return _delegate.getSchedules(tenant);

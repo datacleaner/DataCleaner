@@ -25,14 +25,14 @@ div.pageHeader {
 	height: 140px;
 }
 
-div.pageHeader span.logo {
+div.pageHeader div.logo {
 	margin-left: auto;
 	margin-right: auto;
 	width: 894px;
 	height: 118px;
 	display: block;
 	background-image: url("images/header.png");
-	background-repeat: no-repeat;	
+	background-repeat: no-repeat;
 }
 
 div.pageContent {
@@ -44,7 +44,7 @@ div.pageContent {
 }
 
 /*
-* Navigation menu and tab headers
+* Navigation menu
 */
 #nav {
 	list-style-type: none;
@@ -88,7 +88,37 @@ div.pageContent {
 	background-color: white;
 	color: black;
 }
+/**
+ * User panel
+ */
+#user_panel {
+	background-image: url("../images/user.png");
+	background-position: 5px center;
+	background-repeat: no-repeat;
+	position: relative;
+	float: right;
+	height: 20px;
+	line-height: 20px;
+	font-size: 0.9em;
+	padding-left: 30px;
+	padding-right: 10px;
+	background-color: #8E8E8E;
+	color: white;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
 
+#user_panel span.username {
+	font-weight: bold;
+}
+
+#user_panel span.tenant {
+	font-size: 0.8em;
+}
+
+/**
+ * Tab headers
+ */
 .DashboardTabTitle {
 	background-image: url("images/dashboard.png");
 }
@@ -134,6 +164,7 @@ div.loader {
 }
 
 .ErrorDialog .Caption {
+	
 }
 
 .ErrorDialog .dialogContent {
@@ -144,7 +175,7 @@ div.loader {
 	
 }
 
-.ErrorDialog .Details, .ErrorDialog .AdditionalMessageDetails {
+.ErrorDialog .Details,.ErrorDialog .AdditionalMessageDetails {
 	padding: 5px;
 	margin: 5px;
 	width: 450px;

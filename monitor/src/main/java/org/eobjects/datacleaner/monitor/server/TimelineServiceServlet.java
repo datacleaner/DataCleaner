@@ -36,14 +36,12 @@ import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 /**
  * Servlet wrapper/proxy for the {@link TimelineService}. Passes all service
  * requests on to a delegate, see {@link #setDelegate(TimelineService)} and
  * {@link #getDelegate()}.
  */
-public class TimelineServiceServlet extends RemoteServiceServlet implements TimelineService {
+public class TimelineServiceServlet extends SecureGwtServlet implements TimelineService {
 
     private static final long serialVersionUID = 1L;
 

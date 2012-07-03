@@ -114,12 +114,14 @@ public class PublishResultToMonitorActionListener extends SwingWorker<Map<?, ?>,
     protected Map<?, ?> doInBackground() throws Exception {
 
         final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
+        monitorConnection.prepareClient(_httpClient);
 
         final String uploadUrl = monitorConnection.getBaseUrl() + "/repository/" + tenantId + "/results/"
                 + analysisName;
         logger.debug("Upload url: {}", uploadUrl);
 
         final HttpPost request = new HttpPost(uploadUrl);
+
         final AnalysisResult analysisResult = _resultRef.get();
 
         final byte[] bytes = SerializationUtils.serialize(new SimpleAnalysisResult(analysisResult.getResultMap()));
@@ -186,30 +188,34 @@ public class PublishResultToMonitorActionListener extends SwingWorker<Map<?, ?>,
         entity.addPart("file", uploadFilePart);
         request.setEntity(entity);
 
+        final HttpResponse response;
         try {
+            response = _httpClient.execute(request);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        final StatusLine statusLine = response.getStatusLine();
 
-            final HttpResponse response = _httpClient.execute(request);
-            final StatusLine statusLine = response.getStatusLine();
-
-            if (statusLine.getStatusCode() != 200) {
-                logger.warn("Upload response status: {}", statusLine);
-            } else {
-                logger.info("Upload response status: {}", statusLine);
-            }
+        if (statusLine.getStatusCode() == 200) {
+            logger.info("Upload response status: {}", statusLine);
 
             // parse the response as a JSON map
             final Map<?, ?> responseMap = new ObjectMapper().readValue(response.getEntity().getContent(), Map.class);
 
             return responseMap;
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+        } else {
+            logger.warn("Upload response status: {}", statusLine);
+            final String reasonPhrase = statusLine.getReasonPhrase();
+            WidgetUtils.showErrorMessage("Server reported error",
+                    "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
+            return null;
         }
     }
 
     @Override
     protected void done() {
         final Map<?, ?> responseMap;
-        
+
         try {
             responseMap = get();
         } catch (Exception e) {
@@ -218,9 +224,12 @@ public class PublishResultToMonitorActionListener extends SwingWorker<Map<?, ?>,
         }
 
         _progressWindow.setFinished(analysisName);
-        final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
-        final OpenBrowserAction openBrowserAction = new OpenBrowserAction(monitorConnection.getBaseUrl()
-                + "/repository" + responseMap.get("repository_path"));
-        openBrowserAction.actionPerformed(null);
+
+        if (responseMap != null) {
+            final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
+            final OpenBrowserAction openBrowserAction = new OpenBrowserAction(monitorConnection.getBaseUrl()
+                    + "/repository" + responseMap.get("repository_path"));
+            openBrowserAction.actionPerformed(null);
+        }
     }
 }

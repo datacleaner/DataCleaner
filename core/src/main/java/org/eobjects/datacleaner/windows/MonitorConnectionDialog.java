@@ -34,6 +34,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -55,6 +56,7 @@ import org.eobjects.datacleaner.widgets.DCCheckBox;
 import org.eobjects.datacleaner.widgets.DCCheckBox.Listener;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.DescriptionLabel;
+import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,16 +289,27 @@ public class MonitorConnectionDialog extends AbstractDialog {
             @Override
             public void actionPerformed(ActionEvent event) {
                 final MonitorConnection connection = createMonitorConnection();
+                connection.prepareClient(_httpClient);
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 try {
                     final HttpResponse response = _httpClient.execute(new HttpGet(pingUrl));
-                    InputStream content = response.getEntity().getContent();
-                    // read response as JSON.
-                    Map<?, ?> map = new ObjectMapper().readValue(content, Map.class);
-                    logger.info("Ping request responded: {}", map);
-                    if (response.getStatusLine().getStatusCode() == 200) {
+                    final StatusLine statusLine = response.getStatusLine();
+
+                    if (statusLine.getStatusCode() == 200) {
+                        // read response as JSON.
+                        final InputStream content = response.getEntity().getContent();
+                        final Map<?, ?> map;
+                        try {
+                            map = new ObjectMapper().readValue(content, Map.class);
+                        } finally {
+                            FileHelper.safeClose(content);
+                        }
+                        logger.info("Ping request responded: {}", map);
                         JOptionPane.showMessageDialog(MonitorConnectionDialog.this, "Connection successful!");
                     } else {
+                        final String reasonPhrase = statusLine.getReasonPhrase();
+                        WidgetUtils.showErrorMessage("Server reported error", "Server replied with status "
+                                + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
                     }
                 } catch (Exception e) {
                     WidgetUtils

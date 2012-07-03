@@ -6,7 +6,15 @@
            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<http auto-config='true'>
+	<!-- HTTP basic authentication for the repository RESTful services -->
+	<http pattern="/repository/**">
+		<intercept-url pattern="/**" access="ROLE_USER" />
+		<http-basic />
+	</http>
+
+	<!-- Form based authentication for the web pages -->
+	<http auto-config="true">
+		<anonymous enabled="true" username="anonymous" />
 
 		<!-- unprotected urls -->
 		<intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -19,7 +27,6 @@
 		<form-login login-page="/login.jsf" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
-		<http-basic />
 	</http>
 
 	<authentication-manager>

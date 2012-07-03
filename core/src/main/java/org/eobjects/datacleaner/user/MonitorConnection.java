@@ -20,7 +20,16 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.auth.params.AuthPNames;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.params.AuthPolicy;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.util.SecurityUtils;
 
@@ -95,5 +104,33 @@ public class MonitorConnection implements Serializable {
 
     public boolean isAuthenticationEnabled() {
         return !StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_encodedPassword);
+    }
+
+    /**
+     * Prepares a {@link HttpClient} for invoking HTTP requests using
+     * authentication, if nescesary.
+     * 
+     * @param httpClient
+     */
+    public void prepareClient(HttpClient httpClient) {
+        if (isAuthenticationEnabled()) {
+            final CredentialsProvider credentialsProvider;
+            if (httpClient instanceof DefaultHttpClient) {
+                credentialsProvider = ((DefaultHttpClient) httpClient).getCredentialsProvider();
+            } else {
+                throw new IllegalStateException("Unexpected http client type: " + httpClient);
+            }
+
+            final String encodedPassword = getEncodedPassword();
+            final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getUsername(),
+                    SecurityUtils.decodePassword(encodedPassword));
+
+            final List<String> authpref = new ArrayList<String>();
+            authpref.add(AuthPolicy.BASIC);
+            authpref.add(AuthPolicy.DIGEST);
+            httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
+
+            credentialsProvider.setCredentials(new AuthScope(getHostname(), getPort()), credentials);
+        }
     }
 }

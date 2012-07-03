@@ -95,6 +95,7 @@ div.pageContent {
 	background-image: url("../images/user.png");
 	background-position: 5px center;
 	background-repeat: no-repeat;
+	background-color: #8E8E8E;
 	position: relative;
 	float: right;
 	height: 20px;
@@ -102,7 +103,6 @@ div.pageContent {
 	font-size: 0.9em;
 	padding-left: 30px;
 	padding-right: 10px;
-	background-color: #8E8E8E;
 	color: white;
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
@@ -114,6 +114,72 @@ div.pageContent {
 
 #user_panel span.tenant {
 	font-size: 0.8em;
+}
+
+/**
+ * Login page
+ */
+.login_page_container {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+}
+
+.login_page_footer {
+	height: 70px;
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+	background-image: url("../images/login_footer_bg.png");
+	background-repeat: repeat-x;
+}
+
+.login_page_footer .logo {
+	width: 500px;
+	height: 70px;
+	float: right;
+	background-image: url("../images/login_footer_logo.png");
+	background-repeat: no-repeat;
+}
+
+.login_panel {
+	background-color: #333;
+	border-radius: 10px;
+	padding: 20px;
+	color: #eee;
+	text-align: center;
+	width: 300px;
+	margin-top: 100px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.login_panel h3 {
+	background-image: url("../images/user.png");
+	background-position: left center;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+	margin: 0px;
+}
+
+.login_panel_content {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	width: 180px;
+}
+
+.login_panel_content p {
+	margin: 0px;
+	padding: 0px;
+}
+
+.login_panel_content input {
+	padding: 5px;
+	border: 1px solid white;
+	border-radius: 5px;
 }
 
 /**

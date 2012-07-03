@@ -1,55 +1,51 @@
-<ui:composition template="template.xhtml"
-	xmlns="http://www.w3.org/1999/xhtml"
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
+<f:view>
+	<h:head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<title>DataCleaner dq monitor</title>
 
-	<ui:define name="head">
-		<style type="text/css">
-<!--
-.form-columns {
-	padding: 20px;
-}
+		<link rel="stylesheet" type="text/css" href="styles.css" />
+		<link rel="shortcut icon" href="images/favicon.png" />
 
-.column {
-	float: left;
-}
+	</h:head>
+	<h:body>
 
-.column p {
-	margin: 0px;
-}
--->
-</style>
-	</ui:define>
+		<div class="login_page_container">
 
-	<ui:define name="content">
+			<form action="j_spring_security_check" method="POST">
+				<div class="login_panel">
+					<h3>
+						Log in to <span class="blue">DataCleaner</span> <span
+							class="orange">dq monitor</span>
+					</h3>
+					<div class="login_panel_content">
+						<p>Username:</p>
+						<p>
+							<input name="j_username" type="text" size="20" />
+						</p>
 
-		<h2>Please enter your credentials to log into the dq monitor</h2>
-		<form action="j_spring_security_check" method="POST">
-			<div class="form-columns">
-				<div class="column">
-					<p>Username:</p>
-					<p>
-						<input name="j_username" type="text" size="20" />
-					</p>
-				</div>
+						<p>Password:</p>
+						<p>
+							<input name="j_password" type="password" size="20" />
+						</p>
+					</div>
 
-				<div class="column">
-					<p>Password:</p>
-					<p>
-						<input name="j_password" type="password" size="20" />
-					</p>
-				</div>
-			</div>
-			<div class="column">
-				<p>
-					<h:outputText value="&#160;" />
-				</p>
-				<p>
 					<input type="submit" value="Log in" />
-				</p>
-			</div>
-		</form>
 
-	</ui:define>
-</ui:composition>
+					<div style="clear: both"></div>
+				</div>
+			</form>
+			
+			<div class="login_page_footer">
+				<div class="logo"></div>
+			</div>
+			
+		</div>
+	</h:body>
+</f:view>
+</html>

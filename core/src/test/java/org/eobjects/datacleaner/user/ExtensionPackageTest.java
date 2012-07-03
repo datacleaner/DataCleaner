@@ -29,42 +29,34 @@ import junit.framework.TestCase;
 
 public class ExtensionPackageTest extends TestCase {
 
-	public void testLoadExtension() throws Exception {
-		File file = new File("src/test/resources/FooBarPlugin.jar");
-		assertTrue("example plugin jar does not exist", file.exists());
+    public void testLoadExtension() throws Exception {
+        File file = new File("src/test/resources/FooBarPlugin.jar");
+        assertTrue("example plugin jar does not exist", file.exists());
 
-		ExtensionPackage extensionPackage = new ExtensionPackage("foobar plugin", "foo.bar", true, new File[] { file });
+        ExtensionPackage extensionPackage = new ExtensionPackage("foobar plugin", "foo.bar", true, new File[] { file });
 
-		assertFalse(extensionPackage.isLoaded());
+        assertFalse(extensionPackage.isLoaded());
 
-		ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider();
-		extensionPackage.loadDescriptors(descriptorProvider);
+        ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider();
+        extensionPackage.loadDescriptors(descriptorProvider);
 
-		assertTrue(extensionPackage.isLoaded());
-		assertEquals(1, extensionPackage.getLoadedAnalyzers());
-		assertEquals(1, extensionPackage.getLoadedTransformers());
-		assertEquals(1, extensionPackage.getLoadedFilters());
+        assertTrue(extensionPackage.isLoaded());
+        assertEquals(1, extensionPackage.getLoadedAnalyzers());
+        assertEquals(1, extensionPackage.getLoadedTransformers());
+        assertEquals(1, extensionPackage.getLoadedFilters());
 
-		assertEquals("[AnnotationBasedAnalyzerBeanDescriptor[foo.bar.analyzer.BazAnalyzer]]", descriptorProvider
-				.getAnalyzerBeanDescriptors().toString());
-		assertEquals("[AnnotationBasedTransformerBeanDescriptor[foo.bar.transformer.BazTransformer]]", descriptorProvider
-				.getTransformerBeanDescriptors().toString());
-		assertEquals("[AnnotationBasedFilterBeanDescriptor[foo.bar.filter.BazFilter]]", descriptorProvider
-				.getFilterBeanDescriptors().toString());
-	}
+        assertEquals("[AnnotationBasedAnalyzerBeanDescriptor[foo.bar.analyzer.BazAnalyzer]]", descriptorProvider
+                .getAnalyzerBeanDescriptors().toString());
+        assertEquals("[AnnotationBasedTransformerBeanDescriptor[foo.bar.transformer.BazTransformer]]",
+                descriptorProvider.getTransformerBeanDescriptors().toString());
+        assertEquals("[AnnotationBasedFilterBeanDescriptor[foo.bar.filter.BazFilter]]", descriptorProvider
+                .getFilterBeanDescriptors().toString());
+    }
 
-	public void testLongestCommonPrefix() throws Exception {
-		assertEquals("foo.bar", ExtensionPackage.longestCommonPrefix("foo.bar.analyzer", "foo.bar.transformer", '.'));
-		assertEquals("", ExtensionPackage.longestCommonPrefix("hello", "world", '.'));
-		assertEquals("", ExtensionPackage.longestCommonPrefix("bfoo.bar.analyzer", "foo.bar.transformer", '.'));
-		assertEquals("hello.world", ExtensionPackage.longestCommonPrefix("hello.world", "hello.world", '.'));
-		assertEquals("hello", ExtensionPackage.longestCommonPrefix("hello.world", "hello.brave.world", '.'));
-	}
+    public void testAutoDetectPackageName() throws Exception {
+        File file = new File("src/test/resources/FooBarPlugin.jar");
+        assertTrue("example plugin jar does not exist", file.exists());
 
-	public void testAutoDetectPackageName() throws Exception {
-		File file = new File("src/test/resources/FooBarPlugin.jar");
-		assertTrue("example plugin jar does not exist", file.exists());
-
-		assertEquals("foo.bar", ExtensionPackage.autoDetectPackageName(file));
-	}
+        assertEquals("foo.bar", ExtensionPackage.autoDetectPackageName(file));
+    }
 }

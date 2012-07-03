@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -43,6 +44,7 @@ class DefaultJobContext implements JobContext {
     private volatile long _lastModifiedCache;
     private volatile AnalysisJob _job;
     private volatile String _sourceDatastoreName;
+    private volatile List<String> _sourceColumnPaths;
 
     public DefaultJobContext(TenantContext context, RepositoryFile file) {
         _context = context;
@@ -73,6 +75,17 @@ class DefaultJobContext implements JobContext {
 
     @Override
     public String getSourceDatastoreName() {
+        verifyJobMetadataCurrent();
+        return _sourceDatastoreName;
+    }
+
+    @Override
+    public List<String> getSourceColumnPaths() {
+        verifyJobMetadataCurrent();
+        return _sourceColumnPaths;
+    }
+
+    private void verifyJobMetadataCurrent() {
         long lastModified = _file.getLastModified();
         if (_sourceDatastoreName == null || lastModified != _lastModifiedCache) {
             synchronized (this) {
@@ -84,13 +97,13 @@ class DefaultJobContext implements JobContext {
                     try {
                         AnalysisJobMetadata metadata = jobReader.readMetadata(in);
                         _sourceDatastoreName = metadata.getDatastoreName();
+                        _sourceColumnPaths = metadata.getSourceColumnPaths();
                     } finally {
                         FileHelper.safeClose(in);
                     }
                 }
             }
         }
-        return _sourceDatastoreName;
     }
 
     @Override
@@ -104,4 +117,5 @@ class DefaultJobContext implements JobContext {
             FileHelper.safeClose(in);
         }
     }
+
 }

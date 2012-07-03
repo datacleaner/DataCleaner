@@ -28,7 +28,6 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -48,9 +47,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class JobFileController {
 
     private static final String EXTENSION = FileFilters.ANALYSIS_XML.getExtension();
-
-    @Autowired
-    Repository _repository;
 
     @Autowired
     TenantContextFactory _contextFactory;

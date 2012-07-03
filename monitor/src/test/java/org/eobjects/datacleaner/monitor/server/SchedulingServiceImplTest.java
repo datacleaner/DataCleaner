@@ -83,9 +83,9 @@ public class SchedulingServiceImplTest extends TestCase {
 
             final List<ScheduleDefinition> schedules = service.getSchedules(tenant);
 
-            assertEquals(2, schedules.size());
-            assertEquals(null, schedules.get(0).getScheduleExpression());
-            ScheduleDefinition randomNumberGenerationSchedule = schedules.get(1);
+            assertEquals(3, schedules.size());
+            assertEquals(null, schedules.get(1).getScheduleExpression());
+            ScheduleDefinition randomNumberGenerationSchedule = schedules.get(2);
             assertEquals("@hourly", randomNumberGenerationSchedule.getScheduleExpression());
 
             final CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");

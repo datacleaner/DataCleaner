@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 
 import java.util.List;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.metamodel.AbstractDataContext;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.MetaModelException;
@@ -46,12 +47,9 @@ public class PlaceholderDataContext extends AbstractDataContext {
     private final ImmutableSchema _schema;
 
     public PlaceholderDataContext(List<String> sourceColumnPaths) {
-        String prefix = sourceColumnPaths.get(0);
-        for (String sourceColumnPath : sourceColumnPaths) {
-            prefix = longestCommonPrefix(prefix, sourceColumnPath, '.');
-        }
+        final String prefix = StringUtils.getLongestCommonToken(sourceColumnPaths, '.');
 
-        int schemaAndTableDelim = prefix.indexOf('.');
+        final int schemaAndTableDelim = prefix.indexOf('.');
         final String schemaName;
         final String tableName;
 
@@ -111,23 +109,5 @@ public class PlaceholderDataContext extends AbstractDataContext {
     @Override
     protected String[] getSchemaNamesInternal() {
         return new String[] { getDefaultSchemaName() };
-    }
-
-    // TODO: Something similar exists in the ExtensionPackage class. Refactor
-    // and reuse.
-    protected static String longestCommonPrefix(String str1, String str2, char tokenizerChar) {
-        StringBuilder result = new StringBuilder();
-        String[] tokens1 = str1.split("\\" + tokenizerChar);
-        String[] tokens2 = str2.split("\\" + tokenizerChar);
-        for (int i = 0; i < Math.min(tokens1.length, tokens2.length); i++) {
-            if (!tokens1[i].equals(tokens2[i])) {
-                break;
-            }
-            if (i != 0) {
-                result.append(tokenizerChar);
-            }
-            result.append(tokens1[i]);
-        }
-        return result.toString();
     }
 }

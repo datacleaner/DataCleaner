@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.configuration;
 
 import java.io.OutputStream;
+import java.util.List;
 
 import org.eobjects.analyzer.job.AnalysisJob;
 
@@ -31,6 +32,8 @@ public interface JobContext {
     public AnalysisJob getAnalysisJob();
 
     public String getSourceDatastoreName();
+    
+    public List<String> getSourceColumnPaths();
 
     public void toXml(OutputStream out);
 }

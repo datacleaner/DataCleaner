@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<datastore-catalog>
+	</datastore-catalog>
+	
+	<reference-data-catalog>
+	</reference-data-catalog>
+
+	<custom-taskrunner
+		class-name="org.eobjects.datacleaner.monitor.configuration.SharedTaskRunner" />
+
+	<custom-descriptor-provider
+		class-name="org.eobjects.datacleaner.monitor.configuration.SharedDescriptorProvider" />
+
+</configuration>

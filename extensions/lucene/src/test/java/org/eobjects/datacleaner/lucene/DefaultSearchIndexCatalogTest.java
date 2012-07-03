@@ -44,9 +44,13 @@ public class DefaultSearchIndexCatalogTest extends TestCase {
 
         assertEquals(
                 "{datacleaner.lucene.index_count=2, "
-                        + "datacleaner.lucene.0.name=find2, datacleaner.lucene.0.description=null, datacleaner.lucene.0.path=target/example_indices/search1, "
-                        + "datacleaner.lucene.1.name=search1, datacleaner.lucene.1.description=null, datacleaner.lucene.1.path=target/example_indices/search1}",
-                map.toString());
+                        + "datacleaner.lucene.0.name=find2, datacleaner.lucene.0.description=null, datacleaner.lucene.0.path=target"
+                        + File.separatorChar
+                        + "example_indices"
+                        + File.separatorChar
+                        + "search1, "
+                        + "datacleaner.lucene.1.name=search1, datacleaner.lucene.1.description=null, datacleaner.lucene.1.path=target"
+                        + File.separatorChar + "example_indices" + File.separatorChar + "search1}", map.toString());
 
         assertEquals("[find2, search1]", Arrays.toString(catalog1.getSearchIndexNames()));
 

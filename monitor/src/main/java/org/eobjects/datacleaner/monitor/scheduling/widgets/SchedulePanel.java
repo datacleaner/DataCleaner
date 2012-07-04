@@ -70,6 +70,9 @@ public class SchedulePanel extends Composite {
 
     @UiField
     Button launchButton;
+    
+    @UiField
+    Button historyButton;
 
     @UiField
     FlowPanel alertsPanel;
@@ -114,6 +117,8 @@ public class SchedulePanel extends Composite {
                 Window.open(url, "_blank", null);
             }
         });
+        
+        historyButton.addClickHandler(new JobHistoryClickHandler(service, tenant, schedule));
 
         final List<AlertDefinition> alerts = schedule.getAlerts();
         final Anchor expandAlertsAnchor = new Anchor(alerts.size() + " alert(s)");

@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.eobjects.datacleaner.monitor.server.jaxb;
 
 import java.io.OutputStream;
 import java.util.List;
@@ -25,6 +25,8 @@ import java.util.List;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
 import org.eobjects.datacleaner.monitor.jaxb.Timeline;
+import org.eobjects.datacleaner.monitor.server.TimelineReader;
+import org.eobjects.datacleaner.monitor.server.TimelineWriter;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 

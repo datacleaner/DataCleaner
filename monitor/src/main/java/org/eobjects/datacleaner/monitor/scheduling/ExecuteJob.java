@@ -19,8 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling;
 
-import java.util.Date;
-
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
@@ -30,7 +28,6 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -65,7 +62,7 @@ public class ExecuteJob extends AbstractQuartzJob {
 
         final TenantContext context = contextFactory.getContext(tenantId);
 
-        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.PERIODIC);
+        final ExecutionLog execution = new ExecutionLog(schedule, schedule.getTriggerType());
 
         executeJob(context, execution);
     }
@@ -90,10 +87,8 @@ public class ExecuteJob extends AbstractQuartzJob {
         final AnalysisJob analysisJob = job.getAnalysisJob();
 
         final RepositoryFolder resultFolder = context.getResultFolder();
-        final Date timestamp = new Date();
-        final String resultName = jobName + "-" + timestamp.getTime();
 
-        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, resultName);
+        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder);
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration, analysisListener);
 
@@ -102,6 +97,6 @@ public class ExecuteJob extends AbstractQuartzJob {
 
         // TODO: Check alerts
 
-        return resultName;
+        return execution.getResultId();
     }
 }

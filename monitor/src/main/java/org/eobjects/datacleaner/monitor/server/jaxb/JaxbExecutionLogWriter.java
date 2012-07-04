@@ -17,15 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.eobjects.datacleaner.monitor.server.jaxb;
 
 import java.io.OutputStream;
 
 import org.eobjects.datacleaner.monitor.jaxb.ExecutionType;
-import org.eobjects.datacleaner.monitor.jaxb.Schedule;
+import org.eobjects.datacleaner.monitor.jaxb.TriggerType;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
-import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 
 /**
  * Component responsible for writing a {@link ExecutionLog} to an XML
@@ -42,18 +41,26 @@ public class JaxbExecutionLogWriter extends JaxbWriter<org.eobjects.datacleaner.
     private org.eobjects.datacleaner.monitor.jaxb.ExecutionLog createExecutionLog(ExecutionLog executionLog) {
         final org.eobjects.datacleaner.monitor.jaxb.ExecutionLog result = getObjectFactory().createExecutionLog();
 
+        result.setResultId(executionLog.getResultId());
         result.setExecutionStatus(createExecutionStatus(executionLog.getExecutionStatus()));
         result.setJobBeginDate(createDate(executionLog.getJobBeginDate()));
         result.setJobEndDate(createDate(executionLog.getJobEndDate()));
-        result.setSchedule(createSchedule(executionLog.getSchedule()));
+        result.setTriggerType(createTriggerType(executionLog.getTriggerType()));
         result.setLogOutput(executionLog.getLogOutput());
         return result;
     }
 
-    private Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
-        JaxbScheduleWriter scheduleWriter = new JaxbScheduleWriter();
-        Schedule schedule = scheduleWriter.createSchedule(scheduleDefinition);
-        return schedule;
+    private TriggerType createTriggerType(org.eobjects.datacleaner.monitor.scheduling.model.TriggerType triggerType) {
+        switch (triggerType) {
+        case PERIODIC:
+            return TriggerType.PERIODIC;
+        case DEPENDENT:
+            return TriggerType.DEPENDENT;
+        case MANUAL:
+            return TriggerType.MANUAL;
+        default:
+            throw new UnsupportedOperationException("Unknown trigger type: " + triggerType);
+        }
     }
 
     private ExecutionType createExecutionStatus(ExecutionStatus executionStatus) {

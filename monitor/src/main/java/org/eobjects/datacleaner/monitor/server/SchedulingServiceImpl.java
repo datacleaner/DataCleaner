@@ -37,9 +37,14 @@ import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleWriter;
+import org.eobjects.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -47,8 +52,11 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
+import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 import org.quartz.CronExpression;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -315,7 +323,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
+        // TODO: Consider using the existing schedule for the job instead of
+        // creating a new here.
         final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, null);
+
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
         ExecuteJob.executeJob(context, execution);
@@ -325,14 +336,67 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
-        // TODO: Not implemented
-        return null;
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final RepositoryFolder resultFolder = tenantContext.getResultFolder();
+
+        final RepositoryFile latestFile = resultFolder.getLatestFile(job.getName(),
+                FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
+
+        if (latestFile == null) {
+            // no execution available
+            return null;
+        }
+
+        return readExecutionLogFile(latestFile);
     }
 
     @Override
-    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
-        // TODO: Not implemented
-        return null;
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final RepositoryFolder resultFolder = tenantContext.getResultFolder();
+        final List<RepositoryFile> files = resultFolder.getFiles(job.getName(),
+                FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
+
+        final List<ExecutionIdentifier> executionIdentifiers = CollectionUtils.map(files,
+                new Func<RepositoryFile, ExecutionIdentifier>() {
+                    @Override
+                    public ExecutionIdentifier eval(RepositoryFile file) {
+                        InputStream in = file.readFile();
+                        try {
+                            return SaxExecutionIdentifierReader.read(in);
+                        } finally {
+                            FileHelper.safeClose(in);
+                        }
+                    }
+                });
+
+        return executionIdentifiers;
+    }
+
+    @Override
+    public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
+            throws DCSecurityException {
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final RepositoryFolder resultFolder = tenantContext.getResultFolder();
+
+        final String resultId = executionIdentifier.getResultId();
+        final RepositoryFile file = resultFolder.getFile(resultId
+                + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension());
+        if (file == null) {
+            throw new IllegalArgumentException("No execution with result id: " + resultId);
+        }
+
+        return readExecutionLogFile(file);
+    }
+
+    private ExecutionLog readExecutionLogFile(final RepositoryFile file) {
+        final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
+        final InputStream in = file.readFile();
+        try {
+            return reader.read(in);
+        } finally {
+            FileHelper.safeClose(in);
+        }
     }
 
     @Override

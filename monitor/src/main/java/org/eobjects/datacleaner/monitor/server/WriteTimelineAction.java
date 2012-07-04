@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.io.OutputStream;
 
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineWriter;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 import org.eobjects.metamodel.util.Action;
 

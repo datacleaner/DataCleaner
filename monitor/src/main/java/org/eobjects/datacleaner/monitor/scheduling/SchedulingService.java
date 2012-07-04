@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
@@ -52,9 +53,26 @@ public interface SchedulingService extends RemoteService {
     @RolesAllowed(SecurityRoles.VIEWER)
     public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
+    /**
+     * Gets the full details about an {@link ExecutionIdentifier}.
+     * 
+     * @param tenant
+     * @param executionLog
+     * @return
+     * @throws DCSecurityException
+     */
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
+            throws DCSecurityException;
+
+    /**
+     * Gets all executions of a particular job.
+     */
+    @RolesAllowed(SecurityRoles.VIEWER)
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job)
+            throws DCSecurityException;
+
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
-    
-    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule) throws DCSecurityException;
+    public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
+            throws DCSecurityException;
 }

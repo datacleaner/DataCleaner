@@ -55,12 +55,27 @@ public interface RepositoryFolder extends RepositoryNode {
     /**
      * Gets files in this folder which have a particular extension.
      * 
+     * @param prefix
+     *            an (optional, can be null) prefix for file selection.
      * @param extension
      *            the filename extension to look for, eg. ".analysis.xml".
      * 
      * @return files in this folder.
      */
-    public List<RepositoryFile> getFiles(String extension);
+    public List<RepositoryFile> getFiles(String prefix, String extension);
+
+    /**
+     * Gets the latest (newest / latest modified) file with the given prefix and
+     * extension.
+     * 
+     * @param prefix
+     *            an (optional, can be null) prefix for file selection.
+     * @param extension
+     *            the filename extension to look for, eg. ".analysis.xml".
+     * @return the latest of the files that match the conditions, or null if no
+     *         files match.
+     */
+    public RepositoryFile getLatestFile(String prefix, String extension);
 
     /**
      * Gets a file in this folder, by name.

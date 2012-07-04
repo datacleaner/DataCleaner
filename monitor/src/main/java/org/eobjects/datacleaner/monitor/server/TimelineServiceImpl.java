@@ -45,6 +45,7 @@ import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -361,13 +362,8 @@ public class TimelineServiceImpl implements TimelineService {
 
         final String jobName = jobIdentifier.getName();
 
-        List<RepositoryFile> files = resultsFolder.getFiles(FileFilters.ANALYSIS_RESULT_SER.getExtension());
-        files = CollectionUtils.filter(files, new Predicate<RepositoryFile>() {
-            @Override
-            public Boolean eval(RepositoryFile file) {
-                return file.getName().startsWith(jobName);
-            }
-        });
+        final List<RepositoryFile> files = resultsFolder.getFiles(jobName,
+                FileFilters.ANALYSIS_RESULT_SER.getExtension());
 
         return files;
     }
@@ -601,8 +597,15 @@ public class TimelineServiceImpl implements TimelineService {
             return null;
         }
 
-        final List<RepositoryFile> resultFiles = getResultFilesForJob(tenant, job);
-        final RepositoryFile resultFile = resultFiles.get(resultFiles.size() - 1);
+        final RepositoryFolder resultsFolder = context.getResultFolder();
+        final String jobName = job.getName();
+
+        final RepositoryFile resultFile = resultsFolder.getLatestFile(jobName,
+                FileFilters.ANALYSIS_RESULT_SER.getExtension());
+        if (resultFile == null) {
+            return new ArrayList<String>(0);
+        }
+
         final AnalysisResult analysisResult = readAnalysisResult(resultFile);
 
         final AnalysisJob analysisJob = readAnalysisJob(tenant, job);

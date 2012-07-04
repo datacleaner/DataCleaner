@@ -52,14 +52,18 @@ public class ExecutionLogPanel extends Composite {
     @UiField
     Label triggerLabel;
 
-    public ExecutionLogPanel(ExecutionLog historicExecution) {
+    public ExecutionLogPanel(ExecutionLog executionLog) {
         super();
+
+        if (executionLog == null) {
+            executionLog = new ExecutionLog();
+        }
 
         initWidget(uiBinder.createAndBindUi(this));
 
         final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
 
-        final Date beginDate = historicExecution.getJobBeginDate();
+        final Date beginDate = executionLog.getJobBeginDate();
         if (beginDate == null) {
             beginTimeLabel.setText("not available");
             beginTimeLabel.addStyleName("discrete");
@@ -67,7 +71,7 @@ public class ExecutionLogPanel extends Composite {
             beginTimeLabel.setText(format.format(beginDate));
         }
 
-        final Date endDate = historicExecution.getJobEndDate();
+        final Date endDate = executionLog.getJobEndDate();
         if (endDate == null) {
             endTimeLabel.setText("not available");
             endTimeLabel.addStyleName("discrete");
@@ -75,13 +79,13 @@ public class ExecutionLogPanel extends Composite {
             endTimeLabel.setText(format.format(endDate));
         }
 
-        final TriggerType triggerType = historicExecution.getTriggerType();
+        final TriggerType triggerType = executionLog.getTriggerType();
         switch (triggerType) {
         case PERIODIC:
-            triggerLabel.setText("Scheduled: Periodic '" + historicExecution.getSchedule().getCronExpression() + "'");
+            triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
             break;
         case DEPENDENT:
-            triggerLabel.setText("Scheduled: After '" + historicExecution.getSchedule().getCronExpression() + "'");
+            triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getCronExpression() + "'");
             break;
         case MANUAL:
             triggerLabel.setText("Manually triggered");

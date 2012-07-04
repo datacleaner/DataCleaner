@@ -54,7 +54,7 @@ public class TenantContextImpl implements TenantContext {
     @Override
     public List<String> getJobNames() {
         final RepositoryFolder jobsFolder = getJobFolder();
-        final List<RepositoryFile> files = jobsFolder.getFiles(EXTENSION_JOB);
+        final List<RepositoryFile> files = jobsFolder.getFiles(null, EXTENSION_JOB);
         final List<String> filenames = CollectionUtils.map(files, new HasNameMapper());
         final List<String> jobNames = CollectionUtils.map(filenames, new Func<String, String>() {
             @Override

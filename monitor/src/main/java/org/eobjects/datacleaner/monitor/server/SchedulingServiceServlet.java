@@ -24,6 +24,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
@@ -76,8 +77,14 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     }
 
     @Override
-    public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
+    public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.getAllExecutions(tenant, job);
+    }
+
+    @Override
+    public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
+            throws DCSecurityException {
+        return _delegate.getExecution(tenant, executionIdentifier);
     }
 
     @Override

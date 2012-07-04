@@ -28,32 +28,33 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * Represents a running (or finished) execution of a job.
  */
-public class ExecutionLog implements IsSerializable {
+public class ExecutionLog extends ExecutionIdentifier implements IsSerializable {
 
     // metadata about the job and the trigger
     private ScheduleDefinition _schedule;
     private JobIdentifier _job;
-    private TriggerType _triggerType;
 
     // execution level output
     private String _logOutput;
-    private Date _jobBeginDate;
     private Date _jobEndDate;
-    private ExecutionStatus _executionStatus;
 
     // no-args constructor
     public ExecutionLog() {
+        super();
     }
 
     public ExecutionLog(ScheduleDefinition schedule, TriggerType triggerType) {
+        super(schedule.getJob().getName() + "-" + new Date().getTime(), triggerType);
         _schedule = schedule;
         _job = schedule.getJob();
-        _triggerType = triggerType;
-        _executionStatus = ExecutionStatus.PENDING;
     }
 
     public ScheduleDefinition getSchedule() {
         return _schedule;
+    }
+    
+    public void setSchedule(ScheduleDefinition schedule) {
+        _schedule = schedule;
     }
 
     public String getLogOutput() {
@@ -62,14 +63,6 @@ public class ExecutionLog implements IsSerializable {
 
     public void setLogOutput(String logOutput) {
         _logOutput = logOutput;
-    }
-
-    public Date getJobBeginDate() {
-        return _jobBeginDate;
-    }
-
-    public void setJobBeginDate(Date jobBeginDate) {
-        _jobBeginDate = jobBeginDate;
     }
 
     public Date getJobEndDate() {
@@ -82,17 +75,5 @@ public class ExecutionLog implements IsSerializable {
 
     public JobIdentifier getJob() {
         return _job;
-    }
-
-    public TriggerType getTriggerType() {
-        return _triggerType;
-    }
-
-    public ExecutionStatus getExecutionStatus() {
-        return _executionStatus;
-    }
-
-    public void setExecutionStatus(ExecutionStatus executionStatus) {
-        _executionStatus = executionStatus;
     }
 }

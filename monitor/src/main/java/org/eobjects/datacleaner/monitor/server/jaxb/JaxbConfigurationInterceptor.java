@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.eobjects.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,6 +52,7 @@ import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.data.DataSet;
 import org.eobjects.metamodel.data.Row;

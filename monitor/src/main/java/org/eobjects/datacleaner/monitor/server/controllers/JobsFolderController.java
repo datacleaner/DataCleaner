@@ -63,7 +63,7 @@ public class JobsFolderController {
 
         {
             final String extension = FileFilters.ANALYSIS_XML.getExtension();
-            final List<RepositoryFile> files = jobsFolder.getFiles(extension);
+            final List<RepositoryFile> files = jobsFolder.getFiles(null, extension);
             for (RepositoryFile file : files) {
                 Map<String, String> map = new HashMap<String, String>();
                 String jobName = file.getName().substring(0, file.getName().length() - extension.length());

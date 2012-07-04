@@ -95,20 +95,23 @@ public class FileRepositoryFolder implements RepositoryFolder {
     }
 
     @Override
-    public List<RepositoryFile> getFiles(final String extension) {
-        File[] files = _file.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File file) {
-                if (file.isFile() && !file.isHidden()) {
-                    if (extension == null) {
-                        return true;
-                    } else {
-                        return file.getName().endsWith(extension);
-                    }
-                }
-                return false;
-            }
-        });
+    public RepositoryFile getLatestFile(String prefix, String extension) {
+        final FileFilter baseFilter = createFileFilter(prefix, extension);
+
+        final LatestFileFilter latestFileFilter = new LatestFileFilter(baseFilter);
+        _file.listFiles(latestFileFilter);
+        
+        final File latestFile = latestFileFilter.getLatestFile();
+        if (latestFile == null) {
+            return null;
+        }
+        
+        return new FileRepositoryFile(this, latestFile);
+    }
+
+    @Override
+    public List<RepositoryFile> getFiles(final String prefix, final String extension) {
+        File[] files = _file.listFiles(createFileFilter(prefix, extension));
 
         return CollectionUtils.map(files, new Func<File, RepositoryFile>() {
             @Override
@@ -118,9 +121,28 @@ public class FileRepositoryFolder implements RepositoryFolder {
         });
     }
 
+    private FileFilter createFileFilter(final String prefix, final String extension) {
+        return new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                if (file.isFile() && !file.isHidden()) {
+                    final String filename = file.getName();
+                    if (prefix == null || filename.startsWith(prefix)) {
+                        if (extension == null) {
+                            return true;
+                        } else {
+                            return filename.endsWith(extension);
+                        }
+                    }
+                }
+                return false;
+            }
+        };
+    }
+
     @Override
     public List<RepositoryFile> getFiles() {
-        return getFiles(null);
+        return getFiles(null, null);
     }
 
     @Override

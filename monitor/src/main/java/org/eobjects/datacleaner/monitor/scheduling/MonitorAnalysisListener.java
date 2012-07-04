@@ -45,7 +45,7 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
-import org.eobjects.datacleaner.monitor.server.JaxbExecutionLogWriter;
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -67,15 +67,17 @@ public class MonitorAnalysisListener implements AnalysisListener {
     private final RepositoryFile _logFile;
     private final JaxbExecutionLogWriter _executionLogWriter;
 
-    public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder, String resultName) {
+    public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder) {
         _execution = execution;
         _resultFolder = resultFolder;
         _executionLogWriter = new JaxbExecutionLogWriter();
-        _resultFilename = resultName + FileFilters.ANALYSIS_RESULT_SER.getExtension();
+        
+        final String resultId = execution.getResultId();
+        _resultFilename = resultId + FileFilters.ANALYSIS_RESULT_SER.getExtension();
         _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
         _log = new StringBuilder();
 
-        final String logFilename = resultName + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension();
+        final String logFilename = resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension();
         _logFile = resultFolder.createFile(logFilename, new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {

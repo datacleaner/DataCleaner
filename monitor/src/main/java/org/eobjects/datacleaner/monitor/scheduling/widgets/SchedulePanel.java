@@ -58,6 +58,7 @@ public class SchedulePanel extends Composite {
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     private final ScheduleDefinition _schedule;
+    private final TenantIdentifier _tenant;
 
     @UiField
     Label jobLabel;
@@ -70,7 +71,7 @@ public class SchedulePanel extends Composite {
 
     @UiField
     Button launchButton;
-    
+
     @UiField
     Button historyButton;
 
@@ -81,6 +82,7 @@ public class SchedulePanel extends Composite {
             final SchedulingServiceAsync service) {
         super();
 
+        _tenant = tenant;
         _schedule = schedule;
 
         initWidget(uiBinder.createAndBindUi(this));
@@ -101,7 +103,7 @@ public class SchedulePanel extends Composite {
                 service.triggerExecution(tenant, _schedule.getJob(), new DCAsyncCallback<ExecutionLog>() {
                     @Override
                     public void onSuccess(ExecutionLog result) {
-                        final ExecutionLogPanel panel = new ExecutionLogPanel(result);
+                        final ExecutionLogPanel panel = new ExecutionLogPanel(_tenant, result);
                         popupPanel.setWidget(panel);
                         popupPanel.center();
                     }
@@ -117,7 +119,7 @@ public class SchedulePanel extends Composite {
                 Window.open(url, "_blank", null);
             }
         });
-        
+
         historyButton.addClickHandler(new JobHistoryClickHandler(service, tenant, schedule));
 
         final List<AlertDefinition> alerts = schedule.getAlerts();

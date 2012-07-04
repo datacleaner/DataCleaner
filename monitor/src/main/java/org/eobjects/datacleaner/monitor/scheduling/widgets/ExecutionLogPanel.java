@@ -23,12 +23,15 @@ import java.util.Date;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,6 +47,9 @@ public class ExecutionLogPanel extends Composite {
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiField
+    Label statusLabel;
+
+    @UiField
     Label beginTimeLabel;
 
     @UiField
@@ -52,44 +58,59 @@ public class ExecutionLogPanel extends Composite {
     @UiField
     Label triggerLabel;
 
-    public ExecutionLogPanel(ExecutionLog executionLog) {
-        super();
+    @UiField
+    Label logOutputLabel;
 
-        if (executionLog == null) {
-            executionLog = new ExecutionLog();
-        }
+    @UiField
+    Anchor resultAnchor;
+
+    public ExecutionLogPanel(TenantIdentifier tenant, ExecutionLog executionLog) {
+        super();
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
+        if (executionLog != null) {
+            statusLabel.setText(executionLog.getExecutionStatus().toString());
 
-        final Date beginDate = executionLog.getJobBeginDate();
-        if (beginDate == null) {
-            beginTimeLabel.setText("not available");
-            beginTimeLabel.addStyleName("discrete");
-        } else {
-            beginTimeLabel.setText(format.format(beginDate));
-        }
+            final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
 
-        final Date endDate = executionLog.getJobEndDate();
-        if (endDate == null) {
-            endTimeLabel.setText("not available");
-            endTimeLabel.addStyleName("discrete");
-        } else {
-            endTimeLabel.setText(format.format(endDate));
-        }
+            final Date beginDate = executionLog.getJobBeginDate();
+            if (beginDate == null) {
+                beginTimeLabel.setText("not available");
+                beginTimeLabel.addStyleName("discrete");
+            } else {
+                beginTimeLabel.setText(format.format(beginDate));
+            }
 
-        final TriggerType triggerType = executionLog.getTriggerType();
-        switch (triggerType) {
-        case PERIODIC:
-            triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
-            break;
-        case DEPENDENT:
-            triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getCronExpression() + "'");
-            break;
-        case MANUAL:
-            triggerLabel.setText("Manually triggered");
-            break;
+            final Date endDate = executionLog.getJobEndDate();
+            if (endDate == null) {
+                endTimeLabel.setText("not available");
+                endTimeLabel.addStyleName("discrete");
+            } else {
+                endTimeLabel.setText(format.format(endDate));
+            }
+
+            final TriggerType triggerType = executionLog.getTriggerType();
+            switch (triggerType) {
+            case PERIODIC:
+                triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
+                break;
+            case DEPENDENT:
+                triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getCronExpression() + "'");
+                break;
+            case MANUAL:
+                triggerLabel.setText("Manually triggered");
+                break;
+            }
+
+            logOutputLabel.setText(executionLog.getLogOutput());
+
+            final String resultId = executionLog.getResultId();
+            final String resultFilename = resultId + ".analysis.result.dat";
+            final String url = Urls.createRelativeUrl("repository/" + tenant.getId() + "/results/" + resultFilename);
+            resultAnchor.setHref(url);
+            resultAnchor.setTarget("_blank");
+            resultAnchor.setText(resultId);
         }
     }
 }

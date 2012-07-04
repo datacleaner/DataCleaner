@@ -14,7 +14,8 @@
 
 	<g:HTMLPanel styleName="JobHistoryPanel">
 		
-		<g:SimplePanel ui:field="executionLogPanelTarget" styleName="ExecutionLogPanelTarget" />
+		<c:CellList ui:field="executionList" />
+		<g:SimplePanel ui:field="executionLogPanelTarget" />
 
 	</g:HTMLPanel>
 </ui:UiBinder>

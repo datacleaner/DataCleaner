@@ -210,3 +210,42 @@
 .AlertPanel-FATAL,.CustomizeAlertPanel .gwt-RadioButton-FATAL {
 	background-image: url("alert-fatal.png");
 }
+
+/**
+ * Job history and Execution log panels
+ */
+.JobHistoryPanel {
+	width: 720px;
+}
+
+.JobHistoryPanel .ExecutionCellList {
+	float: left;
+	width: 200px;
+	overflow: auto;
+}
+
+.JobHistoryPanel .ExecutionCellList .ExecutionIdentifier span {
+	padding-left: 4px;
+}
+
+.JobHistoryPanel .ExecutionLogPanelTarget {
+	float: left;
+	width: 500px;
+	margin-left: 15px;
+}
+
+.ExecutionLogPanel {
+	width: 500px;
+}
+
+.LogOutputPanel {
+	background-color: #f0f0f0;
+	border: 1px solid #999;
+	height: 270px;
+	overflow: scroll;
+}
+
+.LogOutputPanel .LogOutputLabel {
+	white-space: pre;
+	padding: 4px;
+}

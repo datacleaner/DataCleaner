@@ -33,8 +33,12 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent.Handler;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
  * Panel for showing the history of a job.
@@ -49,9 +53,13 @@ public class JobHistoryPanel extends Composite {
     private final JobIdentifier _job;
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
+    private final DCAsyncCallback<ExecutionLog> _callback;
 
-    @UiField
+    @UiField(provided = true)
     SimplePanel executionLogPanelTarget;
+
+    @UiField(provided = true)
+    CellList<ExecutionIdentifier> executionList;
 
     public JobHistoryPanel(JobIdentifier job, SchedulingServiceAsync service, TenantIdentifier tenant) {
         super();
@@ -59,26 +67,40 @@ public class JobHistoryPanel extends Composite {
         _service = service;
         _tenant = tenant;
 
-        initWidget(uiBinder.createAndBindUi(this));
-
-        final CellList<ExecutionIdentifier> cellList = new CellList<ExecutionIdentifier>(new ExecutionIdentifierCell());
-        cellList.setWidth("200px");
-        cellList.setHeight("400px");
-
-        _service.getLatestExecution(_tenant, _job, new DCAsyncCallback<ExecutionLog>() {
+        _callback = new DCAsyncCallback<ExecutionLog>() {
             @Override
             public void onSuccess(ExecutionLog result) {
-                executionLogPanelTarget.setWidget(new ExecutionLogPanel(result));
+                executionLogPanelTarget.setWidget(new ExecutionLogPanel(_tenant, result));
+            }
+        };
+
+        executionLogPanelTarget = new SimplePanel();
+        executionLogPanelTarget.setStyleName("ExecutionLogPanelTarget");
+        executionList = new CellList<ExecutionIdentifier>(new ExecutionIdentifierCell());
+        executionList.setEmptyListWidget(new Label("(none)"));
+        
+        final SingleSelectionModel<ExecutionIdentifier> selectionModel = new SingleSelectionModel<ExecutionIdentifier>();
+        selectionModel.addSelectionChangeHandler(new Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                final ExecutionIdentifier executionIdentifier = selectionModel.getSelectedObject();
+                _service.getExecution(_tenant, executionIdentifier, _callback);
             }
         });
+        executionList.setSelectionModel(selectionModel);
 
+        executionList.setPixelSize(200, 400);
+        executionList.addStyleName("ExecutionCellList");
+
+        initWidget(uiBinder.createAndBindUi(this));
+
+        _service.getLatestExecution(_tenant, _job, _callback);
+
+        _callback.onSuccess(null);
         _service.getAllExecutions(_tenant, _job, new DCAsyncCallback<List<ExecutionIdentifier>>() {
-
             @Override
             public void onSuccess(List<ExecutionIdentifier> result) {
-                cellList.setRowData(result);
-                
-                // TODO: Place CellList to the left.
+                executionList.setRowData(result);
             }
         });
 

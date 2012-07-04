@@ -35,9 +35,8 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
 
     private TenantIdentifier _tenant;
     private JobIdentifier _job;
-    private JobIdentifier _scheduleAfterJob;
-    private String _scheduleExpression;
-    private boolean _active;
+    private JobIdentifier _dependentJob;
+    private String _cronExpression;
     private List<AlertDefinition> _alerts;
     private DatastoreIdentifier _datastore;
 
@@ -45,21 +44,19 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
     public ScheduleDefinition() {
     }
 
-    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String scheduleExpression, boolean active,
+    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String scheduleExpression,
             DatastoreIdentifier datastoreIdentifier) {
         _tenant = tenant;
         _job = job;
-        _scheduleExpression = scheduleExpression;
-        _active = active;
+        _cronExpression = scheduleExpression;
         _datastore = datastoreIdentifier;
     }
 
     public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, JobIdentifier scheduleAfterJob,
-            boolean active, DatastoreIdentifier datastoreIdentifier) {
+            DatastoreIdentifier datastoreIdentifier) {
         _tenant = tenant;
         _job = job;
-        _scheduleAfterJob = scheduleAfterJob;
-        _active = active;
+        _dependentJob = scheduleAfterJob;
         _datastore = datastoreIdentifier;
     }
 
@@ -71,16 +68,12 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
         return _job;
     }
 
-    public String getScheduleExpression() {
-        return _scheduleExpression;
+    public void setCronExpression(String cronExpression) {
+        _cronExpression = cronExpression;
     }
 
-    public boolean isActive() {
-        return _active;
-    }
-
-    public void setActive(boolean active) {
-        _active = active;
+    public String getCronExpression() {
+        return _cronExpression;
     }
 
     public DatastoreIdentifier getDatastore() {
@@ -91,8 +84,12 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
         _datastore = datastore;
     }
 
-    public JobIdentifier getScheduleAfterJob() {
-        return _scheduleAfterJob;
+    public void setDependentJob(JobIdentifier dependentJob) {
+        _dependentJob = dependentJob;
+    }
+
+    public JobIdentifier getDependentJob() {
+        return _dependentJob;
     }
 
     public List<AlertDefinition> getAlerts() {
@@ -106,15 +103,13 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
         _alerts = alerts;
     }
 
-    public String getScheduleSummary() {
-        if (!isActive()) {
-            return "Not scheduled";
-        }
-
-        if (_scheduleAfterJob == null) {
-            return getScheduleExpression();
+    public TriggerType getTriggerType() {
+        if (_dependentJob != null) {
+            return TriggerType.DEPENDENT;
+        } else if (_cronExpression != null) {
+            return TriggerType.PERIODIC;
         } else {
-            return "Run after " + _scheduleAfterJob.getName();
+            return TriggerType.MANUAL;
         }
     }
 
@@ -122,12 +117,11 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (_active ? 1231 : 1237);
         result = prime * result + ((_alerts == null) ? 0 : _alerts.hashCode());
         result = prime * result + ((_datastore == null) ? 0 : _datastore.hashCode());
         result = prime * result + ((_job == null) ? 0 : _job.hashCode());
-        result = prime * result + ((_scheduleAfterJob == null) ? 0 : _scheduleAfterJob.hashCode());
-        result = prime * result + ((_scheduleExpression == null) ? 0 : _scheduleExpression.hashCode());
+        result = prime * result + ((_dependentJob == null) ? 0 : _dependentJob.hashCode());
+        result = prime * result + ((_cronExpression == null) ? 0 : _cronExpression.hashCode());
         result = prime * result + ((_tenant == null) ? 0 : _tenant.hashCode());
         return result;
     }
@@ -141,8 +135,6 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
         if (getClass() != obj.getClass())
             return false;
         ScheduleDefinition other = (ScheduleDefinition) obj;
-        if (_active != other._active)
-            return false;
         if (_alerts == null) {
             if (other._alerts != null)
                 return false;
@@ -158,15 +150,15 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
                 return false;
         } else if (!_job.equals(other._job))
             return false;
-        if (_scheduleAfterJob == null) {
-            if (other._scheduleAfterJob != null)
+        if (_dependentJob == null) {
+            if (other._dependentJob != null)
                 return false;
-        } else if (!_scheduleAfterJob.equals(other._scheduleAfterJob))
+        } else if (!_dependentJob.equals(other._dependentJob))
             return false;
-        if (_scheduleExpression == null) {
-            if (other._scheduleExpression != null)
+        if (_cronExpression == null) {
+            if (other._cronExpression != null)
                 return false;
-        } else if (!_scheduleExpression.equals(other._scheduleExpression))
+        } else if (!_cronExpression.equals(other._cronExpression))
             return false;
         if (_tenant == null) {
             if (other._tenant != null)

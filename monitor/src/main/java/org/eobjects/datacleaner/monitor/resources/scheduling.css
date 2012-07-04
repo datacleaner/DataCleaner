@@ -29,19 +29,19 @@
 
 .SchedulingOverviewPanel .JobColumn {
 	min-height: 1em;
-	width: 26%;
+	width: 22%;
 	float: left;
 }
 
 .SchedulingOverviewPanel .ScheduleColumn {
 	min-height: 1em;
-	width: 15%;
+	width: 22%;
 	float: left;
 }
 
 .SchedulingOverviewPanel .AlertsColumn {
 	min-height: 1em;
-	width: 26%;
+	width: 23%;
 	float: left;
 }
 
@@ -80,9 +80,54 @@
 
 /* a "row" representing a single scheduled job */
 .SchedulingOverviewPanel .ScheduleGroupPanel .SchedulePanel {
-	border-top: 1px solid #f0f0f0;
+	border-bottom: 1px solid #f0f0f0;
 	clear: both;
 	line-height: 30px;
+}
+
+.SchedulePanel {
+	font-size: 0.9em;
+}
+
+.SchedulePanel .ScheduleColumn {
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.SchedulePanel .ScheduleColumn a {
+	padding-left: 20px;
+	background-position: left center;
+	background-repeat: no-repeat;
+}
+
+.SchedulePanel .ScheduleColumn a.TriggerAnchor-PERIODIC {
+	background-image: url("trigger_type_periodic.png");
+}
+
+.SchedulePanel .ScheduleColumn a.TriggerAnchor-DEPENDENT {
+	background-image: url("trigger_type_dependent.png");
+}
+
+.SchedulePanel .ScheduleColumn a.TriggerAnchor-MANUAL {
+	background-image: url("trigger_type_manual.png");
+}
+
+.SchedulePanel .AlertsColumn {
+	background-color: white;
+}
+
+.ScheduleGroupPanel a {
+	text-decoration: none;
+	color: #333;
+}
+
+.ScheduleGroupPanel a.discrete {
+	color: #666;
+}
+
+.ScheduleGroupPanel a:hover {
+	text-decoration: underline;
+	color: #377FCF;
 }
 
 .TriggerButton {
@@ -93,6 +138,10 @@
 	background-image: url("launch.png");
 }
 
+.HistoryButton {
+	background-image: url("executionlog.png");
+}
+
 .SchedulePanel .ScheduleColumn .gwt-Label {
 	background-image: url("schedule.png");
 	background-repeat: no-repeat;
@@ -100,14 +149,23 @@
 	padding-left: 26px;
 }
 
-.SchedulePanel .ScheduleColumn .gwt-Label.discrete {
-	background-image: none;
-	padding-left: 0;
+.CustomizeSchedulePanel {
+	width: 600px;
+}
+
+.CustomizeSchedulePanel .triggerPanel {
+	margin-top: 20px;
+}
+
+.CustomizeSchedulePanel .triggerPanel .configurationPanel {
+	margin-left: 34px;
+	border-left: 2px solid #f0f0f0;
+	padding-left: 4px;
 }
 
 .SchedulePanel .ActionsColumn .gwt-Button {
 	margin-left: 0px;
-	margin-right: 3px;
+	margin-right: 2px;
 	margin-top: 3px;
 	margin-bottom: 3px;
 }
@@ -119,16 +177,8 @@
 	background-repeat: no-repeat;
 	background-position: left center;
 	padding-left: 26px;
-}
-
-.AlertPanel a {
-	text-decoration: none;
-	color: #333;
-}
-
-.AlertPanel a:hover {
-	text-decoration: underline;
-	color: #377FCF;
+	line-height: 1em;
+	min-height: 18px;
 }
 
 .CustomizeAlertPanel {

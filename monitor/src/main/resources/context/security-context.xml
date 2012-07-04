@@ -33,7 +33,7 @@
 		<authentication-provider>
 			<user-service>
 				<user name="viewer" password="viewer" authorities="ROLE_USER, ROLE_VIEWER" />
-				<user name="engineer" password="engineer" authorities="ROLE_USER, ROLE_ENGINEER" />
+				<user name="developer" password="developer" authorities="ROLE_USER, ROLE_ENGINEER" />
 				<user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
 			</user-service>
 		</authentication-provider>

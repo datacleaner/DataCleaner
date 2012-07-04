@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -112,9 +113,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenant.getId());
 
             for (ScheduleDefinition schedule : schedules) {
-                if (schedule.isActive()) {
-                    initializeSchedule(schedule);
-                }
+                initializeSchedule(schedule);
             }
         }
 
@@ -146,16 +145,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final RepositoryFile scheduleFile = jobsFolder.getFile(jobName + EXTENSION_SCHEDULE_XML);
         final JaxbScheduleReader reader = new JaxbScheduleReader();
 
-        final String scheduleAfterJobName;
-        final String scheduleExpression;
-        final boolean active;
+        final String dependentJobName;
+        final String cronExpression;
 
         final List<Alert> alerts;
 
         if (scheduleFile == null) {
-            scheduleExpression = null;
-            scheduleAfterJobName = null;
-            active = false;
+            cronExpression = null;
+            dependentJobName = null;
             alerts = Collections.emptyList();
         } else {
             final InputStream inputStream = scheduleFile.readFile();
@@ -173,9 +170,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 alerts = alertsType.getAlert();
             }
 
-            scheduleExpression = schedule.getScheduleExpression();
-            active = schedule.isActive();
-            scheduleAfterJobName = schedule.getScheduleAfterJob();
+            cronExpression = schedule.getCronExpression();
+            dependentJobName = schedule.getDependentJob();
         }
 
         final ScheduleDefinition scheduleDefinition;
@@ -184,14 +180,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final String datastoreName = context.getJob(jobIdentifier).getSourceDatastoreName();
         final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
 
-        if (scheduleAfterJobName == null) {
-            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, scheduleExpression, active,
-                    datastoreIdentifier);
+        if (dependentJobName == null) {
+            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, cronExpression, datastoreIdentifier);
         } else {
-            final JobIdentifier scheduleAfterJob = new JobIdentifier(scheduleAfterJobName);
+            final JobIdentifier scheduleAfterJob = new JobIdentifier(dependentJobName);
 
-            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, scheduleAfterJob, active,
-                    datastoreIdentifier);
+            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, scheduleAfterJob, datastoreIdentifier);
         }
 
         for (Alert alert : alerts) {
@@ -241,17 +235,19 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             _scheduler.deleteJob(jobName, tenantId);
             _scheduler.removeJobListener(jobListenerName);
 
-            if (schedule.isActive()) {
+            final TriggerType triggerType = schedule.getTriggerType();
+            if (triggerType == TriggerType.MANUAL) {
+                logger.info("Not scheduling job: {} (manual trigger type)", jobName);
+            } else {
                 final JobDetail jobDetail = new JobDetail(jobName, tenantId, ExecuteJob.class);
                 JobDataMap jobDataMap = jobDetail.getJobDataMap();
                 jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
                 jobDataMap.put(ExecuteJob.DETAIL_SCHEDULE_DEFINITION, schedule);
 
-                final JobIdentifier scheduleAfterJob = schedule.getScheduleAfterJob();
-                if (scheduleAfterJob == null) {
+                if (triggerType == TriggerType.PERIODIC) {
                     // time based trigger
 
-                    final String scheduleExpression = schedule.getScheduleExpression();
+                    final String scheduleExpression = schedule.getCronExpression();
                     final CronExpression cronExpression = toCronExpression(scheduleExpression);
 
                     final CronTriggerBean trigger = new CronTriggerBean();
@@ -267,15 +263,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     _scheduler.scheduleJob(jobDetail, trigger);
                 } else {
                     // event based trigger (via a job listener)
-
                     _scheduler.addJob(jobDetail, true);
 
                     final ExecuteJobListener listener = new ExecuteJobListener(jobListenerName, schedule);
                     _scheduler.addJobListener(listener);
                     logger.info("Adding listener to scheduler: {}", jobListenerName);
                 }
-            } else {
-                logger.info("Not scheduling job: {} (inactive)", jobName);
             }
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
@@ -322,7 +315,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, false, null);
+        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, null);
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
         ExecuteJob.executeJob(context, execution);
@@ -345,6 +338,20 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         _applicationContext = applicationContext;
+    }
+
+    @Override
+    public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
+            throws DCSecurityException {
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final List<String> jobNames = tenantContext.getJobNames();
+        final List<JobIdentifier> result = new ArrayList<JobIdentifier>();
+        for (String jobName : jobNames) {
+            if (!jobName.equals(schedule.getJob().getName())) {
+                result.add(new JobIdentifier(jobName));
+            }
+        }
+        return result;
     }
 
 }

@@ -20,7 +20,7 @@
 		</div>
 
 		<div class="ScheduleColumn">
-			<g:Label ui:field="scheduleLabel" />
+			<g:Anchor ui:field="scheduleAnchor" styleName="ScheduleAnchor" />
 		</div>
 
 		<div class="AlertsColumn">
@@ -28,10 +28,16 @@
 		</div>
 
 		<div class="ActionsColumn">
-			<g:Button text="Trigger now" ui:field="triggerNowButton" styleName="gwt-Button gwt-Button-ImageTextButton TriggerButton" />
-			<g:Button text="Open job" ui:field="launchButton" styleName="gwt-Button gwt-Button-ImageTextButton LaunchButton" />
+			<g:Button text="Trigger" title="Trigger this job to run on the server now"
+				ui:field="triggerNowButton" styleName="gwt-Button gwt-Button-ImageTextButton TriggerButton" />
+			<g:Button text="Open"
+				title="Open this job for editing or testing on the client" ui:field="launchButton"
+				styleName="gwt-Button gwt-Button-ImageTextButton LaunchButton" />
+			<g:Button text="History"
+				title="View the execution history of this job" ui:field="historyButton"
+				styleName="gwt-Button gwt-Button-ImageTextButton HistoryButton" />
 		</div>
-		
+
 		<div style="clear:both"></div>
 
 	</g:HTMLPanel>

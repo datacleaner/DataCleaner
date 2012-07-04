@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
@@ -45,14 +46,15 @@ public class JaxbScheduleWriter extends JaxbWriter<Schedule> {
     }
 
     public Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
-
         final Schedule schedule = getObjectFactory().createSchedule();
-        schedule.setActive(scheduleDefinition.isActive());
-        schedule.setScheduleExpression(scheduleDefinition.getScheduleExpression());
 
-        final JobIdentifier scheduleAfterJob = scheduleDefinition.getScheduleAfterJob();
-        if (scheduleAfterJob != null) {
-            schedule.setScheduleAfterJob(scheduleAfterJob.getName());
+        if (scheduleDefinition.getTriggerType() == TriggerType.DEPENDENT) {
+            final JobIdentifier scheduleAfterJob = scheduleDefinition.getDependentJob();
+            if (scheduleAfterJob != null) {
+                schedule.setDependentJob(scheduleAfterJob.getName());
+            }
+        } else if (scheduleDefinition.getTriggerType() == TriggerType.PERIODIC) {
+            schedule.setCronExpression(scheduleDefinition.getCronExpression());
         }
 
         final Alerts alerts = new Alerts();

@@ -75,11 +75,17 @@ public class ExecutionLogPanel extends Composite {
             endTimeLabel.setText(format.format(endDate));
         }
 
-        TriggerType triggerType = historicExecution.getTriggerType();
-        if (triggerType == TriggerType.MANUAL) {
+        final TriggerType triggerType = historicExecution.getTriggerType();
+        switch (triggerType) {
+        case PERIODIC:
+            triggerLabel.setText("Scheduled: Periodic '" + historicExecution.getSchedule().getCronExpression() + "'");
+            break;
+        case DEPENDENT:
+            triggerLabel.setText("Scheduled: After '" + historicExecution.getSchedule().getCronExpression() + "'");
+            break;
+        case MANUAL:
             triggerLabel.setText("Manually triggered");
-        } else {
-            triggerLabel.setText("Scheduled run: " + historicExecution.getSchedule().getScheduleSummary());
+            break;
         }
     }
 }

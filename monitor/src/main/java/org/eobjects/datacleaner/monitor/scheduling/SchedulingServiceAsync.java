@@ -43,4 +43,7 @@ public interface SchedulingServiceAsync {
 
     void triggerExecution(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<ExecutionLog> callback);
 
+    void getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule,
+            AsyncCallback<List<JobIdentifier>> callback);
+
 }

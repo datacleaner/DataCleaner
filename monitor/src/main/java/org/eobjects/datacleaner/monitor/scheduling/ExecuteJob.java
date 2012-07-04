@@ -65,7 +65,7 @@ public class ExecuteJob extends AbstractQuartzJob {
 
         final TenantContext context = contextFactory.getContext(tenantId);
 
-        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.SCHEDULED);
+        final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.PERIODIC);
 
         executeJob(context, execution);
     }

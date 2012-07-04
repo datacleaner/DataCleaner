@@ -31,6 +31,7 @@ a {
 
 a:hover {
 	color: #377FCF;
+	cursor: pointer;
 }
 
 /*
@@ -58,8 +59,11 @@ a:hover {
 	background-position: 4px center;
 	background-image: none;
 	min-width: 30px;
-	height: 30px;
-	padding-left: 30px;
+	height: 26px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 28px;
+	padding-right: 3px;
 	background-color: #f1f1f1;
 	font-size: 0.9em;
 }

@@ -25,5 +25,5 @@ package org.eobjects.datacleaner.monitor.scheduling.model;
  */
 public enum TriggerType {
 
-    MANUAL, SCHEDULED
+    MANUAL, PERIODIC, DEPENDENT
 }

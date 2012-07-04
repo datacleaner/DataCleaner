@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
@@ -63,7 +64,7 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     public void setDelegate(SchedulingService delegate) {
         _delegate = delegate;
     }
-    
+
     @Override
     public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) {
         return _delegate.getSchedules(tenant);
@@ -73,12 +74,12 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     public ScheduleDefinition updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition) {
         return _delegate.updateSchedule(tenant, scheduleDefinition);
     }
-    
+
     @Override
     public List<ExecutionLog> getAllExecutions(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.getAllExecutions(tenant, job);
     }
-    
+
     @Override
     public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.getLatestExecution(tenant, job);
@@ -87,6 +88,12 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         return _delegate.triggerExecution(tenant, job);
+    }
+
+    @Override
+    public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
+            throws DCSecurityException {
+        return _delegate.getDependentJobCandidates(tenant, schedule);
     }
 
 }

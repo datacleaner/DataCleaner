@@ -24,7 +24,8 @@
 
 	<simpleType name="trigger-type">
 		<restriction base="string">
-			<enumeration value="SCHEDULED" />
+			<enumeration value="PERIODIC" />
+			<enumeration value="DEPENDENT" />
 			<enumeration value="MANUAL" />
 		</restriction>
 	</simpleType>

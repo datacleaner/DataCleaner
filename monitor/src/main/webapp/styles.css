@@ -92,7 +92,7 @@ div.pageContent {
  * User panel
  */
 #user_panel {
-	background-image: url("../images/user.png");
+	background-image: url("images/user.png");
 	background-position: 5px center;
 	background-repeat: no-repeat;
 	background-color: #8E8E8E;
@@ -126,19 +126,19 @@ div.pageContent {
 }
 
 .login_page_footer {
-	height: 70px;
+	height: 80px;
 	width: 100%;
 	position: absolute;
 	bottom: 0;
-	background-image: url("../images/login_footer_bg.png");
+	background-image: url("images/login_footer_bg.png");
 	background-repeat: repeat-x;
 }
 
 .login_page_footer .logo {
 	width: 500px;
-	height: 70px;
+	height: 80px;
 	float: right;
-	background-image: url("../images/login_footer_logo.png");
+	background-image: url("images/login_footer_logo.png");
 	background-repeat: no-repeat;
 }
 
@@ -155,7 +155,7 @@ div.pageContent {
 }
 
 .login_panel h3 {
-	background-image: url("../images/user.png");
+	background-image: url("images/user.png");
 	background-position: left center;
 	background-repeat: no-repeat;
 	padding-left: 20px;
@@ -220,6 +220,18 @@ div.loader {
 
 .discrete {
 	color: #666;
+}
+
+.descriptionLabel {
+	color: #333;
+	background-color: #f4f4d3;
+	padding: 4px;
+	border: 1px solid #a0a0a0;
+}
+
+.descriptionLabel p {
+	margin-top: 4px;
+	margin-bottom: 4px;
 }
 
 /**

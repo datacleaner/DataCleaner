@@ -75,14 +75,13 @@ public class AlertDefinition implements IsSerializable {
             } else {
                 StringBuilder sb = new StringBuilder();
                 if (_severity == AlertSeverity.WARNING || _severity == AlertSeverity.FATAL) {
-                    sb.append("Require ");
+                    sb.append("Req. ");
                 } else {
                     sb.append("Expect ");
                 }
-                sb.append(_metricIdentifier.getDisplayName());
-                sb.append(" to be ");
+                sb.append(_metricIdentifier.getMetricDescriptorName());
                 if (_minimumValue != null && _maximumValue != null) {
-                    sb.append("between " + _minimumValue + " and " + _maximumValue);
+                    sb.append("from " + _minimumValue + " to " + _maximumValue);
                 } else if (_minimumValue != null) {
                     sb.append("greater than " + _minimumValue);
                 } else {

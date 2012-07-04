@@ -52,7 +52,7 @@ public class ExecuteJobListener extends JobListenerSupport {
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
         final String jobName = context.getJobDetail().getName();
-        final String expectedJobName = _schedule.getScheduleAfterJob().getName();
+        final String expectedJobName = _schedule.getDependentJob().getName();
         if (jobName.equals(expectedJobName)) {
             final String tenantId = context.getJobDetail().getGroup();
             final String expectedTenantId = _schedule.getTenant().getId();
@@ -64,7 +64,7 @@ public class ExecuteJobListener extends JobListenerSupport {
     }
 
     private void scheduleExecution(Scheduler scheduler) {
-        final String jobName = _schedule.getScheduleAfterJob().getName();
+        final String jobName = _schedule.getDependentJob().getName();
         final String tenantId = _schedule.getTenant().getId();
         try {
             scheduler.triggerJob(jobName, tenantId);

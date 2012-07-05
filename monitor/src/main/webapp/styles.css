@@ -13,7 +13,7 @@ body,table td,select,button {
 }
 
 a {
-	color: #5594DD
+	color: #5594DD;
 }
 
 div.pageContainer {
@@ -22,14 +22,14 @@ div.pageContainer {
 
 div.pageHeader {
 	background-color: #333;
-	height: 140px;
+	height: 114px;
 }
 
 div.pageHeader div.logo {
 	margin-left: auto;
 	margin-right: auto;
 	width: 894px;
-	height: 118px;
+	height: 105px;
 	display: block;
 	background-image: url("images/header.png");
 	background-repeat: no-repeat;
@@ -43,18 +43,32 @@ div.pageContent {
 	text-align: left;
 }
 
+/**
+ * Scales any img with class 'scalable_background' to become a background image of the page, scaled to the width of the window.
+ */
+img.scalable_background {
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
 /*
 * Navigation menu
 */
+.navContainer {
+	margin-top: -15px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 894px;
+	height: 22px;
+}
+
 #nav {
 	list-style-type: none;
 	margin: 0px;
-	margin-top: -2px;
-	margin-left: auto;
-	margin-right: auto;
 	padding: 0px;
-	width: 894px;
-	height: 22px;
+	margin-left: 110px;
 }
 
 #nav li {
@@ -123,6 +137,7 @@ div.pageContent {
 	width: 100%;
 	height: 100%;
 	text-align: center;
+	position: absolute;
 }
 
 .login_page_footer {

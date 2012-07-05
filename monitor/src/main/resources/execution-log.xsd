@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/datacleaner/execution-log/1.0"
 	xmlns:log="http://eobjects.org/datacleaner/execution-log/1.0"
+	xmlns:schedule="http://eobjects.org/datacleaner/schedule/1.0"
 	elementFormDefault="qualified">
 
 	<import id="schedule" namespace="http://eobjects.org/datacleaner/schedule/1.0"
@@ -18,6 +19,7 @@
 					type="log:execution-type" />
 				<element name="trigger-type" minOccurs="1" maxOccurs="1"
 					type="log:trigger-type" />
+				<element ref="schedule:schedule" minOccurs="1" maxOccurs="1" />
 				<element name="log-output" type="string" />
 			</sequence>
 		</complexType>

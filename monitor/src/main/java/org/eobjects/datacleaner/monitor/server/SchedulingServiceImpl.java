@@ -23,20 +23,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.jaxb.Alert;
-import org.eobjects.datacleaner.monitor.jaxb.Schedule;
-import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.scheduling.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.ExecuteJobListener;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
-import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
@@ -148,60 +144,31 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     private ScheduleDefinition getSchedule(TenantIdentifier tenant, String jobName) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
+
+        final JobIdentifier jobIdentifier = new JobIdentifier(jobName);
+        final JobContext jobContext = context.getJob(jobIdentifier);
+        final String datastoreName = jobContext.getSourceDatastoreName();
+        final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
+
         final RepositoryFolder jobsFolder = context.getJobFolder();
 
         final RepositoryFile scheduleFile = jobsFolder.getFile(jobName + EXTENSION_SCHEDULE_XML);
         final JaxbScheduleReader reader = new JaxbScheduleReader();
 
-        final String dependentJobName;
-        final String cronExpression;
-
-        final List<Alert> alerts;
+        final ScheduleDefinition schedule;
 
         if (scheduleFile == null) {
-            cronExpression = null;
-            dependentJobName = null;
-            alerts = Collections.emptyList();
+            schedule = new ScheduleDefinition(tenant, jobIdentifier, datastoreIdentifier);
         } else {
             final InputStream inputStream = scheduleFile.readFile();
-            final Schedule schedule;
             try {
-                schedule = reader.unmarshallSchedule(inputStream);
+                schedule = reader.read(inputStream, jobIdentifier, tenant, datastoreIdentifier);
             } finally {
                 FileHelper.safeClose(inputStream);
             }
-
-            final Alerts alertsType = schedule.getAlerts();
-            if (alertsType == null) {
-                alerts = Collections.emptyList();
-            } else {
-                alerts = alertsType.getAlert();
-            }
-
-            cronExpression = schedule.getCronExpression();
-            dependentJobName = schedule.getDependentJob();
         }
 
-        final ScheduleDefinition scheduleDefinition;
-
-        final JobIdentifier jobIdentifier = new JobIdentifier(jobName);
-        final String datastoreName = context.getJob(jobIdentifier).getSourceDatastoreName();
-        final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
-
-        if (dependentJobName == null) {
-            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, cronExpression, datastoreIdentifier);
-        } else {
-            final JobIdentifier scheduleAfterJob = new JobIdentifier(dependentJobName);
-
-            scheduleDefinition = new ScheduleDefinition(tenant, jobIdentifier, scheduleAfterJob, datastoreIdentifier);
-        }
-
-        for (Alert alert : alerts) {
-            final AlertDefinition alertDefinition = reader.createAlert(alert);
-            scheduleDefinition.getAlerts().add(alertDefinition);
-        }
-
-        return scheduleDefinition;
+        return schedule;
     }
 
     @Override
@@ -271,10 +238,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     _scheduler.scheduleJob(jobDetail, trigger);
                 } else {
                     // event based trigger (via a job listener)
+                    jobDetail.setDurability(true);
                     _scheduler.addJob(jobDetail, true);
 
                     final ExecuteJobListener listener = new ExecuteJobListener(jobListenerName, schedule);
-                    _scheduler.addJobListener(listener);
+                    _scheduler.addGlobalJobListener(listener);
                     logger.info("Adding listener to scheduler: {}", jobListenerName);
                 }
             }
@@ -323,12 +291,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        // TODO: Consider using the existing schedule for the job instead of
-        // creating a new here.
-        final ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, (String) null, null);
+        final ScheduleDefinition schedule = getSchedule(tenant, job.getName());
 
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
+        // TODO: Consider using scheduler.triggerJob ... That will also trigger listeners. 
         ExecuteJob.executeJob(context, execution);
 
         return execution;
@@ -347,7 +314,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             return null;
         }
 
-        return readExecutionLogFile(latestFile);
+        return readExecutionLogFile(latestFile, tenant);
     }
 
     @Override
@@ -386,14 +353,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new IllegalArgumentException("No execution with result id: " + resultId);
         }
 
-        return readExecutionLogFile(file);
+        return readExecutionLogFile(file, tenant);
     }
 
-    private ExecutionLog readExecutionLogFile(final RepositoryFile file) {
+    private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant) {
         final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
         final InputStream in = file.readFile();
         try {
-            return reader.read(in);
+            return reader.read(in, tenant);
         } finally {
             FileHelper.safeClose(in);
         }

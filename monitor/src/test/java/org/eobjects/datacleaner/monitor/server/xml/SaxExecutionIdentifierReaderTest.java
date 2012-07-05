@@ -44,7 +44,8 @@ public class SaxExecutionIdentifierReaderTest extends TestCase {
     public void testRead() throws Exception {
 
         final ScheduleDefinition schedule = new ScheduleDefinition(new TenantIdentifier("DC"),
-                new JobIdentifier("job1"), new JobIdentifier("job2"), new DatastoreIdentifier("my_ds"));
+                new JobIdentifier("job1"), new DatastoreIdentifier("my_ds"));
+        schedule.setDependentJob(new JobIdentifier("job2"));
         final ExecutionLog executionLog = new ExecutionLog();
         executionLog.setResultId("my-result");
         executionLog.setSchedule(schedule);

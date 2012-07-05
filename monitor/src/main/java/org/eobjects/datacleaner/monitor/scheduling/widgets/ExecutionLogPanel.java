@@ -96,7 +96,7 @@ public class ExecutionLogPanel extends Composite {
                 triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
                 break;
             case DEPENDENT:
-                triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getCronExpression() + "'");
+                triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName() + "'");
                 break;
             case MANUAL:
                 triggerLabel.setText("Manually triggered");

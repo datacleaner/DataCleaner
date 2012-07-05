@@ -54,17 +54,23 @@ public class ExecuteJobListener extends JobListenerSupport {
         final String jobName = context.getJobDetail().getName();
         final String expectedJobName = _schedule.getDependentJob().getName();
         if (jobName.equals(expectedJobName)) {
+            logger.debug("Looked for job '{}', found it!", expectedJobName);
             final String tenantId = context.getJobDetail().getGroup();
             final String expectedTenantId = _schedule.getTenant().getId();
             if (tenantId.equals(expectedTenantId)) {
+                logger.debug("Looked for tenant '{}', found it!", expectedTenantId);
                 Scheduler scheduler = context.getScheduler();
                 scheduleExecution(scheduler);
+            } else {
+                logger.debug("Looked for tenant '{}', found tenant '{}'", expectedTenantId, tenantId);
             }
+        } else {
+            logger.debug("Looked for job '{}', found job '{}'", expectedJobName, jobName);
         }
     }
-
+    
     private void scheduleExecution(Scheduler scheduler) {
-        final String jobName = _schedule.getDependentJob().getName();
+        final String jobName = _schedule.getJob().getName();
         final String tenantId = _schedule.getTenant().getId();
         try {
             scheduler.triggerJob(jobName, tenantId);

@@ -31,7 +31,9 @@ import org.eobjects.datacleaner.monitor.jaxb.ExecutionType;
 import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
+import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 /**
  * Reader of {@link ExecutionLog} objects.
@@ -49,20 +51,21 @@ public class JaxbExecutionLogReader {
         }
     }
 
-    public ExecutionLog read(InputStream inputStream) {
+    public ExecutionLog read(InputStream inputStream, TenantIdentifier tenant) {
         try {
             Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
             unmarshaller.setEventHandler(new JaxbValidationEventHandler());
             org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = (org.eobjects.datacleaner.monitor.jaxb.ExecutionLog) unmarshaller
                     .unmarshal(inputStream);
-            ExecutionLog executionLog = convert(jaxbExecutionLog);
+            ExecutionLog executionLog = convert(jaxbExecutionLog, tenant);
             return executionLog;
         } catch (JAXBException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    private ExecutionLog convert(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog) {
+    private ExecutionLog convert(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,
+            TenantIdentifier tenant) {
 
         final ExecutionLog executionLog = new ExecutionLog();
         executionLog.setResultId(jaxbExecutionLog.getResultId());
@@ -88,6 +91,11 @@ public class JaxbExecutionLogReader {
         }
 
         executionLog.setLogOutput(jaxbExecutionLog.getLogOutput());
+
+        final JaxbScheduleReader reader = new JaxbScheduleReader();
+        final ScheduleDefinition schedule = reader.createSchedule(jaxbExecutionLog.getSchedule(), null, tenant, null,
+                false);
+        executionLog.setSchedule(schedule);
 
         return executionLog;
     }

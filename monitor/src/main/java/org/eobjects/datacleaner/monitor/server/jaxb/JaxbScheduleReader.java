@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -31,9 +32,14 @@ import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
+import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
+import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 /**
  * JAXB based reader of .schedule.xml files
@@ -49,6 +55,13 @@ public class JaxbScheduleReader {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public ScheduleDefinition read(InputStream inputStream, JobIdentifier job, TenantIdentifier tenant,
+            DatastoreIdentifier datastore) {
+        final Schedule schedule = unmarshallSchedule(inputStream);
+        final ScheduleDefinition scheduleDefinition = createSchedule(schedule, job, tenant, datastore, true);
+        return scheduleDefinition;
     }
 
     public Schedule unmarshallSchedule(InputStream inputStream) {
@@ -96,6 +109,33 @@ public class JaxbScheduleReader {
         default:
             throw new UnsupportedOperationException("Unsupported severity: " + severity);
         }
+    }
+
+    public ScheduleDefinition createSchedule(Schedule schedule, JobIdentifier job, TenantIdentifier tenant,
+            DatastoreIdentifier datastore, boolean includeAlerts) {
+        final ScheduleDefinition scheduleDefinition = new ScheduleDefinition();
+        if (schedule != null) {
+            scheduleDefinition.setCronExpression(schedule.getCronExpression());
+            final String jaxbDependentJob = schedule.getDependentJob();
+            if (jaxbDependentJob != null) {
+                scheduleDefinition.setDependentJob(new JobIdentifier(jaxbDependentJob));
+            }
+        }
+        scheduleDefinition.setJob(job);
+        scheduleDefinition.setTenant(tenant);
+        scheduleDefinition.setDatastore(datastore);
+
+        if (includeAlerts && schedule != null) {
+            final Alerts jaxbAlerts = schedule.getAlerts();
+            if (jaxbAlerts != null) {
+                List<Alert> alertList = jaxbAlerts.getAlert();
+                for (Alert jaxbAlert : alertList) {
+                    AlertDefinition alert = createAlert(jaxbAlert);
+                    scheduleDefinition.getAlerts().add(alert);
+                }
+            }
+        }
+        return scheduleDefinition;
     }
 
 }

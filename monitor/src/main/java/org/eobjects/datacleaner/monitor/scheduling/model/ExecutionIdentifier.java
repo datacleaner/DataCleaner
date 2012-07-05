@@ -52,6 +52,14 @@ public class ExecutionIdentifier implements IsSerializable {
         _resultId = resultId;
     }
 
+    /**
+     * Gets the trigger type of this execution. Note that this trigger type
+     * MIGHT NOT be the same as the TriggerType in the Schedule of the job (
+     * {@link ExecutionLog#getSchedule()}), since the execution might be
+     * manually triggered while also having a defined schedule.
+     * 
+     * @return
+     */
     public TriggerType getTriggerType() {
         return _triggerType;
     }

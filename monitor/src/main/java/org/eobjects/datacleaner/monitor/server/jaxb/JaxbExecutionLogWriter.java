@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 import java.io.OutputStream;
 
 import org.eobjects.datacleaner.monitor.jaxb.ExecutionType;
+import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.jaxb.TriggerType;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
@@ -47,6 +48,11 @@ public class JaxbExecutionLogWriter extends JaxbWriter<org.eobjects.datacleaner.
         result.setJobEndDate(createDate(executionLog.getJobEndDate()));
         result.setTriggerType(createTriggerType(executionLog.getTriggerType()));
         result.setLogOutput(executionLog.getLogOutput());
+        
+        final JaxbScheduleWriter scheduleWriter = new JaxbScheduleWriter();
+        final Schedule schedule = scheduleWriter.createSchedule(executionLog.getSchedule());
+        
+        result.setSchedule(schedule);
         return result;
     }
 

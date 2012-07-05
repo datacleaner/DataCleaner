@@ -44,19 +44,9 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
     public ScheduleDefinition() {
     }
 
-    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String scheduleExpression,
-            DatastoreIdentifier datastoreIdentifier) {
+    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, DatastoreIdentifier datastoreIdentifier) {
         _tenant = tenant;
         _job = job;
-        _cronExpression = scheduleExpression;
-        _datastore = datastoreIdentifier;
-    }
-
-    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, JobIdentifier scheduleAfterJob,
-            DatastoreIdentifier datastoreIdentifier) {
-        _tenant = tenant;
-        _job = job;
-        _dependentJob = scheduleAfterJob;
         _datastore = datastoreIdentifier;
     }
 
@@ -64,8 +54,16 @@ public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDe
         return _tenant;
     }
 
+    public void setTenant(TenantIdentifier tenant) {
+        _tenant = tenant;
+    }
+
     public JobIdentifier getJob() {
         return _job;
+    }
+
+    public void setJob(JobIdentifier job) {
+        _job = job;
     }
 
     public void setCronExpression(String cronExpression) {

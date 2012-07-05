@@ -47,6 +47,9 @@ public class JaxbScheduleWriter extends JaxbWriter<Schedule> {
 
     public Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
         final Schedule schedule = getObjectFactory().createSchedule();
+        if (scheduleDefinition == null) {
+            return schedule;
+        }
 
         if (scheduleDefinition.getTriggerType() == TriggerType.DEPENDENT) {
             final JobIdentifier scheduleAfterJob = scheduleDefinition.getDependentJob();

@@ -70,7 +70,7 @@ public class LaunchDataCleanerController {
 
         final String baseUrl = createBaseUrl(request, tenant);
         final String jnlpHref = "jobs/" + jobName + ".launch.jnlp";
-        final String jobUrl = baseUrl + "/jobs/" + jobName + ".analysis.xml";
+        final String jobUrl = baseUrl + '/' + RESOURCES_FOLDER + jobName + ".analysis.xml";
         final String datastoreName = job.getSourceDatastoreName();
         final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml";
 

@@ -7,13 +7,17 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!-- HTTP basic authentication for the repository RESTful services -->
-	<http pattern="/repository/**">
-		<intercept-url pattern="/**" access="ROLE_USER" />
+	<http pattern="/repository/**" realm="DataCleaner dq monitor">
+		<anonymous enabled="true" username="anonymous" />
+		
+		<intercept-url pattern="/*/launch-resources/*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+		<intercept-url pattern="/*/jobs/**" access="ROLE_USER" />
+		<intercept-url pattern="/*/results/**" access="ROLE_USER" />
 		<http-basic />
 	</http>
 
 	<!-- Form based authentication for the web pages -->
-	<http auto-config="true">
+	<http auto-config="true" realm="DataCleaner dq monitor">
 		<anonymous enabled="true" username="anonymous" />
 
 		<!-- unprotected urls -->

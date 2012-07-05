@@ -97,12 +97,15 @@ public class SingleDatePropertyWidget extends AbstractPropertyWidget<Date> {
     protected void setValue(Date value) {
         if (value instanceof NowDate) {
             _dateNowRadio.setSelected(true);
-        } else if (value == null || value instanceof TodayDate) {
+        } else if (value instanceof TodayDate) {
             _dateTodayRadio.setSelected(true);
         } else if (value instanceof YesterdayDate) {
             _dateYesterdayRadio.setSelected(true);
         } else {
-            _datePicker.setDate(value);
+            _dateCustomRadio.setSelected(true);
+            if (value != null) {
+                _datePicker.setDate(value);
+            }
         }
     }
 }

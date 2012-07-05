@@ -91,6 +91,10 @@ public final class HttpXmlUtils {
         final ClientConnectionManager connectionManager = new PoolingClientConnectionManager();
         final DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager);
 
+        if (_userPreferences.getMonitorConnection() != null) {
+            _userPreferences.getMonitorConnection().prepareClient(httpClient);
+        }
+
         if (_userPreferences.isProxyEnabled()) {
             // set up HTTP proxy
             final String proxyHostname = _userPreferences.getProxyHostname();

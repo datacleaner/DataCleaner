@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE jnlp PUBLIC "-//Sun Microsystems, Inc//DTD JNLP Descriptor 6.0//EN" "http://java.sun.com/dtd/JNLP-6.0.dtd">
-<jnlp spec="1.0+" codebase="http://localhost:80/DataCleaner-monitor/repository/DC" href="jobs/my_job.launch.jnlp">
+<jnlp spec="1.0+" codebase="http://localhost:80/DataCleaner-monitor/repository/DC">
 	<information>
 		<title>DataCleaner dq monitor client</title>
 		<vendor>Human Inference</vendor>
@@ -22,7 +22,7 @@
 		<argument>-conf</argument>
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/conf.xml</argument>
 		<argument>-job</argument>
-		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/jobs/my_job.analysis.xml</argument>
+		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/my_job.analysis.xml</argument>
 		<argument>-ds</argument>
 		<argument>my_datastore</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>

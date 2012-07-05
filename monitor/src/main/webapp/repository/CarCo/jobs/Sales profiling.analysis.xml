@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+    <job-metadata>
+        <job-description>Created with DataCleaner 3.0-SNAPSHOT</job-description>
+        <updated-date>2012-07-05+02:00</updated-date>
+    </job-metadata>
+    <source>
+        <data-context ref="Source 1: Car sales"/>
+        <columns>
+            <column path="sales.txt.sales.Color" id="col_0"/>
+            <column path="sales.txt.sales.Model" id="col_1"/>
+            <column path="sales.txt.sales.Source" id="col_2"/>
+        </columns>
+    </source>
+    <transformation>
+        <transformer name="Clean color">
+            <descriptor ref="Synonym lookup"/>
+            <properties>
+                <property value="true" name="Retain original value"/>
+                <property value="Color synonyms" name="Synonym catalog"/>
+            </properties>
+            <input ref="col_0"/>
+            <output id="col_6" name="Color (cleansed)"/>
+        </transformer>
+        <transformer>
+            <descriptor ref="Table lookup"/>
+            <properties>
+                <property value="[Color,Name]" name="Condition columns"/>
+                <property value="Source 2: Car model design" name="Datastore"/>
+                <property value="[Engine type]" name="Output columns"/>
+                <property value="design.txt" name="Schema name"/>
+                <property value="design" name="Table name"/>
+            </properties>
+            <input ref="col_6"/>
+            <input ref="col_1"/>
+            <output id="col_5" name="Engine type (lookup)"/>
+        </transformer>
+        <transformer name="Get city">
+            <descriptor ref="JavaScript transformer"/>
+            <properties>
+                <property value="STRING" name="Return type"/>
+                <property value="function eval() {&#xA;&#x9;var value = values&amp;#91;0&amp;#93;;&#xA;&#x9;if (value.indexOf(&amp;quot;Shop (&amp;quot;) == 0) {&#xA;&#x9;&#x9;return value.substring(6&amp;#44; value.indexOf(&amp;quot;)&amp;quot;));&#xA;&#x9;}&#xA;&#x9;return &amp;quot;(Internet)&amp;quot;;&#xA;}&#xA;eval();" name="Source code"/>
+            </properties>
+            <input ref="col_2"/>
+            <output id="col_4" name="City (dirty)"/>
+        </transformer>
+        <transformer name="Clean city">
+            <descriptor ref="Synonym lookup"/>
+            <properties>
+                <property value="true" name="Retain original value"/>
+                <property value="City synonyms" name="Synonym catalog"/>
+            </properties>
+            <input ref="col_4"/>
+            <output id="col_3" name="City (clean)"/>
+        </transformer>
+    </transformation>
+    <analysis>
+        <analyzer name="Sales per engine type">
+            <descriptor ref="Value distribution"/>
+            <properties>
+                <property value="true" name="Record unique values"/>
+                <property value="true" name="Record drill-down information"/>
+                <property value="&lt;null&gt;" name="Top n most frequent values"/>
+                <property value="&lt;null&gt;" name="Bottom n most frequent values"/>
+            </properties>
+            <input name="Column" ref="col_5"/>
+        </analyzer>
+        <analyzer name="Sales per city">
+            <descriptor ref="Value distribution"/>
+            <properties>
+                <property value="true" name="Record unique values"/>
+                <property value="true" name="Record drill-down information"/>
+                <property value="&lt;null&gt;" name="Top n most frequent values"/>
+                <property value="&lt;null&gt;" name="Bottom n most frequent values"/>
+            </properties>
+            <input name="Column" ref="col_3"/>
+        </analyzer>
+        <analyzer name="Sales per city">
+            <descriptor ref="Value distribution"/>
+            <properties>
+                <property value="true" name="Record unique values"/>
+                <property value="true" name="Record drill-down information"/>
+                <property value="&lt;null&gt;" name="Top n most frequent values"/>
+                <property value="&lt;null&gt;" name="Bottom n most frequent values"/>
+            </properties>
+            <input name="Column" ref="col_4"/>
+        </analyzer>
+    </analysis>
+</job>

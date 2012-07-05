@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:timeline xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns3:job-name>Sales profiling</ns3:job-name>
+    <ns3:metrics>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-name>Sales per engine type</ns2:analyzer-name>
+            <ns2:analyzer-input>Engine type (lookup)</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>Hybrid</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-name>Sales per engine type</ns2:analyzer-name>
+            <ns2:analyzer-input>Engine type (lookup)</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>Gasoline</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-name>Sales per engine type</ns2:analyzer-name>
+            <ns2:analyzer-input>Engine type (lookup)</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>Electric</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-name>Sales per engine type</ns2:analyzer-name>
+            <ns2:analyzer-input>Engine type (lookup)</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>Diesel</ns2:metric-param-query-string>
+        </ns2:metric>
+    </ns3:metrics>
+</ns3:timeline>

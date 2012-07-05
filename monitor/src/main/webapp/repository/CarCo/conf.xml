@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<datastore-catalog>
+		
+		<csv-datastore name="Source 1: Car sales">
+			<filename>datastores/sales.txt</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+			<encoding>UTF-8</encoding>
+			<fail-on-inconsistencies>true</fail-on-inconsistencies>
+		</csv-datastore>
+		
+		<csv-datastore name="Source 2: Car model design">
+			<filename>datastores/design.txt</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+			<encoding>UTF-8</encoding>
+			<fail-on-inconsistencies>true</fail-on-inconsistencies>
+		</csv-datastore>
+		
+		<excel-datastore name="Synonym store">
+			<filename>datastores/synonyms.xls</filename>
+		</excel-datastore>
+		
+		<csv-datastore name="Target 1: Single view of Customers">
+			<filename>datastores/target_customers.txt</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+			<encoding>UTF-8</encoding>
+			<fail-on-inconsistencies>true</fail-on-inconsistencies>
+		</csv-datastore>
+		
+		<csv-datastore name="Target 2: Single view of Cars">
+			<filename>datastores/target_cars.txt</filename>
+			<quote-char>"</quote-char>
+			<separator-char>,</separator-char>
+			<encoding>UTF-8</encoding>
+			<fail-on-inconsistencies>true</fail-on-inconsistencies>
+		</csv-datastore>
+	</datastore-catalog>
+
+	<reference-data-catalog>
+		<dictionaries>
+			<value-list-dictionary name="Engine types">
+				<value>Gasoline</value>
+				<value>Diesel</value>
+				<value>Hybrid</value>
+				<value>Elecric</value>
+			</value-list-dictionary>
+		</dictionaries>
+		<synonym-catalogs>
+			<datastore-synonym-catalog name="Color synonyms">
+				<datastore-name>Synonym store</datastore-name>
+				<master-term-column-path>colors.master</master-term-column-path>
+				<synonym-column-path>colors.synonym</synonym-column-path>
+			</datastore-synonym-catalog>
+			
+			<datastore-synonym-catalog name="City synonyms">
+				<datastore-name>Synonym store</datastore-name>
+				<master-term-column-path>cities.master</master-term-column-path>
+				<synonym-column-path>cities.synonym</synonym-column-path>
+			</datastore-synonym-catalog>
+		</synonym-catalogs>
+	</reference-data-catalog>
+
+	<custom-taskrunner
+		class-name="org.eobjects.datacleaner.monitor.configuration.SharedTaskRunner" />
+
+	<storage-provider>
+		<in-memory max-rows-threshold="500" />
+	</storage-provider>
+
+	<custom-descriptor-provider
+		class-name="org.eobjects.datacleaner.monitor.configuration.SharedDescriptorProvider" />
+
+
+</configuration>

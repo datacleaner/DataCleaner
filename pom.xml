@@ -24,8 +24,8 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>core</module>
-		<module>monitor</module>
 		<module>packaging</module>
+		<module>monitor</module>
 		<module>extensions</module>
 	</modules>
 	<profiles>

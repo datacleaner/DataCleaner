@@ -14,21 +14,27 @@
 	<g:HTMLPanel>
 		<g:Button ui:field="newTimelineButton" text="New timeline" />
 		<g:Button ui:field="toggleWelcomeTextButton" styleName="toggleWelcomeTextButton" />
-		<g:HTMLPanel ui:field="welcomeTextPanel" styleName="welcomeTextPanel">
-			<h2>
-				Welcome to
-				<span class="blue">DataCleaner</span>
-				<span class="orange">dq monitor</span>
-			</h2>
-			<p>This web application is used for creating, sharing and monitoring
-				data quality metrics and managing DataCleaner jobs.</p>
-			<p>Manage these metrics like the KPIs of your data quality efforts,
-				to ensure a steady delivery of high quality data for your
-				organization.</p>
-			<p>Also play around with the metrics to discover trends and explore
-				the depths of your data profiling initiatives over time.</p>
-			<p>Please click the new timeline button to start working with this
-				application.</p>
+		<g:HTMLPanel ui:field="welcomeTextPanel" styleName="InfographicContainer">
+			<div class="InfographicPart InfographicIntro">
+				<h1>
+					Welcome to <span class="blue">DataCleaner</span> <span class="orange">dq monitor</span>
+				</h1>
+				<span class="ScrollDownTeaser">
+					<a href="#first_infographic_part">What is it?</a>
+				</span>
+			</div>
+			<div class="InfographicPart InfographicEvolution">
+				<a name="first_infographic_part"></a>
+				<h2>Monitor the evolution of your data</h2>
+				<div class="Description">DataCleaner dq monitor helps your visualize and
+					explore the evolution of your data. Use it to surveil your data
+					activities and manage your data’s quality.</div>
+			</div>
+			<div class="InfographicPart InfographicImprove">
+				<h2>Continuously improve your data’s quality</h2>
+				<div class="Description">DataCleaner dq monitor orchestrates and schedules
+					DataCleaner jobs, used to cleanse and enrich your data.</div>
+			</div>
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

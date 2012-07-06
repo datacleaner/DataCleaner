@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.user;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
@@ -70,25 +71,42 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
         final JaxbConfigurationReader configurationReader = new JaxbConfigurationReader(
                 new DataCleanerConfigurationReaderInterceptor(_dataCleanerHome));
 
-        AnalyzerBeansConfiguration c;
+        boolean exists;
         try {
-            c = configurationReader.create(_configurationFile.getContent().getInputStream());
-            logger.info("Succesfully read configuration from {}", _configurationFile.getName().getPath());
-        } catch (Exception ex1) {
-            logger.warn("Unexpected error while reading conf.xml from DataCleanerHome!", ex1);
-            logger.info("Reading conf.xml from classpath");
+            exists = _configurationFile.exists();
+        } catch (FileSystemException e1) {
+            logger.debug("Could not determine if configuration file exists");
+            exists = false;
+        }
+
+        final AnalyzerBeansConfiguration c;
+        if (exists) {
             try {
-                c = configurationReader.create(ResourceManager.getInstance().getUrl("datacleaner-home/conf.xml")
-                        .openStream());
-            } catch (Exception ex2) {
-                logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
-                logger.warn("Creating a bare-minimum configuration because of previous errors!");
-                c = new AnalyzerBeansConfigurationImpl(new DatastoreCatalogImpl(), new ReferenceDataCatalogImpl(),
-                        new SimpleDescriptorProvider(), new SingleThreadedTaskRunner(), new InMemoryStorageProvider());
+                c = configurationReader.create(_configurationFile.getContent().getInputStream());
+                logger.info("Succesfully read configuration from {}", _configurationFile.getName().getPath());
+            } catch (FileSystemException e) {
+                throw new IllegalStateException("Unexpected error while reading configuration file: "
+                        + _configurationFile, e);
             }
+        } else {
+            logger.info("Configuration file does not exist, reading built-in configuration.");
+            c = getConfigurationFromClasspath(configurationReader);
         }
 
         return c;
+    }
+
+    private AnalyzerBeansConfiguration getConfigurationFromClasspath(JaxbConfigurationReader configurationReader) {
+        logger.info("Reading conf.xml from classpath");
+        try {
+            return configurationReader.create(ResourceManager.getInstance().getUrl("datacleaner-home/conf.xml")
+                    .openStream());
+        } catch (Exception ex2) {
+            logger.warn("Unexpected error while reading conf.xml from classpath!", ex2);
+            logger.warn("Creating a bare-minimum configuration because of previous errors!");
+            return new AnalyzerBeansConfigurationImpl(new DatastoreCatalogImpl(), new ReferenceDataCatalogImpl(),
+                    new SimpleDescriptorProvider(), new SingleThreadedTaskRunner(), new InMemoryStorageProvider());
+        }
     }
 
 }

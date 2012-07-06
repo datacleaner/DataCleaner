@@ -73,7 +73,7 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
 
         boolean exists;
         try {
-            exists = _configurationFile.exists();
+            exists = _configurationFile != null && _configurationFile.exists();
         } catch (FileSystemException e1) {
             logger.debug("Could not determine if configuration file exists");
             exists = false;

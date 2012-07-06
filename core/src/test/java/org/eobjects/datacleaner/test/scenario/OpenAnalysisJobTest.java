@@ -30,12 +30,13 @@ import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.guice.DCModule;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 public class OpenAnalysisJobTest extends TestCase {
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -53,17 +54,22 @@ public class OpenAnalysisJobTest extends TestCase {
             System.out.println("!!! Skipping test because environment is headless: " + getName());
             return;
         }
-        
+
         DCModule module = new DCModule();
         Injector injector = Guice.createInjector(module);
         AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
         FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.xml");
 
-        AnalysisJobBuilderWindow window = OpenAnalysisJobActionListener.open(file, configuration, injector);
+        injector = OpenAnalysisJobActionListener.open(file, configuration, injector);
+        AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+
         assertNotNull(window);
-        
+
         assertEquals("all_analyzers.analysis.xml", window.getJobFilename());
+
+        ((AnalysisJobBuilderWindowImpl) window).updateStatusLabel();
+
         assertEquals("Job is correctly configured", window.getStatusLabelText());
     }
 }

@@ -118,17 +118,11 @@ public final class Bootstrap {
             }
         }
 
-        final FileObject dataCleanerHome = DataCleanerHome.get();
         final String configurationFilePath = arguments.getConfigurationFile();
 
-        final FileObject configurationFile;
-        if (configurationFilePath == null) {
-            configurationFile = dataCleanerHome.resolveFile("conf.xml");
-        } else {
-            configurationFile = VFSUtils.getFileSystemManager().resolveFile(configurationFilePath);
-        }
+        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml");
 
-        Injector injector = Guice.createInjector(new DCModule(dataCleanerHome, configurationFile));
+        Injector injector = Guice.createInjector(new DCModule(DataCleanerHome.get(), configurationFile));
 
         // configuration loading can be multithreaded, so begin early
         final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
@@ -172,12 +166,12 @@ public final class Bootstrap {
 
             // check for job file
             final String jobFilePath = _options.getCommandLineArguments().getJobFile();
-            if (jobFilePath == null) {
-                analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
-            } else {
-                final FileObject jobFile = VFSUtils.getFileSystemManager().resolveFile(jobFilePath);
-                analysisJobBuilderWindow = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
+            if (jobFilePath != null) {
+                final FileObject jobFile = resolveFile(jobFilePath, null);
+                injector = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
             }
+
+            analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 
             final Datastore singleDatastore;
             if (_options.isSingleDatastoreMode()) {
@@ -200,7 +194,7 @@ public final class Bootstrap {
             if (singleDatastore != null) {
                 // this part has to be done after displaying the window (a lot
                 // of initialization goes on there)
-                final AnalysisJobBuilder analysisJobBuilder = injector.getInstance(AnalysisJobBuilder.class);
+                final AnalysisJobBuilder analysisJobBuilder = analysisJobBuilderWindow.getAnalysisJobBuilder();
                 final DatastoreConnection con = singleDatastore.openConnection();
                 final InjectorBuilder injectorBuilder = injector.getInstance(InjectorBuilder.class);
                 try {
@@ -240,6 +234,23 @@ public final class Bootstrap {
             if (exitActionListener != null) {
                 windowContext.addExitActionListener(exitActionListener);
             }
+        }
+    }
+
+    private FileObject resolveFile(String filename, String fallbackFilename) throws FileSystemException {
+        final FileObject dataCleanerHome = DataCleanerHome.get();
+        if (filename == null) {
+            return dataCleanerHome.resolveFile(fallbackFilename);
+        } else {
+            String lowerCaseFilename = filename.toLowerCase();
+            if (lowerCaseFilename.startsWith("http://") || lowerCaseFilename.startsWith("https://")) {
+                if (!GraphicsEnvironment.isHeadless()) {
+                    // show loading indicator that the file is being downloaded
+
+                }
+            }
+
+            return VFSUtils.getFileSystemManager().resolveFile(filename);
         }
     }
 

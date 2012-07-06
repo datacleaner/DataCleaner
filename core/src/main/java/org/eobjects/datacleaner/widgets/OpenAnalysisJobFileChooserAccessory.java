@@ -48,10 +48,13 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 import org.jdesktop.swingx.VerticalLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Injector;
 
 /**
  * The FileChooser "accessory" that will display analysis job information when
@@ -128,7 +131,9 @@ public class OpenAnalysisJobFileChooserAccessory extends DCPanel implements Prop
             public void actionPerformed(ActionEvent e) {
                 OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
                         .get();
-                openAnalysisJobActionListener.openAnalysisJob(_file);
+                final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file);
+                final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+                window.open();
                 _fileChooser.cancelSelection();
             }
         });

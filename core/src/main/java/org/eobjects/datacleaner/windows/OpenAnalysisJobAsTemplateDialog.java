@@ -61,6 +61,8 @@ import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 
+import com.google.inject.Injector;
+
 /**
  * Dialog for opening a job as a template. This feature allows the user to reuse
  * an existing job but on a new set of columns, typically from a different
@@ -121,11 +123,14 @@ public class OpenAnalysisJobAsTemplateDialog extends AbstractDialog {
                         FileHelper.safeClose(inputStream);
                     }
 
-                    OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
+                    final OpenAnalysisJobActionListener openAnalysisJobActionListener = _openAnalysisJobActionListenerProvider
                             .get();
-                    openAnalysisJobActionListener.openAnalysisJob(_file, ajb);
+                    final Injector injector = openAnalysisJobActionListener.openAnalysisJob(_file, ajb);
 
                     OpenAnalysisJobAsTemplateDialog.this.dispose();
+
+                    final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+                    window.open();
                 } catch (Exception e1) {
                     throw new IllegalStateException(e1);
                 }

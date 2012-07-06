@@ -35,73 +35,80 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
  */
 public interface AnalysisJobBuilderWindow extends DCWindow {
 
-	/**
-	 * Gets whether or not the datastore has been set in this window (ie. if the
-	 * tree is showing a datastore).
-	 * 
-	 * @return true if a datastore is set.
-	 */
-	public boolean isDatastoreSet();
+    /**
+     * Gets whether or not the datastore has been set in this window (ie. if the
+     * tree is showing a datastore).
+     * 
+     * @return true if a datastore is set.
+     */
+    public boolean isDatastoreSet();
 
-	/**
-	 * Initializes the window to use a particular datastore in the schema tree.
-	 * 
-	 * @param datastore
-	 */
-	public void setDatastore(final Datastore datastore);
+    /**
+     * Initializes the window to use a particular datastore in the schema tree.
+     * 
+     * @param datastore
+     */
+    public void setDatastore(final Datastore datastore);
 
-	/**
-	 * Initializes the window to use a particular datastore in the schema tree.
-	 * 
-	 * @param datastore
-	 * @param expandTree
-	 *            true if the datastore tree should be initially expanded.
-	 */
-	public void setDatastore(final Datastore datastore, boolean expandTree);
+    /**
+     * Initializes the window to use a particular datastore in the schema tree.
+     * 
+     * @param datastore
+     * @param expandTree
+     *            true if the datastore tree should be initially expanded.
+     */
+    public void setDatastore(final Datastore datastore, boolean expandTree);
 
-	/**
-	 * Sets the job filename of the window (will be visible in the title and
-	 * more).
-	 * 
-	 * @param jobFilename
-	 */
-	public void setJobFilename(String jobFilename);
+    /**
+     * Sets the job filename of the window (will be visible in the title and
+     * more).
+     * 
+     * @param jobFilename
+     */
+    public void setJobFilename(String jobFilename);
 
-	/**
-	 * Gets the current job filename
-	 * 
-	 * @return
-	 */
-	public String getJobFilename();
+    /**
+     * Gets the current job filename
+     * 
+     * @return
+     */
+    public String getJobFilename();
 
-	/**
-	 * Sets whether or not datastore selection should be enabled (default is
-	 * true). If disabled, only a single datastore will be usable within this
-	 * window.
-	 * 
-	 * @param datastoreSelectionEnabled
-	 */
-	public void setDatastoreSelectionEnabled(boolean datastoreSelectionEnabled);
+    /**
+     * Sets whether or not datastore selection should be enabled (default is
+     * true). If disabled, only a single datastore will be usable within this
+     * window.
+     * 
+     * @param datastoreSelectionEnabled
+     */
+    public void setDatastoreSelectionEnabled(boolean datastoreSelectionEnabled);
 
-	/**
-	 * Gets whether datastore selection is enabled.
-	 * 
-	 * @see #setDatastoreSelectionEnabled(boolean)
-	 * @return a boolean indicating whether or not datastore selection is
-	 *         enabled.
-	 */
-	public boolean isDatastoreSelectionEnabled();
+    /**
+     * Gets whether datastore selection is enabled.
+     * 
+     * @see #setDatastoreSelectionEnabled(boolean)
+     * @return a boolean indicating whether or not datastore selection is
+     *         enabled.
+     */
+    public boolean isDatastoreSelectionEnabled();
 
-	/**
-	 * Applies property values for all job components visible in the window.
-	 */
-	public void applyPropertyValues();
+    /**
+     * Applies property values for all job components visible in the window.
+     */
+    public void applyPropertyValues();
 
-	/**
-	 * Gets the status text of the status label. Useful if something goes wrong
-	 * - this status label will typically have a humanly readable explanation.
-	 * 
-	 * @return
-	 */
-	public String getStatusLabelText();
+    /**
+     * Gets the status text of the status label. Useful if something goes wrong
+     * - this status label will typically have a humanly readable explanation.
+     * 
+     * @return
+     */
+    public String getStatusLabelText();
+
+    /**
+     * Gets the {@link AnalysisJobBuilder} that the window currently represents.
+     * 
+     * @return
+     */
+    public AnalysisJobBuilder getAnalysisJobBuilder();
 }

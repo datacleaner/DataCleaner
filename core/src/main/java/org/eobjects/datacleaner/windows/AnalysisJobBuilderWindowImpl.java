@@ -371,7 +371,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         displayDatastoreSelection();
     }
 
-    private void updateStatusLabel() {
+    public void updateStatusLabel() {
         boolean success = false;
 
         if (_datastore == null) {
@@ -920,5 +920,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     public void onRemove(InputColumn<?> sourceColumn) {
         onSourceColumnsChanged();
         updateStatusLabel();
+    }
+
+    @Override
+    public AnalysisJobBuilder getAnalysisJobBuilder() {
+        return _analysisJobBuilder;
     }
 }

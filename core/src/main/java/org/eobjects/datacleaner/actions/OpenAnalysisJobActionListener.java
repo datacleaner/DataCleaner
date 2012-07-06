@@ -105,10 +105,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         }
     }
 
-    public static AnalysisJobBuilderWindow open(FileObject file, AnalyzerBeansConfiguration configuration,
-            Injector injector) {
-        UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
-        OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
+    public static Injector open(FileObject file, AnalyzerBeansConfiguration configuration, Injector injector) {
+        final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
+        final OpenAnalysisJobActionListener openAnalysisJobActionListener = new OpenAnalysisJobActionListener(null,
                 configuration, null, injector.getInstance(DCModule.class), userPreferences, null);
         return openAnalysisJobActionListener.openAnalysisJob(file);
     }
@@ -117,7 +116,9 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         if (file.getName().getBaseName().endsWith(FileFilters.ANALYSIS_RESULT_SER.getExtension())) {
             openAnalysisResult(file, _parentModule);
         } else {
-            openAnalysisJob(file);
+            Injector injector = openAnalysisJob(file);
+            final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
+            window.open();
         }
     }
 
@@ -158,7 +159,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
      * @param file
      * @return
      */
-    public AnalysisJobBuilderWindow openAnalysisJob(FileObject file) {
+    public Injector openAnalysisJob(FileObject file) {
         JaxbJobReader reader = new JaxbJobReader(_configuration);
         try {
             AnalysisJobBuilder ajb = reader.create(file);
@@ -191,7 +192,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
      * @param ajb
      * @return
      */
-    public AnalysisJobBuilderWindow openAnalysisJob(final FileObject fileObject, final AnalysisJobBuilder ajb) {
+    public Injector openAnalysisJob(final FileObject fileObject, final AnalysisJobBuilder ajb) {
         final File file = VFSUtils.toFile(fileObject);
 
         if (file != null) {
@@ -205,13 +206,10 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             };
         });
 
-        AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
-        window.open();
-
         if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
             _parentWindow.close();
         }
 
-        return window;
+        return injector;
     }
 }

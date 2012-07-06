@@ -23,13 +23,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.windows.AbstractDialog;
@@ -47,13 +45,12 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-public final class DCWindowContext implements WindowContext {
+public final class DCWindowContext extends SimpleWindowContext implements WindowContext {
 
 	private static final Logger logger = LoggerFactory.getLogger(DCWindowContext.class);
 
 	private static final List<WeakReference<DCWindowContext>> _allWindowContexts = new ArrayList<WeakReference<DCWindowContext>>();
 
-	private final List<DCWindow> _windows = new ArrayList<DCWindow>();
 	private final List<ActionListener> _windowListeners = new ArrayList<ActionListener>();
 	private final List<ExitActionListener> _exitActionListeners = new ArrayList<ExitActionListener>();
 	private final AnalyzerBeansConfiguration _configuration;
@@ -93,11 +90,6 @@ public final class DCWindowContext implements WindowContext {
 	}
 
 	@Override
-	public List<DCWindow> getWindows() {
-		return Collections.unmodifiableList(_windows);
-	}
-
-	@Override
 	public void addWindowListener(ActionListener listener) {
 		_windowListeners.add(listener);
 	}
@@ -109,11 +101,11 @@ public final class DCWindowContext implements WindowContext {
 
 	@Override
 	public void onDispose(DCWindow window) {
-		_windows.remove(window);
+		super.onDispose(window);
 		notifyListeners();
 
 		if (!_exiting) {
-			if (_windows.isEmpty()) {
+			if (getWindows().isEmpty()) {
 				logger.info("All DataCleaner windows closed");
 				exit();
 			}
@@ -121,7 +113,7 @@ public final class DCWindowContext implements WindowContext {
 	}
 
 	private void notifyListeners() {
-		ActionEvent event = new ActionEvent(this, _windows.size(), null);
+		ActionEvent event = new ActionEvent(this, getWindows().size(), null);
 		for (ActionListener listener : _windowListeners) {
 			listener.actionPerformed(event);
 		}
@@ -129,20 +121,9 @@ public final class DCWindowContext implements WindowContext {
 
 	@Override
 	public void onShow(DCWindow window) {
-		_windows.add(window);
+	    super.onShow(window);
 
 		notifyListeners();
-	}
-
-	@Override
-	public int getWindowCount(Class<? extends DCWindow> windowClass) {
-		int count = 0;
-		for (DCWindow window : _windows) {
-			if (ReflectionUtils.is(window.getClass(), windowClass)) {
-				count++;
-			}
-		}
-		return count;
 	}
 
 	@Override
@@ -172,7 +153,9 @@ public final class DCWindowContext implements WindowContext {
 		for (ExitActionListener actionListener : _exitActionListeners) {
 			actionListener.exit(0);
 		}
-		for (DCWindow window : new ArrayList<DCWindow>(_windows)) {
+		
+		final List<DCWindow> windowsCopy = new ArrayList<DCWindow>(getWindows());
+        for (DCWindow window : windowsCopy) {
 			window.close();
 		}
 	}

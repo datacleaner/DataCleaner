@@ -22,9 +22,11 @@ package org.eobjects.datacleaner.extensionswap;
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.vfs2.FileObject;
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -91,8 +93,8 @@ public final class ExtensionSwapClient {
     public void registerExtensionPackage(final ExtensionSwapPackage extensionSwapPackage, final String username) {
         downloadJarFile(extensionSwapPackage, username, new FileDownloadListener() {
             @Override
-            public void onFilesDownloaded(File[] files) {
-                File jarFile = files[0];
+            public void onFilesDownloaded(FileObject[] files) {
+                File jarFile = VFSUtils.toFile(files[0]);
                 registerExtensionPackage(extensionSwapPackage, jarFile);
             }
         });

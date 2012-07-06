@@ -26,10 +26,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverState;
 import org.eobjects.datacleaner.database.DriverWrapper;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,85 +47,99 @@ import org.slf4j.LoggerFactory;
  */
 public final class UserDatabaseDriver implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(UserDatabaseDriver.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserDatabaseDriver.class);
 
-	private transient Driver _driverInstance;
-	private transient Driver _registeredDriver;
-	private transient boolean _loaded = false;
-	private final File[] _files;
-	private final String _driverClassName;
+    private transient Driver _driverInstance;
+    private transient Driver _registeredDriver;
+    private transient boolean _loaded = false;
+    private final File[] _files;
+    private final String _driverClassName;
 
-	public UserDatabaseDriver(File[] files, String driverClassName) {
-		if (files == null) {
-			throw new IllegalStateException("Driver file(s) cannot be null");
-		}
-		if (driverClassName == null) {
-			throw new IllegalStateException("Driver class name cannot be null");
-		}
-		_files = files;
-		_driverClassName = driverClassName;
-	}
+    public UserDatabaseDriver(FileObject[] files, String driverClassName) {
+        this(convert(files), driverClassName);
+    }
 
-	public String getDriverClassName() {
-		return _driverClassName;
-	}
+    private static File[] convert(FileObject[] files) {
+        return CollectionUtils.map(files, new Func<FileObject, File>() {
+            @Override
+            public File eval(FileObject arg) {
+                return VFSUtils.toFile(arg);
+            }
+        }).toArray(new File[0]);
 
-	public File[] getFiles() {
-		return Arrays.copyOf(_files, _files.length);
-	}
+    }
 
-	public UserDatabaseDriver loadDriver() throws IllegalStateException {
-		if (!_loaded) {
-			ClassLoader driverClassLoader = ClassLoaderUtils.createClassLoader(_files);
+    public UserDatabaseDriver(File[] files, String driverClassName) {
+        if (files == null) {
+            throw new IllegalStateException("Driver file(s) cannot be null");
+        }
+        if (driverClassName == null) {
+            throw new IllegalStateException("Driver class name cannot be null");
+        }
+        _files = files;
+        _driverClassName = driverClassName;
+    }
 
-			final Class<?> loadedClass;
-			try {
-				loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
-			} catch (Exception e) {
-				if (e instanceof RuntimeException) {
-					throw (RuntimeException) e;
-				}
-				throw new IllegalStateException("Could not load driver class", e);
-			}
-			logger.info("Loaded class: {}", loadedClass.getName());
+    public String getDriverClassName() {
+        return _driverClassName;
+    }
 
-			if (ReflectionUtils.is(loadedClass, Driver.class)) {
-				_driverInstance = (Driver) ReflectionUtils.newInstance(loadedClass);
-				_registeredDriver = new DriverWrapper(_driverInstance);
-				try {
-					DriverManager.registerDriver(_registeredDriver);
-				} catch (SQLException e) {
-					throw new IllegalStateException("Could not register driver", e);
-				}
-			} else {
-				throw new IllegalStateException("Class is not a Driver class: " + _driverClassName);
-			}
-			_loaded = true;
-		}
-		return this;
-	}
+    public File[] getFiles() {
+        return Arrays.copyOf(_files, _files.length);
+    }
 
-	public void unloadDriver() {
-		try {
-			DriverManager.deregisterDriver(_registeredDriver);
-			_registeredDriver = null;
-			_driverInstance = null;
-			_loaded = false;
-		} catch (SQLException e) {
-			logger.error("Exception occurred while unloading driver: " + _driverClassName, e);
-		}
-	}
+    public UserDatabaseDriver loadDriver() throws IllegalStateException {
+        if (!_loaded) {
+            ClassLoader driverClassLoader = ClassLoaderUtils.createClassLoader(_files);
 
-	public boolean isLoaded() {
-		return _loaded;
-	}
+            final Class<?> loadedClass;
+            try {
+                loadedClass = Class.forName(_driverClassName, true, driverClassLoader);
+            } catch (Exception e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new IllegalStateException("Could not load driver class", e);
+            }
+            logger.info("Loaded class: {}", loadedClass.getName());
 
-	public DatabaseDriverState getState() {
-		if (_loaded) {
-			return DatabaseDriverState.INSTALLED_WORKING;
-		}
-		return DatabaseDriverState.INSTALLED_NOT_WORKING;
-	}
+            if (ReflectionUtils.is(loadedClass, Driver.class)) {
+                _driverInstance = (Driver) ReflectionUtils.newInstance(loadedClass);
+                _registeredDriver = new DriverWrapper(_driverInstance);
+                try {
+                    DriverManager.registerDriver(_registeredDriver);
+                } catch (SQLException e) {
+                    throw new IllegalStateException("Could not register driver", e);
+                }
+            } else {
+                throw new IllegalStateException("Class is not a Driver class: " + _driverClassName);
+            }
+            _loaded = true;
+        }
+        return this;
+    }
+
+    public void unloadDriver() {
+        try {
+            DriverManager.deregisterDriver(_registeredDriver);
+            _registeredDriver = null;
+            _driverInstance = null;
+            _loaded = false;
+        } catch (SQLException e) {
+            logger.error("Exception occurred while unloading driver: " + _driverClassName, e);
+        }
+    }
+
+    public boolean isLoaded() {
+        return _loaded;
+    }
+
+    public DatabaseDriverState getState() {
+        if (_loaded) {
+            return DatabaseDriverState.INSTALLED_WORKING;
+        }
+        return DatabaseDriverState.INSTALLED_NOT_WORKING;
+    }
 }

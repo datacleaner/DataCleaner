@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -40,6 +41,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapClient;
 import org.eobjects.datacleaner.extensionswap.ExtensionSwapInstallationHttpContainer;
@@ -99,7 +101,7 @@ public final class Bootstrap {
 
             if (!GraphicsEnvironment.isHeadless()) {
                 // hide splash screen
-                SplashScreen splashScreen = SplashScreen.getSplashScreen();
+                final SplashScreen splashScreen = SplashScreen.getSplashScreen();
                 if (splashScreen != null) {
                     splashScreen.close();
                 }
@@ -118,15 +120,6 @@ public final class Bootstrap {
             }
         }
 
-        final String configurationFilePath = arguments.getConfigurationFile();
-
-        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml");
-
-        Injector injector = Guice.createInjector(new DCModule(DataCleanerHome.get(), configurationFile));
-
-        // configuration loading can be multithreaded, so begin early
-        final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
-
         if (!cliMode) {
             // set up error handling that displays an error dialog
             final DCUncaughtExceptionHandler exceptionHandler = new DCUncaughtExceptionHandler();
@@ -135,6 +128,14 @@ public final class Bootstrap {
             // init the look and feel
             LookAndFeelManager.getInstance().init();
         }
+
+        final String configurationFilePath = arguments.getConfigurationFile();
+        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml");
+
+        Injector injector = Guice.createInjector(new DCModule(DataCleanerHome.get(), configurationFile));
+
+        // configuration loading can be multithreaded, so begin early
+        final AnalyzerBeansConfiguration configuration = injector.getInstance(AnalyzerBeansConfiguration.class);
 
         // log usage
         final UsageLogger usageLogger = injector.getInstance(UsageLogger.class);
@@ -237,20 +238,52 @@ public final class Bootstrap {
         }
     }
 
-    private FileObject resolveFile(String filename, String fallbackFilename) throws FileSystemException {
+    /**
+     * Looks up a file, either based on a user requested filename (typically a
+     * CLI parameter, may be a URL) or by a relative filename defined in the
+     * system-
+     * 
+     * @param userRequestedFilename
+     *            the user requested filename, may be null
+     * @param localFilename
+     *            the relative filename defined by the system
+     * @return
+     * @throws FileSystemException
+     */
+    private FileObject resolveFile(String userRequestedFilename, String localFilename) throws FileSystemException {
         final FileObject dataCleanerHome = DataCleanerHome.get();
-        if (filename == null) {
-            return dataCleanerHome.resolveFile(fallbackFilename);
+        if (userRequestedFilename == null) {
+            return dataCleanerHome.resolveFile(localFilename);
         } else {
-            String lowerCaseFilename = filename.toLowerCase();
+            String lowerCaseFilename = userRequestedFilename.toLowerCase();
             if (lowerCaseFilename.startsWith("http://") || lowerCaseFilename.startsWith("https://")) {
                 if (!GraphicsEnvironment.isHeadless()) {
-                    // show loading indicator that the file is being downloaded
+                    // download to a RAM file.
+                    final FileObject targetDirectory = VFSUtils.getFileSystemManager().resolveFile(
+                            "ram:///datacleaner/temp");
+                    if (!targetDirectory.exists()) {
+                        targetDirectory.createFolder();
+                    }
 
+                    final WindowContext windowContext = new SimpleWindowContext();
+                    final HttpClient httpClient = new DefaultHttpClient();
+
+                    final String[] urls = new String[] { userRequestedFilename };
+                    final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
+
+                    final DownloadFilesActionListener downloadAction = new DownloadFilesActionListener(urls,
+                            targetDirectory, targetFilenames, null, windowContext, httpClient);
+                    downloadAction.actionPerformed(null);
+
+                    final FileObject[] files = downloadAction.getFiles();
+
+                    assert files.length == 1;
+
+                    return files[0];
                 }
             }
 
-            return VFSUtils.getFileSystemManager().resolveFile(filename);
+            return VFSUtils.getFileSystemManager().resolveFile(userRequestedFilename);
         }
     }
 

@@ -19,9 +19,12 @@
  */
 package org.eobjects.datacleaner.actions;
 
-import java.io.File;
+import org.apache.commons.vfs2.FileObject;
 
+/**
+ * Listener invoked when file download has finished.
+ */
 public interface FileDownloadListener {
 
-	public void onFilesDownloaded(File[] files);
+    public void onFilesDownloaded(FileObject[] files);
 }

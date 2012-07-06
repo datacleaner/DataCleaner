@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +37,7 @@ import javax.swing.JToolBar;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.vfs2.FileObject;
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -236,7 +236,7 @@ public class DatabaseDriversPanel extends DCPanel {
 	private ActionListener createDownloadActionListener(final DatabaseDriverDescriptor dd) {
 		final FileDownloadListener downloadListener = new FileDownloadListener() {
 			@Override
-			public void onFilesDownloaded(File[] files) {
+			public void onFilesDownloaded(FileObject[] files) {
 				final String driverClassName = dd.getDriverClassName();
 
 				logger.info("Registering and loading driver '{}' in files '{}'", driverClassName, files);

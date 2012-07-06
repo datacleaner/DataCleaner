@@ -21,9 +21,7 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,11 +29,14 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
@@ -51,12 +52,12 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-public class DownloadFilesActionListener extends SwingWorker<File[], Task> implements ActionListener {
+public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task> implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(DownloadFilesActionListener.class);
 
     private final String[] _urls;
-    private final File[] _files;
+    private final FileObject[] _files;
     private final FileDownloadListener _listener;
     private final FileTransferProgressWindow _downloadProgressWindow;
     private final HttpClient _httpClient;
@@ -64,20 +65,33 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
 
     public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext,
             HttpClient httpClient, UserPreferences userPreferences) {
-        this(urls, createTargetFilenames(urls), listener, windowContext, httpClient, userPreferences);
+        this(urls, createTargetDirectory(userPreferences), createTargetFilenames(urls), listener, windowContext,
+                httpClient);
     }
 
-    public DownloadFilesActionListener(String[] urls, String[] targetFilenames, FileDownloadListener listener,
-            WindowContext windowContext, HttpClient httpClient, UserPreferences userPreferences) {
+    public DownloadFilesActionListener(final String[] urls, final String[] targetFilenames,
+            final FileDownloadListener listener, final WindowContext windowContext, final HttpClient httpClient,
+            UserPreferences userPreferences) {
+        this(urls, createTargetDirectory(userPreferences), targetFilenames, listener, windowContext, httpClient);
+    }
+
+    public DownloadFilesActionListener(final String[] urls, final FileObject targetDirectory,
+            final String[] targetFilenames, final FileDownloadListener listener, final WindowContext windowContext,
+            final HttpClient httpClient) {
         if (urls == null) {
             throw new IllegalArgumentException("urls cannot be null");
         }
         _urls = urls;
         _listener = listener;
-        _files = new File[_urls.length];
+        _files = new FileObject[_urls.length];
         for (int i = 0; i < urls.length; i++) {
-            String filename = targetFilenames[i];
-            _files[i] = new File(userPreferences.getSaveDownloadedFilesDirectory(), filename);
+            final String filename = targetFilenames[i];
+            try {
+                _files[i] = targetDirectory.resolveFile(filename);
+            } catch (FileSystemException e) {
+                // should never happen
+                throw new IllegalStateException(e);
+            }
         }
 
         final Action<Void> cancelCallback = new Action<Void>() {
@@ -90,7 +104,17 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
         _httpClient = httpClient;
     }
 
-    private static String[] createTargetFilenames(String[] urls) {
+    private static FileObject createTargetDirectory(UserPreferences userPreferences) {
+        final File localDirectory = userPreferences.getSaveDownloadedFilesDirectory();
+        try {
+            return VFSUtils.getFileSystemManager().toFileObject(localDirectory);
+        } catch (FileSystemException e) {
+            // should never happen
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public static String[] createTargetFilenames(String[] urls) {
         String[] filenames = new String[urls.length];
         for (int i = 0; i < urls.length; i++) {
             String url = urls[i];
@@ -103,7 +127,13 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
         return filenames;
     }
 
-    public File[] getFiles() {
+    public FileObject[] getFiles() {
+        try {
+            get();
+        } catch (Exception e) {
+            // should not happen
+            throw new IllegalStateException(e);
+        }
         return _files;
     }
 
@@ -134,8 +164,10 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
         super.done();
         if (!_cancelled) {
             try {
-                File[] files = get();
-                _listener.onFilesDownloaded(files);
+                FileObject[] files = get();
+                if (_listener != null) {
+                    _listener.onFilesDownloaded(files);
+                }
             } catch (Throwable e) {
                 WidgetUtils.showErrorMessage("Error transfering file(s)!", e);
             }
@@ -143,10 +175,10 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
     }
 
     @Override
-    protected File[] doInBackground() throws Exception {
+    protected FileObject[] doInBackground() throws Exception {
         for (int i = 0; i < _urls.length; i++) {
             final String url = _urls[i];
-            final File file = _files[i];
+            final FileObject file = _files[i];
 
             InputStream inputStream = null;
             OutputStream outputStream = null;
@@ -169,13 +201,17 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
                         publish(new Task() {
                             @Override
                             public void execute() throws Exception {
-                                _downloadProgressWindow.setExpectedSize(file.getName(), expectedSize);
+                                _downloadProgressWindow.setExpectedSize(file.getName().getBaseName(), expectedSize);
                             }
                         });
                     }
 
                     inputStream = responseEntity.getContent();
-                    outputStream = new BufferedOutputStream(new FileOutputStream(file));
+
+                    if (!file.exists()) {
+                        file.createFile();
+                    }
+                    outputStream = file.getContent().getOutputStream();
 
                     long bytes = 0;
                     for (int numBytes = inputStream.read(buffer); numBytes != -1; numBytes = inputStream.read(buffer)) {
@@ -189,7 +225,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
                         publish(new Task() {
                             @Override
                             public void execute() throws Exception {
-                                _downloadProgressWindow.setProgress(file.getName(), totalBytes);
+                                _downloadProgressWindow.setProgress(file.getName().getBaseName(), totalBytes);
                             }
                         });
                     }
@@ -198,7 +234,7 @@ public class DownloadFilesActionListener extends SwingWorker<File[], Task> imple
                         publish(new Task() {
                             @Override
                             public void execute() throws Exception {
-                                _downloadProgressWindow.setFinished(file.getName());
+                                _downloadProgressWindow.setFinished(file.getName().getBaseName());
                             }
                         });
                     }

@@ -27,7 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.event.DocumentEvent;
 
 import org.eobjects.analyzer.beans.filter.MaxRowsFilter;
-import org.eobjects.analyzer.beans.filter.ValidationCategory;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
@@ -131,7 +130,7 @@ public class MaxRowsFilterShortcutPanel extends DCPanel {
 				if (selected) {
 					_analysisJobBuilder.addFilter(maxRowsFilterJobBuilder);
 					_analysisJobBuilder.setDefaultRequirement(
-							maxRowsFilterJobBuilder, ValidationCategory.VALID);
+							maxRowsFilterJobBuilder, MaxRowsFilter.Category.VALID);
 				} else {
 					_analysisJobBuilder.removeFilter(maxRowsFilterJobBuilder);
 					_maxRowsFilterJobBuilder = null;

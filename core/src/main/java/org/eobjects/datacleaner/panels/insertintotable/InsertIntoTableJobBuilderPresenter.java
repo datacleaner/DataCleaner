@@ -70,6 +70,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 	private final ConfiguredPropertyDescriptor _errorFileLocationProperty;
 	private final ConfiguredPropertyDescriptor _additionalErrorLogValuesProperty;
 	private final ConfiguredPropertyDescriptor _bufferSizeProperty;
+	private final ConfiguredPropertyDescriptor _truncateTableProperty;
 
 	public InsertIntoTableJobBuilderPresenter(AnalyzerJobBuilder<InsertIntoTableAnalyzer> analyzerJobBuilder,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
@@ -86,6 +87,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 		_inputColumnsProperty = descriptor.getConfiguredProperty("Values");
 		_columnNamesProperty = descriptor.getConfiguredProperty("Column names");
 		_bufferSizeProperty = descriptor.getConfiguredProperty("Buffer size");
+		_truncateTableProperty = descriptor.getConfiguredProperty("Truncate table");
 		_errorHandlingProperty = descriptor.getConfiguredProperty("How to handle insertion errors?");
 		_errorFileLocationProperty = descriptor.getConfiguredProperty("Error log file location");
 		_additionalErrorLogValuesProperty = descriptor.getConfiguredProperty("Additional error log values");
@@ -152,7 +154,7 @@ class InsertIntoTableJobBuilderPresenter extends AnalyzerJobBuilderPanel {
 	protected List<ConfiguredPropertyTaskPane> createPropertyTaskPanes() {
 		final ConfiguredPropertyTaskPane taskPane = new ConfiguredPropertyTaskPane("Insert mapping",
 				"images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-						_inputColumnsProperty, _bufferSizeProperty));
+						_inputColumnsProperty, _truncateTableProperty, _bufferSizeProperty));
 
 		final ConfiguredPropertyTaskPane errorHandlingPane = new ConfiguredPropertyTaskPane("Error handling",
 				IconUtils.STATUS_WARNING, Arrays.asList(_errorHandlingProperty, _errorFileLocationProperty,

@@ -9,19 +9,62 @@
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<title>DataCleaner dq monitor</title>
 
+		<link href='http://fonts.googleapis.com/css?family=Ubuntu|Lobster'
+			rel='stylesheet' type='text/css' />
 		<link rel="stylesheet" type="text/css" href="styles.css" />
 		<link rel="shortcut icon" href="images/favicon.png" />
-		
+
 	</h:head>
 	<h:body>
 
-		<img src="images/login_background.png" class="scalable_background" alt="" />
+		<div class="pageContainer">
 
-		<div class="login_page_container">
+			<div
+				style="position: absolute; top: 90px; right: 10px; padding-bottom: 80px;">
+				<div class="InfographicContainer">
+					<div class="InfographicPart InfographicIntro">
+						<h1>
+							Welcome to <span class="blue">DataCleaner</span> <span
+								class="orange">dq monitor</span>
+						</h1>
+						<span class="ScrollDownTeaser"> <a
+							href="#first_infographic_part">What is it?</a>
+						</span>
+					</div>
+					<div style="height: 300px;"></div>
+					<div class="InfographicPart InfographicEvolution">
+						<a name="first_infographic_part"></a>
+						<h2>Monitor the evolution of your data</h2>
+						<div class="Description">DataCleaner dq monitor helps your
+							visualize and explore the evolution of your data. Use it to
+							surveil your data activities and manage your data’s quality.</div>
+					</div>
+					<div class="InfographicPart InfographicShare">
+						<h2>Share your data analysis with everyone</h2>
+						<div class="Description">Use DataCleaner to explore, profile
+							and analyze your data. Use the monitor webapplication to share it
+							with anyone, even to set up an automatic analysis at regular
+							intervals.</div>
+					</div>
+					<div class="InfographicPart InfographicImprove">
+						<h2>Continuously improve your data’s quality</h2>
+						<div class="Description">DataCleaner dq monitor orchestrates
+							and schedules DataCleaner jobs, used to cleanse and enrich your
+							data.</div>
+					</div>
+					<div class="InfographicPart InfographicConnect">
+						<h2>Connect DataCleaner to the world</h2>
+						<div class="Description">With the dq monitor you can
+							securely connect DataCleaner jobs to other business processes
+							using web services, scheduled executions and more. Instantly use
+							your jobs for both batch and real-time processing of data.</div>
+					</div>
+				</div>
+			</div>
 
-			<form action="j_spring_security_check" method="POST">
-				<div class="login_panel">
-					<h3>
+			<div class="login_panel">
+				<form action="j_spring_security_check" method="POST">
+					<h3 class="login_panel_header">
 						Log in to <span class="blue">DataCleaner</span> <span
 							class="orange">dq monitor</span>
 					</h3>
@@ -40,12 +83,26 @@
 					<input type="submit" value="Log in" />
 
 					<div style="clear: both"></div>
+				</form>
+			</div>
+
+			<div class="login_demo_accounts_panel">
+				<h3 class="login_panel_header">Demo accounts</h3>
+				<div class="login_panel_content">
+
+					<p>Try logging in using any of these demo credentials:</p>
+					<p>User: #{userService}</p>
+					<ul>
+						<li>admin/admin: The administrator of the 'DC' tenant.</li>
+						<li>joe/joe: A developer in the 'CarCo' tenant.</li>
+					</ul>
 				</div>
-			</form>
-			
+			</div>
+
+
 			<div class="pageFooter">
 				<div class="logo"></div>
-			</div>			
+			</div>
 		</div>
 	</h:body>
 </f:view>

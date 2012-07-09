@@ -17,7 +17,9 @@
 		<g:HTMLPanel ui:field="welcomeTextPanel" styleName="InfographicContainer">
 			<div class="InfographicPart InfographicIntro">
 				<h1>
-					Welcome to <span class="blue">DataCleaner</span> <span class="orange">dq monitor</span>
+					Welcome to
+					<span class="blue">DataCleaner</span>
+					<span class="orange">dq monitor</span>
 				</h1>
 				<span class="ScrollDownTeaser">
 					<a href="#first_infographic_part">What is it?</a>
@@ -30,10 +32,26 @@
 					explore the evolution of your data. Use it to surveil your data
 					activities and manage your data’s quality.</div>
 			</div>
+			<div class="InfographicPart InfographicShare">
+				<h2>Share your data analysis with everyone</h2>
+				<div class="Description">Use DataCleaner to explore, profile
+					and analyze your
+					data. Use the monitor webapplication to share it
+					with anyone, even
+					to set up an automatic analysis at regular
+					intervals.</div>
+			</div>
 			<div class="InfographicPart InfographicImprove">
 				<h2>Continuously improve your data’s quality</h2>
 				<div class="Description">DataCleaner dq monitor orchestrates and schedules
 					DataCleaner jobs, used to cleanse and enrich your data.</div>
+			</div>
+			<div class="InfographicPart InfographicConnect">
+				<h2>Connect DataCleaner to the world</h2>
+				<div class="Description">With the dq monitor you can securely connect
+					DataCleaner jobs to other business processes using web services,
+					scheduled executions and more. Instantly use your jobs for both
+					batch and real-time processing of data.</div>
 			</div>
 		</g:HTMLPanel>
 	</g:HTMLPanel>

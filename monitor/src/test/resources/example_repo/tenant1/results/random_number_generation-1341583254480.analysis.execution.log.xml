@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:execution-log xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/execution-log/1.0" xmlns:ns4="http://eobjects.org/datacleaner/timeline/1.0">
+    <ns3:result-id>random_number_generation-1341583254480</ns3:result-id>
+    <ns3:job-begin-date>2012-07-06T16:00:54.709+02:00</ns3:job-begin-date>
+    <ns3:job-end-date>2012-07-06T16:00:55.315+02:00</ns3:job-end-date>
+    <ns3:execution-status>SUCCESS</ns3:execution-status>
+    <ns3:trigger-type>MANUAL</ns3:trigger-type>
+    <schedule>
+        <cron-expression>@hourly</cron-expression>
+        <alerts>
+            <alert>
+                <description>Req. Meanfrom 0 to 400</description>
+                <ns2:metric>
+                    <ns2:analyzer-descriptor-name>Number analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:analyzer-input>Random number</ns2:analyzer-input>
+                    <ns2:metric-descriptor-name>Mean</ns2:metric-descriptor-name>
+                    <ns2:metric-param-column-name>Random number</ns2:metric-param-column-name>
+                </ns2:metric>
+                <minimum-value>0</minimum-value>
+                <maximum-value>400</maximum-value>
+                <severity>FATAL</severity>
+            </alert>
+            <alert>
+                <description>Req. Meanfrom 5 to 300</description>
+                <ns2:metric>
+                    <ns2:analyzer-descriptor-name>Number analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:analyzer-input>Random number</ns2:analyzer-input>
+                    <ns2:metric-descriptor-name>Mean</ns2:metric-descriptor-name>
+                    <ns2:metric-param-column-name>Random number</ns2:metric-param-column-name>
+                </ns2:metric>
+                <minimum-value>5</minimum-value>
+                <maximum-value>300</maximum-value>
+                <severity>WARNING</severity>
+            </alert>
+            <alert>
+                <description>Expect Meanfrom 100 to 200</description>
+                <ns2:metric>
+                    <ns2:analyzer-descriptor-name>Number analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:analyzer-input>Random number</ns2:analyzer-input>
+                    <ns2:metric-descriptor-name>Mean</ns2:metric-descriptor-name>
+                    <ns2:metric-param-column-name>Random number</ns2:metric-param-column-name>
+                </ns2:metric>
+                <minimum-value>100</minimum-value>
+                <maximum-value>200</maximum-value>
+                <severity>SURVEILLANCE</severity>
+            </alert>
+            <alert>
+                <description>Expect Meanfrom 120 to 180</description>
+                <ns2:metric>
+                    <ns2:analyzer-descriptor-name>Number analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:analyzer-input>Random number</ns2:analyzer-input>
+                    <ns2:metric-descriptor-name>Mean</ns2:metric-descriptor-name>
+                    <ns2:metric-param-column-name>Random number</ns2:metric-param-column-name>
+                </ns2:metric>
+                <minimum-value>120</minimum-value>
+                <maximum-value>180</maximum-value>
+                <severity>INTELLIGENCE</severity>
+            </alert>
+        </alerts>
+    </schedule>
+    <ns3:log-output>2012-07-06 16:00:54 - Job execution BEGIN
+2012-07-06 16:00:54 - Row processing of table Table[name=CUSTOMERS,type=TABLE,remarks=null] BEGIN
+ - Query: SELECT &quot;CUSTOMERS&quot;.&quot;CUSTOMERNUMBER&quot; FROM PUBLIC.&quot;CUSTOMERS&quot;
+ - Expected row count: 133
+2012-07-06 16:00:55 - Row processing of table Table[name=CUSTOMERS,type=TABLE,remarks=null] SUCCESS
+2012-07-06 16:00:55 - Result gathered from analyzer: ImmutableAnalyzerJob[name=null,analyzer=Number analyzer]
+2012-07-06 16:00:55 - Job execution SUCCESS</ns3:log-output>
+</ns3:execution-log>

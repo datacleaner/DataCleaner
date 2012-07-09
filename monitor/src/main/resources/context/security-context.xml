@@ -48,7 +48,7 @@
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>
-
+	
 	<!-- Uncomment this to have a single-tenant configuration -->
 	<!-- <beans:bean name="tenantResolver" class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver"> -->
 	<!-- <beans:property name="tenantId" value="DC" /> -->

@@ -21,8 +21,8 @@
 /**
  * Overrides of the "clean" theme for basic elements
  */
-body,table td,select,button {
-	font-family: "Trebuchet MS", sans-serif;
+body,table td,select,button,input {
+	font-family: "Ubuntu", sans-serif;
 }
 
 a {

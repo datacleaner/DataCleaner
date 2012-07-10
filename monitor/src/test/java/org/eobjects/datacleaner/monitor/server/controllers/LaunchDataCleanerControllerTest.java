@@ -45,7 +45,7 @@ public class LaunchDataCleanerControllerTest extends TestCase {
         final JobContext jobMock = EasyMock.createMock(JobContext.class);
 
         EasyMock.expect(contextFactoryMock.getContext("DC")).andReturn(contextMock);
-        EasyMock.expect(contextMock.getJob("my_job")).andReturn(jobMock);
+        EasyMock.expect(contextMock.getJob("my job")).andReturn(jobMock);
         EasyMock.expect(jobMock.getSourceDatastoreName()).andReturn("my_datastore");
 
         EasyMock.replay(contextFactoryMock, contextMock, jobMock);
@@ -75,7 +75,7 @@ public class LaunchDataCleanerControllerTest extends TestCase {
         request.setContextPath("DataCleaner-monitor");
         MockHttpServletResponse response = new MockHttpServletResponse();
         String tenant = "DC";
-        String jobName = "my_job";
+        String jobName = "my job";
 
         controller.launchDataCleaner(request, response, tenant, jobName);
 

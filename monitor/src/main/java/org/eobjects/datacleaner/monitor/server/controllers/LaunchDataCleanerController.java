@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -67,10 +68,12 @@ public class LaunchDataCleanerController {
         response.setContentType("application/x-java-jnlp-file");
 
         final PrintWriter out = response.getWriter();
+        
+        final String encodedJobName = URLEncoder.encode(jobName, FileHelper.UTF_8_ENCODING);
 
         final String baseUrl = createBaseUrl(request, tenant);
-        final String jnlpHref = "jobs/" + jobName + ".launch.jnlp";
-        final String jobUrl = baseUrl + '/' + RESOURCES_FOLDER + jobName + ".analysis.xml";
+        final String jnlpHref = "jobs/" + encodedJobName + ".launch.jnlp";
+        final String jobUrl = baseUrl + '/' + RESOURCES_FOLDER + encodedJobName + ".analysis.xml";
         final String datastoreName = job.getSourceDatastoreName();
         final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml";
 

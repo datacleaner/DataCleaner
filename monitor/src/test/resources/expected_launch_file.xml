@@ -22,7 +22,7 @@
 		<argument>-conf</argument>
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/conf.xml</argument>
 		<argument>-job</argument>
-		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/my_job.analysis.xml</argument>
+		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/my+job.analysis.xml</argument>
 		<argument>-ds</argument>
 		<argument>my_datastore</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>

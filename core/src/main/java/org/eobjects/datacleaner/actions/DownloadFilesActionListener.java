@@ -84,10 +84,15 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
         _urls = urls;
         _listener = listener;
         _files = new FileObject[_urls.length];
+
+        final String[] finalFilenames = new String[_files.length];
         for (int i = 0; i < urls.length; i++) {
             final String filename = targetFilenames[i];
             try {
                 _files[i] = targetDirectory.resolveFile(filename);
+                // slight differences may exist between target filename and
+                // actual filename. This trick will eradicate that.
+                finalFilenames[i] = _files[i].getName().getBaseName();
             } catch (FileSystemException e) {
                 // should never happen
                 throw new IllegalStateException(e);
@@ -100,7 +105,8 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
                 cancelDownload();
             }
         };
-        _downloadProgressWindow = new FileTransferProgressWindow(windowContext, cancelCallback, targetFilenames);
+
+        _downloadProgressWindow = new FileTransferProgressWindow(windowContext, cancelCallback, finalFilenames);
         _httpClient = httpClient;
     }
 

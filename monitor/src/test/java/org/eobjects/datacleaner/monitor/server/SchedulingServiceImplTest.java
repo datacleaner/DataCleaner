@@ -118,10 +118,15 @@ public class SchedulingServiceImplTest extends TestCase {
 
         } finally {
             scheduler.shutdown();
+            
+            Thread.sleep(200);
 
             File[] files = directory.listFiles(filenameFilter);
             for (int i = 0; i < files.length; i++) {
-                files[i].delete();
+                boolean deleted = files[i].delete();
+                if (!deleted) {
+                    throw new IllegalStateException("Could not delete " + files[i]);
+                }
             }
         }
     }

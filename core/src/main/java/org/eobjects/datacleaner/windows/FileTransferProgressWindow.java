@@ -140,7 +140,7 @@ public class FileTransferProgressWindow extends AbstractDialog {
         _expectedBytesLabels[index].setText(formatter.format(bytes) + " bytes");
         _progressBars[index].setMaximum((int) (bytes / 100));
     }
-    
+
     @Override
     protected JComponent getDialogContent() {
         final DCPanel centerPanel = new DCPanel();

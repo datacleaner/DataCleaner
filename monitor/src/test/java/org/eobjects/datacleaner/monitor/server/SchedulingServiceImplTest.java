@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -82,6 +83,9 @@ public class SchedulingServiceImplTest extends TestCase {
             final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
             final List<ScheduleDefinition> schedules = service.getSchedules(tenant);
+            
+            // sort to make it deterministic
+            Collections.sort(schedules);
 
             assertEquals(3, schedules.size());
             assertEquals(null, schedules.get(1).getCronExpression());

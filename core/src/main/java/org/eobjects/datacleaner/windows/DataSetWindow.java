@@ -43,6 +43,7 @@ import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.data.DataSetTableModel;
 import org.eobjects.metamodel.query.Query;
 
 public class DataSetWindow extends AbstractWindow {
@@ -71,7 +72,7 @@ public class DataSetWindow extends AbstractWindow {
             @Override
             public TableModel call() throws Exception {
                 DataSet dataSet = dataContext.executeQuery(_query);
-                return dataSet.toTableModel();
+                return new DataSetTableModel(dataSet);
             }
         };
         _previousPageButton = WidgetFactory.createButton("Previous page", "images/actions/back.png");

@@ -44,6 +44,7 @@ import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.Datastore;
@@ -67,6 +68,7 @@ import org.eobjects.datacleaner.widgets.LoadingIcon;
 import org.eobjects.datacleaner.widgets.table.DCTable;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.data.DataSet;
+import org.eobjects.metamodel.data.DataSetTableModel;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -382,7 +384,8 @@ public abstract class AbstractFileBasedDatastoreDialog<D extends FileDatastore> 
                 try {
                     DataSet dataSet = get();
                     if (dataSet != null) {
-                        _previewTable.setModel(dataSet.toTableModel());
+                        TableModel tableModel = new DataSetTableModel(dataSet);
+                        _previewTable.setModel(tableModel);
                     }
                 } catch (Throwable e) {
                     if (e instanceof ExecutionException) {

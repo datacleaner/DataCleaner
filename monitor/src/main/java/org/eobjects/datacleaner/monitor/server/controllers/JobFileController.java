@@ -59,6 +59,8 @@ public class JobFileController {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
+        
+        jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
 
@@ -97,6 +99,8 @@ public class JobFileController {
     public void jobXml(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
             final OutputStream out) {
 
+        jobName = jobName.replaceAll("\\+", " ");
+        
         final TenantContext context = _contextFactory.getContext(tenant);
         JobContext job = context.getJob(jobName);
         job.toXml(out);

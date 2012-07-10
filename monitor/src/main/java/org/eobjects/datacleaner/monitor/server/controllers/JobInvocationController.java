@@ -59,6 +59,8 @@ public class JobInvocationController {
     @ResponseBody
     public List<Object[]> invokeJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
             final List<Object[]> sourceRecords) throws Throwable {
+        
+        jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);

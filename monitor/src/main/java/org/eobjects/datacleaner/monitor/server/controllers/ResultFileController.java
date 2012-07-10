@@ -73,6 +73,8 @@ public class ResultFileController {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
+        
+        resultName = resultName.replaceAll("\\+", " ");
 
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
@@ -112,6 +114,8 @@ public class ResultFileController {
             @RequestParam(value = "tabs", required = false) Boolean tabsParam,
             @RequestParam(value = "comp_name", required = false) String componentParamName,
             @RequestParam(value = "comp_index", required = false) Integer componentIndexParam, final Writer out) {
+        
+        resultName = resultName.replaceAll("\\+", " ");
 
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 

@@ -61,7 +61,9 @@ public class LaunchDataCleanerController {
     @ResponseBody
     public void launchDataCleaner(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
-
+        
+        jobName = jobName.replaceAll("\\+", " ");
+        
         final TenantContext context = _contextFactory.getContext(tenant);
         final JobContext job = context.getJob(jobName);
 

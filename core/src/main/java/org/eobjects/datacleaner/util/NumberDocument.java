@@ -19,46 +19,62 @@
  */
 package org.eobjects.datacleaner.util;
 
+import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
 import org.eobjects.analyzer.util.CharIterator;
 
+/**
+ * A {@link Document}, typically used for {@link JTextField}s, which specifies
+ * that only numbers may be entered.
+ */
 public class NumberDocument extends PlainDocument {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final boolean _allowDecimal;
+    private final boolean _allowDecimal;
+    private final boolean _allowNegative;
 
-	public NumberDocument(boolean allowDecimal) {
-		_allowDecimal = allowDecimal;
-	}
+    public NumberDocument() {
+        this(true);
+    }
 
-	public NumberDocument() {
-		this(true);
-	}
+    public NumberDocument(boolean allowDecimal) {
+        this(allowDecimal, true);
+    }
 
-	@Override
-	public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-		boolean number = true;
-		CharIterator it = new CharIterator(str);
-		while (it.hasNext() && number) {
-			it.next();
-			if (!it.isDigit()) {
-				if (!it.is('-')) {
-					if (!it.is('%')) {
-						if (!_allowDecimal) {
-							number = false;
-						} else if (!it.is('.')) {
-							number = false;
-						}
-					}
-				}
-			}
-		}
-		if (number) {
-			super.insertString(offs, str, a);
-		}
-	}
+    public NumberDocument(boolean allowDecimal, boolean allowNegative) {
+        _allowDecimal = allowDecimal;
+        _allowNegative = allowNegative;
+    }
+
+    @Override
+    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
+        boolean valid = true;
+        CharIterator it = new CharIterator(str);
+        while (it.hasNext() && valid) {
+            it.next();
+
+            if (it.isDigit() || it.is('%')) {
+                continue;
+            }
+
+            if (it.is('-') && _allowNegative) {
+                continue;
+            }
+
+            if (it.is('.') && _allowDecimal) {
+                continue;
+            }
+
+            valid = false;
+            break;
+        }
+        if (valid) {
+            super.insertString(offs, str, a);
+        }
+    }
 }

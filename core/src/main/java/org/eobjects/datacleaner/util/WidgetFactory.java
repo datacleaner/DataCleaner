@@ -32,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JViewport;
 import javax.swing.border.CompoundBorder;
@@ -61,7 +62,12 @@ import org.slf4j.LoggerFactory;
  */
 public final class WidgetFactory {
 
-	private static final Logger logger = LoggerFactory.getLogger(WidgetFactory.class);
+    /**
+     * Default {@link JTextField} columns width value
+     */
+	public static final int TEXT_FIELD_COLUMNS = 17;
+	
+    private static final Logger logger = LoggerFactory.getLogger(WidgetFactory.class);
 
 	public static JMenu createMenu(String text, char mnemonic) {
 		JMenu menu = new JMenu();
@@ -165,7 +171,7 @@ public final class WidgetFactory {
 	}
 
 	public static JXTextField createTextField(String promptText) {
-		return createTextField(promptText, 17);
+		return createTextField(promptText, TEXT_FIELD_COLUMNS);
 	}
 	
 	public static JXTextField createTextField(String promptText, int columns) {

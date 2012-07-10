@@ -169,7 +169,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         });
 
         _usernameTextField = WidgetFactory.createTextField("Username");
-        _passwordTextField = new JPasswordField(17);
+        _passwordTextField = new JPasswordField(WidgetFactory.TEXT_FIELD_COLUMNS);
 
         _authenticationCheckBox = new DCCheckBox<Void>("Use authentication?", true);
         _authenticationCheckBox.setBorderPainted(false);

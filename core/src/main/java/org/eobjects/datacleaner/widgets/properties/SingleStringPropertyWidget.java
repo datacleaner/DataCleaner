@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
@@ -65,15 +66,18 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
     protected JTextComponent getTextComponent(ConfiguredPropertyDescriptor propertyDescriptor,
             StringProperty stringPropertyAnnotation) {
         final boolean multiline;
+        final boolean password;
         final String mimeType;
 
         if (stringPropertyAnnotation == null) {
             multiline = false;
             mimeType = null;
+            password = false;
         } else {
             multiline = stringPropertyAnnotation.multiline();
             String[] mimeTypes = stringPropertyAnnotation.mimeType();
             mimeType = getTextAreaMimeType(mimeTypes);
+            password = stringPropertyAnnotation.password();
         }
 
         final JTextComponent textComponent;
@@ -86,7 +90,11 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
                 textComponent = WidgetFactory.createTextArea(propertyDescriptor.getName());
             }
         } else {
-            textComponent = WidgetFactory.createTextField(propertyDescriptor.getName());
+            if (password) {
+                textComponent = new JPasswordField(WidgetFactory.TEXT_FIELD_COLUMNS);
+            } else {
+                textComponent = WidgetFactory.createTextField(propertyDescriptor.getName());
+            }
         }
 
         textComponent.getDocument().addDocumentListener(new DCDocumentListener() {

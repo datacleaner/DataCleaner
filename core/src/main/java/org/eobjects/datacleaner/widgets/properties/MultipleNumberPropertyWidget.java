@@ -24,11 +24,14 @@ import javax.inject.Inject;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 
+/**
+ * Default {@link PropertyWidget} for number arrays.
+ */
 public class MultipleNumberPropertyWidget extends AbstractMultipleNumberPropertyWidget<Number[]> {
 
-	@Inject
-	public MultipleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
-			AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
-		super(propertyDescriptor, beanJobBuilder);
-	}
+    @Inject
+    public MultipleNumberPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
+            AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
+        super(propertyDescriptor, beanJobBuilder);
+    }
 }

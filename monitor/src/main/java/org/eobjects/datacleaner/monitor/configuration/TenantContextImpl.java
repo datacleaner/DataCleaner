@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -67,6 +68,9 @@ public class TenantContextImpl implements TenantContext {
 
     @Override
     public JobContext getJob(String jobName) {
+        if (StringUtils.isNullOrEmpty(jobName)) {
+            return null;
+        }
         JobContext job = _jobCache.get(jobName);
         if (job == null) {
             if (!jobName.endsWith(EXTENSION_JOB)) {
@@ -93,6 +97,9 @@ public class TenantContextImpl implements TenantContext {
 
     @Override
     public JobContext getJob(JobIdentifier jobIdentifier) {
+        if (jobIdentifier == null) {
+            return null;
+        }
         return getJob(jobIdentifier.getName());
     }
 

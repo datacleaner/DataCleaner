@@ -25,6 +25,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.connection.PerformanceCharacteristics;
 import org.eobjects.analyzer.connection.PerformanceCharacteristicsImpl;
+import org.eobjects.metamodel.schema.ColumnType;
 
 /**
  * {@link Datastore} placeholder for lightweight reading of analysis jobs
@@ -36,15 +37,21 @@ public class PlaceholderDatastore implements Datastore {
 
     private final String _datastoreName;
     private final List<String> _sourceColumnPaths;
+    private final List<ColumnType> _sourceColumnTypes;
     private String _description;
 
-    public PlaceholderDatastore(String datastoreName, List<String> sourceColumnPaths) {
+    public PlaceholderDatastore(String datastoreName, List<String> sourceColumnPaths, List<ColumnType> sourceColumnTypes) {
         _datastoreName = datastoreName;
         _sourceColumnPaths = sourceColumnPaths;
+        _sourceColumnTypes = sourceColumnTypes;
     }
 
     public List<String> getSourceColumnPaths() {
         return _sourceColumnPaths;
+    }
+    
+    public List<ColumnType> getSourceColumnTypes() {
+        return _sourceColumnTypes;
     }
 
     @Override

@@ -43,7 +43,7 @@ final class PlaceholderDatastoreConnection implements DatastoreConnection {
 
     @Override
     public DataContext getDataContext() {
-        return new PlaceholderDataContext(_datastore.getSourceColumnPaths());
+        return new PlaceholderDataContext(_datastore.getSourceColumnPaths(), _datastore.getSourceColumnTypes());
     }
 
     @Override

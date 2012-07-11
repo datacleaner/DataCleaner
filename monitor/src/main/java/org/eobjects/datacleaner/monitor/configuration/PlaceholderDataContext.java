@@ -46,7 +46,7 @@ public class PlaceholderDataContext extends AbstractDataContext {
 
     private final ImmutableSchema _schema;
 
-    public PlaceholderDataContext(List<String> sourceColumnPaths) {
+    public PlaceholderDataContext(List<String> sourceColumnPaths, List<ColumnType> sourceColumnTypes) {
         final String prefix = StringUtils.getLongestCommonToken(sourceColumnPaths, '.');
 
         final int schemaAndTableDelim = prefix.indexOf('.');
@@ -71,17 +71,19 @@ public class PlaceholderDataContext extends AbstractDataContext {
         MutableTable table = new MutableTable(tableName).setSchema(schema);
         schema.addTable(table);
 
-        for (String sourceColumnPath : sourceColumnPaths) {
+        for (int i = 0; i < sourceColumnPaths.size(); i++) {
             final String columnName;
             if (prefix.isEmpty()) {
-                columnName = sourceColumnPath;
+                columnName = sourceColumnPaths.get(i);
             } else {
-                columnName = sourceColumnPath.substring(prefix.length() + 1);
+                columnName = sourceColumnPaths.get(i).substring(prefix.length() + 1);
             }
 
-            // TODO: Column type should be same as original column type
-            ColumnType columnType = ColumnType.VARCHAR;
-            MutableColumn column = new MutableColumn(columnName).setType(columnType).setTable(table);
+            ColumnType columnType = sourceColumnTypes.get(i);
+            if (columnType == null) {
+                columnType = ColumnType.VARCHAR;
+            }
+            final MutableColumn column = new MutableColumn(columnName).setType(columnType).setTable(table);
             table.addColumn(column);
         }
 

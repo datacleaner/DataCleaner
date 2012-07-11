@@ -31,6 +31,7 @@ import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.job.JobReader;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.metamodel.schema.ColumnType;
 import org.eobjects.metamodel.util.FileHelper;
 
 /**
@@ -73,8 +74,9 @@ public class MonitorJobReader {
             try {
                 if (datastore == null) {
                     final List<String> sourceColumnPaths = metadata.getSourceColumnPaths();
+                    final List<ColumnType> sourceColumnTypes = metadata.getSourceColumnTypes();
                     final PlaceholderDatastore placeholderDatastore = new PlaceholderDatastore(datastoreName,
-                            sourceColumnPaths);
+                            sourceColumnPaths, sourceColumnTypes);
 
                     final SourceColumnMapping sourceColumnMapping = new SourceColumnMapping(sourceColumnPaths);
                     sourceColumnMapping.setDatastore(placeholderDatastore);

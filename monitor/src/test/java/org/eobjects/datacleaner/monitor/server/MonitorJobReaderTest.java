@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.server;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -30,6 +31,7 @@ import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
+import org.eobjects.metamodel.schema.ColumnType;
 
 public class MonitorJobReaderTest extends TestCase {
 
@@ -49,6 +51,10 @@ public class MonitorJobReaderTest extends TestCase {
                         + "MetaModelInputColumn[PUBLIC.EMPLOYEES.EMAIL], MetaModelInputColumn[PUBLIC.EMPLOYEES.OFFICECODE], "
                         + "MetaModelInputColumn[PUBLIC.EMPLOYEES.REPORTSTO], MetaModelInputColumn[PUBLIC.EMPLOYEES.JOBTITLE]]",
                 sourceColumns.toString());
+        
+        Iterator<InputColumn<?>> it = sourceColumns.iterator();
+        assertEquals(ColumnType.INTEGER, it.next().getPhysicalColumn().getType());
+        assertEquals(ColumnType.VARCHAR, it.next().getPhysicalColumn().getType());
     }
 
     public void testMapPlaceholderColumnsNonQualified() throws Exception {

@@ -8,13 +8,13 @@
 	<source>
 		<data-context ref="orderdb" />
 		<columns>
-			<column path="PUBLIC.EMPLOYEES.EMPLOYEENUMBER" id="col_0" />
+			<column path="PUBLIC.EMPLOYEES.EMPLOYEENUMBER" type="INTEGER" id="col_0" />
 			<column path="PUBLIC.EMPLOYEES.LASTNAME" id="col_1" />
 			<column path="PUBLIC.EMPLOYEES.FIRSTNAME" id="col_2" />
 			<column path="PUBLIC.EMPLOYEES.EXTENSION" id="col_3" />
 			<column path="PUBLIC.EMPLOYEES.EMAIL" id="col_4" />
 			<column path="PUBLIC.EMPLOYEES.OFFICECODE" id="col_5" />
-			<column path="PUBLIC.EMPLOYEES.REPORTSTO" id="col_6" />
+			<column path="PUBLIC.EMPLOYEES.REPORTSTO" type="INTEGER" id="col_6" />
 			<column path="PUBLIC.EMPLOYEES.JOBTITLE" id="col_7" />
 		</columns>
 		<variables>

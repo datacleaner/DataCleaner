@@ -46,7 +46,7 @@ div.pageHeader div.logo {
 	margin-left: auto;
 	margin-right: auto;
 	width: 894px;
-	height: 105px;
+	height: 118px;
 	display: block;
 	background-image: url("images/header.png");
 	background-repeat: no-repeat;
@@ -164,7 +164,7 @@ img.scalable_background {
 * Navigation menu
 */
 .navContainer {
-	margin-top: -15px;
+	margin-top: -28px;
 	margin-left: auto;
 	margin-right: auto;
 	width: 894px;
@@ -214,6 +214,7 @@ img.scalable_background {
  * User panel
  */
 #user_panel {
+	font-family: "Ubuntu", sans-serif;
 	background-image: url("images/user.png");
 	background-position: 5px center;
 	background-repeat: no-repeat;

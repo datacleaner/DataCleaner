@@ -22,7 +22,7 @@
  * Overrides of the "clean" theme for basic elements
  */
 body,table td,select,button,input {
-	font-family: "Ubuntu", sans-serif;
+	font-family: "Open Sans", sans-serif;
 }
 
 a {
@@ -96,6 +96,7 @@ a:hover {
 }
 
 .HeadingLabel {
+	font-family: "Ubuntu", sans-serif;
 	color: #377FCF;
 	font-size: 1.2em;
 	margin-bottom: 10px;

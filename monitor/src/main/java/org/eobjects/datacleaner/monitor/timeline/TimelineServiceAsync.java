@@ -66,6 +66,9 @@ public interface TimelineServiceAsync {
 
     public void addTimelineGroup(TenantIdentifier tenant, String name, AsyncCallback<TimelineGroup> callback);
 
-    public void removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup, AsyncCallback<Boolean> callback);
+    public void removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup,
+            AsyncCallback<Boolean> callback);
+
+    void isDashboardEditor(TenantIdentifier tenant, AsyncCallback<Boolean> callback);
 
 }

@@ -47,13 +47,16 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
     private final SimplePanel _targetPanel;
     private final Map<String, Anchor> _anchors;
     private final FlowPanel _anchorPanel;
+    private final boolean _isDashboardEditor;
 
-    public TimelineGroupSelectionPanel(TenantIdentifier tenant, TimelineServiceAsync service, SimplePanel targetPanel) {
+    public TimelineGroupSelectionPanel(TenantIdentifier tenant, TimelineServiceAsync service, SimplePanel targetPanel,
+            boolean isDashboardEditor) {
         super();
 
         _tenant = tenant;
         _service = service;
         _targetPanel = targetPanel;
+        _isDashboardEditor = isDashboardEditor;
         _anchors = new HashMap<String, Anchor>();
         _anchorPanel = new FlowPanel();
         _anchorPanel.setStyleName("AnchorPanel");
@@ -75,6 +78,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
         });
 
         final Anchor createNewGroupAnchor = new Anchor();
+        createNewGroupAnchor.setVisible(_isDashboardEditor);
         createNewGroupAnchor.setStyleName("CreateNewTimelineGroupAnchor");
         createNewGroupAnchor.setText("New group");
         createNewGroupAnchor.addClickHandler(new ClickHandler() {
@@ -132,7 +136,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
                 anchor.addStyleName("selected");
 
                 if (panel == null) {
-                    panel = new TimelineGroupPanel(_service, _tenant, group);
+                    panel = new TimelineGroupPanel(_service, _tenant, group, _isDashboardEditor);
                 }
                 _targetPanel.setWidget(panel);
                 History.newItem(groupName);

@@ -74,7 +74,7 @@ public class CreateTimelineHandler implements ClickHandler {
         final TimelineDefinition timelineDefinition = new TimelineDefinition();
         timelineDefinition.setJobIdentifier(job);
 
-        final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, null, _timelineListPanel);
+        final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, null, _timelineListPanel, true);
         timelinePanel.setTimelineDefinition(timelineDefinition, false);
 
         final CustomizeMetricsPanel customizeMetricsPanel = new CustomizeMetricsPanel(_service, _tenant,

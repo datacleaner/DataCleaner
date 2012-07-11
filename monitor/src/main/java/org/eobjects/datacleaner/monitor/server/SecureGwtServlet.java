@@ -86,6 +86,20 @@ public class SecureGwtServlet extends RemoteServiceServlet {
         super.doUnexpectedFailure(exception);
     }
 
+    protected boolean hasRole(String roleName) {
+        final Principal principal = getThreadLocalRequest().getUserPrincipal();
+        if (principal == null) {
+            return false;
+        }
+
+        final Authentication authentication = (Authentication) principal;
+
+        final UserBean user = new UserBean(getTenantResolver());
+        user.updateUser(authentication);
+
+        return user.hasRole(roleName);
+    }
+
     @Override
     protected void onAfterRequestDeserialized(RPCRequest request) {
         final Principal principal = getThreadLocalRequest().getUserPrincipal();

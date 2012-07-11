@@ -43,6 +43,13 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("timelineService")
 public interface TimelineService extends RemoteService {
+    
+    /**
+     * Determines whether the current user is authorized to edit the dashboard.
+     * @param tenant
+     * @return
+     */
+    public boolean isDashboardEditor(TenantIdentifier tenant);
 
     /**
      * Gets the saved jobs of a particular tenant

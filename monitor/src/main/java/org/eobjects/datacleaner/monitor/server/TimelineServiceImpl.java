@@ -674,4 +674,11 @@ public class TimelineServiceImpl implements TimelineService {
             return false;
         }
     }
+
+    @Override
+    public boolean isDashboardEditor(TenantIdentifier tenant) {
+        // this question cannot be answerred here. The wrapping SecureGwtServlet
+        // will handle it.
+        return true;
+    }
 }

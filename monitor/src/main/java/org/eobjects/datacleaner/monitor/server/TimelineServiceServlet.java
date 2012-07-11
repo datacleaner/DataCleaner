@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.TimelineService;
 import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
@@ -130,5 +131,10 @@ public class TimelineServiceServlet extends SecureGwtServlet implements Timeline
     @Override
     public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup) {
         return _delegate.removeTimelineGroup(tenant, timelineGroup);
+    }
+
+    @Override
+    public boolean isDashboardEditor(TenantIdentifier tenant) {
+        return hasRole(SecurityRoles.DASHBOARD_EDITOR) && _delegate.isDashboardEditor(tenant);
     }
 }

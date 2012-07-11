@@ -23,6 +23,7 @@ import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.timeline.widgets.TimelineGroupSelectionPanel;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -38,18 +39,27 @@ public class TimelineEntryPoint implements EntryPoint {
 
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
-        
+
         final ClientConfig clientConfig = new DictionaryClientConfig();
         final TenantIdentifier tenant = clientConfig.getTenant();
 
         final TimelineServiceAsync service = GWT.create(TimelineService.class);
 
+        service.isDashboardEditor(tenant, new DCAsyncCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                render(service, tenant, result.booleanValue());
+            }
+        });
+    }
+
+    protected void render(TimelineServiceAsync service, TenantIdentifier tenant, boolean isDashboardEditor) {
         final FlowPanel timelinesSplitPanel = new FlowPanel();
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
         {
             final SimplePanel targetPanel = new SimplePanel();
             final TimelineGroupSelectionPanel selectionPanel = new TimelineGroupSelectionPanel(tenant, service,
-                    targetPanel);
+                    targetPanel, isDashboardEditor);
 
             timelinesSplitPanel.add(selectionPanel);
             timelinesSplitPanel.add(targetPanel);

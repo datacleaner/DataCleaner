@@ -46,13 +46,15 @@ public class TimelineGroupPanel extends FlowPanel {
     private final WelcomePanel _welcomePanel;
     private final TimelineGroup _group;
     private final Button _removeGroupButton;
+    private final boolean _isDashboardEditor;
     private int _dashboardWidgetCount;
 
-    public TimelineGroupPanel(TimelineServiceAsync service, TenantIdentifier tenant, TimelineGroup group) {
+    public TimelineGroupPanel(TimelineServiceAsync service, TenantIdentifier tenant, TimelineGroup group, boolean isDashboardEditor) {
         super();
         _tenant = tenant;
         _service = service;
         _group = group;
+        _isDashboardEditor = isDashboardEditor;
         _dashboardWidgetCount = 0;
 
         addStyleName("TimelineGroupPanel");
@@ -100,6 +102,7 @@ public class TimelineGroupPanel extends FlowPanel {
             add(_removeGroupButton);
         }
         
+        newTimelineButton.setVisible(_isDashboardEditor);
         newTimelineButton.addStyleDependentName("ImageTextButton");
         newTimelineButton.addStyleName("NewDashboardWidgetButton");
         newTimelineButton.addClickHandler(new CreateTimelineHandler(_service, _tenant, this));
@@ -119,7 +122,7 @@ public class TimelineGroupPanel extends FlowPanel {
     }
 
     public void addTimelinePanel(TimelineIdentifier identifier) {
-        final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, identifier, this);
+        final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, identifier, this, _isDashboardEditor);
         addTimelinePanel(timelinePanel);
     }
 

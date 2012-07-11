@@ -67,22 +67,25 @@ public class TimelinePanel extends FlowPanel {
     private final TimelineGroupPanel _timelineGroupPanel;
     private final Button _saveButton;
     private final Button _deleteButton;
+    private final boolean _isDashboardEditor;
 
     private TimelineIdentifier _timelineIdentifier;
     private TimelineDefinition _timelineDefinition;
     private TimelineData _timelineData;
 
     public TimelinePanel(TenantIdentifier tenant, TimelineServiceAsync service, TimelineIdentifier timelineIdentifier,
-            TimelineGroupPanel timelineGroupPanel) {
+            TimelineGroupPanel timelineGroupPanel, boolean isDashboardEditor) {
         super();
         _tenant = tenant;
         _service = service;
         _timelineIdentifier = timelineIdentifier;
         _timelineGroupPanel = timelineGroupPanel;
+        _isDashboardEditor = isDashboardEditor;
         _loadingIndicator = new LoadingIndicator();
         _loadingIndicator.setHeight((DefaultVAxisOption.DEFAULT_HEIGHT + 4) + "px");
 
         _saveButton = new Button("");
+        _saveButton.setVisible(isDashboardEditor);
         _saveButton.addStyleDependentName("ImageButton");
         _saveButton.setTitle("Save timeline");
         _saveButton.addStyleName("SaveButton");
@@ -102,6 +105,7 @@ public class TimelinePanel extends FlowPanel {
         }
 
         _deleteButton = new Button();
+        _deleteButton.setVisible(isDashboardEditor);
         _deleteButton.addStyleDependentName("ImageButton");
         _deleteButton.setTitle("Delete timeline");
         _deleteButton.addStyleName("DeleteButton");
@@ -267,19 +271,22 @@ public class TimelinePanel extends FlowPanel {
 
     private ButtonPanel createButtonPanel() {
         final Button customizeButton = new Button("");
+        customizeButton.setVisible(_isDashboardEditor);
         customizeButton.addStyleDependentName("ImageButton");
         customizeButton.setTitle("Customize timeline");
         customizeButton.addStyleName("CustomizeButton");
         customizeButton.addClickHandler(new CustomizeTimelineHandler(_service, this));
 
         final Button copyButton = new Button("");
+        copyButton.setVisible(_isDashboardEditor);
         copyButton.addStyleDependentName("ImageButton");
         copyButton.setTitle("Copy timeline");
         copyButton.addStyleName("CopyButton");
         copyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel);
+                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel,
+                        _isDashboardEditor);
                 copyPanel.setTimelineDefinition(_timelineDefinition);
                 _timelineGroupPanel.add(copyPanel);
             }

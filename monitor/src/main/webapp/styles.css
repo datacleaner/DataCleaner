@@ -8,7 +8,7 @@ body {
 }
 
 body,table td,select,button,input {
-	font-family: "Ubuntu", sans-serif;
+	font-family: "Open Sans", sans-serif;
 	font-size: small;
 }
 
@@ -198,7 +198,7 @@ img.scalable_background {
 #nav li a {
 	color: white;
 	text-decoration: none;
-	font-family: 'Arial Unicode MS', Arial, sans-serif;
+	font-family: 'Open Sans', sans-serif;
 	font-size: 13px;
 	font-weight: normal;
 	padding-left: 26px;

@@ -30,6 +30,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -50,6 +52,7 @@ import javax.swing.text.JTextComponent;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.panels.DCPanel;
+import org.eobjects.metamodel.util.FileHelper;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.border.DropShadowBorder;
 import org.jdesktop.swingx.decorator.Highlighter;
@@ -65,20 +68,46 @@ public final class WidgetUtils {
 
     private static final Map<String, Font> fonts;
 
+    public static final Font FONT_UBUNTU_PLAIN;
+    public static final Font FONT_UBUNTU_BOLD;
+    public static final Font FONT_UBUNTU_ITALIC;
+    public static final Font FONT_UBUNTU_BOLD_ITALIC;
+    
+    public static final Font FONT_OPENSANS_PLAIN;
+    public static final Font FONT_OPENSANS_BOLD;
+    public static final Font FONT_OPENSANS_ITALIC;
+    public static final Font FONT_OPENSANS_BOLD_ITALIC;
+
     static {
-        Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         fonts = new HashMap<String, Font>();
+        
+        Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         for (Font font : fontArray) {
-            fonts.put(font.getName(), font);
+            if (font.isPlain()) {
+                fonts.put(font.getName(), font);
+            }
         }
+
+        FONT_UBUNTU_PLAIN = createFont("fonts/Ubuntu-R.ttf");
+        FONT_UBUNTU_ITALIC = createFont("fonts/Ubuntu-RI.ttf");
+        FONT_UBUNTU_BOLD = createFont("fonts/Ubuntu-B.ttf");
+        FONT_UBUNTU_BOLD_ITALIC = createFont("fonts/Ubuntu-BI.ttf");
+        
+        FONT_OPENSANS_PLAIN = createFont("fonts/OpenSans-Regular.ttf");
+        FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
+        FONT_OPENSANS_BOLD = createFont("fonts/OpenSans-Bold.ttf");
+        FONT_OPENSANS_BOLD_ITALIC = createFont("fonts/OpenSans-BoldItalic.ttf");
+
+        fonts.put(FONT_UBUNTU_PLAIN.getName(), FONT_UBUNTU_PLAIN);
+        fonts.put(FONT_OPENSANS_PLAIN.getName(), FONT_OPENSANS_PLAIN);
     }
 
-    public static final Font FONT_BANNER = new FontUIResource("Trebuchet MS", Font.PLAIN, 18);
-    public static final Font FONT_HEADER1 = new FontUIResource("Trebuchet MS", Font.BOLD, 15);
-    public static final Font FONT_HEADER2 = new FontUIResource("Verdana", Font.BOLD, 13);
+    public static final Font FONT_BANNER = FONT_UBUNTU_PLAIN.deriveFont(18f);
+    public static final Font FONT_HEADER1 = FONT_UBUNTU_PLAIN.deriveFont(15f);
+    public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(13f);
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
-    public static final Font FONT_NORMAL = new FontUIResource("Verdana", Font.PLAIN, 11);
-    public static final Font FONT_SMALL = new FontUIResource("Verdana", Font.PLAIN, 10);
+    public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
+    public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(11f);
 
     // the three blue variants in the DataCleaner logo (#5594dd, #235da0,
     // #023a7c)
@@ -91,9 +120,10 @@ public final class WidgetUtils {
     public static final Color BG_COLOR_ORANGE_MEDIUM = new ColorUIResource(225, 102, 5);
     public static final Color BG_COLOR_ORANGE_DARK = new ColorUIResource(168, 99, 15);
 
-    // pale yellow color which work fine for information/help text fields. #f4f4d3
+    // pale yellow color which work fine for information/help text fields.
+    // #f4f4d3
     public static final Color BG_COLOR_PALE_YELLOW = new ColorUIResource(244, 244, 211);
-    
+
     // white
     public static final Color BG_COLOR_BRIGHTEST = ColorUIResource.WHITE;
 
@@ -149,6 +179,23 @@ public final class WidgetUtils {
 
     private WidgetUtils() {
         // prevent instantiation
+    }
+
+    private static Font createFont(String path) {
+        final URL url = ResourceManager.getInstance().getUrl(path);
+        if (url == null) {
+            throw new IllegalArgumentException("Font resource not found: " + path);
+        }
+
+        InputStream in = null;
+        try {
+            in = url.openStream();
+            return Font.createFont(Font.TRUETYPE_FONT, in);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        } finally {
+            FileHelper.safeClose(in);
+        }
     }
 
     public static void centerOnScreen(Component component) {

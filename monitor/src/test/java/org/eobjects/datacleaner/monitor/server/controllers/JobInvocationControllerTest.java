@@ -32,7 +32,7 @@ import org.eobjects.datacleaner.repository.file.FileRepository;
 
 public class JobInvocationControllerTest extends TestCase {
 
-    public void testInvoke() throws Throwable {
+    public void testInvokeDatabaseSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final ConfigurationCache configurationCache = new ConfigurationCache(repository);
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
@@ -52,5 +52,31 @@ public class JobInvocationControllerTest extends TestCase {
 
         assertEquals("[kasper, eobjects.dk]", Arrays.toString(rows.get(0).getValues()));
         assertEquals("[kasper.sorensen, humaninference.com]", Arrays.toString(rows.get(1).getValues()));
+    }
+
+    public void testInvokeFileWithExtensionNameSchema() throws Throwable {
+        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final ConfigurationCache configurationCache = new ConfigurationCache(repository);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
+        final JobInvocationController controller = new JobInvocationController();
+        controller._contextFactory = contextFactory;
+
+        final JobInvocationPayload sourceRecords = new JobInvocationPayload();
+        
+        final int input = 123;
+        sourceRecords.addRow(new Object[] { input });
+
+        JobInvocationPayload result = controller.invokeJob("tenant1", "random_number_generation", sourceRecords);
+
+        assertEquals("[Random number]", result.getColumns().toString());
+
+        List<JobInvocationRowData> rows = result.getRows();
+        assertEquals(1, rows.size());
+
+        final Object[] values = rows.get(0).getValues();
+        assertEquals(1, values.length);
+        final Number number = (Number) values[0];
+        assertTrue(number.doubleValue() >= 0);
+        assertTrue(number.doubleValue() <= input);
     }
 }

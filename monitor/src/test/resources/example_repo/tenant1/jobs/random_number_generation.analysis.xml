@@ -6,9 +6,9 @@
         <updated-date>2012-06-07+02:00</updated-date>
     </job-metadata>
     <source>
-        <data-context ref="orderdb"/>
+        <data-context ref="Vendors"/>
         <columns>
-            <column path="PUBLIC.CUSTOMERS.CUSTOMERNUMBER" id="col_0"/>
+            <column path="vendor_dictionary.txt.vendor_dictionary.A" id="col_0"/>
         </columns>
     </source>
     <transformation>

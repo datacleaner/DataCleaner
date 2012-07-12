@@ -103,9 +103,8 @@ public class JobInvocationController {
             tableName = tablePath;
             schemaName = null;
         } else {
-            schemaName = tablePath.substring(0, tablePath.indexOf('.'));
-            tableName = tablePath.substring(tablePath.indexOf('.') + 1);
-
+            schemaName = tablePath.substring(0, tablePath.lastIndexOf('.'));
+            tableName = tablePath.substring(tablePath.lastIndexOf('.') + 1);
         }
 
         final List<TableDataProvider<?>> tableDataProviders = new ArrayList<TableDataProvider<?>>(1);

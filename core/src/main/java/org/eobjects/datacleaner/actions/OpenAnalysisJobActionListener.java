@@ -119,6 +119,10 @@ public class OpenAnalysisJobActionListener implements ActionListener {
             Injector injector = openAnalysisJob(file);
             final AnalysisJobBuilderWindow window = injector.getInstance(AnalysisJobBuilderWindow.class);
             window.open();
+            
+            if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
+                _parentWindow.close();
+            }
         }
     }
 
@@ -205,10 +209,6 @@ public class OpenAnalysisJobActionListener implements ActionListener {
                 return fileObject.getName().getBaseName();
             };
         });
-
-        if (_parentWindow != null && !_parentWindow.isDatastoreSet()) {
-            _parentWindow.close();
-        }
 
         return injector;
     }

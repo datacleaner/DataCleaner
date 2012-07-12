@@ -9,6 +9,11 @@
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
+		
+		<csv-datastore name="Vendors">
+			<filename>reference-data/vendor_dictionary.txt</filename>
+			<header-line-number>0</header-line-number>
+		</csv-datastore>
 	</datastore-catalog>
 	
 	<reference-data-catalog>

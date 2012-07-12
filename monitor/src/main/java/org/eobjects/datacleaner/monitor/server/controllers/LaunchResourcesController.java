@@ -28,6 +28,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.repository.Repository;
@@ -39,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping(value = "/{tenant}/launch-resources")
@@ -55,6 +59,9 @@ public class LaunchResourcesController {
 
     @Autowired
     JobFileController _jobFileController;
+
+    @Autowired
+    TenantContextFactory _tenantContextFactory;
 
     @RequestMapping("/images/app-icon.png")
     public void fetchAppIcon(HttpServletResponse response) throws IOException {
@@ -79,8 +86,13 @@ public class LaunchResourcesController {
     }
 
     @RequestMapping("/conf.xml")
-    public void fetchConfigurationFile(@PathVariable("tenant") final String tenant, final HttpServletResponse response)
+    public void fetchConfigurationFile(@PathVariable("tenant") final String tenant,
+            @RequestParam(value = "job", required = false) final String jobName, final HttpServletResponse response)
             throws Exception {
+
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final JobContext job = tenantContext.getJob(jobName);
+
         final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
         if (tenantFolder == null) {
             throw new IllegalArgumentException("No such tenant: " + tenant);
@@ -97,7 +109,7 @@ public class LaunchResourcesController {
         try {
             // intercept the input stream to decorate it with client-side config
             // elements.
-            _configurationInterceptor.intercept(tenant, in, out);
+            _configurationInterceptor.intercept(tenant, job, in, out);
         } finally {
             FileHelper.safeClose(in);
         }
@@ -111,7 +123,8 @@ public class LaunchResourcesController {
      * @param response
      */
     @RequestMapping(value = "/{job:.+}.analysis.xml")
-    public void fetchAnalysisJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName, OutputStream out) {
+    public void fetchAnalysisJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
+            OutputStream out) {
         _jobFileController.jobXml(tenant, jobName, out);
     }
 

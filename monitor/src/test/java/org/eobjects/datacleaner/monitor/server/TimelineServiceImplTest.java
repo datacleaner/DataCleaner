@@ -52,11 +52,11 @@ public class TimelineServiceImplTest extends TestCase {
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
 
         final List<JobIdentifier> jobs = service.getJobs(tenant);
-        assertEquals(3, jobs.size());
+        assertEquals(4, jobs.size());
 
         Collections.sort(jobs);
 
-        final JobIdentifier job = jobs.get(1);
+        final JobIdentifier job = jobs.get(2);
         assertEquals("JobIdentifier[name=product_profiling]", job.toString());
 
         final JobMetrics jobMetrics = service.getJobMetrics(tenant, job);

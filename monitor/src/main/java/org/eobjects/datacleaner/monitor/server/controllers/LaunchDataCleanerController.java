@@ -77,7 +77,7 @@ public class LaunchDataCleanerController {
         final String jnlpHref = "jobs/" + encodedJobName + ".launch.jnlp";
         final String jobUrl = baseUrl + '/' + RESOURCES_FOLDER + encodedJobName + ".analysis.xml";
         final String datastoreName = job.getSourceDatastoreName();
-        final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml";
+        final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
 
         final InputStream in = getClass().getResourceAsStream("launch-datacleaner-template.xml");
         try {

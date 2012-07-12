@@ -1947,6 +1947,80 @@
                 </rows>
             </table>
         </pojo-datastore>
+        <pojo-datastore name="Vendors">
+            <schema-name>vendor_dictionary.txt</schema-name>
+            <table>
+                <name>vendor_dictionary</name>
+                <columns>
+                    <column>
+                        <name>A</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>Classic Metal Creations</v>
+                    </row>
+                    <row>
+                        <v>Autoart Studio Design</v>
+                    </row>
+                    <row>
+                        <v>Carousel DieCast Legends</v>
+                    </row>
+                    <row>
+                        <v>Autoart Studio Design</v>
+                    </row>
+                    <row>
+                        <v>Min Lin Diecast</v>
+                    </row>
+                    <row>
+                        <v>Studio M Art Models</v>
+                    </row>
+                    <row>
+                        <v>Unimax Art Galleries</v>
+                    </row>
+                    <row>
+                        <v>Motor City Art Classics</v>
+                    </row>
+                    <row>
+                        <v>Red Start Diecast</v>
+                    </row>
+                    <row>
+                        <v>Motor City Art Classics</v>
+                    </row>
+                    <row>
+                        <v>Carousel DieCast Legends</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>Second Gear Diecast</v>
+                    </row>
+                    <row>
+                        <v>Red Start Diecast</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>Second Gear Diecast</v>
+                    </row>
+                    <row>
+                        <v>Classic Metal Creations</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>Studio M Art Models</v>
+                    </row>
+                    <row>
+                        <v>Highway 66 Mini Classics</v>
+                    </row>
+                </rows>
+            </table>
+        </pojo-datastore>
     </datastore-catalog>
     <reference-data-catalog>
         <dictionaries>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0">
+    <configuration-metadata>
+        <configuration-name>DataCleaner dq monitor configuration for tenant tenant1</configuration-name>
+        <author>Automatically generated</author>
+        <updated-date>2012-06-26+02:00</updated-date>
+    </configuration-metadata>
+    <datastore-catalog>
+        <pojo-datastore description="DataCleaner example database" name="orderdb">
+            <schema-name>PUBLIC</schema-name>
+            <table>
+                <name>PRODUCTS</name>
+                <columns>
+                    <column>
+                        <name>PRODUCTVENDOR</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>Min Lin Diecast</v>
+                        <v>1969 Harley Davidson Ultimate Chopper</v>
+                    </row>
+                    <row>
+                        <v>Classic Metal Creations</v>
+                        <v>1952 Alpine Renault 1300</v>
+                    </row>
+                    <row>
+                        <v>Highway 66 Mini Classics</v>
+                        <v>1996 Moto Guzzi 1100i</v>
+                    </row>
+                    <row>
+                        <v>Red Start Diecast</v>
+                        <v>2003 Harley-Davidson Eagle Drag Bike</v>
+                    </row>
+                    <row>
+                        <v>Motor City Art Classics</v>
+                        <v>1972 Alfa Romeo GTA</v>
+                    </row>
+                    <row>
+                        <v>Second Gear Diecast</v>
+                        <v>1962 LanciaA Delta 16V</v>
+                    </row>
+                    <row>
+                        <v>Autoart Studio Design</v>
+                        <v>1968 Ford Mustang</v>
+                    </row>
+                    <row>
+                        <v>Second Gear Diecast</v>
+                        <v>2001 Ferrari Enzo</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                        <v>1958 Setra Bus</v>
+                    </row>
+                    <row>
+                        <v>Unimax Art Galleries</v>
+                        <v>2002 Suzuki XREO</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                        <v>1969 Corvair Monza</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                        <v>1968 Dodge Charger</v>
+                    </row>
+                    <row>
+                        <v>Second Gear Diecast</v>
+                        <v>1969 Ford Falcon</v>
+                    </row>
+                    <row>
+                        <v>Studio M Art Models</v>
+                        <v>1970 Plymouth Hemi Cuda</v>
+                    </row>
+                    <row>
+                        <v>Exoto Designs</v>
+                        <v>1957 Chevy Pickup</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                        <v>1969 Dodge Charger</v>
+                    </row>
+                    <row>
+                        <v>Studio M Art Models</v>
+                        <v>1940 Ford Pickup Truck</v>
+                    </row>
+                    <row>
+                        <v>Highway 66 Mini Classics</v>
+                        <v>1993 Mazda RX-7</v>
+                    </row>
+                    <row>
+                        <v>Motor City Art Classics</v>
+                        <v>1937 Lincoln Berline</v>
+                    </row>
+                    <row>
+                        <v>Studio M Art Models</v>
+                        <v>1936 Mercedes-Benz 500K Special Roadster</v>
+                    </row>
+                </rows>
+            </table>
+        </pojo-datastore>
+        <pojo-datastore name="Vendors">
+            <schema-name>vendor_dictionary.txt</schema-name>
+            <table>
+                <name>vendor_dictionary</name>
+                <columns>
+                    <column>
+                        <name>A</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>Classic Metal Creations</v>
+                    </row>
+                    <row>
+                        <v>Autoart Studio Design</v>
+                    </row>
+                    <row>
+                        <v>Carousel DieCast Legends</v>
+                    </row>
+                    <row>
+                        <v>Autoart Studio Design</v>
+                    </row>
+                    <row>
+                        <v>Min Lin Diecast</v>
+                    </row>
+                    <row>
+                        <v>Studio M Art Models</v>
+                    </row>
+                    <row>
+                        <v>Unimax Art Galleries</v>
+                    </row>
+                    <row>
+                        <v>Motor City Art Classics</v>
+                    </row>
+                    <row>
+                        <v>Red Start Diecast</v>
+                    </row>
+                    <row>
+                        <v>Motor City Art Classics</v>
+                    </row>
+                    <row>
+                        <v>Carousel DieCast Legends</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>Second Gear Diecast</v>
+                    </row>
+                    <row>
+                        <v>Red Start Diecast</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>Second Gear Diecast</v>
+                    </row>
+                    <row>
+                        <v>Classic Metal Creations</v>
+                    </row>
+                    <row>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>Studio M Art Models</v>
+                    </row>
+                    <row>
+                        <v>Highway 66 Mini Classics</v>
+                    </row>
+                </rows>
+            </table>
+        </pojo-datastore>
+    </datastore-catalog>
+    <reference-data-catalog>
+        <dictionaries>
+            <text-file-dictionary name="vendor whitelist">
+                <filename>reference-data/vendor_dictionary.txt</filename>
+            </text-file-dictionary>
+        </dictionaries>
+        <synonym-catalogs/>
+    </reference-data-catalog>
+    <multithreaded-taskrunner max-threads="10"/>
+    <classpath-scanner>
+        <package recursive="true">org.eobjects</package>
+        <package recursive="true">com.hi</package>
+    </classpath-scanner>
+</configuration>

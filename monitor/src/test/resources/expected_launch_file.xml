@@ -20,7 +20,7 @@
 	</resources>
 	<application-desc main-class="org.eobjects.datacleaner.Main">
 		<argument>-conf</argument>
-		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/conf.xml</argument>
+		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=my+job</argument>
 		<argument>-job</argument>
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/my+job.analysis.xml</argument>
 		<argument>-ds</argument>

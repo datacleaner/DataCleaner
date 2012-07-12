@@ -22,11 +22,26 @@ package org.eobjects.datacleaner.monitor.server;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
+
 /**
  * Interface for the component which intercepts a tenant's server-side
  * configuration and transforms it into a client-side configuration.
  */
 public interface ConfigurationInterceptor {
 
-    public void intercept(final String tenantId, final InputStream in, final OutputStream out) throws Exception;
+    /**
+     * Intercepts a configuration {@link InputStream} and after conversion
+     * creates a consumable {@link OutputStream}.
+     * 
+     * @param tenantId
+     * @param job
+     *            optionally the job which is needs the resulting configuration
+     *            to execute. May be null if no specific job is requested.
+     * @param in
+     * @param out
+     * @throws Exception
+     */
+    public void intercept(final String tenantId, JobContext job, final InputStream in, final OutputStream out)
+            throws Exception;
 }

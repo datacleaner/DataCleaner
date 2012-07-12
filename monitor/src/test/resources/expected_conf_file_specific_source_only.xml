@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0">
+    <configuration-metadata>
+        <configuration-name>DataCleaner dq monitor configuration for tenant tenant1</configuration-name>
+        <author>Automatically generated</author>
+        <updated-date>2012-06-26+02:00</updated-date>
+    </configuration-metadata>
+    <datastore-catalog>
+        <pojo-datastore description="DataCleaner example database" name="orderdb">
+            <schema-name>PUBLIC</schema-name>
+            <table>
+                <name>EMPLOYEES</name>
+                <columns>
+                    <column>
+                        <name>EMAIL</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>dmurphy@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>mpatterso@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>jfirrelli@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>wpatterson@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>athompson@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>bhoward@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>ljennings@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>lthompson@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>jfirrelli@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>spatterso@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>ftseng@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>gvanauf@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>lbondur@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>ghernande@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>pcastillo@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>lbott@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>bjones@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>afixter@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>pmarsh@classicmodelcars.com</v>
+                    </row>
+                    <row>
+                        <v>tking@classicmodelcars.com</v>
+                    </row>
+                </rows>
+            </table>
+        </pojo-datastore>
+    </datastore-catalog>
+    <reference-data-catalog>
+        <dictionaries>
+            <text-file-dictionary name="vendor whitelist">
+                <filename>reference-data/vendor_dictionary.txt</filename>
+            </text-file-dictionary>
+        </dictionaries>
+        <synonym-catalogs/>
+    </reference-data-catalog>
+    <multithreaded-taskrunner max-threads="10"/>
+    <classpath-scanner>
+        <package recursive="true">org.eobjects</package>
+        <package recursive="true">com.hi</package>
+    </classpath-scanner>
+</configuration>

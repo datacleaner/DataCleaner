@@ -107,7 +107,7 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 				addValueWidthTextField(valueWidth);
 			}
 
-			_headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber() + 1);
+			_headerLineComboBox.setSelectedIndex(originalDatastore.getHeaderLineNumber());
 
 			onSettingsUpdated(false);
 		} else {

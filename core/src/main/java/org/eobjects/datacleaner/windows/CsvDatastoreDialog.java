@@ -114,7 +114,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
 			_failOnInconsistenciesCheckBox.setSelected(_originalDatastore.isFailOnInconsistencies());
 			_encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
 
-			_headerLineComboBox.setSelectedItem(_originalDatastore.getHeaderLineNumber() + 1);
+			_headerLineComboBox.setSelectedItem(_originalDatastore.getHeaderLineNumber());
 
 			Character separatorChar = _originalDatastore.getSeparatorChar();
 			String separator = null;

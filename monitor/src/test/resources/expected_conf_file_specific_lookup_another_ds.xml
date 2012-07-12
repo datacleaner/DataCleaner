@@ -12,94 +12,94 @@
                 <name>PRODUCTS</name>
                 <columns>
                     <column>
-                        <name>PRODUCTVENDOR</name>
+                        <name>PRODUCTNAME</name>
                         <type>VARCHAR</type>
                     </column>
                     <column>
-                        <name>PRODUCTNAME</name>
+                        <name>PRODUCTVENDOR</name>
                         <type>VARCHAR</type>
                     </column>
                 </columns>
                 <rows>
                     <row>
-                        <v>Min Lin Diecast</v>
                         <v>1969 Harley Davidson Ultimate Chopper</v>
+                        <v>Min Lin Diecast</v>
                     </row>
                     <row>
-                        <v>Classic Metal Creations</v>
                         <v>1952 Alpine Renault 1300</v>
+                        <v>Classic Metal Creations</v>
                     </row>
                     <row>
-                        <v>Highway 66 Mini Classics</v>
                         <v>1996 Moto Guzzi 1100i</v>
-                    </row>
-                    <row>
-                        <v>Red Start Diecast</v>
-                        <v>2003 Harley-Davidson Eagle Drag Bike</v>
-                    </row>
-                    <row>
-                        <v>Motor City Art Classics</v>
-                        <v>1972 Alfa Romeo GTA</v>
-                    </row>
-                    <row>
-                        <v>Second Gear Diecast</v>
-                        <v>1962 LanciaA Delta 16V</v>
-                    </row>
-                    <row>
-                        <v>Autoart Studio Design</v>
-                        <v>1968 Ford Mustang</v>
-                    </row>
-                    <row>
-                        <v>Second Gear Diecast</v>
-                        <v>2001 Ferrari Enzo</v>
-                    </row>
-                    <row>
-                        <v>Welly Diecast Productions</v>
-                        <v>1958 Setra Bus</v>
-                    </row>
-                    <row>
-                        <v>Unimax Art Galleries</v>
-                        <v>2002 Suzuki XREO</v>
-                    </row>
-                    <row>
-                        <v>Welly Diecast Productions</v>
-                        <v>1969 Corvair Monza</v>
-                    </row>
-                    <row>
-                        <v>Welly Diecast Productions</v>
-                        <v>1968 Dodge Charger</v>
-                    </row>
-                    <row>
-                        <v>Second Gear Diecast</v>
-                        <v>1969 Ford Falcon</v>
-                    </row>
-                    <row>
-                        <v>Studio M Art Models</v>
-                        <v>1970 Plymouth Hemi Cuda</v>
-                    </row>
-                    <row>
-                        <v>Exoto Designs</v>
-                        <v>1957 Chevy Pickup</v>
-                    </row>
-                    <row>
-                        <v>Welly Diecast Productions</v>
-                        <v>1969 Dodge Charger</v>
-                    </row>
-                    <row>
-                        <v>Studio M Art Models</v>
-                        <v>1940 Ford Pickup Truck</v>
-                    </row>
-                    <row>
                         <v>Highway 66 Mini Classics</v>
-                        <v>1993 Mazda RX-7</v>
                     </row>
                     <row>
+                        <v>2003 Harley-Davidson Eagle Drag Bike</v>
+                        <v>Red Start Diecast</v>
+                    </row>
+                    <row>
+                        <v>1972 Alfa Romeo GTA</v>
                         <v>Motor City Art Classics</v>
-                        <v>1937 Lincoln Berline</v>
                     </row>
                     <row>
+                        <v>1962 LanciaA Delta 16V</v>
+                        <v>Second Gear Diecast</v>
+                    </row>
+                    <row>
+                        <v>1968 Ford Mustang</v>
+                        <v>Autoart Studio Design</v>
+                    </row>
+                    <row>
+                        <v>2001 Ferrari Enzo</v>
+                        <v>Second Gear Diecast</v>
+                    </row>
+                    <row>
+                        <v>1958 Setra Bus</v>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>2002 Suzuki XREO</v>
+                        <v>Unimax Art Galleries</v>
+                    </row>
+                    <row>
+                        <v>1969 Corvair Monza</v>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>1968 Dodge Charger</v>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>1969 Ford Falcon</v>
+                        <v>Second Gear Diecast</v>
+                    </row>
+                    <row>
+                        <v>1970 Plymouth Hemi Cuda</v>
                         <v>Studio M Art Models</v>
+                    </row>
+                    <row>
+                        <v>1957 Chevy Pickup</v>
+                        <v>Exoto Designs</v>
+                    </row>
+                    <row>
+                        <v>1969 Dodge Charger</v>
+                        <v>Welly Diecast Productions</v>
+                    </row>
+                    <row>
+                        <v>1940 Ford Pickup Truck</v>
+                        <v>Studio M Art Models</v>
+                    </row>
+                    <row>
+                        <v>1993 Mazda RX-7</v>
+                        <v>Highway 66 Mini Classics</v>
+                    </row>
+                    <row>
+                        <v>1937 Lincoln Berline</v>
+                        <v>Motor City Art Classics</v>
+                    </row>
+                    <row>
                         <v>1936 Mercedes-Benz 500K Special Roadster</v>
+                        <v>Studio M Art Models</v>
                     </row>
                 </rows>
             </table>

@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -222,7 +223,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     return col.getPhysicalColumn();
                 }
             });
-            datastoreUsage.put(analysisJob.getDatastore().getName(), new HashSet<Column>(columns));
+            datastoreUsage.put(analysisJob.getDatastore().getName(), new LinkedHashSet<Column>(columns));
 
             buildDatastoreUsageMap(datastoreUsage, analysisJob.getExplorerJobs());
             buildDatastoreUsageMap(datastoreUsage, analysisJob.getFilterJobs());
@@ -353,7 +354,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                         // update the usage map
                         Set<Column> usage = datastoreUsage.get(datastore.getName());
                         if (usage == null) {
-                            usage = new HashSet<Column>();
+                            usage = new LinkedHashSet<Column>();
                             datastoreUsage.put(datastore.getName(), usage);
                         }
                         usage.addAll(columns);
@@ -366,7 +367,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     }
 
     private Collection<Column> getColumns(HasBeanConfiguration componentJob, Table table) {
-        final Collection<Column> columns = new HashSet<Column>();
+        final Collection<Column> columns = new LinkedHashSet<Column>();
 
         final Set<ConfiguredPropertyDescriptor> columnProperties = componentJob.getDescriptor()
                 .getConfiguredPropertiesByAnnotation(ColumnProperty.class);
@@ -406,7 +407,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     }
 
     private Collection<Table> getTables(HasBeanConfiguration componentJob, Schema schema) {
-        final Collection<Table> tables = new HashSet<Table>();
+        final Collection<Table> tables = new LinkedHashSet<Table>();
 
         final Set<ConfiguredPropertyDescriptor> tableProperties = componentJob.getDescriptor()
                 .getConfiguredPropertiesByAnnotation(TableProperty.class);
@@ -447,7 +448,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
     private Collection<Schema> getSchemas(SchemaNavigator schemaNavigator, HasBeanConfiguration componentJob,
             ConfiguredPropertyDescriptor schemaProperty) {
-        final Collection<Schema> schemas = new HashSet<Schema>();
+        final Collection<Schema> schemas = new LinkedHashSet<Schema>();
 
         final Object schemaValue = componentJob.getConfiguration().getProperty(schemaProperty);
         if (schemaValue == null) {

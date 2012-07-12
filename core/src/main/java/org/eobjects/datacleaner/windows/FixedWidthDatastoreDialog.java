@@ -337,11 +337,11 @@ public final class FixedWidthDatastoreDialog extends AbstractFileBasedDatastoreD
 		Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
 		if (headerLineComboValue != null) {
 			int intComboValue = headerLineComboValue.intValue();
-			if (intComboValue <= 0) {
+			if (intComboValue < 0) {
 				return FixedWidthConfiguration.NO_COLUMN_NAME_LINE;
 			} else {
 				// MetaModel's headerline number is 0-based
-				return intComboValue - 1;
+				return intComboValue;
 			}
 		} else {
 			return FixedWidthConfiguration.DEFAULT_COLUMN_NAME_LINE;

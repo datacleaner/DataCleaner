@@ -59,6 +59,10 @@ public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransform
 	public List<Object[]> getList() {
         return list;
     }
+	
+	public InputColumn<?>[] getColumns() {
+        return columns;
+    }
 
 	@Override
 	public PreviewTransformedDataAnalyzer getResult() {

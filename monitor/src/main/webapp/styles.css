@@ -179,6 +179,7 @@ img.scalable_background {
 }
 
 #nav li {
+	line-height: 18px;
 	list-style-type: none;
 	margin: 0px;
 	margin-right: 10px;

@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,14 +39,18 @@ public class JobInvocationControllerTest extends TestCase {
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
-        List<Object[]> sourceRecords = new ArrayList<Object[]>();
-        sourceRecords.add(new Object[] { "kasper@eobjects.dk" });
-        sourceRecords.add(new Object[] { "kasper.sorensen@humaninference.com" });
+        final JobInvocationPayload sourceRecords = new JobInvocationPayload();
+        sourceRecords.addRow(new Object[] { "kasper@eobjects.dk" });
+        sourceRecords.addRow(new Object[] { "kasper.sorensen@humaninference.com" });
 
-        List<Object[]> result = controller.invokeJob("tenant1", "email_standardizer", sourceRecords);
-        assertEquals(2, result.size());
+        JobInvocationPayload result = controller.invokeJob("tenant1", "email_standardizer", sourceRecords);
 
-        assertEquals("[kasper, eobjects.dk]", Arrays.toString(result.get(0)));
-        assertEquals("[kasper.sorensen, humaninference.com]", Arrays.toString(result.get(1)));
+        assertEquals("[Username, Domain]", result.getColumns().toString());
+
+        List<JobInvocationRowData> rows = result.getRows();
+        assertEquals(2, rows.size());
+
+        assertEquals("[kasper, eobjects.dk]", Arrays.toString(rows.get(0).getValues()));
+        assertEquals("[kasper.sorensen, humaninference.com]", Arrays.toString(rows.get(1).getValues()));
     }
 }

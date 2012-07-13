@@ -45,10 +45,10 @@ public class TenantContextImpl implements TenantContext {
     private final ConfigurationCache _configurationCache;
     private final ConcurrentHashMap<String, JobContext> _jobCache;
 
-    public TenantContextImpl(String tenantId, Repository repository, ConfigurationCache configurationCache) {
+    public TenantContextImpl(String tenantId, Repository repository) {
         _tenantId = tenantId;
         _repository = repository;
-        _configurationCache = configurationCache;
+        _configurationCache = new ConfigurationCache(tenantId, repository);
         _jobCache = new ConcurrentHashMap<String, JobContext>();
     }
 
@@ -92,7 +92,7 @@ public class TenantContextImpl implements TenantContext {
 
     @Override
     public AnalyzerBeansConfiguration getConfiguration() {
-        return _configurationCache.getAnalyzerBeansConfiguration(_tenantId);
+        return _configurationCache.getAnalyzerBeansConfiguration();
     }
 
     @Override

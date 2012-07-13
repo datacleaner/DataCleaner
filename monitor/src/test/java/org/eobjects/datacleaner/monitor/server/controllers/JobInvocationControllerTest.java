@@ -24,7 +24,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.repository.Repository;
@@ -34,8 +33,7 @@ public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeDatabaseSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final ConfigurationCache configurationCache = new ConfigurationCache(repository);
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -56,8 +54,7 @@ public class JobInvocationControllerTest extends TestCase {
 
     public void testInvokeFileWithExtensionNameSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final ConfigurationCache configurationCache = new ConfigurationCache(repository);
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 

@@ -21,76 +21,69 @@ package org.eobjects.datacleaner.monitor.configuration;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
 import org.eobjects.metamodel.util.FileHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
- * Caches configuration objects per tenant in order to avoid recreating it every
- * time it is needed.
+ * Caches configuration objects for a tenant in order to avoid recreating it
+ * every time it is needed.
  */
-@Component("configurationCache")
-public class ConfigurationCache {
+final class ConfigurationCache {
 
-    private final ConcurrentHashMap<String, AnalyzerBeansConfiguration> _analyzerBeansConfigurations;
     private final Repository _repository;
+    private final RepositoryFolder _tenantFolder;
+    private final RepositoryFile _file;
 
-    @Autowired
-    public ConfigurationCache(Repository repository) {
+    private volatile AnalyzerBeansConfiguration _configuration;
+    private volatile long _lastModifiedCache;
+
+    public ConfigurationCache(String tenantId, Repository repository) {
         _repository = repository;
-        _analyzerBeansConfigurations = new ConcurrentHashMap<String, AnalyzerBeansConfiguration>();
-    }
 
-    public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(String tenantId) {
-        AnalyzerBeansConfiguration conf = _analyzerBeansConfigurations.get(tenantId);
-        if (conf == null) {
-            final AnalyzerBeansConfiguration newConfiguration = readConfiguration(tenantId);
-            conf = _analyzerBeansConfigurations.putIfAbsent(tenantId, newConfiguration);
-            if (conf == null) {
-                conf = newConfiguration;
-            }
-        }
-        return conf;
-    }
-
-    public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration(TenantIdentifier tenant) {
-        final String tenantId = tenant.getId();
-        return getAnalyzerBeansConfiguration(tenantId);
-    }
-
-    private AnalyzerBeansConfiguration readConfiguration(final String tenantId) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenantId);
-        if (tenantFolder == null) {
+        _tenantFolder = _repository.getFolder(tenantId);
+        if (_tenantFolder == null) {
             throw new IllegalStateException("No tenant folder: " + tenantId);
         }
 
-        final RepositoryFile configurationFile = tenantFolder.getFile("conf.xml");
-        if (configurationFile == null) {
+        _file = _tenantFolder.getFile("conf.xml");
+        if (_file == null) {
             throw new IllegalStateException("No conf.xml file found for tenant: " + tenantId);
         }
+    }
 
+    public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration() {
+        long lastModified = _file.getLastModified();
+        if (_configuration == null || lastModified != _lastModifiedCache) {
+            synchronized (this) {
+                lastModified = _file.getLastModified();
+                if (_configuration == null || lastModified != _lastModifiedCache) {
+                    _configuration = readConfiguration();
+                }
+            }
+        }
+        return _configuration;
+    }
+
+    private AnalyzerBeansConfiguration readConfiguration() {
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor() {
             @Override
             public String createFilename(String filename) {
-                if (tenantFolder instanceof FileRepositoryFolder) {
-                    File file = ((FileRepositoryFolder) tenantFolder).getFile();
+                if (_tenantFolder instanceof FileRepositoryFolder) {
+                    File file = ((FileRepositoryFolder) _tenantFolder).getFile();
                     return file.getAbsolutePath() + File.separatorChar + filename;
                 }
-                // TODO: What about other repos?
+                // TODO: What about other non-file based repos?
                 return super.createFilename(filename);
             }
         });
-        final InputStream inputStream = configurationFile.readFile();
+        final InputStream inputStream = _file.readFile();
         try {
             final AnalyzerBeansConfiguration conf = reader.read(inputStream);
             return conf;

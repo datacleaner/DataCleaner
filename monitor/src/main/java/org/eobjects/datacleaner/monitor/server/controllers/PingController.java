@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class PingController {
     Repository _repository;
 
     @Autowired
-    ConfigurationCache _configurationCache;
+    TenantContextFactory _tenantContextFactory;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
@@ -56,7 +56,7 @@ public class PingController {
             throw new IllegalArgumentException("No such tenant: " + tenant);
         }
 
-        final AnalyzerBeansConfiguration configuration = _configurationCache.getAnalyzerBeansConfiguration(tenant);
+        final AnalyzerBeansConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
 
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("tenant", tenant);

@@ -27,7 +27,6 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -54,15 +53,15 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         _configurationFactory.setScannedPackages(Arrays.asList("org.eobjects", "com.hi"));
 
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final ConfigurationCache configurationCache = new ConfigurationCache(repository);
 
-        _contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
+        _contextFactory = new TenantContextFactoryImpl(repository);
     }
 
     public void testGenerateGenericConfiguration() throws Exception {
         String actual = generationConf(null);
 
-        String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_conf_file_generic.xml"), "UTF-8");
+        String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_conf_file_generic.xml"),
+                "UTF-8");
         expected = expected.replaceAll("\r\n", "\n").trim();
 
         assertEquals(expected, actual);
@@ -71,18 +70,20 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
     public void testGenerateJobSpecificConfigurationSourceOnly() throws Exception {
         JobContext job = _contextFactory.getContext("tenant1").getJob("email_standardizer");
         String actual = generationConf(job);
-      
-        String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_conf_file_specific_source_only.xml"), "UTF-8");
+
+        String expected = FileHelper.readFileAsString(new File(
+                "src/test/resources/expected_conf_file_specific_source_only.xml"), "UTF-8");
         expected = expected.replaceAll("\r\n", "\n").trim();
 
         assertEquals(expected, actual);
     }
-    
+
     public void testGenerateJobSpecificConfigurationTableLookupAnotherDatastore() throws Exception {
         JobContext job = _contextFactory.getContext("tenant1").getJob("lookup_vendor");
         String actual = generationConf(job);
-      
-        String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_conf_file_specific_lookup_another_ds.xml"), "UTF-8");
+
+        String expected = FileHelper.readFileAsString(new File(
+                "src/test/resources/expected_conf_file_specific_lookup_another_ds.xml"), "UTF-8");
         expected = expected.replaceAll("\r\n", "\n").trim();
 
         assertEquals(expected, actual);

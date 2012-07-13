@@ -34,12 +34,10 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
 
     private final ConcurrentHashMap<String, TenantContext> _contexts;
     private final Repository _repository;
-    private final ConfigurationCache _configurationCache;
 
     @Autowired
-    public TenantContextFactoryImpl(Repository repository, ConfigurationCache configurationCache) {
+    public TenantContextFactoryImpl(Repository repository) {
         _repository = repository;
-        _configurationCache = configurationCache;
         _contexts = new ConcurrentHashMap<String, TenantContext>();
     }
 
@@ -50,7 +48,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     public TenantContext getContext(String tenantId) {
         TenantContext context = _contexts.get(tenantId);
         if (context == null) {
-            final TenantContext newContext = new TenantContextImpl(tenantId, _repository, _configurationCache);
+            final TenantContext newContext = new TenantContextImpl(tenantId, _repository);
             context = _contexts.putIfAbsent(tenantId, newContext);
             if (context == null) {
                 context = newContext;

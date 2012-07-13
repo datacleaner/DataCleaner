@@ -24,7 +24,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -44,8 +43,7 @@ public class TimelineServiceImplTest extends TestCase {
 
     public void testBasicInteraction() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
-        final ConfigurationCache configurationCache = new ConfigurationCache(repository);
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
         final TimelineService service = new TimelineServiceImpl(repository, contextFactory);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");

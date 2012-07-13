@@ -29,7 +29,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eobjects.datacleaner.monitor.configuration.ConfigurationCache;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -50,8 +49,7 @@ public class SchedulingServiceImplTest extends TestCase {
 
     public void testScenario() throws Exception {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
-        final ConfigurationCache configurationCache = new ConfigurationCache(repository);
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, configurationCache);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
 
         final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
 

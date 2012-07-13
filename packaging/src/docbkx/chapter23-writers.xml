@@ -78,6 +78,13 @@
 			option
 			is the right one for you.
 		</para>
+		<para>
+			Optionally, you can make the 'Insert into table' component truncate
+			your table before insertion. This will delete all existing records in
+			the table, useful for
+			<emphasis>initial load</emphasis>
+			situations.
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="writers_reference_insert_into_table.jpg"
@@ -112,6 +119,12 @@
 				<para>
 					<emphasis>MongoDB database</emphasis>
 					. In this case data will be inserted into the MongoDB collection.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>CouchDB database</emphasis>
+					. In this case data will be inserted into the CouchDB database.
 				</para>
 			</listitem>
 		</orderedlist>

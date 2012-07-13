@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.scheduling;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
+import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -79,21 +80,28 @@ public class ExecuteJob extends AbstractQuartzJob {
      *         execution status etc. at a later state.
      */
     public static String executeJob(TenantContext context, ExecutionLog execution) {
-
-        final String jobName = execution.getJob().getName();
-
-        final JobContext job = context.getJob(jobName);
-
-        final AnalysisJob analysisJob = job.getAnalysisJob();
-
         final RepositoryFolder resultFolder = context.getResultFolder();
-
         final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder);
-        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
-        final AnalysisRunnerImpl runner = new AnalysisRunnerImpl(configuration, analysisListener);
 
-        // fire and forget
-        runner.run(analysisJob);
+        try {
+            final String jobName = execution.getJob().getName();
+
+            final JobContext job = context.getJob(jobName);
+
+            final AnalysisJob analysisJob = job.getAnalysisJob();
+
+            final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, analysisListener);
+
+            // fire and forget (the listener will do the rest)
+            runner.run(analysisJob);
+        } catch (Throwable e) {
+
+            // only initialization issues are catched here, eg. failing to load
+            // job or configuration. Other issues will be reported to the
+            // listener by the runner.
+            analysisListener.errorUknown(null, e);
+        }
 
         // TODO: Check alerts
 

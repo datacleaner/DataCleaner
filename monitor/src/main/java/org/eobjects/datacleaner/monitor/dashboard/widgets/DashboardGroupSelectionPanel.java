@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -39,7 +39,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 /**
  * A panel which shows and let's the user select different timeline groups
  */
-public class TimelineGroupSelectionPanel extends FlowPanel {
+public class DashboardGroupSelectionPanel extends FlowPanel {
 
     private static final String DEFAULT_GROUP_NAME = "(default)";
     private final TenantIdentifier _tenant;
@@ -49,7 +49,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
     private final FlowPanel _anchorPanel;
     private final boolean _isDashboardEditor;
 
-    public TimelineGroupSelectionPanel(TenantIdentifier tenant, DashboardServiceAsync service, SimplePanel targetPanel,
+    public DashboardGroupSelectionPanel(TenantIdentifier tenant, DashboardServiceAsync service, SimplePanel targetPanel,
             boolean isDashboardEditor) {
         super();
 
@@ -67,10 +67,10 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
         addGroup(null);
 
         // load all other groups
-        _service.getTimelineGroups(_tenant, new DCAsyncCallback<List<TimelineGroup>>() {
+        _service.getDashboardGroups(_tenant, new DCAsyncCallback<List<DashboardGroup>>() {
             @Override
-            public void onSuccess(List<TimelineGroup> result) {
-                for (TimelineGroup group : result) {
+            public void onSuccess(List<DashboardGroup> result) {
+                for (DashboardGroup group : result) {
                     addGroup(group);
                 }
                 initializeSelectedAnchor();
@@ -86,9 +86,9 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
             public void onClick(ClickEvent event) {
                 String name = Window.prompt("Name of the new group?", "");
                 if (name != null && name.trim().length() > 1) {
-                    _service.addTimelineGroup(_tenant, name, new DCAsyncCallback<TimelineGroup>() {
+                    _service.addDashboardGroup(_tenant, name, new DCAsyncCallback<DashboardGroup>() {
                         @Override
-                        public void onSuccess(TimelineGroup result) {
+                        public void onSuccess(DashboardGroup result) {
                             addGroup(result);
                         }
                     });
@@ -116,7 +116,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
         });
     }
 
-    public Anchor addGroup(final TimelineGroup group) {
+    public Anchor addGroup(final DashboardGroup group) {
         final String groupName;
         if (group == null) {
             groupName = DEFAULT_GROUP_NAME;
@@ -126,7 +126,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
 
         final Anchor anchor = new Anchor(groupName);
         anchor.addClickHandler(new ClickHandler() {
-            private TimelineGroupPanel panel = null;
+            private DashboardGroupPanel panel = null;
 
             @Override
             public void onClick(ClickEvent event) {
@@ -136,7 +136,7 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
                 anchor.addStyleName("selected");
 
                 if (panel == null) {
-                    panel = new TimelineGroupPanel(_service, _tenant, group, _isDashboardEditor);
+                    panel = new DashboardGroupPanel(_service, _tenant, group, _isDashboardEditor);
                 }
                 _targetPanel.setWidget(panel);
                 History.newItem(groupName);

@@ -32,7 +32,7 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -71,35 +71,35 @@ public interface DashboardService extends RemoteService {
     public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     /**
-     * Gets the available timeline groups
+     * Gets the available dashboard groups
      * 
      * @param tenant
      * 
      * @return
      */
     @RolesAllowed(SecurityRoles.VIEWER)
-    public List<TimelineGroup> getTimelineGroups(TenantIdentifier tenant) throws DCSecurityException;
+    public List<DashboardGroup> getDashboardGroups(TenantIdentifier tenant) throws DCSecurityException;
 
     /**
-     * Adds a timeline group to the tenant's repository.
+     * Adds a dashboard group to the tenant's repository.
      * 
      * @param tenant
      * @param name
      * @return
      */
     @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
-    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name) throws DCSecurityException;
+    public DashboardGroup addDashboardGroup(TenantIdentifier tenant, String name) throws DCSecurityException;
 
     /**
      * Removes a timeline group from a tenant's repository. All contained
      * timelines must be removed first, or else the operation will not succeed.
      * 
      * @param tenant
-     * @param timelineGroup
+     * @param dashboardGroup
      * @return a boolean indicating if the remove operation went well.
      */
     @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
-    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup) throws DCSecurityException;
+    public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup dashboardGroup) throws DCSecurityException;
 
     /**
      * Gets the saved timeline identifiers of a tenant
@@ -110,7 +110,7 @@ public interface DashboardService extends RemoteService {
      * @return
      */
     @RolesAllowed(SecurityRoles.VIEWER)
-    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, TimelineGroup group)
+    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, DashboardGroup group)
             throws DCSecurityException;
 
     /**

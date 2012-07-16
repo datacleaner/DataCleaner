@@ -22,18 +22,18 @@ package org.eobjects.datacleaner.monitor.dashboard.model;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Represents a logical grouping of timelines
+ * Represents a logical grouping of dashboard widgets
  */
-public class TimelineGroup implements IsSerializable {
+public class DashboardGroup implements IsSerializable {
 
     private String _name;
     private String _description;
 
-    public TimelineGroup() {
+    public DashboardGroup() {
         this(null);
     }
 
-    public TimelineGroup(String name) {
+    public DashboardGroup(String name) {
         _name = name;
     }
 

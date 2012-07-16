@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.dashboard;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.dashboard.widgets.TimelineGroupSelectionPanel;
+import org.eobjects.datacleaner.monitor.dashboard.widgets.DashboardGroupSelectionPanel;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
@@ -58,7 +58,7 @@ public class DashboardEntryPoint implements EntryPoint {
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
         {
             final SimplePanel targetPanel = new SimplePanel();
-            final TimelineGroupSelectionPanel selectionPanel = new TimelineGroupSelectionPanel(tenant, service,
+            final DashboardGroupSelectionPanel selectionPanel = new DashboardGroupSelectionPanel(tenant, service,
                     targetPanel, isDashboardEditor);
 
             timelinesSplitPanel.add(selectionPanel);

@@ -64,7 +64,7 @@ public class TimelinePanel extends FlowPanel {
     private final DashboardServiceAsync _service;
     private final LoadingIndicator _loadingIndicator;
     private final TenantIdentifier _tenant;
-    private final TimelineGroupPanel _timelineGroupPanel;
+    private final DashboardGroupPanel _timelineGroupPanel;
     private final Button _saveButton;
     private final Button _deleteButton;
     private final boolean _isDashboardEditor;
@@ -74,7 +74,7 @@ public class TimelinePanel extends FlowPanel {
     private TimelineData _timelineData;
 
     public TimelinePanel(TenantIdentifier tenant, DashboardServiceAsync service, TimelineIdentifier timelineIdentifier,
-            TimelineGroupPanel timelineGroupPanel, boolean isDashboardEditor) {
+            DashboardGroupPanel timelineGroupPanel, boolean isDashboardEditor) {
         super();
         _tenant = tenant;
         _service = service;
@@ -338,7 +338,7 @@ public class TimelinePanel extends FlowPanel {
         return data;
     }
 
-    public TimelineGroupPanel getTimelineGroupPanel() {
+    public DashboardGroupPanel getTimelineGroupPanel() {
         return _timelineGroupPanel;
     }
 

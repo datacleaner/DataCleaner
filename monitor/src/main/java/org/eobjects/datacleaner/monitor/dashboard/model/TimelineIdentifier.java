@@ -28,9 +28,9 @@ public class TimelineIdentifier implements IsSerializable {
 
     private String _name;
     private String _path;
-    private TimelineGroup _group;
+    private DashboardGroup _group;
 
-    public TimelineIdentifier(String name, String path, TimelineGroup group) {
+    public TimelineIdentifier(String name, String path, DashboardGroup group) {
         _name = name;
         _path = path;
         _group = group;
@@ -40,7 +40,7 @@ public class TimelineIdentifier implements IsSerializable {
         this(null, null, null);
     }
     
-    public TimelineGroup getGroup() {
+    public DashboardGroup getGroup() {
         return _group;
     }
 

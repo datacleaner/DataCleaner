@@ -28,7 +28,7 @@ import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
 import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -81,7 +81,7 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
     }
 
     @Override
-    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, TimelineGroup group) {
+    public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, DashboardGroup group) {
         return _delegate.getTimelines(tenant, group);
     }
 
@@ -119,18 +119,18 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
     }
 
     @Override
-    public List<TimelineGroup> getTimelineGroups(final TenantIdentifier tenant) {
-        return _delegate.getTimelineGroups(tenant);
+    public List<DashboardGroup> getDashboardGroups(final TenantIdentifier tenant) {
+        return _delegate.getDashboardGroups(tenant);
     }
 
     @Override
-    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name) {
-        return _delegate.addTimelineGroup(tenant, name);
+    public DashboardGroup addDashboardGroup(TenantIdentifier tenant, String name) {
+        return _delegate.addDashboardGroup(tenant, name);
     }
 
     @Override
-    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup) {
-        return _delegate.removeTimelineGroup(tenant, timelineGroup);
+    public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup) {
+        return _delegate.removeDashboardGroup(tenant, timelineGroup);
     }
 
     @Override

@@ -28,7 +28,7 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -38,7 +38,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DashboardServiceAsync {
 
-    public void getTimelines(TenantIdentifier tenant, TimelineGroup group,
+    public void getTimelines(TenantIdentifier tenant, DashboardGroup group,
             AsyncCallback<List<TimelineIdentifier>> callback);
 
     public void getTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier identifier,
@@ -62,11 +62,11 @@ public interface DashboardServiceAsync {
 
     public void removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
 
-    public void getTimelineGroups(TenantIdentifier tenant, AsyncCallback<List<TimelineGroup>> callback);
+    public void getDashboardGroups(TenantIdentifier tenant, AsyncCallback<List<DashboardGroup>> callback);
 
-    public void addTimelineGroup(TenantIdentifier tenant, String name, AsyncCallback<TimelineGroup> callback);
+    public void addDashboardGroup(TenantIdentifier tenant, String name, AsyncCallback<DashboardGroup> callback);
 
-    public void removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup,
+    public void removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup,
             AsyncCallback<Boolean> callback);
 
     void isDashboardEditor(TenantIdentifier tenant, AsyncCallback<Boolean> callback);

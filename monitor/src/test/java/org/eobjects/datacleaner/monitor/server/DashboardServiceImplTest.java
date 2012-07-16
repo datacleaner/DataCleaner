@@ -31,7 +31,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
@@ -83,7 +83,7 @@ public class DashboardServiceImplTest extends TestCase {
         List<TimelineIdentifier> timelines = service.getTimelines(tenant, null);
         assertEquals(0, timelines.size());
 
-        final List<TimelineGroup> timelineGroups = service.getTimelineGroups(tenant);
+        final List<DashboardGroup> timelineGroups = service.getDashboardGroups(tenant);
         assertEquals(2, timelineGroups.size());
 
         timelines = service.getTimelines(tenant, timelineGroups.get(0));

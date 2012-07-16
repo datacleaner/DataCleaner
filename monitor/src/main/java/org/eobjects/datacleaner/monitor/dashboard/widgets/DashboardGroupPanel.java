@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
@@ -39,17 +39,17 @@ import com.google.gwt.user.client.ui.Label;
  * Container panel for a group of timelines. Each timeline will be presented in
  * a {@link TimelinePanel}.
  */
-public class TimelineGroupPanel extends FlowPanel {
+public class DashboardGroupPanel extends FlowPanel {
 
     private final TenantIdentifier _tenant;
     private final DashboardServiceAsync _service;
     private final WelcomePanel _welcomePanel;
-    private final TimelineGroup _group;
+    private final DashboardGroup _group;
     private final Button _removeGroupButton;
     private final boolean _isDashboardEditor;
     private int _dashboardWidgetCount;
 
-    public TimelineGroupPanel(DashboardServiceAsync service, TenantIdentifier tenant, TimelineGroup group, boolean isDashboardEditor) {
+    public DashboardGroupPanel(DashboardServiceAsync service, TenantIdentifier tenant, DashboardGroup group, boolean isDashboardEditor) {
         super();
         _tenant = tenant;
         _service = service;
@@ -68,7 +68,7 @@ public class TimelineGroupPanel extends FlowPanel {
             public void onClick(ClickEvent event) {
                 final boolean confirmation = Window.confirm("Are you sure you wish to remove this group?");
                 if (confirmation) {
-                    _service.removeTimelineGroup(_tenant, _group, new DCAsyncCallback<Boolean>() {
+                    _service.removeDashboardGroup(_tenant, _group, new DCAsyncCallback<Boolean>() {
                         @Override
                         public void onSuccess(Boolean result) {
                             if (result != null && result.booleanValue()) {
@@ -143,7 +143,7 @@ public class TimelineGroupPanel extends FlowPanel {
         }
     }
 
-    public TimelineGroup getTimelineGroup() {
+    public DashboardGroup getTimelineGroup() {
         return _group;
     }
 }

@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
@@ -53,7 +53,7 @@ public class SaveTimelineClickHandler implements ClickHandler {
         if (timelineIdentifier == null) {
             // TODO: This is a bit too naive :P
             String name = Window.prompt("Name of timeline?", "");
-            TimelineGroup timelineGroup = _timelinePanel.getTimelineGroupPanel().getTimelineGroup();;
+            DashboardGroup timelineGroup = _timelinePanel.getTimelineGroupPanel().getTimelineGroup();;
             timelineIdentifier = new TimelineIdentifier(name, null, timelineGroup);
             create = true;
         } else {

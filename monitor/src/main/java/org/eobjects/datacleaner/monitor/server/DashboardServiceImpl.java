@@ -51,7 +51,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -91,12 +91,12 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<TimelineGroup> getTimelineGroups(final TenantIdentifier tenant) {
+    public List<DashboardGroup> getDashboardGroups(final TenantIdentifier tenant) {
         final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final List<RepositoryFolder> folders = timelinesFolder.getFolders();
-        final List<TimelineGroup> groups = new ArrayList<TimelineGroup>();
+        final List<DashboardGroup> groups = new ArrayList<DashboardGroup>();
         for (RepositoryFolder folder : folders) {
-            final TimelineGroup group = new TimelineGroup(folder.getName());
+            final DashboardGroup group = new DashboardGroup(folder.getName());
 
             final RepositoryFile descriptionFile = folder.getFile("description.txt");
             if (descriptionFile == null) {
@@ -128,7 +128,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<TimelineIdentifier> getTimelines(final TenantIdentifier tenant, final TimelineGroup group) {
+    public List<TimelineIdentifier> getTimelines(final TenantIdentifier tenant, final DashboardGroup group) {
         final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final List<RepositoryFile> files;
         final String groupName = (group == null ? null : group.getName());
@@ -565,7 +565,7 @@ public class DashboardServiceImpl implements DashboardService {
     public TimelineIdentifier createTimelineDefinition(final TenantIdentifier tenant,
             final TimelineIdentifier timelineIdentifier, final TimelineDefinition timelineDefinition) {
         final String name = timelineIdentifier.getName();
-        final TimelineGroup group = timelineIdentifier.getGroup();
+        final DashboardGroup group = timelineIdentifier.getGroup();
 
         final RepositoryFolder timelinesFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
 
@@ -646,8 +646,8 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public TimelineGroup addTimelineGroup(TenantIdentifier tenant, String name) {
-        final TimelineGroup group = new TimelineGroup(name);
+    public DashboardGroup addDashboardGroup(TenantIdentifier tenant, String name) {
+        final DashboardGroup group = new DashboardGroup(name);
 
         final RepositoryFolder timelineFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final RepositoryFolder groupFolder = timelineFolder.createFolder(name);
@@ -658,7 +658,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public Boolean removeTimelineGroup(TenantIdentifier tenant, TimelineGroup timelineGroup) {
+    public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup) {
         final RepositoryFolder timelineFolder = _tenantContextFactory.getContext(tenant).getTimelineFolder();
         final RepositoryFolder groupFolder = timelineFolder.getFolder(timelineGroup.getName());
 

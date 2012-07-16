@@ -33,9 +33,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
- * GWT Entry point for the Timeline module
+ * GWT Entry point for the Dashboard module
  */
-public class TimelineEntryPoint implements EntryPoint {
+public class DashboardEntryPoint implements EntryPoint {
 
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());

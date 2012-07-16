@@ -20,7 +20,7 @@
     Boston, MA  02110-1301  USA
 
 -->
-<module rename-to='timeline'>
+<module rename-to='dashboard'>
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
 	<inherits name="com.google.gwt.i18n.I18N"/>

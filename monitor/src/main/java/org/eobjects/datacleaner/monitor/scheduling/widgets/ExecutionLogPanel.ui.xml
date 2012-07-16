@@ -33,6 +33,11 @@
 			<span class="FormKey">Trigger:</span>
 			<g:Label styleName="FormValue" ui:field="triggerLabel" />
 		</div>
+		
+		<div class="FormRow">
+			<span class="FormKey">Triggered by:</span>
+			<g:Label styleName="FormValue" ui:field="triggeredByLabel" />
+		</div>
 
 		<div class="FormRow" style="margin-top: 25px;">
 			<span>Log output:</span>

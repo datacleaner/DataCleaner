@@ -19,6 +19,8 @@
 					type="log:execution-type" />
 				<element name="trigger-type" minOccurs="1" maxOccurs="1"
 					type="log:trigger-type" />
+				<element name="triggered-by" minOccurs="1" maxOccurs="1"
+					type="string" />
 				<element ref="schedule:schedule" minOccurs="1" maxOccurs="1" />
 				<element name="log-output" type="string" />
 			</sequence>

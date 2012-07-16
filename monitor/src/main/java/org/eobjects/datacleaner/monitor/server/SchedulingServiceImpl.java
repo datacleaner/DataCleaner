@@ -66,6 +66,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.CronTriggerBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -295,7 +297,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        // TODO: Consider using scheduler.triggerJob ... That will also trigger listeners. 
+        // set the "triggered by" attribute.
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final String username = authentication.getName();
+        execution.setTriggeredBy(username);
+
+        // TODO: Consider using scheduler.triggerJob(...) ... That will also
+        // trigger listeners.
         ExecuteJob.executeJob(context, execution);
 
         return execution;

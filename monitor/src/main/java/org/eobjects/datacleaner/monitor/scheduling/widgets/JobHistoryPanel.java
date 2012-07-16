@@ -78,7 +78,7 @@ public class JobHistoryPanel extends Composite {
         executionLogPanelTarget.setStyleName("ExecutionLogPanelTarget");
         executionList = new CellList<ExecutionIdentifier>(new ExecutionIdentifierCell());
         executionList.setEmptyListWidget(new Label("(none)"));
-        
+
         final SingleSelectionModel<ExecutionIdentifier> selectionModel = new SingleSelectionModel<ExecutionIdentifier>();
         selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
@@ -94,13 +94,16 @@ public class JobHistoryPanel extends Composite {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        _service.getLatestExecution(_tenant, _job, _callback);
-
         _callback.onSuccess(null);
         _service.getAllExecutions(_tenant, _job, new DCAsyncCallback<List<ExecutionIdentifier>>() {
             @Override
             public void onSuccess(List<ExecutionIdentifier> result) {
                 executionList.setRowData(result);
+
+                if (!result.isEmpty()) {
+                    final ExecutionIdentifier latestResult = result.get(result.size() - 1);
+                    executionList.getSelectionModel().setSelected(latestResult, true);
+                }
             }
         });
 

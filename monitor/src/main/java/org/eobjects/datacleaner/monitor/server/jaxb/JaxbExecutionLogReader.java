@@ -67,6 +67,7 @@ public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.dat
             executionLog.setJobEndDate(jaxbJobEndDate.toGregorianCalendar().getTime());
         }
 
+        executionLog.setTriggeredBy(jaxbExecutionLog.getTriggeredBy());
         executionLog.setLogOutput(jaxbExecutionLog.getLogOutput());
 
         final JaxbScheduleReader reader = new JaxbScheduleReader();

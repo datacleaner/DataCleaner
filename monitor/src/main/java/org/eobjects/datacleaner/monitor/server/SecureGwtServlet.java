@@ -63,8 +63,8 @@ public class SecureGwtServlet extends RemoteServiceServlet {
     private static final Logger logger = LoggerFactory.getLogger(SecureGwtServlet.class);
 
     protected TenantResolver getTenantResolver() {
-        WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-        TenantResolver tenantResolver = applicationContext.getBean(TenantResolver.class);
+        final WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
+        final TenantResolver tenantResolver = applicationContext.getBean(TenantResolver.class);
         if (tenantResolver == null) {
             throw new IllegalStateException("No TenantResolver found in application context!");
         }

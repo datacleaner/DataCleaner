@@ -37,6 +37,8 @@ public class ExecutionLog extends ExecutionIdentifier implements IsSerializable 
     // execution level output
     private String _logOutput;
     private Date _jobEndDate;
+    
+    private String _triggeredBy;
 
     // no-args constructor
     public ExecutionLog() {
@@ -75,5 +77,13 @@ public class ExecutionLog extends ExecutionIdentifier implements IsSerializable 
 
     public JobIdentifier getJob() {
         return _job;
+    }
+    
+    public String getTriggeredBy() {
+        return _triggeredBy;
+    }
+    
+    public void setTriggeredBy(String triggeredBy) {
+        _triggeredBy = triggeredBy;
     }
 }

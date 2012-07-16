@@ -63,6 +63,9 @@ public class ExecutionLogPanel extends Composite {
 
     @UiField
     Anchor resultAnchor;
+    
+    @UiField
+    Label triggeredByLabel;
 
     public ExecutionLogPanel(TenantIdentifier tenant, ExecutionLog executionLog) {
         super();
@@ -102,6 +105,8 @@ public class ExecutionLogPanel extends Composite {
                 triggerLabel.setText("Manually triggered");
                 break;
             }
+            
+            triggeredByLabel.setText(executionLog.getTriggeredBy());
 
             logOutputLabel.setText(executionLog.getLogOutput());
 

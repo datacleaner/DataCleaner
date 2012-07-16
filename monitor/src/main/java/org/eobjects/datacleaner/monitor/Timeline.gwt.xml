@@ -27,9 +27,9 @@
 	<inherits name='com.google.gwt.visualization.Visualization' />
 
 	<entry-point
-		class='org.eobjects.datacleaner.monitor.timeline.TimelineEntryPoint' />
+		class='org.eobjects.datacleaner.monitor.dashboard.TimelineEntryPoint' />
 
-	<source path='timeline' />
+	<source path='dashboard' />
 	<source path='shared' />
 	<source path='util' />
 	

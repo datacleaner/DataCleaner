@@ -92,7 +92,7 @@
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 						<fileset>
-							<directory>src/main/webapp/timeline</directory>
+							<directory>src/main/webapp/dashboard</directory>
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 						<fileset>

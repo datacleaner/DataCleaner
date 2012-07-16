@@ -17,18 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.widgets;
+package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions;
+import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.VerticalAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.DefaultHAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.DefaultVAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.LatestNumberOfDaysHAxisOption;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.NumberTextBox;
-import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions;
-import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.VerticalAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.DefaultHAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.DefaultVAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.LatestNumberOfDaysHAxisOption;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.DatePickerCell;

@@ -17,16 +17,16 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.widgets;
+package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;

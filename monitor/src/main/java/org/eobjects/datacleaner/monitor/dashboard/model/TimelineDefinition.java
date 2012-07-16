@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.model;
+package org.eobjects.datacleaner.monitor.dashboard.model;
 
 import java.util.ArrayList;
 import java.util.List;

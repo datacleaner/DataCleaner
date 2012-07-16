@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.widgets;
+package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
+import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
-import org.eobjects.datacleaner.monitor.timeline.TimelineServiceAsync;
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

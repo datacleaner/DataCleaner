@@ -24,6 +24,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions;
+import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.VerticalAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.DefaultHAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.DefaultVAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.LatestNumberOfDaysHAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType;
 import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis;
 import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.FixedAxis;
@@ -34,13 +41,6 @@ import org.eobjects.datacleaner.monitor.jaxb.Timeline;
 import org.eobjects.datacleaner.monitor.server.TimelineReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions;
-import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.VerticalAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.DefaultHAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.DefaultVAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.LatestNumberOfDaysHAxisOption;
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 
 /**
  * JAXB based {@link TimelineReader} of .analysis.timeline.xml files.

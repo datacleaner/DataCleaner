@@ -24,16 +24,16 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import org.eobjects.datacleaner.monitor.dashboard.TimelineService;
+import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.timeline.TimelineService;
-import org.eobjects.datacleaner.monitor.timeline.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineData;
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineGroup;
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 

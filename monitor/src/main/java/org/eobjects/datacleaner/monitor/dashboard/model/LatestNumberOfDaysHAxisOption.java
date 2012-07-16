@@ -17,11 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.timeline.model;
+package org.eobjects.datacleaner.monitor.dashboard.model;
 
 import java.util.Date;
 
-import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
+import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
 
 /**
  * A {@link HorizontalAxisOption} implementation which allows the user to select

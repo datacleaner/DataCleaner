@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.io.OutputStream;
 
-import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 
 /**
  * Defines a component that can write timeline definitions to an output stream.

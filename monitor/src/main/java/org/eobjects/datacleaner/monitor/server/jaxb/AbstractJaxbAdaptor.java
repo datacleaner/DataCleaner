@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.jaxb;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -26,6 +27,7 @@ import java.util.GregorianCalendar;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -36,12 +38,12 @@ import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
  * Utility abstract class for making it easier to implement a writer object for
  * the JAXB model.
  */
-abstract class JaxbWriter<E> {
+abstract class AbstractJaxbAdaptor<E> {
 
     private final ObjectFactory _objectFactory;
     private final JAXBContext _jaxbContext;
 
-    public JaxbWriter() {
+    protected AbstractJaxbAdaptor() {
         _objectFactory = new ObjectFactory();
         try {
             _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
@@ -51,7 +53,7 @@ abstract class JaxbWriter<E> {
         }
     }
 
-    public DatatypeFactory getDatatypeFactory() {
+    protected DatatypeFactory getDatatypeFactory() {
         try {
             return DatatypeFactory.newInstance();
         } catch (Exception e) {
@@ -59,7 +61,7 @@ abstract class JaxbWriter<E> {
         }
     }
 
-    public XMLGregorianCalendar createDate(Date date) {
+    protected XMLGregorianCalendar createDate(Date date) {
         if (date == null) {
             return null;
         }
@@ -67,10 +69,37 @@ abstract class JaxbWriter<E> {
         cal.setTime(date);
         return getDatatypeFactory().newXMLGregorianCalendar(cal);
     }
-
-    private Marshaller createMarshaller() {
+    
+    protected Date createDate(XMLGregorianCalendar gregorianCalendar) {
+        if (gregorianCalendar == null) {
+            return null;
+        }
+        return gregorianCalendar.toGregorianCalendar().getTime();
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected E unmarshal(InputStream in) {
+        final Unmarshaller unmarshaller = createUnmarshaller();
         try {
-            Marshaller marshaller = _jaxbContext.createMarshaller();
+            return (E) unmarshaller.unmarshal(in);
+        } catch (JAXBException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    protected Unmarshaller createUnmarshaller() {
+        try {
+            final Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
+            unmarshaller.setEventHandler(new JaxbValidationEventHandler());
+            return unmarshaller;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    protected Marshaller createMarshaller() {
+        try {
+            final Marshaller marshaller = _jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setEventHandler(new JaxbValidationEventHandler());
             return marshaller;
@@ -79,7 +108,7 @@ abstract class JaxbWriter<E> {
         }
     }
 
-    public void marshal(E obj, OutputStream outputStream) {
+    protected void marshal(E obj, OutputStream outputStream) {
         Marshaller marshaller = createMarshaller();
         try {
             marshaller.marshal(obj, outputStream);
@@ -88,7 +117,7 @@ abstract class JaxbWriter<E> {
         }
     }
 
-    public JAXBContext getJaxbContext() {
+    protected JAXBContext getJaxbContext() {
         return _jaxbContext;
     }
 

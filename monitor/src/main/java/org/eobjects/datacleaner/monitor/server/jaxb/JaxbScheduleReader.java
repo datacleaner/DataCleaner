@@ -22,15 +22,9 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.datacleaner.monitor.jaxb.Alert;
 import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
-import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
@@ -44,35 +38,13 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 /**
  * JAXB based reader of .schedule.xml files
  */
-public class JaxbScheduleReader {
-
-    private final JAXBContext _jaxbContext;
-
-    public JaxbScheduleReader() {
-        try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                    ObjectFactory.class.getClassLoader());
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
 
     public ScheduleDefinition read(InputStream inputStream, JobIdentifier job, TenantIdentifier tenant,
             DatastoreIdentifier datastore) {
-        final Schedule schedule = unmarshallSchedule(inputStream);
+        final Schedule schedule = unmarshal(inputStream);
         final ScheduleDefinition scheduleDefinition = createSchedule(schedule, job, tenant, datastore, true);
         return scheduleDefinition;
-    }
-
-    public Schedule unmarshallSchedule(InputStream inputStream) {
-        try {
-            Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
-            unmarshaller.setEventHandler(new JaxbValidationEventHandler());
-            Schedule schedule = (Schedule) unmarshaller.unmarshal(inputStream);
-            return schedule;
-        } catch (JAXBException e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 
     public AlertDefinition createAlert(Alert alert) {

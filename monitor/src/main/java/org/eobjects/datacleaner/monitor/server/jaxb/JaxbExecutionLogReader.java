@@ -21,14 +21,9 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.datacleaner.monitor.jaxb.ExecutionType;
-import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
@@ -38,30 +33,12 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 /**
  * Reader of {@link ExecutionLog} objects.
  */
-public class JaxbExecutionLogReader {
-
-    private final JAXBContext _jaxbContext;
-
-    public JaxbExecutionLogReader() {
-        try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                    ObjectFactory.class.getClassLoader());
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
 
     public ExecutionLog read(InputStream inputStream, TenantIdentifier tenant) {
-        try {
-            Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
-            unmarshaller.setEventHandler(new JaxbValidationEventHandler());
-            org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = (org.eobjects.datacleaner.monitor.jaxb.ExecutionLog) unmarshaller
-                    .unmarshal(inputStream);
-            ExecutionLog executionLog = convert(jaxbExecutionLog, tenant);
-            return executionLog;
-        } catch (JAXBException e) {
-            throw new IllegalArgumentException(e);
-        }
+        org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);
+        ExecutionLog executionLog = convert(jaxbExecutionLog, tenant);
+        return executionLog;
     }
 
     private ExecutionLog convert(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog,

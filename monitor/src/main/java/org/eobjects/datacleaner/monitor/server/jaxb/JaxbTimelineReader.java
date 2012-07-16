@@ -21,46 +21,35 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.eobjects.analyzer.util.JaxbValidationEventHandler;
+import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType;
+import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis;
+import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.FixedAxis;
+import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.RollingAxis;
+import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.VerticalAxis;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
-import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.monitor.jaxb.Timeline;
 import org.eobjects.datacleaner.monitor.server.TimelineReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions;
+import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.HorizontalAxisOption;
+import org.eobjects.datacleaner.monitor.timeline.model.ChartOptions.VerticalAxisOption;
+import org.eobjects.datacleaner.monitor.timeline.model.DefaultHAxisOption;
+import org.eobjects.datacleaner.monitor.timeline.model.DefaultVAxisOption;
+import org.eobjects.datacleaner.monitor.timeline.model.LatestNumberOfDaysHAxisOption;
 import org.eobjects.datacleaner.monitor.timeline.model.TimelineDefinition;
 
 /**
  * JAXB based {@link TimelineReader} of .analysis.timeline.xml files.
  */
-public class JaxbTimelineReader implements TimelineReader {
-
-    private final JAXBContext _jaxbContext;
-
-    public JaxbTimelineReader() {
-        try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                    ObjectFactory.class.getClassLoader());
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
+public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements TimelineReader {
 
     public Timeline unmarshallTimeline(InputStream inputStream) {
-        try {
-            Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
-            unmarshaller.setEventHandler(new JaxbValidationEventHandler());
-            Timeline timeline = (Timeline) unmarshaller.unmarshal(inputStream);
-            return timeline;
-        } catch (JAXBException e) {
-            throw new IllegalArgumentException(e);
-        }
+        Timeline timeline = unmarshal(inputStream);
+        return timeline;
     }
 
     @Override
@@ -80,7 +69,56 @@ public class JaxbTimelineReader implements TimelineReader {
         final List<MetricIdentifier> metrics = createMetrics(timeline);
         timelineDefinition.setMetrics(metrics);
 
+        final ChartOptions chartOptions = createChartOptions(timeline);
+        timelineDefinition.setChartOptions(chartOptions);
+
         return timelineDefinition;
+    }
+
+    private ChartOptions createChartOptions(Timeline timeline) {
+        final ChartOptionsType chartOptionsType = timeline.getChartOptions();
+        if (chartOptionsType == null) {
+            return null;
+        }
+
+        final HorizontalAxisOption horizontalAxisOption = createHorizontalAxisOption(chartOptionsType
+                .getHorizontalAxis());
+        final VerticalAxisOption verticalAxisOption = createVericalAxisOption(chartOptionsType.getVerticalAxis());
+
+        final ChartOptions chartOptions = new ChartOptions(horizontalAxisOption, verticalAxisOption);
+        return chartOptions;
+    }
+
+    private VerticalAxisOption createVericalAxisOption(VerticalAxis axis) {
+        if (axis == null) {
+            return new DefaultVAxisOption();
+        }
+
+        final Integer height = axis.getHeight();
+        final boolean logarithmicScale = axis.isLogarithmicScale();
+        final Integer minimumValue = axis.getMinimumValue();
+        final Integer maximumValue = axis.getMaximumValue();
+
+        return new DefaultVAxisOption(height, minimumValue, maximumValue, logarithmicScale);
+    }
+
+    private HorizontalAxisOption createHorizontalAxisOption(HorizontalAxis axis) {
+        if (axis == null) {
+            return new DefaultHAxisOption();
+        }
+
+        final FixedAxis fixedAxis = axis.getFixedAxis();
+        final RollingAxis rollingAxis = axis.getRollingAxis();
+        if (fixedAxis != null) {
+            final Date beginDate = createDate(fixedAxis.getBeginDate());
+            final Date endDate = createDate(fixedAxis.getEndDate());
+            return new DefaultHAxisOption(beginDate, endDate);
+        } else if (rollingAxis != null) {
+            int latestNumberOfDays = rollingAxis.getLatestNumberOfDays();
+            return new LatestNumberOfDaysHAxisOption(latestNumberOfDays);
+        } else {
+            return new DefaultHAxisOption();
+        }
     }
 
     public List<MetricIdentifier> createMetrics(Timeline timeline) {

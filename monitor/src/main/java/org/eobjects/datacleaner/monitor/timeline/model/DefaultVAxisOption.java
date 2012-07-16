@@ -61,5 +61,9 @@ public class DefaultVAxisOption implements ChartOptions.VerticalAxisOption {
     public boolean isLogarithmicScale() {
         return _logarithmicScale;
     }
+    
+    public boolean isHeightSet() {
+        return _height != null;
+    }
 
 }

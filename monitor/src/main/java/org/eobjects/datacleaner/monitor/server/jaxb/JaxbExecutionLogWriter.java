@@ -31,7 +31,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
  * Component responsible for writing a {@link ExecutionLog} to an XML
  * outputstream.
  */
-public class JaxbExecutionLogWriter extends JaxbWriter<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
+public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
 
     public void write(ExecutionLog executionLog, OutputStream out) {
         final org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbObj = createExecutionLog(executionLog);

@@ -37,7 +37,7 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 /**
  * Jaxb based Schedule writer for .schedule.xml files.
  */
-public class JaxbScheduleWriter extends JaxbWriter<Schedule> {
+public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
 
     public void write(ScheduleDefinition scheduleDefinition, OutputStream outputStream) {
         Schedule schedule = createSchedule(scheduleDefinition);

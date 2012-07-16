@@ -9,15 +9,55 @@
 
 	<element name="timeline">
 		<complexType>
-			<sequence>
+			<all>
 				<element name="timeline-metadata" minOccurs="0" maxOccurs="1"
 					type="timeline:timelineMetadataType" />
 				<element name="job-name" minOccurs="1" maxOccurs="1" type="string" />
 				<element name="metrics" minOccurs="1" maxOccurs="1"
 					type="timeline:metricsType" />
-			</sequence>
+				<element name="chart-options" minOccurs="0" maxOccurs="1"
+					type="timeline:chartOptionsType" />
+			</all>
 		</complexType>
 	</element>
+
+	<complexType name="chartOptionsType">
+		<all>
+			<element name="horizontal-axis" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<choice>
+						<element name="rolling-axis">
+							<complexType>
+								<all>
+									<element name="latest-number-of-days" type="int" />
+								</all>
+							</complexType>
+						</element>
+						<element name="fixed-axis">
+							<complexType>
+								<all>
+									<element name="begin-date" type="date" minOccurs="0"
+										maxOccurs="1" />
+									<element name="end-date" type="date" minOccurs="0"
+										maxOccurs="1" />
+								</all>
+							</complexType>
+						</element>
+					</choice>
+				</complexType>
+			</element>
+			<element name="vertical-axis" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<all>
+						<element name="height" type="int" minOccurs="0" maxOccurs="1" />
+						<element name="logarithmic-scale" type="boolean" />
+						<element name="minimum-value" type="int" minOccurs="0" maxOccurs="1" />
+						<element name="maximum-value" type="int" minOccurs="0" maxOccurs="1" />
+					</all>
+				</complexType>
+			</element>
+		</all>
+	</complexType>
 
 	<complexType name="timelineMetadataType">
 		<sequence>

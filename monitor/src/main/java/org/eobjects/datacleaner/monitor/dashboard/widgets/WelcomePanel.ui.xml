@@ -12,7 +12,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
 
 	<g:HTMLPanel>
-		<g:Button ui:field="newTimelineButton" text="New timeline" />
+		<g:Button ui:field="newTimelineButton" text="New timeline chart" />
 		<g:Button ui:field="toggleWelcomeTextButton" styleName="toggleWelcomeTextButton" />
 		<g:HTMLPanel ui:field="welcomeTextPanel" styleName="InfographicContainer">
 			<div class="InfographicPart InfographicIntro">

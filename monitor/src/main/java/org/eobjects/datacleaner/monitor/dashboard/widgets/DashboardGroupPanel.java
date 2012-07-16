@@ -97,7 +97,7 @@ public class DashboardGroupPanel extends FlowPanel {
             }
 
             _welcomePanel = null;
-            newTimelineButton = new Button("New timeline");
+            newTimelineButton = new Button("New timeline chart");
             add(newTimelineButton);
             add(_removeGroupButton);
         }

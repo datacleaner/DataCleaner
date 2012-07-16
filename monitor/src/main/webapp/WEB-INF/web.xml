@@ -76,7 +76,7 @@
 	<!-- GWT RPC servlets -->
 	<servlet>
 		<servlet-name>DashboardService</servlet-name>
-		<servlet-class>org.eobjects.datacleaner.monitor.server.TimelineServiceServlet</servlet-class>
+		<servlet-class>org.eobjects.datacleaner.monitor.server.DashboardServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>

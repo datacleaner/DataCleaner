@@ -34,7 +34,7 @@
 	<source path='util' />
 	
 	<stylesheet src="shared.css" />
-	<stylesheet src="timeline.css" />
+	<stylesheet src="dashboard.css" />
 	
 	<public path="resources" />
 

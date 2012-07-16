@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -41,10 +41,10 @@ import com.google.gwt.user.client.ui.FlowPanel;
 public class CreateTimelineHandler implements ClickHandler {
 
     private final TimelineGroupPanel _timelineListPanel;
-    private final TimelineServiceAsync _service;
+    private final DashboardServiceAsync _service;
     private final TenantIdentifier _tenant;
 
-    public CreateTimelineHandler(TimelineServiceAsync service, TenantIdentifier tenant,
+    public CreateTimelineHandler(DashboardServiceAsync service, TenantIdentifier tenant,
             TimelineGroupPanel timelineListPanel) {
         _service = service;
         _tenant = tenant;

@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -42,14 +42,14 @@ import com.google.gwt.user.client.ui.Label;
 public class TimelineGroupPanel extends FlowPanel {
 
     private final TenantIdentifier _tenant;
-    private final TimelineServiceAsync _service;
+    private final DashboardServiceAsync _service;
     private final WelcomePanel _welcomePanel;
     private final TimelineGroup _group;
     private final Button _removeGroupButton;
     private final boolean _isDashboardEditor;
     private int _dashboardWidgetCount;
 
-    public TimelineGroupPanel(TimelineServiceAsync service, TenantIdentifier tenant, TimelineGroup group, boolean isDashboardEditor) {
+    public TimelineGroupPanel(DashboardServiceAsync service, TenantIdentifier tenant, TimelineGroup group, boolean isDashboardEditor) {
         super();
         _tenant = tenant;
         _service = service;

@@ -34,9 +34,9 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
- * Async variant of {@link TimelineService}.
+ * Async variant of {@link DashboardService}.
  */
-public interface TimelineServiceAsync {
+public interface DashboardServiceAsync {
 
     public void getTimelines(TenantIdentifier tenant, TimelineGroup group,
             AsyncCallback<List<TimelineIdentifier>> callback);

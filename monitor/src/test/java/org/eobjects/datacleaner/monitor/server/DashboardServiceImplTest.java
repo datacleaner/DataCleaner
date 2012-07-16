@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
-import org.eobjects.datacleaner.monitor.dashboard.TimelineService;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
 import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
@@ -39,12 +39,12 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 
-public class TimelineServiceImplTest extends TestCase {
+public class DashboardServiceImplTest extends TestCase {
 
     public void testBasicInteraction() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
-        final TimelineService service = new TimelineServiceImpl(repository, contextFactory);
+        final DashboardService service = new DashboardServiceImpl(repository, contextFactory);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());

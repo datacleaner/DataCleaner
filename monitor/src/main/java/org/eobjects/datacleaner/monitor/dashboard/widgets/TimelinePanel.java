@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 import java.util.Date;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions;
 import org.eobjects.datacleaner.monitor.dashboard.model.DefaultVAxisOption;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
@@ -61,7 +61,7 @@ public class TimelinePanel extends FlowPanel {
      */
     private static final int WIDTH = 880 - 150 - 10;
 
-    private final TimelineServiceAsync _service;
+    private final DashboardServiceAsync _service;
     private final LoadingIndicator _loadingIndicator;
     private final TenantIdentifier _tenant;
     private final TimelineGroupPanel _timelineGroupPanel;
@@ -73,7 +73,7 @@ public class TimelinePanel extends FlowPanel {
     private TimelineDefinition _timelineDefinition;
     private TimelineData _timelineData;
 
-    public TimelinePanel(TenantIdentifier tenant, TimelineServiceAsync service, TimelineIdentifier timelineIdentifier,
+    public TimelinePanel(TenantIdentifier tenant, DashboardServiceAsync service, TimelineIdentifier timelineIdentifier,
             TimelineGroupPanel timelineGroupPanel, boolean isDashboardEditor) {
         super();
         _tenant = tenant;

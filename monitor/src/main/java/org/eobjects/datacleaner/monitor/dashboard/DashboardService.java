@@ -41,8 +41,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * Service interface for the timeline module
  */
-@RemoteServiceRelativePath("timelineService")
-public interface TimelineService extends RemoteService {
+@RemoteServiceRelativePath("dashboardService")
+public interface DashboardService extends RemoteService {
     
     /**
      * Determines whether the current user is authorized to edit the dashboard.

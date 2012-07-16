@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
@@ -43,13 +43,13 @@ public class TimelineGroupSelectionPanel extends FlowPanel {
 
     private static final String DEFAULT_GROUP_NAME = "(default)";
     private final TenantIdentifier _tenant;
-    private final TimelineServiceAsync _service;
+    private final DashboardServiceAsync _service;
     private final SimplePanel _targetPanel;
     private final Map<String, Anchor> _anchors;
     private final FlowPanel _anchorPanel;
     private final boolean _isDashboardEditor;
 
-    public TimelineGroupSelectionPanel(TenantIdentifier tenant, TimelineServiceAsync service, SimplePanel targetPanel,
+    public TimelineGroupSelectionPanel(TenantIdentifier tenant, DashboardServiceAsync service, SimplePanel targetPanel,
             boolean isDashboardEditor) {
         super();
 

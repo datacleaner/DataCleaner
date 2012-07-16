@@ -35,7 +35,7 @@ import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.server.TimelineServiceImpl;
+import org.eobjects.datacleaner.monitor.server.DashboardServiceImpl;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -130,7 +130,7 @@ public class ResultFileController {
             throw new IllegalArgumentException("No such result file: " + resultName);
         }
 
-        final AnalysisResult analysisResult = TimelineServiceImpl.readAnalysisResult(resultFile);
+        final AnalysisResult analysisResult = DashboardServiceImpl.readAnalysisResult(resultFile);
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final boolean tabs = (tabsParam == null ? true : tabsParam.booleanValue());
 

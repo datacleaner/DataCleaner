@@ -75,13 +75,13 @@
 
 	<!-- GWT RPC servlets -->
 	<servlet>
-		<servlet-name>TimelineService</servlet-name>
+		<servlet-name>DashboardService</servlet-name>
 		<servlet-class>org.eobjects.datacleaner.monitor.server.TimelineServiceServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>TimelineService</servlet-name>
-		<url-pattern>/timeline/timelineService</url-pattern>
+		<servlet-name>DashboardService</servlet-name>
+		<url-pattern>/dashboard/dashboardService</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

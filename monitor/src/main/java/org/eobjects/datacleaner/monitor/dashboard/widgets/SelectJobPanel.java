@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
@@ -39,12 +39,12 @@ import com.google.gwt.user.client.ui.ListBox;
  */
 public abstract class SelectJobPanel extends FlowPanel {
 
-    private final TimelineServiceAsync _service;
+    private final DashboardServiceAsync _service;
     private final TenantIdentifier _tenant;
     private final LoadingIndicator _loadingIndicator;
     private ListBox _listBox;
 
-    public SelectJobPanel(TimelineServiceAsync service, TenantIdentifier tenant) {
+    public SelectJobPanel(DashboardServiceAsync service, TenantIdentifier tenant) {
         _service = service;
         _tenant = tenant;
         _loadingIndicator = new LoadingIndicator();

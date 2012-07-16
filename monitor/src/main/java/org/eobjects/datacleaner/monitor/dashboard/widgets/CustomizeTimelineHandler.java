@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class CustomizeTimelineHandler implements ClickHandler {
 
-    private final TimelineServiceAsync _service;
+    private final DashboardServiceAsync _service;
     private final TimelinePanel _timelinePanel;
 
     private final DCPopupPanel _popup;
@@ -43,7 +43,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
     private CustomizeMetricsPanel _customizeMetricsPanel;
     private CustomizeChartOptionsPanel _customizeChartOptionsPanel;
 
-    public CustomizeTimelineHandler(TimelineServiceAsync service, TimelinePanel timelinePanel) {
+    public CustomizeTimelineHandler(DashboardServiceAsync service, TimelinePanel timelinePanel) {
         _service = service;
         _timelinePanel = timelinePanel;
 

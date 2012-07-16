@@ -43,7 +43,7 @@ public class TimelineEntryPoint implements EntryPoint {
         final ClientConfig clientConfig = new DictionaryClientConfig();
         final TenantIdentifier tenant = clientConfig.getTenant();
 
-        final TimelineServiceAsync service = GWT.create(TimelineService.class);
+        final DashboardServiceAsync service = GWT.create(DashboardService.class);
 
         service.isDashboardEditor(tenant, new DCAsyncCallback<Boolean>() {
             @Override
@@ -53,7 +53,7 @@ public class TimelineEntryPoint implements EntryPoint {
         });
     }
 
-    protected void render(TimelineServiceAsync service, TenantIdentifier tenant, boolean isDashboardEditor) {
+    protected void render(DashboardServiceAsync service, TenantIdentifier tenant, boolean isDashboardEditor) {
         final FlowPanel timelinesSplitPanel = new FlowPanel();
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
         {

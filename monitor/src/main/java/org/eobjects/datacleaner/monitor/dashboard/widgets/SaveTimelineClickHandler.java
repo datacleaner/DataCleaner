@@ -19,7 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
@@ -35,11 +35,11 @@ import com.google.gwt.user.client.Window;
  */
 public class SaveTimelineClickHandler implements ClickHandler {
 
-    private final TimelineServiceAsync _service;
+    private final DashboardServiceAsync _service;
     private final TenantIdentifier _tenantIdentifier;
     private final TimelinePanel _timelinePanel;
 
-    public SaveTimelineClickHandler(TimelineServiceAsync service, TenantIdentifier tenantIdentifier,
+    public SaveTimelineClickHandler(DashboardServiceAsync service, TenantIdentifier tenantIdentifier,
             TimelinePanel timelinePanel) {
         _service = service;
         _tenantIdentifier = tenantIdentifier;

@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -41,10 +41,10 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
     private final List<MetricPresenter> _metricPresenters;
     private TimelineDefinition _timelineDefinition;
-    private TimelineServiceAsync _service;
+    private DashboardServiceAsync _service;
     private TenantIdentifier _tenantIdentifier;
 
-    public CustomizeMetricsPanel(TimelineServiceAsync service, TenantIdentifier tenantIdentifier,
+    public CustomizeMetricsPanel(DashboardServiceAsync service, TenantIdentifier tenantIdentifier,
             TimelineDefinition timelineDefinition) {
         super();
         _service = service;

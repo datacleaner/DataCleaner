@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineServiceAsync;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -81,7 +81,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
     }
 
     public StringParameterizedMetricPresenter(TenantIdentifier tenantIdentifier, JobIdentifier jobIdentifier, MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics,
-            TimelineServiceAsync service) {
+            DashboardServiceAsync service) {
         _tenantIdentifier = tenantIdentifier;
         _jobIdentifier = jobIdentifier;
         _metricIdentifier = metricIdentifier;

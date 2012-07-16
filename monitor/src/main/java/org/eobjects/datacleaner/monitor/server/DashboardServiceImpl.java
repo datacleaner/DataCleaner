@@ -45,7 +45,7 @@ import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.dashboard.TimelineService;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
 import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
 import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
@@ -74,18 +74,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Main implementation of the {@link TimelineService} interface.
+ * Main implementation of the {@link DashboardService} interface.
  */
 @Component("timelineService")
-public class TimelineServiceImpl implements TimelineService {
+public class DashboardServiceImpl implements DashboardService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TimelineServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
     private final TenantContextFactory _tenantContextFactory;
     private final Repository _repository;
 
     @Autowired
-    public TimelineServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory) {
+    public DashboardServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory) {
         _repository = repository;
         _tenantContextFactory = tenantContextFactory;
     }

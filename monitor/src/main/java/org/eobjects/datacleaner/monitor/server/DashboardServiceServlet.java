@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.eobjects.datacleaner.monitor.dashboard.TimelineService;
+import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
 import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
@@ -38,15 +38,15 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Servlet wrapper/proxy for the {@link TimelineService}. Passes all service
- * requests on to a delegate, see {@link #setDelegate(TimelineService)} and
+ * Servlet wrapper/proxy for the {@link DashboardService}. Passes all service
+ * requests on to a delegate, see {@link #setDelegate(DashboardService)} and
  * {@link #getDelegate()}.
  */
-public class TimelineServiceServlet extends SecureGwtServlet implements TimelineService {
+public class DashboardServiceServlet extends SecureGwtServlet implements DashboardService {
 
     private static final long serialVersionUID = 1L;
 
-    private TimelineService _delegate;
+    private DashboardService _delegate;
 
     @Override
     public void init() throws ServletException {
@@ -54,7 +54,7 @@ public class TimelineServiceServlet extends SecureGwtServlet implements Timeline
 
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            TimelineService delegate = applicationContext.getBean(TimelineService.class);
+            DashboardService delegate = applicationContext.getBean(DashboardService.class);
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
@@ -62,11 +62,11 @@ public class TimelineServiceServlet extends SecureGwtServlet implements Timeline
         }
     }
 
-    public void setDelegate(TimelineService delegate) {
+    public void setDelegate(DashboardService delegate) {
         _delegate = delegate;
     }
 
-    public TimelineService getDelegate() {
+    public DashboardService getDelegate() {
         return _delegate;
     }
 

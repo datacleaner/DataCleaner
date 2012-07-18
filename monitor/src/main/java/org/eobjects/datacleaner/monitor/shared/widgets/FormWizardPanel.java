@@ -32,6 +32,7 @@ import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.FormElement;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NodeCollection;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -72,20 +73,40 @@ final class FormWizardPanel implements WizardPanel {
 
         final NodeCollection<com.google.gwt.dom.client.Element> inputElements = formElement.getElements();
         for (int i = 0; i < inputElements.getLength(); i++) {
-            final Element inputElement = inputElements.getItem(i);
+            final Element element = inputElements.getItem(i);
 
-            final String name = inputElement.getPropertyString("name");
-            final String value = inputElement.getPropertyString("value");
-            
-            List<String> valueList = formParameters.get(name);
-            if (valueList == null) {
-                valueList = new ArrayList<String>();
-                formParameters.put(name, valueList);
+            final String name;
+            final String value;
+            final boolean included;
+
+            if (element.getTagName().equals("input")) {
+                InputElement inputElement = InputElement.as(element);
+                name = inputElement.getName();
+                value = inputElement.getValue();
+
+                String type = inputElement.getType();
+                if ("checkbox".equals(type) || "radio".equals(type)) {
+                    included = inputElement.isChecked();
+                } else {
+                    included = true;
+                }
+            } else {
+                // useful for eg. <textarea> and <select> element types
+                name = element.getPropertyString("name");
+                value = element.getPropertyString("value");
+                included = true;
             }
-            valueList.add(value);
+
+            if (included) {
+                List<String> valueList = formParameters.get(name);
+                if (valueList == null) {
+                    valueList = new ArrayList<String>();
+                    formParameters.put(name, valueList);
+                }
+                valueList.add(value);
+            }
         }
 
         _service.nextPage(_tenant, _wizardPage.getSessionIdentifier(), formParameters, callback);
     }
-
 }

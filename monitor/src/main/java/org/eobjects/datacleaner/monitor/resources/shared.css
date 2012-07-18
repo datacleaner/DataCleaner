@@ -37,6 +37,22 @@ a:hover {
 /*
  * GWT built-in style modifications 
  */
+.gwt-TextBox, .gwt-ListBox {
+	padding: 5px 4px;
+	border: 1px solid #CCC;
+	border-top: 1px solid #999;
+	font-size: 0.9em;
+	font-family: "Open Sans", sans-serif;
+}
+
+.gwt-TextBox {
+	min-width: 200px;
+}
+
+.gwt-ListBox {
+	min-width: 210px;
+}
+ 
 .gwt-PopupPanel .popupContent {
 	text-align: left;
 	padding: 5px;

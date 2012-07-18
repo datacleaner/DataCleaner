@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.configuration;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -111,8 +110,6 @@ class DefaultJobContext implements JobContext {
         final InputStream in = _file.readFile();
         try {
             FileHelper.copy(in, out);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
         } finally {
             FileHelper.safeClose(in);
         }

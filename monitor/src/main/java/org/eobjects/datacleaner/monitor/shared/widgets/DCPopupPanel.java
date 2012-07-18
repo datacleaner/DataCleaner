@@ -44,7 +44,9 @@ public class DCPopupPanel extends PopupPanel {
         _panel.setStyleName("DCPopupPanelContent");
 
         final FlowPanel outerPanel = new FlowPanel();
-        outerPanel.add(new HeadingLabel(heading));
+        if (heading != null) {
+            outerPanel.add(new HeadingLabel(heading));
+        }
         outerPanel.add(_panel);
         outerPanel.add(_buttonPanel);
 

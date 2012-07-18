@@ -46,4 +46,6 @@ public interface TenantContext {
     public RepositoryFolder getTimelineFolder();
 
     public AnalyzerBeansConfiguration getConfiguration();
+
+    public boolean containsJob(String jobName);
 }

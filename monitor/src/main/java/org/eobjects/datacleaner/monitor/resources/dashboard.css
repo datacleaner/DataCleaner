@@ -238,6 +238,7 @@
 	font-size: small;
 	padding: 1px;
 	width: 100px;
+	min-width: 100px;
 }
 
 .CustomizeChartOptionsPanel .TimelineRadioSpecPanel {

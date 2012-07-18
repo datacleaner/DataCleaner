@@ -3,8 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<bean name="configurationFactory" lazy-init="false"
 		class="org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory">
@@ -28,5 +27,9 @@
 	<import resource="classpath:context/repository-context.xml" />
 	<import resource="classpath:context/scheduling-context.xml" />
 	<import resource="classpath:context/security-context.xml" />
+
+	<!-- Extensions can put a context/extension-context.xml file in the JAR 
+		file to include additional Spring config. -->
+	<import resource="classpath*:context/extension-context.xml" />
 
 </beans>

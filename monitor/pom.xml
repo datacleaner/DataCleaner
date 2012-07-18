@@ -15,6 +15,7 @@
 		<spring.core.version>3.1.1.RELEASE</spring.core.version>
 		<spring.security.version>3.1.0.RELEASE</spring.security.version>
 		<quartz.version>1.8.6</quartz.version>
+		<freemarker.version>2.3.19</freemarker.version>
 	</properties>
 
 	<build>
@@ -319,6 +320,13 @@
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-annotation_1.1_spec</artifactId>
 			<version>1.0.1</version>
+		</dependency>
+
+		<!-- Freemarker (for Wizard plugins) -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
 		</dependency>
 
 		<!-- JSF -->

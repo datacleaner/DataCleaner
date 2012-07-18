@@ -93,6 +93,17 @@
 		<servlet-name>SchedulingService</servlet-name>
 		<url-pattern>/scheduling/schedulingService</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>JobWizardService</servlet-name>
+		<servlet-class>org.eobjects.datacleaner.monitor.server.JobWizardServiceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>JobWizardService</servlet-name>
+		<url-pattern>/scheduling/jobWizardService</url-pattern>
+		<url-pattern>/dashboard/jobWizardService</url-pattern>
+	</servlet-mapping>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>

@@ -67,7 +67,7 @@ public class TenantContextImpl implements TenantContext {
     }
 
     @Override
-    public JobContext getJob(String jobName) {
+    public JobContext getJob(String jobName) throws IllegalArgumentException {
         if (StringUtils.isNullOrEmpty(jobName)) {
             return null;
         }
@@ -145,6 +145,16 @@ public class TenantContextImpl implements TenantContext {
             throw new IllegalArgumentException("No timeline folder for tenant: " + _tenantId);
         }
         return timelinesFolder;
+    }
+
+    @Override
+    public boolean containsJob(String jobName) {
+        try {
+            JobContext job = getJob(jobName);
+            return job != null;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
 }

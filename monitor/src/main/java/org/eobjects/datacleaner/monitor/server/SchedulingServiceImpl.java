@@ -299,8 +299,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         // set the "triggered by" attribute.
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final String username = authentication.getName();
-        execution.setTriggeredBy(username);
+        if (authentication != null) {
+            final String username = authentication.getName();
+            execution.setTriggeredBy(username);
+        }
 
         // TODO: Consider using scheduler.triggerJob(...) ... That will also
         // trigger listeners.

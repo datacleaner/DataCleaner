@@ -1,0 +1,12 @@
+<div>
+	<p>Please select the source table of the job:</p>
+	<select name="tableName">
+		<#list schemas as schema>
+			<optgroup label="${schema.name}">
+				<#list schema.tableNames as tableName>
+					<option label="${tableName}" value="${schema.name}.${tableName}">
+				</#list>
+			</optgroup>
+		</#list>
+	</select>
+</div>

@@ -21,6 +21,14 @@
 	border-bottom: 7px solid #333;
 }
 
+.SchedulingOverviewPanel .ButtonPanel {
+	text-align: left;
+}
+
+.SchedulingOverviewPanel .NewJobButton {
+	background-image: url("new.png");
+}
+
 .SchedulingOverviewPanel .EmptyColumn {
 	min-height: 1em;
 	width: 5%;

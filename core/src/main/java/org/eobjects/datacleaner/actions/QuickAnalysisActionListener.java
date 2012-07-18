@@ -57,123 +57,127 @@ import com.google.inject.Injector;
  */
 public class QuickAnalysisActionListener implements ActionListener {
 
-	private final Datastore _datastore;
-	private final Table _table;
-	private final Column[] _columns;
-	private final DCModule _parentModule;
-	private final UserPreferences _userPreferences;
-	private final AnalyzerBeansConfiguration _configuration;
+    private final Datastore _datastore;
+    private final Table _table;
+    private final Column[] _columns;
+    private final DCModule _parentModule;
+    private final UserPreferences _userPreferences;
+    private final AnalyzerBeansConfiguration _configuration;
 
-	@Inject
-	protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
-			DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
-		_datastore = datastore;
-		_table = table;
-		_columns = columns;
-		_parentModule = parentModule;
-		_userPreferences = userPreferences;
-		_configuration = configuration;
-	}
+    @Inject
+    protected QuickAnalysisActionListener(Datastore datastore, @Nullable Table table, @Nullable Column[] columns,
+            DCModule parentModule, UserPreferences userPreferences, AnalyzerBeansConfiguration configuration) {
+        _datastore = datastore;
+        _table = table;
+        _columns = columns;
+        _parentModule = parentModule;
+        _userPreferences = userPreferences;
+        _configuration = configuration;
+    }
 
-	public Column[] getColumns() {
-		if (_columns == null) {
-			return _table.getColumns();
-		}
-		return _columns;
-	}
+    public Column[] getColumns() {
+        if (_columns == null) {
+            return _table.getColumns();
+        }
+        return _columns;
+    }
 
-	public Table getTable() {
-		if (_table == null) {
-			return _columns[0].getTable();
-		}
-		return _table;
-	}
+    public Table getTable() {
+        if (_table == null) {
+            return _columns[0].getTable();
+        }
+        return _table;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
-		ajb.setDatastore(_datastore);
+    public static void configureAnalysisJobBuilder(AnalysisJobBuilder ajb, QuickAnalysisStrategy quickAnalysisStrategy) {
+        final List<InputColumn<?>> booleanColumns = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> stringColumns = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> numberColumns = new ArrayList<InputColumn<?>>();
+        final List<InputColumn<?>> dateTimeColumns = new ArrayList<InputColumn<?>>();
 
-		final List<InputColumn<?>> booleanColumns = new ArrayList<InputColumn<?>>();
-		final List<InputColumn<?>> stringColumns = new ArrayList<InputColumn<?>>();
-		final List<InputColumn<?>> numberColumns = new ArrayList<InputColumn<?>>();
-		final List<InputColumn<?>> dateTimeColumns = new ArrayList<InputColumn<?>>();
+        for (InputColumn<?> inputColumn : ajb.getSourceColumns()) {
+            final Class<?> dataType = inputColumn.getDataType();
+            if (ReflectionUtils.isBoolean(dataType)) {
+                booleanColumns.add(inputColumn);
+            } else if (ReflectionUtils.isNumber(dataType)) {
+                numberColumns.add(inputColumn);
+            } else if (ReflectionUtils.isDate(dataType)) {
+                dateTimeColumns.add(inputColumn);
+            } else if (ReflectionUtils.isString(dataType)) {
+                stringColumns.add(inputColumn);
+            }
+        }
 
-		for (Column column : getColumns()) {
-			ajb.addSourceColumn(column);
-			InputColumn<?> inputColumn = ajb.getSourceColumnByName(column.getName());
-			Class<?> dataType = inputColumn.getDataType();
-			if (ReflectionUtils.isBoolean(dataType)) {
-				booleanColumns.add(inputColumn);
-			} else if (ReflectionUtils.isNumber(dataType)) {
-				numberColumns.add(inputColumn);
-			} else if (ReflectionUtils.isDate(dataType)) {
-				dateTimeColumns.add(inputColumn);
-			} else if (ReflectionUtils.isString(dataType)) {
-				stringColumns.add(inputColumn);
-			}
-		}
+        if (!booleanColumns.isEmpty()) {
+            // boolean analyzer contains combination matrices, so all columns
+            // are added to a single analyzer job.
+            ajb.addAnalyzer(BooleanAnalyzer.class).addInputColumns(booleanColumns);
+        }
+        if (!numberColumns.isEmpty()) {
+            createAnalyzers(ajb, NumberAnalyzer.class, numberColumns, quickAnalysisStrategy);
+        }
+        if (!dateTimeColumns.isEmpty()) {
+            createAnalyzers(ajb, DateAndTimeAnalyzer.class, dateTimeColumns, quickAnalysisStrategy);
+        }
+        if (!stringColumns.isEmpty()) {
+            createAnalyzers(ajb, StringAnalyzer.class, stringColumns, quickAnalysisStrategy);
+        }
+    }
 
-		if (!booleanColumns.isEmpty()) {
-			// boolean analyzer contains combination matrices, so all columns
-			// are added to a single analyzer job.
-			ajb.addAnalyzer(BooleanAnalyzer.class).addInputColumns(booleanColumns);
-		}
-		if (!numberColumns.isEmpty()) {
-			createAnalyzers(ajb, NumberAnalyzer.class, numberColumns);
-		}
-		if (!dateTimeColumns.isEmpty()) {
-			createAnalyzers(ajb, DateAndTimeAnalyzer.class, dateTimeColumns);
-		}
-		if (!stringColumns.isEmpty()) {
-			createAnalyzers(ajb, StringAnalyzer.class, stringColumns);
-		}
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        final AnalysisJobBuilder ajb = new AnalysisJobBuilder(_configuration);
+        ajb.setDatastore(_datastore);
+        ajb.addSourceColumns(getColumns());
 
-		try {
-			if (!ajb.isConfigured(true)) {
-				throw new IllegalStateException("Unknown job configuration issue!");
-			}
+        final QuickAnalysisStrategy quickAnalysisStrategy = _userPreferences.getQuickAnalysisStrategy();
 
-			Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
+        configureAnalysisJobBuilder(ajb, quickAnalysisStrategy);
 
-			RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
-			actionListener.actionPerformed(event);
-		} catch (Exception e) {
-			WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);
-		}
+        try {
+            if (!ajb.isConfigured(true)) {
+                throw new IllegalStateException("Unknown job configuration issue!");
+            }
 
-	}
+            Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
 
-	/**
-	 * Registers analyzers and up to 4 columns per analyzer. This restriction is
-	 * to ensure that results will be nicely readable. A table might contain
-	 * hundreds of columns.
-	 * 
-	 * @param ajb
-	 * @param analyzerClass
-	 * @param columns
-	 */
-	private void createAnalyzers(AnalysisJobBuilder ajb, Class<? extends Analyzer<?>> analyzerClass,
-			List<InputColumn<?>> columns) {
-		final QuickAnalysisStrategy quickAnalysisStrategy = _userPreferences.getQuickAnalysisStrategy();
-		final int columnsPerAnalyzer = quickAnalysisStrategy.getColumnsPerAnalyzer();
+            RunAnalysisActionListener actionListener = injector.getInstance(RunAnalysisActionListener.class);
+            actionListener.actionPerformed(event);
+        } catch (Exception e) {
+            WidgetUtils.showErrorMessage("Error", "Could not perform quick analysis on table " + _table.getName(), e);
+        }
 
-		AnalyzerJobBuilder<?> analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
-		int columnCount = 0;
-		for (InputColumn<?> inputColumn : columns) {
-			if (columnCount == columnsPerAnalyzer) {
-				analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
-				columnCount = 0;
-			}
-			analyzerJobBuilder.addInputColumn(inputColumn);
+    }
 
-			if (quickAnalysisStrategy.isIncludeValueDistribution()) {
-				ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumn(inputColumn);
-			}
-			if (inputColumn.getDataType() == String.class && quickAnalysisStrategy.isIncludePatternFinder()) {
-				ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumn(inputColumn);
-			}
-			columnCount++;
-		}
-	}
+    /**
+     * Registers analyzers and up to 4 columns per analyzer. This restriction is
+     * to ensure that results will be nicely readable. A table might contain
+     * hundreds of columns.
+     * 
+     * @param ajb
+     * @param analyzerClass
+     * @param columns
+     */
+    private static void createAnalyzers(AnalysisJobBuilder ajb, Class<? extends Analyzer<?>> analyzerClass,
+            List<InputColumn<?>> columns, QuickAnalysisStrategy quickAnalysisStrategy) {
+        final int columnsPerAnalyzer = quickAnalysisStrategy.getColumnsPerAnalyzer();
+
+        AnalyzerJobBuilder<?> analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
+        int columnCount = 0;
+        for (InputColumn<?> inputColumn : columns) {
+            if (columnCount == columnsPerAnalyzer) {
+                analyzerJobBuilder = ajb.addAnalyzer(analyzerClass);
+                columnCount = 0;
+            }
+            analyzerJobBuilder.addInputColumn(inputColumn);
+
+            if (quickAnalysisStrategy.isIncludeValueDistribution()) {
+                ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumn(inputColumn);
+            }
+            if (inputColumn.getDataType() == String.class && quickAnalysisStrategy.isIncludePatternFinder()) {
+                ajb.addAnalyzer(PatternFinderAnalyzer.class).addInputColumn(inputColumn);
+            }
+            columnCount++;
+        }
+    }
 }

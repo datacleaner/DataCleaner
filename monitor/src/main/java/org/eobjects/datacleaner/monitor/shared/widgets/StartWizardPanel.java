@@ -25,6 +25,7 @@ import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -72,6 +73,11 @@ final class StartWizardPanel extends Composite implements WizardPanel {
                 jobNameTextBox.setFocus(true);
             }
         });
+    }
+    
+    @Override
+    public JobWizardSessionIdentifier getSessionIdentifier() {
+        return null;
     }
 
     @Override

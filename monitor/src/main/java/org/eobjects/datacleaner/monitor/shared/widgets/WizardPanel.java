@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -28,6 +29,8 @@ import com.google.gwt.user.client.ui.IsWidget;
  * Interface for panels used as steps in a wizard.
  */
 public interface WizardPanel extends IsWidget {
+    
+    public JobWizardSessionIdentifier getSessionIdentifier();
 
     public void requestNextPage(AsyncCallback<JobWizardPage> callback);
 }

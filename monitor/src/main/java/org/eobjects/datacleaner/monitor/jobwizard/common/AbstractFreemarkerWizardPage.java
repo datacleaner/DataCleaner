@@ -52,7 +52,7 @@ public abstract class AbstractFreemarkerWizardPage implements JobWizardPageContr
         final Map<String, Object> formModel = getFormModel();
         final String templateFilename = getTemplateFilename();
 
-        logger.info("Rendering freemarker template {} with form model: {}", templateFilename, formModel);
+        logger.debug("Rendering freemarker template {} with form model: {}", templateFilename, formModel);
 
         final StringWriter out = new StringWriter();
         try {

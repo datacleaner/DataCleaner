@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.dom.client.BodyElement;
@@ -55,6 +56,11 @@ final class FormWizardPanel implements WizardPanel {
     }
 
     @Override
+    public JobWizardSessionIdentifier getSessionIdentifier() {
+        return _wizardPage.getSessionIdentifier();
+    }
+
+    @Override
     public Widget asWidget() {
         // form element needs to be appended to body before the HTMLPanel can
         // wrap it.
@@ -67,9 +73,9 @@ final class FormWizardPanel implements WizardPanel {
 
     @Override
     public void requestNextPage(AsyncCallback<JobWizardPage> callback) {
-        Map<String, List<String>> formParameters = new HashMap<String, List<String>>();
+        final Map<String, List<String>> formParameters = new HashMap<String, List<String>>();
 
-        FormElement formElement = FormElement.as(_form);
+        final FormElement formElement = FormElement.as(_form);
 
         final NodeCollection<com.google.gwt.dom.client.Element> inputElements = formElement.getElements();
         for (int i = 0; i < inputElements.getLength(); i++) {
@@ -79,7 +85,8 @@ final class FormWizardPanel implements WizardPanel {
             final String value;
             final boolean included;
 
-            if (element.getTagName().equals("input")) {
+            final String tagName = element.getTagName();
+            if (tagName.equalsIgnoreCase("input")) {
                 InputElement inputElement = InputElement.as(element);
                 name = inputElement.getName();
                 value = inputElement.getValue();

@@ -193,6 +193,9 @@ public class JobWizardServiceImpl implements JobWizardService {
 
     @Override
     public Boolean cancelWizard(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier) {
+        if (sessionIdentifier == null) {
+            return true;
+        }
         String sessionId = sessionIdentifier.getSessionId();
         closeSession(sessionId);
         return true;

@@ -139,3 +139,19 @@ a:hover {
 .FormRow .gwt-Button {
 	float: right;
 }
+
+/**
+ * Styling for the job wizards
+ */
+.JobWizardPopupPanel .DCPopupPanelContent {
+	min-height: 300px;
+	min-width: 500px;
+}
+
+.JobWizardPopupPanel .HeadingLabel {
+	padding-left: 26px;
+	background-image: url("job.png");
+	background-repeat: no-repeat;
+	background-position: left center;
+	min-height: 22px;
+}

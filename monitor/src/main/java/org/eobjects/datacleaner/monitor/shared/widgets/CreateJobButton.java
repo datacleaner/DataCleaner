@@ -67,7 +67,7 @@ public class CreateJobButton extends Button implements ClickHandler {
 
     @Override
     public void onClick(ClickEvent event) {
-        DCPopupPanel popup = new DCPopupPanel(null);
+        final DCPopupPanel popup = new DCPopupPanel(null);
         popup.setGlassEnabled(false);
         popup.setWidget(_menuBar);
         popup.getButtonPanel().setVisible(false);

@@ -22,14 +22,18 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * Command that starts a job wizard. Used by the {@link CreateJobButton}'s drop
@@ -40,12 +44,15 @@ final class StartWizardCommand implements Command {
     private final JobWizardServiceAsync _service;
     private final TenantIdentifier _tenant;
     private final JobWizardIdentifier _wizard;
+    private final LoadingIndicator _loadingIndicator;
+
     private WizardPanel _currentPanel;
 
     public StartWizardCommand(JobWizardServiceAsync service, TenantIdentifier tenant, JobWizardIdentifier wizard) {
         _service = service;
         _tenant = tenant;
         _wizard = wizard;
+        _loadingIndicator = new LoadingIndicator();
     }
 
     @Override
@@ -56,6 +63,8 @@ final class StartWizardCommand implements Command {
         final Button nextStepButton = new Button("Next");
 
         final DCPopupPanel popup = new DCPopupPanel("New job: " + _wizard.getDisplayName());
+        popup.addStyleName("JobWizardPopupPanel");
+        popup.setAutoHideEnabled(false);
         popup.setWidget(startWizardPanel);
         popup.addButton(nextStepButton);
         popup.addButton(new CancelPopupButton(popup));
@@ -63,16 +72,40 @@ final class StartWizardCommand implements Command {
         nextStepButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                popup.setWidget(_loadingIndicator);
                 _currentPanel.requestNextPage(new DCAsyncCallback<JobWizardPage>() {
                     @Override
                     public void onSuccess(JobWizardPage result) {
                         if (result == null) {
+                            _currentPanel = null;
                             wizardFinished(popup);
                         } else {
                             _currentPanel = new FormWizardPanel(_service, _tenant, result);
                             popup.setWidget(_currentPanel);
                             popup.center();
                         }
+                    }
+                });
+            }
+        });
+
+        popup.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+                if (_currentPanel == null) {
+                    // wizard ended
+                    return;
+                }
+                JobWizardSessionIdentifier sessionIdentifier = _currentPanel.getSessionIdentifier();
+                if (sessionIdentifier == null) {
+                    // session not started yet
+                    return;
+                }
+                // cancel the wizard
+                _service.cancelWizard(_tenant, startWizardPanel.getSessionIdentifier(), new DCAsyncCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        assert result.booleanValue();
                     }
                 });
             }

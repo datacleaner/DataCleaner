@@ -63,7 +63,7 @@ class DCExitActionListener implements ExitActionListener {
 		thread.start();
 	}
 
-	protected void printThreadInformation(ThreadGroup threadGroup, String prefix) {
+	public static void printThreadInformation(ThreadGroup threadGroup, String prefix) {
 		logger.warn("Thread group: " + threadGroup);
 
 		ThreadGroup[] groups = new ThreadGroup[threadGroup.activeGroupCount() + 2];

@@ -63,7 +63,7 @@ public class ConfigurationFactory {
         _numThreads = numThreads;
     }
 
-    @Bean(name = "taskRunner")
+    @Bean(name = "taskRunner", destroyMethod = "shutdown")
     public TaskRunner createTaskRunner() {
         if (_numThreads == null) {
             throw new IllegalStateException("Number of threads have not been configured.");

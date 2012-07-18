@@ -26,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
@@ -110,6 +113,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return _scheduler;
     }
 
+    @PostConstruct
     public void initialize() {
         final List<RepositoryFolder> tenantFolders = _repository.getFolders();
         for (RepositoryFolder tenantFolder : tenantFolders) {
@@ -130,6 +134,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         logger.info("Schedule initialization done!");
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        try {
+            _scheduler.shutdown();
+        } catch (SchedulerException e) {
+            logger.error("Failed to shutdown scheduler: " + e.getMessage(), e);
+        }
     }
 
     @Override

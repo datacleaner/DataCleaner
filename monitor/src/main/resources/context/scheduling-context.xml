@@ -8,10 +8,4 @@
 				 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
 				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.9.0.xsd">
 
-	<bean name="schedulingService"
-		class="org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl" init-method="initialize">
-		<constructor-arg name="repository" ref="repository" />
-		<constructor-arg name="tenantContextFactory" ref="tenantContextFactory" />
-	</bean>
-
 </beans>

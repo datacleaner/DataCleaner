@@ -1,19 +1,20 @@
 <div>
 	<p>Please select the source columns of the job:</p>
-	
+
 	<table>
+		<tr>
+			<th>&nbsp;</th>
+			<th>Name</th>
+			<th>Type</th>
+		</tr>
 		<#list columns as column>
-			<tr>
-				<td>
-					<input type="checkbox" name="columns" id="column_checkbox_${column_index}" value="${column.name}" title="${column.name}" />
-				</td>
-				<td>
-					<label for="column_checkbox_${column_index}">${column.name}</label>
-				</td>
-				<td>
-					${column.type!"n/a"}
-				</td>
-			</tr>
+		<tr>
+			<td><input type="checkbox" name="columns"
+				id="column_checkbox_${column_index}" value="${column.name}"
+				title="${column.name}" /></td>
+			<td><label for="column_checkbox_${column_index}">${column.name}</label></td>
+			<td>${column.type!"n/a"}</td>
+		</tr>
 		</#list>
 	</table>
 </div>

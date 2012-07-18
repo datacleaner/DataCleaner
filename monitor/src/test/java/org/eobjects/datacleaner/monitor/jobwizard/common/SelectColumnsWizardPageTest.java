@@ -47,39 +47,38 @@ public class SelectColumnsWizardPageTest extends TestCase {
         };
         final String formInnerHtml = page.getFormInnerHtml();
         assertEquals(
-                "<div>\n"
-                        + "    <p>Please select the source columns of the job:</p>\n"
-                        + "    \n"
-                        + "    <table>\n"
-                        + "            <tr>\n"
-                        + "            <td>\n"
-                        + "                <input type=\"checkbox\" name=\"columns\" id=\"column_checkbox_0\" value=\"foo\" title=\"foo\" />\n"
-                        + "            </td>\n"
-                        + "            <td>\n"
-                        + "                <label for=\"column_checkbox_0\">foo</label>\n"
-                        + "            </td>\n"
-                        + "            <td>\n"
-                        + "                INTEGER\n"
-                        + "            </td>\n"
-                        + "        </tr>\n"
-                        + "        <tr>\n"
-                        + "            <td>\n"
-                        + "                <input type=\"checkbox\" name=\"columns\" id=\"column_checkbox_1\" value=\"bar\" title=\"bar\" />\n"
-                        + "            </td>\n"
-                        + "            <td>\n"
-                        + "                <label for=\"column_checkbox_1\">bar</label>\n"
-                        + "            </td>\n"
-                        + "            <td>\n"
-                        + "                VARCHAR\n"
-                        + "            </td>\n"
-                        + "        </tr>\n"
-                        + "        <tr>\n"
-                        + "            <td>\n"
-                        + "                <input type=\"checkbox\" name=\"columns\" id=\"column_checkbox_2\" value=\"baz\" title=\"baz\" />\n"
-                        + "            </td>\n" + "            <td>\n"
-                        + "                <label for=\"column_checkbox_2\">baz</label>\n" + "            </td>\n"
-                        + "            <td>\n" + "                n/a\n" + "            </td>\n"
-                        + "        </tr>\n" + "    </table>\n" + "</div>", formInnerHtml.replaceAll("\t", "    ")
+                "<div>\n" + 
+                "    <p>Please select the source columns of the job:</p>\n" + 
+                "\n" + 
+                "    <table>\n" + 
+                "        <tr>\n" + 
+                "            <th>&nbsp;</th>\n" + 
+                "            <th>Name</th>\n" + 
+                "            <th>Type</th>\n" + 
+                "        </tr>\n" + 
+                "                <tr>\n" + 
+                "            <td><input type=\"checkbox\" name=\"columns\"\n" + 
+                "                id=\"column_checkbox_0\" value=\"foo\"\n" + 
+                "                title=\"foo\" /></td>\n" + 
+                "            <td><label for=\"column_checkbox_0\">foo</label></td>\n" + 
+                "            <td>INTEGER</td>\n" + 
+                "        </tr>\n" + 
+                "        <tr>\n" + 
+                "            <td><input type=\"checkbox\" name=\"columns\"\n" + 
+                "                id=\"column_checkbox_1\" value=\"bar\"\n" + 
+                "                title=\"bar\" /></td>\n" + 
+                "            <td><label for=\"column_checkbox_1\">bar</label></td>\n" + 
+                "            <td>VARCHAR</td>\n" + 
+                "        </tr>\n" + 
+                "        <tr>\n" + 
+                "            <td><input type=\"checkbox\" name=\"columns\"\n" + 
+                "                id=\"column_checkbox_2\" value=\"baz\"\n" + 
+                "                title=\"baz\" /></td>\n" + 
+                "            <td><label for=\"column_checkbox_2\">baz</label></td>\n" + 
+                "            <td>n/a</td>\n" + 
+                "        </tr>\n" + 
+                "    </table>\n" + 
+                "</div>", formInnerHtml.replaceAll("\t", "    ")
                         .replaceAll("\r\n", "\n"));
 
     }

@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.datacleaner.repository.RepositoryFile;
 
 /**
  * Defines a context around an {@link AnalysisJob}.
@@ -36,4 +37,6 @@ public interface JobContext {
     public List<String> getSourceColumnPaths();
 
     public void toXml(OutputStream out);
+
+    public RepositoryFile getJobFile();
 }

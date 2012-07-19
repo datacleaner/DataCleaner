@@ -36,7 +36,6 @@ import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.DashboardServiceImpl;
-import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -60,10 +59,7 @@ public class ResultFileController {
     private static final String EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
     @Autowired
-    Repository _repository;
-
-    @Autowired
-    TenantContextFactory _tenantContextFactory;
+    TenantContextFactory _contextFactory;
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
@@ -73,10 +69,10 @@ public class ResultFileController {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
-        
+
         resultName = resultName.replaceAll("\\+", " ");
 
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
+        final TenantContext context = _contextFactory.getContext(tenant);
 
         final RepositoryFolder resultsFolder = context.getResultFolder();
 
@@ -114,10 +110,10 @@ public class ResultFileController {
             @RequestParam(value = "tabs", required = false) Boolean tabsParam,
             @RequestParam(value = "comp_name", required = false) String componentParamName,
             @RequestParam(value = "comp_index", required = false) Integer componentIndexParam, final Writer out) {
-        
+
         resultName = resultName.replaceAll("\\+", " ");
 
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
+        final TenantContext context = _contextFactory.getContext(tenant);
 
         final RepositoryFolder resultsFolder = context.getResultFolder();
 

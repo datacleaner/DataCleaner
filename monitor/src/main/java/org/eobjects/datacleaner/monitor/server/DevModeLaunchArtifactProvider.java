@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -66,6 +67,9 @@ public class DevModeLaunchArtifactProvider implements LaunchArtifactProvider {
 
     @Override
     public List<String> getJarFilenames() {
+        if (_delegate == null) {
+            return Collections.emptyList();
+        }
         return _delegate.getJarFilenames();
     }
 

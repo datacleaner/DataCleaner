@@ -37,4 +37,10 @@ public class MainTest extends TestCase {
         System.clearProperty("datastoreCatalog.orderdb.url");
         System.clearProperty("foo");
     }
+
+    public static void main(String[] args) {
+        args = "-conf http://127.0.0.1:8888/repository/DC/launch-resources/conf.xml?job=random_number_generation -job http://127.0.0.1:8888/repository/DC/jobs/random_number_generation.analysis.xml -ds orderdb -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
+                .split(" ");
+        Main.main(args);
+    }
 }

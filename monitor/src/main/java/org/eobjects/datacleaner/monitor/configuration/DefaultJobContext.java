@@ -114,5 +114,9 @@ class DefaultJobContext implements JobContext {
             FileHelper.safeClose(in);
         }
     }
-
+    
+    @Override
+    public RepositoryFile getJobFile() {
+        return _file;
+    }
 }

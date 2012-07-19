@@ -31,6 +31,8 @@ import javax.swing.JOptionPane;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.provider.DelegateFileObject;
+import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobMetadataFactoryImpl;
@@ -62,21 +64,24 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
     private final UserPreferences _userPreferences;
     private final UsageLogger _usageLogger;
     private final AnalyzerBeansConfiguration _configuration;
+    private final HttpClient _httpClient;
 
     @Inject
     protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
-            UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration) {
+            UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration,
+            HttpClient httpClient) {
         _window = window;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
         _configuration = configuration;
+        _httpClient = httpClient;
     }
 
     @Override
     public void actionPerformed(ActionEvent event) {
         final String actionCommand = event.getActionCommand();
-        
+
         _usageLogger.log("Save analysis job");
 
         _window.setStatusLabelNotice();
@@ -162,7 +167,21 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
             FileHelper.safeClose(outputStream);
         }
 
-        _userPreferences.addRecentJobFile(file);
+        if (file instanceof DelegateFileObject) {
+            DelegateFileObject delegateFileObject = (DelegateFileObject) file;
+            String scheme = file.getName().getScheme();
+
+            if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
+                PublishJobToMonitorActionListener publisher = new PublishJobToMonitorActionListener(delegateFileObject,
+                        _window.getWindowContext(), _userPreferences, _httpClient);
+                publisher.actionPerformed(event);
+            } else {
+                throw new UnsupportedOperationException("Unexpected delegate file object: " + delegateFileObject
+                        + " (delegate: " + delegateFileObject.getDelegateFile() + ")");
+            }
+        } else {
+            _userPreferences.addRecentJobFile(file);
+        }
 
         _window.setJobFile(file);
 

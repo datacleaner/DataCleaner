@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,22 +58,10 @@ public class JobFileController {
             throw new IllegalArgumentException(
                     "No file upload provided. Please provide a multipart file using the 'file' HTTP parameter.");
         }
-        
+
         jobName = jobName.replaceAll("\\+", " ");
 
-        final TenantContext context = _contextFactory.getContext(tenant);
-
-        final RepositoryFolder jobsFolder = context.getJobFolder();
-
-        final long timestamp = new Date().getTime();
-        final String filename;
-        if (jobName.endsWith(EXTENSION)) {
-            filename = jobName.substring(0, jobName.length() - EXTENSION.length()) + "-" + timestamp + EXTENSION;
-        } else {
-            filename = jobName + "-" + timestamp + EXTENSION;
-        }
-
-        final RepositoryFile jobFile = jobsFolder.createFile(filename, new Action<OutputStream>() {
+        final Action<OutputStream> writeCallback = new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {
                 final InputStream in = file.getInputStream();
@@ -84,7 +71,26 @@ public class JobFileController {
                     FileHelper.safeClose(in);
                 }
             }
-        });
+        };
+
+        final TenantContext context = _contextFactory.getContext(tenant);
+        final JobContext existingJob = context.getJob(jobName);
+        final RepositoryFile jobFile;
+        if (existingJob == null) {
+            final RepositoryFolder jobsFolder = context.getJobFolder();
+
+            final String filename;
+            if (jobName.endsWith(EXTENSION)) {
+                filename = jobName;
+            } else {
+                filename = jobName + EXTENSION;
+            }
+
+            jobFile = jobsFolder.createFile(filename, writeCallback);
+        } else {
+            jobFile = existingJob.getJobFile();
+            jobFile.writeFile(writeCallback);
+        }
 
         final Map<String, String> result = new HashMap<String, String>();
         result.put("status", "Success");
@@ -100,7 +106,7 @@ public class JobFileController {
             final OutputStream out) {
 
         jobName = jobName.replaceAll("\\+", " ");
-        
+
         final TenantContext context = _contextFactory.getContext(tenant);
         JobContext job = context.getJob(jobName);
         job.toXml(out);

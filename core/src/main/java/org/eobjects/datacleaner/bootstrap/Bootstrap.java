@@ -24,11 +24,17 @@ import java.awt.Image;
 import java.awt.SplashScreen;
 import java.io.Closeable;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileType;
+import org.apache.commons.vfs2.provider.AbstractFileSystem;
+import org.apache.commons.vfs2.provider.DelegateFileObject;
+import org.apache.commons.vfs2.provider.url.UrlFileName;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.cli.CliArguments;
@@ -250,7 +256,8 @@ public final class Bootstrap {
      * @return
      * @throws FileSystemException
      */
-    private FileObject resolveFile(String userRequestedFilename, String localFilename) throws FileSystemException {
+    private FileObject resolveFile(final String userRequestedFilename, final String localFilename)
+            throws FileSystemException {
         final FileObject dataCleanerHome = DataCleanerHome.get();
         if (userRequestedFilename == null) {
             return dataCleanerHome.resolveFile(localFilename);
@@ -279,7 +286,27 @@ public final class Bootstrap {
 
                     assert files.length == 1;
 
-                    return files[0];
+                    final FileObject ramFile = files[0];
+
+                    final URI uri;
+                    try {
+                        uri = new URI(userRequestedFilename);
+                    } catch (URISyntaxException e) {
+                        throw new IllegalArgumentException("Illegal URI: " + userRequestedFilename, e);
+                    }
+                    final String scheme = uri.getScheme();
+                    final int defaultPort;
+                    if ("http".equals(scheme)) {
+                        defaultPort = 80;
+                    } else {
+                        defaultPort = 8443;
+                    }
+
+                    final UrlFileName fileName = new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort,
+                            null, null, uri.getPath(), FileType.FILE, uri.getQuery());
+
+                    AbstractFileSystem fileSystem = (AbstractFileSystem) dataCleanerHome.getFileSystem();
+                    return new DelegateFileObject(fileName, fileSystem, ramFile);
                 }
             }
 

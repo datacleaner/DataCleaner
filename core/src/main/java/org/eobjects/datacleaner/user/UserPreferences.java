@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
@@ -62,9 +63,9 @@ public interface UserPreferences {
 
     public boolean isLoggedIn();
 
-    public void addRecentJobFile(File file);
+    public void addRecentJobFile(FileObject file);
 
-    public List<File> getRecentJobFiles();
+    public List<FileObject> getRecentJobFiles();
 
     public List<Datastore> getUserDatastores();
 

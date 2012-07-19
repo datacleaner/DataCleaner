@@ -36,8 +36,11 @@ import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
+import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,16 +246,29 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     }
 
     @Override
-    public void addRecentJobFile(File file) {
-        if (recentJobFiles.contains(file)) {
-            recentJobFiles.remove(file);
+    public void addRecentJobFile(FileObject fileObject) {
+        final File file = VFSUtils.toFile(fileObject);
+        if (file != null) {
+            if (recentJobFiles.contains(file)) {
+                recentJobFiles.remove(file);
+            }
+            recentJobFiles.add(0, file);
         }
-        recentJobFiles.add(0, file);
     }
 
     @Override
-    public List<File> getRecentJobFiles() {
-        return recentJobFiles;
+    public List<FileObject> getRecentJobFiles() {
+        List<FileObject> fileObjectList = CollectionUtils.map(recentJobFiles, new Func<File, FileObject>() {
+            @Override
+            public FileObject eval(File file) {
+                try {
+                    return VFSUtils.getFileSystemManager().toFileObject(file);
+                } catch (FileSystemException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        });
+        return fileObjectList;
     }
 
     @Override

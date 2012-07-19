@@ -50,8 +50,8 @@ public final class Main {
 
 		initializeLogging();
 
-		BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
-		Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
+		final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
+		final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
 		bootstrap.run();
 	}
 

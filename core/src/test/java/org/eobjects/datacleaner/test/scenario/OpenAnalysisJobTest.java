@@ -66,7 +66,7 @@ public class OpenAnalysisJobTest extends TestCase {
 
         assertNotNull(window);
 
-        assertEquals("all_analyzers.analysis.xml", window.getJobFilename());
+        assertEquals("all_analyzers.analysis.xml", window.getJobFile());
 
         ((AnalysisJobBuilderWindowImpl) window).updateStatusLabel();
 

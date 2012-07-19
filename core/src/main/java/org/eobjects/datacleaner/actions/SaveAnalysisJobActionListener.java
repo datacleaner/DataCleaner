@@ -21,20 +21,22 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.inject.Inject;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobMetadataFactoryImpl;
 import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -42,99 +44,129 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.metamodel.util.FileHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * ActionListener for saving an analysis job
+ */
 public final class SaveAnalysisJobActionListener implements ActionListener {
 
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final AnalysisJobBuilderWindow _window;
-	private final UserPreferences _userPreferences;
-	private final UsageLogger _usageLogger;
-	private final AnalyzerBeansConfiguration _configuration;
+    public static final String ACTION_COMMAND_SAVE_AS = "SAVE_AS";
 
-	@Inject
-	protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window,
-			AnalysisJobBuilder analysisJobBuilder,
-			UserPreferences userPreferences, UsageLogger usageLogger,
-			AnalyzerBeansConfiguration configuration) {
-		_window = window;
-		_analysisJobBuilder = analysisJobBuilder;
-		_userPreferences = userPreferences;
-		_usageLogger = usageLogger;
-		_configuration = configuration;
-	}
+    private static final Logger logger = LoggerFactory.getLogger(SaveAnalysisJobActionListener.class);
 
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		_usageLogger.log("Save analysis job");
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final AnalysisJobBuilderWindow _window;
+    private final UserPreferences _userPreferences;
+    private final UsageLogger _usageLogger;
+    private final AnalyzerBeansConfiguration _configuration;
 
-		AnalysisJob analysisJob = null;
-		try {
-			_window.applyPropertyValues();
-			analysisJob = _analysisJobBuilder.toAnalysisJob();
-		} catch (Exception e) {
-			WidgetUtils.showErrorMessage("Errors in job",
-					"Please fix the errors that exist in the job before saving it:\n\n"
-							+ _window.getStatusLabelText(), e);
-			return;
-		}
+    @Inject
+    protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
+            UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration) {
+        _window = window;
+        _analysisJobBuilder = analysisJobBuilder;
+        _userPreferences = userPreferences;
+        _usageLogger = usageLogger;
+        _configuration = configuration;
+    }
 
-		DCFileChooser fileChooser = new DCFileChooser(
-				_userPreferences.getAnalysisJobDirectory());
-		fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        final String actionCommand = event.getActionCommand();
+        
+        _usageLogger.log("Save analysis job");
 
-		int result = fileChooser.showSaveDialog(_window.toComponent());
-		if (result == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
+        _window.setStatusLabelNotice();
+        _window.setStatusLabelText("Saving job...");
 
-			if (!file.getName().endsWith(".xml")) {
-				file = new File(file.getParentFile(), file.getName()
-						+ FileFilters.ANALYSIS_XML.getExtension());
-			}
+        AnalysisJob analysisJob = null;
+        try {
+            _window.applyPropertyValues();
+            analysisJob = _analysisJobBuilder.toAnalysisJob();
+        } catch (Exception e) {
+            WidgetUtils.showErrorMessage("Errors in job",
+                    "Please fix the errors that exist in the job before saving it:\n\n" + _window.getStatusLabelText(),
+                    e);
+            return;
+        }
 
-			if (file.exists()) {
-				int overwrite = JOptionPane.showConfirmDialog(
-						_window.toComponent(),
-						"Are you sure you want to overwrite the file '"
-								+ file.getName() + "'?",
-						"Overwrite existing file?", JOptionPane.YES_NO_OPTION);
-				if (overwrite != JOptionPane.YES_OPTION) {
-					return;
-				}
-			}
+        final FileObject existingFile = _window.getJobFile();
 
-			_userPreferences.setAnalysisJobDirectory(file.getParentFile());
+        final FileObject file;
+        if (existingFile == null || ACTION_COMMAND_SAVE_AS.equals(actionCommand)) {
+            // ask the user to select a file to save to ("Save as" scenario)
+            final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getAnalysisJobDirectory());
+            fileChooser.setFileFilter(FileFilters.ANALYSIS_XML);
 
-			String author = _userPreferences.getUsername();
-			String jobName = null;
-			String jobDescription = "Created with DataCleaner " + Main.VERSION;
-			String jobVersion = null;
+            final int result = fileChooser.showSaveDialog(_window.toComponent());
+            if (result != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+            FileObject candidate = fileChooser.getSelectedFileObject();
 
-			final JaxbJobWriter writer = new JaxbJobWriter(_configuration,
-					new JaxbJobMetadataFactoryImpl(author, jobName,
-							jobDescription, jobVersion));
+            final boolean exists;
+            try {
+                final String baseName = candidate.getName().getBaseName();
+                if (!baseName.endsWith(".xml")) {
+                    final FileObject parent = candidate.getParent();
+                    file = parent.resolveFile(baseName + FileFilters.ANALYSIS_XML.getExtension());
+                } else {
+                    file = candidate;
+                }
+                exists = file.exists();
+            } catch (FileSystemException e) {
+                throw new IllegalStateException("Failed to prepare file for saving", e);
+            }
 
-			BufferedOutputStream outputStream = null;
-			try {
-				outputStream = new BufferedOutputStream(new FileOutputStream(
-						file));
-				writer.write(analysisJob, outputStream);
-				outputStream.flush();
-				outputStream.close();
-			} catch (IOException e1) {
-				throw new IllegalStateException(e1);
-			} finally {
-				if (outputStream != null) {
-					try {
-						outputStream.close();
-					} catch (Exception e2) {
-						// do nothing
-					}
-				}
-			}
+            if (exists) {
+                int overwrite = JOptionPane.showConfirmDialog(_window.toComponent(),
+                        "Are you sure you want to overwrite the file '" + file.getName() + "'?",
+                        "Overwrite existing file?", JOptionPane.YES_NO_OPTION);
+                if (overwrite != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+        } else {
+            // overwrite existing file ("Save" scenario).
+            file = existingFile;
+        }
 
-			_userPreferences.addRecentJobFile(file);
+        try {
+            final FileObject parent = file.getParent();
+            final File parentFile = VFSUtils.toFile(parent);
+            if (parentFile != null) {
+                _userPreferences.setAnalysisJobDirectory(parentFile);
+            }
+        } catch (FileSystemException e) {
+            logger.warn("Failed to determine parent of {}: {}", file, e.getMessage());
+        }
 
-			_window.setJobFilename(file.getName());
-		}
-	}
+        final String author = _userPreferences.getUsername();
+        final String jobName = null;
+        final String jobDescription = "Created with DataCleaner " + Main.VERSION;
+        final String jobVersion = null;
+
+        final JaxbJobWriter writer = new JaxbJobWriter(_configuration, new JaxbJobMetadataFactoryImpl(author, jobName,
+                jobDescription, jobVersion));
+
+        OutputStream outputStream = null;
+        try {
+            outputStream = file.getContent().getOutputStream();
+            writer.write(analysisJob, outputStream);
+        } catch (IOException e1) {
+            throw new IllegalStateException(e1);
+        } finally {
+            FileHelper.safeClose(outputStream);
+        }
+
+        _userPreferences.addRecentJobFile(file);
+
+        _window.setJobFile(file);
+
+        _window.setStatusLabelNotice();
+        _window.setStatusLabelText("Saved job to file " + file.getName().getBaseName());
+    }
 }

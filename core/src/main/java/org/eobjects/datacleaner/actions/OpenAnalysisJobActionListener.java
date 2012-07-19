@@ -137,8 +137,8 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         }
 
         final Injector injector = Guice.createInjector(new DCModule(parentModule, null) {
-            public String getJobFilename() {
-                return file.getName().getBaseName();
+            public FileObject getJobFilename() {
+                return file;
             };
 
             @Override
@@ -201,12 +201,12 @@ public class OpenAnalysisJobActionListener implements ActionListener {
 
         if (file != null) {
             _userPreferences.setAnalysisJobDirectory(file.getParentFile());
-            _userPreferences.addRecentJobFile(file);
+            _userPreferences.addRecentJobFile(fileObject);
         }
 
         Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb) {
-            public String getJobFilename() {
-                return fileObject.getName().getBaseName();
+            public FileObject getJobFilename() {
+                return fileObject;
             };
         });
 

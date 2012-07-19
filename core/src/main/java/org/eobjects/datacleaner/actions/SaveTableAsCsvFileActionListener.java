@@ -129,12 +129,7 @@ public final class SaveTableAsCsvFileActionListener implements ActionListener {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb) {
-					@Override
-					public String getJobFilename() {
-						return "Save " + _table.getName() + " as CSV file";
-					}
-				});
+				Injector injector = Guice.createInjector(new DCModule(_parentModule, ajb));
 
 				ResultWindow window = injector.getInstance(ResultWindow.class);
 				window.setVisible(true);

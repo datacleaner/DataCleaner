@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.vfs2.FileObject;
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -52,7 +53,7 @@ import org.eobjects.datacleaner.actions.ExportResultToHtmlActionListener;
 import org.eobjects.datacleaner.actions.PublishResultToMonitorActionListener;
 import org.eobjects.datacleaner.actions.SaveAnalysisResultActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
-import org.eobjects.datacleaner.guice.JobFilename;
+import org.eobjects.datacleaner.guice.JobFile;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCBannerPanel;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -79,7 +80,7 @@ public final class ResultWindow extends AbstractWindow {
     private final AnalyzerBeansConfiguration _configuration;
     private final ProgressInformationPanel _progressInformationPanel;
     private final RendererFactory _rendererFactory;
-    private final String _jobFilename;
+    private final FileObject _jobFilename;
     private final AnalysisRunnerSwingWorker _worker;
     private final UserPreferences _userPreferences;
     private final HttpClient _httpClient;
@@ -99,7 +100,7 @@ public final class ResultWindow extends AbstractWindow {
      */
     @Inject
     protected ResultWindow(AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job,
-            @Nullable AnalysisResult result, @Nullable @JobFilename String jobFilename, WindowContext windowContext,
+            @Nullable AnalysisResult result, @Nullable @JobFile FileObject jobFilename, WindowContext windowContext,
             UserPreferences userPreferences, RendererFactory rendererFactory, HttpClient httpClient) {
         super(windowContext);
         _configuration = configuration;
@@ -235,8 +236,8 @@ public final class ResultWindow extends AbstractWindow {
             title = datastoreName + " | " + title;
         }
 
-        if (!StringUtils.isNullOrEmpty(_jobFilename)) {
-            title = _jobFilename + " | " + title;
+        if (_jobFilename != null) {
+            title = _jobFilename.getName().getBaseName() + " | " + title;
         }
         return title;
     }
@@ -280,8 +281,8 @@ public final class ResultWindow extends AbstractWindow {
         if (!StringUtils.isNullOrEmpty(datastoreName)) {
             bannerTitle = bannerTitle + " | " + datastoreName;
 
-            if (!StringUtils.isNullOrEmpty(_jobFilename)) {
-                bannerTitle = bannerTitle + " | " + _jobFilename;
+            if (_jobFilename != null) {
+                bannerTitle = bannerTitle + " | " + _jobFilename.getName().getBaseName();
             }
         }
 

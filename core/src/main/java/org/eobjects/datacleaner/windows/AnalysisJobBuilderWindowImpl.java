@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.beans.api.Renderer;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -75,7 +76,7 @@ import org.eobjects.datacleaner.actions.SaveAnalysisJobActionListener;
 import org.eobjects.datacleaner.actions.TransformButtonActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.guice.JobFilename;
+import org.eobjects.datacleaner.guice.JobFile;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.AbstractJobBuilderPanel;
 import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPresenter;
@@ -153,6 +154,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final SourceColumnsPanel _sourceColumnsPanel;
     private final SchemaTreePanel _schemaTreePanel;
     private final JButton _saveButton;
+    private final JButton _saveAsButton;
     private final JButton _visualizeButton;
     private final JButton _transformButton;
     private final JButton _analyzeButton;
@@ -168,18 +170,19 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     private final DCWindowMenuBar _windowMenuBar;
     private volatile AbstractJobBuilderPanel _latestPanel = null;
     private final DCPanel _sourceTabOuterPanel;
-    private String _jobFilename;
+    private FileObject _jobFilename;
     private Datastore _datastore;
     private DatastoreConnection _datastoreConnection;
     private boolean _datastoreSelectionEnabled;
     private final MetadataPanel _metadataPanel;
+
 
     @Inject
     protected AnalysisJobBuilderWindowImpl(AnalyzerBeansConfiguration configuration, WindowContext windowContext,
             SchemaTreePanel schemaTreePanel, SourceColumnsPanel sourceColumnsPanel,
             Provider<RunAnalysisActionListener> runAnalysisActionProvider, MetadataPanel metadataPanel,
             AnalysisJobBuilder analysisJobBuilder, InjectorBuilder injectorBuilder, UserPreferences userPreferences,
-            @Nullable @JobFilename String jobFilename, DCWindowMenuBar windowMenuBar,
+            @Nullable @JobFile FileObject jobFilename, DCWindowMenuBar windowMenuBar,
             Provider<SaveAnalysisJobActionListener> saveAnalysisJobActionListenerProvider,
             Provider<AnalyzeButtonActionListener> addAnalyzerActionListenerProvider,
             Provider<TransformButtonActionListener> addTransformerActionListenerProvider, UsageLogger usageLogger) {
@@ -214,7 +217,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         _analysisJobBuilder.getFilterChangeListeners().add(this);
         _analysisJobBuilder.getSourceColumnListeners().add(this);
 
-        _saveButton = new JButton("Save analysis job", imageManager.getImageIcon("images/actions/save.png"));
+        _saveButton = new JButton("Save", imageManager.getImageIcon("images/actions/save.png"));
+        _saveAsButton = new JButton("Save As...", imageManager.getImageIcon("images/actions/save.png"));
+        
         _visualizeButton = createToolbarButton("Visualize", "images/actions/visualize.png",
                 "<html><b>Visualize job</b><br/>Visualize the components of this job in a flow-chart.</html>");
         _transformButton = createToolbarButton(
@@ -375,18 +380,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         boolean success = false;
 
         if (_datastore == null) {
-            _statusLabel.setText("Welcome to DataCleaner " + Main.VERSION);
+            setStatusLabelText("Welcome to DataCleaner " + Main.VERSION);
             _statusLabel.setIcon(imageManager.getImageIcon("images/window/app-icon.png", IconUtils.ICON_SIZE_SMALL));
         } else {
             try {
                 if (_analysisJobBuilder.isConfigured(true)) {
                     success = true;
-                    _statusLabel.setText("Job is correctly configured");
-                    _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
+                    setStatusLabelText("Job is correctly configured");
+                    setStatusLabelValid();
                 } else {
-                    _statusLabel.setText("Job is not correctly configured");
-                    _statusLabel
-                            .setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
+                    setStatusLabelText("Job is not correctly configured");
+                    setStatusLabelWarning();
                 }
             } catch (Exception ex) {
                 logger.debug("Job not correctly configured", ex);
@@ -402,8 +406,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 } else {
                     errorMessage = ex.getMessage();
                 }
-                _statusLabel.setText("Job error status: " + errorMessage);
-                _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
+                setStatusLabelText("Job error status: " + errorMessage);
+                setStatusLabelError();
             }
         }
 
@@ -411,8 +415,33 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
     }
 
     @Override
+    public void setStatusLabelError() {
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_ERROR, IconUtils.ICON_SIZE_SMALL));
+    }
+
+    @Override
+    public void setStatusLabelNotice() {
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_INFO, IconUtils.ICON_SIZE_SMALL));
+    }
+
+    @Override
+    public void setStatusLabelValid() {
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
+    }
+
+    @Override
+    public void setStatusLabelWarning() {
+        _statusLabel.setIcon(imageManager.getImageIcon(IconUtils.STATUS_WARNING, IconUtils.ICON_SIZE_SMALL));
+    }
+
+    @Override
     public String getStatusLabelText() {
         return _statusLabel.getText();
+    }
+
+    @Override
+    public void setStatusLabelText(String statusLabelText) {
+        _statusLabel.setText(statusLabelText);
     }
 
     @Override
@@ -467,17 +496,17 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
     private void resetJob() {
         setDatastore(null);
-        setJobFilename(null);
+        setJobFile(null);
     }
 
     @Override
-    public void setJobFilename(String jobFilename) {
-        _jobFilename = jobFilename;
+    public void setJobFile(FileObject jobFile) {
+        _jobFilename = jobFile;
         updateWindowTitle();
     }
 
     @Override
-    public String getJobFilename() {
+    public FileObject getJobFile() {
         return _jobFilename;
     }
 
@@ -490,8 +519,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
                 title = datastoreName + " | " + title;
             }
         }
-        if (!StringUtils.isNullOrEmpty(_jobFilename)) {
-            title = _jobFilename + " | " + title;
+        if (_jobFilename != null) {
+            title = _jobFilename.getName().getBaseName() + " | " + title;
         }
         return title;
     }
@@ -532,7 +561,10 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
         // add separator for fixed vs dynamic tabs
         _tabbedPane.addSeparator();
 
-        _saveButton.addActionListener(_saveAnalysisJobActionListenerProvider.get());
+        final SaveAnalysisJobActionListener saveAnalysisJobActionListener = _saveAnalysisJobActionListenerProvider.get();
+        _saveButton.addActionListener(saveAnalysisJobActionListener);
+        _saveAsButton.addActionListener(saveAnalysisJobActionListener);
+        _saveAsButton.setActionCommand(SaveAnalysisJobActionListener.ACTION_COMMAND_SAVE_AS);
 
         _visualizeButton.setToolTipText("Visualize execution flow");
         _visualizeButton.addActionListener(new ActionListener() {
@@ -564,6 +596,8 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         _saveButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _saveButton.setFocusPainted(false);
+        _saveAsButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        _saveAsButton.setFocusPainted(false);
         _visualizeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
         _visualizeButton.setFocusPainted(false);
         _analyzeButton.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
@@ -573,6 +607,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
 
         final JToolBar toolBar = WidgetFactory.createToolBar();
         toolBar.add(_saveButton);
+        toolBar.add(_saveAsButton);
         toolBar.add(_visualizeButton);
         toolBar.add(WidgetFactory.createToolBarSeparator());
         toolBar.add(_transformButton);
@@ -667,6 +702,7 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             _tabbedPane.setEnabledAt(i, everythingEnabled);
         }
         _saveButton.setEnabled(everythingEnabled);
+        _saveAsButton.setEnabled(everythingEnabled);
         _visualizeButton.setEnabled(everythingEnabled);
         _transformButton.setEnabled(everythingEnabled);
         _analyzeButton.setEnabled(everythingEnabled);

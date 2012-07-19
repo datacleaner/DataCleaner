@@ -284,8 +284,8 @@ public class DCModule extends AbstractModule {
     }
 
     @Provides
-    @JobFilename
-    public String getJobFilename() {
+    @JobFile
+    public FileObject getJobFilename() {
         return null;
     }
 

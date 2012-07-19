@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.windows;
 
+import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 
@@ -60,19 +61,18 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
     public void setDatastore(final Datastore datastore, boolean expandTree);
 
     /**
-     * Sets the job filename of the window (will be visible in the title and
-     * more).
+     * Sets the job file of the window (will be visible in the title and more).
      * 
-     * @param jobFilename
+     * @param jobFile
      */
-    public void setJobFilename(String jobFilename);
+    public void setJobFile(FileObject jobFile);
 
     /**
-     * Gets the current job filename
+     * Gets the current job file
      * 
      * @return
      */
-    public String getJobFilename();
+    public FileObject getJobFile();
 
     /**
      * Sets whether or not datastore selection should be enabled (default is
@@ -104,6 +104,34 @@ public interface AnalysisJobBuilderWindow extends DCWindow {
      * @return
      */
     public String getStatusLabelText();
+
+    /**
+     * Sets the status label text. Note that the status label text changes based
+     * on multiple events, so the duration of a given text may not be for long.
+     * 
+     * @param statusLabelText
+     */
+    public void setStatusLabelText(String statusLabelText);
+
+    /**
+     * Sets the icon of the status label to indicate an error situation
+     */
+    public void setStatusLabelError();
+
+    /**
+     * Sets the icon of the status label to indicate a warning situation
+     */
+    public void setStatusLabelWarning();
+
+    /**
+     * Sets the icon of the status label to indicate an valid situation
+     */
+    public void setStatusLabelValid();
+
+    /**
+     * Sets the icon of the status label to indicate an notice/informational situation
+     */
+    public void setStatusLabelNotice();
 
     /**
      * Gets the {@link AnalysisJobBuilder} that the window currently represents.

@@ -29,6 +29,9 @@ public class MonitorConnectionTest extends TestCase {
 
         MonitorConnection con2 = new MonitorConnection("localhost", 8080, null, true, "DC", null, "");
         assertEquals("https://localhost:8080", con2.getBaseUrl());
+        
+        MonitorConnection con3 = new MonitorConnection("localhost", 8080, "/DC", true, "DC", null, "");
+        assertEquals("https://localhost:8080/DC", con3.getBaseUrl());
     }
 
     public void testGetRepositoryUrl() throws Exception {

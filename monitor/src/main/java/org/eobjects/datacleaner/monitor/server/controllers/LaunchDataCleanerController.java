@@ -109,6 +109,7 @@ public class LaunchDataCleanerController {
                 line = line.replaceAll("\\$MONITOR_HOSTNAME", hostname);
                 line = line.replaceAll("\\$MONITOR_PORT", Integer.toString(port));
                 line = line.replaceAll("\\$MONITOR_CONTEXT", contextPath);
+                line = line.replaceAll("\\$MONITOR_TENANT", tenant);
                 if (username != null) {
                     line = line.replaceAll("\\$MONITOR_USERNAME", username);
                 }

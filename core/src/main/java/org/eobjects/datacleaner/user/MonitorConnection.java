@@ -59,7 +59,7 @@ public class MonitorConnection implements Serializable {
             String username, String encodedPassword) {
         _hostname = hostname;
         _port = port;
-        _contextPath = ("/".equals(contextPath) ? "" : contextPath);
+        _contextPath = (contextPath != null && contextPath.startsWith("/") ? contextPath.substring(1) : contextPath);
         _https = isHttps;
         _tenantId = tenantId;
         _username = username;

@@ -59,7 +59,7 @@ public class MonitorConnection implements Serializable {
             String username, String encodedPassword) {
         _hostname = hostname;
         _port = port;
-        _contextPath = (contextPath != null && contextPath.startsWith("/") ? contextPath.substring(1) : contextPath);
+        _contextPath = removeBeginningSlash(contextPath);
         _https = isHttps;
         _tenantId = tenantId;
         _username = username;
@@ -149,7 +149,7 @@ public class MonitorConnection implements Serializable {
         if (host.equals(_hostname)) {
             final int port = uri.getPort();
             if (port == _port) {
-                final String path = uri.getPath();
+                final String path = removeBeginningSlash(uri.getPath());
                 if (path.startsWith(_contextPath)) {
                     return true;
                 }
@@ -157,4 +157,15 @@ public class MonitorConnection implements Serializable {
         }
         return false;
     }
+
+    private String removeBeginningSlash(String contextPath) {
+        if (contextPath == null) {
+            return null;
+        }
+        if (contextPath.startsWith("/")) {
+            contextPath = contextPath.substring(1);
+        }
+        return contextPath;
+    }
+
 }

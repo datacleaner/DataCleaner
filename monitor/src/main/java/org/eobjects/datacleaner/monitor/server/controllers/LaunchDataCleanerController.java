@@ -39,6 +39,8 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,22 +63,38 @@ public class LaunchDataCleanerController {
     @ResponseBody
     public void launchDataCleaner(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
-        
+
         jobName = jobName.replaceAll("\\+", " ");
-        
+
         final TenantContext context = _contextFactory.getContext(tenant);
         final JobContext job = context.getJob(jobName);
 
         response.setContentType("application/x-java-jnlp-file");
 
         final PrintWriter out = response.getWriter();
-        
+
         final String encodedJobName = URLEncoder.encode(jobName, FileHelper.UTF_8_ENCODING);
 
-        final String baseUrl = createBaseUrl(request, tenant);
+        final String username;
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            username = null;
+        } else {
+            username = authentication.getName();
+        }
+
+        final String scheme = request.getScheme();
+        final String hostname = request.getServerName();
+        final int port = request.getServerPort();
+        final String contextPath = request.getContextPath();
+
+        final String baseUrl = createBaseUrl(scheme, hostname, port, contextPath, tenant);
         final String jnlpHref = "jobs/" + encodedJobName + ".launch.jnlp";
-        final String jobUrl = baseUrl + '/' + RESOURCES_FOLDER + encodedJobName + ".analysis.xml";
+        final String jobUrl = baseUrl + "/jobs/" + encodedJobName + ".analysis.xml";
         final String datastoreName = job.getSourceDatastoreName();
+
+        // TODO: Preferably we would move conf.xml outside the launch-resources
+        // folder for higher protection.
         final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
 
         final InputStream in = getClass().getResourceAsStream("launch-datacleaner-template.xml");
@@ -88,6 +106,13 @@ public class LaunchDataCleanerController {
                 line = line.replaceAll("\\$JOB_URL", jobUrl);
                 line = line.replaceAll("\\$DATASTORE_NAME", datastoreName);
                 line = line.replaceAll("\\$CONF_URL", confUrl);
+                line = line.replaceAll("\\$MONITOR_HOSTNAME", hostname);
+                line = line.replaceAll("\\$MONITOR_PORT", Integer.toString(port));
+                line = line.replaceAll("\\$MONITOR_CONTEXT", contextPath);
+                if (username != null) {
+                    line = line.replaceAll("\\$MONITOR_USERNAME", username);
+                }
+                line = line.replaceAll("\\$MONITOR_HTTPS", ("https".equals(scheme) ? "true" : "false"));
                 if (line.indexOf("$JAR_HREF") == -1) {
                     out.write(line);
                     out.write('\n');
@@ -109,19 +134,18 @@ public class LaunchDataCleanerController {
         }
     }
 
-    private String createBaseUrl(HttpServletRequest request, String tenant) {
+    private String createBaseUrl(String scheme, String hostname, int port, String contextPath, String tenant) {
         final StringBuilder baseUrl = new StringBuilder();
-        baseUrl.append(request.getScheme());
+        baseUrl.append(scheme);
         baseUrl.append("://");
-        baseUrl.append(request.getServerName());
+        baseUrl.append(hostname);
         baseUrl.append(':');
-        baseUrl.append(request.getServerPort());
+        baseUrl.append(port);
 
-        final String contextPath = request.getContextPath();
         if (!contextPath.startsWith("/")) {
             baseUrl.append('/');
         }
-        
+
         if (!StringUtils.isNullOrEmpty(contextPath) && !"/".equals(contextPath)) {
             baseUrl.append(contextPath);
             if (!contextPath.endsWith("/")) {

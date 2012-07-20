@@ -37,188 +37,188 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 
 public abstract class AbstractDialog extends JDialog implements DCWindow, WindowListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private volatile boolean initialized = false;
-	private final WindowContext _windowContext;
-	private final DCBannerPanel _banner;
-	private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
-	private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
+    private volatile boolean initialized = false;
+    private final WindowContext _windowContext;
+    private final DCBannerPanel _banner;
+    private volatile Color _topBackgroundColor = WidgetUtils.BG_COLOR_DARK;
+    private volatile Color _bottomBackgroundColor = WidgetUtils.BG_COLOR_DARK;
 
-	public AbstractDialog(WindowContext windowContext) {
-		this(windowContext, null);
-	}
+    public AbstractDialog(WindowContext windowContext) {
+        this(windowContext, null);
+    }
 
-	public AbstractDialog(WindowContext windowContext, Image bannerImage) {
-		super();
-		// modal dialogs are turned off because they prevent use of default
-		// uncaught exception handlers(!)
-		setModal(false);
+    public AbstractDialog(WindowContext windowContext, Image bannerImage) {
+        super();
+        // modal dialogs are turned off because they prevent use of default
+        // uncaught exception handlers(!)
+        setModal(false);
 
-		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		addWindowListener(this);
-		setResizable(isWindowResizable());
-		_windowContext = windowContext;
-		_banner = createBanner(bannerImage);
-	}
-	
-	protected DCBannerPanel getBanner() {
-		return _banner;
-	}
+        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        addWindowListener(this);
+        setResizable(isWindowResizable());
+        _windowContext = windowContext;
+        _banner = createBanner(bannerImage);
+    }
 
-	protected void setTopBackgroundColor(Color topBackgroundColor) {
-		_topBackgroundColor = topBackgroundColor;
-	}
+    protected DCBannerPanel getBanner() {
+        return _banner;
+    }
 
-	protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
-		_bottomBackgroundColor = bottomBackgroundColor;
-	}
+    protected void setTopBackgroundColor(Color topBackgroundColor) {
+        _topBackgroundColor = topBackgroundColor;
+    }
 
-	@Override
-	public void open() {
-		setVisible(true);
-	}
+    protected void setBottomBackgroundColor(Color bottomBackgroundColor) {
+        _bottomBackgroundColor = bottomBackgroundColor;
+    }
 
-	@Override
-	public void close() {
-		if (isVisible()) {
-			dispose();
-		}
-	}
+    @Override
+    public void open() {
+        setVisible(true);
+    }
 
-	protected void updateWindowTitle() {
-		String windowTitle = getWindowTitle();
-		if (windowTitle == null) {
-			windowTitle = "DataCleaner";
-		} else {
-			if (windowTitle.indexOf("DataCleaner") == -1) {
-				windowTitle = windowTitle + " | DataCleaner";
-			}
-		}
-		setTitle(windowTitle);
-	}
+    @Override
+    public void close() {
+        if (isVisible()) {
+            dispose();
+        }
+    }
 
-	protected void initialize() {
-		updateWindowTitle();
-		setIconImage(getWindowIcon());
-		setResizable(isWindowResizable());
+    protected void updateWindowTitle() {
+        String windowTitle = getWindowTitle();
+        if (windowTitle == null) {
+            windowTitle = "DataCleaner";
+        } else {
+            if (windowTitle.indexOf("DataCleaner") == -1) {
+                windowTitle = windowTitle + " | DataCleaner";
+            }
+        }
+        setTitle(windowTitle);
+    }
 
-		JComponent content = getWindowContent();
-		getContentPane().add(content);
+    protected void initialize() {
+        updateWindowTitle();
+        setIconImage(getWindowIcon());
+        setResizable(isWindowResizable());
 
-		getContentPane().setPreferredSize(content.getPreferredSize());
+        JComponent content = getWindowContent();
+        getContentPane().add(content);
 
-		pack();
+        getContentPane().setPreferredSize(content.getPreferredSize());
 
-		WidgetUtils.centerOnScreen(this);
+        pack();
 
-		_windowContext.onShow(this);
-	}
+        WidgetUtils.centerOnScreen(this);
 
-	@Override
-	public void setVisible(boolean b) {
-		if (b == false) {
-			throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
-		}
-		if (!initialized) {
-			initialized = true;
-			initialize();
-		}
-		super.setVisible(true);
-	}
+        _windowContext.onShow(this);
+    }
 
-	protected boolean isWindowResizable() {
-		return false;
-	}
+    @Override
+    public final void setVisible(boolean b) {
+        if (b == false) {
+            throw new UnsupportedOperationException("Window does not support hiding, consider using dispose()");
+        }
+        if (!initialized) {
+            initialized = true;
+            initialize();
+        }
+        super.setVisible(true);
+    }
 
-	@Override
-	public Image getWindowIcon() {
-		return ImageManager.getInstance().getImage("images/window/app-icon.png");
-	}
+    protected boolean isWindowResizable() {
+        return false;
+    }
 
-	protected final JComponent getWindowContent() {
-		DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
-		panel.setLayout(new BorderLayout());
+    @Override
+    public Image getWindowIcon() {
+        return ImageManager.getInstance().getImage("images/window/app-icon.png");
+    }
 
-		final int bannerHeight;
-		if (_banner == null) {
-			bannerHeight = 0;
-		} else {
-			panel.add(_banner, BorderLayout.NORTH);
-			bannerHeight = _banner.getPreferredSize().height;
-		}
-		JComponent dialogContent = getDialogContent();
-		panel.add(dialogContent, BorderLayout.CENTER);
+    protected final JComponent getWindowContent() {
+        DCPanel panel = new DCPanel(_topBackgroundColor, _bottomBackgroundColor);
+        panel.setLayout(new BorderLayout());
 
-		panel.setPreferredSize(getDialogWidth(), bannerHeight + dialogContent.getPreferredSize().height);
+        final int bannerHeight;
+        if (_banner == null) {
+            bannerHeight = 0;
+        } else {
+            panel.add(_banner, BorderLayout.NORTH);
+            bannerHeight = _banner.getPreferredSize().height;
+        }
+        JComponent dialogContent = getDialogContent();
+        panel.add(dialogContent, BorderLayout.CENTER);
 
-		return panel;
-	}
+        panel.setPreferredSize(getDialogWidth(), bannerHeight + dialogContent.getPreferredSize().height);
 
-	private DCBannerPanel createBanner(Image bannerImage) {
-		if (bannerImage == null) {
-			return null;
-		} else {
-			final DCBannerPanel bannerPanel = new DCBannerPanel(bannerImage, getBannerTitle());
-			return bannerPanel;
-		}
-	}
+        return panel;
+    }
 
-	protected abstract String getBannerTitle();
+    private DCBannerPanel createBanner(Image bannerImage) {
+        if (bannerImage == null) {
+            return null;
+        } else {
+            final DCBannerPanel bannerPanel = new DCBannerPanel(bannerImage, getBannerTitle());
+            return bannerPanel;
+        }
+    }
 
-	protected abstract int getDialogWidth();
+    protected abstract String getBannerTitle();
 
-	protected abstract JComponent getDialogContent();
+    protected abstract int getDialogWidth();
 
-	@Override
-	public void windowOpened(WindowEvent e) {
-	}
+    protected abstract JComponent getDialogContent();
 
-	@Override
-	public final void windowClosing(WindowEvent e) {
-		boolean dispose = onWindowClosing();
-		if (dispose) {
-			dispose();
-		}
-	}
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
 
-	@Override
-	public void dispose() {
-		_windowContext.onDispose(this);
-		super.dispose();
-	}
+    @Override
+    public final void windowClosing(WindowEvent e) {
+        boolean dispose = onWindowClosing();
+        if (dispose) {
+            dispose();
+        }
+    }
 
-	@Override
-	public WindowContext getWindowContext() {
-		return _windowContext;
-	}
+    @Override
+    public void dispose() {
+        _windowContext.onDispose(this);
+        super.dispose();
+    }
 
-	protected boolean onWindowClosing() {
-		return true;
-	}
+    @Override
+    public WindowContext getWindowContext() {
+        return _windowContext;
+    }
 
-	@Override
-	public void windowClosed(WindowEvent e) {
-	}
+    protected boolean onWindowClosing() {
+        return true;
+    }
 
-	@Override
-	public void windowIconified(WindowEvent e) {
-	}
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
 
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-	}
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
 
-	@Override
-	public void windowActivated(WindowEvent e) {
-	}
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
 
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-	}
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
 
-	@Override
-	public Component toComponent() {
-		return this;
-	}
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+    }
+
+    @Override
+    public Component toComponent() {
+        return this;
+    }
 }

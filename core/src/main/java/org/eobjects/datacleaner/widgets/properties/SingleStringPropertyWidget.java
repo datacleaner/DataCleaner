@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
@@ -91,7 +90,7 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
             }
         } else {
             if (password) {
-                textComponent = new JPasswordField(WidgetFactory.TEXT_FIELD_COLUMNS);
+                textComponent = WidgetFactory.createPasswordField();
             } else {
                 textComponent = WidgetFactory.createTextField(propertyDescriptor.getName());
             }

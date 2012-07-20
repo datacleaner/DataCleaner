@@ -76,7 +76,7 @@ public class MongoDbDatastoreDialog extends AbstractDialog implements SchemaFact
 		_portTextField.setDocument(new NumberDocument(false));
 		_databaseNameTextField = WidgetFactory.createTextField();
 		_usernameTextField = WidgetFactory.createTextField();
-		_passwordField = new JPasswordField(WidgetFactory.TEXT_FIELD_COLUMNS);
+		_passwordField = WidgetFactory.createPasswordField();
 
 		if (_originalDatastore == null) {
 			_hostnameTextField.setText("localhost");

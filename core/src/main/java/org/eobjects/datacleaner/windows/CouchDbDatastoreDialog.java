@@ -76,7 +76,7 @@ public class CouchDbDatastoreDialog extends AbstractDialog implements SchemaFact
 		_portTextField = WidgetFactory.createTextField();
 		_portTextField.setDocument(new NumberDocument(false));
 		_usernameTextField = WidgetFactory.createTextField();
-		_passwordField = new JPasswordField(WidgetFactory.TEXT_FIELD_COLUMNS);
+		_passwordField = WidgetFactory.createPasswordField();
 
 		_sslCheckBox = new JCheckBox("Connect via SSL", false);
 		_sslCheckBox.setOpaque(false);

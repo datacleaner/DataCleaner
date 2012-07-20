@@ -22,11 +22,16 @@
 		<argument>-conf</argument>
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=my+job</argument>
 		<argument>-job</argument>
-		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/launch-resources/my+job.analysis.xml</argument>
+		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/jobs/my+job.analysis.xml</argument>
 		<argument>-ds</argument>
 		<argument>my_datastore</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>
 		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
 		<argument>-Ddatacleaner.sandbox=true</argument>
+		<argument>-Ddatacleaner.monitor.hostname=localhost</argument>
+		<argument>-Ddatacleaner.monitor.port=80</argument>
+		<argument>-Ddatacleaner.monitor.context=DataCleaner-monitor</argument>
+		<argument>-Ddatacleaner.monitor.https=false</argument>
+		<argument>-Ddatacleaner.monitor.username=$MONITOR_USERNAME</argument>
 	</application-desc>
 </jnlp>

@@ -26,5 +26,10 @@
 		<argument>-Ddatacleaner.ui.visible=true</argument>
 		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
 		<argument>-Ddatacleaner.sandbox=true</argument>
+		<argument>-Ddatacleaner.monitor.hostname=$MONITOR_HOSTNAME</argument>
+		<argument>-Ddatacleaner.monitor.port=$MONITOR_PORT</argument>
+		<argument>-Ddatacleaner.monitor.context=$MONITOR_CONTEXT</argument>
+		<argument>-Ddatacleaner.monitor.https=$MONITOR_HTTPS</argument>
+		<argument>-Ddatacleaner.monitor.username=$MONITOR_USERNAME</argument>
 	</application-desc>
 </jnlp>

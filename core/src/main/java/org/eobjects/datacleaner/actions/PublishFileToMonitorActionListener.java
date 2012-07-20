@@ -80,6 +80,10 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
     protected abstract InputStream getTransferStream();
     
     protected abstract long getExpectedSize();
+    
+    protected boolean openBrowserWhenDone() {
+        return false;
+    }
 
     @Override
     public final void actionPerformed(ActionEvent e) {
@@ -236,7 +240,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
         _progressWindow.setFinished(getTransferredFilename());
 
-        if (responseMap != null) {
+        if (openBrowserWhenDone() && responseMap != null) {
             final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
             final OpenBrowserAction openBrowserAction = new OpenBrowserAction(monitorConnection.getBaseUrl()
                     + "/repository" + responseMap.get("repository_path"));

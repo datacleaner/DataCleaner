@@ -78,4 +78,9 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     protected InputStream getTransferStream() {
         return new ByteArrayInputStream(getBytes());
     }
+
+    @Override
+    protected boolean openBrowserWhenDone() {
+        return true;
+    }
 }

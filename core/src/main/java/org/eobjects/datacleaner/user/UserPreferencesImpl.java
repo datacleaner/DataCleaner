@@ -38,6 +38,7 @@ import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.actions.LoginChangeListener;
+import org.eobjects.datacleaner.bootstrap.SystemProperties;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
@@ -409,6 +410,19 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
 
     @Override
     public MonitorConnection getMonitorConnection() {
+        if (monitorConnection == null) {
+            final String hostname = System.getProperty(SystemProperties.MONITOR_HOSTNAME);
+            if (!StringUtils.isNullOrEmpty(hostname)) {
+                final int port = Integer.parseInt(System.getProperty(SystemProperties.MONITOR_PORT));
+                final String contextPath = System.getProperty(SystemProperties.MONITOR_CONTEXT);
+                final String tenant = System.getProperty(SystemProperties.MONITOR_TENANT);
+                final boolean isHttps = "true".equals(System.getProperty(SystemProperties.MONITOR_HTTPS));
+                final String username = System.getProperty(SystemProperties.MONITOR_USERNAME);
+                final String encodedPassword = null;
+                final MonitorConnection con = new MonitorConnection(hostname, port, contextPath, isHttps, tenant, username, encodedPassword);
+                return con;
+            }
+        }
         return monitorConnection;
     }
 

@@ -260,7 +260,8 @@ public class OptionsDialog extends AbstractWindow {
 		WidgetUtils.addToGridBag(new JLabel("Username"), proxyAuthPanel, 0, 0);
 		WidgetUtils.addToGridBag(proxyUsernameField, proxyAuthPanel, 1, 0);
 
-		final JPasswordField proxyPasswordField = new JPasswordField(_userPreferences.getProxyPassword());
+		final JPasswordField proxyPasswordField = WidgetFactory.createPasswordField();
+		proxyPasswordField.setText(_userPreferences.getProxyPassword());
 		proxyPasswordField.getDocument().addDocumentListener(new DCDocumentListener() {
 			@Override
 			protected void onChange(DocumentEvent event) {

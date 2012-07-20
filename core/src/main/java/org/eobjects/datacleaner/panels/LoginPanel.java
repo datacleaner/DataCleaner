@@ -179,9 +179,8 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 					.addToGridBag(new JLabel(ImageManager.getInstance().getImageIcon(IconUtils.STATUS_VALID)), this, 0, 0);
 			WidgetUtils.addToGridBag(loggedInLabel, this, 0, 1);
 		} else {
-			final JXTextField usernameTextField = new JXTextField();
-			usernameTextField.setColumns(15);
-			final JPasswordField passwordTextField = new JPasswordField(15);
+			final JXTextField usernameTextField = WidgetFactory.createTextField(null, 15);
+			final JPasswordField passwordTextField = WidgetFactory.createPasswordField(15);
 
 			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/website.png");
 			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));

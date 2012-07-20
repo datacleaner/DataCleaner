@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class MonitorConnection implements Serializable {
             String username, String encodedPassword) {
         _hostname = hostname;
         _port = port;
-        _contextPath = contextPath;
+        _contextPath = ("/".equals(contextPath) ? "" : contextPath);
         _https = isHttps;
         _tenantId = tenantId;
         _username = username;
@@ -103,7 +104,7 @@ public class MonitorConnection implements Serializable {
     }
 
     public boolean isAuthenticationEnabled() {
-        return !StringUtils.isNullOrEmpty(_username) && !StringUtils.isNullOrEmpty(_encodedPassword);
+        return !StringUtils.isNullOrEmpty(_username);
     }
 
     /**
@@ -132,5 +133,28 @@ public class MonitorConnection implements Serializable {
 
             credentialsProvider.setCredentials(new AuthScope(getHostname(), getPort()), credentials);
         }
+    }
+
+    /**
+     * Determines if a {@link URI} matches the configured DC Monitor settings.
+     * 
+     * @param uri
+     * @return
+     */
+    public boolean matchesURI(URI uri) {
+        if (uri == null) {
+            return false;
+        }
+        final String host = uri.getHost();
+        if (host.equals(_hostname)) {
+            final int port = uri.getPort();
+            if (port == _port) {
+                final String path = uri.getPath();
+                if (path.startsWith(_contextPath)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

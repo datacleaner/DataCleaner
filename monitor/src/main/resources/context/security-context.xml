@@ -9,10 +9,13 @@
 	<!-- HTTP basic authentication for the repository RESTful services -->
 	<http pattern="/repository/**" realm="DataCleaner dq monitor">
 		<anonymous enabled="true" username="anonymous" />
-		
-		<intercept-url pattern="/*/launch-resources/*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/*/jobs/**" access="ROLE_USER" />
-		<intercept-url pattern="/*/results/**" access="ROLE_USER" />
+
+		<!-- Launch resources are hosted unprotected since -->
+		<intercept-url pattern="/repository/*/launch-resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+
+		<!-- Everything else in the repository is protected -->
+		<intercept-url pattern="/**" access="ROLE_USER" />
+
 		<http-basic />
 	</http>
 
@@ -48,7 +51,7 @@
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>
-	
+
 	<!-- Uncomment this to have a single-tenant configuration -->
 	<!-- <beans:bean name="tenantResolver" class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver"> -->
 	<!-- <beans:property name="tenantId" value="DC" /> -->

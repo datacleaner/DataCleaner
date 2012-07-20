@@ -78,6 +78,9 @@ public class SecurityUtils {
      *         longer periods, the encoded version is recommended.
      */
     public static String decodePassword(String encodedPassword) {
+        if (encodedPassword == null) {
+            return null;
+        }
         try {
             SecretKeyFactory instance = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
             SecretKey key = instance.generateSecret(new PBEKeySpec(SECRET));

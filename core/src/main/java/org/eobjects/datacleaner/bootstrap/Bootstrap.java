@@ -56,12 +56,14 @@ import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.macos.MacOSManager;
 import org.eobjects.datacleaner.regexswap.RegexSwapUserPreferencesHandler;
 import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.datacleaner.windows.WelcomeDialog;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
@@ -83,14 +85,18 @@ public final class Bootstrap {
     private final BootstrapOptions _options;
 
     public Bootstrap(BootstrapOptions options) {
+        if (options == null) {
+            throw new IllegalArgumentException("Bootstrap options cannot be null");
+        }
         _options = options;
     }
 
     public void run() {
         try {
             runInternal();
-        } catch (FileSystemException e) {
-            throw new IllegalStateException(e);
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred during bootstrap. Exiting with status code -2.", e);
+            exitCommandLine(null, -2);
         }
     }
 
@@ -136,7 +142,7 @@ public final class Bootstrap {
         }
 
         final String configurationFilePath = arguments.getConfigurationFile();
-        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml");
+        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml", null);
 
         Injector injector = Guice.createInjector(new DCModule(DataCleanerHome.get(), configurationFile));
 
@@ -171,10 +177,12 @@ public final class Bootstrap {
             final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
             macOsManager.init();
 
+            final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
+
             // check for job file
             final String jobFilePath = _options.getCommandLineArguments().getJobFile();
             if (jobFilePath != null) {
-                final FileObject jobFile = resolveFile(jobFilePath, null);
+                final FileObject jobFile = resolveFile(jobFilePath, null, userPreferences);
                 injector = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
             }
 
@@ -224,7 +232,6 @@ public final class Bootstrap {
                 });
             }
 
-            final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
             final WindowContext windowContext = injector.getInstance(WindowContext.class);
 
             final HttpClient httpClient = injector.getInstance(HttpClient.class);
@@ -253,11 +260,12 @@ public final class Bootstrap {
      *            the user requested filename, may be null
      * @param localFilename
      *            the relative filename defined by the system
+     * @param userPreferences
      * @return
      * @throws FileSystemException
      */
-    private FileObject resolveFile(final String userRequestedFilename, final String localFilename)
-            throws FileSystemException {
+    private FileObject resolveFile(final String userRequestedFilename, final String localFilename,
+            UserPreferences userPreferences) throws FileSystemException {
         final FileObject dataCleanerHome = DataCleanerHome.get();
         if (userRequestedFilename == null) {
             return dataCleanerHome.resolveFile(localFilename);
@@ -272,8 +280,35 @@ public final class Bootstrap {
                         targetDirectory.createFolder();
                     }
 
-                    final WindowContext windowContext = new SimpleWindowContext();
+                    final URI uri;
+                    try {
+                        uri = new URI(userRequestedFilename);
+                    } catch (URISyntaxException e) {
+                        throw new IllegalArgumentException("Illegal URI: " + userRequestedFilename, e);
+                    }
+
                     final HttpClient httpClient = new DefaultHttpClient();
+                    final WindowContext windowContext = new SimpleWindowContext();
+
+                    // check if URI points to DC monitor. If so, make sure
+                    // credentials are entered.
+                    if (userPreferences != null && userPreferences.getMonitorConnection() != null) {
+                        MonitorConnection monitorConnection = userPreferences.getMonitorConnection();
+                        if (monitorConnection.matchesURI(uri)) {
+                            if (monitorConnection.isAuthenticationEnabled()) {
+                                if (monitorConnection.getEncodedPassword() == null) {
+                                    final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext,
+                                            userPreferences, httpClient);
+                                    // show modal dialog, this will block until
+                                    // closed.
+                                    dialog.setModal(true);
+                                    dialog.open();
+                                    monitorConnection = userPreferences.getMonitorConnection();
+                                }
+                            }
+                            monitorConnection.prepareClient(httpClient);
+                        }
+                    }
 
                     final String[] urls = new String[] { userRequestedFilename };
                     final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
@@ -288,12 +323,6 @@ public final class Bootstrap {
 
                     final FileObject ramFile = files[0];
 
-                    final URI uri;
-                    try {
-                        uri = new URI(userRequestedFilename);
-                    } catch (URISyntaxException e) {
-                        throw new IllegalArgumentException("Illegal URI: " + userRequestedFilename, e);
-                    }
                     final String scheme = uri.getScheme();
                     final int defaultPort;
                     if ("http".equals(scheme)) {
@@ -317,7 +346,11 @@ public final class Bootstrap {
     private void exitCommandLine(AnalyzerBeansConfiguration configuration, int statusCode) {
         if (configuration != null) {
             logger.debug("Shutting down task runner");
-            configuration.getTaskRunner().shutdown();
+            try {
+                configuration.getTaskRunner().shutdown();
+            } catch (Exception e) {
+                logger.warn("Shutting down TaskRunner threw unexpected exception", e);
+            }
         }
         ExitActionListener exitActionListener = _options.getExitActionListener();
         if (exitActionListener != null) {

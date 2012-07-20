@@ -41,7 +41,7 @@ public abstract class AbstractDatabaseConnectionPresenter implements DatabaseCon
 
 	public AbstractDatabaseConnectionPresenter() {
 		_usernameTextField = createTextField("Username");
-		_passwordField = new JPasswordField(JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
+		_passwordField = WidgetFactory.createPasswordField(JdbcDatastoreDialog.TEXT_FIELD_WIDTH);
 	}
 
 	/**

@@ -136,8 +136,10 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
     public FileObject[] getFiles() {
         try {
             get();
-        } catch (Exception e) {
-            // should not happen
+        } catch (Throwable e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
             throw new IllegalStateException(e);
         }
         return _files;

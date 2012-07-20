@@ -38,9 +38,17 @@ public class MainTest extends TestCase {
         System.clearProperty("foo");
     }
 
-    public static void main(String[] args) {
-        args = "-conf http://127.0.0.1:8888/repository/DC/launch-resources/conf.xml?job=random_number_generation -job http://127.0.0.1:8888/repository/DC/jobs/random_number_generation.analysis.xml -ds orderdb -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
-                .split(" ");
+    // A simple main method "integration test" which assumes that the
+    // JettyRunner of the DC monitor is running. This will emulate how the JNLP
+    // client of DC monitor starts up.
+    public static void main(String[] foo) {
+        final String confLocation = "http://127.0.0.1:8888/repository/DC/launch-resources/conf.xml?job=random_number_generation";
+        final String jobLocation = "http://127.0.0.1:8888/repository/DC/jobs/random_number_generation.analysis.xml";
+        final String[] args = ("-conf " + confLocation + " -job " + jobLocation + " -ds orderdb"
+                + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
+                + " -Ddatacleaner.monitor.hostname=127.0.0.1 -Ddatacleaner.monitor.port=8888"
+                + " -Ddatacleaner.monitor.context=/ -Ddatacleaner.monitor.https=false"
+                + " -Ddatacleaner.monitor.tenant=DC" + " -Ddatacleaner.monitor.username=admin").split(" ");
         Main.main(args);
     }
 }

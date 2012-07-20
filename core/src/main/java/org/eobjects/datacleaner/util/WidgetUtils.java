@@ -72,7 +72,7 @@ public final class WidgetUtils {
     public static final Font FONT_UBUNTU_BOLD;
     public static final Font FONT_UBUNTU_ITALIC;
     public static final Font FONT_UBUNTU_BOLD_ITALIC;
-    
+
     public static final Font FONT_OPENSANS_PLAIN;
     public static final Font FONT_OPENSANS_BOLD;
     public static final Font FONT_OPENSANS_ITALIC;
@@ -80,7 +80,7 @@ public final class WidgetUtils {
 
     static {
         fonts = new HashMap<String, Font>();
-        
+
         Font[] fontArray = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
         for (Font font : fontArray) {
             if (font.isPlain()) {
@@ -92,7 +92,7 @@ public final class WidgetUtils {
         FONT_UBUNTU_ITALIC = createFont("fonts/Ubuntu-RI.ttf");
         FONT_UBUNTU_BOLD = createFont("fonts/Ubuntu-B.ttf");
         FONT_UBUNTU_BOLD_ITALIC = createFont("fonts/Ubuntu-BI.ttf");
-        
+
         FONT_OPENSANS_PLAIN = createFont("fonts/OpenSans-Regular.ttf");
         FONT_OPENSANS_ITALIC = createFont("fonts/OpenSans-Italic.ttf");
         FONT_OPENSANS_BOLD = createFont("fonts/OpenSans-Bold.ttf");
@@ -161,6 +161,7 @@ public final class WidgetUtils {
 
     public static final Border BORDER_THIN = new LineBorder(BG_COLOR_MEDIUM);
     public static final Border BORDER_LIST_ITEM = new MatteBorder(0, 2, 1, 0, WidgetUtils.BG_COLOR_MEDIUM);
+    public static final Border BORDER_EMPHASIZE_FIELD = new LineBorder(ADDITIONAL_COLOR_RED_BRIGHT, 2, false);
 
     /**
      * A highlighter for coloring odd/even rows in a table

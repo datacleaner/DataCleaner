@@ -39,6 +39,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -169,7 +170,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         });
 
         _usernameTextField = WidgetFactory.createTextField("Username");
-        _passwordTextField = new JPasswordField(WidgetFactory.TEXT_FIELD_COLUMNS);
+        _passwordTextField = WidgetFactory.createPasswordField();
 
         _authenticationCheckBox = new DCCheckBox<Void>("Use authentication?", true);
         _authenticationCheckBox.setBorderPainted(false);
@@ -354,6 +355,18 @@ public class MonitorConnectionDialog extends AbstractDialog {
         panel.setPreferredSize(getDialogWidth(), 400);
 
         return panel;
+    }
+    
+    @Override
+    protected void initialize() {
+        super.initialize();
+        // set focus to password field if username field is already filled
+        if (!StringUtils.isNullOrEmpty(_usernameTextField.getText())) {
+            _passwordTextField.setBorder(WidgetUtils.BORDER_EMPHASIZE_FIELD);
+            
+            boolean focused = _passwordTextField.requestFocusInWindow();
+            assert focused;
+        }
     }
 
     public static void main(String[] args) {

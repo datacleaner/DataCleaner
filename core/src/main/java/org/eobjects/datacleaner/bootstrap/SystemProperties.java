@@ -46,4 +46,34 @@ public class SystemProperties {
      * {@link UserPreferences} file etc.
      */
     public static final String SANDBOX = "datacleaner.sandbox";
+
+    /**
+     * Property for the hostname of the DC monitor app
+     */
+    public static final String MONITOR_HOSTNAME = "datacleaner.monitor.hostname";
+
+    /**
+     * Property for the port of the DC monitor app
+     */
+    public static final String MONITOR_PORT = "datacleaner.monitor.port";
+
+    /**
+     * Property for the context path of the DC monitor app
+     */
+    public static final String MONITOR_CONTEXT = "datacleaner.monitor.context";
+
+    /**
+     * Property for the tenant of the DC monitor app
+     */
+    public static final String MONITOR_TENANT = "datacleaner.monitor.tenant";
+    
+    /**
+     * Property for determining of the DC monitor app is running on HTTPS.
+     */
+    public static final String MONITOR_HTTPS = "datacleaner.monitor.https";
+    
+    /**
+     * Property for for the username of the DC monitor app
+     */
+    public static final String MONITOR_USERNAME = "datacleaner.monitor.username";
 }

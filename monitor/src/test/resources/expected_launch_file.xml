@@ -31,6 +31,7 @@
 		<argument>-Ddatacleaner.monitor.hostname=localhost</argument>
 		<argument>-Ddatacleaner.monitor.port=80</argument>
 		<argument>-Ddatacleaner.monitor.context=DataCleaner-monitor</argument>
+		<argument>-Ddatacleaner.monitor.tenant=DC</argument>
 		<argument>-Ddatacleaner.monitor.https=false</argument>
 		<argument>-Ddatacleaner.monitor.username=$MONITOR_USERNAME</argument>
 	</application-desc>

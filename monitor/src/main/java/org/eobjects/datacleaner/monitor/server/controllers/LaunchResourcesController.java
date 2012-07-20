@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 
 import javax.servlet.ServletOutputStream;
@@ -56,9 +55,6 @@ public class LaunchResourcesController {
 
     @Autowired
     ConfigurationInterceptor _configurationInterceptor;
-
-    @Autowired
-    JobFileController _jobFileController;
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
@@ -113,19 +109,6 @@ public class LaunchResourcesController {
         } finally {
             FileHelper.safeClose(in);
         }
-    }
-
-    /**
-     * TODO: For now this controller also serves the job file, since BASIC auth
-     * from within DC at job-loading time is not yet implemented.
-     * 
-     * @param request
-     * @param response
-     */
-    @RequestMapping(value = "/{job:.+}.analysis.xml")
-    public void fetchAnalysisJob(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
-            OutputStream out) {
-        _jobFileController.jobXml(tenant, jobName, out);
     }
 
     @RequestMapping(value = "/{filename:.+}.jar")

@@ -229,6 +229,26 @@
 		</pluginManagement>
 	</build>
 
+	<profiles>
+		<profile>
+			<!-- Quick profile to make GWT compilation work faster (in development) -->
+			<id>Quick</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>gwt-maven-plugin</artifactId>
+						<version>${gwt.version}</version>
+						<configuration>
+							<draftCompile>true</draftCompile>
+							
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<repositories>
 		<repository>
 			<!-- Up-to-date GWT visualization is not available in central repo. Using 

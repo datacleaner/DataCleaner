@@ -14,7 +14,6 @@
 		<dependency>
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans-cli</artifactId>
-			<version>${analyzerbeans.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.eobjects.analyzerbeans</groupId>
@@ -29,7 +28,6 @@
 		<dependency>
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans-h2</artifactId>
-			<version>${analyzerbeans.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>

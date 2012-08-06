@@ -17,13 +17,13 @@
 		<quartz.version>1.8.6</quartz.version>
 		<freemarker.version>2.3.19</freemarker.version>
 	</properties>
-	
+
 	<modules>
 		<module>api</module>
 		<module>services</module>
 		<module>ui</module>
 	</modules>
-	
+
 	<dependencies>
 		<!-- Test dependencies -->
 		<dependency>
@@ -33,5 +33,32 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.core.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.core.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 </project>

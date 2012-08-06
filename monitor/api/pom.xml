@@ -88,14 +88,12 @@
  		<dependency>
 			<groupId>org.eobjects.analyzerbeans</groupId>
 			<artifactId>AnalyzerBeans-core</artifactId>
-			<version>${analyzerbeans.version}</version>
 		</dependency>
 		
 		<!-- Middleware: Spring, Quartz etc. -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>

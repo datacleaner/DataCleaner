@@ -7,7 +7,7 @@
 		<version>3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-packaging</artifactId>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 	<name>DataCleaner-packaging</name>
 	<properties>
 		<mainClass>org.eobjects.datacleaner.Main</mainClass>
@@ -363,58 +363,9 @@
 		</profile>
 		<profile>
 			<id>jnlp</id>
-			<build>
-				<plugins>
-					<plugin>
-						<!-- Java Web start JNLP file generation -->
-						<groupId>org.codehaus.mojo.webstart</groupId>
-						<artifactId>webstart-maven-plugin</artifactId>
-						<version>1.0-beta-1</version>
-						<configuration>
-							<templateFilename>template.vm</templateFilename>
-							<jnlp>
-								<outputFile>datacleaner.jnlp</outputFile>
-								<mainClass>${mainClass}</mainClass>
-							</jnlp>
-							<outputJarVersions>false</outputJarVersions>
-							<verbose>true</verbose>
-						</configuration>
-						<executions>
-							<execution>
-								<id>jnlp-on-verify</id>
-								<goals>
-									<goal>jnlp</goal>
-								</goals>
-								<phase>verify</phase>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<!-- Sign JAR files in jnlp folder -->
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-jarsigner-plugin</artifactId>
-						<version>1.2</version>
-						<executions>
-							<execution>
-								<id>sign</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<keystore>src/main/jnlp/dc_keystore</keystore>
-							<alias>dc_alias</alias>
-							<storepass>dc_password</storepass>
-							<keypass>dc_password</keypass>
-							<archiveDirectory>target/jnlp</archiveDirectory>
-							<processMainArtifact>false</processMainArtifact>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
+			<modules>
+				<module>jnlp</module>
+			</modules>
 		</profile>
 		<profile>
 			<id>macos</id>

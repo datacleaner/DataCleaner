@@ -11,7 +11,7 @@
 	<packaging>war</packaging>
 
 	<build>
-		<finalName>DataCleaner</finalName>
+		<finalName>DataCleaner-monitor</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
@@ -57,6 +57,13 @@
 			<artifactId>DataCleaner-monitor</artifactId>
 			<version>3.0-SNAPSHOT</version>
 			<type>war</type>
+		</dependency>
+		
+		<!-- Extensions -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor</artifactId>
+			<artifactId>DataCleaner-move-data-wizard</artifactId>
 		</dependency>
 	</dependencies>
 </project>

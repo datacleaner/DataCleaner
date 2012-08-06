@@ -24,19 +24,10 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>core</module>
-		<module>packaging</module>
 		<module>monitor</module>
 		<module>extensions</module>
+		<module>packaging</module>
 	</modules>
-	<profiles>
-		<profile>
-			<!-- extensions profile also builds the optional extensions -->
-			<id>extensions</id>
-			<modules>
-				<module>extensions</module>
-			</modules>
-		</profile>
-	</profiles>
 	<organization>
 		<name>eobjects.org</name>
 		<url>http://eobjects.org</url>

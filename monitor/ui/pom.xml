@@ -7,6 +7,7 @@
 		<version>3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>DataCleaner-monitor-ui</artifactId>
+	<packaging>war</packaging>
 	<name>DataCleaner - monitor UI</name>
 
 	<build>

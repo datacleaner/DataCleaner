@@ -9,5 +9,11 @@
 	<artifactId>DataCleaner-monitor-services</artifactId>
 	<name>DataCleaner - monitor services</name>
 
-	
+	<dependencies>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 </project>

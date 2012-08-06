@@ -17,6 +17,12 @@
 		<quartz.version>1.8.6</quartz.version>
 		<freemarker.version>2.3.19</freemarker.version>
 	</properties>
+	
+	<modules>
+		<module>api</module>
+		<module>services</module>
+		<module>ui</module>
+	</modules>
 
 	<build>
 		<finalName>DataCleaner-monitor</finalName>

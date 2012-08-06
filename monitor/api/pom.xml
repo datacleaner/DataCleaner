@@ -84,13 +84,13 @@
 	</build>
 
 	<dependencies>
-		<!-- DataCleaner dependencies -->
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
-			<version>${project.version}</version>
+		<!-- AnalyzerBeans API dependency -->
+ 		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-core</artifactId>
+			<version>${analyzerbeans.version}</version>
 		</dependency>
-
+		
 		<!-- Middleware: Spring, Quartz etc. -->
 		<dependency>
 			<groupId>org.springframework</groupId>

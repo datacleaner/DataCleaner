@@ -19,22 +19,32 @@
  */
 package org.eobjects.datacleaner.monitor.jobwizard.movedata;
 
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizard;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardSession;
-import org.springframework.stereotype.Component;
+import org.eobjects.metamodel.schema.Column;
 
-@Component
-public class MoveDataWizard implements JobWizard {
+/**
+ * Simple struct like pojo for holding the information about a mapped columns.
+ */
+final class ColumnMapping {
 
-    @Override
-    public String getDisplayName() {
-        return "Move data";
+    private final Column _sourceColumn;
+    private final Column _targetColumn;
+    private final boolean _id;
+
+    public ColumnMapping(Column sourceColumn, Column targetColumn, boolean id) {
+        _sourceColumn = sourceColumn;
+        _targetColumn = targetColumn;
+        _id = id;
     }
 
-    @Override
-    public JobWizardSession start(JobWizardContext context) {
-        return new MoveDataWizardSession(context);
+    public Column getSourceColumn() {
+        return _sourceColumn;
     }
 
+    public Column getTargetColumn() {
+        return _targetColumn;
+    }
+
+    public boolean isId() {
+        return _id;
+    }
 }

@@ -9,12 +9,67 @@
 	<artifactId>DataCleaner-move-data-wizard</artifactId>
 	<packaging>jar</packaging>
 	<name>DataCleaner - 'move data' wizard extension</name>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.scala-tools</groupId>
+				<artifactId>maven-scala-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-scala-main-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/scala</source>
+							</sources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>add-scala-test-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/test/scala</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-monitor-api</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-services</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-basic-filters</artifactId>
+			<version>${analyzerbeans.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-writers</artifactId>
+			<version>${analyzerbeans.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
 import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardPageController;
@@ -36,11 +37,15 @@ import org.eobjects.metamodel.schema.Table;
  */
 public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage implements JobWizardPageController {
 
-    private final JobWizardContext _context;
+    private final Datastore _datastore;
     private final Integer _pageIndex;
 
     public SelectTableWizardPage(JobWizardContext context, Integer pageIndex) {
-        _context = context;
+        this(context.getSourceDatastore(), pageIndex);
+    }
+
+    public SelectTableWizardPage(Datastore datastore, Integer pageIndex) {
+        _datastore = datastore;
         _pageIndex = pageIndex;
     }
 
@@ -58,11 +63,15 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
     protected Class<?> getTemplateFriendlyClass() {
         return SelectTableWizardPage.class;
     }
+    
+    protected String getPromptText() {
+        return "Please select the source table of the job:";
+    }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> map = new HashMap<String, Object>();
-        final DatastoreConnection con = _context.getSourceDatastore().openConnection();
+        final DatastoreConnection con = _datastore.openConnection();
         try {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();
             for (Schema schema : schemas) {
@@ -79,7 +88,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
     @Override
     public JobWizardPageController nextPageController(Map<String, List<String>> formParameters) {
         final String tableName = formParameters.get("tableName").get(0);
-        final DatastoreConnection con = _context.getSourceDatastore().openConnection();
+        final DatastoreConnection con = _datastore.openConnection();
         try {
             final Table selectedTable = con.getSchemaNavigator().convertToTable(tableName);
             return nextPageController(selectedTable);

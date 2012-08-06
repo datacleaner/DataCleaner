@@ -26,7 +26,7 @@ import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
 /**
  * Default implementation of {@link JobWizardContext}.
  */
-final class JobWizardContextImpl implements JobWizardContext {
+public final class JobWizardContextImpl implements JobWizardContext {
 
     private final TenantContext _tenantContext;
     private final Datastore _sourceDatastore;

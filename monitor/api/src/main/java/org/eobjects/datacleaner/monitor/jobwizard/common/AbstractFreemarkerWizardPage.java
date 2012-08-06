@@ -46,7 +46,8 @@ public abstract class AbstractFreemarkerWizardPage implements JobWizardPageContr
         configuration.setObjectWrapper(new DefaultObjectWrapper());
 
         // load templates from the package of the (concrete) class.
-        final TemplateLoader templateLoader = new ClassTemplateLoader(getTemplateFriendlyClass(), "");
+        final Class<?> templateFriendlyClass = getTemplateFriendlyClass();
+        final TemplateLoader templateLoader = new ClassTemplateLoader(templateFriendlyClass, "");
         configuration.setTemplateLoader(templateLoader);
 
         final Map<String, Object> formModel = getFormModel();

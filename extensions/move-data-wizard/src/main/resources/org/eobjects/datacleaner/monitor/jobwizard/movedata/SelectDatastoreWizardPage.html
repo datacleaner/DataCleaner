@@ -1,0 +1,8 @@
+<div>
+	<p>Please select the target datastore to write to:</p>
+	<select name="datastoreName">
+		<#list datastoreNames as datastoreName>
+			<option label="${datastoreName}" value="${datastoreName}">
+		</#list>
+	</select>
+</div>

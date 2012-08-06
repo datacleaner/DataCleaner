@@ -32,7 +32,7 @@ import org.easymock.EasyMock;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizard;
-import org.eobjects.datacleaner.monitor.jobwizard.quickanalysis.QuickAnalysisWizard;
+import org.eobjects.datacleaner.monitor.jobwizard.common.MockAnalysisWizard;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
@@ -54,7 +54,7 @@ public class JobWizardServiceImplTest extends TestCase {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
 
         final Map<String, JobWizard> wizardMap = new TreeMap<String, JobWizard>();
-        wizardMap.put("quick", new QuickAnalysisWizard());
+        wizardMap.put("quick", new MockAnalysisWizard());
 
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
         EasyMock.expect(applicationContextMock.getBeansOfType(JobWizard.class)).andReturn(wizardMap).anyTimes();
@@ -80,7 +80,7 @@ public class JobWizardServiceImplTest extends TestCase {
         assertEquals(1, jobWizardIdentifiers.size());
 
         final JobWizardIdentifier jobWizardIdentifier = jobWizardIdentifiers.get(0);
-        assertEquals("JobWizardIdentifier[Quick analysis]", jobWizardIdentifier.toString());
+        assertEquals("JobWizardIdentifier[Mock wizard]", jobWizardIdentifier.toString());
 
         final List<DatastoreIdentifier> datastores = service.getAvailableDatastores(tenant);
         assertEquals(2, datastores.size());

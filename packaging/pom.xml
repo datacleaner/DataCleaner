@@ -12,8 +12,14 @@
 	<properties>
 		<mainClass>org.eobjects.datacleaner.Main</mainClass>
 	</properties>
+
+	<modules>
+		<module>desktop-app</module>
+		<module>jnlp</module>
+		<module>documentation</module>
+	</modules>
+
 	<build>
-		<finalName>DataCleaner</finalName>
 		<plugins>
 			<plugin>
 				<!-- Exclude/skip this module when deploying artifacts -->
@@ -24,181 +30,7 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
-			<plugin>
-				<!-- make the jar file executable when dependencies are available in 
-					lib/ folder -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<addDefaultImplementationEntries>true
-							</addDefaultImplementationEntries>
-							<addDefaultSpecificationEntries>true
-							</addDefaultSpecificationEntries>
-							<classpathPrefix>lib</classpathPrefix>
-							<mainClass>${mainClass}</mainClass>
-							<useUniqueVersions>false</useUniqueVersions>
-						</manifest>
-						<manifestEntries>
-							<SplashScreen-Image>images/splash.png</SplashScreen-Image>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<!-- Copy dependencies to lib/ folder -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<!-- Copy dependencies to lib/ -->
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeScope>runtime</includeScope>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<!-- Unpack resources for docbook XSLT generation -->
-						<!-- See http://wiki.docbook.org/MavenDocBookXSL -->
-						<id>unpack-shared-resources</id>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<!-- linked with pre-site phase -->
-						<phase>pre-site</phase>
-						<configuration>
-							<outputDirectory>${project.build.directory}/docbook-resources</outputDirectory>
-							<includeGroupIds>net.sf.docbook</includeGroupIds>
-							<includeArtifactIds>docbook-xsl</includeArtifactIds>
-							<includeClassifiers>ns-resources</includeClassifiers>
-							<excludeTransitive>true</excludeTransitive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 
-			<plugin>
-				<!-- Assembly which creates the zip and tar.gz distributables -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/all.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<!-- Generate docbook documentation, see http://docbkx-tools.sourceforge.net/docbkx-maven-plugin/plugin-info.html -->
-				<groupId>com.agilejava.docbkx</groupId>
-				<artifactId>docbkx-maven-plugin</artifactId>
-				<version>2.0.13</version>
-				<executions>
-					<execution>
-						<!-- HTML (multi page) generation -->
-						<id>reference-html-multi</id>
-						<goals>
-							<goal>generate-html</goal>
-						</goals>
-						<phase>site</phase>
-						<configuration>
-							<chunkedOutput>true</chunkedOutput>
-							<chunkFirstSections>1</chunkFirstSections>
-							<postProcess>
-								<move todir="${project.basedir}/target/site/reference/html">
-									<fileset dir="${project.basedir}/target/docbkx/html/index">
-										<include name="**/*.html" />
-									</fileset>
-								</move>
-								<copy todir="${project.basedir}/target/site/reference/html">
-									<fileset dir="${project.basedir}/src/docbkx/resources">
-										<include name="**/*.css" />
-										<include name="**/*.png" />
-										<include name="**/*.gif" />
-										<include name="**/*.jpg" />
-										<include name="**/*.htc" />
-									</fileset>
-								</copy>
-							</postProcess>
-						</configuration>
-					</execution>
-					<!-- HTML (single page) generation -->
-					<execution>
-						<id>reference-html-single</id>
-						<goals>
-							<goal>generate-html</goal>
-						</goals>
-						<phase>site</phase>
-						<configuration>
-							<chunkedOutput>false</chunkedOutput>
-							<postProcess>
-								<move file="${project.basedir}/target/docbkx/html/index.html"
-									tofile="${project.basedir}/target/site/reference/html_single/index.html"
-									failonerror="false" />
-								<copy todir="${project.basedir}/target/site/reference/html_single">
-									<fileset dir="${project.basedir}/src/docbkx/resources">
-										<include name="**/*.css" />
-										<include name="**/*.png" />
-										<include name="**/*.gif" />
-										<include name="**/*.jpg" />
-									</fileset>
-								</copy>
-							</postProcess>
-						</configuration>
-					</execution>
-					<!-- PDF generation -->
-					<execution>
-						<id>reference-pdf</id>
-						<goals>
-							<goal>generate-pdf</goal>
-						</goals>
-						<phase>site</phase>
-						<configuration>
-							<imgSrcPath>src/docbkx/resources/</imgSrcPath>
-							<defaultImageWidth>15cm</defaultImageWidth>
-							<postProcess>
-								<copy todir="${project.basedir}/target/site/reference">
-									<fileset dir="${project.basedir}/target/docbkx">
-										<include name="**/*.pdf" />
-									</fileset>
-								</copy>
-								<move file="${project.basedir}/target/site/reference/pdf/index.pdf"
-									tofile="${project.basedir}/target/site/reference/pdf/datacleaner-reference.pdf"
-									failonerror="false" />
-							</postProcess>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.docbook</groupId>
-						<artifactId>docbook-xml</artifactId>
-						<version>4.4</version>
-						<scope>runtime</scope>
-					</dependency>
-				</dependencies>
-				<configuration>
-					<includes>index.xml</includes>
-					<xincludeSupported>true</xincludeSupported>
-					<htmlStylesheet>style.css</htmlStylesheet>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<profiles>

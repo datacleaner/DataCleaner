@@ -160,8 +160,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private ScheduleDefinition getSchedule(TenantIdentifier tenant, String jobName) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final JobIdentifier jobIdentifier = new JobIdentifier(jobName);
-        final JobContext jobContext = context.getJob(jobIdentifier);
+        final JobContext jobContext = context.getJob(jobName);
         final String datastoreName = jobContext.getSourceDatastoreName();
         final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
 
@@ -172,6 +171,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         final ScheduleDefinition schedule;
 
+        final JobIdentifier jobIdentifier = new JobIdentifier(jobName);
         if (scheduleFile == null) {
             schedule = new ScheduleDefinition(tenant, jobIdentifier, datastoreIdentifier);
         } else {

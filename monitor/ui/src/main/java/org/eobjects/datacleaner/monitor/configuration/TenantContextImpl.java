@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -93,14 +92,6 @@ public class TenantContextImpl implements TenantContext {
     @Override
     public AnalyzerBeansConfiguration getConfiguration() {
         return _configurationCache.getAnalyzerBeansConfiguration();
-    }
-
-    @Override
-    public JobContext getJob(JobIdentifier jobIdentifier) {
-        if (jobIdentifier == null) {
-            return null;
-        }
-        return getJob(jobIdentifier.getName());
     }
 
     @Override

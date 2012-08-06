@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 
 /**
@@ -36,8 +35,6 @@ public interface TenantContext {
     public List<String> getJobNames();
 
     public JobContext getJob(String jobName);
-    
-    public JobContext getJob(JobIdentifier jobIdentifier);
     
     public RepositoryFolder getJobFolder();
     

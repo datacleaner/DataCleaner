@@ -545,7 +545,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private AnalysisJob readAnalysisJob(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
-        final JobContext jobContext = context.getJob(jobIdentifier);
+        final JobContext jobContext = context.getJob(jobIdentifier.getName());
         final AnalysisJob job = jobContext.getAnalysisJob();
         return job;
     }

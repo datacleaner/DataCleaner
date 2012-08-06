@@ -212,13 +212,6 @@
 			<version>1.0.1</version>
 		</dependency>
 
-		<!-- Freemarker (for Wizard plugins) -->
-		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
-			<version>${freemarker.version}</version>
-		</dependency>
-
 		<!-- JSF -->
 		<dependency>
 			<groupId>org.glassfish</groupId>
@@ -270,12 +263,6 @@
 		</dependency>
 
 		<!-- Test dependencies -->
-		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-testware</artifactId>
-			<version>${analyzerbeans.version}</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty.aggregate</groupId>
 			<artifactId>jetty-all</artifactId>

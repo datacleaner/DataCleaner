@@ -23,5 +23,15 @@
 		<module>services</module>
 		<module>ui</module>
 	</modules>
+	
+	<dependencies>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-testware</artifactId>
+			<version>${analyzerbeans.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 </project>

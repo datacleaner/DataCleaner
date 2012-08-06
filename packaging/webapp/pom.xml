@@ -54,16 +54,16 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-monitor</artifactId>
-			<version>3.0-SNAPSHOT</version>
+			<artifactId>DataCleaner-monitor-ui</artifactId>
+			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
 		
 		<!-- Extensions -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-monitor</artifactId>
 			<artifactId>DataCleaner-move-data-wizard</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

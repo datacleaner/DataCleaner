@@ -7,7 +7,7 @@
 	</parent>
 	<artifactId>DataCleaner-test-tools</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner Test tools extension</name>
+	<name>DataCleaner - 'test tools' extension</name>
 
 	<build>
 		<plugins>

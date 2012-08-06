@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>DataCleaner-monitor</artifactId>
 	<packaging>war</packaging>
-	<name>DataCleaner-monitor</name>
+	<name>DataCleaner - monitor</name>
 
 	<properties>
 		<gwt.version>2.4.0</gwt.version>

@@ -7,7 +7,7 @@
 	</parent>
 	<artifactId>DataCleaner-regex-parser</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner-regex-parser</name>
+	<name>DataCleaner - 'regex parser' extension</name>
 
 	<build>
 		<plugins>

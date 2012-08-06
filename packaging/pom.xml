@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>DataCleaner-packaging</artifactId>
 	<packaging>pom</packaging>
-	<name>DataCleaner-packaging</name>
+	<name>DataCleaner packaging modules</name>
 	<properties>
 		<mainClass>org.eobjects.datacleaner.Main</mainClass>
 	</properties>

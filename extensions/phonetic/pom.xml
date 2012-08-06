@@ -7,7 +7,7 @@
 	</parent>
 	<artifactId>DataCleaner-phonetic-similarity</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner-phonetic-similarity</name>
+	<name>DataCleaner - 'phonetic similarity finder' extension</name>
 	<build>
 		<plugins>
 			<plugin>

@@ -16,7 +16,7 @@
 	<groupId>org.eobjects.datacleaner</groupId>
 	<artifactId>DataCleaner</artifactId>
 	<version>3.0-SNAPSHOT</version>
-	<name>DataCleaner</name>
+	<name>DataCleaner parent</name>
 	<description>DataCleaner is the premier open source data profiling application. Use it to
 		discover, analyze and diagnose the state of your data. DataCleaner works with
 		almost any kind of data, eg. CSV files, databases, Excel spreadsheets and more.</description>

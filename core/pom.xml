@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>DataCleaner-core</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner-core</name>
+	<name>DataCleaner - core library</name>
 
 	<dependencies>
 		<dependency>

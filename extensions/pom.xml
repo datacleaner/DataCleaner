@@ -27,6 +27,7 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	
 	<modules>
 		<module>sample</module>
 		<module>lucene</module>
@@ -37,4 +38,14 @@
 		<module>quick-analysis-wizard</module>
 		<module>move-data-wizard</module>
 	</modules>
+	
+	<dependencies>
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-testware</artifactId>
+			<version>${analyzerbeans.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

@@ -73,16 +73,6 @@
 			</plugin>
 
 			<plugin>
-				<!-- Exclude/skip this module when deploying artifacts -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-
-			<plugin>
 				<!-- Delete directories created by GWT eclipse plugin on clean -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -158,41 +148,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.0-beta-1</version>
-				<executions>
-					<execution>
-						<id>tomcat-run</id>
-						<goals>
-							<goal>exec-war-only</goal>
-						</goals>
-						<phase>package</phase>
-						<configuration>
-							<path>/DataCleaner-monitor</path>
-							<extraDependencies>
-								<!-- Default database drivers -->
-								<dependency>
-									<groupId>postgresql</groupId>
-									<artifactId>postgresql</artifactId>
-									<version>9.1-901-1.jdbc4</version>
-								</dependency>
-								<dependency>
-									<groupId>mysql</groupId>
-									<artifactId>mysql-connector-java</artifactId>
-									<version>5.1.18</version>
-								</dependency>
-								<dependency>
-									<groupId>net.sourceforge.jtds</groupId>
-									<artifactId>jtds</artifactId>
-									<version>1.2.4</version>
-								</dependency>
-							</extraDependencies>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 
 		<pluginManagement>
@@ -241,7 +196,6 @@
 						<version>${gwt.version}</version>
 						<configuration>
 							<draftCompile>true</draftCompile>
-							
 						</configuration>
 					</plugin>
 				</plugins>
@@ -289,14 +243,6 @@
 			<groupId>com.google.gwt.google-apis</groupId>
 			<artifactId>gwt-visualization</artifactId>
 			<version>1.1.2</version>
-		</dependency>
-
-		<!-- Optional JDBC drivers -->
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
-			<optional>true</optional>
 		</dependency>
 
 		<!-- Middleware: Spring, Quartz etc. -->

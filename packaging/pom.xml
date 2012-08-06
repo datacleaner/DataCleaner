@@ -16,6 +16,7 @@
 	<modules>
 		<module>desktop-app</module>
 		<module>jnlp</module>
+		<module>webapp</module>
 		<module>documentation</module>
 	</modules>
 
@@ -43,6 +44,7 @@
 		</repository>
 	</repositories>
 	<dependencies>
+		<!-- The core DataCleaner library -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-core</artifactId>

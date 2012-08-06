@@ -62,6 +62,11 @@
 		<!-- Extensions -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-quick-analysis-wizard</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-move-data-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>

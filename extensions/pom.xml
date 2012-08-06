@@ -34,5 +34,6 @@
 		<module>regex-parser</module>
 		<module>test-tools</module>
 		<module>network-tools</module>
+		<module>move-data-wizard</module>
 	</modules>
 </project>

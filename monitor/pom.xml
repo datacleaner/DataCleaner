@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>DataCleaner-monitor</artifactId>
 	<packaging>pom</packaging>
-	<name>DataCleaner - monitor modules</name>
+	<name>DataCleaner monitor modules</name>
 
 	<properties>
 		<gwt.version>2.4.0</gwt.version>

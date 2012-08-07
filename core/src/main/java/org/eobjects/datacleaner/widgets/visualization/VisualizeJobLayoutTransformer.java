@@ -76,7 +76,7 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
 		Collections.sort(vertices, longestTrailComparator);
 
 		final int maxPrerequisiteCount = getAccumulatedPrerequisiteCount(vertices.get(0));
-		logger.info("Maximum prerequisite count: {}", maxPrerequisiteCount);
+		logger.debug("Maximum prerequisite count: {}", maxPrerequisiteCount);
 
 		final int x = maxPrerequisiteCount;
 		for (Object vertex : vertices) {

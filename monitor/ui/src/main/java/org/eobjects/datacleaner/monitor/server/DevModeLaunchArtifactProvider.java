@@ -43,11 +43,14 @@ public class DevModeLaunchArtifactProvider implements LaunchArtifactProvider {
         // if being run from the parent project's folder
         final File candidate1 = new File("packaging/target/jnlp");
 
-        // if being run from any of the module's folders
+        // if being run from any of the parent modules folders
         final File candidate2 = new File("../packaging/target/jnlp");
 
-        // if being run from self-extracting war in target folder
+        // if being run from any of the module folders
         final File candidate3 = new File("../../packaging/target/jnlp");
+        
+       // if being run from self-extracting war in target folder
+        final File candidate4 = new File("../../../packaging/target/jnlp");
 
         if (candidate1.exists()) {
             _delegate = new FileFolderLaunchArtifactProvider(candidate1);
@@ -55,6 +58,8 @@ public class DevModeLaunchArtifactProvider implements LaunchArtifactProvider {
             _delegate = new FileFolderLaunchArtifactProvider(candidate2);
         } else if (candidate3.exists()) {
             _delegate = new FileFolderLaunchArtifactProvider(candidate3);
+        } else if (candidate4.exists()) {
+            _delegate = new FileFolderLaunchArtifactProvider(candidate4);
         } else {
             _delegate = null;
         }

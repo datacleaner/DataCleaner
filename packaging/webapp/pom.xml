@@ -70,5 +70,14 @@
 			<artifactId>DataCleaner-move-data-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>org.eclipse.jetty.aggregate</groupId>
+			<artifactId>jetty-all</artifactId>
+			<version>7.2.0.v20101020</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

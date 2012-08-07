@@ -4,7 +4,7 @@
 		<#list schemas as schema>
 			<optgroup label="${schema.name}">
 				<#list schema.tableNames as tableName>
-					<option label="${tableName}" value="${schema.name}.${tableName}" />
+					<option value="${schema.name}.${tableName}">${tableName}</option>
 				</#list>
 			</optgroup>
 		</#list>

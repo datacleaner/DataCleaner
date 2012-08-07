@@ -24,9 +24,9 @@
 			</td>
 			<td>
 				<select name="mapping_${sourceColumn_index}">
-					<option label="- none -" value="">
+					<option label="- none -" value=""></option>
 					<#list targetColumns as targetColumn>
-						<option label="${targetColumn.name}" value="${targetColumn.name}">
+						<option value="${targetColumn.name}">${targetColumn.name}</option>
 					</#list>
 				</select>
 			</td>

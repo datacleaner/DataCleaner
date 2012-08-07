@@ -12,6 +12,31 @@ body,table td,select,button,input {
 	font-size: small;
 }
 
+select,button,input,textarea {
+	background-color: white;
+	padding: 5px 4px;
+	border: 1px solid #CCC;
+	border-top: 1px solid #999;
+	border-radius: 2px;
+	font-family: "Open Sans", sans-serif;
+}
+
+optgroup {
+	font-family: "Ubuntu", sans-serif;
+	font-weight: normal;
+	font-style: normal;
+	color: #5594DD;
+	background-color: #f0f0f0;
+}
+
+option {
+	font-family: "Open Sans", sans-serif;
+	font-weight: normal;
+	font-style: normal;
+	color: black;
+	background-color: white;
+}
+
 h1,h2,h3,h4,h5 {
 	font-family: 'Ubuntu', sans-serif;
 	font-weight: normal;

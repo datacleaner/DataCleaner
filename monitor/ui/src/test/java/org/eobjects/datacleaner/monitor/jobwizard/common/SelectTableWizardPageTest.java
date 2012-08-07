@@ -56,14 +56,19 @@ public class SelectTableWizardPageTest extends TestCase {
             }
         };
         final String formInnerHtml = page.getFormInnerHtml();
-        assertEquals("<div>\n" + "    <p>Please select the source table of the job:</p>\n"
-                + "    <select name=\"tableName\">\n" + "            <optgroup label=\"information_schema\">\n"
-                + "                    <option label=\"tables\" value=\"information_schema.tables\">\n"
-                + "                    <option label=\"columns\" value=\"information_schema.columns\">\n"
-                + "                    <option label=\"relationships\" value=\"information_schema.relationships\">\n"
-                + "            </optgroup>\n" + "            <optgroup label=\"my_pojo_ds\">\n"
-                + "                    <option label=\"tab\" value=\"my_pojo_ds.tab\">\n" + "            </optgroup>\n"
-                + "    </select>\n" + "</div>", formInnerHtml.replaceAll("\t", "    ").replaceAll("\r\n", "\n"));
+        assertEquals("<div>\n" + 
+        		"    <p>Please select the source table of the job:</p>\n" + 
+        		"    <select name=\"tableName\">\n" + 
+        		"            <optgroup label=\"information_schema\">\n" + 
+        		"                    <option value=\"information_schema.tables\">tables</option>\n" + 
+        		"                    <option value=\"information_schema.columns\">columns</option>\n" + 
+        		"                    <option value=\"information_schema.relationships\">relationships</option>\n" + 
+        		"            </optgroup>\n" + 
+        		"            <optgroup label=\"my_pojo_ds\">\n" + 
+        		"                    <option value=\"my_pojo_ds.tab\">tab</option>\n" + 
+        		"            </optgroup>\n" + 
+        		"    </select>\n" + 
+        		"</div>", formInnerHtml.replaceAll("\t", "    ").replaceAll("\r\n", "\n"));
 
         EasyMock.verify(context);
     }

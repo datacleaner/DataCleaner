@@ -38,14 +38,14 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             <optgroup label="INFORMATION_SCHEMA">
             </optgroup>
             <optgroup label="PUBLIC">
-                    <option label="CUSTOMERS" value="PUBLIC.CUSTOMERS">
-                    <option label="EMPLOYEES" value="PUBLIC.EMPLOYEES">
-                    <option label="OFFICES" value="PUBLIC.OFFICES">
-                    <option label="ORDERDETAILS" value="PUBLIC.ORDERDETAILS">
-                    <option label="ORDERFACT" value="PUBLIC.ORDERFACT">
-                    <option label="ORDERS" value="PUBLIC.ORDERS">
-                    <option label="PAYMENTS" value="PUBLIC.PAYMENTS">
-                    <option label="PRODUCTS" value="PUBLIC.PRODUCTS">
+                    <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
+                    <option value="PUBLIC.EMPLOYEES">EMPLOYEES</option>
+                    <option value="PUBLIC.OFFICES">OFFICES</option>
+                    <option value="PUBLIC.ORDERDETAILS">ORDERDETAILS</option>
+                    <option value="PUBLIC.ORDERFACT">ORDERFACT</option>
+                    <option value="PUBLIC.ORDERS">ORDERS</option>
+                    <option value="PUBLIC.PAYMENTS">PAYMENTS</option>
+                    <option value="PUBLIC.PRODUCTS">PRODUCTS</option>
             </optgroup>
     </select>
 </div>"""), normalize(page1.getFormInnerHtml()));
@@ -57,7 +57,7 @@ class MoveDataWizardTest extends AssertionsForJUnit {
     assertEquals(normalize("""<div>
     <p>Please select the target datastore to write to:</p>
     <select name="datastoreName">
-                    <option label="orderdb" value="orderdb">
+                    <option value="orderdb">orderdb</option>
     </select>
 </div>"""), normalize(page2.getFormInnerHtml()));
 
@@ -71,14 +71,14 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             <optgroup label="INFORMATION_SCHEMA">
             </optgroup>
             <optgroup label="PUBLIC">
-                    <option label="CUSTOMERS" value="PUBLIC.CUSTOMERS">
-                    <option label="EMPLOYEES" value="PUBLIC.EMPLOYEES">
-                    <option label="OFFICES" value="PUBLIC.OFFICES">
-                    <option label="ORDERDETAILS" value="PUBLIC.ORDERDETAILS">
-                    <option label="ORDERFACT" value="PUBLIC.ORDERFACT">
-                    <option label="ORDERS" value="PUBLIC.ORDERS">
-                    <option label="PAYMENTS" value="PUBLIC.PAYMENTS">
-                    <option label="PRODUCTS" value="PUBLIC.PRODUCTS">
+                    <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
+                    <option value="PUBLIC.EMPLOYEES">EMPLOYEES</option>
+                    <option value="PUBLIC.OFFICES">OFFICES</option>
+                    <option value="PUBLIC.ORDERDETAILS">ORDERDETAILS</option>
+                    <option value="PUBLIC.ORDERFACT">ORDERFACT</option>
+                    <option value="PUBLIC.ORDERS">ORDERS</option>
+                    <option value="PUBLIC.PAYMENTS">PAYMENTS</option>
+                    <option value="PUBLIC.PRODUCTS">PRODUCTS</option>
             </optgroup>
     </select>
 </div>"""), normalize(page3.getFormInnerHtml()));
@@ -108,15 +108,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_0">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -129,15 +129,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_1">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -150,15 +150,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_2">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -171,15 +171,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_3">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -192,15 +192,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_4">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -213,15 +213,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_5">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -234,15 +234,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_6">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -255,15 +255,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_7">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -276,15 +276,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_8">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -297,15 +297,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_9">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -318,15 +318,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_10">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -339,15 +339,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_11">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>
@@ -360,15 +360,15 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
             <td>
                 <select name="mapping_12">
-                    <option label="- none -" value="">
-                        <option label="EMPLOYEENUMBER" value="EMPLOYEENUMBER">
-                        <option label="LASTNAME" value="LASTNAME">
-                        <option label="FIRSTNAME" value="FIRSTNAME">
-                        <option label="EXTENSION" value="EXTENSION">
-                        <option label="EMAIL" value="EMAIL">
-                        <option label="OFFICECODE" value="OFFICECODE">
-                        <option label="REPORTSTO" value="REPORTSTO">
-                        <option label="JOBTITLE" value="JOBTITLE">
+                    <option label="- none -" value=""></option>
+                        <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
+                        <option value="LASTNAME">LASTNAME</option>
+                        <option value="FIRSTNAME">FIRSTNAME</option>
+                        <option value="EXTENSION">EXTENSION</option>
+                        <option value="EMAIL">EMAIL</option>
+                        <option value="OFFICECODE">OFFICECODE</option>
+                        <option value="REPORTSTO">REPORTSTO</option>
+                        <option value="JOBTITLE">JOBTITLE</option>
                 </select>
             </td>
         </tr>

@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map.Entry;
@@ -32,6 +33,11 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class JettyRunner {
 
     public static void main(String[] args) throws Exception {
+        File webappFolder = new File("../../monitor/ui/src/main/webapp");
+        if (!webappFolder.exists()) {
+            throw new IllegalStateException("Does not exist: " + webappFolder);
+        }
+        
         Server server = new Server();
 
         SelectChannelConnector connector = new SelectChannelConnector();
@@ -40,7 +46,7 @@ public class JettyRunner {
 
         WebAppContext webApp = new WebAppContext();
         webApp.setContextPath("/");
-        webApp.setWar("src/main/webapp");
+        webApp.setWar(webappFolder.getCanonicalPath());
         server.setHandler(webApp);
         server.start();
 

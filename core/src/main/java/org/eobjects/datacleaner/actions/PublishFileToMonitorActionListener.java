@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map<?, ?>, Task> implements ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(PublishFileToMonitorActionListener.class);
-    
+
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
     private final HttpClient _httpClient;
@@ -74,13 +74,13 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
     }
 
     protected abstract String getTransferredFilename();
-    
+
     protected abstract String getUploadUrl(MonitorConnection monitorConnection);
-    
+
     protected abstract InputStream getTransferStream();
-    
+
     protected abstract long getExpectedSize();
-    
+
     protected boolean openBrowserWhenDone() {
         return false;
     }
@@ -101,7 +101,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             execute();
         }
     }
-    
+
     @Override
     protected Map<?, ?> doInBackground() throws Exception {
 
@@ -112,7 +112,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
         logger.debug("Upload url: {}", uploadUrl);
 
         final HttpPost request = new HttpPost(uploadUrl);
-        
+
         final long expectedSize = getExpectedSize();
 
         publish(new Task() {
@@ -196,11 +196,11 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             } finally {
                 FileHelper.safeClose(content);
             }
-            
+
             final ObjectMapper objectMapper = new ObjectMapper();
             try {
                 final Map<?, ?> responseMap = objectMapper.readValue(contentString, Map.class);
-                
+
                 return responseMap;
             } catch (Exception e) {
                 logger.warn("Received non-JSON response:\n{}", contentString);
@@ -215,7 +215,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
             return null;
         }
     }
-    
+
     @Override
     protected void process(List<Task> chunks) {
         for (Task task : chunks) {
@@ -242,9 +242,21 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
         if (openBrowserWhenDone() && responseMap != null) {
             final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
+            final String repositoryPath = responseMap.get("repository_path").toString();
             final OpenBrowserAction openBrowserAction = new OpenBrowserAction(monitorConnection.getBaseUrl()
-                    + "/repository" + responseMap.get("repository_path"));
+                    + "/repository" + encodeSpaces(repositoryPath));
             openBrowserAction.actionPerformed(null);
         }
+    }
+
+    /**
+     * Simple replacement function that replaces white spaces with "+" symbols,
+     * making a filename retreivable by URL.
+     * 
+     * @param str
+     * @return
+     */
+    protected static String encodeSpaces(String str) {
+        return str.replaceAll(" ", "\\+");
     }
 }

@@ -75,8 +75,10 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
 
     @Override
     protected String getUploadUrl(MonitorConnection monitorConnection) {
+        final String transferredFilename = getTransferredFilename();
+        final String encodedFilename = encodeSpaces(transferredFilename);
         return monitorConnection.getBaseUrl() + "/repository/" + monitorConnection.getTenantId() + "/results/"
-                + getTransferredFilename();
+                + encodedFilename;
     }
 
     @Override

@@ -57,7 +57,7 @@ public class SelectTableWizardPageTest extends TestCase {
         };
         final String formInnerHtml = page.getFormInnerHtml();
         assertEquals("<div>\n" + "    <p>Please select the source table of the job:</p>\n"
-                + "    <select name=\"tableName\">\n" + "                    <optgroup label=\"information_schema\">\n"
+                + "    <select name=\"tableName\">\n" + "            <optgroup label=\"information_schema\">\n"
                 + "                    <option label=\"tables\" value=\"information_schema.tables\">\n"
                 + "                    <option label=\"columns\" value=\"information_schema.columns\">\n"
                 + "                    <option label=\"relationships\" value=\"information_schema.relationships\">\n"

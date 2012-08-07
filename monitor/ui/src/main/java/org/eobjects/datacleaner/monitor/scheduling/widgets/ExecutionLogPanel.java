@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 import java.util.Date;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.Urls;
@@ -63,7 +64,7 @@ public class ExecutionLogPanel extends Composite {
 
     @UiField
     Anchor resultAnchor;
-    
+
     @UiField
     Label triggeredByLabel;
 
@@ -72,8 +73,12 @@ public class ExecutionLogPanel extends Composite {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        if (executionLog != null) {
-            statusLabel.setText(executionLog.getExecutionStatus().toString());
+        final ExecutionStatus executionStatus;
+        if (executionLog == null) {
+            executionStatus = ExecutionStatus.PENDING;
+        } else {
+            executionStatus = executionLog.getExecutionStatus();
+            statusLabel.setText(executionStatus.toString());
 
             final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
 
@@ -99,13 +104,14 @@ public class ExecutionLogPanel extends Composite {
                 triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
                 break;
             case DEPENDENT:
-                triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName() + "'");
+                triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName()
+                        + "'");
                 break;
             case MANUAL:
                 triggerLabel.setText("Manually triggered");
                 break;
             }
-            
+
             triggeredByLabel.setText(executionLog.getTriggeredBy());
 
             logOutputLabel.setText(executionLog.getLogOutput());
@@ -116,6 +122,12 @@ public class ExecutionLogPanel extends Composite {
             resultAnchor.setHref(url);
             resultAnchor.setTarget("_blank");
             resultAnchor.setText(resultId);
+        }
+
+        if (executionStatus == ExecutionStatus.SUCCESS) {
+            resultAnchor.setVisible(true);
+        } else {
+            resultAnchor.setVisible(false);
         }
     }
 }

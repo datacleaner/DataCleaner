@@ -53,8 +53,8 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
     private final Table _targetTable;
     private final Table _sourceTable;
 
-    public MoveDataMappingPage(AnalysisJobBuilder analysisJobBuilder, Table sourceTable,
-            Datastore targetDatastore, Table targetTable) {
+    public MoveDataMappingPage(AnalysisJobBuilder analysisJobBuilder, Table sourceTable, Datastore targetDatastore,
+            Table targetTable) {
         _analysisJobBuilder = analysisJobBuilder;
         _sourceTable = sourceTable;
         _targetDatastore = targetDatastore;
@@ -173,6 +173,9 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
         update.setConfiguredProperty("Values", values);
         update.setConfiguredProperty("Condition column names", conditionColumns);
         update.setConfiguredProperty("Condition values", conditionValues);
+
+        // set an empty array, or else JaxbJobWriter will fail (Ticket #900)
+        update.setConfiguredProperty("Additional error log values", new InputColumn[0]);
         return update;
     }
 
@@ -198,9 +201,9 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
         tableLookup.setConfiguredProperty("Condition columns", conditionColumns);
         tableLookup.setConfiguredProperty("Condition values", conditionValues);
         tableLookup.setConfiguredProperty("Output columns", outputColumns);
-        
+
         tableLookup.getOutputColumns().get(0).setName("lookup_output");
-        
+
         return tableLookup;
     }
 
@@ -221,6 +224,9 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
         insert.setConfiguredProperty("Table name", _targetTable.getName());
         insert.setConfiguredProperty("Column names", columnNames);
         insert.setConfiguredProperty("Values", values);
+
+        // set an empty array, or else JaxbJobWriter will fail (Ticket #900)
+        insert.setConfiguredProperty("Additional error log values", new InputColumn[0]);
         return insert;
     }
 

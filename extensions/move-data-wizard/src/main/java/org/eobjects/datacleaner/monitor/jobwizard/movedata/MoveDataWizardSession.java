@@ -49,12 +49,12 @@ final class MoveDataWizardSession implements JobWizardSession {
                 return new SelectDatastoreWizardPage(MoveDataWizardSession.this, _analysisJobBuilder, selectedTable);
             }
         };
-
     }
 
     @Override
     public AnalysisJobBuilder createJob() {
-
+        boolean configured = _analysisJobBuilder.isConfigured(true);
+        assert configured;
         return _analysisJobBuilder;
     }
 

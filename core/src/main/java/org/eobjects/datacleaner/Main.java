@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -29,6 +30,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileType;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.eobjects.analyzer.util.ClassLoaderUtils;
 import org.eobjects.datacleaner.bootstrap.Bootstrap;
 import org.eobjects.datacleaner.bootstrap.BootstrapOptions;
 import org.eobjects.datacleaner.bootstrap.DefaultBootstrapOptions;
@@ -43,69 +45,94 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
  */
 public final class Main {
 
-	public static final String VERSION = "3.0-SNAPSHOT";
+    public static final String VERSION = "3.0-SNAPSHOT";
 
-	public static void main(String[] args) {
-		initializeSystemProperties(args);
+    public static void main(String[] args) {
+        initializeSystemProperties(args);
 
-		initializeLogging();
+        initializeLogging();
 
-		final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
-		final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
-		bootstrap.run();
-	}
+        final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
+        final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
+        bootstrap.run();
+    }
 
-	/**
-	 * Initializes system properties based on the arguments passed
-	 * 
-	 * @param args
-	 * @return
-	 */
-	protected static Map<String, String> initializeSystemProperties(String[] args) {
-		Map<String, String> result = new HashMap<String, String>();
-		Pattern pattern = Pattern.compile("-D(.+)=(.+)");
-		for (String arg : args) {
-			Matcher matcher = pattern.matcher(arg);
-			if (matcher.matches()) {
-				String key = matcher.group(1);
-				String value = matcher.group(2);
-				result.put(key, value);
-				System.setProperty(key, value);
-			}
-		}
-		return result;
-	}
+    /**
+     * Initializes system properties based on the arguments passed
+     * 
+     * @param args
+     * @return
+     */
+    protected static Map<String, String> initializeSystemProperties(String[] args) {
+        Map<String, String> result = new HashMap<String, String>();
+        Pattern pattern = Pattern.compile("-D(.+)=(.+)");
+        for (String arg : args) {
+            Matcher matcher = pattern.matcher(arg);
+            if (matcher.matches()) {
+                String key = matcher.group(1);
+                String value = matcher.group(2);
+                result.put(key, value);
+                System.setProperty(key, value);
+            }
+        }
+        return result;
+    }
 
-	/**
-	 * Initializes logging, specifically by looking for log4j.xml or
-	 * log4j.properties file in DataCleaner's home directory.
-	 * 
-	 * @return true if a logging configuration file was found, or false
-	 *         otherwise
-	 */
-	protected static boolean initializeLogging() {
-		final FileObject dataCleanerHome = DataCleanerHome.get();
-		
-		try {
-		    final FileObject xmlConfigurationFile = dataCleanerHome.resolveFile("log4j.xml");
-		    if (xmlConfigurationFile.exists() && xmlConfigurationFile.getType() == FileType.FILE) {
-		        DOMConfigurator.configure(xmlConfigurationFile.getURL());
-		        return true;
-		    }
-		} catch (FileSystemException e) {
-		    // no xml logging found, ignore
-		}
+    /**
+     * Initializes logging, specifically by looking for log4j.xml or
+     * log4j.properties file in DataCleaner's home directory.
+     * 
+     * @return true if a logging configuration file was found, or false
+     *         otherwise
+     */
+    protected static boolean initializeLogging() {
+        if (ClassLoaderUtils.IS_WEB_START) {
+            final URL url = Main.class.getResource("log4j-jnlp.xml");
+            assert url != null;
+            println("Using JNLP log configuration: " + url);
+            DOMConfigurator.configure(url);
+            return true;
+        }
 
-		try {
-		    final FileObject propertiesConfigurationFile = dataCleanerHome.resolveFile("log4j.properties");
-		    if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.getType() == FileType.FILE) {
-		        PropertyConfigurator.configure(propertiesConfigurationFile.getURL());
-		        return true;
-		    }
-		} catch (FileSystemException e) {
+        final FileObject dataCleanerHome = DataCleanerHome.get();
+
+        try {
+            final FileObject xmlConfigurationFile = dataCleanerHome.resolveFile("log4j.xml");
+            if (xmlConfigurationFile.exists() && xmlConfigurationFile.getType() == FileType.FILE) {
+                println("Using custom log configuration: " + xmlConfigurationFile);
+                DOMConfigurator.configure(xmlConfigurationFile.getURL());
+                return true;
+            }
+        } catch (FileSystemException e) {
             // no xml logging found, ignore
         }
 
-		return false;
-	}
+        try {
+            final FileObject propertiesConfigurationFile = dataCleanerHome.resolveFile("log4j.properties");
+            if (propertiesConfigurationFile.exists() && propertiesConfigurationFile.getType() == FileType.FILE) {
+                println("Using custom log configuration: " + propertiesConfigurationFile);
+                PropertyConfigurator.configure(propertiesConfigurationFile.getURL());
+                return true;
+            }
+        } catch (FileSystemException e) {
+            // no xml logging found, ignore
+        }
+
+        // fall back to default log4j.xml file in classpath
+        final URL url = Main.class.getResource("log4j-default.xml");
+        assert url != null;
+        println("Using default log configuration: " + url);
+        DOMConfigurator.configure(url);
+        return false;
+    }
+
+    /**
+     * Prints a message to the console. This mechanism is to be used only before
+     * logging is configured.
+     * 
+     * @param string
+     */
+    private static void println(String string) {
+        System.out.println(string);
+    }
 }

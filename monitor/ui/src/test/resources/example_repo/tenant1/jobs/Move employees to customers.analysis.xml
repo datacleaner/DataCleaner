@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
+	<source>
+		<data-context ref="orderdb" />
+		<columns>
+			<column type="INTEGER" path="PUBLIC.EMPLOYEES.EMPLOYEENUMBER"
+				id="col_0" />
+			<column type="VARCHAR" path="PUBLIC.EMPLOYEES.LASTNAME" id="col_1" />
+			<column type="VARCHAR" path="PUBLIC.EMPLOYEES.FIRSTNAME" id="col_2" />
+			<column type="VARCHAR" path="PUBLIC.EMPLOYEES.JOBTITLE" id="col_3" />
+		</columns>
+	</source>
+	<transformation>
+		<transformer>
+			<descriptor ref="Table lookup" />
+			<properties>
+				<property value="[CUSTOMERNUMBER]" name="Condition columns" />
+				<property value="orderdb" name="Datastore" />
+				<property value="[CUSTOMERNUMBER]" name="Output columns" />
+				<property value="PUBLIC" name="Schema name" />
+				<property value="CUSTOMERS" name="Table name" />
+			</properties>
+			<input ref="col_0" />
+			<output id="col_4" name="lookup_output" />
+		</transformer>
+		<filter>
+			<descriptor ref="Null check" />
+			<properties>
+				<property value="false" name="Consider empty string as null" />
+			</properties>
+			<input ref="col_4" />
+			<outcome id="outcome_0" category="NULL" />
+			<outcome id="outcome_1" category="NOT_NULL" />
+		</filter>
+	</transformation>
+	<analysis>
+		<analyzer requires="outcome_0">
+			<descriptor ref="Insert into table" />
+			<properties>
+				<property value="LARGE" name="Buffer size" />
+				<property
+					value="[CUSTOMERNUMBER,CONTACTLASTNAME,CONTACTFIRSTNAME,CUSTOMERNAME]"
+					name="Column names" />
+				<property value="orderdb" name="Datastore" />
+				<property
+					value="c:\dev\eclipse\workspace\DataCleaner\packaging\webapp\target\.extract\temp"
+					name="Error log file location" />
+				<property value="STOP_JOB" name="How to handle insertion errors?" />
+				<property value="PUBLIC" name="Schema name" />
+				<property value="CUSTOMERS" name="Table name" />
+				<property value="false" name="Truncate table" />
+			</properties>
+			<input name="Values" ref="col_0" />
+			<input name="Values" ref="col_1" />
+			<input name="Values" ref="col_2" />
+			<input name="Values" ref="col_3" />
+		</analyzer>
+		<analyzer requires="outcome_1">
+			<descriptor ref="Update table" />
+			<properties>
+				<property value="LARGE" name="Buffer size" />
+				<property value="[CONTACTLASTNAME,CONTACTFIRSTNAME,CUSTOMERNAME]"
+					name="Column names" />
+				<property value="[CUSTOMERNUMBER]" name="Condition column names" />
+				<property value="orderdb" name="Datastore" />
+				<property
+					value="c:\dev\eclipse\workspace\DataCleaner\packaging\webapp\target\.extract\temp"
+					name="Error log file location" />
+				<property value="STOP_JOB" name="How to handle updation errors?" />
+				<property value="PUBLIC" name="Schema name" />
+				<property value="CUSTOMERS" name="Table name" />
+			</properties>
+			<input name="Condition values" ref="col_0" />
+			<input name="Values" ref="col_1" />
+			<input name="Values" ref="col_2" />
+			<input name="Values" ref="col_3" />
+		</analyzer>
+	</analysis>
+</job>

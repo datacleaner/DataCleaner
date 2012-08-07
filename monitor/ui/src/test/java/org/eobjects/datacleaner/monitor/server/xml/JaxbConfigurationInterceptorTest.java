@@ -27,8 +27,11 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbConfigurationInterceptor;
 import org.eobjects.datacleaner.repository.Repository;
@@ -87,6 +90,24 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         expected = expected.replaceAll("\r\n", "\n").trim();
 
         assertEquals(expected, actual);
+    }
+    
+    public void testGenerateWithLookupInsertUpdate() throws Exception {
+        final TenantContext tenantContext = _contextFactory.getContext("tenant1");
+        final Datastore ds = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore("orderdb");
+        final DatastoreConnection con = ds.openConnection();
+        try {
+            JobContext job = tenantContext.getJob("Move employees to customers");
+            String actual = generationConf(job);
+            
+            String expected = FileHelper.readFileAsString(new File(
+                    "src/test/resources/expected_conf_file_lookup_insert_update.xml"), "UTF-8");
+
+            expected = expected.replaceAll("\r\n", "\n").trim();
+            assertEquals(expected, actual);
+        } finally {
+            con.close();
+        }
     }
 
     private String generationConf(JobContext job) throws Exception {

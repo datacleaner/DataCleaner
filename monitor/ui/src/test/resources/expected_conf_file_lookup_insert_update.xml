@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0">
+    <configuration-metadata>
+        <configuration-name>DataCleaner dq monitor configuration for tenant tenant1</configuration-name>
+        <author>Automatically generated</author>
+        <updated-date>2012-06-26+02:00</updated-date>
+    </configuration-metadata>
+    <datastore-catalog>
+        <pojo-datastore description="DataCleaner example database" name="orderdb">
+            <schema-name>PUBLIC</schema-name>
+            <table>
+                <name>EMPLOYEES</name>
+                <columns>
+                    <column>
+                        <name>EMPLOYEENUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>LASTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>FIRSTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>JOBTITLE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>1002</v>
+                        <v>Murphy</v>
+                        <v>Diane</v>
+                        <v>President</v>
+                    </row>
+                    <row>
+                        <v>1056</v>
+                        <v>Patterson</v>
+                        <v>Mary</v>
+                        <v>VP Sales</v>
+                    </row>
+                    <row>
+                        <v>1076</v>
+                        <v>Firrelli</v>
+                        <v>Jeff</v>
+                        <v>VP Marketing</v>
+                    </row>
+                    <row>
+                        <v>1088</v>
+                        <v>Patterson</v>
+                        <v>William</v>
+                        <v>Sales Manager (JAPAN, APAC)</v>
+                    </row>
+                    <row>
+                        <v>1102</v>
+                        <v>Bondur</v>
+                        <v>Gerard</v>
+                        <v>Sale Manager (EMEA)</v>
+                    </row>
+                    <row>
+                        <v>1143</v>
+                        <v>Bow</v>
+                        <v>Anthony</v>
+                        <v>Sales Manager (NA)</v>
+                    </row>
+                    <row>
+                        <v>1165</v>
+                        <v>Jennings</v>
+                        <v>Leslie</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1166</v>
+                        <v>Thompson</v>
+                        <v>Leslie</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1188</v>
+                        <v>Firrelli</v>
+                        <v>Julie</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1216</v>
+                        <v>Patterson</v>
+                        <v>Steve</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1286</v>
+                        <v>Tseng</v>
+                        <v>Foon Yue</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1323</v>
+                        <v>Vanauf</v>
+                        <v>George</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1337</v>
+                        <v>Bondur</v>
+                        <v>Loui</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1370</v>
+                        <v>Hernandez</v>
+                        <v>Gerard</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1401</v>
+                        <v>Castillo</v>
+                        <v>Pamela</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1501</v>
+                        <v>Bott</v>
+                        <v>Larry</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1504</v>
+                        <v>Jones</v>
+                        <v>Barry</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1611</v>
+                        <v>Fixter</v>
+                        <v>Andy</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1612</v>
+                        <v>Marsh</v>
+                        <v>Peter</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1619</v>
+                        <v>King</v>
+                        <v>Tom</v>
+                        <v>Sales Rep</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>CUSTOMERS</name>
+                <columns>
+                    <column>
+                        <name>CUSTOMERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CONTACTLASTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CONTACTFIRSTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CUSTOMERNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>103</v>
+                        <v>Schmitt</v>
+                        <v>Carine</v>
+                        <v>Atelier graphique</v>
+                    </row>
+                    <row>
+                        <v>112</v>
+                        <v>King</v>
+                        <v>Sue</v>
+                        <v>Signal Gift Stores</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>Ferguson</v>
+                        <v>Peter</v>
+                        <v>Australian Collectors, Co.</v>
+                    </row>
+                    <row>
+                        <v>119</v>
+                        <v>Labrune</v>
+                        <v>Janine</v>
+                        <v>La Rochelle Gifts</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>Bergulfsen</v>
+                        <v>Jonas</v>
+                        <v>Baane Mini Imports</v>
+                    </row>
+                    <row>
+                        <v>124</v>
+                        <v>Nelson</v>
+                        <v>Valarie</v>
+                        <v>Mini Gifts Distributors Ltd.</v>
+                    </row>
+                    <row>
+                        <v>125</v>
+                        <v>Piestrzeniewicz</v>
+                        <v>Zbyszek</v>
+                        <v>Havel &amp; Zbyszek Co</v>
+                    </row>
+                    <row>
+                        <v>128</v>
+                        <v>Keitel</v>
+                        <v>Roland</v>
+                        <v>Blauer See Auto, Co.</v>
+                    </row>
+                    <row>
+                        <v>129</v>
+                        <v>Murphy</v>
+                        <v>Julie</v>
+                        <v>Mini Wheels Co.</v>
+                    </row>
+                    <row>
+                        <v>131</v>
+                        <v>Yu</v>
+                        <v>Kwai</v>
+                        <v>Land of Toys Inc.</v>
+                    </row>
+                    <row>
+                        <v>141</v>
+                        <v>Freyre</v>
+                        <v>Diego</v>
+                        <v>Euro+ Shopping Channel</v>
+                    </row>
+                    <row>
+                        <v>144</v>
+                        <v>Berglund</v>
+                        <v>Christina</v>
+                        <v>Volvo Model Replicas, Co</v>
+                    </row>
+                    <row>
+                        <v>145</v>
+                        <v>Petersen</v>
+                        <v>Jytte</v>
+                        <v>Danish Wholesale Imports</v>
+                    </row>
+                    <row>
+                        <v>146</v>
+                        <v>Saveley</v>
+                        <v>Mary</v>
+                        <v>Saveley &amp; Henriot, Co.</v>
+                    </row>
+                    <row>
+                        <v>148</v>
+                        <v>Natividad</v>
+                        <v>Eric</v>
+                        <v>Dragon Souveniers, Ltd.</v>
+                    </row>
+                    <row>
+                        <v>151</v>
+                        <v>Young</v>
+                        <v>Jeff</v>
+                        <v>Muscle Machine Inc</v>
+                    </row>
+                    <row>
+                        <v>157</v>
+                        <v>Yu</v>
+                        <v>Kyung</v>
+                        <v>Diecast Classics Inc.</v>
+                    </row>
+                    <row>
+                        <v>161</v>
+                        <v>Hirano</v>
+                        <v>Juri</v>
+                        <v>Technics Stores Inc.</v>
+                    </row>
+                    <row>
+                        <v>166</v>
+                        <v>Victorino</v>
+                        <v>Wendy</v>
+                        <v>Handji Gifts&amp; Co</v>
+                    </row>
+                    <row>
+                        <v>167</v>
+                        <v>Oeztan</v>
+                        <v>Veysel</v>
+                        <v>Herkku Gifts</v>
+                    </row>
+                </rows>
+            </table>
+        </pojo-datastore>
+    </datastore-catalog>
+    <reference-data-catalog>
+        <dictionaries>
+            <text-file-dictionary name="vendor whitelist">
+                <filename>reference-data/vendor_dictionary.txt</filename>
+            </text-file-dictionary>
+        </dictionaries>
+        <synonym-catalogs/>
+    </reference-data-catalog>
+    <multithreaded-taskrunner max-threads="10"/>
+    <classpath-scanner>
+        <package recursive="true">org.eobjects</package>
+        <package recursive="true">com.hi</package>
+    </classpath-scanner>
+</configuration>

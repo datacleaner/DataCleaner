@@ -85,9 +85,9 @@ public class SchedulingServiceImplTest extends TestCase {
             // sort to make it deterministic
             Collections.sort(schedules);
 
-            assertEquals(4, schedules.size());
+            assertEquals(5, schedules.size());
             assertEquals(null, schedules.get(1).getCronExpression());
-            ScheduleDefinition randomNumberGenerationSchedule = schedules.get(3);
+            ScheduleDefinition randomNumberGenerationSchedule = schedules.get(4);
             assertEquals("@hourly", randomNumberGenerationSchedule.getCronExpression());
 
             final CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");

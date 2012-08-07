@@ -50,11 +50,11 @@ public class DashboardServiceImplTest extends TestCase {
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
 
         final List<JobIdentifier> jobs = service.getJobs(tenant);
-        assertEquals(4, jobs.size());
+        assertEquals(5, jobs.size());
 
         Collections.sort(jobs);
 
-        final JobIdentifier job = jobs.get(2);
+        final JobIdentifier job = jobs.get(3);
         assertEquals("JobIdentifier[name=product_profiling]", job.toString());
 
         final JobMetrics jobMetrics = service.getJobMetrics(tenant, job);

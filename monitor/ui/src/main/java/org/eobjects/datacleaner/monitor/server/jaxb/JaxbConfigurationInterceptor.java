@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -506,12 +507,12 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
             datastoreType.setSchemaName(schema.getName());
 
-            for (Table table : tables) {
+            for (final Table table : tables) {
                 final Column[] usedColumns;
                 if (columns == null || columns.isEmpty()) {
                     usedColumns = table.getColumns();
                 } else {
-                    usedColumns = MetaModelHelper.getTableColumns(table, columns);
+                    usedColumns = getTableColumns(table, columns);
                 }
 
                 final PojoTableType tableType = createPojoTable(dataContext, table, usedColumns);
@@ -522,6 +523,26 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         }
 
         return datastoreType;
+    }
+
+    /**
+     * TODO: This method resembles
+     * {@link MetaModelHelper#getTableColumns(Table, Iterable)}, but due to a
+     * small equality bug, this will not work. Should work when MetaModel 3.0.2
+     * (or later) is out.
+     * 
+     * @param table
+     * @param columns
+     * @return
+     */
+    private Column[] getTableColumns(final Table table, final Set<Column> columns) {
+        final List<Column> result = new ArrayList<Column>();
+        for (final Column column : columns) {
+            if (table.equals(column.getTable())) {
+                result.add(column);
+            }
+        }
+        return result.toArray(new Column[result.size()]);
     }
 
     private PojoTableType createPojoTable(final DataContext dataContext, final Table table, final Column[] usedColumns) {

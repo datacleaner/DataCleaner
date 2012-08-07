@@ -92,9 +92,6 @@ public class LaunchDataCleanerController {
         final String jnlpHref = "jobs/" + encodedJobName + ".launch.jnlp";
         final String jobUrl = baseUrl + "/jobs/" + encodedJobName + ".analysis.xml";
         final String datastoreName = job.getSourceDatastoreName();
-
-        // TODO: Preferably we would move conf.xml outside the launch-resources
-        // folder for higher protection.
         final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
 
         final InputStream in = getClass().getResourceAsStream("launch-datacleaner-template.xml");

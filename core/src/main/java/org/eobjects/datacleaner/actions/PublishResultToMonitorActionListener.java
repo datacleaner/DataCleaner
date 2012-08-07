@@ -23,12 +23,16 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.guice.JobFile;
+import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.windows.ResultWindow;
 import org.eobjects.metamodel.util.Ref;
 
@@ -39,16 +43,15 @@ import org.eobjects.metamodel.util.Ref;
 public class PublishResultToMonitorActionListener extends PublishFileToMonitorActionListener {
 
     private final Ref<AnalysisResult> _resultRef;
-
-    // TODO: Fix hardcoding.
-    private final String analysisName = "foobar";
+    private final FileObject _jobFilename;
 
     private byte[] _bytes;
 
     public PublishResultToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences,
-            Ref<AnalysisResult> resultRef, HttpClient httpClient) {
+            Ref<AnalysisResult> resultRef, HttpClient httpClient, @Nullable @JobFile FileObject jobFilename) {
         super(windowContext, userPreferences, httpClient);
         _resultRef = resultRef;
+        _jobFilename = jobFilename;
     }
 
     private byte[] getBytes() {
@@ -61,12 +64,19 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
 
     @Override
     protected String getTransferredFilename() {
-        return analysisName;
+        final String jobExtension = FileFilters.ANALYSIS_XML.getExtension();
+
+        String baseName = _jobFilename.getName().getBaseName();
+        if (baseName.endsWith(jobExtension)) {
+            baseName = baseName.substring(0, baseName.length() - jobExtension.length());
+        }
+        return baseName;
     }
 
     @Override
     protected String getUploadUrl(MonitorConnection monitorConnection) {
-        return monitorConnection.getBaseUrl() + "/repository/" + monitorConnection.getTenantId() + "/results/" + analysisName;
+        return monitorConnection.getBaseUrl() + "/repository/" + monitorConnection.getTenantId() + "/results/"
+                + getTransferredFilename();
     }
 
     @Override

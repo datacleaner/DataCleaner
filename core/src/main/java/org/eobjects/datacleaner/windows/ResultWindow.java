@@ -311,9 +311,13 @@ public final class ResultWindow extends AbstractWindow {
 
         final JButton publishButton = new JButton("Publish to dq monitor", imageManager.getImageIcon(
                 IconUtils.MENU_DQ_MONITOR, IconUtils.ICON_SIZE_MEDIUM));
-        publishButton.setOpaque(false);
-        publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(), _userPreferences,
-                resultRef, _httpClient));
+        if (_jobFilename == null) {
+            publishButton.setEnabled(false);
+        } else {
+            publishButton.setOpaque(false);
+            publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
+                    _userPreferences, resultRef, _httpClient, _jobFilename));
+        }
 
         final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);
         layout.setAlignOnBaseline(true);

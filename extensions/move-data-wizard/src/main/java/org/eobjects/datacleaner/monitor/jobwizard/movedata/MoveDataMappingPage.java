@@ -171,7 +171,7 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
         update.setConfiguredProperty("Table name", _targetTable.getName());
         update.setConfiguredProperty("Column names", columnNames);
         update.setConfiguredProperty("Values", values);
-        update.setConfiguredProperty("Condition columns", conditionColumns);
+        update.setConfiguredProperty("Condition column names", conditionColumns);
         update.setConfiguredProperty("Condition values", conditionValues);
         return update;
     }
@@ -179,14 +179,16 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
     private TransformerJobBuilder<TableLookupTransformer> buildLookup(final List<ColumnMapping> idMappings) {
         final InputColumn<?>[] conditionValues = new InputColumn[idMappings.size()];
         final String[] conditionColumns = new String[idMappings.size()];
-        final String[] outputColumns = new String[idMappings.size()];
         for (int i = 0; i < idMappings.size(); i++) {
             final ColumnMapping idMapping = idMappings.get(i);
             conditionValues[i] = _analysisJobBuilder.getSourceColumnByName(idMapping.getSourceColumn()
                     .getQualifiedLabel());
             conditionColumns[i] = idMapping.getTargetColumn().getName();
-            outputColumns[i] = "id_" + (i + 1);
         }
+
+        // use the first (ANY) column as output of the lookup
+        final String[] outputColumns = new String[1];
+        outputColumns[0] = idMappings.get(0).getTargetColumn().getName();
 
         final TransformerJobBuilder<TableLookupTransformer> tableLookup = _analysisJobBuilder
                 .addTransformer(TableLookupTransformer.class);
@@ -196,6 +198,9 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
         tableLookup.setConfiguredProperty("Condition columns", conditionColumns);
         tableLookup.setConfiguredProperty("Condition values", conditionValues);
         tableLookup.setConfiguredProperty("Output columns", outputColumns);
+        
+        tableLookup.getOutputColumns().get(0).setName("lookup_output");
+        
         return tableLookup;
     }
 

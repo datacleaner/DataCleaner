@@ -71,6 +71,7 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("promptText", getPromptText());
         final DatastoreConnection con = _datastore.openConnection();
         try {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();

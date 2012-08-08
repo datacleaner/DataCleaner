@@ -40,5 +40,25 @@
 			<artifactId>DataCleaner-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- GWT servlet server side -->
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>${gwt.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.core.version}</version>
+		</dependency>
 	</dependencies>
 </project>

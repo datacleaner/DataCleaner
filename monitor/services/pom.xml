@@ -40,7 +40,7 @@
 			<artifactId>DataCleaner-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<!-- GWT servlet server side -->
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -48,7 +48,7 @@
 			<version>${gwt.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- Middleware: Spring, Quartz etc. -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -63,11 +63,23 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<version>${spring.security.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring.security.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -79,7 +91,17 @@
 			<artifactId>quartz</artifactId>
 			<version>${quartz.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-annotation_1.1_spec</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+
 		<!-- Servlet+JSP dependencies -->
 		<dependency>
 			<groupId>javax.servlet</groupId>

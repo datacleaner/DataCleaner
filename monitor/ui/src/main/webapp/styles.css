@@ -432,3 +432,67 @@ div.loader {
 	height: 250px;
 	overflow: auto;
 }
+
+/**
+ * Datastores page
+ */
+.datastoreList, .datastoreList li {
+	list-style: none;
+}
+
+.datastoreList .datastore .name {
+	
+}
+
+.datastoreList .datastore .description {
+	margin-left: 20px;
+	margin-right: 20px;
+	color: #333;
+	background-color: #f4f4d3;
+	padding: 4px;
+	border: 1px solid #a0a0a0;
+	border-bottom: none;
+}
+
+.datastoreList .datastore .details {
+	margin-left: 20px;
+	margin-right: 20px;
+	color: #333;
+	padding: 4px;
+	border: 1px solid #a0a0a0;
+	border-top: none;
+}
+
+.datastoreList .datastore .details .label {
+	clear: both;
+	display: block;
+	float: left;
+	width: 100px;
+	display: inline;
+}
+
+.datastoreList .datastore .details .value {
+	display: block;
+	float: left;
+	color: #5594DD;
+}
+
+/**
+ * Repository page
+ */
+.repositoryView {
+	line-height: 22px;
+}
+
+.repositoryView li {
+	margin: 0px;
+	padding: 0px;
+}
+
+.repositoryView .folder {
+	list-style-image: url("images/folder_normal.png");
+}
+
+.repositoryView .file {
+	list-style-image: url("images/job.png");
+}

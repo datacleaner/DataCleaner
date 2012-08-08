@@ -19,21 +19,21 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
-
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * Defines a timeline created by the user. A {@link TimelineDefinition} can
  * either be created ad-hoc or saved in the repository, in which case it will
  * have a {@link TimelineIdentifier}.
  */
-public class TimelineDefinition implements IsSerializable {
+public class TimelineDefinition implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private List<MetricIdentifier> _metrics;
     private JobIdentifier _jobIdentifier;

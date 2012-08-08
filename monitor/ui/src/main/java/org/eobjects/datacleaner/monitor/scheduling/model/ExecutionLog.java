@@ -19,16 +19,17 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * Represents a running (or finished) execution of a job.
  */
-public class ExecutionLog extends ExecutionIdentifier implements IsSerializable {
+public class ExecutionLog extends ExecutionIdentifier implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     // metadata about the job and the trigger
     private ScheduleDefinition _schedule;

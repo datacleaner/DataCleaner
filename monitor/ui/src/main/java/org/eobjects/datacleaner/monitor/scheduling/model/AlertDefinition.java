@@ -19,15 +19,17 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import java.io.Serializable;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
  * Defines the rules of an alert that the user has configured.
  */
-public class AlertDefinition implements IsSerializable {
+public class AlertDefinition implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     private MetricIdentifier _metricIdentifier;
     private String _description;
     private Number _minimumValue;

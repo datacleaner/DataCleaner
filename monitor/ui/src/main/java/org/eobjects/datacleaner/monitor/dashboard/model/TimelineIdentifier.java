@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
 /**
  * Identifying object for a timeline definition saved in the repository.
  */
-public class TimelineIdentifier implements IsSerializable {
+public class TimelineIdentifier implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String _name;
     private String _path;

@@ -29,6 +29,8 @@ import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalA
  */
 public class LatestNumberOfDaysHAxisOption implements HorizontalAxisOption {
 
+    private static final long serialVersionUID = 1L;
+
     public static final int DEFAULT_NUMBER_OF_DAYS = 30;
     
     private int _latestNumberOfDays;

@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
 /**
  * Represents a logical grouping of dashboard widgets
  */
-public class DashboardGroup implements IsSerializable {
+public class DashboardGroup implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String _name;
     private String _description;

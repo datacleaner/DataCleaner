@@ -19,20 +19,21 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.model;
 
+import java.io.Serializable;
 import java.util.Date;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Defines visual options for a timeline chart
  */
-public class ChartOptions implements IsSerializable {
+public class ChartOptions implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Defines options pertaining to the horizontal axis (time dimension) of the
      * chart.
      */
-    public static interface HorizontalAxisOption extends IsSerializable {
+    public static interface HorizontalAxisOption extends Serializable {
         public Date getBeginDate();
 
         public Date getEndDate();
@@ -42,7 +43,7 @@ public class ChartOptions implements IsSerializable {
      * Defines options pertaining to the vertical axis (metric values) of the
      * chart.
      */
-    public static interface VerticalAxisOption extends IsSerializable {
+    public static interface VerticalAxisOption extends Serializable {
         /**
          * Gets the height (in pixels) of the chart
          * 

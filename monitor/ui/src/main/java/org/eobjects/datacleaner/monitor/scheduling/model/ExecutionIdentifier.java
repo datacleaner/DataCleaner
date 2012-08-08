@@ -19,15 +19,16 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
+import java.io.Serializable;
 import java.util.Date;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Represents the basic information about an execution. Can be used as a key for
  * retrieving more information in an {@link ExecutionLog} object.
  */
-public class ExecutionIdentifier implements IsSerializable {
+public class ExecutionIdentifier implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String _resultId;
     private TriggerType _triggerType;

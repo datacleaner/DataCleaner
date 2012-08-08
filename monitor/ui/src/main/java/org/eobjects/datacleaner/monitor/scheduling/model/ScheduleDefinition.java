@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,12 +27,12 @@ import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * Represents information about a scheduled job execution.
  */
-public class ScheduleDefinition implements IsSerializable, Comparable<ScheduleDefinition> {
+public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private TenantIdentifier _tenant;
     private JobIdentifier _job;

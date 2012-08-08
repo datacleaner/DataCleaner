@@ -19,17 +19,18 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Represents the data shown in a timeline. Consists of a list of
  * {@link TimelineDataRow}s.
  */
-public class TimelineData implements IsSerializable {
+public class TimelineData implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    
     private List<TimelineDataRow> _rows;
 
     public List<TimelineDataRow> getRows() {

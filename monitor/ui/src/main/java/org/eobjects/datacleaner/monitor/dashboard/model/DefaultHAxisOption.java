@@ -23,6 +23,8 @@ import java.util.Date;
 
 public class DefaultHAxisOption implements ChartOptions.HorizontalAxisOption {
 
+    private static final long serialVersionUID = 1L;
+
     private Date _endDate;
     private Date _beginDate;
 

@@ -19,15 +19,16 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * A row of metric values in a {@link TimelineData} object.
  */
-public class TimelineDataRow implements IsSerializable, Comparable<TimelineDataRow> {
+public class TimelineDataRow implements Comparable<TimelineDataRow>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Date _date;
     private List<Number> _metricValues;

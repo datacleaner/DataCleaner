@@ -19,17 +19,18 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /**
  * Represents the available metrics of a specific job.
  */
-public class JobMetrics implements IsSerializable {
+public class JobMetrics implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private JobIdentifier _job;
     private List<MetricGroup> _metricGroups;

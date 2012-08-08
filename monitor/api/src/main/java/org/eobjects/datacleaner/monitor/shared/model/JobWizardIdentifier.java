@@ -19,27 +19,27 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
+import java.io.Serializable;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+/**
+ * Identifies a job creation wizard
+ */
+public class JobWizardIdentifier implements Serializable {
 
-public class JobWizardSessionIdentifier implements IsSerializable {
+    private static final long serialVersionUID = 1L;
 
-    private String sessionId;
-    private JobWizardIdentifier wizardIdentifier;
+    private String displayName;
 
-    public JobWizardIdentifier getWizardIdentifier() {
-        return wizardIdentifier;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setWizardIdentifier(JobWizardIdentifier wizardIdentifier) {
-        this.wizardIdentifier = wizardIdentifier;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
+    @Override
+    public String toString() {
+        return "JobWizardIdentifier[" + displayName + "]";
     }
 }

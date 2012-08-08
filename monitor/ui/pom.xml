@@ -17,8 +17,10 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwt.version}</version>
 				<configuration>
-					<runTarget>org.eobjects.datacleaner.monitor.DataCleanerWebMonitor/index.html</runTarget>
-					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
+					<compileSourcesArtifacts>
+						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-api</artifact>
+						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-services</artifact>
+					</compileSourcesArtifacts>
 				</configuration>
 				<executions>
 					<execution>

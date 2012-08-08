@@ -19,36 +19,43 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
 /**
- * Identifier object for a Tenant of the DataCleaner monitor web app.
+ * Identifies a Datastore in the repository.
  */
-public class TenantIdentifier implements IsSerializable {
+public class DatastoreIdentifier implements Serializable, Comparable<JobIdentifier> {
 
-    private String _id;
+    private static final long serialVersionUID = 1L;
 
-    public TenantIdentifier() {
+    private String _name;
+
+    public DatastoreIdentifier() {
         this(null);
     }
 
-    public TenantIdentifier(String id) {
-        _id = id;
+    public DatastoreIdentifier(String name) {
+        _name = name;
     }
 
-    public String getId() {
-        return _id;
+    public String getName() {
+        return _name;
     }
 
-    public void setId(String id) {
-        _id = id;
+    public void setName(String name) {
+        _name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "DatastoreIdentifier[name=" + _name + "]";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((_id == null) ? 0 : _id.hashCode());
+        result = prime * result + ((_name == null) ? 0 : _name.hashCode());
         return result;
     }
 
@@ -60,17 +67,25 @@ public class TenantIdentifier implements IsSerializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TenantIdentifier other = (TenantIdentifier) obj;
-        if (_id == null) {
-            if (other._id != null)
+        DatastoreIdentifier other = (DatastoreIdentifier) obj;
+        if (_name == null) {
+            if (other._name != null)
                 return false;
-        } else if (!_id.equals(other._id))
+        } else if (!_name.equals(other._name))
             return false;
         return true;
     }
 
     @Override
-    public String toString() {
-        return "TenantIdentifier[" + getId() + "]";
+    public int compareTo(JobIdentifier o) {
+        if (o == null) {
+            return 1;
+        }
+        String name = getName();
+        if (name == null) {
+            return -1;
+        }
+        return name.compareTo(o.getName());
     }
+
 }

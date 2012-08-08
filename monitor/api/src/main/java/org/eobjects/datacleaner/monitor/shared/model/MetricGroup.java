@@ -19,15 +19,16 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
+import java.io.Serializable;
 import java.util.List;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Represents a grouping of related {@link MetricIdentifier}s. Typically these
  * are grouped according to the analysis job components that expose the metrics.
  */
-public class MetricGroup implements IsSerializable {
+public class MetricGroup implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String _name;
     private List<MetricIdentifier> _metrics;

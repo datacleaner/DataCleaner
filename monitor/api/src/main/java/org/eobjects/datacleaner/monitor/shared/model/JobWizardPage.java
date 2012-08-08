@@ -19,9 +19,11 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
-public class JobWizardPage implements IsSerializable {
+public class JobWizardPage implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private JobWizardSessionIdentifier sessionIdentifier;
     private String formInnerHtml;

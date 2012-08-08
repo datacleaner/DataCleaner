@@ -19,12 +19,14 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
 /**
  * Identifies a metric of interest.
  */
-public class MetricIdentifier implements IsSerializable {
+public class MetricIdentifier implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String _analyzerDescriptorName;
     private String _analyzerName;

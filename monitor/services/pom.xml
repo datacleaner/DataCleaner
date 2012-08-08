@@ -9,6 +9,26 @@
 	<artifactId>DataCleaner-monitor-services</artifactId>
 	<name>DataCleaner - monitor services</name>
 
+	<build>
+		<plugins>
+			<plugin>
+				<!-- Always create source jar, needed by "ui" (GWT) module -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>

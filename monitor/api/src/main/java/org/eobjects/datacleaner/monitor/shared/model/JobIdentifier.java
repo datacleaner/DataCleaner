@@ -19,21 +19,23 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
 /**
- * Identifies a Datastore in the repository.
+ * Identifies a job in the repository.
  */
-public class DatastoreIdentifier implements IsSerializable, Comparable<JobIdentifier> {
+public class JobIdentifier implements Serializable, Comparable<JobIdentifier> {
+
+    private static final long serialVersionUID = 1L;
 
     private String _name;
 
-    public DatastoreIdentifier() {
-        this(null);
+    public JobIdentifier(String name) {
+        _name = name;
     }
 
-    public DatastoreIdentifier(String name) {
-        _name = name;
+    public JobIdentifier() {
+        this(null);
     }
 
     public String getName() {
@@ -42,11 +44,6 @@ public class DatastoreIdentifier implements IsSerializable, Comparable<JobIdenti
 
     public void setName(String name) {
         _name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "DatastoreIdentifier[name=" + _name + "]";
     }
 
     @Override
@@ -65,7 +62,7 @@ public class DatastoreIdentifier implements IsSerializable, Comparable<JobIdenti
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DatastoreIdentifier other = (DatastoreIdentifier) obj;
+        JobIdentifier other = (JobIdentifier) obj;
         if (_name == null) {
             if (other._name != null)
                 return false;
@@ -75,15 +72,13 @@ public class DatastoreIdentifier implements IsSerializable, Comparable<JobIdenti
     }
 
     @Override
+    public String toString() {
+        return "JobIdentifier[name=" + _name + "]";
+    }
+
+    @Override
     public int compareTo(JobIdentifier o) {
-        if (o == null) {
-            return 1;
-        }
-        String name = getName();
-        if (name == null) {
-            return -1;
-        }
-        return name.compareTo(o.getName());
+        return getName().compareTo(o.getName());
     }
 
 }

@@ -37,6 +37,8 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.util.FileHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +48,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping(value = "/{tenant}/launch-resources")
 public class LaunchResourcesController {
+
+    private static final Logger logger = LoggerFactory.getLogger(LaunchResourcesController.class);
 
     @Autowired
     LaunchArtifactProvider _launchArtifactProvider;
@@ -130,6 +134,9 @@ public class LaunchResourcesController {
 
         try {
             FileHelper.copy(in, out);
+        } catch (IllegalStateException e) {
+            logger.error("Failed to copy JAR file '{}': {}", filename, e.getMessage());
+            throw e;
         } finally {
             FileHelper.safeClose(in);
         }

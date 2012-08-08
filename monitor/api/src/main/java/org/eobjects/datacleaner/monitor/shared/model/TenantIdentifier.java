@@ -19,36 +19,38 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import java.io.Serializable;
 
 /**
- * Identifies a job in the repository.
+ * Identifier object for a Tenant of the DataCleaner monitor web app.
  */
-public class JobIdentifier implements IsSerializable, Comparable<JobIdentifier> {
+public class TenantIdentifier implements Serializable {
 
-    private String _name;
+    private static final long serialVersionUID = 1L;
 
-    public JobIdentifier(String name) {
-        _name = name;
-    }
+    private String _id;
 
-    public JobIdentifier() {
+    public TenantIdentifier() {
         this(null);
     }
 
-    public String getName() {
-        return _name;
+    public TenantIdentifier(String id) {
+        _id = id;
     }
 
-    public void setName(String name) {
-        _name = name;
+    public String getId() {
+        return _id;
+    }
+
+    public void setId(String id) {
+        _id = id;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((_name == null) ? 0 : _name.hashCode());
+        result = prime * result + ((_id == null) ? 0 : _id.hashCode());
         return result;
     }
 
@@ -60,23 +62,17 @@ public class JobIdentifier implements IsSerializable, Comparable<JobIdentifier> 
             return false;
         if (getClass() != obj.getClass())
             return false;
-        JobIdentifier other = (JobIdentifier) obj;
-        if (_name == null) {
-            if (other._name != null)
+        TenantIdentifier other = (TenantIdentifier) obj;
+        if (_id == null) {
+            if (other._id != null)
                 return false;
-        } else if (!_name.equals(other._name))
+        } else if (!_id.equals(other._id))
             return false;
         return true;
     }
 
     @Override
     public String toString() {
-        return "JobIdentifier[name=" + _name + "]";
+        return "TenantIdentifier[" + getId() + "]";
     }
-
-    @Override
-    public int compareTo(JobIdentifier o) {
-        return getName().compareTo(o.getName());
-    }
-
 }

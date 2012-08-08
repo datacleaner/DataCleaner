@@ -134,7 +134,7 @@ public class LaunchResourcesController {
 
         try {
             FileHelper.copy(in, out);
-        } catch (IllegalStateException e) {
+        } catch (Exception e) {
             logger.error("Failed to copy JAR file '{}': {}", filename, e.getMessage());
             throw e;
         } finally {

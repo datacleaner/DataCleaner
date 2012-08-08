@@ -32,7 +32,7 @@ import junit.framework.TestCase;
 public class FileRepositoryTest extends TestCase {
 
     public void testSimpleNavigation() throws Exception {
-        Repository repository = new FileRepository(new File("../ui/src/test/resources/example_folders"));
+        Repository repository = new FileRepository(new File("src/test/resources/example_folders"));
 
         assertEquals("/folder1", repository.getFolders().get(0).getQualifiedPath());
 

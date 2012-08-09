@@ -339,7 +339,8 @@ h3.login_panel_header {
 	background-color: #ddd;
 	border-bottom-right-radius: 10px;
 	padding: 20px;
-	padding-top: 40px; padding-left : 50px;
+	padding-top: 40px;
+	padding-left: 50px;
 	color: #333;
 	text-align: center;
 	width: 300px;
@@ -436,8 +437,13 @@ div.loader {
 /**
  * Datastores page
  */
-.datastoreList, .datastoreList li {
+.datastoreList,.datastoreList li {
 	list-style: none;
+}
+
+.datastoreList .datastore {
+	clear: both;
+	margin-bottom: 40px;
 }
 
 .datastoreList .datastore .name {
@@ -483,6 +489,37 @@ div.loader {
 	max-width: 85%;
 }
 
+button.LaunchButton {
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	background-image: url("images/launch.png") !important;
+	min-width: 30px;
+	height: 26px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 28px;
+	padding-right: 3px;
+	background-color: #F1F1F1;
+	font-size: 0.9em;
+	border: 1px solid #BBB;
+	border-bottom-color: #A0A0A0;
+	border-radius: 3px;
+	margin-left: 0px;
+	margin-right: 2px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+button.LaunchButton:hover {
+	border-color: #939393;
+}
+
+button.LaunchButton:active {
+	border: 1px inset #ccc;
+}
+
 /**
  * Repository page
  */
@@ -497,7 +534,7 @@ div.loader {
 	margin: 0px;
 	margin-bottom: 4px;
 	padding: 0px;
-  	padding-left: 26px;
+	padding-left: 26px;
 	background-repeat: no-repeat;
 	background-position: left top;
 }

@@ -9,64 +9,61 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<ul class="datastoreList">
+		<div class="datastoreList">
 			<ui:repeat var="datastoreName"
 				value="#{tenantContext.configuration.datastoreCatalog.datastoreNames}">
 				<ui:param name="datastore"
 					value="#{tenantContext.configuration.datastoreCatalog.getDatastore(datastoreName)}" />
 
-				<li>
-					<div class="datastore #{jsfHelper.isFileDatastore(datastore) ? 'FileDatastore' : ''} #{datastore.class.simpleName}">
-						<h2 class="name">#{datastore.name}</h2>
+				<div
+					class="datastore #{jsfHelper.isFileDatastore(datastore) ? 'FileDatastore' : ''} #{datastore.class.simpleName}">
 
-						<div class="description">#{datastore.description}</div>
-
-						<div class="details">
-							<div class="datastoreType">
-									<span class="label">Type:</span>
-									<span class="value">#{datastore.class.simpleName}</span>
-								</div>
-							<h:panelGroup
-								rendered="#{jsfHelper.isFileDatastore(datastore)}">
-								<div class="filename">
-									<span class="label">Filename:</span>
-									<span class="value">#{datastore.filename}</span>
-								</div>
-							</h:panelGroup>
-							<h:panelGroup
-								rendered="#{jsfHelper.isHostnameBasedDatastore(datastore)}">
-								<div class="url">
-									<span class="label">Hostname:</span>
-									<span class="value">#{datastore.hostname}</span>
-								</div>
-							</h:panelGroup>
-							<h:panelGroup
-								rendered="#{jsfHelper.isJdbcDatastore(datastore)}">
-								<div class="url">
-									<span class="label">URL:</span>
-									<span class="value">#{datastore.jdbcUrl}#{datastore.datasourceJndiUrl}</span>
-								</div>
-								<div class="url">
-									<span class="label">Username:</span>
-									<span class="value">#{datastore.username}</span>
-								</div>
-							</h:panelGroup>
-							<h:panelGroup
-								rendered="#{jsfHelper.isCompositeDatastore(datastore)}">
-								<div class="url">
-									<span class="label">Child datastores:</span>
-									<span class="value">
-										#{datastore.datastores}
-									</span>
-								</div>
-							</h:panelGroup>
-							
-							<div style="clear: both;"></div>
-						</div>
+					<div style="float: right">
+						<button
+							onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{datastore.name}.analyze.jnlp'"
+							class="LaunchButton">Analyze</button>
 					</div>
-				</li>
+
+					<h2 class="name">#{datastore.name}</h2>
+
+					<div class="description">#{datastore.description}</div>
+
+					<div class="details">
+						<div class="datastoreType">
+							<span class="label">Type:</span> <span class="value">#{datastore.class.simpleName}</span>
+						</div>
+						<h:panelGroup rendered="#{jsfHelper.isFileDatastore(datastore)}">
+							<div class="filename">
+								<span class="label">Filename:</span> <span class="value">#{datastore.filename}</span>
+							</div>
+						</h:panelGroup>
+						<h:panelGroup
+							rendered="#{jsfHelper.isHostnameBasedDatastore(datastore)}">
+							<div class="url">
+								<span class="label">Hostname:</span> <span class="value">#{datastore.hostname}</span>
+							</div>
+						</h:panelGroup>
+						<h:panelGroup rendered="#{jsfHelper.isJdbcDatastore(datastore)}">
+							<div class="url">
+								<span class="label">URL:</span> <span class="value">#{datastore.jdbcUrl}#{datastore.datasourceJndiUrl}</span>
+							</div>
+							<div class="url">
+								<span class="label">Username:</span> <span class="value">#{datastore.username}</span>
+							</div>
+						</h:panelGroup>
+						<h:panelGroup
+							rendered="#{jsfHelper.isCompositeDatastore(datastore)}">
+							<div class="url">
+								<span class="label">Child datastores:</span> <span class="value">
+									#{datastore.datastores} </span>
+							</div>
+						</h:panelGroup>
+
+						<div style="clear: both;"></div>
+					</div>
+				</div>
 			</ui:repeat>
-		</ul>
+		</div>
 	</ui:define>
 
 </ui:composition>

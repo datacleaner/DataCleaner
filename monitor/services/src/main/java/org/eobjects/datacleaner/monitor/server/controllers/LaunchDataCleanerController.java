@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.List;
@@ -48,7 +49,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.launch.jnlp")
 public class LaunchDataCleanerController {
 
     private static final String RESOURCES_FOLDER = "launch-resources/";
@@ -59,21 +59,59 @@ public class LaunchDataCleanerController {
     @Autowired
     TenantContextFactory _contextFactory;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/{tenant}/datastores/{datastore}.analyze.jnlp", method = RequestMethod.GET)
     @ResponseBody
-    public void launchDataCleaner(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
+    public void launchDataCleanerForDatastore(HttpServletRequest request, HttpServletResponse response,
+            @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName)
+            throws IOException {
+        datastoreName = datastoreName.replaceAll("\\+", " ");
 
+        final String scheme = request.getScheme();
+        final String hostname = request.getServerName();
+        final int port = request.getServerPort();
+        final String contextPath = request.getContextPath();
+
+        final String jnlpHref = "datastores/" + datastoreName + ".analyze.jnlp";
+        final String confPath = '/' + RESOURCES_FOLDER + "conf.xml";
+
+        writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
+                datastoreName, confPath);
+    }
+
+    @RequestMapping(value = "/{tenant}/jobs/{job}.launch.jnlp", method = RequestMethod.GET)
+    @ResponseBody
+    public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,
+            @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
         jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
         final JobContext job = context.getJob(jobName);
-
-        response.setContentType("application/x-java-jnlp-file");
-
-        final PrintWriter out = response.getWriter();
+        final String datastoreName = job.getSourceDatastoreName();
 
         final String encodedJobName = URLEncoder.encode(jobName, FileHelper.UTF_8_ENCODING);
+
+        final String scheme = request.getScheme();
+        final String hostname = request.getServerName();
+        final int port = request.getServerPort();
+        final String contextPath = request.getContextPath();
+
+        final String jnlpHref = "jobs/" + encodedJobName + ".launch.jnlp";
+        final String jobPath = "/jobs/" + encodedJobName + ".analysis.xml";
+        final String confPath = '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
+
+        writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, jobPath,
+                datastoreName, confPath);
+    }
+
+    private void writeJnlpResponse(HttpServletRequest request, final String tenant, final HttpServletResponse response,
+            final String scheme, final String hostname, final int port, final String contextPath,
+            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath)
+            throws UnsupportedEncodingException, IOException {
+        response.setContentType("application/x-java-jnlp-file");
+
+        final String baseUrl = createBaseUrl(scheme, hostname, port, contextPath, tenant);
+        final String jobUrl = (jobPath == null ? null : baseUrl + jobPath);
+        final String confUrl = baseUrl + confPath;
 
         final String username;
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -83,16 +121,7 @@ public class LaunchDataCleanerController {
             username = authentication.getName();
         }
 
-        final String scheme = request.getScheme();
-        final String hostname = request.getServerName();
-        final int port = request.getServerPort();
-        final String contextPath = request.getContextPath();
-
-        final String baseUrl = createBaseUrl(scheme, hostname, port, contextPath, tenant);
-        final String jnlpHref = "jobs/" + encodedJobName + ".launch.jnlp";
-        final String jobUrl = baseUrl + "/jobs/" + encodedJobName + ".analysis.xml";
-        final String datastoreName = job.getSourceDatastoreName();
-        final String confUrl = baseUrl + '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
+        final PrintWriter out = response.getWriter();
 
         final InputStream in = getClass().getResourceAsStream("launch-datacleaner-template.xml");
         try {
@@ -100,7 +129,13 @@ public class LaunchDataCleanerController {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
                 line = line.replaceAll("\\$BASE_URL", baseUrl);
                 line = line.replaceAll("\\$JNLP_HREF", jnlpHref);
-                line = line.replaceAll("\\$JOB_URL", jobUrl);
+                if (jobUrl == null
+                        && (line.indexOf("<argument>-job</argument>") != -1 || line.indexOf("$JOB_URL") != -1)) {
+                    // omit the JOB_URL argument lines
+                    line = "";
+                } else {
+                    line = line.replaceAll("\\$JOB_URL", jobUrl);
+                }
                 line = line.replaceAll("\\$DATASTORE_NAME", datastoreName);
                 line = line.replaceAll("\\$CONF_URL", confUrl);
                 line = line.replaceAll("\\$MONITOR_HOSTNAME", hostname);

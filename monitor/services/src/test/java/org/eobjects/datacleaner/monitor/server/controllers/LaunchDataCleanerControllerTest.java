@@ -77,7 +77,7 @@ public class LaunchDataCleanerControllerTest extends TestCase {
         String tenant = "DC";
         String jobName = "my job";
 
-        controller.launchDataCleaner(request, response, tenant, jobName);
+        controller.launchDataCleanerForJob(request, response, tenant, jobName);
 
         String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_launch_file.xml"), "UTF-8");
         expected = expected.replaceAll("\r\n", "\n");

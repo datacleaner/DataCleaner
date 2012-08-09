@@ -3,15 +3,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
-		<jdbc-datastore name="orderdb" description="DataCleaner example database">
-			<url>jdbc:hsqldb:res:orderdb;readonly=true</url>
+		<jdbc-datastore name="orderdb" description="DataCleaner sample database, containing an example data warehouse with orders, customers, products, employees etc.">
+			<url>jdbc:hsqldb:res:orderdb</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
 			<password></password>
 		</jdbc-datastore>
+		
+		<csv-datastore name="Vendor list" description="A growing list of known product vendor names, used as a reference dictionary in the example product profiling job to ensure that vendor names are correctly filled and spelled.">
+			<filename>reference-data/vendor_dictionary.txt</filename>
+		</csv-datastore>
 
 		<pojo-datastore name="Contributors"
-			description="A selection of contributors to DataCleaner">
+			description="A simple example datastore with a (limited) selection of contributors to the DataCleaner open source project.">
 			<schema-name>contributors</schema-name>
 			<table>
 				<name>Companies</name>
@@ -120,9 +124,10 @@
 
 	<reference-data-catalog>
 		<dictionaries>
-			<text-file-dictionary name="vendor whitelist">
-				<filename>reference-data/vendor_dictionary.txt</filename>
-			</text-file-dictionary>
+			<datastore-dictionary name="vendor whitelist">
+				<datastore-name>Vendor list</datastore-name>
+				<column-path>VENDOR</column-path>
+			</datastore-dictionary>
 		</dictionaries>
 		<synonym-catalogs>
 		</synonym-catalogs>

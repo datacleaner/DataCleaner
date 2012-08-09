@@ -1,5 +1,6 @@
 <ui:composition template="template.xhtml"
 	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
@@ -15,7 +16,7 @@
 					value="#{tenantContext.configuration.datastoreCatalog.getDatastore(datastoreName)}" />
 
 				<li>
-					<div class="datastore">
+					<div class="datastore #{jsfHelper.isFileDatastore(datastore) ? 'FileDatastore' : ''} #{datastore.class.simpleName}">
 						<h2 class="name">#{datastore.name}</h2>
 
 						<div class="description">#{datastore.description}</div>

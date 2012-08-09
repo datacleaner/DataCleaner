@@ -8,35 +8,50 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<h2>Jobs:</h2>
-		<div class="repositoryView">
+		<h2>Jobs</h2>
+		<ul class="repositoryView">
 			<ui:repeat var="folder" value="#{tenantContext.jobFolder.folders}">
 				<li class="folder">#{folder.name}</li>
+				<ul class="repositoryView">
+					<ui:repeat var="file" value="#{folder.files}">
+						<li class="file #{file.type}">#{file.name}</li>
+					</ui:repeat>
+				</ul>
 			</ui:repeat>
 			<ui:repeat var="file" value="#{tenantContext.jobFolder.files}">
 				<li class="file #{file.type}">#{file.name}</li>
 			</ui:repeat>
-		</div>
+		</ul>
 
-		<h2>Results:</h2>
-		<div class="repositoryView">
+		<h2>Results</h2>
+		<ul class="repositoryView">
 			<ui:repeat var="folder" value="#{tenantContext.resultFolder.folders}">
 				<li class="folder">#{folder.name}</li>
+				<ul class="repositoryView">
+					<ui:repeat var="file" value="#{folder.files}">
+						<li class="file #{file.type}">#{file.name}</li>
+					</ui:repeat>
+				</ul>
 			</ui:repeat>
 			<ui:repeat var="file" value="#{tenantContext.resultFolder.files}">
 				<li class="file #{file.type}">#{file.name}</li>
 			</ui:repeat>
-		</div>
+		</ul>
 
-		<h2>Timelines:</h2>
-		<div class="repositoryView">
+		<h2>Timelines</h2>
+		<ul class="repositoryView">
 			<ui:repeat var="folder" value="#{tenantContext.timelineFolder.folders}">
 				<li class="folder">#{folder.name}</li>
+				<ul class="repositoryView">
+					<ui:repeat var="file" value="#{folder.files}">
+						<li class="file #{file.type}">#{file.name}</li>
+					</ui:repeat>
+				</ul>
 			</ui:repeat>
 			<ui:repeat var="file" value="#{tenantContext.timelineFolder.files}">
 				<li class="file #{file.type}">#{file.name}</li>
 			</ui:repeat>
-		</div>
+		</ul>
 
 	</ui:define>
 

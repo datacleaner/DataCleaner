@@ -441,12 +441,18 @@ div.loader {
 }
 
 .datastoreList .datastore .name {
-	
+	background-image: url("images/datastore_database.png");
+	background-repeat: no-repeat;
+	background-position: left center;
+	padding-left: 30px;
+}
+
+.datastoreList .datastore.FileDatastore .name {
+	background-image: url("images/datastore_file.png");
 }
 
 .datastoreList .datastore .description {
-	margin-left: 20px;
-	margin-right: 20px;
+	margin-left: 30px;
 	color: #333;
 	background-color: #f4f4d3;
 	padding: 4px;
@@ -455,8 +461,7 @@ div.loader {
 }
 
 .datastoreList .datastore .details {
-	margin-left: 20px;
-	margin-right: 20px;
+	margin-left: 30px;
 	color: #333;
 	padding: 4px;
 	border: 1px solid #a0a0a0;
@@ -467,32 +472,52 @@ div.loader {
 	clear: both;
 	display: block;
 	float: left;
-	width: 100px;
+	width: 14%;
 	display: inline;
 }
 
 .datastoreList .datastore .details .value {
 	display: block;
 	float: left;
-	color: #5594DD;
+	color: black;
+	max-width: 85%;
 }
 
 /**
  * Repository page
  */
 .repositoryView {
+	margin-left: 22px;
+	list-style: none;
 	line-height: 22px;
 }
 
 .repositoryView li {
+	list-style: none;
 	margin: 0px;
+	margin-bottom: 4px;
 	padding: 0px;
+  	padding-left: 26px;
+	background-repeat: no-repeat;
+	background-position: left top;
 }
 
 .repositoryView .folder {
-	list-style-image: url("images/folder_normal.png");
+	background-image: url("images/repository_folder.png");
 }
 
 .repositoryView .file {
-	list-style-image: url("images/job.png");
+	background-image: url("images/repository_file.png");
+}
+
+.repositoryView .file.ANALYSIS_JOB {
+	background-image: url("images/repository_file_job.png");
+}
+
+.repositoryView .file.ANALYSIS_RESULT {
+	background-image: url("images/repository_file_result.png");
+}
+
+.repositoryView .file.TIMELINE_SPEC {
+	background-image: url("images/repository_file_timeline.png");
 }

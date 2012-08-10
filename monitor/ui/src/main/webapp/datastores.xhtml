@@ -16,7 +16,7 @@
 					value="#{tenantContext.configuration.datastoreCatalog.getDatastore(datastoreName)}" />
 
 				<div
-					class="datastore #{jsfHelper.isFileDatastore(datastore) ? 'FileDatastore' : ''} #{datastore.class.simpleName}">
+					class="datastore #{jsfHelper.isFileDatastore(datastore) ? 'FileDatastore' : ''} #{jsfHelper.getSimpleClassName(datastore)}">
 
 					<div style="float: right">
 						<button
@@ -30,7 +30,7 @@
 
 					<div class="details">
 						<div class="datastoreType">
-							<span class="label">Type:</span> <span class="value">#{datastore.class.simpleName}</span>
+							<span class="label">Type:</span> <span class="value">#{jsfHelper.getSimpleClassName(datastore)}</span>
 						</div>
 						<h:panelGroup rendered="#{jsfHelper.isFileDatastore(datastore)}">
 							<div class="filename">

@@ -39,16 +39,20 @@ public class JsfHelper {
     public boolean isJdbcDatastore(Datastore datastore) {
         return datastore instanceof JdbcDatastore;
     }
-    
+
     public boolean isCompositeDatastore(Datastore datastore) {
         return datastore instanceof CompositeDatastore;
     }
-    
+
     public boolean isHostnameBasedDatastore(Datastore datastore) {
         try {
             return datastore.getClass().getDeclaredMethod("getHostname") != null;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String getSimpleClassName(Object object) {
+        return object.getClass().getSimpleName();
     }
 }

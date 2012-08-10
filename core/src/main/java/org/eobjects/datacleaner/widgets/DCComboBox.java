@@ -42,95 +42,101 @@ import javax.swing.JComboBox;
  */
 public class DCComboBox<E> extends JComboBox implements ItemListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static interface Listener<E> {
-		public void onItemSelected(E item);
-	}
+    public static interface Listener<E> {
+        public void onItemSelected(E item);
+    }
 
-	private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
+    private final List<Listener<E>> _listeners = new ArrayList<Listener<E>>();
 
-	public DCComboBox() {
-		this(new DefaultComboBoxModel());
-	}
+    public DCComboBox() {
+        this(new DefaultComboBoxModel());
+    }
 
-	public DCComboBox(Collection<E> items) {
-		this(new DefaultComboBoxModel(items.toArray()));
-	}
+    public DCComboBox(Collection<E> items) {
+        this(new DefaultComboBoxModel(items.toArray()));
+    }
 
-	public DCComboBox(E[] items) {
-		this(new DefaultComboBoxModel(items));
-	}
+    public DCComboBox(E[] items) {
+        this(new DefaultComboBoxModel(items));
+    }
 
-	private DCComboBox(ComboBoxModel model) {
-		super(model);
-		super.addItemListener(this);
-	}
+    private DCComboBox(ComboBoxModel model) {
+        super(model);
+        super.addItemListener(this);
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public E getSelectedItem() {
-		return (E) super.getSelectedItem();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public E getSelectedItem() {
+        return (E) super.getSelectedItem();
+    }
 
-	@Override
-	public void setSelectedItem(Object newItem) {
-		final E previousItem = getSelectedItem();
-		if (previousItem == newItem) {
-			return;
-		}
+    @Override
+    public void setSelectedItem(Object newItem) {
+        final E previousItem = getSelectedItem();
+        if (previousItem == newItem) {
+            return;
+        }
 
-		@SuppressWarnings("unchecked")
-		E item = (E) newItem;
+        @SuppressWarnings("unchecked")
+        E item = (E) newItem;
 
-		// super.setSelectedItem(...) will notify all listeners (through of the
-		// item listener)
-		super.setSelectedItem(item);
-	}
+        // super.setSelectedItem(...) will notify all listeners (through of the
+        // item listener)
+        super.setSelectedItem(item);
+    }
 
-	public void addListener(Listener<E> listener) {
-		_listeners.add(listener);
-	}
+    public void addListener(Listener<E> listener) {
+        _listeners.add(listener);
+    }
 
-	public void removeListener(Listener<E> listener) {
-		_listeners.remove(listener);
-	}
+    public void removeListener(Listener<E> listener) {
+        _listeners.remove(listener);
+    }
 
-	/**
-	 * @deprecated use {@link #addListener(Listener)} instead
-	 */
-	@Deprecated
-	@Override
-	public void addItemListener(ItemListener aListener) {
-		super.addItemListener(aListener);
-	}
+    /**
+     * @deprecated use {@link #addListener(Listener)} instead
+     */
+    @Deprecated
+    @Override
+    public void addItemListener(ItemListener aListener) {
+        super.addItemListener(aListener);
+    }
 
-	/**
-	 * @deprecated use {@link #addListener(Listener)} instead
-	 */
-	@Deprecated
-	@Override
-	public void addActionListener(ActionListener l) {
-		super.addActionListener(l);
-	}
+    /**
+     * @deprecated use {@link #addListener(Listener)} instead
+     */
+    @Deprecated
+    @Override
+    public void addActionListener(ActionListener l) {
+        super.addActionListener(l);
+    }
 
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
-			@SuppressWarnings("unchecked")
-			final E newItem = (E) e.getItem();
-			notifyListeners(newItem);
-		}
-	}
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        final int stateChange = e.getStateChange();
+        if (stateChange == ItemEvent.SELECTED) {
+            @SuppressWarnings("unchecked")
+            final E newItem = (E) e.getItem();
+            notifyListeners(newItem);
+        } else if (stateChange == ItemEvent.DESELECTED && getSelectedItem() == null) {
+            // special case of selecting a "null" value. Even though "null" can
+            // be added to the model of a combo, it does not get a SELECTED
+            // event when chosen.
+            notifyListeners(null);
+        }
+    }
 
-	public void notifyListeners() {
-		notifyListeners(getSelectedItem());
-	}
+    public void notifyListeners() {
+        notifyListeners(getSelectedItem());
+    }
 
-	private void notifyListeners(E item) {
-		// notify listeners
-		for (Listener<E> listener : _listeners) {
-			listener.onItemSelected(item);
-		}
-	}
+    private void notifyListeners(E item) {
+        // notify listeners
+        for (Listener<E> listener : _listeners) {
+            listener.onItemSelected(item);
+        }
+    }
 }

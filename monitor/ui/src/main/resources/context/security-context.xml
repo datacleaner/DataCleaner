@@ -35,7 +35,9 @@
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
 	</http>
-
+	
+	<global-method-security jsr250-annotations="enabled" />
+	
 	<authentication-manager>
 		<authentication-provider>
 			<user-service>

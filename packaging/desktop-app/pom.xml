@@ -78,7 +78,6 @@
 				<!-- Assembly which creates the zip and tar.gz distributables -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.3</version>
 				<configuration>
 					<descriptors>
 						<descriptor>src/main/assembly/all.xml</descriptor>
@@ -238,7 +237,6 @@
 						<!-- Assembly which creates the zip and tar.gz distributables -->
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-assembly-plugin</artifactId>
-						<version>2.2</version>
 						<configuration>
 							<descriptors>
 								<descriptor>src/main/assembly/windows.xml</descriptor>

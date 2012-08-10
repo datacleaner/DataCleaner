@@ -15,10 +15,20 @@
 
 	<modules>
 		<module>desktop-app</module>
-		<module>jnlp</module>
 		<module>webapp</module>
 		<module>documentation</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<!-- Build with "-Pjnlp" to include JNLP creation (includes JAR signing 
+				which takes time) -->
+			<id>jnlp</id>
+			<modules>
+				<module>jnlp</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<build>
 		<plugins>

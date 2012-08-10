@@ -60,6 +60,7 @@ import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
@@ -141,8 +142,13 @@ public final class Bootstrap {
             LookAndFeelManager.getInstance().init();
         }
 
+        // initially use a temporary non-persistent user preferences object.
+        // This is just to have basic settings available for eg. resolving
+        // files.
+        final UserPreferences initialUserPreferences = new UserPreferencesImpl(null);
+
         final String configurationFilePath = arguments.getConfigurationFile();
-        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml", null);
+        final FileObject configurationFile = resolveFile(configurationFilePath, "conf.xml", initialUserPreferences);
 
         Injector injector = Guice.createInjector(new DCModule(DataCleanerHome.get(), configurationFile));
 
@@ -154,7 +160,6 @@ public final class Bootstrap {
         usageLogger.logApplicationStartup();
 
         if (cliMode) {
-
             // run in CLI mode
 
             int exitCode = 0;
@@ -177,14 +182,14 @@ public final class Bootstrap {
             final MacOSManager macOsManager = injector.getInstance(MacOSManager.class);
             macOsManager.init();
 
-            final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
-
             // check for job file
             final String jobFilePath = _options.getCommandLineArguments().getJobFile();
             if (jobFilePath != null) {
-                final FileObject jobFile = resolveFile(jobFilePath, null, userPreferences);
+                final FileObject jobFile = resolveFile(jobFilePath, null, initialUserPreferences);
                 injector = OpenAnalysisJobActionListener.open(jobFile, configuration, injector);
             }
+
+            final UserPreferences userPreferences = injector.getInstance(UserPreferences.class);
 
             analysisJobBuilderWindow = injector.getInstance(AnalysisJobBuilderWindow.class);
 

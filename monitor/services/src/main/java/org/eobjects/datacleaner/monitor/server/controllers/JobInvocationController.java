@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.connection.PojoDatastore;
@@ -35,6 +37,7 @@ import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderAnalysisJob;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
 import org.eobjects.metamodel.pojo.ArrayTableDataProvider;
 import org.eobjects.metamodel.pojo.TableDataProvider;
@@ -83,6 +86,7 @@ public class JobInvocationController {
      */
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
+    @RolesAllowed({ SecurityRoles.SCHEDULE_EDITOR })
     public JobInvocationPayload invokeJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
         logger.info("Request payload: {}", input);

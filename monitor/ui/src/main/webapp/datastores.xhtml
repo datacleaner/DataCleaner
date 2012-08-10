@@ -18,11 +18,13 @@
 				<div
 					class="datastore #{jsfHelper.isFileDatastore(datastore) ? 'FileDatastore' : ''} #{jsfHelper.getSimpleClassName(datastore)}">
 
-					<div style="float: right">
-						<button
-							onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{datastore.name}.analyze.jnlp'"
-							class="LaunchButton">Analyze</button>
-					</div>
+					<h:panelGroup rendered="#{user.hasRole('ROLE_JOB_EDITOR')}">
+						<div style="float: right">
+							<button
+								onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{datastore.name}.analyze.jnlp'"
+								class="LaunchButton">Analyze</button>
+						</div>
+					</h:panelGroup>
 
 					<h2 class="name">#{datastore.name}</h2>
 

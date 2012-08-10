@@ -29,6 +29,7 @@ import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +39,7 @@ import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -59,6 +61,7 @@ public class LaunchDataCleanerController {
     @Autowired
     TenantContextFactory _contextFactory;
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.analyze.jnlp", method = RequestMethod.GET)
     @ResponseBody
     public void launchDataCleanerForDatastore(HttpServletRequest request, HttpServletResponse response,
@@ -78,6 +81,7 @@ public class LaunchDataCleanerController {
                 datastoreName, confPath);
     }
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{tenant}/jobs/{job}.launch.jnlp", method = RequestMethod.GET)
     @ResponseBody
     public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,

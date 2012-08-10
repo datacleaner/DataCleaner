@@ -22,10 +22,13 @@ package org.eobjects.datacleaner.monitor.shared;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -38,15 +41,20 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("jobWizardService")
 public interface JobWizardService extends RemoteService {
 
+    @RolesAllowed(SecurityRoles.VIEWER)
     public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant);
 
+    @RolesAllowed(SecurityRoles.VIEWER)
     public List<JobWizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant);
 
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public JobWizardPage startWizard(TenantIdentifier tenant, JobWizardIdentifier wizard,
             DatastoreIdentifier selectedDatastore, String jobName) throws IllegalArgumentException;
 
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public JobWizardPage nextPage(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters);
 
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Boolean cancelWizard(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier);
 }

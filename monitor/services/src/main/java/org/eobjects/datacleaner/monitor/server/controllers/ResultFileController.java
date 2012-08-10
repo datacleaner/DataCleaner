@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -36,6 +38,7 @@ import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.DashboardServiceImpl;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -61,6 +64,7 @@ public class ResultFileController {
     @Autowired
     TenantContextFactory _contextFactory;
 
+    @RolesAllowed({ SecurityRoles.JOB_EDITOR, SecurityRoles.SCHEDULE_EDITOR })
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, String> uploadAnalysisResult(@PathVariable("tenant") String tenant,
@@ -105,6 +109,7 @@ public class ResultFileController {
         return result;
     }
 
+    @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
     public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
             @RequestParam(value = "tabs", required = false) Boolean tabsParam,

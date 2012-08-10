@@ -24,8 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -43,6 +46,7 @@ public class ResultsFolderController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
+    @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Map<String, String>> resultsFolderHtml(@PathVariable("tenant") String tenant) {
@@ -53,7 +57,8 @@ public class ResultsFolderController {
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
         {
-            final List<RepositoryFile> files = resultsFolder.getFiles(null,FileFilters.ANALYSIS_RESULT_SER.getExtension());
+            final List<RepositoryFile> files = resultsFolder.getFiles(null,
+                    FileFilters.ANALYSIS_RESULT_SER.getExtension());
             for (RepositoryFile file : files) {
                 Map<String, String> map = new HashMap<String, String>();
                 map.put("filename", file.getName());

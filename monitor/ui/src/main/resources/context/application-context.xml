@@ -21,8 +21,7 @@
 	</bean>
 
 	<context:component-scan base-package="org.eobjects.datacleaner.monitor.server" />
-	<context:component-scan
-		base-package="org.eobjects.datacleaner.monitor.configuration" />
+	<context:component-scan base-package="org.eobjects.datacleaner.monitor.configuration" />
 
 	<import resource="classpath:context/repository-context.xml" />
 	<import resource="classpath:context/scheduling-context.xml" />

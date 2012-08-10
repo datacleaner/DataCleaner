@@ -24,9 +24,12 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -50,6 +53,7 @@ public class JobFileController {
     @Autowired
     TenantContextFactory _contextFactory;
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, String> uploadAnalysisJob(@PathVariable("tenant") final String tenant,
@@ -101,6 +105,7 @@ public class JobFileController {
         return result;
     }
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
     public void jobXml(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
             final OutputStream out) {

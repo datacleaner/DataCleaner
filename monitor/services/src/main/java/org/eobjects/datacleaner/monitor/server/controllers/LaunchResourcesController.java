@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +33,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -63,11 +65,13 @@ public class LaunchResourcesController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping("/images/app-icon.png")
     public void fetchAppIcon(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/window/app-icon.png");
     }
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping("/images/splash.png")
     public void fetchSplashImage(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/splash.png");
@@ -85,6 +89,7 @@ public class LaunchResourcesController {
         }
     }
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping("/conf.xml")
     public void fetchConfigurationFile(@PathVariable("tenant") final String tenant,
             @RequestParam(value = "job", required = false) final String jobName, final HttpServletResponse response)
@@ -115,6 +120,7 @@ public class LaunchResourcesController {
         }
     }
 
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{filename:.+}.jar")
     public void fetchJarFile(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("filename") String filename) throws Exception {

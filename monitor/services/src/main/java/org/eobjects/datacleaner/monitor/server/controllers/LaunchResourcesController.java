@@ -65,13 +65,11 @@ public class LaunchResourcesController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
-    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping("/images/app-icon.png")
     public void fetchAppIcon(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/window/app-icon.png");
     }
 
-    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping("/images/splash.png")
     public void fetchSplashImage(HttpServletResponse response) throws IOException {
         fetchImage(response, "images/splash.png");
@@ -120,7 +118,6 @@ public class LaunchResourcesController {
         }
     }
 
-    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{filename:.+}.jar")
     public void fetchJarFile(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("filename") String filename) throws Exception {

@@ -6,15 +6,16 @@
            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
+	<!-- Launch JAR files and images are hosted unprotected -->
+	<http pattern="/repository/*/launch-resources/*.jar" security="none" />
+	<http pattern="/repository/*/launch-resources/images/**" security="none" />
+
 	<!-- HTTP basic authentication for the repository RESTful services -->
 	<http pattern="/repository/**" realm="DataCleaner dq monitor">
 		<anonymous enabled="true" username="anonymous" />
 
-		<!-- Launch resources are hosted unprotected since -->
-		<intercept-url pattern="/repository/*/launch-resources/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
 		<!-- Everything else in the repository is protected -->
-		<intercept-url pattern="/**" access="ROLE_USER" />
+		<intercept-url pattern="/repository/**" access="ROLE_USER" />
 
 		<http-basic />
 	</http>
@@ -35,25 +36,29 @@
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
 	</http>
-	
+
 	<global-method-security jsr250-annotations="enabled" />
-	
+
 	<authentication-manager>
 		<authentication-provider>
 			<user-service>
 				<!-- DC tenant users -->
 				<user name="viewer" password="viewer" authorities="ROLE_USER, ROLE_VIEWER" />
-				<user name="developer" password="developer" authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
-				<user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
+				<user name="developer" password="developer"
+					authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
+				<user name="admin" password="admin"
+					authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
 
 				<!-- CarCo tenant users -->
 				<user name="john" password="john" authorities="ROLE_USER, ROLE_VIEWER" />
-				<user name="jane" password="jane" authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
-				<user name="joe" password="joe" authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
+				<user name="jane" password="jane"
+					authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
+				<user name="joe" password="joe"
+					authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>
-	
+
 	<!-- Uncomment this to have a single-tenant configuration -->
 	<!-- <beans:bean name="tenantResolver" class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver"> -->
 	<!-- <beans:property name="tenantId" value="DC" /> -->

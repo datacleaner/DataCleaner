@@ -64,16 +64,18 @@ div.pageContainer {
 
 div.pageHeader {
 	background-color: #333;
-	height: 114px;
+	height: 51px;
+	background-image: url("images/header_bg.png");
+	background-repeat: repeat-x;
 }
 
 div.pageHeader div.logo {
 	margin-left: auto;
 	margin-right: auto;
 	width: 894px;
-	height: 118px;
+	height: 55px;
 	display: block;
-	background-image: url("images/header.png");
+	background-image: url("images/header_logo.png");
 	background-repeat: no-repeat;
 }
 
@@ -200,7 +202,7 @@ img.scalable_background {
 	list-style-type: none;
 	margin: 0px;
 	padding: 0px;
-	margin-left: 110px;
+	margin-left: 280px;
 }
 
 #nav li {
@@ -212,7 +214,7 @@ img.scalable_background {
 	padding-left: 4px;
 	padding-right: 4px;
 	float: left;
-	background-color: #8E8E8E;
+	background-color: #555;
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
 }
@@ -233,7 +235,7 @@ img.scalable_background {
 }
 
 #nav li.selected a {
-	background-color: white;
+	background-color: transparent;
 	color: black;
 }
 /**
@@ -244,7 +246,7 @@ img.scalable_background {
 	background-image: url("images/user.png");
 	background-position: 5px center;
 	background-repeat: no-repeat;
-	background-color: #8E8E8E;
+	background-color: #555;
 	position: relative;
 	float: right;
 	height: 20px;

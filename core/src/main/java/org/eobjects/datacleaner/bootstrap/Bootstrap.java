@@ -307,6 +307,7 @@ public final class Bootstrap {
                                     // show modal dialog, this will block until
                                     // closed.
                                     dialog.setModal(true);
+                                    dialog.setAlwaysOnTop(true);
                                     dialog.open();
                                     monitorConnection = userPreferences.getMonitorConnection();
                                 }

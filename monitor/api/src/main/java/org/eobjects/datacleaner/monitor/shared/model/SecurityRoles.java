@@ -20,7 +20,7 @@
 package org.eobjects.datacleaner.monitor.shared.model;
 
 /**
- * Enumerates the security roles used in the dq monitor
+ * Enumerates the security roles used in the DC monitor
  */
 public interface SecurityRoles {
 

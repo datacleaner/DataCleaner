@@ -37,7 +37,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
 /**
- * Presents an overview of all scheduled activity in the dq monitor.
+ * Presents an overview of all scheduled activity in the DCmonitor.
  */
 public class SchedulingOverviewPanel extends Composite {
 

@@ -54,7 +54,7 @@ import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.Action;
 
 /**
- * AnalysisListener for DataCleaner dq monitor. Picks up metrics and logging
+ * AnalysisListener for DataCleaner monitor. Picks up metrics and logging
  * statements about the job execution.
  */
 public class MonitorAnalysisListener implements AnalysisListener {

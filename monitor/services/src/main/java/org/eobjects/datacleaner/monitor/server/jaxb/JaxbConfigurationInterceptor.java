@@ -180,7 +180,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
         // set a configuration metadata element with the tenants name
         final ConfigurationMetadataType configurationMetadata = new ConfigurationMetadataType();
-        configurationMetadata.setConfigurationName("DataCleaner dq monitor configuration for tenant " + tenantId);
+        configurationMetadata.setConfigurationName("DataCleaner monitor configuration for tenant " + tenantId);
         configuration.setConfigurationMetadata(configurationMetadata);
         configurationMetadata.setUpdatedDate(createDate(_calRef.get()));
         configurationMetadata.setAuthor("Automatically generated");

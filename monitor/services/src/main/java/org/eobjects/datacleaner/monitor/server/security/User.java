@@ -20,7 +20,7 @@
 package org.eobjects.datacleaner.monitor.server.security;
 
 /**
- * Defines the interface of a dq monitor user.
+ * Defines the interface of a monitor user.
  */
 public interface User {
     

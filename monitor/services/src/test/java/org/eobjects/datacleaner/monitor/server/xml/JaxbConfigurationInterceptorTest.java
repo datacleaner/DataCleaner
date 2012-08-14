@@ -22,8 +22,12 @@ package org.eobjects.datacleaner.monitor.server.xml;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
@@ -112,10 +116,19 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
     private String generationConf(JobContext job) throws Exception {
 
-        final Ref<Date> dateRef = new Ref<Date>() {
+        final Ref<Calendar> dateRef = new Ref<Calendar>() {
             @Override
-            public Date get() {
-                return DateUtils.get(2012, Month.JUNE, 26);
+            public Calendar get() {
+            	Calendar cal = Calendar.getInstance();
+            	cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+            	cal.set(Calendar.YEAR, 2012);
+            	cal.set(Calendar.MONTH, Calendar.JUNE);
+            	cal.set(Calendar.DAY_OF_MONTH, 26);
+            	cal.set(Calendar.HOUR, 0);
+            	cal.set(Calendar.MINUTE, 0);
+            	cal.set(Calendar.SECOND, 0);
+            	cal.set(Calendar.MILLISECOND, 0);
+            	return cal;
             }
         };
 

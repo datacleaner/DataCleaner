@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -114,7 +116,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
     private final JAXBContext _jaxbContext;
     private final ConfigurationFactory _configurationFactory;
-    private final Ref<Date> _dateRef;
+    private final Ref<Calendar> _calRef;
     private final TenantContextFactory _contextFactory;
     private final boolean _replaceDatastores;
 
@@ -126,22 +128,22 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
     public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory,
             boolean replaceDatastores) throws JAXBException {
-        this(contextFactory, configurationFactory, replaceDatastores, new Ref<Date>() {
+        this(contextFactory, configurationFactory, replaceDatastores, new Ref<Calendar>() {
             @Override
-            public Date get() {
-                return new Date();
+            public Calendar get() {
+                return Calendar.getInstance();
             }
         });
     }
 
     public JaxbConfigurationInterceptor(TenantContextFactory contextFactory, ConfigurationFactory configurationFactory,
-            boolean replaceDatastores, Ref<Date> dateRef) throws JAXBException {
+            boolean replaceDatastores, Ref<Calendar> calRef) throws JAXBException {
         _contextFactory = contextFactory;
         _configurationFactory = configurationFactory;
         _replaceDatastores = replaceDatastores;
         _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
                 ObjectFactory.class.getClassLoader());
-        _dateRef = dateRef;
+        _calRef = calRef;
     }
 
     public void intercept(final String tenantId, final JobContext job, final InputStream in, final OutputStream out)
@@ -180,7 +182,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         final ConfigurationMetadataType configurationMetadata = new ConfigurationMetadataType();
         configurationMetadata.setConfigurationName("DataCleaner dq monitor configuration for tenant " + tenantId);
         configuration.setConfigurationMetadata(configurationMetadata);
-        configurationMetadata.setUpdatedDate(createDate(_dateRef.get()));
+        configurationMetadata.setUpdatedDate(createDate(_calRef.get()));
         configurationMetadata.setAuthor("Automatically generated");
 
         final Marshaller marshaller = createMarshaller();
@@ -623,12 +625,13 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         }
     }
 
-    public XMLGregorianCalendar createDate(Date date) {
-        if (date == null) {
+    public XMLGregorianCalendar createDate(Calendar calendar) {
+        if (calendar == null) {
             return null;
         }
         GregorianCalendar cal = new GregorianCalendar();
-        cal.setTime(date);
+        cal.setTime(calendar.getTime());
+        cal.setTimeZone(calendar.getTimeZone());
         return getDatatypeFactory().newXMLGregorianCalendar(cal);
     }
 }

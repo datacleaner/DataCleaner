@@ -3,7 +3,7 @@
     <configuration-metadata>
         <configuration-name>DataCleaner dq monitor configuration for tenant tenant1</configuration-name>
         <author>Automatically generated</author>
-        <updated-date>2012-06-26+02:00</updated-date>
+        <updated-date>2012-06-26Z</updated-date>
     </configuration-metadata>
     <datastore-catalog>
         <pojo-datastore description="DataCleaner example database" name="orderdb">

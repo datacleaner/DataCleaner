@@ -23,11 +23,12 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
 import java.io.Writer;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -38,11 +39,15 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Ref;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Action listener used to fire an export of an analysis result
  */
 public class ExportResultToHtmlActionListener implements ActionListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExportResultToHtmlActionListener.class);
 
     private final Ref<AnalysisResult> _result;
     private final UserPreferences _userPreferences;
@@ -90,15 +95,36 @@ public class ExportResultToHtmlActionListener implements ActionListener {
                 }
             }
 
-            HtmlAnalysisResultWriter resultWriter = new HtmlAnalysisResultWriter();
-            Writer writer = FileHelper.getBufferedWriter(file);
-            try {
-                resultWriter.write(analysisResult, _configuration, writer);
-            } catch (IOException e) {
-                WidgetUtils.showErrorMessage("Error writing result to HTML page", e);
-            } finally {
-                FileHelper.safeClose(writer);
-            }
+            final Writer writer = FileHelper.getBufferedWriter(file);
+
+            // run the actual HTML rendering in the background using a
+            // SwingWorker.
+            new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    final HtmlAnalysisResultWriter resultWriter = new HtmlAnalysisResultWriter();
+                    try {
+                        logger.debug("Begin write to HTML");
+                        resultWriter.write(analysisResult, _configuration, writer);
+                        logger.debug("End write to HTML");
+                    } finally {
+                        FileHelper.safeClose(writer);
+                    }
+                    return null;
+                }
+
+                protected void done() {
+                    try {
+                        get();
+                    } catch (ExecutionException e) {
+                        logger.error("ExecutionException occurred while getting the result of the HTML rendering", e);
+                        final Throwable cause = e.getCause();
+                        WidgetUtils.showErrorMessage("Error writing result to HTML page", cause);
+                    } catch (InterruptedException e) {
+                        logger.warn("Unexpected interrupt in done() method!");
+                    }
+                };
+            }.execute();
         }
     }
 

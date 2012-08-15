@@ -23,8 +23,10 @@ import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.Stroke;
+import java.util.Arrays;
 
 import org.apache.commons.collections15.Transformer;
+import org.eobjects.metamodel.util.HasName;
 
 import edu.uci.ics.jung.visualization.RenderContext;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -40,43 +42,61 @@ import edu.uci.ics.jung.visualization.renderers.DefaultVertexLabelRenderer;
  */
 public class GraphUtils {
 
-	private static final BasicStroke stroke = new BasicStroke(1.2f);
+    private static final BasicStroke stroke = new BasicStroke(1.2f);
 
-	private GraphUtils() {
-		// prevent instantiation
-	}
+    private GraphUtils() {
+        // prevent instantiation
+    }
 
-	public static <V, E> void applyStyles(VisualizationViewer<V, E> visualizationViewer) {
-		final RenderContext<V, E> renderContext = visualizationViewer.getRenderContext();
-		renderContext.setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM, false));
-		renderContext.setEdgeStrokeTransformer(new Transformer<E, Stroke>() {
-			@Override
-			public Stroke transform(E input) {
-				return stroke;
-			}
-		});
-		renderContext.setEdgeDrawPaintTransformer(new Transformer<E, Paint>() {
-			@Override
-			public Paint transform(E input) {
-				return WidgetUtils.BG_COLOR_MEDIUM;
-			}
-		});
-		renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
-		renderContext.setEdgeFontTransformer(new Transformer<E, Font>() {
-			@Override
-			public Font transform(E input) {
-				return WidgetUtils.FONT_SMALL;
-			}
-		});
-		renderContext.setVertexFontTransformer(new Transformer<V, Font>() {
-			@Override
-			public Font transform(V input) {
-				return WidgetUtils.FONT_SMALL;
-			}
-		});
+    public static <V, E> void applyStyles(VisualizationViewer<V, E> visualizationViewer) {
+        final RenderContext<V, E> renderContext = visualizationViewer.getRenderContext();
 
-		final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>();
-		graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
-		visualizationViewer.setGraphMouse(graphMouse);
-	}
+        renderContext.setEdgeLabelRenderer(new DefaultEdgeLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM, false));
+        renderContext.setEdgeStrokeTransformer(new Transformer<E, Stroke>() {
+            @Override
+            public Stroke transform(E input) {
+                return stroke;
+            }
+        });
+        renderContext.setEdgeDrawPaintTransformer(new Transformer<E, Paint>() {
+            @Override
+            public Paint transform(E input) {
+                return WidgetUtils.BG_COLOR_MEDIUM;
+            }
+        });
+        renderContext.setVertexLabelRenderer(new DefaultVertexLabelRenderer(WidgetUtils.BG_COLOR_BLUE_MEDIUM));
+        renderContext.setEdgeFontTransformer(GraphUtils.<E> createFontTransformer());
+        renderContext.setVertexFontTransformer(GraphUtils.<V> createFontTransformer());
+
+        final DefaultModalGraphMouse<Object, Integer> graphMouse = new DefaultModalGraphMouse<Object, Integer>();
+        graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+        visualizationViewer.setGraphMouse(graphMouse);
+    }
+
+    private static <E> Transformer<E, Font> createFontTransformer() {
+        return new Transformer<E, Font>() {
+            @Override
+            public Font transform(E input) {
+                final Font defaultFont = WidgetUtils.FONT_SMALL;
+                if (input == null) {
+                    return defaultFont;
+                }
+
+                final String str;
+                if (input instanceof HasName) {
+                    str = ((HasName) input).getName();
+                } else if (input instanceof Object[]) {
+                    str = Arrays.toString((Object[])input);
+                } else {
+                    str = input.toString();
+                }
+
+                if (defaultFont.canDisplayUpTo(str) == -1) {
+                    return defaultFont;
+                }
+                final Font findCompatibleFont = WidgetUtils.findCompatibleFont(str, WidgetUtils.FONT_SMALL);
+                return findCompatibleFont.deriveFont(WidgetUtils.FONT_SIZE_SMALL);
+            }
+        };
+    }
 }

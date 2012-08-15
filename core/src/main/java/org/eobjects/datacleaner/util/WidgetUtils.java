@@ -64,7 +64,10 @@ import org.slf4j.LoggerFactory;
 
 public final class WidgetUtils {
 
+
     private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
+
+    public static final float FONT_SIZE_SMALL = 11f;
 
     private static final Map<String, Font> fonts;
 
@@ -107,7 +110,7 @@ public final class WidgetUtils {
     public static final Font FONT_HEADER2 = FONT_UBUNTU_PLAIN.deriveFont(13f);
     public static final Font FONT_MONOSPACE = new FontUIResource("Monospaced", Font.PLAIN, 14);
     public static final Font FONT_NORMAL = FONT_OPENSANS_PLAIN.deriveFont(13f);
-    public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(11f);
+    public static final Font FONT_SMALL = FONT_OPENSANS_PLAIN.deriveFont(FONT_SIZE_SMALL);
 
     // the three blue variants in the DataCleaner logo (#5594dd, #235da0,
     // #023a7c)

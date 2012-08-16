@@ -130,6 +130,9 @@ public class MultipleMappedEnumsPropertyWidget<E extends Enum<?>> extends Multip
 		checkBox.addListener(new DCCheckBox.Listener<InputColumn<?>>() {
 			@Override
 			public void onItemSelected(InputColumn<?> item, boolean selected) {
+			    if (isBatchUpdating()) {
+			        return;
+			    }
 				comboBox.setVisible(selected);
 				_mappedEnumsPropertyWidget.fireValueChanged();
 			}

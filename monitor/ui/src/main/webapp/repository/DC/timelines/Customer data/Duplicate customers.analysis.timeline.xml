@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:timeline xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns3:job-name>Customer duplicates</ns3:job-name>
+    <ns3:metrics>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Duplicate detection</ns2:analyzer-descriptor-name>
+            <ns2:metric-descriptor-name>Duplicate groups</ns2:metric-descriptor-name>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Duplicate detection</ns2:analyzer-descriptor-name>
+            <ns2:metric-descriptor-name>Duplicate records</ns2:metric-descriptor-name>
+        </ns2:metric>
+    </ns3:metrics>
+    <ns3:chart-options>
+        <ns3:horizontal-axis>
+            <ns3:fixed-axis/>
+        </ns3:horizontal-axis>
+        <ns3:vertical-axis>
+            <ns3:height>350</ns3:height>
+            <ns3:logarithmic-scale>false</ns3:logarithmic-scale>
+        </ns3:vertical-axis>
+    </ns3:chart-options>
+</ns3:timeline>

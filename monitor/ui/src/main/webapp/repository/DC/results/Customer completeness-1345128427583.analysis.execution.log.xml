@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns4:execution-log xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns4:result-id>Customer completeness-1345128427583</ns4:result-id>
+    <ns4:job-begin-date>2012-08-16T16:47:07.662+02:00</ns4:job-begin-date>
+    <ns4:job-end-date>2012-08-16T16:47:07.998+02:00</ns4:job-end-date>
+    <ns4:execution-status>SUCCESS</ns4:execution-status>
+    <ns4:trigger-type>MANUAL</ns4:trigger-type>
+    <ns4:triggered-by>admin</ns4:triggered-by>
+    <schedule>
+        <alerts/>
+    </schedule>
+    <ns4:log-output>2012-08-16 16:47:07 - Job execution BEGIN
+2012-08-16 16:47:07 - Row processing of table Table[name=CUSTOMERS,type=TABLE,remarks=null] BEGIN
+ - Query: SELECT &quot;CUSTOMERS&quot;.&quot;CONTACTLASTNAME&quot;, &quot;CUSTOMERS&quot;.&quot;CUSTOMERNAME&quot;, &quot;CUSTOMERS&quot;.&quot;POSTALCODE&quot;, &quot;CUSTOMERS&quot;.&quot;CITY&quot;, &quot;CUSTOMERS&quot;.&quot;CUSTOMERNUMBER&quot;, &quot;CUSTOMERS&quot;.&quot;ADDRESSLINE1&quot;, &quot;CUSTOMERS&quot;.&quot;CONTACTFIRSTNAME&quot;, &quot;CUSTOMERS&quot;.&quot;COUNTRY&quot;, &quot;CUSTOMERS&quot;.&quot;PHONE&quot; FROM PUBLIC.&quot;CUSTOMERS&quot;
+ - Expected row count: 133
+2012-08-16 16:47:07 - Row processing of table Table[name=CUSTOMERS,type=TABLE,remarks=null] SUCCESS
+2012-08-16 16:47:07 - Result gathered from analyzer: ImmutableAnalyzerJob[name=null,analyzer=Completeness analyzer]
+2012-08-16 16:47:07 - Job execution SUCCESS</ns4:log-output>
+</ns4:execution-log>

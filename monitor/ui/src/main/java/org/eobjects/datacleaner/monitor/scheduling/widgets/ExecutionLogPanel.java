@@ -80,7 +80,7 @@ public class ExecutionLogPanel extends Composite {
             executionStatus = executionLog.getExecutionStatus();
             statusLabel.setText(executionStatus.toString());
 
-            final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
+            final DateTimeFormat format = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM);
 
             final Date beginDate = executionLog.getJobBeginDate();
             if (beginDate == null) {

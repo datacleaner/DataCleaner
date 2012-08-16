@@ -180,6 +180,20 @@
 			<version>2.2</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Servlet+JSP dependencies -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- JSTL -->
 		<dependency>
@@ -193,6 +207,14 @@
 			<artifactId>standard</artifactId>
 			<scope>runtime</scope>
 			<version>1.1.2</version>
+		</dependency>
+		
+		<!-- Jetty used for dev mode testing -->
+		<dependency>
+			<groupId>org.eclipse.jetty.aggregate</groupId>
+			<artifactId>jetty-all</artifactId>
+			<version>7.2.0.v20101020</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

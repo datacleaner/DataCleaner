@@ -26,24 +26,6 @@
 						<phase>package</phase>
 						<configuration>
 							<path>/DataCleaner-monitor</path>
-							<extraDependencies>
-								<!-- Default database drivers -->
-								<dependency>
-									<groupId>postgresql</groupId>
-									<artifactId>postgresql</artifactId>
-									<version>9.1-901-1.jdbc4</version>
-								</dependency>
-								<dependency>
-									<groupId>mysql</groupId>
-									<artifactId>mysql-connector-java</artifactId>
-									<version>5.1.18</version>
-								</dependency>
-								<dependency>
-									<groupId>net.sourceforge.jtds</groupId>
-									<artifactId>jtds</artifactId>
-									<version>1.2.4</version>
-								</dependency>
-							</extraDependencies>
 						</configuration>
 					</execution>
 				</executions>
@@ -70,7 +52,6 @@
 			<artifactId>DataCleaner-move-data-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
 		
 		<!-- Test dependencies -->
 		<dependency>

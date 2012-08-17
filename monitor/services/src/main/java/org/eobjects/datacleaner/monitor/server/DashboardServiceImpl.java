@@ -177,16 +177,11 @@ public class DashboardServiceImpl implements DashboardService {
 				.getChartOptions().getHorizontalAxisOption();
 
 		for (RepositoryFile resultFile : resultFiles) {
-			AnalysisResult analysisResult = _tenantContextFactory
-					.getContext(tenant.getId()).getResult(resultFile.getName())
-					.getAnalysisResult();
-			Date date = analysisResult.getCreationDate();
+			MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers, resultFile, tenant,	jobIdentifier);
+			Date date = metricValues.getMetricDate();
 			if (isInRange(date, horizontalAxisOption)) {
 				final TimelineDataRow row = new TimelineDataRow(date,
 						resultFile.getQualifiedPath());
-				MetricValues metricValues = _metricValueProducer
-						.getMetricValues(metricIdentifiers, resultFile, tenant,
-								jobIdentifier);
 				final List<Number> metricValuesList = metricValues.getValues();
 				row.setMetricValues(metricValuesList);
 				rows.add(row);

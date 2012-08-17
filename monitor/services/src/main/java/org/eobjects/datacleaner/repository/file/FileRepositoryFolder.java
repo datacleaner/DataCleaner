@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.repository.file;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eobjects.datacleaner.repository.Repository;
@@ -30,6 +31,7 @@ import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.Func;
+import org.eobjects.metamodel.util.ToStringComparator;
 
 /**
  * {@link RepositoryFolder} implementation based on a local directory.
@@ -112,7 +114,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
     @Override
     public List<RepositoryFile> getFiles(final String prefix, final String extension) {
         File[] files = _file.listFiles(createFileFilter(prefix, extension));
-
+		Arrays.sort(files, ToStringComparator.getComparator());
         return CollectionUtils.map(files, new Func<File, RepositoryFile>() {
             @Override
             public RepositoryFile eval(File file) {

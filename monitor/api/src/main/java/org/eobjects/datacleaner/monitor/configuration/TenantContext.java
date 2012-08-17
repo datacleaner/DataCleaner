@@ -36,6 +36,8 @@ public interface TenantContext {
 
     public JobContext getJob(String jobName);
     
+    public ResultContext getResult(String resultFileName);
+    
     public RepositoryFolder getJobFolder();
     
     public RepositoryFolder getResultFolder();

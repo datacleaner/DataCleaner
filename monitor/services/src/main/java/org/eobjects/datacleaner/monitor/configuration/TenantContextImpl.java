@@ -34,118 +34,128 @@ import org.eobjects.metamodel.util.HasNameMapper;
 
 public class TenantContextImpl implements TenantContext {
 
-    private static final String PATH_TIMELINES = "timelines";
-    private static final String PATH_JOBS = "jobs";
-    private static final String PATH_RESULTS = "results";
+	private static final String PATH_TIMELINES = "timelines";
+	private static final String PATH_JOBS = "jobs";
+	private static final String PATH_RESULTS = "results";
     private static final String EXTENSION_JOB = FileFilters.ANALYSIS_XML.getExtension();
 
-    private final String _tenantId;
-    private final Repository _repository;
-    private final ConfigurationCache _configurationCache;
-    private final ConcurrentHashMap<String, JobContext> _jobCache;
+	private final String _tenantId;
+	private final Repository _repository;
+	private final ConfigurationCache _configurationCache;
+	private final ConcurrentHashMap<String, JobContext> _jobCache;
 
-    public TenantContextImpl(String tenantId, Repository repository) {
-        _tenantId = tenantId;
-        _repository = repository;
-        _configurationCache = new ConfigurationCache(tenantId, repository);
-        _jobCache = new ConcurrentHashMap<String, JobContext>();
-    }
+	public TenantContextImpl(String tenantId, Repository repository) {
+		_tenantId = tenantId;
+		_repository = repository;
+		_configurationCache = new ConfigurationCache(tenantId, repository);
+		_jobCache = new ConcurrentHashMap<String, JobContext>();
+	}
 
-    @Override
-    public List<String> getJobNames() {
-        final RepositoryFolder jobsFolder = getJobFolder();
+	@Override
+	public List<String> getJobNames() {
+		final RepositoryFolder jobsFolder = getJobFolder();
         final List<RepositoryFile> files = jobsFolder.getFiles(null, EXTENSION_JOB);
         final List<String> filenames = CollectionUtils.map(files, new HasNameMapper());
         final List<String> jobNames = CollectionUtils.map(filenames, new Func<String, String>() {
-            @Override
-            public String eval(String filename) {
+					@Override
+					public String eval(String filename) {
                 return filename.substring(0, filename.length() - EXTENSION_JOB.length());
-            }
-        });
-        return jobNames;
-    }
+					}
+				});
+		return jobNames;
+	}
 
-    @Override
-    public JobContext getJob(String jobName) throws IllegalArgumentException {
-        if (StringUtils.isNullOrEmpty(jobName)) {
-            return null;
-        }
-        JobContext job = _jobCache.get(jobName);
-        if (job == null) {
-            if (!jobName.endsWith(EXTENSION_JOB)) {
-                jobName = jobName + EXTENSION_JOB;
-            }
+	@Override
+	public JobContext getJob(String jobName) throws IllegalArgumentException {
+		if (StringUtils.isNullOrEmpty(jobName)) {
+			return null;
+		}
+		JobContext job = _jobCache.get(jobName);
+		if (job == null) {
+			if (!jobName.endsWith(EXTENSION_JOB)) {
+				jobName = jobName + EXTENSION_JOB;
+			}
 
-            final RepositoryFile file = getJobFolder().getFile(jobName);
-            if (file == null) {
-                throw new IllegalArgumentException("No such job: " + jobName);
-            }
-            final JobContext newJob = new DefaultJobContext(this, file);
-            job = _jobCache.putIfAbsent(jobName, newJob);
-            if (job == null) {
-                job = newJob;
-            }
-        }
-        return job;
-    }
+			final RepositoryFile file = getJobFolder().getFile(jobName);
+			if (file == null) {
+				throw new IllegalArgumentException("No such job: " + jobName);
+			}
+			final JobContext newJob = new DefaultJobContext(this, file);
+			job = _jobCache.putIfAbsent(jobName, newJob);
+			if (job == null) {
+				job = newJob;
+			}
+		}
+		return job;
+	}
 
-    @Override
-    public AnalyzerBeansConfiguration getConfiguration() {
-        return _configurationCache.getAnalyzerBeansConfiguration();
-    }
+	@Override
+	public AnalyzerBeansConfiguration getConfiguration() {
+		return _configurationCache.getAnalyzerBeansConfiguration();
+	}
 
-    @Override
-    public RepositoryFolder getJobFolder() {
-        final RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + _tenantId);
-        }
-        final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
-        if (jobsFolder == null) {
+	@Override
+	public RepositoryFolder getJobFolder() {
+		final RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
+		if (tenantFolder == null) {
+			throw new IllegalArgumentException("No such tenant: " + _tenantId);
+		}
+		final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
+		if (jobsFolder == null) {
             throw new IllegalArgumentException("No job folder for tenant: " + _tenantId);
-        }
-        return jobsFolder;
-    }
+		}
+		return jobsFolder;
+	}
 
-    @Override
-    public String getTenantId() {
-        return _tenantId;
-    }
+	@Override
+	public String getTenantId() {
+		return _tenantId;
+	}
 
-    @Override
-    public RepositoryFolder getResultFolder() {
-        final RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + _tenantId);
-        }
+	@Override
+	public RepositoryFolder getResultFolder() {
+		final RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
+		if (tenantFolder == null) {
+			throw new IllegalArgumentException("No such tenant: " + _tenantId);
+		}
         final RepositoryFolder resultsFolder = tenantFolder.getFolder(PATH_RESULTS);
-        if (resultsFolder == null) {
+		if (resultsFolder == null) {
             throw new IllegalArgumentException("No result folder for tenant: " + _tenantId);
-        }
-        return resultsFolder;
-    }
+		}
+		return resultsFolder;
+	}
 
-    @Override
-    public RepositoryFolder getTimelineFolder() {
-        final RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + _tenantId);
-        }
+	@Override
+	public RepositoryFolder getTimelineFolder() {
+		final RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
+		if (tenantFolder == null) {
+			throw new IllegalArgumentException("No such tenant: " + _tenantId);
+		}
         final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
-        if (timelinesFolder == null) {
+		if (timelinesFolder == null) {
             throw new IllegalArgumentException("No timeline folder for tenant: " + _tenantId);
-        }
-        return timelinesFolder;
-    }
+		}
+		return timelinesFolder;
+	}
 
-    @Override
-    public boolean containsJob(String jobName) {
-        try {
-            JobContext job = getJob(jobName);
-            return job != null;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
+	@Override
+	public boolean containsJob(String jobName) {
+		try {
+			JobContext job = getJob(jobName);
+			return job != null;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public ResultContext getResult(String resultFileName) {
+		if (StringUtils.isNullOrEmpty(resultFileName)) {
+			return null;
+		}
+		RepositoryFolder resultFolder = getResultFolder();
+		RepositoryFile repositoryFile = resultFolder.getFile(resultFileName);
+		return new DefaultResultContext(repositoryFile);
+	}
 
 }

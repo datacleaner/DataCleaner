@@ -3,7 +3,7 @@
   <groupId>com.hi.easydq</groupId>
   <artifactId>EasyDQ-dedup-DataCleaner</artifactId>
   <versioning>
-    <release>1.5</release>
+    <release>1.11</release>
     <versions>
       <version>1.0</version>
       <version>1.1</version>
@@ -12,7 +12,8 @@
       <version>1.3</version>
       <version>1.4</version>
       <version>1.5</version>
+      <version>1.11</version>
     </versions>
-    <lastUpdated>20120430113503</lastUpdated>
+    <lastUpdated>20120817081408</lastUpdated>
   </versioning>
 </metadata>

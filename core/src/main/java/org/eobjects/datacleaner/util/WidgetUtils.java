@@ -64,7 +64,6 @@ import org.slf4j.LoggerFactory;
 
 public final class WidgetUtils {
 
-
     private static final Logger logger = LoggerFactory.getLogger(WidgetUtils.class);
 
     public static final float FONT_SIZE_SMALL = 11f;
@@ -321,14 +320,16 @@ public final class WidgetUtils {
             final Throwable exception) {
         JXErrorPane.setDefaultLocale(Locale.ENGLISH);
         final JXErrorPane errorPane = new JXErrorPane();
-        final ErrorInfo info = new ErrorInfo(shortMessage, detailedMessage, null, "error", exception,
+        String finalDetailedMessage = detailedMessage == null ? "" : detailedMessage;
+        String finalShortMessage = shortMessage == null ? "" : shortMessage;
+        final ErrorInfo info = new ErrorInfo(finalShortMessage, finalDetailedMessage, null, "error", exception,
                 ErrorLevel.SEVERE, null);
         errorPane.setErrorInfo(info);
         final JDialog dialog = JXErrorPane.createDialog(null, errorPane);
         centerOnScreen(dialog);
         dialog.setLocale(Locale.ENGLISH);
         dialog.setModal(true);
-        dialog.setTitle(shortMessage);
+        dialog.setTitle(finalShortMessage);
         dialog.setVisible(true);
         dialog.toFront();
     }

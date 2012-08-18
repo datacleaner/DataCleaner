@@ -37,12 +37,16 @@ import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Ref;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Action listener used to fire saving a result to an .analysis.result.dat
  * (serialized) file.
  */
 public class SaveAnalysisResultActionListener implements ActionListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(SaveAnalysisResultActionListener.class);
 
     private final Ref<AnalysisResult> _result;
     private final UserPreferences _userPreferences;
@@ -99,6 +103,7 @@ public class SaveAnalysisResultActionListener implements ActionListener {
             try {
                 SerializationUtils.serialize(analysisResult, out);
             } catch (Exception e) {
+                logger.error("Error serializing analysis result: " + analysisResult, e);
                 WidgetUtils.showErrorMessage("Error writing result to file", e);
             } finally {
                 FileHelper.safeClose(out);

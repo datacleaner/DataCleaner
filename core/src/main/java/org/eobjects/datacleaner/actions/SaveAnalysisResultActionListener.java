@@ -23,7 +23,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -35,6 +35,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
+import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Ref;
 
 /**
@@ -94,10 +95,13 @@ public class SaveAnalysisResultActionListener implements ActionListener {
                 analysisResult = new SimpleAnalysisResult(_result.get().getResultMap());
             }
 
+            final OutputStream out = FileHelper.getOutputStream(file);
             try {
-                SerializationUtils.serialize(analysisResult, new FileOutputStream(file));
+                SerializationUtils.serialize(analysisResult, out);
             } catch (Exception e) {
                 WidgetUtils.showErrorMessage("Error writing result to file", e);
+            } finally {
+                FileHelper.safeClose(out);
             }
         }
     }

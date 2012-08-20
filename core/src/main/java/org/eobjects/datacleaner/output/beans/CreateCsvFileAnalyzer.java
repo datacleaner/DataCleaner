@@ -64,14 +64,14 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Override
 	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
-		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
+		final String dsName = ajb.getDatastore().getName();
 		file = new File(userPreferences.getSaveDatastoreDirectory(), "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName
 				+ ".csv");
 	}
 
 	@Override
 	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
-		final String dsName = ajb.getDatastoreConnection().getDatastore().getName();
+		final String dsName = ajb.getDatastore().getName();
 		file = new File(userPreferences.getSaveDatastoreDirectory(), "output-" + dsName + "-" + descriptor.getDisplayName() + ".csv");
 	}
 

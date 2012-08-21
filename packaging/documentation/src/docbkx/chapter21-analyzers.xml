@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="analyzers"
-	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	id="analyzers" xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Analyzers</title>
@@ -25,6 +25,16 @@
 		columns. The configuration panel may also contain additional
 		properties for configuration.
 	</para>
+
+	<section id="completeness_analyzer">
+		<title>Completeness analyzer</title>
+		<para>The completeness analyzer provides a really simple way to check
+			that all required fields in your records have been filled. Think of
+			it like a big "not null" check across multiple fields. In combination
+			with the monitoring application, this analyzer makes it easy to track
+			which records needs additional information.
+		</para>
+	</section>
 
 	<section id="easydq_dedup">
 		<title>EasyDQ matching and deduplication</title>

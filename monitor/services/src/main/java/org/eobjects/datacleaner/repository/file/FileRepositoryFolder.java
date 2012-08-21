@@ -102,19 +102,19 @@ public class FileRepositoryFolder implements RepositoryFolder {
 
         final LatestFileFilter latestFileFilter = new LatestFileFilter(baseFilter);
         _file.listFiles(latestFileFilter);
-        
+
         final File latestFile = latestFileFilter.getLatestFile();
         if (latestFile == null) {
             return null;
         }
-        
+
         return new FileRepositoryFile(this, latestFile);
     }
 
     @Override
     public List<RepositoryFile> getFiles(final String prefix, final String extension) {
         File[] files = _file.listFiles(createFileFilter(prefix, extension));
-		Arrays.sort(files, ToStringComparator.getComparator());
+        Arrays.sort(files, ToStringComparator.getComparator());
         return CollectionUtils.map(files, new Func<File, RepositoryFile>() {
             @Override
             public RepositoryFile eval(File file) {

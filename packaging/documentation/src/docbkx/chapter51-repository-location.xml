@@ -4,32 +4,81 @@
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Repository location</title>
+	<chapterinfo>
+		<abstract>
+			<para>In this chapter we will explain configuration of the repository
+				of the DataCleaner monitor web application. By default the
+				repository and other artifacts are bundled with the application, but
+				for production deployments this configuration may not be sufficient.
+				Learn about how to deploy a repository that is located independently
+				of the web application code.
+			</para>
+		</abstract>
+	</chapterinfo>
 
-	<para>
-		By default DataCleaner monitor web application uses a file-based
-		repository location which is relative to the deployed web archive.
-		This makes it easy to deploy and test-drive, but it might not be the
-		best production deployment choice.
-	</para>
-	<para>
-		To change the repository location, find the file
-		<emphasis>WEB-INF/classes/context/repository-context.xml</emphasis>
-		within the deployed web archive folder. Find the &lt;bean&gt;
-		element
-		which initially looks like this:
-	</para>
-	<programlisting>
-		&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
-		&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="repository"/&gt;
-		&lt;/bean&gt; </programlisting>
-	<para>You can modify the value attribute of the inner
-		&lt;constructor-arg&gt; element to point to a directory location of
-		choice. The location can be absolute or relative to the web archive
-		folder. For instance you might want to use a configuration like this
-		in a unix environment:
-	</para>
-	<programlisting>
-		&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
-		&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/repository"/&gt;
-		&lt;/bean&gt; </programlisting>
+	<section id="repository_location_configuration">
+		<title>Configure repository location</title>
+		<para>
+			By default DataCleaner monitor web application uses a file-based
+			repository location which is relative to the deployed web archive.
+			This makes it easy to deploy and test-drive, but it might not be the
+			best production deployment choice.
+		</para>
+		<para>
+			To change the repository location, find the file
+			<emphasis>WEB-INF/classes/context/repository-context.xml</emphasis>
+			within the deployed web archive folder. Find the &lt;bean&gt;
+			element
+			which initially looks like this:
+		</para>
+		<programlisting>
+			&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="repository"/&gt;
+			&lt;/bean&gt; </programlisting>
+		<para>You can modify the value attribute of the inner
+			&lt;constructor-arg&gt; element to point to a directory location of
+			choice. The location can be absolute or relative to the web archive
+			folder. For instance you might want to use a configuration like this
+			in a unix environment:
+		</para>
+		<programlisting>
+			&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/repository"/&gt;
+			&lt;/bean&gt; </programlisting>
+	</section>
+
+	<section id="signed_jar_files_folder">
+		<title>Providing signed Java WebStart client files</title>
+		<para>
+			The DataCleaner monitor web application features an option to
+			let the user launch the desktop application for editing and testing
+			jobs deployed on the monitor server. To enable this special mode of
+			interoperability, signed JAR files needs to be provided, since
+			otherwise the desktop application will not be allowed to launch by
+			most Java runtime configurations.
+		</para>
+		<para>
+			Signed JAR files can be
+			<link xl:href="http://datacleaner.eobjects.org/downloads">downloaded separately</link>
+			and should be extracted into a directory of choice on the server.
+			Once extracted you need to configure the application with the
+			directory path. Find the file
+			<emphasis>WEB-INF/classes/context/repository-context.xml</emphasis>
+			within the deployed web archive folder. Remove or comment the
+			&lt;bean&gt;
+			element which initially looks like this:
+		</para>
+		<programlisting>
+			&lt;bean&#160;name="launchArtifactProvider"&#160;lazy-init="true"
+			&#160;&#160;&#160;class="org.eobjects.datacleaner.monitor.server.DevModeLaunchArtifactProvider"/&gt;
+		</programlisting>
+		<para>It needs to be replaced with a new &lt;bean&gt; element which
+			will look like this:
+		</para>
+		<programlisting>
+			&lt;bean&#160;name="launchArtifactProvider"&#160;
+			&#160;&#160;&#160;&#160;lazy-init="true"&#160;class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"&gt;
+			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/signed_jars"/&gt;
+			&lt;/bean&gt;</programlisting>
+	</section>
 </chapter>

@@ -4,6 +4,15 @@
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Repository layout</title>
+	<chapterinfo>
+		<abstract>
+			<para>In this chapter we look at the file and folder layout of a
+				DataCleaner monitor repository. Beginning with the multi-tenant
+				layout, and then proceeding with a typical tenant's repository
+				layout.
+			</para>
+		</abstract>
+	</chapterinfo>
 
 	<section id="multi_tenant_layout">
 		<title>Multi-tenant layout</title>

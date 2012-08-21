@@ -43,6 +43,7 @@ import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
@@ -132,7 +133,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
         final StringWriter stringWriter = new StringWriter();
         stringWriter.write("Job execution FAILURE");
         
-        if (throwable != null) {
+        if (throwable != null && !StringUtils.isNullOrEmpty(throwable.getMessage())) {
             stringWriter.write("\n - ");
             stringWriter.write(throwable.getMessage());
             stringWriter.write(" (");

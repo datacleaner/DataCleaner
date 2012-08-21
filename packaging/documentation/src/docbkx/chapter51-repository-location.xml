@@ -5,4 +5,31 @@
 
 	<title>Repository location</title>
 
+	<para>
+		By default DataCleaner monitor web application uses a file-based
+		repository location which is relative to the deployed web archive.
+		This makes it easy to deploy and test-drive, but it might not be the
+		best production deployment choice.
+	</para>
+	<para>
+		To change the repository location, find the file
+		<emphasis>WEB-INF/classes/context/repository-context.xml</emphasis>
+		within the deployed web archive folder. Find the &lt;bean&gt;
+		element
+		which initially looks like this:
+	</para>
+	<programlisting>
+		&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+		&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="repository"/&gt;
+		&lt;/bean&gt; </programlisting>
+	<para>You can modify the value attribute of the inner
+		&lt;constructor-arg&gt; element to point to a directory location of
+		choice. The location can be absolute or relative to the web archive
+		folder. For instance you might want to use a configuration like this
+		in a unix environment:
+	</para>
+	<programlisting>
+		&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+		&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/repository"/&gt;
+		&lt;/bean&gt; </programlisting>
 </chapter>

@@ -5,4 +5,86 @@
 
 	<title>Repository layout</title>
 
+	<section id="multi_tenant_layout">
+		<title>Multi-tenant layout</title>
+		<para>The DataCleaner repository layout, used by the monitoring web
+			application, is built to support multi-tenant deployments. Therefore,
+			on the root level of the repository, folders are located which each
+			represent a tenant's separate home folder. Users from one tenant are
+			not able to access files or folders from other tenant's home folders.
+		</para>
+	</section>
+
+	<section id="tenant_home_layout">
+		<title>Tenant home layout</title>
+		<para>To function properly, each tenant home folder requires these
+			files and folders:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>conf.xml (file)</para>
+			</listitem>
+			<listitem>
+				<para>jobs (folder)</para>
+			</listitem>
+			<listitem>
+				<para>results (folder)</para>
+			</listitem>
+			<listitem>
+				<para>timelines (folder)</para>
+			</listitem>
+		</orderedlist>
+		<para>
+			The
+			<emphasis>conf.xml</emphasis>
+			file represents the DataCleaner configuration for the particular
+			tenant. The file format is the same as described in the
+			<link linkend="chapter_configuration_file">Configuration file</link>
+			chapter. It is recommended to use the supplied example conf.xml file
+			(for the 'DC' tenant) as a template for further customization.
+			Specifically the custom elements for task-runner, descriptor-provider
+			and storage-provider in this template conf.xml file is recommended
+			for optimal performance.
+		</para>
+		<para>
+			The folders are all
+			<emphasis>managed</emphasis>
+			by the DataCleaner monitoring web application, so only in rare cases
+			should you manually interact with them.
+		</para>
+		<para>It is allowed to add more files and folders to the tenant home.
+			These will not be managed by the monitor application, but can be
+			referenced eg. as the filename paths of datastores defined in
+			conf.xml.
+		</para>
+	</section>
+
+	<section id="repository_adding_job">
+		<title>Adding a new job to the repository</title>
+
+		<para>There are multiple ways to add a new job to the repository. The
+			most fail-safe way is to use one of the job wizards, provided by the
+			DataCleaner monitoring web application. These are found on the
+			'Scheduling' page, using the "New job" button.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_02_new_job.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+
+		<para>
+			Alternatively, you can create the job using the desktop application.
+			In that case, make sure that the
+			<emphasis>name of any involved datastore in the desktop application
+				matches the name of the datastore in the repository!
+			</emphasis>
+			If so, you can safely drop the .analysis.xml job file in the
+			<emphasis>jobs</emphasis>
+			folder on the repository. It will be immediately available in the web
+			UI of the monitor application.
+		</para>
+	</section>
+
 </chapter>

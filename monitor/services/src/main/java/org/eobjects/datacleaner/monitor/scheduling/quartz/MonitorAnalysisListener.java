@@ -131,6 +131,14 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
         final StringWriter stringWriter = new StringWriter();
         stringWriter.write("Job execution FAILURE");
+        
+        if (throwable != null) {
+            stringWriter.write("\n - ");
+            stringWriter.write(throwable.getMessage());
+            stringWriter.write(" (");
+            stringWriter.write(throwable.getClass().getSimpleName());
+            stringWriter.write(")");
+        }
 
         if (componentJob != null) {
             stringWriter.write('\n');

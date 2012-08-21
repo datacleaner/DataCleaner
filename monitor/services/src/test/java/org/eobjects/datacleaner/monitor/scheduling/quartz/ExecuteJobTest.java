@@ -56,13 +56,15 @@ public class ExecuteJobTest extends TestCase {
 
             ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
             String logOutput = log.getLogOutput();
+            assertTrue(logOutput, logOutput.indexOf("- No such datastore: orderdb (NoSuchDatastoreException)") != -1);
             assertTrue(
                     logOutput,
                     logOutput.indexOf("org.eobjects.analyzer.job.NoSuchDatastoreException: No such datastore: orderdb") != -1);
         } finally {
-            RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId + ".analysis.execution.log.xml");
+            RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId
+                    + ".analysis.execution.log.xml");
             assertNotNull(logNode);
-            
+
             // cleanup
             logNode.delete();
         }

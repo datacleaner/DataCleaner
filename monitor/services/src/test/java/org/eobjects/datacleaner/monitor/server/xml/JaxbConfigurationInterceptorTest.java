@@ -22,11 +22,8 @@ package org.eobjects.datacleaner.monitor.server.xml;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
@@ -41,9 +38,7 @@ import org.eobjects.datacleaner.monitor.server.jaxb.JaxbConfigurationInterceptor
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
-import org.eobjects.metamodel.util.DateUtils;
 import org.eobjects.metamodel.util.FileHelper;
-import org.eobjects.metamodel.util.Month;
 import org.eobjects.metamodel.util.Ref;
 
 public class JaxbConfigurationInterceptorTest extends TestCase {

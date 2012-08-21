@@ -21,10 +21,12 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -89,6 +91,12 @@ public class ExecuteJob extends AbstractQuartzJob {
             final JobContext job = context.getJob(jobName);
 
             final AnalysisJob analysisJob = job.getAnalysisJob();
+
+            if (analysisJob.getDatastore() instanceof PlaceholderDatastore) {
+                // the job was materialized using a placeholder datastore - ie.
+                // the real datastore was not found!
+                throw new NoSuchDatastoreException(job.getSourceDatastoreName());
+            }
 
             final AnalyzerBeansConfiguration configuration = context.getConfiguration();
             final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, analysisListener);

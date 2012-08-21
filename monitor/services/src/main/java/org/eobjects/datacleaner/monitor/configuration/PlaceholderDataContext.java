@@ -47,7 +47,18 @@ public class PlaceholderDataContext extends AbstractDataContext {
     private final ImmutableSchema _schema;
 
     public PlaceholderDataContext(List<String> sourceColumnPaths, List<ColumnType> sourceColumnTypes) {
-        final String prefix = StringUtils.getLongestCommonToken(sourceColumnPaths, '.');
+        final String prefix;
+        if (sourceColumnPaths.size() == 1) {
+            final String columnPath = sourceColumnPaths.get(0);
+            final int lastIndexOfDot = columnPath.lastIndexOf(".");
+            if (lastIndexOfDot == -1) {
+                prefix = columnPath;
+            } else {
+                prefix = columnPath.substring(0, lastIndexOfDot);
+            }
+        } else {
+            prefix = StringUtils.getLongestCommonToken(sourceColumnPaths, '.');
+        }
 
         final int schemaAndTableDelim = prefix.indexOf('.');
         final String schemaName;

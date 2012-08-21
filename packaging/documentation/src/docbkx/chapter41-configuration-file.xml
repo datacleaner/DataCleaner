@@ -16,20 +16,20 @@
 			configuration and configure the environment of DataCleaner.
 		</para>
 		<para>
+			In the DataCleaner monitoring web application, the conf.xml file
+			is the only point of configuration. The file is located in the root
+			of each tenant's repository folder. For more information, refer to the repository chapter.
+		</para>
+		<para>
 			Most of the elements in the configuration file is also editable
 			within the Desktop application. It is however important to note that
 			changes made in the GUI are not saved directly to the configuration
 			file, but to the
 			<emphasis>userpreferences.dat</emphasis>
-			file. You can consider the
-			relationship between the two files this
-			way: The configuration file
-			defines a static, unmodifyable prototype
-			of the applications
-			environment. All
-			customizations made to this
-			prototype in the Desktop application is saved in
-			the
+			file. You can consider the relationship between the two files this
+			way: The configuration file defines a static, unmodifyable prototype
+			of the applications environment. All customizations made to this
+			prototype in the Desktop application is saved in the
 			userpreferences.dat file.
 		</para>
 	</chapterinfo>

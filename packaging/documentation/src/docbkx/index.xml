@@ -56,23 +56,40 @@
 		<xi:include href="chapter42-job-files.xml" />
 		<xi:include href="chapter43-logging.xml" />
 	</part>
+	
+	<part>
+		<partinfo>
+			<title>DataCleaner monitor repository</title>
+		</partinfo>
+		<xi:include href="chapter51-repository-location.xml" />
+		<xi:include href="chapter52-repository-layout.xml" />
+	</part>
+	
+	<part>
+		<partinfo>
+			<title>DataCleaner monitor web services</title>
+		</partinfo>
+		<xi:include href="chapter61-job-triggering.xml" />
+		<xi:include href="chapter62-repository-navigation.xml" />
+		<xi:include href="chapter63-atomic-transformations.xml" />
+	</part>
 
 	<part>
 		<partinfo>
 			<title>Invoking DataCleaner jobs from the command-line</title>
 		</partinfo>
-		<xi:include href="chapter51-command-line-interface.xml" />
-		<xi:include href="chapter52-scheduling-jobs.xml" />
+		<xi:include href="chapter71-command-line-interface.xml" />
+		<xi:include href="chapter72-scheduling-jobs.xml" />
 	</part>
 
 	<part>
 		<partinfo>
 			<title>Developer's guide</title>
 		</partinfo>
-		<xi:include href="chapter61-architecture.xml" />
-		<xi:include href="chapter62-developer-resources.xml" />
-		<xi:include href="chapter63-extension-packaging.xml" />
-		<xi:include href="chapter64-embedding-datacleaner.xml" />
+		<xi:include href="chapter81-architecture.xml" />
+		<xi:include href="chapter82-developer-resources.xml" />
+		<xi:include href="chapter83-extension-packaging.xml" />
+		<xi:include href="chapter84-embedding-datacleaner.xml" />
 	</part>
 
 </book>

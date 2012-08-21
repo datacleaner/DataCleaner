@@ -8,7 +8,8 @@
 	<chapterinfo>
 		<abstract>
 			<para>In this chapter we will try to define how we see the concepts
-				and terms surrounding the environment(s) around DataCleaner.</para>
+				and terms surrounding the environment(s) around DataCleaner.
+			</para>
 			<para>Although these terms have no strict definitions, you can use
 				this chapter as a guide, at least for the scope of how to use and
 				what to expect from DataCleaner in relation to the described topics.
@@ -16,7 +17,8 @@
 			<para>As a lot of the statements in this chapter are in deed
 				subjective or based upon personal experience, we encourage everyone
 				to provide their feedback and to contribute corrections/improvements
-				to it.</para>
+				to it.
+			</para>
 		</abstract>
 	</chapterinfo>
 
@@ -26,10 +28,12 @@
 			quality of the data used for a particular purpose. Often times the DQ
 			term is applied to the quality of data used in business decisions but
 			it may also refer to the quality of data used in research, campaigns,
-			processes and more.</para>
+			processes and more.
+		</para>
 		<para>Working with Data Quality typically varies a lot from project to
 			project, just as the issues in the quality of data vary a lot.
-			Examples of data quality issues include:</para>
+			Examples of data quality issues include:
+		</para>
 		<orderedlist>
 			<listitem>
 				Completeness of data
@@ -46,7 +50,8 @@
 		</orderedlist>
 		<para>A less technical definition of high-quality data is, that data
 			are of high quality "if they are fit for their intended uses in
-			operations, decision making and planning" (J. M. Juran).</para>
+			operations, decision making and planning" (J. M. Juran).
+		</para>
 	</section>
 
 	<section id="what_is_mdm">
@@ -54,18 +59,21 @@
 		<para>Master Data Management (MDM) is a very broad term and is seen
 			materialized in a variety of ways. For the scope of this document it
 			serves more as a context of data quality than an activity that we
-			actually target per-se.</para>
+			actually target per-se.
+		</para>
 		<para>The overall goals of MDM is to manage the important data of an
 			organization. By "master data" we refer to "a single version of the
 			truth", ie. not the data of a particular system, but for example all
-			the customer data of a company.</para>
+			the customer data of a company.
+		</para>
 		<para>Obviously one of the very important issues to handle in MDM is
 			the quality of data. If you simply gather eg. "all customer data"
 			from all systems in an organization, you will most likely see a lot
 			of data quality issues. There will be a lot of duplicate entries,
 			there will be variances in the way that customer data is filled out,
 			there will be different identifiers and even different levels of
-			granularity for defining "what is a customer?".</para>
+			granularity for defining "what is a customer?".
+		</para>
 	</section>
 
 	<section id="what_is_data_quality_analysis">
@@ -75,17 +83,20 @@
 			includes both technical and non-technical elements. For example, to
 			do a good DQA you will probably need to talk to users, business
 			people, partner organizations and maybe customers. This is needed to
-			asses what the goal of the DQA should be.</para>
+			asses what the goal of the DQA should be.
+		</para>
 		<para>From a technical viewpoint the main task in a DQA is the data
 			profiling activity, which will help you discover and measure the
-			current state of affairs in the data.</para>
+			current state of affairs in the data.
+		</para>
 	</section>
 
 	<section id="what_is_data_profiling">
 		<title>What is Data Profiling?</title>
 		<para>Data Profiling is the activity of investigating a datastore to
 			create a 'profile' of it. With a profile of your datastore you will
-			be a lot better equipped to actually improve it.</para>
+			be a lot better equipped to actually improve it.
+		</para>
 		<para>
 			The way you do profiling often depends on whether you already
 			have
@@ -105,17 +116,26 @@
 	<section id="what_is_data_quality_monitoring">
 		<title>What is Data Quality Monitoring?</title>
 		<para>We've argued that Data Profiling is ideally an explorative
-			activity. Data Quality Monitoring isn't! The measurements that you do
-			when profiling often times needs to be continuously checked so that
-			your improvements are enforced through time. This is what Data
-			Quality Monitoring is about.</para>
+			activity. Data Quality Monitoring typically isn't! The measurements
+			that you do
+			when profiling often times needs to be continuously
+			checked so that
+			your improvements are enforced through time. This is
+			what Data
+			Quality Monitoring is about.
+		</para>
+		<para>As of version 3, DataCleaner now also includes a monitoring web
+			application.
+		</para>
 		<para>Data Quality Monitoring comes in different shapes and sizes. You
 			can set up your own bulk of scheduled jobs that run every night. You
 			can build alerts around it that send you emails if a particular
 			measure goes beyond it's allowed thresholds, or in some cases you can
 			attempt ruling out the issue entirely by applying First-Time-Right
 			(FTR) principles that validate data at entry-time. eg. at data
-			registration forms and more.
+			registration forms and more. With the DataCleaner monitoring
+			application, these scenarios are provided in a convenient way for
+			users of the DataCleaner profiler.
 		</para>
 	</section>
 
@@ -132,7 +152,8 @@
 			contribute back to the community your modifications. The idea here is
 			that we should cooperate on building great software and that we
 			should make this great software available to anyone for everybody's
-			benefit.</para>
+			benefit.
+		</para>
 		<para>
 			So what
 			<emphasis>can</emphasis>

@@ -102,8 +102,11 @@ public class SaxExecutionIdentifierReader extends DefaultHandler {
     }
 
     private Date toDate(String string) {
-        Calendar cal = DatatypeConverter.parseDate(string);
-        return cal.getTime();
+		if (string == null) {
+			return null;
+		}
+		Calendar cal = DatatypeConverter.parseDate(string);
+		return cal.getTime();
     }
 
     @Override

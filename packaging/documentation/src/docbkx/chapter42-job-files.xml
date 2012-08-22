@@ -5,7 +5,7 @@
 
 	<title>Analysis job files</title>
 
-	<section>
+	<section id="job_files_xml_schema">
 		<title>XML schema</title>
 		<para>Analysis job files are written in an XML format pertaining to
 			the XML namespace

@@ -5,4 +5,100 @@
 
 	<title>Repository navigation</title>
 
+	<chapterinfo>
+		<abstract>
+			<para>
+				In this chapter we will learn how to use web service URLs to
+				navigate the DataCleaner repository. The repository is available at
+				the root level of the DataCleaner monitoring web application. Access
+				is of course restricted to the tenant's home folder. Therefore, all
+				these web services are located with URLs starting with the form:
+			</para>
+			<para>/DataCleaner-monitor/repository/DC/...
+			</para>
+			<para>Where 'DC' is the tenant identifier and 'DataCleaner-monitor'
+				is the web application archive name.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<section id="repository_nav_job_files">
+		<title>Job files</title>
+		<para>
+			Job files are available in the reserved folder name 'jobs'. To
+			get a listing of all job files (in JSON format), go to:
+		</para>
+		<programlisting>
+			/DataCleaner-monitor/repository/DC/jobs
+		</programlisting>
+		<para>Where 'DC' is the tenant identifier and 'DataCleaner-monitor'
+			is
+			the web application archive name.
+		</para>
+		<para>The result will resemble this example result:</para>
+		<programlisting>
+			[
+			&#160;&#160;{"repository_path":"/DC/jobs/Contributor&#160;name&#160;cleansing.analysis.xml",
+			&#160;&#160;&#160;&#160;"name":"Contributor&#160;name&#160;cleansing","filename":"Contributor&#160;name&#160;cleansing.analysis.xml"},
+			&#160;&#160;{"repository_path":"/DC/jobs/Customer&#160;completeness.analysis.xml",
+			&#160;&#160;&#160;&#160;"name":"Customer&#160;completeness","filename":"Customer&#160;completeness.analysis.xml"},
+			&#160;&#160;{"repository_path":"/DC/jobs/Customer&#160;duplicates.analysis.xml",
+			&#160;&#160;&#160;&#160;"name":"Customer&#160;duplicates","filename":"Customer&#160;duplicates.analysis.xml"},
+			&#160;&#160;{"repository_path":"/DC/jobs/product_profiling.analysis.xml",
+			&#160;&#160;&#160;&#160;"name":"product_profiling","filename":"product_profiling.analysis.xml"}
+			]
+		</programlisting>
+		<para>
+			Further navigating to one of these repository paths, you will be
+			able
+			to read the full XML description of the job, as described in the
+			<link linkend="job_files_xml_schema">Analysis Job files</link>
+			chapter:
+		</para>
+		<programlisting>
+			/DataCleaner-monitor/repository/DC/jobs/product_profiling.analysis.xml
+		</programlisting>
+		<para>Where 'DC' is the tenant identifier, 'product_profiling' is the
+			name of the job and 'DataCleaner-monitor'
+			is the web application
+			archive name.
+		</para>
+	</section>
+
+	<section id="repository_nav_result_files">
+		<title>Result files</title>
+		<para>
+			Result files are available in the reserved folder name
+			'results'. To
+			get a listing of all job files (in JSON format), go to:
+		</para>
+		<programlisting>
+			/DataCleaner-monitor/repository/DC/results
+		</programlisting>
+		<para>Where 'DC' is the tenant identifier and 'DataCleaner-monitor'
+			is
+			the web application archive name.
+		</para>
+		<para>The result will resemble this example result:</para>
+		<programlisting>
+			[
+			&#160;&#160;{"repository_path":"/DC/results/Customer&#160;completeness-1345128427583.analysis.result.dat",
+			&#160;&#160;&#160;&#160;"filename":"Customer&#160;completeness-1345128427583.analysis.result.dat"},
+			&#160;&#160;{"repository_path":"/DC/results/Customer&#160;completeness-1345200106074.analysis.result.dat",
+			&#160;&#160;&#160;&#160;"filename":"Customer&#160;completeness-1345200106074.analysis.result.dat"}
+			]
+		</programlisting>
+		<para>
+			Further navigating to one of these repository paths, you will be
+			able to inspect the analysis result, rendered in HTML format.
+		</para>
+		<programlisting>
+			/DataCleaner-monitor/repository/DC/results/Customer&#160;completeness-1345200106074.analysis.result.dat
+		</programlisting>
+		<para>Where 'DC' is the tenant identifier, 'Customer completeness' is the
+			name of the job, '1345200106074' is the timestamp of the result and 'DataCleaner-monitor'
+			is the web application archive name.
+		</para>
+	</section>
+
 </chapter>

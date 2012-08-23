@@ -32,22 +32,19 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
-import org.eobjects.datacleaner.monitor.jaxb.ObjectFactory;
 
 /**
  * Utility abstract class for making it easier to implement a writer object for
  * the JAXB model.
  */
-abstract class AbstractJaxbAdaptor<E> {
+public abstract class AbstractJaxbAdaptor<E> {
 
-    private final ObjectFactory _objectFactory;
     private final JAXBContext _jaxbContext;
 
-    protected AbstractJaxbAdaptor() {
-        _objectFactory = new ObjectFactory();
+    protected AbstractJaxbAdaptor(Class<E> clazz) {
         try {
-            _jaxbContext = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName(),
-                    ObjectFactory.class.getClassLoader());
+            _jaxbContext = JAXBContext.newInstance(clazz.getPackage().getName(),
+                    clazz.getClassLoader());
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -119,9 +116,5 @@ abstract class AbstractJaxbAdaptor<E> {
 
     protected JAXBContext getJaxbContext() {
         return _jaxbContext;
-    }
-
-    public ObjectFactory getObjectFactory() {
-        return _objectFactory;
     }
 }

@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 
 /**
@@ -44,7 +45,10 @@ public interface TenantContext {
     
     public RepositoryFolder getTimelineFolder();
 
+    public RepositoryFile getConfigurationFile();
+
     public AnalyzerBeansConfiguration getConfiguration();
 
     public boolean containsJob(String jobName);
+
 }

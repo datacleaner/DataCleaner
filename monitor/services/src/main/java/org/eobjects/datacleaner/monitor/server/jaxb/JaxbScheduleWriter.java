@@ -39,6 +39,10 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
  */
 public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
 
+    public JaxbScheduleWriter() {
+        super(Schedule.class);
+    }
+
     public void write(ScheduleDefinition scheduleDefinition, OutputStream outputStream) {
         Schedule schedule = createSchedule(scheduleDefinition);
 
@@ -46,7 +50,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
     }
 
     public Schedule createSchedule(ScheduleDefinition scheduleDefinition) {
-        final Schedule schedule = getObjectFactory().createSchedule();
+        final Schedule schedule = new Schedule();
         if (scheduleDefinition == null) {
             return schedule;
         }
@@ -72,7 +76,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
     }
 
     private Alert createAlert(AlertDefinition alertDefinition) {
-        final Alert alert = getObjectFactory().createAlert();
+        final Alert alert = new Alert();
         alert.setDescription(alertDefinition.getDescription());
         alert.setMinimumValue((alertDefinition.getMinimumValue() == null ? null : alertDefinition.getMinimumValue()
                 .intValue()));
@@ -102,7 +106,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
     }
 
     private MetricType createMetric(MetricIdentifier metricIdentifier) {
-        final MetricType metric = getObjectFactory().createMetricType();
+        final MetricType metric = new MetricType();
         metric.setAnalyzerDescriptorName(metricIdentifier.getAnalyzerDescriptorName());
         metric.setAnalyzerInput(metricIdentifier.getAnalyzerInputName());
         metric.setAnalyzerName(metricIdentifier.getAnalyzerName());

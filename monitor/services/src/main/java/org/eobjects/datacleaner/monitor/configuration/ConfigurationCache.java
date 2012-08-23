@@ -25,7 +25,6 @@ import java.io.InputStream;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
-import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
@@ -37,29 +36,28 @@ import org.eobjects.metamodel.util.FileHelper;
  */
 final class ConfigurationCache {
 
-    private final Repository _repository;
     private final RepositoryFolder _tenantFolder;
     private final RepositoryFile _file;
 
     private volatile AnalyzerBeansConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
-    public ConfigurationCache(String tenantId, Repository repository) {
-        _repository = repository;
+    public ConfigurationCache(String tenantId, RepositoryFolder tenantFolder) {
+        _tenantFolder = tenantFolder;
 
-        _tenantFolder = _repository.getFolder(tenantId);
-        if (_tenantFolder == null) {
-            throw new IllegalStateException("No tenant folder: " + tenantId);
+        RepositoryFile file = _tenantFolder.getFile("conf.xml");
+        if (file == null) {
+            file = _tenantFolder.createFile("conf.xml", new WriteDefaultTenantConfigurationAction());
         }
+        _file = file;
+    }
 
-        _file = _tenantFolder.getFile("conf.xml");
-        if (_file == null) {
-            throw new IllegalStateException("No conf.xml file found for tenant: " + tenantId);
-        }
+    public RepositoryFile getConfigurationFile() {
+        return _file;
     }
 
     public AnalyzerBeansConfiguration getAnalyzerBeansConfiguration() {
-        long lastModified = _file.getLastModified();
+        long lastModified = getConfigurationFile().getLastModified();
         if (_configuration == null || lastModified != _lastModifiedCache) {
             synchronized (this) {
                 lastModified = _file.getLastModified();
@@ -83,7 +81,7 @@ final class ConfigurationCache {
                 return super.createFilename(filename);
             }
         });
-        final InputStream inputStream = _file.readFile();
+        final InputStream inputStream = getConfigurationFile().readFile();
         try {
             final AnalyzerBeansConfiguration conf = reader.read(inputStream);
             return conf;

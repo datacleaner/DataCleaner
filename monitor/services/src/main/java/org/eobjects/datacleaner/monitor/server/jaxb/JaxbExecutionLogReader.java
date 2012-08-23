@@ -34,6 +34,10 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
  * Reader of {@link ExecutionLog} objects.
  */
 public class JaxbExecutionLogReader extends AbstractJaxbAdaptor<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
+    
+    public JaxbExecutionLogReader() {
+        super(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog.class);
+    }
 
     public ExecutionLog read(InputStream inputStream, TenantIdentifier tenant) {
         org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbExecutionLog = unmarshal(inputStream);

@@ -39,6 +39,10 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
  * JAXB based reader of .schedule.xml files
  */
 public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
+    
+    public JaxbScheduleReader() {
+        super(Schedule.class);
+    }
 
     public ScheduleDefinition read(InputStream inputStream, JobIdentifier job, TenantIdentifier tenant,
             DatastoreIdentifier datastore) {

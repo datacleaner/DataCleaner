@@ -111,7 +111,7 @@ final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public String toString() {
-        return "RepositoryFile[" + getName() + "]";
+        return getQualifiedPath();
     }
 
     @Override
@@ -120,6 +120,23 @@ final class FileRepositoryFile implements RepositoryFile {
         if (!success) {
             throw new IllegalStateException("Could not delete file: " + _file);
         }
+    }
+    
+    @Override
+    public int hashCode() {
+        return getQualifiedPath().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof RepositoryFile) {
+            String otherQualifiedPath = ((RepositoryFile) obj).getQualifiedPath();
+            return getQualifiedPath().equals(otherQualifiedPath);
+        }
+        return false;
     }
 
     @Override

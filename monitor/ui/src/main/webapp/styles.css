@@ -525,6 +525,23 @@ button.LaunchButton:active {
 /**
  * Repository page
  */
+.uploadConfigurationPanel {
+	background-color: #f4f4d3;
+	border: 1px solid #a0a0a0;
+	float: right;
+	background-image: url("images/repository_file.png");
+	background-repeat: no-repeat;
+	padding: 10px;
+	padding-left: 30px;
+	background-position: 2px 10px;
+}
+
+.uploadConfigurationPanel p { 
+	padding: 0px;
+	margin: 0px;
+}
+ 
+ 
 .repositoryView {
 	margin-left: 22px;
 	list-style: none;

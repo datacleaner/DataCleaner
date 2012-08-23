@@ -8,6 +8,17 @@
 	</ui:define>
 
 	<ui:define name="content">
+		<h:panelGroup rendered="#{user.hasRole('ADMIN')}"
+			styleClass="uploadConfigurationPanel">
+			<h3>Configuration file</h3>
+			<p>Upload new <a href="repository/#{user.tenant}/conf.xml" target="_blank">conf.xml</a> file:</p>
+			<form action="repository/#{user.tenant}/conf.xml" method="post"
+				enctype="multipart/form-data">
+				<input type="file" name="file" /> <input type="submit"
+					value="Upload" onclick="if (confirm('Are you sure you wish to upload (and overwrite) the configuration file?')) {return true;} else {return false;};" />
+			</form>
+		</h:panelGroup>
+
 		<h2>Jobs</h2>
 		<ul class="repositoryView">
 			<ui:repeat var="folder" value="#{tenantContext.jobFolder.folders}">
@@ -40,7 +51,8 @@
 
 		<h2>Timelines</h2>
 		<ul class="repositoryView">
-			<ui:repeat var="folder" value="#{tenantContext.timelineFolder.folders}">
+			<ui:repeat var="folder"
+				value="#{tenantContext.timelineFolder.folders}">
 				<li class="folder">#{folder.name}</li>
 				<ul class="repositoryView">
 					<ui:repeat var="file" value="#{folder.files}">

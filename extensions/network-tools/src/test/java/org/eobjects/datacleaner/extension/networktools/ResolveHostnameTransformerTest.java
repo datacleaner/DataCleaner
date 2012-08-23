@@ -41,7 +41,7 @@ public class ResolveHostnameTransformerTest extends TestCase {
 		assertEquals("127.0.0.1",
 				t.transform(new MockInputRow().put(col, "127.0.0.1"))[0]);
 
-		assertEquals("173.45.233.40",
+		assertEquals("94.142.211.197",
 				t.transform(new MockInputRow().put(col, "eobjects.org"))[0]);
 		
 		assertEquals(null,

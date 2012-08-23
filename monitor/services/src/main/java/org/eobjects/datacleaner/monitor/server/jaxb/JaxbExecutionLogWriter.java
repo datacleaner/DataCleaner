@@ -33,6 +33,10 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
  */
 public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.datacleaner.monitor.jaxb.ExecutionLog> {
 
+    public JaxbExecutionLogWriter() {
+        super(org.eobjects.datacleaner.monitor.jaxb.ExecutionLog.class);
+    }
+
     public void write(ExecutionLog executionLog, OutputStream out) {
         final org.eobjects.datacleaner.monitor.jaxb.ExecutionLog jaxbObj = createExecutionLog(executionLog);
 
@@ -40,7 +44,7 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.dat
     }
 
     private org.eobjects.datacleaner.monitor.jaxb.ExecutionLog createExecutionLog(ExecutionLog executionLog) {
-        final org.eobjects.datacleaner.monitor.jaxb.ExecutionLog result = getObjectFactory().createExecutionLog();
+        final org.eobjects.datacleaner.monitor.jaxb.ExecutionLog result = new org.eobjects.datacleaner.monitor.jaxb.ExecutionLog();
 
         result.setResultId(executionLog.getResultId());
         result.setExecutionStatus(createExecutionStatus(executionLog.getExecutionStatus()));
@@ -49,10 +53,10 @@ public class JaxbExecutionLogWriter extends AbstractJaxbAdaptor<org.eobjects.dat
         result.setTriggerType(createTriggerType(executionLog.getTriggerType()));
         result.setTriggeredBy(executionLog.getTriggeredBy());
         result.setLogOutput(executionLog.getLogOutput());
-        
+
         final JaxbScheduleWriter scheduleWriter = new JaxbScheduleWriter();
         final Schedule schedule = scheduleWriter.createSchedule(executionLog.getSchedule());
-        
+
         result.setSchedule(schedule);
         return result;
     }

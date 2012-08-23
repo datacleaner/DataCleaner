@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -42,19 +41,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class JobsFolderController {
 
     @Autowired
-    Repository _repository;
-
-    @Autowired
     TenantContextFactory _contextFactory;
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") String tenant) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
-
         final TenantContext context = _contextFactory.getContext(tenant);
 
         final RepositoryFolder jobsFolder = context.getJobFolder();

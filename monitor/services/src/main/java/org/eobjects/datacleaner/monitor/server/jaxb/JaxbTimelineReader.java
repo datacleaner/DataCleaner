@@ -46,6 +46,10 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
  * JAXB based {@link TimelineReader} of .analysis.timeline.xml files.
  */
 public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements TimelineReader {
+    
+    public JaxbTimelineReader() {
+        super(Timeline.class);
+    }
 
     public Timeline unmarshallTimeline(InputStream inputStream) {
         Timeline timeline = unmarshal(inputStream);

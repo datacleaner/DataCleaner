@@ -46,73 +46,86 @@ import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
  */
 public class DrillToProfilingResultSelectHandler extends SelectHandler {
 
-    public static final String PROPERTY_NAME_RESULT_FILE = "path";
+	public static final String PROPERTY_NAME_RESULT_FILE = "path";
 
-    private final CoreChart _chart;
-    private final AbstractDataTable _data;
-    private final DCPopupPanel _popup;
+	private final CoreChart _chart;
+	private final AbstractDataTable _data;
+	private final DCPopupPanel _popup;
 
-    public DrillToProfilingResultSelectHandler(CoreChart chart, AbstractDataTable data) {
-        _chart = chart;
-        _data = data;
-        _popup = new DCPopupPanel("Inspect profiling result?");
-        _popup.addStyleName("DrillToProfilingResultPopupPanel");
-    }
+	public DrillToProfilingResultSelectHandler(CoreChart chart,
+			AbstractDataTable data) {
+		_chart = chart;
+		_data = data;
+		_popup = new DCPopupPanel("Inspect profiling result?");
+		_popup.addStyleName("DrillToProfilingResultPopupPanel");
+	}
 
-    @Override
-    public void onSelect(SelectEvent event) {
-        final JsArray<Selection> selections = _chart.getSelections();
+	@Override
+	public void onSelect(SelectEvent event) {
+		final JsArray<Selection> selections = _chart.getSelections();
 
-        if (selections == null || selections.length() != 1) {
-            // this handler only reacts to single cell selections
-            return;
-        }
+		if (selections == null || selections.length() != 1) {
+			// this handler only reacts to single cell selections
+			return;
+		}
 
-        final Selection selection = selections.get(0);
-        if (!selection.isCell()) {
-            // this handler only reacts to single cell selections
-            return;
-        }
+		final Selection selection = selections.get(0);
+		if (!selection.isCell()) {
+			final SafeHtml labelHtml = new SafeHtmlBuilder()
+					.appendHtmlConstant(
+							"Do you wish to inspect the profiling result for ")
+					.appendHtmlConstant("?").toSafeHtml();
 
-        final int column = selection.getColumn();
-        final int row = selection.getRow();
-        final String metricLabel = _data.getColumnLabel(column);
-        final Date date = _data.getValueDate(row, 0);
-        final String resultFilePath = _data.getProperty(row, 0, PROPERTY_NAME_RESULT_FILE);
-        final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
-        final String url = Urls.createRelativeUrl("repository" + resultFilePath);
+			_popup.setWidget(new HTML(labelHtml));
+			return;
+		}
 
-        final Button showResultButton = new Button("Show results");
-        showResultButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Frame frame = new Frame(url);
-                frame.setPixelSize(800, 500);
-                _popup.setWidget(frame);
-                _popup.removeButton(showResultButton);
-                _popup.center();
-            }
-        });
+		final int column = selection.getColumn();
+		final int row = selection.getRow();
+		final String metricLabel = _data.getColumnLabel(column);
+		final Date date = _data.getValueDate(row, 0);
+		final String resultFilePath = _data.getProperty(row, 0,
+				PROPERTY_NAME_RESULT_FILE);
+		final String formattedDate = DateTimeFormat.getFormat(
+				PredefinedFormat.DATE_TIME_SHORT).format(date);
+		final String url = Urls
+				.createRelativeUrl("repository" + resultFilePath);
 
-        final Button showResultFullPageButton = new Button("Show results (new window)");
-        showResultFullPageButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                Window.open(url, "_blank", null);
-            }
-        });
+		final Button showResultButton = new Button("Show results");
+		showResultButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Frame frame = new Frame(url);
+				frame.setPixelSize(800, 500);
+				_popup.setWidget(frame);
+				_popup.removeButton(showResultButton);
+				_popup.center();
+			}
+		});
 
-        final SafeHtml labelHtml = new SafeHtmlBuilder()
-                .appendHtmlConstant("Do you wish to inspect the profiling result for ").appendEscaped(metricLabel)
-                .appendEscapedLines("\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?")
-                .toSafeHtml();
+		final Button showResultFullPageButton = new Button(
+				"Show results (new window)");
+		showResultFullPageButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.open(url, "_blank", null);
+			}
+		});
 
-        _popup.setWidget(new HTML(labelHtml));
-        _popup.removeButtons();
-        _popup.addButton(showResultButton);
-        _popup.addButton(showResultFullPageButton);
-        _popup.addButton(new CancelPopupButton(_popup));
-        _popup.center();
-        _popup.show();
-    }
+		final SafeHtml labelHtml = new SafeHtmlBuilder()
+				.appendHtmlConstant(
+						"Do you wish to inspect the profiling result for ")
+				.appendEscaped(metricLabel)
+				.appendEscapedLines("\ncollected at ")
+				.appendEscaped(formattedDate).appendHtmlConstant("?")
+				.toSafeHtml();
+
+		_popup.setWidget(new HTML(labelHtml));
+		_popup.removeButtons();
+		_popup.addButton(showResultButton);
+		_popup.addButton(showResultFullPageButton);
+		_popup.addButton(new CancelPopupButton(_popup));
+		_popup.center();
+		_popup.show();
+	}
 }

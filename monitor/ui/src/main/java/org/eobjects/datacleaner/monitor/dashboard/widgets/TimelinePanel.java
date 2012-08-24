@@ -29,6 +29,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.eobjects.datacleaner.monitor.dashboard.util.RandomColorGenerator;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
@@ -41,10 +42,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.ChartArea;
 import com.google.gwt.visualization.client.DataTable;
+import com.google.gwt.visualization.client.LegendPosition;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
 import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
@@ -59,7 +62,7 @@ public class TimelinePanel extends FlowPanel {
      * The width of the full panel, minus the width of the group selection
      * panel, minus 10 px margin
      */
-    private static final int WIDTH = 880 - 150 - 10;
+    private static final int WIDTH = 750 - 150 - 10;
 
     private final DashboardServiceAsync _service;
     private final LoadingIndicator _loadingIndicator;
@@ -72,8 +75,11 @@ public class TimelinePanel extends FlowPanel {
     private TimelineIdentifier _timelineIdentifier;
     private TimelineDefinition _timelineDefinition;
     private TimelineData _timelineData;
+    private TimelinePanel _timeLinePanel;
 
-    public TimelinePanel(TenantIdentifier tenant, DashboardServiceAsync service, TimelineIdentifier timelineIdentifier,
+    public TimelinePanel(TenantIdentifier tenant,
+            DashboardServiceAsync service,
+            TimelineIdentifier timelineIdentifier,
             DashboardGroupPanel timelineGroupPanel, boolean isDashboardEditor) {
         super();
         _tenant = tenant;
@@ -81,15 +87,18 @@ public class TimelinePanel extends FlowPanel {
         _timelineIdentifier = timelineIdentifier;
         _timelineGroupPanel = timelineGroupPanel;
         _isDashboardEditor = isDashboardEditor;
+        _timeLinePanel = this;
         _loadingIndicator = new LoadingIndicator();
-        _loadingIndicator.setHeight((DefaultVAxisOption.DEFAULT_HEIGHT + 4) + "px");
+        _loadingIndicator.setHeight((DefaultVAxisOption.DEFAULT_HEIGHT + 4)
+                + "px");
 
         _saveButton = new Button("");
         _saveButton.setVisible(isDashboardEditor);
         _saveButton.addStyleDependentName("ImageButton");
         _saveButton.setTitle("Save timeline");
         _saveButton.addStyleName("SaveButton");
-        _saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
+        _saveButton.addClickHandler(new SaveTimelineClickHandler(_service,
+                _tenant, this));
         _saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -112,15 +121,17 @@ public class TimelinePanel extends FlowPanel {
         _deleteButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final boolean confirmation = Window.confirm("Are you sure you wish to delete this timeline?");
+                final boolean confirmation = Window
+                        .confirm("Are you sure you wish to delete this timeline?");
                 if (confirmation) {
                     if (_timelineIdentifier != null) {
-                        _service.removeTimeline(_tenant, _timelineIdentifier, new DCAsyncCallback<Boolean>() {
-                            @Override
-                            public void onSuccess(Boolean result) {
-                                // do nothing
-                            }
-                        });
+                        _service.removeTimeline(_tenant, _timelineIdentifier,
+                                new DCAsyncCallback<Boolean>() {
+                                    @Override
+                                    public void onSuccess(Boolean result) {
+                                        // do nothing
+                                    }
+                                });
                     }
                     _timelineGroupPanel.removeTimelinePanel(TimelinePanel.this);
                 }
@@ -132,12 +143,14 @@ public class TimelinePanel extends FlowPanel {
         setLoading();
 
         if (_timelineIdentifier != null) {
-            _service.getTimelineDefinition(_tenant, _timelineIdentifier, new DCAsyncCallback<TimelineDefinition>() {
-                @Override
-                public void onSuccess(final TimelineDefinition definition) {
-                    setTimelineDefinition(definition);
-                }
-            });
+            _service.getTimelineDefinition(_tenant, _timelineIdentifier,
+                    new DCAsyncCallback<TimelineDefinition>() {
+                        @Override
+                        public void onSuccess(
+                                final TimelineDefinition definition) {
+                            setTimelineDefinition(definition);
+                        }
+                    });
         }
     }
 
@@ -175,8 +188,11 @@ public class TimelinePanel extends FlowPanel {
         return _tenant;
     }
 
-    public void setTimelineDefinition(final TimelineDefinition timelineDefinition, final boolean fireEvents) {
-        if (timelineDefinition.equals(_timelineDefinition) && _timelineData != null) {
+    public void setTimelineDefinition(
+            final TimelineDefinition timelineDefinition,
+            final boolean fireEvents) {
+        if (timelineDefinition.equals(_timelineDefinition)
+                && _timelineData != null) {
             return;
         }
         _timelineDefinition = timelineDefinition;
@@ -185,16 +201,18 @@ public class TimelinePanel extends FlowPanel {
                 _saveButton.setEnabled(true);
             }
             setLoading();
-            _service.getTimelineData(_tenant, timelineDefinition, new DCAsyncCallback<TimelineData>() {
-                @Override
-                public void onSuccess(TimelineData data) {
-                    setTimelineData(data);
-                }
-            });
+            _service.getTimelineData(_tenant, timelineDefinition,
+                    new DCAsyncCallback<TimelineData>() {
+                        @Override
+                        public void onSuccess(TimelineData data) {
+                            setTimelineData(data);
+                        }
+                    });
         }
     }
 
-    public void setTimelineDefinition(final TimelineDefinition timelineDefinition) {
+    public void setTimelineDefinition(
+            final TimelineDefinition timelineDefinition) {
         setTimelineDefinition(timelineDefinition, true);
     }
 
@@ -217,12 +235,17 @@ public class TimelinePanel extends FlowPanel {
             public void run() {
                 final Options options = Options.create();
 
-                final ChartOptions chartOptions = _timelineDefinition.getChartOptions();
+                final ChartOptions chartOptions = _timelineDefinition
+                        .getChartOptions();
 
-                final Integer height = chartOptions.getVerticalAxisOption().getHeight();
-                final Integer maximumValue = chartOptions.getVerticalAxisOption().getMaximumValue();
-                final Integer minimumValue = chartOptions.getVerticalAxisOption().getMinimumValue();
-                final boolean logarithmicScale = chartOptions.getVerticalAxisOption().isLogarithmicScale();
+                final Integer height = chartOptions.getVerticalAxisOption()
+                        .getHeight();
+                final Integer maximumValue = chartOptions
+                        .getVerticalAxisOption().getMaximumValue();
+                final Integer minimumValue = chartOptions
+                        .getVerticalAxisOption().getMinimumValue();
+                final boolean logarithmicScale = chartOptions
+                        .getVerticalAxisOption().isLogarithmicScale();
 
                 final ChartArea chartArea = ChartArea.create();
                 chartArea.setLeft(50d);
@@ -234,7 +257,8 @@ public class TimelinePanel extends FlowPanel {
                 options.setWidth(WIDTH);
                 options.setHeight(height);
 
-                if (logarithmicScale || maximumValue != null || minimumValue != null) {
+                if (logarithmicScale || maximumValue != null
+                        || minimumValue != null) {
                     final AxisOptions axisOptions = AxisOptions.create();
                     if (minimumValue != null) {
                         axisOptions.setMinValue(minimumValue);
@@ -251,18 +275,38 @@ public class TimelinePanel extends FlowPanel {
                 if (_timelineIdentifier != null) {
                     options.setTitle(_timelineIdentifier.getName());
                 }
+                options.setLegend(LegendPosition.NONE);
 
-                final AbstractDataTable dataTable = createDataTable(_timelineDefinition, _timelineData);
+                final AbstractDataTable dataTable = createDataTable(
+                        _timelineDefinition, _timelineData);
+                List<String> colors = RandomColorGenerator
+                        .getRandomColors(dataTable.getNumberOfColumns() - 1);
+                String[] colours = new String[colors.size()];
+                colors.toArray(colours);
+
+                options.setColors(colours);
 
                 final LineChart chart = new LineChart(dataTable, options);
-                chart.addSelectHandler(new DrillToProfilingResultSelectHandler(chart, dataTable));
+                chart.addSelectHandler(new DrillToProfilingResultSelectHandler(
+                        chart, dataTable));
                 chart.addStyleName("TimelineChart");
 
                 remove(_loadingIndicator);
-                add(chart);
+                HorizontalPanel horizontalPanel = new HorizontalPanel();
+                horizontalPanel.add(chart);
+                LegendPanel legendPanel = new LegendPanel();
+                for (int i = 1; i < dataTable.getNumberOfColumns(); i++) {
+                    Legend legend = new Legend(dataTable.getColumnLabel(i), colors.get(i - 1));
+                    legendPanel.addLegend(legend, new LegendClickHandler(dataTable.getColumnLabel(i),
+                            _timelineDefinition.getMetrics().get(i - 1), _timeLinePanel, legend));
+                    
+                }
+                horizontalPanel.add(legendPanel);
+                add(horizontalPanel);
             }
         };
-        VisualizationUtils.loadVisualizationApi(lineChartRunnable, LineChart.PACKAGE);
+        VisualizationUtils.loadVisualizationApi(lineChartRunnable,
+                LineChart.PACKAGE);
     }
 
     public TimelineData getTimelineData() {
@@ -275,7 +319,8 @@ public class TimelinePanel extends FlowPanel {
         customizeButton.addStyleDependentName("ImageButton");
         customizeButton.setTitle("Customize timeline");
         customizeButton.addStyleName("CustomizeButton");
-        customizeButton.addClickHandler(new CustomizeTimelineHandler(_service, this));
+        customizeButton.addClickHandler(new CustomizeTimelineHandler(_service,
+                this));
 
         final Button copyButton = new Button("");
         copyButton.setVisible(_isDashboardEditor);
@@ -285,16 +330,17 @@ public class TimelinePanel extends FlowPanel {
         copyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel,
-                        _isDashboardEditor);
+                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service,
+                        null, _timelineGroupPanel, _isDashboardEditor);
                 copyPanel.setTimelineDefinition(_timelineDefinition);
                 _timelineGroupPanel.add(copyPanel);
             }
         });
 
         final ButtonPanel buttonPanel = new ButtonPanel();
-        buttonPanel.add(new HeadingLabel((_timelineIdentifier == null ? "<new timeline>" : _timelineIdentifier
-                .getName())));
+        buttonPanel.add(new HeadingLabel(
+                (_timelineIdentifier == null ? "<new timeline>"
+                        : _timelineIdentifier.getName())));
         buttonPanel.add(customizeButton);
         buttonPanel.add(copyButton);
         buttonPanel.add(_saveButton);
@@ -303,10 +349,13 @@ public class TimelinePanel extends FlowPanel {
         return buttonPanel;
     }
 
-    private void addRow(DataTable data, Date date, String resultFilePath, List<Number> values) {
+    private void addRow(DataTable data, Date date, String resultFilePath,
+            List<Number> values) {
         int rowIndex = data.addRow();
         data.setValue(rowIndex, 0, date);
-        data.setProperty(rowIndex, 0, DrillToProfilingResultSelectHandler.PROPERTY_NAME_RESULT_FILE, resultFilePath);
+        data.setProperty(rowIndex, 0,
+                DrillToProfilingResultSelectHandler.PROPERTY_NAME_RESULT_FILE,
+                resultFilePath);
         for (int i = 0; i < values.size(); i++) {
             int columnIndex = i + 1;
             final Number value = values.get(i);
@@ -321,18 +370,24 @@ public class TimelinePanel extends FlowPanel {
         }
     }
 
-    private AbstractDataTable createDataTable(TimelineDefinition definition, TimelineData timelineData) {
+    private AbstractDataTable createDataTable(TimelineDefinition definition,
+            TimelineData timelineData) {
         final DataTable data = DataTable.create();
         data.addColumn(ColumnType.DATE, "Date");
 
         final List<MetricIdentifier> metrics = definition.getMetrics();
         for (MetricIdentifier metricIdentifier : metrics) {
-            data.addColumn(ColumnType.NUMBER, metricIdentifier.getDisplayName());
+            String metricDisplayName = metricIdentifier.getMetricDisplayName();
+            if (metricDisplayName == null || "".equals(metricDisplayName)) {
+                metricDisplayName = metricIdentifier.getDisplayName();
+            }
+            data.addColumn(ColumnType.NUMBER, metricDisplayName);
         }
 
         final List<TimelineDataRow> rows = timelineData.getRows();
         for (TimelineDataRow row : rows) {
-            addRow(data, row.getDate(), row.getResultFilePath(), row.getMetricValues());
+            addRow(data, row.getDate(), row.getResultFilePath(),
+                    row.getMetricValues());
         }
 
         return data;
@@ -351,5 +406,19 @@ public class TimelinePanel extends FlowPanel {
             setLoading();
             renderChart();
         }
+    }
+
+    public void updateTimeLineDefiniton() {
+        _service.updateTimelineDefinition(_tenant, _timelineIdentifier, _timelineDefinition,
+                new DCAsyncCallback<TimelineIdentifier>() {
+
+                    @Override
+                    public void onSuccess(TimelineIdentifier result) {
+
+                        setLoading();
+                        renderChart();
+                    }
+                });
+
     }
 }

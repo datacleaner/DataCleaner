@@ -7,12 +7,14 @@
 			<analyzer-descriptor-name>Pattern finder</analyzer-descriptor-name>
 			<analyzer-input>PRODUCTCODE</analyzer-input>
 			<metric-descriptor-name>Pattern count</metric-descriptor-name>
+			<metric-display-name>Pattern count test</metric-display-name>
 		</metric>
 		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 			<analyzer-descriptor-name>Reference data matcher</analyzer-descriptor-name>
 			<analyzer-name>Vendor whitelist check</analyzer-name>
 			<analyzer-input>PRODUCTVENDOR</analyzer-input>
 			<metric-descriptor-name>False count</metric-descriptor-name>
+			<metric-display-name>False count test</metric-display-name>
 			<metric-param-query-string>PRODUCTVENDOR in 'vendor whitelist'</metric-param-query-string>
 		</metric>
 	</metrics>

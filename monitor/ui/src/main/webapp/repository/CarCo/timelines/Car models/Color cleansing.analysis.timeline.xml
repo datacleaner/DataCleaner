@@ -6,11 +6,13 @@
             <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Color (cleansed)</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Distinct count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Distinct count test</ns2:metric-display-name>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Color</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Distinct count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Distinct count test</ns2:metric-display-name>
         </ns2:metric>
     </ns3:metrics>
 </ns3:timeline>

@@ -32,10 +32,12 @@ public class MetricIdentifier implements Serializable {
     private String _analyzerName;
     private String _analyzerInputName;
     private String _metricDescriptorName;
+    private String _metricDisplayName;
     private String _paramQueryString;
     private String _paramColumnName;
     private boolean _parameterizedByQueryString;
     private boolean _parameterizedByColumnName;
+
 
     public String getAnalyzerDescriptorName() {
         return _analyzerDescriptorName;
@@ -112,6 +114,7 @@ public class MetricIdentifier implements Serializable {
         metricIdentifier.setAnalyzerInputName(_analyzerInputName);
         metricIdentifier.setAnalyzerName(_analyzerName);
         metricIdentifier.setMetricDescriptorName(_metricDescriptorName);
+        metricIdentifier.setMetricDisplayName(_metricDisplayName);
         metricIdentifier.setParamColumnName(_paramColumnName);
         metricIdentifier.setParameterizedByColumnName(_parameterizedByColumnName);
         metricIdentifier.setParameterizedByQueryString(_parameterizedByQueryString);
@@ -231,4 +234,12 @@ public class MetricIdentifier implements Serializable {
         }
         return _metricDescriptorName;
     }
+
+	public void setMetricDisplayName(String _metricDisplayName) {
+		this._metricDisplayName = _metricDisplayName;
+	}
+
+	public String getMetricDisplayName() {
+		return _metricDisplayName;
+	}
 }

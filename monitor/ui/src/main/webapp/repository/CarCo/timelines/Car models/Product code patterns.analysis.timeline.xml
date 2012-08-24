@@ -6,36 +6,42 @@
             <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Model code</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Match count</ns2:metric-display-name>
             <ns2:metric-param-query-string>???_A</ns2:metric-param-query-string>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Model code</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Match count</ns2:metric-display-name>
             <ns2:metric-param-query-string>AA</ns2:metric-param-query-string>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Model code</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Match count</ns2:metric-display-name>
             <ns2:metric-param-query-string>???</ns2:metric-param-query-string>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Model code</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Match count</ns2:metric-display-name>
             <ns2:metric-param-query-string>AA_A</ns2:metric-param-query-string>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Model code</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Match count</ns2:metric-display-name>
             <ns2:metric-param-query-string>AAA</ns2:metric-param-query-string>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
             <ns2:analyzer-input>Model code</ns2:analyzer-input>
             <ns2:metric-descriptor-name>Pattern count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Pattern count</ns2:metric-display-name>
         </ns2:metric>
     </ns3:metrics>
 </ns3:timeline>

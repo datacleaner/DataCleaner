@@ -6,16 +6,19 @@
 			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
 			<analyzer-input>PRODUCTLINE</analyzer-input>
 			<metric-descriptor-name>Distinct count</metric-descriptor-name>
+			<metric-display-name>Distinct count</metric-display-name>
 		</metric>
 		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
 			<analyzer-input>PRODUCTLINE</analyzer-input>
 			<metric-descriptor-name>Null count</metric-descriptor-name>
+			<metric-display-name>Null count</metric-display-name>
 		</metric>
 		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
 			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
 			<analyzer-input>PRODUCTLINE</analyzer-input>
 			<metric-descriptor-name>Unique count</metric-descriptor-name>
+			<metric-display-name>Unique count</metric-display-name>
 		</metric>
 	</metrics>
 </timeline>

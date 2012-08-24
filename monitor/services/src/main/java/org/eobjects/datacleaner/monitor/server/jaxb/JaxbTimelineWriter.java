@@ -67,6 +67,7 @@ public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements
             metricType.setAnalyzerInput(metric.getAnalyzerInputName());
             metricType.setAnalyzerName(metric.getAnalyzerName());
             metricType.setMetricDescriptorName(metric.getMetricDescriptorName());
+            metricType.setMetricDisplayName(metric.getMetricDisplayName());
             metricType.setMetricParamColumnName(metric.getParamColumnName());
             metricType.setMetricParamQueryString(metric.getParamQueryString());
 

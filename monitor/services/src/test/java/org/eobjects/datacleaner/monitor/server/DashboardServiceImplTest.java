@@ -43,10 +43,15 @@ import org.eobjects.datacleaner.repository.file.FileRepository;
 public class DashboardServiceImplTest extends TestCase {
 
     public void testBasicInteraction() throws Exception {
-        final FileRepository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
-		final MetricValueProducer metricValueProducer = new DefaultMetricValueProducer(contextFactory);        
-        final DashboardService service = new DashboardServiceImpl(repository, contextFactory, metricValueProducer);
+		final FileRepository repository = new FileRepository(
+				"src/test/resources/example_repo");
+		final TenantContextFactory contextFactory = new TenantContextFactoryImpl(
+				repository);
+
+		final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(
+				contextFactory);
+		final DashboardService service = new DashboardServiceImpl(repository,
+				contextFactory, metricValueCache);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());

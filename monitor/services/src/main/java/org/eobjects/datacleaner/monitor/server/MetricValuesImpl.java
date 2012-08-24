@@ -35,120 +35,108 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MetricValuesImpl implements MetricValues {
+/**
+ * Default {@link MetricValues} implementation, calculates the metric values
+ * directly from the {@link AnalysisResult}.
+ */
+public final class MetricValuesImpl implements MetricValues {
 
-	private final Date _metricDate;
-	private final List<MetricIdentifier> _metricIdentifiers;
-	private final AnalysisResult _analysisResult;
-	private final AnalysisJob _analysisJob;
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(DashboardServiceImpl.class);
-	
-	public MetricValuesImpl(List<MetricIdentifier> metricIdentifiers, AnalysisResult analysisResult, AnalysisJob analysisJob){
-		_metricIdentifiers = metricIdentifiers;
-		_analysisResult = analysisResult;
-		_analysisJob = analysisJob;
-		_metricDate = analysisResult.getCreationDate();
-	}
+    private static final Logger logger = LoggerFactory.getLogger(MetricValuesImpl.class);
+    
+    private final Date _metricDate;
+    private final List<MetricIdentifier> _metricIdentifiers;
+    private final AnalysisResult _analysisResult;
+    private final AnalysisJob _analysisJob;
 
-	@Override
-	public Date getMetricDate() {
-		return _metricDate;
-	}
+    public MetricValuesImpl(List<MetricIdentifier> metricIdentifiers, AnalysisResult analysisResult,
+            AnalysisJob analysisJob) {
+        _metricIdentifiers = metricIdentifiers;
+        _analysisResult = analysisResult;
+        _analysisJob = analysisJob;
+        _metricDate = analysisResult.getCreationDate();
+    }
 
-	@Override
-	public List<Number> getValues() {
-		final int metricCount = _metricIdentifiers.size();
-		final List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>(
-				metricCount);
-		final List<MetricDescriptor> metricDescriptors = new ArrayList<MetricDescriptor>(
-				metricCount);
-		final List<MetricParameters> metricParameters = new ArrayList<MetricParameters>(
-				metricCount);
-		MetricValueUtils metricValueUtils = new MetricValueUtils();
+    @Override
+    public Date getMetricDate() {
+        return _metricDate;
+    }
 
-		for (MetricIdentifier metricIdentifier : _metricIdentifiers) {
-			final AnalyzerJob analyzerJob = metricValueUtils.getAnalyzerJob(
-					metricIdentifier, _analysisJob);
-			analyzerJobs.add(analyzerJob);
+    @Override
+    public List<Number> getValues() {
+        final int metricCount = _metricIdentifiers.size();
+        final List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>(metricCount);
+        final List<MetricDescriptor> metricDescriptors = new ArrayList<MetricDescriptor>(metricCount);
+        final List<MetricParameters> metricParameters = new ArrayList<MetricParameters>(metricCount);
+        MetricValueUtils metricValueUtils = new MetricValueUtils();
 
-			final MetricDescriptor metricDescriptor = getMetricDescriptor(
-					metricIdentifier, analyzerJob);
-			metricDescriptors.add(metricDescriptor);
+        for (MetricIdentifier metricIdentifier : _metricIdentifiers) {
+            final AnalyzerJob analyzerJob = metricValueUtils.getAnalyzerJob(metricIdentifier, _analysisJob);
+            analyzerJobs.add(analyzerJob);
 
-			MetricParameters parameter = createMetricParameter(
-					metricIdentifier, metricDescriptor, analyzerJob);
-			metricParameters.add(parameter);
-		}
+            final MetricDescriptor metricDescriptor = getMetricDescriptor(metricIdentifier, analyzerJob);
+            metricDescriptors.add(metricDescriptor);
 
-		final List<Number> metricValuesList = new ArrayList<Number>(metricCount);
-		for (int i = 0; i < metricCount; i++) {
-			final MetricIdentifier metricIdentifier = _metricIdentifiers.get(i);
-			final AnalyzerJob job = analyzerJobs.get(i);
-			final MetricDescriptor metric = metricDescriptors.get(i);
-			final MetricParameters parameters = metricParameters.get(i);
+            MetricParameters parameter = createMetricParameter(metricIdentifier, metricDescriptor, analyzerJob);
+            metricParameters.add(parameter);
+        }
 
-			final AnalyzerResult analyzerResult = metricValueUtils.getResult(
-					_analysisResult, job, metricIdentifier);
+        final List<Number> metricValuesList = new ArrayList<Number>(metricCount);
+        for (int i = 0; i < metricCount; i++) {
+            final MetricIdentifier metricIdentifier = _metricIdentifiers.get(i);
+            final AnalyzerJob job = analyzerJobs.get(i);
+            final MetricDescriptor metric = metricDescriptors.get(i);
+            final MetricParameters parameters = metricParameters.get(i);
 
-			final Number metricValue = metric.getValue(analyzerResult,
-					parameters);
-			metricValuesList.add(metricValue);
-		}
-		
-		return metricValuesList;
-	}
+            final AnalyzerResult analyzerResult = metricValueUtils.getResult(_analysisResult, job, metricIdentifier);
 
-	private MetricDescriptor getMetricDescriptor(
-			final MetricIdentifier metricIdentifier,
-			final AnalyzerJob analyzerJob) {
-		AnalyzerBeanDescriptor<?> analyzerDescriptor = analyzerJob
-				.getDescriptor();
-		MetricDescriptor metric = analyzerDescriptor
-				.getResultMetric(metricIdentifier.getMetricDescriptorName());
+            final Number metricValue = metric.getValue(analyzerResult, parameters);
+            metricValuesList.add(metricValue);
+        }
 
-		if (metric == null) {
-			logger.error(
-					"Did not find any metric descriptors with name '{}' in {}",
-					metricIdentifier.getMetricDescriptorName(),
-					analyzerDescriptor.getResultClass());
-		}
-		return metric;
-	}
+        return metricValuesList;
+    }
 
-	private MetricParameters createMetricParameter(
-			final MetricIdentifier metricIdentifier,
-			final MetricDescriptor metricDescriptor, AnalyzerJob analyzerJob) {
-		final String queryString;
-		final InputColumn<?> queryInputColumn;
+    private MetricDescriptor getMetricDescriptor(final MetricIdentifier metricIdentifier, final AnalyzerJob analyzerJob) {
+        AnalyzerBeanDescriptor<?> analyzerDescriptor = analyzerJob.getDescriptor();
+        MetricDescriptor metric = analyzerDescriptor.getResultMetric(metricIdentifier.getMetricDescriptorName());
 
-		final String paramQueryString = metricIdentifier.getParamQueryString();
-		if (paramQueryString == null) {
-			queryString = null;
-		} else {
-			queryString = paramQueryString;
-		}
+        if (metric == null) {
+            logger.error("Did not find any metric descriptors with name '{}' in {}",
+                    metricIdentifier.getMetricDescriptorName(), analyzerDescriptor.getResultClass());
+        }
+        return metric;
+    }
 
-		final String paramColumnName = metricIdentifier.getParamColumnName();
-		if (paramColumnName == null) {
-			queryInputColumn = null;
-		} else {
-			InputColumn<?>[] inputColumns = analyzerJob.getInput();
-			InputColumn<?> candidate = null;
-			for (InputColumn<?> inputColumn : inputColumns) {
-				if (paramColumnName.equals(inputColumn.getName())) {
-					candidate = inputColumn;
-					break;
-				}
-			}
-			if (candidate == null) {
-				logger.warn("Could not find any input column with name '{}'",
-						paramColumnName);
-			}
-			queryInputColumn = candidate;
-		}
+    private MetricParameters createMetricParameter(final MetricIdentifier metricIdentifier,
+            final MetricDescriptor metricDescriptor, AnalyzerJob analyzerJob) {
+        final String queryString;
+        final InputColumn<?> queryInputColumn;
 
-		return new MetricParameters(queryString, queryInputColumn);
-	}	
+        final String paramQueryString = metricIdentifier.getParamQueryString();
+        if (paramQueryString == null) {
+            queryString = null;
+        } else {
+            queryString = paramQueryString;
+        }
+
+        final String paramColumnName = metricIdentifier.getParamColumnName();
+        if (paramColumnName == null) {
+            queryInputColumn = null;
+        } else {
+            InputColumn<?>[] inputColumns = analyzerJob.getInput();
+            InputColumn<?> candidate = null;
+            for (InputColumn<?> inputColumn : inputColumns) {
+                if (paramColumnName.equals(inputColumn.getName())) {
+                    candidate = inputColumn;
+                    break;
+                }
+            }
+            if (candidate == null) {
+                logger.warn("Could not find any input column with name '{}'", paramColumnName);
+            }
+            queryInputColumn = candidate;
+        }
+
+        return new MetricParameters(queryString, queryInputColumn);
+    }
 }

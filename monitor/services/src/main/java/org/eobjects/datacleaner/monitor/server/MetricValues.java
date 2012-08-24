@@ -22,7 +22,13 @@ package org.eobjects.datacleaner.monitor.server;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Represents a set of metric values, extracted from the same analysis result
+ * (and thus same date).
+ */
 public interface MetricValues {
-	  public Date getMetricDate();
-	  public List<Number> getValues();
+
+    public Date getMetricDate();
+
+    public List<Number> getValues();
 }

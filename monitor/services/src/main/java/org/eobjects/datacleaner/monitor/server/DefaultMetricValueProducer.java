@@ -31,34 +31,32 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+/**
+ * Default implementation of {@link MetricValueProducer}. Will read files from
+ * the repository to calculate metrics.
+ */
 public class DefaultMetricValueProducer implements MetricValueProducer {
 
-	private TenantContextFactory _tenantContextFactory;
+    private final TenantContextFactory _tenantContextFactory;
 
-	@Autowired
-	public DefaultMetricValueProducer(TenantContextFactory tenantContextFactory) {
-		_tenantContextFactory = tenantContextFactory;
-	}
+    @Autowired
+    public DefaultMetricValueProducer(TenantContextFactory tenantContextFactory) {
+        _tenantContextFactory = tenantContextFactory;
+    }
 
-	@Override
-	public MetricValues getMetricValues(
-			List<MetricIdentifier> metricIdentifiers,
-			RepositoryFile resultFile, TenantIdentifier tenant,
-			JobIdentifier jobIdentifier) {
+    @Override
+    public MetricValues getMetricValues(List<MetricIdentifier> metricIdentifiers, RepositoryFile resultFile,
+            TenantIdentifier tenant, JobIdentifier jobIdentifier) {
 
-		TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-		String resultFilename = resultFile.getName();
-		ResultContext resultContext = tenantContext.getResult(resultFilename);
-		String jobName = jobIdentifier.getName();
-		AnalysisJob analysisJob = tenantContext.getJob(jobName)
-				.getAnalysisJob();
-		AnalysisResult analysisResult = resultContext.getAnalysisResult();
+        TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        String resultFilename = resultFile.getName();
+        ResultContext resultContext = tenantContext.getResult(resultFilename);
+        String jobName = jobIdentifier.getName();
+        AnalysisJob analysisJob = tenantContext.getJob(jobName).getAnalysisJob();
+        AnalysisResult analysisResult = resultContext.getAnalysisResult();
 
-		return new MetricValuesImpl(metricIdentifiers, analysisResult,
-				analysisJob);
-	}
+        return new MetricValuesImpl(metricIdentifiers, analysisResult, analysisJob);
+    }
 
 }

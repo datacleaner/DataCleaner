@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server;
 import java.util.List;
 
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
@@ -35,7 +36,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultMetricValueProducer implements MetricValueProducer {
 
-	TenantContextFactory _tenantContextFactory;
+	private TenantContextFactory _tenantContextFactory;
 
 	@Autowired
 	public DefaultMetricValueProducer(TenantContextFactory tenantContextFactory) {
@@ -49,13 +50,14 @@ public class DefaultMetricValueProducer implements MetricValueProducer {
 			JobIdentifier jobIdentifier) {
 
 		TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-		ResultContext resultContext = tenantContext.getResult(resultFile
-				.getName());
-		AnalysisJob analysisJob = tenantContext.getJob(jobIdentifier.getName())
+		String resultFilename = resultFile.getName();
+		ResultContext resultContext = tenantContext.getResult(resultFilename);
+		String jobName = jobIdentifier.getName();
+		AnalysisJob analysisJob = tenantContext.getJob(jobName)
 				.getAnalysisJob();
-		
-		return new MetricValuesImpl(metricIdentifiers,
-				resultContext.getAnalysisResult(),
+		AnalysisResult analysisResult = resultContext.getAnalysisResult();
+
+		return new MetricValuesImpl(metricIdentifiers, analysisResult,
 				analysisJob);
 	}
 

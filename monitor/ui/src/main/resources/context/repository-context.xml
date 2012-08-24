@@ -10,6 +10,9 @@
 		class="org.eobjects.datacleaner.repository.file.FileRepository">
 		<constructor-arg type="java.io.File" value="repository" />
 	</bean>
+	
+	<bean id="metricValueProducer" class="org.eobjects.datacleaner.monitor.server.DefaultMetricValueProducer">
+	</bean>
 
 	<!-- Development mode launch artifact provider. Will only work if dev mode 
 		finds JAR files in directories relative to the build structure. -->

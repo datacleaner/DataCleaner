@@ -87,6 +87,13 @@ public class MetricIdentifier implements Serializable {
         return _paramQueryString;
     }
 
+	public String getId() {
+		String ID = _analyzerDescriptorName + _analyzerInputName
+				+ _analyzerName + _metricDescriptorName + _paramColumnName
+				+ _paramQueryString;
+		return ID.replaceAll("'", "");
+	}
+
     public boolean isParameterizedByColumnName() {
         return _parameterizedByColumnName;
     }

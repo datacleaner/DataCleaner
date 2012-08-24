@@ -38,6 +38,24 @@ public class MetricIdentifier implements Serializable {
     private boolean _parameterizedByQueryString;
     private boolean _parameterizedByColumnName;
 
+    // full constructor that specifies every field in one go.
+    public MetricIdentifier(String metricDisplayName, String analyzerDescriptorName, String analyzerName,
+            String analyzerInputName, String metricDescriptorName, String paramQueryString, String paramColumnName,
+            boolean parameterizedByQueryString, boolean parameterizedByColumnName) {
+        _metricDisplayName = metricDisplayName;
+        _analyzerDescriptorName = analyzerDescriptorName;
+        _analyzerName = analyzerName;
+        _analyzerInputName = analyzerInputName;
+        _metricDescriptorName = metricDescriptorName;
+        _paramQueryString = paramQueryString;
+        _paramColumnName = paramColumnName;
+        _parameterizedByQueryString = parameterizedByQueryString;
+        _parameterizedByColumnName = parameterizedByColumnName;
+    }
+
+    // no-arg constructor used by GWT
+    public MetricIdentifier() {
+    }
 
     public String getAnalyzerDescriptorName() {
         return _analyzerDescriptorName;
@@ -87,12 +105,11 @@ public class MetricIdentifier implements Serializable {
         return _paramQueryString;
     }
 
-	public String getId() {
-		String ID = _analyzerDescriptorName + _analyzerInputName
-				+ _analyzerName + _metricDescriptorName + _paramColumnName
-				+ _paramQueryString;
-		return ID.replaceAll("'", "");
-	}
+    public String getId() {
+        String ID = _analyzerDescriptorName + _analyzerInputName + _analyzerName + _metricDescriptorName
+                + _paramColumnName + _paramQueryString;
+        return ID.replaceAll("'", "");
+    }
 
     public boolean isParameterizedByColumnName() {
         return _parameterizedByColumnName;
@@ -242,11 +259,11 @@ public class MetricIdentifier implements Serializable {
         return _metricDescriptorName;
     }
 
-	public void setMetricDisplayName(String _metricDisplayName) {
-		this._metricDisplayName = _metricDisplayName;
-	}
+    public void setMetricDisplayName(String _metricDisplayName) {
+        this._metricDisplayName = _metricDisplayName;
+    }
 
-	public String getMetricDisplayName() {
-		return _metricDisplayName;
-	}
+    public String getMetricDisplayName() {
+        return _metricDisplayName;
+    }
 }

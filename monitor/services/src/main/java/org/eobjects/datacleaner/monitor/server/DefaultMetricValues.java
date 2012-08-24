@@ -39,16 +39,16 @@ import org.slf4j.LoggerFactory;
  * Default {@link MetricValues} implementation, calculates the metric values
  * directly from the {@link AnalysisResult}.
  */
-public final class MetricValuesImpl implements MetricValues {
+public final class DefaultMetricValues implements MetricValues {
 
-    private static final Logger logger = LoggerFactory.getLogger(MetricValuesImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultMetricValues.class);
     
     private final Date _metricDate;
     private final List<MetricIdentifier> _metricIdentifiers;
     private final AnalysisResult _analysisResult;
     private final AnalysisJob _analysisJob;
 
-    public MetricValuesImpl(List<MetricIdentifier> metricIdentifiers, AnalysisResult analysisResult,
+    public DefaultMetricValues(List<MetricIdentifier> metricIdentifiers, AnalysisResult analysisResult,
             AnalysisJob analysisJob) {
         _metricIdentifiers = metricIdentifiers;
         _analysisResult = analysisResult;

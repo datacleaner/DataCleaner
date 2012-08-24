@@ -56,7 +56,7 @@ public class DefaultMetricValueProducer implements MetricValueProducer {
         AnalysisJob analysisJob = tenantContext.getJob(jobName).getAnalysisJob();
         AnalysisResult analysisResult = resultContext.getAnalysisResult();
 
-        return new MetricValuesImpl(metricIdentifiers, analysisResult, analysisJob);
+        return new DefaultMetricValues(metricIdentifiers, analysisResult, analysisJob);
     }
 
 }

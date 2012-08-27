@@ -256,6 +256,13 @@ public class DCModule extends AbstractModule {
                 }
             }
         }
+
+        if (_configuration instanceof AnalyzerBeansConfigurationImpl) {
+            // Ticket #905 and #925: Always replace the injection manager
+            // factory to ensure correct scope when doing injections.
+            return ((AnalyzerBeansConfigurationImpl) _configuration).replace(injectionManagerFactory);
+        }
+
         return _configuration;
     }
 

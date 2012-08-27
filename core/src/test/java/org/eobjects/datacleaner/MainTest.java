@@ -42,13 +42,13 @@ public class MainTest extends TestCase {
     // JettyRunner of the DC monitor is running. This will emulate how the JNLP
     // client of DC monitor starts up.
     public static void main(String[] foo) {
-        final String hostname = "127.0.0.1";
-        final String port = "8888";
-        final String context = "";
+        final String hostname = "demo.datacleaner.org";
+        final String port = "80";
+        final String context = "/DataCleaner-monitor";
         final String confLocation = "http://" + hostname + ":" + port + context
-                + "/repository/DC/launch-resources/conf.xml?job=random_number_generation";
+                + "/repository/DC/launch-resources/conf.xml?job=Customer+completeness";
         final String jobLocation = "http://" + hostname + ":" + port + context
-                + "/repository/DC/jobs/random_number_generation.analysis.xml";
+                + "/repository/DC/jobs/Customer+completeness.analysis.xml";
         final String[] args = ("-conf " + confLocation + " -job " + jobLocation + " -ds orderdb"
                 + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
                 + " -Ddatacleaner.monitor.hostname=" + hostname + " -Ddatacleaner.monitor.port=" + port

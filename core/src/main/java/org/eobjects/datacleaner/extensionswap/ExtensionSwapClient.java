@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 
 public final class ExtensionSwapClient {
 
-    public static final String DEFAULT_WEBSITE_HOSTNAME = "datacleaner.eobjects.org";
+    public static final String DEFAULT_WEBSITE_HOSTNAME = "datacleaner.org";
 
     private static final String EXTENSIONSWAP_ID_PROPERTY = "extensionswap.id";
     private static final String EXTENSIONSWAP_VERSION_PROPERTY = "extensionswap.version";

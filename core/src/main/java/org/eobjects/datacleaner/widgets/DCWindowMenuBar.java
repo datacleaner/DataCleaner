@@ -142,10 +142,10 @@ public class DCWindowMenuBar extends JMenuBar {
         });
 
 		final JMenuItem helpContents = WidgetFactory.createMenuItem("Help contents", "images/widgets/help.png");
-		helpContents.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/docs"));
+		helpContents.addActionListener(new OpenBrowserAction("http://datacleaner.org/docs"));
 
 		final JMenuItem askAtTheForumsMenuItem = WidgetFactory.createMenuItem("Ask at the forums", "images/menu/forums.png");
-		askAtTheForumsMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/forum/1"));
+		askAtTheForumsMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.org/forum/1"));
 
 		final JMenuItem aboutMenuItem = WidgetFactory.createMenuItem("About DataCleaner", "images/menu/about.png");
 		aboutMenuItem.addActionListener(new ActionListener() {

@@ -72,7 +72,7 @@ public class WelcomeDialog extends JDialog {
 
         final JButton websiteButton = new JButton("Visit the DataCleaner website", imageManager.getImageIcon(
                 "images/actions/website.png", IconUtils.ICON_SIZE_MEDIUM));
-        websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org"));
+        websiteButton.addActionListener(new OpenBrowserAction("http://datacleaner.org"));
 
         panel.add(DCPanel.flow(Alignment.RIGHT, 10, 10, websiteButton, closeButton), BorderLayout.SOUTH);
 

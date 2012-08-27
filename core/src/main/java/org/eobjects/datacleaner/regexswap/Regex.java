@@ -104,7 +104,7 @@ public final class Regex extends BaseObject implements Serializable {
 	}
 
 	public String createWebsiteUrl() {
-		String url = "http://datacleaner.eobjects.org/regex/" + getName().replaceAll(" ", "%20");
+		String url = "http://datacleaner.org/regex/" + getName().replaceAll(" ", "%20");
 		return url;
 	}
 

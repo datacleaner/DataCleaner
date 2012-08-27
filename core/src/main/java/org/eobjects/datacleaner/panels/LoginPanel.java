@@ -183,7 +183,7 @@ public class LoginPanel extends JPanel implements LoginChangeListener {
 			final JPasswordField passwordTextField = WidgetFactory.createPasswordField(15);
 
 			final JButton registerButton = WidgetFactory.createButton("Register", "images/actions/website.png");
-			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.eobjects.org/?register"));
+			registerButton.addActionListener(new OpenBrowserAction("http://datacleaner.org/?register"));
 
 			final JButton loginButton = WidgetFactory.createButton("Login", "images/actions/login.png");
 			loginButton.addActionListener(new ActionListener() {

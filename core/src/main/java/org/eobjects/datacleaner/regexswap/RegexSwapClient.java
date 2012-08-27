@@ -38,8 +38,8 @@ import org.w3c.dom.Node;
  */
 public final class RegexSwapClient {
 
-	public static final String CATEGORIES_URL = "http://datacleaner.eobjects.org/ws/categories";
-	public static final String REGEXES_URL = "http://datacleaner.eobjects.org/ws/regexes";
+	public static final String CATEGORIES_URL = "http://datacleaner.org/ws/categories";
+	public static final String REGEXES_URL = "http://datacleaner.org/ws/regexes";
 
 	private final Map<String, Category> _categories = new HashMap<String, Category>();
 	private final Map<String, Regex> _regexes = new HashMap<String, Regex>();

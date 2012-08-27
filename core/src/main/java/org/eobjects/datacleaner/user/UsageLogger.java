@@ -130,7 +130,7 @@ public final class UsageLogger {
 		public void run() {
 			try {
 				final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-				final HttpPost req = new HttpPost("http://datacleaner.eobjects.org/ws/user_action");
+				final HttpPost req = new HttpPost("http://datacleaner.org/ws/user_action");
 				nameValuePairs.add(new BasicNameValuePair("username", _username));
 				nameValuePairs.add(new BasicNameValuePair("action", _action));
 				nameValuePairs.add(new BasicNameValuePair("version", Main.VERSION));

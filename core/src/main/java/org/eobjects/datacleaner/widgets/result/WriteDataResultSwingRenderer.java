@@ -121,9 +121,9 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                     "<b>"
                             + result.getErrorRowCount()
                             + " records</b> could <i>not</i> be written to the table!<br/>"
-                            + "The records were written to <a href=\"http://datacleaner.eobjects.org/preview_datastore\">"
+                            + "The records were written to <a href=\"http://datacleaner.org/preview_datastore\">"
                             + errorDatastore.getFilename()
-                            + "</a> (<a href=\"http://datacleaner.eobjects.org/register_datastore\">Register as datastore</a>).");
+                            + "</a> (<a href=\"http://datacleaner.org/register_datastore\">Register as datastore</a>).");
             editorPane.setEditable(false);
             editorPane.setOpaque(false);
             editorPane.addHyperlinkListener(new HyperlinkListener() {
@@ -131,10 +131,10 @@ public class WriteDataResultSwingRenderer extends AbstractRenderer<WriteDataResu
                 public void hyperlinkUpdate(HyperlinkEvent e) {
                     if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
                         final String href = e.getDescription();
-                        if ("http://datacleaner.eobjects.org/register_datastore".equals(href)) {
+                        if ("http://datacleaner.org/register_datastore".equals(href)) {
                             _datastoreCatalog.addDatastore(errorDatastore);
                             JOptionPane.showMessageDialog(editorPane, "Saved datastore: " + errorDatastore.getName());
-                        } else if ("http://datacleaner.eobjects.org/preview_datastore".equals(href)) {
+                        } else if ("http://datacleaner.org/preview_datastore".equals(href)) {
                             DatastoreConnection errorCon = errorDatastore.openConnection();
                             try {
                                 Table table = errorCon.getDataContext().getDefaultSchema().getTables()[0];

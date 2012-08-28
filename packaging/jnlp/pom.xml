@@ -9,6 +9,15 @@
 	<artifactId>DataCleaner-jnlp</artifactId>
 	<name>DataCleaner - JNLP/WebStart packaging</name>
 	
+	<dependencies>
+		<!-- The core DataCleaner library -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	
 	<build>
 		<plugins>
 			<plugin>

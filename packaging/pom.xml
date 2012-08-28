@@ -75,12 +75,6 @@
 		</repository>
 	</repositories>
 	<dependencies>
-		<!-- The core DataCleaner library -->
-		<dependency>
-			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 
 		<!-- Extensions in libext -->
 		<dependency>

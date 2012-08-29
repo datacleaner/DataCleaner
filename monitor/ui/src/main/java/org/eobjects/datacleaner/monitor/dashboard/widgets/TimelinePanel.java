@@ -29,7 +29,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
-import org.eobjects.datacleaner.monitor.dashboard.util.RandomColorGenerator;
+import org.eobjects.datacleaner.monitor.dashboard.util.ColorProvider;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
@@ -42,7 +42,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.ChartArea;
@@ -62,7 +61,7 @@ public class TimelinePanel extends FlowPanel {
      * The width of the full panel, minus the width of the group selection
      * panel, minus 10 px margin
      */
-    private static final int WIDTH = 750 - 150 - 10;
+    private static final int WIDTH = 540;
 
     private final DashboardServiceAsync _service;
     private final LoadingIndicator _loadingIndicator;
@@ -75,7 +74,6 @@ public class TimelinePanel extends FlowPanel {
     private TimelineIdentifier _timelineIdentifier;
     private TimelineDefinition _timelineDefinition;
     private TimelineData _timelineData;
-    private TimelinePanel _timeLinePanel;
 
     public TimelinePanel(TenantIdentifier tenant,
             DashboardServiceAsync service,
@@ -87,7 +85,6 @@ public class TimelinePanel extends FlowPanel {
         _timelineIdentifier = timelineIdentifier;
         _timelineGroupPanel = timelineGroupPanel;
         _isDashboardEditor = isDashboardEditor;
-        _timeLinePanel = this;
         _loadingIndicator = new LoadingIndicator();
         _loadingIndicator.setHeight((DefaultVAxisOption.DEFAULT_HEIGHT + 4)
                 + "px");
@@ -250,7 +247,7 @@ public class TimelinePanel extends FlowPanel {
                 final ChartArea chartArea = ChartArea.create();
                 chartArea.setLeft(50d);
                 chartArea.setTop(10d);
-                chartArea.setWidth(WIDTH * 0.72d);
+                chartArea.setWidth(WIDTH - 60);
                 chartArea.setHeight(height * 0.8d);
                 options.setChartArea(chartArea);
 
@@ -279,12 +276,8 @@ public class TimelinePanel extends FlowPanel {
 
                 final AbstractDataTable dataTable = createDataTable(
                         _timelineDefinition, _timelineData);
-                List<String> colors = RandomColorGenerator
-                        .getRandomColors(dataTable.getNumberOfColumns() - 1);
-                String[] colours = new String[colors.size()];
-                colors.toArray(colours);
-
-                options.setColors(colours);
+                List<String> colors = ColorProvider.getColors(dataTable.getNumberOfColumns() - 1);
+                options.setColors(colors.toArray(new String[colors.size()]));
 
                 final LineChart chart = new LineChart(dataTable, options);
                 chart.addSelectHandler(new DrillToProfilingResultSelectHandler(
@@ -292,17 +285,16 @@ public class TimelinePanel extends FlowPanel {
                 chart.addStyleName("TimelineChart");
 
                 remove(_loadingIndicator);
-                HorizontalPanel horizontalPanel = new HorizontalPanel();
-                horizontalPanel.add(chart);
+                add(chart);
                 LegendPanel legendPanel = new LegendPanel();
+                legendPanel.addStyleName("LegendPanel");
                 for (int i = 1; i < dataTable.getNumberOfColumns(); i++) {
                     Legend legend = new Legend(dataTable.getColumnLabel(i), colors.get(i - 1));
                     legendPanel.addLegend(legend, new LegendClickHandler(dataTable.getColumnLabel(i),
-                            _timelineDefinition.getMetrics().get(i - 1), _timeLinePanel, legend));
-                    
+                            _timelineDefinition.getMetrics().get(i - 1), TimelinePanel.this, legend));
+
                 }
-                horizontalPanel.add(legendPanel);
-                add(horizontalPanel);
+                add(legendPanel);
             }
         };
         VisualizationUtils.loadVisualizationApi(lineChartRunnable,
@@ -377,11 +369,7 @@ public class TimelinePanel extends FlowPanel {
 
         final List<MetricIdentifier> metrics = definition.getMetrics();
         for (MetricIdentifier metricIdentifier : metrics) {
-            String metricDisplayName = metricIdentifier.getMetricDisplayName();
-            if (metricDisplayName == null || "".equals(metricDisplayName)) {
-                metricDisplayName = metricIdentifier.getDisplayName();
-            }
-            data.addColumn(ColumnType.NUMBER, metricDisplayName);
+            data.addColumn(ColumnType.NUMBER, metricIdentifier.getDisplayName());
         }
 
         final List<TimelineDataRow> rows = timelineData.getRows();

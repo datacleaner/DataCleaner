@@ -246,24 +246,24 @@ public class MetricIdentifier implements Serializable {
                 + (_paramQueryString != null ? ",paramQueryString=" + _paramQueryString : "") + "]";
     }
 
-    public String getDisplayName() {
-        if (_paramColumnName != null) {
-            return _metricDescriptorName + " (" + _paramColumnName + ")";
-        }
-        if (_paramQueryString != null) {
-            return _metricDescriptorName + ": " + _paramQueryString;
-        }
-        if (_analyzerInputName != null) {
-            return _metricDescriptorName + " (" + _analyzerInputName + ")";
-        }
-        return _metricDescriptorName;
-    }
-
     public void setMetricDisplayName(String _metricDisplayName) {
         this._metricDisplayName = _metricDisplayName;
     }
 
-    public String getMetricDisplayName() {
+    public String getDisplayName() {
+        if (_metricDisplayName == null || "".equals(_metricDisplayName)) {
+            if (_paramColumnName != null) {
+                return _metricDescriptorName + " (" + _paramColumnName + ")";
+            }
+            if (_paramQueryString != null) {
+                return _metricDescriptorName + ": " + _paramQueryString;
+            }
+            if (_analyzerInputName != null) {
+                return _metricDescriptorName + " (" + _analyzerInputName + ")";
+            }
+            return _metricDescriptorName;
+        }
         return _metricDisplayName;
     }
+
 }

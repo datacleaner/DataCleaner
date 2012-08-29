@@ -77,7 +77,6 @@ public class LegendClickHandler implements ClickHandler {
     private Button configureSaveButton(final DCPopupPanel popUp, final TextBox textBox) {
         Button saveButton = new Button("Save");
         saveButton.setVisible(true);
-        saveButton.addStyleDependentName("ImageButton");
         saveButton.setTitle("Save");
         saveButton.addStyleName("SaveButton");
         saveButton.addClickHandler(new ClickHandler() {

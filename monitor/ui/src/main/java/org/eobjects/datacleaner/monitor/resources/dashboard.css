@@ -100,6 +100,7 @@
 }
 
 .TimelinePanel {
+	clear: both;
 	margin-top: 15px;
 	margin-bottom: 15px;
 }
@@ -129,8 +130,28 @@
 	background-image: url("delete.png");
 }
 
-.TimelinePanel .TimelineChart {
+.TimelinePanel  {
 	text-align: center;
+}
+
+.TimelineChart {
+	float: left;
+	text-align: center;
+}
+
+.LegendPanel {
+	margin-top: 10px;	
+}
+
+.LegendMarker {
+	height: 1em; 
+	width: 1em; 
+	display: inline-block;
+	margin: 0 5px 0 0;	
+}
+
+.LegendCursor {
+	cursor: pointer;	
 }
 
 .CreateTimelinePopupPanel {

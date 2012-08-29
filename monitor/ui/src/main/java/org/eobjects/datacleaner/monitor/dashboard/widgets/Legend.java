@@ -24,8 +24,9 @@ import com.google.gwt.user.client.ui.HTML;
 public class Legend extends HTML {
 
     public Legend(String data, String color) {
-        super("<div class=\"LegendMarker\" style=\"height: 1em; width: 1em; display: inline-block;margin: 0 10px 0 0;background-color:" + color
+        super("<div class=\"LegendMarker\" style=\"background-color:" + color
                 + ";\"></div>" + data);
+        addStyleName("LegendCursor");
     }
 
 }

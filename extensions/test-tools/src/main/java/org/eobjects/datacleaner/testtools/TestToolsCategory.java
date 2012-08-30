@@ -22,5 +22,7 @@ package org.eobjects.datacleaner.testtools;
 import org.eobjects.analyzer.beans.categories.AbstractComponentCategory;
 
 public class TestToolsCategory extends AbstractComponentCategory {
+
+    private static final long serialVersionUID = 1L;
 	
 }

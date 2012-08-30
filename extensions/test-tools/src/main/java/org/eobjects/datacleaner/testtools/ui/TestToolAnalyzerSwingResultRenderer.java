@@ -74,7 +74,7 @@ public class TestToolAnalyzerSwingResultRenderer implements
 			DCPanel errorRowsPanel = annotatedRowResultRenderer
 					.render(errorRowsResult);
 
-			String text = errorRowsResult.getRowCount() + " errornous records";
+			String text = errorRowsResult.getAnnotatedRowCount() + " errornous records";
 			DCCollapsiblePanel errorCollapsiblePanel = new DCCollapsiblePanel(
 					text, text, false,
 					ImmutableRef.<JComponent> of(errorRowsPanel));

@@ -24,7 +24,6 @@ import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.ListCellRenderer;
 
 import org.eobjects.datacleaner.testtools.EmailConfiguration;
 import org.eobjects.datacleaner.util.IconUtils;

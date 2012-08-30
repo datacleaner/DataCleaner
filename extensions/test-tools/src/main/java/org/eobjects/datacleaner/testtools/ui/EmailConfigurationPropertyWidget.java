@@ -32,7 +32,6 @@ import org.eobjects.datacleaner.widgets.properties.AbstractPropertyWidget;
 public class EmailConfigurationPropertyWidget extends
 		AbstractPropertyWidget<EmailConfiguration> {
 
-	private static final long serialVersionUID = 1L;
 	private JComboBox _combo;
 
 	public EmailConfigurationPropertyWidget(

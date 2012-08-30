@@ -42,7 +42,7 @@ public class TestToolAnalyzerResult implements AnalyzerResult {
 	}
 	
 	public boolean isSuccesfull() {
-		return errorRowsResult.getRowCount() == 0;
+		return errorRowsResult.getAnnotatedRowCount() == 0;
 	}
 
 	public AnnotatedRowsResult getErrorRowsResult() {

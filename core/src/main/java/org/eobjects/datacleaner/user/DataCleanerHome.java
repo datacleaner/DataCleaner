@@ -109,6 +109,7 @@ public final class DataCleanerHome {
                 copyIfNonExisting(candidate, manager, "examples/duplicate_customer_detection.analysis.xml");
                 copyIfNonExisting(candidate, manager, "examples/customer_data_cleansing.analysis.xml");
                 copyIfNonExisting(candidate, manager, "examples/write_order_information.analysis.xml");
+                copyIfNonExisting(candidate, manager, "examples/customer_data_completeness.analysis.xml");
             }
         }
 

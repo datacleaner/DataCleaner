@@ -11,17 +11,16 @@
 	<http pattern="/repository/*/launch-resources/images/**" security="none" />
 
 	<!-- HTTP basic authentication for the repository RESTful services -->
-	<http pattern="/repository/**" realm="DataCleaner dq monitor">
+	<http pattern="/repository/**" realm="DataCleaner monitor">
 		<anonymous enabled="true" username="anonymous" />
 
-		<!-- Everything else in the repository is protected -->
 		<intercept-url pattern="/repository/**" access="ROLE_USER" />
 
 		<http-basic />
 	</http>
 
 	<!-- Form based authentication for the web pages -->
-	<http auto-config="true" realm="DataCleaner dq monitor">
+	<http auto-config="true" realm="DataCleaner monitor">
 		<anonymous enabled="true" username="anonymous" />
 
 		<!-- unprotected urls -->

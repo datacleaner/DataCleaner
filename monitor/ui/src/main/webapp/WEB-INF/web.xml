@@ -13,7 +13,18 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
+	
+	<!-- Ensure access to only one's own tenant in service URL -->
+	<filter>
+		<filter-name>tenantCheckFilter</filter-name>
+		<filter-class>org.eobjects.datacleaner.monitor.server.security.TenantCheckFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>tenantCheckFilter</filter-name>
+		<servlet-name>repository-browser</servlet-name>
+	</filter-mapping>
+	
 	<!-- JSF listeners -->
 	<listener>
 		<listener-class>com.sun.faces.config.ConfigureListener</listener-class>

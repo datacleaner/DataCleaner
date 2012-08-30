@@ -193,10 +193,10 @@ public class MultipleMappedColumnsPropertyWidgetTest extends TestCase {
 		assertEquals(3, comboBoxes.get(source3).getModel().getSize());
 		assertEquals(null, comboBoxes.get(source3).getModel().getElementAt(0));
 		assertEquals(
-				"Column[name=foo,columnNumber=0,type=null,nullable=null,indexed=false,nativeType=null,columnSize=null]",
+				"Column[name=foo,columnNumber=0,type=null,nullable=null,nativeType=null,columnSize=null]",
 				comboBoxes.get(source3).getModel().getElementAt(1).toString());
 		assertEquals(
-				"Column[name=bar,columnNumber=0,type=null,nullable=null,indexed=false,nativeType=null,columnSize=null]",
+				"Column[name=bar,columnNumber=0,type=null,nullable=null,nativeType=null,columnSize=null]",
 				comboBoxes.get(source3).getModel().getElementAt(2).toString());
 
 		// still the value should be an empty array, since no combo item has

@@ -62,8 +62,8 @@
 				<configuration>
 					<keystore>src/main/jnlp/dc_keystore</keystore>
 					<alias>dc_alias</alias>
-					<storepass>dc_password</storepass>
-					<keypass>dc_password</keypass>
+					<storepass>dc_pass</storepass>
+					<keypass>dc_pass</keypass>
 					<archiveDirectory>target/jnlp</archiveDirectory>
 					<processMainArtifact>false</processMainArtifact>
 					<verbose>true</verbose>

@@ -24,19 +24,20 @@ package org.eobjects.datacleaner.widgets.database;
  */
 public class MysqlDatabaseConnectionPresenter extends UrlTemplateDatabaseConnectionPresenter {
 
-	public MysqlDatabaseConnectionPresenter() {
-		super("jdbc:mysql://HOSTNAME:PORT/DATABASE?defaultFetchSize=-2147483648");
-	}
+    public MysqlDatabaseConnectionPresenter() {
+        super("jdbc:mysql://HOSTNAME:PORT/DATABASE?defaultFetchSize=" + Integer.MIN_VALUE
+                + "&largeRowSizeThreshold=1024");
+    }
 
-	@Override
-	protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
-			String param3, String param4) {
-		return "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?defaultFetchSize=-2147483648";
-	}
+    @Override
+    protected String getJdbcUrl(String hostname, int port, String database, String param1, String param2,
+            String param3, String param4) {
+        return "jdbc:mysql://" + hostname + ":" + port + "/" + database + "?defaultFetchSize=" + Integer.MIN_VALUE + "&largeRowSizeThreshold=1024";
+    }
 
-	@Override
-	protected int getDefaultPort() {
-		return 3306;
-	}
+    @Override
+    protected int getDefaultPort() {
+        return 3306;
+    }
 
 }

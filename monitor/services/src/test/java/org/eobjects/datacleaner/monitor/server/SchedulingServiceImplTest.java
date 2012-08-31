@@ -42,6 +42,8 @@ import org.eobjects.metamodel.util.Month;
 import org.quartz.CronExpression;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.ibm.icu.text.SimpleDateFormat;
 
@@ -50,8 +52,9 @@ public class SchedulingServiceImplTest extends TestCase {
     public void testScenario() throws Exception {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
-
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
         final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
+        service.setApplicationContext(applicationContext);
 
         Scheduler scheduler = service.getScheduler();
         assertFalse(scheduler.isStarted());
@@ -96,20 +99,22 @@ public class SchedulingServiceImplTest extends TestCase {
             File[] files = directory.listFiles(filenameFilter);
             assertEquals("Unexpected files in " + directory + ": " + Arrays.toString(files), 0, files.length);
 
-            final ExecutionLog execution = service.triggerExecution(tenant, randomNumberGenerationSchedule.getJob());
-            assertEquals(ExecutionStatus.RUNNING, execution.getExecutionStatus());
+            ExecutionLog execution = service.triggerExecution(tenant, randomNumberGenerationSchedule.getJob());
+
+            assertEquals(ExecutionStatus.PENDING, execution.getExecutionStatus());
             assertNull(execution.getJobEndDate());
-            assertNotNull(execution.getJobBeginDate());
 
             for (int i = 0; i < 100; i++) {
                 // spend max 10 seconds waiting for execution
-                if (execution.getExecutionStatus() == ExecutionStatus.RUNNING) {
+                if (execution.getExecutionStatus() == ExecutionStatus.RUNNING
+                        || execution.getExecutionStatus() == ExecutionStatus.PENDING) {
                     Thread.sleep(100);
                 }
             }
 
-            assertNotNull(execution.getJobEndDate());
             assertEquals(ExecutionStatus.SUCCESS, execution.getExecutionStatus());
+            assertNotNull(execution.getJobBeginDate());
+            assertNotNull(execution.getJobEndDate());
             final String logOutput = execution.getLogOutput();
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution BEGIN") != -1);
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution SUCCESS") != -1);

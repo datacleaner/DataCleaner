@@ -31,8 +31,9 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.quartz.JobDetail;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
@@ -44,28 +45,38 @@ import org.springframework.context.ApplicationContext;
 public class ExecuteJob extends AbstractQuartzJob {
 
     public static final String DETAIL_SCHEDULE_DEFINITION = "DataCleaner.schedule.definition";
+    public static final Object DETAIL_EXECUTION_LOG = "DataCleaner.schedule.execution.log";
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         logger.debug("executeInternal({})", jobExecutionContext);
 
-        final ApplicationContext applicationContext = getApplicationContext(jobExecutionContext);
+        final ApplicationContext applicationContext;
+        final ExecutionLog execution;
+        final ScheduleDefinition schedule;
 
-        final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
-
-        final JobDetail jobDetail = jobExecutionContext.getJobDetail();
-        final ScheduleDefinition schedule = (ScheduleDefinition) jobDetail.getJobDataMap().get(
-                DETAIL_SCHEDULE_DEFINITION);
-        if (schedule == null) {
-            throw new IllegalArgumentException("No schedule definition defined");
+        final JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
+        if (jobDataMap.containsKey(DETAIL_EXECUTION_LOG)) {
+            // the execution log has been provided already
+            execution = (ExecutionLog) jobDataMap.get(DETAIL_EXECUTION_LOG);
+            schedule = execution.getSchedule();
+            applicationContext = (ApplicationContext) jobDataMap.get(AbstractQuartzJob.APPLICATION_CONTEXT);
+        } else {
+            // we create a new execution log
+            schedule = (ScheduleDefinition) jobDataMap.get(DETAIL_SCHEDULE_DEFINITION);
+            applicationContext = getApplicationContext(jobExecutionContext);
+            if (schedule == null) {
+                throw new IllegalArgumentException("No schedule definition defined");
+            }
+            final TriggerType triggerType = schedule.getTriggerType();
+            execution = new ExecutionLog(schedule, triggerType);
         }
 
+        final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
         final String tenantId = schedule.getTenant().getId();
         logger.info("Tenant {} executing job {}", tenantId, schedule.getJob());
 
         final TenantContext context = contextFactory.getContext(tenantId);
-
-        final ExecutionLog execution = new ExecutionLog(schedule, schedule.getTriggerType());
 
         executeJob(context, execution);
     }

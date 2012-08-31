@@ -304,22 +304,39 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final ScheduleDefinition schedule = getSchedule(tenant, job.getName());
-
+        String jobNameToBeTriggered = job.getName();
+        final ScheduleDefinition schedule = getSchedule(tenant, jobNameToBeTriggered);
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        // set the "triggered by" attribute.
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            final String username = authentication.getName();
-            execution.setTriggeredBy(username);
-        }
+        try {
+            boolean addJob = true;
+            String[] jobNames = _scheduler.getJobNames(tenant.getId());
+            for (String jobName : jobNames) {
+                if (jobName.equals(jobNameToBeTriggered)) {
+                    addJob = false;
+                    break;
+                }
+            }
+            if (addJob) {
+                _scheduler.addJob(new JobDetail(jobNameToBeTriggered, tenant.getId(), ExecuteJob.class), true);
+            }
 
-        // TODO: Consider using scheduler.triggerJob(...) ... That will also
-        // trigger listeners.
-        ExecuteJob.executeJob(context, execution);
+            // set the "triggered by" attribute.
+            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null) {
+                final String username = authentication.getName();
+                execution.setTriggeredBy(username);
+            }
+
+            final JobDataMap jobDataMap = new JobDataMap();
+            jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
+            jobDataMap.put(ExecuteJob.DETAIL_EXECUTION_LOG, execution);
+
+            _scheduler.triggerJob(jobNameToBeTriggered, tenant.getId(), jobDataMap);
+        } catch (SchedulerException e) {
+            throw new IllegalStateException("Unexpected error invoking scheduler", e);
+        }
 
         return execution;
     }

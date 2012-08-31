@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0"
-	xmlns:shared="http://eobjects.org/datacleaner/shared/1.0">
-	<job-name>product_profiling</job-name>
-	<metrics>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Pattern finder</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTCODE</analyzer-input>
-			<metric-descriptor-name>Pattern count</metric-descriptor-name>
-			<metric-display-name>Pattern count test</metric-display-name>
-		</metric>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Reference data matcher</analyzer-descriptor-name>
-			<analyzer-name>Vendor whitelist check</analyzer-name>
-			<analyzer-input>PRODUCTVENDOR</analyzer-input>
-			<metric-descriptor-name>False count</metric-descriptor-name>
-			<metric-display-name>False count test</metric-display-name>
-			<metric-param-query-string>PRODUCTVENDOR in 'vendor whitelist'</metric-param-query-string>
-		</metric>
-	</metrics>
-</timeline>
+<ns3:timeline xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns3:job-name>product_profiling</ns3:job-name>
+    <ns3:metrics>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTCODE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Pattern count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Pattern count</ns2:metric-display-name>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Reference data matcher</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-name>Vendor whitelist check</ns2:analyzer-name>
+            <ns2:analyzer-input>PRODUCTVENDOR</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>False count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Vendor not matched with ref. data</ns2:metric-display-name>
+            <ns2:metric-param-query-string>PRODUCTVENDOR in 'vendor whitelist'</ns2:metric-param-query-string>
+        </ns2:metric>
+    </ns3:metrics>
+    <ns3:chart-options>
+        <ns3:horizontal-axis>
+            <ns3:fixed-axis/>
+        </ns3:horizontal-axis>
+        <ns3:vertical-axis>
+            <ns3:height>250</ns3:height>
+            <ns3:logarithmic-scale>false</ns3:logarithmic-scale>
+        </ns3:vertical-axis>
+    </ns3:chart-options>
+</ns3:timeline>

@@ -1,48 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<timeline xmlns="http://eobjects.org/datacleaner/timeline/1.0">
-	<job-name>product_profiling</job-name>
-	<metrics>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Value count</metric-descriptor-name>
-			<metric-param-query-string>Classic Cars</metric-param-query-string>
-		</metric>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Value count</metric-descriptor-name>
-			<metric-param-query-string>Vintage Cars</metric-param-query-string>
-		</metric>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Value count</metric-descriptor-name>
-			<metric-param-query-string>Motorcycles</metric-param-query-string>
-		</metric>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Value count</metric-descriptor-name>
-			<metric-param-query-string>Planes</metric-param-query-string>
-		</metric>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Value count</metric-descriptor-name>
-			<metric-param-query-string>Trucks and Buses</metric-param-query-string>
-		</metric>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Value count</metric-descriptor-name>
-			<metric-param-query-string>Ships</metric-param-query-string>
-		</metric>
-		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Value count</metric-descriptor-name>
-			<metric-param-query-string>Trains</metric-param-query-string>
-		</metric>
-	</metrics>
-</timeline>
+<ns3:timeline xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns3:job-name>product_profiling</ns3:job-name>
+    <ns3:metrics>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTLINE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Classic Cars</ns2:metric-display-name>
+            <ns2:metric-param-query-string>Classic Cars</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTLINE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Vintage Cars</ns2:metric-display-name>
+            <ns2:metric-param-query-string>Vintage Cars</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTLINE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Motorcycles</ns2:metric-display-name>
+            <ns2:metric-param-query-string>Motorcycles</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTLINE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Planes</ns2:metric-display-name>
+            <ns2:metric-param-query-string>Planes</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTLINE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Trucks and Buses</ns2:metric-display-name>
+            <ns2:metric-param-query-string>Trucks and Buses</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTLINE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Ships</ns2:metric-display-name>
+            <ns2:metric-param-query-string>Ships</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:analyzer-descriptor-name>Value distribution</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTLINE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Value count</ns2:metric-descriptor-name>
+            <ns2:metric-display-name>Trains</ns2:metric-display-name>
+            <ns2:metric-param-query-string>Trains</ns2:metric-param-query-string>
+        </ns2:metric>
+    </ns3:metrics>
+    <ns3:chart-options>
+        <ns3:horizontal-axis>
+            <ns3:fixed-axis/>
+        </ns3:horizontal-axis>
+        <ns3:vertical-axis>
+            <ns3:height>550</ns3:height>
+            <ns3:logarithmic-scale>false</ns3:logarithmic-scale>
+        </ns3:vertical-axis>
+    </ns3:chart-options>
+</ns3:timeline>

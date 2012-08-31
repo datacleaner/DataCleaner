@@ -30,6 +30,7 @@ import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.FileProperty;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
+import org.eobjects.analyzer.beans.api.Provided;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
@@ -49,48 +50,54 @@ import org.eobjects.metamodel.util.FileHelper;
 @Categorized(WriteDataCategory.class)
 public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
 
-	@Configured
-	char separatorChar = ',';
+    @Configured
+    char separatorChar = ',';
 
-	@Configured
-	char quoteChar = '"';
+    @Configured
+    char quoteChar = '"';
 
-	@Configured
-	@FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
-	File file;
-	
-	@Inject
-	UserPreferences userPreferences;
+    @Configured
+    @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
+    File file;
 
-	@Override
-	public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor, String categoryName) {
-		final String dsName = ajb.getDatastore().getName();
-		file = new File(userPreferences.getSaveDatastoreDirectory(), "output-" + dsName + "-" + descriptor.getDisplayName() + "-" + categoryName
-				+ ".csv");
-	}
+    @Inject
+    @Provided
+    UserPreferences userPreferences;
 
-	@Override
-	public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
-		final String dsName = ajb.getDatastore().getName();
-		file = new File(userPreferences.getSaveDatastoreDirectory(), "output-" + dsName + "-" + descriptor.getDisplayName() + ".csv");
-	}
+    @Override
+    public void configureForFilterOutcome(AnalysisJobBuilder ajb, FilterBeanDescriptor<?, ?> descriptor,
+            String categoryName) {
+        final String dsName = ajb.getDatastore().getName();
+        final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
+        final String displayName = descriptor.getDisplayName();
+        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + "-" + categoryName + ".csv");
+    }
 
-	@Override
-	public OutputWriter createOutputWriter() {
-		String[] headers = new String[columns.length];
-		for (int i = 0; i < headers.length; i++) {
-			headers[i] = columns[i].getName();
-		}
-		return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, columns);
-	}
+    @Override
+    public void configureForTransformedData(AnalysisJobBuilder ajb, TransformerBeanDescriptor<?> descriptor) {
+        final String dsName = ajb.getDatastore().getName();
+        final File saveDatastoreDirectory = userPreferences.getSaveDatastoreDirectory();
+        final String displayName = descriptor.getDisplayName();
+        file = new File(saveDatastoreDirectory, "output-" + dsName + "-" + displayName + ".csv");
+    }
 
-	@Override
-	protected WriteDataResult getResultInternal(int rowCount) {
-		Datastore datastore = new CsvDatastore(file.getName(), file.getAbsolutePath(), quoteChar, separatorChar, FileHelper.DEFAULT_ENCODING);
-		return new WriteDataResultImpl(rowCount, datastore, null, null);
-	}
+    @Override
+    public OutputWriter createOutputWriter() {
+        String[] headers = new String[columns.length];
+        for (int i = 0; i < headers.length; i++) {
+            headers[i] = columns[i].getName();
+        }
+        return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, columns);
+    }
 
-	public void setFile(File file) {
-		this.file = file;
-	}
+    @Override
+    protected WriteDataResult getResultInternal(int rowCount) {
+        Datastore datastore = new CsvDatastore(file.getName(), file.getAbsolutePath(), quoteChar, separatorChar,
+                FileHelper.DEFAULT_ENCODING);
+        return new WriteDataResultImpl(rowCount, datastore, null, null);
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
 }

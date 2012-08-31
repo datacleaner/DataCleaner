@@ -31,6 +31,7 @@ import org.eobjects.analyzer.data.MutableInputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
 
 /**
@@ -52,6 +53,8 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
 	protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
 		Analyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
 		if (analyzer instanceof AbstractOutputWriterAnalyzer) {
+		    LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration().getInjectionManager(null), null);
+	        helper.assignProvidedProperties(analyzerJobBuilder.getDescriptor(), analyzer);
 			((AbstractOutputWriterAnalyzer) analyzer).configureForTransformedData(analysisJobBuilder,
 					_transformerJobBuilder.getDescriptor());
 		}

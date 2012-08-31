@@ -188,8 +188,8 @@ public class DataSetWindow extends AbstractWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int newFirstRow = getFirstRow() - maxRows;
-                if (newFirstRow < 0) {
-                    newFirstRow = 0;
+                if (newFirstRow <= 0) {
+                    newFirstRow = 1;
                 }
                 _query.setFirstRow(newFirstRow);
                 updateTable();
@@ -224,7 +224,7 @@ public class DataSetWindow extends AbstractWindow {
         }
 
         if (_previousPageButton != null) {
-            if (getFirstRow() <= 0) {
+            if (getFirstRow() <= 1) {
                 _previousPageButton.setEnabled(false);
             } else {
                 _previousPageButton.setEnabled(true);
@@ -233,7 +233,7 @@ public class DataSetWindow extends AbstractWindow {
     }
 
     private int getFirstRow() {
-        return _query.getFirstRow() == null ? 0 : _query.getFirstRow();
+        return _query.getFirstRow() == null ? 1 : _query.getFirstRow();
     }
 
     @Override

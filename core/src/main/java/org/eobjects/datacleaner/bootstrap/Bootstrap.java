@@ -304,11 +304,7 @@ public final class Bootstrap {
                                 if (monitorConnection.getEncodedPassword() == null) {
                                     final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext,
                                             userPreferences, httpClient);
-                                    // show modal dialog, this will block until
-                                    // closed.
-                                    dialog.setModal(true);
-                                    dialog.setAlwaysOnTop(true);
-                                    dialog.open();
+                                    dialog.openBlocking();
                                     monitorConnection = userPreferences.getMonitorConnection();
                                 }
                             }

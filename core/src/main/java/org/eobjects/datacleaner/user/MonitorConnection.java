@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.user;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,8 @@ import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.util.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Describes the connection information needed to connect to the DQ monitor
@@ -41,6 +44,8 @@ import org.eobjects.datacleaner.util.SecurityUtils;
 public class MonitorConnection implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(MonitorConnection.class);
 
     private final String _hostname;
     private final int _port;
@@ -135,6 +140,19 @@ public class MonitorConnection implements Serializable {
         }
     }
 
+    public boolean matchesURI(String uriString) {
+        if (uriString == null) {
+            return false;
+        }
+        try {
+            URI uri = new URI(uriString);
+            return matchesURI(uri);
+        } catch (URISyntaxException e) {
+            logger.debug("Failed to create URI of string: " + uriString, e);
+            return false;
+        }
+    }
+
     /**
      * Determines if a {@link URI} matches the configured DC Monitor settings.
      * 
@@ -148,7 +166,7 @@ public class MonitorConnection implements Serializable {
         final String host = uri.getHost();
         if (host.equals(_hostname)) {
             final int port = uri.getPort();
-            if (port == _port) {
+            if (port == _port || port == -1) {
                 final String path = removeBeginningSlash(uri.getPath());
                 if (path.startsWith(_contextPath)) {
                     return true;

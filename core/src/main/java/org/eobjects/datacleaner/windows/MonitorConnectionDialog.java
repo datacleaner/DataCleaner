@@ -356,14 +356,14 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
         return panel;
     }
-    
+
     @Override
     protected void initialize() {
         super.initialize();
         // set focus to password field if username field is already filled
         if (!StringUtils.isNullOrEmpty(_usernameTextField.getText())) {
             _passwordTextField.setBorder(WidgetUtils.BORDER_EMPHASIZE_FIELD);
-            
+
             boolean focused = _passwordTextField.requestFocusInWindow();
             assert focused;
         }
@@ -377,5 +377,20 @@ public class MonitorConnectionDialog extends AbstractDialog {
                 new DefaultHttpClient());
 
         dialog.open();
+    }
+
+    /**
+     * Shows a dialog in blocking mode. Only to be used for very
+     * important/blocking behaviour.
+     * 
+     * Note that this way of displaying a dialog is not preferred since
+     * unexpected exceptions cannot be caught for modal dialogs.
+     */
+    public void openBlocking() {
+        // show modal dialog, this will block until
+        // closed.
+        setModal(true);
+        setAlwaysOnTop(true);
+        open();
     }
 }

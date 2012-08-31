@@ -40,12 +40,14 @@ import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
+import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,12 +170,24 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
         }
 
         if (file instanceof DelegateFileObject) {
-            DelegateFileObject delegateFileObject = (DelegateFileObject) file;
-            String scheme = file.getName().getScheme();
+            // this "file" is probably a HTTP URL resource (often provided by DC
+            // monitor)
+            final DelegateFileObject delegateFileObject = (DelegateFileObject) file;
+            final String scheme = file.getName().getScheme();
 
             if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) {
-                PublishJobToMonitorActionListener publisher = new PublishJobToMonitorActionListener(delegateFileObject,
-                        _window.getWindowContext(), _userPreferences, _httpClient);
+                final String uri = delegateFileObject.getName().getURI();
+                final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
+                if (monitorConnection.matchesURI(uri) && monitorConnection.isAuthenticationEnabled()
+                        && monitorConnection.getEncodedPassword() == null) {
+                    // password is not configured, ask for it.
+                    final MonitorConnectionDialog dialog = new MonitorConnectionDialog(_window.getWindowContext(),
+                            _userPreferences, _httpClient);
+                    dialog.openBlocking();
+                }
+
+                final PublishJobToMonitorActionListener publisher = new PublishJobToMonitorActionListener(
+                        delegateFileObject, _window.getWindowContext(), _userPreferences, _httpClient);
                 publisher.actionPerformed(event);
             } else {
                 throw new UnsupportedOperationException("Unexpected delegate file object: " + delegateFileObject

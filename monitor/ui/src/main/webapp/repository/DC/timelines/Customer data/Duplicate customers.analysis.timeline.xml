@@ -5,12 +5,17 @@
         <ns3:metric>
             <ns3:analyzer-descriptor-name>Duplicate detection</ns3:analyzer-descriptor-name>
             <ns3:metric-descriptor-name>Duplicate groups</ns3:metric-descriptor-name>
-            <ns3:metric-display-name>Duplicate groups</ns3:metric-display-name>
+            <ns3:metric-display-name>Dup. groups</ns3:metric-display-name>
+        </ns3:metric>
+        <ns3:metric>
+            <ns3:analyzer-descriptor-name>Duplicate detection</ns3:analyzer-descriptor-name>
+            <ns3:metric-descriptor-name>Duplicate pairs</ns3:metric-descriptor-name>
+            <ns3:metric-display-name>Dup. pairs</ns3:metric-display-name>
         </ns3:metric>
         <ns3:metric>
             <ns3:analyzer-descriptor-name>Duplicate detection</ns3:analyzer-descriptor-name>
             <ns3:metric-descriptor-name>Duplicate records</ns3:metric-descriptor-name>
-            <ns3:metric-display-name>Duplicate records test</ns3:metric-display-name>
+            <ns3:metric-display-name>Dup. records</ns3:metric-display-name>
         </ns3:metric>
     </metrics>
     <chart-options>
@@ -18,7 +23,7 @@
             <fixed-axis/>
         </horizontal-axis>
         <vertical-axis>
-            <height>350</height>
+            <height>550</height>
             <logarithmic-scale>false</logarithmic-scale>
         </vertical-axis>
     </chart-options>

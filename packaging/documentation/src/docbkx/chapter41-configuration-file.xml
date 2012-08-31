@@ -81,7 +81,7 @@
 		</para>
 		<programlisting lang="xml">
 			&lt;jdbc-datastore&#160;name="MySQL&#160;datastore"&gt;
-			&#160;&lt;url&gt;jdbc:mysql://hostname:3306/database&lt;/url&gt;
+			&#160;&lt;url&gt;jdbc:mysql://hostname:3306/database?defaultFetchSize=-2147483648&lt;/url&gt;
 			&#160;&lt;driver&gt;com.mysql.jdbc.Driver&lt;/driver&gt;
 			&#160;&lt;username&gt;username&lt;/username&gt;
 			&#160;&lt;password&gt;password&lt;/password&gt;

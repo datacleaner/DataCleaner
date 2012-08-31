@@ -61,7 +61,7 @@
 		<title>Default logging configuration</title>
 		<para>Here's a listing of the default logging configuration, in XML
 			format:</para>
-		<programlisting>
+		<programlisting lang="xml">
 			&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
 			&lt;!DOCTYPE log4j:configuration SYSTEM "log4j.dtd"&gt;
 			&lt;log4j:configuration&#160;xmlns:log4j="http://jakarta.apache.org/log4j/"&gt;
@@ -182,7 +182,7 @@
 		<para>
 			<emphasis>Logging in a PostgreSQL database:</emphasis>
 		</para>
-		<programlisting>
+		<programlisting lang="xml">
 			&lt;appender&#160;name="jdbcAppender"&#160;class="org.apache.log4j.jdbc.JDBCAppender"&gt;
 			&#160;&lt;param&#160;name="URL"&#160;value="jdbc:postgresql:db"/&gt;
 			&#160;&lt;param&#160;name="Driver"&#160;value="org.postgresql.Driver"/&gt;

@@ -71,7 +71,7 @@ public class DatabaseDriverCatalog implements Serializable {
 		_databaseDrivers = new ArrayList<DatabaseDriverDescriptor>();
 		add(DATABASE_NAME_MYSQL, "images/datastore-types/databases/mysql.png", "com.mysql.jdbc.Driver",
 				"http://repo1.maven.org/maven2/mysql/mysql-connector-java/5.1.18/mysql-connector-java-5.1.18.jar",
-				"jdbc:mysql://<hostname>:3306/<database>", "jdbc:mysql://<hostname>:<port>/<database>");
+				"jdbc:mysql://<hostname>:3306/<database>?defaultFetchSize=-2147483648", "jdbc:mysql://<hostname>:<port>/<database>?defaultFetchSize=-2147483648");
 		add(DATABASE_NAME_DB2, "images/datastore-types/databases/db2.png", "com.ibm.db2.jcc.DB2Driver", null,
 				"jdbc:db2://<hostname>:<port>/<database>", "jdbc:db2j:net://<hostname>:<port>/<database>");
 		add(DATABASE_NAME_INGRES, "images/datastore-types/databases/ingres.png", "com.ingres.jdbc.IngresDriver",

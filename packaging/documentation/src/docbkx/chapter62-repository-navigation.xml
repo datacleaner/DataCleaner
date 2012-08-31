@@ -36,7 +36,7 @@
 			the web application archive name.
 		</para>
 		<para>The result will resemble this example result:</para>
-		<programlisting>
+		<programlisting lang="json">
 			[
 			&#160;&#160;{"repository_path":"/DC/jobs/Contributor&#160;name&#160;cleansing.analysis.xml",
 			&#160;&#160;&#160;&#160;"name":"Contributor&#160;name&#160;cleansing","filename":"Contributor&#160;name&#160;cleansing.analysis.xml"},
@@ -80,7 +80,7 @@
 			the web application archive name.
 		</para>
 		<para>The result will resemble this example result:</para>
-		<programlisting>
+		<programlisting lang="json">
 			[
 			&#160;&#160;{"repository_path":"/DC/results/Customer&#160;completeness-1345128427583.analysis.result.dat",
 			&#160;&#160;&#160;&#160;"filename":"Customer&#160;completeness-1345128427583.analysis.result.dat"},

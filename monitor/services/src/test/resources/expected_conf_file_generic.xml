@@ -71,7 +71,7 @@
                         <v>Schmitt</v>
                         <v>Carine</v>
                         <v>40.32.2555</v>
-                        <v>54, rue Royale</v>
+                        <v>54&amp;#44; rue Royale</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>Nantes</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -97,7 +97,7 @@
                     </row>
                     <row>
                         <v>114</v>
-                        <v>Australian Collectors, Co.</v>
+                        <v>Australian Collectors&amp;#44; Co.</v>
                         <v>Ferguson</v>
                         <v>Peter</v>
                         <v>03 9520 4555</v>
@@ -116,7 +116,7 @@
                         <v>Labrune</v>
                         <v>Janine</v>
                         <v>40.67.8555</v>
-                        <v>67, rue des Cinquante Otages</v>
+                        <v>67&amp;#44; rue des Cinquante Otages</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>Nantes</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -157,7 +157,7 @@
                     </row>
                     <row>
                         <v>125</v>
-                        <v>Havel &amp; Zbyszek Co</v>
+                        <v>Havel &amp;amp; Zbyszek Co</v>
                         <v>Piestrzeniewicz</v>
                         <v>Zbyszek</v>
                         <v>(26) 642-7555</v>
@@ -172,7 +172,7 @@
                     </row>
                     <row>
                         <v>128</v>
-                        <v>Blauer See Auto, Co.</v>
+                        <v>Blauer See Auto&amp;#44; Co.</v>
                         <v>Keitel</v>
                         <v>Roland</v>
                         <v>+49 69 66 90 2555</v>
@@ -221,7 +221,7 @@
                         <v>Freyre</v>
                         <v>Diego</v>
                         <v>(91) 555 94 44</v>
-                        <v>C/ Moralzarzal, 86</v>
+                        <v>C/ Moralzarzal&amp;#44; 86</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>Madrid</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -232,7 +232,7 @@
                     </row>
                     <row>
                         <v>144</v>
-                        <v>Volvo Model Replicas, Co</v>
+                        <v>Volvo Model Replicas&amp;#44; Co</v>
                         <v>Berglund</v>
                         <v>Christina</v>
                         <v>0921-12 3555</v>
@@ -262,11 +262,11 @@
                     </row>
                     <row>
                         <v>146</v>
-                        <v>Saveley &amp; Henriot, Co.</v>
+                        <v>Saveley &amp;amp; Henriot&amp;#44; Co.</v>
                         <v>Saveley</v>
                         <v>Mary</v>
                         <v>78.32.5555</v>
-                        <v>2, rue du Commerce</v>
+                        <v>2&amp;#44; rue du Commerce</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>Lyon</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -277,11 +277,11 @@
                     </row>
                     <row>
                         <v>148</v>
-                        <v>Dragon Souveniers, Ltd.</v>
+                        <v>Dragon Souveniers&amp;#44; Ltd.</v>
                         <v>Natividad</v>
                         <v>Eric</v>
                         <v>+65 221 7555</v>
-                        <v>Bronz Sok., Bronz Apt. 3/6 Tesvikiye</v>
+                        <v>Bronz Sok.&amp;#44; Bronz Apt. 3/6 Tesvikiye</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>Singapore</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -337,7 +337,7 @@
                     </row>
                     <row>
                         <v>166</v>
-                        <v>Handji Gifts&amp; Co</v>
+                        <v>Handji Gifts&amp;amp; Co</v>
                         <v>Victorino</v>
                         <v>Wendy</v>
                         <v>+65 224 1555</v>
@@ -356,7 +356,7 @@
                         <v>Oeztan</v>
                         <v>Veysel</v>
                         <v>+47 2267 3215</v>
-                        <v>Drammen 121, PR 744 Sentrum</v>
+                        <v>Drammen 121&amp;#44; PR 744 Sentrum</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>Bergen</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
@@ -442,7 +442,7 @@
                         <v>wpatterson@classicmodelcars.com</v>
                         <v>6</v>
                         <v>1056</v>
-                        <v>Sales Manager (JAPAN, APAC)</v>
+                        <v>Sales Manager (JAPAN&amp;#44; APAC)</v>
                     </row>
                     <row>
                         <v>1102</v>
@@ -969,9 +969,9 @@
                         <v>100.0</v>
                         <v>3</v>
                         <v>5151.0</v>
-                        <v>2003-01-06 00:00:00.0</v>
-                        <v>2003-01-13 00:00:00.0</v>
-                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-06T00:00:00 0</v>
+                        <v>2003-01-13T00:00:00 0</v>
+                        <v>2003-01-10T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>363</v>
@@ -987,9 +987,9 @@
                         <v>67.8</v>
                         <v>2</v>
                         <v>3390.0</v>
-                        <v>2003-01-06 00:00:00.0</v>
-                        <v>2003-01-13 00:00:00.0</v>
-                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-06T00:00:00 0</v>
+                        <v>2003-01-13T00:00:00 0</v>
+                        <v>2003-01-10T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>363</v>
@@ -1005,9 +1005,9 @@
                         <v>86.51</v>
                         <v>4</v>
                         <v>1903.22</v>
-                        <v>2003-01-06 00:00:00.0</v>
-                        <v>2003-01-13 00:00:00.0</v>
-                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-06T00:00:00 0</v>
+                        <v>2003-01-13T00:00:00 0</v>
+                        <v>2003-01-10T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>363</v>
@@ -1023,9 +1023,9 @@
                         <v>34.47</v>
                         <v>1</v>
                         <v>1689.03</v>
-                        <v>2003-01-06 00:00:00.0</v>
-                        <v>2003-01-13 00:00:00.0</v>
-                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-06T00:00:00 0</v>
+                        <v>2003-01-13T00:00:00 0</v>
+                        <v>2003-01-10T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>363</v>
@@ -1041,9 +1041,9 @@
                         <v>100.0</v>
                         <v>4</v>
                         <v>3782.0</v>
-                        <v>2003-01-09 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-11 00:00:00.0</v>
+                        <v>2003-01-09T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-11T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Check on availability.</v>
                         <v>128</v>
@@ -1059,9 +1059,9 @@
                         <v>100.0</v>
                         <v>1</v>
                         <v>3773.38</v>
-                        <v>2003-01-09 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-11 00:00:00.0</v>
+                        <v>2003-01-09T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-11T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Check on availability.</v>
                         <v>128</v>
@@ -1077,9 +1077,9 @@
                         <v>31.2</v>
                         <v>3</v>
                         <v>1404.0</v>
-                        <v>2003-01-09 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-11 00:00:00.0</v>
+                        <v>2003-01-09T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-11T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Check on availability.</v>
                         <v>128</v>
@@ -1095,9 +1095,9 @@
                         <v>53.76</v>
                         <v>2</v>
                         <v>2472.96</v>
-                        <v>2003-01-09 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-11 00:00:00.0</v>
+                        <v>2003-01-09T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-11T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Check on availability.</v>
                         <v>128</v>
@@ -1113,9 +1113,9 @@
                         <v>100.0</v>
                         <v>2</v>
                         <v>4808.31</v>
-                        <v>2003-01-10 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-14 00:00:00.0</v>
+                        <v>2003-01-10T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-14T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>181</v>
@@ -1131,9 +1131,9 @@
                         <v>50.14</v>
                         <v>1</v>
                         <v>2055.74</v>
-                        <v>2003-01-10 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-14 00:00:00.0</v>
+                        <v>2003-01-10T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-14T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>181</v>
@@ -1149,9 +1149,9 @@
                         <v>100.0</v>
                         <v>11</v>
                         <v>5404.62</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1167,9 +1167,9 @@
                         <v>100.0</v>
                         <v>4</v>
                         <v>5398.26</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1185,9 +1185,9 @@
                         <v>100.0</v>
                         <v>8</v>
                         <v>3394.98</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1203,9 +1203,9 @@
                         <v>100.0</v>
                         <v>10</v>
                         <v>3920.0</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1221,9 +1221,9 @@
                         <v>54.09</v>
                         <v>2</v>
                         <v>1189.98</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1239,9 +1239,9 @@
                         <v>83.07</v>
                         <v>12</v>
                         <v>2242.89</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1257,9 +1257,9 @@
                         <v>57.46</v>
                         <v>14</v>
                         <v>2011.1</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1275,9 +1275,9 @@
                         <v>100.0</v>
                         <v>13</v>
                         <v>2539.5</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1293,9 +1293,9 @@
                         <v>100.0</v>
                         <v>16</v>
                         <v>4791.82</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1311,9 +1311,9 @@
                         <v>100.0</v>
                         <v>5</v>
                         <v>4228.2</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
@@ -1359,180 +1359,180 @@
                 <rows>
                     <row>
                         <v>10100</v>
-                        <v>2003-01-06 00:00:00.0</v>
-                        <v>2003-01-13 00:00:00.0</v>
-                        <v>2003-01-10 00:00:00.0</v>
+                        <v>2003-01-06T00:00:00 0</v>
+                        <v>2003-01-13T00:00:00 0</v>
+                        <v>2003-01-10T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>363</v>
                     </row>
                     <row>
                         <v>10101</v>
-                        <v>2003-01-09 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-11 00:00:00.0</v>
+                        <v>2003-01-09T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-11T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Check on availability.</v>
                         <v>128</v>
                     </row>
                     <row>
                         <v>10102</v>
-                        <v>2003-01-10 00:00:00.0</v>
-                        <v>2003-01-18 00:00:00.0</v>
-                        <v>2003-01-14 00:00:00.0</v>
+                        <v>2003-01-10T00:00:00 0</v>
+                        <v>2003-01-18T00:00:00 0</v>
+                        <v>2003-01-14T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>181</v>
                     </row>
                     <row>
                         <v>10103</v>
-                        <v>2003-01-29 00:00:00.0</v>
-                        <v>2003-02-07 00:00:00.0</v>
-                        <v>2003-02-02 00:00:00.0</v>
+                        <v>2003-01-29T00:00:00 0</v>
+                        <v>2003-02-07T00:00:00 0</v>
+                        <v>2003-02-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>121</v>
                     </row>
                     <row>
                         <v>10104</v>
-                        <v>2003-01-31 00:00:00.0</v>
-                        <v>2003-02-09 00:00:00.0</v>
-                        <v>2003-02-01 00:00:00.0</v>
+                        <v>2003-01-31T00:00:00 0</v>
+                        <v>2003-02-09T00:00:00 0</v>
+                        <v>2003-02-01T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>141</v>
                     </row>
                     <row>
                         <v>10105</v>
-                        <v>2003-02-11 00:00:00.0</v>
-                        <v>2003-02-21 00:00:00.0</v>
-                        <v>2003-02-12 00:00:00.0</v>
+                        <v>2003-02-11T00:00:00 0</v>
+                        <v>2003-02-21T00:00:00 0</v>
+                        <v>2003-02-12T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>145</v>
                     </row>
                     <row>
                         <v>10106</v>
-                        <v>2003-02-17 00:00:00.0</v>
-                        <v>2003-02-24 00:00:00.0</v>
-                        <v>2003-02-21 00:00:00.0</v>
+                        <v>2003-02-17T00:00:00 0</v>
+                        <v>2003-02-24T00:00:00 0</v>
+                        <v>2003-02-21T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>278</v>
                     </row>
                     <row>
                         <v>10107</v>
-                        <v>2003-02-24 00:00:00.0</v>
-                        <v>2003-03-03 00:00:00.0</v>
-                        <v>2003-02-26 00:00:00.0</v>
+                        <v>2003-02-24T00:00:00 0</v>
+                        <v>2003-03-03T00:00:00 0</v>
+                        <v>2003-02-26T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Difficult to negotiate with customer. We need more marketing materials</v>
                         <v>131</v>
                     </row>
                     <row>
                         <v>10108</v>
-                        <v>2003-03-03 00:00:00.0</v>
-                        <v>2003-03-12 00:00:00.0</v>
-                        <v>2003-03-08 00:00:00.0</v>
+                        <v>2003-03-03T00:00:00 0</v>
+                        <v>2003-03-12T00:00:00 0</v>
+                        <v>2003-03-08T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>385</v>
                     </row>
                     <row>
                         <v>10109</v>
-                        <v>2003-03-10 00:00:00.0</v>
-                        <v>2003-03-19 00:00:00.0</v>
-                        <v>2003-03-11 00:00:00.0</v>
+                        <v>2003-03-10T00:00:00 0</v>
+                        <v>2003-03-19T00:00:00 0</v>
+                        <v>2003-03-11T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Customer requested that FedEx Ground is used for this shipping</v>
                         <v>486</v>
                     </row>
                     <row>
                         <v>10110</v>
-                        <v>2003-03-18 00:00:00.0</v>
-                        <v>2003-03-24 00:00:00.0</v>
-                        <v>2003-03-20 00:00:00.0</v>
+                        <v>2003-03-18T00:00:00 0</v>
+                        <v>2003-03-24T00:00:00 0</v>
+                        <v>2003-03-20T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>187</v>
                     </row>
                     <row>
                         <v>10111</v>
-                        <v>2003-03-25 00:00:00.0</v>
-                        <v>2003-03-31 00:00:00.0</v>
-                        <v>2003-03-30 00:00:00.0</v>
+                        <v>2003-03-25T00:00:00 0</v>
+                        <v>2003-03-31T00:00:00 0</v>
+                        <v>2003-03-30T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>129</v>
                     </row>
                     <row>
                         <v>10112</v>
-                        <v>2003-03-24 00:00:00.0</v>
-                        <v>2003-04-03 00:00:00.0</v>
-                        <v>2003-03-29 00:00:00.0</v>
+                        <v>2003-03-24T00:00:00 0</v>
+                        <v>2003-04-03T00:00:00 0</v>
+                        <v>2003-03-29T00:00:00 0</v>
                         <v>Shipped</v>
-                        <v>Customer requested that ad materials (such as posters, pamphlets) be included in the shippment</v>
+                        <v>Customer requested that ad materials (such as posters&amp;#44; pamphlets) be included in the shippment</v>
                         <v>144</v>
                     </row>
                     <row>
                         <v>10113</v>
-                        <v>2003-03-26 00:00:00.0</v>
-                        <v>2003-04-02 00:00:00.0</v>
-                        <v>2003-03-27 00:00:00.0</v>
+                        <v>2003-03-26T00:00:00 0</v>
+                        <v>2003-04-02T00:00:00 0</v>
+                        <v>2003-03-27T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>124</v>
                     </row>
                     <row>
                         <v>10114</v>
-                        <v>2003-04-01 00:00:00.0</v>
-                        <v>2003-04-07 00:00:00.0</v>
-                        <v>2003-04-02 00:00:00.0</v>
+                        <v>2003-04-01T00:00:00 0</v>
+                        <v>2003-04-07T00:00:00 0</v>
+                        <v>2003-04-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>172</v>
                     </row>
                     <row>
                         <v>10115</v>
-                        <v>2003-04-04 00:00:00.0</v>
-                        <v>2003-04-12 00:00:00.0</v>
-                        <v>2003-04-07 00:00:00.0</v>
+                        <v>2003-04-04T00:00:00 0</v>
+                        <v>2003-04-12T00:00:00 0</v>
+                        <v>2003-04-07T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>424</v>
                     </row>
                     <row>
                         <v>10116</v>
-                        <v>2003-04-11 00:00:00.0</v>
-                        <v>2003-04-19 00:00:00.0</v>
-                        <v>2003-04-13 00:00:00.0</v>
+                        <v>2003-04-11T00:00:00 0</v>
+                        <v>2003-04-19T00:00:00 0</v>
+                        <v>2003-04-13T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>381</v>
                     </row>
                     <row>
                         <v>10117</v>
-                        <v>2003-04-16 00:00:00.0</v>
-                        <v>2003-04-24 00:00:00.0</v>
-                        <v>2003-04-17 00:00:00.0</v>
+                        <v>2003-04-16T00:00:00 0</v>
+                        <v>2003-04-24T00:00:00 0</v>
+                        <v>2003-04-17T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>148</v>
                     </row>
                     <row>
                         <v>10118</v>
-                        <v>2003-04-21 00:00:00.0</v>
-                        <v>2003-04-29 00:00:00.0</v>
-                        <v>2003-04-26 00:00:00.0</v>
+                        <v>2003-04-21T00:00:00 0</v>
+                        <v>2003-04-29T00:00:00 0</v>
+                        <v>2003-04-26T00:00:00 0</v>
                         <v>Shipped</v>
                         <v>Customer has worked with some of our vendors in the past and is aware of their MSRP</v>
                         <v>216</v>
                     </row>
                     <row>
                         <v>10119</v>
-                        <v>2003-04-28 00:00:00.0</v>
-                        <v>2003-05-05 00:00:00.0</v>
-                        <v>2003-05-02 00:00:00.0</v>
+                        <v>2003-04-28T00:00:00 0</v>
+                        <v>2003-05-05T00:00:00 0</v>
+                        <v>2003-05-02T00:00:00 0</v>
                         <v>Shipped</v>
                         <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
                         <v>382</v>
@@ -1563,121 +1563,121 @@
                     <row>
                         <v>103</v>
                         <v>HQ336336</v>
-                        <v>2004-10-19 00:00:00.0</v>
+                        <v>2004-10-19T00:00:00 0</v>
                         <v>5307.98</v>
                     </row>
                     <row>
                         <v>103</v>
                         <v>JM555205</v>
-                        <v>2003-06-05 00:00:00.0</v>
+                        <v>2003-06-05T00:00:00 0</v>
                         <v>16560.3</v>
                     </row>
                     <row>
                         <v>103</v>
                         <v>OM314933</v>
-                        <v>2004-12-18 00:00:00.0</v>
+                        <v>2004-12-18T00:00:00 0</v>
                         <v>2311.68</v>
                     </row>
                     <row>
                         <v>112</v>
                         <v>BO864823</v>
-                        <v>2004-12-17 00:00:00.0</v>
+                        <v>2004-12-17T00:00:00 0</v>
                         <v>14449.61</v>
                     </row>
                     <row>
                         <v>112</v>
                         <v>HQ55022</v>
-                        <v>2003-06-06 00:00:00.0</v>
+                        <v>2003-06-06T00:00:00 0</v>
                         <v>33847.62</v>
                     </row>
                     <row>
                         <v>112</v>
                         <v>ND748579</v>
-                        <v>2004-08-20 00:00:00.0</v>
+                        <v>2004-08-20T00:00:00 0</v>
                         <v>34453.85</v>
                     </row>
                     <row>
                         <v>114</v>
                         <v>GG31455</v>
-                        <v>2003-05-20 00:00:00.0</v>
+                        <v>2003-05-20T00:00:00 0</v>
                         <v>50397.66</v>
                     </row>
                     <row>
                         <v>114</v>
                         <v>MA765515</v>
-                        <v>2004-12-15 00:00:00.0</v>
+                        <v>2004-12-15T00:00:00 0</v>
                         <v>85591.32</v>
                     </row>
                     <row>
                         <v>114</v>
                         <v>NP603840</v>
-                        <v>2003-05-31 00:00:00.0</v>
+                        <v>2003-05-31T00:00:00 0</v>
                         <v>9738.18</v>
                     </row>
                     <row>
                         <v>114</v>
                         <v>NR27552</v>
-                        <v>2004-03-10 00:00:00.0</v>
+                        <v>2004-03-10T00:00:00 0</v>
                         <v>49637.57</v>
                     </row>
                     <row>
                         <v>119</v>
                         <v>DB933704</v>
-                        <v>2004-11-14 00:00:00.0</v>
+                        <v>2004-11-14T00:00:00 0</v>
                         <v>20719.91</v>
                     </row>
                     <row>
                         <v>119</v>
                         <v>LN373447</v>
-                        <v>2004-08-08 00:00:00.0</v>
+                        <v>2004-08-08T00:00:00 0</v>
                         <v>56002.9</v>
                     </row>
                     <row>
                         <v>119</v>
                         <v>NG94694</v>
-                        <v>2005-02-22 00:00:00.0</v>
+                        <v>2005-02-22T00:00:00 0</v>
                         <v>59617.44</v>
                     </row>
                     <row>
                         <v>121</v>
                         <v>DB889831</v>
-                        <v>2003-02-16 00:00:00.0</v>
+                        <v>2003-02-16T00:00:00 0</v>
                         <v>54702.0</v>
                     </row>
                     <row>
                         <v>121</v>
                         <v>FD317790</v>
-                        <v>2003-10-28 00:00:00.0</v>
+                        <v>2003-10-28T00:00:00 0</v>
                         <v>1474.66</v>
                     </row>
                     <row>
                         <v>121</v>
                         <v>KI831359</v>
-                        <v>2004-11-04 00:00:00.0</v>
+                        <v>2004-11-04T00:00:00 0</v>
                         <v>19769.68</v>
                     </row>
                     <row>
                         <v>121</v>
                         <v>MA302151</v>
-                        <v>2004-11-28 00:00:00.0</v>
+                        <v>2004-11-28T00:00:00 0</v>
                         <v>40652.85</v>
                     </row>
                     <row>
                         <v>124</v>
                         <v>AE215433</v>
-                        <v>2005-02-18 00:00:00.0</v>
+                        <v>2005-02-18T00:00:00 0</v>
                         <v>51826.36</v>
                     </row>
                     <row>
                         <v>124</v>
                         <v>AQ50522</v>
-                        <v>2005-06-03 00:00:00.0</v>
+                        <v>2005-06-03T00:00:00 0</v>
                         <v>32194.79</v>
                     </row>
                     <row>
                         <v>124</v>
                         <v>BG255406</v>
-                        <v>2004-08-28 00:00:00.0</v>
+                        <v>2004-08-28T00:00:00 0</v>
                         <v>93928.73</v>
                     </row>
                 </rows>
@@ -1729,7 +1729,7 @@
                         <v>Motorcycles</v>
                         <v>1:10</v>
                         <v>Min Lin Diecast</v>
-                        <v>This replica features working kickstand, front suspension, gear-shift lever, footbrake lever, drive chain, wheels and steering. All parts are particularly delicate due to their precise scale and require special care and attention.</v>
+                        <v>This replica features working kickstand&amp;#44; front suspension&amp;#44; gear-shift lever&amp;#44; footbrake lever&amp;#44; drive chain&amp;#44; wheels and steering. All parts are particularly delicate due to their precise scale and require special care and attention.</v>
                         <v>7933</v>
                         <v>48.81</v>
                         <v>95.7</v>
@@ -1751,7 +1751,7 @@
                         <v>Motorcycles</v>
                         <v>1:10</v>
                         <v>Highway 66 Mini Classics</v>
-                        <v>Official Moto Guzzi logos and insignias, saddle bags located on side of motorcycle, detailed engine, working steering, working suspension, two leather seats, luggage rack, dual exhaust pipes, small saddle bag located on handle bars, two-tone paint with chrome accents, superior die-cast detail , rotating wheels , working kick stand, diecast metal with plastic parts and baked enamel finish.</v>
+                        <v>Official Moto Guzzi logos and insignias&amp;#44; saddle bags located on side of motorcycle&amp;#44; detailed engine&amp;#44; working steering&amp;#44; working suspension&amp;#44; two leather seats&amp;#44; luggage rack&amp;#44; dual exhaust pipes&amp;#44; small saddle bag located on handle bars&amp;#44; two-tone paint with chrome accents&amp;#44; superior die-cast detail &amp;#44; rotating wheels &amp;#44; working kick stand&amp;#44; diecast metal with plastic parts and baked enamel finish.</v>
                         <v>6625</v>
                         <v>68.99</v>
                         <v>118.94</v>
@@ -1762,8 +1762,8 @@
                         <v>Motorcycles</v>
                         <v>1:10</v>
                         <v>Red Start Diecast</v>
-                        <v>Model features, official Harley Davidson logos and insignias, detachable rear wheelie bar, heavy diecast metal with resin parts, authentic multi-color tampo-printed graphics, separate engine drive belts, free-turning front fork, rotating tires and rear racing slick, certificate of authenticity, detailed engine, display stand&#xD;
-, precision diecast replica, baked enamel finish, 1:10 scale model, removable fender, seat and tank cover piece for displaying the superior detail of the v-twin engine</v>
+                        <v>Model features&amp;#44; official Harley Davidson logos and insignias&amp;#44; detachable rear wheelie bar&amp;#44; heavy diecast metal with resin parts&amp;#44; authentic multi-color tampo-printed graphics&amp;#44; separate engine drive belts&amp;#44; free-turning front fork&amp;#44; rotating tires and rear racing slick&amp;#44; certificate of authenticity&amp;#44; detailed engine&amp;#44; display stand&#xD;
+&amp;#44; precision diecast replica&amp;#44; baked enamel finish&amp;#44; 1:10 scale model&amp;#44; removable fender&amp;#44; seat and tank cover piece for displaying the superior detail of the v-twin engine</v>
                         <v>5582</v>
                         <v>91.02</v>
                         <v>193.66</v>
@@ -1796,7 +1796,7 @@
                         <v>Classic Cars</v>
                         <v>1:12</v>
                         <v>Autoart Studio Design</v>
-                        <v>Hood, doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color dark green.</v>
+                        <v>Hood&amp;#44; doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color dark green.</v>
                         <v>68</v>
                         <v>95.34</v>
                         <v>194.57</v>
@@ -1818,7 +1818,7 @@
                         <v>Trucks and Buses</v>
                         <v>1:12</v>
                         <v>Welly Diecast Productions</v>
-                        <v>Model features 30 windows, skylights &amp; glare resistant glass, working steering system, original logos</v>
+                        <v>Model features 30 windows&amp;#44; skylights &amp;amp; glare resistant glass&amp;#44; working steering system&amp;#44; original logos</v>
                         <v>1579</v>
                         <v>77.9</v>
                         <v>136.67</v>
@@ -1829,7 +1829,7 @@
                         <v>Motorcycles</v>
                         <v>1:12</v>
                         <v>Unimax Art Galleries</v>
-                        <v>Official logos and insignias, saddle bags located on side of motorcycle, detailed engine, working steering, working suspension, two leather seats, luggage rack, dual exhaust pipes, small saddle bag located on handle bars, two-tone paint with chrome accents, superior die-cast detail , rotating wheels , working kick stand, diecast metal with plastic parts and baked enamel finish.</v>
+                        <v>Official logos and insignias&amp;#44; saddle bags located on side of motorcycle&amp;#44; detailed engine&amp;#44; working steering&amp;#44; working suspension&amp;#44; two leather seats&amp;#44; luggage rack&amp;#44; dual exhaust pipes&amp;#44; small saddle bag located on handle bars&amp;#44; two-tone paint with chrome accents&amp;#44; superior die-cast detail &amp;#44; rotating wheels &amp;#44; working kick stand&amp;#44; diecast metal with plastic parts and baked enamel finish.</v>
                         <v>9997</v>
                         <v>66.27</v>
                         <v>150.62</v>
@@ -1840,7 +1840,7 @@
                         <v>Classic Cars</v>
                         <v>1:18</v>
                         <v>Welly Diecast Productions</v>
-                        <v>1:18 scale die-cast about 10 long doors open, hood opens, trunk opens and wheels roll</v>
+                        <v>1:18 scale die-cast about 10 long doors open&amp;#44; hood opens&amp;#44; trunk opens and wheels roll</v>
                         <v>6906</v>
                         <v>89.14</v>
                         <v>151.08</v>
@@ -1851,7 +1851,7 @@
                         <v>Classic Cars</v>
                         <v>1:12</v>
                         <v>Welly Diecast Productions</v>
-                        <v>1:12 scale model of a 1968 Dodge Charger. Hood, doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color black</v>
+                        <v>1:12 scale model of a 1968 Dodge Charger. Hood&amp;#44; doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color black</v>
                         <v>9123</v>
                         <v>75.16</v>
                         <v>117.44</v>
@@ -1884,7 +1884,7 @@
                         <v>Trucks and Buses</v>
                         <v>1:12</v>
                         <v>Exoto Designs</v>
-                        <v>1:12 scale die-cast about 20 long Hood opens, Rubber wheels</v>
+                        <v>1:12 scale die-cast about 20 long Hood opens&amp;#44; Rubber wheels</v>
                         <v>6125</v>
                         <v>55.7</v>
                         <v>118.5</v>
@@ -1906,7 +1906,7 @@
                         <v>Trucks and Buses</v>
                         <v>1:18</v>
                         <v>Studio M Art Models</v>
-                        <v>This model features soft rubber tires, working steering, rubber mud guards, authentic Ford logos, detailed undercarriage, opening doors and hood,  removable split rear gate, full size spare mounted in bed, detailed interior with opening glove box</v>
+                        <v>This model features soft rubber tires&amp;#44; working steering&amp;#44; rubber mud guards&amp;#44; authentic Ford logos&amp;#44; detailed undercarriage&amp;#44; opening doors and hood&amp;#44;  removable split rear gate&amp;#44; full size spare mounted in bed&amp;#44; detailed interior with opening glove box</v>
                         <v>2613</v>
                         <v>58.33</v>
                         <v>116.67</v>
@@ -1917,7 +1917,7 @@
                         <v>Classic Cars</v>
                         <v>1:18</v>
                         <v>Highway 66 Mini Classics</v>
-                        <v>This model features, opening hood, opening doors, detailed engine, rear spoiler, opening trunk, working steering, tinted windows, baked enamel finish. Color red.</v>
+                        <v>This model features&amp;#44; opening hood&amp;#44; opening doors&amp;#44; detailed engine&amp;#44; rear spoiler&amp;#44; opening trunk&amp;#44; working steering&amp;#44; tinted windows&amp;#44; baked enamel finish. Color red.</v>
                         <v>3975</v>
                         <v>83.51</v>
                         <v>141.54</v>
@@ -1928,7 +1928,7 @@
                         <v>Vintage Cars</v>
                         <v>1:18</v>
                         <v>Motor City Art Classics</v>
-                        <v>Features opening engine cover, doors, trunk, and fuel filler cap. Color black</v>
+                        <v>Features opening engine cover&amp;#44; doors&amp;#44; trunk&amp;#44; and fuel filler cap. Color black</v>
                         <v>8693</v>
                         <v>60.62</v>
                         <v>102.74</v>
@@ -1939,7 +1939,7 @@
                         <v>Vintage Cars</v>
                         <v>1:18</v>
                         <v>Studio M Art Models</v>
-                        <v>This 1:18 scale replica is constructed of heavy die-cast metal and has all the features of the original: working doors and rumble seat, independent spring suspension, detailed interior, working steering system, and a bifold hood that reveals an engine so accurate that it even includes the wiring. All this is topped off with a baked enamel finish. Color white.</v>
+                        <v>This 1:18 scale replica is constructed of heavy die-cast metal and has all the features of the original: working doors and rumble seat&amp;#44; independent spring suspension&amp;#44; detailed interior&amp;#44; working steering system&amp;#44; and a bifold hood that reveals an engine so accurate that it even includes the wiring. All this is topped off with a baked enamel finish. Color white.</v>
                         <v>8635</v>
                         <v>24.26</v>
                         <v>53.91</v>

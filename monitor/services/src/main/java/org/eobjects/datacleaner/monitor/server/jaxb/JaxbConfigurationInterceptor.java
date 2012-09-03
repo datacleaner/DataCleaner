@@ -68,6 +68,7 @@ import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.job.HasBeanConfiguration;
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.analyzer.util.SchemaNavigator;
+import org.eobjects.analyzer.util.convert.StringConverter;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -577,13 +578,16 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     }
 
     private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row) {
-        org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row rowType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row();
-        Object[] values = row.getValues();
+        final StringConverter converter = new StringConverter(null);
+
+        final org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row rowType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row();
+        final Object[] values = row.getValues();
         for (Object value : values) {
             if (value == null) {
                 rowType.getV().add(null);
             } else {
-                rowType.getV().add(value.toString());
+                final String stringValue = converter.serialize(value);
+                rowType.getV().add(stringValue);
             }
         }
         return rowType;

@@ -36,7 +36,6 @@ import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
@@ -95,13 +94,7 @@ public class LaunchResourcesController {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);
-
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
-
-        final RepositoryFile confFile = tenantFolder.getFile("conf.xml");
+        final RepositoryFile confFile = tenantContext.getConfigurationFile();
 
         response.setContentType("application/xml");
 

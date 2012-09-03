@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -99,7 +100,14 @@ public class ConfigurationFileController {
         final TenantContext context = _contextFactory.getContext(tenant);
         final RepositoryFile configurationFile = context.getConfigurationFile();
 
-        final InputStream in = configurationFile.readFile();
+        final InputStream in;
+        if (configurationFile == null) {
+            // serve an empty file
+            in = new ByteArrayInputStream(new byte[0]);
+        } else {
+            in = configurationFile.readFile();
+        }
+
         try {
             FileHelper.copy(in, out);
         } finally {

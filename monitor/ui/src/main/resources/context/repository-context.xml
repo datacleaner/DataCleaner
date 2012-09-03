@@ -6,22 +6,28 @@
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 				http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="repository"
-		class="org.eobjects.datacleaner.repository.file.FileRepository">
+	<bean id="repository" class="org.eobjects.datacleaner.repository.file.FileRepository">
 		<constructor-arg type="java.io.File" value="repository" />
 	</bean>
-	
-	<bean id="metricValueProducer" class="org.eobjects.datacleaner.monitor.server.DefaultMetricValueProducer">
+
+	<bean id="metricValueProducer"
+		class="org.eobjects.datacleaner.monitor.server.DefaultMetricValueProducer">
 	</bean>
 
 	<!-- Development mode launch artifact provider. Will only work if dev mode 
 		finds JAR files in directories relative to the build structure. -->
-	<bean id="launchArtifactProvider" lazy-init="true"
+	<bean id="launchArtifactProvider"
 		class="org.eobjects.datacleaner.monitor.server.DevModeLaunchArtifactProvider" />
 
 	<!-- Example launch artifact provider based on external folder -->
-	<!-- <bean name="launchArtifactProvider" lazy-init="true" class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"> -->
+	<!-- <bean name="launchArtifactProvider" class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"> -->
 	<!-- <constructor-arg type="java.io.File" value="C:\dev\eclipse\workspace\DataCleaner\packaging\target\jnlp"/> -->
 	<!-- </bean> -->
+
+	<bean id="htmlAnalysisResultWriterFactory"
+		class="org.eobjects.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory">
+		<property name="resourcesDirectory"
+			value="http://eobjects.org/resources/datacleaner-html-rendering" />
+	</bean>
 
 </beans>

@@ -72,7 +72,7 @@ public class OpenAnalysisJobActionListener implements ActionListener {
     private final UsageLogger _usageLogger;
 
     @Inject
-    protected OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow,
+    public OpenAnalysisJobActionListener(AnalysisJobBuilderWindow parentWindow,
             AnalyzerBeansConfiguration configuration, WindowContext windowContext, DCModule parentModule,
             UserPreferences userPreferences, UsageLogger usageLogger) {
         _parentWindow = parentWindow;
@@ -126,19 +126,25 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         }
     }
 
-    public static ResultWindow openAnalysisResult(final FileObject file, DCModule parentModule) {
+    public ResultWindow openAnalysisResult(final FileObject fileObject, DCModule parentModule) {
         final AnalysisResult analysisResult;
         try {
-            ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(file.getContent().getInputStream());
+            ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(fileObject.getContent().getInputStream());
             is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
             analysisResult = (AnalysisResult) is.readObject();
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+        
+        final File file = VFSUtils.toFile(fileObject);
+        if (file != null) {
+            _userPreferences.setAnalysisJobDirectory(file.getParentFile());
+            _userPreferences.addRecentJobFile(fileObject);
+        }
 
         final Injector injector = Guice.createInjector(new DCModule(parentModule, null) {
             public FileObject getJobFilename() {
-                return file;
+                return fileObject;
             };
 
             @Override

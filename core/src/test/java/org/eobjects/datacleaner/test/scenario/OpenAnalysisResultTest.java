@@ -27,6 +27,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.actions.OpenAnalysisJobActionListener;
 import org.eobjects.datacleaner.guice.DCModule;
+import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.windows.AbstractWindow;
 import org.eobjects.datacleaner.windows.ResultWindow;
 
@@ -52,9 +53,11 @@ public class OpenAnalysisResultTest extends TestCase {
 
         DCModule module = new DCModule();
 
-        FileObject file = VFSUtils.getFileSystemManager().resolveFile("src/test/resources/all_analyzers.analysis.result.dat");
+        FileObject file = VFSUtils.getFileSystemManager().resolveFile(
+                "src/test/resources/all_analyzers.analysis.result.dat");
 
-        ResultWindow window = OpenAnalysisJobActionListener.openAnalysisResult(file, module);
+        OpenAnalysisJobActionListener listener = new OpenAnalysisJobActionListener(null, null, null, null, new UserPreferencesImpl(null), null);
+        ResultWindow window = listener.openAnalysisResult(file, module);
         assertNotNull(window);
 
         assertEquals("all_analyzers.analysis.result.dat | Analysis results", window.getWindowTitle());

@@ -277,14 +277,28 @@ img.scalable_background {
 	bottom: 0;
 	background-image: url("images/login_footer_bg.png");
 	background-repeat: repeat-x;
+	font-size: 0.9em;
+	color: #f0f0f0;
 }
 
 .pageFooter .logo {
-	width: 500px;
 	height: 80px;
 	float: right;
+	padding-right: 155px;
 	background-image: url("images/login_footer_logo.png");
 	background-repeat: no-repeat;
+	background-position: right;
+}
+
+.pageFooter .logo .tagline {
+	display: block;
+	margin-top: 40px;
+}
+
+.pageFooter .versionInformation {
+	float: left;
+	margin-top: 40px;
+	margin-left: 6px;
 }
 
 /**
@@ -533,7 +547,7 @@ button.LaunchButton:active {
 	background-repeat: no-repeat;
 	padding: 10px;
 	padding-left: 30px;
-	background-position: 2px 10px;
+	background-position: 2px 22px;
 }
 
 .uploadConfigurationPanel p { 

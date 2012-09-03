@@ -23,6 +23,7 @@ import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.datacleaner.Main;
 import org.springframework.stereotype.Component;
 
 /**
@@ -50,6 +51,10 @@ public class JsfHelper {
         } catch (Exception e) {
             return false;
         }
+    }
+    
+    public String getVersion() {
+        return Main.VERSION;
     }
 
     public String getSimpleClassName(Object object) {

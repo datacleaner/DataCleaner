@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -116,9 +117,18 @@ final class StartWizardCommand implements Command {
     }
 
     private void wizardFinished(DCPopupPanel popup) {
+        final CancelPopupButton button = new CancelPopupButton(popup, "Close");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // full page refresh.
+                Window.Location.reload();
+            }
+        });
+
         popup.setWidget(new Label("Job created! Wizard finished."));
         popup.getButtonPanel().clear();
-        popup.addButton(new CancelPopupButton(popup, "Close"));
+        popup.addButton(button);
         popup.center();
     }
 

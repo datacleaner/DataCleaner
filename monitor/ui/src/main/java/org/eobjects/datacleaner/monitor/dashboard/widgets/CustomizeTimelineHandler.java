@@ -92,9 +92,7 @@ public class CustomizeTimelineHandler implements ClickHandler {
             }
         };
         _customizeChartOptionsPanel = new CustomizeChartOptionsPanel(_timelinePanel.getTimelineDefinition()
-                .getChartOptions()) {
-            
-        };
+                .getChartOptions());
 
         final TabPanel tabPanel = new TabPanel();
         tabPanel.add(_customizeMetricsPanel, "Metrics");

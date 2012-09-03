@@ -172,6 +172,10 @@
 	
 }
 
+.CustomizeMetricsPanel .JobInformationLabel {
+	color: #666;
+}
+
 .CustomizeMetricsPanel .HeadingLabel {
 	cursor: pointer;
 }

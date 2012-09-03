@@ -36,6 +36,7 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 
 public class CustomizeMetricsPanel extends FlowPanel {
 
@@ -67,6 +68,12 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
     private void setJobMetrics(JobMetrics jobMetrics) {
         clear();
+
+        final Label jobLabel = new Label("Showing available metrics from job '"
+                + _timelineDefinition.getJobIdentifier().getName() + "':");
+        jobLabel.setStyleName("JobInformationLabel");
+        add(jobLabel);
+
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
         for (MetricGroup metricGroup : metricGroups) {
             add(createMetricGroupPanel(metricGroup));
@@ -85,7 +92,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
-        final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics = new MultipleColumnParameterizedMetricsPresenter(metricGroup);
+        final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics = new MultipleColumnParameterizedMetricsPresenter(
+                metricGroup);
         for (MetricIdentifier metricIdentifier : availableMetrics) {
             final MetricPresenter presenter = createMetricPresenter(columnParameterizedMetrics, metricGroup,
                     metricIdentifier, activeMetrics);
@@ -100,7 +108,6 @@ public class CustomizeMetricsPanel extends FlowPanel {
             innerPanel.add(columnParameterizedMetrics);
         }
 
-        
         HeadingLabel heading = new HeadingLabel(metricGroup.getName());
         heading.addClickHandler(new ClickHandler() {
             @Override

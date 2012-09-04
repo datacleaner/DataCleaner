@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<properties>
-		<javadoc.version>2.8</javadoc.version>
-		<sshwagon.version>1.0-beta-7</sshwagon.version>
+		<javadoc.version>2.8.1</javadoc.version>
+		<sshwagon.version>1.0</sshwagon.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<analyzerbeans.version>0.18-SNAPSHOT</analyzerbeans.version>
 	</properties>
@@ -94,7 +94,7 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>eobjects-snapshot-repo</id>
-			<url>scp://eobjects.org/var/www/repo</url>
+			<url>scp://192.168.3.110/var/www/repo</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<mailingLists>

@@ -39,6 +39,9 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </optgroup>
             <optgroup label="PUBLIC">
                     <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
+                    <option value="PUBLIC.CUSTOMER_W_TER">CUSTOMER_W_TER</option>
+                    <option value="PUBLIC.DEPARTMENT_MANAGERS">DEPARTMENT_MANAGERS</option>
+                    <option value="PUBLIC.DIM_TIME">DIM_TIME</option>
                     <option value="PUBLIC.EMPLOYEES">EMPLOYEES</option>
                     <option value="PUBLIC.OFFICES">OFFICES</option>
                     <option value="PUBLIC.ORDERDETAILS">ORDERDETAILS</option>
@@ -46,6 +49,8 @@ class MoveDataWizardTest extends AssertionsForJUnit {
                     <option value="PUBLIC.ORDERS">ORDERS</option>
                     <option value="PUBLIC.PAYMENTS">PAYMENTS</option>
                     <option value="PUBLIC.PRODUCTS">PRODUCTS</option>
+                    <option value="PUBLIC.QUADRANT_ACTUALS">QUADRANT_ACTUALS</option>
+                    <option value="PUBLIC.TRIAL_BALANCE">TRIAL_BALANCE</option>
             </optgroup>
     </select>
 </div>"""), normalize(page1.getFormInnerHtml()));
@@ -72,6 +77,9 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </optgroup>
             <optgroup label="PUBLIC">
                     <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
+                    <option value="PUBLIC.CUSTOMER_W_TER">CUSTOMER_W_TER</option>
+                    <option value="PUBLIC.DEPARTMENT_MANAGERS">DEPARTMENT_MANAGERS</option>
+                    <option value="PUBLIC.DIM_TIME">DIM_TIME</option>
                     <option value="PUBLIC.EMPLOYEES">EMPLOYEES</option>
                     <option value="PUBLIC.OFFICES">OFFICES</option>
                     <option value="PUBLIC.ORDERDETAILS">ORDERDETAILS</option>
@@ -79,6 +87,8 @@ class MoveDataWizardTest extends AssertionsForJUnit {
                     <option value="PUBLIC.ORDERS">ORDERS</option>
                     <option value="PUBLIC.PAYMENTS">PAYMENTS</option>
                     <option value="PUBLIC.PRODUCTS">PRODUCTS</option>
+                    <option value="PUBLIC.QUADRANT_ACTUALS">QUADRANT_ACTUALS</option>
+                    <option value="PUBLIC.TRIAL_BALANCE">TRIAL_BALANCE</option>
             </optgroup>
     </select>
 </div>"""), normalize(page3.getFormInnerHtml()));

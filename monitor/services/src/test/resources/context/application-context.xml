@@ -5,14 +5,16 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<bean name="tenantContextFactory" class="org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl">
-		<constructor-arg ref="repository" /> 
+	<bean
+		class="org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl">
+		<constructor-arg ref="repository" />
 	</bean>
-	
+
 	<bean id="repository" class="org.eobjects.datacleaner.repository.file.FileRepository">
-		<constructor-arg type="java.io.File" value="src/test/resources/example_repo" />
+		<constructor-arg type="java.io.File"
+			value="src/test/resources/example_repo" />
 	</bean>
-	
+
 	<bean id="alertNotificationService" name="alertNotificationService"
 		class="org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl">
 		<property name="alertNotifiers">

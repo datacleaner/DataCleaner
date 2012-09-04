@@ -52,7 +52,8 @@ public class SchedulingServiceImplTest extends TestCase {
     public void testScenario() throws Exception {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+                "context/application-context.xml");
         final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
         service.setApplicationContext(applicationContext);
 
@@ -84,7 +85,7 @@ public class SchedulingServiceImplTest extends TestCase {
             final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
             final List<ScheduleDefinition> schedules = service.getSchedules(tenant);
-            
+
             // sort to make it deterministic
             Collections.sort(schedules);
 
@@ -104,7 +105,7 @@ public class SchedulingServiceImplTest extends TestCase {
             assertEquals(ExecutionStatus.PENDING, execution.getExecutionStatus());
             assertNull(execution.getJobEndDate());
 
-            for (int i = 0; i < 100000; i++) {
+            for (int i = 0; i < 100; i++) {
                 // spend max 10 seconds waiting for execution
                 if (execution.getExecutionStatus() == ExecutionStatus.RUNNING
                         || execution.getExecutionStatus() == ExecutionStatus.PENDING) {
@@ -113,7 +114,8 @@ public class SchedulingServiceImplTest extends TestCase {
             }
 
             final String logOutput = execution.getLogOutput();
-            assertEquals("Got " + execution + ":\n" + logOutput, ExecutionStatus.SUCCESS, execution.getExecutionStatus());
+            assertEquals("Got " + execution + ":\n" + logOutput, ExecutionStatus.SUCCESS,
+                    execution.getExecutionStatus());
             assertNotNull(execution.getJobBeginDate());
             assertNotNull(execution.getJobEndDate());
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution BEGIN") != -1);
@@ -125,7 +127,7 @@ public class SchedulingServiceImplTest extends TestCase {
 
         } finally {
             scheduler.shutdown();
-            
+
             Thread.sleep(200);
 
             File[] files = directory.listFiles(filenameFilter);

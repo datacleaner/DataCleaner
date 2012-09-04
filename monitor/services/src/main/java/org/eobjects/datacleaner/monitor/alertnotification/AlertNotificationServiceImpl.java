@@ -39,27 +39,31 @@ import org.eobjects.metamodel.util.Ref;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("notificationService")
+@Component
 public class AlertNotificationServiceImpl implements AlertNotificationService {
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
-
+    
     @Autowired
     MetricValueProducer _metricValueProducer;
-
+    
     private List<AlertNotifier> alertNotifiers;
-
-    public void setAlertNotifiers(List<AlertNotifier> alertNotifiers) {
-        this.alertNotifiers = alertNotifiers;
-    }
-
-    public List<AlertNotifier> getAlertNotifiers() {
-        return alertNotifiers;
-    }
-
+    
     @Override
     public void notifySubscribers(final ExecutionLog execution) {
+        if (alertNotifiers == null || alertNotifiers.isEmpty()) {
+            // no notifiers to invoke
+            return;
+        }
+        
+        if (_tenantContextFactory == null) {
+            throw new IllegalStateException("TenantContextFactory cannot be null");
+        }
+        if (_metricValueProducer == null) {
+            throw new IllegalStateException("MetricValueProducer cannot be null");
+        }
+
         final TenantContext context = _tenantContextFactory.getContext(execution.getSchedule().getTenant());
         final ResultContext result = context.getResult(execution.getResultId());
 
@@ -93,7 +97,7 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
             }
         };
 
-        for (AlertNotifier alertNotification : getAlertNotifiers()) {
+        for (AlertNotifier alertNotification : alertNotifiers) {
             alertNotification.onExecutionFinished(execution, activeAlerts, result);
         }
     }
@@ -115,4 +119,11 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
         return false;
     }
 
+    public void setAlertNotifiers(List<AlertNotifier> alertNotifiers) {
+        this.alertNotifiers = alertNotifiers;
+    }
+
+    public List<AlertNotifier> getAlertNotifiers() {
+        return alertNotifiers;
+    }
 }

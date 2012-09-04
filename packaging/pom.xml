@@ -80,17 +80,17 @@
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-cleansing-DataCleaner</artifactId>
-			<version>1.11</version>
+			<version>1.13</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-dedup-DataCleaner</artifactId>
-			<version>1.11</version>
+			<version>1.13</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-sanctionlist-DataCleaner</artifactId>
-			<version>1.11</version>
+			<version>1.13</version>
 		</dependency>
 
 		<!-- Default database drivers -->
@@ -107,7 +107,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.18</version>
+			<version>5.1.21</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.jtds</groupId>

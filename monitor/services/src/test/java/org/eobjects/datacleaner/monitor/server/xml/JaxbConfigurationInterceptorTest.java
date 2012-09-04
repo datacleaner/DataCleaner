@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server.xml;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -66,7 +67,12 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
                 "UTF-8");
         expected = expected.replaceAll("\r\n", "\n").trim();
 
-        assertEquals(expected, actual);
+        if (!expected.equals(actual)) {
+            final URL orderDbScript = ClassLoader.getSystemResource("orderdb.script");
+            System.out.println("!! Seems there is some issue in resolving the correct orderdb file: " + orderDbScript);
+            
+            assertEquals(expected, actual);
+        }
     }
 
     public void testGenerateJobSpecificConfigurationSourceOnly() throws Exception {
@@ -90,7 +96,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
         assertEquals(expected, actual);
     }
-    
+
     public void testGenerateWithLookupInsertUpdate() throws Exception {
         final TenantContext tenantContext = _contextFactory.getContext("tenant1");
         final Datastore ds = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore("orderdb");
@@ -98,7 +104,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         try {
             JobContext job = tenantContext.getJob("Move employees to customers");
             String actual = generationConf(job);
-            
+
             String expected = FileHelper.readFileAsString(new File(
                     "src/test/resources/expected_conf_file_lookup_insert_update.xml"), "UTF-8");
 
@@ -114,16 +120,16 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         final Ref<Calendar> dateRef = new Ref<Calendar>() {
             @Override
             public Calendar get() {
-            	Calendar cal = Calendar.getInstance();
-            	cal.setTimeZone(TimeZone.getTimeZone("GMT"));
-            	cal.set(Calendar.YEAR, 2012);
-            	cal.set(Calendar.MONTH, Calendar.JUNE);
-            	cal.set(Calendar.DAY_OF_MONTH, 26);
-            	cal.set(Calendar.HOUR, 0);
-            	cal.set(Calendar.MINUTE, 0);
-            	cal.set(Calendar.SECOND, 0);
-            	cal.set(Calendar.MILLISECOND, 0);
-            	return cal;
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+                cal.set(Calendar.YEAR, 2012);
+                cal.set(Calendar.MONTH, Calendar.JUNE);
+                cal.set(Calendar.DAY_OF_MONTH, 26);
+                cal.set(Calendar.HOUR, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                return cal;
             }
         };
 

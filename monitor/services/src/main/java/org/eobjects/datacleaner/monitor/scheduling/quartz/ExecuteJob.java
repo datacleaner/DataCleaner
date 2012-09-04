@@ -51,35 +51,42 @@ public class ExecuteJob extends AbstractQuartzJob {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        logger.debug("executeInternal({})", jobExecutionContext);
-
         final ApplicationContext applicationContext;
         final ExecutionLog execution;
         final ScheduleDefinition schedule;
+        final TenantContext context;
+        final AlertNotificationServiceImpl notificationService;
 
-        final JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
-        if (jobDataMap.containsKey(DETAIL_EXECUTION_LOG)) {
-            // the execution log has been provided already
-            execution = (ExecutionLog) jobDataMap.get(DETAIL_EXECUTION_LOG);
-            schedule = execution.getSchedule();
-            applicationContext = (ApplicationContext) jobDataMap.get(AbstractQuartzJob.APPLICATION_CONTEXT);
-        } else {
-            // we create a new execution log
-            schedule = (ScheduleDefinition) jobDataMap.get(DETAIL_SCHEDULE_DEFINITION);
-            applicationContext = getApplicationContext(jobExecutionContext);
-            if (schedule == null) {
-                throw new IllegalArgumentException("No schedule definition defined");
+        try {
+            logger.debug("executeInternal({})", jobExecutionContext);
+
+            final JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
+            if (jobDataMap.containsKey(DETAIL_EXECUTION_LOG)) {
+                // the execution log has been provided already
+                execution = (ExecutionLog) jobDataMap.get(DETAIL_EXECUTION_LOG);
+                schedule = execution.getSchedule();
+                applicationContext = (ApplicationContext) jobDataMap.get(AbstractQuartzJob.APPLICATION_CONTEXT);
+            } else {
+                // we create a new execution log
+                schedule = (ScheduleDefinition) jobDataMap.get(DETAIL_SCHEDULE_DEFINITION);
+                applicationContext = getApplicationContext(jobExecutionContext);
+                if (schedule == null) {
+                    throw new IllegalArgumentException("No schedule definition defined");
+                }
+                final TriggerType triggerType = schedule.getTriggerType();
+                execution = new ExecutionLog(schedule, triggerType);
             }
-            final TriggerType triggerType = schedule.getTriggerType();
-            execution = new ExecutionLog(schedule, triggerType);
+
+            final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
+            notificationService = applicationContext.getBean(AlertNotificationServiceImpl.class);
+            final String tenantId = schedule.getTenant().getId();
+            logger.info("Tenant {} executing job {}", tenantId, schedule.getJob());
+
+            context = contextFactory.getContext(tenantId);
+        } catch (RuntimeException e) {
+            logger.error("Unexpected error occurred in executeInternal!", e);
+            throw e;
         }
-
-        final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
-        final AlertNotificationServiceImpl notificationService = applicationContext.getBean(AlertNotificationServiceImpl.class);
-        final String tenantId = schedule.getTenant().getId();
-        logger.info("Tenant {} executing job {}", tenantId, schedule.getJob());
-
-        final TenantContext context = contextFactory.getContext(tenantId);
 
         executeJob(context, execution, notificationService);
     }
@@ -95,9 +102,11 @@ public class ExecuteJob extends AbstractQuartzJob {
      * @return The expected result name, which can be used to get updates about
      *         execution status etc. at a later state.
      */
-    public static String executeJob(TenantContext context, ExecutionLog execution, AlertNotificationService notificationService) {
+    public static String executeJob(TenantContext context, ExecutionLog execution,
+            AlertNotificationService notificationService) {
         final RepositoryFolder resultFolder = context.getResultFolder();
-        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, notificationService);
+        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder,
+                notificationService);
 
         try {
             final String jobName = execution.getJob().getName();

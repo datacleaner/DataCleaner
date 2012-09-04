@@ -84,4 +84,9 @@ public class ExecutionIdentifier implements Serializable {
     public void setExecutionStatus(ExecutionStatus executionStatus) {
         _executionStatus = executionStatus;
     }
+
+    @Override
+    public String toString() {
+        return "ExecutionIdentifier[begin=" + _jobBeginDate + ", status=" + _executionStatus + "]";
+    }
 }

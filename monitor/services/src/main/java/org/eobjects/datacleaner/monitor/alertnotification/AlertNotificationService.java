@@ -23,6 +23,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 
 public interface AlertNotificationService {
 
-    public void notifySubsribers(ExecutionLog execution);
+    public void notifySubscribers(ExecutionLog execution);
 
 }

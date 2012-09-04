@@ -104,7 +104,7 @@ public class SchedulingServiceImplTest extends TestCase {
             assertEquals(ExecutionStatus.PENDING, execution.getExecutionStatus());
             assertNull(execution.getJobEndDate());
 
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 100000; i++) {
                 // spend max 10 seconds waiting for execution
                 if (execution.getExecutionStatus() == ExecutionStatus.RUNNING
                         || execution.getExecutionStatus() == ExecutionStatus.PENDING) {
@@ -112,10 +112,10 @@ public class SchedulingServiceImplTest extends TestCase {
                 }
             }
 
-            assertEquals(ExecutionStatus.SUCCESS, execution.getExecutionStatus());
+            final String logOutput = execution.getLogOutput();
+            assertEquals("Got " + execution + ":\n" + logOutput, ExecutionStatus.SUCCESS, execution.getExecutionStatus());
             assertNotNull(execution.getJobBeginDate());
             assertNotNull(execution.getJobEndDate());
-            final String logOutput = execution.getLogOutput();
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution BEGIN") != -1);
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution SUCCESS") != -1);
 

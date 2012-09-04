@@ -70,12 +70,13 @@ public class MonitorAnalysisListener implements AnalysisListener {
     private final JaxbExecutionLogWriter _executionLogWriter;
     private final AlertNotificationService _notificationService;
 
-    public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder, AlertNotificationService notificationService) {
+    public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder,
+            AlertNotificationService notificationService) {
         _notificationService = notificationService;
         _execution = execution;
         _resultFolder = resultFolder;
         _executionLogWriter = new JaxbExecutionLogWriter();
-        
+
         final String resultId = execution.getResultId();
         _resultFilename = resultId + FileFilters.ANALYSIS_RESULT_SER.getExtension();
         _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
@@ -106,10 +107,12 @@ public class MonitorAnalysisListener implements AnalysisListener {
         log("Job execution SUCCESS");
         _execution.setJobEndDate(new Date());
         _execution.setExecutionStatus(ExecutionStatus.SUCCESS);
-        
+
         flushLog();
-        
-        _notificationService.notifySubsribers(_execution);
+
+        if (_notificationService != null) {
+            _notificationService.notifySubscribers(_execution);
+        }
     }
 
     private void writeResult() {
@@ -137,7 +140,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
         final StringWriter stringWriter = new StringWriter();
         stringWriter.write("Job execution FAILURE");
-        
+
         if (throwable != null && !StringUtils.isNullOrEmpty(throwable.getMessage())) {
             stringWriter.write("\n - ");
             stringWriter.write(throwable.getMessage());

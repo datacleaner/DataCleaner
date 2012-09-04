@@ -59,7 +59,7 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
     }
 
     @Override
-    public void notifySubsribers(final ExecutionLog execution) {
+    public void notifySubscribers(final ExecutionLog execution) {
         final TenantContext context = _tenantContextFactory.getContext(execution.getSchedule().getTenant());
         final ResultContext result = context.getResult(execution.getResultId());
 

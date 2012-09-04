@@ -12,5 +12,15 @@
 	<bean id="repository" class="org.eobjects.datacleaner.repository.file.FileRepository">
 		<constructor-arg type="java.io.File" value="src/test/resources/example_repo" />
 	</bean>
+	
+	<bean id="alertNotificationService" name="alertNotificationService"
+		class="org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl">
+		<property name="alertNotifiers">
+			<list>
+				<bean
+					class="org.eobjects.datacleaner.monitor.alertnotification.LoggerAlertNotifier" />
+			</list>
+		</property>
+	</bean>
 
 </beans>

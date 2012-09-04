@@ -38,7 +38,7 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     // execution level output
     private String _logOutput;
     private Date _jobEndDate;
-    
+
     private String _triggeredBy;
 
     // no-args constructor
@@ -55,7 +55,7 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     public ScheduleDefinition getSchedule() {
         return _schedule;
     }
-    
+
     public void setSchedule(ScheduleDefinition schedule) {
         _schedule = schedule;
     }
@@ -79,12 +79,17 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     public JobIdentifier getJob() {
         return _job;
     }
-    
+
     public String getTriggeredBy() {
         return _triggeredBy;
     }
-    
+
     public void setTriggeredBy(String triggeredBy) {
         _triggeredBy = triggeredBy;
+    }
+
+    @Override
+    public String toString() {
+        return "ExecutionLog[job=" + _job + ", " + super.toString() + "]";
     }
 }

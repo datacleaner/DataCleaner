@@ -33,6 +33,7 @@ import org.eobjects.datacleaner.monitor.server.MetricValueProducer;
 import org.eobjects.datacleaner.monitor.server.MetricValues;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.NumberComparator;
 import org.eobjects.metamodel.util.Ref;
@@ -42,21 +43,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class AlertNotificationServiceImpl implements AlertNotificationService {
 
-    @Autowired
-    TenantContextFactory _tenantContextFactory;
-    
-    @Autowired
-    MetricValueProducer _metricValueProducer;
-    
+    private final TenantContextFactory _tenantContextFactory;
+    private final MetricValueProducer _metricValueProducer;
+
     private List<AlertNotifier> alertNotifiers;
-    
+
+    @Autowired
+    public AlertNotificationServiceImpl(TenantContextFactory tenantContextFactory,
+            MetricValueProducer metricValueProducer) {
+        _tenantContextFactory = tenantContextFactory;
+        _metricValueProducer = metricValueProducer;
+    }
+
     @Override
     public void notifySubscribers(final ExecutionLog execution) {
         if (alertNotifiers == null || alertNotifiers.isEmpty()) {
             // no notifiers to invoke
             return;
         }
-        
+
         if (_tenantContextFactory == null) {
             throw new IllegalStateException("TenantContextFactory cannot be null");
         }
@@ -64,8 +69,8 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
             throw new IllegalStateException("MetricValueProducer cannot be null");
         }
 
-        final TenantContext context = _tenantContextFactory.getContext(execution.getSchedule().getTenant());
-        final ResultContext result = context.getResult(execution.getResultId());
+        final TenantContext tenantContext = _tenantContextFactory.getContext(execution.getSchedule().getTenant());
+        final ResultContext resultContext = tenantContext.getResult(execution.getResultId());
 
         final Ref<Map<AlertDefinition, Number>> activeAlerts = new LazyRef<Map<AlertDefinition, Number>>() {
             @Override
@@ -78,9 +83,10 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
                 }
 
                 final TenantIdentifier tenantId = execution.getSchedule().getTenant();
+                final RepositoryFile resultFile = resultContext.getResultFile();
 
                 final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers,
-                        result.getResultFile(), tenantId, execution.getJob());
+                        resultFile, tenantId, execution.getJob());
                 final List<Number> values = metricValues.getValues();
 
                 final Map<AlertDefinition, Number> result = new TreeMap<AlertDefinition, Number>();
@@ -98,7 +104,7 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
         };
 
         for (AlertNotifier alertNotification : alertNotifiers) {
-            alertNotification.onExecutionFinished(execution, activeAlerts, result);
+            alertNotification.onExecutionFinished(execution, activeAlerts, resultContext);
         }
     }
 

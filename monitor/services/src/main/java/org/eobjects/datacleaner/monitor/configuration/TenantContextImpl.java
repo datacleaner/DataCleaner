@@ -160,16 +160,19 @@ public class TenantContextImpl implements TenantContext {
     }
 
     @Override
-    public ResultContext getResult(String resultFileName) {
-        if (StringUtils.isNullOrEmpty(resultFileName)) {
+    public ResultContext getResult(String resultFilename) {
+        if (StringUtils.isNullOrEmpty(resultFilename)) {
             return null;
         }
-        if (!resultFileName.endsWith(EXTENSION_RESULT)) {
-            resultFileName = resultFileName + EXTENSION_RESULT;
+        if (!resultFilename.endsWith(EXTENSION_RESULT)) {
+            resultFilename = resultFilename + EXTENSION_RESULT;
         }
 
         RepositoryFolder resultFolder = getResultFolder();
-        RepositoryFile repositoryFile = resultFolder.getFile(resultFileName);
+        RepositoryFile repositoryFile = resultFolder.getFile(resultFilename);
+        if (repositoryFile == null) {
+            throw new IllegalArgumentException("No such result: " + resultFilename);
+        }
         return new DefaultResultContext(repositoryFile);
     }
 

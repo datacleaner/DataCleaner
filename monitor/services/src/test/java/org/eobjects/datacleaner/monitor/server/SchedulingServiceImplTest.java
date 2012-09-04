@@ -54,6 +54,7 @@ public class SchedulingServiceImplTest extends TestCase {
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "context/application-context.xml");
+        
         final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
         service.setApplicationContext(applicationContext);
 

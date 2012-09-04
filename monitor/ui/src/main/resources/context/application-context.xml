@@ -21,7 +21,8 @@
 	</bean>
 
 	<bean id="alertNotificationService" name="alertNotificationService"
-		class="org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl">
+		class="org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl"
+		autowire="constructor">
 		<property name="alertNotifiers">
 			<list>
 				<bean

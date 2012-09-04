@@ -108,8 +108,8 @@ public class MonitorAnalysisListener implements AnalysisListener {
         _execution.setExecutionStatus(ExecutionStatus.SUCCESS);
         
         flushLog();
-        // TODO: This represents the result filename, but we should make a util method to resolve RepositoryFile from resultId.
-        _notificationService.notifySubsribers(_execution, metrics, job);
+        
+        _notificationService.notifySubsribers(_execution);
     }
 
     private void writeResult() {

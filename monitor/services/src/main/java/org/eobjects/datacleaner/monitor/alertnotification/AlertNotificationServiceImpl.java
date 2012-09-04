@@ -19,31 +19,100 @@
  */
 package org.eobjects.datacleaner.monitor.alertnotification;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.server.MetricValueProducer;
+import org.eobjects.datacleaner.monitor.server.MetricValues;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.metamodel.util.LazyRef;
+import org.eobjects.metamodel.util.NumberComparator;
+import org.eobjects.metamodel.util.Ref;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("notificationService")
 public class AlertNotificationServiceImpl implements AlertNotificationService {
 
-    private List<AlertNotification> alertNotifications;
+    @Autowired
+    TenantContextFactory _tenantContextFactory;
 
-    public void setAlertNotifications(List<AlertNotification> alertNotifications) {
-        this.alertNotifications = alertNotifications;
+    @Autowired
+    MetricValueProducer _metricValueProducer;
+
+    private List<AlertNotifier> alertNotifiers;
+
+    public void setAlertNotifiers(List<AlertNotifier> alertNotifiers) {
+        this.alertNotifiers = alertNotifiers;
     }
 
-    public List<AlertNotification> getAlertNotifications() {
-        return alertNotifications;
+    public List<AlertNotifier> getAlertNotifiers() {
+        return alertNotifiers;
     }
 
     @Override
-    public void notifySubsribers(ExecutionLog execution, AnalysisJobMetrics metrics, AnalysisJob job) {
-        for (AlertNotification alertNotification : getAlertNotifications()) {
-            alertNotification.execute(execution, metrics, job);
+    public void notifySubsribers(final ExecutionLog execution) {
+        final TenantContext context = _tenantContextFactory.getContext(execution.getSchedule().getTenant());
+        final ResultContext result = context.getResult(execution.getResultId());
+
+        final Ref<Map<AlertDefinition, Number>> activeAlerts = new LazyRef<Map<AlertDefinition, Number>>() {
+            @Override
+            protected Map<AlertDefinition, Number> fetch() {
+                final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
+                final List<AlertDefinition> allAlerts = execution.getSchedule().getAlerts();
+                for (AlertDefinition alertDefinition : allAlerts) {
+                    MetricIdentifier metricIdentifier = alertDefinition.getMetricIdentifier();
+                    metricIdentifiers.add(metricIdentifier);
+                }
+
+                final TenantIdentifier tenantId = execution.getSchedule().getTenant();
+
+                final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers,
+                        result.getResultFile(), tenantId, execution.getJob());
+                final List<Number> values = metricValues.getValues();
+
+                final Map<AlertDefinition, Number> result = new TreeMap<AlertDefinition, Number>();
+                for (int i = 0; i < allAlerts.size(); i++) {
+                    final Number max = allAlerts.get(i).getMaximumValue();
+                    final Number min = allAlerts.get(i).getMinimumValue();
+                    final Number actual = values.get(i);
+                    if (isBeyondThreshold(actual, min, max)) {
+                        result.put(allAlerts.get(i), actual);
+                    }
+                }
+
+                return result;
+            }
+        };
+
+        for (AlertNotifier alertNotification : getAlertNotifiers()) {
+            alertNotification.onExecutionFinished(execution, activeAlerts, result);
         }
+    }
+
+    protected boolean isBeyondThreshold(Number actual, Number min, Number max) {
+        if (min == null && max == null) {
+            return false;
+        }
+
+        final Comparable<Object> comparable = NumberComparator.getComparable(actual);
+        if (max != null && comparable.compareTo(max) > 0) {
+            return true;
+        }
+
+        if (min != null && comparable.compareTo(min) < 0) {
+            return true;
+        }
+
+        return false;
     }
 
 }

@@ -86,8 +86,7 @@ public class LegendClickHandler implements ClickHandler {
                 String text = textBox.getText();
                 _metricIdentifier.setMetricDisplayName(text);
                 popUp.hide();
-                _timeLinePanel.updateTimeLineDefiniton();
-
+                _timeLinePanel.refreshTimelineDefiniton();
             }
         });
         return saveButton;

@@ -19,28 +19,19 @@
  */
 package org.eobjects.datacleaner.monitor.alertnotification;
 
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
+import java.util.Map;
+
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.metamodel.util.Ref;
 
-public abstract class AlertNotification implements Runnable {
+/**
+ * Interface for components that listen for executions and notifies in case any
+ * alerts was raised..
+ */
+public interface AlertNotifier {
 
-    private ExecutionLog _execution;
-    private AnalysisJobMetrics _metrics;
-    private AnalysisJob _job;
-
-    public void execute(ExecutionLog execution, AnalysisJobMetrics metrics, AnalysisJob job) {
-        _execution = execution;
-        _metrics = metrics;
-        _job = job;
-        Thread thread = new Thread(this);
-        thread.start();
-    }
-
-    @Override
-    public void run() {
-        process(_execution, _metrics, _job);
-    }
-
-    public abstract void process(ExecutionLog execution, AnalysisJobMetrics metrics, AnalysisJob job);
+    public void onExecutionFinished(ExecutionLog execution, Ref<Map<AlertDefinition, Number>> activeAlerts,
+            ResultContext result);
 }

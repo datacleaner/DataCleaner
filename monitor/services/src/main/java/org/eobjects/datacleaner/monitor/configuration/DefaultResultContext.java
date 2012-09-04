@@ -44,4 +44,9 @@ public class DefaultResultContext implements ResultContext {
 		}
 	}
 
+    @Override
+    public RepositoryFile getResultFile() {
+        return _repositoryFile;
+    }
+
 }

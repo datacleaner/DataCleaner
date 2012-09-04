@@ -383,9 +383,8 @@ public class TimelinePanel extends FlowPanel {
         }
     }
 
-    public void updateTimeLineDefiniton() {
-        
+    public void refreshTimelineDefiniton() {
         setLoading();
-        renderChart();
+        renderChart();        
     }
 }

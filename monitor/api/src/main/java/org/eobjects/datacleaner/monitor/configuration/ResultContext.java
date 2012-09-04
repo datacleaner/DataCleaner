@@ -20,9 +20,12 @@
 package org.eobjects.datacleaner.monitor.configuration;
 
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.datacleaner.repository.RepositoryFile;
 
 public interface ResultContext {
 	
 	public AnalysisResult getAnalysisResult();
+
+    public RepositoryFile getResultFile();
 
 }

@@ -20,23 +20,15 @@
 		<property name="numThreads" value="30" />
 	</bean>
 
-	<bean name="notificationService"
+	<bean id="alertNotificationService" name="alertNotificationService"
 		class="org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl">
-		<property name="alertNotifications">
-			<ref bean="alertNotifications" />
+		<property name="alertNotifiers">
+			<list>
+				<bean
+					class="org.eobjects.datacleaner.monitor.alertnotification.LoggerAlertNotifier" />
+			</list>
 		</property>
 	</bean>
-
-	<bean id="alertNotifications" class="java.util.ArrayList">
-		<constructor-arg>
-			<list>
-				<ref bean="TextAlertNotification" />
-			</list>
-		</constructor-arg>
-	</bean>
-
-	<bean id="TextAlertNotification"
-		class="org.eobjects.datacleaner.monitor.alertnotification.TextAlertNotification" />
 
 	<context:component-scan base-package="org.eobjects.datacleaner.monitor.server" />
 	<context:component-scan

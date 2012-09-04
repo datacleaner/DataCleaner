@@ -19,12 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.alertnotification;
 
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 
 public interface AlertNotificationService {
 
-    void notifySubsribers(ExecutionLog _execution, AnalysisJobMetrics metrics, AnalysisJob job);
+    public void notifySubsribers(ExecutionLog execution);
 
 }

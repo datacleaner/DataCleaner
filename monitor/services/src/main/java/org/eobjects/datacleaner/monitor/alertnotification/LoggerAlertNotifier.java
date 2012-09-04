@@ -19,15 +19,32 @@
  */
 package org.eobjects.datacleaner.monitor.alertnotification;
 
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.runner.AnalysisJobMetrics;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import java.util.Map;
 
-public class TextAlertNotification extends AlertNotification {
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.metamodel.util.Ref;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * A simple {@link AlertNotifier} that logs alerts as WARNINGs in the log.
+ */
+public class LoggerAlertNotifier implements AlertNotifier {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoggerAlertNotifier.class);
 
     @Override
-    public void process(ExecutionLog execution, AnalysisJobMetrics metrics, AnalysisJob job) {
-        System.out.println("In Text Alert Notification");
+    public void onExecutionFinished(ExecutionLog execution, Ref<Map<AlertDefinition, Number>> activeAlerts,
+            ResultContext resultContext) {
+        if (!logger.isWarnEnabled()) {
+            return;
+        }
+
+        final Map<AlertDefinition, Number> alertValues = activeAlerts.get();
+        logger.warn("Active alerts: {}", alertValues.keySet());
+        logger.warn("Alert metric values: {}", alertValues.values());
     }
 
 }

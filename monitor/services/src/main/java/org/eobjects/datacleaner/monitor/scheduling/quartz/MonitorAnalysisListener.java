@@ -44,6 +44,7 @@ import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
@@ -67,8 +68,10 @@ public class MonitorAnalysisListener implements AnalysisListener {
     private final String _resultFilename;
     private final RepositoryFile _logFile;
     private final JaxbExecutionLogWriter _executionLogWriter;
+    private final AlertNotificationService _notificationService;
 
-    public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder) {
+    public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder, AlertNotificationService notificationService) {
+        _notificationService = notificationService;
         _execution = execution;
         _resultFolder = resultFolder;
         _executionLogWriter = new JaxbExecutionLogWriter();
@@ -105,6 +108,8 @@ public class MonitorAnalysisListener implements AnalysisListener {
         _execution.setExecutionStatus(ExecutionStatus.SUCCESS);
         
         flushLog();
+        // TODO: This represents the result filename, but we should make a util method to resolve RepositoryFile from resultId.
+        _notificationService.notifySubsribers(_execution, metrics, job);
     }
 
     private void writeResult() {

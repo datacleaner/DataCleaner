@@ -49,7 +49,7 @@ public class ExecuteJobTest extends TestCase {
         ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, datastoreIdentifier);
         ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        String executionId = ExecuteJob.executeJob(tenantContext, execution);
+        String executionId = ExecuteJob.executeJob(tenantContext, execution, null);
         assertNotNull(executionId);
         try {
             SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);

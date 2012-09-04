@@ -384,16 +384,8 @@ public class TimelinePanel extends FlowPanel {
     }
 
     public void updateTimeLineDefiniton() {
-        _service.updateTimelineDefinition(_tenant, _timelineIdentifier, _timelineDefinition,
-                new DCAsyncCallback<TimelineIdentifier>() {
-
-                    @Override
-                    public void onSuccess(TimelineIdentifier result) {
-
-                        setLoading();
-                        renderChart();
-                    }
-                });
-
+        
+        setLoading();
+        renderChart();
     }
 }

@@ -25,6 +25,8 @@ import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
+import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationService;
+import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -73,12 +75,13 @@ public class ExecuteJob extends AbstractQuartzJob {
         }
 
         final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
+        final AlertNotificationServiceImpl notificationService = applicationContext.getBean(AlertNotificationServiceImpl.class);
         final String tenantId = schedule.getTenant().getId();
         logger.info("Tenant {} executing job {}", tenantId, schedule.getJob());
 
         final TenantContext context = contextFactory.getContext(tenantId);
 
-        executeJob(context, execution);
+        executeJob(context, execution, notificationService);
     }
 
     /**
@@ -92,9 +95,9 @@ public class ExecuteJob extends AbstractQuartzJob {
      * @return The expected result name, which can be used to get updates about
      *         execution status etc. at a later state.
      */
-    public static String executeJob(TenantContext context, ExecutionLog execution) {
+    public static String executeJob(TenantContext context, ExecutionLog execution, AlertNotificationService notificationService) {
         final RepositoryFolder resultFolder = context.getResultFolder();
-        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder);
+        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, notificationService);
 
         try {
             final String jobName = execution.getJob().getName();

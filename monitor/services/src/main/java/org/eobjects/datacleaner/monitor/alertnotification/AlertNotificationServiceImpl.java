@@ -91,11 +91,12 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
 
                 final Map<AlertDefinition, Number> result = new TreeMap<AlertDefinition, Number>();
                 for (int i = 0; i < allAlerts.size(); i++) {
-                    final Number max = allAlerts.get(i).getMaximumValue();
-                    final Number min = allAlerts.get(i).getMinimumValue();
+                    AlertDefinition alertDef = allAlerts.get(i);
+                    final Number max = alertDef.getMaximumValue();
+                    final Number min = alertDef.getMinimumValue();
                     final Number actual = values.get(i);
                     if (isBeyondThreshold(actual, min, max)) {
-                        result.put(allAlerts.get(i), actual);
+                        result.put(alertDef, actual);
                     }
                 }
 

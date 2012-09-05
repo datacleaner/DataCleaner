@@ -20,16 +20,18 @@
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.metamodel.util.ToStringComparator;
 
 /**
  * Defines the rules of an alert that the user has configured.
  */
-public class AlertDefinition implements Serializable {
+public class AlertDefinition implements Serializable, Comparable<AlertDefinition> {
 
     private static final long serialVersionUID = 1L;
-    
+
     private MetricIdentifier _metricIdentifier;
     private String _description;
     private Number _minimumValue;
@@ -59,6 +61,9 @@ public class AlertDefinition implements Serializable {
     }
 
     public MetricIdentifier getMetricIdentifier() {
+        if (_metricIdentifier == null) {
+            return new MetricIdentifier();
+        }
         return _metricIdentifier;
     }
 
@@ -110,5 +115,27 @@ public class AlertDefinition implements Serializable {
     @Override
     public String toString() {
         return getDescription();
+    }
+
+    @Override
+    public int compareTo(AlertDefinition other) {
+        if (other == this) {
+            return 0;
+        }
+        int diff = getMetricIdentifier().compareTo(other.getMetricIdentifier());
+        if (diff == 0) {
+            final Comparator<Object> comparator = ToStringComparator.getComparator();
+            diff = comparator.compare(getDescription(), other.getDescription());
+            if (diff == 0) {
+                diff = comparator.compare(getSeverity(), other.getSeverity());
+                if (diff == 0) {
+                    diff = comparator.compare(getMaximumValue(), other.getMaximumValue());
+                    if (diff == 0) {
+                        diff = comparator.compare(getMinimumValue(), other.getMinimumValue());
+                    }
+                }
+            }
+        }
+        return diff;
     }
 }

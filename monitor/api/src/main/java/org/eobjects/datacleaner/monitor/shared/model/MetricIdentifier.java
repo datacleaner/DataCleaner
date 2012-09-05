@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Identifies a metric of interest.
  */
-public class MetricIdentifier implements Serializable {
+public class MetricIdentifier implements Serializable, Comparable<MetricIdentifier> {
 
     private static final long serialVersionUID = 1L;
 
@@ -264,6 +264,14 @@ public class MetricIdentifier implements Serializable {
             return _metricDescriptorName;
         }
         return _metricDisplayName;
+    }
+
+    @Override
+    public int compareTo(MetricIdentifier other) {
+        if (this == other) {
+            return 0;
+        }
+        return getId().compareTo(other.getId());
     }
 
 }

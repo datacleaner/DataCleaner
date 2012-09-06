@@ -102,10 +102,14 @@ public class LegendClickHandler implements ClickHandler {
 
             @Override
             public void onClick(ClickEvent event) {
-
-                _metricIdentifier.setMetricColor(selectColorPanel.getSelectedColor());
+                String selectedColor = selectColorPanel.getSelectedColor();
                 popUp.hide();
-                _timeLinePanel.refreshTimelineDefiniton();
+                boolean isSaveTimelineActive = false;
+                if(!selectedColor.equals("")){
+                    _metricIdentifier.setMetricColor(selectedColor);
+                    isSaveTimelineActive = true;
+                }
+                _timeLinePanel.refreshTimelineDefiniton(isSaveTimelineActive);
             }
         });
         return saveButton;
@@ -136,7 +140,7 @@ public class LegendClickHandler implements ClickHandler {
                 String text = textBox.getText();
                 _metricIdentifier.setMetricDisplayName(text);
                 popUp.hide();
-                _timeLinePanel.refreshTimelineDefiniton();
+                _timeLinePanel.refreshTimelineDefiniton(true);
             }
         });
         return saveButton;

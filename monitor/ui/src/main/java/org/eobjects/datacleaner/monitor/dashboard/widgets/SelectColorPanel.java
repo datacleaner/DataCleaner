@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 public class SelectColorPanel extends FlowPanel {
 
     private String _colorString;
+    private RadioButton _rbAutoSelectColor;
     private RadioButton _rbManualSelectColor;
     private RadioButton _rbChoosePredefinedColor;
     private ColorBox _colorBox;
@@ -45,16 +46,29 @@ public class SelectColorPanel extends FlowPanel {
         HTML description = new HTML("<p>Please select one of the following approaches for determining the metric's color in the timeline.</p>");
         description.setStyleName("descriptionLabel");
         add(description);
+        _rbAutoSelectColor = new RadioButton("colorGroup", "Automatically apply a color");
         _rbManualSelectColor = new RadioButton("colorGroup", "Select color from palette");
         _rbChoosePredefinedColor = new RadioButton("colorGroup", "Choose predefined color");
-        _rbManualSelectColor.setValue(true);
+        if("".equals(_colorString) || _colorString == null){
+            _rbAutoSelectColor.setValue(true);
+        }else{
+            _rbManualSelectColor.setValue(true);
+        }
         configureColorPanels();
 
     }
 
     private void configureColorPanels() {
+        configureAutoSelectColorPanel();
         configureManualSelectColorPanel();
         configurePredefinedColorPanel();
+    }
+
+    private void configureAutoSelectColorPanel() {
+        FlowPanel autoSelectPanel = new FlowPanel();
+        autoSelectPanel.add(_rbAutoSelectColor);
+        autoSelectPanel.addStyleName("colorPanel");
+        add(autoSelectPanel);
     }
 
     private void configureManualSelectColorPanel() {
@@ -98,7 +112,7 @@ public class SelectColorPanel extends FlowPanel {
         if (_rbChoosePredefinedColor.getValue()) {
             return _predefinedListBox.getValue(_predefinedListBox.getSelectedIndex());
         }
-
+        
         return "";
     }
 

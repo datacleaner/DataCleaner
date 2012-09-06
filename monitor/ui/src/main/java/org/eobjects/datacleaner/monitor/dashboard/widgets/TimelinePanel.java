@@ -303,7 +303,6 @@ public class TimelinePanel extends FlowPanel {
             String color = metricIdentifier.getMetricColor();
             if (color == "" || color == null) {
                 color = colorProvider.getNextColor();
-                metricIdentifier.setMetricColor(color);
             }
             colors.add(color);
         }
@@ -398,11 +397,12 @@ public class TimelinePanel extends FlowPanel {
         }
     }
 
-    public void refreshTimelineDefiniton() {
+    public void refreshTimelineDefiniton(boolean isSaveTimelineActive) {
         setLoading();
         renderChart();
-        _saveButton.setEnabled(true);
+        if (isSaveTimelineActive) {
+            _saveButton.setEnabled(true);
+        }
     }
-    
-    
+
 }

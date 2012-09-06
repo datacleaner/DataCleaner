@@ -75,8 +75,13 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
         final Ref<Map<AlertDefinition, Number>> activeAlerts = new LazyRef<Map<AlertDefinition, Number>>() {
             @Override
             protected Map<AlertDefinition, Number> fetch() {
+                final Map<AlertDefinition, Number> result = new TreeMap<AlertDefinition, Number>();
                 final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
                 final List<AlertDefinition> allAlerts = execution.getSchedule().getAlerts();
+                if (allAlerts.isEmpty()) {
+                    // no alerts at all
+                    return result;
+                }
                 for (AlertDefinition alertDefinition : allAlerts) {
                     MetricIdentifier metricIdentifier = alertDefinition.getMetricIdentifier();
                     metricIdentifiers.add(metricIdentifier);
@@ -89,7 +94,6 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
                         resultFile, tenantId, execution.getJob());
                 final List<Number> values = metricValues.getValues();
 
-                final Map<AlertDefinition, Number> result = new TreeMap<AlertDefinition, Number>();
                 for (int i = 0; i < allAlerts.size(); i++) {
                     AlertDefinition alertDef = allAlerts.get(i);
                     final Number max = alertDef.getMaximumValue();

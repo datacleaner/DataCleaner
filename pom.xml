@@ -17,10 +17,10 @@
 	<artifactId>DataCleaner</artifactId>
 	<version>3.0-SNAPSHOT</version>
 	<name>DataCleaner parent</name>
-	<description>DataCleaner is the premier open source data profiling application. Use it to
+	<description>DataCleaner is the premier open source data quality solution. Use it to
 		discover, analyze and diagnose the state of your data. DataCleaner works with
 		almost any kind of data, eg. CSV files, databases, Excel spreadsheets and more.</description>
-	<url>http://datacleaner.eobjects.org</url>
+	<url>http://datacleaner.org</url>
 	<packaging>pom</packaging>
 	<modules>
 		<module>core</module>
@@ -29,8 +29,8 @@
 		<module>packaging</module>
 	</modules>
 	<organization>
-		<name>eobjects.org</name>
-		<url>http://eobjects.org</url>
+		<name>Human Inference</name>
+		<url>http://www.humaninference.com</url>
 	</organization>
 	<developers>
 		<developer>
@@ -56,8 +56,24 @@
 			<email>pranjan@xebia.com</email>
 		</contributor>
 		<contributor>
+			<name>Anand Swarup</name>
+		</contributor>
+		<contributor>
+			<name>Pulin Pathneja</name>
+		</contributor>
+		<contributor>
+			<name>Swapnil Dubey</name>
+		</contributor>
+		<contributor>
 			<name>Rajneesh Namta</name>
 			<email>rnamta@xebia.com</email>
+			<roles>
+				<role>Tester</role>
+			</roles>
+		</contributor>
+		<contributor>
+			<name>Nayan Gaur</name>
+			<email>ngaur@xebia.com</email>
 			<roles>
 				<role>Tester</role>
 			</roles>

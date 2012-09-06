@@ -5,17 +5,20 @@
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
             <ns2:metric-descriptor-name>Row count</ns2:metric-descriptor-name>
-            <ns2:metric-display-name>Row count</ns2:metric-display-name>
+            <ns2:metric-display-name>Row</ns2:metric-display-name>
+            <ns2:metric-color>#963213</ns2:metric-color>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
             <ns2:metric-descriptor-name>Valid row count</ns2:metric-descriptor-name>
             <ns2:metric-display-name>Valid row count</ns2:metric-display-name>
+            <ns2:metric-color>#ffc800</ns2:metric-color>
         </ns2:metric>
         <ns2:metric>
             <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
             <ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
             <ns2:metric-display-name>Invalid row count</ns2:metric-display-name>
+            <ns2:metric-color>#5594dd</ns2:metric-color>
         </ns2:metric>
     </ns3:metrics>
     <ns3:chart-options>

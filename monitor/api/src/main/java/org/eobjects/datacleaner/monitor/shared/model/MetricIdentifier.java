@@ -33,6 +33,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     private String _analyzerInputName;
     private String _metricDescriptorName;
     private String _metricDisplayName;
+    private String _metricColor;
     private String _paramQueryString;
     private String _paramColumnName;
     private boolean _parameterizedByQueryString;
@@ -127,6 +128,34 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         _parameterizedByQueryString = parameterizedByQueryString;
     }
 
+    public void setMetricDisplayName(String _metricDisplayName) {
+        this._metricDisplayName = _metricDisplayName;
+    }
+
+    public String getDisplayName() {
+        if (_metricDisplayName == null || "".equals(_metricDisplayName)) {
+            if (_paramColumnName != null) {
+                return _metricDescriptorName + " (" + _paramColumnName + ")";
+            }
+            if (_paramQueryString != null) {
+                return _metricDescriptorName + ": " + _paramQueryString;
+            }
+            if (_analyzerInputName != null) {
+                return _metricDescriptorName + " (" + _analyzerInputName + ")";
+            }
+            return _metricDescriptorName;
+        }
+        return _metricDisplayName;
+    }
+
+    public void setMetricColor(String metricColor) {
+        _metricColor = metricColor;
+    }
+
+    public String getMetricColor() {
+        return _metricColor;
+    }
+
     /**
      * Creates a copy of this {@link MetricIdentifier}.
      * 
@@ -139,6 +168,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         metricIdentifier.setAnalyzerName(_analyzerName);
         metricIdentifier.setMetricDescriptorName(_metricDescriptorName);
         metricIdentifier.setMetricDisplayName(_metricDisplayName);
+        metricIdentifier.setMetricColor(_metricColor);
         metricIdentifier.setParamColumnName(_paramColumnName);
         metricIdentifier.setParameterizedByColumnName(_parameterizedByColumnName);
         metricIdentifier.setParameterizedByQueryString(_parameterizedByQueryString);
@@ -154,6 +184,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         result = prime * result + ((_analyzerInputName == null) ? 0 : _analyzerInputName.hashCode());
         result = prime * result + ((_analyzerName == null) ? 0 : _analyzerName.hashCode());
         result = prime * result + ((_metricDescriptorName == null) ? 0 : _metricDescriptorName.hashCode());
+        result = prime * result + ((_metricDisplayName == null) ? 0 : _metricDisplayName.hashCode());
         result = prime * result + ((_paramColumnName == null) ? 0 : _paramColumnName.hashCode());
         result = prime * result + ((_paramQueryString == null) ? 0 : _paramQueryString.hashCode());
         result = prime * result + (_parameterizedByColumnName ? 1231 : 1237);
@@ -244,26 +275,6 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return "MetricIdentifier[analyzerInputName=" + _analyzerInputName + ",metricDescriptorName="
                 + _metricDescriptorName + (_paramColumnName != null ? ",paramColumnName=" + _paramColumnName : "")
                 + (_paramQueryString != null ? ",paramQueryString=" + _paramQueryString : "") + "]";
-    }
-
-    public void setMetricDisplayName(String _metricDisplayName) {
-        this._metricDisplayName = _metricDisplayName;
-    }
-
-    public String getDisplayName() {
-        if (_metricDisplayName == null || "".equals(_metricDisplayName)) {
-            if (_paramColumnName != null) {
-                return _metricDescriptorName + " (" + _paramColumnName + ")";
-            }
-            if (_paramQueryString != null) {
-                return _metricDescriptorName + ": " + _paramQueryString;
-            }
-            if (_analyzerInputName != null) {
-                return _metricDescriptorName + " (" + _analyzerInputName + ")";
-            }
-            return _metricDescriptorName;
-        }
-        return _metricDisplayName;
     }
 
     @Override

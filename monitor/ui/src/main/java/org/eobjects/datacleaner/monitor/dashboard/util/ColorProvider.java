@@ -19,8 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.eobjects.datacleaner.monitor.shared.widgets.Color;
 
 public class ColorProvider {
 
@@ -28,24 +27,21 @@ public class ColorProvider {
             Color.ADDITIONAL_COLOR_RED_BRIGHT, Color.BG_COLOR_BLUE_BRIGHT, Color.BG_COLOR_ORANGE_BRIGHT,
             Color.ADDITIONAL_COLOR_PURPLE_BRIGHT, Color.ADDITIONAL_COLOR_CYAN_BRIGHT };
 
-    public static List<String> getColors(int numberOfColors) {
-        List<String> colorsList = new ArrayList<String>();
-        int colorIndex = 0;
-        for (int i = 0; i < numberOfColors; i++) {
-            final Color color;
-            Color colorCandidate = SLICE_COLORS[colorIndex];
-            int darkAmount = i / SLICE_COLORS.length;
-            for (int j = 0; j < darkAmount; j++) {
-                colorCandidate = colorCandidate.slightlyDarker();
-            }
-            color = colorCandidate;
-            colorIndex++;
-            if (colorIndex >= SLICE_COLORS.length) {
-                colorIndex = 0;
-            }
-            colorsList.add(color.toHexString());
+    private int colorIndex = 0;
+
+    public String getNextColor() {
+        final Color color;
+        Color colorCandidate = SLICE_COLORS[colorIndex];
+        int darkAmount = colorIndex / SLICE_COLORS.length;
+        for (int j = 0; j < darkAmount; j++) {
+            colorCandidate = colorCandidate.slightlyDarker();
         }
-        return colorsList;
+        color = colorCandidate;
+        colorIndex++;
+        if (colorIndex >= SLICE_COLORS.length) {
+            colorIndex = 0;
+        }
+        return color.toHexString();
     }
 
 }

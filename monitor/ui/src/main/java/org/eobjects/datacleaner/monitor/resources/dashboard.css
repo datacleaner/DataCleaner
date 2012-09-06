@@ -289,3 +289,19 @@
 	float: right;
 	width: 300px;
 }
+
+
+.SelectColorPanel {
+	width: 600px;
+}
+
+.SelectColorPanel .colorPanel {
+	margin-top: 20px;
+}
+
+.SelectColorPanel .colorPanel .configurationPanel {
+	margin-left: 34px;
+	border-left: 2px solid #f0f0f0;
+	padding-left: 4px;
+}
+

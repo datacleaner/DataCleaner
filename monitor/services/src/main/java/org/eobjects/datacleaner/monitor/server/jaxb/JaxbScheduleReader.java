@@ -59,6 +59,7 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
         metricIdentifier.setAnalyzerName(metricType.getAnalyzerName());
         metricIdentifier.setMetricDescriptorName(metricType.getMetricDescriptorName());
         metricIdentifier.setMetricDisplayName(metricType.getMetricDisplayName());
+        metricIdentifier.setMetricColor(metricType.getMetricColor());
         metricIdentifier.setParamColumnName(metricType.getMetricParamColumnName());
         metricIdentifier.setParamQueryString(metricType.getMetricParamQueryString());
         metricIdentifier.setParameterizedByColumnName(metricType.getMetricParamColumnName() != null);

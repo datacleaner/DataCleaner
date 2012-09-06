@@ -38,40 +38,90 @@ public class LegendClickHandler implements ClickHandler {
     private MetricIdentifier _metricIdentifier;
     private final TimelinePanel _timeLinePanel;
     private Legend _legend;
+    private Boolean _isDashboardEditor;
 
-    public LegendClickHandler(String data, MetricIdentifier metricIdentifier, TimelinePanel timelinePanel, Legend legend) {
+    public LegendClickHandler(String data, MetricIdentifier metricIdentifier, TimelinePanel timelinePanel, Legend legend, boolean isDashboardEditor) {
         _data = data;
         _metricIdentifier = metricIdentifier;
         _timeLinePanel = timelinePanel;
         _legend = legend;
+        _isDashboardEditor = isDashboardEditor;
     }
 
     @Override
     public void onClick(ClickEvent event) {
-        final PopupPanel popupPanel = new PopupPanel(true);
-        MenuBar popupMenuBar = new MenuBar(true);
-        MenuItem alertItem = new MenuItem("Edit Metric Name", true, new Command() {
+        if (_isDashboardEditor) {
+            final PopupPanel popupPanel = new PopupPanel(true);
+            MenuBar popupMenuBar = populateLegendMenu(popupPanel);
+            popupPanel.setWidget(popupMenuBar);
+            popupPanel.showRelativeTo(_legend);
+        }
+    }
 
+    private MenuBar populateLegendMenu(final PopupPanel popupPanel) {
+        MenuBar popupMenuBar = new MenuBar(true);
+        MenuItem editMetricNameItem = new MenuItem("Edit metric name", true, new Command() {
             @Override
             public void execute() {
                 popupPanel.hide();
-                final DCPopupPanel editMetricPopUp = new DCPopupPanel("Edit Metric Name");
-                final TextBox textBox = new TextBox();
-                textBox.setText(_data);
-                Button saveButton = configureSaveButton(editMetricPopUp, textBox);
-                editMetricPopUp.setWidget(textBox);
-                editMetricPopUp.removeButtons();
-                editMetricPopUp.addButton(saveButton);
-                editMetricPopUp.addButton(new CancelPopupButton(editMetricPopUp));
-                editMetricPopUp.center();
-                editMetricPopUp.show();
+                configureEditMetricPopup();
             }
+        });
+        popupMenuBar.addItem(editMetricNameItem);
 
+        MenuItem editLegendColorItem = new MenuItem("Change color", true, new Command() {
+            @Override
+            public void execute() {
+                popupPanel.hide();
+                configureEditLegendColorPopup();
+            }
         });
 
-        popupMenuBar.addItem(alertItem);
-        popupPanel.setWidget(popupMenuBar);
-        popupPanel.showRelativeTo(_legend);
+        popupMenuBar.addItem(editLegendColorItem);
+        return popupMenuBar;
+    }
+
+    protected void configureEditLegendColorPopup() {
+        final DCPopupPanel popup = new DCPopupPanel("Change color");
+        popup.addStyleName("CreateTimelinePopupPanel");
+        SelectColorPanel selectColorPanel = new SelectColorPanel(_metricIdentifier.getMetricColor());
+        Button saveButton = configureSaveColorButton(popup, selectColorPanel);
+        popup.setWidget(selectColorPanel);
+        popup.addButton(saveButton);
+        popup.addButton(new CancelPopupButton(popup));
+        popup.center();
+        popup.show();
+    }
+
+    private Button configureSaveColorButton(final DCPopupPanel popUp, final SelectColorPanel selectColorPanel) {
+        Button saveButton = new Button("Save");
+        saveButton.setVisible(true);
+        saveButton.setTitle("Save");
+        saveButton.addStyleName("SaveButton");
+        saveButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+
+                _metricIdentifier.setMetricColor(selectColorPanel.getSelectedColor());
+                popUp.hide();
+                _timeLinePanel.refreshTimelineDefiniton();
+            }
+        });
+        return saveButton;
+    }
+
+    private void configureEditMetricPopup() {
+        final DCPopupPanel editMetricPopUp = new DCPopupPanel("Edit Metric Name");
+        final TextBox textBox = new TextBox();
+        textBox.setText(_data);
+        Button saveButton = configureSaveButton(editMetricPopUp, textBox);
+        editMetricPopUp.setWidget(textBox);
+        editMetricPopUp.removeButtons();
+        editMetricPopUp.addButton(saveButton);
+        editMetricPopUp.addButton(new CancelPopupButton(editMetricPopUp));
+        editMetricPopUp.center();
+        editMetricPopUp.show();
     }
 
     private Button configureSaveButton(final DCPopupPanel popUp, final TextBox textBox) {

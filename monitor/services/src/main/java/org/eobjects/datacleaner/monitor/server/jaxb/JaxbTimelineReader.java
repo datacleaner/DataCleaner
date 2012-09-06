@@ -135,6 +135,7 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
             metricIdentifier.setAnalyzerInputName(metricType.getAnalyzerInput());
             metricIdentifier.setMetricDescriptorName(metricType.getMetricDescriptorName());
             metricIdentifier.setMetricDisplayName(metricType.getMetricDisplayName());
+            metricIdentifier.setMetricColor(metricType.getMetricColor());
             metricIdentifier.setParamColumnName(metricType.getMetricParamColumnName());
             metricIdentifier.setParamQueryString(metricType.getMetricParamQueryString());
             metricIdentifier.setParameterizedByColumnName(metricType.getMetricParamColumnName() != null);

@@ -46,7 +46,7 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
  * Jaxb based {@link TimelineReader} of .analysis.timeline.xml files.
  */
 public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements TimelineWriter {
-    
+
     public JaxbTimelineWriter() {
         super(Timeline.class);
     }
@@ -68,6 +68,7 @@ public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements
             metricType.setAnalyzerName(metric.getAnalyzerName());
             metricType.setMetricDescriptorName(metric.getMetricDescriptorName());
             metricType.setMetricDisplayName(metric.getDisplayName());
+            metricType.setMetricColor(metric.getMetricColor());
             metricType.setMetricParamColumnName(metric.getParamColumnName());
             metricType.setMetricParamQueryString(metric.getParamQueryString());
 

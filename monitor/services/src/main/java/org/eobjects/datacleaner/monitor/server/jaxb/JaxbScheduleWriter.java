@@ -112,6 +112,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
         metric.setAnalyzerName(metricIdentifier.getAnalyzerName());
         metric.setMetricDescriptorName(metricIdentifier.getMetricDescriptorName());
         metric.setMetricDisplayName(metricIdentifier.getDisplayName());
+        metric.setMetricColor(metricIdentifier.getMetricColor());
         metric.setMetricParamColumnName(metricIdentifier.getParamColumnName());
         metric.setMetricParamQueryString(metricIdentifier.getParamQueryString());
         return metric;

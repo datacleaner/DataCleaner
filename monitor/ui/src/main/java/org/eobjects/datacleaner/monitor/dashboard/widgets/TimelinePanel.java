@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -272,7 +273,7 @@ public class TimelinePanel extends FlowPanel {
                 options.setLegend(LegendPosition.NONE);
 
                 final AbstractDataTable dataTable = createDataTable(_timelineDefinition, _timelineData);
-                List<String> colors = ColorProvider.getColors(dataTable.getNumberOfColumns() - 1);
+                final List<String> colors = createColors(_timelineDefinition, new ColorProvider());
                 options.setColors(colors.toArray(new String[colors.size()]));
 
                 final LineChart chart = new LineChart(dataTable, options);
@@ -286,13 +287,27 @@ public class TimelinePanel extends FlowPanel {
                 for (int i = 1; i < dataTable.getNumberOfColumns(); i++) {
                     Legend legend = new Legend(dataTable.getColumnLabel(i), colors.get(i - 1));
                     legendPanel.addLegend(legend, new LegendClickHandler(dataTable.getColumnLabel(i),
-                            _timelineDefinition.getMetrics().get(i - 1), TimelinePanel.this, legend));
+                            _timelineDefinition.getMetrics().get(i - 1), TimelinePanel.this, legend, _isDashboardEditor));
 
                 }
                 add(legendPanel);
             }
         };
         VisualizationUtils.loadVisualizationApi(lineChartRunnable, LineChart.PACKAGE);
+    }
+
+    protected List<String> createColors(TimelineDefinition definition, ColorProvider colorProvider) {
+        final List<String> colors = new ArrayList<String>();
+
+        for (MetricIdentifier metricIdentifier : definition.getMetrics()) {
+            String color = metricIdentifier.getMetricColor();
+            if (color == "" || color == null) {
+                color = colorProvider.getNextColor();
+                metricIdentifier.setMetricColor(color);
+            }
+            colors.add(color);
+        }
+        return colors;
     }
 
     public TimelineData getTimelineData() {
@@ -385,6 +400,9 @@ public class TimelinePanel extends FlowPanel {
 
     public void refreshTimelineDefiniton() {
         setLoading();
-        renderChart();        
+        renderChart();
+        _saveButton.setEnabled(true);
     }
+    
+    
 }

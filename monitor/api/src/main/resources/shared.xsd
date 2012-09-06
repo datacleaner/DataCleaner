@@ -17,6 +17,8 @@
 				maxOccurs="1" type="string" />
 			<element name="metric-display-name" minOccurs="1" maxOccurs="1"
 				type="string" />
+			<element name="metric-color" minOccurs="0" maxOccurs="1"
+				type="string" />
 			<element name="metric-param-query-string" minOccurs="0"
 				maxOccurs="1" type="string" />
 			<element name="metric-param-column-name" minOccurs="0"

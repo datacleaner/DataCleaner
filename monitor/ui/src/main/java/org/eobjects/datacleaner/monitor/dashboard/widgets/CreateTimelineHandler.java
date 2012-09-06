@@ -101,7 +101,6 @@ public class CreateTimelineHandler implements ClickHandler {
         final FlowPanel mainPanel = new FlowPanel();
         mainPanel.add(new HeadingLabel("Select metrics to monitor"));
         mainPanel.add(customizeMetricsPanel);
-
         popup.setWidget(mainPanel);
         popup.removeButtons();
         popup.addButton(saveButton);

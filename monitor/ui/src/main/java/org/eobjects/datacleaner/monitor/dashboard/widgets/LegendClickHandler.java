@@ -105,10 +105,8 @@ public class LegendClickHandler implements ClickHandler {
                 String selectedColor = selectColorPanel.getSelectedColor();
                 popUp.hide();
                 boolean isSaveTimelineActive = false;
-                if(!selectedColor.equals("")){
-                    _metricIdentifier.setMetricColor(selectedColor);
-                    isSaveTimelineActive = true;
-                }
+                _metricIdentifier.setMetricColor(selectedColor);
+                isSaveTimelineActive = true;
                 _timeLinePanel.refreshTimelineDefiniton(isSaveTimelineActive);
             }
         });

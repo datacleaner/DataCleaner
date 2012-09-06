@@ -90,8 +90,8 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
                 final TenantIdentifier tenantId = execution.getSchedule().getTenant();
                 final RepositoryFile resultFile = resultContext.getResultFile();
 
-                final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers,
-                        resultFile, tenantId, execution.getJob());
+                final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers, resultFile,
+                        tenantId, execution.getJob());
                 final List<Number> values = metricValues.getValues();
 
                 for (int i = 0; i < allAlerts.size(); i++) {

@@ -20,10 +20,8 @@
 package org.eobjects.datacleaner.monitor.scheduling.model;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.metamodel.util.ToStringComparator;
 
 /**
  * Defines the rules of an alert that the user has configured.
@@ -124,17 +122,7 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         }
         int diff = getMetricIdentifier().compareTo(other.getMetricIdentifier());
         if (diff == 0) {
-            final Comparator<Object> comparator = ToStringComparator.getComparator();
-            diff = comparator.compare(getDescription(), other.getDescription());
-            if (diff == 0) {
-                diff = comparator.compare(getSeverity(), other.getSeverity());
-                if (diff == 0) {
-                    diff = comparator.compare(getMaximumValue(), other.getMaximumValue());
-                    if (diff == 0) {
-                        diff = comparator.compare(getMinimumValue(), other.getMinimumValue());
-                    }
-                }
-            }
+            diff = getDescription().compareTo(other.getDescription());
         }
         return diff;
     }

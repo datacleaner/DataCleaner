@@ -21,6 +21,10 @@ package org.eobjects.datacleaner.monitor.alertnotification;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 
+/**
+ * Defines an interface for the component which handles alert notifications for
+ * finished Job executions.
+ */
 public interface AlertNotificationService {
 
     public void notifySubscribers(ExecutionLog execution);

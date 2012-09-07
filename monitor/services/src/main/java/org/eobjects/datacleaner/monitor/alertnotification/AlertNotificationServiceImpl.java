@@ -37,11 +37,18 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.NumberComparator;
 import org.eobjects.metamodel.util.Ref;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Default alert notification service
+ */
 @Component
 public class AlertNotificationServiceImpl implements AlertNotificationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AlertNotificationServiceImpl.class);
 
     private final TenantContextFactory _tenantContextFactory;
     private final MetricValueProducer _metricValueProducer;
@@ -108,8 +115,12 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
             }
         };
 
-        for (AlertNotifier alertNotification : alertNotifiers) {
-            alertNotification.onExecutionFinished(execution, activeAlerts, resultContext);
+        for (AlertNotifier alertNotifier : alertNotifiers) {
+            try {
+                alertNotifier.onExecutionFinished(execution, activeAlerts, resultContext);
+            } catch (Exception e) {
+                logger.error("AlertNotifier (" + alertNotifier + ") threw unexpected exception", e);
+            }
         }
     }
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<schedule xmlns="http://eobjects.org/datacleaner/schedule/1.0"
+	xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0"
+	xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+	<cron-expression>@daily</cron-expression>
+	<alerts>
+		<alert>
+			<description>Incompleteness - fatal</description>
+			<ns2:metric>
+				<ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+				<ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
+				<ns2:metric-display-name>Invalid row count</ns2:metric-display-name>
+			</ns2:metric>
+			<maximum-value>100</maximum-value>
+			<severity>FATAL</severity>
+		</alert>
+		<alert>
+			<description>Incompleteness - warning</description>
+			<ns2:metric>
+				<ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+				<ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
+				<ns2:metric-display-name>Invalid row count</ns2:metric-display-name>
+			</ns2:metric>
+			<maximum-value>50</maximum-value>
+			<severity>WARNING</severity>
+		</alert>
+		<alert>
+			<description>Incompleteness - issue</description>
+			<ns2:metric>
+				<ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+				<ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
+				<ns2:metric-display-name>Invalid row count</ns2:metric-display-name>
+			</ns2:metric>
+			<maximum-value>10</maximum-value>
+			<severity>SURVEILLANCE</severity>
+		</alert>
+		<alert>
+			<description>Incompleteness - log</description>
+			<ns2:metric>
+				<ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+				<ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
+				<ns2:metric-display-name>Invalid row count</ns2:metric-display-name>
+			</ns2:metric>
+			<maximum-value>5</maximum-value>
+			<severity>INTELLIGENCE</severity>
+		</alert>
+	</alerts>
+</schedule>

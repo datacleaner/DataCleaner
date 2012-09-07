@@ -42,7 +42,12 @@ final class ExecutionIdentifierCell extends AbstractCell<ExecutionIdentifier> {
         sb.appendHtmlConstant("<div class=\"ExecutionIdentifier\">");
 
         final Date beginDate = executionIdentifier.getJobBeginDate();
-        final String dateString = _format.format(beginDate);
+        final String dateString;
+        if (beginDate == null) {
+            dateString = "(n/a)";
+        } else {
+            dateString = _format.format(beginDate);
+        }
 
         // date
         sb.appendHtmlConstant("<span class=\"beginDate\">");

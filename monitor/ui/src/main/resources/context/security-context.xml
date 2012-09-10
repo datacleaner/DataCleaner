@@ -47,33 +47,15 @@
 					authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
 				<user name="admin" password="admin"
 					authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
-
-				<!-- CarCo tenant users -->
-				<user name="john" password="john" authorities="ROLE_USER, ROLE_VIEWER" />
-				<user name="jane" password="jane"
-					authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
-				<user name="joe" password="joe"
-					authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
-			</user-service>
+				</user-service>
 		</authentication-provider>
 	</authentication-manager>
 
 	<!-- Uncomment this to have a single-tenant configuration -->
-	<!-- <beans:bean name="tenantResolver" class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver"> -->
-	<!-- <beans:property name="tenantId" value="DC" /> -->
-	<!-- </beans:bean> -->
+	<beans:bean name="tenantResolver" class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver">
+	 <beans:property name="tenantId" value="DC" /> 
+	 </beans:bean> 
 
-	<!-- Tenant resolver for 'DC' and 'CarCo' tenants. -->
-	<beans:bean name="tenantResolver"
-		class="org.eobjects.datacleaner.monitor.server.security.MapBasedTenantResolver">
-		<beans:property name="defaultTenant" value="DC" />
-		<beans:property name="userTenantMap">
-			<beans:map>
-				<beans:entry key="john" value="CarCo" />
-				<beans:entry key="jane" value="CarCo" />
-				<beans:entry key="joe" value="CarCo" />
-			</beans:map>
-		</beans:property>
-	</beans:bean>
+	
 
 </beans:beans>

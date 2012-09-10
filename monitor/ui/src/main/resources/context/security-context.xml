@@ -47,15 +47,13 @@
 					authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
 				<user name="admin" password="admin"
 					authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
-				</user-service>
+			</user-service>
 		</authentication-provider>
 	</authentication-manager>
 
-	<!-- Uncomment this to have a single-tenant configuration -->
-	<beans:bean name="tenantResolver" class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver">
-	 <beans:property name="tenantId" value="DC" /> 
-	 </beans:bean> 
-
-	
+	<beans:bean name="tenantResolver"
+		class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver">
+		<beans:property name="tenantId" value="DC" />
+	</beans:bean>
 
 </beans:beans>

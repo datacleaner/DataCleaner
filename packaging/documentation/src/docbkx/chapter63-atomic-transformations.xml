@@ -5,4 +5,104 @@
 
 	<title>Atomic transformations (data cleaning as a service)</title>
 
+	<chapterinfo>
+		<abstract>
+			<para>
+				In this chapter we will learn how to use the DataCleaner
+				monitor as a web service for invoking DataCleaner jobs as on-demand
+				/ on-the-fly data cleansing operations.
+				Like in the case of
+				repository navigation, these web services are located with URLs
+				starting with the form:
+			</para>
+			<para>/DataCleaner-monitor/repository/DC/...
+			</para>
+			<para>Where 'DC' is the tenant identifier and 'DataCleaner-monitor'
+				is the web application archive name.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<section>
+		<title>What are atomic transformation services?</title>
+
+		<para>DataCleaner jobs provides a generic feature for transforming
+			data, through the ability to have transformers and filters added to
+			jobs. Usually such jobs are executed in batches, but in fact they are
+			not restrained to that purpose. Atomic transformation refers to
+			utilizing DataCleaner jobs as independent on-the-fly data cleansing
+			activities. For example, such transformations could be used as a part
+			of a data processing pipeline in a SOA architecture or in a web
+			application with flexible data processing needs.
+		</para>
+
+		<para>Any DataCleaner job can be used for performing atomic
+			transformations. Simply create a job that does some kind of
+			transformation (anything from a simple 'String length' operation to a
+			complete chain of 'Address cleansing' and regex parsing), and place
+			the job in the DataCleaner monitor repository. A specialized web
+			service endpoint will be automatically exposed to use the job as an
+			atomic transformation. The endpoint URL will be:
+		</para>
+
+		<programlisting>
+			/DataCleaner-monitor/repository/DC/jobs/[jobname].invoke
+		</programlisting>
+
+	</section>
+
+	<section>
+		<title>Invoking atomic transformations</title>
+
+		<para>The contract of the atomic transformation invocation service is
+			dynamic, based on the contract defined by source data and transformed
+			data in the job.
+		</para>
+		<para>The web service is based on JSON data. You need to provide the
+			JSON data corresponding to the source record format of the job.
+		</para>
+
+		<para>For instance, let's say a job defines the following JavaScript
+			transformation with two source columns (POSTALCODE and COUNTRY):
+		</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="webservice_atomic_transformation_example.jpg"
+					scalefit="1" format="JPG" />
+			</imageobject>
+		</mediaobject>
+
+		<para>The web service will therefore expect that each JSON record
+			contains two values. The service accepts one or multiple records in
+			it's payload. Use a HTTP POST with a body like this (3 records and 2
+			columns):
+		</para>
+
+		<programlisting>
+			{"rows":[
+			&#160;&#160;{"values":["2200","DK"]},
+			&#160;&#160;{"values":["2200",""]},
+			&#160;&#160;{"values":["DK2200","DK"]}
+			]}
+		</programlisting>
+
+		<para>And the resulting response body will look like this:</para>
+
+		<programlisting>
+			{
+			&#160;&#160;"rows":[
+			&#160;&#160;&#160;&#160;{"values":["DK2200"]},
+			&#160;&#160;&#160;&#160;{"values":["2200"]},
+			&#160;&#160;&#160;&#160;{"values":["DK2200"]}
+			&#160;&#160;],
+			&#160;&#160;"columns":[
+			&#160;&#160;&#160;&#160;"Country postalcode"
+			&#160;&#160;]
+			}
+		</programlisting>
+
+		<para>Note that the 'Content-Type' header of the request is assumed to be 'application/json'.</para>
+	</section>
+
 </chapter>

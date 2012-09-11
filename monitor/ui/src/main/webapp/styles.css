@@ -271,33 +271,36 @@ img.scalable_background {
  * Footer
  */
 .pageFooter {
-	height: 80px;
+	font-family: "Ubuntu", sans-serif;
+	height: 35px;
 	width: 100%;
 	position: fixed;
 	bottom: 0;
+	background-color: white;
 	background-image: url("images/login_footer_bg.png");
+	background-position: left bottom;
 	background-repeat: repeat-x;
-	font-size: 0.9em;
-	color: #f0f0f0;
+	font-size: 1em;
+	color: #333;
 }
 
 .pageFooter .logo {
-	height: 80px;
+	height: 35px;
 	float: right;
-	padding-right: 155px;
+	padding-right: 100px;
 	background-image: url("images/login_footer_logo.png");
 	background-repeat: no-repeat;
-	background-position: right;
+	background-position: right 5px;
 }
 
 .pageFooter .logo .tagline {
 	display: block;
-	margin-top: 40px;
+	margin-top: 15px;
 }
 
 .pageFooter .versionInformation {
 	float: left;
-	margin-top: 40px;
+	margin-top: 15px;
 	margin-left: 6px;
 }
 

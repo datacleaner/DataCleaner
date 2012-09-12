@@ -41,111 +41,141 @@ import com.google.gwt.user.client.ui.SimplePanel;
  */
 public class DashboardGroupSelectionPanel extends FlowPanel {
 
-    private static final String DEFAULT_GROUP_NAME = "(default)";
-    private final TenantIdentifier _tenant;
-    private final DashboardServiceAsync _service;
-    private final SimplePanel _targetPanel;
-    private final Map<String, Anchor> _anchors;
-    private final FlowPanel _anchorPanel;
-    private final boolean _isDashboardEditor;
+	private static final String DEFAULT_GROUP_NAME = "(default)";
+	private final TenantIdentifier _tenant;
+	private final DashboardServiceAsync _service;
+	private final SimplePanel _targetPanel;
+	private final Map<String, Anchor> _anchors;
+	private final FlowPanel _anchorPanel;
+	private final boolean _isDashboardEditor;
 
-    public DashboardGroupSelectionPanel(TenantIdentifier tenant, DashboardServiceAsync service, SimplePanel targetPanel,
-            boolean isDashboardEditor) {
-        super();
+	public DashboardGroupSelectionPanel(TenantIdentifier tenant,
+			DashboardServiceAsync service, SimplePanel targetPanel,
+			boolean isDashboardEditor) {
+		super();
 
-        _tenant = tenant;
-        _service = service;
-        _targetPanel = targetPanel;
-        _isDashboardEditor = isDashboardEditor;
-        _anchors = new HashMap<String, Anchor>();
-        _anchorPanel = new FlowPanel();
-        _anchorPanel.setStyleName("AnchorPanel");
+		_tenant = tenant;
+		_service = service;
+		_targetPanel = targetPanel;
+		_isDashboardEditor = isDashboardEditor;
+		_anchors = new HashMap<String, Anchor>();
+		_anchorPanel = new FlowPanel();
+		_anchorPanel.setStyleName("AnchorPanel");
 
-        addStyleName("TimelineGroupSelectionPanel");
+		addStyleName("TimelineGroupSelectionPanel");
 
-        // add the default/"welcome" group
-        addGroup(null);
+		// add the default/"welcome" group
+		addSpecifficTimeLineGroup(null);
 
-        // load all other groups
-        _service.getDashboardGroups(_tenant, new DCAsyncCallback<List<DashboardGroup>>() {
-            @Override
-            public void onSuccess(List<DashboardGroup> result) {
-                for (DashboardGroup group : result) {
-                    addGroup(group);
-                }
-                initializeSelectedAnchor();
-            }
-        });
+		// load all other groups
+		_service.getDashboardGroups(_tenant,
+				new DCAsyncCallback<List<DashboardGroup>>() {
+					@Override
+					public void onSuccess(List<DashboardGroup> result) {
+						if (null != result && result.size() > 0) {
+							// loading the first group on page load
+							addSpecifficTimeLineGroup(result.get(0));
+						}
+						for (int groupCounter = 1; groupCounter < result.size(); groupCounter++) {
+							addGroup(result.get(groupCounter));
+						}
+						initializeSelectedAnchor();
+					}
+				});
 
-        final Anchor createNewGroupAnchor = new Anchor();
-        createNewGroupAnchor.setVisible(_isDashboardEditor);
-        createNewGroupAnchor.setStyleName("CreateNewTimelineGroupAnchor");
-        createNewGroupAnchor.setText("New group");
-        createNewGroupAnchor.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                String name = Window.prompt("Name of the new group?", "");
-                if (name != null && name.trim().length() > 1) {
-                    _service.addDashboardGroup(_tenant, name, new DCAsyncCallback<DashboardGroup>() {
-                        @Override
-                        public void onSuccess(DashboardGroup result) {
-                            addGroup(result);
-                        }
-                    });
-                }
-            }
-        });
+		final Anchor createNewGroupAnchor = new Anchor();
+		createNewGroupAnchor.setVisible(_isDashboardEditor);
+		createNewGroupAnchor.setStyleName("CreateNewTimelineGroupAnchor");
+		createNewGroupAnchor.setText("New group");
+		createNewGroupAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				String name = Window.prompt("Name of the new group?", "");
+				if (name != null && name.trim().length() > 1) {
+					_service.addDashboardGroup(_tenant, name,
+							new DCAsyncCallback<DashboardGroup>() {
+								@Override
+								public void onSuccess(DashboardGroup result) {
+									addGroup(result);
+								}
+							});
+				}
+			}
+		});
 
-        add(_anchorPanel);
-        add(createNewGroupAnchor);
-    }
+		add(_anchorPanel);
+		add(createNewGroupAnchor);
+	}
 
-    protected void initializeSelectedAnchor() {
-        final Anchor anchor;
+	protected void initializeSelectedAnchor() {
+		final Anchor anchor;
 
-        final String historyToken = History.getToken();
-        if (historyToken == null || historyToken.length() == 0) {
-            anchor = _anchors.get(DEFAULT_GROUP_NAME);
-        } else if (_anchors.containsKey(historyToken)) {
-            anchor = _anchors.get(historyToken);
-        } else {
-            anchor = _anchors.get(DEFAULT_GROUP_NAME);
-        }
+		final String historyToken = History.getToken();
+		if (historyToken == null || historyToken.length() == 0) {
+			anchor = _anchors.get(DEFAULT_GROUP_NAME);
+		} else if (_anchors.containsKey(historyToken)) {
+			anchor = _anchors.get(historyToken);
+		} else {
+			anchor = _anchors.get(DEFAULT_GROUP_NAME);
+		}
 
-        anchor.fireEvent(new ClickEvent() {
-        });
-    }
+		anchor.fireEvent(new ClickEvent() {
+		});
+	}
 
-    public Anchor addGroup(final DashboardGroup group) {
-        final String groupName;
-        if (group == null) {
-            groupName = DEFAULT_GROUP_NAME;
-        } else {
-            groupName = group.getName();
-        }
+	public Anchor addGroup(final DashboardGroup group) {
+		final String groupName;
+		groupName = group.getName();
+		final Anchor anchor = new Anchor(groupName);
+		anchor.addClickHandler(new ClickHandler() {
+			private DashboardGroupPanel panel = null;
+			@Override
+			public void onClick(ClickEvent event) {
+				for (Anchor anchor : _anchors.values()) {
+					anchor.removeStyleName("selected");
+				}
+				anchor.addStyleName("selected");
+				if (panel == null) {
+					panel = new DashboardGroupPanel(_service, _tenant, group,
+							_isDashboardEditor);
+				}
+				_targetPanel.setWidget(panel);
+				History.newItem(groupName);
+			}
+		});
+		_anchorPanel.add(anchor);
+		_anchors.put(groupName, anchor);
+		return anchor;
 
-        final Anchor anchor = new Anchor(groupName);
-        anchor.addClickHandler(new ClickHandler() {
-            private DashboardGroupPanel panel = null;
+	}
 
-            @Override
-            public void onClick(ClickEvent event) {
-                for (Anchor anchor : _anchors.values()) {
-                    anchor.removeStyleName("selected");
-                }
-                anchor.addStyleName("selected");
+	public Anchor addSpecifficTimeLineGroup(final DashboardGroup group) {
+		String groupName = "";
+		if (null == group) {
+			groupName = DEFAULT_GROUP_NAME;
+		} else {
+			groupName = group.getName();
+		}
+		final Anchor anchor = new Anchor(groupName);
 
-                if (panel == null) {
-                    panel = new DashboardGroupPanel(_service, _tenant, group, _isDashboardEditor);
-                }
-                _targetPanel.setWidget(panel);
-                History.newItem(groupName);
-            }
-        });
-        _anchorPanel.add(anchor);
+		final DashboardGroupPanel panel = new DashboardGroupPanel(_service,
+				_tenant, group, _isDashboardEditor);
 
-        _anchors.put(groupName, anchor);
-        return anchor;
-    }
+		History.newItem(groupName);
+
+		_anchorPanel.add(anchor);
+		anchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				for (Anchor anchor : _anchors.values()) {
+					anchor.removeStyleName("selected");
+				}
+				anchor.addStyleName("selected");
+				_targetPanel.setWidget(panel);
+			}
+		});
+		_anchors.put(groupName, anchor);
+		return anchor;
+	}
 
 }

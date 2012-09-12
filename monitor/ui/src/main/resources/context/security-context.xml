@@ -51,7 +51,7 @@
 		</authentication-provider>
 	</authentication-manager>
 
-	<beans:bean name="tenantResolver"
+	<beans:bean name="tenantResolver" id="tenantResolver"
 		class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver">
 		<beans:property name="tenantId" value="DC" />
 	</beans:bean>

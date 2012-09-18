@@ -165,7 +165,12 @@ public class LaunchDataCleanerController {
     private void insertJarFiles(ServletContext context, Writer out, String templateLine) throws IOException {
         List<String> jarFilenames = _launchArtifactProvider.getJarFilenames();
         for (String filename : jarFilenames) {
-            final String line = templateLine.replaceAll("\\$JAR_HREF", RESOURCES_FOLDER + filename);
+            final String line;
+            if (filename.startsWith("http://") || filename.startsWith("https://")) {
+                line = templateLine.replaceAll("\\$JAR_HREF", filename);
+            } else {
+                line = templateLine.replaceAll("\\$JAR_HREF", RESOURCES_FOLDER + filename);
+            }
             out.write(line);
             out.write('\n');
         }

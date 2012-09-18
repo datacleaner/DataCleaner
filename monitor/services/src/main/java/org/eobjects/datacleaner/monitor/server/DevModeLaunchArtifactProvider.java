@@ -61,7 +61,7 @@ public class DevModeLaunchArtifactProvider implements LaunchArtifactProvider {
         } else if (candidate4.exists()) {
             _delegate = new FileFolderLaunchArtifactProvider(candidate4);
         } else {
-            _delegate = null;
+            _delegate = new JnlpUrlLaunchArtifactProvider();
         }
     }
 

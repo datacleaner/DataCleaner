@@ -19,11 +19,13 @@
  */
 package org.eobjects.datacleaner.monitor.alertnotification;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -39,6 +41,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class AlertNotificationServiceImplTest extends TestCase {
 
     public void testNotify() throws Exception {
+        final File targetDir = new File("target/example_repo");
+        FileUtils.deleteDirectory(targetDir);
+        FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
+        
         final AtomicInteger counter = new AtomicInteger();
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(

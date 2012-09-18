@@ -168,7 +168,7 @@ public class MonitorConnection implements Serializable {
             final int port = uri.getPort();
             if (port == _port || port == -1) {
                 final String path = removeBeginningSlash(uri.getPath());
-                if (path.startsWith(_contextPath)) {
+                if (StringUtils.isNullOrEmpty(_contextPath) || path.startsWith(_contextPath)) {
                     return true;
                 }
             }

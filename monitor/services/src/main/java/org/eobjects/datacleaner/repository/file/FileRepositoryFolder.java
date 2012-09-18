@@ -81,7 +81,7 @@ public class FileRepositoryFolder implements RepositoryFolder {
         File[] directories = _file.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
-                if (file.isDirectory() && !file.isHidden()) {
+                if (file.isDirectory() && !file.isHidden() && !file.getName().startsWith(".")) {
                     return true;
                 }
                 return false;

@@ -77,9 +77,11 @@ final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public void writeFile(Action<OutputStream> writeCallback) {
+        final FileOutputStream fileOutputStream;
         final OutputStream outputStream;
         try {
-            outputStream = new BufferedOutputStream(new FileOutputStream(_file));
+            fileOutputStream = new FileOutputStream(_file);
+            outputStream = new BufferedOutputStream(fileOutputStream);
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
         }
@@ -92,7 +94,7 @@ final class FileRepositoryFile implements RepositoryFile {
             }
             throw new IllegalStateException("Error occurred while writing to file", e);
         } finally {
-            FileHelper.safeClose(outputStream);
+            FileHelper.safeClose(outputStream, fileOutputStream);
         }
     }
 
@@ -121,7 +123,7 @@ final class FileRepositoryFile implements RepositoryFile {
             throw new IllegalStateException("Could not delete file: " + _file);
         }
     }
-    
+
     @Override
     public int hashCode() {
         return getQualifiedPath().hashCode();

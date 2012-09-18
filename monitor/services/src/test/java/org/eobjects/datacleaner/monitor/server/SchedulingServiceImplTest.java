@@ -29,6 +29,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.FileUtils;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -50,11 +51,15 @@ import com.ibm.icu.text.SimpleDateFormat;
 public class SchedulingServiceImplTest extends TestCase {
 
     public void testScenario() throws Exception {
-        final Repository repository = new FileRepository("src/test/resources/example_repo");
+        final File targetDir = new File("target/example_repo");
+        FileUtils.deleteDirectory(targetDir);
+        FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
+
+        final Repository repository = new FileRepository(targetDir);
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "context/application-context.xml");
-        
+
         final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
         service.setApplicationContext(applicationContext);
 
@@ -64,9 +69,8 @@ public class SchedulingServiceImplTest extends TestCase {
         service.initialize();
 
         assertTrue(scheduler.isStarted());
-        scheduler.pauseAll();
 
-        final File directory = new File("src/test/resources/example_repo/tenant1/results");
+        final File resultDirectory = new File(targetDir, "tenant1/results");
         final FilenameFilter filenameFilter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -98,8 +102,8 @@ public class SchedulingServiceImplTest extends TestCase {
             final CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");
             assertEquals("0 0 * * * ?", trigger.getCronExpression());
 
-            File[] files = directory.listFiles(filenameFilter);
-            assertEquals("Unexpected files in " + directory + ": " + Arrays.toString(files), 0, files.length);
+            File[] files = resultDirectory.listFiles(filenameFilter);
+            assertEquals("Unexpected files in " + resultDirectory + ": " + Arrays.toString(files), 0, files.length);
 
             ExecutionLog execution = service.triggerExecution(tenant, randomNumberGenerationSchedule.getJob());
 
@@ -122,21 +126,18 @@ public class SchedulingServiceImplTest extends TestCase {
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution BEGIN") != -1);
             assertTrue("Unexpected log output was: " + logOutput, logOutput.indexOf("Job execution SUCCESS") != -1);
 
-            files = directory.listFiles(filenameFilter);
+            scheduler.shutdown(true);
+
+            files = resultDirectory.listFiles(filenameFilter);
             assertEquals("Expected 2 files: analysis result and log file, but found: " + Arrays.toString(files), 2,
                     files.length);
 
         } finally {
             scheduler.shutdown();
 
-            Thread.sleep(200);
-
-            File[] files = directory.listFiles(filenameFilter);
+            File[] files = resultDirectory.listFiles(filenameFilter);
             for (int i = 0; i < files.length; i++) {
-                boolean deleted = files[i].delete();
-                if (!deleted) {
-                    throw new IllegalStateException("Could not delete " + files[i]);
-                }
+                files[i].delete();
             }
         }
     }

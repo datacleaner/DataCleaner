@@ -43,7 +43,7 @@ public class SharedTaskRunner implements TaskRunner {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
             if (applicationContext == null) {
                 logger.warn("No WebApplicationContext available! Creating a temporary delegate!");
-                return createTemporaryDelegate();
+                _delegate = createTemporaryDelegate();
             } else {
                 _delegate = applicationContext.getBean(TaskRunner.class);
             }
@@ -52,7 +52,7 @@ public class SharedTaskRunner implements TaskRunner {
     }
     
     private TaskRunner createTemporaryDelegate() {
-        return new MultiThreadedTaskRunner(1);
+        return new MultiThreadedTaskRunner(Runtime.getRuntime().availableProcessors());
     }
 
     public void setDelegate(TaskRunner delegate) {

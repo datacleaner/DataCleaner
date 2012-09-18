@@ -20,12 +20,14 @@
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 
-public class LegendPanel extends VerticalPanel {
+/**
+ * Panel which holds legends
+ */
+public class LegendPanel extends FlowPanel {
 
     public void addLegend(Legend legend, ClickHandler clickHandler) {
-
         legend.addClickHandler(clickHandler);
         add(legend);
     }

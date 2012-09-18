@@ -135,12 +135,15 @@
 }
 
 .TimelineChart {
+	clear: both;
 	float: left;
 	text-align: center;
 }
 
 .LegendPanel {
-	margin-top: 10px;	
+	float: right;
+	margin-top: 10px;
+	width: 170px;
 }
 
 .LegendMarker {

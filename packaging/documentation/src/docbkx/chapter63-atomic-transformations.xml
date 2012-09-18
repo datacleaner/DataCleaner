@@ -26,23 +26,21 @@
 	<section>
 		<title>What are atomic transformation services?</title>
 
-		<para>DataCleaner jobs provides a generic feature for transforming
-			data, through the ability to have transformers and filters added to
-			jobs. Usually such jobs are executed in batches, but in fact they are
-			not restrained to that purpose. Atomic transformation refers to
-			utilizing DataCleaner jobs as independent on-the-fly data cleansing
-			activities. For example, such transformations could be used as a part
-			of a data processing pipeline in a SOA architecture or in a web
-			application with flexible data processing needs.
-		</para>
+		<p>DataCleaner jobs normally operate on batches of records, for
+			example all records in a CSV file. However, any DataCleaner job can
+			also be used to process single records on the fly. This feature is
+			called "atomic transformations". Such transformations could be used
+			as a part of a data processing pipeline in a SOA architecture or in a
+			web application with flexible data processing needs.</p>
 
-		<para>Any DataCleaner job can be used for performing atomic
-			transformations. Simply create a job that does some kind of
-			transformation (anything from a simple 'String length' operation to a
-			complete chain of 'Address cleansing' and regex parsing), and place
-			the job in the DataCleaner monitor repository. A specialized web
-			service endpoint will be automatically exposed to use the job as an
-			atomic transformation. The endpoint URL will be:
+		<para>Creating an atomic transformation is easy. Any DataCleaner job
+			can be used for performing atomic transformations. Simply create a
+			job that does some kind of transformation (anything from a simple
+			'String length' operation to a complete chain of 'Address cleansing'
+			and regex parsing), and place the job in the DataCleaner monitor
+			repository. A specialized web service endpoint will be automatically
+			exposed to use the job as an atomic transformation. The endpoint URL
+			will be:
 		</para>
 
 		<programlisting>
@@ -102,7 +100,9 @@
 			}
 		</programlisting>
 
-		<para>Note that the 'Content-Type' header of the request is assumed to be 'application/json'.</para>
+		<para>Note that the 'Content-Type' header of the request is assumed to
+			be 'application/json'.
+		</para>
 	</section>
 
 </chapter>

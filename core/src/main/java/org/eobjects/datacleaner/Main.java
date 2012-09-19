@@ -45,7 +45,7 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
  */
 public final class Main {
 
-    public static final String VERSION = "3.0 (beta)";
+    public static final String VERSION = "3.0";
 
     public static void main(String[] args) {
         initializeSystemProperties(args);

@@ -28,4 +28,8 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 public interface ClientConfig {
 
     public TenantIdentifier getTenant();
+    
+    public boolean isDefaultDashboardGroupDisplayed();
+    
+    public boolean isInformercialDisplayed();
 }

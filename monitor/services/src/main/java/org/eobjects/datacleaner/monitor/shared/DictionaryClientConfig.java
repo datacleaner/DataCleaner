@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.shared;
 
+import java.util.MissingResourceException;
+
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.i18n.client.Dictionary;
@@ -45,6 +47,30 @@ public class DictionaryClientConfig implements ClientConfig {
     }
 
     private String get(String key) {
-        return _dictionary.get(key);
+        try {
+            return _dictionary.get(key);
+        } catch (MissingResourceException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isDefaultDashboardGroupDisplayed() {
+        final String str = get("dashboard_default_group");
+        if (str == null) {
+            // default is true
+            return true;
+        }
+        return "true".equalsIgnoreCase(str);
+    }
+
+    @Override
+    public boolean isInformercialDisplayed() {
+        final String str = get("dashboard_infomercial");
+        if (str == null) {
+            // default is true
+            return true;
+        }
+        return "true".equalsIgnoreCase(str);
     }
 }

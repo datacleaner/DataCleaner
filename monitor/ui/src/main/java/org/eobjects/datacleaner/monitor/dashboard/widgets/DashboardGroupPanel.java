@@ -49,7 +49,8 @@ public class DashboardGroupPanel extends FlowPanel {
     private final boolean _isDashboardEditor;
     private int _dashboardWidgetCount;
 
-    public DashboardGroupPanel(DashboardServiceAsync service, TenantIdentifier tenant, DashboardGroup group, boolean isDashboardEditor) {
+    public DashboardGroupPanel(DashboardServiceAsync service, TenantIdentifier tenant, DashboardGroup group,
+            boolean isDashboardEditor, boolean displayInfomercial) {
         super();
         _tenant = tenant;
         _service = service;
@@ -83,13 +84,16 @@ public class DashboardGroupPanel extends FlowPanel {
         });
 
         final Button newTimelineButton;
-        if (group == null) {
+        if (displayInfomercial && group == null) {
             // this is the "default" group
             add(new HeadingLabel("Welcome"));
             _welcomePanel = new WelcomePanel();
             newTimelineButton = _welcomePanel.getNewTimelineButton();
             add(_welcomePanel);
         } else {
+            if (group == null) {
+                group = new DashboardGroup(null);
+            }
             add(new HeadingLabel(group.getName()));
 
             if (group.getDescription() != null) {
@@ -101,7 +105,7 @@ public class DashboardGroupPanel extends FlowPanel {
             add(newTimelineButton);
             add(_removeGroupButton);
         }
-        
+
         newTimelineButton.setVisible(_isDashboardEditor);
         newTimelineButton.addStyleDependentName("ImageTextButton");
         newTimelineButton.addStyleName("NewDashboardWidgetButton");

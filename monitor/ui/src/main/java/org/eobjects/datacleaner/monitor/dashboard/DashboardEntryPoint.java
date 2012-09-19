@@ -48,18 +48,19 @@ public class DashboardEntryPoint implements EntryPoint {
         service.isDashboardEditor(tenant, new DCAsyncCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                render(service, tenant, result.booleanValue());
+                render(service, clientConfig, result.booleanValue());
             }
         });
     }
 
-    protected void render(DashboardServiceAsync service, TenantIdentifier tenant, boolean isDashboardEditor) {
+    protected void render(DashboardServiceAsync service, ClientConfig clientConfig, boolean isDashboardEditor) {
         final FlowPanel timelinesSplitPanel = new FlowPanel();
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
         {
             final SimplePanel targetPanel = new SimplePanel();
-            final DashboardGroupSelectionPanel selectionPanel = new DashboardGroupSelectionPanel(tenant, service,
-                    targetPanel, isDashboardEditor);
+            final DashboardGroupSelectionPanel selectionPanel = new DashboardGroupSelectionPanel(
+                    clientConfig.getTenant(), service, targetPanel, isDashboardEditor,
+                    clientConfig.isDefaultDashboardGroupDisplayed(), clientConfig.isInformercialDisplayed());
 
             timelinesSplitPanel.add(selectionPanel);
             timelinesSplitPanel.add(targetPanel);

@@ -42,111 +42,118 @@ import org.eobjects.datacleaner.widgets.visualization.VisualizeJobGraph;
 
 public class VisualizeJobWindow extends AbstractWindow {
 
-	private static final long serialVersionUID = 1L;
-	private final ImageManager imageManager = ImageManager.getInstance();
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final JScrollPane _scroll;
-	private volatile boolean _displayColumns;
-	private volatile boolean _displayOutcomes;
+    private static final long serialVersionUID = 1L;
+    private final ImageManager imageManager = ImageManager.getInstance();
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final JScrollPane _scroll;
+    private volatile boolean _displayColumns;
+    private volatile boolean _displayOutcomes;
 
-	public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
-		super(windowContext);
-		_analysisJobBuilder = analysisJobBuilder;
-		_displayColumns = true;
-		_displayOutcomes = true;
+    public VisualizeJobWindow(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
+        super(windowContext);
+        _analysisJobBuilder = analysisJobBuilder;
+        _displayColumns = isDefaultDisplayColumns(analysisJobBuilder);
+        _displayOutcomes = true;
 
-		_scroll = WidgetUtils.scrolleable(null);
-		_scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		_scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        _scroll = WidgetUtils.scrolleable(null);
+        _scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        _scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-		refreshGraph();
-	}
+        refreshGraph();
+    }
 
-	public void refreshGraph() {
-		final JComponent visualization = VisualizeJobGraph.create(_analysisJobBuilder, _displayColumns, _displayOutcomes);
-		_scroll.setViewportView(visualization);
-	}
+    private boolean isDefaultDisplayColumns(AnalysisJobBuilder analysisJobBuilder) {
+        int columnsTotal = analysisJobBuilder.getAvailableInputColumns(Object.class).size();
 
-	@Override
-	protected void initialize() {
-		super.initialize();
-	}
+        return columnsTotal <= 10;
+    }
 
-	@Override
-	protected void onWindowVisible() {
-		super.onWindowVisible();
-		boolean horizontalShowing = _scroll.getHorizontalScrollBar().isShowing();
-		boolean verticalShowing = _scroll.getVerticalScrollBar().isShowing();
-		if (horizontalShowing || verticalShowing) {
-			// maximize if needed
-			setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-		}
-	}
+    public void refreshGraph() {
+        final JComponent visualization = VisualizeJobGraph.create(_analysisJobBuilder, _displayColumns,
+                _displayOutcomes);
+        _scroll.setViewportView(visualization);
+    }
 
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
-	}
+    @Override
+    protected void initialize() {
+        super.initialize();
+    }
 
-	@Override
-	protected boolean isCentered() {
-		return true;
-	}
+    @Override
+    protected void onWindowVisible() {
+        super.onWindowVisible();
+        boolean horizontalShowing = _scroll.getHorizontalScrollBar().isShowing();
+        boolean verticalShowing = _scroll.getVerticalScrollBar().isShowing();
+        if (horizontalShowing || verticalShowing) {
+            // maximize if needed
+            setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        }
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "Visualize job";
-	}
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 
-	@Override
-	public Image getWindowIcon() {
-		return imageManager.getImage("images/actions/visualize.png");
-	}
+    @Override
+    protected boolean isCentered() {
+        return true;
+    }
 
-	@Override
-	protected JComponent getWindowContent() {
-		DCPanel panel = new DCPanel();
-		panel.setLayout(new BorderLayout());
-		panel.add(_scroll, BorderLayout.CENTER);
-		panel.add(createButtonPanel(), BorderLayout.SOUTH);
-		return panel;
-	}
+    @Override
+    public String getWindowTitle() {
+        return "Visualize job";
+    }
 
-	private JComponent createButtonPanel() {
-		final JCheckBox displayColumnsCheckBox = new JCheckBox("Display columns?");
-		displayColumnsCheckBox.setOpaque(false);
-		displayColumnsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		displayColumnsCheckBox.setSelected(_displayColumns);
-		displayColumnsCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_displayColumns = displayColumnsCheckBox.isSelected();
-				refreshGraph();
-			}
-		});
+    @Override
+    public Image getWindowIcon() {
+        return imageManager.getImage("images/actions/visualize.png");
+    }
 
-		final JCheckBox displayFilterOutcomesCheckBox = new JCheckBox("Display filter outcomes?");
-		displayFilterOutcomesCheckBox.setOpaque(false);
-		displayFilterOutcomesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
-		displayFilterOutcomesCheckBox.setSelected(_displayOutcomes);
-		displayFilterOutcomesCheckBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				_displayOutcomes = displayFilterOutcomesCheckBox.isSelected();
-				refreshGraph();
-			}
-		});
+    @Override
+    protected JComponent getWindowContent() {
+        DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add(_scroll, BorderLayout.CENTER);
+        panel.add(createButtonPanel(), BorderLayout.SOUTH);
+        return panel;
+    }
 
-		final DCPanel buttonPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 10));
-		buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
+    private JComponent createButtonPanel() {
+        final JCheckBox displayColumnsCheckBox = new JCheckBox("Display columns?");
+        displayColumnsCheckBox.setOpaque(false);
+        displayColumnsCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        displayColumnsCheckBox.setSelected(_displayColumns);
+        displayColumnsCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _displayColumns = displayColumnsCheckBox.isSelected();
+                refreshGraph();
+            }
+        });
 
-		buttonPanel.add(new JLabel(imageManager.getImageIcon("images/model/column.png")));
-		buttonPanel.add(displayColumnsCheckBox);
-		buttonPanel.add(Box.createHorizontalStrut(20));
-		buttonPanel.add(new JLabel(imageManager.getImageIcon("images/component-types/filter-outcome.png")));
-		buttonPanel.add(displayFilterOutcomesCheckBox);
+        final JCheckBox displayFilterOutcomesCheckBox = new JCheckBox("Display filter outcomes?");
+        displayFilterOutcomesCheckBox.setOpaque(false);
+        displayFilterOutcomesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        displayFilterOutcomesCheckBox.setSelected(_displayOutcomes);
+        displayFilterOutcomesCheckBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                _displayOutcomes = displayFilterOutcomesCheckBox.isSelected();
+                refreshGraph();
+            }
+        });
 
-		return buttonPanel;
-	}
+        final DCPanel buttonPanel = new DCPanel(WidgetUtils.BG_COLOR_DARK, WidgetUtils.BG_COLOR_DARK);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 10));
+        buttonPanel.setBorder(new MatteBorder(1, 0, 0, 0, WidgetUtils.BG_COLOR_MEDIUM));
+
+        buttonPanel.add(new JLabel(imageManager.getImageIcon("images/model/column.png")));
+        buttonPanel.add(displayColumnsCheckBox);
+        buttonPanel.add(Box.createHorizontalStrut(20));
+        buttonPanel.add(new JLabel(imageManager.getImageIcon("images/component-types/filter-outcome.png")));
+        buttonPanel.add(displayFilterOutcomesCheckBox);
+
+        return buttonPanel;
+    }
 }

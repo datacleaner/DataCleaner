@@ -14,8 +14,9 @@
 		class="org.eobjects.datacleaner.monitor.server.DefaultMetricValueProducer">
 	</bean>
 
-	<!-- Development mode launch artifact provider. Will only work if dev mode 
-		finds JAR files in directories relative to the build structure. -->
+	<!-- Development mode launch artifact provider. Finds JAR files in directories 
+		relative to the build structure. If none are found, will fall back to the 
+		JNLP file available on datacleaner.org -->
 	<bean id="launchArtifactProvider"
 		class="org.eobjects.datacleaner.monitor.server.DevModeLaunchArtifactProvider" />
 

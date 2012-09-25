@@ -166,7 +166,7 @@ public class DCModule extends AbstractModule {
     protected void configure() {
         bind(AnalysisJobBuilderWindow.class).to(AnalysisJobBuilderWindowImpl.class);
         bind(AuthenticationService.class).to(DCAuthenticationService.class);
-        bind(InjectionManagerFactory.class).to(DCInjectionManagerFactory.class);
+        bind(InjectionManagerFactory.class).to(GuiceInjectionManagerFactory.class);
     }
 
     @Provides

@@ -29,18 +29,18 @@ import org.eobjects.analyzer.job.AnalysisJob;
 /**
  * A {@link InjectionManagerFactory} which is aware of the underlying Guice system for dependency injection
  */
-public class DCInjectionManagerFactory implements InjectionManagerFactory {
+public class GuiceInjectionManagerFactory implements InjectionManagerFactory {
 
     private final InjectorBuilder _injectorBuilder;
 
     @Inject
-    protected DCInjectionManagerFactory(InjectorBuilder injectorBuilder) {
+    protected GuiceInjectionManagerFactory(InjectorBuilder injectorBuilder) {
         _injectorBuilder = injectorBuilder;
     }
 
     @Override
     public InjectionManager getInjectionManager(AnalyzerBeansConfiguration conf, AnalysisJob job) {
-        return new DCInjectionManager(conf, job, _injectorBuilder);
+        return new GuiceInjectionManager(conf, job, _injectorBuilder);
     }
 
 }

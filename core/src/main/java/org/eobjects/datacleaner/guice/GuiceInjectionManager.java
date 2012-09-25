@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-final class DCInjectionManager extends InjectionManagerImpl {
+final class GuiceInjectionManager extends InjectionManagerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(DCInjectionManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuiceInjectionManager.class);
 
     private final InjectorBuilder _injectorBuilder;
 
-    public DCInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job, InjectorBuilder injectorBuilder) {
+    public GuiceInjectionManager(AnalyzerBeansConfiguration configuration, AnalysisJob job, InjectorBuilder injectorBuilder) {
         super(configuration, job);
         _injectorBuilder = injectorBuilder;
     }

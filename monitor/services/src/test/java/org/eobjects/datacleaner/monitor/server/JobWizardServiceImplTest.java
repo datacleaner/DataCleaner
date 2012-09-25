@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
+import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizard;
@@ -61,7 +62,7 @@ public class JobWizardServiceImplTest extends TestCase {
         EasyMock.replay(applicationContextMock);
 
         service = new JobWizardServiceImpl();
-        service._tenantContextFactory = new TenantContextFactoryImpl(repository);
+        service._tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl());
         service._applicationContext = applicationContextMock;
     }
 

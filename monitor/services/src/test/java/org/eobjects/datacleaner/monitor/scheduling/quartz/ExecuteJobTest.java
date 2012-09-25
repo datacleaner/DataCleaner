@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
 import junit.framework.TestCase;
 
+import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
@@ -40,7 +41,8 @@ public class ExecuteJobTest extends TestCase {
 
     public void testInvalidDatastoreInJob() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo);
+        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
+                new InjectionManagerFactoryImpl());
 
         TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
         JobIdentifier job = new JobIdentifier("product_profiling");

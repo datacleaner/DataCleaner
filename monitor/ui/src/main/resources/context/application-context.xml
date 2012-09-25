@@ -20,6 +20,9 @@
 		<property name="numThreads" value="30" />
 	</bean>
 
+	<bean id="injectionManagerFactory" name="injectionManagerFactory"
+		class="org.eobjects.datacleaner.spring.SpringInjectionManagerFactory" />
+
 	<bean id="alertNotificationService" name="alertNotificationService"
 		class="org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl"
 		autowire="constructor">

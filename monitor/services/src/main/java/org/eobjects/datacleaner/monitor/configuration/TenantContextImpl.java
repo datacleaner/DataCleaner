@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -49,13 +50,15 @@ public class TenantContextImpl implements TenantContext {
 
     private final String _tenantId;
     private final Repository _repository;
+    private final InjectionManagerFactory _injectionManagerFactory;
     private final ConfigurationCache _configurationCache;
     private final ConcurrentHashMap<String, JobContext> _jobCache;
 
-    public TenantContextImpl(String tenantId, Repository repository) {
+    public TenantContextImpl(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory) {
         _tenantId = tenantId;
         _repository = repository;
-        _configurationCache = new ConfigurationCache(tenantId, getTenantFolder());
+        _injectionManagerFactory = injectionManagerFactory;
+        _configurationCache = new ConfigurationCache(tenantId, getTenantFolder(), _injectionManagerFactory);
         _jobCache = new ConcurrentHashMap<String, JobContext>();
     }
 

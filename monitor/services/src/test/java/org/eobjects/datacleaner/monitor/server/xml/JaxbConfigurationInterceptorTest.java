@@ -29,6 +29,7 @@ import java.util.TimeZone;
 
 import junit.framework.TestCase;
 
+import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
@@ -57,7 +58,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
         final Repository repository = new FileRepository("src/test/resources/example_repo");
 
-        _contextFactory = new TenantContextFactoryImpl(repository);
+        _contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl());
     }
 
     public void testGenerateGenericConfiguration() throws Exception {
@@ -70,7 +71,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         if (!expected.equals(actual)) {
             final URL orderDbScript = ClassLoader.getSystemResource("orderdb.script");
             System.out.println("!! Seems there is some issue in resolving the correct orderdb file: " + orderDbScript);
-            
+
             assertEquals(expected, actual);
         }
     }

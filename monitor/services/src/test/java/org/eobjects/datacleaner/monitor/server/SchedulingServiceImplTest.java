@@ -30,6 +30,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.commons.io.FileUtils;
+import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -56,7 +57,8 @@ public class SchedulingServiceImplTest extends TestCase {
         FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
 
         final Repository repository = new FileRepository(targetDir);
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository);
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl());
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "context/application-context.xml");
 

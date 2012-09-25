@@ -25,6 +25,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
@@ -43,15 +44,12 @@ import org.eobjects.datacleaner.repository.file.FileRepository;
 public class DashboardServiceImplTest extends TestCase {
 
     public void testBasicInteraction() throws Exception {
-		final FileRepository repository = new FileRepository(
-				"src/test/resources/example_repo");
-		final TenantContextFactory contextFactory = new TenantContextFactoryImpl(
-				repository);
+        final FileRepository repository = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl());
 
-		final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(
-				contextFactory);
-		final DashboardService service = new DashboardServiceImpl(repository,
-				contextFactory, metricValueCache);
+        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
+        final DashboardService service = new DashboardServiceImpl(repository, contextFactory, metricValueCache);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
@@ -95,28 +93,27 @@ public class DashboardServiceImplTest extends TestCase {
 
         timelines = service.getTimelines(tenant, timelineGroups.get(0));
         final TimelineIdentifier timelineIdentifier = timelines.get(0);
-        if (timelineIdentifier.getName().equalsIgnoreCase("Product code patterns (the lower the better)")){
-        	assertEquals(
-        			"TimelineIdentifier[name=Product code patterns (the lower the better),path=/tenant1/timelines/Product data/Product code patterns (the lower the better).analysis.timeline.xml]",
-        			timelineIdentifier.toString());
-        	assertEquals(3, timelines.size());
-        	final TimelineDefinition timelineDefinition = service.getTimelineDefinition(tenant, timelineIdentifier);
-        	assertEquals(
-        			"TimelineDefinition[job=JobIdentifier[name=product_profiling],metrics=[MetricIdentifier[analyzerInputName=PRODUCTCODE,metricDescriptorName=Pattern count], MetricIdentifier[analyzerInputName=PRODUCTVENDOR,metricDescriptorName=False count,paramQueryString=PRODUCTVENDOR in 'vendor whitelist']]]",
-        			timelineDefinition.toString());
-        	final TimelineData timelineData = service.getTimelineData(tenant, timelineDefinition);
-        	assertEquals("TimelineData[6 rows]", timelineData.toString());
-        	final List<TimelineDataRow> rows = timelineData.getRows();
-        	assertEquals(6, rows.size());        
-        	List<Number> actualMetricValues = rows.get(0).getMetricValues();
-        	List<Number> expectedMetricValues = new ArrayList<Number>();
-        	expectedMetricValues.add(5);
-        	expectedMetricValues.add(0);
-        	assertEquals(expectedMetricValues, actualMetricValues);
-        	assertNotNull(rows.get(0).getDate());
-        }
-        else
-        	assertEquals(1, timelines.size());
+        if (timelineIdentifier.getName().equalsIgnoreCase("Product code patterns (the lower the better)")) {
+            assertEquals(
+                    "TimelineIdentifier[name=Product code patterns (the lower the better),path=/tenant1/timelines/Product data/Product code patterns (the lower the better).analysis.timeline.xml]",
+                    timelineIdentifier.toString());
+            assertEquals(3, timelines.size());
+            final TimelineDefinition timelineDefinition = service.getTimelineDefinition(tenant, timelineIdentifier);
+            assertEquals(
+                    "TimelineDefinition[job=JobIdentifier[name=product_profiling],metrics=[MetricIdentifier[analyzerInputName=PRODUCTCODE,metricDescriptorName=Pattern count], MetricIdentifier[analyzerInputName=PRODUCTVENDOR,metricDescriptorName=False count,paramQueryString=PRODUCTVENDOR in 'vendor whitelist']]]",
+                    timelineDefinition.toString());
+            final TimelineData timelineData = service.getTimelineData(tenant, timelineDefinition);
+            assertEquals("TimelineData[6 rows]", timelineData.toString());
+            final List<TimelineDataRow> rows = timelineData.getRows();
+            assertEquals(6, rows.size());
+            List<Number> actualMetricValues = rows.get(0).getMetricValues();
+            List<Number> expectedMetricValues = new ArrayList<Number>();
+            expectedMetricValues.add(5);
+            expectedMetricValues.add(0);
+            assertEquals(expectedMetricValues, actualMetricValues);
+            assertNotNull(rows.get(0).getDate());
+        } else
+            assertEquals(1, timelines.size());
 
     }
 }

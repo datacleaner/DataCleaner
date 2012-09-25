@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,12 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
 
     private final ConcurrentHashMap<String, TenantContext> _contexts;
     private final Repository _repository;
+    private final InjectionManagerFactory _injectionManagerFactory;
 
     @Autowired
-    public TenantContextFactoryImpl(Repository repository) {
+    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory injectionManagerFactory) {
         _repository = repository;
+        _injectionManagerFactory = injectionManagerFactory;
         _contexts = new ConcurrentHashMap<String, TenantContext>();
     }
 
@@ -48,7 +51,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     public TenantContext getContext(String tenantId) {
         TenantContext context = _contexts.get(tenantId);
         if (context == null) {
-            final TenantContext newContext = new TenantContextImpl(tenantId, _repository);
+            final TenantContext newContext = new TenantContextImpl(tenantId, _repository, _injectionManagerFactory);
             context = _contexts.putIfAbsent(tenantId, newContext);
             if (context == null) {
                 context = newContext;

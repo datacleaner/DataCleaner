@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
+import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -36,14 +38,17 @@ import org.eobjects.metamodel.util.FileHelper;
  */
 final class ConfigurationCache {
 
+    private final InjectionManagerFactory _injectionManagerFactory;
     private final RepositoryFolder _tenantFolder;
     private final RepositoryFile _file;
 
     private volatile AnalyzerBeansConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
-    public ConfigurationCache(String tenantId, RepositoryFolder tenantFolder) {
+    public ConfigurationCache(String tenantId, RepositoryFolder tenantFolder,
+            InjectionManagerFactory injectionManagerFactory) {
         _tenantFolder = tenantFolder;
+        _injectionManagerFactory = injectionManagerFactory;
 
         RepositoryFile file = _tenantFolder.getFile("conf.xml");
         if (file == null) {
@@ -62,14 +67,24 @@ final class ConfigurationCache {
             synchronized (this) {
                 lastModified = _file.getLastModified();
                 if (_configuration == null || lastModified != _lastModifiedCache) {
-                    _configuration = readConfiguration();
+                    AnalyzerBeansConfiguration readConfiguration = readConfiguration();
+                    AnalyzerBeansConfiguration decoratedConfiguration = decorateConfiguration(readConfiguration);
+                    _configuration = decoratedConfiguration;
                 }
             }
         }
         return _configuration;
     }
 
-    private AnalyzerBeansConfiguration readConfiguration() {
+    protected AnalyzerBeansConfiguration decorateConfiguration(AnalyzerBeansConfiguration conf) {
+        // set the injection manager factory on the configuration
+        final AnalyzerBeansConfigurationImpl configuration = new AnalyzerBeansConfigurationImpl(
+                conf.getDatastoreCatalog(), conf.getReferenceDataCatalog(), conf.getDescriptorProvider(),
+                conf.getTaskRunner(), conf.getStorageProvider(), _injectionManagerFactory);
+        return configuration;
+    }
+
+    protected AnalyzerBeansConfiguration readConfiguration() {
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor() {
             @Override
             public String createFilename(String filename) {
@@ -83,8 +98,8 @@ final class ConfigurationCache {
         });
         final InputStream inputStream = getConfigurationFile().readFile();
         try {
-            final AnalyzerBeansConfiguration conf = reader.read(inputStream);
-            return conf;
+            final AnalyzerBeansConfiguration readConfiguration = reader.read(inputStream);
+            return readConfiguration;
         } finally {
             FileHelper.safeClose(inputStream);
         }

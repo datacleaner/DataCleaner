@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
+import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,25 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     private final Repository _repository;
     private final InjectionManagerFactory _injectionManagerFactory;
 
+    /**
+     * Constructs a {@link TenantContextFactoryImpl}.
+     * 
+     * @param repository
+     * @deprecated use
+     *             {@link #TenantContextFactoryImpl(Repository, InjectionManagerFactory)}
+     *             instead.
+     */
+    @Deprecated
+    public TenantContextFactoryImpl(Repository repository) {
+        this(repository, new InjectionManagerFactoryImpl());
+    }
+
+    /**
+     * Constructs a {@link TenantContextFactoryImpl}.
+     * 
+     * @param repository
+     * @param injectionManagerFactory
+     */
     @Autowired
     public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory injectionManagerFactory) {
         _repository = repository;

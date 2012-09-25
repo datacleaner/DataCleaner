@@ -78,10 +78,7 @@ final class ConfigurationCache {
 
     protected AnalyzerBeansConfiguration decorateConfiguration(AnalyzerBeansConfiguration conf) {
         // set the injection manager factory on the configuration
-        final AnalyzerBeansConfigurationImpl configuration = new AnalyzerBeansConfigurationImpl(
-                conf.getDatastoreCatalog(), conf.getReferenceDataCatalog(), conf.getDescriptorProvider(),
-                conf.getTaskRunner(), conf.getStorageProvider(), _injectionManagerFactory);
-        return configuration;
+        return conf;
     }
 
     protected AnalyzerBeansConfiguration readConfiguration() {
@@ -94,6 +91,11 @@ final class ConfigurationCache {
                 }
                 // TODO: What about other non-file based repos?
                 return super.createFilename(filename);
+            }
+            
+            @Override
+            public AnalyzerBeansConfigurationImpl createBaseConfiguration() {
+                return new AnalyzerBeansConfigurationImpl(_injectionManagerFactory);
             }
         });
         final InputStream inputStream = getConfigurationFile().readFile();

@@ -24,301 +24,265 @@ import java.io.Serializable;
 /**
  * Identifies a metric of interest.
  */
-public class MetricIdentifier implements Serializable,
-		Comparable<MetricIdentifier> {
+public class MetricIdentifier implements Serializable, Comparable<MetricIdentifier> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String _analyzerDescriptorName;
-	private String _analyzerName;
-	private String _analyzerInputName;
-	private String _metricDescriptorName;
-	private String _metricDisplayName;
-	private String _metricColor;
-	private String _paramQueryString;
-	private String _paramColumnName;
-	private boolean _parameterizedByQueryString;
-	private boolean _parameterizedByColumnName;
+    private String _analyzerDescriptorName;
+    private String _analyzerName;
+    private String _analyzerInputName;
+    private String _metricDescriptorName;
+    private String _metricDisplayName;
+    private String _metricColor;
+    private String _paramQueryString;
+    private String _paramColumnName;
+    private boolean _parameterizedByQueryString;
+    private boolean _parameterizedByColumnName;
 
-	// full constructor that specifies every field in one go.
-	public MetricIdentifier(String metricDisplayName,
-			String analyzerDescriptorName, String analyzerName,
-			String analyzerInputName, String metricDescriptorName,
-			String paramQueryString, String paramColumnName,
-			boolean parameterizedByQueryString,
-			boolean parameterizedByColumnName) {
-		_metricDisplayName = metricDisplayName;
-		_analyzerDescriptorName = analyzerDescriptorName;
-		_analyzerName = analyzerName;
-		_analyzerInputName = analyzerInputName;
-		_metricDescriptorName = "";
-		_paramQueryString = paramQueryString;
-		_paramColumnName = paramColumnName;
-		_parameterizedByQueryString = parameterizedByQueryString;
-		_parameterizedByColumnName = parameterizedByColumnName;
-	}
+    // full constructor that specifies every field in one go.
+    public MetricIdentifier(String metricDisplayName, String analyzerDescriptorName, String analyzerName,
+            String analyzerInputName, String metricDescriptorName, String paramQueryString, String paramColumnName,
+            boolean parameterizedByQueryString, boolean parameterizedByColumnName) {
+        _metricDisplayName = metricDisplayName;
+        _analyzerDescriptorName = analyzerDescriptorName;
+        _analyzerName = analyzerName;
+        _analyzerInputName = analyzerInputName;
+        _metricDescriptorName = metricDescriptorName;
+        _paramQueryString = paramQueryString;
+        _paramColumnName = paramColumnName;
+        _parameterizedByQueryString = parameterizedByQueryString;
+        _parameterizedByColumnName = parameterizedByColumnName;
+    }
 
-	// no-arg constructor used by GWT
-	public MetricIdentifier() {
-	}
+    // no-arg constructor used by GWT
+    public MetricIdentifier() {
+    }
 
-	public String getAnalyzerDescriptorName() {
-		return _analyzerDescriptorName;
-	}
+    public String getAnalyzerDescriptorName() {
+        return _analyzerDescriptorName;
+    }
 
-	public void setAnalyzerDescriptorName(String analyzerDescriptorName) {
-		_analyzerDescriptorName = analyzerDescriptorName;
-	}
+    public void setAnalyzerDescriptorName(String analyzerDescriptorName) {
+        _analyzerDescriptorName = analyzerDescriptorName;
+    }
 
-	public String getAnalyzerName() {
-		return _analyzerName;
-	}
+    public String getAnalyzerName() {
+        return _analyzerName;
+    }
 
-	public void setAnalyzerName(String analyzerName) {
-		_analyzerName = analyzerName;
-	}
+    public void setAnalyzerName(String analyzerName) {
+        _analyzerName = analyzerName;
+    }
 
-	public String getMetricDescriptorName() {
-		return _metricDescriptorName;
-	}
+    public String getMetricDescriptorName() {
+        return _metricDescriptorName;
+    }
 
-	public void setMetricDescriptorName(String metricDescriptorName) {
-		_metricDescriptorName = metricDescriptorName;
-	}
+    public void setMetricDescriptorName(String metricDescriptorName) {
+        _metricDescriptorName = metricDescriptorName;
+    }
 
-	public String getAnalyzerInputName() {
-		return _analyzerInputName;
-	}
+    public String getAnalyzerInputName() {
+        return _analyzerInputName;
+    }
 
-	public void setAnalyzerInputName(String analyzerInputName) {
-		_analyzerInputName = analyzerInputName;
-	}
+    public void setAnalyzerInputName(String analyzerInputName) {
+        _analyzerInputName = analyzerInputName;
+    }
 
-	public void setParamColumnName(String paramColumnName) {
-		_paramColumnName = paramColumnName;
-	}
+    public void setParamColumnName(String paramColumnName) {
+        _paramColumnName = paramColumnName;
+    }
 
-	public String getParamColumnName() {
-		return _paramColumnName;
-	}
+    public String getParamColumnName() {
+        return _paramColumnName;
+    }
 
-	public void setParamQueryString(String paramQueryString) {
-		_paramQueryString = paramQueryString;
-	}
+    public void setParamQueryString(String paramQueryString) {
+        _paramQueryString = paramQueryString;
+    }
 
-	public String getParamQueryString() {
-		return _paramQueryString;
-	}
+    public String getParamQueryString() {
+        return _paramQueryString;
+    }
 
-	public String getId() {
-		String ID = _analyzerDescriptorName + _analyzerInputName
-				+ _analyzerName + _metricDescriptorName + _paramColumnName
-				+ _paramQueryString;
-		return ID.replaceAll("'", "");
-	}
+    public String getId() {
+        String ID = _analyzerDescriptorName + _analyzerInputName + _analyzerName + _metricDescriptorName
+                + _paramColumnName + _paramQueryString;
+        return ID.replaceAll("'", "");
+    }
 
-	public boolean isParameterizedByColumnName() {
-		return _parameterizedByColumnName;
-	}
+    public boolean isParameterizedByColumnName() {
+        return _parameterizedByColumnName;
+    }
 
-	public void setParameterizedByColumnName(boolean parameterizedByColumnName) {
-		_parameterizedByColumnName = parameterizedByColumnName;
-	}
+    public void setParameterizedByColumnName(boolean parameterizedByColumnName) {
+        _parameterizedByColumnName = parameterizedByColumnName;
+    }
 
-	public boolean isParameterizedByQueryString() {
-		return _parameterizedByQueryString;
-	}
+    public boolean isParameterizedByQueryString() {
+        return _parameterizedByQueryString;
+    }
 
-	public void setParameterizedByQueryString(boolean parameterizedByQueryString) {
-		_parameterizedByQueryString = parameterizedByQueryString;
-	}
+    public void setParameterizedByQueryString(boolean parameterizedByQueryString) {
+        _parameterizedByQueryString = parameterizedByQueryString;
+    }
 
-	public void setMetricDisplayName(String _metricDisplayName) {
-		this._metricDisplayName = _metricDisplayName;
-	}
+    public void setMetricDisplayName(String _metricDisplayName) {
+        this._metricDisplayName = _metricDisplayName;
+    }
 
-	public String getDisplayName() {
-		if (_metricDisplayName == null || "".equals(_metricDisplayName)) {
-			if (_paramColumnName != null) {
-				return _metricDescriptorName + " (" + _paramColumnName + ")";
-			}
-			if (_paramQueryString != null) {
-				if (_metricDescriptorName.equalsIgnoreCase("Value Count")) {
-					return  _paramQueryString;
-				} else {
-					return _metricDescriptorName + ": " + _paramQueryString;
-				}
-			}
-			if (_analyzerInputName != null) {
-				return _metricDescriptorName + " (" + _analyzerInputName + ")";
-			}
-			return _metricDescriptorName;
-		}
-		return _metricDescriptorName;
-	}
+    public String getDisplayName() {
+        if (_metricDisplayName == null || "".equals(_metricDisplayName)) {
+            if (_paramColumnName != null) {
+                return _metricDescriptorName + " (" + _paramColumnName + ")";
+            }
+            if (_paramQueryString != null) {
+                return _metricDescriptorName + ": " + _paramQueryString;
+            }
+            if (_analyzerInputName != null) {
+                return _metricDescriptorName + " (" + _analyzerInputName + ")";
+            }
+            return _metricDescriptorName;
+        }
+        return _metricDisplayName;
+    }
 
-	public void setMetricColor(String metricColor) {
-		_metricColor = metricColor;
-	}
+    public void setMetricColor(String metricColor) {
+        _metricColor = metricColor;
+    }
 
-	public String getMetricColor() {
-		return _metricColor;
-	}
+    public String getMetricColor() {
+        return _metricColor;
+    }
 
-	/**
-	 * Creates a copy of this {@link MetricIdentifier}.
-	 * 
-	 * @return
-	 */
-	public MetricIdentifier copy() {
-		final MetricIdentifier metricIdentifier = new MetricIdentifier();
-		metricIdentifier.setAnalyzerDescriptorName(_analyzerDescriptorName);
-		metricIdentifier.setAnalyzerInputName(_analyzerInputName);
-		metricIdentifier.setAnalyzerName(_analyzerName);
-		metricIdentifier.setMetricDescriptorName(_metricDescriptorName);
-		metricIdentifier.setMetricDisplayName(_metricDisplayName);
-		metricIdentifier.setMetricColor(_metricColor);
-		metricIdentifier.setParamColumnName(_paramColumnName);
-		metricIdentifier
-				.setParameterizedByColumnName(_parameterizedByColumnName);
-		metricIdentifier
-				.setParameterizedByQueryString(_parameterizedByQueryString);
-		metricIdentifier.setParamQueryString(_paramQueryString);
-		return metricIdentifier;
-	}
+    /**
+     * Creates a copy of this {@link MetricIdentifier}.
+     * 
+     * @return
+     */
+    public MetricIdentifier copy() {
+        final MetricIdentifier metricIdentifier = new MetricIdentifier();
+        metricIdentifier.setAnalyzerDescriptorName(_analyzerDescriptorName);
+        metricIdentifier.setAnalyzerInputName(_analyzerInputName);
+        metricIdentifier.setAnalyzerName(_analyzerName);
+        metricIdentifier.setMetricDescriptorName(_metricDescriptorName);
+        metricIdentifier.setMetricDisplayName(_metricDisplayName);
+        metricIdentifier.setMetricColor(_metricColor);
+        metricIdentifier.setParamColumnName(_paramColumnName);
+        metricIdentifier.setParameterizedByColumnName(_parameterizedByColumnName);
+        metricIdentifier.setParameterizedByQueryString(_parameterizedByQueryString);
+        metricIdentifier.setParamQueryString(_paramQueryString);
+        return metricIdentifier;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((_analyzerDescriptorName == null) ? 0
-						: _analyzerDescriptorName.hashCode());
-		result = prime
-				* result
-				+ ((_analyzerInputName == null) ? 0 : _analyzerInputName
-						.hashCode());
-		result = prime * result
-				+ ((_analyzerName == null) ? 0 : _analyzerName.hashCode());
-		result = prime
-				* result
-				+ ((_metricDescriptorName == null) ? 0 : _metricDescriptorName
-						.hashCode());
-		result = prime
-				* result
-				+ ((_metricDisplayName == null) ? 0 : _metricDisplayName
-						.hashCode());
-		result = prime
-				* result
-				+ ((_paramColumnName == null) ? 0 : _paramColumnName.hashCode());
-		result = prime
-				* result
-				+ ((_paramQueryString == null) ? 0 : _paramQueryString
-						.hashCode());
-		result = prime * result + (_parameterizedByColumnName ? 1231 : 1237);
-		result = prime * result + (_parameterizedByQueryString ? 1231 : 1237);
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((_analyzerDescriptorName == null) ? 0 : _analyzerDescriptorName.hashCode());
+        result = prime * result + ((_analyzerInputName == null) ? 0 : _analyzerInputName.hashCode());
+        result = prime * result + ((_analyzerName == null) ? 0 : _analyzerName.hashCode());
+        result = prime * result + ((_metricDescriptorName == null) ? 0 : _metricDescriptorName.hashCode());
+        result = prime * result + ((_metricDisplayName == null) ? 0 : _metricDisplayName.hashCode());
+        result = prime * result + ((_paramColumnName == null) ? 0 : _paramColumnName.hashCode());
+        result = prime * result + ((_paramQueryString == null) ? 0 : _paramQueryString.hashCode());
+        result = prime * result + (_parameterizedByColumnName ? 1231 : 1237);
+        result = prime * result + (_parameterizedByQueryString ? 1231 : 1237);
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MetricIdentifier other = (MetricIdentifier) obj;
-		if (_analyzerDescriptorName == null) {
-			if (other._analyzerDescriptorName != null)
-				return false;
-		} else if (!_analyzerDescriptorName
-				.equals(other._analyzerDescriptorName))
-			return false;
-		if (_analyzerInputName == null) {
-			if (other._analyzerInputName != null)
-				return false;
-		} else if (!_analyzerInputName.equals(other._analyzerInputName))
-			return false;
-		if (_analyzerName == null) {
-			if (other._analyzerName != null)
-				return false;
-		} else if (!_analyzerName.equals(other._analyzerName))
-			return false;
-		if (_metricDescriptorName == null) {
-			if (other._metricDescriptorName != null)
-				return false;
-		} else if (!_metricDescriptorName.equals(other._metricDescriptorName))
-			return false;
-		if (_paramColumnName == null) {
-			if (other._paramColumnName != null)
-				return false;
-		} else if (!_paramColumnName.equals(other._paramColumnName))
-			return false;
-		if (_paramQueryString == null) {
-			if (other._paramQueryString != null)
-				return false;
-		} else if (!_paramQueryString.equals(other._paramQueryString))
-			return false;
-		if (_parameterizedByColumnName != other._parameterizedByColumnName)
-			return false;
-		if (_parameterizedByQueryString != other._parameterizedByQueryString)
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MetricIdentifier other = (MetricIdentifier) obj;
+        if (_analyzerDescriptorName == null) {
+            if (other._analyzerDescriptorName != null)
+                return false;
+        } else if (!_analyzerDescriptorName.equals(other._analyzerDescriptorName))
+            return false;
+        if (_analyzerInputName == null) {
+            if (other._analyzerInputName != null)
+                return false;
+        } else if (!_analyzerInputName.equals(other._analyzerInputName))
+            return false;
+        if (_analyzerName == null) {
+            if (other._analyzerName != null)
+                return false;
+        } else if (!_analyzerName.equals(other._analyzerName))
+            return false;
+        if (_metricDescriptorName == null) {
+            if (other._metricDescriptorName != null)
+                return false;
+        } else if (!_metricDescriptorName.equals(other._metricDescriptorName))
+            return false;
+        if (_paramColumnName == null) {
+            if (other._paramColumnName != null)
+                return false;
+        } else if (!_paramColumnName.equals(other._paramColumnName))
+            return false;
+        if (_paramQueryString == null) {
+            if (other._paramQueryString != null)
+                return false;
+        } else if (!_paramQueryString.equals(other._paramQueryString))
+            return false;
+        if (_parameterizedByColumnName != other._parameterizedByColumnName)
+            return false;
+        if (_parameterizedByQueryString != other._parameterizedByQueryString)
+            return false;
+        return true;
+    }
 
-	public boolean equalsIgnoreParameterValues(MetricIdentifier other) {
-		if (this == other)
-			return true;
-		if (other == null)
-			return false;
-		if (_analyzerDescriptorName == null) {
-			if (other._analyzerDescriptorName != null)
-				return false;
-		} else if (!_analyzerDescriptorName
-				.equals(other._analyzerDescriptorName))
-			return false;
-		if (_analyzerInputName == null) {
-			if (other._analyzerInputName != null)
-				return false;
-		} else if (!_analyzerInputName.equals(other._analyzerInputName))
-			return false;
-		if (_analyzerName == null) {
-			if (other._analyzerName != null)
-				return false;
-		} else if (!_analyzerName.equals(other._analyzerName))
-			return false;
-		if (_metricDescriptorName == null) {
-			if (other._metricDescriptorName != null)
-				return false;
-		} else if (!_metricDescriptorName.equals(other._metricDescriptorName))
-			return false;
-		if (_parameterizedByColumnName != other._parameterizedByColumnName)
-			return false;
-		if (_parameterizedByQueryString != other._parameterizedByQueryString)
-			return false;
-		return true;
-	}
+    public boolean equalsIgnoreParameterValues(MetricIdentifier other) {
+        if (this == other)
+            return true;
+        if (other == null)
+            return false;
+        if (_analyzerDescriptorName == null) {
+            if (other._analyzerDescriptorName != null)
+                return false;
+        } else if (!_analyzerDescriptorName.equals(other._analyzerDescriptorName))
+            return false;
+        if (_analyzerInputName == null) {
+            if (other._analyzerInputName != null)
+                return false;
+        } else if (!_analyzerInputName.equals(other._analyzerInputName))
+            return false;
+        if (_analyzerName == null) {
+            if (other._analyzerName != null)
+                return false;
+        } else if (!_analyzerName.equals(other._analyzerName))
+            return false;
+        if (_metricDescriptorName == null) {
+            if (other._metricDescriptorName != null)
+                return false;
+        } else if (!_metricDescriptorName.equals(other._metricDescriptorName))
+            return false;
+        if (_parameterizedByColumnName != other._parameterizedByColumnName)
+            return false;
+        if (_parameterizedByQueryString != other._parameterizedByQueryString)
+            return false;
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "MetricIdentifier[analyzerInputName="
-				+ _analyzerInputName
-				+ ",metricDescriptorName="
-				+ _metricDescriptorName
-				+ (_paramColumnName != null ? ",paramColumnName="
-						+ _paramColumnName : "")
-				+ (_paramQueryString != null ? ",paramQueryString="
-						+ _paramQueryString : "") + "]";
-	}
+    @Override
+    public String toString() {
+        return "MetricIdentifier[analyzerInputName=" + _analyzerInputName + ",metricDescriptorName="
+                + _metricDescriptorName + (_paramColumnName != null ? ",paramColumnName=" + _paramColumnName : "")
+                + (_paramQueryString != null ? ",paramQueryString=" + _paramQueryString : "") + "]";
+    }
 
-	@Override
-	public int compareTo(MetricIdentifier other) {
-		if (this == other) {
-			return 0;
-		}
-		return getId().compareTo(other.getId());
-	}
+    @Override
+    public int compareTo(MetricIdentifier other) {
+        if (this == other) {
+            return 0;
+        }
+        return getId().compareTo(other.getId());
+    }
 
 }

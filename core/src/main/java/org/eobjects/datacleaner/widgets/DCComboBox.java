@@ -62,7 +62,7 @@ public class DCComboBox<E> extends JComboBox implements ItemListener {
         this(new DefaultComboBoxModel(items));
     }
 
-    private DCComboBox(ComboBoxModel model) {
+    public DCComboBox(ComboBoxModel model) {
         super(model);
         super.addItemListener(this);
     }

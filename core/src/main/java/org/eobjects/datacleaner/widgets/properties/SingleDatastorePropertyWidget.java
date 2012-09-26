@@ -35,6 +35,8 @@ import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link PropertyWidget} for single datastore properties. Shown as a combo box.
@@ -43,6 +45,8 @@ import org.eobjects.datacleaner.widgets.SchemaStructureComboBoxListRenderer;
  */
 public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datastore> implements DatastoreChangeListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(SingleDatastorePropertyWidget.class);
+    
 	private final DatastoreCatalog _datastoreCatalog;
 	private final DCComboBox<Datastore> _comboBox;
 	private final Class<?> _datastoreClass;
@@ -143,7 +147,11 @@ public class SingleDatastorePropertyWidget extends AbstractPropertyWidget<Datast
 			_connection = null;
 		}
 		if (datastore != null) {
-			_connection = datastore.openConnection();
+		    try {
+		        _connection = datastore.openConnection();
+		    } catch (Exception e) {
+		        logger.warn("Could not open connection to datastore: {}", datastore);
+		    }
 		}
 	}
 

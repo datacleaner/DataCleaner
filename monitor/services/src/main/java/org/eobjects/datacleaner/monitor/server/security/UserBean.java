@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.security;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,9 +36,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 @Component("user")
 @Scope(WebApplicationContext.SCOPE_SESSION)
-public class UserBean implements User {
+public class UserBean implements User, Serializable {
 
-    private final TenantResolver _tenantResolver;
+    private static final long serialVersionUID = 1L;
+
+    private final transient TenantResolver _tenantResolver;
     private final Set<String> _roles;
     private String _username;
     private String _tenant;
@@ -62,7 +65,7 @@ public class UserBean implements User {
             _tenant = null;
         } else {
             _username = authentication.getName();
-            _tenant = _tenantResolver.getTenantId(_username);
+            _tenant = (_tenantResolver == null ? null : _tenantResolver.getTenantId(_username));
 
             final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             for (GrantedAuthority authority : authorities) {
@@ -107,7 +110,7 @@ public class UserBean implements User {
         }
         return _tenant;
     }
-    
+
     @Override
     public boolean isLoggedIn() {
         return getUsername() != null;

@@ -127,10 +127,13 @@
 			<id>eobjects-snapshot-repo</id>
 			<url>scp://192.168.3.110/var/www/repo</url>
 		</snapshotRepository>
+		<!-- Repository sometimes used for deploying only to eobjects' repository -->
+		<!--
 		<repository>
 			<id>eobjects-release-repo</id>
 			<url>scp://192.168.3.110/var/www/repo</url>
 		</repository>
+		-->
 	</distributionManagement>
 	<mailingLists>
 		<mailingList>

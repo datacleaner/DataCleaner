@@ -10,10 +10,11 @@
 
 	<ui:define name="content">
 		<div class="datastoreList">
+			<c:set var="datastoreCatalog" value="${tenantContext.configuration.datastoreCatalog}" />
 			<ui:repeat var="datastoreName"
-				value="#{tenantContext.configuration.datastoreCatalog.datastoreNames}">
+				value="#{datastoreCatalog.datastoreNames}">
 				<ui:param name="datastore"
-					value="#{tenantContext.configuration.datastoreCatalog.getDatastore(datastoreName)}" />
+					value="#{datastoreCatalog.getDatastore(datastoreName)}" />
 
 				<div
 					class="datastore #{jsfHelper.isFileDatastore(datastore) ? 'FileDatastore' : ''} #{jsfHelper.getSimpleClassName(datastore)}">
@@ -36,7 +37,13 @@
 						</div>
 						<h:panelGroup rendered="#{jsfHelper.isFileDatastore(datastore)}">
 							<div class="filename">
-								<span class="label">Filename:</span> <span class="value">#{datastore.filename}</span>
+								<span class="label">Filename:</span>
+								<span class="value">
+									#{datastore.filename}
+									<h:panelGroup rendered="#{not jsfHelper.isFileFound(datastore)}">
+										<span class="warning">File not found</span>
+									</h:panelGroup>								
+								</span>
 							</div>
 						</h:panelGroup>
 						<h:panelGroup

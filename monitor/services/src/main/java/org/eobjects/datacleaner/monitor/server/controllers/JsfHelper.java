@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
+import java.io.File;
+
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
@@ -41,6 +43,12 @@ public class JsfHelper {
         return datastore instanceof JdbcDatastore;
     }
 
+    public boolean isFileFound(FileDatastore datastore) {
+        String filename = datastore.getFilename();
+        File file = new File(filename);
+        return file.exists();
+    }
+
     public boolean isCompositeDatastore(Datastore datastore) {
         return datastore instanceof CompositeDatastore;
     }
@@ -52,7 +60,7 @@ public class JsfHelper {
             return false;
         }
     }
-    
+
     public String getVersion() {
         return Main.VERSION;
     }

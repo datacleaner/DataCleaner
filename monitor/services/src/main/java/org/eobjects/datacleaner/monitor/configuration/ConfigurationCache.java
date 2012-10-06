@@ -85,6 +85,10 @@ final class ConfigurationCache {
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor() {
             @Override
             public String createFilename(String filename) {
+                if (isAbsolute(filename)) {
+                    return filename;
+                }
+                
                 if (_tenantFolder instanceof FileRepositoryFolder) {
                     File file = ((FileRepositoryFolder) _tenantFolder).getFile();
                     return file.getAbsolutePath() + File.separatorChar + filename;
@@ -105,5 +109,12 @@ final class ConfigurationCache {
         } finally {
             FileHelper.safeClose(inputStream);
         }
+    }
+
+    private boolean isAbsolute(String filename) {
+        assert filename != null;
+        
+        File file = new File(filename);
+        return file.isAbsolute();
     }
 }

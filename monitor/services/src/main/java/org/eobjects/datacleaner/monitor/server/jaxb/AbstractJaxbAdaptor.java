@@ -80,7 +80,7 @@ public abstract class AbstractJaxbAdaptor<E> {
         try {
             return (E) unmarshaller.unmarshal(in);
         } catch (JAXBException e) {
-            throw new IllegalArgumentException(e);
+            throw new JaxbException(e);
         }
     }
 
@@ -89,8 +89,8 @@ public abstract class AbstractJaxbAdaptor<E> {
             final Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
             unmarshaller.setEventHandler(new JaxbValidationEventHandler());
             return unmarshaller;
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+        } catch (JAXBException e) {
+            throw new JaxbException(e);
         }
     }
 
@@ -101,7 +101,7 @@ public abstract class AbstractJaxbAdaptor<E> {
             marshaller.setEventHandler(new JaxbValidationEventHandler());
             return marshaller;
         } catch (JAXBException e) {
-            throw new IllegalArgumentException(e);
+            throw new JaxbException(e);
         }
     }
 
@@ -110,7 +110,7 @@ public abstract class AbstractJaxbAdaptor<E> {
         try {
             marshaller.marshal(obj, outputStream);
         } catch (JAXBException e) {
-            throw new IllegalStateException(e);
+            throw new JaxbException(e);
         }
     }
 

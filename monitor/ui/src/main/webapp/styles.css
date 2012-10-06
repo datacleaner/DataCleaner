@@ -395,6 +395,7 @@ h3.login_panel_header {
  */
 div.loader {
 	width: 100%;
+	min-width: 32px;
 	background: url("images/loader.gif") no-repeat center center;
 	height: 32px;
 }

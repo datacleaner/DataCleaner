@@ -103,7 +103,7 @@ public class SchedulePanel extends Composite {
                 service.triggerExecution(tenant, _schedule.getJob(), new DCAsyncCallback<ExecutionLog>() {
                     @Override
                     public void onSuccess(ExecutionLog result) {
-                        final ExecutionLogPanel panel = new ExecutionLogPanel(_tenant, result);
+                        final ExecutionLogPanel panel = new ExecutionLogPanel(service, _tenant, result);
                         popupPanel.setWidget(panel);
                         popupPanel.center();
                     }

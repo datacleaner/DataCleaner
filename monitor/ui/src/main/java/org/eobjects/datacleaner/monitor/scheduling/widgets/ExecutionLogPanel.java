@@ -21,10 +21,13 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
@@ -32,6 +35,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -46,6 +50,9 @@ public class ExecutionLogPanel extends Composite {
     }
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+
+    private final SchedulingServiceAsync _service;
+    private final TenantIdentifier _tenant;
 
     @UiField
     Label statusLabel;
@@ -68,14 +75,25 @@ public class ExecutionLogPanel extends Composite {
     @UiField
     Label triggeredByLabel;
 
-    public ExecutionLogPanel(TenantIdentifier tenant, ExecutionLog executionLog) {
+    @UiField(provided = true)
+    LoadingIndicator loadingIndicator;
+
+    public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog) {
         super();
+
+        _service = service;
+        _tenant = tenant;
+        loadingIndicator = new LoadingIndicator();
 
         initWidget(uiBinder.createAndBindUi(this));
 
+        updateContent(executionLog);
+    }
+
+    private void updateContent(final ExecutionLog executionLog) {
         final ExecutionStatus executionStatus;
         if (executionLog == null) {
-            executionStatus = ExecutionStatus.PENDING;
+            executionStatus = ExecutionStatus.UNKNOWN;
         } else {
             executionStatus = executionLog.getExecutionStatus();
             statusLabel.setText(executionStatus.toString());
@@ -118,7 +136,7 @@ public class ExecutionLogPanel extends Composite {
 
             final String resultId = executionLog.getResultId();
             final String resultFilename = resultId + ".analysis.result.dat";
-            final String url = Urls.createRelativeUrl("repository/" + tenant.getId() + "/results/" + resultFilename);
+            final String url = Urls.createRelativeUrl("repository/" + _tenant.getId() + "/results/" + resultFilename);
             resultAnchor.setHref(url);
             resultAnchor.setTarget("_blank");
             resultAnchor.setText(resultId);
@@ -128,6 +146,25 @@ public class ExecutionLogPanel extends Composite {
             resultAnchor.setVisible(true);
         } else {
             resultAnchor.setVisible(false);
+        }
+
+        GWT.log("Execution status: " + executionStatus);
+        if (executionStatus == null || executionStatus == ExecutionStatus.RUNNING
+                || executionStatus == ExecutionStatus.PENDING || executionStatus == ExecutionStatus.UNKNOWN) {
+            new Timer() {
+                @Override
+                public void run() {
+                    _service.getExecution(_tenant, executionLog, new DCAsyncCallback<ExecutionLog>() {
+                        @Override
+                        public void onSuccess(ExecutionLog result) {
+                            updateContent(result);
+                        }
+                    });
+                }
+            }.schedule(1000);
+        } else {
+            GWT.log("Hiding loading indicator. Execution status: " + executionStatus);
+            loadingIndicator.setVisible(false);
         }
     }
 }

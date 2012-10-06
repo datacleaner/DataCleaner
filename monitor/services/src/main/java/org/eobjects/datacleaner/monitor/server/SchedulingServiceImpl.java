@@ -35,11 +35,13 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.scheduling.quartz.AbstractQuartzJob;
 import org.eobjects.datacleaner.monitor.scheduling.quartz.ExecuteJob;
 import org.eobjects.datacleaner.monitor.scheduling.quartz.ExecuteJobListener;
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbException;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleWriter;
@@ -354,7 +356,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             return null;
         }
 
-        return readExecutionLogFile(latestFile, tenant);
+        return readExecutionLogFile(latestFile, tenant, 1);
     }
 
     @Override
@@ -383,6 +385,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     @Override
     public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
             throws DCSecurityException {
+        if (executionIdentifier == null) {
+            return null;
+        }
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final RepositoryFolder resultFolder = tenantContext.getResultFolder();
 
@@ -393,17 +398,33 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new IllegalArgumentException("No execution with result id: " + resultId);
         }
 
-        return readExecutionLogFile(file, tenant);
+        return readExecutionLogFile(file, tenant, 1);
     }
 
-    private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant) {
+    private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant, final int retries) {
         final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
         final InputStream in = file.readFile();
         try {
             return reader.read(in, tenant);
+        } catch (JaxbException e) {
+            if (retries > 0) {
+                logger.debug("Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
+            } else {
+                logger.info("Failed to read execution log, returning unknown status.");
+                final ExecutionLog executionLog = new ExecutionLog(null, null);
+                executionLog.setExecutionStatus(ExecutionStatus.UNKNOWN);
+                return executionLog;
+            }
         } finally {
             FileHelper.safeClose(in);
         }
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            // do nothing
+        }
+        return readExecutionLogFile(file, tenant, retries - 1);
     }
 
     @Override

@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Date;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
@@ -108,6 +109,13 @@ public class ExecuteJob extends AbstractQuartzJob {
      *         execution status etc. at a later state.
      */
     public String executeJob(TenantContext context, ExecutionLog execution, AlertNotificationService notificationService) {
+        if (execution.getJobBeginDate() == null) {
+            // although the job begin date will in vanilla scenarios be set by
+            // the MonitorAnalysisListener, we also set it here, just in case of
+            // unknown exception scenarios.
+            execution.setJobBeginDate(new Date());
+        }
+
         final RepositoryFolder resultFolder = context.getResultFolder();
         final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder,
                 notificationService);

@@ -26,5 +26,5 @@ package org.eobjects.datacleaner.monitor.scheduling.model;
  */
 public enum ExecutionStatus {
 
-    PENDING, RUNNING, SUCCESS, FAILURE
+    PENDING, RUNNING, SUCCESS, FAILURE, UNKNOWN
 }

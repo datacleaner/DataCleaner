@@ -70,7 +70,7 @@ public class JobHistoryPanel extends Composite {
         _callback = new DCAsyncCallback<ExecutionLog>() {
             @Override
             public void onSuccess(ExecutionLog result) {
-                executionLogPanelTarget.setWidget(new ExecutionLogPanel(_tenant, result));
+                executionLogPanelTarget.setWidget(new ExecutionLogPanel(_service, _tenant, result));
             }
         };
 
@@ -84,7 +84,9 @@ public class JobHistoryPanel extends Composite {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 final ExecutionIdentifier executionIdentifier = selectionModel.getSelectedObject();
-                _service.getExecution(_tenant, executionIdentifier, _callback);
+                if (executionIdentifier != null) {
+                    _service.getExecution(_tenant, executionIdentifier, _callback);
+                }
             }
         });
         executionList.setSelectionModel(selectionModel);

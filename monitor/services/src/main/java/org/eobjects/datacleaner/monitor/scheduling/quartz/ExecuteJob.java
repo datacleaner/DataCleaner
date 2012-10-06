@@ -19,7 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
@@ -102,8 +107,7 @@ public class ExecuteJob extends AbstractQuartzJob {
      * @return The expected result name, which can be used to get updates about
      *         execution status etc. at a later state.
      */
-    public static String executeJob(TenantContext context, ExecutionLog execution,
-            AlertNotificationService notificationService) {
+    public String executeJob(TenantContext context, ExecutionLog execution, AlertNotificationService notificationService) {
         final RepositoryFolder resultFolder = context.getResultFolder();
         final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder,
                 notificationService);
@@ -113,13 +117,11 @@ public class ExecuteJob extends AbstractQuartzJob {
 
             final JobContext job = context.getJob(jobName);
 
+            preLoadJob(context, job);
+
             final AnalysisJob analysisJob = job.getAnalysisJob();
 
-            if (analysisJob.getDatastore() instanceof PlaceholderDatastore) {
-                // the job was materialized using a placeholder datastore - ie.
-                // the real datastore was not found!
-                throw new NoSuchDatastoreException(job.getSourceDatastoreName());
-            }
+            preExecuteJob(context, job, analysisJob);
 
             final AnalyzerBeansConfiguration configuration = context.getConfiguration();
             final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, analysisListener);
@@ -134,8 +136,41 @@ public class ExecuteJob extends AbstractQuartzJob {
             analysisListener.errorUknown(null, e);
         }
 
-        // TODO: Check alerts
-
         return execution.getResultId();
+    }
+
+    /**
+     * Validates a job before loading it with a concrete datastore.
+     * 
+     * @param context
+     * @param job
+     * @throws FileNotFoundException
+     */
+    private void preLoadJob(TenantContext context, JobContext job) throws FileNotFoundException {
+        final String sourceDatastoreName = job.getSourceDatastoreName();
+        final Datastore datastore = context.getConfiguration().getDatastoreCatalog().getDatastore(sourceDatastoreName);
+
+        if (datastore instanceof FileDatastore) {
+            final String filename = ((FileDatastore) datastore).getFilename();
+            final File file = new File(filename);
+            if (!file.exists()) {
+                logger.warn("Raising FileNotFound exception from datastore: {}", datastore);
+                throw new FileNotFoundException(filename);
+            }
+        }
+    }
+
+    private void preExecuteJob(TenantContext context, JobContext job, AnalysisJob analysisJob) throws Exception {
+        final Datastore datastore = analysisJob.getDatastore();
+
+        if (datastore instanceof PlaceholderDatastore) {
+            // the job was materialized using a placeholder datastore - ie.
+            // the real datastore was not found!
+            final String sourceDatastoreName = job.getSourceDatastoreName();
+            logger.warn(
+                    "Raising a NoSuchDatastoreException since a PlaceholderDatastore was found at execution time: {}",
+                    sourceDatastoreName);
+            throw new NoSuchDatastoreException(sourceDatastoreName);
+        }
     }
 }

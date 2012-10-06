@@ -3,6 +3,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
+		<csv-datastore name="SomeCSV">
+			<!-- A filename which does not exist -->
+			<filename>foo/bar.csv</filename>
+		</csv-datastore>
 	</datastore-catalog>
 	
 	<reference-data-catalog>

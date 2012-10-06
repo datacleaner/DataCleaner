@@ -39,6 +39,38 @@ import org.eobjects.datacleaner.repository.file.FileRepository;
 
 public class ExecuteJobTest extends TestCase {
 
+    public void testFileNotFound() throws Exception {
+        final Repository repo = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
+                new InjectionManagerFactoryImpl());
+
+        TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
+        JobIdentifier job = new JobIdentifier("some_csv_profiling");
+        DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier("SomeCSV");
+        TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant3");
+        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, datastoreIdentifier);
+        ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+
+        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null);
+
+        assertNotNull(executionId);
+        try {
+            SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);
+
+            ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
+            String logOutput = log.getLogOutput();
+            assertTrue(logOutput, logOutput.indexOf("foo/bar.csv (FileNotFoundException)") != -1);
+            assertTrue(logOutput, logOutput.indexOf("java.io.FileNotFoundException: ") != -1);
+        } finally {
+            RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId
+                    + ".analysis.execution.log.xml");
+            assertNotNull(logNode);
+
+            // cleanup
+            logNode.delete();
+        }
+    }
+
     public void testInvalidDatastoreInJob() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
@@ -51,7 +83,7 @@ public class ExecuteJobTest extends TestCase {
         ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, datastoreIdentifier);
         ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        String executionId = ExecuteJob.executeJob(tenantContext, execution, null);
+        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null);
         assertNotNull(executionId);
         try {
             SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);

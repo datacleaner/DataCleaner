@@ -27,10 +27,12 @@ import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
+import org.eobjects.datacleaner.monitor.jaxb.VariableProvider;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
@@ -62,8 +64,17 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             }
         } else if (scheduleDefinition.getTriggerType() == TriggerType.PERIODIC) {
             schedule.setCronExpression(scheduleDefinition.getCronExpression());
+        } else {
+            schedule.setManualTrigger(true);
         }
 
+        final VariableProviderDefinition variableProviderDef = scheduleDefinition.getVariableProvider();
+        if (variableProviderDef != null) {
+            final VariableProvider variableProvider = new VariableProvider();
+            variableProvider.setClassName(variableProviderDef.getClassName());
+            schedule.setVariableProvider(variableProvider);
+        }
+        
         final Alerts alerts = new Alerts();
         final List<AlertDefinition> alertDefinitions = scheduleDefinition.getAlerts();
         for (AlertDefinition alertDefinition : alertDefinitions) {
@@ -71,6 +82,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             alerts.getAlert().add(alert);
         }
         schedule.setAlerts(alerts);
+        
 
         return schedule;
     }

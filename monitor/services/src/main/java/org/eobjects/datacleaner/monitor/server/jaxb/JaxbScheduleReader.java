@@ -27,9 +27,11 @@ import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
+import org.eobjects.datacleaner.monitor.jaxb.VariableProvider;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -39,7 +41,7 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
  * JAXB based reader of .schedule.xml files
  */
 public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
-    
+
     public JaxbScheduleReader() {
         super(Schedule.class);
     }
@@ -98,7 +100,15 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
             if (jaxbDependentJob != null) {
                 scheduleDefinition.setDependentJob(new JobIdentifier(jaxbDependentJob));
             }
+
+            final VariableProvider variableProvider = schedule.getVariableProvider();
+            if (variableProvider != null) {
+                final VariableProviderDefinition variableProviderDef = new VariableProviderDefinition();
+                variableProviderDef.setClassName(variableProvider.getClassName());
+                scheduleDefinition.setVariableProvider(variableProviderDef);
+            }
         }
+
         scheduleDefinition.setJob(job);
         scheduleDefinition.setTenant(tenant);
         scheduleDefinition.setDatastore(datastore);

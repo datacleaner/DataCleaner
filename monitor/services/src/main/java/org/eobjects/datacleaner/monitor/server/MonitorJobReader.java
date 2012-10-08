@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.SourceColumnMapping;
@@ -28,7 +29,7 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
-import org.eobjects.analyzer.job.JobReader;
+import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.schema.ColumnType;
@@ -49,9 +50,13 @@ public class MonitorJobReader {
         _configuration = configuration;
         _jobFile = jobFile;
     }
-
+    
     public AnalysisJob readJob() {
-        final JobReader<InputStream> jobReader = new JaxbJobReader(_configuration);
+        return readJob(null);
+    }
+
+    public AnalysisJob readJob(Map<String, String> variableOverrides) {
+        final JaxbJobReader jobReader = new JaxbJobReader(_configuration);
 
         // read metadata
         final AnalysisJobMetadata metadata;
@@ -63,12 +68,12 @@ public class MonitorJobReader {
                 FileHelper.safeClose(inputStream);
             }
         }
-
+        
         final String datastoreName = metadata.getDatastoreName();
         final Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
 
         // read job
-        final AnalysisJob job;
+        final AnalysisJobBuilder jobBuilder;
         {
             final InputStream inputStream = _jobFile.readFile();
             try {
@@ -86,15 +91,17 @@ public class MonitorJobReader {
                         throw new IllegalStateException("Not all column mapping satisfied. Missing: "
                                 + sourceColumnMapping.getUnmappedPaths());
                     }
-                    job = jobReader.read(inputStream, sourceColumnMapping);
+                    
+                    jobBuilder = jobReader.create(inputStream, sourceColumnMapping, variableOverrides);
                 } else {
-                    job = jobReader.read(inputStream);
+                    jobBuilder = jobReader.create(inputStream, variableOverrides);
                 }
             } finally {
                 FileHelper.safeClose(inputStream);
             }
         }
 
+        final AnalysisJob job = jobBuilder.toAnalysisJob();
         return job;
     }
 }

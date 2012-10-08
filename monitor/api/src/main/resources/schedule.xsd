@@ -11,9 +11,11 @@
 		<complexType>
 			<sequence>
 				<choice minOccurs="0" maxOccurs="1">
+					<element name="manual-trigger" type="boolean" default="true" />
 					<element name="cron-expression" type="string" />
 					<element name="dependent-job" type="string" />
 				</choice>
+				<element name="variable-provider" minOccurs="0" maxOccurs="1" type="schedule:variableProvider" />
 				<element name="alerts" minOccurs="0" maxOccurs="1">
 					<complexType>
 						<sequence>
@@ -25,6 +27,10 @@
 			</sequence>
 		</complexType>
 	</element>
+	
+	<complexType name="variableProvider">
+		<attribute name="class-name" type="string" />
+	</complexType>
 
 	<complexType name="alert">
 		<sequence>

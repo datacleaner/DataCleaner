@@ -40,6 +40,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private String _cronExpression;
     private List<AlertDefinition> _alerts;
     private DatastoreIdentifier _datastore;
+    private VariableProviderDefinition _variableProvider;
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -112,16 +113,25 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         }
     }
 
+    public VariableProviderDefinition getVariableProvider() {
+        return _variableProvider;
+    }
+
+    public void setVariableProvider(VariableProviderDefinition variableProvider) {
+        _variableProvider = variableProvider;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((_alerts == null) ? 0 : _alerts.hashCode());
-        result = prime * result + ((_datastore == null) ? 0 : _datastore.hashCode());
-        result = prime * result + ((_job == null) ? 0 : _job.hashCode());
-        result = prime * result + ((_dependentJob == null) ? 0 : _dependentJob.hashCode());
         result = prime * result + ((_cronExpression == null) ? 0 : _cronExpression.hashCode());
+        result = prime * result + ((_datastore == null) ? 0 : _datastore.hashCode());
+        result = prime * result + ((_dependentJob == null) ? 0 : _dependentJob.hashCode());
+        result = prime * result + ((_job == null) ? 0 : _job.hashCode());
         result = prime * result + ((_tenant == null) ? 0 : _tenant.hashCode());
+        result = prime * result + ((_variableProvider == null) ? 0 : _variableProvider.hashCode());
         return result;
     }
 
@@ -139,30 +149,35 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
                 return false;
         } else if (!_alerts.equals(other._alerts))
             return false;
+        if (_cronExpression == null) {
+            if (other._cronExpression != null)
+                return false;
+        } else if (!_cronExpression.equals(other._cronExpression))
+            return false;
         if (_datastore == null) {
             if (other._datastore != null)
                 return false;
         } else if (!_datastore.equals(other._datastore))
-            return false;
-        if (_job == null) {
-            if (other._job != null)
-                return false;
-        } else if (!_job.equals(other._job))
             return false;
         if (_dependentJob == null) {
             if (other._dependentJob != null)
                 return false;
         } else if (!_dependentJob.equals(other._dependentJob))
             return false;
-        if (_cronExpression == null) {
-            if (other._cronExpression != null)
+        if (_job == null) {
+            if (other._job != null)
                 return false;
-        } else if (!_cronExpression.equals(other._cronExpression))
+        } else if (!_job.equals(other._job))
             return false;
         if (_tenant == null) {
             if (other._tenant != null)
                 return false;
         } else if (!_tenant.equals(other._tenant))
+            return false;
+        if (_variableProvider == null) {
+            if (other._variableProvider != null)
+                return false;
+        } else if (!_variableProvider.equals(other._variableProvider))
             return false;
         return true;
     }

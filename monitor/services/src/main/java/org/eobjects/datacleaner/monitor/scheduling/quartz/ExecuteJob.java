@@ -22,24 +22,32 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Date;
+import java.util.Map;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
+import org.eobjects.analyzer.descriptors.Descriptors;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationService;
 import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.scheduling.api.VariableProvider;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -127,11 +135,16 @@ public class ExecuteJob extends AbstractQuartzJob {
 
             preLoadJob(context, job);
 
-            final AnalysisJob analysisJob = job.getAnalysisJob();
+            final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+
+            final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
+            final Map<String, String> variableOverrides = overrideVariables(variableProviderDef, job, execution,
+                    configuration);
+
+            final AnalysisJob analysisJob = job.getAnalysisJob(variableOverrides);
 
             preExecuteJob(context, job, analysisJob);
 
-            final AnalyzerBeansConfiguration configuration = context.getConfiguration();
             final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, analysisListener);
 
             // fire and forget (the listener will do the rest)
@@ -145,6 +158,35 @@ public class ExecuteJob extends AbstractQuartzJob {
         }
 
         return execution.getResultId();
+    }
+
+    private static Map<String, String> overrideVariables(VariableProviderDefinition variableProviderDef,
+            JobContext job, ExecutionLog execution, AnalyzerBeansConfiguration configuration)
+            throws ClassNotFoundException {
+        if (variableProviderDef == null) {
+            return null;
+        }
+
+        final String className = variableProviderDef.getClassName();
+        if (className == null) {
+            return null;
+        }
+
+        final InjectionManager injectionManager = configuration.getInjectionManager(null);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null);
+
+        @SuppressWarnings("unchecked")
+        final Class<? extends VariableProvider> cls = (Class<? extends VariableProvider>) Class.forName(className);
+        final ComponentDescriptor<? extends VariableProvider> descriptor = Descriptors.ofComponent(cls);
+        final VariableProvider variableProvider = ReflectionUtils.newInstance(cls);
+        lifeCycleHelper.assignProvidedProperties(descriptor, variableProvider);
+        lifeCycleHelper.initialize(descriptor, variableProvider);
+        try {
+            final Map<String, String> variableOverrides = variableProvider.provideValues(job, execution);
+            return variableOverrides;
+        } finally {
+            lifeCycleHelper.close(descriptor, variableProvider);
+        }
     }
 
     /**

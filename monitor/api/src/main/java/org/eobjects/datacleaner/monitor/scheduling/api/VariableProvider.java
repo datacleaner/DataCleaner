@@ -17,31 +17,18 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.eobjects.datacleaner.monitor.scheduling.api;
 
-import java.io.OutputStream;
-import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 
 /**
- * Defines a context around an {@link AnalysisJob}.
+ * Defines a mechanism to provide variable values to the DataCleaner monitor
+ * application at runtime.
  */
-public interface JobContext {
-    
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
+public interface VariableProvider {
 
-    public AnalysisJob getAnalysisJob();
-
-    public String getSourceDatastoreName();
-    
-    public List<String> getSourceColumnPaths();
-    
-    public Map<String, String> getVariables();
-
-    public void toXml(OutputStream out);
-
-    public RepositoryFile getJobFile();
+    public Map<String, String> provideValues(JobContext job, ExecutionLog execution);
 }

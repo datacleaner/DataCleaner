@@ -58,7 +58,7 @@ public class TenantContextImpl implements TenantContext {
         _tenantId = tenantId;
         _repository = repository;
         _injectionManagerFactory = injectionManagerFactory;
-        _configurationCache = new ConfigurationCache(tenantId, getTenantFolder(), _injectionManagerFactory);
+        _configurationCache = new ConfigurationCache(tenantId, getTenantRootFolder(), _injectionManagerFactory);
         _jobCache = new ConcurrentHashMap<String, JobContext>();
     }
 
@@ -105,7 +105,8 @@ public class TenantContextImpl implements TenantContext {
         return _configurationCache.getAnalyzerBeansConfiguration();
     }
 
-    private RepositoryFolder getTenantFolder() {
+    @Override
+    public RepositoryFolder getTenantRootFolder() {
         RepositoryFolder tenantFolder = _repository.getFolder(_tenantId);
         if (tenantFolder == null) {
             logger.info("Creating tenant folder: {}", _tenantId);
@@ -119,7 +120,7 @@ public class TenantContextImpl implements TenantContext {
 
     @Override
     public RepositoryFolder getJobFolder() {
-        final RepositoryFolder tenantFolder = getTenantFolder();
+        final RepositoryFolder tenantFolder = getTenantRootFolder();
         final RepositoryFolder jobsFolder = tenantFolder.getFolder(PATH_JOBS);
         if (jobsFolder == null) {
             throw new IllegalArgumentException("No job folder for tenant: " + _tenantId);
@@ -134,7 +135,7 @@ public class TenantContextImpl implements TenantContext {
 
     @Override
     public RepositoryFolder getResultFolder() {
-        final RepositoryFolder tenantFolder = getTenantFolder();
+        final RepositoryFolder tenantFolder = getTenantRootFolder();
         final RepositoryFolder resultsFolder = tenantFolder.getFolder(PATH_RESULTS);
         if (resultsFolder == null) {
             throw new IllegalArgumentException("No result folder for tenant: " + _tenantId);
@@ -144,7 +145,7 @@ public class TenantContextImpl implements TenantContext {
 
     @Override
     public RepositoryFolder getTimelineFolder() {
-        final RepositoryFolder tenantFolder = getTenantFolder();
+        final RepositoryFolder tenantFolder = getTenantRootFolder();
         final RepositoryFolder timelinesFolder = tenantFolder.getFolder(PATH_TIMELINES);
         if (timelinesFolder == null) {
             throw new IllegalArgumentException("No timeline folder for tenant: " + _tenantId);

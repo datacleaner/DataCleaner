@@ -149,8 +149,7 @@ public class ExecutionLogPanel extends Composite {
         }
 
         GWT.log("Execution status: " + executionStatus);
-        if (executionStatus == null || executionStatus == ExecutionStatus.RUNNING
-                || executionStatus == ExecutionStatus.PENDING || executionStatus == ExecutionStatus.UNKNOWN) {
+        if (!executionLog.isFinished()) {
             new Timer() {
                 @Override
                 public void run() {

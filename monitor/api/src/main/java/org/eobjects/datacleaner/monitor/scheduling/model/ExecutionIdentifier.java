@@ -45,6 +45,12 @@ public class ExecutionIdentifier implements Serializable {
         _executionStatus = ExecutionStatus.PENDING;
     }
 
+    public boolean isFinished() {
+        boolean runningOrUnkown = _executionStatus == null || _executionStatus == ExecutionStatus.RUNNING
+                || _executionStatus == ExecutionStatus.PENDING || _executionStatus == ExecutionStatus.UNKNOWN;
+        return !runningOrUnkown;
+    }
+
     public String getResultId() {
         return _resultId;
     }

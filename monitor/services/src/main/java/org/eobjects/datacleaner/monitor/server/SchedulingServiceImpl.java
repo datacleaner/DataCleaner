@@ -307,7 +307,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     @Override
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
 
-        String jobNameToBeTriggered = job.getName();
+        final String jobNameToBeTriggered = job.getName();
         final ScheduleDefinition schedule = getSchedule(tenant, jobNameToBeTriggered);
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
@@ -401,7 +401,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return readExecutionLogFile(file, tenant, 1);
     }
 
-    private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant, final int retries) {
+    private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant,
+            final int retries) {
         final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
         final InputStream in = file.readFile();
         try {

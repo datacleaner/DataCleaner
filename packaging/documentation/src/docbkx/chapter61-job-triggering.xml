@@ -5,4 +5,96 @@
 
 	<title>Job triggering</title>
 
+	<chapterinfo>
+		<abstract>
+			<para>The DataCleaner web monitor usually handles scheduling of jobs,
+				but sometimes you need to trigger them manually. And sometimes third
+				party systems need to trigger them manually.
+			</para>
+			<para>In this chapter, a web service for triggering DataCleaner jobs
+				in the DataCleaner monitor web application is explained.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<para>
+		The web service is reachable by this HTTP URL:
+	</para>
+
+	<programlisting>
+		/DataCleaner-monitor/repository/{tenant}/jobs/{job}.trigger
+	</programlisting>
+
+	<para>
+		The response from the trigger web service is a JSON document that
+		looks like this:
+	</para>
+
+	<programlisting>
+		{
+		&#160;&#160;"status":"PENDING",
+		&#160;&#160;"logOutput":null,
+		&#160;&#160;"endDate":null,
+		&#160;&#160;"beginDate":null,
+		&#160;&#160;"resultId":"Customer&#160;completeness-1349876418933",
+		&#160;&#160;"triggeredBy":"admin"
+		}
+	</programlisting>
+
+	<para>
+		Optionally you can also add these parameters:
+	</para>
+
+	<table>
+		<title>Job triggering HTTP parameters</title>
+		<tgroup cols="2">
+			<thead>
+				<row>
+					<entry>Parameter</entry>
+					<entry>Description</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+					<entry>block</entry>
+					<entry>Set to 'true' if the server should wait until the job has
+						executed before responding. This will ensure that the client is
+						able to read a 'status' which is either 'SUCCESS' or 'FAILURE'
+						(unless a timeout occurs).
+					</entry>
+				</row>
+				<row>
+					<entry>timeoutMillis</entry>
+					<entry>To be used in combination with 'block'. Set this to the max
+						number of milliseconds to wait before responding.
+					</entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table>
+
+	<para>
+		Using these parameters, a typical response will look like this:
+	</para>
+
+	<programlisting>
+		{
+		&#160;&#160;"status":"SUCCESS",
+		&#160;&#160;"logOutput":
+		&#160;&#160;&#160;&#160;"2012-10-10&#160;16:04:02&#160;-&#160;Job&#160;execution&#160;BEGIN\n
+		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;BEGIN\n
+		&#160;&#160;&#160;&#160;&#160;-&#160;Query:&#160;SELECT&#160;\"CUSTOMERS\".\"PHONE\",&#160;\"CUSTOMERS\".\"POSTALCODE\",&#160;\"CUSTOMERS\".\"ADDRESSLINE1\",
+		&#160;&#160;&#160;&#160;\"CUSTOMERS\".\"COUNTRY\",&#160;\"CUSTOMERS\".\"CUSTOMERNUMBER\",&#160;\"CUSTOMERS\".\"CONTACTFIRSTNAME\",&#160;\"CUSTOMERS\".\"CITY\",
+		&#160;&#160;&#160;&#160;\"CUSTOMERS\".\"CUSTOMERNAME\",&#160;\"CUSTOMERS\".\"CONTACTLASTNAME\"&#160;FROM&#160;PUBLIC.\"CUSTOMERS\"\n
+		&#160;&#160;&#160;&#160;&#160;-&#160;Expected&#160;row&#160;count:&#160;133\n
+		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Row&#160;processing&#160;of&#160;table&#160;Table[name=CUSTOMERS,type=TABLE,remarks=null]&#160;SUCCESS\n
+		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:02&#160;-&#160;Result&#160;gathered&#160;from&#160;analyzer:&#160;ImmutableAnalyzerJob[name=null,analyzer=Completeness&#160;analyzer]\n
+		&#160;&#160;&#160;&#160;2012-10-10&#160;16:04:03&#160;-&#160;Job&#160;execution&#160;SUCCESS",
+		&#160;&#160;"endDate":"Wed&#160;Oct&#160;10&#160;16:04:03&#160;CEST&#160;2012",
+		&#160;&#160;"beginDate":"Wed&#160;Oct&#160;10&#160;16:04:02&#160;CEST&#160;2012",
+		&#160;&#160;"resultId":"Customer&#160;completeness-1349877840924",
+		&#160;&#160;"triggeredBy":"admin"
+		}
+	</programlisting>
+
 </chapter>

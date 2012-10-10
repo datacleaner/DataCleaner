@@ -35,6 +35,8 @@ import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,9 +49,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/{tenant}/jobs/{job}.analysis.xml")
 public class JobFileController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(JobFileController.class);
 
     private static final String EXTENSION = FileFilters.ANALYSIS_XML.getExtension();
-
+    
     @Autowired
     TenantContextFactory _contextFactory;
 
@@ -90,12 +94,14 @@ public class JobFileController {
                 filename = jobName + EXTENSION;
             }
 
+            logger.info("Creating new job from uploaded file: {}", filename);
             jobFile = jobsFolder.createFile(filename, writeCallback);
         } else {
             jobFile = existingJob.getJobFile();
+            logger.info("Overwriting job from uploaded file: {}", jobFile.getName());
             jobFile.writeFile(writeCallback);
         }
-
+        
         final Map<String, String> result = new HashMap<String, String>();
         result.put("status", "Success");
         result.put("file_type", jobFile.getType().toString());

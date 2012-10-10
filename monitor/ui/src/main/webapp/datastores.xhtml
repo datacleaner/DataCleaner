@@ -10,7 +10,8 @@
 
 	<ui:define name="content">
 		<div class="datastoreList">
-			<c:set var="datastoreCatalog" value="${tenantContext.configuration.datastoreCatalog}" />
+			<c:set var="datastoreCatalog"
+				value="${tenantContext.configuration.datastoreCatalog}" />
 			<ui:repeat var="datastoreName"
 				value="#{datastoreCatalog.datastoreNames}">
 				<ui:param name="datastore"
@@ -26,6 +27,14 @@
 								class="LaunchButton">Analyze</button>
 						</div>
 					</h:panelGroup>
+					<h:panelGroup rendered="${jsfHelper.isFileDatastore(datastore) and user.hasRole('ROLE_ADMIN')}">
+
+						<div style="float: right">
+							<button
+								onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{datastore.name}.download'"
+								class="DownloadButton">Download</button>
+						</div>
+					</h:panelGroup>
 
 					<h2 class="name">#{datastore.name}</h2>
 
@@ -37,13 +46,11 @@
 						</div>
 						<h:panelGroup rendered="#{jsfHelper.isFileDatastore(datastore)}">
 							<div class="filename">
-								<span class="label">Filename:</span>
-								<span class="value">
-									#{datastore.filename}
-									<h:panelGroup rendered="#{not jsfHelper.isFileFound(datastore)}">
+								<span class="label">Filename:</span> <span class="value">
+									#{datastore.filename} <h:panelGroup
+										rendered="#{not jsfHelper.isFileFound(datastore)}">
 										<span class="warning">File not found</span>
-									</h:panelGroup>								
-								</span>
+									</h:panelGroup> </span>
 							</div>
 						</h:panelGroup>
 						<h:panelGroup

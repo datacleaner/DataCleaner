@@ -600,3 +600,25 @@ button.LaunchButton:active {
 .repositoryView .file.TIMELINE_SPEC {
 	background-image: url("images/repository_file_timeline.png");
 }
+button.DownloadButton {
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	background-image: url("images/save.png") !important;
+	min-width: 30px;
+	height: 22px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 28px;
+	padding-right: 3px;
+	background-color: #F1F1F1;
+	font-size: 0.9em;
+	border: 1px solid #BBB;
+	border-bottom-color: #A0A0A0;
+	border-radius: 3px;
+	margin-left: 0px;
+	margin-right: 2px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	text-decoration: none;
+	cursor: pointer;
+}

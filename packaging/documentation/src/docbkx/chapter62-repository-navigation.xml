@@ -14,8 +14,7 @@
 				is of course restricted to the tenant's home folder. Therefore, all
 				these web services are located with URLs starting with the form:
 			</para>
-			<para>/DataCleaner-monitor/repository/DC/...
-			</para>
+			<programlisting>/DataCleaner-monitor/repository/DC/...</programlisting>
 			<para>Where 'DC' is the tenant identifier and 'DataCleaner-monitor'
 				is the web application archive name.
 			</para>

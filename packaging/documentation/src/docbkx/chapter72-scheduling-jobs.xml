@@ -4,12 +4,86 @@
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Scheduling jobs</title>
-
-	<para>
-		Scheduling DataCleaner jobs can be done via any third party scheduler
-		in combination with the
-		<link linkend="command_line_interface">command line interface</link>
-		. Typical options are:
+	<chapterinfo>
+		<abstract>
+			<para>Often times DataCleaner jobs needs to be scheduled.
+			Out of the box, we provide the DataCleaner monitoring web
+			application for this purpose. But using the command line
+			interface you can also have third party applications schedule
+			DataCleaner jobs. In this chapter we will go through the options.
+			</para>
+		</abstract>
+	</chapterinfo>
+	
+	<section>
+		<title>DataCleaner monitor</title>
+		<para>The DataCleaner monitor web application is the preferred application for scheduling of DataCleaner jobs.</para>
+		<para>Below is a screenshot of the Scheduling page of the DataCleaner monitor. To access this page, your user needs to have the ROLE_SCHEDULE_EDITOR security role.</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_03_scheduling.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>Things to notice on this page:</para>
+		
+		<orderedlist>
+			<listitem>
+				<para>Each job is categorized by their datastores. This is to provide an overview of which jobs are
+				executing based on which datastores. Technically, a job can interact with more than one datastore,
+				but it will be categorized on this page based on which datastore is acting as source for the
+				job's execution flow.</para>
+			</listitem>
+			<listitem>
+				<para>Besides the datastore and job name, we have a <emphasis>Scheduling</emphasis> column. In the case shown, all jobs
+				are 'Manually triggered', meaning that they are not scheduled by the DataCleaner monitor. Click the link to
+				change the trigger:</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="monitor_04_scheduling_triggers.jpg" format="JPG"
+							scalefit="1" />
+					</imageobject>
+				</mediaobject>
+				<para>The three types of triggering is explained on the screen: Periodic trigger, Dependent trigger, Manual trigger.</para>
+			</listitem>
+			<listitem>
+				<para>
+					In the next column <emphasis>Alerts</emphasis> are defined.
+					Alerts define conditions that should be inspected after execution.
+					An alert is based on metrics, similar to those that can be shown in the timelines on the Dashboard page.
+					An alert also contains a severity, defining how severe the alert is, if it is raised. The severity scale is (increasing severity):
+					<emphasis>Intelligence, Surveillance, Warning, Fatal</emphasis>.
+				</para>
+				<para>
+					Typical handling of raised alerts include sending an email or SMS to the data stewards.
+					These alert notification mechanisms are included in the commercial editions of DataCleaner.
+					You can also develop your own alert notification handlers, by implementing the
+					<emphasis>org.eobjects.datacleaner.monitor.alertnotification.AlertNotifier</emphasis> interface in Java.
+				</para>
+			</listitem>
+			<listitem>
+				<para>In the last column, <emphasis>Actions</emphasis> can be found. The following options are there:</para>
+				<orderedlist>
+					<listitem>
+						<para><emphasis>Trigger</emphasis>, which triggers a job for immediate execution.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Open</emphasis>, which launches the DataCleaner desktop application with the job loaded. Note that for security and bandwidth concerns, only the first 20 input records of the job is transferred to the desktop application. It is in other words not possible to "trigger" the job run on the desktop as if it is running on the server, but it provides a good playground for experiments and testing. Jobs can even be modified and saved back onto the monitoring server this way.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>History</emphasis>, which displays a dialog with execution log information about each triggered job execution.</para>
+					</listitem>
+				</orderedlist>
+			</listitem>
+		</orderedlist>
+	</section>
+	
+	<section>
+		<title>Alternative scheduling approaches</title>
+		<para>
+		If, for whatever reason, the DataCleaner monitor is not to be used for scheduling, jobs can be scheduled in a variety of alternative ways.
+		Scheduling DataCleaner jobs can be done via any third party scheduler in combination with the
+		<link linkend="command_line_interface">command line interface</link>. Typical options are:
 	</para>
 
 	<orderedlist>
@@ -53,5 +127,6 @@
 			</para>
 		</listitem>
 	</orderedlist>
+	</section>
 
 </chapter>

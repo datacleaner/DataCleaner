@@ -34,6 +34,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -69,12 +71,21 @@ public class LaunchDataCleanerController {
             throws IOException {
         datastoreName = datastoreName.replaceAll("\\+", " ");
 
+        final AnalyzerBeansConfiguration configuration = _contextFactory.getContext(tenant).getConfiguration();
+        final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
+        if (ds == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);
+            return;
+        }
+
         final String scheme = request.getScheme();
         final String hostname = request.getServerName();
         final int port = request.getServerPort();
         final String contextPath = request.getContextPath();
+        
+        final String encodedDatastoreName = URLEncoder.encode(datastoreName, FileHelper.UTF_8_ENCODING);
 
-        final String jnlpHref = "datastores/" + datastoreName + ".analyze.jnlp";
+        final String jnlpHref = "datastores/" + encodedDatastoreName + ".analyze.jnlp";
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml";
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
@@ -89,6 +100,11 @@ public class LaunchDataCleanerController {
         jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
+        if (!context.containsJob(jobName)) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such job: " + jobName);
+            return;
+        }
+
         final JobContext job = context.getJob(jobName);
         final String datastoreName = job.getSourceDatastoreName();
 

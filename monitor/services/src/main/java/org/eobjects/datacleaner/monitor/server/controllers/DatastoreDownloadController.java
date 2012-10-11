@@ -57,9 +57,9 @@ public class DatastoreDownloadController {
     protected void downloadFileRepo(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName)
             throws IOException {
-        final AnalyzerBeansConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
-
         datastoreName = datastoreName.replaceAll("\\+", " ");
+
+        final AnalyzerBeansConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
         final Datastore ds = configuration.getDatastoreCatalog().getDatastore(datastoreName);
         if (ds == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);

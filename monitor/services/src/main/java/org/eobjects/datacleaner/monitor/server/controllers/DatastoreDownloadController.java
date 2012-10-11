@@ -82,7 +82,7 @@ public class DatastoreDownloadController {
 
             final FileInputStream is = new FileInputStream(file);
             try {
-                response.setHeader("Content-Disposition", "attachment; filename=" + datastoreName);
+                response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
 
                 final OutputStream os = response.getOutputStream();
                 FileHelper.copy(is, os);

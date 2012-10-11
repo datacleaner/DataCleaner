@@ -19,9 +19,11 @@
  */
 package org.eobjects.datacleaner;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +37,7 @@ import org.eobjects.datacleaner.bootstrap.Bootstrap;
 import org.eobjects.datacleaner.bootstrap.BootstrapOptions;
 import org.eobjects.datacleaner.bootstrap.DefaultBootstrapOptions;
 import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.metamodel.util.FileHelper;
 
 /**
  * The main executable class of DataCleaner. This class primarily sets up
@@ -45,7 +48,7 @@ import org.eobjects.datacleaner.user.DataCleanerHome;
  */
 public final class Main {
 
-    public static final String VERSION = "3.1-SNAPSHOT";
+    public static final String VERSION = determineVersion();
 
     public static void main(String[] args) {
         initializeSystemProperties(args);
@@ -55,6 +58,24 @@ public final class Main {
         final BootstrapOptions bootstrapOptions = new DefaultBootstrapOptions(args);
         final Bootstrap bootstrap = new Bootstrap(bootstrapOptions);
         bootstrap.run();
+    }
+
+    private static String determineVersion() {
+        final Properties properties = new Properties();
+        InputStream inputStream = Main.class.getResourceAsStream("/META-INF/maven/org.eobjects.datacleaner/DataCleaner-core/pom.properties");
+        try {
+            properties.load(inputStream);
+        } catch (Exception e) {
+            // do nothing
+            println("Failed to load DataCleaner version from manifest: " + e.getMessage());
+            return "UNKNOWN";
+        } finally {
+            FileHelper.safeClose(inputStream);
+        }
+        
+        final String version = properties.getProperty("version");
+        println("DataCleaner version: " + version);
+        return version;
     }
 
     /**

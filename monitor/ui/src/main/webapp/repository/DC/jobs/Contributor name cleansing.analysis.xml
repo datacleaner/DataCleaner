@@ -14,18 +14,27 @@
 			<descriptor ref="EasyDQ Name cleansing" />
 			<properties>
 				<property value="[Representation]" name="Name parts" />
-				<property value="named:easydqconnection" name="Connection" />
+				<property value="ondemand:username:password" name="Connection"/>
 				<property value="TOP_SUGGESTION" name="Suggestion Handling" />
 			</properties>
-			<input ref="col_name" name="Name part columns" />
-			<output id="col_traffic_light" />
+			<input ref="col_name" />
+			<output id="col_17" name="Traffic light (name)" />
+			<output id="col_18" name="Contact Title preceding" />
+			<output id="col_19" name="Contact Honorific" />
+			<output id="col_20" name="Contact Given name" />
+			<output id="col_21" name="Contact Initial" />
+			<output id="col_22" name="Contact Family name" />
+			<output id="col_23" name="Contact Title succeeding" />
+			<output id="col_24" name="Contact Gender" />
+			<output id="col_25" name="Contact Complete name" />
+			<output id="col_26" name="Messages (name)" />
 		</transformer>
 	</transformation>
 	<analysis>
 		<analyzer>
 			<descriptor ref="Value distribution" />
 			<properties />
-			<input ref="col_traffic_light" />
+			<input ref="col_17" />
 		</analyzer>
 	</analysis>
 </job>

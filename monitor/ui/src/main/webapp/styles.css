@@ -605,7 +605,7 @@ button.DownloadButton {
 	background-position: 4px center;
 	background-image: url("images/save.png") !important;
 	min-width: 30px;
-	height: 22px;
+	height: 26px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	padding-left: 28px;
@@ -621,4 +621,11 @@ button.DownloadButton {
 	margin-bottom: 3px;
 	text-decoration: none;
 	cursor: pointer;
+}
+button.DownloadButton:hover {
+	border-color: #939393;
+}
+
+button.DownloadButton:active {
+	border: 1px inset #ccc;
 }

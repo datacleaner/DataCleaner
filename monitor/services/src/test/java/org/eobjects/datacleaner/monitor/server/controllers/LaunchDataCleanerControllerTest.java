@@ -45,6 +45,7 @@ public class LaunchDataCleanerControllerTest extends TestCase {
         final JobContext jobMock = EasyMock.createMock(JobContext.class);
 
         EasyMock.expect(contextFactoryMock.getContext("DC")).andReturn(contextMock);
+        EasyMock.expect(contextMock.containsJob("my job")).andReturn(true);
         EasyMock.expect(contextMock.getJob("my job")).andReturn(jobMock);
         EasyMock.expect(jobMock.getSourceDatastoreName()).andReturn("my_datastore");
 

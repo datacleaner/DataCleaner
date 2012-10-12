@@ -267,7 +267,7 @@ public class AboutDialog extends AbstractDialog {
 		final DCPanel contentPanel = new DCPanel();
 		contentPanel.setLayout(new VerticalLayout());
 		contentPanel.add(headerLabel);
-		contentPanel.add(DCLabel.dark("Copyright (C) 2012 eobjects.org"));
+		contentPanel.add(DCLabel.dark("Copyright (C) 2012 Human Inference"));
 		contentPanel.add(Box.createVerticalStrut(20));
 		contentPanel.add(DCPanel.around(humanInferenceButton));
 		contentPanel.add(Box.createVerticalStrut(20));

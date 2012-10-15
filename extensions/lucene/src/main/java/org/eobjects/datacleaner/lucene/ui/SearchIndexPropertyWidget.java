@@ -36,6 +36,7 @@ import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
 import org.eobjects.datacleaner.widgets.DCListCellRenderer;
@@ -49,6 +50,8 @@ import org.jdesktop.swingx.HorizontalLayout;
 public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchIndex> implements SearchIndexListener {
 
     private final DCComboBox<String> _comboBox;
+    private final JButton _removeButton;
+    private final JButton _createButton;
     private final SearchIndexCatalog _catalog;
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
@@ -65,25 +68,11 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
         final String[] names = catalog.getSearchIndexNames();
         _comboBox = new DCComboBox<String>(names);
         _comboBox.setRenderer(new DCListCellRenderer());
-
-        final SearchIndex currentValue = getCurrentValue();
-        if (currentValue != null) {
-            _comboBox.setSelectedItem(currentValue.getName());
-        } else {
-            _comboBox.setSelectedItem(null);
-        }
-
-        _comboBox.addListener(new Listener<String>() {
-            @Override
-            public void onItemSelected(String item) {
-                fireValueChanged();
-            }
-        });
-
-        final ImageIcon icon = ImageManager.getInstance().getImageIcon("images/search_index.png",
+        
+        final ImageIcon createIcon = ImageManager.getInstance().getImageIcon("images/search_index.png",
                 IconUtils.ICON_SIZE_MEDIUM, getClass().getClassLoader());
-        final JButton button = new JButton("Configure indices", icon);
-        button.addActionListener(new ActionListener() {
+        _createButton = new JButton("Create index", createIcon);
+        _createButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final ConfigureSearchIndicesDialog dialog = new ConfigureSearchIndicesDialog(_windowContext, _catalog,
@@ -91,12 +80,47 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
                 dialog.open();
             }
         });
+        
+        _removeButton = WidgetFactory.createSmallButton("images/actions/remove.png");
+        _removeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                final String indexName = _comboBox.getSelectedItem();
+                if (indexName == null) {
+                    return;
+                }
+                final SearchIndex index = _catalog.getSearchIndex(indexName);
+                if (index == null) {
+                    return;
+                }
+                _catalog.removeSearchIndex(index);
+            }
+        });
+
+        _comboBox.addListener(new Listener<String>() {
+            @Override
+            public void onItemSelected(String item) {
+                boolean itemSelected = item != null;
+                _removeButton.setEnabled(itemSelected);
+                fireValueChanged();
+            }
+        });
+
+        final SearchIndex currentValue = getCurrentValue();
+        if (currentValue != null) {
+            _comboBox.setSelectedItem(currentValue.getName());
+        } else {
+            _comboBox.setSelectedItem(null);
+            _removeButton.setEnabled(false);
+        }
 
         final DCPanel panel = new DCPanel();
         panel.setLayout(new HorizontalLayout());
         panel.add(_comboBox);
         panel.add(Box.createHorizontalStrut(4));
-        panel.add(button);
+        panel.add(_createButton);
+        panel.add(Box.createHorizontalStrut(4));
+        panel.add(_removeButton);
         add(panel);
     }
 

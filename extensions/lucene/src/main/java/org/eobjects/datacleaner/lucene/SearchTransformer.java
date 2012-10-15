@@ -34,6 +34,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Convertable;
 import org.eobjects.analyzer.beans.api.Description;
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 @TransformerBean("Search Lucene index")
 @Description("Searches a Lucene search index and returns the top result, if any.")
+@Categorized(LuceneSearchCategory.class)
 public class SearchTransformer implements Transformer<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchTransformer.class);

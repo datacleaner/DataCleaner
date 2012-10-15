@@ -28,7 +28,6 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.lucene.DefaultSearchIndexCatalog;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
 import org.eobjects.datacleaner.lucene.SearchTransformer;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
@@ -62,7 +61,7 @@ public class LuceneTransformerJobBuilderRenderer implements
 
     @Override
     public TransformerJobBuilderPresenter render(TransformerJobBuilder<SearchTransformer> tjb) {
-        final SearchIndexCatalog catalog = new DefaultSearchIndexCatalog(userPreferences);
+        final SearchIndexCatalog catalog = SearchIndexCatalogFactory.getInstance(userPreferences);
 
         final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
                 PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, tjb).getInstance(PropertyWidgetFactory.class);

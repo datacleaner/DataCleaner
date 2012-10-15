@@ -20,6 +20,8 @@
 package org.eobjects.datacleaner.lucene;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,6 +37,7 @@ public class DefaultSearchIndexCatalog implements SearchIndexCatalog {
 
     private static final String PROPERTY_PREFIX = "datacleaner.lucene.";
 
+    private final List<SearchIndexListener> _listeners;
     private final Map<String, SearchIndex> _searchIndices;
     private final Map<String, String> _properties;
 
@@ -45,6 +48,7 @@ public class DefaultSearchIndexCatalog implements SearchIndexCatalog {
     protected DefaultSearchIndexCatalog(Map<String, String> properties) {
         _properties = properties;
         _searchIndices = new TreeMap<String, SearchIndex>();
+        _listeners = new ArrayList<SearchIndexListener>(3);
 
         initialize();
     }
@@ -104,6 +108,22 @@ public class DefaultSearchIndexCatalog implements SearchIndexCatalog {
     public void addSearchIndex(SearchIndex searchIndex) {
         _searchIndices.put(searchIndex.getName(), searchIndex);
         updateMap();
+
+        // inform listeners
+        for (SearchIndexListener listener : _listeners) {
+            listener.onAdd(searchIndex);
+        }
+    }
+
+    @Override
+    public void removeSearchIndex(SearchIndex searchIndex) {
+        _searchIndices.remove(searchIndex.getName());
+        updateMap();
+
+        // inform listeners
+        for (SearchIndexListener listener : _listeners) {
+            listener.onRemove(searchIndex);
+        }
     }
 
     private void updateMap() {
@@ -119,5 +139,15 @@ public class DefaultSearchIndexCatalog implements SearchIndexCatalog {
 
             i++;
         }
+    }
+
+    @Override
+    public void addListener(SearchIndexListener listener) {
+        _listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(SearchIndexListener listener) {
+        _listeners.remove(listener);
     }
 }

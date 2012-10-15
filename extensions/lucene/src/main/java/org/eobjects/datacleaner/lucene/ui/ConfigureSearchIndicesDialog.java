@@ -19,12 +19,26 @@
  */
 package org.eobjects.datacleaner.lucene.ui;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JToolBar;
 
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.lucene.SearchIndex;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.IconUtils;
+import org.eobjects.datacleaner.util.ImageManager;
+import org.eobjects.datacleaner.util.WidgetFactory;
+import org.eobjects.datacleaner.util.WidgetUtils;
+import org.eobjects.datacleaner.widgets.DCComboBox;
+import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 import org.eobjects.datacleaner.windows.AbstractDialog;
 
 /**
@@ -36,12 +50,14 @@ public class ConfigureSearchIndicesDialog extends AbstractDialog {
 
     private final SearchIndexCatalog _catalog;
     private final UserPreferences _userPreferences;
+    private final DCComboBox<String> _comboBox;
 
     public ConfigureSearchIndicesDialog(WindowContext windowContext, SearchIndexCatalog catalog,
-            UserPreferences userPreferences) {
+            UserPreferences userPreferences, DCComboBox<String> comboBox) {
         super(windowContext, Images.BANNER_IMAGE);
         _catalog = catalog;
         _userPreferences = userPreferences;
+        _comboBox = comboBox;
     }
 
     @Override
@@ -61,12 +77,41 @@ public class ConfigureSearchIndicesDialog extends AbstractDialog {
 
     @Override
     protected JComponent getDialogContent() {
-        final CreateSearchIndexPanel createSearchIndexPanel = new CreateSearchIndexPanel(_catalog, _userPreferences);
+        final ConfigureSearchIndexPanel createSearchIndexPanel = new ConfigureSearchIndexPanel(_userPreferences);
 
-        final DCPanel panel = new DCPanel(Images.WATERMARK_IMAGE, 95, 95);
-        panel.setPreferredSize(getDialogWidth(), 400);
+        final ImageIcon saveIcon = ImageManager.getInstance().getImageIcon("images/actions/save.png");
+        final JButton saveButton = WidgetFactory.createButton("Save", saveIcon);
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                final SearchIndex searchIndex = createSearchIndexPanel.createSearchIndex();
+                if (searchIndex == null) {
+                    return;
+                }
+                _catalog.addSearchIndex(searchIndex);
+                _comboBox.setSelectedItem(searchIndex.getName());
+                dispose();
+            }
+        });
 
-        panel.add(createSearchIndexPanel);
+        final CloseableTabbedPane tabbedPane = new CloseableTabbedPane();
+        tabbedPane.addTab("Configure search index", ImageManager.getInstance().getImageIcon(IconUtils.MENU_OPTIONS),
+                createSearchIndexPanel);
+        tabbedPane.setUnclosableTab(0);
+
+        final JToolBar toolBar = WidgetFactory.createToolBar();
+        toolBar.add(WidgetFactory.createToolBarSeparator());
+        toolBar.add(saveButton);
+
+        final DCPanel toolBarPanel = new DCPanel(WidgetUtils.BG_COLOR_DARKEST, WidgetUtils.BG_COLOR_DARKEST);
+        toolBarPanel.setLayout(new BorderLayout());
+        toolBarPanel.add(toolBar, BorderLayout.CENTER);
+
+        final DCPanel panel = new DCPanel();
+        panel.setLayout(new BorderLayout());
+        panel.setPreferredSize(getDialogWidth(), 360);
+        panel.add(tabbedPane, BorderLayout.CENTER);
+        panel.add(toolBarPanel, BorderLayout.SOUTH);
 
         return panel;
     }

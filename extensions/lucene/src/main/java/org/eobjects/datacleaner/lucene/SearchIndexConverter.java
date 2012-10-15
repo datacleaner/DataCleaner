@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import org.eobjects.analyzer.beans.api.Converter;
 import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.datacleaner.lucene.ui.SearchIndexCatalogFactory;
 import org.eobjects.datacleaner.user.UserPreferences;
 
 /**
@@ -36,7 +37,7 @@ public class SearchIndexConverter implements Converter<SearchIndex> {
 
     @Override
     public SearchIndex fromString(Class<?> cls, String str) {
-        final DefaultSearchIndexCatalog catalog = new DefaultSearchIndexCatalog(userPreferences);
+        final SearchIndexCatalog catalog = SearchIndexCatalogFactory.getInstance(userPreferences);
         return catalog.getSearchIndex(str);
     }
 

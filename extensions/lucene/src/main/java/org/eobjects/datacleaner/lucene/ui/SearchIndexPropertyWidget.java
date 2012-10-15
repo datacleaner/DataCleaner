@@ -31,6 +31,7 @@ import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.lucene.SearchIndex;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
+import org.eobjects.datacleaner.lucene.SearchIndexListener;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -45,7 +46,7 @@ import org.jdesktop.swingx.HorizontalLayout;
 /**
  * A {@link PropertyWidget} for selecting a {@link SearchIndex} in a combobox.
  */
-public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchIndex> {
+public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchIndex> implements SearchIndexListener {
 
     private final DCComboBox<String> _comboBox;
     private final SearchIndexCatalog _catalog;
@@ -86,7 +87,7 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
             @Override
             public void actionPerformed(ActionEvent e) {
                 final ConfigureSearchIndicesDialog dialog = new ConfigureSearchIndicesDialog(_windowContext, _catalog,
-                        _userPreferences);
+                        _userPreferences, _comboBox);
                 dialog.open();
             }
         });
@@ -111,5 +112,26 @@ public class SearchIndexPropertyWidget extends AbstractPropertyWidget<SearchInde
             return;
         }
         _comboBox.setSelectedItem(value.getName());
+    }
+
+    @Override
+    protected void onPanelAdd() {
+        super.onPanelAdd();
+        _catalog.addListener(this);
+    }
+
+    protected void onPanelRemove() {
+        super.onPanelRemove();
+        _catalog.removeListener(this);
+    };
+
+    @Override
+    public void onAdd(SearchIndex searchIndex) {
+        _comboBox.addItem(searchIndex.getName());
+    }
+
+    @Override
+    public void onRemove(SearchIndex searchIndex) {
+        _comboBox.removeItem(searchIndex.getName());
     }
 }

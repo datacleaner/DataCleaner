@@ -19,17 +19,14 @@
  */
 package org.eobjects.datacleaner.lucene.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JRadioButton;
 
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.lucene.FileSystemSearchIndex;
-import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
+import org.eobjects.datacleaner.lucene.SearchIndex;
 import org.eobjects.datacleaner.panels.DCPanel;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -42,32 +39,36 @@ import org.jdesktop.swingx.VerticalLayout;
 /**
  * Panel for creating a new search index.
  */
-public class CreateSearchIndexPanel extends DCPanel {
+public class ConfigureSearchIndexPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
+
+    private final UserPreferences _userPreferences;
 
     private final JXTextField _nameTextField;
     private final JXTextField _descriptionTextField;
     private final JRadioButton _storageDatastoreFolderRadio;
     private final JRadioButton _storageTempFolderRadio;
 
-    public CreateSearchIndexPanel(final SearchIndexCatalog catalog, final UserPreferences userPreferences) {
-        super();
-        setTitledBorder("Create new search index");
+    public ConfigureSearchIndexPanel(final UserPreferences userPreferences) {
+        super(Images.WATERMARK_IMAGE, 95, 10);
+        _userPreferences = userPreferences;
+        
+        setTitledBorder("Search index properties");
 
         _nameTextField = WidgetFactory.createTextField("Search index name");
         _descriptionTextField = WidgetFactory.createTextField("Description");
 
         int row = 0;
-        WidgetUtils.addToGridBag(DCLabel.bright("Name:"), this, 0, row);
+        WidgetUtils.addToGridBag(DCLabel.dark("Name:"), this, 0, row);
         WidgetUtils.addToGridBag(_nameTextField, this, 1, row);
 
         row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Description:"), this, 0, row);
-        WidgetUtils.addToGridBag(_descriptionTextField, this, 1,row);
+        WidgetUtils.addToGridBag(DCLabel.dark("Description:"), this, 0, row);
+        WidgetUtils.addToGridBag(_descriptionTextField, this, 1, row);
 
         row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Storage:"), this, 0, row);
+        WidgetUtils.addToGridBag(DCLabel.dark("Storage:"), this, 0, row);
         _storageDatastoreFolderRadio = new JRadioButton("DataCleaner's datastore folder", true);
         _storageDatastoreFolderRadio.setOpaque(false);
         _storageTempFolderRadio = new JRadioButton("My computer's temp folder", false);
@@ -82,32 +83,26 @@ public class CreateSearchIndexPanel extends DCPanel {
         final ButtonGroup group = new ButtonGroup();
         group.add(_storageDatastoreFolderRadio);
         group.add(_storageTempFolderRadio);
-
-        row++;
-        JButton saveButton = new JButton("Save");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                final String name = _nameTextField.getText();
-                if (StringUtils.isNullOrEmpty(name)) {
-                    WidgetUtils.showErrorMessage("No search index name", "Please fill in a search index name!", null);
-                    return;
-                }
-
-                final File parentFolder;
-                if (_storageDatastoreFolderRadio.isSelected()) {
-                    parentFolder = userPreferences.getSaveDatastoreDirectory();
-                } else {
-                    parentFolder = FileHelper.getTempDir();
-                }
-                final File folder = new File(parentFolder, "lucene." + name);
-                folder.mkdir();
-
-                FileSystemSearchIndex searchIndex = new FileSystemSearchIndex(name, folder);
-                catalog.addSearchIndex(searchIndex);
-            }
-        });
-        WidgetUtils.addToGridBag(saveButton, this, 1, row);
+        
     }
 
+    public SearchIndex createSearchIndex() {
+        final String name = _nameTextField.getText();
+        if (StringUtils.isNullOrEmpty(name)) {
+            WidgetUtils.showErrorMessage("No search index name", "Please fill in a search index name!", null);
+            return null;
+        }
+
+        final File parentFolder;
+        if (_storageDatastoreFolderRadio.isSelected()) {
+            parentFolder = _userPreferences.getSaveDatastoreDirectory();
+        } else {
+            parentFolder = FileHelper.getTempDir();
+        }
+        final File folder = new File(parentFolder, "lucene." + name);
+        folder.mkdirs();
+
+        final FileSystemSearchIndex searchIndex = new FileSystemSearchIndex(name, folder);
+        return searchIndex;
+    }
 }

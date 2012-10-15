@@ -19,20 +19,9 @@
  */
 package org.eobjects.datacleaner.lucene;
 
-/**
- * Represents a catalog of all registered {@link SearchIndex} objects.
- */
-public interface SearchIndexCatalog {
-    
-    public void addListener(SearchIndexListener listener);
-    
-    public void removeListener(SearchIndexListener listener);
+public interface SearchIndexListener {
 
-    public String[] getSearchIndexNames();
-
-    public SearchIndex getSearchIndex(String name);
-
-    public void addSearchIndex(SearchIndex searchIndex);
+    public void onAdd(SearchIndex searchIndex);
     
-    public void removeSearchIndex(SearchIndex searchIndex);
+    public void onRemove(SearchIndex searchIndex);
 }

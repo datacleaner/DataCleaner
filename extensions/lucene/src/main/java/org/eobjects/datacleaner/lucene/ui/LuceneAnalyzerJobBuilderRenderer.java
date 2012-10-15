@@ -27,7 +27,6 @@ import org.eobjects.analyzer.beans.api.RendererPrecedence;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
-import org.eobjects.datacleaner.lucene.DefaultSearchIndexCatalog;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
 import org.eobjects.datacleaner.lucene.WriteSearchIndexAnalyzer;
 import org.eobjects.datacleaner.panels.AnalyzerJobBuilderPresenter;
@@ -58,7 +57,7 @@ public class LuceneAnalyzerJobBuilderRenderer implements
 
     @Override
     public AnalyzerJobBuilderPresenter render(AnalyzerJobBuilder<WriteSearchIndexAnalyzer> ajb) {
-        final SearchIndexCatalog catalog = new DefaultSearchIndexCatalog(userPreferences);
+        final SearchIndexCatalog catalog = SearchIndexCatalogFactory.getInstance(userPreferences);
 
         final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(
                 PropertyWidgetFactory.TYPELITERAL_BEAN_JOB_BUILDER, ajb).getInstance(PropertyWidgetFactory.class);

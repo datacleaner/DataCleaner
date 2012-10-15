@@ -43,10 +43,14 @@ public class JsfHelper {
         return datastore instanceof JdbcDatastore;
     }
 
-    public boolean isFileFound(FileDatastore datastore) {
-        String filename = datastore.getFilename();
-        File file = new File(filename);
-        return file.exists();
+    public boolean isFileFound(Datastore datastore) {
+        if (datastore instanceof FileDatastore) {
+            String filename = ((FileDatastore) datastore).getFilename();
+            File file = new File(filename);
+            return file.exists();
+        } else {
+            return false;
+        }
     }
 
     public boolean isCompositeDatastore(Datastore datastore) {

@@ -26,7 +26,7 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.lucene.SearchIndex;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
-import org.eobjects.datacleaner.lucene.SearchTransformer;
+import org.eobjects.datacleaner.lucene.SearchToMapTransformer;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPanel;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -43,7 +43,7 @@ public class LuceneTransformerJobBuilderPanel extends TransformerJobBuilderPanel
     private final SearchIndexCatalog _catalog;
     private final UserPreferences _userPreferences;
 
-    public LuceneTransformerJobBuilderPanel(TransformerJobBuilder<SearchTransformer> tjb,
+    public LuceneTransformerJobBuilderPanel(TransformerJobBuilder<SearchToMapTransformer> tjb,
             PropertyWidgetFactory propertyWidgetFactory, SearchIndexCatalog catalog, WindowContext windowContext,
             AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
         super(Images.WATERMARK_IMAGE, 95, 95, tjb, windowContext, propertyWidgetFactory, configuration);

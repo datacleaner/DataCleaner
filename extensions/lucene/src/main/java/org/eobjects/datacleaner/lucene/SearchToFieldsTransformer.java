@@ -48,12 +48,12 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TransformerBean("Search Lucene index")
-@Description("Searches a Lucene search index and returns the top result, if any.")
+@TransformerBean("Search Lucene index (return fields)")
+@Description("Searches a Lucene search index and returns the top result, if any. This transformer returns the individually found fields, but they must be specified up-front of the search.")
 @Categorized(LuceneSearchCategory.class)
-public class SearchTransformer implements Transformer<Object> {
+public class SearchToFieldsTransformer implements Transformer<Object> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchTransformer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SearchToFieldsTransformer.class);
 
     @Configured
     @Description("Column containing search term(s) to fire.")
@@ -64,13 +64,25 @@ public class SearchTransformer implements Transformer<Object> {
     @Description("Search index to fire searches on.")
     SearchIndex searchIndex;
 
+    @Configured
+    @Description("Document fields to resolve in the search results.")
+    String[] fields;
+
     private IndexSearcher indexSearcher;
-    
 
     @Override
     public OutputColumns getOutputColumns() {
-        final String[] columnNames = new String[] { "Search result", "Score" };
-        final Class<?>[] columnTypes = new Class[] { Map.class, Number.class };
+        final String[] columnNames = new String[fields.length + 1];
+        columnNames[columnNames.length - 1] = "Score";
+
+        final Class<?>[] columnTypes = new Class[fields.length + 1];
+        columnTypes[columnTypes.length - 1] = Number.class;
+        
+        for (int i = 0; i < fields.length; i++) {
+            columnNames[i] = fields[i];
+            columnTypes[i] = String.class;
+        }
+        
         return new OutputColumns(columnNames, columnTypes);
     }
 
@@ -81,8 +93,9 @@ public class SearchTransformer implements Transformer<Object> {
 
     @Override
     public Object[] transform(InputRow row) {
-        final Object[] result = new Object[2];
-        result[1] = 0;
+        final Object[] result = new Object[fields.length + 1];
+        final int scoreIndex = result.length - 1;
+        result[scoreIndex] = 0; // initial score
 
         final String searchText = row.getValue(searchInput);
 
@@ -90,14 +103,14 @@ public class SearchTransformer implements Transformer<Object> {
             return result;
         }
 
-        Query query;
+        final Query query;
         try {
             final Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
             final QueryParser queryParser = new QueryParser(Constants.VERSION, Constants.SEARCH_FIELD_NAME, analyzer);
             query = queryParser.parse(searchText);
         } catch (ParseException e) {
             logger.error("An error occurred while parsing query: " + searchText, e);
-            result[1] = -1;
+            result[scoreIndex] = -1;
             return result;
         }
 
@@ -121,8 +134,10 @@ public class SearchTransformer implements Transformer<Object> {
             throw new IllegalStateException("Fetching document from index threw exception", e);
         }
 
-        result[0] = toMap(document);
-        result[1] = scoreDoc.score;
+        for (int i = 0; i < fields.length; i++) {
+            result[i] = document.get(fields[i]);
+        }
+        result[scoreIndex] = scoreDoc.score;
 
         return result;
     }

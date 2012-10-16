@@ -90,14 +90,14 @@ public class LuceneIntegrationTest extends TestCase {
 
         final Document document = reader.document(0);
         assertEquals("[Atelier graphique]", Arrays.toString(document.getValues("name")));
-        assertEquals("{name=Atelier graphique, country=France, phone=40.32.2555}", SearchTransformer.toMap(document)
+        assertEquals("{name=Atelier graphique, country=France, phone=40.32.2555}", SearchToMapTransformer.toMap(document)
                 .toString());
         assertEquals("{name=Signal Gift Stores, country=USA, phone=7025551838}",
-                SearchTransformer.toMap(reader.document(1)).toString());
-        assertEquals("{name=Australian Collectors, Co., country=Australia, phone=03 9520 4555}", SearchTransformer
+                SearchToMapTransformer.toMap(reader.document(1)).toString());
+        assertEquals("{name=Australian Collectors, Co., country=Australia, phone=03 9520 4555}", SearchToMapTransformer
                 .toMap(reader.document(2)).toString());
         assertEquals("{name=La Rochelle Gifts, country=France, phone=40.67.8555}",
-                SearchTransformer.toMap(reader.document(3)).toString());
+                SearchToMapTransformer.toMap(reader.document(3)).toString());
     }
 
     private Map<String, ?> createSearchInput(String text) {
@@ -111,8 +111,8 @@ public class LuceneIntegrationTest extends TestCase {
         analysisJobBuilder.setDatastore("searches");
         analysisJobBuilder.addSourceColumns("searchinput");
 
-        final TransformerJobBuilder<SearchTransformer> transformer = analysisJobBuilder
-                .addTransformer(SearchTransformer.class);
+        final TransformerJobBuilder<SearchToMapTransformer> transformer = analysisJobBuilder
+                .addTransformer(SearchToMapTransformer.class);
         transformer.getConfigurableBean().searchIndex = searchIndex;
         transformer.addInputColumns(analysisJobBuilder.getSourceColumns());
         transformer.getOutputColumns().get(0).setName("out1");

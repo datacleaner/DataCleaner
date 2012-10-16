@@ -26,7 +26,7 @@ import org.apache.lucene.util.Version;
  */
 interface Constants {
 
-    public static final Version VERSION = Version.LUCENE_36;
+    public static final Version VERSION = Version.LUCENE_40;
     
     public static final String SEARCH_FIELD_NAME = "datacleaner_search_field";
 }

@@ -22,8 +22,8 @@ package org.eobjects.datacleaner.lucene;
 import java.io.IOException;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.SimpleAnalyzer;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.IndexSearcher;
@@ -44,9 +44,9 @@ public abstract class AbstractSearchIndex extends AbstractReferenceData implemen
 
     protected abstract Directory getDirectory();
 
-    protected final IndexReader getIndexReader() {
+    protected final DirectoryReader getIndexReader() {
         try {
-            final IndexReader reader = IndexReader.open(getDirectory());
+            final DirectoryReader reader = DirectoryReader.open(getDirectory());
             return reader;
         } catch (IOException e) {
             throw new IllegalStateException("Could not read from directory", e);
@@ -55,8 +55,8 @@ public abstract class AbstractSearchIndex extends AbstractReferenceData implemen
 
     @Override
     public IndexSearcher getSearcher() {
-        final IndexReader indexReader = getIndexReader();
-        return new IndexSearcher(indexReader);
+        final DirectoryReader reader = getIndexReader();
+        return new IndexSearcher(reader);
     }
 
     @Override

@@ -1,10 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
 		<artifactId>DataCleaner-extensions</artifactId>
 		<version>3.1-SNAPSHOT</version>
 	</parent>
+	<properties>
+		<lucene.version>4.0.0</lucene.version>
+	</properties>
 	<artifactId>DataCleaner-lucene</artifactId>
 	<packaging>jar</packaging>
 	<name>DataCleaner - 'lucene search' extension</name>
@@ -44,10 +48,19 @@
 		</dependency>
 
 		<dependency>
-			<!-- Include Lucene core -->
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>3.6.0</version>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>${lucene.version}</version>
 		</dependency>
 
 		<!-- Test dependencies -->

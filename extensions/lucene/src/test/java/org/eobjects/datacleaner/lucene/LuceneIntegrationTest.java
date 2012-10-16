@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.DirectoryReader;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.connection.Datastore;
@@ -86,7 +86,7 @@ public class LuceneIntegrationTest extends TestCase {
 
     private void runSearchIndexAssertions(SearchIndex searchIndex) throws CorruptIndexException, IOException {
         final AbstractSearchIndex abstractSearchIndex = (AbstractSearchIndex) searchIndex;
-        final IndexReader reader = abstractSearchIndex.getIndexReader();
+        final DirectoryReader reader = abstractSearchIndex.getIndexReader();
 
         final Document document = reader.document(0);
         assertEquals("[Atelier graphique]", Arrays.toString(document.getValues("name")));
@@ -146,7 +146,7 @@ public class LuceneIntegrationTest extends TestCase {
         assertEquals("[Foobar, null, 0]", Arrays.toString(list.get(1)));
         assertEquals("[Rochelle France, {name=La Rochelle Gifts, country=France, phone=40.67.8555}, 3.0850117]",
                 Arrays.toString(list.get(2)));
-        assertEquals("[Land of Toys Inc., {name=Land of Toys Inc., country=USA, phone=2125557818}, 3.7473693]",
+        assertEquals("[Land of Toys Inc., {name=Land of Toys Inc., country=USA, phone=2125557818}, 3.7473695]",
                 Arrays.toString(list.get(3)));
         assertEquals("[Signal Gift Stores, {name=Signal Gift Stores, country=USA, phone=7025551838}, 3.5396461]",
                 Arrays.toString(list.get(4)));

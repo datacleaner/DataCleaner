@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -129,9 +129,9 @@ public class SearchTransformer implements Transformer<Object> {
 
     protected static Map<String, String> toMap(Document document) {
         final Map<String, String> result = new LinkedHashMap<String, String>();
-        final List<Fieldable> fields = document.getFields();
-        for (Fieldable fieldable : fields) {
-            final String name = fieldable.name();
+        final List<IndexableField> fields = document.getFields();
+        for (IndexableField field : fields) {
+            final String name = field.name();
             final String value = document.get(name);
             result.put(name, value);
         }

@@ -23,6 +23,8 @@ import java.util.Iterator;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.eobjects.metamodel.util.Action;
 
@@ -63,12 +65,11 @@ final class WriteSearchIndexAction implements Action<Iterable<Object[]>> {
                             }
                             searchText.append(stringValue);
 
-                            doc.add(new Field(field, stringValue, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                            doc.add(new StringField(field, stringValue, Field.Store.YES));
                         }
                     }
 
-                    doc.add(new Field(Constants.SEARCH_FIELD_NAME, searchText.toString(), Field.Store.NO,
-                            Field.Index.ANALYZED));
+                    doc.add(new TextField(Constants.SEARCH_FIELD_NAME, searchText.toString(), Field.Store.NO));
 
                     writer.addDocument(doc);
                 }

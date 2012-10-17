@@ -47,72 +47,88 @@ public class MetricValueUtils {
             final MetricIdentifier metricIdentifier) {
         AnalyzerResult result = analysisResult.getResult(analyzerJob);
         if (result == null) {
-            logger.info("Could not resolve AnalyzerResult using key={}, reiterating using non-exact matching",
+            logger.debug("Could not resolve AnalyzerResult using key={}, reiterating using non-exact matching",
                     analyzerJob);
-
-            Collection<ComponentJob> componentJobs = analysisResult.getResultMap().keySet();
-
-            List<AnalyzerJob> candidates = CollectionUtils2.filterOnClass(componentJobs, AnalyzerJob.class);
-
-            // filter analyzers of the corresponding type
-            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final String actualDescriptorName = o.getDescriptor().getDisplayName();
-                    final String metricDescriptorName = analyzerJob.getDescriptor().getDisplayName();
-                    return metricDescriptorName.equals(actualDescriptorName);
-                }
-            });
-
-            final String analyzerJobName = analyzerJob.getName();
-            if (analyzerJobName != null) {
-                // filter analyzers with a particular name
-                candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                    @Override
-                    public Boolean eval(AnalyzerJob o) {
-                        final String actualAnalyzerName = o.getName();
-                        final String metricAnalyzerName = analyzerJobName;
-                        return metricAnalyzerName.equals(actualAnalyzerName);
-                    }
-                });
-            }
-
-            // filter analyzer jobs with same input
-            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final String actualAnalyzerInputNames = CollectionUtils.map(o.getInput(), new HasNameMapper())
-                            .toString();
-                    final String metricAnalyzerInputNames = CollectionUtils.map(analyzerJob.getInput(),
-                            new HasNameMapper()).toString();
-                    return metricAnalyzerInputNames.equals(actualAnalyzerInputNames);
-                }
-            });
-
-            // filter analyzer jobs with input matching the metric
-            final String analyzerInputName = metricIdentifier.getAnalyzerInputName();
-            if (analyzerInputName != null) {
-                candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                    @Override
-                    public Boolean eval(AnalyzerJob o) {
-                        InputColumn<?> identifyingInputColumn = getIdentifyingInputColumn(o);
-                        if (identifyingInputColumn == null) {
-                            return false;
-                        }
-                        return analyzerInputName.equals(identifyingInputColumn.getName());
-                    }
-                });
-            }
-
-            if (candidates.isEmpty()) {
-                throw new IllegalArgumentException("No matching AnalyzerJobs found");
-            } else if (candidates.size() > 1) {
-                logger.warn("Multiple matching AnalyzerJobs found, selecting the first: {}", candidates);
-            }
-            AnalyzerJob candidate = candidates.iterator().next();
-            result = analysisResult.getResult(candidate);
+            result = getResultFuzzy(analysisResult, analyzerJob, metricIdentifier);
+        } else {
+            logger.debug("Resolved AnalyzerResult using key={}", analyzerJob);
         }
         return result;
+    }
+
+    private AnalyzerResult getResultFuzzy(final AnalysisResult analysisResult, final AnalyzerJob analyzerJob,
+            final MetricIdentifier metricIdentifier) {
+        Collection<ComponentJob> componentJobs = analysisResult.getResultMap().keySet();
+
+        List<AnalyzerJob> candidates = CollectionUtils2.filterOnClass(componentJobs, AnalyzerJob.class);
+
+        // filter analyzers of the corresponding type
+        candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+            @Override
+            public Boolean eval(AnalyzerJob o) {
+                final String actualDescriptorName = o.getDescriptor().getDisplayName();
+                final String metricDescriptorName = analyzerJob.getDescriptor().getDisplayName();
+                return metricDescriptorName.equals(actualDescriptorName);
+            }
+        });
+
+        final String analyzerJobName = analyzerJob.getName();
+        if (analyzerJobName != null) {
+            // filter analyzers with a particular name
+            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+                @Override
+                public Boolean eval(AnalyzerJob o) {
+                    final String actualAnalyzerName = o.getName();
+                    final String metricAnalyzerName = analyzerJobName;
+                    return metricAnalyzerName.equals(actualAnalyzerName);
+                }
+            });
+        }
+
+        // filter analyzer jobs with same input
+        candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+            @Override
+            public Boolean eval(AnalyzerJob o) {
+                final String actualAnalyzerInputNames = CollectionUtils.map(o.getInput(), new HasNameMapper())
+                        .toString();
+                final String metricAnalyzerInputNames = CollectionUtils
+                        .map(analyzerJob.getInput(), new HasNameMapper()).toString();
+                return metricAnalyzerInputNames.equals(actualAnalyzerInputNames);
+            }
+        });
+
+        // filter analyzer jobs with input matching the metric
+        final String analyzerInputName = metricIdentifier.getAnalyzerInputName();
+        if (analyzerInputName != null) {
+            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+                @Override
+                public Boolean eval(AnalyzerJob o) {
+                    InputColumn<?> identifyingInputColumn = getIdentifyingInputColumn(o);
+                    if (identifyingInputColumn == null) {
+                        return false;
+                    }
+                    return analyzerInputName.equals(identifyingInputColumn.getName());
+                }
+            });
+        }
+
+        if (candidates.isEmpty()) {
+            throw new IllegalArgumentException("No matching AnalyzerJobs found");
+        } else if (candidates.size() > 1) {
+            logger.warn("Multiple matching AnalyzerJobs found, selecting the first: {}", candidates);
+        }
+
+        final AnalyzerJob candidate = candidates.iterator().next();
+
+        if (logger.isDebugEnabled()) {
+            int candidateHash = candidate.hashCode();
+            int keyHash = analyzerJob.hashCode();
+            boolean equals = candidate.equals(analyzerJob);
+            logger.debug("Result of fuzzy result lookup: Equals={}, CandidateHash={}, KeyHash={}", new Object[] {
+                    equals, candidateHash, keyHash });
+        }
+
+        return analysisResult.getResult(candidate);
     }
 
     public AnalyzerJob getAnalyzerJob(final MetricIdentifier metricIdentifier, final AnalysisJob analysisJob) {

@@ -96,27 +96,4 @@
 		</para>
 	</section>
 	
-	<section id="repository_uploading_content">
-		<title>Uploading content to the repository</title>
-		<para>Files can be uploaded to the repository using HTTP POST upload requests. The types of uploadable files are:</para>
-		
-		<orderedlist>
-			<listitem>
-				<para><emphasis>DataCleaner jobs (.analysis.xml files)</emphasis>, which are uploaded using this URL template:</para>
-				<programlisting>POST /DataCleaner-monitor/repository/{tenant}/jobs/{job}.analysis.xml</programlisting>
-				<para>Where the request parameter 'file' is a multi-part file containing the new job file content.</para>
-			</listitem>
-			<listitem>
-				<para><emphasis>DataCleaner results (.analysis.result.dat files)</emphasis>, which are uploaded using this URL template:</para>
-				<programlisting>POST /DataCleaner-monitor/repository/{tenant}/results/{result}.analysis.result.dat</programlisting>
-				<para>Where the request parameter 'file' is a multi-part file containing the new result file content.</para>
-			</listitem>
-			<listitem>
-				<para><emphasis>Configuration (conf.xml file)</emphasis>, which are uploaded using this URL template:</para>
-				<programlisting>POST /DataCleaner-monitor/repository/{tenant}/conf.xml</programlisting>
-				<para>Where the request parameter 'file' is a multi-part file containing the configuration file content.</para>
-			</listitem>
-		</orderedlist>
-	</section>
-
 </chapter>

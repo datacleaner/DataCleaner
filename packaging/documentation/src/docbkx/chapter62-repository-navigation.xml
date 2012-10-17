@@ -14,7 +14,8 @@
 				is of course restricted to the tenant's home folder. Therefore, all
 				these web services are located with URLs starting with the form:
 			</para>
-			<programlisting>/DataCleaner-monitor/repository/DC/...</programlisting>
+			<programlisting>/DataCleaner-monitor/repository/DC/...
+			</programlisting>
 			<para>Where 'DC' is the tenant identifier and 'DataCleaner-monitor'
 				is the web application archive name.
 			</para>
@@ -94,10 +95,103 @@
 		<programlisting>
 			/DataCleaner-monitor/repository/DC/results/Customer&#160;completeness-1345200106074.analysis.result.dat
 		</programlisting>
-		<para>Where 'DC' is the tenant identifier, 'Customer completeness' is the
-			name of the job, '1345200106074' is the timestamp of the result and 'DataCleaner-monitor'
+		<para>Where 'DC' is the tenant identifier, 'Customer completeness' is
+			the
+			name of the job, '1345200106074' is the timestamp of the result
+			and 'DataCleaner-monitor'
 			is the web application archive name.
 		</para>
+	</section>
+
+	<section id="repository_uploading_content">
+		<title>Uploading content to the repository</title>
+		<para>Files can be uploaded to the repository using HTTP POST upload
+			requests. The types of uploadable files are:
+		</para>
+
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>DataCleaner jobs (.analysis.xml files)</emphasis>
+					, which are uploaded using this URL template:
+				</para>
+				<programlisting>POST&#160;/DataCleaner-monitor/repository/{tenant}/jobs/{job}.analysis.xml
+				</programlisting>
+				<para>Where the request parameter 'file' is a multi-part file
+					containing the new job file content.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>DataCleaner results (.analysis.result.dat files)
+					</emphasis>
+					, which are uploaded using this URL template:
+				</para>
+				<programlisting>POST&#160;/DataCleaner-monitor/repository/{tenant}/results/{result}.analysis.result.dat
+				</programlisting>
+				<para>Where the request parameter 'file' is a multi-part file
+					containing the new result file content.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Configuration (conf.xml file)</emphasis>
+					, which are uploaded using this URL template:
+				</para>
+				<programlisting>POST&#160;/DataCleaner-monitor/repository/{tenant}/conf.xml
+				</programlisting>
+				<para>Where the request parameter 'file' is a multi-part file
+					containing the configuration file content.
+				</para>
+			</listitem>
+		</orderedlist>
+	</section>
+
+	<section id="modifying_result_metadata">
+		<title>Modifying result metadata</title>
+		<para>In some cases you can end up having results in the DataCleaner
+			monitor repository which are not correctly configured. Specifically
+			we sometimes see these situations:
+		</para>
+
+		<orderedlist>
+			<listitem>
+				<para>The registered date of the result might not be correct, if the
+					result was created at a later time than the data it represents.
+				</para>
+			</listitem>
+			<listitem>
+				<para>The name of the associated job is wrong, if the result was
+					uploaded from the desktop application but with a reference to a
+					client-side job.
+				</para>
+			</listitem>
+		</orderedlist>
+
+		<para>To fix this situation, there is a result modification web
+			service available. The service requires the ADMIN security role.
+		</para>
+
+		<para>The request URL is the same as the URL for inspecting the
+			result, but where '.analysis.result.dat' is replaced with '.modify':
+		</para>
+
+		<programlisting>
+			POST&#160;/DataCleaner-monitor/repository/{tenant}/results/{result}.modify
+		</programlisting>
+
+		<para>The POST request body needs to be a JSON document, specifying
+			the new metadata for the result file. Here's an example:
+		</para>
+
+		<programlisting lang="json">
+			{
+			&#160;&#160;"job":"name&#160;of&#160;new&#160;job",
+			&#160;&#160;"date":"2012-10-17&#160;21:47:00",
+			&#160;&#160;"overwrite":true
+			}
+		</programlisting>
+
 	</section>
 
 </chapter>

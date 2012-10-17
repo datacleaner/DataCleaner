@@ -82,7 +82,8 @@ public interface RepositoryFolder extends RepositoryNode {
      * 
      * @param name
      *            the name of the file.
-     * @return a file in this folder, by name.
+     * @return a file in this folder, or null if none exist with the specified
+     *         name.
      */
     public RepositoryFile getFile(String name);
 

@@ -31,6 +31,7 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
  *
  */
 public interface MetricValueProducer {
+    
 	public MetricValues getMetricValues(List<MetricIdentifier> metricIdentifiers, RepositoryFile resultFile, TenantIdentifier tenant, JobIdentifier jobIdentifier);
 
 }

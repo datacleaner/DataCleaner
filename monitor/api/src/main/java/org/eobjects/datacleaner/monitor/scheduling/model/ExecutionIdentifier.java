@@ -26,7 +26,7 @@ import java.util.Date;
  * Represents the basic information about an execution. Can be used as a key for
  * retrieving more information in an {@link ExecutionLog} object.
  */
-public class ExecutionIdentifier implements Serializable {
+public class ExecutionIdentifier implements Serializable, Comparable<ExecutionIdentifier> {
 
     private static final long serialVersionUID = 1L;
 
@@ -94,5 +94,45 @@ public class ExecutionIdentifier implements Serializable {
     @Override
     public String toString() {
         return "ExecutionIdentifier[begin=" + _jobBeginDate + ", status=" + _executionStatus + "]";
+    }
+
+    @Override
+    public int compareTo(ExecutionIdentifier o) {
+        if (o == null) {
+            return 1;
+        }
+        if (o == this) {
+            return 0;
+        }
+
+        if (_jobBeginDate != null) {
+            int diff = _jobBeginDate.compareTo(o.getJobBeginDate());
+            if (diff != 0) {
+                return diff;
+            }
+        }
+
+        if (_resultId != null) {
+            int diff = _resultId.compareTo(o.getResultId());
+            if (diff != 0) {
+                return diff;
+            }
+        }
+
+        if (_executionStatus != null) {
+            int diff = _executionStatus.compareTo(o.getExecutionStatus());
+            if (diff != 0) {
+                return diff;
+            }
+        }
+
+        if (_triggerType != null) {
+            int diff = _triggerType.compareTo(o.getTriggerType());
+            if (diff != 0) {
+                return diff;
+            }
+        }
+
+        return 0;
     }
 }

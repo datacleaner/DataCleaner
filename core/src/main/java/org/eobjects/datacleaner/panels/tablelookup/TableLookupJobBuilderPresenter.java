@@ -66,6 +66,7 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 	private final ConfiguredPropertyDescriptor _inputColumnArrayProperty;
 	private final ConfiguredPropertyDescriptor _columnNameArrayProperty;
 	private final ConfiguredPropertyDescriptor _outputColumnsProperty;
+    private final ConfiguredPropertyDescriptor _cacheLookupsProperty;
 
 	public TableLookupJobBuilderPresenter(TransformerJobBuilder<TableLookupTransformer> transformerJobBuilder,
 			WindowContext windowContext, PropertyWidgetFactory propertyWidgetFactory,
@@ -82,6 +83,7 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 		_inputColumnArrayProperty = descriptor.getConfiguredProperty("Condition values");
 		_columnNameArrayProperty = descriptor.getConfiguredProperty("Condition columns");
 		_outputColumnsProperty = descriptor.getConfiguredProperty("Output columns");
+		_cacheLookupsProperty = descriptor.getConfiguredProperty("Cache lookups");
 
 		// the Datastore property
 		assert _datastoreProperty != null;
@@ -154,7 +156,7 @@ class TableLookupJobBuilderPresenter extends TransformerJobBuilderPanel {
 
 		final ConfiguredPropertyTaskPane inputMappingTaskPane = new ConfiguredPropertyTaskPane("Input mapping",
 				"images/model/column.png", Arrays.asList(_datastoreProperty, _schemaNameProperty, _tableNameProperty,
-						_inputColumnArrayProperty));
+						_inputColumnArrayProperty, _cacheLookupsProperty));
 		final ConfiguredPropertyTaskPane outputMappingTaskPane = new ConfiguredPropertyTaskPane("Output mapping",
 				IconUtils.MENU_OPTIONS, Arrays.asList(_outputColumnsProperty));
 		propertyTaskPanes.add(inputMappingTaskPane);

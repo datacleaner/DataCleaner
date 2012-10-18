@@ -101,7 +101,7 @@ final class FileRepositoryFile implements RepositoryFile {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new IllegalStateException("Error occurred while writing to file", e);
+            throw new IllegalStateException("Error occurred while reading from file", e);
         } finally {
             FileHelper.safeClose(inputStream, fileInputStream);
         }

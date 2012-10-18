@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.WriteUpdatedConfigurationFileAction;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,18 +100,15 @@ public class ConfigurationFileController {
         final TenantContext context = _contextFactory.getContext(tenant);
         final RepositoryFile configurationFile = context.getConfigurationFile();
 
-        final InputStream in;
         if (configurationFile == null) {
-            // serve an empty file
-            in = new ByteArrayInputStream(new byte[0]);
-        } else {
-            in = configurationFile.readFile();
+            return;
         }
 
-        try {
-            FileHelper.copy(in, out);
-        } finally {
-            FileHelper.safeClose(in);
-        }
+        configurationFile.readFile(new Action<InputStream>() {
+            @Override
+            public void run(InputStream in) throws Exception {
+                FileHelper.copy(in, out);
+            }
+        });
     }
 }

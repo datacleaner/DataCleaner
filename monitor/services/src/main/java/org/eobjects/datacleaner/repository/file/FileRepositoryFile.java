@@ -25,14 +25,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * {@link RepositoryFile} implementation based on a local file.
@@ -64,7 +69,11 @@ final class FileRepositoryFile implements RepositoryFile {
         return _parent.getQualifiedPath() + "/" + getName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Deprecated
     public InputStream readFile() {
         try {
             final FileInputStream in = new FileInputStream(_file);
@@ -72,6 +81,53 @@ final class FileRepositoryFile implements RepositoryFile {
             return bin;
         } catch (FileNotFoundException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public void readFile(Action<InputStream> readCallback) {
+        final FileInputStream fileInputStream;
+        final InputStream inputStream;
+        try {
+            fileInputStream = new FileInputStream(_file);
+            inputStream = new BufferedInputStream(fileInputStream);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+
+        try {
+            readCallback.run(inputStream);
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new IllegalStateException("Error occurred while writing to file", e);
+        } finally {
+            FileHelper.safeClose(inputStream, fileInputStream);
+        }
+    }
+    
+    @Override
+    public <E> E readFile(Func<InputStream, E> readCallback) {
+        final FileInputStream fileInputStream;
+        final InputStream inputStream;
+        try {
+            fileInputStream = new FileInputStream(_file);
+            inputStream = new BufferedInputStream(fileInputStream);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+
+        try {
+            final E result = readCallback.eval(inputStream);
+            return result;
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new IllegalStateException("Error occurred while writing to file", e);
+        } finally {
+            FileHelper.safeClose(inputStream, fileInputStream);
         }
     }
 
@@ -118,10 +174,16 @@ final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public void delete() throws IllegalStateException {
-        final boolean success = _file.delete();
-        if (!success) {
-            throw new IllegalStateException("Could not delete file: " + _file);
+        Path path = FileSystems.getDefault().getPath(_file.getAbsolutePath());
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
+        // final boolean success = _file.delete();
+        // if (!success) {
+        // throw new IllegalStateException("Could not delete file: " + _file);
+        // }
     }
 
     @Override

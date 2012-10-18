@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.eobjects.metamodel.util.Action;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * Represents a file in the {@link Repository}.
@@ -40,7 +41,10 @@ public interface RepositoryFile extends RepositoryNode {
      * Opens up an {@link InputStream} to read from the file.
      * 
      * @return an {@link InputStream} to read from the file.
+     * @deprecated use {@link #readFile(Action)} or {@link #readFile(Func)}
+     *             instead.
      */
+    @Deprecated
     public InputStream readFile();
 
     /**
@@ -51,6 +55,24 @@ public interface RepositoryFile extends RepositoryNode {
      *            a callback which should define what to write to the file.
      */
     public void writeFile(Action<OutputStream> writeCallback);
+
+    /**
+     * Opens up an {@link InputStream} to read from the file, and allows a
+     * callback to perform writing actions on it.
+     * 
+     * @param readCallback
+     */
+    public void readFile(Action<InputStream> readCallback);
+
+    /**
+     * Opens up an {@link InputStream} to read from the file, and allows a
+     * callback function to perform writing actions on it and return the
+     * function's result.
+     * 
+     * @param readCallback
+     * @return the result of the function
+     */
+    public <E> E readFile(Func<InputStream, E> readCallback);
 
     /**
      * Gets the type of the file.

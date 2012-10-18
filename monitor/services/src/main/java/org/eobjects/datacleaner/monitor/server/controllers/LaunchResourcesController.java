@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.util.ResourceManager;
+import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,15 +101,14 @@ public class LaunchResourcesController {
 
         final ServletOutputStream out = response.getOutputStream();
 
-        final InputStream in = confFile.readFile();
-
-        try {
-            // intercept the input stream to decorate it with client-side config
-            // elements.
-            _configurationInterceptor.intercept(tenant, job, in, out);
-        } finally {
-            FileHelper.safeClose(in);
-        }
+        confFile.readFile(new Action<InputStream>() {
+            @Override
+            public void run(InputStream in) throws Exception {
+                // intercept the input stream to decorate it with client-side
+                // config elements.
+                _configurationInterceptor.intercept(tenant, job, in, out);
+            }
+        });
     }
 
     @RequestMapping(value = "/{filename:.+}.jar")

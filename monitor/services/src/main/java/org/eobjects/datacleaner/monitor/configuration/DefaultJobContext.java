@@ -30,7 +30,9 @@ import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.datacleaner.monitor.server.MonitorJobReader;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * Default {@link JobContext} implementation. This implementation caches the
@@ -120,29 +122,30 @@ class DefaultJobContext implements JobContext {
                 lastModified = _file.getLastModified();
                 if (_sourceDatastoreName == null || lastModified != _lastModifiedCache) {
                     final AnalyzerBeansConfiguration configuration = _context.getConfiguration();
-                    final JaxbJobReader jobReader = new JaxbJobReader(configuration);
-                    final InputStream in = _file.readFile();
-                    try {
-                        AnalysisJobMetadata metadata = jobReader.readMetadata(in);
-                        _sourceDatastoreName = metadata.getDatastoreName();
-                        _sourceColumnPaths = metadata.getSourceColumnPaths();
-                        _variables = metadata.getVariables();
-                    } finally {
-                        FileHelper.safeClose(in);
-                    }
+                    final AnalysisJobMetadata metadata = _file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
+                        @Override
+                        public AnalysisJobMetadata eval(InputStream in) {
+                            final JaxbJobReader jobReader = new JaxbJobReader(configuration);
+                            AnalysisJobMetadata metadata = jobReader.readMetadata(in);
+                            return metadata;
+                        }
+                    });
+                    _sourceDatastoreName = metadata.getDatastoreName();
+                    _sourceColumnPaths = metadata.getSourceColumnPaths();
+                    _variables = metadata.getVariables();
                 }
             }
         }
     }
 
     @Override
-    public void toXml(OutputStream out) {
-        final InputStream in = _file.readFile();
-        try {
-            FileHelper.copy(in, out);
-        } finally {
-            FileHelper.safeClose(in);
-        }
+    public void toXml(final OutputStream out) {
+        _file.readFile(new Action<InputStream>() {
+            @Override
+            public void run(InputStream in) throws Exception {
+                FileHelper.copy(in, out);
+            }
+        });
     }
 
     @Override

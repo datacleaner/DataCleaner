@@ -56,7 +56,6 @@ import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
 import org.quartz.CronExpression;
 import org.quartz.JobDataMap;
@@ -159,7 +158,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         return schedules;
     }
 
-    private ScheduleDefinition getSchedule(TenantIdentifier tenant, String jobName) {
+    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final String jobName) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final JobContext jobContext = context.getJob(jobName);
@@ -177,12 +176,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         if (scheduleFile == null) {
             schedule = new ScheduleDefinition(tenant, jobIdentifier, datastoreIdentifier);
         } else {
-            final InputStream inputStream = scheduleFile.readFile();
-            try {
-                schedule = reader.read(inputStream, jobIdentifier, tenant, datastoreIdentifier);
-            } finally {
-                FileHelper.safeClose(inputStream);
-            }
+            schedule = scheduleFile.readFile(new Func<InputStream, ScheduleDefinition>() {
+                @Override
+                public ScheduleDefinition eval(InputStream inputStream) {
+                    return reader.read(inputStream, jobIdentifier, tenant, datastoreIdentifier);
+                }
+            });
         }
 
         return schedule;
@@ -370,12 +369,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 new Func<RepositoryFile, ExecutionIdentifier>() {
                     @Override
                     public ExecutionIdentifier eval(RepositoryFile file) {
-                        InputStream in = file.readFile();
-                        try {
-                            return SaxExecutionIdentifierReader.read(in);
-                        } finally {
-                            FileHelper.safeClose(in);
-                        }
+                        ExecutionIdentifier result = file.readFile(new Func<InputStream, ExecutionIdentifier>() {
+                            @Override
+                            public ExecutionIdentifier eval(InputStream in) {
+                                return SaxExecutionIdentifierReader.read(in);
+                            }
+                        });
+                        return result;
                     }
                 });
 
@@ -404,28 +404,36 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant,
             final int retries) {
         final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
-        final InputStream in = file.readFile();
-        try {
-            return reader.read(in, tenant);
-        } catch (JaxbException e) {
-            if (retries > 0) {
-                logger.debug("Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
-            } else {
-                logger.info("Failed to read execution log, returning unknown status.");
-                final ExecutionLog executionLog = new ExecutionLog(null, null);
-                executionLog.setExecutionStatus(ExecutionStatus.UNKNOWN);
-                return executionLog;
+        
+        final ExecutionLog result = file.readFile(new Func<InputStream,ExecutionLog>() {
+            @Override
+            public ExecutionLog eval(InputStream in) {
+                try {
+                    return reader.read(in, tenant);
+                } catch (JaxbException e) {
+                    if (retries > 0) {
+                        logger.debug("Failed to read execution log in first pass. This could be because it is also being written at this time. Retrying.");
+                        return null;
+                    } else {
+                        logger.info("Failed to read execution log, returning unknown status.");
+                        final ExecutionLog executionLog = new ExecutionLog(null, null);
+                        executionLog.setExecutionStatus(ExecutionStatus.UNKNOWN);
+                        return executionLog;
+                    }
+                }
+            }});
+        
+        if (result == null) {
+            // retry
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // do nothing
             }
-        } finally {
-            FileHelper.safeClose(in);
+            return readExecutionLogFile(file, tenant, retries - 1);
         }
-
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            // do nothing
-        }
-        return readExecutionLogFile(file, tenant, retries - 1);
+        
+        return result;
     }
 
     @Override

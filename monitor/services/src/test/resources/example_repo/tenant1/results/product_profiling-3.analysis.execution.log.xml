@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:execution-log xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/execution-log/1.0" xmlns:ns4="http://eobjects.org/datacleaner/timeline/1.0">
+    <ns3:result-id>product_profiling-3</ns3:result-id>
+    <ns3:job-begin-date>2012-09-05T16:13:56.869+02:00</ns3:job-begin-date>
+    <ns3:job-end-date>2012-09-05T16:13:57.335+02:00</ns3:job-end-date>
+    <ns3:execution-status>SUCCESS</ns3:execution-status>
+    <ns3:trigger-type>MANUAL</ns3:trigger-type>
+    <ns3:triggered-by>admin</ns3:triggered-by>
+    <schedule>
+        <alerts/>
+    </schedule>
+    <ns3:log-output>FOO</ns3:log-output>
+</ns3:execution-log>

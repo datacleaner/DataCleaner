@@ -28,7 +28,7 @@ import org.eobjects.analyzer.configuration.jaxb.Configuration;
 import org.eobjects.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * Writes an updated conf.xml file to the repository. This is used by taking the
@@ -45,12 +45,13 @@ public class WriteUpdatedConfigurationFileAction extends AbstractJaxbAdaptor<Con
             RepositoryFile existingConfigurationFile) throws JAXBException {
         super(Configuration.class);
         _updatedConfigurationInputStream = updatedConfigurationInputStream;
-        final InputStream in = existingConfigurationFile.readFile();
-        try {
-            _existingConfiguration = unmarshal(in);
-        } finally {
-            FileHelper.safeClose(in);
-        }
+
+        _existingConfiguration = existingConfigurationFile.readFile(new Func<InputStream, Configuration>() {
+            @Override
+            public Configuration eval(InputStream in) {
+                return unmarshal(in);
+            }
+        });
     }
 
     @Override

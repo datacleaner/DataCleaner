@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.monitor.server.jaxb.JaxbConfigurationInterceptor
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
+import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Ref;
 
@@ -116,7 +117,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         }
     }
 
-    private String generationConf(JobContext job) throws Exception {
+    private String generationConf(final JobContext job) throws Exception {
 
         final Ref<Calendar> dateRef = new Ref<Calendar>() {
             @Override
@@ -139,10 +140,15 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
         final FileRepository repo = new FileRepository("src/test/resources/example_repo");
         final RepositoryFile file = (RepositoryFile) repo.getRepositoryNode("/tenant1/conf.xml");
-        final InputStream in = file.readFile();
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        interceptor.intercept("tenant1", job, in, out);
+        
+        file.readFile(new Action<InputStream>() {
+            @Override
+            public void run(InputStream in) throws Exception {
+                interceptor.intercept("tenant1", job, in, out);
+            }
+        });
 
         final String actual = new String(out.toByteArray(), "UTF-8").trim();
         return actual;

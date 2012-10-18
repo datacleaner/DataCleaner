@@ -30,7 +30,7 @@ import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
-import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * Caches configuration objects for a tenant in order to avoid recreating it
@@ -88,7 +88,7 @@ final class ConfigurationCache {
                 if (isAbsolute(filename)) {
                     return filename;
                 }
-                
+
                 if (_tenantFolder instanceof FileRepositoryFolder) {
                     File file = ((FileRepositoryFolder) _tenantFolder).getFile();
                     return file.getAbsolutePath() + File.separatorChar + filename;
@@ -96,24 +96,28 @@ final class ConfigurationCache {
                 // TODO: What about other non-file based repos?
                 return super.createFilename(filename);
             }
-            
+
             @Override
             public AnalyzerBeansConfigurationImpl createBaseConfiguration() {
                 return new AnalyzerBeansConfigurationImpl(_injectionManagerFactory);
             }
         });
-        final InputStream inputStream = getConfigurationFile().readFile();
-        try {
-            final AnalyzerBeansConfiguration readConfiguration = reader.read(inputStream);
-            return readConfiguration;
-        } finally {
-            FileHelper.safeClose(inputStream);
-        }
+        
+        final RepositoryFile configurationFile = getConfigurationFile();
+        final AnalyzerBeansConfiguration readConfiguration = configurationFile.readFile(
+                new Func<InputStream, AnalyzerBeansConfiguration>() {
+                    @Override
+                    public AnalyzerBeansConfiguration eval(InputStream inputStream) {
+                        final AnalyzerBeansConfiguration readConfiguration = reader.read(inputStream);
+                        return readConfiguration;
+                    }
+                });
+        return readConfiguration;
     }
 
     private boolean isAbsolute(String filename) {
         assert filename != null;
-        
+
         File file = new File(filename);
         return file.isAbsolute();
     }

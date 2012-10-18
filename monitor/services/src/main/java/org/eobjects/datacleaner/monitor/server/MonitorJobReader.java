@@ -33,7 +33,7 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.schema.ColumnType;
-import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * A component that reads jobs for the monitor web app without starting a live
@@ -50,33 +50,30 @@ public class MonitorJobReader {
         _configuration = configuration;
         _jobFile = jobFile;
     }
-    
+
     public AnalysisJob readJob() {
         return readJob(null);
     }
 
-    public AnalysisJob readJob(Map<String, String> variableOverrides) {
+    public AnalysisJob readJob(final Map<String, String> variableOverrides) {
         final JaxbJobReader jobReader = new JaxbJobReader(_configuration);
 
         // read metadata
-        final AnalysisJobMetadata metadata;
-        {
-            final InputStream inputStream = _jobFile.readFile();
-            try {
-                metadata = jobReader.readMetadata(inputStream);
-            } finally {
-                FileHelper.safeClose(inputStream);
+        final AnalysisJobMetadata metadata = _jobFile.readFile(new Func<InputStream, AnalysisJobMetadata>() {
+            @Override
+            public AnalysisJobMetadata eval(InputStream in) {
+                return jobReader.readMetadata(in);
             }
-        }
-        
+        });
+
         final String datastoreName = metadata.getDatastoreName();
         final Datastore datastore = _configuration.getDatastoreCatalog().getDatastore(datastoreName);
 
         // read job
-        final AnalysisJobBuilder jobBuilder;
-        {
-            final InputStream inputStream = _jobFile.readFile();
-            try {
+        final AnalysisJobBuilder jobBuilder = _jobFile.readFile(new Func<InputStream, AnalysisJobBuilder>() {
+            @Override
+            public AnalysisJobBuilder eval(InputStream inputStream) {
+                final AnalysisJobBuilder jobBuilder;
                 if (datastore == null) {
                     final List<String> sourceColumnPaths = metadata.getSourceColumnPaths();
                     final List<ColumnType> sourceColumnTypes = metadata.getSourceColumnTypes();
@@ -91,15 +88,14 @@ public class MonitorJobReader {
                         throw new IllegalStateException("Not all column mapping satisfied. Missing: "
                                 + sourceColumnMapping.getUnmappedPaths());
                     }
-                    
+
                     jobBuilder = jobReader.create(inputStream, sourceColumnMapping, variableOverrides);
                 } else {
                     jobBuilder = jobReader.create(inputStream, variableOverrides);
                 }
-            } finally {
-                FileHelper.safeClose(inputStream);
+                return jobBuilder;
             }
-        }
+        });
 
         final AnalysisJob job = jobBuilder.toAnalysisJob();
         return job;

@@ -106,7 +106,7 @@ final class FileRepositoryFile implements RepositoryFile {
             FileHelper.safeClose(inputStream, fileInputStream);
         }
     }
-    
+
     @Override
     public <E> E readFile(Func<InputStream, E> readCallback) {
         final FileInputStream fileInputStream;
@@ -174,16 +174,10 @@ final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public void delete() throws IllegalStateException {
-        Path path = FileSystems.getDefault().getPath(_file.getAbsolutePath());
-        try {
-            Files.delete(path);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
+        final boolean success = _file.delete();
+        if (!success) {
+            throw new IllegalStateException("Could not delete file: " + _file);
         }
-        // final boolean success = _file.delete();
-        // if (!success) {
-        // throw new IllegalStateException("Could not delete file: " + _file);
-        // }
     }
 
     @Override

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.spring;
 
+import java.util.Map;
+
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.configuration.InjectionManagerImpl;
@@ -26,7 +28,7 @@ import org.eobjects.analyzer.configuration.InjectionPoint;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -50,10 +52,21 @@ final class SpringInjectionManager extends InjectionManagerImpl {
         if (instance == null) {
             Class<?> baseType = injectionPoint.getBaseType();
             try {
-                final Object bean = _applicationContext.getBean(baseType);
-                logger.debug("Resolved spring bean for injection: {}", bean);
-                instance = bean;
-            } catch (NoSuchBeanDefinitionException e) {
+                final Map<String, ?> beans = _applicationContext.getBeansOfType(baseType, false, true);
+                if (beans.isEmpty()) {
+                    logger.warn("No beans resolved of type {}", baseType);
+                } else if (beans.size() == 1) {
+                    Object bean = beans.values().iterator().next();
+                    logger.debug("Resolved spring bean for injection: {}", bean);
+                    instance = bean;
+                } else {
+                    logger.warn("Multiple beans resolved of type {}: ", baseType, beans);
+
+                    Object bean = beans.values().iterator().next();
+                    logger.warn("Picking the first bean candidate for injection: {}", bean);
+                    instance = bean;
+                }
+            } catch (BeansException e) {
                 logger.warn("Could not resolve spring bean of type " + baseType + " for injection", e);
             }
         }

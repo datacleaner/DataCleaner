@@ -31,12 +31,16 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
 import org.eobjects.metamodel.util.Func;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Caches configuration objects for a tenant in order to avoid recreating it
  * every time it is needed.
  */
 final class ConfigurationCache {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ConfigurationCache.class);
 
     private final InjectionManagerFactory _injectionManagerFactory;
     private final RepositoryFolder _tenantFolder;
@@ -92,8 +96,10 @@ final class ConfigurationCache {
                 if (_tenantFolder instanceof FileRepositoryFolder) {
                     File file = ((FileRepositoryFolder) _tenantFolder).getFile();
                     return file.getAbsolutePath() + File.separatorChar + filename;
+                } else {
+                    // TODO: What about other non-file based repos?
+                    logger.warn("File path is relative, but repository is not file-based: {}", filename);
                 }
-                // TODO: What about other non-file based repos?
                 return super.createFilename(filename);
             }
 
@@ -104,6 +110,10 @@ final class ConfigurationCache {
         });
         
         final RepositoryFile configurationFile = getConfigurationFile();
+        _lastModifiedCache = configurationFile.getLastModified();
+        
+        logger.info("Reading configuration from file: {}", configurationFile);
+        
         final AnalyzerBeansConfiguration readConfiguration = configurationFile.readFile(
                 new Func<InputStream, AnalyzerBeansConfiguration>() {
                     @Override
@@ -112,6 +122,7 @@ final class ConfigurationCache {
                         return readConfiguration;
                     }
                 });
+        
         return readConfiguration;
     }
 

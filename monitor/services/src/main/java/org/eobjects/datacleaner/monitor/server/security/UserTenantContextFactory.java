@@ -27,16 +27,20 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
+/**
+ * Factory for {@link TenantContext} objects which are provided typically to
+ * render JSF pages.
+ */
 @Component("tenantContext")
-@Scope(WebApplicationContext.SCOPE_SESSION)
-public class UserTenantContext implements FactoryBean<TenantContext> {
+@Scope(WebApplicationContext.SCOPE_REQUEST)
+public class UserTenantContextFactory implements FactoryBean<TenantContext> {
 
     @Autowired
     TenantContextFactory tenantContextFactory;
-    
+
     @Autowired
     User user;
-    
+
     @Override
     public TenantContext getObject() throws Exception {
         return tenantContextFactory.getContext(user.getTenant());

@@ -54,7 +54,7 @@ final class SpringInjectionManager extends InjectionManagerImpl {
                 logger.debug("Resolved spring bean for injection: {}", bean);
                 instance = bean;
             } catch (NoSuchBeanDefinitionException e) {
-                logger.warn("Could not resolve sprint bean of type " + baseType + " for injection", e);
+                logger.warn("Could not resolve spring bean of type " + baseType + " for injection", e);
             }
         }
         return instance;

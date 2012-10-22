@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.user;
 
+import java.io.File;
+
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.configuration.ConfigurationReaderInterceptor;
@@ -55,10 +57,15 @@ public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurat
         if (filename == null) {
             return null;
         }
+        
+        File file = new File(filename);
+        if (file.isAbsolute()) {
+            return filename;
+        }
 
         try {
-            FileObject file = _dataCleanerHome.resolveFile(filename);
-            return file.getName().getPathDecoded();
+            FileObject fileObject = _dataCleanerHome.resolveFile(filename);
+            return fileObject.getName().getPathDecoded();
         } catch (FileSystemException e) {
             logger.warn("Could not resolve absolute path using VFS: " + filename, e);
             return filename;

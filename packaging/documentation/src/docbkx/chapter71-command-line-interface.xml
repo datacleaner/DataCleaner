@@ -77,15 +77,13 @@
 
 		<programlisting>
 			&gt;&#160;datacleaner-console.exe&#160;-usage
-			-conf
-			(-configuration, --configuration-file) FILE
+			-conf&#160;(-configuration, --configuration-file) FILE
 			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;XML&#160;file&#160;describing&#160;the&#160;configuration&#160;of&#160;AnalyzerBeans
 			-ds (-datastore, --datastore-name) VAL
 			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Name&#160;of&#160;datastore&#160;when&#160;printing&#160;a&#160;list&#160;of&#160;schemas,&#160;tables&#160;or&#160;columns
 			-job (--job-file) FILE
 			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;An&#160;analysis&#160;job&#160;XML&#160;file&#160;to&#160;execute
-			-list [ANALYZERS | TRANSFORMERS | FILTERS | DATASTORES | SCHEMAS |
-			TABLES | COLUMNS]
+			-list&#160;[ANALYZERS&#160;|&#160;TRANSFORMERS&#160;|&#160;FILTERS&#160;|&#160;DATASTORES&#160;|&#160;SCHEMAS&#160;|&#160;TABLES&#160;|&#160;COLUMNS]
 			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Used&#160;to&#160;print&#160;a&#160;list&#160;of&#160;various&#160;elements&#160;available&#160;in&#160;the&#160;configuration
 			-s (-schema, --schema-name) VAL
 			&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;:&#160;Name&#160;of&#160;schema&#160;when&#160;printing&#160;a&#160;list&#160;of&#160;tables&#160;or&#160;columns

@@ -30,6 +30,7 @@ import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.datacleaner.monitor.server.MonitorJobReader;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
@@ -57,6 +58,13 @@ class DefaultJobContext implements JobContext {
         _sourceDatastoreName = null;
         _variables = null;
         _job = null;
+    }
+
+    @Override
+    public String getName() {
+        final int extensionLength = FileFilters.ANALYSIS_XML.getExtension().length();
+        final String filename = _file.getName();
+        return filename.substring(0, filename.length() - extensionLength);
     }
 
     @Override

@@ -31,6 +31,8 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
  */
 public interface JobContext {
     
+    public String getName();
+    
     public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
 
     public AnalysisJob getAnalysisJob();

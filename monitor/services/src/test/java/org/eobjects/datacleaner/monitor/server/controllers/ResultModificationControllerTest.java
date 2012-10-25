@@ -45,8 +45,8 @@ import org.springframework.context.ApplicationEventPublisher;
 
 public class ResultModificationControllerTest extends TestCase {
 
-    private ResultModificationController controller;
-    private ResultModificationEventExecutionLogListener listener;
+    private ResultModificationController resultModificationController;
+    private ResultModificationEventExecutionLogListener resultModificationListener;
     private Repository repository;
 
     protected void setUp() throws Exception {
@@ -58,14 +58,14 @@ public class ResultModificationControllerTest extends TestCase {
         TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new InjectionManagerFactoryImpl());
 
-        controller = new ResultModificationController();
-        listener = new ResultModificationEventExecutionLogListener(tenantContextFactory);
+        resultModificationController = new ResultModificationController();
+        resultModificationListener = new ResultModificationEventExecutionLogListener(tenantContextFactory);
 
-        controller._contextFactory = tenantContextFactory;
-        controller._eventPublisher = new ApplicationEventPublisher() {
+        resultModificationController._contextFactory = tenantContextFactory;
+        resultModificationController._eventPublisher = new ApplicationEventPublisher() {
             @Override
             public void publishEvent(ApplicationEvent event) {
-                listener.onApplicationEvent((ResultModificationEvent) event);
+                resultModificationListener.onApplicationEvent((ResultModificationEvent) event);
             }
         };
     }
@@ -74,7 +74,7 @@ public class ResultModificationControllerTest extends TestCase {
         ResultModificationPayload input = new ResultModificationPayload();
         input.setJob("email_standardizer");
 
-        Map<String, String> response = controller.modifyResult("tenant1", "product_profiling-3", input);
+        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3", input);
         assertEquals("{new_result_name=email_standardizer-1338990580902.analysis.result.dat, "
                 + "old_result_name=product_profiling-3.analysis.result.dat, "
                 + "repository_url=/tenant1/results/email_standardizer-1338990580902.analysis.result.dat}",
@@ -88,7 +88,7 @@ public class ResultModificationControllerTest extends TestCase {
         // reproduce the date, to make unittest locale-independent
         Date date = ConvertToDateTransformer.getInternalInstance().transformValue("2012-12-17");
 
-        Map<String, String> response = controller.modifyResult("tenant1", "product_profiling-3", input);
+        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3", input);
         assertEquals("{new_result_name=product_profiling-" + date.getTime() + ".analysis.result.dat, "
                 + "old_result_name=product_profiling-3.analysis.result.dat, "
                 + "repository_url=/tenant1/results/product_profiling-" + date.getTime() + ".analysis.result.dat}",
@@ -104,7 +104,7 @@ public class ResultModificationControllerTest extends TestCase {
         input.setJob("email_standardizer");
         input.setDate("1355698800000");
 
-        Map<String, String> response = controller.modifyResult("tenant1", "product_profiling-3", input);
+        Map<String, String> response = resultModificationController.modifyResult("tenant1", "product_profiling-3", input);
         assertEquals("{new_result_name=email_standardizer-1355698800000.analysis.result.dat, "
                 + "old_result_name=product_profiling-3.analysis.result.dat, "
                 + "repository_url=/tenant1/results/email_standardizer-1355698800000.analysis.result.dat}",

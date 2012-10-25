@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
@@ -78,14 +79,15 @@ public class DashboardServiceImpl implements DashboardService {
     private final TenantContextFactory _tenantContextFactory;
     private final Repository _repository;
     private final MetricValueProducer _metricValueProducer;
+    private final ResultDao _resultDao;
 
     @Autowired
     public DashboardServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory,
-            final MetricValueProducer metricValueProducer) {
+            final MetricValueProducer metricValueProducer, ResultDao resultDao) {
         _repository = repository;
         _tenantContextFactory = tenantContextFactory;
         _metricValueProducer = metricValueProducer;
-
+        _resultDao = resultDao;
     }
 
     @Override
@@ -160,7 +162,7 @@ public class DashboardServiceImpl implements DashboardService {
         final List<MetricIdentifier> metricIdentifiers = timeline.getMetrics();
 
         JobIdentifier jobIdentifier = timeline.getJobIdentifier();
-        final List<RepositoryFile> resultFiles = getResultFilesForJob(tenant, jobIdentifier);
+        final List<RepositoryFile> resultFiles = _resultDao.getResultsForJob(tenant, jobIdentifier);
         final List<TimelineDataRow> rows = new ArrayList<TimelineDataRow>();
 
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
@@ -198,19 +200,6 @@ public class DashboardServiceImpl implements DashboardService {
         }
 
         return true;
-    }
-
-    private List<RepositoryFile> getResultFilesForJob(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-
-        final RepositoryFolder resultsFolder = context.getResultFolder();
-
-        final String jobName = jobIdentifier.getName();
-
-        final List<RepositoryFile> files = resultsFolder.getFiles(jobName,
-                FileFilters.ANALYSIS_RESULT_SER.getExtension());
-
-        return files;
     }
 
     @Override

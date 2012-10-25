@@ -194,4 +194,33 @@
 
 	</section>
 
+	<section id="modifying_result_metadata">
+		<title>Renaming jobs</title>
+		<para>
+			Renaming a job in the DataCleaner monitor repository is possible
+			through a dedicated webservice for job modification.
+		</para>
+
+		<para>The request URL is the same as the URL for vieweing the
+			job XML,
+			but where '.analysis.xml' is replaced with '.modify':
+		</para>
+
+		<programlisting>
+			POST&#160;/DataCleaner-monitor/repository/{tenant}/jobs/{job}.modify
+		</programlisting>
+
+		<para>The POST request body needs to be a JSON document, specifying
+			the new metadata for the result file. Here's an example:
+		</para>
+
+		<programlisting lang="json">
+			{
+			&#160;&#160;"name":"new&#160;name&#160;of&#160;job",
+			&#160;&#160;"overwrite":true
+			}
+		</programlisting>
+
+	</section>
+
 </chapter>

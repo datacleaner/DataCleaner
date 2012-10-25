@@ -81,7 +81,7 @@ public final class HttpXmlUtils {
         for (Entry<String, String> entry : params.entrySet()) {
             nameValuePairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
         }
-        method.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+        method.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
         ResponseHandler<String> responseHandler = new BasicResponseHandler();
         String response = getHttpClient().execute(method, responseHandler);
         return response;

@@ -25,6 +25,10 @@ import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 
+/**
+ * DAO (Data Access Object) interface for interactions with analysis results in
+ * the repository.
+ */
 public interface ResultDao {
 
     public List<RepositoryFile> getResultsForJob(TenantIdentifier tenantIdentifier, JobIdentifier job);

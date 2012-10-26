@@ -37,6 +37,8 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDaoImpl;
+import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
+import org.eobjects.datacleaner.monitor.server.dao.TimelineDaoImpl;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -51,8 +53,10 @@ public class DashboardServiceImplTest extends TestCase {
                 new InjectionManagerFactoryImpl());
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
-        
-        final DashboardService service = new DashboardServiceImpl(repository, contextFactory, metricValueCache, resultDao);
+        final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
+
+        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache,
+                resultDao, timelineDao);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());

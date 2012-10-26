@@ -27,10 +27,14 @@ import junit.framework.TestCase;
 import org.apache.commons.io.FileUtils;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.events.JobModificationEvent;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDaoImpl;
+import org.eobjects.datacleaner.monitor.server.dao.TimelineDaoImpl;
 import org.eobjects.datacleaner.monitor.server.listeners.JobModificationEventRenameResultsListener;
+import org.eobjects.datacleaner.monitor.server.listeners.JobModificationEventUpdateTimelinesListener;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.repository.file.FileRepository;
@@ -40,9 +44,11 @@ import org.springframework.context.ApplicationEventPublisher;
 public class JobModificationControllerTest extends TestCase {
 
     private JobModificationController jobModificationController;
-    private JobModificationEventRenameResultsListener jobModificationListener;
+    private JobModificationEventRenameResultsListener jobModificationListener1;
+    private JobModificationEventUpdateTimelinesListener jobModificationListener2;
     private ResultModificationController resultModificationController;
     private Repository repository;
+    private TimelineDaoImpl timelineDao;
 
     protected void setUp() throws Exception {
         File targetDir = new File("target/repo_job_modification");
@@ -53,7 +59,6 @@ public class JobModificationControllerTest extends TestCase {
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new InjectionManagerFactoryImpl());
 
-        final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory);
         resultModificationController = new ResultModificationController();
         resultModificationController._contextFactory = tenantContextFactory;
         resultModificationController._eventPublisher = new ApplicationEventPublisher() {
@@ -63,13 +68,19 @@ public class JobModificationControllerTest extends TestCase {
             }
         };
 
+        final ResultDao resultDao = new ResultDaoImpl(tenantContextFactory);
+        timelineDao = new TimelineDaoImpl(tenantContextFactory, repository);
+
         jobModificationController = new JobModificationController();
-        jobModificationListener = new JobModificationEventRenameResultsListener(resultDao, resultModificationController);
+        jobModificationListener1 = new JobModificationEventRenameResultsListener(resultDao,
+                resultModificationController);
+        jobModificationListener2 = new JobModificationEventUpdateTimelinesListener(timelineDao);
         jobModificationController._contextFactory = tenantContextFactory;
         jobModificationController._eventPublisher = new ApplicationEventPublisher() {
             @Override
             public void publishEvent(ApplicationEvent event) {
-                jobModificationListener.onApplicationEvent((JobModificationEvent) event);
+                jobModificationListener1.onApplicationEvent((JobModificationEvent) event);
+                jobModificationListener2.onApplicationEvent((JobModificationEvent) event);
             }
         };
     }
@@ -78,14 +89,20 @@ public class JobModificationControllerTest extends TestCase {
         final JobModificationPayload input = new JobModificationPayload();
         input.setName("renamed_job");
 
-        Map<String, String> result = jobModificationController.modifyResult("tenant1", "product_profiling", input);
+        final Map<String, String> result = jobModificationController
+                .modifyResult("tenant1", "product_profiling", input);
         assertEquals("{new_job_name=renamed_job, old_job_name=product_profiling, "
                 + "repository_url=/tenant1/jobs/renamed_job.analysis.xml}", result.toString());
-        
-        RepositoryFolder resultsFolder = repository.getFolder("tenant1").getFolder("results");
-        
+
+        final RepositoryFolder resultsFolder = repository.getFolder("tenant1").getFolder("results");
+
         // check that files have been renamed
         assertEquals(0, resultsFolder.getFiles("product_profiling", ".result.dat").size());
         assertEquals(6, resultsFolder.getFiles("renamed_job", ".result.dat").size());
+
+        final TimelineDefinition timelineDefinition = timelineDao.getTimelineDefinition(new TimelineIdentifier(
+                "Product types", "/tenant1/timelines/Product data/Product types.analysis.timeline.xml", null));
+
+        assertEquals("renamed_job", timelineDefinition.getJobIdentifier().getName());
     }
 }

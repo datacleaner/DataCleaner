@@ -50,19 +50,16 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
-import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
+import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFile.Type;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.repository.RepositoryNode;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
-import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,17 +74,17 @@ public class DashboardServiceImpl implements DashboardService {
     private static final Logger logger = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
     private final TenantContextFactory _tenantContextFactory;
-    private final Repository _repository;
     private final MetricValueProducer _metricValueProducer;
     private final ResultDao _resultDao;
+    private final TimelineDao _timelineDao;
 
     @Autowired
-    public DashboardServiceImpl(final Repository repository, final TenantContextFactory tenantContextFactory,
-            final MetricValueProducer metricValueProducer, ResultDao resultDao) {
-        _repository = repository;
+    public DashboardServiceImpl(final TenantContextFactory tenantContextFactory,
+            final MetricValueProducer metricValueProducer, ResultDao resultDao, TimelineDao timelineDao) {
         _tenantContextFactory = tenantContextFactory;
         _metricValueProducer = metricValueProducer;
         _resultDao = resultDao;
+        _timelineDao = timelineDao;
     }
 
     @Override
@@ -204,23 +201,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public TimelineDefinition getTimelineDefinition(final TenantIdentifier tenant, final TimelineIdentifier timeline) {
-        final String path = timeline.getPath();
-
-        logger.info("Reading timeline from file: {}", path);
-
-        final RepositoryFile timelineNode = (RepositoryFile) _repository.getRepositoryNode(path);
-
-        final TimelineDefinition timelineDefinition = timelineNode
-                .readFile(new Func<InputStream, TimelineDefinition>() {
-                    @Override
-                    public TimelineDefinition eval(InputStream in) {
-                        final TimelineReader reader = new JaxbTimelineReader();
-                        final TimelineDefinition timelineDefinition = reader.read(in);
-                        return timelineDefinition;
-                    }
-                });
-
-        return timelineDefinition;
+        return _timelineDao.getTimelineDefinition(timeline);
     }
 
     @Override
@@ -304,12 +285,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public TimelineIdentifier updateTimelineDefinition(final TenantIdentifier tenant,
             final TimelineIdentifier timelineIdentifier, final TimelineDefinition timelineDefinition) {
-        final RepositoryFile file = (RepositoryFile) _repository.getRepositoryNode(timelineIdentifier.getPath());
-
-        file.writeFile(new WriteTimelineAction(timelineDefinition));
-        logger.info("Updated timeline definition in file: {}", file);
-        return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath(),
-                timelineIdentifier.getGroup());
+        return _timelineDao.updateTimeline(timelineIdentifier, timelineDefinition);
     }
 
     @Override
@@ -376,25 +352,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public Boolean removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline) {
-        if (timeline == null) {
-            return false;
-        }
-
-        final String path = timeline.getPath();
-        final RepositoryNode node = _repository.getRepositoryNode(path);
-
-        if (node == null) {
-            return false;
-        }
-
-        try {
-            node.delete();
-        } catch (IllegalStateException e) {
-            logger.warn("Attempt to delete node failed: " + node, e);
-            return false;
-        }
-
-        return true;
+        return _timelineDao.removeTimeline(timeline);
     }
 
     @Override

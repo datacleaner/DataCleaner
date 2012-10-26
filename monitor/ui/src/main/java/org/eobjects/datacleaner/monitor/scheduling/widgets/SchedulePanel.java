@@ -114,8 +114,7 @@ public class SchedulePanel extends Composite {
         launchButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                String url = Urls.createRelativeUrl("repository/" + tenant.getId() + "/jobs/"
-                        + schedule.getJob().getName() + ".launch.jnlp");
+                String url = Urls.createRepositoryUrl(tenant, "jobs/" + schedule.getJob().getName() + ".launch.jnlp");
                 Window.open(url, "_blank", null);
             }
         });

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.util;
 
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 
@@ -48,7 +50,24 @@ public final class Urls {
         GWT.log("CONTEXT_PATH: " + CONTEXT_PATH);
     }
 
+    /**
+     * Creates a URL relative to the webapp context root.
+     * 
+     * @param relativePath
+     * @return
+     */
     public static String createRelativeUrl(String relativePath) {
         return CONTEXT_PATH + relativePath;
+    }
+
+    /**
+     * Creates a URL relative to the tenant's repository folder URL.
+     * 
+     * @param tenant
+     * @param relativePath
+     * @return
+     */
+    public static String createRepositoryUrl(TenantIdentifier tenant, String relativePath) {
+        return createRelativeUrl("repository/" + tenant.getId() + "/" + relativePath);
     }
 }

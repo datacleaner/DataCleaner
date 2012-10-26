@@ -23,9 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.repository.Repository;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,15 +52,12 @@ public class PingController {
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Map<String, Object> ping(@PathVariable("tenant") final String tenant) {
-        final RepositoryFolder tenantFolder = _repository.getFolder(tenant);
-        if (tenantFolder == null) {
-            throw new IllegalArgumentException("No such tenant: " + tenant);
-        }
-
-        final AnalyzerBeansConfiguration configuration = _tenantContextFactory.getContext(tenant).getConfiguration();
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
 
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("tenant", tenant);
+        map.put("version", Main.VERSION);
         map.put("ping", "pong");
         map.put("configuration_check", (configuration == null ? "invalid" : "valid"));
 

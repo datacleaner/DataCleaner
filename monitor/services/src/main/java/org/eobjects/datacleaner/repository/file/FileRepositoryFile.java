@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
@@ -62,6 +63,9 @@ final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public String getQualifiedPath() {
+        if (_parent == null || _parent instanceof Repository) {
+            return "/" + getName();
+        }
         return _parent.getQualifiedPath() + "/" + getName();
     }
 

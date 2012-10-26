@@ -33,11 +33,13 @@ public class FileRepositoryTest extends TestCase {
 
     public void testSimpleNavigation() throws Exception {
         Repository repository = new FileRepository(new File("src/test/resources/example_folders"));
-        
+
         assertEquals("", repository.getName());
         assertEquals("/", repository.getQualifiedPath());
 
         assertEquals("/folder1", repository.getFolders().get(0).getQualifiedPath());
+
+        assertEquals("/file1", repository.getFile("file1").getQualifiedPath());
 
         RepositoryNode node = repository.getRepositoryNode("/folder2/sub2");
         assertEquals("/folder2/sub2", node.getQualifiedPath());

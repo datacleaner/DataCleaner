@@ -103,4 +103,9 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
         return _delegate.getDependentJobCandidates(tenant, schedule);
     }
 
+    @Override
+    public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
+        _delegate.removeSchedule(tenant, job);
+    }
+
 }

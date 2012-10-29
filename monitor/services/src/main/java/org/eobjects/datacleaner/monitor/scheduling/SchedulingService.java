@@ -48,6 +48,9 @@ public interface SchedulingService extends RemoteService {
             throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
+    public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
+
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.VIEWER)

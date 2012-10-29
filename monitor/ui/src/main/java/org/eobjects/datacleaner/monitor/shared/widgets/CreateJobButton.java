@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.MenuBar;
 
@@ -56,6 +57,15 @@ public class CreateJobButton extends Button implements ClickHandler {
         service.getJobWizardIdentifiers(_tenant, new DCAsyncCallback<List<JobWizardIdentifier>>() {
             @Override
             public void onSuccess(List<JobWizardIdentifier> result) {
+                if (result.isEmpty()) {
+                    _menuBar.addItem("(no job wizards installed)", new Command() {
+                        @Override
+                        public void execute() {
+                            // do nothing
+                        }
+                    });
+                }
+
                 for (JobWizardIdentifier wizard : result) {
                     final String displayName = wizard.getDisplayName();
                     final StartWizardCommand command = new StartWizardCommand(service, _tenant, wizard);
@@ -69,6 +79,7 @@ public class CreateJobButton extends Button implements ClickHandler {
     public void onClick(ClickEvent event) {
         final DCPopupPanel popup = new DCPopupPanel(null);
         popup.setGlassEnabled(false);
+        popup.setAutoHideEnabled(true);
         popup.setWidget(_menuBar);
         popup.getButtonPanel().setVisible(false);
         popup.showRelativeTo(this);

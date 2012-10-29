@@ -42,4 +42,8 @@ public class DCRequestBuilder {
             ErrorHandler.showErrorDialog("Error sending request", e.getMessage(), e);
         }
     }
+
+    public void setHeader(String header, String value) {
+        _requestBuilder.setHeader(header, value);
+    }
 }

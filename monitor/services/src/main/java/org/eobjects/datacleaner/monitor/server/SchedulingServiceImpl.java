@@ -219,13 +219,15 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     }
 
     private void initializeSchedule(final ScheduleDefinition schedule) {
+        final JobIdentifier job = schedule.getJob();
+
+        removeSchedule(schedule.getTenant(), job);
+
         final String tenantId = schedule.getTenant().getId();
-        final String jobName = schedule.getJob().getName();
+        final String jobName = job.getName();
         final String jobListenerName = tenantId + "." + jobName;
 
         try {
-            _scheduler.deleteJob(jobName, tenantId);
-            _scheduler.removeJobListener(jobListenerName);
 
             final TriggerType triggerType = schedule.getTriggerType();
             if (triggerType == TriggerType.MANUAL) {
@@ -267,7 +269,24 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new IllegalStateException("Could not configure job scheduling", e);
+            throw new IllegalStateException("Failed to schedule job: " + job, e);
+        }
+    }
+
+    @Override
+    public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
+        logger.info("Removing schedule for job: " + job);
+        final String jobName = job.getName();
+        final String tenantId = tenant.getId();
+        final String jobListenerName = tenantId + "." + jobName;
+        try {
+            _scheduler.deleteJob(jobName, tenantId);
+            _scheduler.removeJobListener(jobListenerName);
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new IllegalStateException("Failed to remove job schedule: " + job, e);
         }
     }
 
@@ -379,7 +398,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                         return result;
                     }
                 });
-        
+
         Collections.sort(executionIdentifiers);
 
         return executionIdentifiers;
@@ -407,8 +426,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant,
             final int retries) {
         final JaxbExecutionLogReader reader = new JaxbExecutionLogReader();
-        
-        final ExecutionLog result = file.readFile(new Func<InputStream,ExecutionLog>() {
+
+        final ExecutionLog result = file.readFile(new Func<InputStream, ExecutionLog>() {
             @Override
             public ExecutionLog eval(InputStream in) {
                 try {
@@ -424,8 +443,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                         return executionLog;
                     }
                 }
-            }});
-        
+            }
+        });
+
         if (result == null) {
             // retry
             try {
@@ -435,7 +455,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             }
             return readExecutionLogFile(file, tenant, retries - 1);
         }
-        
+
         return result;
     }
 
@@ -457,5 +477,4 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
         return result;
     }
-
 }

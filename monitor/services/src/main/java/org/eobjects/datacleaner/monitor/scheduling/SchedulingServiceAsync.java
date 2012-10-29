@@ -51,4 +51,6 @@ public interface SchedulingServiceAsync {
     void getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier,
             AsyncCallback<ExecutionLog> callback);
 
+    void removeSchedule(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<Void> callback);
+
 }

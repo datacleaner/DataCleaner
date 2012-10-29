@@ -118,6 +118,17 @@ a:hover {
 	margin-bottom: 10px;
 }
 
+.DropDownAnchor {
+	background-image: url("dropdown_options_normal.png");
+	background-position: right center;
+	background-repeat: no-repeat;
+	padding-right: 16px;
+}
+
+.DropDownAnchor, DropDownButton:active  {
+	background-image: url("dropdown_options_hover.png");
+}
+
 .ButtonPanel {
 	text-align: center;
 	padding: 10px;

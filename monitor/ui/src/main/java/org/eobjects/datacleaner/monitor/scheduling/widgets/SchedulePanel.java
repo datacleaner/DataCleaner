@@ -30,6 +30,7 @@ import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.DropDownAnchor;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.Urls;
@@ -44,7 +45,6 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -61,7 +61,7 @@ public class SchedulePanel extends Composite {
     private final TenantIdentifier _tenant;
 
     @UiField
-    Label jobLabel;
+    DropDownAnchor jobLabel;
 
     @UiField
     Anchor scheduleAnchor;
@@ -88,6 +88,8 @@ public class SchedulePanel extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
 
         updateScheduleWidgets();
+
+        jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant));
 
         scheduleAnchor.addClickHandler(new CustomizeScheduleClickHandler(this, service, tenant, schedule));
 
@@ -137,6 +139,10 @@ public class SchedulePanel extends Composite {
             }
         });
         alertsPanel.add(expandAlertsAnchor);
+    }
+
+    public ScheduleDefinition getSchedule() {
+        return _schedule;
     }
 
     public void updateScheduleWidgets() {

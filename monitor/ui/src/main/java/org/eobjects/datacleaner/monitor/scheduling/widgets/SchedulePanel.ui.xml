@@ -9,14 +9,15 @@
 	distribution; if not, write to: Free Software Foundation, Inc. 51 Franklin 
 	Street, Fifth Floor Boston, MA 02110-1301 USA -->
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	 xmlns:dc='urn:import:org.eobjects.datacleaner.monitor.shared.widgets'>
 
 	<g:HTMLPanel styleName="SchedulePanel">
 
 		<div class="EmptyColumn"></div>
 
 		<div class="JobColumn">
-			<g:Label ui:field="jobLabel" />
+			<dc:DropDownAnchor ui:field="jobLabel" />
 		</div>
 
 		<div class="ScheduleColumn">

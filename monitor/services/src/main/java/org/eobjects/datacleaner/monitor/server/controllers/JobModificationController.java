@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,11 +30,13 @@ import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.events.JobModificationEvent;
+import org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
+import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +76,8 @@ public class JobModificationController {
 
         final JobContext oldJob = tenantContext.getJob(jobName);
         final RepositoryFile existingFile = oldJob.getJobFile();
+        final RepositoryFile oldScheduleFile = tenantContext.getJobFolder().getFile(
+                jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
 
         final String nameInput = input.getName();
 
@@ -92,6 +97,7 @@ public class JobModificationController {
 
         if (newFile == null) {
             jobFolder.createFile(newFilename, writeAction);
+
         } else {
             if (overwrite) {
                 newFile.writeFile(writeAction);
@@ -102,6 +108,10 @@ public class JobModificationController {
         }
 
         existingFile.delete();
+
+        if (oldScheduleFile != null) {
+            renameSchedule(oldScheduleFile, nameInput, jobFolder);
+        }
 
         final JobContext newJob = tenantContext.getJob(newFilename);
 
@@ -114,5 +124,30 @@ public class JobModificationController {
         logger.debug("Response payload: {}", response);
 
         return response;
+    }
+
+    private void renameSchedule(final RepositoryFile oldScheduleFile, final String nameInput,
+            final RepositoryFolder jobFolder) {
+        final String newScheduleFilename = nameInput + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML;
+
+        final Action<OutputStream> writeScheduleAction = new Action<OutputStream>() {
+            @Override
+            public void run(final OutputStream out) throws Exception {
+                oldScheduleFile.readFile(new Action<InputStream>() {
+                    @Override
+                    public void run(final InputStream in) throws Exception {
+                        FileHelper.copy(in, out);
+                    }
+                });
+            }
+        };
+        final RepositoryFile newScheduleFile = jobFolder.getFile(newScheduleFilename);
+        if (newScheduleFile == null) {
+            jobFolder.createFile(newScheduleFilename, writeScheduleAction);
+        } else {
+            newScheduleFile.writeFile(writeScheduleAction);
+        }
+
+        oldScheduleFile.delete();
     }
 }

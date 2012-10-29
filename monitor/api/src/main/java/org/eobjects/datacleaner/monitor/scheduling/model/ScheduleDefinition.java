@@ -190,4 +190,10 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         }
         return diff;
     }
+
+    @Override
+    public String toString() {
+        return "ScheduleDefinition[job=" + _job + ", cronExpression=" + _cronExpression + ", dependentJob="
+                + _dependentJob + "]";
+    }
 }

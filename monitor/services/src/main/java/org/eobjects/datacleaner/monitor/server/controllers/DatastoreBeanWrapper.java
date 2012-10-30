@@ -20,11 +20,14 @@
 package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.File;
+import java.util.List;
 
 import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.HasNameMapper;
 
 /**
  * Wrapper for datastore to facilitate property retrieval in ui
@@ -67,7 +70,7 @@ public class DatastoreBeanWrapper {
     public boolean isJdbcDatastore() {
         return _datastore instanceof JdbcDatastore;
     }
-    
+
     public String getFilename() {
         if (_datastore instanceof FileDatastore) {
             String filename = ((FileDatastore) _datastore).getFilename();
@@ -76,7 +79,7 @@ public class DatastoreBeanWrapper {
             return null;
         }
     }
-    
+
     public String getUsername() {
         if (_datastore instanceof JdbcDatastore) {
             JdbcDatastore jdbcDatastore = (JdbcDatastore) _datastore;
@@ -86,7 +89,7 @@ public class DatastoreBeanWrapper {
             return null;
         }
     }
-    
+
     public String getJdbcUrl() {
         if (_datastore instanceof JdbcDatastore) {
             JdbcDatastore jdbcDatastore = (JdbcDatastore) _datastore;
@@ -125,4 +128,13 @@ public class DatastoreBeanWrapper {
         return _datastore.getClass().getSimpleName();
     }
 
+    public String getChildDatastores() {
+        if (!isCompositeDatastore()) {
+            return null;
+        }
+        CompositeDatastore compositeDatastore = (CompositeDatastore) _datastore;
+        List<? extends Datastore> childDatastores = compositeDatastore.getDatastores();
+        List<String> names = CollectionUtils.map(childDatastores, new HasNameMapper());
+        return names.toString();
+    }
 }

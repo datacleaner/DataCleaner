@@ -173,6 +173,9 @@
 					<includes>
 						<include>**/src/**/java/org/**</include>
 					</includes>
+					<excludes>
+						<exclude>**/package-info.java</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>

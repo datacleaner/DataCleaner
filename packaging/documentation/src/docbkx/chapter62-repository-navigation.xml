@@ -194,7 +194,7 @@
 
 	</section>
 
-	<section id="modifying_result_metadata">
+	<section id="renaming_jobs">
 		<title>Renaming jobs</title>
 		<para>
 			Renaming a job in the DataCleaner monitor repository is possible

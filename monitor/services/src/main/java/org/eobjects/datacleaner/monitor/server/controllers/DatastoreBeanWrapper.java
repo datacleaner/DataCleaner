@@ -27,77 +27,102 @@ import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 
 /**
- * 
  * Wrapper for datastore to facilitate property retrieval in ui
  * 
  * @author anand
- * 
  */
 public class DatastoreBeanWrapper {
 
-	private Datastore datastore;
+    private final Datastore _datastore;
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return datastore.getName();
-	}
+    public DatastoreBeanWrapper(Datastore datastore) {
+        _datastore = datastore;
+    }
 
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return datastore.getDescription();
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return _datastore.getName();
+    }
 
-	/**
-	 * @return the datastore
-	 */
-	public Datastore getDatastore() {
-		return datastore;
-	}
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return _datastore.getDescription();
+    }
 
-	/**
-	 * @param datastore
-	 *            the datastore to set
-	 */
-	public void setDatastore(Datastore datastore) {
-		this.datastore = datastore;
-	}
+    /**
+     * @return the datastore
+     */
+    public Datastore getDatastore() {
+        return _datastore;
+    }
 
-	public boolean isFileDatastore() {
-		return datastore instanceof FileDatastore;
-	}
+    public boolean isFileDatastore() {
+        return _datastore instanceof FileDatastore;
+    }
 
-	public boolean isJdbcDatastore() {
-		return datastore instanceof JdbcDatastore;
-	}
+    public boolean isJdbcDatastore() {
+        return _datastore instanceof JdbcDatastore;
+    }
+    
+    public String getFilename() {
+        if (_datastore instanceof FileDatastore) {
+            String filename = ((FileDatastore) _datastore).getFilename();
+            return filename;
+        } else {
+            return null;
+        }
+    }
+    
+    public String getUsername() {
+        if (_datastore instanceof JdbcDatastore) {
+            JdbcDatastore jdbcDatastore = (JdbcDatastore) _datastore;
+            String username = jdbcDatastore.getUsername();
+            return username;
+        } else {
+            return null;
+        }
+    }
+    
+    public String getJdbcUrl() {
+        if (_datastore instanceof JdbcDatastore) {
+            JdbcDatastore jdbcDatastore = (JdbcDatastore) _datastore;
+            String url = jdbcDatastore.getJdbcUrl();
+            if (url == null) {
+                url = jdbcDatastore.getDatasourceJndiUrl();
+            }
+            return url;
+        } else {
+            return null;
+        }
+    }
 
-	public boolean isFileFound() {
-		if (datastore instanceof FileDatastore) {
-			String filename = ((FileDatastore) datastore).getFilename();
-			File file = new File(filename);
-			return file.exists();
-		} else {
-			return false;
-		}
-	}
+    public boolean isFileFound() {
+        String filename = getFilename();
+        if (filename == null) {
+            return false;
+        }
+        File file = new File(filename);
+        return file.exists();
+    }
 
-	public boolean isCompositeDatastore() {
-		return datastore instanceof CompositeDatastore;
-	}
+    public boolean isCompositeDatastore() {
+        return _datastore instanceof CompositeDatastore;
+    }
 
-	public boolean isHostnameBasedDatastore() {
-		try {
-			return datastore.getClass().getDeclaredMethod("getHostname") != null;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+    public boolean isHostnameBasedDatastore() {
+        try {
+            return _datastore.getClass().getDeclaredMethod("getHostname") != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
-	public String getSimpleClassName() {
-		return datastore.getClass().getSimpleName();
-	}
+    public String getSimpleClassName() {
+        return _datastore.getClass().getSimpleName();
+    }
 
 }

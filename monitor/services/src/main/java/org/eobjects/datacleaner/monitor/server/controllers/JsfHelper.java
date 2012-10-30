@@ -19,13 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
-import java.io.File;
-
-import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.analyzer.connection.FileDatastore;
-import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.datacleaner.Main;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.security.User;
@@ -42,81 +37,36 @@ import org.springframework.web.context.WebApplicationContext;
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 public class JsfHelper {
 
-	DatastoreCatalog datasourceCatalog;
+    @Autowired
+    TenantContextFactory tenantContextFactory;
 
-	@Autowired
-	TenantContextFactory tenantContextFactory;
+    @Autowired
+    User user;
 
-	@Autowired
-	User user;
+    public String getVersion() {
+        return Main.VERSION;
+    }
 
-	DatastoreBeanWrapper[] datastoreBeanWrapper;
+    public DatastoreBeanWrapper[] getDatastores() {
+        final DatastoreCatalog datastoreCatalog = tenantContextFactory.getContext(user.getTenant()).getConfiguration()
+                .getDatastoreCatalog();
 
-	public boolean isFileDatastore(Datastore datastore) {
-		return datastore instanceof FileDatastore;
-	}
+        DatastoreBeanWrapper[] datastoreBeanWrapper = prepareDatastoreWrappers(datastoreCatalog);
+        return datastoreBeanWrapper;
+    }
 
-	public boolean isJdbcDatastore(Datastore datastore) {
-		return datastore instanceof JdbcDatastore;
-	}
+    private DatastoreBeanWrapper[] prepareDatastoreWrappers(DatastoreCatalog datastoreCatalog) {
+        final String[] datastoreNames = datastoreCatalog.getDatastoreNames();
 
-	public boolean isFileFound(Datastore datastore) {
-		if (datastore instanceof FileDatastore) {
-			String filename = ((FileDatastore) datastore).getFilename();
-			File file = new File(filename);
-			return file.exists();
-		} else {
-			return false;
-		}
-	}
+        final DatastoreBeanWrapper[] beanWrapperArray = new DatastoreBeanWrapper[datastoreNames.length];
 
-	public boolean isCompositeDatastore(Datastore datastore) {
-		return datastore instanceof CompositeDatastore;
-	}
+        for (int i = 0; i < beanWrapperArray.length; i++) {
+            final String datastoreName = datastoreNames[i];
+            final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
+            beanWrapperArray[i] = new DatastoreBeanWrapper(datastore);
+        }
 
-	public boolean isHostnameBasedDatastore(Datastore datastore) {
-		try {
-			return datastore.getClass().getDeclaredMethod("getHostname") != null;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+        return beanWrapperArray;
 
-	public String getVersion() {
-		return Main.VERSION;
-	}
-
-	public String getSimpleClassName(Object object) {
-		return object.getClass().getSimpleName();
-	}
-
-	public DatastoreBeanWrapper[] getDatastoreBeanWrapper() {
-		if (datastoreBeanWrapper != null) {
-			return datastoreBeanWrapper;
-		}
-
-		datasourceCatalog = tenantContextFactory.getContext(user.getTenant())
-				.getConfiguration().getDatastoreCatalog();
-
-		datastoreBeanWrapper = prepareDatastoreWrappers(datasourceCatalog
-				.getDatastoreNames());
-		return datastoreBeanWrapper;
-	}
-
-	private DatastoreBeanWrapper[] prepareDatastoreWrappers(
-			String[] datastoreNames) {
-		DatastoreBeanWrapper[] beanWrapperArray = new DatastoreBeanWrapper[datastoreNames.length];
-
-		int count = 0;
-
-		for (String datastore : datastoreNames) {
-			beanWrapperArray[count] = new DatastoreBeanWrapper();
-			beanWrapperArray[count].setDatastore(datasourceCatalog
-					.getDatastore(datastore));
-			count++;
-		}
-
-		return beanWrapperArray;
-
-	}
+    }
 }

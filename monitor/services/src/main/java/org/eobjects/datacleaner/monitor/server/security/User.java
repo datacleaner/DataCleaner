@@ -19,11 +19,13 @@
  */
 package org.eobjects.datacleaner.monitor.server.security;
 
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
+
 /**
  * Defines the interface of a monitor user.
  */
 public interface User {
-    
+
     public boolean isLoggedIn();
 
     public String getUsername();
@@ -31,4 +33,54 @@ public interface User {
     public String getTenant();
 
     public boolean hasRole(String role);
+
+    /**
+     * Determines whether the user has the {@link SecurityRoles#VIEWER} role.
+     * 
+     * @return whether the user has the {@link SecurityRoles#VIEWER} role.
+     */
+    public boolean isViewer();
+
+    /**
+     * Determines whether the user has the {@link SecurityRoles#ADMIN} super
+     * role.
+     * 
+     * @return whether the user has the {@link SecurityRoles#ADMIN} super role.
+     */
+    public boolean isAdmin();
+
+    /**
+     * Determines whether the user has the {@link SecurityRoles#JOB_EDITOR}
+     * role.
+     * 
+     * @return whether the user has the {@link SecurityRoles#JOB_EDITOR} role.
+     */
+    public boolean isJobEditor();
+
+    /**
+     * Determines whether the user has the
+     * {@link SecurityRoles#DASHBOARD_EDITOR} role.
+     * 
+     * @return whether the user has the {@link SecurityRoles#DASHBOARD_EDITOR}
+     *         role.
+     */
+    public boolean isDashboardEditor();
+
+    /**
+     * Determines whether the user has the {@link SecurityRoles#SCHEDULE_EDITOR}
+     * role.
+     * 
+     * @return whether the user has the {@link SecurityRoles#SCHEDULE_EDITOR}
+     *         role.
+     */
+    public boolean isScheduleEditor();
+
+    /**
+     * Determines whether the user has the {@link SecurityRoles#ENGINEER} super
+     * role.
+     * 
+     * @return whether the user has the {@link SecurityRoles#ENGINEER} super
+     *         role.
+     */
+    public boolean isEngineer();
 }

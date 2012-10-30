@@ -8,7 +8,7 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<h:panelGroup rendered="#{user.hasRole('ADMIN')}"
+		<h:panelGroup rendered="#{user.admin}"
 			styleClass="uploadConfigurationPanel">
 			<h3>Configuration file</h3>
 			<p>Upload new <a href="repository/#{user.tenant}/conf.xml" target="_blank">conf.xml</a> file:</p>

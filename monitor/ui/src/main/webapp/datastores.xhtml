@@ -14,14 +14,14 @@
 				<div
 					class="datastore #{datastore.fileDatastore ? 'FileDatastore' : ''} #{datastore.simpleClassName}">
 
-					<h:panelGroup rendered="#{user.hasRole('ROLE_JOB_EDITOR')}">
+					<h:panelGroup rendered="#{user.jobEditor}">
 						<div style="float: right">
 							<button
 								onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{datastore.name}.analyze.jnlp'"
 								class="LaunchButton">Analyze</button>
 						</div>
 					</h:panelGroup>
-					<h:panelGroup rendered="${datastore.fileDatastore and user.hasRole('ROLE_ADMIN')}">
+					<h:panelGroup rendered="${datastore.fileDatastore and user.admin}">
 
 						<div style="float: right">
 							<button

@@ -120,4 +120,34 @@ public class UserBean implements User, Serializable {
     public String toString() {
         return "User[username=" + _username + ",tenant=" + _tenant + "]";
     }
+
+    @Override
+    public boolean isAdmin() {
+        return hasRole(SecurityRoles.ADMIN);
+    }
+    
+    @Override
+    public boolean isEngineer() {
+        return hasRole(SecurityRoles.ENGINEER);
+    }
+
+    @Override
+    public boolean isJobEditor() {
+        return hasRole(SecurityRoles.JOB_EDITOR);
+    }
+
+    @Override
+    public boolean isDashboardEditor() {
+        return hasRole(SecurityRoles.DASHBOARD_EDITOR);
+    }
+
+    @Override
+    public boolean isScheduleEditor() {
+        return hasRole(SecurityRoles.SCHEDULE_EDITOR);
+    }
+    
+    @Override
+    public boolean isViewer() {
+        return hasRole(SecurityRoles.VIEWER);
+    }
 }

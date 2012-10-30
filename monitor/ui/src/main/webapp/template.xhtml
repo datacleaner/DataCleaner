@@ -42,7 +42,7 @@
 
 				<div class="navContainer">
 					<ul id="nav">
-						<c:if test="#{user.hasRole('ROLE_VIEWER')}">
+						<c:if test="#{user.viewer}">
 							<li
 								class="#{ (view.viewId == '/dashboard.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
 									value="dashboard.jsf" styleClass="DashboardTabTitle">
@@ -53,7 +53,7 @@
 								</h:outputLink></li>
 						</c:if>
 
-						<c:if test="#{user.hasRole('ROLE_SCHEDULE_EDITOR')}">
+						<c:if test="#{user.scheduleEditor}">
 							<li
 								class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
 									value="scheduling.jsf" styleClass="SchedulingTabTitle">
@@ -64,7 +64,7 @@
 								</h:outputLink></li>
 						</c:if>
 
-						<c:if test="#{user.hasRole('ROLE_JOB_EDITOR')}">
+						<c:if test="#{user.jobEditor}">
 							<li
 								class="#{ (view.viewId == '/datastores.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
 									value="datastores.jsf" styleClass="DatastoresTabTitle">
@@ -75,7 +75,7 @@
 								</h:outputLink></li>
 						</c:if>
 
-						<c:if test="#{user.hasRole('ROLE_ADMIN')}">
+						<c:if test="#{user.admin}">
 							<li
 								class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
 									value="repository.jsf" styleClass="RepositoryTabTitle">

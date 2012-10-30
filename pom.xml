@@ -328,7 +328,7 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${javadoc.version}</version>
 					<configuration>
-						<skip>true</skip>
+						<!--<skip>true</skip>-->
 					</configuration>
 				</plugin>
 

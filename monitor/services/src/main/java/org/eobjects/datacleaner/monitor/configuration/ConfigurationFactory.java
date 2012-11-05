@@ -19,13 +19,19 @@
  */
 package org.eobjects.datacleaner.monitor.configuration;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.ServletContext;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
+import org.eobjects.analyzer.util.CollectionUtils2;
+import org.eobjects.datacleaner.util.ExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -73,12 +79,48 @@ public class ConfigurationFactory {
     }
 
     @Bean(name = "descriptorProvider")
-    public DescriptorProvider createDescriptorProvider(TaskRunner taskRunner) {
+    public DescriptorProvider createDescriptorProvider(TaskRunner taskRunner, ServletContext servletContext) {
+        final File[] files = getJarFilesForDescriptorProvider(servletContext);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Using JAR files: {}", Arrays.toString(files));
+        }
+
         logger.info("Creating shared descriptor provider with packages: {}", _scannedPackages);
-        ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner);
+        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner);
+        final ClassLoader classLoader = getClass().getClassLoader();
+        logger.info("Using classloader: {}", classLoader);
+
         for (String packageName : _scannedPackages) {
-            descriptorProvider.scanPackage(packageName, true);
+            descriptorProvider.scanPackage(packageName, true, classLoader, false, files);
         }
         return descriptorProvider;
+    }
+
+    private File[] getJarFilesForDescriptorProvider(final ServletContext servletContext) {
+        if (servletContext == null) {
+            logger.warn("ServletContext is null, will not attempt loading JAR files from WEB-INF");
+            return null;
+        }
+
+        final String classesPath = servletContext.getRealPath("/WEB-INF/classes");
+        final String libPath = servletContext.getRealPath("/WEB-INF/lib");
+
+        logger.debug("Path of 'classes': {}", classesPath);
+        logger.debug("Path of 'lib': {}", libPath);
+
+        if (classesPath == null && libPath == null) {
+            logger.info("ServletContext.getRealPath(...) returned null, will not attempt loading JAR files from WEB-INF");
+            return null;
+        }
+
+        final File classesDirectory = new File(classesPath);
+        final File[] jarFiles = new File(libPath).listFiles(new ExtensionFilter(null, ".jar"));
+        if (jarFiles == null || jarFiles.length == 0) {
+            logger.debug("No JAR files found in WEB-INF/lib.");
+            return null;
+        }
+
+        return CollectionUtils2.array(File.class, jarFiles, classesDirectory);
     }
 }

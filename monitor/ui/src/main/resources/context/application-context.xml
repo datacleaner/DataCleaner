@@ -18,6 +18,7 @@
 			</list>
 		</property>
 		<property name="numThreads" value="30" />
+		<property name="scanWebInfFolder" value="true" />
 	</bean>
 
 	<bean id="injectionManagerFactory" name="injectionManagerFactory"

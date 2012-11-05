@@ -52,6 +52,15 @@ public class ConfigurationFactory {
 
     private List<String> _scannedPackages;
     private Integer _numThreads;
+    private boolean scanWebInfFolder = true;
+    
+    public boolean isScanWebInfFolder() {
+        return scanWebInfFolder;
+    }
+    
+    public void setScanWebInfFolder(boolean scanWebInfFolder) {
+        this.scanWebInfFolder = scanWebInfFolder;
+    }
 
     public List<String> getScannedPackages() {
         return _scannedPackages;
@@ -98,6 +107,11 @@ public class ConfigurationFactory {
     }
 
     private File[] getJarFilesForDescriptorProvider(final ServletContext servletContext) {
+        if (!scanWebInfFolder) {
+            logger.debug("scanWebInfFolder is set to false, will not attempt loading JAR files from WEB-INF");
+            return null;
+        }
+        
         if (servletContext == null) {
             logger.warn("ServletContext is null, will not attempt loading JAR files from WEB-INF");
             return null;

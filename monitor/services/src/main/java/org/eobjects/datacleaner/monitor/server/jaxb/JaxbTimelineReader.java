@@ -37,6 +37,7 @@ import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.Fix
 import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.HorizontalAxis.RollingAxis;
 import org.eobjects.datacleaner.monitor.jaxb.ChartOptionsType.VerticalAxis;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
+import org.eobjects.datacleaner.monitor.jaxb.MetricType.Children;
 import org.eobjects.datacleaner.monitor.jaxb.Timeline;
 import org.eobjects.datacleaner.monitor.server.TimelineReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -46,7 +47,7 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
  * JAXB based {@link TimelineReader} of .analysis.timeline.xml files.
  */
 public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements TimelineReader {
-    
+
     public JaxbTimelineReader() {
         super(Timeline.class);
     }
@@ -129,20 +130,44 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
         final List<MetricType> metricTypes = timeline.getMetrics().getMetric();
         final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>(metricTypes.size());
         for (MetricType metricType : metricTypes) {
+            final MetricIdentifier metricIdentifier = createMetric(metricType);
+
+            metrics.add(metricIdentifier);
+        }
+        return metrics;
+    }
+
+    private MetricIdentifier createMetric(MetricType metricType) {
+        final String metricDisplayName = metricType.getMetricDisplayName();
+        final String formula = metricType.getFormula();
+        final Children childrenTypes = metricType.getChildren();
+        if (formula == null || childrenTypes == null) {
             final MetricIdentifier metricIdentifier = new MetricIdentifier();
             metricIdentifier.setAnalyzerDescriptorName(metricType.getAnalyzerDescriptorName());
             metricIdentifier.setAnalyzerName(metricType.getAnalyzerName());
             metricIdentifier.setAnalyzerInputName(metricType.getAnalyzerInput());
             metricIdentifier.setMetricDescriptorName(metricType.getMetricDescriptorName());
-            metricIdentifier.setMetricDisplayName(metricType.getMetricDisplayName());
+            metricIdentifier.setMetricDisplayName(metricDisplayName);
             metricIdentifier.setMetricColor(metricType.getMetricColor());
             metricIdentifier.setParamColumnName(metricType.getMetricParamColumnName());
             metricIdentifier.setParamQueryString(metricType.getMetricParamQueryString());
             metricIdentifier.setParameterizedByColumnName(metricType.getMetricParamColumnName() != null);
             metricIdentifier.setParameterizedByQueryString(metricType.getMetricParamQueryString() != null);
+            return metricIdentifier;
+        } else {
+            final List<MetricType> childMetrics = childrenTypes.getMetric();
+            final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>(childMetrics.size());
+            for (MetricType childMetricType : childMetrics) {
+                MetricIdentifier childMetric = createMetric(childMetricType);
+                children.add(childMetric);
+            }
 
-            metrics.add(metricIdentifier);
+            final MetricIdentifier metricIdentifier = new MetricIdentifier();
+            metricIdentifier.setFormula(formula);
+            metricIdentifier.setChildren(children);
+            metricIdentifier.setMetricDisplayName(metricDisplayName);
+
+            return metricIdentifier;
         }
-        return metrics;
     }
 }

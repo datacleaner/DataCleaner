@@ -354,14 +354,11 @@ public class TimelinePanel extends FlowPanel {
         for (int i = 0; i < values.size(); i++) {
             int columnIndex = i + 1;
             final Number value = values.get(i);
-            final int intValue;
-            if (value == null) {
-                intValue = -1;
-            } else {
+            if (value != null) {
                 // TODO: Is it always an int?
-                intValue = value.intValue();
+                final int                 intValue = value.intValue();
+                data.setValue(rowIndex, columnIndex, intValue);
             }
-            data.setValue(rowIndex, columnIndex, intValue);
         }
     }
 

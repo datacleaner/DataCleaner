@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public final class DefaultMetricValues implements MetricValues {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultMetricValues.class);
-    
+
     private final Date _metricDate;
     private final List<MetricIdentifier> _metricIdentifiers;
     private final AnalysisResult _analysisResult;
@@ -87,9 +87,22 @@ public final class DefaultMetricValues implements MetricValues {
             final MetricDescriptor metric = metricDescriptors.get(i);
             final MetricParameters parameters = metricParameters.get(i);
 
-            final AnalyzerResult analyzerResult = metricValueUtils.getResult(_analysisResult, job, metricIdentifier);
-
-            final Number metricValue = metric.getValue(analyzerResult, parameters);
+            Number metricValue;
+            try {
+                final AnalyzerResult analyzerResult = metricValueUtils
+                        .getResult(_analysisResult, job, metricIdentifier);
+                metricValue = metric.getValue(analyzerResult, parameters);
+            } catch (Exception e) {
+                // typically this can occur if the job has changed over time and metrics are not resolveable.
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Failed to get metric value for " + metricIdentifier + " in result of date: "
+                            + _metricDate, e);
+                } else if (logger.isWarnEnabled()) {
+                    logger.warn("Failed to get metric value for " + metricIdentifier + " in result of date: "
+                            + _metricDate + ":" + e.getMessage());
+                }
+                metricValue = null;
+            }
             metricValuesList.add(metricValue);
         }
 

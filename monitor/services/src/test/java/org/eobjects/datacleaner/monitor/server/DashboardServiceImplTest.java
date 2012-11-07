@@ -71,7 +71,7 @@ public class DashboardServiceImplTest extends TestCase {
 
         final JobMetrics jobMetrics = service.getJobMetrics(tenant, job);
         assertEquals("JobMetrics[product_profiling metrics]", jobMetrics.toString());
-        assertSame(job, jobMetrics.getJob());
+        assertEquals(job, jobMetrics.getJob());
 
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
         assertEquals(3, metricGroups.size());

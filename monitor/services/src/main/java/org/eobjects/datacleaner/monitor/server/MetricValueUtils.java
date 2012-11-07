@@ -33,7 +33,6 @@ import javax.el.ValueExpression;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.ELFormulaMetricDescriptor;
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.descriptors.MetricParameters;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -255,15 +254,7 @@ public class MetricValueUtils {
     public MetricDescriptor getMetricDescriptor(final MetricIdentifier metricIdentifier, final AnalysisJob analysisJob,
             final AnalyzerJob analyzerJob) {
         if (metricIdentifier.isFormulaBased()) {
-            final List<MetricIdentifier> children = metricIdentifier.getChildren();
-            final Map<String, MetricDescriptor> childDescriptors = new HashMap<String, MetricDescriptor>();
-            for (MetricIdentifier child : children) {
-                final MetricDescriptor childDescriptor = getMetricDescriptor(child, analysisJob, analyzerJob);
-                final String variableName = getFormulaVariableName(child);
-                childDescriptors.put(variableName, childDescriptor);
-            }
-            String formula = metricIdentifier.getFormula();
-            return new ELFormulaMetricDescriptor(formula, childDescriptors);
+            return null;
         }
 
         final AnalyzerJob analyzerJobToUse;

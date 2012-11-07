@@ -70,7 +70,8 @@ public final class DefaultMetricValues implements MetricValues {
                     _analysisJob, analyzerJob);
             metricDescriptors.add(metricDescriptor);
 
-            MetricParameters parameter = metricValueUtils.getParameters(metricIdentifier, metricDescriptor, analyzerJob);
+            MetricParameters parameter = metricValueUtils
+                    .getParameters(metricIdentifier, metricDescriptor, analyzerJob);
             metricParameters.add(parameter);
         }
 
@@ -80,8 +81,9 @@ public final class DefaultMetricValues implements MetricValues {
             final AnalyzerJob job = analyzerJobs.get(i);
             final MetricDescriptor metric = metricDescriptors.get(i);
             final MetricParameters parameters = metricParameters.get(i);
-            
-           final Number metricValue = metricValueUtils.getMetricValue(metricIdentifier, metric, _analysisJob, job, _analysisResult, parameters);
+
+            final Number metricValue = metricValueUtils.getMetricValue(metricIdentifier, metric, _analysisJob, job,
+                    _analysisResult, parameters);
             metricValuesList.add(metricValue);
         }
 

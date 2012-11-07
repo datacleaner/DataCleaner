@@ -64,6 +64,10 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         }
         return _metricIdentifier;
     }
+    
+    public void setMetricIdentifier(MetricIdentifier metricIdentifier) {
+        _metricIdentifier = metricIdentifier;
+    }
 
     public void setMaximumValue(Number maximumValue) {
         _maximumValue = maximumValue;

@@ -40,18 +40,24 @@ public class DefineMetricPanel extends FlowPanel {
     private final CheckBox _formulaCheckBox;
     private final List<SelectMetricPanel> _selectMetricPanels;
     private final TextBox _formulaTextBox;
+    private final JobMetrics _jobMetrics;
 
-    public DefineMetricPanel(JobMetrics metrics, MetricIdentifier metric) {
+    public DefineMetricPanel(JobMetrics jobMetrics, MetricIdentifier existingMetric) {
         super();
-        addStyleName("SelectMetricPanel");
+        addStyleName("DefineMetricPanel");
 
-        final boolean formulaBased = (metric == null ? false : metric.isFormulaBased());
+        final boolean formulaBased = (existingMetric == null ? false : existingMetric.isFormulaBased());
 
+        _jobMetrics = jobMetrics;
         _selectMetricPanels = new ArrayList<SelectMetricPanel>();
-        _formulaTextBox = new TextBox();
-        _formulaCheckBox = new CheckBox("Metric formula?");
 
+        _formulaTextBox = new TextBox();
+        _formulaTextBox.setVisible(formulaBased);
+
+        _formulaCheckBox = new CheckBox("Metric formula?");
         _formulaCheckBox.setTitle("Let this metric be a formula, comprising multiple child metrics in a calculation?");
+        _formulaCheckBox.setValue(formulaBased);
+
         _formulaCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
@@ -59,18 +65,17 @@ public class DefineMetricPanel extends FlowPanel {
             }
         });
 
-        _formulaCheckBox.setValue(formulaBased, true);
-
         add(_formulaCheckBox);
         add(_formulaTextBox);
 
         if (formulaBased) {
-            final List<MetricIdentifier> children = metric.getChildren();
+            _formulaTextBox.setText(existingMetric.getFormula());
+            final List<MetricIdentifier> children = existingMetric.getChildren();
             for (MetricIdentifier child : children) {
-                addSelection(new SelectMetricPanel(metrics, child, formulaBased));
+                addSelection(new SelectMetricPanel(_jobMetrics, child, formulaBased));
             }
         } else {
-            addSelection(new SelectMetricPanel(metrics, metric, formulaBased));
+            addSelection(new SelectMetricPanel(_jobMetrics, existingMetric, formulaBased));
         }
 
         // add listener for limiting amount of metric selections
@@ -82,12 +87,32 @@ public class DefineMetricPanel extends FlowPanel {
                     while (_selectMetricPanels.size() > 1) {
                         removeSelection();
                     }
+                } else {
+                    while (_selectMetricPanels.size() < 2) {
+                        addSelection(new SelectMetricPanel(_jobMetrics, null, true));
+                    }
                 }
+
+                final StringBuilder formulaBuilder = new StringBuilder();
+                char c = 'A';
+
                 for (SelectMetricPanel panel : _selectMetricPanels) {
                     // show display name, since it will be used in the formula
                     // as a variable
                     panel.setDisplayNameVisible(formulaBased);
+                    panel.setDisplayName("" + c);
+
+                    if (formulaBuilder.length() == 0) {
+                        formulaBuilder.append(c);
+                    } else {
+                        formulaBuilder.append(" + ");
+                        formulaBuilder.append(c);
+                    }
+
+                    c++;
                 }
+
+                _formulaTextBox.setText(formulaBuilder.toString());
             }
         });
     }

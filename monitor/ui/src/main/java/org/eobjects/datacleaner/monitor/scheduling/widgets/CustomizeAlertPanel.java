@@ -110,6 +110,7 @@ public class CustomizeAlertPanel extends Composite {
     }
 
     public void updateAlert() {
+        _alert.setMetricIdentifier(metricAnchor.getMetric());
         _alert.setDescription(descriptionTextBox.getText());
         _alert.setMaximumValue(maximumValueTextBox.getNumberValue());
         _alert.setMinimumValue(minimumValueTextBox.getNumberValue());

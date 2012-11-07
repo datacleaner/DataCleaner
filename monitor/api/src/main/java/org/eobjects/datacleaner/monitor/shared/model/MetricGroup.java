@@ -62,4 +62,22 @@ public class MetricGroup implements Serializable {
     public String toString() {
         return "MetricGroup[" + getName() + "]";
     }
+
+    public MetricIdentifier getMetric(String metricDescriptorName) {
+        for (MetricIdentifier metric : _metrics) {
+            if (metricDescriptorName.equals(metric.getMetricDescriptorName())) {
+                return metric;
+            }
+        }
+        return null;
+    }
+
+    public boolean containsMetric(MetricIdentifier metricIdentifier) {
+        for (MetricIdentifier metric : _metrics) {
+            if (metric.equalsIgnoreCustomizedDetails(metricIdentifier)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

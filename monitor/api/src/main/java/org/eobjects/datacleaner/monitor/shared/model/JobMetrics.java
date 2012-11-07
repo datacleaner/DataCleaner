@@ -57,4 +57,22 @@ public class JobMetrics implements Serializable {
     public String toString() {
         return "JobMetrics[" + getName() + "]";
     }
+
+    public MetricGroup getMetricGroup(String groupName) {
+        for (MetricGroup group : _metricGroups) {
+            if (groupName.equals(group.getName())) {
+                return group;
+            }
+        }
+        return null;
+    }
+
+    public MetricGroup getMetricGroup(MetricIdentifier metric) {
+        for (MetricGroup group : _metricGroups) {
+            if (group.containsMetric(metric)) {
+                return group;
+            }
+        }
+        return null;
+    }
 }

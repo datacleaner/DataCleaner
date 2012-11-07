@@ -25,6 +25,7 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 
 /**
  * An anchor used to select a single metric, eg. for alerting or inclusion in a
@@ -40,7 +41,7 @@ public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
         addClickHandler(this);
         updateText();
     }
-    
+
     public MetricIdentifier getMetric() {
         return _metric;
     }
@@ -49,11 +50,11 @@ public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
         _metric = metric;
         updateText();
     }
-    
+
     public JobMetrics getJobMetrics() {
         return _jobMetrics;
     }
-    
+
     public void setJobMetrics(JobMetrics jobMetrics) {
         _jobMetrics = jobMetrics;
     }
@@ -72,11 +73,24 @@ public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
             GWT.log("No JobMetrics available");
             return;
         }
+
+        final DCPopupPanel popup = new DCPopupPanel("Define metric");
         
         final DefineMetricPanel panel = new DefineMetricPanel(_jobMetrics, _metric);
 
-        final DCPopupPanel popup = new DCPopupPanel(null);
+        final Button saveButton = new Button("Save");
+        saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                MetricIdentifier metric = panel.getMetric();
+                setMetric(metric);
+                popup.hide();
+            }
+        });
+
         popup.setWidget(panel);
+
+        popup.getButtonPanel().add(saveButton);
         popup.getButtonPanel().add(new CancelPopupButton(popup));
 
         popup.center();

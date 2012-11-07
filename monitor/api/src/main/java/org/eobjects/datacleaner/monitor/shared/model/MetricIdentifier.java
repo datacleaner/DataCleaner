@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.analyzer.result.AnalyzerResult;
+
 /**
  * Identifies a metric of interest.
  */
@@ -318,7 +320,24 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
         return true;
     }
 
-    public boolean equalsIgnoreParameterValues(MetricIdentifier other) {
+    /**
+     * Determines if two {@link MetricIdentifier}s match if ignoring the details
+     * that can be customized/parameterized by the user:
+     * 
+     * <ul>
+     * <li>Display name</li>
+     * <li>Color</li>
+     * <li>Query parameter</li>
+     * <li>Column parameter</li>
+     * </ul>
+     * 
+     * In other words - determines if the two {@link MetricIdentifier}s
+     * reference the same metric in the same {@link AnalyzerResult}.
+     * 
+     * @param other
+     * @return
+     */
+    public boolean equalsIgnoreCustomizedDetails(MetricIdentifier other) {
         if (this == other)
             return true;
         if (other == null)
@@ -348,20 +367,11 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
                 return false;
         } else if (!_formula.equals(other._formula))
             return false;
-        if (_metricColor == null) {
-            if (other._metricColor != null)
-                return false;
-        } else if (!_metricColor.equals(other._metricColor))
-            return false;
+
         if (_metricDescriptorName == null) {
             if (other._metricDescriptorName != null)
                 return false;
         } else if (!_metricDescriptorName.equals(other._metricDescriptorName))
-            return false;
-        if (_metricDisplayName == null) {
-            if (other._metricDisplayName != null)
-                return false;
-        } else if (!_metricDisplayName.equals(other._metricDisplayName))
             return false;
         if (_parameterizedByColumnName != other._parameterizedByColumnName)
             return false;

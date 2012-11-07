@@ -37,7 +37,7 @@ a:hover {
 /*
  * GWT built-in style modifications 
  */
-.gwt-TextBox, .gwt-ListBox {
+.gwt-TextBox,.gwt-ListBox {
 	padding: 5px 4px;
 	border: 1px solid #CCC;
 	border-top: 1px solid #999;
@@ -52,7 +52,7 @@ a:hover {
 .gwt-ListBox {
 	min-width: 210px;
 }
- 
+
 .gwt-PopupPanel .popupContent {
 	text-align: left;
 	padding: 5px;
@@ -125,7 +125,7 @@ a:hover {
 	padding-right: 16px;
 }
 
-.DropDownAnchor, DropDownButton:active  {
+.DropDownAnchor:hover {
 	background-image: url("dropdown_options_hover.png");
 }
 
@@ -165,4 +165,24 @@ a:hover {
 	background-repeat: no-repeat;
 	background-position: left center;
 	min-height: 22px;
+}
+
+/**
+ * Styling for metric definition and selection
+ */
+.DefineMetricPanel {
+	width: 400px;
+	min-height: 500px;
+}
+
+.SelectMetricPanel {
+	margin-top: 10px;
+	padding: 10px;
+	background-color: #fdfdfd;
+	border: 1px solid #f0f0f0;
+	width: 300px;
+}
+
+.SelectMetricPanel select {
+	width: 300px;
 }

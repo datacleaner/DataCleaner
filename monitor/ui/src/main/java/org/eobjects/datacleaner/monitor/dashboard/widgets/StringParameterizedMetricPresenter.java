@@ -104,7 +104,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         _panel.add(addButton);
 
         for (MetricIdentifier activeMetric : activeMetrics) {
-            if (activeMetric.equalsIgnoreParameterValues(_metricIdentifier)) {
+            if (activeMetric.equalsIgnoreCustomizedDetails(_metricIdentifier)) {
                 addMetricPanel(activeMetric);
             }
         }

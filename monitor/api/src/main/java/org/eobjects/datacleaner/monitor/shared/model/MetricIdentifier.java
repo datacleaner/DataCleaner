@@ -40,9 +40,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     private String _paramColumnName;
     private boolean _parameterizedByQueryString;
     private boolean _parameterizedByColumnName;
-
     private String _formula;
-
     private List<MetricIdentifier> _children;
 
     // full constructor that specifies every field in one go.
@@ -177,6 +175,16 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
             return _metricDescriptorName;
         }
         return _metricDisplayName;
+    }
+
+    /**
+     * Determines if the displayname has been set by the user or if it is
+     * automatically generated based on the metric's descriptor.
+     * 
+     * @return
+     */
+    public boolean isDisplayNameSet() {
+        return _metricDisplayName != null;
     }
 
     public void setMetricColor(String metricColor) {

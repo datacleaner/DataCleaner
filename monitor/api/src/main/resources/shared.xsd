@@ -6,39 +6,41 @@
 	<element name="metric" type="shared:metricType" />
 
 	<complexType name="metricType">
-		<choice>
-			<!-- A single metric -->
-			<sequence>
-				<element name="analyzer-descriptor-name" minOccurs="1"
-					maxOccurs="1" type="string" />
-				<element name="analyzer-name" minOccurs="0" maxOccurs="1"
-					type="string" />
-				<element name="analyzer-input" minOccurs="0" maxOccurs="1"
-					type="string" />
-				<element name="metric-descriptor-name" minOccurs="1"
-					maxOccurs="1" type="string" />
-				<element name="metric-display-name" minOccurs="1" maxOccurs="1"
-					type="string" />
-				<element name="metric-color" minOccurs="0" maxOccurs="1"
-					type="string" />
-				<element name="metric-param-query-string" minOccurs="0"
-					maxOccurs="1" type="string" />
-				<element name="metric-param-column-name" minOccurs="0"
-					maxOccurs="1" type="string" />
-			</sequence>
-			<!-- A formula-based metric -->
-			<sequence>
-				<element name="formula" type="string" minOccurs="1"
-					maxOccurs="1" />
-				<element name="children" minOccurs="1" maxOccurs="1">
-					<complexType>
-						<sequence>
-							<element name="metric" type="shared:metricType"
-								minOccurs="0" maxOccurs="unbounded" />
-						</sequence>
-					</complexType>
-				</element>
-			</sequence>
-		</choice>
+		<sequence>
+			<element name="metric-display-name" minOccurs="0" maxOccurs="1"
+				type="string" />
+			<element name="metric-color" minOccurs="0" maxOccurs="1"
+				type="string" />
+			<choice>
+				<!-- A single metric -->
+				<sequence>
+					<element name="analyzer-descriptor-name" minOccurs="1"
+						maxOccurs="1" type="string" />
+					<element name="analyzer-name" minOccurs="0" maxOccurs="1"
+						type="string" />
+					<element name="analyzer-input" minOccurs="0" maxOccurs="1"
+						type="string" />
+					<element name="metric-descriptor-name" minOccurs="1"
+						maxOccurs="1" type="string" />
+					<element name="metric-param-query-string" minOccurs="0"
+						maxOccurs="1" type="string" />
+					<element name="metric-param-column-name" minOccurs="0"
+						maxOccurs="1" type="string" />
+				</sequence>
+				<!-- A formula-based metric -->
+				<sequence>
+					<element name="formula" type="string" minOccurs="1"
+						maxOccurs="1" />
+					<element name="children" minOccurs="1" maxOccurs="1">
+						<complexType>
+							<sequence>
+								<element name="metric" type="shared:metricType"
+									minOccurs="0" maxOccurs="unbounded" />
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</choice>
+		</sequence>
 	</complexType>
 </schema>

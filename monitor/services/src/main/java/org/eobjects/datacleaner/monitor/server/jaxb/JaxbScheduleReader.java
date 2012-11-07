@@ -54,20 +54,11 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
     }
 
     public AlertDefinition createAlert(Alert alert) {
-        final MetricIdentifier metricIdentifier = new MetricIdentifier();
         final MetricType metricType = alert.getMetric();
-        metricIdentifier.setAnalyzerDescriptorName(metricType.getAnalyzerDescriptorName());
-        metricIdentifier.setAnalyzerInputName(metricType.getAnalyzerInput());
-        metricIdentifier.setAnalyzerName(metricType.getAnalyzerName());
-        metricIdentifier.setMetricDescriptorName(metricType.getMetricDescriptorName());
-        metricIdentifier.setMetricDisplayName(metricType.getMetricDisplayName());
-        metricIdentifier.setMetricColor(metricType.getMetricColor());
-        metricIdentifier.setParamColumnName(metricType.getMetricParamColumnName());
-        metricIdentifier.setParamQueryString(metricType.getMetricParamQueryString());
-        metricIdentifier.setParameterizedByColumnName(metricType.getMetricParamColumnName() != null);
-        metricIdentifier.setParameterizedByQueryString(metricType.getMetricParamQueryString() != null);
 
-        AlertSeverity severity = createSeverity(alert.getSeverity());
+        final MetricIdentifier metricIdentifier = new JaxbMetricAdaptor().deserialize(metricType);
+
+        final AlertSeverity severity = createSeverity(alert.getSeverity());
 
         return new AlertDefinition(alert.getDescription(), metricIdentifier, alert.getMinimumValue(),
                 alert.getMaximumValue(), severity);

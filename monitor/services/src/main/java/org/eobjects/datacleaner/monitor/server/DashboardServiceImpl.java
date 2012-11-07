@@ -313,8 +313,12 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job,
             MetricIdentifier metric) {
+        if (metric.isFormulaBased()) {
+            return new ArrayList<String>(0);
+        }
+
         final TenantContext context = _tenantContextFactory.getContext(tenant);
-        MetricValueUtils metricValueUtils = new MetricValueUtils();
+        final MetricValueUtils metricValueUtils = new MetricValueUtils();
 
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final AnalyzerBeanDescriptor<?> analyzerDescriptor = configuration.getDescriptorProvider()

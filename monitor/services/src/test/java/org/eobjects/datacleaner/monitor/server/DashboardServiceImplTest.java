@@ -55,8 +55,8 @@ public class DashboardServiceImplTest extends TestCase {
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
-        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache,
-                resultDao, timelineDao);
+        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
+                timelineDao);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
@@ -119,8 +119,34 @@ public class DashboardServiceImplTest extends TestCase {
             expectedMetricValues.add(0);
             assertEquals(expectedMetricValues, actualMetricValues);
             assertNotNull(rows.get(0).getDate());
-        } else
+        } else {
             assertEquals(1, timelines.size());
+        }
+    }
 
+    public void testFormulaBasedTimeline() throws Exception {
+        final FileRepository repository = new FileRepository("src/test/resources/example_repo");
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl());
+        final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
+        final ResultDao resultDao = new ResultDaoImpl(contextFactory);
+        final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
+
+        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
+                timelineDao);
+
+        final TenantIdentifier tenant = new TenantIdentifier("tenant1");
+
+        String name = "Product type distribution (the lower the better).analysis.timeline.xml";
+        String path = "/tenant1/timelines/Product data/Product type distribution (the lower the better).analysis.timeline.xml";
+        DashboardGroup group = new DashboardGroup("Product data");
+        TimelineDefinition timeline = service.getTimelineDefinition(tenant, new TimelineIdentifier(name, path, group));
+
+        TimelineData data = service.getTimelineData(tenant, timeline);
+        
+        List<TimelineDataRow> rows = data.getRows();
+        assertEquals(6, rows.size());
+        
+        assertEquals("[11, 0, 20, 22, 110]", rows.get(0).getMetricValues().toString());
     }
 }

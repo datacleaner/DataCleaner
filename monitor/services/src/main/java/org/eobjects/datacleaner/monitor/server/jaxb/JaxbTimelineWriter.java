@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
 import org.eobjects.datacleaner.monitor.jaxb.Timeline;
 import org.eobjects.datacleaner.monitor.server.TimelineReader;
 import org.eobjects.datacleaner.monitor.server.TimelineWriter;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
@@ -62,21 +63,16 @@ public class JaxbTimelineWriter extends AbstractJaxbAdaptor<Timeline> implements
         final MetricsType metricsType = new MetricsType();
         final List<MetricIdentifier> metrics = timelineDefinition.getMetrics();
         for (MetricIdentifier metric : metrics) {
-            final MetricType metricType = new MetricType();
-            metricType.setAnalyzerDescriptorName(metric.getAnalyzerDescriptorName());
-            metricType.setAnalyzerInput(metric.getAnalyzerInputName());
-            metricType.setAnalyzerName(metric.getAnalyzerName());
-            metricType.setMetricDescriptorName(metric.getMetricDescriptorName());
-            metricType.setMetricDisplayName(metric.getDisplayName());
-            metricType.setMetricColor(metric.getMetricColor());
-            metricType.setMetricParamColumnName(metric.getParamColumnName());
-            metricType.setMetricParamQueryString(metric.getParamQueryString());
+            final MetricType metricType = new JaxbMetricAdaptor().serialize(metric);
 
             metricsType.getMetric().add(metricType);
         }
 
         final Timeline timeline = new Timeline();
-        timeline.setJobName(timelineDefinition.getJobIdentifier().getName());
+        final JobIdentifier jobIdentifier = timelineDefinition.getJobIdentifier();
+        if (jobIdentifier != null) {
+            timeline.setJobName(jobIdentifier.getName());
+        }
         timeline.setMetrics(metricsType);
 
         timeline.setChartOptions(createChartOptionsType(timelineDefinition.getChartOptions()));

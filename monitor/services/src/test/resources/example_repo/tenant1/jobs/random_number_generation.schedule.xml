@@ -15,6 +15,32 @@
 			<maximum-value>400</maximum-value>
 			<severity>FATAL</severity>
 		</alert>
+		
+		<alert>
+			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+				<metric-display-name>My formula based metric</metric-display-name>
+				<formula>foo * 100 / bar</formula>
+				<children>
+					<metric>
+						<metric-display-name>foo</metric-display-name>
+						<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+						<analyzer-input>Random number</analyzer-input>
+						<metric-descriptor-name>Mean</metric-descriptor-name>
+						<metric-param-column-name>Random number</metric-param-column-name>
+					</metric>
+					<metric>
+						<metric-display-name>bar</metric-display-name>
+						<analyzer-descriptor-name>Number analyzer</analyzer-descriptor-name>
+						<analyzer-input>Random number</analyzer-input>
+						<metric-descriptor-name>Mean</metric-descriptor-name>
+						<metric-param-column-name>Random number</metric-param-column-name>
+					</metric>
+				</children>
+			</metric>
+			<minimum-value>100</minimum-value>
+			<maximum-value>100</maximum-value>
+			<severity>WARNING</severity>
+		</alert>
 
 		<alert>
 			<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">

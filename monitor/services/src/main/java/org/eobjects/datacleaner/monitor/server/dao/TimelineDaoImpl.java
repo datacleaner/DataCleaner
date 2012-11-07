@@ -58,7 +58,7 @@ public class TimelineDaoImpl implements TimelineDao {
         _tenantContextFactory = tenantContextFactory;
         _repository = repository;
     }
-    
+
     @Override
     public boolean removeTimeline(TimelineIdentifier timeline) {
         if (timeline == null) {
@@ -143,6 +143,11 @@ public class TimelineDaoImpl implements TimelineDao {
         logger.info("Reading timeline from file: {}", path);
 
         final RepositoryFile timelineNode = (RepositoryFile) _repository.getRepositoryNode(path);
+
+        if (timelineNode == null) {
+            throw new IllegalArgumentException("No such timeline: " + timeline.getName() + " (in group: "
+                    + timeline.getGroup() + ")");
+        }
 
         final TimelineDefinition timelineDefinition = timelineNode
                 .readFile(new Func<InputStream, TimelineDefinition>() {

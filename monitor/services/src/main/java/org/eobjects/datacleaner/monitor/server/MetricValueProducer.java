@@ -27,11 +27,12 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 
 /**
- * @author anand
- *
+ * Describes the interface for components that can produce/extract values for
+ * metrics from a result file.
  */
 public interface MetricValueProducer {
-    
-	public MetricValues getMetricValues(List<MetricIdentifier> metricIdentifiers, RepositoryFile resultFile, TenantIdentifier tenant, JobIdentifier jobIdentifier);
+
+    public MetricValues getMetricValues(List<MetricIdentifier> metricIdentifiers, RepositoryFile resultFile,
+            TenantIdentifier tenant, JobIdentifier jobIdentifier);
 
 }

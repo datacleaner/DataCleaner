@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.eobjects.datacleaner.monitor.jaxb.Alert;
 import org.eobjects.datacleaner.monitor.jaxb.AlertSeverityType;
-import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule;
 import org.eobjects.datacleaner.monitor.jaxb.Schedule.Alerts;
 import org.eobjects.datacleaner.monitor.jaxb.VariableProvider;
@@ -34,7 +33,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
  * Jaxb based Schedule writer for .schedule.xml files.
@@ -74,7 +72,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             variableProvider.setClassName(variableProviderDef.getClassName());
             schedule.setVariableProvider(variableProvider);
         }
-        
+
         final Alerts alerts = new Alerts();
         final List<AlertDefinition> alertDefinitions = scheduleDefinition.getAlerts();
         for (AlertDefinition alertDefinition : alertDefinitions) {
@@ -82,7 +80,6 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             alerts.getAlert().add(alert);
         }
         schedule.setAlerts(alerts);
-        
 
         return schedule;
     }
@@ -94,7 +91,7 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
                 .intValue()));
         alert.setMaximumValue((alertDefinition.getMaximumValue() == null ? null : alertDefinition.getMaximumValue()
                 .intValue()));
-        alert.setMetric(createMetric(alertDefinition.getMetricIdentifier()));
+        alert.setMetric(new JaxbMetricAdaptor().serialize(alertDefinition.getMetricIdentifier()));
         alert.setSeverity(createSeverity(alertDefinition.getSeverity()));
         return alert;
     }
@@ -115,19 +112,6 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
         default:
             throw new UnsupportedOperationException("Unsupported severity: " + severity);
         }
-    }
-
-    private MetricType createMetric(MetricIdentifier metricIdentifier) {
-        final MetricType metric = new MetricType();
-        metric.setAnalyzerDescriptorName(metricIdentifier.getAnalyzerDescriptorName());
-        metric.setAnalyzerInput(metricIdentifier.getAnalyzerInputName());
-        metric.setAnalyzerName(metricIdentifier.getAnalyzerName());
-        metric.setMetricDescriptorName(metricIdentifier.getMetricDescriptorName());
-        metric.setMetricDisplayName(metricIdentifier.getDisplayName());
-        metric.setMetricColor(metricIdentifier.getMetricColor());
-        metric.setMetricParamColumnName(metricIdentifier.getParamColumnName());
-        metric.setMetricParamQueryString(metricIdentifier.getParamQueryString());
-        return metric;
     }
 
 }

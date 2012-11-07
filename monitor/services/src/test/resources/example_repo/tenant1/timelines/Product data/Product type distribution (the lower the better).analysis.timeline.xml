@@ -8,14 +8,54 @@
 			<metric-descriptor-name>Distinct count</metric-descriptor-name>
 		</metric>
 		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
-			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
-			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Null count</metric-descriptor-name>
+			<metric-display-name>Null rate</metric-display-name>
+			<formula>nullcount * 100 / total</formula>
+			<children>
+				<metric>
+					<metric-display-name>nullcount</metric-display-name>
+					<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+					<analyzer-input>PRODUCTLINE</analyzer-input>
+					<metric-descriptor-name>Null count</metric-descriptor-name>
+				</metric>
+				<metric>
+					<metric-display-name>total</metric-display-name>
+					<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+					<analyzer-input>PRODUCTLINE</analyzer-input>
+					<metric-descriptor-name>Total count</metric-descriptor-name>
+				</metric>
+			</children>
 		</metric>
 		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<metric-display-name>Classic car rate</metric-display-name>
+			<formula>cars * 100 / total</formula>
+			<children>
+				<metric>
+					<metric-display-name>cars</metric-display-name>
+					<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+					<analyzer-input>PRODUCTLINE</analyzer-input>
+					<metric-descriptor-name>Value count</metric-descriptor-name>
+					<metric-param-query-string>Vintage Cars</metric-param-query-string>
+				</metric>
+				<metric>
+					<metric-display-name>total</metric-display-name>
+					<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+					<analyzer-input>PRODUCTLINE</analyzer-input>
+					<metric-descriptor-name>Total count</metric-descriptor-name>
+				</metric>
+			</children>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<metric-display-name>cars</metric-display-name>
 			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
 			<analyzer-input>PRODUCTLINE</analyzer-input>
-			<metric-descriptor-name>Unique count</metric-descriptor-name>
+			<metric-descriptor-name>Value count</metric-descriptor-name>
+			<metric-param-query-string>Vintage Cars</metric-param-query-string>
+		</metric>
+		<metric xmlns="http://eobjects.org/datacleaner/shared/1.0">
+			<metric-display-name>total</metric-display-name>
+			<analyzer-descriptor-name>Value distribution</analyzer-descriptor-name>
+			<analyzer-input>PRODUCTLINE</analyzer-input>
+			<metric-descriptor-name>Total count</metric-descriptor-name>
 		</metric>
 	</metrics>
 </timeline>

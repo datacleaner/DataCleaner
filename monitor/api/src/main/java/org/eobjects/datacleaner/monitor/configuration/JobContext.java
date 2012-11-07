@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 
 /**
@@ -46,4 +47,6 @@ public interface JobContext {
     public void toXml(OutputStream out);
 
     public RepositoryFile getJobFile();
+    
+    public JobMetrics getJobMetrics();
 }

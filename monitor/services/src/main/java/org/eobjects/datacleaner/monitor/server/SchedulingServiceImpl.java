@@ -50,6 +50,7 @@ import org.eobjects.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -137,6 +138,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         logger.info("Schedule initialization done!");
     }
+    
+    @Override
+    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
+        JobContext jobContext = _tenantContextFactory.getContext(tenant).getJob(job.getName());
+        return jobContext.getJobMetrics();
+    }
+    
 
     @PreDestroy
     public void shutdown() {

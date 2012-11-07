@@ -49,13 +49,17 @@ public class AlertPanel extends FlowPanel {
         setStyleDependentName(alert.getSeverity().toString(), true);
 
         _anchor = new Anchor(_alert.toString());
-        _anchor.addClickHandler(new CustomizeAlertClickHandler(this));
+        _anchor.addClickHandler(new CustomizeAlertClickHandler(this, _service));
 
         add(_anchor);
     }
 
     public AlertDefinition getAlert() {
         return _alert;
+    }
+    
+    public ScheduleDefinition getSchedule() {
+        return _schedule;
     }
 
     public void updateAlert() {

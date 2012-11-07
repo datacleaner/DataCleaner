@@ -19,16 +19,21 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
+import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.NumberTextBox;
+import org.eobjects.datacleaner.monitor.shared.widgets.SelectMetricAnchor;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -52,8 +57,8 @@ public class CustomizeAlertPanel extends Composite {
     @UiField
     TextBox descriptionTextBox;
 
-    @UiField
-    Label metricLabel;
+    @UiField(provided=true)
+    SelectMetricAnchor metricAnchor;
 
     @UiField
     NumberTextBox minimumValueTextBox;
@@ -64,10 +69,18 @@ public class CustomizeAlertPanel extends Composite {
     @UiField
     FlowPanel severityPanel;
 
-    public CustomizeAlertPanel(AlertDefinition alert) {
+    public CustomizeAlertPanel(TenantIdentifier tenant, JobIdentifier job, AlertDefinition alert, SchedulingServiceAsync service) {
         super();
 
         _alert = alert;
+        metricAnchor = new SelectMetricAnchor();
+        service.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
+            @Override
+            public void onSuccess(JobMetrics result) {
+                metricAnchor.setJobMetrics(result);
+            }
+        });
+        metricAnchor.setMetric(_alert.getMetricIdentifier());
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -82,7 +95,6 @@ public class CustomizeAlertPanel extends Composite {
         }
 
         descriptionTextBox.setText(_alert.getDescription());
-        metricLabel.setText(_alert.getMetricIdentifier().getDisplayName());
         minimumValueTextBox.setNumberValue(_alert.getMinimumValue());
         maximumValueTextBox.setNumberValue(_alert.getMaximumValue());
     }

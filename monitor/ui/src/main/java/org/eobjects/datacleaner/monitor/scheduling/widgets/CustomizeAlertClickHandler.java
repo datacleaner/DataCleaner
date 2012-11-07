@@ -19,6 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
+import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
+import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 
@@ -33,16 +37,22 @@ import com.google.gwt.user.client.ui.Button;
 public class CustomizeAlertClickHandler implements ClickHandler {
 
     private final AlertPanel _alertPanel;
+    private final SchedulingServiceAsync _service;
 
-    public CustomizeAlertClickHandler(AlertPanel alertPanel) {
+    public CustomizeAlertClickHandler(AlertPanel alertPanel, SchedulingServiceAsync service) {
         _alertPanel = alertPanel;
+        _service = service;
     }
 
     @Override
     public void onClick(ClickEvent event) {
         final DCPopupPanel popup = new DCPopupPanel("Alert");
 
-        final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(_alertPanel.getAlert());
+        final TenantIdentifier tenant = _alertPanel.getSchedule().getTenant();
+        final JobIdentifier job = _alertPanel.getSchedule().getJob();
+        final AlertDefinition alert = _alertPanel.getAlert();
+        
+        final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert, _service);
         final Button button = new Button("Save alert");
         button.addClickHandler(new ClickHandler() {
             @Override

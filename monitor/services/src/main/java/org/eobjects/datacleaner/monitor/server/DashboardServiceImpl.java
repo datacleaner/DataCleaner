@@ -27,24 +27,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.analyzer.util.LabelUtils;
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
 import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
 import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
-import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
@@ -52,7 +48,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -221,65 +217,8 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public JobMetrics getJobMetrics(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final AnalysisJob job = _tenantContextFactory.getContext(tenant).getJob(jobIdentifier.getName())
-                .getAnalysisJob();
-        MetricValueUtils metricValueUtils = new MetricValueUtils();
-
-        final Collection<AnalyzerJob> analyzerJobs = job.getAnalyzerJobs();
-
-        final List<MetricGroup> metricGroups = new ArrayList<MetricGroup>();
-        for (AnalyzerJob analyzerJob : analyzerJobs) {
-            final Set<MetricDescriptor> metricDescriptors = analyzerJob.getDescriptor().getResultMetrics();
-            if (!metricDescriptors.isEmpty()) {
-                final String label = LabelUtils.getLabel(analyzerJob);
-                final InputColumn<?> identifyingInputColumn = metricValueUtils.getIdentifyingInputColumn(analyzerJob);
-                final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
-
-                for (MetricDescriptor metricDescriptor : metricDescriptors) {
-                    MetricIdentifier metricIdentifier = new MetricIdentifier();
-                    metricIdentifier.setAnalyzerDescriptorName(analyzerJob.getDescriptor().getDisplayName());
-                    metricIdentifier.setAnalyzerName(analyzerJob.getName());
-                    if (identifyingInputColumn != null) {
-                        metricIdentifier.setAnalyzerInputName(identifyingInputColumn.getName());
-                    }
-                    metricIdentifier.setMetricDescriptorName(metricDescriptor.getName());
-                    metricIdentifier.setParameterizedByColumnName(metricDescriptor.isParameterizedByInputColumn());
-                    metricIdentifier.setParameterizedByQueryString(metricDescriptor.isParameterizedByString());
-
-                    metricIdentifiers.add(metricIdentifier);
-                }
-
-                final List<String> columnNames = new ArrayList<String>();
-                final Set<ConfiguredPropertyDescriptor> inputProperties = analyzerJob.getDescriptor()
-                        .getConfiguredPropertiesForInput(false);
-                for (ConfiguredPropertyDescriptor inputProperty : inputProperties) {
-                    final Object input = analyzerJob.getConfiguration().getProperty(inputProperty);
-                    if (input instanceof InputColumn) {
-                        String columnName = ((InputColumn<?>) input).getName();
-                        columnNames.add(columnName);
-                    } else if (input instanceof InputColumn[]) {
-                        InputColumn<?>[] inputColumns = (InputColumn<?>[]) input;
-                        for (InputColumn<?> inputColumn : inputColumns) {
-                            String columnName = inputColumn.getName();
-                            if (!columnNames.contains(columnName)) {
-                                columnNames.add(columnName);
-                            }
-                        }
-                    }
-                }
-
-                final MetricGroup metricGroup = new MetricGroup();
-                metricGroup.setName(label);
-                metricGroup.setMetrics(metricIdentifiers);
-                metricGroup.setColumnNames(columnNames);
-                metricGroups.add(metricGroup);
-            }
-        }
-
-        final JobMetrics metrics = new JobMetrics();
-        metrics.setMetricGroups(metricGroups);
-        metrics.setJob(jobIdentifier);
-        return metrics;
+        final JobContext jobContext = _tenantContextFactory.getContext(tenant).getJob(jobIdentifier.getName());
+        return jobContext.getJobMetrics();
     }
 
     @Override

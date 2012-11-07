@@ -25,6 +25,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,6 +36,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface SchedulingServiceAsync {
 
     void getSchedules(TenantIdentifier tenant, AsyncCallback<List<ScheduleDefinition>> callback);
+
+    void getJobMetrics(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<JobMetrics> callback);
 
     void updateSchedule(TenantIdentifier tenant, ScheduleDefinition scheduleDefinition,
             AsyncCallback<ScheduleDefinition> callback);

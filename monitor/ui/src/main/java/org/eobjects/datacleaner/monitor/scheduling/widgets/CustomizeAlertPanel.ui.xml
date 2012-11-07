@@ -16,7 +16,7 @@
 		<div class="FormRow">
 			<span class="FormKey">Metric:</span>
 			<div class="FormValue">
-				<g:Label ui:field="metricLabel" styleName="discrete" />
+				<shared:SelectMetricAnchor ui:field="metricAnchor" />
 			</div>
 		</div>
 

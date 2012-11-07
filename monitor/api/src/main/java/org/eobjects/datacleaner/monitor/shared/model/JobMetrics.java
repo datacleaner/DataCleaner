@@ -17,13 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.dashboard.model;
+package org.eobjects.datacleaner.monitor.shared.model;
 
 import java.io.Serializable;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 
 /**
  * Represents the available metrics of a specific job.

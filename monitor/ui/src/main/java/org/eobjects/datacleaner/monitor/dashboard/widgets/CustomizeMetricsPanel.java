@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
-import org.eobjects.datacleaner.monitor.dashboard.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;

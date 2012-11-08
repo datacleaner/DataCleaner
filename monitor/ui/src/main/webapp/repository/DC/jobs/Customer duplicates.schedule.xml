@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<schedule xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <dependent-job>Customer completeness</dependent-job>
+    <alerts>
+        <alert>
+            <description>Duplicate record rate</description>
+            <ns2:metric>
+                <ns2:metric-display-name>dupes*100/records</ns2:metric-display-name>
+                <ns2:formula>dupes*100/records</ns2:formula>
+                <ns2:children>
+                    <ns2:metric>
+                        <ns2:metric-display-name>dupes</ns2:metric-display-name>
+                        <ns2:analyzer-descriptor-name>Duplicate detection</ns2:analyzer-descriptor-name>
+                        <ns2:metric-descriptor-name>Duplicate records</ns2:metric-descriptor-name>
+                    </ns2:metric>
+                    <ns2:metric>
+                        <ns2:metric-display-name>records</ns2:metric-display-name>
+                        <ns2:analyzer-descriptor-name>Duplicate detection</ns2:analyzer-descriptor-name>
+                        <ns2:metric-descriptor-name>Processed records</ns2:metric-descriptor-name>
+                    </ns2:metric>
+                </ns2:children>
+            </ns2:metric>
+            <maximum-value>5</maximum-value>
+            <severity>WARNING</severity>
+        </alert>
+        <alert>
+            <description>Duplicate groups</description>
+            <ns2:metric>
+                <ns2:analyzer-descriptor-name>Duplicate detection</ns2:analyzer-descriptor-name>
+                <ns2:metric-descriptor-name>Duplicate groups</ns2:metric-descriptor-name>
+            </ns2:metric>
+            <maximum-value>10</maximum-value>
+            <severity>SURVEILLANCE</severity>
+        </alert>
+    </alerts>
+</schedule>

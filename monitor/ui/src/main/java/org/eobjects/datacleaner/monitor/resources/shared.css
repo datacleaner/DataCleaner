@@ -172,7 +172,7 @@ a:hover {
  */
 .DefineMetricPanel {
 	width: 400px;
-	min-height: 500px;
+	min-height: 350px;
 }
 
 .SelectMetricPanel {

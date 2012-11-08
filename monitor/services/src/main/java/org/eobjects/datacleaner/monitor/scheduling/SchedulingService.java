@@ -28,7 +28,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
@@ -57,17 +56,6 @@ public interface SchedulingService extends RemoteService {
     @RolesAllowed(SecurityRoles.VIEWER)
     public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
     
-
-    /**
-     * Gets all available metrics for a job
-     * 
-     * @param tenant
-     * @param job
-     * @return
-     */
-    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
-
     /**
      * Gets the full details about an {@link ExecutionIdentifier}.
      * 

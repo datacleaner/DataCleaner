@@ -23,20 +23,10 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.MetricDescriptor;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalyzerJob;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
 import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
@@ -48,7 +38,6 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -216,12 +205,6 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public JobMetrics getJobMetrics(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final JobContext jobContext = _tenantContextFactory.getContext(tenant).getJob(jobIdentifier.getName());
-        return jobContext.getJobMetrics();
-    }
-
-    @Override
     public TimelineIdentifier updateTimelineDefinition(final TenantIdentifier tenant,
             final TimelineIdentifier timelineIdentifier, final TimelineDefinition timelineDefinition) {
         return _timelineDao.updateTimeline(timelineIdentifier, timelineDefinition);
@@ -247,50 +230,6 @@ public class DashboardServiceImpl implements DashboardService {
         logger.info("Created timeline definition in file: {}", file);
 
         return new TimelineIdentifier(timelineIdentifier.getName(), file.getQualifiedPath(), group);
-    }
-
-    @Override
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job,
-            MetricIdentifier metric) {
-        if (metric.isFormulaBased()) {
-            return new ArrayList<String>(0);
-        }
-
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-        final MetricValueUtils metricValueUtils = new MetricValueUtils();
-
-        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
-        final AnalyzerBeanDescriptor<?> analyzerDescriptor = configuration.getDescriptorProvider()
-                .getAnalyzerBeanDescriptorByDisplayName(metric.getAnalyzerDescriptorName());
-        final MetricDescriptor metricDescriptor = analyzerDescriptor.getResultMetric(metric.getMetricDescriptorName());
-
-        if (!metricDescriptor.isParameterizedByString()) {
-            return null;
-        }
-
-        final RepositoryFolder resultsFolder = context.getResultFolder();
-        final String jobName = job.getName();
-
-        final RepositoryFile resultFile = resultsFolder.getLatestFile(jobName,
-                FileFilters.ANALYSIS_RESULT_SER.getExtension());
-        if (resultFile == null) {
-            return new ArrayList<String>(0);
-        }
-
-        final AnalysisResult analysisResult = context.getResult(resultFile.getName()).getAnalysisResult();
-
-        final AnalysisJob analysisJob = context.getJob(job.getName()).getAnalysisJob();
-        final AnalyzerJob analyzerJob = metricValueUtils.getAnalyzerJob(metric, analysisJob);
-
-        final AnalyzerResult result = metricValueUtils.getResult(analysisResult, analyzerJob, metric);
-
-        final Collection<String> suggestions = metricDescriptor.getMetricParameterSuggestions(result);
-
-        // make sure we can send it across the GWT-RPC wire.
-        if (suggestions instanceof ArrayList) {
-            return suggestions;
-        }
-        return new ArrayList<String>(suggestions);
     }
 
     @Override

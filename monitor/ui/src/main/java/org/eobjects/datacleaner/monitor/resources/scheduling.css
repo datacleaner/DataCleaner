@@ -178,6 +178,12 @@
 	margin-bottom: 3px;
 }
 
+.CreateAlertAnchor {
+	background-image: url("add.png");
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
 .AlertPanel {
 	border-left: 2px solid #f0f0f0;
 	margin-top: 2px;

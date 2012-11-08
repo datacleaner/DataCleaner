@@ -38,6 +38,7 @@ import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDaoImpl;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDaoImpl;
+import org.eobjects.datacleaner.monitor.shared.DescriptorService;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
@@ -55,6 +56,7 @@ public class DashboardServiceImplTest extends TestCase {
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
+        final DescriptorService descriptorService = new DescriptorServiceImpl(contextFactory);
         final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
                 timelineDao);
 
@@ -69,7 +71,7 @@ public class DashboardServiceImplTest extends TestCase {
         final JobIdentifier job = jobs.get(3);
         assertEquals("JobIdentifier[name=product_profiling]", job.toString());
 
-        final JobMetrics jobMetrics = service.getJobMetrics(tenant, job);
+        final JobMetrics jobMetrics = descriptorService.getJobMetrics(tenant, job);
         assertEquals("JobMetrics[product_profiling metrics]", jobMetrics.toString());
         assertEquals(job, jobMetrics.getJob());
 

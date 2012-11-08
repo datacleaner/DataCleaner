@@ -267,6 +267,10 @@ img.scalable_background {
 	font-size: 0.8em;
 }
 
+#user_panel span.logout a {
+	color: white;
+}
+
 /**
  * Footer
  */

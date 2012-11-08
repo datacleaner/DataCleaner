@@ -24,6 +24,7 @@ import java.util.List;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -39,6 +40,7 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class SelectMetricPanel extends FlowPanel {
 
+    private final TenantIdentifier _tenant;
     private final Label _displayNameLabel;
     private final TextBox _displayNameBox;
     private final JobMetrics _jobMetrics;
@@ -46,11 +48,13 @@ public class SelectMetricPanel extends FlowPanel {
     private final ListBox _metricGroupSelectionBox;
     private final ListBox _metricSelectionBox;
     private final ListBox _columnParameterSelectionBox;
-    private final TextBox _queryParameterTextBox;
+    private final StringParameterizedMetricTextBox _queryParameterTextBox;
 
-    public SelectMetricPanel(JobMetrics jobMetrics, MetricIdentifier existingMetric, boolean displayNameVisible) {
+    public SelectMetricPanel(TenantIdentifier tenant, JobMetrics jobMetrics, MetricIdentifier existingMetric,
+            boolean displayNameVisible) {
         super();
         addStyleName("SelectMetricPanel");
+        _tenant = tenant;
         _displayNameLabel = new Label("Name:");
         _displayNameBox = new TextBox();
         _jobMetrics = jobMetrics;
@@ -71,7 +75,8 @@ public class SelectMetricPanel extends FlowPanel {
         _columnParameterSelectionBox.setVisible(false);
         add(_columnParameterSelectionBox);
 
-        _queryParameterTextBox = new TextBox();
+        _queryParameterTextBox = new StringParameterizedMetricTextBox(_tenant, _jobMetrics.getJob(), existingMetric,
+                "", null);
         _queryParameterTextBox.setVisible(false);
         add(_queryParameterTextBox);
 
@@ -116,6 +121,7 @@ public class SelectMetricPanel extends FlowPanel {
                         _columnParameterSelectionBox.addItem(columnName);
                     }
                 } else if (metric.isParameterizedByQueryString()) {
+                    _queryParameterTextBox.setMetric(_tenant, _jobMetrics.getJob(), metric);
                     _queryParameterTextBox.setVisible(true);
                 }
             }

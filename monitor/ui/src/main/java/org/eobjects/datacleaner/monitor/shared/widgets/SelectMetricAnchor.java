@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,11 +34,13 @@ import com.google.gwt.user.client.ui.Button;
  */
 public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
 
+    private final TenantIdentifier _tenant;
     private JobMetrics _jobMetrics;
     private MetricIdentifier _metric;
 
-    public SelectMetricAnchor() {
+    public SelectMetricAnchor(TenantIdentifier tenant) {
         super();
+        _tenant = tenant;
         addClickHandler(this);
         updateText();
     }
@@ -60,7 +63,7 @@ public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
     }
 
     private void updateText() {
-        if (_metric == null) {
+        if (_metric == null || _metric.getDisplayName() == null || "".equals(_metric.getDisplayName())) {
             setText("(select metric)");
         } else {
             setText(_metric.getDisplayName());
@@ -76,7 +79,7 @@ public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
 
         final DCPopupPanel popup = new DCPopupPanel("Define metric");
         
-        final DefineMetricPanel panel = new DefineMetricPanel(_jobMetrics, _metric);
+        final DefineMetricPanel panel = new DefineMetricPanel(_tenant, _jobMetrics, _metric);
 
         final Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {

@@ -50,7 +50,7 @@ public class AlertPanel extends FlowPanel {
         setStyleDependentName(alert.getSeverity().toString(), true);
 
         _anchor = new Anchor(_alert.toString());
-        _anchor.addClickHandler(new CustomizeAlertClickHandler(this, _service));
+        _anchor.addClickHandler(new CustomizeAlertClickHandler(this));
 
         add(_anchor);
     }

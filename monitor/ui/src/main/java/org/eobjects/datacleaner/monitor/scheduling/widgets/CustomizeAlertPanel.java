@@ -19,9 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
-import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
+import org.eobjects.datacleaner.monitor.shared.DescriptorService;
+import org.eobjects.datacleaner.monitor.shared.DescriptorServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -42,6 +43,8 @@ import com.google.gwt.user.client.ui.Widget;
  * Panel used to customize/edit an {@link AlertDefinition}.
  */
 public class CustomizeAlertPanel extends Composite {
+    
+    private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
 
     interface MyUiBinder extends UiBinder<Widget, CustomizeAlertPanel> {
     }
@@ -69,12 +72,12 @@ public class CustomizeAlertPanel extends Composite {
     @UiField
     FlowPanel severityPanel;
 
-    public CustomizeAlertPanel(TenantIdentifier tenant, JobIdentifier job, AlertDefinition alert, SchedulingServiceAsync service) {
+    public CustomizeAlertPanel(TenantIdentifier tenant, JobIdentifier job, AlertDefinition alert) {
         super();
 
         _alert = alert;
-        metricAnchor = new SelectMetricAnchor();
-        service.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
+        metricAnchor = new SelectMetricAnchor(tenant);
+        descriptorService.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
             @Override
             public void onSuccess(JobMetrics result) {
                 metricAnchor.setJobMetrics(result);

@@ -17,9 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.dashboard.widgets;
+package org.eobjects.datacleaner.monitor.shared.widgets;
 
-import java.util.Collection;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
@@ -27,6 +29,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle;
 
 /**
  * A textbox with suggestions which the user uses to express string metric
@@ -34,28 +37,39 @@ import com.google.gwt.user.client.ui.SuggestBox;
  */
 public class StringParameterizedMetricTextBox extends SuggestBox {
 
-    public StringParameterizedMetricTextBox(String text, final CheckBox checkBoxToActivate, Collection<String> suggestions) {
-        super(new StringParameterizedMetricSuggestOracle(suggestions));
+    public StringParameterizedMetricTextBox(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric,
+            String text, CheckBox checkBoxToActivate) {
+        this(text, checkBoxToActivate, new StringParameterizedMetricSuggestOracle(tenant, job, metric));
+    }
+
+    public StringParameterizedMetricTextBox(String text, final CheckBox checkBoxToActivate, SuggestOracle suggestOracle) {
+        super(suggestOracle);
         addStyleName("StringParameterizedMetricTextBox");
         setText(text);
-        
+
         getTextBox().addFocusHandler(new FocusHandler() {
             @Override
             public void onFocus(FocusEvent event) {
                 showSuggestionList();
             }
         });
-        
-        getTextBox().addKeyUpHandler(new KeyUpHandler() {
-            @Override
-            public void onKeyUp(KeyUpEvent event) {
-                final String text = getText();
-                if (text != null && !"".equals(text)) {
-                    // activate checkbox whenever something is written.
-                    checkBoxToActivate.setValue(true);
+
+        if (checkBoxToActivate != null) {
+            getTextBox().addKeyUpHandler(new KeyUpHandler() {
+                @Override
+                public void onKeyUp(KeyUpEvent event) {
+                    final String text = getText();
+                    if (text != null && !"".equals(text)) {
+                        // activate checkbox whenever something is written.
+                        checkBoxToActivate.setValue(true);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
+    public void setMetric(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
+        StringParameterizedMetricSuggestOracle oracle = (StringParameterizedMetricSuggestOracle) getSuggestOracle();
+        oracle.setMetric(tenant, job, metric);
+    }
 }

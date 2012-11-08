@@ -17,12 +17,20 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.dashboard.widgets;
+package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.DescriptorService;
+import org.eobjects.datacleaner.monitor.shared.DescriptorServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SuggestOracle;
 
 public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
@@ -57,6 +65,26 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
         _suggestions = suggestions;
     }
 
+    public StringParameterizedMetricSuggestOracle(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
+        _suggestions = new ArrayList<String>();
+        setMetric(tenant, job, metric);
+    }
+    
+
+    public void setMetric(TenantIdentifier tenant, JobIdentifier job, MetricIdentifier metric) {
+        DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
+        descriptorService.getMetricParameterSuggestions(tenant, job, metric, new DCAsyncCallback<Collection<String>>() {
+            @Override
+            public void onSuccess(Collection<String> result) {
+                _suggestions.clear();
+                if (result == null) {
+                    return;
+                }
+                _suggestions.addAll(result);
+            }
+        });
+    };
+
     @Override
     public void requestDefaultSuggestions(Request request, Callback callback) {
         requestSuggestions("", request, callback);
@@ -86,5 +114,5 @@ public class StringParameterizedMetricSuggestOracle extends SuggestOracle {
 
         final Response response = new Response(suggestions);
         callback.onSuggestionsReady(request, response);
-    };
+    }
 }

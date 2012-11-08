@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.util;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.StatusCodeException;
 
 /**
  * Convenient abstract implementation of the {@link AsyncCallback} which handles
@@ -36,6 +37,16 @@ public abstract class DCAsyncCallback<T> implements AsyncCallback<T> {
     @Override
     public void onFailure(Throwable e) {
         GWT.log("Error occurred", e);
-        ErrorHandler.showErrorDialog("Server reported error", "The server reported an unexpected error.", e);
+        if (e instanceof StatusCodeException) {
+            final String response = ((StatusCodeException) e).getEncodedResponse();
+
+            GWT.log("Encoded error response: " + response);
+
+            final int statusCode = ((StatusCodeException) e).getStatusCode();
+
+            ErrorHandler.showErrorDialog("Server reported HTTP error: " + statusCode, response, e);
+        } else {
+            ErrorHandler.showErrorDialog("Server reported error", "The server reported an unexpected error.", e);
+        }
     }
 }

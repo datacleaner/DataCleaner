@@ -19,21 +19,18 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -43,9 +40,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("dashboardService")
 public interface DashboardService extends RemoteService {
-    
+
     /**
      * Determines whether the current user is authorized to edit the dashboard.
+     * 
      * @param tenant
      * @return
      */
@@ -59,16 +57,6 @@ public interface DashboardService extends RemoteService {
      */
     @RolesAllowed(SecurityRoles.VIEWER)
     public List<JobIdentifier> getJobs(TenantIdentifier tenant) throws DCSecurityException;
-
-    /**
-     * Gets all available metrics for a job
-     * 
-     * @param tenant
-     * @param job
-     * @return
-     */
-    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
-    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
     /**
      * Gets the available dashboard groups
@@ -99,7 +87,8 @@ public interface DashboardService extends RemoteService {
      * @return a boolean indicating if the remove operation went well.
      */
     @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
-    public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup dashboardGroup) throws DCSecurityException;
+    public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup dashboardGroup)
+            throws DCSecurityException;
 
     /**
      * Gets the saved timeline identifiers of a tenant
@@ -160,17 +149,6 @@ public interface DashboardService extends RemoteService {
     @RolesAllowed(SecurityRoles.VIEWER)
     public TimelineData getTimelineData(TenantIdentifier tenant, TimelineDefinition timeline)
             throws DCSecurityException;
-
-    /**
-     * Gets suggestions for parameter values of a particular metric
-     * 
-     * @param tenant
-     * @param metric
-     * @return
-     */
-    @RolesAllowed(SecurityRoles.DASHBOARD_EDITOR)
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
-            MetricIdentifier metric) throws DCSecurityException;
 
     /**
      * Deletes a timeline from the repository

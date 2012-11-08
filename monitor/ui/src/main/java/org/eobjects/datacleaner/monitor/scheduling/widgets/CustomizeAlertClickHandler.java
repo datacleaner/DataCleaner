@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
-import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -40,11 +39,9 @@ import com.google.gwt.user.client.ui.UIObject;
 public class CustomizeAlertClickHandler implements ClickHandler {
 
     private final AlertPanel _alertPanel;
-    private final SchedulingServiceAsync _service;
 
-    public CustomizeAlertClickHandler(AlertPanel alertPanel, SchedulingServiceAsync service) {
+    public CustomizeAlertClickHandler(AlertPanel alertPanel) {
         _alertPanel = alertPanel;
-        _service = service;
     }
 
     @Override
@@ -60,7 +57,7 @@ public class CustomizeAlertClickHandler implements ClickHandler {
                 final JobIdentifier job = _alertPanel.getSchedule().getJob();
                 final AlertDefinition alert = _alertPanel.getAlert();
 
-                final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert, _service);
+                final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert);
                 final Button button = new Button("Save alert");
                 button.addClickHandler(new ClickHandler() {
                     @Override

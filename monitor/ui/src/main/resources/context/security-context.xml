@@ -34,6 +34,7 @@
 		<form-login login-page="/login.jsf" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
+		<logout logout-url="/logout"/>
 	</http>
 
 	<global-method-security jsr250-annotations="enabled" />

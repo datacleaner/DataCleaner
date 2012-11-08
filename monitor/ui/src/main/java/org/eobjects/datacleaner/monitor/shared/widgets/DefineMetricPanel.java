@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -42,7 +43,7 @@ public class DefineMetricPanel extends FlowPanel {
     private final TextBox _formulaTextBox;
     private final JobMetrics _jobMetrics;
 
-    public DefineMetricPanel(JobMetrics jobMetrics, MetricIdentifier existingMetric) {
+    public DefineMetricPanel(final TenantIdentifier tenant, JobMetrics jobMetrics, MetricIdentifier existingMetric) {
         super();
         addStyleName("DefineMetricPanel");
 
@@ -72,10 +73,10 @@ public class DefineMetricPanel extends FlowPanel {
             _formulaTextBox.setText(existingMetric.getFormula());
             final List<MetricIdentifier> children = existingMetric.getChildren();
             for (MetricIdentifier child : children) {
-                addSelection(new SelectMetricPanel(_jobMetrics, child, formulaBased));
+                addSelection(new SelectMetricPanel(tenant, _jobMetrics, child, formulaBased));
             }
         } else {
-            addSelection(new SelectMetricPanel(_jobMetrics, existingMetric, formulaBased));
+            addSelection(new SelectMetricPanel(tenant, _jobMetrics, existingMetric, formulaBased));
         }
 
         // add listener for limiting amount of metric selections
@@ -89,7 +90,7 @@ public class DefineMetricPanel extends FlowPanel {
                     }
                 } else {
                     while (_selectMetricPanels.size() < 2) {
-                        addSelection(new SelectMetricPanel(_jobMetrics, null, true));
+                        addSelection(new SelectMetricPanel(tenant, _jobMetrics, null, true));
                     }
                 }
 

@@ -45,6 +45,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -133,6 +134,11 @@ public class SchedulePanel extends Composite {
             public void onClick(ClickEvent event) {
                 alertsPanel.clear();
                 alertsPanel.add(new CreateAlertAnchor(service, schedule));
+                if (alerts.isEmpty()) {
+                    Label label = new Label("(no alerts)");
+                    label.setStylePrimaryName("AlertPanel");
+                    alertsPanel.add(label);
+                }
                 for (AlertDefinition alert : alerts) {
                     AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
                     alertsPanel.add(alertPanel);

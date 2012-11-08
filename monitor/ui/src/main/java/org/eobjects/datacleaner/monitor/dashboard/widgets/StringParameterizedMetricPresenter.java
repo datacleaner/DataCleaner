@@ -20,14 +20,13 @@
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.shared.widgets.StringParameterizedMetricTextBox;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -46,7 +45,6 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
     private final List<MetricIdentifier> _activeMetrics;
     private final FlowPanel _panel;
     private final List<MetricPanel> _metricPanels;
-    private final Collection<String> _parameterSuggestions;
     private final TenantIdentifier _tenantIdentifier;
     private final JobIdentifier _jobIdentifier;
 
@@ -63,8 +61,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
             } else {
                 _checkBox.setValue(false);
             }
-            _suggestBox = new StringParameterizedMetricTextBox(metric.getParamQueryString(), _checkBox,
-                    _parameterSuggestions);
+            _suggestBox = new StringParameterizedMetricTextBox(_tenantIdentifier, _jobIdentifier, metric,metric.getParamQueryString(), _checkBox);
             add(_checkBox);
             add(_suggestBox);
         }
@@ -74,19 +71,18 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
             copy.setParamQueryString(_suggestBox.getText());
             return copy;
         }
-        
+
         public boolean isSelected() {
             return _checkBox.getValue().booleanValue();
         }
     }
 
-    public StringParameterizedMetricPresenter(TenantIdentifier tenantIdentifier, JobIdentifier jobIdentifier, MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics,
-            DashboardServiceAsync service) {
+    public StringParameterizedMetricPresenter(TenantIdentifier tenantIdentifier, JobIdentifier jobIdentifier,
+            MetricIdentifier metricIdentifier, List<MetricIdentifier> activeMetrics, DashboardServiceAsync service) {
         _tenantIdentifier = tenantIdentifier;
         _jobIdentifier = jobIdentifier;
         _metricIdentifier = metricIdentifier;
         _activeMetrics = activeMetrics;
-        _parameterSuggestions = new ArrayList<String>();
         _metricPanels = new ArrayList<MetricPanel>();
         _panel = new FlowPanel();
         _panel.addStyleName("StringParameterizedMetricsPresenter");
@@ -112,21 +108,6 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         if (_metricPanels.isEmpty()) {
             addMetricPanel(_metricIdentifier);
         }
-
-        service.getMetricParameterSuggestions(_tenantIdentifier, _jobIdentifier, _metricIdentifier, new DCAsyncCallback<Collection<String>>() {
-            @Override
-            public void onSuccess(Collection<String> result) {
-                if (result == null) {
-                    return;
-                }
-
-                // add the suggestion to the existing list which is
-                // referenced/shared between all the text boxes.
-                for (String suggestion : result) {
-                    _parameterSuggestions.add(suggestion);
-                }
-            }
-        });
     }
 
     private void addMetricPanel(MetricIdentifier metric) {

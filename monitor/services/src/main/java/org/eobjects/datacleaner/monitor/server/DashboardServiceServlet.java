@@ -19,19 +19,16 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
@@ -76,11 +73,6 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
     }
 
     @Override
-    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) {
-        return _delegate.getJobMetrics(tenant, job);
-    }
-
-    @Override
     public List<TimelineIdentifier> getTimelines(TenantIdentifier tenant, DashboardGroup group) {
         return _delegate.getTimelines(tenant, group);
     }
@@ -105,12 +97,6 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
     public TimelineIdentifier createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
             TimelineDefinition timelineDefinition) {
         return _delegate.createTimelineDefinition(tenant, timeline, timelineDefinition);
-    }
-
-    @Override
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job,
-            MetricIdentifier metric) {
-        return _delegate.getMetricParameterSuggestions(tenant, job, metric);
     }
 
     @Override

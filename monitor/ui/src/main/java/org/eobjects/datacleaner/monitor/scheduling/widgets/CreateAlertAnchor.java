@@ -56,7 +56,7 @@ public class CreateAlertAnchor extends Anchor implements ClickHandler {
         final JobIdentifier job = _schedule.getJob();
         final TenantIdentifier tenant = _schedule.getTenant();
 
-        final CustomizeAlertPanel panel = new CustomizeAlertPanel(tenant, job, new AlertDefinition(), _service);
+        final CustomizeAlertPanel panel = new CustomizeAlertPanel(tenant, job, new AlertDefinition());
 
         final DCPopupPanel popup = new DCPopupPanel("Create alert");
 

@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.shared.DescriptorService;
+import org.eobjects.datacleaner.monitor.shared.DescriptorServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
@@ -33,12 +35,15 @@ import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class CustomizeMetricsPanel extends FlowPanel {
+
+    private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
 
     private final List<MetricPresenter> _metricPresenters;
     private TimelineDefinition _timelineDefinition;
@@ -56,7 +61,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         addStyleName("CustomizeMetricsPanel");
         add(new LoadingIndicator());
 
-        _service.getJobMetrics(_tenantIdentifier, _timelineDefinition.getJobIdentifier(),
+        descriptorService.getJobMetrics(_tenantIdentifier, _timelineDefinition.getJobIdentifier(),
                 new DCAsyncCallback<JobMetrics>() {
 
                     @Override

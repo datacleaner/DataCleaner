@@ -29,7 +29,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -108,10 +107,4 @@ public class SchedulingServiceServlet extends SecureGwtServlet implements Schedu
     public void removeSchedule(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
         _delegate.removeSchedule(tenant, job);
     }
-
-    @Override
-    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException {
-        return _delegate.getJobMetrics(tenant, job);
-    }
-
 }

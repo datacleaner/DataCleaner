@@ -118,6 +118,17 @@
 		<url-pattern>/scheduling/jobWizardService</url-pattern>
 		<url-pattern>/dashboard/jobWizardService</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>DescriptorService</servlet-name>
+		<servlet-class>org.eobjects.datacleaner.monitor.server.DescriptorServiceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DescriptorService</servlet-name>
+		<url-pattern>/scheduling/descriptorService</url-pattern>
+		<url-pattern>/dashboard/descriptorService</url-pattern>
+	</servlet-mapping>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>

@@ -19,17 +19,14 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard;
 
-import java.util.Collection;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
-import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -49,16 +46,11 @@ public interface DashboardServiceAsync {
 
     public void getJobs(TenantIdentifier tenant, AsyncCallback<List<JobIdentifier>> callback);
 
-    public void getJobMetrics(TenantIdentifier tenant, JobIdentifier job, AsyncCallback<JobMetrics> callback);
-
     public void updateTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
             TimelineDefinition timelineDefinition, AsyncCallback<TimelineIdentifier> callback);
 
     public void createTimelineDefinition(TenantIdentifier tenant, TimelineIdentifier timeline,
             TimelineDefinition timelineDefinition, AsyncCallback<TimelineIdentifier> callback);
-
-    public void getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
-            MetricIdentifier metric, AsyncCallback<Collection<String>> callback);
 
     public void removeTimeline(TenantIdentifier tenant, TimelineIdentifier timeline, AsyncCallback<Boolean> callback);
 

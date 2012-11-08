@@ -35,7 +35,10 @@
 					<c:if test="#{user.loggedIn}">
 						<div id="user_panel">
 							<span>Welcome <span class="username">#{user.username}</span>
-								<span class="tenant">(#{user.tenant})</span></span>
+								<span class="tenant">(#{user.tenant})</span>
+								|
+								<span class="logout"><a href="logout">Log out</a></span>
+							</span>
 						</div>
 					</c:if>
 				</div>

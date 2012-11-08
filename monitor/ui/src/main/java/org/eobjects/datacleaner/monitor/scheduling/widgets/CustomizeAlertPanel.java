@@ -109,12 +109,13 @@ public class CustomizeAlertPanel extends Composite {
         return radioButton;
     }
 
-    public void updateAlert() {
+    public AlertDefinition updateAlert() {
         _alert.setMetricIdentifier(metricAnchor.getMetric());
         _alert.setDescription(descriptionTextBox.getText());
         _alert.setMaximumValue(maximumValueTextBox.getNumberValue());
         _alert.setMinimumValue(minimumValueTextBox.getNumberValue());
         _alert.setSeverity(getSelectedSeverity());
+        return _alert;
     }
 
     private AlertSeverity getSelectedSeverity() {

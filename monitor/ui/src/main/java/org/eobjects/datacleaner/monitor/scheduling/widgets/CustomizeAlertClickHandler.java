@@ -28,7 +28,10 @@ import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.UIObject;
 
 /**
  * Clickhandler invoked when an alert is clicked. The user will be presented
@@ -46,28 +49,49 @@ public class CustomizeAlertClickHandler implements ClickHandler {
 
     @Override
     public void onClick(ClickEvent event) {
-        final DCPopupPanel popup = new DCPopupPanel("Alert");
+        final MenuBar menuBar = new MenuBar(true);
 
-        final TenantIdentifier tenant = _alertPanel.getSchedule().getTenant();
-        final JobIdentifier job = _alertPanel.getSchedule().getJob();
-        final AlertDefinition alert = _alertPanel.getAlert();
-        
-        final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert, _service);
-        final Button button = new Button("Save alert");
-        button.addClickHandler(new ClickHandler() {
+        menuBar.addItem("Edit alert", new Command() {
             @Override
-            public void onClick(ClickEvent event) {
-                customizeAlertPanel.updateAlert();
-                _alertPanel.updateAlert();
-                popup.hide();
+            public void execute() {
+                final DCPopupPanel popup = new DCPopupPanel("Edit alert");
+
+                final TenantIdentifier tenant = _alertPanel.getSchedule().getTenant();
+                final JobIdentifier job = _alertPanel.getSchedule().getJob();
+                final AlertDefinition alert = _alertPanel.getAlert();
+
+                final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert, _service);
+                final Button button = new Button("Save alert");
+                button.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        customizeAlertPanel.updateAlert();
+                        _alertPanel.updateAlert();
+                        popup.hide();
+                    }
+                });
+
+                popup.setWidget(customizeAlertPanel);
+                popup.addButton(button);
+                popup.addButton(new CancelPopupButton(popup));
+                popup.center();
+                popup.show();
+            }
+        });
+        
+        menuBar.addItem("Remove alert", new Command() {
+            @Override
+            public void execute() {
+                _alertPanel.removeAlert();
             }
         });
 
-        popup.setWidget(customizeAlertPanel);
-        popup.addButton(button);
-        popup.addButton(new CancelPopupButton(popup));
-        popup.center();
-        popup.show();
+        final DCPopupPanel popup = new DCPopupPanel(null);
+        popup.setGlassEnabled(false);
+        popup.setWidget(menuBar);
+        popup.setAutoHideEnabled(true);
+        popup.getButtonPanel().setVisible(false);
+        popup.showRelativeTo((UIObject) event.getSource());
     }
 
 }

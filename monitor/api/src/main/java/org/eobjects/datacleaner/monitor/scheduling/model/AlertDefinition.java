@@ -64,7 +64,7 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
         }
         return _metricIdentifier;
     }
-    
+
     public void setMetricIdentifier(MetricIdentifier metricIdentifier) {
         _metricIdentifier = metricIdentifier;
     }
@@ -79,7 +79,9 @@ public class AlertDefinition implements Serializable, Comparable<AlertDefinition
 
     public String getDescription() {
         if (_description == null || _description.trim().isEmpty()) {
-            if (_minimumValue == null && _maximumValue == null) {
+            if (_metricIdentifier == null) {
+                return "";
+            } else if (_minimumValue == null && _maximumValue == null) {
                 return _metricIdentifier.getDisplayName();
             } else {
                 StringBuilder sb = new StringBuilder();

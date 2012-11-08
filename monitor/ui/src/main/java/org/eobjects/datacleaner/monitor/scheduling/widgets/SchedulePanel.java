@@ -132,6 +132,7 @@ public class SchedulePanel extends Composite {
             @Override
             public void onClick(ClickEvent event) {
                 alertsPanel.clear();
+                alertsPanel.add(new CreateAlertAnchor(service, schedule));
                 for (AlertDefinition alert : alerts) {
                     AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
                     alertsPanel.add(alertPanel);

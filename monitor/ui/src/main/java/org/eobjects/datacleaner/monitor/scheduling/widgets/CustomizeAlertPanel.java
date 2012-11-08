@@ -21,14 +21,11 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
-import org.eobjects.datacleaner.monitor.shared.DescriptorService;
-import org.eobjects.datacleaner.monitor.shared.DescriptorServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.NumberTextBox;
 import org.eobjects.datacleaner.monitor.shared.widgets.SelectMetricAnchor;
-import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -44,8 +41,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class CustomizeAlertPanel extends Composite {
     
-    private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
-
     interface MyUiBinder extends UiBinder<Widget, CustomizeAlertPanel> {
     }
 
@@ -72,17 +67,12 @@ public class CustomizeAlertPanel extends Composite {
     @UiField
     FlowPanel severityPanel;
 
-    public CustomizeAlertPanel(TenantIdentifier tenant, JobIdentifier job, AlertDefinition alert) {
+    public CustomizeAlertPanel(TenantIdentifier tenant, JobIdentifier job, AlertDefinition alert, JobMetrics result) {
         super();
 
         _alert = alert;
         metricAnchor = new SelectMetricAnchor(tenant);
-        descriptorService.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
-            @Override
-            public void onSuccess(JobMetrics result) {
-                metricAnchor.setJobMetrics(result);
-            }
-        });
+        metricAnchor.setJobMetrics(result);
         metricAnchor.setMetric(_alert.getMetricIdentifier());
 
         initWidget(uiBinder.createAndBindUi(this));

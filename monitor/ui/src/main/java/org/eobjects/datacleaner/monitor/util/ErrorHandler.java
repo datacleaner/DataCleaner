@@ -70,6 +70,10 @@ public class ErrorHandler {
         if (t instanceof UmbrellaException) {
             // sometimes several exceptions are bundled in an UmbrellaException
             Set<Throwable> causes = ((UmbrellaException) t).getCauses();
+            if (causes.size() == 1) {
+                showErrorDialog(headerMessage, additionalDetails, causes.iterator().next());
+                return;
+            }
             StringBuilder messageBuilder = new StringBuilder();
             for (Throwable cause : causes) {
                 if (messageBuilder.length() != 0) {

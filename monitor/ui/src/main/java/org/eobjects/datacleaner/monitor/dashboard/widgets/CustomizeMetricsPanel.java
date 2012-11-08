@@ -63,7 +63,6 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
         descriptorService.getJobMetrics(_tenantIdentifier, _timelineDefinition.getJobIdentifier(),
                 new DCAsyncCallback<JobMetrics>() {
-
                     @Override
                     public void onSuccess(JobMetrics jobMetrics) {
                         setJobMetrics(jobMetrics);

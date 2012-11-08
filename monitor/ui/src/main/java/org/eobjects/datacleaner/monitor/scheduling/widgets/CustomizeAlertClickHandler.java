@@ -20,11 +20,16 @@
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
+import org.eobjects.datacleaner.monitor.shared.DescriptorService;
+import org.eobjects.datacleaner.monitor.shared.DescriptorServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
@@ -38,6 +43,8 @@ import com.google.gwt.user.client.ui.UIObject;
  */
 public class CustomizeAlertClickHandler implements ClickHandler {
 
+    private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
+    
     private final AlertPanel _alertPanel;
 
     public CustomizeAlertClickHandler(AlertPanel alertPanel) {
@@ -56,23 +63,28 @@ public class CustomizeAlertClickHandler implements ClickHandler {
                 final TenantIdentifier tenant = _alertPanel.getSchedule().getTenant();
                 final JobIdentifier job = _alertPanel.getSchedule().getJob();
                 final AlertDefinition alert = _alertPanel.getAlert();
-
-                final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert);
-                final Button button = new Button("Save alert");
-                button.addClickHandler(new ClickHandler() {
+                
+                descriptorService.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
                     @Override
-                    public void onClick(ClickEvent event) {
-                        customizeAlertPanel.updateAlert();
-                        _alertPanel.updateAlert();
-                        popup.hide();
+                    public void onSuccess(JobMetrics jobMetrics) {
+                        final CustomizeAlertPanel customizeAlertPanel = new CustomizeAlertPanel(tenant, job, alert, jobMetrics);
+                        final Button button = new Button("Save alert");
+                        button.addClickHandler(new ClickHandler() {
+                            @Override
+                            public void onClick(ClickEvent event) {
+                                customizeAlertPanel.updateAlert();
+                                _alertPanel.updateAlert();
+                                popup.hide();
+                            }
+                        });
+                        
+                        popup.setWidget(customizeAlertPanel);
+                        popup.addButton(button);
+                        popup.addButton(new CancelPopupButton(popup));
+                        popup.center();
+                        popup.show();
                     }
                 });
-
-                popup.setWidget(customizeAlertPanel);
-                popup.addButton(button);
-                popup.addButton(new CancelPopupButton(popup));
-                popup.center();
-                popup.show();
             }
         });
         

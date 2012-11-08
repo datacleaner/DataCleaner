@@ -25,6 +25,11 @@ body,table td,select,button,input {
 	font-family: "Open Sans", sans-serif;
 }
 
+input,select,textarea {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
 a {
 	color: #377FCF;
 }
@@ -51,6 +56,10 @@ a:hover {
 
 .gwt-ListBox {
 	min-width: 210px;
+}
+
+.gwt-CheckBox label {
+	padding-left: 4px;
 }
 
 .gwt-PopupPanel .popupContent {
@@ -175,12 +184,43 @@ a:hover {
 	min-height: 350px;
 }
 
+.DefineMetricPanel .FormulaCheckBox {
+	
+}
+
+.DefineMetricPanel .FormulaTextBox {
+	display: block;
+	color: #5594DD;
+}
+
+.DefineMetricPanel .AddMetricButton {
+	background-image: url("add.png") !important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 28px;
+	height: 24px;
+	float: right;
+}
+.DefineMetricPanel .RemoveMetricButton {
+	background-image: url("remove.png") !important;
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 28px;
+	height: 24px;
+	clear: right;
+	float: right;
+}
+
 .SelectMetricPanel {
 	margin-top: 10px;
 	padding: 10px;
 	background-color: #fdfdfd;
 	border: 1px solid #f0f0f0;
 	width: 300px;
+}
+
+.SelectMetricPanel .DisplayNameBox {
+	color: #5594DD;
 }
 
 .SelectMetricPanel select {

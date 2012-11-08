@@ -34,6 +34,7 @@ public class DCPopupPanel extends PopupPanel {
 
     private final SimplePanel _panel;
     private final ButtonPanel _buttonPanel;
+    private FlowPanel _outerPanel;
 
     public DCPopupPanel(String heading) {
         super(true, true);
@@ -43,20 +44,31 @@ public class DCPopupPanel extends PopupPanel {
         _panel = new SimplePanel();
         _panel.setStyleName("DCPopupPanelContent");
 
-        final FlowPanel outerPanel = new FlowPanel();
+        _outerPanel = new FlowPanel();
         if (heading != null) {
-            outerPanel.add(new HeadingLabel(heading));
+            _outerPanel.add(new HeadingLabel(heading));
         }
-        outerPanel.add(_panel);
-        outerPanel.add(_buttonPanel);
+        _outerPanel.add(_panel);
+        _outerPanel.add(_buttonPanel);
 
-        super.setWidget(outerPanel);
+        super.setWidget(_outerPanel);
     }
-    
+
+    public void setHeader(String header) {
+        final Widget firstWidget = _outerPanel.getWidget(0);
+        if (firstWidget instanceof HeadingLabel) {
+            HeadingLabel headingLabel = (HeadingLabel) firstWidget;
+            headingLabel.setText(header);
+        } else {
+            HeadingLabel headingLabel = new HeadingLabel(header);
+            _outerPanel.insert(headingLabel, 0);
+        }
+    }
+
     public void addButton(Button button) {
         getButtonPanel().addButton(button);
     }
-    
+
     public void removeButton(Button button) {
         getButtonPanel().removeButton(button);
     }
@@ -64,7 +76,7 @@ public class DCPopupPanel extends PopupPanel {
     public ButtonPanel getButtonPanel() {
         return _buttonPanel;
     }
-    
+
     public void removeButtons() {
         getButtonPanel().clear();
     }

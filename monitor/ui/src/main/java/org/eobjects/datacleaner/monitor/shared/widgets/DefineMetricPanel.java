@@ -26,8 +26,11 @@ import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -42,6 +45,8 @@ public class DefineMetricPanel extends FlowPanel {
     private final List<SelectMetricPanel> _selectMetricPanels;
     private final TextBox _formulaTextBox;
     private final JobMetrics _jobMetrics;
+    private final Button _formulaAddMetricButton;
+    private final Button _formulaRemoveMetricButton;
 
     public DefineMetricPanel(final TenantIdentifier tenant, JobMetrics jobMetrics, MetricIdentifier existingMetric) {
         super();
@@ -52,22 +57,36 @@ public class DefineMetricPanel extends FlowPanel {
         _jobMetrics = jobMetrics;
         _selectMetricPanels = new ArrayList<SelectMetricPanel>();
 
+        _formulaAddMetricButton = new Button();
+        _formulaAddMetricButton.addStyleName("AddMetricButton");
+        _formulaAddMetricButton.setVisible(formulaBased);
+        _formulaRemoveMetricButton = new Button();
+        _formulaRemoveMetricButton.addStyleName("RemoveMetricButton");
+        _formulaRemoveMetricButton.setVisible(formulaBased);
+
         _formulaTextBox = new TextBox();
+        _formulaTextBox.addStyleName("FormulaTextBox");
         _formulaTextBox.setVisible(formulaBased);
 
         _formulaCheckBox = new CheckBox("Metric formula?");
+        _formulaCheckBox.addStyleName("FormulaCheckBox");
         _formulaCheckBox.setTitle("Let this metric be a formula, comprising multiple child metrics in a calculation?");
         _formulaCheckBox.setValue(formulaBased);
 
         _formulaCheckBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                _formulaTextBox.setVisible(event.getValue());
+                final boolean formulaBased = event.getValue();
+                _formulaTextBox.setVisible(formulaBased);
+                _formulaAddMetricButton.setVisible(formulaBased);
+                _formulaRemoveMetricButton.setVisible(formulaBased);
             }
         });
 
         add(_formulaCheckBox);
         add(_formulaTextBox);
+        add(_formulaAddMetricButton);
+        add(_formulaRemoveMetricButton);
 
         if (formulaBased) {
             _formulaTextBox.setText(existingMetric.getFormula());
@@ -116,6 +135,25 @@ public class DefineMetricPanel extends FlowPanel {
                 _formulaTextBox.setText(formulaBuilder.toString());
             }
         });
+
+        _formulaAddMetricButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final SelectMetricPanel panel = new SelectMetricPanel(tenant, _jobMetrics, null, true);
+                char c = 'A';
+                c += _selectMetricPanels.size();
+                panel.setDisplayName("" + c);
+                addSelection(panel);
+            }
+        });
+        _formulaRemoveMetricButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (_selectMetricPanels.size() > 1) {
+                    removeSelection();
+                }
+            }
+        });
     }
 
     private void removeSelection() {
@@ -128,7 +166,7 @@ public class DefineMetricPanel extends FlowPanel {
         add(selectMetricPanel);
     }
 
-    public MetricIdentifier getMetric() {
+    public MetricIdentifier getMetric() throws IllegalStateException {
         if (_formulaCheckBox.getValue()) {
             final String formula = _formulaTextBox.getValue();
             final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>();

@@ -57,6 +57,7 @@ public class SelectMetricPanel extends FlowPanel {
         _tenant = tenant;
         _displayNameLabel = new Label("Name:");
         _displayNameBox = new TextBox();
+        _displayNameBox.setStyleName("DisplayNameBox");
         _jobMetrics = jobMetrics;
 
         setDisplayNameVisible(displayNameVisible);
@@ -133,9 +134,21 @@ public class SelectMetricPanel extends FlowPanel {
             _metricGroupSelectionBox.addItem(metricGroup.getName());
         }
 
-        if (existingMetric != null) {
+        if (existingMetric == null) {
+            // initialize metric selection if possible
+            if (metricGroups.size() == 1) {
+                final MetricGroup group = metricGroups.get(0);
+                selectItem(_metricGroupSelectionBox, group.getName());
+
+                final List<MetricIdentifier> metrics = group.getMetrics();
+                if (metrics.size() == 1) {
+                    selectItem(_metricSelectionBox, metrics.get(0).getMetricDescriptorName());
+                }
+            }
+        } else {
+            // set input as the existing metric
             _displayNameBox.setText(existingMetric.getDisplayName());
-            MetricGroup group = _jobMetrics.getMetricGroup(existingMetric);
+            final MetricGroup group = _jobMetrics.getMetricGroup(existingMetric);
             if (group == null) {
                 return;
             }
@@ -161,15 +174,12 @@ public class SelectMetricPanel extends FlowPanel {
         }
     }
 
-    public MetricIdentifier getSelectedMetric() {
+    private MetricIdentifier getSelectedMetric() throws IllegalStateException {
         final MetricGroup group = getSelectedMetricGroup();
-        if (group == null) {
-            return null;
-        }
 
         final int index = _metricSelectionBox.getSelectedIndex();
-        if (index == -1) {
-            return null;
+        if (index == -1 || index == 0) {
+            throw new IllegalStateException("No metric selected");
         }
 
         final String metricName = _metricSelectionBox.getItemText(index);
@@ -194,7 +204,7 @@ public class SelectMetricPanel extends FlowPanel {
         return _displayNameBox.getText();
     }
 
-    public MetricIdentifier getMetric() {
+    public MetricIdentifier getMetric() throws IllegalStateException {
         final MetricIdentifier selectedMetric = getSelectedMetric();
         final MetricIdentifier copy = selectedMetric.copy();
 
@@ -212,10 +222,10 @@ public class SelectMetricPanel extends FlowPanel {
         return copy;
     }
 
-    public MetricGroup getSelectedMetricGroup() {
+    private MetricGroup getSelectedMetricGroup() {
         int index = _metricGroupSelectionBox.getSelectedIndex();
-        if (index == -1) {
-            return null;
+        if (index == -1 || index == 0) {
+            throw new IllegalStateException("No metric group selected");
         }
         final String groupName = _metricGroupSelectionBox.getItemText(index);
         final MetricGroup group = _jobMetrics.getMetricGroup(groupName);

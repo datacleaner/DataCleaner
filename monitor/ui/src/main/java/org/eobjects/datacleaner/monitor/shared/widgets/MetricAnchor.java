@@ -26,23 +26,28 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 
 /**
- * An anchor used to select a single metric, eg. for alerting or inclusion in a
- * timelinE.
+ * An anchor used to select or define a metric (either single or formula based),
+ * eg. for alerting or inclusion in a timeline.
  */
-public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
+public class MetricAnchor extends DropDownAnchor implements ClickHandler {
 
     private final TenantIdentifier _tenant;
     private JobMetrics _jobMetrics;
     private MetricIdentifier _metric;
 
-    public SelectMetricAnchor(TenantIdentifier tenant) {
+    public MetricAnchor(TenantIdentifier tenant) {
+        this(tenant, null, null);
+    }
+
+    public MetricAnchor(TenantIdentifier tenant, JobMetrics jobMetrics, MetricIdentifier metric) {
         super();
         _tenant = tenant;
+        addStyleName("MetricAnchor");
         addClickHandler(this);
-        updateText();
+        setJobMetrics(jobMetrics);
+        setMetric(metric);
     }
 
     public MetricIdentifier getMetric() {
@@ -77,26 +82,13 @@ public class SelectMetricAnchor extends DropDownAnchor implements ClickHandler {
             return;
         }
 
-        final DCPopupPanel popup = new DCPopupPanel("Define metric");
-        
-        final DefineMetricPanel panel = new DefineMetricPanel(_tenant, _jobMetrics, _metric);
-
-        final Button saveButton = new Button("Save");
-        saveButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                MetricIdentifier metric = panel.getMetric();
-                setMetric(metric);
-                popup.hide();
-            }
-        });
-
-        popup.setWidget(panel);
-
-        popup.getButtonPanel().add(saveButton);
-        popup.getButtonPanel().add(new CancelPopupButton(popup));
-
-        popup.center();
+        final DefineMetricPopup popup = new DefineMetricPopup(_tenant, _jobMetrics, _metric, false,
+                new DefineMetricPopup.Handler() {
+                    @Override
+                    public void onMetricDefined(MetricIdentifier metric) {
+                        setMetric(metric);
+                    }
+                });
         popup.show();
     }
 }

@@ -176,6 +176,11 @@
 	
 }
 
+.CustomizeMetricsPanel .MetricFormulaButton {
+	background-image: url("formula.png");
+	float: right;
+}
+
 .CustomizeMetricsPanel .JobInformationLabel {
 	color: #666;
 }
@@ -189,6 +194,15 @@
 	padding: 10px;
 	background-color: #fdfdfd;
 	border: 1px solid #f0f0f0;
+}
+
+.MetricGroupPanel .FormulaMetricsPanel .MetricAnchor {
+	padding-left: 30px;
+	color: black;
+	background-image: url("formula.png");
+	background-repeat: no-repeat;
+	background-position: left center;
+	display: block;
 }
 
 .MetricGroupPanel .UnparameterizedMetricsPresenter {

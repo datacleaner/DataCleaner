@@ -27,12 +27,14 @@ import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
+import org.eobjects.analyzer.job.NoSuchComponentException;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.shared.DescriptorNotFoundException;
 import org.eobjects.datacleaner.monitor.shared.DescriptorService;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
@@ -41,6 +43,8 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +54,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DescriptorServiceImpl implements DescriptorService {
 
+    private static final Logger logger = LoggerFactory.getLogger(DescriptorServiceImpl.class);
+
     private final TenantContextFactory _tenantContextFactory;
 
     @Autowired
@@ -58,9 +64,15 @@ public class DescriptorServiceImpl implements DescriptorService {
     }
 
     @Override
-    public JobMetrics getJobMetrics(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
-        final JobContext jobContext = _tenantContextFactory.getContext(tenant).getJob(jobIdentifier.getName());
-        return jobContext.getJobMetrics();
+    public JobMetrics getJobMetrics(final TenantIdentifier tenant, final JobIdentifier jobIdentifier)
+            throws DescriptorNotFoundException {
+        try {
+            final JobContext jobContext = _tenantContextFactory.getContext(tenant).getJob(jobIdentifier.getName());
+            return jobContext.getJobMetrics();
+        } catch (NoSuchComponentException e) {
+            logger.warn("Encountered exception while get Job metrics", e);
+            throw new DescriptorNotFoundException(e.getMessage());
+        }
     }
 
     @Override
@@ -69,7 +81,7 @@ public class DescriptorServiceImpl implements DescriptorService {
         if (metric == null || metric.isFormulaBased()) {
             return new ArrayList<String>(0);
         }
-        
+
         final String analyzerDescriptorName = metric.getAnalyzerDescriptorName();
         final String metricDescriptorName = metric.getMetricDescriptorName();
         if (StringUtils.isNullOrEmpty(analyzerDescriptorName) || StringUtils.isNullOrEmpty(metricDescriptorName)) {

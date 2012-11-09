@@ -190,11 +190,14 @@ a:hover {
 
 .DefineMetricPanel .FormulaTextBox {
 	display: block;
-	color: #5594DD;
+	background-image: url("formula.png");
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	padding-left: 30px;
 }
 
 .DefineMetricPanel .AddMetricButton {
-	background-image: url("add.png") !important;
+	background-image: url("add.png");
 	background-repeat: no-repeat;
 	background-position: center center;
 	width: 28px;
@@ -202,7 +205,7 @@ a:hover {
 	float: right;
 }
 .DefineMetricPanel .RemoveMetricButton {
-	background-image: url("remove.png") !important;
+	background-image: url("remove.png");
 	background-repeat: no-repeat;
 	background-position: center center;
 	width: 28px;

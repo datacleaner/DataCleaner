@@ -31,21 +31,27 @@ import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.DefineMetricPopup;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
+import org.eobjects.datacleaner.monitor.shared.widgets.MetricAnchor;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class CustomizeMetricsPanel extends FlowPanel {
 
     private static final DescriptorServiceAsync descriptorService = GWT.create(DescriptorService.class);
 
     private final List<MetricPresenter> _metricPresenters;
+    private FlowPanel _formulaMetricsPanel;
     private TimelineDefinition _timelineDefinition;
     private DashboardServiceAsync _service;
     private TenantIdentifier _tenantIdentifier;
@@ -56,6 +62,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         _service = service;
         _tenantIdentifier = tenantIdentifier;
         _timelineDefinition = timelineDefinition;
+        _formulaMetricsPanel = null;
         _metricPresenters = new ArrayList<MetricPresenter>();
 
         addStyleName("CustomizeMetricsPanel");
@@ -70,8 +77,27 @@ public class CustomizeMetricsPanel extends FlowPanel {
                 });
     }
 
-    private void setJobMetrics(JobMetrics jobMetrics) {
+    private void setJobMetrics(final JobMetrics jobMetrics) {
         clear();
+
+        final Button formulaMetricButton = new Button("Add metric formula");
+        formulaMetricButton.setTitle("Add a formula of metrics, comprising multiple child metrics in a calculation?");
+        formulaMetricButton.addStyleDependentName("ImageTextButton");
+        formulaMetricButton.addStyleName("MetricFormulaButton");
+        formulaMetricButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final DefineMetricPopup popup = new DefineMetricPopup(_tenantIdentifier, jobMetrics, true,
+                        new DefineMetricPopup.Handler() {
+                            @Override
+                            public void onMetricDefined(MetricIdentifier metric) {
+                                addFormulaMetric(jobMetrics, metric);
+                            }
+                        });
+                popup.show();
+            }
+        });
+        add(formulaMetricButton);
 
         final Label jobLabel = new Label("Showing available metrics from job '"
                 + _timelineDefinition.getJobIdentifier().getName() + "':");
@@ -80,9 +106,31 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
         for (MetricGroup metricGroup : metricGroups) {
-            add(createMetricGroupPanel(metricGroup));
+            final FlowPanel metricGroupPanel = createMetricGroupPanel(metricGroup);
+            add(metricGroupPanel);
         }
+
+        // add formula metrics
+        final List<MetricIdentifier> metrics = _timelineDefinition.getMetrics();
+        for (MetricIdentifier metric : metrics) {
+            if (metric.isFormulaBased()) {
+                addFormulaMetric(jobMetrics, metric);
+            }
+        }
+
         onMetricsLoaded();
+    }
+
+    private void addFormulaMetric(JobMetrics jobMetrics, MetricIdentifier metric) {
+        if (_formulaMetricsPanel == null) {
+            _formulaMetricsPanel = new FlowPanel();
+            _formulaMetricsPanel.addStyleName("FormulaMetricsPanel");
+            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel);
+            add(metricGroupPanel);
+        }
+
+        MetricAnchor anchor = new MetricAnchor(_tenantIdentifier, jobMetrics, metric);
+        _formulaMetricsPanel.add(anchor);
     }
 
     /**
@@ -112,7 +160,12 @@ public class CustomizeMetricsPanel extends FlowPanel {
             innerPanel.add(columnParameterizedMetrics);
         }
 
-        HeadingLabel heading = new HeadingLabel(metricGroup.getName());
+        final String title = metricGroup.getName();
+        return createMetricGroupPanel(title, innerPanel);
+    }
+
+    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel) {
+        final HeadingLabel heading = new HeadingLabel(title);
         heading.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -148,9 +201,22 @@ public class CustomizeMetricsPanel extends FlowPanel {
     public List<MetricIdentifier> getSelectedMetrics() {
         final List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
 
+        // add single metrics
         for (MetricPresenter metricPresenter : _metricPresenters) {
             final List<MetricIdentifier> selectedMetrics = metricPresenter.getSelectedMetrics();
             metrics.addAll(selectedMetrics);
+        }
+
+        if (_formulaMetricsPanel != null) {
+            // add formula based metrics
+            int widgetCount = _formulaMetricsPanel.getWidgetCount();
+            for (int i = 0; i < widgetCount; i++) {
+                Widget widget = _formulaMetricsPanel.getWidget(i);
+                if (widget instanceof MetricAnchor) {
+                    MetricIdentifier metric = ((MetricAnchor) widget).getMetric();
+                    metrics.add(metric);
+                }
+            }
         }
 
         return metrics;

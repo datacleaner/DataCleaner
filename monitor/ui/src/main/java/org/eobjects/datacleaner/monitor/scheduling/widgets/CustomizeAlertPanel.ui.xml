@@ -16,7 +16,7 @@
 		<div class="FormRow">
 			<span class="FormKey">Metric:</span>
 			<div class="FormValue">
-				<shared:SelectMetricAnchor ui:field="metricAnchor" />
+				<shared:MetricAnchor ui:field="metricAnchor" />
 			</div>
 		</div>
 

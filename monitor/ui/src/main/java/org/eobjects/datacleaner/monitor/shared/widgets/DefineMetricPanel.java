@@ -27,6 +27,7 @@ import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -42,19 +43,23 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class DefineMetricPanel extends FlowPanel {
 
-    private final CheckBox _formulaCheckBox;
-    private final List<SelectMetricPanel> _selectMetricPanels;
-    private final TextBox _formulaTextBox;
+    private final TenantIdentifier _tenant;
     private final JobMetrics _jobMetrics;
+    private final CheckBox _formulaCheckBox;
+    private final TextBox _formulaTextBox;
+    private final List<SelectMetricPanel> _selectMetricPanels;
     private final Button _formulaAddMetricButton;
     private final Button _formulaRemoveMetricButton;
 
-    public DefineMetricPanel(final TenantIdentifier tenant, JobMetrics jobMetrics, MetricIdentifier existingMetric) {
+    public DefineMetricPanel(final TenantIdentifier tenant, final JobMetrics jobMetrics,
+            final MetricIdentifier existingMetric, final boolean formulaOnly) {
         super();
         addStyleName("DefineMetricPanel");
 
-        final boolean formulaBased = (existingMetric == null ? false : existingMetric.isFormulaBased());
+        final boolean formulaBased = (formulaOnly ? true : (existingMetric == null ? false : existingMetric
+                .isFormulaBased()));
 
+        _tenant = tenant;
         _jobMetrics = jobMetrics;
         _selectMetricPanels = new ArrayList<SelectMetricPanel>();
 
@@ -68,6 +73,9 @@ public class DefineMetricPanel extends FlowPanel {
         _formulaTextBox = new TextBox();
         _formulaTextBox.addStyleName("FormulaTextBox");
         _formulaTextBox.setVisible(formulaBased);
+        // provide an example template, which makes it convenient to do a
+        // percentage calculation
+        _formulaTextBox.setText("A * 100 / B");
 
         _formulaCheckBox = new CheckBox("Metric formula?");
         _formulaCheckBox.addStyleName("FormulaCheckBox");
@@ -84,19 +92,27 @@ public class DefineMetricPanel extends FlowPanel {
             }
         });
 
-        add(_formulaCheckBox);
+        if (!formulaOnly) {
+            add(_formulaCheckBox);
+        }
         add(_formulaTextBox);
         add(_formulaAddMetricButton);
         add(_formulaRemoveMetricButton);
 
         if (formulaBased) {
-            _formulaTextBox.setText(existingMetric.getFormula());
-            final List<MetricIdentifier> children = existingMetric.getChildren();
-            for (MetricIdentifier child : children) {
-                addSelection(new SelectMetricPanel(tenant, _jobMetrics, child, formulaBased));
+            if (existingMetric == null) {
+                // a new formula is being defined
+                updateFormulaState(true);
+            } else {
+                // an existing formula is being recreated
+                _formulaTextBox.setText(existingMetric.getFormula());
+                final List<MetricIdentifier> children = existingMetric.getChildren();
+                for (MetricIdentifier child : children) {
+                    addSelection(createSelectMetricPanel(child, formulaBased));
+                }
             }
         } else {
-            addSelection(new SelectMetricPanel(tenant, _jobMetrics, existingMetric, formulaBased));
+            addSelection(createSelectMetricPanel(existingMetric, formulaBased));
         }
 
         // add listener for limiting amount of metric selections
@@ -104,46 +120,14 @@ public class DefineMetricPanel extends FlowPanel {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 final boolean formulaBased = event.getValue();
-                if (!formulaBased) {
-                    while (_selectMetricPanels.size() > 1) {
-                        removeSelection();
-                    }
-                } else {
-                    while (_selectMetricPanels.size() < 2) {
-                        addSelection(new SelectMetricPanel(tenant, _jobMetrics, null, true));
-                    }
-                }
-
-                final StringBuilder formulaBuilder = new StringBuilder();
-                char c = 'A';
-
-                for (SelectMetricPanel panel : _selectMetricPanels) {
-                    // show display name, since it will be used in the formula
-                    // as a variable
-                    panel.setDisplayNameVisible(formulaBased);
-                    panel.setDisplayName("" + c);
-
-                    if (formulaBuilder.length() == 0) {
-                        formulaBuilder.append(c);
-                    } else {
-                        formulaBuilder.append(" + ");
-                        formulaBuilder.append(c);
-                    }
-
-                    c++;
-                }
-
-                _formulaTextBox.setText(formulaBuilder.toString());
+                updateFormulaState(formulaBased);
             }
         });
 
         _formulaAddMetricButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final SelectMetricPanel panel = new SelectMetricPanel(tenant, _jobMetrics, null, true);
-                char c = 'A';
-                c += _selectMetricPanels.size();
-                panel.setDisplayName("" + c);
+                final SelectMetricPanel panel = createSelectMetricPanel(null, true);
                 addSelection(panel);
             }
         });
@@ -157,6 +141,47 @@ public class DefineMetricPanel extends FlowPanel {
         });
     }
 
+    private SelectMetricPanel createSelectMetricPanel(MetricIdentifier child, boolean formulaBased) {
+        SelectMetricPanel panel = new SelectMetricPanel(_tenant, _jobMetrics, child, formulaBased);
+        if (child == null) {
+            char c = 'A';
+            c += _selectMetricPanels.size();
+            panel.setDisplayName("" + c);
+        }
+        return panel;
+    }
+
+    private void updateFormulaState(final boolean formulaBased) {
+        if (!formulaBased) {
+            while (_selectMetricPanels.size() > 1) {
+                removeSelection();
+            }
+        } else {
+            while (_selectMetricPanels.size() < 2) {
+                addSelection(createSelectMetricPanel(null, true));
+            }
+        }
+
+        final StringBuilder formulaBuilder = new StringBuilder();
+        char c = 'A';
+
+        for (SelectMetricPanel panel : _selectMetricPanels) {
+            // show display name, since it will be used in the formula
+            // as a variable
+            panel.setDisplayNameVisible(formulaBased);
+            panel.setDisplayName("" + c);
+
+            if (formulaBuilder.length() == 0) {
+                formulaBuilder.append(c);
+            } else {
+                formulaBuilder.append(" + ");
+                formulaBuilder.append(c);
+            }
+
+            c++;
+        }
+    }
+
     private void removeSelection() {
         final SelectMetricPanel panel = _selectMetricPanels.remove(_selectMetricPanels.size() - 1);
         remove(panel);
@@ -164,6 +189,27 @@ public class DefineMetricPanel extends FlowPanel {
 
     private void addSelection(final SelectMetricPanel selectMetricPanel) {
         _selectMetricPanels.add(selectMetricPanel);
+
+        final String displayName = selectMetricPanel.getDisplayName();
+
+        selectMetricPanel.addDisplayNameValueChangeHandler(new ValueChangeHandler<String>() {
+            private String previousValue = displayName;
+
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                final String value = event.getValue();
+                GWT.log("Value changed. Previous: " + previousValue + ", New: " + value);
+                if (previousValue != null && !previousValue.trim().isEmpty()) {
+                    final String formulaText = _formulaTextBox.getText();
+                    final int position = formulaText.indexOf(previousValue);
+                    if (position != -1) {
+                        final String newFormula = formulaText.replace(previousValue, value);
+                        _formulaTextBox.setText(newFormula);
+                    }
+                }
+                previousValue = value;
+            }
+        });
         add(selectMetricPanel);
     }
 

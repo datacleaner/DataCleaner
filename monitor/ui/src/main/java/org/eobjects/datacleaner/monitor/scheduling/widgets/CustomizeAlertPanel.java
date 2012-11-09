@@ -21,11 +21,12 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.NumberTextBox;
-import org.eobjects.datacleaner.monitor.shared.widgets.SelectMetricAnchor;
+import org.eobjects.datacleaner.monitor.shared.widgets.MetricAnchor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -56,7 +57,7 @@ public class CustomizeAlertPanel extends Composite {
     TextBox descriptionTextBox;
 
     @UiField(provided=true)
-    SelectMetricAnchor metricAnchor;
+    MetricAnchor metricAnchor;
 
     @UiField
     NumberTextBox minimumValueTextBox;
@@ -71,7 +72,7 @@ public class CustomizeAlertPanel extends Composite {
         super();
 
         _alert = alert;
-        metricAnchor = new SelectMetricAnchor(tenant);
+        metricAnchor = new MetricAnchor(tenant);
         metricAnchor.setJobMetrics(result);
         metricAnchor.setMetric(_alert.getMetricIdentifier());
 
@@ -103,10 +104,17 @@ public class CustomizeAlertPanel extends Composite {
     }
 
     public AlertDefinition updateAlert() {
+        final Integer max = maximumValueTextBox.getNumberValue();
+        final Integer min = minimumValueTextBox.getNumberValue();
+        
+        if (max == null && min == null) {
+            throw new DCUserInputException("Please enter a maximum or a minimum value for the selected metric.");
+        }
+        
         _alert.setMetricIdentifier(metricAnchor.getMetric());
         _alert.setDescription(descriptionTextBox.getText());
-        _alert.setMaximumValue(maximumValueTextBox.getNumberValue());
-        _alert.setMinimumValue(minimumValueTextBox.getNumberValue());
+        _alert.setMaximumValue(max);
+        _alert.setMinimumValue(min);
         _alert.setSeverity(getSelectedSeverity());
         return _alert;
     }

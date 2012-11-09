@@ -66,7 +66,7 @@ public class CreateAlertAnchor extends Anchor implements ClickHandler {
         descriptorService.getJobMetrics(tenant, job, new DCAsyncCallback<JobMetrics>() {
             @Override
             public void onSuccess(final JobMetrics jobMetrics) {
-                final DefineMetricPanel defineMetricPanel = new DefineMetricPanel(tenant, jobMetrics, null);
+                final DefineMetricPanel defineMetricPanel = new DefineMetricPanel(tenant, jobMetrics, null, false);
 
                 final DCPopupPanel popup = new DCPopupPanel("Create alert: Define metric to monitor");
                 final Button nextButton = new Button("Next");

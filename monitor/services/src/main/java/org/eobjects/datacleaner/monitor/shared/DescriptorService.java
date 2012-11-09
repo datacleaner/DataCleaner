@@ -48,7 +48,7 @@ public interface DescriptorService extends RemoteService {
      * @return
      */
     @RolesAllowed({SecurityRoles.DASHBOARD_EDITOR, SecurityRoles.SCHEDULE_EDITOR})
-    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
+    public JobMetrics getJobMetrics(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException, DescriptorNotFoundException;
 
     /**
      * Gets suggestions for parameter values of a particular metric

@@ -31,6 +31,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -126,6 +127,8 @@ public class SelectMetricPanel extends FlowPanel {
                     _queryParameterTextBox.setMetric(_tenant, _jobMetrics.getJob(), metric);
                     _queryParameterTextBox.setVisible(true);
                 }
+                
+                setDisplayName(metric.getMetricDescriptorName(), true);
             }
         });
 
@@ -148,7 +151,6 @@ public class SelectMetricPanel extends FlowPanel {
             }
         } else {
             // set input as the existing metric
-            _displayNameBox.setText(existingMetric.getDisplayName());
             final MetricGroup group = _jobMetrics.getMetricGroup(existingMetric);
             if (group == null) {
                 return;
@@ -160,6 +162,8 @@ public class SelectMetricPanel extends FlowPanel {
             } else if (existingMetric.isParameterizedByQueryString()) {
                 _queryParameterTextBox.setText(existingMetric.getParamQueryString());
             }
+
+            setDisplayName(existingMetric.getDisplayName());
         }
     }
 
@@ -196,13 +200,21 @@ public class SelectMetricPanel extends FlowPanel {
         _displayNameBox.setVisible(visible);
         _displayNameLabel.setVisible(visible);
     }
-
+    
     public void setDisplayName(String string) {
-        _displayNameBox.setText(string);
+        setDisplayName(string, false);
+    }
+
+    public void setDisplayName(String string, boolean fireEvents) {
+        _displayNameBox.setValue(string, fireEvents);
     }
 
     public String getDisplayName() {
         return _displayNameBox.getText();
+    }
+    
+    public void addDisplayNameValueChangeHandler(ValueChangeHandler<String> handler) {
+        _displayNameBox.addValueChangeHandler(handler);
     }
 
     public MetricIdentifier getMetric() throws DCUserInputException {

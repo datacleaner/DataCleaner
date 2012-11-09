@@ -39,6 +39,7 @@ import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.CollectionUtils2;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.HasNameMapper;
@@ -332,16 +333,11 @@ public class MetricValueUtils {
                 final MetricParameters childParameters = getParameters(child, childDescriptor, childAnalyzerJob);
                 final Number childValue = getMetricValue(child, childDescriptor, analysisJob, childAnalyzerJob,
                         analysisResult, childParameters);
-                final String variableName = child.getDisplayName();
+                final String variableName = prepareVariableName( child.getDisplayName());
                 context.getELResolver().setValue(context, null, variableName, childValue);
             }
 
-            final String formula;
-            if (metricIdentifier.getFormula().indexOf("#{") == -1) {
-                formula = "#{" + metricIdentifier.getFormula() + "}";
-            } else {
-                formula = metricIdentifier.getFormula();
-            }
+            final String formula = prepareFormula(metricIdentifier.getFormula());
 
             final ValueExpression valueExpression = factory.createValueExpression(context, formula, Integer.class);
             return (Number) valueExpression.getValue(context);
@@ -358,6 +354,23 @@ public class MetricValueUtils {
                 return null;
             }
         }
+    }
+
+    private String prepareVariableName(String variableName) {
+        variableName = StringUtils.replaceWhitespaces(variableName, "");
+        return variableName;
+    }
+
+    private String prepareFormula(String formula) {
+        // replace whitespaces to normalize variable names (which MAY contain
+        // spaces in the raw input-formula), and to trim before evaluating.
+        formula = StringUtils.replaceWhitespaces(formula, "");
+
+        if (formula.indexOf("#{") == -1) {
+            formula = "#{" + formula + "}";
+        }
+
+        return formula;
     }
 
     private ELContext createContext(ExpressionFactory factory) {

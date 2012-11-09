@@ -17,36 +17,25 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.api;
+package org.eobjects.datacleaner.monitor.shared.model;
 
-import java.util.List;
-import java.util.Map;
+/**
+ * Exception or super-class of exceptions that relate to the user input of the
+ * DC monitor. When exceptions like this is thrown, the user interface will
+ * treat it as a missing or faulty user input situation, rather than an
+ * application error.
+ */
+public class DCUserInputException extends RuntimeException {
 
-import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
-
-public interface JobWizardPageController {
-
-    /**
-     * Gets a (0-based) page index.
-     * 
-     * @return
-     */
-    public Integer getPageIndex();
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Gets a HTML form element which represents this page rendered for the
-     * user.
+     * Constructs a {@link DCUserInputException} with a particular message to
+     * the user.
      * 
-     * @return
+     * @param message
      */
-    public String getFormInnerHtml();
-
-    /**
-     * Submits the presented form and requests the next page in the wizard.
-     * 
-     * @param formParameters
-     * @return
-     */
-    public JobWizardPageController nextPageController(Map<String, List<String>> formParameters)
-            throws DCUserInputException;
+    public DCUserInputException(String message) {
+        super(message);
+    }
 }

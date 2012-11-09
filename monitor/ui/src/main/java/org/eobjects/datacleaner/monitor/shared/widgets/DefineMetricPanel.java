@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -166,7 +167,7 @@ public class DefineMetricPanel extends FlowPanel {
         add(selectMetricPanel);
     }
 
-    public MetricIdentifier getMetric() throws IllegalStateException {
+    public MetricIdentifier getMetric() throws DCUserInputException {
         if (_formulaCheckBox.getValue()) {
             final String formula = _formulaTextBox.getValue();
             final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>();

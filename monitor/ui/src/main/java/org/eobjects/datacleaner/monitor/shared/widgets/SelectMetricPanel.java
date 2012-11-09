@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -174,12 +175,12 @@ public class SelectMetricPanel extends FlowPanel {
         }
     }
 
-    private MetricIdentifier getSelectedMetric() throws IllegalStateException {
+    private MetricIdentifier getSelectedMetric() throws DCUserInputException {
         final MetricGroup group = getSelectedMetricGroup();
 
         final int index = _metricSelectionBox.getSelectedIndex();
         if (index == -1 || index == 0) {
-            throw new IllegalStateException("No metric selected");
+            throw new DCUserInputException("No metric selected");
         }
 
         final String metricName = _metricSelectionBox.getItemText(index);
@@ -204,7 +205,7 @@ public class SelectMetricPanel extends FlowPanel {
         return _displayNameBox.getText();
     }
 
-    public MetricIdentifier getMetric() throws IllegalStateException {
+    public MetricIdentifier getMetric() throws DCUserInputException {
         final MetricIdentifier selectedMetric = getSelectedMetric();
         final MetricIdentifier copy = selectedMetric.copy();
 
@@ -225,7 +226,7 @@ public class SelectMetricPanel extends FlowPanel {
     private MetricGroup getSelectedMetricGroup() {
         int index = _metricGroupSelectionBox.getSelectedIndex();
         if (index == -1 || index == 0) {
-            throw new IllegalStateException("No metric group selected");
+            throw new DCUserInputException("No metric group selected");
         }
         final String groupName = _metricGroupSelectionBox.getItemText(index);
         final MetricGroup group = _jobMetrics.getMetricGroup(groupName);

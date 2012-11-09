@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
@@ -53,7 +54,7 @@ public interface JobWizardService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public JobWizardPage nextPage(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier,
-            Map<String, List<String>> formParameters);
+            Map<String, List<String>> formParameters) throws DCUserInputException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Boolean cancelWizard(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier);

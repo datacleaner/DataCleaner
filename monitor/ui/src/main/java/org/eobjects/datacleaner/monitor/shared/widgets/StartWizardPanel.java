@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
@@ -32,7 +33,6 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
@@ -81,17 +81,15 @@ final class StartWizardPanel extends Composite implements WizardPanel {
     }
 
     @Override
-    public void requestNextPage(AsyncCallback<JobWizardPage> callback) {
+    public void requestNextPage(AsyncCallback<JobWizardPage> callback) throws DCUserInputException {
         final String jobName = jobNameTextBox.getText();
         if (jobName == null || jobName.trim().isEmpty()) {
-            Window.alert("Please enter a valid job name");
-            return;
+            throw new DCUserInputException("Please enter a valid job name");
         }
         
         final int selectedIndex = datastoreListBox.getSelectedIndex();
         if (selectedIndex == -1) {
-            Window.alert("Please select a valid source datastore");
-            return;
+            throw new DCUserInputException("Please select a valid source datastore");
         }
 
         final String datastoreName = datastoreListBox.getItemText(selectedIndex);

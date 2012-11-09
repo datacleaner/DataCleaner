@@ -277,7 +277,7 @@ public class TimelinePanel extends FlowPanel {
                 options.setColors(colors.toArray(new String[colors.size()]));
 
                 final LineChart chart = new LineChart(dataTable, options);
-                chart.addSelectHandler(new DrillToProfilingResultSelectHandler(chart, dataTable));
+                chart.addSelectHandler(new DrillToProfilingResultSelectHandler(chart, dataTable, _timelineDefinition));
                 chart.addStyleName("TimelineChart");
 
                 remove(_loadingIndicator);

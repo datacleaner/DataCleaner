@@ -21,10 +21,13 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -46,86 +49,132 @@ import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
  */
 public class DrillToProfilingResultSelectHandler extends SelectHandler {
 
-	public static final String PROPERTY_NAME_RESULT_FILE = "path";
+    public static final String PROPERTY_NAME_RESULT_FILE = "path";
 
-	private final CoreChart _chart;
-	private final AbstractDataTable _data;
-	private final DCPopupPanel _popup;
+    private final CoreChart _chart;
+    private final AbstractDataTable _data;
+    private final DCPopupPanel _popup;
+    private final TimelineDefinition _timelineDefinition;
 
-	public DrillToProfilingResultSelectHandler(CoreChart chart,
-			AbstractDataTable data) {
-		_chart = chart;
-		_data = data;
-		_popup = new DCPopupPanel("Inspect profiling result?");
-		_popup.addStyleName("DrillToProfilingResultPopupPanel");
-	}
+    public DrillToProfilingResultSelectHandler(CoreChart chart, AbstractDataTable data,
+            TimelineDefinition timelineDefinition) {
+        _chart = chart;
+        _data = data;
+        _timelineDefinition = timelineDefinition;
+        _popup = new DCPopupPanel("Inspect profiling result?");
+        _popup.addStyleName("DrillToProfilingResultPopupPanel");
+    }
 
-	@Override
-	public void onSelect(SelectEvent event) {
-		final JsArray<Selection> selections = _chart.getSelections();
+    @Override
+    public void onSelect(SelectEvent event) {
+        final JsArray<Selection> selections = _chart.getSelections();
 
-		if (selections == null || selections.length() != 1) {
-			// this handler only reacts to single cell selections
-			return;
-		}
+        if (selections == null || selections.length() != 1) {
+            // this handler only reacts to single cell selections
+            return;
+        }
 
-		final Selection selection = selections.get(0);
-		if (!selection.isCell()) {
-			final SafeHtml labelHtml = new SafeHtmlBuilder()
-					.appendHtmlConstant(
-							"Do you wish to inspect the profiling result for ")
-					.appendHtmlConstant("?").toSafeHtml();
+        final Selection selection = selections.get(0);
+        if (!selection.isCell()) {
+            final SafeHtml labelHtml = new SafeHtmlBuilder()
+                    .appendHtmlConstant("Do you wish to inspect the profiling result for ").appendHtmlConstant("?")
+                    .toSafeHtml();
 
-			_popup.setWidget(new HTML(labelHtml));
-			return;
-		}
+            _popup.setWidget(new HTML(labelHtml));
+            return;
+        }
 
-		final int column = selection.getColumn();
-		final int row = selection.getRow();
-		final String metricLabel = _data.getColumnLabel(column);
-		final Date date = _data.getValueDate(row, 0);
-		final String resultFilePath = _data.getProperty(row, 0,
-				PROPERTY_NAME_RESULT_FILE);
-		final String formattedDate = DateTimeFormat.getFormat(
-				PredefinedFormat.DATE_TIME_SHORT).format(date);
-		final String url = Urls
-				.createRelativeUrl("repository" + resultFilePath);
+        final int column = selection.getColumn();
+        final int row = selection.getRow();
+        final String metricLabel = _data.getColumnLabel(column);
 
-		final Button showResultButton = new Button("Show results");
-		showResultButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Frame frame = new Frame(url);
-				frame.setPixelSize(800, 500);
-				_popup.setWidget(frame);
-				_popup.removeButton(showResultButton);
-				_popup.center();
-			}
-		});
+        final Date date = _data.getValueDate(row, 0);
+        final String resultFilePath = _data.getProperty(row, 0, PROPERTY_NAME_RESULT_FILE);
+        final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
 
-		final Button showResultFullPageButton = new Button(
-				"Show results (new window)");
-		showResultFullPageButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				Window.open(url, "_blank", null);
-			}
-		});
+        final String analyzerDescriptorName = getAnalyzerDescriptorName(column);
+        final String bookmark = createResultUrlBookmark(analyzerDescriptorName);
 
-		final SafeHtml labelHtml = new SafeHtmlBuilder()
-				.appendHtmlConstant(
-						"Do you wish to inspect the profiling result for ")
-				.appendEscaped(metricLabel)
-				.appendEscapedLines("\ncollected at ")
-				.appendEscaped(formattedDate).appendHtmlConstant("?")
-				.toSafeHtml();
+        final String url = Urls.createRelativeUrl("repository" + resultFilePath) + bookmark;
+        GWT.log("Drill to result URL: " + url);
 
-		_popup.setWidget(new HTML(labelHtml));
-		_popup.removeButtons();
-		_popup.addButton(showResultButton);
-		_popup.addButton(showResultFullPageButton);
-		_popup.addButton(new CancelPopupButton(_popup));
-		_popup.center();
-		_popup.show();
-	}
+        final Button showResultButton = new Button("Show results");
+        showResultButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Frame frame = new Frame(url);
+                frame.setPixelSize(800, 500);
+                _popup.setWidget(frame);
+                _popup.removeButton(showResultButton);
+                _popup.center();
+            }
+        });
+
+        final Button showResultFullPageButton = new Button("Show results (new window)");
+        showResultFullPageButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open(url, "_blank", null);
+            }
+        });
+
+        final SafeHtml labelHtml = new SafeHtmlBuilder()
+                .appendHtmlConstant("Do you wish to inspect the profiling result for ").appendEscaped(metricLabel)
+                .appendEscapedLines("\ncollected at ").appendEscaped(formattedDate).appendHtmlConstant("?")
+                .toSafeHtml();
+
+        _popup.setWidget(new HTML(labelHtml));
+        _popup.removeButtons();
+        _popup.addButton(showResultButton);
+        _popup.addButton(showResultFullPageButton);
+        _popup.addButton(new CancelPopupButton(_popup));
+        _popup.center();
+        _popup.show();
+    }
+
+    /**
+     * Create a URL bookmark-part (ie. that part with a hash-sign) to make sure
+     * that the result URL will point to the correct analyzer tab.
+     * 
+     * @param analyzerDescriptorName
+     * @return
+     */
+    private String createResultUrlBookmark(String analyzerDescriptorName) {
+        return "#analysisResultDescriptorGroup_" + toCamelCase(analyzerDescriptorName);
+    }
+
+    public static String toCamelCase(String analyzerDescriptorName) {
+        if (analyzerDescriptorName == null) {
+            return "";
+        }
+        analyzerDescriptorName = analyzerDescriptorName.trim();
+        StringBuilder sb = new StringBuilder(analyzerDescriptorName);
+        
+        boolean capitalizeNext = true;
+        for (int i = 0; i < sb.length(); i++) {
+            char c = sb.charAt(i);
+            if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
+                sb.deleteCharAt(i);
+                capitalizeNext = true;
+                i--;
+            } else if (capitalizeNext) {
+                if (Character.isLowerCase(c)) {
+                    sb.setCharAt(i, Character.toUpperCase(c));
+                }
+                capitalizeNext = false;
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private String getAnalyzerDescriptorName(int column) {
+        final MetricIdentifier metric = _timelineDefinition.getMetrics().get(column - 1);
+        GWT.log("Clicked metric is: " + metric);
+        if (metric.isFormulaBased()) {
+            return metric.getChildren().get(0).getAnalyzerDescriptorName();
+        } else {
+            return metric.getAnalyzerDescriptorName();
+        }
+    }
 }

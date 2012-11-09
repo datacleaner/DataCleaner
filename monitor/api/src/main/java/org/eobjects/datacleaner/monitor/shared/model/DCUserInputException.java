@@ -38,4 +38,8 @@ public class DCUserInputException extends RuntimeException {
     public DCUserInputException(String message) {
         super(message);
     }
+    
+    public DCUserInputException() {
+        super();
+    }
 }

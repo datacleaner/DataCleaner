@@ -129,12 +129,19 @@ public class ResultFileController {
             resultName = resultName + EXTENSION;
         }
 
-        final RepositoryFile resultFile = resultsFolder.getFile(resultName);
+        final RepositoryFile resultFile;
+        if (resultName.endsWith("-latest" + EXTENSION)) {
+            final String prefix = resultName.substring(0, resultName.length() - ("-latest" + EXTENSION).length());
+            resultFile = resultsFolder.getLatestFile(prefix, EXTENSION);
+        } else {
+            resultFile = resultsFolder.getFile(resultName);
+        }
+
         if (resultFile == null) {
             throw new IllegalArgumentException("No such result file: " + resultName);
         }
 
-        final AnalysisResult analysisResult = context.getResult(resultName).getAnalysisResult();
+        final AnalysisResult analysisResult = context.getResult(resultFile.getName()).getAnalysisResult();
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final boolean tabs = (tabsParam == null ? true : tabsParam.booleanValue());
 

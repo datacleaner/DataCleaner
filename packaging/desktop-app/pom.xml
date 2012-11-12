@@ -9,10 +9,10 @@
 	<name>DataCleaner - desktop application packaging</name>
 	
 	<dependencies>
-		<!-- The core DataCleaner library -->
+		<!-- The desktop DataCleaner application -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
+			<artifactId>DataCleaner-desktop</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

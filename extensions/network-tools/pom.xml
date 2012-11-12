@@ -38,7 +38,7 @@
 		<dependency>
 			<!-- Include DataCleaner as a provided dependency -->
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-core</artifactId>
+			<artifactId>DataCleaner-desktop</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>

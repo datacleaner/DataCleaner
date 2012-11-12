@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
-import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.security.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class JsfHelper {
     User user;
 
     public String getVersion() {
-        return Main.VERSION;
+        return Version.get();
     }
 
     public DatastoreBeanWrapper[] getDatastores() {

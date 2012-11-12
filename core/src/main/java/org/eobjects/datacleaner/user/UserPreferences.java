@@ -28,7 +28,6 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
-import org.eobjects.datacleaner.actions.LoginChangeListener;
 
 /**
  * Defines the settings provided at runtime by the user in DataCleaner

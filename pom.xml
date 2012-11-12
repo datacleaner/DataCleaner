@@ -26,6 +26,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>core</module>
+		<module>desktop</module>
 		<module>monitor</module>
 		<module>extensions</module>
 		<module>packaging</module>

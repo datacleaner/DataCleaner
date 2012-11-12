@@ -28,7 +28,6 @@ import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.result.AnalyzerResult;
-import org.eobjects.datacleaner.actions.PreviewTransformedDataActionListener;
 
 /**
  * A dummy analyzer used by the Preview Data button (
@@ -43,29 +42,29 @@ public class PreviewTransformedDataAnalyzer implements Analyzer<PreviewTransform
     private static final long serialVersionUID = 1L;
 
     @Configured
-	InputColumn<?>[] columns;
+    InputColumn<?>[] columns;
 
-	private final List<Object[]> list = new ArrayList<Object[]>();
+    private final List<Object[]> list = new ArrayList<Object[]>();
 
-	@Override
-	public void run(InputRow row, int distinctCount) {
-		Object[] result = new Object[columns.length];
-		for (int i = 0; i < columns.length; i++) {
-			result[i] = row.getValue(columns[i]);
-		}
-		list.add(result);
-	}
-	
-	public List<Object[]> getList() {
+    @Override
+    public void run(InputRow row, int distinctCount) {
+        Object[] result = new Object[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            result[i] = row.getValue(columns[i]);
+        }
+        list.add(result);
+    }
+
+    public List<Object[]> getList() {
         return list;
     }
-	
-	public InputColumn<?>[] getColumns() {
+
+    public InputColumn<?>[] getColumns() {
         return columns;
     }
 
-	@Override
-	public PreviewTransformedDataAnalyzer getResult() {
-		return this;
-	}
+    @Override
+    public PreviewTransformedDataAnalyzer getResult() {
+        return this;
+    }
 }

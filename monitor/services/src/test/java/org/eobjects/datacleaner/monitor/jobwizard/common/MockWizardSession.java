@@ -22,12 +22,9 @@ package org.eobjects.datacleaner.monitor.jobwizard.common;
 import java.util.List;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
 import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
 import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardPageController;
 import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardSession;
-import org.eobjects.datacleaner.monitor.jobwizard.common.SelectColumnsWizardPage;
-import org.eobjects.datacleaner.monitor.jobwizard.common.SelectTableWizardPage;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -70,7 +67,7 @@ final class MockWizardSession implements JobWizardSession {
     @Override
     public AnalysisJobBuilder createJob() {
         final QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy(100, true, true);
-        QuickAnalysisActionListener.configureAnalysisJobBuilder(_analysisJobBuilder, quickAnalysisStrategy);
+        quickAnalysisStrategy.configureAnalysisJobBuilder(_analysisJobBuilder);
         return _analysisJobBuilder;
     }
 }

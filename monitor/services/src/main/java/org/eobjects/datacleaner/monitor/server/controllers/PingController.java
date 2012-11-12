@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.datacleaner.Main;
+import org.eobjects.datacleaner.Version;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.repository.Repository;
@@ -57,7 +57,7 @@ public class PingController {
 
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("tenant", tenant);
-        map.put("version", Main.VERSION);
+        map.put("version", Version.get());
         map.put("ping", "pong");
         map.put("configuration_check", (configuration == null ? "invalid" : "valid"));
 

@@ -11,6 +11,7 @@
 
 		<link href='http://fonts.googleapis.com/css?family=Ubuntu|Lobster|Open+Sans' rel='stylesheet' type='text/css' />
 		<link rel="stylesheet" type="text/css" href="styles.css" />
+		<link rel="stylesheet" type="text/css" href="styles_additional.css" />
 		<link rel="shortcut icon" href="images/favicon.png" />
 
 		<script type="text/javascript">
@@ -45,49 +46,8 @@
 
 				<div class="navContainer">
 					<ul id="nav">
-						<c:if test="#{user.viewer}">
-							<li
-								class="#{ (view.viewId == '/dashboard.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
-									value="dashboard.jsf" styleClass="DashboardTabTitle">
-									<h:outputText value="Dashboard" />
-									<c:if test="#{param['gwt.codesvr'] != null}">
-										<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-									</c:if>
-								</h:outputLink></li>
-						</c:if>
-
-						<c:if test="#{user.scheduleEditor}">
-							<li
-								class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
-									value="scheduling.jsf" styleClass="SchedulingTabTitle">
-									<h:outputText value="Scheduling" />
-									<c:if test="#{param['gwt.codesvr'] != null}">
-										<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-									</c:if>
-								</h:outputLink></li>
-						</c:if>
-
-						<c:if test="#{user.jobEditor}">
-							<li
-								class="#{ (view.viewId == '/datastores.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
-									value="datastores.jsf" styleClass="DatastoresTabTitle">
-									<h:outputText value="Datastores" />
-									<c:if test="#{param['gwt.codesvr'] != null}">
-										<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-									</c:if>
-								</h:outputLink></li>
-						</c:if>
-
-						<c:if test="#{user.admin}">
-							<li
-								class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
-									value="repository.jsf" styleClass="RepositoryTabTitle">
-									<h:outputText value="Repository" />
-									<c:if test="#{param['gwt.codesvr'] != null}">
-										<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
-									</c:if>
-								</h:outputLink></li>
-						</c:if>
+						<ui:include src="template_nav_basic.xhtml" />
+						<ui:include src="template_nav_additional.xhtml" />
 					</ul>
 				</div>
 			</div>

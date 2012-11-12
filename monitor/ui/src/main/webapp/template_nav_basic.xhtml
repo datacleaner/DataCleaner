@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<c:if test="#{user.viewer}">
+		<li
+			class="#{ (view.viewId == '/dashboard.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+				value="dashboard.jsf" styleClass="DashboardTabTitle">
+				<h:outputText value="Dashboard" />
+				<c:if test="#{param['gwt.codesvr'] != null}">
+					<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+				</c:if>
+			</h:outputLink></li>
+	</c:if>
+
+	<c:if test="#{user.scheduleEditor}">
+		<li
+			class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+				value="scheduling.jsf" styleClass="SchedulingTabTitle">
+				<h:outputText value="Scheduling" />
+				<c:if test="#{param['gwt.codesvr'] != null}">
+					<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+				</c:if>
+			</h:outputLink></li>
+	</c:if>
+
+	<c:if test="#{user.jobEditor}">
+		<li
+			class="#{ (view.viewId == '/datastores.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+				value="datastores.jsf" styleClass="DatastoresTabTitle">
+				<h:outputText value="Datastores" />
+				<c:if test="#{param['gwt.codesvr'] != null}">
+					<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+				</c:if>
+			</h:outputLink></li>
+	</c:if>
+
+	<c:if test="#{user.admin}">
+		<li
+			class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
+				value="repository.jsf" styleClass="RepositoryTabTitle">
+				<h:outputText value="Repository" />
+				<c:if test="#{param['gwt.codesvr'] != null}">
+					<f:param name="gwt.codesvr" value="#{param['gwt.codesvr']}" />
+				</c:if>
+			</h:outputLink></li>
+	</c:if>
+
+</ui:composition>

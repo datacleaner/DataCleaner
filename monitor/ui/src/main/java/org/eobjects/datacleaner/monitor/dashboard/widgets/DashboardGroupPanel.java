@@ -58,7 +58,7 @@ public class DashboardGroupPanel extends FlowPanel {
         _isDashboardEditor = isDashboardEditor;
         _dashboardWidgetCount = 0;
 
-        addStyleName("TimelineGroupPanel");
+        addStyleName("DashboardGroupPanel");
 
         _removeGroupButton = new Button("Remove this group");
         _removeGroupButton.addStyleDependentName("ImageTextButton");

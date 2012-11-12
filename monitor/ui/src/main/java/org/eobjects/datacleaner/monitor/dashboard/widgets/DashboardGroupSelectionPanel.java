@@ -38,7 +38,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * A panel which shows and let's the user select different timeline groups
+ * A panel which shows and let's the user select different dashboard
+ * groups/pages.
  */
 public class DashboardGroupSelectionPanel extends FlowPanel {
 
@@ -67,7 +68,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         _anchorPanel = new FlowPanel();
         _anchorPanel.setStyleName("AnchorPanel");
 
-        addStyleName("TimelineGroupSelectionPanel");
+        addStyleName("DashboardGroupSelectionPanel");
 
         if (_displayDefaultGroup) {
             // add the default/"welcome" group
@@ -87,7 +88,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
 
         final Anchor createNewGroupAnchor = new Anchor();
         createNewGroupAnchor.setVisible(_isDashboardEditor);
-        createNewGroupAnchor.setStyleName("CreateNewTimelineGroupAnchor");
+        createNewGroupAnchor.setStyleName("CreateNewDashboardGroupAnchor");
         createNewGroupAnchor.setText("New group");
         createNewGroupAnchor.addClickHandler(new ClickHandler() {
             @Override

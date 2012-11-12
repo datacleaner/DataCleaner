@@ -17,12 +17,12 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-.TimelineGroupSelectionPanel {
+.DashboardGroupSelectionPanel {
 	width: 150px;
 	float: left;
 }
 
-.TimelineGroupSelectionPanel a.CreateNewTimelineGroupAnchor {
+.DashboardGroupSelectionPanel a.CreateNewDashboardGroupAnchor {
 	color: #999;
 	margin-top: 10px;
 	font-size: 0.9em;
@@ -34,7 +34,7 @@
 	background-repeat: no-repeat;
 }
 
-.TimelineGroupSelectionPanel .AnchorPanel a {
+.DashboardGroupSelectionPanel .AnchorPanel a {
 	display: block;
 	width: 140px;
 	line-height: 2em;
@@ -47,40 +47,40 @@
 	background-repeat: no-repeat;
 }
 
-.TimelineGroupSelectionPanel .AnchorPanel a:hover {
+.DashboardGroupSelectionPanel .AnchorPanel a:hover {
 	background-color: #ddd;
 	background-image: url("folder_hover.png");
 }
 
-.TimelineGroupSelectionPanel .AnchorPanel a.selected {
+.DashboardGroupSelectionPanel .AnchorPanel a.selected {
 	background-color: #377FCF;
 	color: white;
 	background-image: url("folder_hover.png");
 }
 
-.TimelineGroupSelectionPanel .AnchorPanel a.selected:hover {
+.DashboardGroupSelectionPanel .AnchorPanel a.selected:hover {
 	cursor: default;
 	text-decoration: none;
 }
 
-.TimelineGroupPanel {
+.DashboardGroupPanel {
 	width: 720px;
 	float: right;
 }
 
-.TimelineGroupPanel .RemoveButton {
+.DashboardGroupPanel .RemoveButton {
 	background-image: url("delete.png");
 }
 
-.TimelineGroupPanel .NewDashboardWidgetButton {
+.DashboardGroupPanel .NewDashboardWidgetButton {
 	background-image: url("new.png");
 }
 
-.TimelineGroupPanel .welcomeTextPanel {
+.DashboardGroupPanel .welcomeTextPanel {
 	margin-top: 5px;
 }
 
-.TimelineGroupPanel .toggleWelcomeTextButton {
+.DashboardGroupPanel .toggleWelcomeTextButton {
 	cursor: pointer;
 	width: 30px;
 	height: 20px;
@@ -91,11 +91,11 @@
 	background-repeat: no-repeat;
 }
 
-.TimelineGroupPanel .toggleWelcomeTextButton.collapsed {
+.DashboardGroupPanel .toggleWelcomeTextButton.collapsed {
 	background-image: url("expand.png");
 }
 
-.TimelineGroupPanel .toggleWelcomeTextButton.expanded {
+.DashboardGroupPanel .toggleWelcomeTextButton.expanded {
 	background-image: url("collapse.png");
 }
 

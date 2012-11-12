@@ -69,6 +69,7 @@ public class ErrorHandler {
         if (t instanceof DCUserInputException) {
             GWT.log("User input exception", t);
             Window.alert(t.getMessage());
+            return;
         }
         
         GWT.log("Uncaught exception", t);

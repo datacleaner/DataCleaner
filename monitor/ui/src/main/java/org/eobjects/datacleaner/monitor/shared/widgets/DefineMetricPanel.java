@@ -219,11 +219,32 @@ public class DefineMetricPanel extends FlowPanel {
             final List<MetricIdentifier> children = new ArrayList<MetricIdentifier>();
             for (SelectMetricPanel panel : _selectMetricPanels) {
                 MetricIdentifier childMetric = panel.getMetric();
+                validateFormulaChildMetric(childMetric);
                 children.add(childMetric);
             }
             return new MetricIdentifier(formula, formula, children);
         } else {
             return _selectMetricPanels.get(0).getMetric();
+        }
+    }
+
+    private void validateFormulaChildMetric(MetricIdentifier childMetric) throws DCUserInputException {
+        final String displayName = childMetric.getDisplayName();
+        if (displayName == null || displayName.trim().isEmpty()) {
+            throw new DCUserInputException("Please provide formula symbols for all child metrics.");
+        }
+
+        char firstChar = displayName.trim().charAt(0);
+        if (!Character.isLetter(firstChar)) {
+            throw new DCUserInputException("Formula symbol '" + displayName + "' must start with a letter.");
+        }
+
+        final int length = displayName.length();
+        for (int i = 0; i < length; i++) {
+            char c = displayName.charAt(i);
+            if (c != ' ' && c != '_' && !Character.isLetter(c) && !Character.isDigit(c)) {
+                throw new DCUserInputException("Formula symbol '" + displayName + "' contains invalid character: " + c);
+            }
         }
     }
 

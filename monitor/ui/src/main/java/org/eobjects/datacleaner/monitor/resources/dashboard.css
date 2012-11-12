@@ -196,13 +196,17 @@
 	border: 1px solid #f0f0f0;
 }
 
-.MetricGroupPanel .FormulaMetricsPanel .MetricAnchor {
-	padding-left: 30px;
-	color: black;
+.FormulaMetricsGroupPanel  .HeadingLabel {
 	background-image: url("formula.png");
 	background-repeat: no-repeat;
-	background-position: left center;
-	display: block;
+	background-position: right bottom;
+	padding-right: 30px;
+	display: inline-block;
+	line-height: 26px;
+}
+
+.FormulaMetricsGroupPanel .MetricAnchor {
+	color: black;
 }
 
 .MetricGroupPanel .UnparameterizedMetricsPresenter {

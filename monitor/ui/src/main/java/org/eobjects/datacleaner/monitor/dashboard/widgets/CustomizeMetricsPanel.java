@@ -34,7 +34,6 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.DefineMetricPopup;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
-import org.eobjects.datacleaner.monitor.shared.widgets.MetricAnchor;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -44,7 +43,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class CustomizeMetricsPanel extends FlowPanel {
 
@@ -126,11 +124,13 @@ public class CustomizeMetricsPanel extends FlowPanel {
             _formulaMetricsPanel = new FlowPanel();
             _formulaMetricsPanel.addStyleName("FormulaMetricsPanel");
             final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel);
+            metricGroupPanel.addStyleName("FormulaMetricsGroupPanel");
             add(metricGroupPanel);
         }
 
-        MetricAnchor anchor = new MetricAnchor(_tenantIdentifier, jobMetrics, metric);
-        _formulaMetricsPanel.add(anchor);
+        FormulaMetricPresenter presenter = new FormulaMetricPresenter(_tenantIdentifier, jobMetrics, metric);
+        _metricPresenters.add(presenter);
+        _formulaMetricsPanel.add(presenter);
     }
 
     /**
@@ -205,18 +205,6 @@ public class CustomizeMetricsPanel extends FlowPanel {
         for (MetricPresenter metricPresenter : _metricPresenters) {
             final List<MetricIdentifier> selectedMetrics = metricPresenter.getSelectedMetrics();
             metrics.addAll(selectedMetrics);
-        }
-
-        if (_formulaMetricsPanel != null) {
-            // add formula based metrics
-            int widgetCount = _formulaMetricsPanel.getWidgetCount();
-            for (int i = 0; i < widgetCount; i++) {
-                Widget widget = _formulaMetricsPanel.getWidget(i);
-                if (widget instanceof MetricAnchor) {
-                    MetricIdentifier metric = ((MetricAnchor) widget).getMetric();
-                    metrics.add(metric);
-                }
-            }
         }
 
         return metrics;

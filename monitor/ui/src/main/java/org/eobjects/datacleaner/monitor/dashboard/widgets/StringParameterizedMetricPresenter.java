@@ -49,6 +49,8 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
     private final JobIdentifier _jobIdentifier;
 
     public final class MetricPanel extends FlowPanel {
+
+        private final MetricIdentifier _metricToReturn;
         private final CheckBox _checkBox;
         private final StringParameterizedMetricTextBox _suggestBox;
 
@@ -56,20 +58,23 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
             super();
             addStyleName("StringParameterizedMetricPresenterMetricPanel");
             _checkBox = new CheckBox();
-            if (isActiveMetric(metric)) {
-                _checkBox.setValue(true);
-            } else {
+            final MetricIdentifier activeMetric = isActiveMetric(metric);
+            if (activeMetric == null) {
+                _metricToReturn = _metricIdentifier.copy();
                 _checkBox.setValue(false);
+            } else {
+                _metricToReturn = activeMetric;
+                _checkBox.setValue(true);
             }
-            _suggestBox = new StringParameterizedMetricTextBox(_tenantIdentifier, _jobIdentifier, metric,metric.getParamQueryString(), _checkBox);
+            _suggestBox = new StringParameterizedMetricTextBox(_tenantIdentifier, _jobIdentifier, _metricToReturn,
+                    _metricToReturn.getParamQueryString(), _checkBox);
             add(_checkBox);
             add(_suggestBox);
         }
 
         public MetricIdentifier createMetricIdentifier() {
-            MetricIdentifier copy = _metricIdentifier.copy();
-            copy.setParamQueryString(_suggestBox.getText());
-            return copy;
+            _metricToReturn.setParamQueryString(_suggestBox.getText());
+            return _metricToReturn;
         }
 
         public boolean isSelected() {
@@ -100,7 +105,7 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         _panel.add(addButton);
 
         for (MetricIdentifier activeMetric : activeMetrics) {
-            if (activeMetric.equalsIgnoreCustomizedDetails(_metricIdentifier)) {
+            if (activeMetric.equalsIgnoreParameterValues(_metricIdentifier)) {
                 addMetricPanel(activeMetric);
             }
         }
@@ -116,13 +121,13 @@ public class StringParameterizedMetricPresenter implements MetricPresenter {
         _metricPanels.add(widget);
     }
 
-    private boolean isActiveMetric(MetricIdentifier metric) {
+    private MetricIdentifier isActiveMetric(MetricIdentifier metric) {
         for (MetricIdentifier activeMetric : _activeMetrics) {
-            if (activeMetric.equals(metric)) {
-                return true;
+            if (activeMetric.equalsIgnoreCustomizedDetails(metric)) {
+                return activeMetric;
             }
         }
-        return false;
+        return null;
     }
 
     @Override

@@ -321,8 +321,9 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     }
 
     /**
-     * Determines if two {@link MetricIdentifier}s match if ignoring the details
-     * that can be customized/parameterized by the user:
+     * Determines if two {@link MetricIdentifier}s match if ignoring parameter
+     * values as well as the details that can be customized/parameterized by the
+     * user:
      * 
      * <ul>
      * <li>Display name</li>
@@ -337,7 +338,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
      * @param other
      * @return
      */
-    public boolean equalsIgnoreCustomizedDetails(MetricIdentifier other) {
+    public boolean equalsIgnoreParameterValues(MetricIdentifier other) {
         if (this == other)
             return true;
         if (other == null)
@@ -377,6 +378,37 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
             return false;
         if (_parameterizedByQueryString != other._parameterizedByQueryString)
             return false;
+        return true;
+    }
+
+    /**
+     * Determines if two {@link MetricIdentifier}s match if ignoring the details
+     * that can be customized/parameterized by the user:
+     * 
+     * <ul>
+     * <li>Display name</li>
+     * <li>Color</li>
+     * </ul>
+     * 
+     * @param other
+     * @return
+     */
+    public boolean equalsIgnoreCustomizedDetails(MetricIdentifier other) {
+        if (!equalsIgnoreParameterValues(other)) {
+            return false;
+        }
+
+        if (_paramColumnName == null) {
+            if (other._paramColumnName != null)
+                return false;
+        } else if (!_paramColumnName.equals(other._paramColumnName))
+            return false;
+        if (_paramQueryString == null) {
+            if (other._paramQueryString != null)
+                return false;
+        } else if (!_paramQueryString.equals(other._paramQueryString))
+            return false;
+
         return true;
     }
 

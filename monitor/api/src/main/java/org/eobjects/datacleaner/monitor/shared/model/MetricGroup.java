@@ -74,7 +74,7 @@ public class MetricGroup implements Serializable {
 
     public boolean containsMetric(MetricIdentifier metricIdentifier) {
         for (MetricIdentifier metric : _metrics) {
-            if (metric.equalsIgnoreCustomizedDetails(metricIdentifier)) {
+            if (metric.equalsIgnoreParameterValues(metricIdentifier)) {
                 return true;
             }
         }

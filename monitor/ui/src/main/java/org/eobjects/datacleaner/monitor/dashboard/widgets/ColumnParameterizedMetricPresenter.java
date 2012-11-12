@@ -65,34 +65,43 @@ public class ColumnParameterizedMetricPresenter implements MetricPresenter {
     }
 
     private Widget createMetricWidget(final MetricIdentifier metric) {
+        final MetricIdentifier activeMetric = isActiveMetric(metric);
+        final MetricIdentifier metricToReturn;
+        if (activeMetric == null) {
+            metricToReturn = metric;
+        } else {
+            metricToReturn = activeMetric;
+        }
+        
         final CheckBox checkBox = new CheckBox();
         checkBox.setTitle(metric.getDisplayName());
         checkBox.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 if (checkBox.getValue().booleanValue()) {
-                    _selectedMetrics.add(metric);
+                    _selectedMetrics.add(metricToReturn);
                 } else {
-                    _selectedMetrics.remove(metric);
+                    _selectedMetrics.remove(metricToReturn);
                 }
             }
         });
-        if (isActiveMetric(metric)) {
-            checkBox.setValue(true);
-            _selectedMetrics.add(metric);
-        } else {
+        
+        if (activeMetric == null) {
             checkBox.setValue(false);
+        } else {
+            checkBox.setValue(true);
+            _selectedMetrics.add(metricToReturn);
         }
         return checkBox;
     }
 
-    private boolean isActiveMetric(MetricIdentifier metric) {
+    private MetricIdentifier isActiveMetric(MetricIdentifier metric) {
         for (MetricIdentifier activeMetric : _activeMetrics) {
-            if (activeMetric.equals(metric)) {
-                return true;
+            if (activeMetric.equalsIgnoreCustomizedDetails(metric)) {
+                return activeMetric;
             }
         }
-        return false;
+        return null;
     }
 
     @Override

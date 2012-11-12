@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class UnparameterizedMetricPresenter implements MetricPresenter {
 
     private final MetricIdentifier _metricIdentifier;
+    private final MetricIdentifier _metricToReturn;
     private final List<MetricIdentifier> _activeMetrics;
     private final CheckBox _checkBox;
 
@@ -42,10 +43,13 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
         _activeMetrics = activeMetrics;
 
         _checkBox = new CheckBox(metricIdentifier.getDisplayName());
-        if (isActiveMetric()) {
-            _checkBox.setValue(true);
-        } else {
+        MetricIdentifier activeMetric = isActiveMetric();
+        if (activeMetric == null) {
+            _metricToReturn = _metricIdentifier;
             _checkBox.setValue(false);
+        } else {
+            _metricToReturn = activeMetric;
+            _checkBox.setValue(true);
         }
     }
 
@@ -61,17 +65,17 @@ public class UnparameterizedMetricPresenter implements MetricPresenter {
     public List<MetricIdentifier> getSelectedMetrics() {
         List<MetricIdentifier> metrics = new ArrayList<MetricIdentifier>();
         if (_checkBox.getValue().booleanValue()) {
-            metrics.add(_metricIdentifier);
+            metrics.add(_metricToReturn);
         }
         return metrics;
     }
 
-    private boolean isActiveMetric() {
+    private MetricIdentifier isActiveMetric() {
         for (MetricIdentifier activeMetric : _activeMetrics) {
-            if (activeMetric.equals(_metricIdentifier)) {
-                return true;
+            if (activeMetric.equalsIgnoreCustomizedDetails(_metricIdentifier)) {
+                return activeMetric;
             }
         }
-        return false;
+        return null;
     }
 }

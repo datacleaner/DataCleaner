@@ -57,12 +57,12 @@ import com.google.gwt.visualization.client.visualizations.corechart.Options;
  * Panel that displays a timeline.
  */
 public class TimelinePanel extends FlowPanel {
-
+    
     /**
      * The width of the full panel, minus the width of the group selection
      * panel, minus 10 px margin
      */
-    private static final int WIDTH = 540;
+    public static final int WIDTH = 540;
 
     private final DashboardServiceAsync _service;
     private final LoadingIndicator _loadingIndicator;
@@ -282,12 +282,14 @@ public class TimelinePanel extends FlowPanel {
 
                 remove(_loadingIndicator);
                 add(chart);
-                LegendPanel legendPanel = new LegendPanel();
-                legendPanel.addStyleName("LegendPanel");
+
+                final LegendPanel legendPanel = new LegendPanel();
                 for (int i = 1; i < dataTable.getNumberOfColumns(); i++) {
                     Legend legend = new Legend(dataTable.getColumnLabel(i), colors.get(i - 1));
-                    legendPanel.addLegend(legend, new LegendClickHandler(dataTable.getColumnLabel(i),
-                            _timelineDefinition.getMetrics().get(i - 1), TimelinePanel.this, legend, _isDashboardEditor));
+                    legendPanel.addLegend(
+                            legend,
+                            new LegendClickHandler(dataTable.getColumnLabel(i), _timelineDefinition.getMetrics().get(
+                                    i - 1), TimelinePanel.this, legend, _isDashboardEditor));
 
                 }
                 add(legendPanel);
@@ -356,7 +358,7 @@ public class TimelinePanel extends FlowPanel {
             final Number value = values.get(i);
             if (value != null) {
                 // TODO: Is it always an int?
-                final int                 intValue = value.intValue();
+                final int intValue = value.intValue();
                 data.setValue(rowIndex, columnIndex, intValue);
             }
         }

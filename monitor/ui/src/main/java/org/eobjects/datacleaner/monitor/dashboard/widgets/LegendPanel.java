@@ -26,6 +26,11 @@ import com.google.gwt.user.client.ui.FlowPanel;
  * Panel which holds legends
  */
 public class LegendPanel extends FlowPanel {
+    
+    public LegendPanel() {
+        super();
+        addStyleName("LegendPanel");
+    }
 
     public void addLegend(Legend legend, ClickHandler clickHandler) {
         legend.addClickHandler(clickHandler);

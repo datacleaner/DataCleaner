@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
@@ -7,7 +8,7 @@
 	</parent>
 	<artifactId>DataCleaner-jnlp</artifactId>
 	<name>DataCleaner - JNLP/WebStart packaging</name>
-	
+
 	<dependencies>
 		<!-- The desktop DataCleaner application -->
 		<dependency>
@@ -16,14 +17,14 @@
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
 				<!-- Java Web start JNLP file generation -->
-				<groupId>org.codehaus.mojo.webstart</groupId>
+				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>webstart-maven-plugin</artifactId>
-				<version>1.0-beta-1</version>
+				<version>1.0-beta-3</version>
 				<configuration>
 					<templateFilename>template.vm</templateFilename>
 					<jnlp>
@@ -32,14 +33,15 @@
 					</jnlp>
 					<outputJarVersions>false</outputJarVersions>
 					<verbose>true</verbose>
+					<makeArchive>false</makeArchive>
 				</configuration>
 				<executions>
 					<execution>
-						<id>jnlp-on-verify</id>
+						<id>jnlp-inline-on-package</id>
 						<goals>
-							<goal>jnlp</goal>
+							<goal>jnlp-inline</goal>
 						</goals>
-						<phase>verify</phase>
+						<phase>package</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -51,7 +53,7 @@
 				<version>1.2</version>
 				<executions>
 					<execution>
-						<id>sign</id>
+						<id>sign-on-verify</id>
 						<phase>verify</phase>
 						<goals>
 							<goal>sign</goal>

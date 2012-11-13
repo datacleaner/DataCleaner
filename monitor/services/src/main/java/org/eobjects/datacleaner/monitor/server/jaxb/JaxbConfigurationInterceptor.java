@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -41,14 +40,12 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.eobjects.analyzer.beans.api.ColumnProperty;
 import org.eobjects.analyzer.beans.api.SchemaProperty;
 import org.eobjects.analyzer.beans.api.TableProperty;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.JaxbPojoDatastoreAdaptor;
 import org.eobjects.analyzer.configuration.jaxb.AbstractDatastoreType;
 import org.eobjects.analyzer.configuration.jaxb.ClasspathScannerType;
 import org.eobjects.analyzer.configuration.jaxb.ClasspathScannerType.Package;
@@ -57,10 +54,6 @@ import org.eobjects.analyzer.configuration.jaxb.ConfigurationMetadataType;
 import org.eobjects.analyzer.configuration.jaxb.DatastoreCatalogType;
 import org.eobjects.analyzer.configuration.jaxb.MultithreadedTaskrunnerType;
 import org.eobjects.analyzer.configuration.jaxb.ObjectFactory;
-import org.eobjects.analyzer.configuration.jaxb.PojoDatastoreType;
-import org.eobjects.analyzer.configuration.jaxb.PojoTableType;
-import org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns;
-import org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
@@ -71,19 +64,12 @@ import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.job.HasBeanConfiguration;
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.analyzer.util.SchemaNavigator;
-import org.eobjects.analyzer.util.convert.StringConverter;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
-import org.eobjects.metamodel.DataContext;
-import org.eobjects.metamodel.MetaModelHelper;
-import org.eobjects.metamodel.data.DataSet;
-import org.eobjects.metamodel.data.Row;
-import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Column;
-import org.eobjects.metamodel.schema.ColumnType;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.CollectionUtils;
@@ -93,8 +79,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * Interceptor class which transforms a tenant's configuration as it is being
@@ -244,7 +228,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             final Set<Column> columns = entry.getValue();
             final Datastore datastore = datastoreCatalog.getDatastore(name);
             if (datastore != null) {
-                final AbstractDatastoreType pojoDatastoreType = createPojoDatastore(datastore, columns);
+                JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+                final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore, columns, MAX_POJO_ROWS);
                 newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
             }
         }
@@ -486,137 +471,6 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         }
 
         return schemas;
-    }
-
-    private AbstractDatastoreType createPojoDatastore(Datastore datastore, Set<Column> columns) {
-        final PojoDatastoreType datastoreType = new PojoDatastoreType();
-        datastoreType.setName(datastore.getName());
-        datastoreType.setDescription(datastore.getDescription());
-
-        final DatastoreConnection con = datastore.openConnection();
-        try {
-            final DataContext dataContext = con.getDataContext();
-
-            final Schema schema;
-            final Table[] tables;
-            if (columns == null || columns.isEmpty()) {
-                schema = dataContext.getDefaultSchema();
-                tables = schema.getTables();
-            } else {
-                tables = MetaModelHelper.getTables(columns);
-                // TODO: There's a possibility that tables span multiple
-                // schemas, but we cannot currently support that in a
-                // PojoDatastore, so we just pick the first and cross our
-                // fingers.
-                schema = tables[0].getSchema();
-            }
-
-            datastoreType.setSchemaName(schema.getName());
-
-            for (final Table table : tables) {
-                final Column[] usedColumns;
-                if (columns == null || columns.isEmpty()) {
-                    usedColumns = table.getColumns();
-                } else {
-                    usedColumns = getTableColumns(table, columns);
-                }
-
-                final PojoTableType tableType = createPojoTable(dataContext, table, usedColumns);
-                datastoreType.getTable().add(tableType);
-            }
-        } finally {
-            con.close();
-        }
-
-        return datastoreType;
-    }
-
-    /**
-     * TODO: This method resembles
-     * {@link MetaModelHelper#getTableColumns(Table, Iterable)}, but due to a
-     * small equality bug, this will not work. Should work when MetaModel 3.0.2
-     * (or later) is out.
-     * 
-     * @param table
-     * @param columns
-     * @return
-     */
-    private Column[] getTableColumns(final Table table, final Set<Column> columns) {
-        final List<Column> result = new ArrayList<Column>();
-        for (final Column column : columns) {
-            if (table.equals(column.getTable())) {
-                result.add(column);
-            }
-        }
-        return result.toArray(new Column[result.size()]);
-    }
-
-    private PojoTableType createPojoTable(final DataContext dataContext, final Table table, final Column[] usedColumns) {
-        final PojoTableType tableType = new PojoTableType();
-        tableType.setName(table.getName());
-
-        // read columns
-        final Columns columnsType = new Columns();
-        for (Column column : usedColumns) {
-            columnsType.getColumn().add(createPojoColumn(column.getName(), column.getType()));
-        }
-        tableType.setColumns(columnsType);
-
-        // read values
-        final Query q = dataContext.query().from(table).select(usedColumns).toQuery();
-        q.setMaxRows(MAX_POJO_ROWS);
-
-        final DocumentBuilder documentBuilder = createDocumentBuilder();
-        final Document document = documentBuilder.newDocument();
-        final Rows rowsType = new Rows();
-        final DataSet ds = dataContext.executeQuery(q);
-        try {
-            while (ds.next()) {
-                Row row = ds.getRow();
-                rowsType.getRow().add(createPojoRow(row, document));
-            }
-        } finally {
-            ds.close();
-        }
-
-        tableType.setRows(rowsType);
-
-        return tableType;
-    }
-
-    private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row, Document document) {
-        final StringConverter converter = new StringConverter(null);
-
-        final org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row rowType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row();
-        final Object[] values = row.getValues();
-        for (Object value : values) {
-            
-            final Element elem = document.createElement("v");
-            
-            if (value != null) {
-                final String stringValue = converter.serialize(value);
-                elem.setTextContent(stringValue);
-            }
-            
-            rowType.getV().add(elem);
-        }
-        return rowType;
-    }
-
-    protected DocumentBuilder createDocumentBuilder() {
-        try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            throw new IllegalStateException("Failed to create DocumentBuilder", e);
-        }
-    }
-
-    private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns.Column createPojoColumn(String name,
-            ColumnType type) {
-        org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns.Column columnType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns.Column();
-        columnType.setName(name);
-        columnType.setType(type.toString());
-        return columnType;
     }
 
     private Package newPackage(String packageName, boolean recursive) {

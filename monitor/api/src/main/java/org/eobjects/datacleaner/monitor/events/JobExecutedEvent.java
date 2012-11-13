@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.events;
 
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.springframework.context.ApplicationEvent;
 
@@ -31,10 +32,16 @@ public class JobExecutedEvent extends ApplicationEvent {
     private static final long serialVersionUID = 1L;
 
     private final ExecutionLog _executionLog;
+    private final AnalysisResult _analysisResult;
 
-    public JobExecutedEvent(Object source, ExecutionLog executionLog) {
+    public JobExecutedEvent(Object source, ExecutionLog executionLog, AnalysisResult analysisResult) {
         super(source);
         _executionLog = executionLog;
+        _analysisResult = analysisResult;
+    }
+    
+    public AnalysisResult getAnalysisResult() {
+        return _analysisResult;
     }
 
     public ExecutionLog getExecutionLog() {

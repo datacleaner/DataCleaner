@@ -104,7 +104,9 @@ public class MonitorAnalysisListener implements AnalysisListener {
     @Override
     public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
 
-        writeResult();
+        final AnalysisResult result = new SimpleAnalysisResult(_results);
+        
+        writeResult(result);
 
         log("Job execution SUCCESS");
         _execution.setJobEndDate(new Date());
@@ -113,15 +115,14 @@ public class MonitorAnalysisListener implements AnalysisListener {
         flushLog();
 
         if (_eventPublisher != null) {
-            _eventPublisher.publishEvent(new JobExecutedEvent(this, _execution));
+            _eventPublisher.publishEvent(new JobExecutedEvent(this, _execution, result));
         }
     }
 
-    private void writeResult() {
+    private void writeResult(final AnalysisResult result) {
         _resultFolder.createFile(_resultFilename, new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {
-                final AnalysisResult result = new SimpleAnalysisResult(_results);
                 final ObjectOutputStream oos = new ObjectOutputStream(out);
                 oos.writeObject(result);
             }

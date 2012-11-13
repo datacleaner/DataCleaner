@@ -128,7 +128,9 @@ public class ExecuteJob extends AbstractQuartzJob {
             execution.setJobBeginDate(new Date());
         }
 
-        eventPublisher.publishEvent(new JobTriggeredEvent(this, execution));
+        if (eventPublisher != null) {
+            eventPublisher.publishEvent(new JobTriggeredEvent(this, execution));
+        }
 
         final RepositoryFolder resultFolder = context.getResultFolder();
         final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, eventPublisher);

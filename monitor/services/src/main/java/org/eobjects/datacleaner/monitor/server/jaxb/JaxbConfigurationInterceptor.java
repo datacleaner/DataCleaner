@@ -93,6 +93,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -565,12 +566,14 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         final Query q = dataContext.query().from(table).select(usedColumns).toQuery();
         q.setMaxRows(MAX_POJO_ROWS);
 
+        final DocumentBuilder documentBuilder = createDocumentBuilder();
+        final Document document = documentBuilder.newDocument();
         final Rows rowsType = new Rows();
         final DataSet ds = dataContext.executeQuery(q);
         try {
             while (ds.next()) {
                 Row row = ds.getRow();
-                rowsType.getRow().add(createPojoRow(row));
+                rowsType.getRow().add(createPojoRow(row, document));
             }
         } finally {
             ds.close();
@@ -581,28 +584,30 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         return tableType;
     }
 
-    private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row) {
+    private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row createPojoRow(Row row, Document document) {
         final StringConverter converter = new StringConverter(null);
 
         final org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row rowType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row();
         final Object[] values = row.getValues();
         for (Object value : values) {
-            DocumentBuilder db = createDocumentBuilder();
-            Element elem = db.newDocument().createElement("v");
+            
+            final Element elem = document.createElement("v");
+            
             if (value != null) {
                 final String stringValue = converter.serialize(value);
                 elem.setTextContent(stringValue);
             }
+            
             rowType.getV().add(elem);
         }
         return rowType;
     }
 
-    private DocumentBuilder createDocumentBuilder() {
+    protected DocumentBuilder createDocumentBuilder() {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder();
         } catch (ParserConfigurationException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Failed to create DocumentBuilder", e);
         }
     }
 

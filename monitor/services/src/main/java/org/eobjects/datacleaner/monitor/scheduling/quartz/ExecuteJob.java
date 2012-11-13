@@ -37,12 +37,13 @@ import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationService;
-import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationServiceImpl;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
+import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
+import org.eobjects.datacleaner.monitor.events.JobTriggeredEvent;
 import org.eobjects.datacleaner.monitor.scheduling.api.VariableProvider;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
@@ -53,6 +54,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * Quartz job which encapsulates the process of executing a DataCleaner job and
@@ -69,7 +71,6 @@ public class ExecuteJob extends AbstractQuartzJob {
         final ExecutionLog execution;
         final ScheduleDefinition schedule;
         final TenantContext context;
-        final AlertNotificationServiceImpl notificationService;
 
         try {
             logger.debug("executeInternal({})", jobExecutionContext);
@@ -92,7 +93,6 @@ public class ExecuteJob extends AbstractQuartzJob {
             }
 
             final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
-            notificationService = applicationContext.getBean(AlertNotificationServiceImpl.class);
             final String tenantId = schedule.getTenant().getId();
             logger.info("Tenant {} executing job {}", tenantId, schedule.getJob());
 
@@ -102,21 +102,25 @@ public class ExecuteJob extends AbstractQuartzJob {
             throw e;
         }
 
-        executeJob(context, execution, notificationService);
+        executeJob(context, execution, applicationContext);
     }
 
     /**
-     * Executes a DataCleaner job in the repository and stores the result
+     * Executes a DataCleaner job in the repository and stores the result.
      * 
      * @param context
      *            the tenant's {@link TenantContext}
      * @param execution
      *            the execution log object
+     * @param eventPublisher
+     *            publisher of application events, specifically for
+     *            {@link JobTriggeredEvent}, {@link JobExecutedEvent} and
+     *            {@link JobFailedEvent}.
      * 
      * @return The expected result name, which can be used to get updates about
      *         execution status etc. at a later state.
      */
-    public String executeJob(TenantContext context, ExecutionLog execution, AlertNotificationService notificationService) {
+    protected String executeJob(TenantContext context, ExecutionLog execution, ApplicationEventPublisher eventPublisher) {
         if (execution.getJobBeginDate() == null) {
             // although the job begin date will in vanilla scenarios be set by
             // the MonitorAnalysisListener, we also set it here, just in case of
@@ -124,9 +128,10 @@ public class ExecuteJob extends AbstractQuartzJob {
             execution.setJobBeginDate(new Date());
         }
 
+        eventPublisher.publishEvent(new JobTriggeredEvent(this, execution));
+
         final RepositoryFolder resultFolder = context.getResultFolder();
-        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder,
-                notificationService);
+        final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, eventPublisher);
 
         try {
             final String jobName = execution.getJob().getName();

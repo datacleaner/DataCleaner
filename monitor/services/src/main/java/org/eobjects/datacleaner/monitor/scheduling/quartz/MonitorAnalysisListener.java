@@ -44,7 +44,8 @@ import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.alertnotification.AlertNotificationService;
+import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
+import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
@@ -54,6 +55,7 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.Action;
+import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * AnalysisListener for DataCleaner monitor. Picks up metrics and logging
@@ -68,11 +70,11 @@ public class MonitorAnalysisListener implements AnalysisListener {
     private final String _resultFilename;
     private final RepositoryFile _logFile;
     private final JaxbExecutionLogWriter _executionLogWriter;
-    private final AlertNotificationService _notificationService;
+    private final ApplicationEventPublisher _eventPublisher;
 
     public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder,
-            AlertNotificationService notificationService) {
-        _notificationService = notificationService;
+            ApplicationEventPublisher eventPublisher) {
+        _eventPublisher = eventPublisher;
         _execution = execution;
         _resultFolder = resultFolder;
         _executionLogWriter = new JaxbExecutionLogWriter();
@@ -110,8 +112,8 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
         flushLog();
 
-        if (_notificationService != null) {
-            _notificationService.notifySubscribers(_execution);
+        if (_eventPublisher != null) {
+            _eventPublisher.publishEvent(new JobExecutedEvent(this, _execution));
         }
     }
 
@@ -172,6 +174,10 @@ public class MonitorAnalysisListener implements AnalysisListener {
 
         log(stringWriter.toString());
         flushLog();
+        
+        if (_eventPublisher != null) {
+            _eventPublisher.publishEvent(new JobFailedEvent(this, _execution, componentJob, row, throwable));
+        }
     }
 
     private void flushLog() {

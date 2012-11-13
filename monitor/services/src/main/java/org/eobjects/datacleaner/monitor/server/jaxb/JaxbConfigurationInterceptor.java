@@ -41,6 +41,9 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.eobjects.analyzer.beans.api.ColumnProperty;
 import org.eobjects.analyzer.beans.api.SchemaProperty;
@@ -90,6 +93,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Element;
 
 /**
  * Interceptor class which transforms a tenant's configuration as it is being
@@ -583,14 +587,23 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         final org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row rowType = new org.eobjects.analyzer.configuration.jaxb.PojoTableType.Rows.Row();
         final Object[] values = row.getValues();
         for (Object value : values) {
-            if (value == null) {
-                rowType.getV().add(null);
-            } else {
+            DocumentBuilder db = createDocumentBuilder();
+            Element elem = db.newDocument().createElement("v");
+            if (value != null) {
                 final String stringValue = converter.serialize(value);
-                rowType.getV().add(stringValue);
+                elem.setTextContent(stringValue);
             }
+            rowType.getV().add(elem);
         }
         return rowType;
+    }
+
+    private DocumentBuilder createDocumentBuilder() {
+        try {
+            return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private org.eobjects.analyzer.configuration.jaxb.PojoTableType.Columns.Column createPojoColumn(String name,

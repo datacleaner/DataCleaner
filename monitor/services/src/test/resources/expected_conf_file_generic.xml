@@ -72,9 +72,9 @@
                         <v>Carine</v>
                         <v>40.32.2555</v>
                         <v>54&amp;#44; rue Royale</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Nantes</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>44000</v>
                         <v>France</v>
                         <v>1370</v>
@@ -87,7 +87,7 @@
                         <v>Sue</v>
                         <v>7025551838</v>
                         <v>8489 Strong St.</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Las Vegas</v>
                         <v>NV</v>
                         <v>83030</v>
@@ -117,9 +117,9 @@
                         <v>Janine</v>
                         <v>40.67.8555</v>
                         <v>67&amp;#44; rue des Cinquante Otages</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Nantes</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>44000</v>
                         <v>France</v>
                         <v>1370</v>
@@ -132,9 +132,9 @@
                         <v>Jonas</v>
                         <v>07-98 9555</v>
                         <v>Erling Skakkes gate 78</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Stavern</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>4110</v>
                         <v>Norway</v>
                         <v>1504</v>
@@ -147,7 +147,7 @@
                         <v>Valarie</v>
                         <v>4155551450</v>
                         <v>5677 Strong St.</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>San Rafael</v>
                         <v>CA</v>
                         <v>97562</v>
@@ -162,12 +162,12 @@
                         <v>Zbyszek</v>
                         <v>(26) 642-7555</v>
                         <v>ul. Filtrowa 68</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Warszawa</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>01-012</v>
                         <v>Poland</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>0.0</v>
                     </row>
                     <row>
@@ -177,9 +177,9 @@
                         <v>Roland</v>
                         <v>+49 69 66 90 2555</v>
                         <v>Lyonerstr. 34</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Frankfurt</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>60528</v>
                         <v>Germany</v>
                         <v>1504</v>
@@ -192,7 +192,7 @@
                         <v>Julie</v>
                         <v>6505555787</v>
                         <v>5557 North Pendale Street</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>San Francisco</v>
                         <v>CA</v>
                         <v>94217</v>
@@ -207,7 +207,7 @@
                         <v>Kwai</v>
                         <v>2125557818</v>
                         <v>897 Long Airport Avenue</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>NYC</v>
                         <v>NY</v>
                         <v>10022</v>
@@ -222,9 +222,9 @@
                         <v>Diego</v>
                         <v>(91) 555 94 44</v>
                         <v>C/ Moralzarzal&amp;#44; 86</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Madrid</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>28034</v>
                         <v>Spain</v>
                         <v>1370</v>
@@ -237,9 +237,9 @@
                         <v>Christina</v>
                         <v>0921-12 3555</v>
                         <v>Berguvsvägen  8</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Luleå</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>S-958 22</v>
                         <v>Sweden</v>
                         <v>1504</v>
@@ -252,9 +252,9 @@
                         <v>Jytte</v>
                         <v>31 12 3555</v>
                         <v>Vinbæltet 34</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Kobenhavn</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>1734</v>
                         <v>Denmark</v>
                         <v>1401</v>
@@ -267,9 +267,9 @@
                         <v>Mary</v>
                         <v>78.32.5555</v>
                         <v>2&amp;#44; rue du Commerce</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Lyon</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>69004</v>
                         <v>France</v>
                         <v>1337</v>
@@ -282,9 +282,9 @@
                         <v>Eric</v>
                         <v>+65 221 7555</v>
                         <v>Bronz Sok.&amp;#44; Bronz Apt. 3/6 Tesvikiye</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Singapore</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>079903</v>
                         <v>Singapore</v>
                         <v>1621</v>
@@ -312,7 +312,7 @@
                         <v>Kyung</v>
                         <v>2155551555</v>
                         <v>7586 Pompton St.</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Allentown</v>
                         <v>PA</v>
                         <v>70267</v>
@@ -327,7 +327,7 @@
                         <v>Juri</v>
                         <v>6505556809</v>
                         <v>9408 Furth Circle</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Burlingame</v>
                         <v>CA</v>
                         <v>94217</v>
@@ -344,7 +344,7 @@
                         <v>Village Close - 106 Linden Road Sandown</v>
                         <v>2nd Floor</v>
                         <v>Singapore</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>069045</v>
                         <v>Singapore</v>
                         <v>1612</v>
@@ -357,9 +357,9 @@
                         <v>Veysel</v>
                         <v>+47 2267 3215</v>
                         <v>Drammen 121&amp;#44; PR 744 Sentrum</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Bergen</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>N 5804</v>
                         <v>Norway</v>
                         <v>1504</v>
@@ -411,7 +411,7 @@
                         <v>x5800</v>
                         <v>dmurphy@classicmodelcars.com</v>
                         <v>1</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>President</v>
                     </row>
                     <row>
@@ -685,8 +685,8 @@
                         <v>Paris</v>
                         <v>+33 14 723 4404</v>
                         <v>43 Rue Jouffroy D'abbans</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
-                        <v></v>
+                        <v/>
+                        <v/>
                         <v>France</v>
                         <v>75017</v>
                         <v>EMEA</v>
@@ -696,7 +696,7 @@
                         <v>Tokyo</v>
                         <v>+81 33 224 5000</v>
                         <v>4-1 Kioicho</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Chiyoda-Ku</v>
                         <v>Japan</v>
                         <v>102-8578</v>
@@ -708,7 +708,7 @@
                         <v>+61 2 9264 2451</v>
                         <v>5-11 Wentworth Avenue</v>
                         <v>Floor #2</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>Australia</v>
                         <v>NSW 2010</v>
                         <v>APAC</v>
@@ -719,7 +719,7 @@
                         <v>+44 20 7877 2041</v>
                         <v>25 Old Broad Street</v>
                         <v>Level 7</v>
-                        <v xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+                        <v/>
                         <v>UK</v>
                         <v>EC2N 1HN</v>
                         <v>EMEA</v>

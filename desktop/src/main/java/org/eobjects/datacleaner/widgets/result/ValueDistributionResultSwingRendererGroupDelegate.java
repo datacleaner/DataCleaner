@@ -48,6 +48,7 @@ import javax.swing.table.TableModel;
 import org.eobjects.analyzer.beans.valuedist.ValueCount;
 import org.eobjects.analyzer.beans.valuedist.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
+import org.eobjects.analyzer.result.AnnotatedRowsResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -379,13 +380,33 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
 
     private void setCountValue(final ValueDistributionGroupResult result, final TableModel model, int i,
             final ValueCount vc) {
-        if (result.isAnnotationsEnabled() && result.hasAnnotation(vc.getValue())) {
+        final String value = vc.getValue();
+        final boolean hasAnnotation;
+        final boolean isNullValue = value == null || LabelUtils.NULL_LABEL.equals(value);
+        final boolean isBlank = "".equals(value) || LabelUtils.BLANK_LABEL.equals(value);
+        if (isNullValue) {
+            hasAnnotation = result.isAnnotationsEnabled();
+        } else if (isBlank) {
+            hasAnnotation = result.isAnnotationsEnabled() && result.hasAnnotation("");
+        } else {
+            hasAnnotation = result.isAnnotationsEnabled() && result.hasAnnotation(value);
+        }
+
+        if (hasAnnotation) {
             ActionListener action = new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent action) {
-                    String title = "Detailed results for [" + vc.getValue() + "]";
+                    String title = "Detailed results for [" + value + "]";
                     List<AnalyzerResult> results = new ArrayList<AnalyzerResult>();
-                    results.add(result.getAnnotatedRows(vc.getValue()));
+                    final AnnotatedRowsResult annotatedRows;
+                    if (isNullValue) {
+                        annotatedRows = result.getAnnotatedRowsForNull();
+                    } else if (isBlank) {
+                        annotatedRows = result.getAnnotatedRows("");
+                    } else {
+                        annotatedRows = result.getAnnotatedRows(value);
+                    }
+                    results.add(annotatedRows);
                     DetailsResultWindow window = new DetailsResultWindow(title, results, _windowContext,
                             _rendererFactory);
                     window.setVisible(true);

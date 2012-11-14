@@ -207,12 +207,13 @@ public class ValueDistributionResultSwingRenderer extends
 		DatastoreConnection con = ds.openConnection();
 		SchemaNavigator sn = con.getSchemaNavigator();
 		ajb.setDatastore(ds);
-		ajb.addSourceColumns(sn.convertToTable("PUBLIC.TRIAL_BALANCE")
-				.getColumns());
-		ajb.addAnalyzer(ValueDistributionAnalyzer.class).addInputColumns(
-				ajb.getSourceColumns());
-
 		ajb.addSourceColumns(sn.convertToTable("PUBLIC.CUSTOMERS").getColumns());
+		
+		AnalyzerJobBuilder<ValueDistributionAnalyzer> singleValueDist = ajb
+                .addAnalyzer(ValueDistributionAnalyzer.class);
+		singleValueDist.addInputColumn(ajb
+                .getSourceColumnByName("PUBLIC.CUSTOMERS.ADDRESSLINE2"));
+
 		AnalyzerJobBuilder<ValueDistributionAnalyzer> groupedValueDist = ajb
 				.addAnalyzer(ValueDistributionAnalyzer.class);
 		groupedValueDist.addInputColumn(ajb

@@ -158,6 +158,11 @@ public class ExecutionLogPanel extends Composite {
                         public void onSuccess(ExecutionLog result) {
                             updateContent(result);
                         }
+
+                        public void onFailure(Throwable e) {
+                            GWT.log("Failed to get execution log, silently ignoring...", e);
+                            updateContent(executionLog); // retry with previous log
+                        };
                     });
                 }
             }.schedule(1000);

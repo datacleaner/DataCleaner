@@ -420,7 +420,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             throw new IllegalArgumentException("No execution with result id: " + resultId);
         }
 
-        return readExecutionLogFile(file, tenant, 1);
+        return readExecutionLogFile(file, tenant, 3);
     }
 
     private ExecutionLog readExecutionLogFile(final RepositoryFile file, final TenantIdentifier tenant,

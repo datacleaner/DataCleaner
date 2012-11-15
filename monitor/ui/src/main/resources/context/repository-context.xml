@@ -22,7 +22,7 @@
 
 	<!-- Example launch artifact provider based on external folder -->
 	<!-- <bean name="launchArtifactProvider" class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"> -->
-	<!-- <constructor-arg type="java.io.File" value="C:\dev\eclipse\workspace\DataCleaner\packaging\target\jnlp"/> -->
+	<!-- <constructor-arg type="java.io.File" value="/opt/datacleaner/signed_jars"/> -->
 	<!-- </bean> -->
 
 	<bean id="htmlAnalysisResultWriterFactory"

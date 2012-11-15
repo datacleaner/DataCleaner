@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.ServletOutputStream;
@@ -36,7 +35,6 @@ import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.util.ResourceManager;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
@@ -67,21 +65,30 @@ public class LaunchResourcesController {
 
     @RequestMapping("/images/app-icon.png")
     public void fetchAppIcon(HttpServletResponse response) throws IOException {
-        fetchImage(response, "images/window/app-icon.png");
+        fetchImage(response, "launch-datacleaner-app-icon.png");
     }
 
     @RequestMapping("/images/splash.png")
     public void fetchSplashImage(HttpServletResponse response) throws IOException {
-        fetchImage(response, "images/splash.png");
+        fetchImage(response, "launch-datacleaner-splash.png");
     }
 
     private void fetchImage(HttpServletResponse response, String path) throws IOException {
         response.setContentType("image/png");
 
-        final URL resource = ResourceManager.getInstance().getUrl(path);
-        final InputStream in = resource.openStream();
+        final InputStream in = getClass().getResourceAsStream(path);
+        if (in == null) {
+            logger.warn("Could not resolve image: {}", path);
+            return;
+        }
         try {
             FileHelper.copy(in, response.getOutputStream());
+        } catch (Exception e) {
+            // errors here often happens when the client aborts because the
+            // client Java already has a cached version of the file.
+            if (logger.isInfoEnabled()) {
+                logger.info("Failed to copy image file '" + path + "'", e);
+            }
         } finally {
             FileHelper.safeClose(in);
         }
@@ -124,6 +131,11 @@ public class LaunchResourcesController {
             return;
         }
 
+        if (in == null) {
+            // file was not found
+            response.sendError(404, "No such jar file: " + filename + ".jar");
+        }
+
         response.setContentType("application/x-java-archive");
 
         final ServletOutputStream out = response.getOutputStream();
@@ -131,8 +143,11 @@ public class LaunchResourcesController {
         try {
             FileHelper.copy(in, out);
         } catch (Exception e) {
-            logger.error("Failed to copy JAR file '{}': {}", filename, e.getMessage());
-            throw e;
+            // errors here often happens when the client aborts because the
+            // client Java already has a cached version of the file.
+            if (logger.isInfoEnabled()) {
+                logger.info("Failed to copy JAR file '" + filename + "'", e);
+            }
         } finally {
             FileHelper.safeClose(in);
         }

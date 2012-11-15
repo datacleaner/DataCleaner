@@ -103,7 +103,7 @@
 	<profiles>
 		<profile>
 			<!-- Quick profile to make GWT compilation work faster (in development) -->
-			<id>Quick</id>
+			<id>quick</id>
 			<build>
 				<plugins>
 					<plugin>

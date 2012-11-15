@@ -41,7 +41,7 @@
 		</profile>
 		<profile>
 			<!-- Quick profile for skipping certain optional build operations -->
-			<id>Quick</id>
+			<id>quick</id>
 		</profile>
 	</profiles>
 	<organization>

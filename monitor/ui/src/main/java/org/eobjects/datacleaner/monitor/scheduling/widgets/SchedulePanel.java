@@ -40,6 +40,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -117,7 +118,17 @@ public class SchedulePanel extends Composite {
         launchButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                String url = Urls.createRepositoryUrl(tenant, "jobs/" + schedule.getJob().getName() + ".launch.jnlp");
+                String ticket;
+                String cdiSessionCookie = Cookies.getCookie("CDI-session");
+                if (cdiSessionCookie == null || cdiSessionCookie.equals("::::::")) {
+                    // No session cookie
+                    ticket = "dummyTicket";
+                } else {
+                    String[] cdiSessionArray = cdiSessionCookie.split("::");
+                    ticket = cdiSessionArray[0];
+                }
+                String url = Urls.createRepositoryUrl(tenant, "jobs/" + schedule.getJob().getName() + ".launch.jnlp",
+                        ticket);
                 Window.open(url, "_blank", null);
             }
         });

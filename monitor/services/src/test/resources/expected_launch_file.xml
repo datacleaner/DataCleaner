@@ -25,6 +25,8 @@
 		<argument>http://localhost:80/DataCleaner-monitor/repository/DC/jobs/my+job.analysis.xml</argument>
 		<argument>-ds</argument>
 		<argument>my_datastore</argument>
+		<argument>-ticket</argument>
+		<argument>dummyTicket</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>
 		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
 		<argument>-Ddatacleaner.sandbox=true</argument>

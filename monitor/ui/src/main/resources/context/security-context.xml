@@ -10,6 +10,12 @@
 	<http pattern="/repository/*/launch-resources/*.jar" security="none" />
 	<http pattern="/repository/*/launch-resources/images/**" security="none" />
 
+	<!-- unprotected static resources/urls -->
+	<http pattern="/favicon.ico" security="none" />
+	<http pattern="/login.jsf" security="none" />
+	<http pattern="/images/**" security="none" />
+	<http pattern="/styles.css" security="none" />
+
 	<!-- HTTP basic authentication for the repository RESTful services -->
 	<http pattern="/repository/**" realm="DataCleaner monitor">
 		<anonymous enabled="true" username="anonymous" />
@@ -23,34 +29,49 @@
 	<http auto-config="true" realm="DataCleaner monitor">
 		<anonymous enabled="true" username="anonymous" />
 
-		<!-- unprotected urls -->
-		<intercept-url pattern="/favicon.ico" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/login.jsf" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/images/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<intercept-url pattern="/styles.css" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
 		<intercept-url pattern="/**" access="ROLE_USER" />
 
 		<form-login login-page="/login.jsf" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
-		<logout logout-url="/logout"/>
+		<logout logout-url="/logout" />
 	</http>
 
 	<global-method-security jsr250-annotations="enabled" />
 
 	<authentication-manager>
-		<authentication-provider>
-			<user-service>
-				<!-- DC tenant users -->
-				<user name="viewer" password="viewer" authorities="ROLE_USER, ROLE_VIEWER" />
-				<user name="developer" password="developer"
-					authorities="ROLE_USER, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR" />
-				<user name="admin" password="admin"
-					authorities="ROLE_USER, ROLE_ADMIN, ROLE_ENGINEER, ROLE_VIEWER, ROLE_JOB_EDITOR, ROLE_DASHBOARD_EDITOR, ROLE_SCHEDULE_EDITOR" />
-			</user-service>
-		</authentication-provider>
+		<authentication-provider ref="authenticationProvider" />
 	</authentication-manager>
+	
+	<beans:bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="userService" />
+		<beans:property name="authoritiesMapper" ref="authoritiesMapper" />
+	</beans:bean>
+	
+	<user-service id="userService">
+		<!-- DC tenant users -->
+		<user name="viewer" password="viewer" authorities="ROLE_VIEWER" />
+		<user name="developer" password="developer" authorities="ROLE_ENGINEER" />
+		<user name="admin" password="admin" authorities="ROLE_ADMIN" />
+	</user-service>
+
+	<beans:bean id="authoritiesMapper"
+		class="org.springframework.security.access.hierarchicalroles.RoleHierarchyAuthoritiesMapper">
+		<beans:constructor-arg ref="roleHierarchy" />
+	</beans:bean>
+	<beans:bean id="roleHierarchy"
+		class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+		<beans:property name="hierarchy">
+			<beans:value>
+				ROLE_ADMIN>ROLE_ENGINEER
+				ROLE_ADMIN>ROLE_SCHEDULE_EDITOR
+				ROLE_ENGINEER>ROLE_VIEWER
+				ROLE_ENGINEER>ROLE_DASHBOARD_EDITOR
+				ROLE_ENGINEER>ROLE_JOB_EDITOR
+				ROLE_VIEWER>ROLE_USER
+			</beans:value>
+		</beans:property>
+	</beans:bean>
 
 	<beans:bean name="tenantResolver" id="tenantResolver"
 		class="org.eobjects.datacleaner.monitor.server.security.SingleTenantResolver">

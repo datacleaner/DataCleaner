@@ -330,7 +330,7 @@ public final class Bootstrap {
                     if ("http".equals(scheme)) {
                         defaultPort = 80;
                     } else {
-                        defaultPort = 8443;
+                        defaultPort = 443;
                     }
 
                     final UrlFileName fileName = new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort,

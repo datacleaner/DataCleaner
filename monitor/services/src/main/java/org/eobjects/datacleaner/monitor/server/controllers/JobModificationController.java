@@ -68,7 +68,7 @@ public class JobModificationController {
     public Map<String, String> modifyJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestBody final JobModificationPayload input) {
 
-        logger.info("Request payload: {}", input);
+        logger.info("Request payload: {} - {}", jobName, input);
 
         jobName = jobName.replaceAll("\\+", " ");
 

@@ -76,10 +76,9 @@ public class LaunchDataCleanerControllerTest extends TestCase {
         request.setContextPath("DataCleaner-monitor");
         MockHttpServletResponse response = new MockHttpServletResponse();
         String tenant = "DC";
-        String ticket = "dummyTicket";
         String jobName = "my job";
 
-        controller.launchDataCleanerForJob(request, response, tenant, ticket, jobName);
+        controller.launchDataCleanerForJob(request, response, tenant, jobName);
 
         String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_launch_file.xml"), "UTF-8");
         expected = expected.replaceAll("\r\n", "\n");

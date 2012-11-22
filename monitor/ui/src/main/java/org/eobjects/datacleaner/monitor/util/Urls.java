@@ -68,18 +68,6 @@ public final class Urls {
      * @return
      */
     public static String createRepositoryUrl(TenantIdentifier tenant, String relativePath) {
-        return createRepositoryUrl(tenant, relativePath, "dummyTicket");
-    }
-
-    /**
-     * Creates a URL relative to the tenant's repository folder URL.
-     * 
-     * @param tenant
-     * @param relativePath
-     * @param ticket
-     * @return
-     */
-    public static String createRepositoryUrl(TenantIdentifier tenant, String relativePath, String ticket) {
-        return createRelativeUrl("repository/" + tenant.getId() + "/" + ticket + "/" + relativePath);
+        return createRelativeUrl("repository/" + tenant.getId() + "/" + relativePath);
     }
 }

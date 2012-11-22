@@ -23,8 +23,6 @@
 		<argument>$JOB_URL</argument>
 		<argument>-ds</argument>
 		<argument>$DATASTORE_NAME</argument>
-		<argument>-ticket</argument>
-		<argument>$TICKET</argument>
 		<argument>-Ddatacleaner.ui.visible=true</argument>
 		<argument>-Ddatacleaner.embed.client=dq-monitor</argument>
 		<argument>-Ddatacleaner.sandbox=true</argument>

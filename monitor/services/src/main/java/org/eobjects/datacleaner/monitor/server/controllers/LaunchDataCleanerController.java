@@ -89,15 +89,14 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml";
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
-                datastoreName, confPath, null);
+                datastoreName, confPath);
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    @RequestMapping(value = "/{tenant}/{ticket}/jobs/{job}.launch.jnlp", method = RequestMethod.GET)
+    @RequestMapping(value = "/{tenant}/jobs/{job}.launch.jnlp", method = RequestMethod.GET)
     @ResponseBody
     public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,
-            @PathVariable("tenant") final String tenant, @PathVariable("ticket") final String ticket,
-            @PathVariable("job") String jobName) throws IOException {
+            @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
         jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -121,13 +120,12 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, jobPath,
-                datastoreName, confPath, ticket);
+                datastoreName, confPath);
     }
 
     private void writeJnlpResponse(HttpServletRequest request, final String tenant, final HttpServletResponse response,
             final String scheme, final String hostname, final int port, final String contextPath,
-            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath,
-            final String ticket)
+            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath)
             throws UnsupportedEncodingException, IOException {
         response.setContentType("application/x-java-jnlp-file");
 
@@ -164,7 +162,6 @@ public class LaunchDataCleanerController {
                 line = line.replaceAll("\\$MONITOR_PORT", Integer.toString(port));
                 line = line.replaceAll("\\$MONITOR_CONTEXT", contextPath);
                 line = line.replaceAll("\\$MONITOR_TENANT", tenant);
-                line = line.replaceAll("\\$TICKET", ticket);
                 if (username != null) {
                     line = line.replaceAll("\\$MONITOR_USERNAME", username);
                 }

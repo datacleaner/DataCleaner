@@ -29,12 +29,13 @@ import org.apache.commons.io.FileUtils;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.events.JobCopyEvent;
+import org.eobjects.datacleaner.monitor.events.JobDeleteEvent;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
-public class JobCopyControllerTest extends TestCase {
+public class JobCopyAndDeleteControllerTest extends TestCase {
 
     private Repository repository;
     private TenantContextFactoryImpl tenantContextFactory;
@@ -49,14 +50,16 @@ public class JobCopyControllerTest extends TestCase {
     }
 
     public void testRenameJobAndResult() throws Exception {
-        final AtomicBoolean eventReceived = new AtomicBoolean(false);
+        assertNull(repository.getRepositoryNode("/tenant1/jobs/product_analysis.analysis.xml"));
+
+        final AtomicBoolean copyEventReceived = new AtomicBoolean(false);
 
         final JobCopyController jobCopyController = new JobCopyController();
         jobCopyController._contextFactory = tenantContextFactory;
         jobCopyController._eventPublisher = new ApplicationEventPublisher() {
             @Override
             public void publishEvent(ApplicationEvent event) {
-                eventReceived.set(true);
+                copyEventReceived.set(true);
 
                 assertTrue(event instanceof JobCopyEvent);
                 JobCopyEvent copyEvent = (JobCopyEvent) event;
@@ -69,8 +72,34 @@ public class JobCopyControllerTest extends TestCase {
         final JobCopyPayload input = new JobCopyPayload();
         input.setName("product_analysis");
 
-        final Map<String, String> result = jobCopyController.copyJob("tenant1", "product_profiling", input);
+        Map<String, String> result = jobCopyController.copyJob("tenant1", "product_profiling", input);
         assertEquals("{repository_url=/tenant1/jobs/product_analysis.analysis.xml, "
                 + "source_job=product_profiling, target_job=product_analysis}", result.toString());
+
+        assertNotNull(repository.getRepositoryNode("/tenant1/jobs/product_analysis.analysis.xml"));
+
+        assertTrue(copyEventReceived.get());
+
+        final AtomicBoolean deleteEventReceived = new AtomicBoolean(false);
+        final JobDeleteController jobDeleteController = new JobDeleteController();
+        jobDeleteController._contextFactory = tenantContextFactory;
+        jobDeleteController._eventPublisher = new ApplicationEventPublisher() {
+            @Override
+            public void publishEvent(ApplicationEvent event) {
+                deleteEventReceived.set(true);
+
+                assertTrue(event instanceof JobDeleteEvent);
+                JobDeleteEvent copyEvent = (JobDeleteEvent) event;
+
+                assertEquals("product_analysis", copyEvent.getJobName());
+            }
+        };
+
+        result = jobDeleteController.deleteJob("tenant1", "product_analysis");
+        assertEquals("{job=product_analysis}", result.toString());
+
+        assertTrue(deleteEventReceived.get());
+
+        assertNull(repository.getRepositoryNode("/tenant1/jobs/product_analysis.analysis.xml"));
     }
 }

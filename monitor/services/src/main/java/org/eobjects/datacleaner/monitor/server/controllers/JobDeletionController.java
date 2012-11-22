@@ -27,7 +27,8 @@ import javax.annotation.security.RolesAllowed;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.events.JobDeleteEvent;
+import org.eobjects.datacleaner.monitor.events.JobDeletionEvent;
+import org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
@@ -42,9 +43,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/{tenant}/jobs/{job}.delete")
-public class JobDeleteController {
+public class JobDeletionController {
 
-    private static final Logger logger = LoggerFactory.getLogger(JobDeleteController.class);
+    private static final Logger logger = LoggerFactory.getLogger(JobDeletionController.class);
 
     @Autowired
     ApplicationEventPublisher _eventPublisher;
@@ -68,8 +69,14 @@ public class JobDeleteController {
 
         RepositoryFile file = job.getJobFile();
         file.delete();
+        
+        final RepositoryFile scheduleFile = tenantContext.getJobFolder().getFile(
+                jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
+        if (scheduleFile != null) {
+            scheduleFile.delete();
+        }
 
-        _eventPublisher.publishEvent(new JobDeleteEvent(this, tenant, jobName));
+        _eventPublisher.publishEvent(new JobDeletionEvent(this, tenant, jobName));
 
         final Map<String, String> response = new TreeMap<String, String>();
         response.put("job", jobName);

@@ -25,14 +25,14 @@ import org.springframework.context.ApplicationEvent;
 /**
  * Event raised when an {@link AnalysisJob} has been deleted in the repository.
  */
-public class JobDeleteEvent extends ApplicationEvent {
+public class JobDeletionEvent extends ApplicationEvent {
 
     private static final long serialVersionUID = 1L;
 
     private final String _tenant;
     private final String _jobName;
 
-    public JobDeleteEvent(Object source, String tenant, String jobName) {
+    public JobDeletionEvent(Object source, String tenant, String jobName) {
         super(source);
         _tenant = tenant;
         _jobName = jobName;

@@ -29,7 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.events.JobCopyEvent;
-import org.eobjects.datacleaner.monitor.events.JobDeleteEvent;
+import org.eobjects.datacleaner.monitor.events.JobDeletionEvent;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationEvent;
@@ -81,15 +81,15 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
         assertTrue(copyEventReceived.get());
 
         final AtomicBoolean deleteEventReceived = new AtomicBoolean(false);
-        final JobDeleteController jobDeleteController = new JobDeleteController();
+        final JobDeletionController jobDeleteController = new JobDeletionController();
         jobDeleteController._contextFactory = tenantContextFactory;
         jobDeleteController._eventPublisher = new ApplicationEventPublisher() {
             @Override
             public void publishEvent(ApplicationEvent event) {
                 deleteEventReceived.set(true);
 
-                assertTrue(event instanceof JobDeleteEvent);
-                JobDeleteEvent copyEvent = (JobDeleteEvent) event;
+                assertTrue(event instanceof JobDeletionEvent);
+                JobDeletionEvent copyEvent = (JobDeletionEvent) event;
 
                 assertEquals("product_analysis", copyEvent.getJobName());
             }

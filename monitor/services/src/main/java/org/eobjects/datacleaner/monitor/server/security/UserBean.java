@@ -20,8 +20,10 @@
 package org.eobjects.datacleaner.monitor.server.security;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
@@ -109,6 +111,13 @@ public class UserBean implements User, Serializable {
             updateUser();
         }
         return _tenant;
+    }
+    
+    public List<String> getRoles() {
+        if (_roles.isEmpty()) {
+            updateUser();
+        }
+        return new ArrayList<String>(_roles);
     }
 
     @Override

@@ -90,7 +90,7 @@ public class JobModificationControllerTest extends TestCase {
         input.setName("renamed_job");
 
         final Map<String, String> result = jobModificationController
-                .modifyResult("tenant1", "product_profiling", input);
+                .modifyJob("tenant1", "product_profiling", input);
         assertEquals("{new_job_name=renamed_job, old_job_name=product_profiling, "
                 + "repository_url=/tenant1/jobs/renamed_job.analysis.xml}", result.toString());
 

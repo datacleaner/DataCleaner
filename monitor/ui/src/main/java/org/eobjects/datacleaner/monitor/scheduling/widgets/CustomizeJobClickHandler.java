@@ -71,9 +71,11 @@ public class CustomizeJobClickHandler implements ClickHandler {
                 popup.show();
 
                 final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".modify");
-                final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
-                JSONObject payload = new JSONObject();
+                
+                final JSONObject payload = new JSONObject();
                 payload.put("name", new JSONString(newName));
+
+                final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
                 requestBuilder.setHeader("Content-Type", "application/json");
                 requestBuilder.send(payload.toString(), new DCRequestCallback() {
                     @Override
@@ -83,6 +85,36 @@ public class CustomizeJobClickHandler implements ClickHandler {
                 });
             }
         });
+        menuBar.addItem("Copy job", new Command() {
+            @Override
+            public void execute() {
+                final String newJobName = Window.prompt("Enter new job name", job.getName() + " (Copy)");
+                
+                if (newJobName == null || newJobName.trim().length() == 0 || newJobName.equals(job.getName())) {
+                    return;
+                }
+
+                final DCPopupPanel popup = new DCPopupPanel("Copying...");
+                popup.setWidget(new LoadingIndicator());
+                popup.center();
+                popup.show();
+
+                final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".copy");
+                
+                final JSONObject payload = new JSONObject();
+                payload.put("name", new JSONString(newJobName));
+
+                final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
+                requestBuilder.setHeader("Content-Type", "application/json");
+                requestBuilder.send(payload.toString(), new DCRequestCallback() {
+                    @Override
+                    protected void onSuccess(Request request, Response response) {
+                        Window.Location.reload();
+                    }
+                });
+            }
+        });
+        
         menuBar.addItem("Job definition (xml)", new Command() {
             @Override
             public void execute() {

@@ -65,7 +65,7 @@ public class JobModificationController {
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
     @RolesAllowed({ SecurityRoles.ADMIN })
-    public Map<String, String> modifyResult(@PathVariable("tenant") final String tenant,
+    public Map<String, String> modifyJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestBody final JobModificationPayload input) {
 
         logger.info("Request payload: {}", input);

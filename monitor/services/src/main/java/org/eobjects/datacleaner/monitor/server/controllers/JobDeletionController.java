@@ -55,7 +55,7 @@ public class JobDeletionController {
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    @RolesAllowed({ SecurityRoles.JOB_EDITOR })
+    @RolesAllowed({ SecurityRoles.ADMIN })
     public Map<String, String> deleteJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName) {
 

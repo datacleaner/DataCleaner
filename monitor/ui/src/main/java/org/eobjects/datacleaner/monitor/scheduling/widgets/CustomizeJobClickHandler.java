@@ -71,7 +71,7 @@ public class CustomizeJobClickHandler implements ClickHandler {
                 popup.show();
 
                 final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".modify");
-                
+
                 final JSONObject payload = new JSONObject();
                 payload.put("name", new JSONString(newName));
 
@@ -89,7 +89,7 @@ public class CustomizeJobClickHandler implements ClickHandler {
             @Override
             public void execute() {
                 final String newJobName = Window.prompt("Enter new job name", job.getName() + " (Copy)");
-                
+
                 if (newJobName == null || newJobName.trim().length() == 0 || newJobName.equals(job.getName())) {
                     return;
                 }
@@ -100,7 +100,7 @@ public class CustomizeJobClickHandler implements ClickHandler {
                 popup.show();
 
                 final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".copy");
-                
+
                 final JSONObject payload = new JSONObject();
                 payload.put("name", new JSONString(newJobName));
 
@@ -115,6 +115,27 @@ public class CustomizeJobClickHandler implements ClickHandler {
             }
         });
         
+        menuBar.addItem("Delete job", new Command() {
+            @Override
+            public void execute() {
+                boolean delete = Window.confirm("Are you sure you want to delete the job '" + job.getName()
+                        + "' and related schedule, results and timelines.");
+                if (delete) {
+                    final String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".delete");
+                    final DCRequestBuilder requestBuilder = new DCRequestBuilder(RequestBuilder.POST, url);
+                    requestBuilder.setHeader("Content-Type", "application/json");
+                    requestBuilder.send("", new DCRequestCallback() {
+                        @Override
+                        protected void onSuccess(Request request, Response response) {
+                            Window.Location.reload();
+                        }
+                    });
+                }
+            }
+        });
+        
+        menuBar.addSeparator();
+
         menuBar.addItem("Job definition (xml)", new Command() {
             @Override
             public void execute() {

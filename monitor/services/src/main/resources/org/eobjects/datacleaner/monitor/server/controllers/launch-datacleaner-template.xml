@@ -32,5 +32,6 @@
 		<argument>-Ddatacleaner.monitor.tenant=$MONITOR_TENANT</argument>
 		<argument>-Ddatacleaner.monitor.https=$MONITOR_HTTPS</argument>
 		<argument>-Ddatacleaner.monitor.username=$MONITOR_USERNAME</argument>
+		<argument>-Ddatacleaner.monitor.cas.ticket=$MONITOR_CAS_TICKET</argument>
 	</application-desc>
 </jnlp>

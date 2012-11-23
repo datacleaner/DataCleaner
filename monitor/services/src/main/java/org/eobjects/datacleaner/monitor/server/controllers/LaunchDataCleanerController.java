@@ -43,7 +43,9 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.metamodel.util.FileHelper;
+import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -89,7 +91,7 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml";
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
-                datastoreName, confPath);
+                datastoreName, confPath, null);
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
@@ -98,7 +100,14 @@ public class LaunchDataCleanerController {
     public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
         jobName = jobName.replaceAll("\\+", " ");
-
+        final Authentication token = SecurityContextHolder.getContext().getAuthentication();
+        String casProxyTicket = null;
+        if (token instanceof CasAuthenticationToken) {
+            CasAuthenticationToken casAuthenticationToken = (CasAuthenticationToken) token;
+            AttributePrincipalImpl attPrincipal = (AttributePrincipalImpl) casAuthenticationToken.getAssertion()
+                    .getPrincipal();
+            casProxyTicket = attPrincipal.getProxyGrantingTicket();
+        }
         final TenantContext context = _contextFactory.getContext(tenant);
         if (!context.containsJob(jobName)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such job: " + jobName);
@@ -120,12 +129,13 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, jobPath,
-                datastoreName, confPath);
+                datastoreName, confPath, casProxyTicket);
     }
 
     private void writeJnlpResponse(HttpServletRequest request, final String tenant, final HttpServletResponse response,
             final String scheme, final String hostname, final int port, final String contextPath,
-            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath)
+            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath,
+            final String casProxyTicket)
             throws UnsupportedEncodingException, IOException {
         response.setContentType("application/x-java-jnlp-file");
 
@@ -164,6 +174,9 @@ public class LaunchDataCleanerController {
                 line = line.replaceAll("\\$MONITOR_TENANT", tenant);
                 if (username != null) {
                     line = line.replaceAll("\\$MONITOR_USERNAME", username);
+                }
+                if (casProxyTicket != null) {
+                    line = line.replaceAll("\\$MONITOR_CAS_TICKET", casProxyTicket);
                 }
                 line = line.replaceAll("\\$MONITOR_HTTPS", ("https".equals(scheme) ? "true" : "false"));
                 if (line.indexOf("$JAR_HREF") == -1) {

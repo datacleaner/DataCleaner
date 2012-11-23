@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import org.eobjects.datacleaner.monitor.shared.widgets.ColorBox;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
@@ -49,9 +51,9 @@ public class SelectColorPanel extends FlowPanel {
         _rbAutoSelectColor = new RadioButton("colorGroup", "Automatically apply a color");
         _rbManualSelectColor = new RadioButton("colorGroup", "Select color from palette");
         _rbChoosePredefinedColor = new RadioButton("colorGroup", "Choose predefined color");
-        if("".equals(_colorString) || _colorString == null){
+        if ("".equals(_colorString) || _colorString == null) {
             _rbAutoSelectColor.setValue(true);
-        }else{
+        } else {
             _rbManualSelectColor.setValue(true);
         }
         configureColorPanels();
@@ -68,6 +70,7 @@ public class SelectColorPanel extends FlowPanel {
         FlowPanel autoSelectPanel = new FlowPanel();
         autoSelectPanel.add(_rbAutoSelectColor);
         autoSelectPanel.addStyleName("colorPanel");
+
         add(autoSelectPanel);
     }
 
@@ -77,6 +80,15 @@ public class SelectColorPanel extends FlowPanel {
 
         manualSelectColorPanel.addStyleName("configurationPanel");
         _colorBox = new ColorBox(_colorString);
+        
+        _colorBox.getTextBox().addClickHandler(new ClickHandler() {
+            
+            @Override
+            public void onClick(ClickEvent arg0) {
+                _rbManualSelectColor.setValue(true);
+            }
+        });
+        
         manualSelectColorPanel.add(_colorBox);
 
         manualSelectPanel.add(_rbManualSelectColor);
@@ -94,9 +106,18 @@ public class SelectColorPanel extends FlowPanel {
         for (int i = 0; i < PredefinedColors.values().length; i++) {
             _predefinedListBox.addItem(PredefinedColors.values()[i].getName(), PredefinedColors.values()[i].getColor().toHexString());
         }
+        _predefinedListBox.addClickHandler(new ClickHandler(){
+
+            @Override
+            public void onClick(ClickEvent arg0) {
+                _rbChoosePredefinedColor.setValue(true);
+            }
+            
+        });
+        
         predefinedColorPanel.addStyleName("configurationPanel");
         predefinedColorPanel.add(_predefinedListBox);
-
+        
         predefinedPanel.add(_rbChoosePredefinedColor);
         predefinedPanel.add(predefinedColorPanel);
         predefinedPanel.addStyleName("colorPanel");
@@ -112,7 +133,7 @@ public class SelectColorPanel extends FlowPanel {
         if (_rbChoosePredefinedColor.getValue()) {
             return _predefinedListBox.getValue(_predefinedListBox.getSelectedIndex());
         }
-        
+
         return "";
     }
 

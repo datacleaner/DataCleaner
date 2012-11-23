@@ -32,7 +32,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.*;
 
 public class ColorBox extends Composite
-        implements HasValue<String>, HasName {
+        implements HasValue<String>, HasName, HasClickHandlers {
 
     
     
@@ -339,6 +339,11 @@ public class ColorBox extends Composite
         popup.setHex(getValue());
         popup.setPopupPosition(getAbsoluteLeft() + rx, getAbsoluteTop() + ry);
         popup.show();
+    }
+
+    @Override
+    public HandlerRegistration addClickHandler(ClickHandler handler) {
+        return addHandler(handler, ClickEvent.getType());        
     }
 
 }

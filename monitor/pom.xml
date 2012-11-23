@@ -71,8 +71,8 @@
 
 			<dependency>
 				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-cas-client</artifactId>
-				<version>3.0.8.RELEASE</version>
+				<artifactId>spring-security-cas</artifactId>
+				<version>${spring.security.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>commons-logging</groupId>

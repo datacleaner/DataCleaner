@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.beans.valuedist.ValueCount;
-import org.eobjects.analyzer.beans.valuedist.ValueCountListImpl;
-import org.eobjects.analyzer.beans.valuedist.ValueDistributionGroupResult;
+import org.eobjects.analyzer.beans.valuedist.SingleValueDistributionResult;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.MockInputColumn;
+import org.eobjects.analyzer.result.ValueCount;
+import org.eobjects.analyzer.result.ValueCountListImpl;
 import org.eobjects.analyzer.storage.RowAnnotationImpl;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -47,7 +47,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends
 
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
 				"foo", 50, 60, null, null);
-		r.renderGroupResult(new ValueDistributionGroupResult(column.getName(),
+		r.renderGroupResult(new SingleValueDistributionResult(column.getName(),
 				topValueCount, null, 0, 0, 0, null, new RowAnnotationImpl(), null, null));
 
 		assertTrue(r.getGroups().isEmpty());
@@ -93,7 +93,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
 				"foo", 13, 100, null, null);
 		RowAnnotationImpl nullValueAnnotation = new RowAnnotationImpl();
-        r.renderGroupResult(new ValueDistributionGroupResult(column.getName(),
+        r.renderGroupResult(new SingleValueDistributionResult(column.getName(),
 				topValueCount, null, 10, 0, 0, null, nullValueAnnotation, null, null));
 
 		Map<String, PieSliceGroup> groups = r.getGroups();
@@ -125,7 +125,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends
 
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
 				"foo", 17, 20, null, null);
-		r.renderGroupResult(new ValueDistributionGroupResult("foo",
+		r.renderGroupResult(new SingleValueDistributionResult("foo",
 				topValueCount, null, 0, 0, 0, null, new RowAnnotationImpl(), null, null));
 
 		assertEquals(
@@ -160,7 +160,7 @@ public class ValueDistributionResultSwingRendererGroupDelegateTest extends
 
 		ValueDistributionResultSwingRendererGroupDelegate r = new ValueDistributionResultSwingRendererGroupDelegate(
 				"foo", 10, 13, null, null);
-		r.renderGroupResult(new ValueDistributionGroupResult("foo",
+		r.renderGroupResult(new SingleValueDistributionResult("foo",
 				topValueCount, null, 0, 0, 0, null, new RowAnnotationImpl(), null, null));
 
 		assertEquals(13, r.getDataset().getItemCount());

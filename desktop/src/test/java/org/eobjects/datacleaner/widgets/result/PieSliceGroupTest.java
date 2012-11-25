@@ -25,7 +25,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eobjects.analyzer.beans.valuedist.ValueCount;
+import org.eobjects.analyzer.result.ValueCount;
 
 public class PieSliceGroupTest extends TestCase {
 	

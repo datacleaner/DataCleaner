@@ -28,7 +28,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,10 +44,10 @@ import javax.swing.JSplitPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import org.eobjects.analyzer.beans.valuedist.ValueCount;
-import org.eobjects.analyzer.beans.valuedist.ValueDistributionGroupResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.AnnotatedRowsResult;
+import org.eobjects.analyzer.result.ValueCount;
+import org.eobjects.analyzer.result.ValueCountingAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -87,7 +86,6 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             .getLogger(ValueDistributionResultSwingRendererGroupDelegate.class);
 
     private static final Color[] SLICE_COLORS = DCDrawingSupplier.DEFAULT_FILL_COLORS;
-
     private static final int DEFAULT_PREFERRED_SLICES = 32;
     private static final int DEFAULT_MAX_SLICES = 40;
 
@@ -142,19 +140,22 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _valueColorMap.put("NOT_PROCESSED", WidgetUtils.BG_COLOR_LESS_DARK);
     }
 
-    public JSplitPane renderGroupResult(final ValueDistributionGroupResult result) {
+    public JSplitPane renderGroupResult(final ValueCountingAnalyzerResult result) {
         // create a special group for the unique values
-        final int uniqueCount = result.getUniqueCount();
-        final int distinctCount = result.getDistinctCount();
+        final Integer uniqueCount = result.getUniqueCount();
+        final Integer distinctCount = result.getDistinctCount();
+        final Integer unexpectedValueCount = result.getUnexpectedValueCount();
         final int totalCount = result.getTotalCount();
 
-        final Collection<String> uniqueValues = result.getUniqueValues();
-        if (uniqueValues != null && !uniqueValues.isEmpty()) {
-            PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelUtils.UNIQUE_LABEL, uniqueCount, uniqueValues, 1);
-            _groups.put(pieSliceGroup.getName(), pieSliceGroup);
-        } else {
-            if (uniqueCount > 0) {
-                _dataset.setValue(LabelUtils.UNIQUE_LABEL, uniqueCount);
+        if (uniqueCount != null) {
+            final Collection<String> uniqueValues = result.getUniqueValues();
+            if (uniqueValues != null && !uniqueValues.isEmpty()) {
+                PieSliceGroup pieSliceGroup = new PieSliceGroup(LabelUtils.UNIQUE_LABEL, uniqueCount, uniqueValues, 1);
+                _groups.put(pieSliceGroup.getName(), pieSliceGroup);
+            } else {
+                if (uniqueCount > 0) {
+                    _dataset.setValue(LabelUtils.UNIQUE_LABEL, uniqueCount);
+                }
             }
         }
 
@@ -167,28 +168,15 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         // create the remaining "normal" slices, either individually or in
         // groups
         {
-            final List<ValueCount> topValueCounts = result.getTopValues().getValueCounts();
-            final List<ValueCount> bottomValueCounts = result.getBottomValues().getValueCounts();
+            final Collection<ValueCount> valueCounts = result.getValueCounts();
 
-            // if the user has specified the values of interest then show the
-            // graph correspondingly without any grouping
-            boolean userSpecifiedGroups = !topValueCounts.isEmpty() && !bottomValueCounts.isEmpty();
-
-            if (userSpecifiedGroups || topValueCounts.size() + bottomValueCounts.size() < _preferredSlices) {
+            if (valueCounts.size() < _preferredSlices) {
                 // vanilla scenario for cleanly distributed datasets
-                for (ValueCount valueCount : topValueCounts) {
-                    _dataset.setValue(LabelUtils.getLabel(valueCount.getValue()), valueCount.getCount());
-                }
-                for (ValueCount valueCount : bottomValueCounts) {
+                for (ValueCount valueCount : valueCounts) {
                     _dataset.setValue(LabelUtils.getLabel(valueCount.getValue()), valueCount.getCount());
                 }
             } else {
                 // create groups of values
-
-                List<ValueCount> valueCounts = topValueCounts;
-                if (!bottomValueCounts.isEmpty()) {
-                    valueCounts = bottomValueCounts;
-                }
 
                 createGroups(valueCounts);
 
@@ -226,9 +214,16 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         // chart for display of the dataset
         final JFreeChart chart = ChartFactory.createPieChart("Value distribution of " + _groupOrColumnName, _dataset,
                 false, true, false);
-        Title totalCountSubtitle = new ShortTextTitle("Total count: " + totalCount);
-        Title distinctCountSubtitle = new ShortTextTitle("Distinct count: " + distinctCount);
-        chart.setSubtitles(Arrays.asList(totalCountSubtitle, distinctCountSubtitle));
+
+        List<Title> titles = new ArrayList<Title>();
+        titles.add(new ShortTextTitle("Total count: " + totalCount));
+        if (distinctCount != null) {
+            titles.add(new ShortTextTitle("Distinct count: " + distinctCount));
+        }
+        if (unexpectedValueCount != null) {
+            titles.add(new ShortTextTitle("Unexpected value count: " + unexpectedValueCount));
+        }
+        chart.setSubtitles(titles);
 
         ChartUtils.applyStyles(chart);
 
@@ -267,6 +262,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
             }
             plot.setSectionPaint(LabelUtils.UNIQUE_LABEL, WidgetUtils.BG_COLOR_BRIGHT);
             plot.setSectionPaint(LabelUtils.NULL_LABEL, WidgetUtils.BG_COLOR_DARKEST);
+            plot.setSectionPaint(LabelUtils.UNEXPECTED_LABEL, WidgetUtils.BG_COLOR_LESS_DARK);
         }
 
         final ChartPanel chartPanel = new ChartPanel(chart);
@@ -344,7 +340,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         return _dataset;
     }
 
-    private void drillToOverview(final ValueDistributionGroupResult result) {
+    private void drillToOverview(final ValueCountingAnalyzerResult result) {
         final TableModel model = new DefaultTableModel(new String[] { "Value", LabelUtils.COUNT_LABEL },
                 _dataset.getItemCount());
         for (int i = 0; i < _dataset.getItemCount(); i++) {
@@ -378,18 +374,26 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _backButton.setVisible(false);
     }
 
-    private void setCountValue(final ValueDistributionGroupResult result, final TableModel model, int i,
+    private void setCountValue(final ValueCountingAnalyzerResult result, final TableModel model, int i,
             final ValueCount vc) {
         final String value = vc.getValue();
+        final int count = vc.getCount();
         final boolean hasAnnotation;
         final boolean isNullValue = value == null || LabelUtils.NULL_LABEL.equals(value);
+        final boolean isUnexpectedValues = LabelUtils.UNEXPECTED_LABEL.equals(value);
         final boolean isBlank = "".equals(value) || LabelUtils.BLANK_LABEL.equals(value);
-        if (isNullValue) {
-            hasAnnotation = result.isAnnotationsEnabled();
-        } else if (isBlank) {
-            hasAnnotation = result.isAnnotationsEnabled() && result.hasAnnotation("");
+        if (count == 0) {
+            hasAnnotation = false;
         } else {
-            hasAnnotation = result.isAnnotationsEnabled() && result.hasAnnotation(value);
+            if (isNullValue) {
+                hasAnnotation = result.hasAnnotatedRows(null);
+            } else if (isUnexpectedValues) {
+                hasAnnotation = result.hasAnnotatedRows(null);
+            } else if (isBlank) {
+                hasAnnotation = result.hasAnnotatedRows("");
+            } else {
+                hasAnnotation = result.hasAnnotatedRows(value);
+            }
         }
 
         if (hasAnnotation) {
@@ -401,10 +405,12 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
                     final AnnotatedRowsResult annotatedRows;
                     if (isNullValue) {
                         annotatedRows = result.getAnnotatedRowsForNull();
+                    } else if (isUnexpectedValues) {
+                        annotatedRows = result.getAnnotatedRowsForUnexpectedValues();
                     } else if (isBlank) {
-                        annotatedRows = result.getAnnotatedRows("");
+                        annotatedRows = result.getAnnotatedRowsForValue("");
                     } else {
-                        annotatedRows = result.getAnnotatedRows(value);
+                        annotatedRows = result.getAnnotatedRowsForValue(value);
                     }
                     results.add(annotatedRows);
                     DetailsResultWindow window = new DetailsResultWindow(title, results, _windowContext,
@@ -413,16 +419,16 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
                 }
             };
 
-            DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(vc.getCount(),
-                    Alignment.LEFT, action, AbstractCrosstabResultSwingRenderer.IMAGE_PATH_DRILL_TO_DETAIL);
+            DCPanel panel = AbstractCrosstabResultSwingRenderer.createActionableValuePanel(count, Alignment.LEFT,
+                    action, AbstractCrosstabResultSwingRenderer.IMAGE_PATH_DRILL_TO_DETAIL);
 
             model.setValueAt(panel, i, 1);
         } else {
-            model.setValueAt(vc.getCount(), i, 1);
+            model.setValueAt(count, i, 1);
         }
     }
 
-    private void drillToGroup(ValueDistributionGroupResult result, String groupName, boolean showBackButton) {
+    private void drillToGroup(ValueCountingAnalyzerResult result, String groupName, boolean showBackButton) {
         final PieSliceGroup group = _groups.get(groupName);
         final TableModel model = new DefaultTableModel(new String[] { groupName + " value", LabelUtils.COUNT_LABEL },
                 group.size());
@@ -439,7 +445,7 @@ final class ValueDistributionResultSwingRendererGroupDelegate {
         _backButton.setVisible(showBackButton);
     }
 
-    protected void createGroups(List<ValueCount> valueCounts) {
+    protected void createGroups(Collection<ValueCount> valueCounts) {
         // this map will contain frequency counts that are not groupable in
         // this block because there is only one occurrence
         final Set<Integer> skipCounts = new HashSet<Integer>();

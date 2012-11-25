@@ -23,8 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eobjects.analyzer.beans.valuedist.ValueCount;
-
+import org.eobjects.analyzer.result.ValueCount;
 import org.eobjects.metamodel.util.BaseObject;
 
 /**

@@ -75,13 +75,15 @@ public class LuceneIntegrationTest extends TestCase {
         searchInput.add(createSearchInput("Gift"));
         searchInput.add(createSearchInput("Atelier Graphick"));
         searchInput.add(createSearchInput("Ateler Graphick"));
-
+        
         final TableDataProvider<?> tableDataProvider = new MapTableDataProvider(tableDef, searchInput);
         final Datastore searches = new PojoDatastore("searches",
                 Arrays.<TableDataProvider<?>> asList(tableDataProvider));
         conf = conf.replace(new DatastoreCatalogImpl(searches));
 
         runSearchJob(conf, searchIndex);
+        
+        assertEquals("[name, country, phone]", searchIndex.getFieldNames().toString());
     }
 
     private void runSearchIndexAssertions(SearchIndex searchIndex) throws CorruptIndexException, IOException {

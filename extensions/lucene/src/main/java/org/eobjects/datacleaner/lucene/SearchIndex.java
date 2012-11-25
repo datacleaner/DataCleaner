@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.lucene;
 
+import java.util.List;
+
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
 import org.eobjects.analyzer.reference.ReferenceData;
@@ -28,6 +30,8 @@ import org.eobjects.metamodel.util.Action;
  * Represents a search index defined by the user.
  */
 public interface SearchIndex extends ReferenceData {
+    
+    public List<String> getFieldNames();
 
     public IndexSearcher getSearcher();
     

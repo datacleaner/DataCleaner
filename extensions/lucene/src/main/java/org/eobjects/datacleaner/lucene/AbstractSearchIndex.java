@@ -20,12 +20,16 @@
 package org.eobjects.datacleaner.lucene;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.eobjects.analyzer.reference.AbstractReferenceData;
@@ -43,6 +47,29 @@ public abstract class AbstractSearchIndex extends AbstractReferenceData implemen
     }
 
     protected abstract Directory getDirectory();
+
+    @Override
+    public List<String> getFieldNames() {
+        try {
+            final List<String> fieldNames = new ArrayList<String>();
+            final DirectoryReader reader = getIndexReader();
+            for (int i = 0; i < reader.maxDoc(); i++) {
+                Document doc = reader.document(i);
+                if (doc != null) {
+                    List<IndexableField> fields = doc.getFields();
+                    if (fields != null && !fields.isEmpty()) {
+                        for (IndexableField indexableField : fields) {
+                            fieldNames.add(indexableField.name());
+                        }
+                        return fieldNames;
+                    }
+                }
+            }
+            return fieldNames;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     protected final DirectoryReader getIndexReader() {
         try {

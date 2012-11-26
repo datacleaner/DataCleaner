@@ -123,7 +123,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         if (_formulaMetricsPanel == null) {
             _formulaMetricsPanel = new FlowPanel();
             _formulaMetricsPanel.addStyleName("FormulaMetricsPanel");
-            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel);
+            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel, null);
             metricGroupPanel.addStyleName("FormulaMetricsGroupPanel");
             add(metricGroupPanel);
         }
@@ -161,11 +161,16 @@ public class CustomizeMetricsPanel extends FlowPanel {
         }
 
         final String title = metricGroup.getName();
-        return createMetricGroupPanel(title, innerPanel);
+        return createMetricGroupPanel(title, innerPanel, metricGroup);
     }
 
-    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel) {
+    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel, MetricGroup metricGroup) {
+        if(metricGroup !=null && metricGroup.getMetrics().size() > 3){
+            innerPanel.setVisible(false);
+        }
+        
         final HeadingLabel heading = new HeadingLabel(title);
+        
         heading.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

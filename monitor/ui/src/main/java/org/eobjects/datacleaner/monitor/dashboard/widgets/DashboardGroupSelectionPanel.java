@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,10 +81,21 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         _service.getDashboardGroups(_tenant, new DCAsyncCallback<List<DashboardGroup>>() {
             @Override
             public void onSuccess(List<DashboardGroup> result) {
+
+                sortDashboardGroups(result);
                 for (DashboardGroup group : result) {
                     addGroup(group);
                 }
                 initializeSelectedAnchor();
+            }
+
+            private void sortDashboardGroups(List<DashboardGroup> result) {
+                Collections.sort(result, new Comparator<DashboardGroup>() {
+                    @Override
+                    public int compare(DashboardGroup o1, DashboardGroup o2) {
+                        return o1.getName().compareToIgnoreCase(o2.getName());
+                    }
+                });
             }
         });
 

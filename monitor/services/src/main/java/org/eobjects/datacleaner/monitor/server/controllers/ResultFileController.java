@@ -35,6 +35,7 @@ import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
+import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory;
@@ -117,7 +118,7 @@ public class ResultFileController {
     public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
             @RequestParam(value = "tabs", required = false) Boolean tabsParam,
             @RequestParam(value = "comp_name", required = false) String componentParamName,
-            @RequestParam(value = "comp_index", required = false) Integer componentIndexParam, final Writer out) {
+            @RequestParam(value = "comp_index", required = false) Integer componentIndexParam, final Writer out) throws IOException {
 
         resultName = resultName.replaceAll("\\+", " ");
 
@@ -131,8 +132,13 @@ public class ResultFileController {
 
         final RepositoryFile resultFile;
         if (resultName.endsWith("-latest" + EXTENSION)) {
-            final String prefix = resultName.substring(0, resultName.length() - ("-latest" + EXTENSION).length());
-            resultFile = resultsFolder.getLatestFile(prefix, EXTENSION);
+            final String jobName = resultName.substring(0, resultName.length() - ("-latest" + EXTENSION).length());
+            resultFile = resultsFolder.getLatestFile(jobName, EXTENSION);
+            if (resultFile == null) {
+                JobContext job = context.getJob(jobName);
+                out.write("No results for job: " + job.getName());
+                return;
+            }
         } else {
             resultFile = resultsFolder.getFile(resultName);
         }

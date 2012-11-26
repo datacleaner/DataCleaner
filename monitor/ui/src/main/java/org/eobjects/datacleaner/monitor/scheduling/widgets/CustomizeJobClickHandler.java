@@ -47,10 +47,16 @@ public class CustomizeJobClickHandler implements ClickHandler {
 
     private final SchedulePanel _schedulePanel;
     private final TenantIdentifier _tenant;
+    private DCPopupPanel _popup;
 
     public CustomizeJobClickHandler(SchedulePanel schedulePanel, TenantIdentifier tenant) {
         _schedulePanel = schedulePanel;
         _tenant = tenant;
+        
+        _popup = new DCPopupPanel(null);
+        _popup.setGlassEnabled(false);
+        _popup.setAutoHideEnabled(true);
+        _popup.getButtonPanel().setVisible(false);
     }
 
     @Override
@@ -140,16 +146,21 @@ public class CustomizeJobClickHandler implements ClickHandler {
             @Override
             public void execute() {
                 String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".analysis.xml");
-                Window.Location.assign(url);
+                Window.open(url, "datacleaner_job_details", null);
+                _popup.hide();
             }
         });
-
-        final DCPopupPanel popup = new DCPopupPanel(null);
-        popup.setGlassEnabled(false);
-        popup.setWidget(menuBar);
-        popup.setAutoHideEnabled(true);
-        popup.getButtonPanel().setVisible(false);
-        popup.showRelativeTo((UIObject) event.getSource());
+        menuBar.addItem("Show latest result", new Command() {
+            @Override
+            public void execute() {
+                String url = Urls.createRepositoryUrl(_tenant, "results/" + job.getName() + "-latest.analysis.result.dat");
+                Window.open(url, "datacleaner_job_details", null);
+                _popup.hide();
+            }
+        });
+        
+        _popup.setWidget(menuBar);
+        _popup.showRelativeTo((UIObject) event.getSource());
     }
 
 }

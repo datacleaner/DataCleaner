@@ -417,8 +417,12 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
                 final String tenant = System.getProperty(SystemProperties.MONITOR_TENANT);
                 final boolean isHttps = "true".equals(System.getProperty(SystemProperties.MONITOR_HTTPS));
                 final String username = System.getProperty(SystemProperties.MONITOR_USERNAME);
+                final String securityMode = System.getProperty(SystemProperties.MONITOR_SECURITY_MODE);
+                final String casHostname = System.getProperty(SystemProperties.MONITOR_CAS_HOSTNAME);
+                final String casPort = System.getProperty(SystemProperties.MONITOR_CAS_PORT);
                 final String encodedPassword = null;
-                final MonitorConnection con = new MonitorConnection(hostname, port, contextPath, isHttps, tenant, username, encodedPassword);
+                final MonitorConnection con = new MonitorConnection(hostname, port, contextPath, isHttps, tenant,
+                        username, encodedPassword, securityMode, casHostname, casPort);
                 return con;
             }
         }

@@ -43,11 +43,11 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.metamodel.util.FileHelper;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -91,7 +91,7 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml";
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
-                datastoreName, confPath, null);
+                datastoreName, confPath, null, null, null);
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
@@ -101,12 +101,16 @@ public class LaunchDataCleanerController {
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
         jobName = jobName.replaceAll("\\+", " ");
         final Authentication token = SecurityContextHolder.getContext().getAuthentication();
-        String casProxyTicket = null;
+        String securityMode = null;
+        String casHostname = null;
+        String casPort = null;
         if (token instanceof CasAuthenticationToken) {
             CasAuthenticationToken casAuthenticationToken = (CasAuthenticationToken) token;
-            AttributePrincipalImpl attPrincipal = (AttributePrincipalImpl) casAuthenticationToken.getAssertion()
-                    .getPrincipal();
-            casProxyTicket = attPrincipal.getProxyGrantingTicket();
+            WebAuthenticationDetails webAuthenticationDetails = (WebAuthenticationDetails) casAuthenticationToken
+                    .getDetails();
+            casHostname = webAuthenticationDetails.getRemoteAddress();
+            casPort = "8443";
+            securityMode = "CAS";
         }
         final TenantContext context = _contextFactory.getContext(tenant);
         if (!context.containsJob(jobName)) {
@@ -129,13 +133,13 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, jobPath,
-                datastoreName, confPath, casProxyTicket);
+                datastoreName, confPath, securityMode, casHostname, casPort);
     }
 
     private void writeJnlpResponse(HttpServletRequest request, final String tenant, final HttpServletResponse response,
             final String scheme, final String hostname, final int port, final String contextPath,
             final String jnlpHref, final String jobPath, final String datastoreName, final String confPath,
-            final String casProxyTicket)
+            final String securityMode, final String casHostname, final String casPort)
             throws UnsupportedEncodingException, IOException {
         response.setContentType("application/x-java-jnlp-file");
 
@@ -175,8 +179,12 @@ public class LaunchDataCleanerController {
                 if (username != null) {
                     line = line.replaceAll("\\$MONITOR_USERNAME", username);
                 }
-                if (casProxyTicket != null) {
-                    line = line.replaceAll("\\$MONITOR_CAS_TICKET", casProxyTicket);
+                if (securityMode != null) {
+                    line = line.replaceAll("\\$MONITOR_SECURITY_MODE", securityMode);
+                }
+                if (casHostname != null) {
+                    line = line.replaceAll("\\$MONITOR_CAS_HOSTNAME", casHostname);
+                    line = line.replaceAll("\\$MONITOR_CAS_PORT", casPort);
                 }
                 line = line.replaceAll("\\$MONITOR_HTTPS", ("https".equals(scheme) ? "true" : "false"));
                 if (line.indexOf("$JAR_HREF") == -1) {

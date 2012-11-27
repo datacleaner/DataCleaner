@@ -49,6 +49,7 @@ import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
+import org.eobjects.datacleaner.util.MonitorHttpClientCASImpl;
 import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.SecurityUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -89,6 +90,10 @@ public class MonitorConnectionDialog extends AbstractDialog {
     private final DCLabel _urlLabel;
 
     private final HttpClient _httpClient;
+
+    private final String _securityMode;
+    private final String _casHostname;
+    private final String _casPort;
 
     @Inject
     public MonitorConnectionDialog(WindowContext windowContext, UserPreferences userPreferences, HttpClient httpClient) {
@@ -172,6 +177,10 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
 
+        _securityMode = monitorConnection.getSecurityMode();
+        _casHostname = monitorConnection.getCasHostname();
+        _casPort = monitorConnection.getCasPort();
+
         _authenticationCheckBox = new DCCheckBox<Void>("Use authentication?", true);
         _authenticationCheckBox.setBorderPainted(false);
         _authenticationCheckBox.setOpaque(false);
@@ -218,7 +227,8 @@ public class MonitorConnectionDialog extends AbstractDialog {
         }
 
         return new MonitorConnection(_hostnameTextField.getText(), port, _contextPathTextField.getText(),
-                _httpsCheckBox.isSelected(), _tenantTextField.getText(), username, password);
+                _httpsCheckBox.isSelected(), _tenantTextField.getText(), username, password, _securityMode,
+                _casHostname, _casPort);
     }
 
     private void updateUrlLabel() {
@@ -292,11 +302,22 @@ public class MonitorConnectionDialog extends AbstractDialog {
                 final MonitorConnection connection = createMonitorConnection();
                 connection.prepareClient(_httpClient);
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
+                HttpGet request = new HttpGet(pingUrl);
+                HttpResponse response = null;
                 try {
-                    final HttpResponse response = _httpClient.execute(new HttpGet(pingUrl));
+                    if (_securityMode != null && _securityMode.equalsIgnoreCase("CAS")) {
+                        String casUrl = "https://" + _casHostname + ":" + _casPort + "/cas/v1/tickets";
+                        String username = connection.getUsername();
+                        String password = SecurityUtils.decodePassword(connection.getEncodedPassword());
+                        MonitorHttpClientCASImpl httpClientCAS = new MonitorHttpClientCASImpl(
+                                _httpClient, casUrl, username, password);
+                        response = httpClientCAS.execute(request);
+                    } else {
+                        response = _httpClient.execute(request);
+                    }
                     final StatusLine statusLine = response.getStatusLine();
 
-                    if (statusLine.getStatusCode() == 200) {
+                    if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
                         // read response as JSON.
                         final InputStream content = response.getEntity().getContent();
                         final Map<?, ?> map;

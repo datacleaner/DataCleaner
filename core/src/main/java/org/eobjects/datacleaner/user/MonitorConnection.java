@@ -54,14 +54,18 @@ public class MonitorConnection implements Serializable {
     private final String _tenantId;
     private final String _username;
     private final String _encodedPassword;
+    private final String _casHostname;
+    private final String _casPort;
+    private final String _securityMode;
 
     public MonitorConnection(String hostname, int port, String contextPath, boolean isHttps, String tenantId,
-            String username, char[] password) {
-        this(hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils.encodePassword(password));
+            String username, char[] password, String securityMode, String casHostname, String casPort) {
+        this(hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils.encodePassword(password),
+                securityMode, casHostname, casPort);
     }
 
     public MonitorConnection(String hostname, int port, String contextPath, boolean isHttps, String tenantId,
-            String username, String encodedPassword) {
+            String username, String encodedPassword, String securityMode, String casHostname, String casPort) {
         _hostname = hostname;
         _port = port;
         _contextPath = removeBeginningSlash(contextPath);
@@ -69,6 +73,9 @@ public class MonitorConnection implements Serializable {
         _tenantId = tenantId;
         _username = username;
         _encodedPassword = encodedPassword;
+        _securityMode = securityMode;
+        _casHostname = casHostname;
+        _casPort = casPort;
     }
 
     public String getHostname() {
@@ -114,7 +121,7 @@ public class MonitorConnection implements Serializable {
 
     /**
      * Prepares a {@link HttpClient} for invoking HTTP requests using
-     * authentication, if nescesary.
+     * authentication, if necessary.
      * 
      * @param httpClient
      */
@@ -184,6 +191,27 @@ public class MonitorConnection implements Serializable {
             contextPath = contextPath.substring(1);
         }
         return contextPath;
+    }
+
+    /**
+     * @return the _casHostname
+     */
+    public String getCasHostname() {
+        return _casHostname;
+    }
+
+    /**
+     * @return the _casPort
+     */
+    public String getCasPort() {
+        return _casPort;
+    }
+
+    /**
+     * @return the _securityMode
+     */
+    public String getSecurityMode() {
+        return _securityMode;
     }
 
 }

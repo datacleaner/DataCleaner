@@ -76,4 +76,17 @@ public class SystemProperties {
      * Property for for the username of the DC monitor app
      */
     public static final String MONITOR_USERNAME = "datacleaner.monitor.username";
+    /**
+     * Property for the security mode
+     */
+    public static final String MONITOR_SECURITY_MODE = "datacleaner.monitor.security.mode";
+    /**
+     * Property for the cas server hostname
+     */
+    public static final String MONITOR_CAS_HOSTNAME = "datacleaner.monitor.cas.hostname";
+    /**
+     * Property for the cas server port
+     */
+    public static final String MONITOR_CAS_PORT = "datacleaner.monitor.cas.port";
+
 }

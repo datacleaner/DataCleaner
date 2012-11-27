@@ -24,21 +24,23 @@ import junit.framework.TestCase;
 public class MonitorConnectionTest extends TestCase {
 
     public void testGetBaseUrl() throws Exception {
-        MonitorConnection con1 = new MonitorConnection("localhost", 8080, "DataCleaner-monitor", false, "DC", null, "");
+        MonitorConnection con1 = new MonitorConnection("localhost", 8080, "DataCleaner-monitor", false, "DC", null, "",
+                null, null, null);
         assertEquals("http://localhost:8080/DataCleaner-monitor", con1.getBaseUrl());
 
-        MonitorConnection con2 = new MonitorConnection("localhost", 8080, null, true, "DC", null, "");
+        MonitorConnection con2 = new MonitorConnection("localhost", 8080, null, true, "DC", null, "", null, null, null);
         assertEquals("https://localhost:8080", con2.getBaseUrl());
         
-        MonitorConnection con3 = new MonitorConnection("localhost", 8080, "/DC", true, "DC", null, "");
+        MonitorConnection con3 = new MonitorConnection("localhost", 8080, "/DC", true, "DC", null, "", null, null, null);
         assertEquals("https://localhost:8080/DC", con3.getBaseUrl());
     }
 
     public void testGetRepositoryUrl() throws Exception {
-        MonitorConnection con1 = new MonitorConnection("localhost", 8080, "DataCleaner-monitor", false, "DC", null, "");
+        MonitorConnection con1 = new MonitorConnection("localhost", 8080, "DataCleaner-monitor", false, "DC", null, "",
+                null, null, null);
         assertEquals("http://localhost:8080/DataCleaner-monitor/repository/DC", con1.getRepositoryUrl());
 
-        MonitorConnection con2 = new MonitorConnection("localhost", 8080, null, true, null, null, "");
+        MonitorConnection con2 = new MonitorConnection("localhost", 8080, null, true, null, null, "", null, null, null);
         assertEquals("https://localhost:8080/repository", con2.getRepositoryUrl());
     }
 }

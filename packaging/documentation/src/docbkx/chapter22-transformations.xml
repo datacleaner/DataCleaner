@@ -54,6 +54,51 @@
 		</para>
 	</section>
 
+	<section id="synonym_lookup_transformer">
+		<title>Synonym lookup</title>
+		<para>
+			The Synonym lookup transformation is a critical part of DataCleaner's
+			ability to standardize and cleanse data. Using this component you can
+			look up values in a
+			<link linkend="synonym_catalogs">synonym catalog</link>
+			and have it replaced with it's master term, if it is found to be a
+			synonym.
+		</para>
+		<para>Below is a screenshot of the synonym lookup's configuration
+			panel:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="transformer_reference_synonym_lookup.png"
+					format="PNG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>
+			The configuration of the Synonym lookup is simple:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>Select the column to apply the lookup function to.</para>
+			</listitem>
+			<listitem>
+				<para>Use the 'Retain original value' option to determine if
+					unmatched values (non-synonyms) should be retained or if a null
+					value should be returned if there is no match.</para>
+			</listitem>
+			<listitem>
+				<para>Select the synonym catalog to use for lookups.</para>
+			</listitem>
+		</orderedlist>
+
+		<para>
+			If your synonym catalog contains all the allowed values for a
+			particula column, it can be a good idea to uncheck the 'Retain
+			original value' checkbox and then do a simple null-check on the
+			resulting output column. If null values are found, it's because there
+			are values in the column that the synonym catalog is not able to
+			standardize.
+		</para>
+	</section>
+
 	<section id="javascript_transformer">
 		<title>JavaScript transformer</title>
 		<para>The JavaScript transformer allows the user to define his/her own

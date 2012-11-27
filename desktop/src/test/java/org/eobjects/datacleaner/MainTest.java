@@ -21,6 +21,8 @@ package org.eobjects.datacleaner;
 
 import java.util.Map;
 
+import org.h2.util.StringUtils;
+
 import junit.framework.TestCase;
 
 public class MainTest extends TestCase {
@@ -45,15 +47,29 @@ public class MainTest extends TestCase {
         final String hostname = "demo.datacleaner.org";
         final String port = "80";
         final String context = "/DataCleaner-monitor";
-        final String confLocation = "http://" + hostname + ":" + port + context
-                + "/repository/DC/launch-resources/conf.xml?job=Customer+completeness";
-        final String jobLocation = "http://" + hostname + ":" + port + context
-                + "/repository/DC/jobs/Customer+completeness.analysis.xml";
-        final String[] args = ("-conf " + confLocation + " -job " + jobLocation + " -ds orderdb"
+        final String tenant = "DC";
+        final String username = "admin";
+        final String datastore = "orderdb";
+        final String jobName = "Customer completeness";
+
+        final String confLocation;
+        final String jobLocation;
+        if (StringUtils.isNullOrEmpty(jobName)) {
+            confLocation = "http://" + hostname + ":" + port + context + "/repository/" + tenant
+                    + "/launch-resources/conf.xml";
+            jobLocation = null;
+        } else {
+            confLocation = "http://" + hostname + ":" + port + context + "/repository/" + tenant
+                    + "/launch-resources/conf.xml?job=" + jobName.replaceAll(" ", "\\+");
+            jobLocation = "http://" + hostname + ":" + port + context + "/repository/" + tenant + "/jobs/"
+                    + jobName.replaceAll(" ", "\\+") + ".analysis.xml";
+        }
+        final String[] args = ("-conf " + confLocation + (jobLocation != null ? " -job " + jobLocation : "")
+                + (StringUtils.isNullOrEmpty(datastore) ? "" : " -ds " + datastore)
                 + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
                 + " -Ddatacleaner.monitor.hostname=" + hostname + " -Ddatacleaner.monitor.port=" + port
                 + " -Ddatacleaner.monitor.context=" + context + "/ -Ddatacleaner.monitor.https=false"
-                + " -Ddatacleaner.monitor.tenant=DC" + " -Ddatacleaner.monitor.username=admin").split(" ");
+                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username).split(" ");
         Main.main(args);
     }
 }

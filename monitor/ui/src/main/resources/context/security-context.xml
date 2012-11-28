@@ -39,7 +39,7 @@
 
 	<global-method-security jsr250-annotations="enabled" />
 
-	<authentication-manager>
+	<authentication-manager alias="authenticationManager">
 		<authentication-provider ref="authenticationProvider" />
 	</authentication-manager>
 	

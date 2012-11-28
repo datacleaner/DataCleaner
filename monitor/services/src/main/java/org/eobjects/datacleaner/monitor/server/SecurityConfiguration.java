@@ -17,32 +17,17 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.controllers;
+package org.eobjects.datacleaner.monitor.server;
 
+/**
+ * Specifies the security configuration of DataCleaner monitor. This object can
+ * optionally be provided in the spring application context in order to instruct
+ * other components how to expose certain details of the application.
+ */
+public class SecurityConfiguration {
 
-public class SecurityURLHolder {
-
-    private String host;
-
-    private String port;
-
+    private String casServerUrl;
     private String securityMode;
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
 
     public String getSecurityMode() {
         return securityMode;
@@ -52,4 +37,11 @@ public class SecurityURLHolder {
         this.securityMode = securityMode;
     }
 
+    public void setCasServerUrl(String casServerUrl) {
+        this.casServerUrl = casServerUrl;
+    }
+
+    public String getCasServerUrl() {
+        return casServerUrl;
+    }
 }

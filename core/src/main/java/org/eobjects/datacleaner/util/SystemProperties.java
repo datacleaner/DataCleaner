@@ -83,8 +83,8 @@ public class SystemProperties {
     public static final String MONITOR_SECURITY_MODE = "datacleaner.monitor.security.mode";
 
     /**
-     * Property for the CAS server url, eg. "http://localhost:8080/cas"
+     * Property for the CAS server url, eg. "https://localhost:8443/cas"
      */
-    public static final String MONITOR_CAS_URL = "datacleaner.monitor.cas.url";
+    public static final String MONITOR_CAS_URL = "datacleaner.monitor.security.casserverurl";
 
 }

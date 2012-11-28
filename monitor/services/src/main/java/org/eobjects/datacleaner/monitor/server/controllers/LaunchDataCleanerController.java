@@ -41,10 +41,10 @@ import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
+import org.eobjects.datacleaner.monitor.server.SecurityConfiguration;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -53,6 +53,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Controller responsible for generating and providing a JNLP file for launching
+ * datacleaner as a WebStart application on the client.
+ */
 @Controller
 public class LaunchDataCleanerController {
 
@@ -64,8 +68,8 @@ public class LaunchDataCleanerController {
     @Autowired
     TenantContextFactory _contextFactory;
 
-    @Autowired
-    SecurityURLHolder securityURLHolder;
+    @Autowired(required = false)
+    SecurityConfiguration securityURLHolder;
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.analyze.jnlp", method = RequestMethod.GET)
@@ -92,7 +96,7 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml";
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
-                datastoreName, confPath, null, null, null);
+                datastoreName, confPath);
     }
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
@@ -101,15 +105,7 @@ public class LaunchDataCleanerController {
     public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
         jobName = jobName.replaceAll("\\+", " ");
-        final Authentication token = SecurityContextHolder.getContext().getAuthentication();
-        String securityMode = null;
-        String casHostname = null;
-        String casPort = null;
-        if (token instanceof CasAuthenticationToken) {
-            casHostname = securityURLHolder.getHost();
-            casPort = securityURLHolder.getPort();
-            securityMode = securityURLHolder.getSecurityMode();
-        }
+        
         final TenantContext context = _contextFactory.getContext(tenant);
         if (!context.containsJob(jobName)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such job: " + jobName);
@@ -130,13 +126,12 @@ public class LaunchDataCleanerController {
         final String confPath = '/' + RESOURCES_FOLDER + "conf.xml?job=" + encodedJobName;
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, jobPath,
-                datastoreName, confPath, securityMode, casHostname, casPort);
+                datastoreName, confPath);
     }
 
     private void writeJnlpResponse(HttpServletRequest request, final String tenant, final HttpServletResponse response,
             final String scheme, final String hostname, final int port, final String contextPath,
-            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath,
-            final String securityMode, final String casHostname, final String casPort)
+            final String jnlpHref, final String jobPath, final String datastoreName, final String confPath)
             throws UnsupportedEncodingException, IOException {
         response.setContentType("application/x-java-jnlp-file");
 
@@ -173,16 +168,23 @@ public class LaunchDataCleanerController {
                 line = line.replaceAll("\\$MONITOR_PORT", Integer.toString(port));
                 line = line.replaceAll("\\$MONITOR_CONTEXT", contextPath);
                 line = line.replaceAll("\\$MONITOR_TENANT", tenant);
-                if (username != null) {
+                if (username == null && line.indexOf("$MONITOR_USERNAME") != -1) {
+                    // omit the username line
+                    line = "";
+                } else {
                     line = line.replaceAll("\\$MONITOR_USERNAME", username);
                 }
-                if (securityMode != null) {
-                    line = line.replaceAll("\\$MONITOR_SECURITY_MODE", securityMode);
+                
+                if (securityURLHolder == null) {
+                    if (line.indexOf("$MONITOR_SECURITY_MODE") != -1 || line.indexOf("$MONITOR_SECURITY_CASSERVICEURL") != -1) {
+                        line = "";
+                    }
+                } else {
+                    line = line.replaceAll("\\$MONITOR_SECURITY_MODE", securityURLHolder.getSecurityMode());
+                    line = line.replaceAll("\\$MONITOR_SECURITY_CASSERVERURL", securityURLHolder.getCasServerUrl());
                 }
-                if (casHostname != null) {
-                    line = line.replaceAll("\\$MONITOR_CAS_HOSTNAME", casHostname);
-                    line = line.replaceAll("\\$MONITOR_CAS_PORT", casPort);
-                }
+                
+                    
                 line = line.replaceAll("\\$MONITOR_HTTPS", ("https".equals(scheme) ? "true" : "false"));
                 if (line.indexOf("$JAR_HREF") == -1) {
                     out.write(line);
@@ -235,7 +237,7 @@ public class LaunchDataCleanerController {
         return baseUrl.toString();
     }
 
-    public void setSecurityURLHolder(SecurityURLHolder securityURLHolder) {
+    public void setSecurityURLHolder(SecurityConfiguration securityURLHolder) {
         this.securityURLHolder = securityURLHolder;
     }
 

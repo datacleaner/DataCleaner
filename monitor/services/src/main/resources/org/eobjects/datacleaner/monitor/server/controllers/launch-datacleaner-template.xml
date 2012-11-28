@@ -33,7 +33,6 @@
 		<argument>-Ddatacleaner.monitor.https=$MONITOR_HTTPS</argument>
 		<argument>-Ddatacleaner.monitor.username=$MONITOR_USERNAME</argument>
 		<argument>-Ddatacleaner.monitor.security.mode=$MONITOR_SECURITY_MODE</argument>
-		<argument>-Ddatacleaner.monitor.cas.hostname=$MONITOR_CAS_HOSTNAME</argument>
-		<argument>-Ddatacleaner.monitor.cas.port=$MONITOR_CAS_PORT</argument>
+		<argument>-Ddatacleaner.monitor.security.casserverurl=$MONITOR_SECURITY_CASSERVERURL</argument>
 	</application-desc>
 </jnlp>

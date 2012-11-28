@@ -47,7 +47,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.cas.authentication.CasAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,6 +64,9 @@ public class LaunchDataCleanerController {
     @Autowired
     TenantContextFactory _contextFactory;
 
+    @Autowired
+    SecurityURLHolder securityURLHolder;
+
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.analyze.jnlp", method = RequestMethod.GET)
     @ResponseBody
@@ -79,12 +81,11 @@ public class LaunchDataCleanerController {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such datastore: " + datastoreName);
             return;
         }
-
         final String scheme = request.getScheme();
         final String hostname = request.getServerName();
         final int port = request.getServerPort();
         final String contextPath = request.getContextPath();
-        
+
         final String encodedDatastoreName = URLEncoder.encode(datastoreName, FileHelper.UTF_8_ENCODING);
 
         final String jnlpHref = "datastores/" + encodedDatastoreName + ".analyze.jnlp";
@@ -105,12 +106,9 @@ public class LaunchDataCleanerController {
         String casHostname = null;
         String casPort = null;
         if (token instanceof CasAuthenticationToken) {
-            CasAuthenticationToken casAuthenticationToken = (CasAuthenticationToken) token;
-            WebAuthenticationDetails webAuthenticationDetails = (WebAuthenticationDetails) casAuthenticationToken
-                    .getDetails();
-            casHostname = webAuthenticationDetails.getRemoteAddress();
-            casPort = "8443";
-            securityMode = "CAS";
+            casHostname = securityURLHolder.getHost();
+            casPort = securityURLHolder.getPort();
+            securityMode = securityURLHolder.getSecurityMode();
         }
         final TenantContext context = _contextFactory.getContext(tenant);
         if (!context.containsJob(jobName)) {
@@ -120,7 +118,6 @@ public class LaunchDataCleanerController {
 
         final JobContext job = context.getJob(jobName);
         final String datastoreName = job.getSourceDatastoreName();
-
         final String encodedJobName = URLEncoder.encode(jobName, FileHelper.UTF_8_ENCODING);
 
         final String scheme = request.getScheme();
@@ -237,4 +234,9 @@ public class LaunchDataCleanerController {
 
         return baseUrl.toString();
     }
+
+    public void setSecurityURLHolder(SecurityURLHolder securityURLHolder) {
+        this.securityURLHolder = securityURLHolder;
+    }
+
 }

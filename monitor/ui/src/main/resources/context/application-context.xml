@@ -35,6 +35,16 @@
 		</property>
 	</bean>
 
+	<bean id="securityURLHolder" name="securityURLHolder"
+		class="org.eobjects.datacleaner.monitor.server.controllers.SecurityURLHolder">
+
+		<property name="host" value="" />
+		<property name="port" value="" />
+		<property name="securityMode" value="test" />
+
+	</bean>
+
+
 	<context:component-scan base-package="org.eobjects.datacleaner.monitor.server" />
 	<context:component-scan
 		base-package="org.eobjects.datacleaner.monitor.configuration" />

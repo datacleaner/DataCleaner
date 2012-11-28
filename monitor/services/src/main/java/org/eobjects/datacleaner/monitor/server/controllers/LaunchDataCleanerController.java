@@ -176,7 +176,7 @@ public class LaunchDataCleanerController {
                 }
                 
                 if (securityURLHolder == null) {
-                    if (line.indexOf("$MONITOR_SECURITY_MODE") != -1 || line.indexOf("$MONITOR_SECURITY_CASSERVICEURL") != -1) {
+                    if (line.indexOf("$MONITOR_SECURITY_MODE") != -1 || line.indexOf("$MONITOR_SECURITY_CASSERVERURL") != -1) {
                         line = "";
                     }
                 } else {

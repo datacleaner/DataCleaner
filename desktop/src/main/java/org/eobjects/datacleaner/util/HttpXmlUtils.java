@@ -31,21 +31,14 @@ import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.slf4j.Logger;
@@ -87,36 +80,16 @@ public final class HttpXmlUtils {
         return response;
     }
 
+    /**
+     * Gets a HTTP client to use for Http/XML requests.
+     * 
+     * @return
+     * 
+     * @deprecated use {@link UserPreferences#createHttpClient()}
+     */
+    @Deprecated
     public HttpClient getHttpClient() {
-        final ClientConnectionManager connectionManager = new PoolingClientConnectionManager();
-        final DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager);
-
-        if (_userPreferences.getMonitorConnection() != null) {
-            _userPreferences.getMonitorConnection().prepareClient(httpClient);
-        }
-
-        if (_userPreferences.isProxyEnabled()) {
-            // set up HTTP proxy
-            final String proxyHostname = _userPreferences.getProxyHostname();
-            final int proxyPort = _userPreferences.getProxyPort();
-
-            try {
-                final HttpHost proxy = new HttpHost(proxyHostname, proxyPort);
-                httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-
-                if (_userPreferences.isProxyAuthenticationEnabled()) {
-                    final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
-                    final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(
-                            _userPreferences.getProxyUsername(), _userPreferences.getProxyPassword());
-                    httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
-                }
-            } catch (Exception e) {
-                // ignore proxy creation and return http client without it
-                logger.error("Unexpected error occurred while initializing HTTP proxy", e);
-            }
-        }
-
-        return httpClient;
+        return _userPreferences.createHttpClient();
     }
 
     public static Element getRootNode(HttpClient httpClient, String url) throws InvalidHttpResponseException {

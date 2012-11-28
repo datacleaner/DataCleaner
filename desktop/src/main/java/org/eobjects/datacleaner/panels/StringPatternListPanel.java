@@ -41,7 +41,7 @@ import org.eobjects.datacleaner.regexswap.RegexSwapDialog;
 import org.eobjects.datacleaner.regexswap.RegexSwapStringPattern;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.StringPatternChangeListener;
-import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -64,16 +64,16 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 	private final DCPanel _listPanel;
 	private final DCGlassPane _glassPane;
 	private final WindowContext _windowContext;
-	private final HttpXmlUtils _httpXmlUtils;
+	private final UserPreferences _userPreferences;
 
 	@Inject
 	protected StringPatternListPanel(DCGlassPane glassPane, AnalyzerBeansConfiguration configuration,
-			WindowContext windowContext, HttpXmlUtils httpXmlUtils) {
+			WindowContext windowContext, UserPreferences userPreferences) {
 		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
 		_glassPane = glassPane;
 		_configuration = configuration;
 		_windowContext = windowContext;
-		_httpXmlUtils = httpXmlUtils;
+		_userPreferences = userPreferences;
 		_catalog = (MutableReferenceDataCatalog) _configuration.getReferenceDataCatalog();
 		_catalog.addStringPatternListener(this);
 
@@ -122,7 +122,7 @@ public class StringPatternListPanel extends DCPanel implements StringPatternChan
 		regexSwapStringPatternButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new RegexSwapDialog(_catalog, _windowContext, _httpXmlUtils).setVisible(true);
+				new RegexSwapDialog(_catalog, _windowContext, _userPreferences).setVisible(true);
 			}
 		});
 

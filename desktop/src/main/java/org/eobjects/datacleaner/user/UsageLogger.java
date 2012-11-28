@@ -34,8 +34,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.eobjects.datacleaner.Version;
-import org.eobjects.datacleaner.bootstrap.SystemProperties;
-import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.util.SystemProperties;
 import org.eobjects.metamodel.util.SharedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,13 +53,11 @@ public final class UsageLogger {
 	private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
 
 	private final UserPreferences _userPreferences;
-	private final HttpXmlUtils _httpXmlUtils;
 	private final ExecutorService _executorService;
 
 	@Inject
-	protected UsageLogger(UserPreferences userPreferences, HttpXmlUtils httpXmlUtils) {
+	protected UsageLogger(UserPreferences userPreferences) {
 		_userPreferences = userPreferences;
-		_httpXmlUtils = httpXmlUtils;
 		_executorService = SharedExecutorService.get();
 	}
 
@@ -136,7 +133,7 @@ public final class UsageLogger {
 				nameValuePairs.add(new BasicNameValuePair("version", Version.get()));
 				req.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-				HttpResponse resp = _httpXmlUtils.getHttpClient().execute(req);
+				HttpResponse resp = _userPreferences.createHttpClient().execute(req);
 				InputStream content = resp.getEntity().getContent();
 				String line = new BufferedReader(new InputStreamReader(content)).readLine();
 				assert "success".equals(line);

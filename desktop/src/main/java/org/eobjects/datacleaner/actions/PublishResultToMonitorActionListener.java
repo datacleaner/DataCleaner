@@ -24,7 +24,6 @@ import java.io.InputStream;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.vfs2.FileObject;
-import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -48,8 +47,8 @@ public class PublishResultToMonitorActionListener extends PublishFileToMonitorAc
     private byte[] _bytes;
 
     public PublishResultToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences,
-            Ref<AnalysisResult> resultRef, HttpClient httpClient, @Nullable @JobFile FileObject jobFilename) {
-        super(windowContext, userPreferences, httpClient);
+            Ref<AnalysisResult> resultRef, @Nullable @JobFile FileObject jobFilename) {
+        super(windowContext, userPreferences);
         _resultRef = resultRef;
         _jobFilename = jobFilename;
     }

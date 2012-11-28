@@ -33,6 +33,8 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.util.SimpleWebServiceHttpClient;
+import org.eobjects.datacleaner.util.WebServiceHttpClient;
 import org.w3c.dom.Element;
 
 public final class ExtensionSwapClient {
@@ -107,8 +109,9 @@ public final class ExtensionSwapClient {
             url = url + "?username=" + username;
         }
         String filename = extensionSwapPackage.getId() + ".jar";
+        WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient(_httpClient);
         DownloadFilesActionListener actionListener = new DownloadFilesActionListener(new String[] { url },
-                new String[] { filename }, listener, _windowContext, _httpClient, _userPreferences);
+                new String[] { filename }, listener, _windowContext, httpClient, _userPreferences);
         actionListener.actionPerformed(null);
     }
 

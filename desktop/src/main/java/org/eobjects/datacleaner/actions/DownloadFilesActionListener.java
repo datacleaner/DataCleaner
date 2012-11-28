@@ -33,13 +33,13 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.InvalidHttpResponseException;
+import org.eobjects.datacleaner.util.WebServiceHttpClient;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
 import org.eobjects.metamodel.util.Action;
@@ -60,24 +60,24 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
     private final FileObject[] _files;
     private final FileDownloadListener _listener;
     private final FileTransferProgressWindow _downloadProgressWindow;
-    private final HttpClient _httpClient;
+    private final WebServiceHttpClient _httpClient;
     private volatile boolean _cancelled = false;
 
     public DownloadFilesActionListener(String[] urls, FileDownloadListener listener, WindowContext windowContext,
-            HttpClient httpClient, UserPreferences userPreferences) {
+            WebServiceHttpClient httpClient, UserPreferences userPreferences) {
         this(urls, createTargetDirectory(userPreferences), createTargetFilenames(urls), listener, windowContext,
                 httpClient);
     }
 
     public DownloadFilesActionListener(final String[] urls, final String[] targetFilenames,
-            final FileDownloadListener listener, final WindowContext windowContext, final HttpClient httpClient,
+            final FileDownloadListener listener, final WindowContext windowContext, final WebServiceHttpClient httpClient,
             UserPreferences userPreferences) {
         this(urls, createTargetDirectory(userPreferences), targetFilenames, listener, windowContext, httpClient);
     }
 
     public DownloadFilesActionListener(final String[] urls, final FileObject targetDirectory,
             final String[] targetFilenames, final FileDownloadListener listener, final WindowContext windowContext,
-            final HttpClient httpClient) {
+            final WebServiceHttpClient httpClient) {
         if (urls == null) {
             throw new IllegalArgumentException("urls cannot be null");
         }

@@ -22,18 +22,16 @@ package org.eobjects.datacleaner.user;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.params.AuthPNames;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.params.AuthPolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.util.CASMonitorHttpClient;
+import org.eobjects.datacleaner.util.HttpBasicMonitorHttpClient;
+import org.eobjects.datacleaner.util.MonitorHttpClient;
 import org.eobjects.datacleaner.util.SecurityUtils;
+import org.eobjects.datacleaner.util.SystemProperties;
+import org.eobjects.datacleaner.util.SimpleWebServiceHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,18 +52,16 @@ public class MonitorConnection implements Serializable {
     private final String _tenantId;
     private final String _username;
     private final String _encodedPassword;
-    private final String _casHostname;
-    private final String _casPort;
-    private final String _securityMode;
+    private final UserPreferences _userPreferences;
 
-    public MonitorConnection(String hostname, int port, String contextPath, boolean isHttps, String tenantId,
-            String username, char[] password, String securityMode, String casHostname, String casPort) {
-        this(hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils.encodePassword(password),
-                securityMode, casHostname, casPort);
+    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath, boolean isHttps, String tenantId,
+            String username, char[] password) {
+        this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils.encodePassword(password));
     }
 
-    public MonitorConnection(String hostname, int port, String contextPath, boolean isHttps, String tenantId,
-            String username, String encodedPassword, String securityMode, String casHostname, String casPort) {
+    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath, boolean isHttps, String tenantId,
+            String username, String encodedPassword) {
+        _userPreferences = userPreferences;
         _hostname = hostname;
         _port = port;
         _contextPath = removeBeginningSlash(contextPath);
@@ -73,9 +69,30 @@ public class MonitorConnection implements Serializable {
         _tenantId = tenantId;
         _username = username;
         _encodedPassword = encodedPassword;
-        _securityMode = securityMode;
-        _casHostname = casHostname;
-        _casPort = casPort;
+    }
+    
+    public MonitorHttpClient getHttpClient() {
+        final HttpClient httpClient;
+        if (_userPreferences == null) {
+            httpClient = new DefaultHttpClient();
+        } else {
+            httpClient = _userPreferences.createHttpClient();
+        }
+        
+        if (!isAuthenticationEnabled()) {
+            return new SimpleWebServiceHttpClient(httpClient);
+        }
+        
+        final String password = SecurityUtils.decodePassword(getEncodedPassword());
+        final String username = getUsername();
+
+        final String securityMode = System.getProperty(SystemProperties.MONITOR_SECURITY_MODE);
+        if ("CAS".equalsIgnoreCase(securityMode)) {
+            final String casUrl = System.getProperty(SystemProperties.MONITOR_CAS_URL);
+            return new CASMonitorHttpClient(httpClient, casUrl, username, password);
+        }
+        
+        return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), username, password);
     }
 
     public String getHostname() {
@@ -117,34 +134,6 @@ public class MonitorConnection implements Serializable {
 
     public boolean isAuthenticationEnabled() {
         return !StringUtils.isNullOrEmpty(_username);
-    }
-
-    /**
-     * Prepares a {@link HttpClient} for invoking HTTP requests using
-     * authentication, if necessary.
-     * 
-     * @param httpClient
-     */
-    public void prepareClient(HttpClient httpClient) {
-        if (isAuthenticationEnabled()) {
-            final CredentialsProvider credentialsProvider;
-            if (httpClient instanceof DefaultHttpClient) {
-                credentialsProvider = ((DefaultHttpClient) httpClient).getCredentialsProvider();
-            } else {
-                throw new IllegalStateException("Unexpected http client type: " + httpClient);
-            }
-
-            final String encodedPassword = getEncodedPassword();
-            final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getUsername(),
-                    SecurityUtils.decodePassword(encodedPassword));
-
-            final List<String> authpref = new ArrayList<String>();
-            authpref.add(AuthPolicy.BASIC);
-            authpref.add(AuthPolicy.DIGEST);
-            httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
-
-            credentialsProvider.setCredentials(new AuthScope(getHostname(), getPort()), credentials);
-        }
     }
 
     public boolean matchesURI(String uriString) {
@@ -192,26 +181,4 @@ public class MonitorConnection implements Serializable {
         }
         return contextPath;
     }
-
-    /**
-     * @return the _casHostname
-     */
-    public String getCasHostname() {
-        return _casHostname;
-    }
-
-    /**
-     * @return the _casPort
-     */
-    public String getCasPort() {
-        return _casPort;
-    }
-
-    /**
-     * @return the _securityMode
-     */
-    public String getSecurityMode() {
-        return _securityMode;
-    }
-
 }

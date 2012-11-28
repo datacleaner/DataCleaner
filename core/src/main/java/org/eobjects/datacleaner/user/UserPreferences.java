@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.vfs2.FileObject;
+import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
@@ -99,6 +100,14 @@ public interface UserPreferences {
     public boolean isProxyAuthenticationEnabled();
 
     public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled);
+
+    /**
+     * Creates a HTTP client based on the user preferences with regard to
+     * proxying and more.
+     * 
+     * @return a HTTP client
+     */
+    public HttpClient createHttpClient();
 
     public QuickAnalysisStrategy getQuickAnalysisStrategy();
 

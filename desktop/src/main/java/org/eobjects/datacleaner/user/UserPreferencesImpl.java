@@ -30,6 +30,14 @@ import java.util.Map;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.reference.Dictionary;
 import org.eobjects.analyzer.reference.StringPattern;
@@ -37,7 +45,7 @@ import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.analyzer.util.VFSUtils;
-import org.eobjects.datacleaner.bootstrap.SystemProperties;
+import org.eobjects.datacleaner.util.SystemProperties;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
@@ -417,12 +425,9 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
                 final String tenant = System.getProperty(SystemProperties.MONITOR_TENANT);
                 final boolean isHttps = "true".equals(System.getProperty(SystemProperties.MONITOR_HTTPS));
                 final String username = System.getProperty(SystemProperties.MONITOR_USERNAME);
-                final String securityMode = System.getProperty(SystemProperties.MONITOR_SECURITY_MODE);
-                final String casHostname = System.getProperty(SystemProperties.MONITOR_CAS_HOSTNAME);
-                final String casPort = System.getProperty(SystemProperties.MONITOR_CAS_PORT);
                 final String encodedPassword = null;
-                final MonitorConnection con = new MonitorConnection(hostname, port, contextPath, isHttps, tenant,
-                        username, encodedPassword, securityMode, casHostname, casPort);
+                final MonitorConnection con = new MonitorConnection(this, hostname, port, contextPath, isHttps, tenant,
+                        username, encodedPassword);
                 return con;
             }
         }
@@ -440,5 +445,34 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     @Override
     public void setSaveDownloadedFilesDirectory(File directory) {
         this.saveDownloadedFilesDirectory = directory;
+    }
+
+    @Override
+    public HttpClient createHttpClient() {
+        final ClientConnectionManager connectionManager = new PoolingClientConnectionManager();
+        final DefaultHttpClient httpClient = new DefaultHttpClient(connectionManager);
+
+        if (isProxyEnabled()) {
+            // set up HTTP proxy
+            final String proxyHostname = getProxyHostname();
+            final int proxyPort = getProxyPort();
+
+            try {
+                final HttpHost proxy = new HttpHost(proxyHostname, proxyPort);
+                httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+
+                if (isProxyAuthenticationEnabled()) {
+                    final AuthScope authScope = new AuthScope(proxyHostname, proxyPort);
+                    final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getProxyUsername(),
+                            getProxyPassword());
+                    httpClient.getCredentialsProvider().setCredentials(authScope, credentials);
+                }
+            } catch (Exception e) {
+                // ignore proxy creation and return http client without it
+                logger.error("Unexpected error occurred while initializing HTTP proxy", e);
+            }
+        }
+
+        return httpClient;
     }
 }

@@ -17,9 +17,8 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.bootstrap;
+package org.eobjects.datacleaner.util;
 
-import org.eobjects.datacleaner.user.DataCleanerHome;
 import org.eobjects.datacleaner.user.UserPreferences;
 
 /**
@@ -66,27 +65,26 @@ public class SystemProperties {
      * Property for the tenant of the DC monitor app
      */
     public static final String MONITOR_TENANT = "datacleaner.monitor.tenant";
-    
+
     /**
      * Property for determining of the DC monitor app is running on HTTPS.
      */
     public static final String MONITOR_HTTPS = "datacleaner.monitor.https";
-    
+
     /**
      * Property for for the username of the DC monitor app
      */
     public static final String MONITOR_USERNAME = "datacleaner.monitor.username";
+
     /**
-     * Property for the security mode
+     * Property for the security mode. Set to "CAS" for CAS security, otherwise
+     * will default to HTTP BASIC security.
      */
     public static final String MONITOR_SECURITY_MODE = "datacleaner.monitor.security.mode";
+
     /**
-     * Property for the cas server hostname
+     * Property for the CAS server url, eg. "http://localhost:8080/cas"
      */
-    public static final String MONITOR_CAS_HOSTNAME = "datacleaner.monitor.cas.hostname";
-    /**
-     * Property for the cas server port
-     */
-    public static final String MONITOR_CAS_PORT = "datacleaner.monitor.cas.port";
+    public static final String MONITOR_CAS_URL = "datacleaner.monitor.cas.url";
 
 }

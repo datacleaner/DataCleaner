@@ -36,7 +36,6 @@ import org.apache.commons.vfs2.provider.AbstractFileSystem;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
 import org.apache.commons.vfs2.provider.url.UrlFileName;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.eobjects.analyzer.cli.CliArguments;
 import org.eobjects.analyzer.cli.CliRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
@@ -63,6 +62,8 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
+import org.eobjects.datacleaner.util.SimpleWebServiceHttpClient;
+import org.eobjects.datacleaner.util.WebServiceHttpClient;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.datacleaner.windows.WelcomeDialog;
@@ -292,9 +293,10 @@ public final class Bootstrap {
                         throw new IllegalArgumentException("Illegal URI: " + userRequestedFilename, e);
                     }
 
-                    final HttpClient httpClient = new DefaultHttpClient();
                     final WindowContext windowContext = new SimpleWindowContext();
 
+                    WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient();
+                    
                     // check if URI points to DC monitor. If so, make sure
                     // credentials are entered.
                     if (userPreferences != null && userPreferences.getMonitorConnection() != null) {
@@ -303,12 +305,12 @@ public final class Bootstrap {
                             if (monitorConnection.isAuthenticationEnabled()) {
                                 if (monitorConnection.getEncodedPassword() == null) {
                                     final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext,
-                                            userPreferences, httpClient);
+                                            userPreferences);
                                     dialog.openBlocking();
                                     monitorConnection = userPreferences.getMonitorConnection();
+                                    httpClient = monitorConnection.getHttpClient();
                                 }
                             }
-                            monitorConnection.prepareClient(httpClient);
                         }
                     }
 

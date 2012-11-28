@@ -23,7 +23,6 @@ import java.io.InputStream;
 
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
-import org.apache.http.client.HttpClient;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -36,8 +35,8 @@ public class PublishJobToMonitorActionListener extends PublishFileToMonitorActio
     private final DelegateFileObject _jobFile;
 
     public PublishJobToMonitorActionListener(DelegateFileObject jobFile, WindowContext windowContext,
-            UserPreferences userPreferences, HttpClient httpClient) {
-        super(windowContext, userPreferences, httpClient);
+            UserPreferences userPreferences) {
+        super(windowContext, userPreferences);
         _jobFile = jobFile;
     }
 

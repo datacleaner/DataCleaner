@@ -30,6 +30,7 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.util.ResourceManager;
+import org.eobjects.datacleaner.util.SystemProperties;
 import org.eobjects.metamodel.DataContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

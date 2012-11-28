@@ -20,14 +20,31 @@
 package org.eobjects.datacleaner.util;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.eobjects.datacleaner.user.UserPreferences;
 
 /**
- * Defines a HTTP client for DataCleaner monitor connectivity.
+ * Simple HTTP client implementation that does not do anything except delegate
+ * to a wrapped {@link HttpClient}. Can be used for non-secured connection or
+ * wrapping {@link UserPreferences#createHttpClient()}.
  */
-public interface MonitorHttpClient extends WebServiceHttpClient {
+public class SimpleWebServiceHttpClient implements WebServiceHttpClient, MonitorHttpClient {
+
+    private final HttpClient _httpClient;
+    
+    public SimpleWebServiceHttpClient() {
+        this(new DefaultHttpClient());
+    }
+
+    public SimpleWebServiceHttpClient(HttpClient httpClient) {
+        _httpClient = httpClient;
+    }
 
     @Override
-    public HttpResponse execute(HttpUriRequest request) throws Exception;
+    public HttpResponse execute(HttpUriRequest request) throws Exception {
+        return _httpClient.execute(request);
+    }
 
 }

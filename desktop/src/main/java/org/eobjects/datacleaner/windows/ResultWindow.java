@@ -39,7 +39,6 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
-import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
@@ -83,7 +82,6 @@ public final class ResultWindow extends AbstractWindow {
     private final FileObject _jobFilename;
     private final AnalysisRunnerSwingWorker _worker;
     private final UserPreferences _userPreferences;
-    private final HttpClient _httpClient;
 
     private AnalysisResult _result;
 
@@ -101,14 +99,13 @@ public final class ResultWindow extends AbstractWindow {
     @Inject
     protected ResultWindow(AnalyzerBeansConfiguration configuration, @Nullable AnalysisJob job,
             @Nullable AnalysisResult result, @Nullable @JobFile FileObject jobFilename, WindowContext windowContext,
-            UserPreferences userPreferences, RendererFactory rendererFactory, HttpClient httpClient) {
+            UserPreferences userPreferences, RendererFactory rendererFactory) {
         super(windowContext);
         _configuration = configuration;
         _job = job;
         _jobFilename = jobFilename;
         _userPreferences = userPreferences;
         _rendererFactory = rendererFactory;
-        _httpClient = httpClient;
         _progressInformationPanel = new ProgressInformationPanel();
         _tabbedPane.addTab("Progress information", imageManager.getImageIcon("images/model/progress_information.png"),
                 _progressInformationPanel);
@@ -316,7 +313,7 @@ public final class ResultWindow extends AbstractWindow {
         } else {
             publishButton.setOpaque(false);
             publishButton.addActionListener(new PublishResultToMonitorActionListener(getWindowContext(),
-                    _userPreferences, resultRef, _httpClient, _jobFilename));
+                    _userPreferences, resultRef, _jobFilename));
         }
 
         final FlowLayout layout = new FlowLayout(Alignment.RIGHT.getFlowLayoutAlignment(), 4, 36);

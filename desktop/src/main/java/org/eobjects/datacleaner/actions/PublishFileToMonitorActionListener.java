@@ -31,7 +31,6 @@ import javax.swing.SwingWorker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MIME;
@@ -61,16 +60,13 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
     private final WindowContext _windowContext;
     private final UserPreferences _userPreferences;
-    private final HttpClient _httpClient;
 
     private FileTransferProgressWindow _progressWindow;
 
-    public PublishFileToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences,
-            HttpClient httpClient) {
+    public PublishFileToMonitorActionListener(WindowContext windowContext, UserPreferences userPreferences) {
         super();
         _windowContext = windowContext;
         _userPreferences = userPreferences;
-        _httpClient = httpClient;
     }
 
     protected abstract String getTransferredFilename();
@@ -89,7 +85,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
     public final void actionPerformed(ActionEvent e) {
         MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
         if (monitorConnection == null) {
-            MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences, _httpClient);
+            MonitorConnectionDialog dialog = new MonitorConnectionDialog(_windowContext, _userPreferences);
             dialog.open();
         } else {
 
@@ -106,7 +102,6 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
     protected Map<?, ?> doInBackground() throws Exception {
 
         final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
-        monitorConnection.prepareClient(_httpClient);
 
         final String uploadUrl = getUploadUrl(monitorConnection);
         logger.debug("Upload url: {}", uploadUrl);
@@ -179,7 +174,7 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
 
         final HttpResponse response;
         try {
-            response = _httpClient.execute(request);
+            response = monitorConnection.getHttpClient().execute(request);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

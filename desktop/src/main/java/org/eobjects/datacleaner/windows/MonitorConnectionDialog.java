@@ -35,9 +35,7 @@ import javax.swing.event.DocumentEvent;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
@@ -49,7 +47,6 @@ import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
-import org.eobjects.datacleaner.util.MonitorHttpClientCASImpl;
 import org.eobjects.datacleaner.util.NumberDocument;
 import org.eobjects.datacleaner.util.SecurityUtils;
 import org.eobjects.datacleaner.util.WidgetFactory;
@@ -89,17 +86,10 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
     private final DCLabel _urlLabel;
 
-    private final HttpClient _httpClient;
-
-    private final String _securityMode;
-    private final String _casHostname;
-    private final String _casPort;
-
     @Inject
-    public MonitorConnectionDialog(WindowContext windowContext, UserPreferences userPreferences, HttpClient httpClient) {
+    public MonitorConnectionDialog(WindowContext windowContext, UserPreferences userPreferences) {
         super(windowContext, imageManager.getImage("images/window/banner-dq-monitor.png"));
         _userPreferences = userPreferences;
-        _httpClient = httpClient;
 
         final MonitorConnection monitorConnection = _userPreferences.getMonitorConnection();
 
@@ -177,10 +167,6 @@ public class MonitorConnectionDialog extends AbstractDialog {
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
 
-        _securityMode = monitorConnection.getSecurityMode();
-        _casHostname = monitorConnection.getCasHostname();
-        _casPort = monitorConnection.getCasPort();
-
         _authenticationCheckBox = new DCCheckBox<Void>("Use authentication?", true);
         _authenticationCheckBox.setBorderPainted(false);
         _authenticationCheckBox.setOpaque(false);
@@ -226,9 +212,8 @@ public class MonitorConnectionDialog extends AbstractDialog {
             password = null;
         }
 
-        return new MonitorConnection(_hostnameTextField.getText(), port, _contextPathTextField.getText(),
-                _httpsCheckBox.isSelected(), _tenantTextField.getText(), username, password, _securityMode,
-                _casHostname, _casPort);
+        return new MonitorConnection(_userPreferences, _hostnameTextField.getText(), port, _contextPathTextField.getText(),
+                _httpsCheckBox.isSelected(), _tenantTextField.getText(), username, password);
     }
 
     private void updateUrlLabel() {
@@ -300,21 +285,11 @@ public class MonitorConnectionDialog extends AbstractDialog {
             @Override
             public void actionPerformed(ActionEvent event) {
                 final MonitorConnection connection = createMonitorConnection();
-                connection.prepareClient(_httpClient);
                 final String pingUrl = connection.getRepositoryUrl() + "/ping";
                 HttpGet request = new HttpGet(pingUrl);
-                HttpResponse response = null;
                 try {
-                    if (_securityMode != null && _securityMode.equalsIgnoreCase("CAS")) {
-                        String casUrl = "https://" + _casHostname + ":" + _casPort + "/cas/v1/tickets";
-                        String username = connection.getUsername();
-                        String password = SecurityUtils.decodePassword(connection.getEncodedPassword());
-                        MonitorHttpClientCASImpl httpClientCAS = new MonitorHttpClientCASImpl(
-                                _httpClient, casUrl, username, password);
-                        response = httpClientCAS.execute(request);
-                    } else {
-                        response = _httpClient.execute(request);
-                    }
+                    final HttpResponse response = connection.getHttpClient().execute(request);
+
                     final StatusLine statusLine = response.getStatusLine();
 
                     if (statusLine.getStatusCode() == 200 || statusLine.getStatusCode() == 201) {
@@ -337,7 +312,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
                     WidgetUtils
                             .showErrorMessage(
                                     "Connection failed",
-                                    "Connecting to DataCleaner dq monitor failed. Did you remember to fill in all the nescesary fields?",
+                                    "Connecting to DataCleaner monitor failed. Did you remember to fill in all the nescesary fields?",
                                     e);
                 }
             }
@@ -394,8 +369,7 @@ public class MonitorConnectionDialog extends AbstractDialog {
         LookAndFeelManager.getInstance().init();
         UserPreferences userPreferences = new UserPreferencesImpl(null);
         WindowContext windowContext = new DCWindowContext(null, userPreferences, null);
-        MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext, userPreferences,
-                new DefaultHttpClient());
+        MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext, userPreferences);
 
         dialog.open();
     }

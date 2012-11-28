@@ -32,7 +32,6 @@ import javax.swing.JOptionPane;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.provider.DelegateFileObject;
-import org.apache.http.client.HttpClient;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobMetadataFactoryImpl;
@@ -66,18 +65,15 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
     private final UserPreferences _userPreferences;
     private final UsageLogger _usageLogger;
     private final AnalyzerBeansConfiguration _configuration;
-    private final HttpClient _httpClient;
 
     @Inject
     protected SaveAnalysisJobActionListener(AnalysisJobBuilderWindow window, AnalysisJobBuilder analysisJobBuilder,
-            UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration,
-            HttpClient httpClient) {
+            UserPreferences userPreferences, UsageLogger usageLogger, AnalyzerBeansConfiguration configuration) {
         _window = window;
         _analysisJobBuilder = analysisJobBuilder;
         _userPreferences = userPreferences;
         _usageLogger = usageLogger;
         _configuration = configuration;
-        _httpClient = httpClient;
     }
 
     @Override
@@ -182,12 +178,12 @@ public final class SaveAnalysisJobActionListener implements ActionListener {
                         && monitorConnection.getEncodedPassword() == null) {
                     // password is not configured, ask for it.
                     final MonitorConnectionDialog dialog = new MonitorConnectionDialog(_window.getWindowContext(),
-                            _userPreferences, _httpClient);
+                            _userPreferences);
                     dialog.openBlocking();
                 }
 
                 final PublishJobToMonitorActionListener publisher = new PublishJobToMonitorActionListener(
-                        delegateFileObject, _window.getWindowContext(), _userPreferences, _httpClient);
+                        delegateFileObject, _window.getWindowContext(), _userPreferences);
                 publisher.actionPerformed(event);
             } else {
                 throw new UnsupportedOperationException("Unexpected delegate file object: " + delegateFileObject

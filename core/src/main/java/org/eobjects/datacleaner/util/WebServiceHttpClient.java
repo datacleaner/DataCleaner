@@ -19,26 +19,13 @@
  */
 package org.eobjects.datacleaner.util;
 
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 
-public class MonitorHttpClientDefaultImpl implements MonitorHttpClient {
+/**
+ * Defines a HTTP client for external web service connectivity over HTTP.
+ */
+public interface WebServiceHttpClient {
 
-    private final HttpClient _httpClient;
-
-    public MonitorHttpClientDefaultImpl(HttpClient httpClient) {
-        _httpClient = httpClient;
-    }
-
-    @Override
-    public HttpResponse execute(HttpRequest request) throws Exception {
-        if (request instanceof HttpGet) {
-            return _httpClient.execute((HttpGet) request);
-        }
-        return _httpClient.execute((HttpPost) request);
-    }
-
+    public HttpResponse execute(HttpUriRequest request) throws Exception;
 }

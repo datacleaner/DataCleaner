@@ -41,7 +41,6 @@ import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
-import org.eobjects.datacleaner.bootstrap.SystemProperties;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.DCAuthenticationService;
@@ -52,7 +51,7 @@ import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
 import org.eobjects.datacleaner.user.UsageLogger;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.user.UserPreferencesImpl;
-import org.eobjects.datacleaner.util.HttpXmlUtils;
+import org.eobjects.datacleaner.util.SystemProperties;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindowImpl;
 import org.eobjects.metamodel.util.ImmutableRef;
@@ -312,7 +311,7 @@ public class DCModule extends AbstractModule {
     }
 
     @Provides
-    public HttpClient getHttpClient(HttpXmlUtils httpXmlUtils) {
-        return httpXmlUtils.getHttpClient();
+    public HttpClient getHttpClient(UserPreferences userPreferences) {
+        return userPreferences.createHttpClient();
     }
 }

@@ -40,7 +40,7 @@
 
 		<property name="host" value="" />
 		<property name="port" value="" />
-		<property name="securityMode" value="test" />
+		<property name="securityMode" value="" />
 
 	</bean>
 

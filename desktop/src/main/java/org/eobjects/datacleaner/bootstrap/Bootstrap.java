@@ -203,9 +203,9 @@ public final class Bootstrap {
                     logger.info("Single datastore mode was enabled, but datastore was null!");
                 } else {
                     logger.info("Initializing single datastore mode with {}", singleDatastore);
+                    analysisJobBuilderWindow.setDatastoreSelectionEnabled(false);
+                    analysisJobBuilderWindow.setDatastore(singleDatastore, true);
                 }
-                analysisJobBuilderWindow.setDatastoreSelectionEnabled(false);
-                analysisJobBuilderWindow.setDatastore(singleDatastore, true);
             } else {
                 singleDatastore = null;
             }
@@ -330,14 +330,15 @@ public final class Bootstrap {
 
                         final FileObject ramFile = files[0];
 
-                        InputStream in = ramFile.getContent().getInputStream();
-                        try {
-                            String str = FileHelper.readInputStreamAsString(ramFile.getContent().getInputStream(),
-                                    "UTF8");
-                            System.out.println("Incoming file: " + userRequestedFilename);
-                            System.out.println(str);
-                        } finally {
-                            FileHelper.safeClose(in);
+                        if (logger.isInfoEnabled()) {
+                            final InputStream in = ramFile.getContent().getInputStream();
+                            try {
+                                final String str = FileHelper.readInputStreamAsString(ramFile.getContent()
+                                        .getInputStream(), "UTF8");
+                                logger.info("Downloaded file contents: {}\n{}", userRequestedFilename, str);
+                            } finally {
+                                FileHelper.safeClose(in);
+                            }
                         }
 
                         final String scheme = uri.getScheme();

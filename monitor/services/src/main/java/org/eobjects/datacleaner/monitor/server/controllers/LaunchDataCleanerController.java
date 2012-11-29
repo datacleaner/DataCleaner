@@ -87,7 +87,7 @@ public class LaunchDataCleanerController {
         }
         final String scheme = request.getScheme();
         final String hostname = request.getServerName();
-        final int port = request.getServerPort();
+        final int port = getPort(request, scheme);
         final String contextPath = request.getContextPath();
 
         final String encodedDatastoreName = URLEncoder.encode(datastoreName, FileHelper.UTF_8_ENCODING);
@@ -105,7 +105,7 @@ public class LaunchDataCleanerController {
     public void launchDataCleanerForJob(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("job") String jobName) throws IOException {
         jobName = jobName.replaceAll("\\+", " ");
-        
+
         final TenantContext context = _contextFactory.getContext(tenant);
         if (!context.containsJob(jobName)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "No such job: " + jobName);
@@ -118,7 +118,8 @@ public class LaunchDataCleanerController {
 
         final String scheme = request.getScheme();
         final String hostname = request.getServerName();
-        final int port = request.getServerPort();
+        final int port = getPort(request, scheme);
+
         final String contextPath = request.getContextPath();
 
         final String jnlpHref = "jobs/" + encodedJobName + ".launch.jnlp";
@@ -127,6 +128,16 @@ public class LaunchDataCleanerController {
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, jobPath,
                 datastoreName, confPath);
+    }
+
+    private int getPort(HttpServletRequest request, final String scheme) {
+        final int port;
+        if ("https".equals(scheme) && request.getServerPort() == 80) {
+            port = 443;
+        } else {
+            port = request.getServerPort();
+        }
+        return port;
     }
 
     private void writeJnlpResponse(HttpServletRequest request, final String tenant, final HttpServletResponse response,
@@ -174,7 +185,7 @@ public class LaunchDataCleanerController {
                 } else {
                     line = line.replaceAll("\\$MONITOR_USERNAME", username);
                 }
-                
+
                 if (securityURLHolder == null) {
                     if (line.indexOf("$MONITOR_SECURITY_MODE") != -1 || line.indexOf("$MONITOR_SECURITY_CASSERVERURL") != -1) {
                         line = "";
@@ -183,8 +194,7 @@ public class LaunchDataCleanerController {
                     line = line.replaceAll("\\$MONITOR_SECURITY_MODE", securityURLHolder.getSecurityMode());
                     line = line.replaceAll("\\$MONITOR_SECURITY_CASSERVERURL", securityURLHolder.getCasServerUrl());
                 }
-                
-                    
+
                 line = line.replaceAll("\\$MONITOR_HTTPS", ("https".equals(scheme) ? "true" : "false"));
                 if (line.indexOf("$JAR_HREF") == -1) {
                     out.write(line);

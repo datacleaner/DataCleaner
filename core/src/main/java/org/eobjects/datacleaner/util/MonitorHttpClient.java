@@ -19,15 +19,23 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.io.Closeable;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 
 /**
  * Defines a HTTP client for DataCleaner monitor connectivity.
+ * 
+ * A monitor http client is STATEFUL and must be closed after usage. This is
+ * because some implementations will contain security tokens etc. which is
+ * reused accross requests.
  */
-public interface MonitorHttpClient extends WebServiceHttpClient {
+public interface MonitorHttpClient extends WebServiceHttpClient, Closeable {
 
     @Override
     public HttpResponse execute(HttpUriRequest request) throws Exception;
 
+    @Override
+    public void close();
 }

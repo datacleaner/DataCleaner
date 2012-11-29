@@ -54,23 +54,24 @@ public class MonitorConnection implements Serializable {
     private final String _encodedPassword;
     private final UserPreferences _userPreferences;
 
-    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath, boolean isHttps, String tenantId,
-            String username, char[] password) {
-        this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils.encodePassword(password));
+    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath,
+            boolean isHttps, String tenantId, String username, char[] password) {
+        this(userPreferences, hostname, port, contextPath, isHttps, tenantId, username, SecurityUtils
+                .encodePassword(password));
     }
 
-    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath, boolean isHttps, String tenantId,
-            String username, String encodedPassword) {
+    public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath,
+            boolean isHttps, String tenantId, String username, String encodedPassword) {
         _userPreferences = userPreferences;
         _hostname = hostname;
         _port = port;
-        _contextPath = removeBeginningSlash(contextPath);
+        _contextPath = removeEndingSlash(removeBeginningSlash(contextPath));
         _https = isHttps;
         _tenantId = tenantId;
         _username = username;
         _encodedPassword = encodedPassword;
     }
-    
+
     public MonitorHttpClient getHttpClient() {
         final HttpClient httpClient;
         if (_userPreferences == null) {
@@ -78,20 +79,20 @@ public class MonitorConnection implements Serializable {
         } else {
             httpClient = _userPreferences.createHttpClient();
         }
-        
+
         if (!isAuthenticationEnabled()) {
             return new SimpleWebServiceHttpClient(httpClient);
         }
-        
+
         final String password = SecurityUtils.decodePassword(getEncodedPassword());
         final String username = getUsername();
 
         final String securityMode = System.getProperty(SystemProperties.MONITOR_SECURITY_MODE);
         if ("CAS".equalsIgnoreCase(securityMode)) {
             final String casUrl = System.getProperty(SystemProperties.MONITOR_CAS_URL);
-            return new CASMonitorHttpClient(httpClient, casUrl, username, password);
+            return new CASMonitorHttpClient(httpClient, casUrl, username, password, getBaseUrl());
         }
-        
+
         return new HttpBasicMonitorHttpClient(httpClient, getHostname(), getPort(), username, password);
     }
 
@@ -178,6 +179,16 @@ public class MonitorConnection implements Serializable {
         }
         if (contextPath.startsWith("/")) {
             contextPath = contextPath.substring(1);
+        }
+        return contextPath;
+    }
+
+    private String removeEndingSlash(String contextPath) {
+        if (contextPath == null) {
+            return null;
+        }
+        if (contextPath.endsWith("/")) {
+            contextPath = contextPath.substring(0, contextPath.length() - 1);
         }
         return contextPath;
     }

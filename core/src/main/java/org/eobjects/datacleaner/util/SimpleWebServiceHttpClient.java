@@ -33,7 +33,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 public class SimpleWebServiceHttpClient implements WebServiceHttpClient, MonitorHttpClient {
 
     private final HttpClient _httpClient;
-    
+
     public SimpleWebServiceHttpClient() {
         this(new DefaultHttpClient());
     }
@@ -47,4 +47,8 @@ public class SimpleWebServiceHttpClient implements WebServiceHttpClient, Monitor
         return _httpClient.execute(request);
     }
 
+    @Override
+    public void close() {
+        // do nothing
+    }
 }

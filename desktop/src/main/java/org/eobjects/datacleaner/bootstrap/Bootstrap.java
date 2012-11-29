@@ -23,6 +23,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.SplashScreen;
 import java.io.Closeable;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -62,8 +63,8 @@ import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.user.UserPreferencesImpl;
 import org.eobjects.datacleaner.util.DCUncaughtExceptionHandler;
 import org.eobjects.datacleaner.util.LookAndFeelManager;
+import org.eobjects.datacleaner.util.MonitorHttpClient;
 import org.eobjects.datacleaner.util.SimpleWebServiceHttpClient;
-import org.eobjects.datacleaner.util.WebServiceHttpClient;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
 import org.eobjects.datacleaner.windows.WelcomeDialog;
@@ -295,8 +296,8 @@ public final class Bootstrap {
 
                     final WindowContext windowContext = new SimpleWindowContext();
 
-                    WebServiceHttpClient httpClient = new SimpleWebServiceHttpClient();
-                    
+                    MonitorHttpClient httpClient = new SimpleWebServiceHttpClient();
+
                     // check if URI points to DC monitor. If so, make sure
                     // credentials are entered.
                     if (userPreferences != null && userPreferences.getMonitorConnection() != null) {
@@ -307,39 +308,55 @@ public final class Bootstrap {
                                     final MonitorConnectionDialog dialog = new MonitorConnectionDialog(windowContext,
                                             userPreferences);
                                     dialog.openBlocking();
-                                    monitorConnection = userPreferences.getMonitorConnection();
-                                    httpClient = monitorConnection.getHttpClient();
                                 }
+                                monitorConnection = userPreferences.getMonitorConnection();
+                                httpClient = monitorConnection.getHttpClient();
                             }
                         }
                     }
 
-                    final String[] urls = new String[] { userRequestedFilename };
-                    final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
+                    try {
 
-                    final DownloadFilesActionListener downloadAction = new DownloadFilesActionListener(urls,
-                            targetDirectory, targetFilenames, null, windowContext, httpClient);
-                    downloadAction.actionPerformed(null);
+                        final String[] urls = new String[] { userRequestedFilename };
+                        final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
 
-                    final FileObject[] files = downloadAction.getFiles();
+                        final DownloadFilesActionListener downloadAction = new DownloadFilesActionListener(urls,
+                                targetDirectory, targetFilenames, null, windowContext, httpClient);
+                        downloadAction.actionPerformed(null);
 
-                    assert files.length == 1;
+                        final FileObject[] files = downloadAction.getFiles();
 
-                    final FileObject ramFile = files[0];
+                        assert files.length == 1;
 
-                    final String scheme = uri.getScheme();
-                    final int defaultPort;
-                    if ("http".equals(scheme)) {
-                        defaultPort = 80;
-                    } else {
-                        defaultPort = 443;
+                        final FileObject ramFile = files[0];
+
+                        InputStream in = ramFile.getContent().getInputStream();
+                        try {
+                            String str = FileHelper.readInputStreamAsString(ramFile.getContent().getInputStream(),
+                                    "UTF8");
+                            System.out.println("Incoming file: " + userRequestedFilename);
+                            System.out.println(str);
+                        } finally {
+                            FileHelper.safeClose(in);
+                        }
+
+                        final String scheme = uri.getScheme();
+                        final int defaultPort;
+                        if ("http".equals(scheme)) {
+                            defaultPort = 80;
+                        } else {
+                            defaultPort = 443;
+                        }
+
+                        final UrlFileName fileName = new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort,
+                                null, null, uri.getPath(), FileType.FILE, uri.getQuery());
+
+                        AbstractFileSystem fileSystem = (AbstractFileSystem) dataCleanerHome.getFileSystem();
+                        return new DelegateFileObject(fileName, fileSystem, ramFile);
+                    } finally {
+                        httpClient.close();
                     }
 
-                    final UrlFileName fileName = new UrlFileName(scheme, uri.getHost(), uri.getPort(), defaultPort,
-                            null, null, uri.getPath(), FileType.FILE, uri.getQuery());
-
-                    AbstractFileSystem fileSystem = (AbstractFileSystem) dataCleanerHome.getFileSystem();
-                    return new DelegateFileObject(fileName, fileSystem, ramFile);
                 }
             }
 

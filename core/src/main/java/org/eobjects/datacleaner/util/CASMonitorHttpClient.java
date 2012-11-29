@@ -29,138 +29,222 @@ import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.LazyRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * {@link MonitorHttpClient} for CAS (Centralized Authentication System) enabled
  * environments.
+ * 
+ * This client requires that CAS is installed with the RESTful API, which is
+ * described in detail here: https://wiki.jasig.org/display/CASUM/RESTful+API
  */
 public class CASMonitorHttpClient implements MonitorHttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger(CASMonitorHttpClient.class);
 
+    private final Charset charset = Charset.forName("UTF-8");
+
     private final HttpClient _httpClient;
-    private final String _casUrl;
+    private final String _casServerUrl;
     private final String _username;
     private final String _password;
+    private final String _monitorBaseUrl;
+    private final LazyRef<String> _ticketGrantingTicketRef;
+    private String _requestedService;
+    private String _casRestServiceUrl;
 
-    public CASMonitorHttpClient(HttpClient client, String casUrl, String username, String password) {
+    public CASMonitorHttpClient(HttpClient client, String casServerUrl, String username, String password,
+            String monitorBaseUrl) {
         _httpClient = client;
-        _casUrl = casUrl;
+        _casServerUrl = casServerUrl;
         _username = username;
         _password = password;
+        _monitorBaseUrl = monitorBaseUrl;
+        _requestedService = _monitorBaseUrl + "/j_spring_cas_security_check";
+        _casRestServiceUrl = _casServerUrl + "/v1/tickets";
+        _ticketGrantingTicketRef = createTicketGrantingTicketRef();
+
+        logger.debug("Requested service url: {}", _requestedService);
+        logger.debug("Using CAS service url: {}", _casRestServiceUrl);
+    }
+
+    private LazyRef<String> createTicketGrantingTicketRef() {
+        return new LazyRef<String>() {
+            @Override
+            protected String fetch() {
+                // the requested service (from CAS's perspective) is the spring
+                // security 'j_spring_cas_security_check' filter.
+
+                // we use the RESTful CAS api to get tickets
+                try {
+                    final String ticketGrantingTicket = getTicketGrantingTicket(_casRestServiceUrl);
+                    logger.debug("Got a ticket granting ticket: {}", ticketGrantingTicket);
+
+                    return ticketGrantingTicket;
+                } catch (Exception e) {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
+                    throw new IllegalStateException("Failed to fetch ticket granting ticket from CAS", e);
+                }
+            }
+        };
     }
 
     @Override
-    public HttpResponse execute(HttpUriRequest request) throws Exception {
-        final String ticketServiceUrl = _casUrl + "/v1/tickets";
+    public HttpResponse execute(final HttpUriRequest request) throws Exception {
+        // enable cookies
+        final CookieStore cookieStore = new BasicCookieStore();
+        final HttpContext context = new BasicHttpContext();
+        context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        _httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
 
-        logger.debug("Using ticket service url: {}", ticketServiceUrl);
+        String ticketGrantingTicket = _ticketGrantingTicketRef.get();
 
-        final HttpPost ticketServiceRequest = new HttpPost(ticketServiceUrl);
+        final String ticket = getTicket(_requestedService, _casRestServiceUrl, ticketGrantingTicket, context);
+        logger.debug("Got a service ticket: {}", ticketGrantingTicket);
+        logger.debug("Cookies 2: {}", cookieStore.getCookies());
+
+        // now we request the spring security CAS check service, this will set
+        // cookies on the client.
+        final HttpGet cookieRequest = new HttpGet(_requestedService + "?ticket=" + ticket);
+        final HttpResponse cookieResponse = _httpClient.execute(cookieRequest, context);
+        EntityUtils.consume(cookieResponse.getEntity());
+        cookieRequest.releaseConnection();
+        logger.debug("Cookies 3: {}", cookieStore.getCookies());
+
+        final HttpResponse result = _httpClient.execute(request, context);
+        logger.debug("Cookies 4: {}", cookieStore.getCookies());
+
+        return result;
+    }
+
+    public String getTicket(final String requestedService, final String casServiceUrl,
+            final String ticketGrantingTicket, HttpContext context) throws IOException, ClientProtocolException,
+            Exception {
+        final HttpPost post = new HttpPost(casServiceUrl + "/" + ticketGrantingTicket);
+        final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+        parameters.add(new BasicNameValuePair("service", requestedService));
+        final HttpEntity entity = new UrlEncodedFormEntity(parameters, charset);
+        post.setEntity(entity);
+
+        final HttpResponse response = _httpClient.execute(post, context);
+        final String ticket = readResponse(response.getEntity());
+        post.releaseConnection();
+        return ticket;
+    }
+
+    public String getTicketGrantingTicket(final String casServiceUrl) throws Exception {
+        final HttpPost ticketServiceRequest = new HttpPost(casServiceUrl);
         ticketServiceRequest.setEntity(new StringEntity("username=" + _username + "&password=" + _password));
         final HttpResponse casResponse = _httpClient.execute(ticketServiceRequest);
         final StatusLine statusLine = casResponse.getStatusLine();
         final int statusCode = statusLine.getStatusCode();
-        
+
         if (statusCode == 302) {
             final String reason = statusLine.getReasonPhrase();
-            throwError(casResponse,
-                    "Unexpected HTTP status code from CAS service: 302. This indicates that the RESTful API for CAS is not installed. Reason: " + reason);
+            throwError("Unexpected HTTP status code from CAS service: 302. This indicates that the RESTful API for CAS is not installed. Reason: "
+                    + reason);
         }
 
         if (statusCode != 201) {
             final String reason = statusLine.getReasonPhrase();
             logger.error("Unexpected HTTP status code from CAS service request: {}. Reason: {}", statusCode, reason);
-            throwError(casResponse, statusCode + " - " + reason);
+            throwError(statusCode + " - " + reason);
         }
-
-        readResponse(casResponse);
 
         final Header locationHeader = casResponse.getFirstHeader("Location");
         if (locationHeader == null) {
-            throwError(casResponse, "Header 'Location' is null");
+            throwError("Header 'Location' is null");
         }
         ticketServiceRequest.releaseConnection();
 
         final String locationResponse = locationHeader.getValue();
         int tgtIndex = locationResponse.indexOf("TGT");
         if (tgtIndex == -1) {
-            throwError(casResponse, "No TGT element in 'Location' header: " + locationResponse);
+            throwError("No TGT element in 'Location' header: " + locationResponse);
         }
         final String ticketGrantingTicket = locationResponse.substring(tgtIndex);
         if (ticketGrantingTicket == null) {
-            throwError(casResponse, "CAS ticket is null");
+            throwError("CAS ticket is null");
         }
 
-        logger.debug("Ticket: {}", ticketGrantingTicket);
+        EntityUtils.consume(casResponse.getEntity());
 
-        // user is authenticated
-        if (request instanceof HttpEntityEnclosingRequest) {
-            final HttpEntityEnclosingRequest httpEntityEnclosingRequest = (HttpEntityEnclosingRequest) request;
-            final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-            parameters.add(new BasicNameValuePair("pgtId", ticketGrantingTicket));
-            parameters.add(new BasicNameValuePair("pgtIou", _username));
-            Charset charset = Charset.forName("UTF-8");
-            final HttpEntity entity = new UrlEncodedFormEntity(parameters, charset);
-            httpEntityEnclosingRequest.setEntity(entity);
-        } else {
-            final HttpParams params = new BasicHttpParams();
-            params.setParameter("pgtId", ticketGrantingTicket);
-            params.setParameter("pgtIou", _username);
-            request.setParams(params);
-        }
-
-        return _httpClient.execute(request);
-
+        return ticketGrantingTicket;
     }
 
-    private void throwError(HttpResponse casResponse, String message) throws Exception {
-        readResponse(casResponse);
-
-        throw new IllegalStateException(message);
-    }
-
-    public void readResponse(HttpResponse response) throws IOException {
-        if (!logger.isDebugEnabled()) {
-            return;
-        }
-        final HttpEntity entity = response.getEntity();
-        if (entity == null) {
-            return;
-        }
+    private String readResponse(HttpEntity entity) throws Exception {
         final InputStream in = entity.getContent();
         if (in == null) {
-            return;
+            return null;
         }
 
         try {
-            logger.debug("Response:");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            
+            final StringBuilder sb = new StringBuilder();
             String line = reader.readLine();
             while (line != null) {
-                logger.debug(line);
+                if (sb.length() != 0) {
+                    sb.append('\n');
+                }
+                sb.append(line);
                 line = reader.readLine();
             }
-        } catch (Exception e) {
-            logger.warn("Failed to read response entity: " + e.getMessage(), e);
+            final String result = sb.toString();
+            logger.debug("Response: ", result);
+            return result;
         } finally {
             FileHelper.safeClose(in);
+        }
+    }
+
+    private void throwError(String message) throws Exception {
+        throw new IllegalStateException(message);
+    }
+
+    @Override
+    public void close() {
+        if (_ticketGrantingTicketRef.isFetched()) {
+            // Fire a HTTP DELETE request to "log out"
+            final String ticketGrantingTicket = _ticketGrantingTicketRef.get();
+            final HttpDelete request = new HttpDelete(_casRestServiceUrl + "/" + ticketGrantingTicket);
+            try {
+                final HttpResponse response = _httpClient.execute(request);
+                if (logger.isDebugEnabled()) {
+                    final String responseStr = readResponse(response.getEntity());
+                    logger.debug("Log out response: {}", responseStr);
+                } else {
+                    EntityUtils.consume(response.getEntity());
+                }
+            } catch (Exception e) {
+                logger.warn("Failed to log out of CAS: " + e.getMessage(), e);
+            } finally {
+                request.releaseConnection();
+            }
         }
     }
 }

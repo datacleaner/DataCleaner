@@ -42,6 +42,7 @@ import org.eobjects.analyzer.job.tasks.Task;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.user.MonitorConnection;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.MonitorHttpClient;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.windows.FileTransferProgressWindow;
 import org.eobjects.datacleaner.windows.MonitorConnectionDialog;
@@ -172,42 +173,47 @@ public abstract class PublishFileToMonitorActionListener extends SwingWorker<Map
         entity.addPart("file", uploadFilePart);
         request.setEntity(entity);
 
-        final HttpResponse response;
+        final MonitorHttpClient monitorHttpClient = monitorConnection.getHttpClient();
         try {
-            response = monitorConnection.getHttpClient().execute(request);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        final StatusLine statusLine = response.getStatusLine();
-
-        if (statusLine.getStatusCode() == 200) {
-            logger.info("Upload response status: {}", statusLine);
-
-            // parse the response as a JSON map
-            final InputStream content = response.getEntity().getContent();
-            final String contentString;
+            final HttpResponse response;
             try {
-                contentString = FileHelper.readInputStreamAsString(content, FileHelper.DEFAULT_ENCODING);
-            } finally {
-                FileHelper.safeClose(content);
-            }
-
-            final ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                final Map<?, ?> responseMap = objectMapper.readValue(contentString, Map.class);
-
-                return responseMap;
+                response = monitorHttpClient.execute(request);
             } catch (Exception e) {
-                logger.warn("Received non-JSON response:\n{}", contentString);
-                logger.error("Failed to parse response as JSON", e);
+                throw new IllegalStateException(e);
+            }
+            final StatusLine statusLine = response.getStatusLine();
+
+            if (statusLine.getStatusCode() == 200) {
+                logger.info("Upload response status: {}", statusLine);
+
+                // parse the response as a JSON map
+                final InputStream content = response.getEntity().getContent();
+                final String contentString;
+                try {
+                    contentString = FileHelper.readInputStreamAsString(content, FileHelper.DEFAULT_ENCODING);
+                } finally {
+                    FileHelper.safeClose(content);
+                }
+
+                final ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    final Map<?, ?> responseMap = objectMapper.readValue(contentString, Map.class);
+
+                    return responseMap;
+                } catch (Exception e) {
+                    logger.warn("Received non-JSON response:\n{}", contentString);
+                    logger.error("Failed to parse response as JSON", e);
+                    return null;
+                }
+            } else {
+                logger.warn("Upload response status: {}", statusLine);
+                final String reasonPhrase = statusLine.getReasonPhrase();
+                WidgetUtils.showErrorMessage("Server reported error",
+                        "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
                 return null;
             }
-        } else {
-            logger.warn("Upload response status: {}", statusLine);
-            final String reasonPhrase = statusLine.getReasonPhrase();
-            WidgetUtils.showErrorMessage("Server reported error",
-                    "Server replied with status " + statusLine.getStatusCode() + ":\n" + reasonPhrase, null);
-            return null;
+        } finally {
+            monitorHttpClient.close();
         }
     }
 

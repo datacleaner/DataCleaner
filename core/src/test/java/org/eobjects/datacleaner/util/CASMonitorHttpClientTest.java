@@ -27,19 +27,33 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class CASMonitorHttpClientTest {
 
     // A main method that can be used to manually test a CAS based HTTP request
     public static void main(String[] args) throws Exception {
-        final CASMonitorHttpClient client = new CASMonitorHttpClient(new DefaultHttpClient(),
-                "http://localhost:8080/cas", "admin", "admin");
+        CASMonitorHttpClient client = new CASMonitorHttpClient(new DefaultHttpClient(),
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor");
 
-        final HttpResponse response = client.execute(new HttpGet("http://localhost:8080/test/test.jsp"));
+        doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/ping"));
+        doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/launch-resources/conf.xml?job=Customer+completeness"));
+        client.close();
+
+        client = new CASMonitorHttpClient(new DefaultHttpClient(),
+                "https://localhost:8443/cas", "admin", "admin", "https://localhost:8443/DataCleaner-monitor");
+        doRequest(client, new HttpGet("https://localhost:8443/DataCleaner-monitor/repository/DC/jobs/Customer+completeness.analysis.xml"));
+client.close();
+    }
+
+    private static void doRequest(CASMonitorHttpClient client, HttpUriRequest req) throws Exception {
+        System.out.println("REQUESTING: " + req.getURI());
+        
+        final HttpResponse response = client.execute(req);
 
         final StatusLine statusLine = response.getStatusLine();
-        System.out.println("Status: " + statusLine.getStatusCode() + " - " + statusLine.getReasonPhrase());
+        System.out.println("\tStatus: " + statusLine.getStatusCode() + " - " + statusLine.getReasonPhrase());
 
         final HttpEntity entity = response.getEntity();
         final InputStream in = entity.getContent();
@@ -47,7 +61,7 @@ public class CASMonitorHttpClientTest {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String line = reader.readLine();
         while (line != null) {
-            System.out.println("Read: " + line);
+            System.out.println("\t" + line);
             line = reader.readLine();
         }
     }

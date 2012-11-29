@@ -59,4 +59,9 @@ public class HttpBasicMonitorHttpClient implements MonitorHttpClient {
         return _httpClient.execute(request);
     }
 
+    @Override
+    public void close() {
+        // do nothing
+    }
+
 }

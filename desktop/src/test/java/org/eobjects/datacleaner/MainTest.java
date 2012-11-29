@@ -44,32 +44,41 @@ public class MainTest extends TestCase {
     // JettyRunner of the DC monitor is running. This will emulate how the JNLP
     // client of DC monitor starts up.
     public static void main(String[] foo) {
-        final String hostname = "demo.datacleaner.org";
-        final String port = "80";
+        final String hostname = "localhost";
+
+        final boolean https = true;
+        final String port = "8443";
         final String context = "/DataCleaner-monitor";
         final String tenant = "DC";
         final String username = "admin";
         final String datastore = "orderdb";
         final String jobName = "Customer completeness";
+//        final String jobName = "";
+
+        final String securityMode = "CAS";
+        final String casServerUrl = "https://localhost:8443/cas";
 
         final String confLocation;
         final String jobLocation;
         if (StringUtils.isNullOrEmpty(jobName)) {
-            confLocation = "http://" + hostname + ":" + port + context + "/repository/" + tenant
+            confLocation = "https://" + hostname + ":" + port + context + "/repository/" + tenant
                     + "/launch-resources/conf.xml";
             jobLocation = null;
         } else {
-            confLocation = "http://" + hostname + ":" + port + context + "/repository/" + tenant
+            confLocation = "https://" + hostname + ":" + port + context + "/repository/" + tenant
                     + "/launch-resources/conf.xml?job=" + jobName.replaceAll(" ", "\\+");
-            jobLocation = "http://" + hostname + ":" + port + context + "/repository/" + tenant + "/jobs/"
+            jobLocation = "https://" + hostname + ":" + port + context + "/repository/" + tenant + "/jobs/"
                     + jobName.replaceAll(" ", "\\+") + ".analysis.xml";
         }
-        final String[] args = ("-conf " + confLocation + (jobLocation != null ? " -job " + jobLocation : "")
+        String fullArguments = "-conf " + confLocation + (jobLocation != null ? " -job " + jobLocation : "")
                 + (StringUtils.isNullOrEmpty(datastore) ? "" : " -ds " + datastore)
                 + " -Ddatacleaner.ui.visible=true -Ddatacleaner.embed.client=dq-monitor -Ddatacleaner.sandbox=true"
                 + " -Ddatacleaner.monitor.hostname=" + hostname + " -Ddatacleaner.monitor.port=" + port
-                + " -Ddatacleaner.monitor.context=" + context + "/ -Ddatacleaner.monitor.https=false"
-                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username).split(" ");
+                + " -Ddatacleaner.monitor.context=" + context + "/ -Ddatacleaner.monitor.https=" + https
+                + " -Ddatacleaner.monitor.tenant=" + tenant + " -Ddatacleaner.monitor.username=" + username
+                + " -Ddatacleaner.monitor.security.mode=" + securityMode
+                + " -Ddatacleaner.monitor.security.casserverurl=" + casServerUrl;
+        final String[] args = fullArguments.split(" ");
         Main.main(args);
     }
 }

@@ -33,13 +33,13 @@ public class Color {
     public final static Color GRAY = new Color(128, 128, 128);
     public final static Color DARK_GRAY = new Color(64, 64, 64);
     public final static Color BLACK = new Color(0, 0, 0);
-    public final static Color RED = new Color(255, 0, 0);
-    public final static Color PINK = new Color(255, 175, 175);
-    public final static Color ORANGE = new Color(255, 200, 0);
-    public final static Color YELLOW = new Color(255, 255, 0);
-    public final static Color GREEN = new Color(0, 255, 0);
-    public final static Color MAGENTA = new Color(255, 0, 255);
-    public final static Color CYAN = new Color(0, 255, 255);
+    public final static Color RED = new Color(236, 22, 22);
+    public final static Color PINK = new Color(248, 17, 229);
+    public final static Color ORANGE = new Color(255, 114, 0);
+    public final static Color YELLOW = new Color(254, 229, 21);
+    public final static Color GREEN = new Color(12, 176, 31);
+    public final static Color MAGENTA = new Color(241, 3, 139);
+    public final static Color CYAN = new Color(13, 79, 231);
     public final static Color BLUE = new Color(0, 0, 255);
 
     private static final double DARKER_BRIGHTER_FACTOR = 0.7;

@@ -22,10 +22,26 @@ package org.eobjects.datacleaner.monitor.configuration;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 
+/**
+ * Represents the context of an analysis result stored in the repository.
+ */
 public interface ResultContext {
-	
-	public AnalysisResult getAnalysisResult();
 
+    /**
+     * Reads and materializes the analysis result.
+     * 
+     * @return
+     * @throws IllegalStateException
+     *             if an exception occurs while reading or materializing the
+     *             analysis result
+     */
+    public AnalysisResult getAnalysisResult() throws IllegalStateException;
+
+    /**
+     * Gets the file in the repository that holds this analysis result.
+     * 
+     * @return
+     */
     public RepositoryFile getResultFile();
 
 }

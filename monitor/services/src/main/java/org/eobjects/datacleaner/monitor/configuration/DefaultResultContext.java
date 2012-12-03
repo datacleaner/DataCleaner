@@ -26,6 +26,9 @@ import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Func;
 
+/**
+ * Default implementation of the {@link ResultContext} interface.
+ */
 public class DefaultResultContext implements ResultContext {
 
     private final RepositoryFile _repositoryFile;
@@ -35,7 +38,7 @@ public class DefaultResultContext implements ResultContext {
     }
 
     @Override
-    public AnalysisResult getAnalysisResult() {
+    public AnalysisResult getAnalysisResult() throws IllegalStateException {
         final AnalysisResult analysisResult = _repositoryFile.readFile(new Func<InputStream, AnalysisResult>() {
             @Override
             public AnalysisResult eval(InputStream in) {

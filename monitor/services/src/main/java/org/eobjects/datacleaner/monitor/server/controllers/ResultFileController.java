@@ -22,13 +22,14 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Writer;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.ComponentJob;
@@ -36,6 +37,7 @@ import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.HtmlAnalysisResultWriterFactory;
@@ -47,6 +49,8 @@ import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Predicate;
 import org.eobjects.metamodel.util.TruePredicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +63,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/{tenant}/results/{result:.+}")
 public class ResultFileController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResultFileController.class);
 
     private static final String EXTENSION = FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
@@ -118,7 +124,8 @@ public class ResultFileController {
     public void resultHtml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
             @RequestParam(value = "tabs", required = false) Boolean tabsParam,
             @RequestParam(value = "comp_name", required = false) String componentParamName,
-            @RequestParam(value = "comp_index", required = false) Integer componentIndexParam, final Writer out) throws IOException {
+            @RequestParam(value = "comp_index", required = false) Integer componentIndexParam,
+            final HttpServletResponse response) throws IOException {
 
         resultName = resultName.replaceAll("\\+", " ");
 
@@ -136,7 +143,7 @@ public class ResultFileController {
             resultFile = resultsFolder.getLatestFile(jobName, EXTENSION);
             if (resultFile == null) {
                 JobContext job = context.getJob(jobName);
-                out.write("No results for job: " + job.getName());
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "No results for job: " + job.getName());
                 return;
             }
         } else {
@@ -147,7 +154,16 @@ public class ResultFileController {
             throw new IllegalArgumentException("No such result file: " + resultName);
         }
 
-        final AnalysisResult analysisResult = context.getResult(resultFile.getName()).getAnalysisResult();
+        final ResultContext resultContext = context.getResult(resultFile.getName());
+        final AnalysisResult analysisResult;
+        try {
+            analysisResult = resultContext.getAnalysisResult();
+        } catch (IllegalStateException e) {
+            logger.error("Failed to read AnalysisResult in file: " + resultFile, e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to read result file: "
+                    + resultFile.getName() + ". See server logs for details.");
+            return;
+        }
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final boolean tabs = (tabsParam == null ? true : tabsParam.booleanValue());
 
@@ -163,6 +179,7 @@ public class ResultFileController {
 
         final HtmlAnalysisResultWriter htmlWriter = _htmlAnalysisResultWriterFactory.create(tabs,
                 jobInclusionPredicate, headers);
+        final PrintWriter out = response.getWriter();
 
         try {
             htmlWriter.write(analysisResult, configuration, out);

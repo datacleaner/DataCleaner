@@ -44,6 +44,8 @@ import org.eobjects.metamodel.util.Month;
 import org.quartz.CronExpression;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -81,13 +83,13 @@ public class SchedulingServiceImplTest extends TestCase {
         };
 
         try {
-            assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getTriggerGroupNames()));
-            assertEquals("[random_number_generation]", Arrays.toString(scheduler.getTriggerNames("tenant1")));
-            assertEquals("[another_random_job]", Arrays.toString(scheduler.getTriggerNames("tenant2")));
+            assertEquals("[tenant1, tenant2]", scheduler.getTriggerGroupNames().toString());
+            assertEquals("[tenant1.random_number_generation]", scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant1")).toString());
+            assertEquals("[tenant2.another_random_job]", scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals("tenant2")).toString());
 
-            assertEquals("[tenant1, tenant2]", Arrays.toString(scheduler.getJobGroupNames()));
-            assertEquals("[random_number_generation]", Arrays.toString(scheduler.getJobNames("tenant1")));
-            assertEquals("[another_random_job]", Arrays.toString(scheduler.getJobNames("tenant2")));
+            assertEquals("[tenant1, tenant2]", scheduler.getJobGroupNames().toString());
+            assertEquals("[tenant1.random_number_generation]", scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant1")).toString());
+            assertEquals("[tenant2.another_random_job]", scheduler.getJobKeys(GroupMatcher.jobGroupEndsWith("tenant2")).toString());
 
             final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
@@ -101,7 +103,7 @@ public class SchedulingServiceImplTest extends TestCase {
             ScheduleDefinition randomNumberGenerationSchedule = schedules.get(4);
             assertEquals("@hourly", randomNumberGenerationSchedule.getCronExpression());
 
-            final CronTrigger trigger = (CronTrigger) scheduler.getTrigger("random_number_generation", "tenant1");
+            final CronTrigger trigger = (CronTrigger) scheduler.getTrigger(new TriggerKey("random_number_generation", "tenant1"));
             assertEquals("0 0 * * * ?", trigger.getCronExpression());
 
             File[] files = resultDirectory.listFiles(filenameFilter);

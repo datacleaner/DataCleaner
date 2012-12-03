@@ -63,7 +63,7 @@ import org.springframework.context.ApplicationEventPublisher;
 public class ExecuteJob extends AbstractQuartzJob {
 
     public static final String DETAIL_SCHEDULE_DEFINITION = "DataCleaner.schedule.definition";
-    public static final Object DETAIL_EXECUTION_LOG = "DataCleaner.schedule.execution.log";
+    public static final String DETAIL_EXECUTION_LOG = "DataCleaner.schedule.execution.log";
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -71,20 +71,19 @@ public class ExecuteJob extends AbstractQuartzJob {
         final ExecutionLog execution;
         final ScheduleDefinition schedule;
         final TenantContext context;
-
+        
         try {
             logger.debug("executeInternal({})", jobExecutionContext);
 
+            applicationContext = getApplicationContext(jobExecutionContext);
             final JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
             if (jobDataMap.containsKey(DETAIL_EXECUTION_LOG)) {
                 // the execution log has been provided already
                 execution = (ExecutionLog) jobDataMap.get(DETAIL_EXECUTION_LOG);
                 schedule = execution.getSchedule();
-                applicationContext = (ApplicationContext) jobDataMap.get(AbstractQuartzJob.APPLICATION_CONTEXT);
             } else {
                 // we create a new execution log
                 schedule = (ScheduleDefinition) jobDataMap.get(DETAIL_SCHEDULE_DEFINITION);
-                applicationContext = getApplicationContext(jobExecutionContext);
                 if (schedule == null) {
                     throw new IllegalArgumentException("No schedule definition defined");
                 }

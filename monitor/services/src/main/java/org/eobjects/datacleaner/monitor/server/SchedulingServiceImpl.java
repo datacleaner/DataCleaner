@@ -24,8 +24,8 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -59,18 +59,24 @@ import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.Func;
 import org.quartz.CronExpression;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.scheduling.quartz.CronTriggerBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -91,11 +97,41 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
     private ApplicationContext _applicationContext;
 
-    @Autowired
+    /**
+     * Alternative constructor, mainly for testing purposes. Will create a local
+     * in-memory scheduler.
+     * 
+     * @param repository
+     * @param tenantContextFactory
+     */
     public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory) {
+        this(repository, tenantContextFactory, null);
+    }
+
+    /**
+     * Default constructor.
+     * 
+     * @param repository
+     * @param tenantContextFactory
+     * @param scheduler
+     */
+    @Autowired(required = false)
+    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory, Scheduler scheduler) {
+        if (repository == null) {
+            throw new IllegalArgumentException("Repository cannot be null");
+        }
+        if (tenantContextFactory == null) {
+            throw new IllegalArgumentException("TenantContextFactory cannot be null");
+        }
         _repository = repository;
         _tenantContextFactory = tenantContextFactory;
-        _scheduler = createScheduler();
+        if (scheduler == null) {
+            logger.info("No scheduler configured, creating a default scheduler");
+            _scheduler = createScheduler();
+        } else {
+            logger.info("Using configured scheduler: {}", scheduler);
+            _scheduler = scheduler;
+        }
     }
 
     private Scheduler createScheduler() {
@@ -233,9 +269,17 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             if (triggerType == TriggerType.MANUAL) {
                 logger.info("Not scheduling job: {} (manual trigger type)", jobName);
             } else {
-                final JobDetail jobDetail = new JobDetail(jobName, tenantId, ExecuteJob.class);
-                JobDataMap jobDataMap = jobDetail.getJobDataMap();
-                jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
+                final JobBuilder jobBuilder = JobBuilder.newJob(ExecuteJob.class).withIdentity(jobName, tenantId);
+                if (triggerType != TriggerType.PERIODIC) {
+                    // non-periodic triggers need to be durable
+                    jobBuilder.storeDurably();
+                }
+
+                final JobDetail jobDetail = jobBuilder.build();
+
+                final JobDataMap jobDataMap = jobDetail.getJobDataMap();
+                // TODO: jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT,
+                // _applicationContext);
                 jobDataMap.put(ExecuteJob.DETAIL_SCHEDULE_DEFINITION, schedule);
 
                 if (triggerType == TriggerType.PERIODIC) {
@@ -244,24 +288,19 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                     final String scheduleExpression = schedule.getCronExpression();
                     final CronExpression cronExpression = toCronExpression(scheduleExpression);
 
-                    final CronTriggerBean trigger = new CronTriggerBean();
-                    trigger.setGroup(tenantId);
-                    trigger.setName(jobName);
-                    trigger.setStartTime(new Date());
-                    trigger.setCronExpression(cronExpression);
-                    trigger.setJobDetail(jobDetail);
+                    final CronScheduleBuilder cronSchedule = CronScheduleBuilder.cronSchedule(cronExpression);
 
-                    trigger.afterPropertiesSet();
+                    final CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, tenantId)
+                            .forJob(jobDetail).withSchedule(cronSchedule).startNow().build();
 
                     logger.info("Adding trigger to scheduler: {} | {}", jobName, cronExpression);
                     _scheduler.scheduleJob(jobDetail, trigger);
                 } else {
                     // event based trigger (via a job listener)
-                    jobDetail.setDurability(true);
                     _scheduler.addJob(jobDetail, true);
 
                     final ExecuteJobListener listener = new ExecuteJobListener(jobListenerName, schedule);
-                    _scheduler.addGlobalJobListener(listener);
+                    _scheduler.getListenerManager().addJobListener(listener);
                     logger.info("Adding listener to scheduler: {}", jobListenerName);
                 }
             }
@@ -280,8 +319,8 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final String tenantId = tenant.getId();
         final String jobListenerName = tenantId + "." + jobName;
         try {
-            _scheduler.deleteJob(jobName, tenantId);
-            _scheduler.removeJobListener(jobListenerName);
+            _scheduler.deleteJob(new JobKey(jobName, tenantId));
+            _scheduler.getListenerManager().removeJobListener(jobListenerName);
         } catch (Exception e) {
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
@@ -332,15 +371,19 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         try {
             boolean addJob = true;
-            String[] jobNames = _scheduler.getJobNames(tenant.getId());
-            for (String jobName : jobNames) {
+            GroupMatcher<JobKey> matcher = GroupMatcher.jobGroupEquals(tenant.getId());
+            Set<JobKey> jobKeys = _scheduler.getJobKeys(matcher);
+            for (JobKey jobKey : jobKeys) {
+                String jobName = jobKey.getName();
                 if (jobName.equals(jobNameToBeTriggered)) {
                     addJob = false;
                     break;
                 }
             }
             if (addJob) {
-                _scheduler.addJob(new JobDetail(jobNameToBeTriggered, tenant.getId(), ExecuteJob.class), true);
+                final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class)
+                        .withIdentity(jobNameToBeTriggered, tenant.getId()).build();
+                _scheduler.addJob(jobDetail, true);
             }
 
             // set the "triggered by" attribute.
@@ -351,10 +394,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             }
 
             final JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
+            // TODO: jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT,
+            // _applicationContext);
             jobDataMap.put(ExecuteJob.DETAIL_EXECUTION_LOG, execution);
 
-            _scheduler.triggerJob(jobNameToBeTriggered, tenant.getId(), jobDataMap);
+            _scheduler.triggerJob(new JobKey(jobNameToBeTriggered, tenant.getId()), jobDataMap);
         } catch (SchedulerException e) {
             throw new IllegalStateException("Unexpected error invoking scheduler", e);
         }
@@ -462,6 +506,14 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         _applicationContext = applicationContext;
+        try {
+            SchedulerContext schedulerContext = _scheduler.getContext();
+            schedulerContext.put(AbstractQuartzJob.APPLICATION_CONTEXT, _applicationContext);
+        } catch (SchedulerException e) {
+            logger.error(
+                    "Failed to get scheduler context and set application context on it. Expect issues when invoking jobs, or set property '"
+                            + AbstractQuartzJob.APPLICATION_CONTEXT + " on the scheduler's context manually'.", e);
+        }
     }
 
     @Override

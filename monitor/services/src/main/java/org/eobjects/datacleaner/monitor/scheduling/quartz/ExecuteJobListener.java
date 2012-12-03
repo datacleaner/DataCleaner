@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.listeners.JobListenerSupport;
@@ -51,11 +52,12 @@ public class ExecuteJobListener extends JobListenerSupport {
 
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-        final String jobName = context.getJobDetail().getName();
+        final JobKey jobKey = context.getJobDetail().getKey();
+        final String jobName = jobKey.getName();
         final String expectedJobName = _schedule.getDependentJob().getName();
         if (jobName.equals(expectedJobName)) {
             logger.debug("Looked for job '{}', found it!", expectedJobName);
-            final String tenantId = context.getJobDetail().getGroup();
+            final String tenantId = jobKey.getGroup();
             final String expectedTenantId = _schedule.getTenant().getId();
             if (tenantId.equals(expectedTenantId)) {
                 logger.debug("Looked for tenant '{}', found it!", expectedTenantId);
@@ -68,12 +70,12 @@ public class ExecuteJobListener extends JobListenerSupport {
             logger.debug("Looked for job '{}', found job '{}'", expectedJobName, jobName);
         }
     }
-    
+
     private void scheduleExecution(Scheduler scheduler) {
         final String jobName = _schedule.getJob().getName();
         final String tenantId = _schedule.getTenant().getId();
         try {
-            scheduler.triggerJob(jobName, tenantId);
+            scheduler.triggerJob(new JobKey(jobName, tenantId));
         } catch (SchedulerException e) {
             logger.error("Failed to trigger job " + jobName + " for tenant " + tenantId, e);
         }

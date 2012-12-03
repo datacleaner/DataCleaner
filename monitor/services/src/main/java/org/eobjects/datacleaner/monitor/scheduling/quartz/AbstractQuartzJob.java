@@ -19,9 +19,12 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
+import java.util.Arrays;
+
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -32,16 +35,23 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
  */
 public abstract class AbstractQuartzJob extends QuartzJobBean implements Job {
 
-    public static final String APPLICATION_CONTEXT = "applicationContext";
-    
+    public static final String APPLICATION_CONTEXT = "DataCleaner.schedule.applicationContext";
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     protected ApplicationContext getApplicationContext(JobExecutionContext context) {
-        final JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-        final Object object = jobDataMap.get(APPLICATION_CONTEXT);
-        if (object == null) {
-            logger.warn("Could not find ApplicationContext in JobDataMap. Available keys: {}", jobDataMap.keySet());
+        try {
+            final SchedulerContext schedulerContext = context.getScheduler().getContext();
+            final ApplicationContext applicationContext = (ApplicationContext) schedulerContext
+                    .get(APPLICATION_CONTEXT);
+            if (applicationContext == null) {
+                logger.warn("Couldn't find application context in keys: {}",
+                        Arrays.toString(schedulerContext.getKeys()));
+            }
+            return applicationContext;
+        } catch (SchedulerException e) {
+            logger.error("Couldn't retrieve ApplicationContext from scheduler context", e);
+            throw new IllegalStateException(e);
         }
-        return (ApplicationContext) object;
     }
 }

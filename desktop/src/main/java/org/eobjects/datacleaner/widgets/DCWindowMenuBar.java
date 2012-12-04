@@ -132,7 +132,7 @@ public class DCWindowMenuBar extends JMenuBar {
 			}
 		});
 		
-		final JMenuItem dqMonitorMenuItem = WidgetFactory.createMenuItem("DataCleaner dq monitor", IconUtils.MENU_DQ_MONITOR);
+		final JMenuItem dqMonitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor", IconUtils.MENU_DQ_MONITOR);
 		dqMonitorMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

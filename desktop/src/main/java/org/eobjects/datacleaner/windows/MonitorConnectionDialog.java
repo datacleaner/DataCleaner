@@ -225,12 +225,12 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
     @Override
     public String getWindowTitle() {
-        return "DataCleaner dq monitor connection";
+        return "DataCleaner monitor connection";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "DataCleaner dq monitor\nSet up connection";
+        return "DataCleaner monitor\nSet up connection";
     }
 
     @Override
@@ -343,9 +343,9 @@ public class MonitorConnectionDialog extends AbstractDialog {
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
         descriptionLabel
-                .setText("The DataCleaner dq monitor is a separate web application that is part of the DataCleaner eco-system. "
+                .setText("The DataCleaner monitor is a separate web application that is part of the DataCleaner eco-system. "
                         + "In this dialog you can configure your connection to it. "
-                        + "With the dq monitor you can create, share, monitor and govern current and historic data quality metrics. "
+                        + "With the monitor you can create, share, monitor and govern current and historic data quality metrics. "
                         + "You can also set up alerts to react when certain metrics are out of their expected ranges.");
 
         final DCPanel panel = new DCPanel();

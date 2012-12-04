@@ -40,7 +40,6 @@ import org.eobjects.analyzer.beans.api.Convertable;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.OutputColumns;
-import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.beans.api.TransformerBean;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
@@ -51,7 +50,7 @@ import org.slf4j.LoggerFactory;
 @TransformerBean("Search Lucene index (return map)")
 @Description("Searches a Lucene search index and returns the top result, if any. This transformer returns the search result as a map, which can then be post-processed eg. using the 'data structures' transformation options.")
 @Categorized(LuceneSearchCategory.class)
-public class SearchToMapTransformer implements Transformer<Object> {
+public class SearchToMapTransformer implements SearchTransformer<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchToMapTransformer.class);
 

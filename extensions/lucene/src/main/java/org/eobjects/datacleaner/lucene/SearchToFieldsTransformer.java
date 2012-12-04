@@ -40,7 +40,6 @@ import org.eobjects.analyzer.beans.api.Convertable;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
 import org.eobjects.analyzer.beans.api.OutputColumns;
-import org.eobjects.analyzer.beans.api.Transformer;
 import org.eobjects.analyzer.beans.api.TransformerBean;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
@@ -51,7 +50,7 @@ import org.slf4j.LoggerFactory;
 @TransformerBean("Search Lucene index (return fields)")
 @Description("Searches a Lucene search index and returns the top result, if any. This transformer returns the individually found fields, but they must be specified up-front of the search.")
 @Categorized(LuceneSearchCategory.class)
-public class SearchToFieldsTransformer implements Transformer<Object> {
+public class SearchToFieldsTransformer implements SearchTransformer<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchToFieldsTransformer.class);
 

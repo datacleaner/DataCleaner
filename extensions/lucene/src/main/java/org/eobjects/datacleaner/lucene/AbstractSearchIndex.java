@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
@@ -44,6 +45,11 @@ public abstract class AbstractSearchIndex extends AbstractReferenceData implemen
 
     public AbstractSearchIndex(String name) {
         super(name);
+
+        // hack to ensure that Lucene loads codec properly
+        ClassLoader classLoader = getClass().getClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        Codec.reloadCodecs(getClass().getClassLoader());
     }
 
     protected abstract Directory getDirectory();

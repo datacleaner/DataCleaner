@@ -19,14 +19,11 @@
  */
 package org.eobjects.datacleaner.lucene;
 
-import org.apache.lucene.util.Version;
+import org.eobjects.analyzer.beans.api.Transformer;
 
 /**
- * Holds a few constants shared in this extension.
+ * Interface for search transformers. Useful abstraction for the renderer.
  */
-interface Constants {
-    
-    public static final Version VERSION = Version.LUCENE_40;
-    
-    public static final String SEARCH_FIELD_NAME = "datacleaner_search_field";
+public interface SearchTransformer<T> extends Transformer<T> {
+
 }

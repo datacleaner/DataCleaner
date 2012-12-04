@@ -29,7 +29,7 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
 import org.eobjects.datacleaner.lucene.SearchIndexCatalog;
-import org.eobjects.datacleaner.lucene.SearchTransformer;
+import org.eobjects.datacleaner.lucene.LuceneTransformer;
 import org.eobjects.datacleaner.panels.ComponentJobBuilderRenderingFormat;
 import org.eobjects.datacleaner.panels.TransformerJobBuilderPresenter;
 import org.eobjects.datacleaner.user.UserPreferences;
@@ -37,7 +37,7 @@ import org.eobjects.datacleaner.widgets.properties.PropertyWidgetFactory;
 
 @RendererBean(ComponentJobBuilderRenderingFormat.class)
 public class LuceneTransformerJobBuilderRenderer implements
-        Renderer<TransformerJobBuilder<SearchTransformer<?>>, TransformerJobBuilderPresenter> {
+        Renderer<TransformerJobBuilder<LuceneTransformer<?>>, TransformerJobBuilderPresenter> {
 
     @Inject
     InjectorBuilder injectorBuilder;
@@ -52,12 +52,12 @@ public class LuceneTransformerJobBuilderRenderer implements
     AnalyzerBeansConfiguration configuration;
 
     @Override
-    public RendererPrecedence getPrecedence(TransformerJobBuilder<SearchTransformer<?>> tjb) {
+    public RendererPrecedence getPrecedence(TransformerJobBuilder<LuceneTransformer<?>> tjb) {
         return RendererPrecedence.HIGH;
     }
 
     @Override
-    public TransformerJobBuilderPresenter render(TransformerJobBuilder<SearchTransformer<?>> tjb) {
+    public TransformerJobBuilderPresenter render(TransformerJobBuilder<LuceneTransformer<?>> tjb) {
         final SearchIndexCatalog catalog = SearchIndexCatalogFactory.getInstance(userPreferences);
 
         final PropertyWidgetFactory propertyWidgetFactory = injectorBuilder.with(

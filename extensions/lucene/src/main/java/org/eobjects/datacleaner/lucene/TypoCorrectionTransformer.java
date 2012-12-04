@@ -20,16 +20,11 @@
 package org.eobjects.datacleaner.lucene;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -39,20 +34,21 @@ import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Convertable;
 import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.beans.api.Initialize;
+import org.eobjects.analyzer.beans.api.NumberProperty;
 import org.eobjects.analyzer.beans.api.OutputColumns;
 import org.eobjects.analyzer.beans.api.TransformerBean;
+import org.eobjects.analyzer.beans.stringpattern.DefaultTokenizer;
+import org.eobjects.analyzer.beans.stringpattern.Token;
+import org.eobjects.analyzer.beans.stringpattern.TokenType;
+import org.eobjects.analyzer.beans.stringpattern.TokenizerConfiguration;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@TransformerBean("Search Lucene index (return map)")
-@Description("Searches a Lucene search index and returns the top result, if any. This transformer returns the search result as a map, which can then be post-processed eg. using the 'data structures' transformation options.")
+@TransformerBean("Typo correction using search index")
+@Description("Uses a search index field containing correct spellings of words to search/replace for typos and minor mistakes within strings.")
 @Categorized(LuceneSearchCategory.class)
-public class SearchToMapTransformer implements LuceneTransformer<Object> {
-
-    private static final Logger logger = LoggerFactory.getLogger(SearchToMapTransformer.class);
+public class TypoCorrectionTransformer implements LuceneTransformer<String> {
 
     @Configured
     @Description("Column containing search term(s) to fire.")
@@ -63,41 +59,80 @@ public class SearchToMapTransformer implements LuceneTransformer<Object> {
     @Description("Search index to fire searches on.")
     SearchIndex searchIndex;
 
+    @Configured
+    @Description("Search field name")
+    String searchField;
+
+    @Configured
+    @NumberProperty(negative = false)
+    int fuzzFactor = 1;
+
+    private DefaultTokenizer tokenizer;
     private IndexSearcher indexSearcher;
 
     @Override
     public OutputColumns getOutputColumns() {
-        final String[] columnNames = new String[] { "Search result", "Score" };
-        final Class<?>[] columnTypes = new Class[] { Map.class, Number.class };
-        return new OutputColumns(columnNames, columnTypes);
+        return new OutputColumns(searchInput.getName() + " (typos corrected)");
     }
 
     @Initialize
     public void init() {
         indexSearcher = searchIndex.getSearcher();
+
+        TokenizerConfiguration tokenizerConfiguration = new TokenizerConfiguration(false);
+        tokenizerConfiguration.setDiscriminateTextCase(false);
+
+        tokenizer = new DefaultTokenizer(tokenizerConfiguration);
     }
 
     @Override
-    public Object[] transform(InputRow row) {
-        final Object[] result = new Object[2];
-        result[1] = 0;
-
+    public String[] transform(InputRow row) {
         final String searchText = row.getValue(searchInput);
 
         if (StringUtils.isNullOrEmpty(searchText)) {
-            return result;
+            return new String[1];
         }
 
-        final Query query;
-        try {
-            final Analyzer analyzer = new SimpleAnalyzer(Constants.VERSION);
-            final QueryParser queryParser = new QueryParser(Constants.VERSION, Constants.SEARCH_FIELD_NAME, analyzer);
-            query = queryParser.parse(searchText);
-        } catch (ParseException e) {
-            logger.error("An error occurred while parsing query: " + searchText, e);
-            result[1] = -1;
-            return result;
+        final StringBuilder result = new StringBuilder();
+
+        final List<Token> tokens = tokenizer.tokenize(searchText);
+
+        int textTokens = 0;
+        for (Token token : tokens) {
+            if (token.getType() == TokenType.TEXT) {
+                textTokens++;
+            }
         }
+
+        // first try a full-text search
+        final String fullResult = searchToken(searchText, textTokens * fuzzFactor);
+        if (fullResult != null) {
+            return new String[] { fullResult };
+        }
+
+        for (Token token : tokens) {
+            final String string = token.getString();
+            if (token.getType() == TokenType.TEXT) {
+                String outputToken = searchToken(string, fuzzFactor);
+                if (outputToken == null) {
+                    result.append(string);
+                } else {
+                    result.append(outputToken);
+                }
+            } else {
+                result.append(string);
+            }
+        }
+
+        return new String[] { result.toString() };
+    }
+
+    private String searchToken(String inputToken, int fuzzFactor) {
+        if (fuzzFactor > 2) {
+            // max supported fuzz factor in Lucene is 2
+            fuzzFactor = 2;
+        }
+        final Query query = new FuzzyQuery(new Term(searchField, inputToken), fuzzFactor);
 
         final TopDocs searchResult;
         try {
@@ -107,7 +142,7 @@ public class SearchToMapTransformer implements LuceneTransformer<Object> {
         }
 
         if (searchResult == null || searchResult.totalHits == 0) {
-            return result;
+            return null;
         }
 
         final ScoreDoc scoreDoc = searchResult.scoreDocs[0];
@@ -119,21 +154,6 @@ public class SearchToMapTransformer implements LuceneTransformer<Object> {
             throw new IllegalStateException("Fetching document from index threw exception", e);
         }
 
-        result[0] = toMap(document);
-        result[1] = scoreDoc.score;
-
-        return result;
+        return document.get(searchField);
     }
-
-    protected static Map<String, String> toMap(Document document) {
-        final Map<String, String> result = new LinkedHashMap<String, String>();
-        final List<IndexableField> fields = document.getFields();
-        for (IndexableField field : fields) {
-            final String name = field.name();
-            final String value = document.get(name);
-            result.put(name, value);
-        }
-        return result;
-    }
-
 }

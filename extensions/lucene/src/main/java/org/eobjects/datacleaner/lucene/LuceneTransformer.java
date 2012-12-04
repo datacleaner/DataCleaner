@@ -24,6 +24,6 @@ import org.eobjects.analyzer.beans.api.Transformer;
 /**
  * Interface for search transformers. Useful abstraction for the renderer.
  */
-public interface SearchTransformer<T> extends Transformer<T> {
+public interface LuceneTransformer<T> extends Transformer<T> {
 
 }

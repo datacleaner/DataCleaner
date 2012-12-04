@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 @TransformerBean("Search Lucene index (return fields)")
 @Description("Searches a Lucene search index and returns the top result, if any. This transformer returns the individually found fields, but they must be specified up-front of the search.")
 @Categorized(LuceneSearchCategory.class)
-public class SearchToFieldsTransformer implements SearchTransformer<Object> {
+public class SearchToFieldsTransformer implements LuceneTransformer<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(SearchToFieldsTransformer.class);
 

@@ -31,8 +31,34 @@ import org.eobjects.metamodel.util.Action;
 import junit.framework.TestCase;
 
 public class TypoCorrectionTransformerTest extends TestCase {
+    
+    public void testSpellingAndCasingScenario() throws Exception {
+        InMemorySearchIndex index = new InMemorySearchIndex("names");
+        index.write(new Action<IndexWriter>() {
+            @Override
+            public void run(IndexWriter w) throws Exception {
+                w.addDocument(createDoc("nuts"));
+                w.addDocument(createDoc("bolts"));
+                w.addDocument(createDoc("cuts"));
+                w.addDocument(createDoc("user"));
+                w.addDocument(createDoc("users"));
+                w.addDocument(createDoc("for"));
+            }
+        });
 
-    public void testScenario() throws Exception {
+        MockInputColumn<String> col = new MockInputColumn<String>("name");
+
+        TypoCorrectionTransformer transformer = new TypoCorrectionTransformer();
+        transformer.searchField = "name";
+        transformer.searchIndex = index;
+        transformer.fuzzFactor = 2;
+        transformer.searchInput = col;
+        transformer.init();
+
+        assertEquals("Nuts and Bolts for EasyDQ users", transformer.transform(new MockInputRow().put(col, "Nuts and Bolts fr EasyDQ users"))[0]);
+    }
+
+    public void testNameScenario() throws Exception {
         InMemorySearchIndex index = new InMemorySearchIndex("names");
         index.write(new Action<IndexWriter>() {
             @Override

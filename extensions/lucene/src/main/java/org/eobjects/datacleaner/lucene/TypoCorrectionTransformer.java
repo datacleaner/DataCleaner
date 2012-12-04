@@ -114,7 +114,7 @@ public class TypoCorrectionTransformer implements LuceneTransformer<String> {
             final String string = token.getString();
             if (token.getType() == TokenType.TEXT) {
                 String outputToken = searchToken(string, fuzzFactor);
-                if (outputToken == null) {
+                if (outputToken == null || string.equalsIgnoreCase(outputToken)) {
                     result.append(string);
                 } else {
                     result.append(outputToken);

@@ -69,6 +69,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
@@ -105,36 +106,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
      * @param tenantContextFactory
      */
     public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory) {
-        this(repository, tenantContextFactory, null);
+        this(repository, tenantContextFactory, createScheduler());
     }
 
-    /**
-     * Default constructor.
-     * 
-     * @param repository
-     * @param tenantContextFactory
-     * @param scheduler
-     */
-    @Autowired(required = false)
-    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory, Scheduler scheduler) {
-        if (repository == null) {
-            throw new IllegalArgumentException("Repository cannot be null");
-        }
-        if (tenantContextFactory == null) {
-            throw new IllegalArgumentException("TenantContextFactory cannot be null");
-        }
-        _repository = repository;
-        _tenantContextFactory = tenantContextFactory;
-        if (scheduler == null) {
-            logger.info("No scheduler configured, creating a default scheduler");
-            _scheduler = createScheduler();
-        } else {
-            logger.info("Using configured scheduler: {}", scheduler);
-            _scheduler = scheduler;
-        }
-    }
-
-    private Scheduler createScheduler() {
+    private static Scheduler createScheduler() {
         try {
             StdSchedulerFactory factory = new StdSchedulerFactory();
             Scheduler scheduler = factory.getScheduler();
@@ -147,6 +122,29 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
     }
 
+    /**
+     * Default constructor.
+     * 
+     * @param repository
+     * @param tenantContextFactory
+     * @param scheduler
+     */
+    @Autowired
+    public SchedulingServiceImpl(Repository repository, TenantContextFactory tenantContextFactory, Scheduler scheduler) {
+        if (repository == null) {
+            throw new IllegalArgumentException("Repository cannot be null");
+        }
+        if (tenantContextFactory == null) {
+            throw new IllegalArgumentException("TenantContextFactory cannot be null");
+        }
+        if (scheduler == null) {
+            throw new IllegalArgumentException("Quartz scheduler cannot be null");
+        }
+        _repository = repository;
+        _tenantContextFactory = tenantContextFactory;
+        _scheduler = scheduler;
+    }
+
     public Scheduler getScheduler() {
         return _scheduler;
     }
@@ -156,9 +154,10 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final List<RepositoryFolder> tenantFolders = _repository.getFolders();
         for (RepositoryFolder tenantFolder : tenantFolders) {
             final TenantIdentifier tenant = new TenantIdentifier(tenantFolder.getName());
-            final List<ScheduleDefinition> schedules = getSchedules(tenant);
+            final String tenantId = tenant.getId();
 
-            logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenant.getId());
+            final List<ScheduleDefinition> schedules = getSchedules(tenant);
+            logger.info("Initializing {} schedules for tenant {}", schedules.size(), tenantId);
 
             for (ScheduleDefinition schedule : schedules) {
                 initializeSchedule(schedule);
@@ -166,12 +165,36 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         }
 
         try {
-            _scheduler.start();
+            if (!_scheduler.isStarted()) {
+                _scheduler.start();
+            }
         } catch (SchedulerException e) {
             throw new IllegalStateException("Failed to start scheduler", e);
         }
 
+        logTriggers();
+
         logger.info("Schedule initialization done!");
+    }
+
+    private void logTriggers() {
+        final List<RepositoryFolder> tenantFolders = _repository.getFolders();
+        for (RepositoryFolder tenantFolder : tenantFolders) {
+            final String tenantId = tenantFolder.getName();
+            try {
+                final Set<TriggerKey> triggerKeys = _scheduler
+                        .getTriggerKeys(GroupMatcher.triggerGroupEquals(tenantId));
+                if (triggerKeys == null || triggerKeys.isEmpty()) {
+                    logger.info("No triggers initialized for tenant: {}", tenantId);
+                } else {
+                    for (TriggerKey triggerKey : triggerKeys) {
+                        logger.info("Trigger of tenant {}: {}", tenantId, triggerKey);
+                    }
+                }
+            } catch (SchedulerException e) {
+                logger.warn("Failed to get triggers of tenant: " + tenantId, e);
+            }
+        }
     }
 
     @PreDestroy
@@ -269,19 +292,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             if (triggerType == TriggerType.MANUAL) {
                 logger.info("Not scheduling job: {} (manual trigger type)", jobName);
             } else {
-                final JobBuilder jobBuilder = JobBuilder.newJob(ExecuteJob.class).withIdentity(jobName, tenantId);
-                if (triggerType != TriggerType.PERIODIC) {
-                    // non-periodic triggers need to be durable
-                    jobBuilder.storeDurably();
-                }
-
-                final JobDetail jobDetail = jobBuilder.build();
+                final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class).withIdentity(jobName, tenantId)
+                        .storeDurably().build();
 
                 final JobDataMap jobDataMap = jobDetail.getJobDataMap();
-                // TODO: jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT,
-                // _applicationContext);
                 jobDataMap.put(ExecuteJob.DETAIL_SCHEDULE_DEFINITION, schedule);
-
+                
                 if (triggerType == TriggerType.PERIODIC) {
                     // time based trigger
 
@@ -298,7 +314,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 } else {
                     // event based trigger (via a job listener)
                     _scheduler.addJob(jobDetail, true);
-
                     final ExecuteJobListener listener = new ExecuteJobListener(jobListenerName, schedule);
                     _scheduler.getListenerManager().addJobListener(listener);
                     logger.info("Adding listener to scheduler: {}", jobListenerName);
@@ -382,7 +397,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             }
             if (addJob) {
                 final JobDetail jobDetail = JobBuilder.newJob(ExecuteJob.class)
-                        .withIdentity(jobNameToBeTriggered, tenant.getId()).build();
+                        .withIdentity(jobNameToBeTriggered, tenant.getId()).storeDurably().build();
                 _scheduler.addJob(jobDetail, true);
             }
 
@@ -394,8 +409,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
             }
 
             final JobDataMap jobDataMap = new JobDataMap();
-            // TODO: jobDataMap.put(AbstractQuartzJob.APPLICATION_CONTEXT,
-            // _applicationContext);
             jobDataMap.put(ExecuteJob.DETAIL_EXECUTION_LOG, execution);
 
             _scheduler.triggerJob(new JobKey(jobNameToBeTriggered, tenant.getId()), jobDataMap);

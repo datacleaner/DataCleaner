@@ -25,6 +25,8 @@ import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +35,8 @@ import org.springframework.stereotype.Component;
  */
 @Component("tenantContextFactory")
 public class TenantContextFactoryImpl implements TenantContextFactory {
+    
+    private static final Logger logger = LoggerFactory.getLogger(TenantContextFactoryImpl.class);
 
     private final ConcurrentHashMap<String, TenantContext> _contexts;
     private final Repository _repository;
@@ -71,6 +75,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     public TenantContext getContext(String tenantId) {
         TenantContext context = _contexts.get(tenantId);
         if (context == null) {
+            logger.info("Initializing tenant context: {}", tenantId);
             final TenantContext newContext = new TenantContextImpl(tenantId, _repository, _injectionManagerFactory);
             context = _contexts.putIfAbsent(tenantId, newContext);
             if (context == null) {

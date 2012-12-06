@@ -103,8 +103,12 @@ public class CustomizeMetricsPanel extends FlowPanel {
         add(jobLabel);
 
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
+        boolean isMetricGroupVisible = true;
+        if(metricGroups.size() > 3){
+            isMetricGroupVisible = false;
+        }
         for (MetricGroup metricGroup : metricGroups) {
-            final FlowPanel metricGroupPanel = createMetricGroupPanel(metricGroup);
+            final FlowPanel metricGroupPanel = createMetricGroupPanel(metricGroup, isMetricGroupVisible);
             add(metricGroupPanel);
         }
 
@@ -123,7 +127,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         if (_formulaMetricsPanel == null) {
             _formulaMetricsPanel = new FlowPanel();
             _formulaMetricsPanel.addStyleName("FormulaMetricsPanel");
-            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel, null);
+            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel, null, true);
             metricGroupPanel.addStyleName("FormulaMetricsGroupPanel");
             add(metricGroupPanel);
         }
@@ -139,7 +143,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
     protected void onMetricsLoaded() {
     }
 
-    private FlowPanel createMetricGroupPanel(MetricGroup metricGroup) {
+    private FlowPanel createMetricGroupPanel(MetricGroup metricGroup, boolean isMetricGroupVisible) {
         final FlowPanel innerPanel = new FlowPanel();
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
@@ -161,13 +165,10 @@ public class CustomizeMetricsPanel extends FlowPanel {
         }
 
         final String title = metricGroup.getName();
-        return createMetricGroupPanel(title, innerPanel, metricGroup);
+        return createMetricGroupPanel(title, innerPanel, metricGroup, isMetricGroupVisible);
     }
 
-    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel, MetricGroup metricGroup) {
-        if(metricGroup !=null && metricGroup.getMetrics().size() > 3){
-            innerPanel.setVisible(false);
-        }
+    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel, MetricGroup metricGroup, boolean isMetricGroupVisible) {
         
         final HeadingLabel heading = new HeadingLabel(title);
         
@@ -178,6 +179,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
                 innerPanel.setVisible(!innerPanel.isVisible());
             }
         });
+        innerPanel.setVisible(isMetricGroupVisible);
         final FlowPanel panel = new FlowPanel();
         panel.addStyleName("MetricGroupPanel");
         panel.add(heading);

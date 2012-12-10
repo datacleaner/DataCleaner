@@ -58,7 +58,7 @@ public class DataSetWindow extends AbstractWindow {
     private JButton _previousPageButton;
     private JButton _nextPageButton;
 
-    public DataSetWindow(Query query, final DataContext dataContext, WindowContext windowContext) {
+    public DataSetWindow(final Query query, final DataContext dataContext, WindowContext windowContext) {
         this(query, dataContext, -1, windowContext);
     }
 
@@ -81,7 +81,7 @@ public class DataSetWindow extends AbstractWindow {
         _nextPageButton.setEnabled(false);
     }
 
-    public DataSetWindow(String title, Callable<TableModel> tableModelCallable, WindowContext windowContext) {
+    public DataSetWindow(final String title, final Callable<TableModel> tableModelCallable, final WindowContext windowContext) {
         super(windowContext);
         _table = new DCTable();
         _query = null;

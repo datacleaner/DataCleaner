@@ -125,8 +125,26 @@ public class MonitorConnection implements Serializable {
     }
 
     public String getBaseUrl() {
-        return "" + (_https ? "https://" : "http://") + _hostname + ":" + _port
-                + (StringUtils.isNullOrEmpty(_contextPath) ? "" : "/" + _contextPath);
+        StringBuilder sb = new StringBuilder();
+        if (_https) {
+            sb.append("https://");
+        } else {
+            sb.append("http://");
+        }
+        sb.append(_hostname);
+
+        if ((_https && _port != 443) || (!_https && _port != 80)) {
+            // only add port if it differs from default ports of HTTP/HTTPS.
+            sb.append(':');
+            sb.append(_port);
+        }
+
+        if (!StringUtils.isNullOrEmpty(_contextPath)) {
+            sb.append('/');
+            sb.append(_contextPath);
+        }
+
+        return sb.toString();
     }
 
     public String getRepositoryUrl() {

@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.user;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
@@ -32,6 +33,7 @@ import org.eobjects.analyzer.job.concurrent.SingleThreadedTaskRunner;
 import org.eobjects.analyzer.reference.ReferenceDataCatalogImpl;
 import org.eobjects.analyzer.storage.InMemoryStorageProvider;
 import org.eobjects.datacleaner.util.ResourceManager;
+import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.LazyRef;
 import org.eobjects.metamodel.util.Ref;
 import org.slf4j.Logger;
@@ -81,12 +83,30 @@ public class DataCleanerConfigurationReader extends LazyRef<AnalyzerBeansConfigu
 
         final AnalyzerBeansConfiguration c;
         if (exists) {
+            InputStream inputStream = null;
             try {
-                c = configurationReader.create(_configurationFile.getContent().getInputStream());
+                inputStream = _configurationFile.getContent().getInputStream();
+                
+                c = configurationReader.create(inputStream);
                 logger.info("Succesfully read configuration from {}", _configurationFile.getName().getPath());
-            } catch (FileSystemException e) {
+            } catch (Exception e) {
+                FileHelper.safeClose(inputStream);
+                try {
+                    inputStream = _configurationFile.getContent().getInputStream();
+                    String content = FileHelper.readInputStreamAsString(inputStream, FileHelper.DEFAULT_ENCODING);
+                    logger.error("Failed to read configuration file. File contents was:");
+                    logger.error(content);
+                } catch (Throwable t) {
+                    logger.debug("Failed to re-open configuration file to determine file contents", e);
+                }
+
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
                 throw new IllegalStateException("Unexpected error while reading configuration file: "
                         + _configurationFile, e);
+            } finally {
+                FileHelper.safeClose(inputStream);
             }
         } else {
             logger.info("Configuration file does not exist, reading built-in configuration.");

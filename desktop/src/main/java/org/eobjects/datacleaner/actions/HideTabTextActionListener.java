@@ -32,21 +32,20 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
 public final class HideTabTextActionListener implements ActionListener {
 
 	private final CloseableTabbedPane _tabbedPane;
-	private final int _tabIndex;
 	private final String _title;
 
 	public HideTabTextActionListener(CloseableTabbedPane tabbedPane, int tabIndex) {
 		_tabbedPane = tabbedPane;
-		_tabIndex = tabIndex;
 		_title = tabbedPane.getTitleAt(tabIndex);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (_title.equals(_tabbedPane.getTitleAt(_tabIndex))) {
-			_tabbedPane.setTitleAt(_tabIndex, "");
+	    int tabIndex = e.getID();
+		if (_title.equals(_tabbedPane.getTitleAt(tabIndex))) {
+			_tabbedPane.setTitleAt(tabIndex, "");
 		} else {
-			_tabbedPane.setTitleAt(_tabIndex, _title);
+			_tabbedPane.setTitleAt(tabIndex, _title);
 		}
 	}
 

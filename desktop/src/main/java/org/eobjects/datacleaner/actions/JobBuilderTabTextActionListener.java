@@ -36,28 +36,30 @@ import org.eobjects.datacleaner.widgets.tabs.CloseableTabbedPane;
  */
 public class JobBuilderTabTextActionListener extends AbstractJobBuilderPopupListener implements ActionListener {
 
-	private final CloseableTabbedPane _tabbedPane;
-	private final int _tabIndex;
+    private final CloseableTabbedPane _tabbedPane;
 
-	public JobBuilderTabTextActionListener(AnalysisJobBuilder analysisJobBuilder,
-			AbstractBeanJobBuilder<?, ?, ?> jobBuilder, int tabIndex, CloseableTabbedPane tabbedPane) {
-		super(jobBuilder, analysisJobBuilder);
-		_tabIndex = tabIndex;
-		_tabbedPane = tabbedPane;
-	}
+    private volatile int _tabIndex;
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		MouseEvent mouseEvent = (MouseEvent) e.getSource();
-		showPopup(_tabbedPane, mouseEvent.getX(), mouseEvent.getY());
-	}
+    public JobBuilderTabTextActionListener(AnalysisJobBuilder analysisJobBuilder,
+            AbstractBeanJobBuilder<?, ?, ?> jobBuilder, int tabIndex, CloseableTabbedPane tabbedPane) {
+        super(jobBuilder, analysisJobBuilder);
+        _tabIndex = tabIndex;
+        _tabbedPane = tabbedPane;
+    }
 
-	@Override
-	protected void onNameChanged() {
-		_tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(getJobBuilder()));
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        _tabIndex = e.getID();
+        MouseEvent mouseEvent = (MouseEvent) e.getSource();
+        showPopup(_tabbedPane, mouseEvent.getX(), mouseEvent.getY());
+    }
 
-	@Override
-	protected void onRemoved() {
-	}
+    @Override
+    protected void onNameChanged() {
+        _tabbedPane.setTitleAt(_tabIndex, LabelUtils.getLabel(getJobBuilder()));
+    }
+
+    @Override
+    protected void onRemoved() {
+    }
 }

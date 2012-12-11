@@ -6,7 +6,7 @@
 		<javadoc.version>2.8.1</javadoc.version>
 		<slf4j.version>1.6.6</slf4j.version>
 		<junit.version>4.10</junit.version>
-		<analyzerbeans.version>0.24-SNAPSHOT</analyzerbeans.version>
+		<analyzerbeans.version>0.24</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->

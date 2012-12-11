@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:timeline xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns3:job-name>product_profiling</ns3:job-name>
+    <ns3:metrics>
+        <ns2:metric>
+            <ns2:metric-display-name>A999 9999</ns2:metric-display-name>
+            <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTCODE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>A999 9999</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:metric-display-name>A99-9999</ns2:metric-display-name>
+            <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTCODE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>A99-9999</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:metric-display-name>A999999</ns2:metric-display-name>
+            <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTCODE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>A999999</ns2:metric-param-query-string>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:metric-display-name>Other</ns2:metric-display-name>
+            <ns2:analyzer-descriptor-name>Pattern finder</ns2:analyzer-descriptor-name>
+            <ns2:analyzer-input>PRODUCTCODE</ns2:analyzer-input>
+            <ns2:metric-descriptor-name>Match count</ns2:metric-descriptor-name>
+            <ns2:metric-param-query-string>NOT IN [A999_9999,A999 9999,A99-9999,A999999]</ns2:metric-param-query-string>
+        </ns2:metric>
+    </ns3:metrics>
+    <ns3:chart-options>
+        <ns3:horizontal-axis>
+            <ns3:fixed-axis/>
+        </ns3:horizontal-axis>
+        <ns3:vertical-axis>
+            <ns3:height>350</ns3:height>
+            <ns3:logarithmic-scale>false</ns3:logarithmic-scale>
+            <ns3:minimum-value>0</ns3:minimum-value>
+            <ns3:maximum-value>20</ns3:maximum-value>
+        </ns3:vertical-axis>
+    </ns3:chart-options>
+</ns3:timeline>

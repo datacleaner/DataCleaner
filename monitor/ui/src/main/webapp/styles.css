@@ -72,7 +72,7 @@ div.pageHeader {
 div.pageHeader div.logo {
 	margin-left: auto;
 	margin-right: auto;
-	width: 894px;
+	width: 904px;
 	height: 55px;
 	display: block;
 	background-image: url("images/header_logo.png");
@@ -84,7 +84,7 @@ div.pageContent {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 80px;
-	width: 894px;
+	width: 904px;
 	text-align: left;
 }
 
@@ -194,7 +194,7 @@ img.scalable_background {
 	margin-top: -28px;
 	margin-left: auto;
 	margin-right: auto;
-	width: 894px;
+	width: 904px;
 	height: 22px;
 }
 

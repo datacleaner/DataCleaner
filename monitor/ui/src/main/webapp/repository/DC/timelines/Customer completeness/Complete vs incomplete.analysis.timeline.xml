@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:timeline xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns3:job-name>Customer completeness</ns3:job-name>
+    <ns3:metrics>
+        <ns2:metric>
+            <ns2:metric-display-name>Complete %</ns2:metric-display-name>
+            <ns2:metric-color>#0cb01f</ns2:metric-color>
+            <ns2:formula>Valid row count * 100 / Row count</ns2:formula>
+            <ns2:children>
+                <ns2:metric>
+                    <ns2:metric-display-name>Valid row count</ns2:metric-display-name>
+                    <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:metric-descriptor-name>Valid row count</ns2:metric-descriptor-name>
+                </ns2:metric>
+                <ns2:metric>
+                    <ns2:metric-display-name>Row count</ns2:metric-display-name>
+                    <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:metric-descriptor-name>Row count</ns2:metric-descriptor-name>
+                </ns2:metric>
+            </ns2:children>
+        </ns2:metric>
+        <ns2:metric>
+            <ns2:metric-display-name>Incomplete %</ns2:metric-display-name>
+            <ns2:metric-color>#ec1616</ns2:metric-color>
+            <ns2:formula>Invalid row count * 100 / Row count</ns2:formula>
+            <ns2:children>
+                <ns2:metric>
+                    <ns2:metric-display-name>Invalid row count</ns2:metric-display-name>
+                    <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
+                </ns2:metric>
+                <ns2:metric>
+                    <ns2:metric-display-name>Row count</ns2:metric-display-name>
+                    <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+                    <ns2:metric-descriptor-name>Row count</ns2:metric-descriptor-name>
+                </ns2:metric>
+            </ns2:children>
+        </ns2:metric>
+    </ns3:metrics>
+    <ns3:chart-options>
+        <ns3:horizontal-axis>
+            <ns3:fixed-axis/>
+        </ns3:horizontal-axis>
+        <ns3:vertical-axis>
+            <ns3:height>300</ns3:height>
+            <ns3:logarithmic-scale>false</ns3:logarithmic-scale>
+            <ns3:minimum-value>0</ns3:minimum-value>
+            <ns3:maximum-value>100</ns3:maximum-value>
+        </ns3:vertical-axis>
+    </ns3:chart-options>
+</ns3:timeline>

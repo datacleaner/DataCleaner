@@ -3,22 +3,22 @@
     <ns3:job-name>Customer completeness</ns3:job-name>
     <ns3:metrics>
         <ns2:metric>
-            <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
-            <ns2:metric-descriptor-name>Row count</ns2:metric-descriptor-name>
             <ns2:metric-display-name>Record count</ns2:metric-display-name>
             <ns2:metric-color>#963213</ns2:metric-color>
+            <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+            <ns2:metric-descriptor-name>Row count</ns2:metric-descriptor-name>
         </ns2:metric>
         <ns2:metric>
-            <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
-            <ns2:metric-descriptor-name>Valid row count</ns2:metric-descriptor-name>
             <ns2:metric-display-name>Properly filled records</ns2:metric-display-name>
             <ns2:metric-color>#ffc800</ns2:metric-color>
+            <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+            <ns2:metric-descriptor-name>Valid row count</ns2:metric-descriptor-name>
         </ns2:metric>
         <ns2:metric>
-            <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
-            <ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
             <ns2:metric-display-name>Incomplete records</ns2:metric-display-name>
             <ns2:metric-color>#5594dd</ns2:metric-color>
+            <ns2:analyzer-descriptor-name>Completeness analyzer</ns2:analyzer-descriptor-name>
+            <ns2:metric-descriptor-name>Invalid row count</ns2:metric-descriptor-name>
         </ns2:metric>
     </ns3:metrics>
     <ns3:chart-options>
@@ -26,7 +26,7 @@
             <ns3:fixed-axis/>
         </ns3:horizontal-axis>
         <ns3:vertical-axis>
-            <ns3:height>200</ns3:height>
+            <ns3:height>300</ns3:height>
             <ns3:logarithmic-scale>false</ns3:logarithmic-scale>
         </ns3:vertical-axis>
     </ns3:chart-options>

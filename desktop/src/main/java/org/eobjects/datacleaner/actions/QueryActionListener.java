@@ -21,34 +21,58 @@ package org.eobjects.datacleaner.actions;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.windows.QueryWindow;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.HasName;
 
 /**
  * Action listener that displays a query window
  */
-public class QueryAnalysisListener implements ActionListener {
+public class QueryActionListener implements ActionListener {
 
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final Table _table;
     private final WindowContext _windowContext;
+    private final Collection<? extends HasName> _columns;
+    
+    public QueryActionListener(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, Table table) {
+        this(windowContext, analysisJobBuilder, table, null);
+    }
 
-    public QueryAnalysisListener(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, Table table) {
+    public QueryActionListener(WindowContext windowContext, AnalysisJobBuilder analysisJobBuilder, Table table, Collection<? extends HasName> columns) {
         _windowContext = windowContext;
         _analysisJobBuilder = analysisJobBuilder;
         _table = table;
+        _columns = columns;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         final Datastore datastore = _analysisJobBuilder.getDatastore();
-        final String initialQuery = "SELECT *\nFROM " + _table.getQualifiedLabel();
         
-        final QueryWindow window = new QueryWindow(_windowContext, datastore, initialQuery);
+        final StringBuilder initialQuery = new StringBuilder("SELECT ");
+        if (_columns == null || _columns.isEmpty()) {
+            initialQuery.append("*");
+        } else {
+            boolean first = true;
+            for (HasName column : _columns) {
+                if (!first) {
+                    initialQuery.append(", ");
+                }
+                initialQuery.append("a.");
+                initialQuery.append(column.getName());
+                first = false;
+            }
+        }
+        
+        initialQuery.append("\nFROM " + _table.getQualifiedLabel() + " a");
+        
+        final QueryWindow window = new QueryWindow(_windowContext, datastore, initialQuery.toString());
         window.open();
     }
 

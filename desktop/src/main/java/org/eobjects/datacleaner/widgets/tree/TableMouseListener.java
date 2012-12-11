@@ -34,7 +34,7 @@ import javax.swing.tree.TreePath;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
-import org.eobjects.datacleaner.actions.QueryAnalysisListener;
+import org.eobjects.datacleaner.actions.QueryActionListener;
 import org.eobjects.datacleaner.actions.QuickAnalysisActionListener;
 import org.eobjects.datacleaner.actions.SaveTableAsCsvFileActionListener;
 import org.eobjects.datacleaner.actions.SaveTableAsExcelSpreadsheetActionListener;
@@ -132,7 +132,7 @@ final class TableMouseListener extends MouseAdapter implements MouseListener {
                 popup.add(quickAnalysisMenuItem);
 
                 final JMenuItem queryMenuItem = WidgetFactory.createMenuItem("Ad-hoc query", "images/model/query.png");
-                queryMenuItem.addActionListener(new QueryAnalysisListener(_schemaTree.getWindowContext(),
+                queryMenuItem.addActionListener(new QueryActionListener(_schemaTree.getWindowContext(),
                         _analysisJobBuilder, table));
                 popup.add(queryMenuItem);
 

@@ -49,6 +49,8 @@ import org.eobjects.metamodel.query.Query;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.jdesktop.swingx.JXTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Window that presents an ad-hoc query editor panel and a result of the query
@@ -56,6 +58,8 @@ import org.jdesktop.swingx.JXTextField;
 public class QueryWindow extends AbstractWindow {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(QueryWindow.class);
 
     private final Datastore _datastore;
     private final RSyntaxTextArea _queryTextArea;
@@ -81,11 +85,14 @@ public class QueryWindow extends AbstractWindow {
         _queryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                String queryString = _queryTextArea.getText();
-                DatastoreConnection con = _datastore.openConnection();
+                final String queryString = _queryTextArea.getText();
+                logger.debug("Query being parsed: {}", queryString);
+
+                final DatastoreConnection con = _datastore.openConnection();
                 try {
                     final DataContext dataContext = con.getDataContext();
                     final Query q = dataContext.parseQuery(queryString);
+                    logger.info("Parsed query: {}", q);
                     final String limitString = _limitTextField.getText();
                     if (!StringUtils.isNullOrEmpty(limitString)) {
                         int limit = Integer.parseInt(limitString);
@@ -111,7 +118,7 @@ public class QueryWindow extends AbstractWindow {
         WidgetUtils.addToGridBag(DCLabel.dark("Max rows:"), buttonPanel, 1, 1, GridBagConstraints.CENTER);
         WidgetUtils.addToGridBag(decoratedLimitTextField, buttonPanel, 2, 1, GridBagConstraints.CENTER);
         WidgetUtils.addToGridBag(_queryButton, buttonPanel, 1, 2, 2, 1);
-        
+
         final JScrollPane scrolledTextArea = new JScrollPane(_queryTextArea);
         final DCPanel decoratedTextField = WidgetUtils.decorateWithShadow(scrolledTextArea, true, 2);
 

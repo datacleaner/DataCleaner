@@ -25,10 +25,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.Box;
 import javax.swing.Icon;
@@ -46,6 +46,7 @@ import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.InputColumnComparator;
 import org.eobjects.analyzer.util.LabelUtils;
 import org.eobjects.datacleaner.actions.PreviewSourceDataActionListener;
+import org.eobjects.datacleaner.actions.QueryActionListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -58,205 +59,206 @@ import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.table.TableColumnExt;
 
+/**
+ * Panel that displays columns in a table-layout. Used for both the "Source" tab
+ * and for transformer panels in DataCleaner desktop application.
+ */
 public final class ColumnListTable extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String[] headers = new String[] { "Name", "Type", "" };
-	private final ImageManager imageManager = ImageManager.getInstance();
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final Table _table;
-	private final DCTable _columnTable;
+    private static final String[] headers = new String[] { "Name", "Type", "" };
+    private final ImageManager imageManager = ImageManager.getInstance();
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final Table _table;
+    private final DCTable _columnTable;
 
-	// private final SortedSet<InputColumn<?>> _columns = new
-	// TreeSet<InputColumn<?>>(new InputColumnComparator());
+    private final SortedSet<InputColumn<?>> _columns = new TreeSet<InputColumn<?>>(new InputColumnComparator());
 
-	// TODO: Temporary patch to ensure correct ordering. Replace with previous
-	// SortedSet when comparator is working.
-	private final List<InputColumn<?>> _columns = new ArrayList<InputColumn<?>>();
+    private final WindowContext _windowContext;
 
-	private final WindowContext _windowContext;
+    public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
+            boolean addShadowBorder, WindowContext windowContext) {
+        this(null, columns, analysisJobBuilder, addShadowBorder, windowContext);
+    }
 
-	public ColumnListTable(Collection<? extends InputColumn<?>> columns, AnalysisJobBuilder analysisJobBuilder,
-			boolean addShadowBorder, WindowContext windowContext) {
-		this(null, columns, analysisJobBuilder, addShadowBorder, windowContext);
-	}
+    public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder,
+            WindowContext windowContext) {
+        this(table, null, analysisJobBuilder, addShadowBorder, windowContext);
+    }
 
-	public ColumnListTable(Table table, AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder,
-			WindowContext windowContext) {
-		this(table, null, analysisJobBuilder, addShadowBorder, windowContext);
-	}
+    private ColumnListTable(Table table, Collection<? extends InputColumn<?>> columns,
+            AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, WindowContext windowContext) {
+        super();
+        _table = table;
+        _analysisJobBuilder = analysisJobBuilder;
+        _windowContext = windowContext;
 
-	private ColumnListTable(Table table, Collection<? extends InputColumn<?>> columns,
-			AnalysisJobBuilder analysisJobBuilder, boolean addShadowBorder, WindowContext windowContext) {
-		super();
-		_table = table;
-		_analysisJobBuilder = analysisJobBuilder;
-		_windowContext = windowContext;
+        setLayout(new BorderLayout());
 
-		setLayout(new BorderLayout());
+        if (table != null) {
+            final DCPanel headerPanel = new DCPanel();
+            headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            final JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(), imageManager.getImageIcon(
+                    "images/model/column.png", IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+            tableNameLabel.setOpaque(false);
+            tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
 
-		if (table != null) {
-			DCPanel headerPanel = new DCPanel();
-			headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(), imageManager.getImageIcon(
-					"images/model/column.png", IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
-			tableNameLabel.setOpaque(false);
-			tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
+            final JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
+            previewButton.setToolTipText("Preview table rows");
+            previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
+                    .getDatastore(), _columns));
+            
+            final JButton queryButton = WidgetFactory.createSmallButton("images/model/query.png");
+            queryButton.setToolTipText("Ad-hoc query");
+            queryButton.addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns));
 
-			JButton previewButton = WidgetFactory.createSmallButton("images/actions/preview_data.png");
-			previewButton.setToolTipText("Preview table rows");
-			previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
-					.getDatastore(), _columns));
+           final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+            removeButton.setToolTipText("Remove table from source");
+            removeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Column[] cols = _table.getColumns();
+                    for (Column col : cols) {
+                        _analysisJobBuilder.removeSourceColumn(col);
+                    }
+                }
+            });
 
-			JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
-			removeButton.setToolTipText("Remove table from source");
-			removeButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Column[] cols = _table.getColumns();
-					for (Column col : cols) {
-						_analysisJobBuilder.removeSourceColumn(col);
-					}
-				}
-			});
+            headerPanel.add(tableNameLabel);
+            headerPanel.add(Box.createHorizontalStrut(4));
+            headerPanel.add(previewButton);
+            headerPanel.add(Box.createHorizontalStrut(4));
+            headerPanel.add(queryButton);
+            headerPanel.add(Box.createHorizontalStrut(4));
+            headerPanel.add(removeButton);
+            add(headerPanel, BorderLayout.NORTH);
+        }
 
-			headerPanel.add(tableNameLabel);
-			headerPanel.add(Box.createHorizontalStrut(4));
-			headerPanel.add(previewButton);
-			headerPanel.add(Box.createHorizontalStrut(4));
-			headerPanel.add(removeButton);
-			add(headerPanel, BorderLayout.NORTH);
-		}
+        _columnTable = new DCTable(headers);
+        _columnTable.setSortable(false);
+        _columnTable.setColumnControlVisible(false);
+        _columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
 
-		_columnTable = new DCTable(headers);
-		_columnTable.setSortable(false);
-		_columnTable.setColumnControlVisible(false);
-		_columnTable.setRowHeight(IconUtils.ICON_SIZE_SMALL + 4);
+        JPanel tablePanel = _columnTable.toPanel();
 
-		JPanel tablePanel = _columnTable.toPanel();
+        if (addShadowBorder) {
+            tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
+        }
+        add(tablePanel, BorderLayout.CENTER);
 
-		if (addShadowBorder) {
-			tablePanel.setBorder(new CompoundBorder(WidgetUtils.BORDER_SHADOW, WidgetUtils.BORDER_THIN));
-		}
-		add(tablePanel, BorderLayout.CENTER);
+        if (columns != null) {
+            for (InputColumn<?> column : columns) {
+                _columns.add(column);
+            }
+        }
+        updateComponents();
+    }
 
-		if (columns != null) {
-			for (InputColumn<?> column : columns) {
-				_columns.add(column);
-			}
-		}
-		updateComponents();
-	}
+    private void updateComponents() {
+        TableModel model = new DefaultTableModel(headers, _columns.size());
+        int i = 0;
+        for (final InputColumn<?> column : _columns) {
+            final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_SMALL);
+            if (column instanceof MutableInputColumn<?>) {
+                final JXTextField textField = WidgetFactory.createTextField("Column name");
+                textField.setText(column.getName());
+                final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
+                textField.addFocusListener(new FocusAdapter() {
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        if (!mutableInputColumn.getName().equals(textField.getText())) {
+                            mutableInputColumn.setName(textField.getText());
 
-	private void updateComponents() {
-		TableModel model = new DefaultTableModel(headers, _columns.size());
-		int i = 0;
-		for (final InputColumn<?> column : _columns) {
-		    final Icon icon = IconUtils.getColumnIcon(column, IconUtils.ICON_SIZE_SMALL);
-			if (column instanceof MutableInputColumn<?>) {
-				final JXTextField textField = WidgetFactory.createTextField("Column name");
-				textField.setText(column.getName());
-				final MutableInputColumn<?> mutableInputColumn = (MutableInputColumn<?>) column;
-				textField.addFocusListener(new FocusAdapter() {
-					@Override
-					public void focusLost(FocusEvent e) {
-						if (!mutableInputColumn.getName().equals(textField.getText())) {
-							mutableInputColumn.setName(textField.getText());
+                            TransformerJobBuilder<?> tjb = _analysisJobBuilder
+                                    .getOriginatingTransformer(mutableInputColumn);
+                            if (tjb != null) {
+                                tjb.onOutputChanged();
+                            }
+                        }
+                    }
+                });
 
-							TransformerJobBuilder<?> tjb = _analysisJobBuilder.getOriginatingTransformer(mutableInputColumn);
-							if (tjb != null) {
-								tjb.onOutputChanged();
-							}
-						}
-					}
-				});
+                final JButton resetButton = getResetButton(textField, mutableInputColumn);
+                final DCPanel panel = new DCPanel();
+                panel.setLayout(new HorizontalLayout(4));
+                panel.add(new JLabel(icon));
+                panel.add(textField);
+                panel.add(resetButton);
 
-				final JButton resetButton = getResetButton(textField, mutableInputColumn);
-				final DCPanel panel = new DCPanel();
-				panel.setLayout(new HorizontalLayout(4));
-				panel.add(new JLabel(icon));
-				panel.add(textField);
-				panel.add(resetButton);
+                model.setValueAt(panel, i, 0);
+            } else {
+                model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
+            }
 
-				model.setValueAt(panel, i, 0);
-			} else {
-				model.setValueAt(new JLabel(column.getName(), icon, JLabel.LEFT), i, 0);
-			}
+            final Class<?> dataType = column.getDataType();
+            final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
+            model.setValueAt(dataTypeString, i, 1);
 
-			final Class<?> dataType = column.getDataType();
-			final String dataTypeString = LabelUtils.getDataTypeLabel(dataType);
-			model.setValueAt(dataTypeString, i, 1);
+            JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+            removeButton.setToolTipText("Remove column from source");
+            removeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn());
+                }
+            });
 
-			JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
-			removeButton.setToolTipText("Remove column from source");
-			removeButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					_analysisJobBuilder.removeSourceColumn(column.getPhysicalColumn());
-				}
-			});
+            DCPanel buttonPanel = new DCPanel();
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
+            // buttonPanel.add(transformButton);
+            // buttonPanel.add(filterButton);
+            if (column.isPhysicalColumn()) {
+                buttonPanel.add(removeButton);
+            }
 
-			DCPanel buttonPanel = new DCPanel();
-			buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 4, 0));
-			// buttonPanel.add(transformButton);
-			// buttonPanel.add(filterButton);
-			if (column.isPhysicalColumn()) {
-				buttonPanel.add(removeButton);
-			}
+            model.setValueAt(buttonPanel, i, 2);
+            i++;
+        }
+        _columnTable.setModel(model);
 
-			model.setValueAt(buttonPanel, i, 2);
-			i++;
-		}
-		_columnTable.setModel(model);
+        TableColumnExt columnExt = _columnTable.getColumnExt(2);
+        columnExt.setMinWidth(26);
+        columnExt.setMaxWidth(80);
+        columnExt.setPreferredWidth(30);
+    }
 
-		TableColumnExt columnExt = _columnTable.getColumnExt(2);
-		columnExt.setMinWidth(26);
-		columnExt.setMaxWidth(80);
-		columnExt.setPreferredWidth(30);
-	}
+    private JButton getResetButton(final JXTextField textField, final MutableInputColumn<?> mutableInputColumn) {
+        JButton button = WidgetFactory.createSmallButton("images/actions/reset.png");
+        button.setToolTipText("Reset output column name");
+        button.addActionListener(new ActionListener() {
 
-	private JButton getResetButton(final JXTextField textField, final MutableInputColumn<?> mutableInputColumn) {
-		JButton button = WidgetFactory.createSmallButton("images/actions/reset.png");
-		button.setToolTipText("Reset output column name");
-		button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textField.setText(mutableInputColumn.getInitialName());
+            }
+        });
+        return button;
+    }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				textField.setText(mutableInputColumn.getInitialName());
-			}
-		});
-		return button;
-	}
+    public Table getTable() {
+        return _table;
+    }
 
-	public Table getTable() {
-		return _table;
-	}
+    public void addColumn(InputColumn<?> column) {
+        _columns.add(column);
+        updateComponents();
+    }
 
-	public void addColumn(InputColumn<?> column) {
-		// TODO: Temporary patch to ensure correct ordering. Remove the
-		// if-sentence when comparator is working for transformed columns
-		if (!_columns.contains(column)) {
-			_columns.add(column);
-			Collections.sort(_columns, new InputColumnComparator());
-		}
-		updateComponents();
-	}
+    public void removeColumn(InputColumn<?> column) {
+        _columns.remove(column);
+        updateComponents();
+    }
 
-	public void removeColumn(InputColumn<?> column) {
-		_columns.remove(column);
-		updateComponents();
-	}
+    public void setColumns(List<? extends InputColumn<?>> columns) {
+        _columns.clear();
+        for (InputColumn<?> column : columns) {
+            _columns.add(column);
+        }
+        updateComponents();
+    }
 
-	public void setColumns(List<? extends InputColumn<?>> columns) {
-		_columns.clear();
-		for (InputColumn<?> column : columns) {
-			_columns.add(column);
-		}
-		updateComponents();
-	}
-
-	public int getColumnCount() {
-		return _columns.size();
-	}
+    public int getColumnCount() {
+        return _columns.size();
+    }
 }

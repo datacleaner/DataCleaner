@@ -148,15 +148,15 @@ public class CustomizeMetricsPanel extends FlowPanel {
         final FlowPanel innerPanel = new FlowPanel();
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
-        if(activeMetrics.size()>0){
-            isMetricGroupVisible = true;
-        }
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
         final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics = new MultipleColumnParameterizedMetricsPresenter(
                 metricGroup);
         for (MetricIdentifier metricIdentifier : availableMetrics) {
             final MetricPresenter presenter = createMetricPresenter(columnParameterizedMetrics, metricGroup,
                     metricIdentifier, activeMetrics);
+            if(presenter.getSelectedMetrics().size() > 0){
+                isMetricGroupVisible = true;
+            }
             if (presenter != null) {
                 _metricPresenters.add(presenter);
                 innerPanel.add(presenter);

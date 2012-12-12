@@ -110,7 +110,7 @@ public class DatastoreQueryController {
                 for (SelectItem selectItem : selectItems) {
                     final String label = selectItem.getSuperQueryAlias(false);
                     writer.write("<th>");
-                    writer.write(StringEscapeUtils.escapeHtml(label));
+                    writer.write(StringEscapeUtils.escapeXml(label));
                     writer.write("</th>");
                 }
                 writer.write("</tr>\n</thead>");
@@ -127,7 +127,7 @@ public class DatastoreQueryController {
                             writer.write("<td />");
                         } else {
                             writer.write("<td>");
-                            writer.write(StringEscapeUtils.escapeHtml(ConvertToStringTransformer.transformValue(value)));
+                            writer.write(StringEscapeUtils.escapeXml(ConvertToStringTransformer.transformValue(value)));
                             writer.write("</td>");
                         }
                     }

@@ -107,6 +107,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
         if(metricGroups.size() > 3){
             isMetricGroupVisible = false;
         }
+        
         for (MetricGroup metricGroup : metricGroups) {
             final FlowPanel metricGroupPanel = createMetricGroupPanel(metricGroup, isMetricGroupVisible);
             add(metricGroupPanel);
@@ -147,6 +148,9 @@ public class CustomizeMetricsPanel extends FlowPanel {
         final FlowPanel innerPanel = new FlowPanel();
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
+        if(activeMetrics.size()>0){
+            isMetricGroupVisible = true;
+        }
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
         final MultipleColumnParameterizedMetricsPresenter columnParameterizedMetrics = new MultipleColumnParameterizedMetricsPresenter(
                 metricGroup);

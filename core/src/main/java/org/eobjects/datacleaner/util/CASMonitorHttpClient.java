@@ -27,12 +27,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -131,36 +132,53 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         // now we request the spring security CAS check service, this will set
         // cookies on the client.
         final HttpGet cookieRequest = new HttpGet(_requestedService + "?ticket=" + ticket);
-        final HttpResponse cookieResponse = _httpClient.execute(cookieRequest, context);
+        final HttpResponse cookieResponse = executeHttpRequest(cookieRequest, context);
         EntityUtils.consume(cookieResponse.getEntity());
         cookieRequest.releaseConnection();
         logger.debug("Cookies 3: {}", cookieStore.getCookies());
 
-        final HttpResponse result = _httpClient.execute(request, context);
+        final HttpResponse result = executeHttpRequest(request, context);
         logger.debug("Cookies 4: {}", cookieStore.getCookies());
 
         return result;
     }
 
     public String getTicket(final String requestedService, final String casServiceUrl,
-            final String ticketGrantingTicket, HttpContext context) throws IOException, ClientProtocolException,
-            Exception {
+            final String ticketGrantingTicket, HttpContext context) throws IOException, Exception {
         final HttpPost post = new HttpPost(casServiceUrl + "/" + ticketGrantingTicket);
         final List<NameValuePair> parameters = new ArrayList<NameValuePair>();
         parameters.add(new BasicNameValuePair("service", requestedService));
         final HttpEntity entity = new UrlEncodedFormEntity(parameters, charset);
         post.setEntity(entity);
 
-        final HttpResponse response = _httpClient.execute(post, context);
+        final HttpResponse response = executeHttpRequest(post, context);
         final String ticket = readResponse(response.getEntity());
         post.releaseConnection();
         return ticket;
     }
 
+    private HttpResponse executeHttpRequest(HttpUriRequest req, HttpContext context) throws IOException {
+        try {
+            return _httpClient.execute(req, context);
+        } catch (SSLPeerUnverifiedException ex1) {
+            logger.info("SSL peer was not authenticated, retrying with a SSL registry tolerant of self-signed certificates.");
+            logger.debug("SSL peer was not authenticated", ex1);
+
+            try {
+                SecurityUtils.removeSshCertificateChecks(_httpClient);
+                return _httpClient.execute(req, context);
+            } catch (Exception ex2) {
+                logger.warn("Failed to set up self-signed certificate trust", ex2);
+                throw ex1;
+            }
+        }
+
+    }
+
     public String getTicketGrantingTicket(final String casServiceUrl) throws Exception {
         final HttpPost ticketServiceRequest = new HttpPost(casServiceUrl);
         ticketServiceRequest.setEntity(new StringEntity("username=" + _username + "&password=" + _password));
-        final HttpResponse casResponse = _httpClient.execute(ticketServiceRequest);
+        final HttpResponse casResponse = executeHttpRequest(ticketServiceRequest, null);
         final StatusLine statusLine = casResponse.getStatusLine();
         final int statusCode = statusLine.getStatusCode();
 
@@ -233,7 +251,7 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
             final String ticketGrantingTicket = _ticketGrantingTicketRef.get();
             final HttpDelete request = new HttpDelete(_casRestServiceUrl + "/" + ticketGrantingTicket);
             try {
-                final HttpResponse response = _httpClient.execute(request);
+                final HttpResponse response = executeHttpRequest(request, null);
                 if (logger.isDebugEnabled()) {
                     final String responseStr = readResponse(response.getEntity());
                     logger.debug("Log out response: {}", responseStr);

@@ -19,13 +19,24 @@
  */
 package org.eobjects.datacleaner.util;
 
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 
 /**
  * Utility methods for security concerns.
@@ -38,6 +49,43 @@ public class SecurityUtils {
 
     private SecurityUtils() {
         // prevent instantiation
+    }
+
+    /**
+     * Removes the certificate checks of HTTPS traffic on a HTTP client. Use
+     * with caution!
+     * 
+     * @param httpClient
+     * @throws IllegalStateException
+     */
+    public static void removeSshCertificateChecks(HttpClient httpClient) throws IllegalStateException {
+        try {
+            // prepare a SSL context which doesn't validate certificates
+            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            final TrustManager trustManager = new X509TrustManager() {
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+                }
+
+                @Override
+                public void checkClientTrusted(X509Certificate[] certs, String authType) throws CertificateException {
+                }
+            };
+            sslContext.init(null, new TrustManager[] { trustManager }, new SecureRandom());
+            final SSLSocketFactory schemeSocketFactory = new SSLSocketFactory(sslContext);
+            final Scheme sslScheme = new Scheme("https", 443, schemeSocketFactory);
+
+            // try again with a new registry
+            final SchemeRegistry registry = httpClient.getConnectionManager().getSchemeRegistry();
+            registry.register(sslScheme);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**

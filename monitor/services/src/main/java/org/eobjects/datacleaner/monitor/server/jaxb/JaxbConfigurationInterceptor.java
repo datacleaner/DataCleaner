@@ -64,6 +64,7 @@ import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.job.HasBeanConfiguration;
 import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.analyzer.util.SchemaNavigator;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -134,8 +135,9 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         _calRef = calRef;
     }
 
-    public void intercept(final String tenantId, final JobContext job, final InputStream in, final OutputStream out)
-            throws Exception {
+    @Override
+    public void intercept(final String tenantId, final JobContext job, final String datastoreName,
+            final InputStream in, final OutputStream out) throws Exception {
         final TenantContext context = _contextFactory.getContext(tenantId);
 
         final Unmarshaller unmarshaller = _jaxbContext.createUnmarshaller();
@@ -144,7 +146,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         // replace datastore catalog
         if (_replaceDatastores) {
             final DatastoreCatalogType originalDatastoreCatalog = configuration.getDatastoreCatalog();
-            final DatastoreCatalogType newDatastoreCatalog = interceptDatastoreCatalog(context, job,
+            final DatastoreCatalogType newDatastoreCatalog = interceptDatastoreCatalog(context, job, datastoreName,
                     originalDatastoreCatalog);
             configuration.setDatastoreCatalog(newDatastoreCatalog);
         }
@@ -184,12 +186,13 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      * 
      * @param context
      * @param job
+     * @param datastoreName
      * 
      * @param originalDatastoreCatalog
      * @return
      */
     private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context, final JobContext job,
-            final DatastoreCatalogType originalDatastoreCatalog) {
+            final String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
         final DatastoreCatalogType newDatastoreCatalog = new DatastoreCatalogType();
 
@@ -200,12 +203,17 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         Map<String, Set<Column>> datastoreUsage = new HashMap<String, Set<Column>>();
 
         if (job == null) {
-            // represent all datastores (no job-specific information is known)
-            for (final String name : datastoreCatalog.getDatastoreNames()) {
-                datastoreUsage.put(name, new HashSet<Column>());
+            if (StringUtils.isNullOrEmpty(datastoreName)) {
+                // represent all datastores (no job-specific information is
+                // known)
+                for (final String name : datastoreCatalog.getDatastoreNames()) {
+                    datastoreUsage.put(name, new HashSet<Column>());
+                }
+            } else {
+                // represent only a single datastore
+                datastoreUsage.put(datastoreName, new HashSet<Column>());
             }
         } else {
-
             AnalysisJob analysisJob = job.getAnalysisJob();
             Collection<InputColumn<?>> sourceColumns = analysisJob.getSourceColumns();
             List<Column> columns = CollectionUtils.map(sourceColumns, new Func<InputColumn<?>, Column>() {
@@ -214,6 +222,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     return col.getPhysicalColumn();
                 }
             });
+
+            // represent the datastore of the job
             datastoreUsage.put(analysisJob.getDatastore().getName(), new LinkedHashSet<Column>(columns));
 
             buildDatastoreUsageMap(datastoreUsage, analysisJob.getExplorerJobs());
@@ -228,9 +238,15 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             final Set<Column> columns = entry.getValue();
             final Datastore datastore = datastoreCatalog.getDatastore(name);
             if (datastore != null) {
-                JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
-                final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore, columns, MAX_POJO_ROWS);
-                newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
+                try {
+                    JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+                    final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore, columns,
+                            MAX_POJO_ROWS);
+                    newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
+                } catch (Exception e) {
+                    // allow omitting errornous datastores here.
+                    logger.error("Failed to serialize datastore '" + name + "' to POJO format: " + e.getMessage(), e);
+                }
             }
         }
 

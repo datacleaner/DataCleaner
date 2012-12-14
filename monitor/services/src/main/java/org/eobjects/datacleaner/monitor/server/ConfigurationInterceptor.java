@@ -38,10 +38,13 @@ public interface ConfigurationInterceptor {
      * @param job
      *            optionally the job which is needs the resulting configuration
      *            to execute. May be null if no specific job is requested.
+     * @param datastoreName
+     *            optionally the datastore name of interest. May be null if no
+     *            specific datastore is requested.
      * @param in
      * @param out
      * @throws Exception
      */
-    public void intercept(final String tenantId, JobContext job, final InputStream in, final OutputStream out)
-            throws Exception;
+    public void intercept(final String tenantId, JobContext job, final String datastoreName, final InputStream in,
+            final OutputStream out) throws Exception;
 }

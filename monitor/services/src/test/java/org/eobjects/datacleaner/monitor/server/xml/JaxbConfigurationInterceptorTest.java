@@ -146,7 +146,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         file.readFile(new Action<InputStream>() {
             @Override
             public void run(InputStream in) throws Exception {
-                interceptor.intercept("tenant1", job, in, out);
+                interceptor.intercept("tenant1", job, null, in, out);
             }
         });
 

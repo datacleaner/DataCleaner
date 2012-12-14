@@ -97,9 +97,10 @@ public class LaunchResourcesController {
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping("/conf.xml")
     public void fetchConfigurationFile(@PathVariable("tenant") final String tenant,
-            @RequestParam(value = "job", required = false) final String jobName, final HttpServletResponse response)
-            throws Exception {
-
+            @RequestParam(value = "job", required = false) final String jobName,
+            @RequestParam(value = "datastore", required = false) final String datastoreName,
+            final HttpServletResponse response) throws Exception {
+        
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);
         final RepositoryFile confFile = tenantContext.getConfigurationFile();
@@ -113,7 +114,7 @@ public class LaunchResourcesController {
             public void run(InputStream in) throws Exception {
                 // intercept the input stream to decorate it with client-side
                 // config elements.
-                _configurationInterceptor.intercept(tenant, job, in, out);
+                _configurationInterceptor.intercept(tenant, job, datastoreName, in, out);
             }
         });
     }

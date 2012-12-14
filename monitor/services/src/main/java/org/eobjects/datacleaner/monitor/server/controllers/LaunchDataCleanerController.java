@@ -93,7 +93,7 @@ public class LaunchDataCleanerController {
         final String encodedDatastoreName = URLEncoder.encode(datastoreName, FileHelper.UTF_8_ENCODING);
 
         final String jnlpHref = "datastores/" + encodedDatastoreName + ".analyze.jnlp";
-        final String confPath = '/' + RESOURCES_FOLDER + "conf.xml";
+        final String confPath = '/' + RESOURCES_FOLDER + "conf.xml?datastore=" + encodedDatastoreName;
 
         writeJnlpResponse(request, tenant, response, scheme, hostname, port, contextPath, jnlpHref, null,
                 datastoreName, confPath);

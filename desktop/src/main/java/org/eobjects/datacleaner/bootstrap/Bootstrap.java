@@ -386,11 +386,10 @@ public final class Bootstrap {
                 logger.info("SSL peer not verified. Asking user for confirmation to accept urls: {}",
                         Arrays.toString(urls));
             }
-            int confirmation = JOptionPane
-                    .showConfirmDialog(
-                            null,
-                            "Unverified SSL peer. The certificate presented by the server could not be verified. Do you want to continue?",
-                            "Unverified SSL peer", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            int confirmation = JOptionPane.showConfirmDialog(null, "Unverified SSL peer.\n\n"
+                    + "The certificate presented by the server could not be verified.\n\n"
+                    + "Do you want to continue, accepting the unverified certificate?", "Unverified SSL peer",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
             if (confirmation != JOptionPane.YES_OPTION) {
                 throw new IllegalStateException(e);
             }

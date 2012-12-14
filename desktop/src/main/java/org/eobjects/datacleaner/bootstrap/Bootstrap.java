@@ -27,7 +27,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.vfs2.FileObject;
@@ -297,11 +300,12 @@ public final class Bootstrap {
                     final WindowContext windowContext = new SimpleWindowContext();
 
                     MonitorHttpClient httpClient = new SimpleWebServiceHttpClient();
+                    MonitorConnection monitorConnection = null;
 
                     // check if URI points to DC monitor. If so, make sure
                     // credentials are entered.
                     if (userPreferences != null && userPreferences.getMonitorConnection() != null) {
-                        MonitorConnection monitorConnection = userPreferences.getMonitorConnection();
+                        monitorConnection = userPreferences.getMonitorConnection();
                         if (monitorConnection.matchesURI(uri)) {
                             if (monitorConnection.isAuthenticationEnabled()) {
                                 if (monitorConnection.getEncodedPassword() == null) {
@@ -320,11 +324,8 @@ public final class Bootstrap {
                         final String[] urls = new String[] { userRequestedFilename };
                         final String[] targetFilenames = DownloadFilesActionListener.createTargetFilenames(urls);
 
-                        final DownloadFilesActionListener downloadAction = new DownloadFilesActionListener(urls,
-                                targetDirectory, targetFilenames, null, windowContext, httpClient);
-                        downloadAction.actionPerformed(null);
-
-                        final FileObject[] files = downloadAction.getFiles();
+                        final FileObject[] files = downloadFiles(urls, targetDirectory, targetFilenames, windowContext,
+                                httpClient, monitorConnection);
 
                         assert files.length == 1;
 
@@ -362,6 +363,41 @@ public final class Bootstrap {
             }
 
             return VFSUtils.getFileSystemManager().resolveFile(userRequestedFilename);
+        }
+    }
+
+    private FileObject[] downloadFiles(String[] urls, FileObject targetDirectory, String[] targetFilenames,
+            WindowContext windowContext, MonitorHttpClient httpClient, MonitorConnection monitorConnection) {
+        final DownloadFilesActionListener downloadAction = new DownloadFilesActionListener(urls, targetDirectory,
+                targetFilenames, null, windowContext, httpClient);
+        try {
+            downloadAction.actionPerformed(null);
+            FileObject[] files = downloadAction.getFiles();
+            if (logger.isInfoEnabled()) {
+                logger.info("Succesfully downloaded urls: {}", Arrays.toString(urls));
+            }
+            return files;
+        } catch (SSLPeerUnverifiedException e) {
+            downloadAction.cancelDownload(true);
+            if (monitorConnection == null || monitorConnection.isAcceptUnverifiedSslPeers()) {
+                throw new IllegalStateException("Failed to verify SSL peer", e);
+            }
+            if (logger.isInfoEnabled()) {
+                logger.info("SSL peer not verified. Asking user for confirmation to accept urls: {}",
+                        Arrays.toString(urls));
+            }
+            int confirmation = JOptionPane
+                    .showConfirmDialog(
+                            null,
+                            "Unverified SSL peer. The certificate presented by the server could not be verified. Do you want to continue?",
+                            "Unverified SSL peer", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            if (confirmation != JOptionPane.YES_OPTION) {
+                throw new IllegalStateException(e);
+            }
+            monitorConnection.setAcceptUnverifiedSslPeers(true);
+            httpClient = monitorConnection.getHttpClient();
+
+            return downloadFiles(urls, targetDirectory, targetFilenames, windowContext, httpClient, monitorConnection);
         }
     }
 

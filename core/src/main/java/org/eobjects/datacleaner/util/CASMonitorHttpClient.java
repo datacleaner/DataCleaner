@@ -123,7 +123,18 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
         context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
         _httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BROWSER_COMPATIBILITY);
 
-        String ticketGrantingTicket = _ticketGrantingTicketRef.get();
+        final String ticketGrantingTicket;
+        try {
+            ticketGrantingTicket = _ticketGrantingTicketRef.get();
+        } catch (IllegalStateException e) {
+            if (e.getCause() instanceof SSLPeerUnverifiedException) {
+                // Unverified SSL peer exceptions needs to be rethrown
+                // specifically, since they can be caught and the user may
+                // decide to remove certificate checks.
+                throw (SSLPeerUnverifiedException) e.getCause();
+            }
+            throw e;
+        }
 
         final String ticket = getTicket(_requestedService, _casRestServiceUrl, ticketGrantingTicket, context);
         logger.debug("Got a service ticket: {}", ticketGrantingTicket);
@@ -158,21 +169,8 @@ public class CASMonitorHttpClient implements MonitorHttpClient {
     }
 
     private HttpResponse executeHttpRequest(HttpUriRequest req, HttpContext context) throws IOException {
-        try {
-            return _httpClient.execute(req, context);
-        } catch (SSLPeerUnverifiedException ex1) {
-            logger.info("SSL peer was not authenticated, retrying with a SSL registry tolerant of self-signed certificates.");
-            logger.debug("SSL peer was not authenticated", ex1);
-
-            try {
-                SecurityUtils.removeSshCertificateChecks(_httpClient);
-                return _httpClient.execute(req, context);
-            } catch (Exception ex2) {
-                logger.warn("Failed to set up self-signed certificate trust", ex2);
-                throw ex1;
-            }
-        }
-
+        logger.debug("Executing HTTP request: {}", req);
+        return _httpClient.execute(req, context);
     }
 
     public String getTicketGrantingTicket(final String casServiceUrl) throws Exception {

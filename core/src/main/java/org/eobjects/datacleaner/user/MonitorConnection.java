@@ -53,6 +53,8 @@ public class MonitorConnection implements Serializable {
     private final String _username;
     private final String _encodedPassword;
     private final UserPreferences _userPreferences;
+    
+    private transient boolean _acceptUnverifiedSslPeers = false;
 
     public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath,
             boolean isHttps, String tenantId, String username, char[] password) {
@@ -78,6 +80,10 @@ public class MonitorConnection implements Serializable {
             httpClient = new DefaultHttpClient();
         } else {
             httpClient = _userPreferences.createHttpClient();
+        }
+        
+        if (_acceptUnverifiedSslPeers) {
+            SecurityUtils.removeSshCertificateChecks(httpClient);
         }
 
         if (!isAuthenticationEnabled()) {
@@ -209,5 +215,13 @@ public class MonitorConnection implements Serializable {
             contextPath = contextPath.substring(0, contextPath.length() - 1);
         }
         return contextPath;
+    }
+    
+    public boolean isAcceptUnverifiedSslPeers() {
+        return _acceptUnverifiedSslPeers;
+    }
+    
+    public void setAcceptUnverifiedSslPeers(boolean acceptUnverifiedSslPeers) {
+        _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
     }
 }

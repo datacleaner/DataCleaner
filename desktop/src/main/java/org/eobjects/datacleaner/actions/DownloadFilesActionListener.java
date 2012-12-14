@@ -26,7 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.apache.commons.vfs2.FileObject;
@@ -70,8 +73,8 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
     }
 
     public DownloadFilesActionListener(final String[] urls, final String[] targetFilenames,
-            final FileDownloadListener listener, final WindowContext windowContext, final WebServiceHttpClient httpClient,
-            UserPreferences userPreferences) {
+            final FileDownloadListener listener, final WindowContext windowContext,
+            final WebServiceHttpClient httpClient, UserPreferences userPreferences) {
         this(urls, createTargetDirectory(userPreferences), targetFilenames, listener, windowContext, httpClient);
     }
 
@@ -133,12 +136,18 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
         return filenames;
     }
 
-    public FileObject[] getFiles() {
+    public FileObject[] getFiles() throws SSLPeerUnverifiedException, IllegalStateException, RuntimeException {
         try {
             get();
         } catch (Throwable e) {
+            if (e instanceof ExecutionException) {
+                e = e.getCause();
+            }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
+            }
+            if (e instanceof SSLPeerUnverifiedException) {
+                throw (SSLPeerUnverifiedException) e;
             }
             throw new IllegalStateException(e);
         }
@@ -162,9 +171,33 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
         }
     }
 
+    /**
+     * Cancels the file download gracefully.
+     */
     public void cancelDownload() {
+        cancelDownload(false);
+    }
+
+    /**
+     * Cancels the file download.
+     * 
+     * @param hideWindowImmediately
+     *            determines if the download progress window should be hidden
+     *            immediately or only when the progress of cancelling the
+     *            download has occurred gracefully.
+     */
+    public void cancelDownload(boolean hideWindowImmediately) {
         logger.info("Cancel of download requested");
         _cancelled = true;
+
+        if (hideWindowImmediately && _downloadProgressWindow != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    _downloadProgressWindow.close();
+                }
+            });
+        }
     }
 
     @Override
@@ -177,6 +210,11 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
                     _listener.onFilesDownloaded(files);
                 }
             } catch (Throwable e) {
+                if (_listener == null) {
+                    // when there is no listener, the error will be catched and
+                    // handled by the blocking getFiles() call.
+                    return;
+                }
                 WidgetUtils.showErrorMessage("Error transfering file(s)!", e);
             }
         }
@@ -248,7 +286,8 @@ public class DownloadFilesActionListener extends SwingWorker<FileObject[], Task>
                     }
                 }
             } catch (IOException e) {
-                throw new IllegalStateException(e);
+                logger.debug("IOException occurred while downloading files", e);
+                throw e;
             } finally {
                 if (inputStream != null) {
                     try {

@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eobjects.datacleaner.util.FileFilters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link LaunchArtifactProvider} implementation based on an external
@@ -36,6 +38,8 @@ import org.eobjects.datacleaner.util.FileFilters;
  * folder are assumed to be signed.
  */
 public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileFolderLaunchArtifactProvider.class);
 
     private final File _libFolder;
 
@@ -46,7 +50,8 @@ public class FileFolderLaunchArtifactProvider implements LaunchArtifactProvider 
     @Override
     public List<String> getJarFilenames() {
         String[] list = _libFolder.list(FileFilters.JAR);
-        if (list == null) {
+        if (list == null || list.length == 0) {
+            logger.error("No JAR files found in launch artifact folder: {}", _libFolder);
             return Collections.emptyList();
         }
         return Arrays.asList(list);

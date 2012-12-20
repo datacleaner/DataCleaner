@@ -21,13 +21,14 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.eobjects.metamodel.util.LazyRef;
-import org.eobjects.metamodel.util.Ref;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -37,40 +38,30 @@ import org.w3c.dom.NodeList;
  */
 public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(JnlpUrlLaunchArtifactProvider.class);
+
     private final String _url;
-    private final Ref<List<String>> _jarFilenamesRef;
-    
+
     public JnlpUrlLaunchArtifactProvider() {
         this("http://datacleaner.org/resources/webstart/datacleaner.jnlp");
     }
 
     public JnlpUrlLaunchArtifactProvider(String url) {
         _url = url;
-        _jarFilenamesRef = new LazyRef<List<String>>() {
-
-            @Override
-            protected List<String> fetch() {
-                try {
-                    return readFromUrl();
-                } catch (Exception e) {
-                    throw new IllegalStateException(e);
-                }
-            }
-        };
     }
-    
+
     protected List<String> readFromUrl() throws Exception {
         final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         final Document document = documentBuilder.parse(_url);
         final Element documentElement = document.getDocumentElement();
         final String codebase = documentElement.getAttribute("codebase");
-        
+
         final NodeList jarElements = document.getElementsByTagName("jar");
         final int length = jarElements.getLength();
         assert length > 0;
-        
+
         final List<String> result = new ArrayList<String>(length);
-        
+
         for (int i = 0; i < length; i++) {
             final Element jarElement = (Element) jarElements.item(i);
             final String href = jarElement.getAttribute("href");
@@ -82,7 +73,7 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
                 result.add(codebase + '/' + href);
             }
         }
-        
+
         return result;
     }
 
@@ -93,12 +84,19 @@ public class JnlpUrlLaunchArtifactProvider implements LaunchArtifactProvider {
 
     @Override
     public List<String> getJarFilenames() {
-        return _jarFilenamesRef.get();
+        try {
+            return readFromUrl();
+        } catch (Exception e) {
+            logger.error("Failed to retrieve and parse JNLP file from url: " + _url, e);
+            // return empty list to indicate an issue.
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public InputStream readJarFile(String filename) throws IllegalArgumentException, IllegalStateException {
-        throw new IllegalArgumentException("This provider does not provide JAR files themselves. Expecting to not be invoked!");
+        throw new IllegalArgumentException(
+                "This provider does not provide JAR files themselves. Expecting to not be invoked!");
     }
 
 }

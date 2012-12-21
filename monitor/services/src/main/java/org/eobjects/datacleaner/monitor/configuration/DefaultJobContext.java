@@ -83,11 +83,12 @@ class DefaultJobContext implements JobContext {
     @Override
     public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides) {
         if (variableOverrides == null || variableOverrides.isEmpty()) {
-            // use cached job definitions
-            long lastModified = _file.getLastModified();
+            // cached job definition may be used, if not outdated
+            final long configurationLastModified = _context.getConfigurationFile().getLastModified();
+            long lastModified = Math.max(_file.getLastModified(), configurationLastModified);
             if (_job == null || lastModified != _lastModifiedCache) {
                 synchronized (this) {
-                    lastModified = _file.getLastModified();
+                    lastModified = Math.max(_file.getLastModified(), configurationLastModified);
                     if (_job == null || lastModified != _lastModifiedCache) {
                         _lastModifiedCache = lastModified;
                         final AnalyzerBeansConfiguration configuration = _context.getConfiguration();

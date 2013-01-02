@@ -22,18 +22,18 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -55,6 +55,7 @@ import org.eobjects.analyzer.configuration.jaxb.ConfigurationMetadataType;
 import org.eobjects.analyzer.configuration.jaxb.DatastoreCatalogType;
 import org.eobjects.analyzer.configuration.jaxb.MultithreadedTaskrunnerType;
 import org.eobjects.analyzer.configuration.jaxb.ObjectFactory;
+import org.eobjects.analyzer.configuration.jaxb.PojoTableType;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
@@ -71,6 +72,7 @@ import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
+import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.MutableSchema;
 import org.eobjects.metamodel.schema.MutableTable;
@@ -100,6 +102,8 @@ import org.springframework.stereotype.Component;
  */
 @Component("configurationInterceptor")
 public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
+
+    private static final String REMARK_INCLUDE_IN_QUERY = "INCLUDE_IN_QUERY";
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbConfigurationInterceptor.class);
 
@@ -197,13 +201,12 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context, final JobContext job,
             final String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
-        final DatastoreCatalogType newDatastoreCatalog = new DatastoreCatalogType();
 
         final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
 
         // Create a map of all used datastores and the columns which are
         // being accessed within them.
-        final Map<String, MutableSchema> datastoreUsage = new HashMap<String, MutableSchema>();
+        final Map<String, MutableSchema> datastoreUsage = new LinkedHashMap<String, MutableSchema>();
 
         if (job == null) {
             if (StringUtils.isNullOrEmpty(datastoreName)) {
@@ -225,7 +228,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             for (InputColumn<?> col : sourceColumns) {
                 final Column sourceColumn = col.getPhysicalColumn();
 
-                addColumn(schema, sourceColumn);
+                addQueriedColumn(schema, sourceColumn);
             }
 
             // represent the datastore of the job
@@ -237,36 +240,75 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             buildDatastoreUsageMap(datastoreUsage, analysisJob.getAnalyzerJobs());
         }
 
+        return interceptDatastoreCatalog(datastoreCatalog, datastoreUsage);
+    }
+
+    public DatastoreCatalogType interceptDatastoreCatalog(final DatastoreCatalog datastoreCatalog,
+            final Map<String, MutableSchema> datastoreUsage) {
+        final DatastoreCatalogType newDatastoreCatalog = new DatastoreCatalogType();
         final Set<Entry<String, MutableSchema>> datastoreUsageEntries = datastoreUsage.entrySet();
-        for (Entry<String, MutableSchema> entry : datastoreUsageEntries) {
+        for (final Entry<String, MutableSchema> entry : datastoreUsageEntries) {
             final String name = entry.getKey();
-            final MutableSchema schema = entry.getValue();
+            Schema schema = entry.getValue();
+            
             final Datastore datastore = datastoreCatalog.getDatastore(name);
             if (datastore != null) {
-                try {
-                    final Set<Column> columns = new TreeSet<Column>(new Comparator<Column>() {
-                        @Override
-                        public int compare(Column o1, Column o2) {
-                            if (o1.getTable() == o2.getTable()) {
-                                int diff = o1.getColumnNumber() - o2.getColumnNumber();
-                                if (diff != 0) {
-                                    return diff;
-                                }
+                // a comparator that takes the column number into account.
+                final Comparator<Column> columnComparator = new Comparator<Column>() {
+                    @Override
+                    public int compare(Column o1, Column o2) {
+                        if (o1.getTable() == o2.getTable()) {
+                            int diff = o1.getColumnNumber() - o2.getColumnNumber();
+                            if (diff != 0) {
+                                return diff;
                             }
-                            return o1.compareTo(o2);
-                        }});
-                    for (Table table : schema.getTables()) {
-                        for (Column column : table.getColumns()) {
-                            columns.add(column);
+                        }
+                        return o1.compareTo(o2);
+                    }
+                };
+
+                final DatastoreConnection connection = datastore.openConnection();
+                try {
+                    final DataContext dataContext = connection.getDataContext();
+                    final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+                    final Collection<PojoTableType> pojoTables = new ArrayList<PojoTableType>();
+                    
+                    Table[] usageTables = schema.getTables();
+                    if (usageTables == null || usageTables.length == 0) {
+                        // an unspecified schema entry will be interpreted as an
+                        // open-ended inclusion of schema information only
+                        schema = dataContext.getDefaultSchema();
+                        usageTables = dataContext.getDefaultSchema().getTables();
+                    }
+
+                    for (final Table usageTable : usageTables) {
+                        final Column[] columns = usageTable.getColumns();
+                        Arrays.sort(columns, columnComparator);
+
+                        final int maxRows = REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS : 0;
+
+                        final Table sourceTable = columns[0].getTable();
+                        try {
+                            final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable, columns,
+                                    maxRows);
+                            pojoTables.add(pojoTable);
+                        } catch (Exception e) {
+                            // allow omitting errornous tables here.
+                            logger.error("Failed to serialize table '" + sourceTable + "' of datastore '" + name
+                                    + "' to POJO format: " + e.getMessage(), e);
                         }
                     }
-                    final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
-                    final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore, columns,
-                            MAX_POJO_ROWS);
+
+                    final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore.getName(),
+                            schema.getName(), pojoTables);
+                    pojoDatastoreType.setDescription(datastore.getDescription());
+
                     newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
                 } catch (Exception e) {
                     // allow omitting errornous datastores here.
                     logger.error("Failed to serialize datastore '" + name + "' to POJO format: " + e.getMessage(), e);
+                } finally {
+                    connection.close();
                 }
             }
         }
@@ -274,16 +316,24 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         return newDatastoreCatalog;
     }
 
-    private void addColumn(final MutableSchema usageSchema, final Column sourceColumn) {
+    private MutableTable addNonQueriedTable(final MutableSchema usageSchema, final Table sourceTable) {
         if (usageSchema.getName() == null) {
-            usageSchema.setName(sourceColumn.getTable().getSchema().getName());
+            usageSchema.setName(sourceTable.getSchema().getName());
         }
-        
-        MutableTable table = (MutableTable) usageSchema.getTableByName(sourceColumn.getTable().getName());
+
+        MutableTable table = (MutableTable) usageSchema.getTableByName(sourceTable.getName());
         if (table == null) {
-            table = new MutableTable(sourceColumn.getTable().getName()).setSchema(usageSchema);
+            table = new MutableTable(sourceTable.getName()).setSchema(usageSchema);
             usageSchema.addTable(table);
         }
+        return table;
+    }
+
+    private void addQueriedColumn(final MutableSchema usageSchema, final Column sourceColumn) {
+        MutableTable table = addNonQueriedTable(usageSchema, sourceColumn.getTable());
+
+        // add this table in query plan
+        table.setRemarks(REMARK_INCLUDE_IN_QUERY);
 
         Column column = table.getColumnByName(sourceColumn.getName());
         if (column == null) {
@@ -412,7 +462,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                             datastoreUsage.put(datastore.getName(), usageSchema);
                         }
                         for (Column column : columns) {
-                            addColumn(usageSchema, column);
+                            addQueriedColumn(usageSchema, column);
                         }
                     }
                 }

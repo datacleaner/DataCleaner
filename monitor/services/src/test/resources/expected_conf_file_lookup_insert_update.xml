@@ -9,6 +9,365 @@
         <pojo-datastore description="DataCleaner example database" name="orderdb">
             <schema-name>PUBLIC</schema-name>
             <table>
+                <name>CUSTOMERS</name>
+                <columns>
+                    <column>
+                        <name>CUSTOMERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CUSTOMERNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CONTACTLASTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CONTACTFIRSTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PHONE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE1</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE2</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CITY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>STATE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>POSTALCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>COUNTRY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>SALESREPEMPLOYEENUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CREDITLIMIT</name>
+                        <type>NUMERIC</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>103</v>
+                        <v>Atelier graphique</v>
+                        <v>Schmitt</v>
+                        <v>Carine</v>
+                        <v>40.32.2555</v>
+                        <v>54&amp;#44; rue Royale</v>
+                        <v/>
+                        <v>Nantes</v>
+                        <v/>
+                        <v>44000</v>
+                        <v>France</v>
+                        <v>1370</v>
+                        <v>21000.0</v>
+                    </row>
+                    <row>
+                        <v>112</v>
+                        <v>Signal Gift Stores</v>
+                        <v>King</v>
+                        <v>Sue</v>
+                        <v>7025551838</v>
+                        <v>8489 Strong St.</v>
+                        <v/>
+                        <v>Las Vegas</v>
+                        <v>NV</v>
+                        <v>83030</v>
+                        <v>USA</v>
+                        <v>1166</v>
+                        <v>71800.0</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>Australian Collectors&amp;#44; Co.</v>
+                        <v>Ferguson</v>
+                        <v>Peter</v>
+                        <v>03 9520 4555</v>
+                        <v>636 St Kilda Road</v>
+                        <v>Level 3</v>
+                        <v>Melbourne</v>
+                        <v>Victoria</v>
+                        <v>3004</v>
+                        <v>Australia</v>
+                        <v>1611</v>
+                        <v>117300.0</v>
+                    </row>
+                    <row>
+                        <v>119</v>
+                        <v>La Rochelle Gifts</v>
+                        <v>Labrune</v>
+                        <v>Janine</v>
+                        <v>40.67.8555</v>
+                        <v>67&amp;#44; rue des Cinquante Otages</v>
+                        <v/>
+                        <v>Nantes</v>
+                        <v/>
+                        <v>44000</v>
+                        <v>France</v>
+                        <v>1370</v>
+                        <v>118200.0</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>Baane Mini Imports</v>
+                        <v>Bergulfsen</v>
+                        <v>Jonas</v>
+                        <v>07-98 9555</v>
+                        <v>Erling Skakkes gate 78</v>
+                        <v/>
+                        <v>Stavern</v>
+                        <v/>
+                        <v>4110</v>
+                        <v>Norway</v>
+                        <v>1504</v>
+                        <v>81700.0</v>
+                    </row>
+                    <row>
+                        <v>124</v>
+                        <v>Mini Gifts Distributors Ltd.</v>
+                        <v>Nelson</v>
+                        <v>Valarie</v>
+                        <v>4155551450</v>
+                        <v>5677 Strong St.</v>
+                        <v/>
+                        <v>San Rafael</v>
+                        <v>CA</v>
+                        <v>97562</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>210500.0</v>
+                    </row>
+                    <row>
+                        <v>125</v>
+                        <v>Havel &amp;amp; Zbyszek Co</v>
+                        <v>Piestrzeniewicz</v>
+                        <v>Zbyszek</v>
+                        <v>(26) 642-7555</v>
+                        <v>ul. Filtrowa 68</v>
+                        <v/>
+                        <v>Warszawa</v>
+                        <v/>
+                        <v>01-012</v>
+                        <v>Poland</v>
+                        <v/>
+                        <v>0.0</v>
+                    </row>
+                    <row>
+                        <v>128</v>
+                        <v>Blauer See Auto&amp;#44; Co.</v>
+                        <v>Keitel</v>
+                        <v>Roland</v>
+                        <v>+49 69 66 90 2555</v>
+                        <v>Lyonerstr. 34</v>
+                        <v/>
+                        <v>Frankfurt</v>
+                        <v/>
+                        <v>60528</v>
+                        <v>Germany</v>
+                        <v>1504</v>
+                        <v>59700.0</v>
+                    </row>
+                    <row>
+                        <v>129</v>
+                        <v>Mini Wheels Co.</v>
+                        <v>Murphy</v>
+                        <v>Julie</v>
+                        <v>6505555787</v>
+                        <v>5557 North Pendale Street</v>
+                        <v/>
+                        <v>San Francisco</v>
+                        <v>CA</v>
+                        <v>94217</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>64600.0</v>
+                    </row>
+                    <row>
+                        <v>131</v>
+                        <v>Land of Toys Inc.</v>
+                        <v>Yu</v>
+                        <v>Kwai</v>
+                        <v>2125557818</v>
+                        <v>897 Long Airport Avenue</v>
+                        <v/>
+                        <v>NYC</v>
+                        <v>NY</v>
+                        <v>10022</v>
+                        <v>USA</v>
+                        <v>1323</v>
+                        <v>114900.0</v>
+                    </row>
+                    <row>
+                        <v>141</v>
+                        <v>Euro+ Shopping Channel</v>
+                        <v>Freyre</v>
+                        <v>Diego</v>
+                        <v>(91) 555 94 44</v>
+                        <v>C/ Moralzarzal&amp;#44; 86</v>
+                        <v/>
+                        <v>Madrid</v>
+                        <v/>
+                        <v>28034</v>
+                        <v>Spain</v>
+                        <v>1370</v>
+                        <v>227600.0</v>
+                    </row>
+                    <row>
+                        <v>144</v>
+                        <v>Volvo Model Replicas&amp;#44; Co</v>
+                        <v>Berglund</v>
+                        <v>Christina</v>
+                        <v>0921-12 3555</v>
+                        <v>Berguvsvägen  8</v>
+                        <v/>
+                        <v>Luleå</v>
+                        <v/>
+                        <v>S-958 22</v>
+                        <v>Sweden</v>
+                        <v>1504</v>
+                        <v>53100.0</v>
+                    </row>
+                    <row>
+                        <v>145</v>
+                        <v>Danish Wholesale Imports</v>
+                        <v>Petersen</v>
+                        <v>Jytte</v>
+                        <v>31 12 3555</v>
+                        <v>Vinbæltet 34</v>
+                        <v/>
+                        <v>Kobenhavn</v>
+                        <v/>
+                        <v>1734</v>
+                        <v>Denmark</v>
+                        <v>1401</v>
+                        <v>83400.0</v>
+                    </row>
+                    <row>
+                        <v>146</v>
+                        <v>Saveley &amp;amp; Henriot&amp;#44; Co.</v>
+                        <v>Saveley</v>
+                        <v>Mary</v>
+                        <v>78.32.5555</v>
+                        <v>2&amp;#44; rue du Commerce</v>
+                        <v/>
+                        <v>Lyon</v>
+                        <v/>
+                        <v>69004</v>
+                        <v>France</v>
+                        <v>1337</v>
+                        <v>123900.0</v>
+                    </row>
+                    <row>
+                        <v>148</v>
+                        <v>Dragon Souveniers&amp;#44; Ltd.</v>
+                        <v>Natividad</v>
+                        <v>Eric</v>
+                        <v>+65 221 7555</v>
+                        <v>Bronz Sok.&amp;#44; Bronz Apt. 3/6 Tesvikiye</v>
+                        <v/>
+                        <v>Singapore</v>
+                        <v/>
+                        <v>079903</v>
+                        <v>Singapore</v>
+                        <v>1621</v>
+                        <v>103800.0</v>
+                    </row>
+                    <row>
+                        <v>151</v>
+                        <v>Muscle Machine Inc</v>
+                        <v>Young</v>
+                        <v>Jeff</v>
+                        <v>2125557413</v>
+                        <v>4092 Furth Circle</v>
+                        <v>Suite 400</v>
+                        <v>NYC</v>
+                        <v>NY</v>
+                        <v>10022</v>
+                        <v>USA</v>
+                        <v>1286</v>
+                        <v>138500.0</v>
+                    </row>
+                    <row>
+                        <v>157</v>
+                        <v>Diecast Classics Inc.</v>
+                        <v>Yu</v>
+                        <v>Kyung</v>
+                        <v>2155551555</v>
+                        <v>7586 Pompton St.</v>
+                        <v/>
+                        <v>Allentown</v>
+                        <v>PA</v>
+                        <v>70267</v>
+                        <v>USA</v>
+                        <v>1216</v>
+                        <v>100600.0</v>
+                    </row>
+                    <row>
+                        <v>161</v>
+                        <v>Technics Stores Inc.</v>
+                        <v>Hirano</v>
+                        <v>Juri</v>
+                        <v>6505556809</v>
+                        <v>9408 Furth Circle</v>
+                        <v/>
+                        <v>Burlingame</v>
+                        <v>CA</v>
+                        <v>94217</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>84600.0</v>
+                    </row>
+                    <row>
+                        <v>166</v>
+                        <v>Handji Gifts&amp;amp; Co</v>
+                        <v>Victorino</v>
+                        <v>Wendy</v>
+                        <v>+65 224 1555</v>
+                        <v>Village Close - 106 Linden Road Sandown</v>
+                        <v>2nd Floor</v>
+                        <v>Singapore</v>
+                        <v/>
+                        <v>069045</v>
+                        <v>Singapore</v>
+                        <v>1612</v>
+                        <v>97900.0</v>
+                    </row>
+                    <row>
+                        <v>167</v>
+                        <v>Herkku Gifts</v>
+                        <v>Oeztan</v>
+                        <v>Veysel</v>
+                        <v>+47 2267 3215</v>
+                        <v>Drammen 121&amp;#44; PR 744 Sentrum</v>
+                        <v/>
+                        <v>Bergen</v>
+                        <v/>
+                        <v>N 5804</v>
+                        <v>Norway</v>
+                        <v>1504</v>
+                        <v>96800.0</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
                 <name>EMPLOYEES</name>
                 <columns>
                     <column>
@@ -148,149 +507,6 @@
                         <v>King</v>
                         <v>Tom</v>
                         <v>Sales Rep</v>
-                    </row>
-                </rows>
-            </table>
-            <table>
-                <name>CUSTOMERS</name>
-                <columns>
-                    <column>
-                        <name>CUSTOMERNUMBER</name>
-                        <type>INTEGER</type>
-                    </column>
-                    <column>
-                        <name>CONTACTLASTNAME</name>
-                        <type>VARCHAR</type>
-                    </column>
-                    <column>
-                        <name>CONTACTFIRSTNAME</name>
-                        <type>VARCHAR</type>
-                    </column>
-                    <column>
-                        <name>CUSTOMERNAME</name>
-                        <type>VARCHAR</type>
-                    </column>
-                </columns>
-                <rows>
-                    <row>
-                        <v>103</v>
-                        <v>Schmitt</v>
-                        <v>Carine</v>
-                        <v>Atelier graphique</v>
-                    </row>
-                    <row>
-                        <v>112</v>
-                        <v>King</v>
-                        <v>Sue</v>
-                        <v>Signal Gift Stores</v>
-                    </row>
-                    <row>
-                        <v>114</v>
-                        <v>Ferguson</v>
-                        <v>Peter</v>
-                        <v>Australian Collectors&amp;#44; Co.</v>
-                    </row>
-                    <row>
-                        <v>119</v>
-                        <v>Labrune</v>
-                        <v>Janine</v>
-                        <v>La Rochelle Gifts</v>
-                    </row>
-                    <row>
-                        <v>121</v>
-                        <v>Bergulfsen</v>
-                        <v>Jonas</v>
-                        <v>Baane Mini Imports</v>
-                    </row>
-                    <row>
-                        <v>124</v>
-                        <v>Nelson</v>
-                        <v>Valarie</v>
-                        <v>Mini Gifts Distributors Ltd.</v>
-                    </row>
-                    <row>
-                        <v>125</v>
-                        <v>Piestrzeniewicz</v>
-                        <v>Zbyszek</v>
-                        <v>Havel &amp;amp; Zbyszek Co</v>
-                    </row>
-                    <row>
-                        <v>128</v>
-                        <v>Keitel</v>
-                        <v>Roland</v>
-                        <v>Blauer See Auto&amp;#44; Co.</v>
-                    </row>
-                    <row>
-                        <v>129</v>
-                        <v>Murphy</v>
-                        <v>Julie</v>
-                        <v>Mini Wheels Co.</v>
-                    </row>
-                    <row>
-                        <v>131</v>
-                        <v>Yu</v>
-                        <v>Kwai</v>
-                        <v>Land of Toys Inc.</v>
-                    </row>
-                    <row>
-                        <v>141</v>
-                        <v>Freyre</v>
-                        <v>Diego</v>
-                        <v>Euro+ Shopping Channel</v>
-                    </row>
-                    <row>
-                        <v>144</v>
-                        <v>Berglund</v>
-                        <v>Christina</v>
-                        <v>Volvo Model Replicas&amp;#44; Co</v>
-                    </row>
-                    <row>
-                        <v>145</v>
-                        <v>Petersen</v>
-                        <v>Jytte</v>
-                        <v>Danish Wholesale Imports</v>
-                    </row>
-                    <row>
-                        <v>146</v>
-                        <v>Saveley</v>
-                        <v>Mary</v>
-                        <v>Saveley &amp;amp; Henriot&amp;#44; Co.</v>
-                    </row>
-                    <row>
-                        <v>148</v>
-                        <v>Natividad</v>
-                        <v>Eric</v>
-                        <v>Dragon Souveniers&amp;#44; Ltd.</v>
-                    </row>
-                    <row>
-                        <v>151</v>
-                        <v>Young</v>
-                        <v>Jeff</v>
-                        <v>Muscle Machine Inc</v>
-                    </row>
-                    <row>
-                        <v>157</v>
-                        <v>Yu</v>
-                        <v>Kyung</v>
-                        <v>Diecast Classics Inc.</v>
-                    </row>
-                    <row>
-                        <v>161</v>
-                        <v>Hirano</v>
-                        <v>Juri</v>
-                        <v>Technics Stores Inc.</v>
-                    </row>
-                    <row>
-                        <v>166</v>
-                        <v>Victorino</v>
-                        <v>Wendy</v>
-                        <v>Handji Gifts&amp;amp; Co</v>
-                    </row>
-                    <row>
-                        <v>167</v>
-                        <v>Oeztan</v>
-                        <v>Veysel</v>
-                        <v>Herkku Gifts</v>
                     </row>
                 </rows>
             </table>

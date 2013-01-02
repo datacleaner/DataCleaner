@@ -25,14 +25,15 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -71,10 +72,10 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.metamodel.schema.Column;
+import org.eobjects.metamodel.schema.MutableSchema;
+import org.eobjects.metamodel.schema.MutableTable;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
 import org.eobjects.metamodel.util.Ref;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +102,9 @@ import org.springframework.stereotype.Component;
 public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(JaxbConfigurationInterceptor.class);
-    private static final Integer MAX_POJO_ROWS = 20;
+
+    private static final int MAX_POJO_ROWS = 20;
+    private static final int MAX_AUTO_COLUMNS_PER_TABLE = 40;
 
     private final JAXBContext _jaxbContext;
     private final ConfigurationFactory _configurationFactory;
@@ -200,31 +203,33 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
 
         // Create a map of all used datastores and the columns which are
         // being accessed within them.
-        Map<String, Set<Column>> datastoreUsage = new HashMap<String, Set<Column>>();
+        final Map<String, MutableSchema> datastoreUsage = new HashMap<String, MutableSchema>();
 
         if (job == null) {
             if (StringUtils.isNullOrEmpty(datastoreName)) {
                 // represent all datastores (no job-specific information is
                 // known)
                 for (final String name : datastoreCatalog.getDatastoreNames()) {
-                    datastoreUsage.put(name, new HashSet<Column>());
+                    datastoreUsage.put(name, new MutableSchema());
                 }
             } else {
                 // represent only a single datastore
-                datastoreUsage.put(datastoreName, new HashSet<Column>());
+                datastoreUsage.put(datastoreName, new MutableSchema());
             }
         } else {
-            AnalysisJob analysisJob = job.getAnalysisJob();
-            Collection<InputColumn<?>> sourceColumns = analysisJob.getSourceColumns();
-            List<Column> columns = CollectionUtils.map(sourceColumns, new Func<InputColumn<?>, Column>() {
-                @Override
-                public Column eval(InputColumn<?> col) {
-                    return col.getPhysicalColumn();
-                }
-            });
+            // read the job to determine which datastores are needed to include
+
+            final MutableSchema schema = new MutableSchema();
+            final AnalysisJob analysisJob = job.getAnalysisJob();
+            final Collection<InputColumn<?>> sourceColumns = analysisJob.getSourceColumns();
+            for (InputColumn<?> col : sourceColumns) {
+                final Column sourceColumn = col.getPhysicalColumn();
+
+                addColumn(schema, sourceColumn);
+            }
 
             // represent the datastore of the job
-            datastoreUsage.put(analysisJob.getDatastore().getName(), new LinkedHashSet<Column>(columns));
+            datastoreUsage.put(analysisJob.getDatastore().getName(), schema);
 
             buildDatastoreUsageMap(datastoreUsage, analysisJob.getExplorerJobs());
             buildDatastoreUsageMap(datastoreUsage, analysisJob.getFilterJobs());
@@ -232,14 +237,30 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
             buildDatastoreUsageMap(datastoreUsage, analysisJob.getAnalyzerJobs());
         }
 
-        final Set<Entry<String, Set<Column>>> datastoreUsageEntries = datastoreUsage.entrySet();
-        for (Entry<String, Set<Column>> entry : datastoreUsageEntries) {
+        final Set<Entry<String, MutableSchema>> datastoreUsageEntries = datastoreUsage.entrySet();
+        for (Entry<String, MutableSchema> entry : datastoreUsageEntries) {
             final String name = entry.getKey();
-            final Set<Column> columns = entry.getValue();
+            final MutableSchema schema = entry.getValue();
             final Datastore datastore = datastoreCatalog.getDatastore(name);
             if (datastore != null) {
                 try {
-                    JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
+                    final Set<Column> columns = new TreeSet<Column>(new Comparator<Column>() {
+                        @Override
+                        public int compare(Column o1, Column o2) {
+                            if (o1.getTable() == o2.getTable()) {
+                                int diff = o1.getColumnNumber() - o2.getColumnNumber();
+                                if (diff != 0) {
+                                    return diff;
+                                }
+                            }
+                            return o1.compareTo(o2);
+                        }});
+                    for (Table table : schema.getTables()) {
+                        for (Column column : table.getColumns()) {
+                            columns.add(column);
+                        }
+                    }
+                    final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
                     final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore, columns,
                             MAX_POJO_ROWS);
                     newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);
@@ -253,6 +274,23 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         return newDatastoreCatalog;
     }
 
+    private void addColumn(final MutableSchema usageSchema, final Column sourceColumn) {
+        if (usageSchema.getName() == null) {
+            usageSchema.setName(sourceColumn.getTable().getSchema().getName());
+        }
+        
+        MutableTable table = (MutableTable) usageSchema.getTableByName(sourceColumn.getTable().getName());
+        if (table == null) {
+            table = new MutableTable(sourceColumn.getTable().getName()).setSchema(usageSchema);
+            usageSchema.addTable(table);
+        }
+
+        Column column = table.getColumnByName(sourceColumn.getName());
+        if (column == null) {
+            table.addColumn(sourceColumn);
+        }
+    }
+
     /**
      * Builds the map of datastore usage by scanning all {@link ComponentJob}s
      * given for configured {@link Datastore} properties.
@@ -260,7 +298,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      * @param datastoreUsage
      * @param componentJobs
      */
-    private void buildDatastoreUsageMap(final Map<String, Set<Column>> datastoreUsage,
+    private void buildDatastoreUsageMap(final Map<String, MutableSchema> datastoreUsage,
             final Collection<? extends HasBeanConfiguration> componentJobs) {
         for (HasBeanConfiguration componentJob : componentJobs) {
             final Set<ConfiguredPropertyDescriptor> datastoreProperties = componentJob.getDescriptor()
@@ -307,7 +345,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      * @param componentJob
      * @param datastore
      */
-    private void buildDatastoreUsageMap(final Map<String, Set<Column>> datastoreUsage,
+    private void buildDatastoreUsageMap(final Map<String, MutableSchema> datastoreUsage,
             final HasBeanConfiguration componentJob, final Datastore datastore) {
         final Set<ConfiguredPropertyDescriptor> schemaProperties = componentJob.getDescriptor()
                 .getConfiguredPropertiesByAnnotation(SchemaProperty.class);
@@ -324,7 +362,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     logger.warn(
                             "No schemas specified for Datastore {} in {}. Registering an unspecified datastore usage scenario.",
                             datastore, componentJob);
-                    datastoreUsage.put(datastore.getName(), new HashSet<Column>());
+                    datastoreUsage.put(datastore.getName(), new MutableSchema());
                 } else if (schemas.size() > 1) {
                     // we do not know any cases where this will happen, but
                     // it might potentially happen in a third party
@@ -339,7 +377,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                         logger.warn(
                                 "No tables specified for Schema {} in {}. Registering an unspecified datastore usage scenario.",
                                 schema, componentJob);
-                        datastoreUsage.put(datastore.getName(), new HashSet<Column>());
+                        datastoreUsage.put(datastore.getName(), new MutableSchema());
                         return;
                     } else if (tables.size() > 1) {
                         // we do not know any cases where this will happen, but
@@ -351,21 +389,31 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     }
 
                     for (final Table table : tables) {
-                        Collection<Column> columns = getColumns(componentJob, table);
-                        if (columns == null || columns.isEmpty()) {
-                            logger.info(
-                                    "Could not determine used columns for {}. Adding all columns to usage scenario.",
-                                    table);
+                        Collection<Column> columns;
+
+                        if (table.getColumnCount() < MAX_AUTO_COLUMNS_PER_TABLE) {
+                            logger.debug("Table {} contains less than {} columns, adding all columns for convenience.",
+                                    table.getName(), MAX_AUTO_COLUMNS_PER_TABLE);
                             columns = Arrays.asList(table.getColumns());
+                        } else {
+                            columns = getColumns(componentJob, table);
+                            if (columns == null || columns.isEmpty()) {
+                                logger.info(
+                                        "Could not determine used columns for {}. Adding all columns to usage scenario.",
+                                        table);
+                                columns = Arrays.asList(table.getColumns());
+                            }
                         }
 
                         // update the usage map
-                        Set<Column> usage = datastoreUsage.get(datastore.getName());
-                        if (usage == null) {
-                            usage = new LinkedHashSet<Column>();
-                            datastoreUsage.put(datastore.getName(), usage);
+                        MutableSchema usageSchema = datastoreUsage.get(datastore.getName());
+                        if (usageSchema == null) {
+                            usageSchema = new MutableSchema();
+                            datastoreUsage.put(datastore.getName(), usageSchema);
                         }
-                        usage.addAll(columns);
+                        for (Column column : columns) {
+                            addColumn(usageSchema, column);
+                        }
                     }
                 }
             }

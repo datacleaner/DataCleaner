@@ -291,9 +291,6 @@ public final class IconUtils {
         if (displayName.equals("pattern finder")) {
             imagePath = "images/component-types/type_pattern_finder.png";
         }
-        if (displayName.equals("weekday distribution")) {
-            imagePath = "images/component-types/type_weekday_distribution.png";
-        }
         if (displayName.equals("date/time analyzer")) {
             imagePath = "images/component-types/type_date_time_analyzer.png";
         }

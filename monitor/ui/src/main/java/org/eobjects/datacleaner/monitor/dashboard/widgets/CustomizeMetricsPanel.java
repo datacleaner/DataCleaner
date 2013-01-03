@@ -103,13 +103,17 @@ public class CustomizeMetricsPanel extends FlowPanel {
         add(jobLabel);
 
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
-        boolean isMetricGroupVisible = true;
-        if(metricGroups.size() > 3){
-            isMetricGroupVisible = false;
+
+        // show only metric groups if there are not too many
+        final boolean isMetricGroupVisibleByDefault;
+        if (metricGroups.size() > 2) {
+            isMetricGroupVisibleByDefault = false;
+        } else {
+            isMetricGroupVisibleByDefault = true;
         }
-        
+
         for (MetricGroup metricGroup : metricGroups) {
-            final FlowPanel metricGroupPanel = createMetricGroupPanel(metricGroup, isMetricGroupVisible);
+            final FlowPanel metricGroupPanel = createMetricGroupPanel(metricGroup, isMetricGroupVisibleByDefault);
             add(metricGroupPanel);
         }
 
@@ -128,7 +132,8 @@ public class CustomizeMetricsPanel extends FlowPanel {
         if (_formulaMetricsPanel == null) {
             _formulaMetricsPanel = new FlowPanel();
             _formulaMetricsPanel.addStyleName("FormulaMetricsPanel");
-            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel, null, true);
+            final FlowPanel metricGroupPanel = createMetricGroupPanel("Metric formulas", _formulaMetricsPanel, null,
+                    true);
             metricGroupPanel.addStyleName("FormulaMetricsGroupPanel");
             add(metricGroupPanel);
         }
@@ -146,6 +151,7 @@ public class CustomizeMetricsPanel extends FlowPanel {
 
     private FlowPanel createMetricGroupPanel(MetricGroup metricGroup, boolean isMetricGroupVisible) {
         final FlowPanel innerPanel = new FlowPanel();
+        innerPanel.setStyleName("contents");
 
         final List<MetricIdentifier> activeMetrics = _timelineDefinition.getMetrics();
         final List<MetricIdentifier> availableMetrics = metricGroup.getMetrics();
@@ -154,10 +160,11 @@ public class CustomizeMetricsPanel extends FlowPanel {
         for (MetricIdentifier metricIdentifier : availableMetrics) {
             final MetricPresenter presenter = createMetricPresenter(columnParameterizedMetrics, metricGroup,
                     metricIdentifier, activeMetrics);
-            if(presenter.getSelectedMetrics().size() > 0){
-                isMetricGroupVisible = true;
-            }
             if (presenter != null) {
+                final List<MetricIdentifier> selectedMetrics = presenter.getSelectedMetrics();
+                if (selectedMetrics.size() > 0) {
+                    isMetricGroupVisible = true;
+                }
                 _metricPresenters.add(presenter);
                 innerPanel.add(presenter);
             }
@@ -172,23 +179,35 @@ public class CustomizeMetricsPanel extends FlowPanel {
         return createMetricGroupPanel(title, innerPanel, metricGroup, isMetricGroupVisible);
     }
 
-    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel, MetricGroup metricGroup, boolean isMetricGroupVisible) {
-        
+    private FlowPanel createMetricGroupPanel(String title, final Panel innerPanel, MetricGroup metricGroup,
+            boolean isMetricGroupVisibleByDefault) {
+        final FlowPanel metricGroupPanel = new FlowPanel();
+        metricGroupPanel.setStyleName("MetricGroupPanel");
+
         final HeadingLabel heading = new HeadingLabel(title);
-        
+
         heading.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 // toggle visibility
-                innerPanel.setVisible(!innerPanel.isVisible());
+                boolean expanded = metricGroupPanel.getStyleName().indexOf("expanded") != -1;
+                setExpanded(metricGroupPanel, !expanded);
             }
         });
-        innerPanel.setVisible(isMetricGroupVisible);
-        final FlowPanel panel = new FlowPanel();
-        panel.addStyleName("MetricGroupPanel");
-        panel.add(heading);
-        panel.add(innerPanel);
-        return panel;
+        setExpanded(metricGroupPanel, isMetricGroupVisibleByDefault);
+        metricGroupPanel.add(heading);
+        metricGroupPanel.add(innerPanel);
+        return metricGroupPanel;
+    }
+
+    private void setExpanded(FlowPanel metricGroupPanel, boolean visible) {
+        if (visible) {
+            metricGroupPanel.removeStyleDependentName("collapsed");
+            metricGroupPanel.addStyleDependentName("expanded");
+        } else {
+            metricGroupPanel.removeStyleDependentName("expanded");
+            metricGroupPanel.addStyleDependentName("collapsed");
+        }
     }
 
     private MetricPresenter createMetricPresenter(

@@ -197,6 +197,20 @@
 	border: 1px solid #f0f0f0;
 }
 
+.MetricGroupPanel-collapsed .contents, .MetricGroupPanel-collapsed .FormulaMetricsPanel {
+	visibility: hidden;
+	display: none;
+}
+
+.MetricGroupPanel-collapsed .HeadingLabel {
+	background-image: url("expand-metrics.png") !important;
+	background-repeat: no-repeat;
+	background-position: right bottom;
+	padding-right: 30px;
+	display: inline-block;
+	line-height: 26px;
+}
+
 .FormulaMetricsGroupPanel  .HeadingLabel {
 	background-image: url("formula.png");
 	background-repeat: no-repeat;

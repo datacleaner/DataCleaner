@@ -249,7 +249,6 @@ public class TimelinePanel extends FlowPanel {
                 chartArea.setWidth(WIDTH - 60);
                 chartArea.setHeight(height * 0.8d);
                 options.setChartArea(chartArea);
-
                 options.setWidth(WIDTH);
                 options.setHeight(height);
 
@@ -271,6 +270,14 @@ public class TimelinePanel extends FlowPanel {
                     options.setTitle(_timelineIdentifier.getName());
                 }
                 options.setLegend(LegendPosition.NONE);
+                
+                if (_timelineData.getRows().size() == 1) {
+                    options.setPointSize(6);
+                } else if (_timelineData.getRows().size() < 10) {
+                    options.setPointSize(3);
+                } else if (_timelineData.getRows().size() < 20) {
+                    options.setPointSize(2);
+                }
 
                 final AbstractDataTable dataTable = createDataTable(_timelineDefinition, _timelineData);
                 final List<String> colors = createColors(_timelineDefinition, new ColorProvider());

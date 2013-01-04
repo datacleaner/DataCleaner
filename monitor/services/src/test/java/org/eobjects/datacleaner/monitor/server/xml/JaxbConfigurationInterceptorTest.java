@@ -63,7 +63,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
     }
 
     public void testGenerateGenericConfiguration() throws Exception {
-        String actual = generationConf(null);
+        String actual = generationConf(null, null);
 
         String expected = FileHelper.readFileAsString(new File("src/test/resources/expected_conf_file_generic.xml"),
                 "UTF-8");
@@ -76,10 +76,20 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
             assertEquals(expected, actual);
         }
     }
+    
+    public void testGenerateDatastoreSpecificConfiguration() throws Exception {
+        String actual = generationConf(null, "orderdb");
+
+        String expected = FileHelper.readFileAsString(new File(
+                "src/test/resources/expected_conf_file_specific_datastore.xml"), "UTF-8");
+        expected = expected.replaceAll("\r\n", "\n").trim();
+
+        assertEquals(expected, actual);
+    }
 
     public void testGenerateJobSpecificConfigurationSourceOnly() throws Exception {
         JobContext job = _contextFactory.getContext("tenant1").getJob("email_standardizer");
-        String actual = generationConf(job);
+        String actual = generationConf(job, null);
 
         String expected = FileHelper.readFileAsString(new File(
                 "src/test/resources/expected_conf_file_specific_source_only.xml"), "UTF-8");
@@ -90,7 +100,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
     public void testGenerateJobSpecificConfigurationTableLookupAnotherDatastore() throws Exception {
         JobContext job = _contextFactory.getContext("tenant1").getJob("lookup_vendor");
-        String actual = generationConf(job);
+        String actual = generationConf(job, null);
 
         String expected = FileHelper.readFileAsString(new File(
                 "src/test/resources/expected_conf_file_specific_lookup_another_ds.xml"), "UTF-8");
@@ -105,7 +115,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         final DatastoreConnection con = ds.openConnection();
         try {
             JobContext job = tenantContext.getJob("Move employees to customers");
-            String actual = generationConf(job);
+            String actual = generationConf(job, null);
 
             String expected = FileHelper.readFileAsString(new File(
                     "src/test/resources/expected_conf_file_lookup_insert_update.xml"), "UTF-8");
@@ -117,7 +127,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         }
     }
 
-    private String generationConf(final JobContext job) throws Exception {
+    private String generationConf(final JobContext job, final String datastoreName) throws Exception {
 
         final Ref<Calendar> dateRef = new Ref<Calendar>() {
             @Override
@@ -146,7 +156,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         file.readFile(new Action<InputStream>() {
             @Override
             public void run(InputStream in) throws Exception {
-                interceptor.intercept("tenant1", job, null, in, out);
+                interceptor.intercept("tenant1", job, datastoreName, in, out);
             }
         });
 

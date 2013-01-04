@@ -1,0 +1,1019 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0">
+    <configuration-metadata>
+        <configuration-name>DataCleaner monitor configuration for tenant tenant1</configuration-name>
+        <author>Automatically generated</author>
+        <updated-date>2012-06-26Z</updated-date>
+    </configuration-metadata>
+    <datastore-catalog>
+        <pojo-datastore description="DataCleaner example database" name="orderdb">
+            <table>
+                <name>CUSTOMERS</name>
+                <columns>
+                    <column>
+                        <name>CUSTOMERNUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CUSTOMERNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CONTACTLASTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CONTACTFIRSTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PHONE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE1</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE2</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CITY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>STATE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>POSTALCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>COUNTRY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>SALESREPEMPLOYEENUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>CREDITLIMIT</name>
+                        <type>NUMERIC</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>103</v>
+                        <v>Atelier graphique</v>
+                        <v>Schmitt</v>
+                        <v>Carine</v>
+                        <v>40.32.2555</v>
+                        <v>54&amp;#44; rue Royale</v>
+                        <v/>
+                        <v>Nantes</v>
+                        <v/>
+                        <v>44000</v>
+                        <v>France</v>
+                        <v>1370</v>
+                        <v>21000.0</v>
+                    </row>
+                    <row>
+                        <v>112</v>
+                        <v>Signal Gift Stores</v>
+                        <v>King</v>
+                        <v>Sue</v>
+                        <v>7025551838</v>
+                        <v>8489 Strong St.</v>
+                        <v/>
+                        <v>Las Vegas</v>
+                        <v>NV</v>
+                        <v>83030</v>
+                        <v>USA</v>
+                        <v>1166</v>
+                        <v>71800.0</v>
+                    </row>
+                    <row>
+                        <v>114</v>
+                        <v>Australian Collectors&amp;#44; Co.</v>
+                        <v>Ferguson</v>
+                        <v>Peter</v>
+                        <v>03 9520 4555</v>
+                        <v>636 St Kilda Road</v>
+                        <v>Level 3</v>
+                        <v>Melbourne</v>
+                        <v>Victoria</v>
+                        <v>3004</v>
+                        <v>Australia</v>
+                        <v>1611</v>
+                        <v>117300.0</v>
+                    </row>
+                    <row>
+                        <v>119</v>
+                        <v>La Rochelle Gifts</v>
+                        <v>Labrune</v>
+                        <v>Janine</v>
+                        <v>40.67.8555</v>
+                        <v>67&amp;#44; rue des Cinquante Otages</v>
+                        <v/>
+                        <v>Nantes</v>
+                        <v/>
+                        <v>44000</v>
+                        <v>France</v>
+                        <v>1370</v>
+                        <v>118200.0</v>
+                    </row>
+                    <row>
+                        <v>121</v>
+                        <v>Baane Mini Imports</v>
+                        <v>Bergulfsen</v>
+                        <v>Jonas</v>
+                        <v>07-98 9555</v>
+                        <v>Erling Skakkes gate 78</v>
+                        <v/>
+                        <v>Stavern</v>
+                        <v/>
+                        <v>4110</v>
+                        <v>Norway</v>
+                        <v>1504</v>
+                        <v>81700.0</v>
+                    </row>
+                    <row>
+                        <v>124</v>
+                        <v>Mini Gifts Distributors Ltd.</v>
+                        <v>Nelson</v>
+                        <v>Valarie</v>
+                        <v>4155551450</v>
+                        <v>5677 Strong St.</v>
+                        <v/>
+                        <v>San Rafael</v>
+                        <v>CA</v>
+                        <v>97562</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>210500.0</v>
+                    </row>
+                    <row>
+                        <v>125</v>
+                        <v>Havel &amp;amp; Zbyszek Co</v>
+                        <v>Piestrzeniewicz</v>
+                        <v>Zbyszek</v>
+                        <v>(26) 642-7555</v>
+                        <v>ul. Filtrowa 68</v>
+                        <v/>
+                        <v>Warszawa</v>
+                        <v/>
+                        <v>01-012</v>
+                        <v>Poland</v>
+                        <v/>
+                        <v>0.0</v>
+                    </row>
+                    <row>
+                        <v>128</v>
+                        <v>Blauer See Auto&amp;#44; Co.</v>
+                        <v>Keitel</v>
+                        <v>Roland</v>
+                        <v>+49 69 66 90 2555</v>
+                        <v>Lyonerstr. 34</v>
+                        <v/>
+                        <v>Frankfurt</v>
+                        <v/>
+                        <v>60528</v>
+                        <v>Germany</v>
+                        <v>1504</v>
+                        <v>59700.0</v>
+                    </row>
+                    <row>
+                        <v>129</v>
+                        <v>Mini Wheels Co.</v>
+                        <v>Murphy</v>
+                        <v>Julie</v>
+                        <v>6505555787</v>
+                        <v>5557 North Pendale Street</v>
+                        <v/>
+                        <v>San Francisco</v>
+                        <v>CA</v>
+                        <v>94217</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>64600.0</v>
+                    </row>
+                    <row>
+                        <v>131</v>
+                        <v>Land of Toys Inc.</v>
+                        <v>Yu</v>
+                        <v>Kwai</v>
+                        <v>2125557818</v>
+                        <v>897 Long Airport Avenue</v>
+                        <v/>
+                        <v>NYC</v>
+                        <v>NY</v>
+                        <v>10022</v>
+                        <v>USA</v>
+                        <v>1323</v>
+                        <v>114900.0</v>
+                    </row>
+                    <row>
+                        <v>141</v>
+                        <v>Euro+ Shopping Channel</v>
+                        <v>Freyre</v>
+                        <v>Diego</v>
+                        <v>(91) 555 94 44</v>
+                        <v>C/ Moralzarzal&amp;#44; 86</v>
+                        <v/>
+                        <v>Madrid</v>
+                        <v/>
+                        <v>28034</v>
+                        <v>Spain</v>
+                        <v>1370</v>
+                        <v>227600.0</v>
+                    </row>
+                    <row>
+                        <v>144</v>
+                        <v>Volvo Model Replicas&amp;#44; Co</v>
+                        <v>Berglund</v>
+                        <v>Christina</v>
+                        <v>0921-12 3555</v>
+                        <v>Berguvsvägen  8</v>
+                        <v/>
+                        <v>Luleå</v>
+                        <v/>
+                        <v>S-958 22</v>
+                        <v>Sweden</v>
+                        <v>1504</v>
+                        <v>53100.0</v>
+                    </row>
+                    <row>
+                        <v>145</v>
+                        <v>Danish Wholesale Imports</v>
+                        <v>Petersen</v>
+                        <v>Jytte</v>
+                        <v>31 12 3555</v>
+                        <v>Vinbæltet 34</v>
+                        <v/>
+                        <v>Kobenhavn</v>
+                        <v/>
+                        <v>1734</v>
+                        <v>Denmark</v>
+                        <v>1401</v>
+                        <v>83400.0</v>
+                    </row>
+                    <row>
+                        <v>146</v>
+                        <v>Saveley &amp;amp; Henriot&amp;#44; Co.</v>
+                        <v>Saveley</v>
+                        <v>Mary</v>
+                        <v>78.32.5555</v>
+                        <v>2&amp;#44; rue du Commerce</v>
+                        <v/>
+                        <v>Lyon</v>
+                        <v/>
+                        <v>69004</v>
+                        <v>France</v>
+                        <v>1337</v>
+                        <v>123900.0</v>
+                    </row>
+                    <row>
+                        <v>148</v>
+                        <v>Dragon Souveniers&amp;#44; Ltd.</v>
+                        <v>Natividad</v>
+                        <v>Eric</v>
+                        <v>+65 221 7555</v>
+                        <v>Bronz Sok.&amp;#44; Bronz Apt. 3/6 Tesvikiye</v>
+                        <v/>
+                        <v>Singapore</v>
+                        <v/>
+                        <v>079903</v>
+                        <v>Singapore</v>
+                        <v>1621</v>
+                        <v>103800.0</v>
+                    </row>
+                    <row>
+                        <v>151</v>
+                        <v>Muscle Machine Inc</v>
+                        <v>Young</v>
+                        <v>Jeff</v>
+                        <v>2125557413</v>
+                        <v>4092 Furth Circle</v>
+                        <v>Suite 400</v>
+                        <v>NYC</v>
+                        <v>NY</v>
+                        <v>10022</v>
+                        <v>USA</v>
+                        <v>1286</v>
+                        <v>138500.0</v>
+                    </row>
+                    <row>
+                        <v>157</v>
+                        <v>Diecast Classics Inc.</v>
+                        <v>Yu</v>
+                        <v>Kyung</v>
+                        <v>2155551555</v>
+                        <v>7586 Pompton St.</v>
+                        <v/>
+                        <v>Allentown</v>
+                        <v>PA</v>
+                        <v>70267</v>
+                        <v>USA</v>
+                        <v>1216</v>
+                        <v>100600.0</v>
+                    </row>
+                    <row>
+                        <v>161</v>
+                        <v>Technics Stores Inc.</v>
+                        <v>Hirano</v>
+                        <v>Juri</v>
+                        <v>6505556809</v>
+                        <v>9408 Furth Circle</v>
+                        <v/>
+                        <v>Burlingame</v>
+                        <v>CA</v>
+                        <v>94217</v>
+                        <v>USA</v>
+                        <v>1165</v>
+                        <v>84600.0</v>
+                    </row>
+                    <row>
+                        <v>166</v>
+                        <v>Handji Gifts&amp;amp; Co</v>
+                        <v>Victorino</v>
+                        <v>Wendy</v>
+                        <v>+65 224 1555</v>
+                        <v>Village Close - 106 Linden Road Sandown</v>
+                        <v>2nd Floor</v>
+                        <v>Singapore</v>
+                        <v/>
+                        <v>069045</v>
+                        <v>Singapore</v>
+                        <v>1612</v>
+                        <v>97900.0</v>
+                    </row>
+                    <row>
+                        <v>167</v>
+                        <v>Herkku Gifts</v>
+                        <v>Oeztan</v>
+                        <v>Veysel</v>
+                        <v>+47 2267 3215</v>
+                        <v>Drammen 121&amp;#44; PR 744 Sentrum</v>
+                        <v/>
+                        <v>Bergen</v>
+                        <v/>
+                        <v>N 5804</v>
+                        <v>Norway</v>
+                        <v>1504</v>
+                        <v>96800.0</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>EMPLOYEES</name>
+                <columns>
+                    <column>
+                        <name>EMPLOYEENUMBER</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>LASTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>FIRSTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>EXTENSION</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>EMAIL</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>OFFICECODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>REPORTSTO</name>
+                        <type>INTEGER</type>
+                    </column>
+                    <column>
+                        <name>JOBTITLE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>1002</v>
+                        <v>Murphy</v>
+                        <v>Diane</v>
+                        <v>x5800</v>
+                        <v>dmurphy@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v/>
+                        <v>President</v>
+                    </row>
+                    <row>
+                        <v>1056</v>
+                        <v>Patterson</v>
+                        <v>Mary</v>
+                        <v>x4611</v>
+                        <v>mpatterso@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1002</v>
+                        <v>VP Sales</v>
+                    </row>
+                    <row>
+                        <v>1076</v>
+                        <v>Firrelli</v>
+                        <v>Jeff</v>
+                        <v>x9273</v>
+                        <v>jfirrelli@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1002</v>
+                        <v>VP Marketing</v>
+                    </row>
+                    <row>
+                        <v>1088</v>
+                        <v>Patterson</v>
+                        <v>William</v>
+                        <v>x4871</v>
+                        <v>wpatterson@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1056</v>
+                        <v>Sales Manager (JAPAN&amp;#44; APAC)</v>
+                    </row>
+                    <row>
+                        <v>1102</v>
+                        <v>Bondur</v>
+                        <v>Gerard</v>
+                        <v>x5408</v>
+                        <v>athompson@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1056</v>
+                        <v>Sale Manager (EMEA)</v>
+                    </row>
+                    <row>
+                        <v>1143</v>
+                        <v>Bow</v>
+                        <v>Anthony</v>
+                        <v>x5428</v>
+                        <v>bhoward@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1056</v>
+                        <v>Sales Manager (NA)</v>
+                    </row>
+                    <row>
+                        <v>1165</v>
+                        <v>Jennings</v>
+                        <v>Leslie</v>
+                        <v>x3291</v>
+                        <v>ljennings@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1166</v>
+                        <v>Thompson</v>
+                        <v>Leslie</v>
+                        <v>x4065</v>
+                        <v>lthompson@classicmodelcars.com</v>
+                        <v>1</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1188</v>
+                        <v>Firrelli</v>
+                        <v>Julie</v>
+                        <v>x2173</v>
+                        <v>jfirrelli@classicmodelcars.com</v>
+                        <v>2</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1216</v>
+                        <v>Patterson</v>
+                        <v>Steve</v>
+                        <v>x4334</v>
+                        <v>spatterso@classicmodelcars.com</v>
+                        <v>2</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1286</v>
+                        <v>Tseng</v>
+                        <v>Foon Yue</v>
+                        <v>x2248</v>
+                        <v>ftseng@classicmodelcars.com</v>
+                        <v>3</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1323</v>
+                        <v>Vanauf</v>
+                        <v>George</v>
+                        <v>x4102</v>
+                        <v>gvanauf@classicmodelcars.com</v>
+                        <v>3</v>
+                        <v>1143</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1337</v>
+                        <v>Bondur</v>
+                        <v>Loui</v>
+                        <v>x6493</v>
+                        <v>lbondur@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1370</v>
+                        <v>Hernandez</v>
+                        <v>Gerard</v>
+                        <v>x2028</v>
+                        <v>ghernande@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1401</v>
+                        <v>Castillo</v>
+                        <v>Pamela</v>
+                        <v>x2759</v>
+                        <v>pcastillo@classicmodelcars.com</v>
+                        <v>4</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1501</v>
+                        <v>Bott</v>
+                        <v>Larry</v>
+                        <v>x2311</v>
+                        <v>lbott@classicmodelcars.com</v>
+                        <v>7</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1504</v>
+                        <v>Jones</v>
+                        <v>Barry</v>
+                        <v>x102</v>
+                        <v>bjones@classicmodelcars.com</v>
+                        <v>7</v>
+                        <v>1102</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1611</v>
+                        <v>Fixter</v>
+                        <v>Andy</v>
+                        <v>x101</v>
+                        <v>afixter@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1088</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1612</v>
+                        <v>Marsh</v>
+                        <v>Peter</v>
+                        <v>x102</v>
+                        <v>pmarsh@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1088</v>
+                        <v>Sales Rep</v>
+                    </row>
+                    <row>
+                        <v>1619</v>
+                        <v>King</v>
+                        <v>Tom</v>
+                        <v>x103</v>
+                        <v>tking@classicmodelcars.com</v>
+                        <v>6</v>
+                        <v>1088</v>
+                        <v>Sales Rep</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>OFFICES</name>
+                <columns>
+                    <column>
+                        <name>OFFICECODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>CITY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PHONE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE1</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>ADDRESSLINE2</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>STATE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>COUNTRY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>POSTALCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>TERRITORY</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>1</v>
+                        <v>San Francisco</v>
+                        <v>+1 650 219 4782</v>
+                        <v>100 Market Street</v>
+                        <v>Suite 300</v>
+                        <v>CA</v>
+                        <v>USA</v>
+                        <v>94080</v>
+                        <v>NA</v>
+                    </row>
+                    <row>
+                        <v>2</v>
+                        <v>Boston</v>
+                        <v>+1 215 837 0825</v>
+                        <v>1550 Court Place</v>
+                        <v>Suite 102</v>
+                        <v>MA</v>
+                        <v>USA</v>
+                        <v>02107</v>
+                        <v>NA</v>
+                    </row>
+                    <row>
+                        <v>3</v>
+                        <v>NYC</v>
+                        <v>+1 212 555 3000</v>
+                        <v>523 East 53rd Street</v>
+                        <v>apt. 5A</v>
+                        <v>NY</v>
+                        <v>USA</v>
+                        <v>10022</v>
+                        <v>NA</v>
+                    </row>
+                    <row>
+                        <v>4</v>
+                        <v>Paris</v>
+                        <v>+33 14 723 4404</v>
+                        <v>43 Rue Jouffroy D'abbans</v>
+                        <v/>
+                        <v/>
+                        <v>France</v>
+                        <v>75017</v>
+                        <v>EMEA</v>
+                    </row>
+                    <row>
+                        <v>5</v>
+                        <v>Tokyo</v>
+                        <v>+81 33 224 5000</v>
+                        <v>4-1 Kioicho</v>
+                        <v/>
+                        <v>Chiyoda-Ku</v>
+                        <v>Japan</v>
+                        <v>102-8578</v>
+                        <v>Japan</v>
+                    </row>
+                    <row>
+                        <v>6</v>
+                        <v>Sydney</v>
+                        <v>+61 2 9264 2451</v>
+                        <v>5-11 Wentworth Avenue</v>
+                        <v>Floor #2</v>
+                        <v/>
+                        <v>Australia</v>
+                        <v>NSW 2010</v>
+                        <v>APAC</v>
+                    </row>
+                    <row>
+                        <v>7</v>
+                        <v>London</v>
+                        <v>+44 20 7877 2041</v>
+                        <v>25 Old Broad Street</v>
+                        <v>Level 7</v>
+                        <v/>
+                        <v>UK</v>
+                        <v>EC2N 1HN</v>
+                        <v>EMEA</v>
+                    </row>
+                </rows>
+            </table>
+            <table>
+                <name>PRODUCTS</name>
+                <columns>
+                    <column>
+                        <name>PRODUCTCODE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTNAME</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTLINE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTSCALE</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTVENDOR</name>
+                        <type>VARCHAR</type>
+                    </column>
+                    <column>
+                        <name>PRODUCTDESCRIPTION</name>
+                        <type>LONGVARCHAR</type>
+                    </column>
+                    <column>
+                        <name>QUANTITYINSTOCK</name>
+                        <type>SMALLINT</type>
+                    </column>
+                    <column>
+                        <name>BUYPRICE</name>
+                        <type>NUMERIC</type>
+                    </column>
+                    <column>
+                        <name>MSRP</name>
+                        <type>NUMERIC</type>
+                    </column>
+                </columns>
+                <rows>
+                    <row>
+                        <v>S10_1678</v>
+                        <v>1969 Harley Davidson Ultimate Chopper</v>
+                        <v>Motorcycles</v>
+                        <v>1:10</v>
+                        <v>Min Lin Diecast</v>
+                        <v>This replica features working kickstand&amp;#44; front suspension&amp;#44; gear-shift lever&amp;#44; footbrake lever&amp;#44; drive chain&amp;#44; wheels and steering. All parts are particularly delicate due to their precise scale and require special care and attention.</v>
+                        <v>7933</v>
+                        <v>48.81</v>
+                        <v>95.7</v>
+                    </row>
+                    <row>
+                        <v>S10_1949</v>
+                        <v>1952 Alpine Renault 1300</v>
+                        <v>Classic Cars</v>
+                        <v>1:10</v>
+                        <v>Classic Metal Creations</v>
+                        <v>Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>7305</v>
+                        <v>98.58</v>
+                        <v>214.3</v>
+                    </row>
+                    <row>
+                        <v>S10_2016</v>
+                        <v>1996 Moto Guzzi 1100i</v>
+                        <v>Motorcycles</v>
+                        <v>1:10</v>
+                        <v>Highway 66 Mini Classics</v>
+                        <v>Official Moto Guzzi logos and insignias&amp;#44; saddle bags located on side of motorcycle&amp;#44; detailed engine&amp;#44; working steering&amp;#44; working suspension&amp;#44; two leather seats&amp;#44; luggage rack&amp;#44; dual exhaust pipes&amp;#44; small saddle bag located on handle bars&amp;#44; two-tone paint with chrome accents&amp;#44; superior die-cast detail &amp;#44; rotating wheels &amp;#44; working kick stand&amp;#44; diecast metal with plastic parts and baked enamel finish.</v>
+                        <v>6625</v>
+                        <v>68.99</v>
+                        <v>118.94</v>
+                    </row>
+                    <row>
+                        <v>S10_4698</v>
+                        <v>2003 Harley-Davidson Eagle Drag Bike</v>
+                        <v>Motorcycles</v>
+                        <v>1:10</v>
+                        <v>Red Start Diecast</v>
+                        <v>Model features&amp;#44; official Harley Davidson logos and insignias&amp;#44; detachable rear wheelie bar&amp;#44; heavy diecast metal with resin parts&amp;#44; authentic multi-color tampo-printed graphics&amp;#44; separate engine drive belts&amp;#44; free-turning front fork&amp;#44; rotating tires and rear racing slick&amp;#44; certificate of authenticity&amp;#44; detailed engine&amp;#44; display stand&#xD;
+&amp;#44; precision diecast replica&amp;#44; baked enamel finish&amp;#44; 1:10 scale model&amp;#44; removable fender&amp;#44; seat and tank cover piece for displaying the superior detail of the v-twin engine</v>
+                        <v>5582</v>
+                        <v>91.02</v>
+                        <v>193.66</v>
+                    </row>
+                    <row>
+                        <v>S10_4757</v>
+                        <v>1972 Alfa Romeo GTA</v>
+                        <v>Classic Cars</v>
+                        <v>1:10</v>
+                        <v>Motor City Art Classics</v>
+                        <v>Features include: Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>3252</v>
+                        <v>85.68</v>
+                        <v>136.0</v>
+                    </row>
+                    <row>
+                        <v>S10_4962</v>
+                        <v>1962 LanciaA Delta 16V</v>
+                        <v>Classic Cars</v>
+                        <v>1:10</v>
+                        <v>Second Gear Diecast</v>
+                        <v>Features include: Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>6791</v>
+                        <v>103.42</v>
+                        <v>147.74</v>
+                    </row>
+                    <row>
+                        <v>S12_1099</v>
+                        <v>1968 Ford Mustang</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Autoart Studio Design</v>
+                        <v>Hood&amp;#44; doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color dark green.</v>
+                        <v>68</v>
+                        <v>95.34</v>
+                        <v>194.57</v>
+                    </row>
+                    <row>
+                        <v>S12_1108</v>
+                        <v>2001 Ferrari Enzo</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Second Gear Diecast</v>
+                        <v>Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>3619</v>
+                        <v>95.59</v>
+                        <v>207.8</v>
+                    </row>
+                    <row>
+                        <v>S12_1666</v>
+                        <v>1958 Setra Bus</v>
+                        <v>Trucks and Buses</v>
+                        <v>1:12</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>Model features 30 windows&amp;#44; skylights &amp;amp; glare resistant glass&amp;#44; working steering system&amp;#44; original logos</v>
+                        <v>1579</v>
+                        <v>77.9</v>
+                        <v>136.67</v>
+                    </row>
+                    <row>
+                        <v>S12_2823</v>
+                        <v>2002 Suzuki XREO</v>
+                        <v>Motorcycles</v>
+                        <v>1:12</v>
+                        <v>Unimax Art Galleries</v>
+                        <v>Official logos and insignias&amp;#44; saddle bags located on side of motorcycle&amp;#44; detailed engine&amp;#44; working steering&amp;#44; working suspension&amp;#44; two leather seats&amp;#44; luggage rack&amp;#44; dual exhaust pipes&amp;#44; small saddle bag located on handle bars&amp;#44; two-tone paint with chrome accents&amp;#44; superior die-cast detail &amp;#44; rotating wheels &amp;#44; working kick stand&amp;#44; diecast metal with plastic parts and baked enamel finish.</v>
+                        <v>9997</v>
+                        <v>66.27</v>
+                        <v>150.62</v>
+                    </row>
+                    <row>
+                        <v>S12_3148</v>
+                        <v>1969 Corvair Monza</v>
+                        <v>Classic Cars</v>
+                        <v>1:18</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>1:18 scale die-cast about 10 long doors open&amp;#44; hood opens&amp;#44; trunk opens and wheels roll</v>
+                        <v>6906</v>
+                        <v>89.14</v>
+                        <v>151.08</v>
+                    </row>
+                    <row>
+                        <v>S12_3380</v>
+                        <v>1968 Dodge Charger</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>1:12 scale model of a 1968 Dodge Charger. Hood&amp;#44; doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color black</v>
+                        <v>9123</v>
+                        <v>75.16</v>
+                        <v>117.44</v>
+                    </row>
+                    <row>
+                        <v>S12_3891</v>
+                        <v>1969 Ford Falcon</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Second Gear Diecast</v>
+                        <v>Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.</v>
+                        <v>1049</v>
+                        <v>83.05</v>
+                        <v>173.02</v>
+                    </row>
+                    <row>
+                        <v>S12_3990</v>
+                        <v>1970 Plymouth Hemi Cuda</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Studio M Art Models</v>
+                        <v>Very detailed 1970 Plymouth Cuda model in 1:12 scale. The Cuda is generally accepted as one of the fastest original muscle cars from the 1970s. This model is a reproduction of one of the orginal 652 cars built in 1970. Red color.</v>
+                        <v>5663</v>
+                        <v>31.92</v>
+                        <v>79.8</v>
+                    </row>
+                    <row>
+                        <v>S12_4473</v>
+                        <v>1957 Chevy Pickup</v>
+                        <v>Trucks and Buses</v>
+                        <v>1:12</v>
+                        <v>Exoto Designs</v>
+                        <v>1:12 scale die-cast about 20 long Hood opens&amp;#44; Rubber wheels</v>
+                        <v>6125</v>
+                        <v>55.7</v>
+                        <v>118.5</v>
+                    </row>
+                    <row>
+                        <v>S12_4675</v>
+                        <v>1969 Dodge Charger</v>
+                        <v>Classic Cars</v>
+                        <v>1:12</v>
+                        <v>Welly Diecast Productions</v>
+                        <v>Detailed model of the 1969 Dodge Charger. This model includes finely detailed interior and exterior features. Painted in red and white.</v>
+                        <v>7323</v>
+                        <v>58.73</v>
+                        <v>115.16</v>
+                    </row>
+                    <row>
+                        <v>S18_1097</v>
+                        <v>1940 Ford Pickup Truck</v>
+                        <v>Trucks and Buses</v>
+                        <v>1:18</v>
+                        <v>Studio M Art Models</v>
+                        <v>This model features soft rubber tires&amp;#44; working steering&amp;#44; rubber mud guards&amp;#44; authentic Ford logos&amp;#44; detailed undercarriage&amp;#44; opening doors and hood&amp;#44;  removable split rear gate&amp;#44; full size spare mounted in bed&amp;#44; detailed interior with opening glove box</v>
+                        <v>2613</v>
+                        <v>58.33</v>
+                        <v>116.67</v>
+                    </row>
+                    <row>
+                        <v>S18_1129</v>
+                        <v>1993 Mazda RX-7</v>
+                        <v>Classic Cars</v>
+                        <v>1:18</v>
+                        <v>Highway 66 Mini Classics</v>
+                        <v>This model features&amp;#44; opening hood&amp;#44; opening doors&amp;#44; detailed engine&amp;#44; rear spoiler&amp;#44; opening trunk&amp;#44; working steering&amp;#44; tinted windows&amp;#44; baked enamel finish. Color red.</v>
+                        <v>3975</v>
+                        <v>83.51</v>
+                        <v>141.54</v>
+                    </row>
+                    <row>
+                        <v>S18_1342</v>
+                        <v>1937 Lincoln Berline</v>
+                        <v>Vintage Cars</v>
+                        <v>1:18</v>
+                        <v>Motor City Art Classics</v>
+                        <v>Features opening engine cover&amp;#44; doors&amp;#44; trunk&amp;#44; and fuel filler cap. Color black</v>
+                        <v>8693</v>
+                        <v>60.62</v>
+                        <v>102.74</v>
+                    </row>
+                    <row>
+                        <v>S18_1367</v>
+                        <v>1936 Mercedes-Benz 500K Special Roadster</v>
+                        <v>Vintage Cars</v>
+                        <v>1:18</v>
+                        <v>Studio M Art Models</v>
+                        <v>This 1:18 scale replica is constructed of heavy die-cast metal and has all the features of the original: working doors and rumble seat&amp;#44; independent spring suspension&amp;#44; detailed interior&amp;#44; working steering system&amp;#44; and a bifold hood that reveals an engine so accurate that it even includes the wiring. All this is topped off with a baked enamel finish. Color white.</v>
+                        <v>8635</v>
+                        <v>24.26</v>
+                        <v>53.91</v>
+                    </row>
+                </rows>
+            </table>
+        </pojo-datastore>
+        <pojo-datastore name="Vendors">
+            <schema-name>vendor_dictionary.txt</schema-name>
+            <table>
+                <name>vendor_dictionary</name>
+                <columns>
+                    <column>
+                        <name>A</name>
+                        <type>VARCHAR</type>
+                    </column>
+                </columns>
+            </table>
+        </pojo-datastore>
+    </datastore-catalog>
+    <reference-data-catalog>
+        <dictionaries>
+            <text-file-dictionary name="vendor whitelist">
+                <filename>reference-data/vendor_dictionary.txt</filename>
+            </text-file-dictionary>
+        </dictionaries>
+        <synonym-catalogs/>
+    </reference-data-catalog>
+    <multithreaded-taskrunner max-threads="10"/>
+    <classpath-scanner>
+        <package recursive="true">org.eobjects</package>
+        <package recursive="true">com.hi</package>
+    </classpath-scanner>
+</configuration>

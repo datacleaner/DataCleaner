@@ -216,8 +216,32 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     datastoreUsage.put(name, new MutableSchema());
                 }
             } else {
-                // represent only a single datastore
-                datastoreUsage.put(datastoreName, new MutableSchema());
+                // represent the single datastore fully
+
+                final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
+                if (datastore == null) {
+                    throw new IllegalArgumentException("Datastore '" + datastoreName + "' does not exist");
+                }
+                DatastoreConnection con = datastore.openConnection();
+                try {
+                    Schema schema = con.getDataContext().getDefaultSchema();
+                    MutableSchema usageSchema = new MutableSchema();
+                    String[] tableNames = schema.getTableNames();
+                    for (String tableName : tableNames) {
+                        usageSchema.addTable(new MutableTable(tableName).setSchema(usageSchema).setRemarks(
+                                REMARK_INCLUDE_IN_QUERY));
+                    }
+                    datastoreUsage.put(datastoreName, usageSchema);
+                } finally {
+                    con.close();
+                }
+
+                // add schema information about the remaining datastores
+                for (final String name : datastoreCatalog.getDatastoreNames()) {
+                    if (!datastoreName.equals(name)) {
+                        datastoreUsage.put(name, new MutableSchema());
+                    }
+                }
             }
         } else {
             // read the job to determine which datastores are needed to include
@@ -250,7 +274,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         for (final Entry<String, MutableSchema> entry : datastoreUsageEntries) {
             final String name = entry.getKey();
             Schema schema = entry.getValue();
-            
+
             final Datastore datastore = datastoreCatalog.getDatastore(name);
             if (datastore != null) {
                 // a comparator that takes the column number into account.
@@ -272,7 +296,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     final DataContext dataContext = connection.getDataContext();
                     final JaxbPojoDatastoreAdaptor adaptor = new JaxbPojoDatastoreAdaptor();
                     final Collection<PojoTableType> pojoTables = new ArrayList<PojoTableType>();
-                    
+
                     Table[] usageTables = schema.getTables();
                     if (usageTables == null || usageTables.length == 0) {
                         // an unspecified schema entry will be interpreted as an
@@ -282,15 +306,22 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                     }
 
                     for (final Table usageTable : usageTables) {
-                        final Column[] columns = usageTable.getColumns();
-                        Arrays.sort(columns, columnComparator);
+                        Column[] usageColumns = usageTable.getColumns();
+                        if (usageColumns == null || usageColumns.length == 0) {
+                            // an unspecified table entry will be interpreted by
+                            // including all columns of that table
+                            Table table = dataContext.getSchemaByName(schema.getName()).getTableByName(
+                                    usageTable.getName());
+                            usageColumns = table.getColumns();
+                        }
+                        Arrays.sort(usageColumns, columnComparator);
 
                         final int maxRows = REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS : 0;
 
-                        final Table sourceTable = columns[0].getTable();
+                        final Table sourceTable = usageColumns[0].getTable();
                         try {
-                            final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable, columns,
-                                    maxRows);
+                            final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable,
+                                    usageColumns, maxRows);
                             pojoTables.add(pojoTable);
                         } catch (Exception e) {
                             // allow omitting errornous tables here.

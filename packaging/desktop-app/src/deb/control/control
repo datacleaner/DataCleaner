@@ -9,4 +9,4 @@ Description: DataCleaner - open source data quality
  The application connects to many different databases and file formats, for example: CSV files, Excel spreadsheets, NoSQL databases such as MongoDB, as well as relational databases such as Oracle, MySQL, PostgreSQL, Microsoft SQL Server, Ingres, IBM DB2 and more.
  Use the graphical user interface to orchestrate your data quality jobs and perform one-time DQ audits, or the command line interface to execute and schedule them for continuous monitoring of your data's quality.
 Distribution: development
-Homepage: http://datacleaner.eobjects.org
+Homepage: http://datacleaner.org

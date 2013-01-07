@@ -44,4 +44,12 @@ public interface ResultContext {
      */
     public RepositoryFile getResultFile();
 
+    /**
+     * Gets the job that produced this result (if available).
+     * 
+     * @return the job that produced this result, or null if that job is not
+     *         available.
+     */
+    public JobContext getJob();
+
 }

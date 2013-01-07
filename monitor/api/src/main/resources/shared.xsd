@@ -4,6 +4,14 @@
 	elementFormDefault="qualified">
 
 	<element name="metric" type="shared:metricType" />
+	
+	<element name="metrics" type="shared:metricsType" />
+	
+	<complexType name="metricsType">
+		<sequence>
+			<element ref="shared:metric" minOccurs="1" maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
 
 	<complexType name="metricType">
 		<sequence>

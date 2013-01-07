@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -78,7 +79,11 @@ public abstract class AbstractJaxbAdaptor<E> {
     protected E unmarshal(InputStream in) {
         final Unmarshaller unmarshaller = createUnmarshaller();
         try {
-            return (E) unmarshaller.unmarshal(in);
+            Object result = unmarshaller.unmarshal(in);
+            if (result instanceof JAXBElement<?>) {
+                result = ((JAXBElement<?>) result).getValue();
+            }
+            return (E) result;
         } catch (JAXBException e) {
             throw new JaxbException(e);
         }

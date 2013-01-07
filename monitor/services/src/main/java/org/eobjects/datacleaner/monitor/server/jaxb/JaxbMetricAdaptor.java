@@ -19,18 +19,29 @@
  */
 package org.eobjects.datacleaner.monitor.server.jaxb;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType.Children;
+import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
  * Utility class which has the responsibility of converting from and to
  * {@link MetricType} and {@link MetricIdentifier}.
  */
-public class JaxbMetricAdaptor {
+public class JaxbMetricAdaptor extends AbstractJaxbAdaptor<MetricsType> {
+
+    public JaxbMetricAdaptor() {
+        super(MetricsType.class);
+    }
+    
+    public MetricsType read(InputStream in) {
+        final MetricsType result = super.unmarshal(in);
+        return result;
+    }
 
     public MetricType serialize(MetricIdentifier metricIdentifier) {
         final MetricType metric = new MetricType();

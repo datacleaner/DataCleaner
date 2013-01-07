@@ -31,9 +31,11 @@ import org.eobjects.metamodel.util.Func;
  */
 public class DefaultResultContext implements ResultContext {
 
+    private final TenantContext _tenantContext;
     private final RepositoryFile _repositoryFile;
 
-    public DefaultResultContext(final RepositoryFile resultFile) {
+    public DefaultResultContext(final TenantContext tenantContext, final RepositoryFile resultFile) {
+        _tenantContext = tenantContext;
         _repositoryFile = resultFile;
     }
 
@@ -57,6 +59,17 @@ public class DefaultResultContext implements ResultContext {
     @Override
     public RepositoryFile getResultFile() {
         return _repositoryFile;
+    }
+
+    @Override
+    public JobContext getJob() {
+        final String resultFilename = _repositoryFile.getName();
+        // we assume a filename pattern like this:
+        // {job}-{timestamp}.analysis.result.dat
+        final int lastIndexOfDash = resultFilename.lastIndexOf('-');
+        assert lastIndexOfDash != -1;
+        final String jobName = resultFilename.substring(0, lastIndexOfDash);
+        return _tenantContext.getJob(jobName);
     }
 
 }

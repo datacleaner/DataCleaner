@@ -21,12 +21,16 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
 
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.jaxb.MetricType;
+import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
+import org.eobjects.datacleaner.monitor.server.jaxb.JaxbMetricAdaptor;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineReader;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbTimelineWriter;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
@@ -97,5 +101,21 @@ public class JaxbMetricAdaptorTest extends TestCase {
 
         assertEquals(metric1, child1);
         assertEquals(metric2, child2);
+    }
+    
+    public void testReadMetricsList() throws Exception {
+        JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
+        FileInputStream in = new FileInputStream("src/test/resources/jaxb_metrics.xml");
+        MetricsType metrics = adaptor.read(in);
+        in.close();
+        
+        List<MetricType> metricList = metrics.getMetric();
+        assertEquals(3, metricList.size());
+        
+        MetricType metricType = metricList.get(0);
+        assertEquals("Record count", metricType.getMetricDisplayName());
+        
+        MetricIdentifier metric = adaptor.deserialize(metricType);
+        assertEquals("MetricIdentifier[analyzerInputName=null,metricDescriptorName=Row count]", metric.toString());
     }
 }

@@ -171,13 +171,21 @@ public class TenantContextImpl implements TenantContext {
         if (!resultFilename.endsWith(EXTENSION_RESULT)) {
             resultFilename = resultFilename + EXTENSION_RESULT;
         }
+        
+        final RepositoryFolder resultsFolder = getResultFolder();
+        
+        final RepositoryFile resultFile;
+        if (resultFilename.endsWith("-latest" + EXTENSION_RESULT)) {
+            final String jobName = resultFilename.substring(0, resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
+            resultFile = resultsFolder.getLatestFile(jobName, EXTENSION_RESULT);
+        } else {
+            resultFile = resultsFolder.getFile(resultFilename);
+        }
 
-        RepositoryFolder resultFolder = getResultFolder();
-        RepositoryFile repositoryFile = resultFolder.getFile(resultFilename);
-        if (repositoryFile == null) {
+        if (resultFile == null) {
             throw new IllegalArgumentException("No such result: " + resultFilename);
         }
-        return new DefaultResultContext(repositoryFile);
+        return new DefaultResultContext(this, resultFile);
     }
 
     @Override

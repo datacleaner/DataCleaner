@@ -14,7 +14,7 @@
 					type="timeline:timelineMetadataType" />
 				<element name="job-name" minOccurs="1" maxOccurs="1" type="string" />
 				<element name="metrics" minOccurs="1" maxOccurs="1"
-					type="timeline:metricsType" />
+					type="shared:metricsType" />
 				<element name="chart-options" minOccurs="0" maxOccurs="1"
 					type="timeline:chartOptionsType" />
 			</all>
@@ -63,12 +63,6 @@
 		<sequence>
 			<element name="timeline-name" minOccurs="0" maxOccurs="1"
 				type="string" />
-		</sequence>
-	</complexType>
-
-	<complexType name="metricsType">
-		<sequence>
-			<element ref="shared:metric" minOccurs="1" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 

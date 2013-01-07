@@ -1,0 +1,20 @@
+<metrics xmlns="http://eobjects.org/datacleaner/shared/1.0">
+	<metric>
+		<metric-display-name>Record count</metric-display-name>
+		<metric-color>#963213</metric-color>
+		<analyzer-descriptor-name>Completeness analyzer</analyzer-descriptor-name>
+		<metric-descriptor-name>Row count</metric-descriptor-name>
+	</metric>
+	<metric>
+		<metric-display-name>Properly filled records</metric-display-name>
+		<metric-color>#ffc800</metric-color>
+		<analyzer-descriptor-name>Completeness analyzer</analyzer-descriptor-name>
+		<metric-descriptor-name>Valid row count</metric-descriptor-name>
+	</metric>
+	<metric>
+		<metric-display-name>Incomplete records</metric-display-name>
+		<metric-color>#5594dd</metric-color>
+		<analyzer-descriptor-name>Completeness analyzer</analyzer-descriptor-name>
+		<metric-descriptor-name>Invalid row count</metric-descriptor-name>
+	</metric>
+</metrics>

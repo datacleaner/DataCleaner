@@ -18,10 +18,102 @@
 	<section>
 		<title>Metrics background</title>
 
-		<para>TODO</para>
+		<para>Data quality metrics are all contained within result files.
+			Depending on the job that produced the result, the result may contain
+			different metrics. For instancec, if you have a Value distribution
+			analyzer in the job, your result will expose a "Value count" metric
+			(and many more).
+		</para>
+
+		<para>
+			To further complicate things, some metrics are parameterized. A
+			metric can be parameterized by either a
+			<emphasis>column name</emphasis>
+			or a
+			<emphasis>query string</emphasis>
+			. For instance, some analyzers (like the String analyzer or Number
+			analyzer) record metrics for multiple columns at the same time. To
+			retrieve metrics from these analyzers you need to provide a column
+			name as a parameter. Other metrics like the "Value count" metric of a
+			Value distribution require a string parameter, specifying which value
+			to get the count of.
+		</para>
+
+	</section>
+
+	<section>
+		<title>Getting a list of available metrics</title>
+
+		<para>To get a list of metrics exposed by a particular result, use the
+			following URL pattern:
+		</para>
 
 		<programlisting>
-			/DataCleaner-monitor/repository/DC/results/[resultname].metrics
+			GET&#160;/DataCleaner-monitor/repository/DC/results/[resultname].metrics
+		</programlisting>
+
+		<para>Here's an example result:</para>
+
+		<programlisting>
+			[
+			&#160;&#160;{"children":null,"analyzerDescriptorName":"Completeness&#160;analyzer","metricDescriptorName":"Row&#160;count",
+			&#160;&#160;&#160;&#160;"analyzerName":null,"analyzerInputName":null,"parameterizedByColumnName":false,"parameterizedByQueryString":false,
+			&#160;&#160;&#160;&#160;"metricDisplayName":null,"metricColor":null,"formula":null,"paramColumnName":null,"paramQueryString":null},
+
+			&#160;&#160;{"children":null,"analyzerDescriptorName":"Completeness&#160;analyzer","metricDescriptorName":"Valid&#160;row&#160;count",
+			&#160;&#160;&#160;&#160;"analyzerName":null,"analyzerInputName":null,"parameterizedByColumnName":false,"parameterizedByQueryString":false,
+			&#160;&#160;&#160;&#160;"metricDisplayName":null,"metricColor":null,"formula":null,"paramColumnName":null,"paramQueryString":null},
+
+			&#160;&#160;{"children":null,"analyzerDescriptorName":"Completeness&#160;analyzer","metricDescriptorName":"Invalid&#160;row&#160;count",
+			&#160;&#160;&#160;&#160;"analyzerName":null,"analyzerInputName":null,"parameterizedByColumnName":false,"parameterizedByQueryString":false,
+			&#160;&#160;&#160;&#160;"metricDisplayName":null,"metricColor":null,"formula":null,"paramColumnName":null,"paramQueryString":null}
+			]
+		</programlisting>
+
+		<para>
+			From the metrics list we can see that the result carries 3 metrics
+			of
+			a
+			<emphasis>Completeness analyzer</emphasis>
+			. This analyzer only exposes a few basic metrics, which makes it a
+			nice example, but most other analyzers do expose a lot more.
+		</para>
+
+	</section>
+
+	<section>
+		<title>Getting the values of particular metrics</title>
+
+		<para>Using the available metrics we saw before, we can build our own
+			list of metrics of interest. This same list can be sent to the same
+			URL with a HTTP POST request:
+		</para>
+
+		<programlisting>
+			POST&#160;/DataCleaner-monitor/repository/DC/results/[resultname].metrics
+		</programlisting>
+
+		<para>As the request body we need to provide the list of metrics that
+			we're interested in. Null values can be left out. For instance:
+		</para>
+
+		<programlisting>
+			[
+			&#160;&#160;{"analyzerDescriptorName":"Completeness&#160;analyzer","metricDescriptorName":"Valid&#160;row&#160;count"},
+
+			&#160;&#160;{"analyzerDescriptorName":"Completeness&#160;analyzer","metricDescriptorName":"Invalid&#160;row&#160;count"}
+			]
+		</programlisting>
+
+		<para>This will return a response like this:</para>
+
+		<programlisting>
+			{
+			&#160;&#160;"metricDate":1346154850730,
+			&#160;&#160;"metricValues":[
+			&#160;&#160;&#160;&#160;{"displayName":"Valid&#160;row&#160;count","value":123},
+			&#160;&#160;&#160;&#160;{"displayName":"Invalid&#160;row&#160;count","value":19}]
+			}
 		</programlisting>
 
 	</section>

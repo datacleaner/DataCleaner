@@ -20,15 +20,20 @@
 package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -39,6 +44,8 @@ import org.eobjects.datacleaner.monitor.server.MetricValueProducer;
 import org.eobjects.datacleaner.monitor.server.MetricValues;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbMetricAdaptor;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -66,10 +73,9 @@ public class ResultMetricsController {
 
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics.xml", method = RequestMethod.POST, produces = "application/xml", consumes = "application/xml")
-    @ResponseBody
-    public Map<String, ?> getMetricsXml(@PathVariable("tenant") final String tenant,
-            @PathVariable("result") String resultName, final HttpServletRequest request) throws IOException {
-        
+    public void getMetricsXml(@PathVariable("tenant") final String tenant, @PathVariable("result") String resultName,
+            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+
         final JaxbMetricAdaptor adaptor = new JaxbMetricAdaptor();
 
         final MetricsType metricsType = adaptor.read(request.getInputStream());
@@ -81,15 +87,69 @@ public class ResultMetricsController {
 
         logger.debug("Getting XML metrics from result '{}': {}", resultName, metricList);
 
-        // TODO: Represent as XML instead of JSON
-        
-        return getMetrics(resultName, tenant, metricList);
+        final MetricValues metricValues = getMetricValues(resultName, tenant, metricList);
+        final XMLGregorianCalendar xmlDate = adaptor.createDate(metricValues.getMetricDate());
+
+        response.setContentType("application/xml");
+
+        final PrintWriter out = response.getWriter();
+
+        out.write("<result>");
+
+        out.write("\n  <metric-date>");
+        out.write(xmlDate.toXMLFormat());
+        out.write("</metric-date>");
+
+        out.write("\n  <metric-values>");
+        for (int i = 0; i < metricList.size(); i++) {
+            final String displayName = metricList.get(i).getDisplayName();
+            final Number value = metricValues.getValues().get(i);
+            out.write("\n    <metric-value>");
+            out.write("\n      <display-name>" + StringEscapeUtils.escapeXml(displayName) + "</display-name>");
+            if (value == null) {
+                out.write("\n      <value />");
+            } else {
+                out.write("\n      <value>" + StringEscapeUtils.escapeXml(value + "") + "</value>");
+            }
+            out.write("\n    </metric-value>");
+        }
+        out.write("\n  </metric-values>");
+        out.write("\n</result>");
+
+        out.flush();
+        out.close();
+    }
+
+    @RolesAllowed(SecurityRoles.VIEWER)
+    @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.GET, produces = "application/json", consumes = "application/json")
+    @ResponseBody
+    public List<MetricIdentifier> getMetricsJson(@PathVariable("tenant") final String tenant,
+            @PathVariable("result") String resultName) throws IOException {
+
+        resultName = resultName.replaceAll("\\+", " ");
+
+        final TenantContext context = _contextFactory.getContext(tenant);
+
+        final List<MetricIdentifier> result = new ArrayList<MetricIdentifier>();
+
+        final ResultContext resultContext = context.getResult(resultName);
+        final JobContext job = resultContext.getJob();
+        final JobMetrics jobMetrics = job.getJobMetrics();
+        final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
+        for (final MetricGroup metricGroup : metricGroups) {
+            final List<MetricIdentifier> metrics = metricGroup.getMetrics();
+            for (MetricIdentifier metricIdentifier : metrics) {
+                result.add(metricIdentifier);
+            }
+        }
+
+        return result;
     }
 
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(value = "/{tenant}/results/{result:.+}.metrics", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    public Map<String, ?> getMetricsJson(@PathVariable("tenant") final String tenant,
+    public Map<String, ?> postMetricsJson(@PathVariable("tenant") final String tenant,
             @PathVariable("result") String resultName, @RequestBody MetricIdentifier[] metricIdentifiers)
             throws IOException {
 
@@ -97,10 +157,25 @@ public class ResultMetricsController {
 
         logger.debug("Getting JSON metrics from result '{}': {}", resultName, metricList);
 
-        return getMetrics(resultName, tenant, metricList);
+        final MetricValues metricValues = getMetricValues(resultName, tenant, metricList);
+
+        final Map<String, Object> result = new HashMap<String, Object>();
+        result.put("metricDate", metricValues.getMetricDate());
+
+        final List<Map<String, Object>> metricValuesMaps = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < metricList.size(); i++) {
+            final String displayName = metricList.get(i).getDisplayName();
+            final Number value = metricValues.getValues().get(i);
+            final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+            map.put("displayName", displayName);
+            map.put("value", value);
+            metricValuesMaps.add(map);
+        }
+        result.put("metricValues", metricValuesMaps);
+        return result;
     }
 
-    private Map<String, Object> getMetrics(String resultName, String tenant, List<MetricIdentifier> metricList) {
+    public MetricValues getMetricValues(String resultName, String tenant, List<MetricIdentifier> metricList) {
         resultName = resultName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
@@ -113,11 +188,7 @@ public class ResultMetricsController {
 
         final MetricValues metricValues = _metricValueProducer.getMetricValues(metricList, resultFile,
                 new TenantIdentifier(tenant), jobIdentifier);
-
-        final Map<String, Object> result = new HashMap<String, Object>();
-        result.put("metricsDate", metricValues.getMetricDate());
-        result.put("metricValues", metricValues.getValues());
-        return result;
+        return metricValues;
     }
 
 }

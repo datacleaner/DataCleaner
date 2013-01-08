@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.eobjects.analyzer.result.AnalyzerResult;
 
 /**
@@ -70,10 +71,12 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     public MetricIdentifier() {
     }
 
+    @JsonIgnore
     public boolean isFormulaBased() {
         return _formula != null;
     }
 
+    @JsonIgnore
     public String getId() {
         if (isFormulaBased()) {
             StringBuilder sb = new StringBuilder();
@@ -155,11 +158,16 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
     public void setParameterizedByQueryString(boolean parameterizedByQueryString) {
         _parameterizedByQueryString = parameterizedByQueryString;
     }
+    
+    public String getMetricDisplayName() {
+        return _metricDisplayName;
+    }
 
     public void setMetricDisplayName(String metricDisplayName) {
         _metricDisplayName = metricDisplayName;
     }
 
+    @JsonIgnore
     public String getDisplayName() {
         if (_metricDisplayName == null || "".equals(_metricDisplayName)) {
             if (isFormulaBased()) {
@@ -185,6 +193,7 @@ public class MetricIdentifier implements Serializable, Comparable<MetricIdentifi
      * 
      * @return
      */
+    @JsonIgnore
     public boolean isDisplayNameSet() {
         return _metricDisplayName != null;
     }

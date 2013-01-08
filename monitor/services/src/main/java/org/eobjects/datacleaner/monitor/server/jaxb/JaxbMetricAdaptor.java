@@ -21,7 +21,10 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType.Children;
@@ -41,6 +44,11 @@ public class JaxbMetricAdaptor extends AbstractJaxbAdaptor<MetricsType> {
     public MetricsType read(InputStream in) {
         final MetricsType result = super.unmarshal(in);
         return result;
+    }
+    
+    @Override
+    public XMLGregorianCalendar createDate(Date date) {
+        return super.createDate(date);
     }
 
     public MetricType serialize(MetricIdentifier metricIdentifier) {

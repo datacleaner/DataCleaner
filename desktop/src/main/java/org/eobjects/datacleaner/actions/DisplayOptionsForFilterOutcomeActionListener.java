@@ -34,6 +34,7 @@ import org.eobjects.analyzer.job.Outcome;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.datacleaner.output.beans.AbstractOutputWriterAnalyzer;
 import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
@@ -46,70 +47,73 @@ import org.eobjects.datacleaner.widgets.DescriptorMenu;
  */
 public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputWritersAction implements ActionListener {
 
-	private static final ImageManager imageManager = ImageManager.getInstance();
+    private static final ImageManager imageManager = ImageManager.getInstance();
 
-	private final FilterJobBuilder<?, ?> _filterJobBuilder;
-	private final String _categoryName;
+    private final FilterJobBuilder<?, ?> _filterJobBuilder;
+    private final String _categoryName;
 
-	public DisplayOptionsForFilterOutcomeActionListener(FilterJobBuilder<?, ?> filterJobBuilder, String categoryName) {
-		super(filterJobBuilder.getAnalysisJobBuilder());
-		_filterJobBuilder = filterJobBuilder;
-		_categoryName = categoryName;
-	}
+    public DisplayOptionsForFilterOutcomeActionListener(FilterJobBuilder<?, ?> filterJobBuilder, String categoryName) {
+        super(filterJobBuilder.getAnalysisJobBuilder());
+        _filterJobBuilder = filterJobBuilder;
+        _categoryName = categoryName;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		final FilterOutcome requirement = _filterJobBuilder.getOutcome(_filterJobBuilder.getDescriptor()
-				.getOutcomeCategoryByName(_categoryName));
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        final FilterOutcome requirement = _filterJobBuilder.getOutcome(_filterJobBuilder.getDescriptor()
+                .getOutcomeCategoryByName(_categoryName));
 
-		final DescriptorMenu writeDataMenu = new DescriptorMenu(new WriteDataCategory());
-		{
-			List<JMenuItem> writerDataMenuItems = createMenuItems();
-			for (JMenuItem menuItem : writerDataMenuItems) {
-				writeDataMenu.add(menuItem);
-			}
-		}
+        final DescriptorMenu writeDataMenu = new DescriptorMenu(new WriteDataCategory());
+        {
+            List<JMenuItem> writerDataMenuItems = createMenuItems();
+            for (JMenuItem menuItem : writerDataMenuItems) {
+                writeDataMenu.add(menuItem);
+            }
+        }
 
-		final AnalysisJobBuilder analysisJobBuilder = _filterJobBuilder.getAnalysisJobBuilder();
+        final AnalysisJobBuilder analysisJobBuilder = _filterJobBuilder.getAnalysisJobBuilder();
 
-		// TODO: Add more items: "Dependent components" (click through),
-		// "Add analyzer", "Add transformer"
+        // TODO: Add more items: "Dependent components" (click through),
+        // "Add analyzer", "Add transformer"
 
-		final JMenuItem setAsDefaultOutcomeMenuItem = new JMenuItem("Set as default requirement");
-		setAsDefaultOutcomeMenuItem
-				.setToolTipText("Makes this filter outcome the default choice for other components in the job.");
+        final JMenuItem setAsDefaultOutcomeMenuItem = new JMenuItem("Set as default requirement");
+        setAsDefaultOutcomeMenuItem
+                .setToolTipText("Makes this filter outcome the default choice for other components in the job.");
 
-		Outcome existingDefaultRequirement = analysisJobBuilder.getDefaultRequirement();
-		if (requirement.equals(existingDefaultRequirement)) {
-			setAsDefaultOutcomeMenuItem
-					.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID, IconUtils.ICON_SIZE_SMALL));
-		}
+        Outcome existingDefaultRequirement = analysisJobBuilder.getDefaultRequirement();
+        if (requirement.equals(existingDefaultRequirement)) {
+            setAsDefaultOutcomeMenuItem.setIcon(imageManager.getImageIcon(IconUtils.STATUS_VALID,
+                    IconUtils.ICON_SIZE_SMALL));
+        }
 
-		setAsDefaultOutcomeMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Enum<?> category = _filterJobBuilder.getDescriptor().getOutcomeCategoryByName(_categoryName);
-				FilterOutcome outcome = _filterJobBuilder.getOutcome(category);
-				analysisJobBuilder.setDefaultRequirement(outcome);
-			}
-		});
+        setAsDefaultOutcomeMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Enum<?> category = _filterJobBuilder.getDescriptor().getOutcomeCategoryByName(_categoryName);
+                FilterOutcome outcome = _filterJobBuilder.getOutcome(category);
+                analysisJobBuilder.setDefaultRequirement(outcome);
+            }
+        });
 
-		final JPopupMenu popup = new JPopupMenu();
-		popup.add(writeDataMenu);
-		popup.add(setAsDefaultOutcomeMenuItem);
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(writeDataMenu);
+        popup.add(setAsDefaultOutcomeMenuItem);
 
-		final JComponent component = (JComponent) e.getSource();
-		popup.show(component, 0, component.getHeight());
-	}
+        final JComponent component = (JComponent) e.getSource();
+        popup.show(component, 0, component.getHeight());
+    }
 
-	@Override
-	protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
-		Analyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
-		if (analyzer instanceof AbstractOutputWriterAnalyzer) {
-			((AbstractOutputWriterAnalyzer) analyzer).configureForFilterOutcome(analysisJobBuilder,
-					_filterJobBuilder.getDescriptor(), _categoryName);
-		}
-		analyzerJobBuilder.setRequirement(_filterJobBuilder, _categoryName);
-	}
+    @Override
+    protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
+        Analyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
+        if (analyzer instanceof AbstractOutputWriterAnalyzer) {
+            LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()
+                    .getInjectionManager(null), null);
+            helper.assignProvidedProperties(analyzerJobBuilder.getDescriptor(), analyzer);
+            ((AbstractOutputWriterAnalyzer) analyzer).configureForFilterOutcome(analysisJobBuilder,
+                    _filterJobBuilder.getDescriptor(), _categoryName);
+        }
+        analyzerJobBuilder.setRequirement(_filterJobBuilder, _categoryName);
+    }
 
 }

@@ -85,17 +85,17 @@
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-cleansing-DataCleaner</artifactId>
-			<version>1.13</version>
+			<version>1.15</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-dedup-DataCleaner</artifactId>
-			<version>1.13</version>
+			<version>1.15</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-sanctionlist-DataCleaner</artifactId>
-			<version>1.13</version>
+			<version>1.15</version>
 		</dependency>
 
 		<!-- Default database drivers -->

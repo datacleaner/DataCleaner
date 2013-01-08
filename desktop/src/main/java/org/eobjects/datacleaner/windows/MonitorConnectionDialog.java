@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 /**
- * Dialog for setting up the users connection to the DataCleaner DQ Monitor
+ * Dialog for setting up the users connection to the DataCleaner monitor
  * webapp.
  */
 public class MonitorConnectionDialog extends AbstractDialog {

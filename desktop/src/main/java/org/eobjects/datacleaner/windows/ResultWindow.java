@@ -306,7 +306,7 @@ public final class ResultWindow extends AbstractWindow {
         exportButton
                 .addActionListener(new ExportResultToHtmlActionListener(resultRef, _configuration, _userPreferences));
 
-        final JButton publishButton = new JButton("Publish to dq monitor", imageManager.getImageIcon(
+        final JButton publishButton = new JButton("Publish to monitor server", imageManager.getImageIcon(
                 IconUtils.MENU_DQ_MONITOR, IconUtils.ICON_SIZE_MEDIUM));
         if (_jobFilename == null) {
             publishButton.setEnabled(false);

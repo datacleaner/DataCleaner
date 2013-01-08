@@ -132,8 +132,8 @@ public class DCWindowMenuBar extends JMenuBar {
 			}
 		});
 		
-		final JMenuItem dqMonitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor", IconUtils.MENU_DQ_MONITOR);
-		dqMonitorMenuItem.addActionListener(new ActionListener() {
+		final JMenuItem monitorMenuItem = WidgetFactory.createMenuItem("DataCleaner monitor", IconUtils.MENU_DQ_MONITOR);
+		monitorMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MonitorConnectionDialog dialog = _monitorConnectionDialogProvider.get();
@@ -169,7 +169,7 @@ public class DCWindowMenuBar extends JMenuBar {
 
 		final JMenu windowMenu = WidgetFactory.createMenu("Window", 'W');
 		windowMenu.add(optionsMenuItem);
-		windowMenu.add(dqMonitorMenuItem);
+		windowMenu.add(monitorMenuItem);
 		windowMenu.addSeparator();
 
 		final int minimumSize = windowMenu.getMenuComponentCount();

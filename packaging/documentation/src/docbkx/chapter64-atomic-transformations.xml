@@ -26,12 +26,12 @@
 	<section>
 		<title>What are atomic transformation services?</title>
 
-		<p>DataCleaner jobs normally operate on batches of records, for
+		<para>DataCleaner jobs normally operate on batches of records, for
 			example all records in a CSV file. However, any DataCleaner job can
 			also be used to process single records on the fly. This feature is
 			called "atomic transformations". Such transformations could be used
 			as a part of a data processing pipeline in a SOA architecture or in a
-			web application with flexible data processing needs.</p>
+			web application with flexible data processing needs.</para>
 
 		<para>Creating an atomic transformation is easy. Any DataCleaner job
 			can be used for performing atomic transformations. Simply create a

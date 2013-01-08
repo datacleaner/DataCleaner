@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Metric web services</title>
+
+	<chapterinfo>
+		<abstract>
+			<para>
+				Accessing data quality metrics using web services is also
+				possible using DataCleaner monitor. In this chapter we will explain
+				how.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<section>
+		<title>Metrics background</title>
+
+		<para>TODO</para>
+
+		<programlisting>
+			/DataCleaner-monitor/repository/DC/results/[resultname].metrics
+		</programlisting>
+
+	</section>
+
+</chapter>

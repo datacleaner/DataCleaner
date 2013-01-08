@@ -71,7 +71,8 @@
 		</partinfo>
 		<xi:include href="chapter61-job-triggering.xml" />
 		<xi:include href="chapter62-repository-navigation.xml" />
-		<xi:include href="chapter63-atomic-transformations.xml" />
+		<xi:include href="chapter63-metric-services.xml" />
+		<xi:include href="chapter64-atomic-transformations.xml" />
 	</part>
 
 	<part>

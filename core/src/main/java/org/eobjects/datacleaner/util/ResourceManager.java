@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.util;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,7 +56,9 @@ public final class ResourceManager {
 		if (classLoaders == null || classLoaders.length == 0) {
 			classLoaders = new ClassLoader[] { ClassLoaderUtils.getParentClassLoader() };
 		} else {
-			logger.debug("Custom classloaders specified: {}", classLoaders);
+		    if (logger.isDebugEnabled()) {
+		        logger.debug("Custom classloaders specified: {}", Arrays.toString(classLoaders));
+		    }
 		}
 
 		List<URL> result = new LinkedList<URL>();

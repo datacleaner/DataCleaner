@@ -50,15 +50,21 @@ import org.eobjects.metamodel.util.FileHelper;
 @Categorized(WriteDataCategory.class)
 public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
 
-    @Configured
-    char separatorChar = ',';
-
-    @Configured
-    char quoteChar = '"';
-
-    @Configured
+    @Configured(order = 1)
     @FileProperty(accessMode = FileAccessMode.SAVE, extension = { "csv", "tsv", "txt", "dat" })
     File file;
+
+    @Configured(order = 2, required = false)
+    Character separatorChar = ',';
+
+    @Configured(order = 3, required = false)
+    Character quoteChar = '"';
+
+    @Configured(order = 4, required = false)
+    Character escapeChar = '\\';
+
+    @Configured(order = 5, required = false)
+    boolean includeHeader = true;
 
     @Inject
     @Provided
@@ -87,7 +93,8 @@ public class CreateCsvFileAnalyzer extends AbstractOutputWriterAnalyzer {
         for (int i = 0; i < headers.length; i++) {
             headers[i] = columns[i].getName();
         }
-        return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, columns);
+        return CsvOutputWriterFactory.getWriter(file.getPath(), headers, separatorChar, quoteChar, quoteChar,
+                includeHeader, columns);
     }
 
     @Override

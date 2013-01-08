@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -135,13 +136,6 @@
 			<id>eobjects-snapshot-repo</id>
 			<url>scp://192.168.3.110/var/www/repo</url>
 		</snapshotRepository>
-		<!-- Repository sometimes used for deploying only to eobjects' repository -->
-		<!--
-		<repository>
-			<id>eobjects-release-repo</id>
-			<url>scp://192.168.3.110/var/www/repo</url>
-		</repository>
-		-->
 	</distributionManagement>
 	<mailingLists>
 		<mailingList>
@@ -220,6 +214,11 @@
 				<version>2.8</version>
 			</plugin>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.2</version>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
@@ -239,13 +238,6 @@
 						<phase>site</phase>
 					</execution>
 				</executions>
-				<configuration>
-					<links>
-						<link>http://analyzerbeans.eobjects.org/apidocs/</link>
-						<link>http://metamodel.eobjects.org/apidocs/</link>
-						<link>http://sassyreader.eobjects.org/apidocs/</link>
-					</links>
-				</configuration>
 			</plugin>
 		</plugins>
 
@@ -339,7 +331,7 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>${javadoc.version}</version>
 					<configuration>
-						<!--<skip>true</skip>-->
+						<!--<skip>true</skip> -->
 					</configuration>
 				</plugin>
 
@@ -379,6 +371,13 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${javadoc.version}</version>
+				<configuration>
+					<links>
+						<link>http://analyzerbeans.eobjects.org/apidocs/</link>
+						<link>http://metamodel.eobjects.org/apidocs/</link>
+						<link>http://sassyreader.eobjects.org/apidocs/</link>
+					</links>
+				</configuration>
 				<reportSets>
 					<reportSet>
 						<id>non-aggregate</id>
@@ -405,9 +404,13 @@
 				</reportSets>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>

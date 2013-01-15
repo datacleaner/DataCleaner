@@ -21,15 +21,20 @@ package org.eobjects.datacleaner.monitor.configuration;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.eobjects.analyzer.beans.api.RenderingFormat;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.job.concurrent.MultiThreadedTaskRunner;
 import org.eobjects.analyzer.job.concurrent.TaskRunner;
+import org.eobjects.analyzer.result.renderer.SwingRenderingFormat;
+import org.eobjects.analyzer.result.renderer.TextRenderingFormat;
 import org.eobjects.analyzer.util.CollectionUtils2;
 import org.eobjects.datacleaner.util.ExtensionFilter;
 import org.slf4j.Logger;
@@ -96,7 +101,11 @@ public class ConfigurationFactory {
         }
 
         logger.info("Creating shared descriptor provider with packages: {}", _scannedPackages);
-        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner);
+        
+        final Collection<Class<? extends RenderingFormat<?>>> excludedRenderingFormats = new HashSet<Class<? extends RenderingFormat<?>>>();
+        excludedRenderingFormats.add(SwingRenderingFormat.class);
+        excludedRenderingFormats.add(TextRenderingFormat.class);
+        final ClasspathScanDescriptorProvider descriptorProvider = new ClasspathScanDescriptorProvider(taskRunner, excludedRenderingFormats);
         final ClassLoader classLoader = getClass().getClassLoader();
         logger.info("Using classloader: {}", classLoader);
 

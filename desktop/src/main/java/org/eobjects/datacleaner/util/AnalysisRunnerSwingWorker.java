@@ -25,7 +25,6 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.data.ExpressionBasedInputColumn;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -144,21 +143,17 @@ public final class AnalysisRunnerSwingWorker extends
 			final AnalyzerResult result) {
 		final List<InputColumn<?>> inputColumns = Arrays.asList(analyzerJob
 				.getInput());
-		InputColumn<?> tableInputColumn = null;
-		for (InputColumn<?> inputColumn : inputColumns) {
-			// cannot find origin based on expression based column
-			if (!(inputColumn instanceof ExpressionBasedInputColumn)) {
-				tableInputColumn = inputColumn;
-				break;
-			}
-		}
-
-		assert tableInputColumn != null;
-
 		final SourceColumnFinder sourceColumnFinder = new SourceColumnFinder();
 		sourceColumnFinder.addSources(job);
-		final Table table = sourceColumnFinder
-				.findOriginatingTable(tableInputColumn);
+		Table table = null;
+		for (InputColumn<?> inputColumn : inputColumns) {
+		    table = sourceColumnFinder.findOriginatingTable(inputColumn);
+		    if (table != null) {
+		        break;
+		    }
+		}
+
+		assert table != null;
 
 		_progressInformationPanel.addUserLog("Analyzer '"
 				+ LabelUtils.getLabel(analyzerJob) + "' finished");

@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.user;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -45,13 +46,14 @@ import org.slf4j.LoggerFactory;
  * @author Kasper Sørensen
  */
 public final class UsageLogger {
-
+    
 	private static final Logger logger = LoggerFactory.getLogger(UsageLogger.class);
 
 	// Special username used for anonymous entries. This is the only
 	// non-existing username that is allowed on server side.
 	private static final String NOT_LOGGED_IN_USERNAME = "[not-logged-in]";
 
+	private final Charset charset = Charset.forName("UTF-8");
 	private final UserPreferences _userPreferences;
 	private final ExecutorService _executorService;
 
@@ -131,7 +133,7 @@ public final class UsageLogger {
 				nameValuePairs.add(new BasicNameValuePair("username", _username));
 				nameValuePairs.add(new BasicNameValuePair("action", _action));
 				nameValuePairs.add(new BasicNameValuePair("version", Version.get()));
-				req.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+				req.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
 
 				HttpResponse resp = _userPreferences.createHttpClient().execute(req);
 				InputStream content = resp.getEntity().getContent();

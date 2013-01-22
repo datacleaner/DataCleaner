@@ -188,13 +188,13 @@ public class VisualizeJobLayoutTransformer implements Transformer<Object, Point2
         int max = 0;
         for (VisualizeJobLink edge : edges) {
             assert edge.getTo() == obj;
-            Object from = edge.getFrom();
+            final Object from = edge.getFrom();
             if (obj == from) {
                 // strange case where an edge is both going from and to the same
                 // vertex.
                 return max;
             }
-            int count = getAccumulatedPrerequisiteCount(from) + 1;
+            final int count = getAccumulatedPrerequisiteCount(from) + 1;
             max = Math.max(max, count);
         }
         return max;

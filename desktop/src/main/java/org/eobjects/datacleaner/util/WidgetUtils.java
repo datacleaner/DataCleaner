@@ -342,6 +342,9 @@ public final class WidgetUtils {
                 sb.append("\n\n");
             }
             String message = e.getMessage();
+            if (StringUtils.isNullOrEmpty(message)) {
+                message = "(" + e.getClass().getName() + ")";
+            }
             sb.append(message);
             e = e.getCause();
         }

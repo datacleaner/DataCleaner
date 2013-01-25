@@ -55,6 +55,7 @@ import org.eobjects.analyzer.connection.FixedWidthDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
+import org.eobjects.analyzer.connection.SalesforceDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
@@ -337,7 +338,14 @@ public class DatastoreListPanel extends DCPanel implements
 				IconUtils.ODB_IMAGEPATH, OdbDatastore.class,
 				OdbDatastoreDialog.class));
 
-		panel.add(Box.createHorizontalStrut(20));
+		panel.add(Box.createHorizontalStrut(10));
+		
+		panel.add(createNewDatastoreButton("Salesforce.com",
+                "Connect to a Salesforce.com account",
+                IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class,
+                null));
+
+        panel.add(Box.createHorizontalStrut(10));
 
 		panel.add(createNewDatastoreButton("MongoDB database",
 				"Connect to a MongoDB database", IconUtils.MONGODB_IMAGEPATH,

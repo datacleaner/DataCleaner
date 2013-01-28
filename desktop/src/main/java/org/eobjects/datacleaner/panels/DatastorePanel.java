@@ -46,6 +46,7 @@ import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.PojoDatastore;
+import org.eobjects.analyzer.connection.SalesforceDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
@@ -66,6 +67,7 @@ import org.eobjects.datacleaner.windows.FixedWidthDatastoreDialog;
 import org.eobjects.datacleaner.windows.JdbcDatastoreDialog;
 import org.eobjects.datacleaner.windows.MongoDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
+import org.eobjects.datacleaner.windows.SalesforceDatastoreDialog;
 import org.eobjects.datacleaner.windows.SasDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 
@@ -119,7 +121,7 @@ public class DatastorePanel extends DCPanel {
                 updateUI();
             }
         });
-        
+
         final String datastoreName = datastore.getName();
         final DCLabel datastoreNameLabel = DCLabel.dark("<html><b>" + datastoreName + "</b><br/>" + description
                 + "</html>");
@@ -188,7 +190,7 @@ public class DatastorePanel extends DCPanel {
                     Injector injectorWithDatastore = _injectorBuilder.with(JdbcDatastore.class, datastore)
                             .createInjector();
                     JdbcDatastoreDialog dialog = injectorWithDatastore.getInstance(JdbcDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof CsvDatastore) {
@@ -197,7 +199,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(CsvDatastore.class, datastore).createInjector();
                     CsvDatastoreDialog dialog = injector.getInstance(CsvDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof AccessDatastore) {
@@ -206,7 +208,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(AccessDatastore.class, datastore).createInjector();
                     AccessDatastoreDialog dialog = injector.getInstance(AccessDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof ExcelDatastore) {
@@ -215,7 +217,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(ExcelDatastore.class, datastore).createInjector();
                     ExcelDatastoreDialog dialog = injector.getInstance(ExcelDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof SasDatastore) {
@@ -224,7 +226,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(SasDatastore.class, datastore).createInjector();
                     SasDatastoreDialog dialog = injector.getInstance(SasDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof XmlDatastore) {
@@ -233,7 +235,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(XmlDatastore.class, datastore).createInjector();
                     XmlDatastoreDialog dialog = injector.getInstance(XmlDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof OdbDatastore) {
@@ -242,7 +244,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(OdbDatastore.class, datastore).createInjector();
                     OdbDatastoreDialog dialog = injector.getInstance(OdbDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof FixedWidthDatastore) {
@@ -251,7 +253,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(FixedWidthDatastore.class, datastore).createInjector();
                     FixedWidthDatastoreDialog dialog = injector.getInstance(FixedWidthDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof DbaseDatastore) {
@@ -260,7 +262,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(DbaseDatastore.class, datastore).createInjector();
                     DbaseDatastoreDialog dialog = injector.getInstance(DbaseDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof CouchDbDatastore) {
@@ -269,7 +271,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(CouchDbDatastore.class, datastore).createInjector();
                     CouchDbDatastoreDialog dialog = injector.getInstance(CouchDbDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof MongoDbDatastore) {
@@ -278,7 +280,16 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(MongoDbDatastore.class, datastore).createInjector();
                     MongoDbDatastoreDialog dialog = injector.getInstance(MongoDbDatastoreDialog.class);
-                    dialog.setVisible(true);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof SalesforceDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = _injectorBuilder.with(SalesforceDatastore.class, datastore).createInjector();
+                    SalesforceDatastoreDialog dialog = injector.getInstance(SalesforceDatastoreDialog.class);
+                    dialog.open();
                 }
             });
         } else if (datastore instanceof CompositeDatastore) {
@@ -287,7 +298,7 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     CompositeDatastoreDialog dialog = new CompositeDatastoreDialog((CompositeDatastore) datastore,
                             _datastoreCatalog, _windowContext);
-                    dialog.setVisible(true);
+                    dialog.open();
                 }
             });
         } else {

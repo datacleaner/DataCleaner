@@ -30,7 +30,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
-import org.eobjects.analyzer.connection.SalesforceDatastore;
+import org.eobjects.analyzer.connection.SugarCrmDatastore;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.panels.DCPanel;
@@ -46,40 +46,43 @@ import org.jdesktop.swingx.JXTextField;
 import com.google.inject.Inject;
 
 /**
- * Datastore dialog for Salesforce.com datastores
+ * Datastore dialog for SugarCRM datastores
  */
-public class SalesforceDatastoreDialog extends AbstractDialog {
+public class SugarCrmDatastoreDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
 
     private static final ImageManager imageManager = ImageManager.getInstance();
 
     private final MutableDatastoreCatalog _datastoreCatalog;
-    private final SalesforceDatastore _originalDatastore;
+    private final SugarCrmDatastore _originalDatastore;
     private final JXTextField _datastoreNameTextField;
+    private final JXTextField _baseUrlTextField;
     private final JXTextField _usernameTextField;
     private final JPasswordField _passwordTextField;
-    private final JXTextField _securityTokenTextField;
 
     @Inject
-    public SalesforceDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
-            @Nullable SalesforceDatastore originalDatastore) {
-        super(windowContext, imageManager.getImage("images/window/banner-salesforce.png"));
+    public SugarCrmDatastoreDialog(WindowContext windowContext, MutableDatastoreCatalog datastoreCatalog,
+            @Nullable SugarCrmDatastore originalDatastore) {
+        super(windowContext, imageManager.getImage("images/window/banner-sugarcrm.png"));
         _datastoreCatalog = datastoreCatalog;
         _originalDatastore = originalDatastore;
 
         _datastoreNameTextField = WidgetFactory.createTextField("Datastore name");
+        _baseUrlTextField = WidgetFactory.createTextField("Base URL");
         _usernameTextField = WidgetFactory.createTextField("Username");
         _passwordTextField = WidgetFactory.createPasswordField();
-        _securityTokenTextField = WidgetFactory.createTextField("Security token");
 
         if (originalDatastore != null) {
             _datastoreNameTextField.setText(originalDatastore.getName());
             _datastoreNameTextField.setEditable(false);
 
+            _baseUrlTextField.setText(originalDatastore.getBaseUrl());
             _usernameTextField.setText(originalDatastore.getUsername());
             _passwordTextField.setText(originalDatastore.getPassword());
-            _securityTokenTextField.setText(originalDatastore.getSecurityToken());
+        } else {
+            _usernameTextField.setText("admin");
+            _baseUrlTextField.setText("http://localhost/sugarcrm");
         }
     }
 
@@ -94,33 +97,33 @@ public class SalesforceDatastoreDialog extends AbstractDialog {
 
         row++;
         WidgetUtils.addToGridBag(new JSeparator(SwingConstants.HORIZONTAL), formPanel, 1, row, 3, 1);
+        
+        row++;
+        WidgetUtils.addToGridBag(DCLabel.bright("SugarCRM base URL:"), formPanel, 1, row);
+        WidgetUtils.addToGridBag(_baseUrlTextField, formPanel, 2, row);
+        HelpIcon securityTokenHelpIcon = new HelpIcon(
+                "The base URL is the first part of any URL that you use when you access the SugarCRM system.");
+        WidgetUtils.addToGridBag(securityTokenHelpIcon, formPanel, 3, row);
 
         row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Salesforce username:"), formPanel, 1, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("SugarCRM username:"), formPanel, 1, row);
         WidgetUtils.addToGridBag(_usernameTextField, formPanel, 2, row);
 
         row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Salesforce password:"), formPanel, 1, row);
+        WidgetUtils.addToGridBag(DCLabel.bright("SugarCRM password:"), formPanel, 1, row);
         WidgetUtils.addToGridBag(_passwordTextField, formPanel, 2, row);
-
-        row++;
-        WidgetUtils.addToGridBag(DCLabel.bright("Salesforce security token:"), formPanel, 1, row);
-        WidgetUtils.addToGridBag(_securityTokenTextField, formPanel, 2, row);
-        HelpIcon securityTokenHelpIcon = new HelpIcon(
-                "Your security token is set on Salesforce.com by going to: <b><i>Your Name</i> | Setup | My Personal Information | Reset Security Token</b>.<br/>This security token is needed in order to use the Salesforce.com web services.");
-        WidgetUtils.addToGridBag(securityTokenHelpIcon, formPanel, 3, row);
 
         final JButton saveButton = WidgetFactory.createButton("Save datastore", "images/model/datastore.png");
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SalesforceDatastore datastore = createDatastore();
+                SugarCrmDatastore datastore = createDatastore();
 
                 if (_originalDatastore != null) {
                     _datastoreCatalog.removeDatastore(_originalDatastore);
                 }
                 _datastoreCatalog.addDatastore(datastore);
-                SalesforceDatastoreDialog.this.dispose();
+                SugarCrmDatastoreDialog.this.dispose();
             }
         });
 
@@ -134,30 +137,30 @@ public class SalesforceDatastoreDialog extends AbstractDialog {
         outerPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         final DescriptionLabel descriptionLabel = new DescriptionLabel();
-        descriptionLabel.setText("Configure your Salesforce.com account in this dialog.");
+        descriptionLabel.setText("Configure your SugarCRM system and account in this dialog.");
         outerPanel.add(descriptionLabel, BorderLayout.NORTH);
 
         return outerPanel;
     }
 
-    private SalesforceDatastore createDatastore() {
+    private SugarCrmDatastore createDatastore() {
         final String name = _datastoreNameTextField.getText();
         final String username = _usernameTextField.getText();
         final char[] passwordChars = _passwordTextField.getPassword();
         final String password = String.valueOf(passwordChars);
-        final String securityToken = _securityTokenTextField.getText();
+        final String baseUrl = _baseUrlTextField.getText();
 
-        return new SalesforceDatastore(name, username, password, securityToken);
+        return new SugarCrmDatastore(name, baseUrl, username, password);
     }
 
     @Override
     public String getWindowTitle() {
-        return "Salesforce.com datastore";
+        return "SugarCRM datastore";
     }
 
     @Override
     protected String getBannerTitle() {
-        return "Salesforce.com account";
+        return "SugarCRM system";
     }
 
     @Override

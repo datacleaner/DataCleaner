@@ -48,6 +48,7 @@ import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.PojoDatastore;
 import org.eobjects.analyzer.connection.SalesforceDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
+import org.eobjects.analyzer.connection.SugarCrmDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
@@ -69,6 +70,7 @@ import org.eobjects.datacleaner.windows.MongoDbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.SalesforceDatastoreDialog;
 import org.eobjects.datacleaner.windows.SasDatastoreDialog;
+import org.eobjects.datacleaner.windows.SugarCrmDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 
 import com.google.inject.Injector;
@@ -289,6 +291,15 @@ public class DatastorePanel extends DCPanel {
                 public void actionPerformed(ActionEvent e) {
                     Injector injector = _injectorBuilder.with(SalesforceDatastore.class, datastore).createInjector();
                     SalesforceDatastoreDialog dialog = injector.getInstance(SalesforceDatastoreDialog.class);
+                    dialog.open();
+                }
+            });
+        } else if (datastore instanceof SugarCrmDatastore) {
+            editButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Injector injector = _injectorBuilder.with(SugarCrmDatastore.class, datastore).createInjector();
+                    SugarCrmDatastoreDialog dialog = injector.getInstance(SugarCrmDatastoreDialog.class);
                     dialog.open();
                 }
             });

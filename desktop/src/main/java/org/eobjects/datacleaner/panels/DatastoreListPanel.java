@@ -57,6 +57,7 @@ import org.eobjects.analyzer.connection.MongoDbDatastore;
 import org.eobjects.analyzer.connection.OdbDatastore;
 import org.eobjects.analyzer.connection.SalesforceDatastore;
 import org.eobjects.analyzer.connection.SasDatastore;
+import org.eobjects.analyzer.connection.SugarCrmDatastore;
 import org.eobjects.analyzer.connection.XmlDatastore;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
@@ -87,6 +88,7 @@ import org.eobjects.datacleaner.windows.OdbDatastoreDialog;
 import org.eobjects.datacleaner.windows.OptionsDialog;
 import org.eobjects.datacleaner.windows.SalesforceDatastoreDialog;
 import org.eobjects.datacleaner.windows.SasDatastoreDialog;
+import org.eobjects.datacleaner.windows.SugarCrmDatastoreDialog;
 import org.eobjects.datacleaner.windows.XmlDatastoreDialog;
 import org.jdesktop.swingx.JXTextField;
 import org.jdesktop.swingx.VerticalLayout;
@@ -309,6 +311,8 @@ public class DatastoreListPanel extends DCPanel implements DatastoreChangeListen
 
         panel.add(createNewDatastoreButton("Salesforce.com", "Connect to a Salesforce.com account",
                 IconUtils.SALESFORCE_IMAGEPATH, SalesforceDatastore.class, SalesforceDatastoreDialog.class));
+        panel.add(createNewDatastoreButton("SugarCRM", "Connect to a SugarCRM system",
+                IconUtils.SUGAR_CRM_IMAGEPATH, SugarCrmDatastore.class, SugarCrmDatastoreDialog.class));
 
         panel.add(Box.createHorizontalStrut(10));
 

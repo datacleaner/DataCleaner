@@ -234,10 +234,9 @@ public final class AnalysisJobBuilderWindowImpl extends AbstractWindow implement
             @Override
             protected DatastoreListPanel fetch() {
                 DatastoreListPanel datastoreListPanel = _injectorWithGlassPane.getInstance(DatastoreListPanel.class);
-                datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 150));
+                datastoreListPanel.setBorder(new EmptyBorder(4, 4, 0, 20));
                 return datastoreListPanel;
             }
-
         };
 
         _sourceColumnsPanel = sourceColumnsPanel;

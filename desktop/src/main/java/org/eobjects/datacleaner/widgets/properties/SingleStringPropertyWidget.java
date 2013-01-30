@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.JTextComponent;
 
@@ -160,7 +161,13 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
     @Override
     public String getValue() {
-        return _textComponent.getText();
+        String text = _textComponent.getText();
+        if (_textComponent instanceof JTextField) {
+            // look for escaped new lines
+            text = text.replaceAll("\\\\r", "\r");
+            text = text.replaceAll("\\\\n", "\n");
+        }
+        return text;
     }
 
     @Override

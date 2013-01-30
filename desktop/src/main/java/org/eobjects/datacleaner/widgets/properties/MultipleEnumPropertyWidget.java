@@ -23,6 +23,7 @@ import javax.inject.Inject;
 
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.job.builder.AbstractBeanJobBuilder;
+import org.eobjects.metamodel.util.HasName;
 
 public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesPropertyWidget<Enum<?>> {
 
@@ -42,6 +43,9 @@ public class MultipleEnumPropertyWidget extends AbstractMultipleCheckboxesProper
 
 	@Override
 	protected String getName(Enum<?> item) {
+	    if (item instanceof HasName) {
+	        return ((HasName)item).getName();
+	    }
 		return item.toString();
 	}
 

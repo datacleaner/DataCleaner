@@ -57,6 +57,9 @@
 							<div class="url">
 								<span class="label">URL:</span> <span class="value">#{ds.jdbcUrl}</span>
 							</div>
+						</h:panelGroup>
+						<h:panelGroup
+							rendered="#{ds.usernameDatastore}">
 							<div class="url">
 								<span class="label">Username:</span> <span class="value">#{ds.username}</span>
 							</div>

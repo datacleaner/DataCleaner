@@ -26,6 +26,7 @@ import org.eobjects.analyzer.connection.CompositeDatastore;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.connection.JdbcDatastore;
+import org.eobjects.analyzer.connection.UsernameDatastore;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.HasNameMapper;
 
@@ -71,20 +72,21 @@ public class DatastoreBeanWrapper {
         return _datastore instanceof JdbcDatastore;
     }
 
+    public boolean isUsernameDatastore() {
+        return _datastore instanceof UsernameDatastore;
+    }
+
+    public String getUsername() {
+        if (isUsernameDatastore()) {
+            return ((UsernameDatastore) _datastore).getUsername();
+        }
+        return null;
+    }
+
     public String getFilename() {
         if (_datastore instanceof FileDatastore) {
             String filename = ((FileDatastore) _datastore).getFilename();
             return filename;
-        } else {
-            return null;
-        }
-    }
-
-    public String getUsername() {
-        if (_datastore instanceof JdbcDatastore) {
-            JdbcDatastore jdbcDatastore = (JdbcDatastore) _datastore;
-            String username = jdbcDatastore.getUsername();
-            return username;
         } else {
             return null;
         }

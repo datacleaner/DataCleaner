@@ -48,14 +48,15 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
     private final JTextComponent _textComponent;
+    private final StringProperty _stringPropertyAnnotation;
 
     @Inject
     public SingleStringPropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
             AbstractBeanJobBuilder<?, ?, ?> beanJobBuilder) {
         super(beanJobBuilder, propertyDescriptor);
 
-        StringProperty stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
-        _textComponent = getTextComponent(propertyDescriptor, stringPropertyAnnotation);
+        _stringPropertyAnnotation = propertyDescriptor.getAnnotation(StringProperty.class);
+        _textComponent = getTextComponent(propertyDescriptor);
         String currentValue = getCurrentValue();
         if (currentValue != null) {
             _textComponent.setText(currentValue);
@@ -63,21 +64,20 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
         add(_textComponent);
     }
 
-    protected JTextComponent getTextComponent(ConfiguredPropertyDescriptor propertyDescriptor,
-            StringProperty stringPropertyAnnotation) {
+    protected JTextComponent getTextComponent(ConfiguredPropertyDescriptor propertyDescriptor) {
         final boolean multiline;
         final boolean password;
         final String mimeType;
 
-        if (stringPropertyAnnotation == null) {
+        if (_stringPropertyAnnotation == null) {
             multiline = false;
             mimeType = null;
             password = false;
         } else {
-            multiline = stringPropertyAnnotation.multiline();
-            String[] mimeTypes = stringPropertyAnnotation.mimeType();
+            multiline = _stringPropertyAnnotation.multiline();
+            String[] mimeTypes = _stringPropertyAnnotation.mimeType();
             mimeType = getTextAreaMimeType(mimeTypes);
-            password = stringPropertyAnnotation.password();
+            password = _stringPropertyAnnotation.password();
         }
 
         final JTextComponent textComponent;
@@ -156,7 +156,14 @@ public class SingleStringPropertyWidget extends AbstractPropertyWidget<String> {
 
     @Override
     public boolean isSet() {
-        return _textComponent.getText() != null && _textComponent.getText().length() > 0;
+        final String text = _textComponent.getText();
+        if (text == null) {
+            return false;
+        }
+        if (_stringPropertyAnnotation != null && _stringPropertyAnnotation.emptyString()) {
+            return true;
+        }
+        return text.length() > 0;
     }
 
     @Override

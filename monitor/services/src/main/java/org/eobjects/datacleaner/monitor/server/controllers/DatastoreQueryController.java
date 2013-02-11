@@ -37,6 +37,7 @@ import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.data.DataSet;
 import org.eobjects.metamodel.data.Row;
 import org.eobjects.metamodel.query.SelectItem;
+import org.eobjects.metamodel.query.parser.QueryParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +145,8 @@ public class DatastoreQueryController {
             } finally {
                 dataSet.close();
             }
+        } catch (QueryParserException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Query parsing failed: " + e.getMessage());
         } finally {
             con.close();
         }

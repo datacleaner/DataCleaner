@@ -58,6 +58,9 @@ li {
 	padding-left: 0px;
 }
 
+/*
+ * Page containers
+ */
 div.pageContainer {
 	margin-top: 0;
 }
@@ -85,6 +88,37 @@ div.pageContent {
 	margin-right: auto;
 	margin-bottom: 80px;
 	width: 904px;
+	text-align: left;
+}
+
+/*
+ * Popup containers
+ */
+div.popupContainer {
+	margin-top: 0;
+}
+
+div.popupHeader {
+	background-color: #333;
+	height: 51px;
+	background-image: url("images/header_bg.png");
+	background-repeat: repeat-x;
+}
+
+div.popupHeader div.logo {
+	margin-left: auto;
+	margin-right: auto;
+	height: 55px;
+	display: block;
+	background-image: url("images/header_logo.png");
+	background-repeat: no-repeat;
+}
+
+div.popupContent {
+	margin-top: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-bottom: 20px;
 	text-align: left;
 }
 
@@ -639,5 +673,35 @@ button.DownloadButton:hover {
 }
 
 button.DownloadButton:active {
+	border: 1px inset #ccc;
+}
+
+button.QueryButton {
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	background-image: url("images/query.png") !important;
+	min-width: 30px;
+	height: 26px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 28px;
+	padding-right: 3px;
+	background-color: #F1F1F1;
+	font-size: 0.9em;
+	border: 1px solid #BBB;
+	border-bottom-color: #A0A0A0;
+	border-radius: 3px;
+	margin-left: 0px;
+	margin-right: 2px;
+	margin-top: 3px;
+	margin-bottom: 3px;
+	text-decoration: none;
+	cursor: pointer;
+}
+button.QueryButton:hover {
+	border-color: #939393;
+}
+
+button.QueryButton:active {
 	border: 1px inset #ccc;
 }

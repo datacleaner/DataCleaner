@@ -76,6 +76,10 @@
 							<followSymlinks>false</followSymlinks>
 						</fileset>
 						<fileset>
+							<directory>src/main/webapp/query</directory>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+						<fileset>
 							<directory>src/main/webapp/WEB-INF/deploy</directory>
 							<followSymlinks>false</followSymlinks>
 						</fileset>

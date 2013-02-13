@@ -34,9 +34,9 @@ import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalysisJobMetadata;
 import org.eobjects.analyzer.job.AnalyzerJob;
+import org.eobjects.analyzer.job.AnalyzerJobHelper;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.util.LabelUtils;
-import org.eobjects.datacleaner.monitor.server.MetricValueUtils;
 import org.eobjects.datacleaner.monitor.server.MonitorJobReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
@@ -178,7 +178,6 @@ class DefaultJobContext implements JobContext {
     @Override
     public JobMetrics getJobMetrics() {
         final AnalysisJob job = getAnalysisJob();
-        final MetricValueUtils metricValueUtils = new MetricValueUtils();
 
         final Collection<AnalyzerJob> analyzerJobs = job.getAnalyzerJobs();
 
@@ -187,7 +186,7 @@ class DefaultJobContext implements JobContext {
             final Set<MetricDescriptor> metricDescriptors = analyzerJob.getDescriptor().getResultMetrics();
             if (!metricDescriptors.isEmpty()) {
                 final String label = LabelUtils.getLabel(analyzerJob);
-                final InputColumn<?> identifyingInputColumn = metricValueUtils.getIdentifyingInputColumn(analyzerJob);
+                final InputColumn<?> identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn(analyzerJob);
                 final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
 
                 for (MetricDescriptor metricDescriptor : metricDescriptors) {

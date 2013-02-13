@@ -19,10 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -30,11 +28,11 @@ import javax.el.ValueExpression;
 
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.descriptors.MetricParameters;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.AnalyzerJob;
+import org.eobjects.analyzer.job.AnalyzerJobHelper;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
@@ -74,7 +72,7 @@ public class MetricValueUtils {
         List<AnalyzerJob> candidates = CollectionUtils2.filterOnClass(componentJobs, AnalyzerJob.class);
 
         // filter analyzers of the corresponding type
-        candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+        candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
             @Override
             public Boolean eval(AnalyzerJob o) {
                 final String actualDescriptorName = o.getDescriptor().getDisplayName();
@@ -86,7 +84,7 @@ public class MetricValueUtils {
         final String analyzerJobName = analyzerJob.getName();
         if (analyzerJobName != null) {
             // filter analyzers with a particular name
-            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
                 @Override
                 public Boolean eval(AnalyzerJob o) {
                     final String actualAnalyzerName = o.getName();
@@ -97,7 +95,7 @@ public class MetricValueUtils {
         }
 
         // filter analyzer jobs with same input
-        candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+        candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
             @Override
             public Boolean eval(AnalyzerJob o) {
                 final String actualAnalyzerInputNames = CollectionUtils.map(o.getInput(), new HasNameMapper())
@@ -111,10 +109,10 @@ public class MetricValueUtils {
         // filter analyzer jobs with input matching the metric
         final String analyzerInputName = metricIdentifier.getAnalyzerInputName();
         if (analyzerInputName != null) {
-            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+            candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
                 @Override
                 public Boolean eval(AnalyzerJob o) {
-                    InputColumn<?> identifyingInputColumn = getIdentifyingInputColumn(o);
+                    InputColumn<?> identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn(o);
                     if (identifyingInputColumn == null) {
                         return false;
                     }
@@ -150,54 +148,8 @@ public class MetricValueUtils {
             metricIdentifier = metric;
         }
 
-        List<AnalyzerJob> candidates = new ArrayList<AnalyzerJob>(analysisJob.getAnalyzerJobs());
-
-        // filter analyzers of the corresponding type
-        candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-            @Override
-            public Boolean eval(AnalyzerJob o) {
-                final String actualDescriptorName = o.getDescriptor().getDisplayName();
-                final String metricDescriptorName = metricIdentifier.getAnalyzerDescriptorName();
-                return metricDescriptorName.equals(actualDescriptorName);
-            }
-        });
-
-        if (metricIdentifier.getAnalyzerName() != null) {
-            // filter analyzers with a particular name
-            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final String actualAnalyzerName = o.getName();
-                    final String metricAnalyzerName = metricIdentifier.getAnalyzerName();
-                    return metricAnalyzerName.equals(actualAnalyzerName);
-                }
-            });
-        }
-
-        if (metricIdentifier.getAnalyzerInputName() != null) {
-            // filter analyzers with a particular input
-            candidates = refineCandidates(candidates, new Predicate<AnalyzerJob>() {
-                @Override
-                public Boolean eval(AnalyzerJob o) {
-                    final InputColumn<?> inputColumn = getIdentifyingInputColumn(o);
-                    if (inputColumn == null) {
-                        return false;
-                    }
-
-                    final String metricInputName = metricIdentifier.getAnalyzerInputName();
-                    return metricInputName.equals(inputColumn.getName());
-                }
-            });
-        }
-
-        if (candidates.isEmpty()) {
-            logger.error("No more AnalyzerJob candidates to choose from");
-            return null;
-        } else if (candidates.size() > 1) {
-            logger.warn("Multiple ({}) AnalyzerJob candidates to choose from, picking first");
-        }
-
-        AnalyzerJob analyzerJob = candidates.iterator().next();
+        final AnalyzerJobHelper analyzerJobHelper = new AnalyzerJobHelper(analysisJob);
+        final AnalyzerJob analyzerJob = analyzerJobHelper.getAnalyzerJob(metricIdentifier.getAnalyzerDescriptorName(), metric.getAnalyzerName(), metric.getAnalyzerInputName());
         return analyzerJob;
     }
 
@@ -214,40 +166,6 @@ public class MetricValueUtils {
             }
         }
         throw new IllegalStateException("No singular metrics found in formula metric: " + metric);
-    }
-
-    private <E> List<E> refineCandidates(final List<E> candidates, final Predicate<? super E> predicate) {
-        if (candidates.size() == 1) {
-            return candidates;
-        }
-        List<E> newCandidates = CollectionUtils.filter(candidates, predicate);
-        if (newCandidates.isEmpty()) {
-            return candidates;
-        }
-        return newCandidates;
-    }
-
-    public InputColumn<?> getIdentifyingInputColumn(final AnalyzerJob o) {
-        final Set<ConfiguredPropertyDescriptor> inputProperties = o.getDescriptor().getConfiguredPropertiesForInput(
-                false);
-        if (inputProperties.size() != 1) {
-            return null;
-        }
-
-        final ConfiguredPropertyDescriptor inputProperty = inputProperties.iterator().next();
-        final Object input = o.getConfiguration().getProperty(inputProperty);
-
-        if (input instanceof InputColumn) {
-            final InputColumn<?> inputColumn = (InputColumn<?>) input;
-            return inputColumn;
-        } else if (input instanceof InputColumn[]) {
-            final InputColumn<?>[] inputColumns = (InputColumn[]) input;
-            if (inputColumns.length != 1) {
-                return null;
-            }
-            return inputColumns[0];
-        }
-        return null;
     }
 
     public MetricDescriptor getMetricDescriptor(final MetricIdentifier metricIdentifier, final AnalysisJob analysisJob,
@@ -333,7 +251,7 @@ public class MetricValueUtils {
                 final MetricParameters childParameters = getParameters(child, childDescriptor, childAnalyzerJob);
                 final Number childValue = getMetricValue(child, childDescriptor, analysisJob, childAnalyzerJob,
                         analysisResult, childParameters);
-                final String variableName = prepareVariableName( child.getDisplayName());
+                final String variableName = prepareVariableName(child.getDisplayName());
                 context.getELResolver().setValue(context, null, variableName, childValue);
             }
 

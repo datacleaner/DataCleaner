@@ -53,7 +53,7 @@ public class DisplayOutputWritersForTransformedDataActionListener extends Displa
 	protected void configure(AnalysisJobBuilder analysisJobBuilder, AnalyzerJobBuilder<?> analyzerJobBuilder) {
 		Analyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
 		if (analyzer instanceof AbstractOutputWriterAnalyzer) {
-		    LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration().getInjectionManager(null), null);
+		    LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration().getInjectionManager(null), null, true);
 	        helper.assignProvidedProperties(analyzerJobBuilder.getDescriptor(), analyzer);
 			((AbstractOutputWriterAnalyzer) analyzer).configureForTransformedData(analysisJobBuilder,
 					_transformerJobBuilder.getDescriptor());

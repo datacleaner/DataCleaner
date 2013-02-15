@@ -59,7 +59,7 @@ public class MutableReferenceDataCatalog implements ReferenceDataCatalog {
 	 */
 	public MutableReferenceDataCatalog() {
 		_immutableDelegate = new ReferenceDataCatalogImpl();
-		_lifeCycleHelper = new LifeCycleHelper(null, null);
+		_lifeCycleHelper = new LifeCycleHelper(null, null, true);
 		_dictionaries = new ArrayList<Dictionary>();
 		_synonymCatalogs = new ArrayList<SynonymCatalog>();
 		_stringPatterns = new ArrayList<StringPattern>();

@@ -179,7 +179,7 @@ public class ExecuteJob extends AbstractQuartzJob {
         }
 
         final InjectionManager injectionManager = configuration.getInjectionManager(null);
-        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, true);
 
         @SuppressWarnings("unchecked")
         final Class<? extends VariableProvider> cls = (Class<? extends VariableProvider>) Class.forName(className);

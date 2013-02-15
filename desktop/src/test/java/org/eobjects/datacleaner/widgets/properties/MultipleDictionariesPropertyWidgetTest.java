@@ -46,7 +46,7 @@ public class MultipleDictionariesPropertyWidgetTest extends TestCase {
 	private AnalyzerJobBuilder<ManyPropertiesAnalyzer> analyzerJobBuilder = ajb.addAnalyzer(ManyPropertiesAnalyzer.class);
 	private ConfiguredPropertyDescriptor property = analyzerJobBuilder.getDescriptor().getConfiguredProperty(
 			"Dictionary array property");
-	private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration.getInjectionManager(null), null);
+	private LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(configuration.getInjectionManager(null), null, true);
 	private MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
 			configuration.getReferenceDataCatalog(), new UserPreferencesImpl(null), lifeCycleHelper);
 	private Provider<ReferenceDataDialog> referenceDataDialogProvider = null;

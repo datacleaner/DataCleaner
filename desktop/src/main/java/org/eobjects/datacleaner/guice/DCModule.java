@@ -205,7 +205,7 @@ public class DCModule extends AbstractModule {
     @Provides
     public final LifeCycleHelper getLifeCycleHelper(InjectionManager injectionManager,
             @Nullable ReferenceDataActivationManager referenceDataActivationManager) {
-        return new LifeCycleHelper(injectionManager, referenceDataActivationManager);
+        return new LifeCycleHelper(injectionManager, referenceDataActivationManager, true);
     }
 
     @Provides
@@ -240,7 +240,7 @@ public class DCModule extends AbstractModule {
                             c.getDatastoreCatalog(), userPreferences);
                     final MutableReferenceDataCatalog referenceDataCatalog = new MutableReferenceDataCatalog(
                             c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(
-                                    injectionManagerFactory.getInjectionManager(c, null), null));
+                                    injectionManagerFactory.getInjectionManager(c, null), null, true));
                     final DescriptorProvider descriptorProvider = c.getDescriptorProvider();
 
                     final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();

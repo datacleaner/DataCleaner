@@ -108,7 +108,7 @@ public class DisplayOptionsForFilterOutcomeActionListener extends DisplayOutputW
         Analyzer<?> analyzer = analyzerJobBuilder.getConfigurableBean();
         if (analyzer instanceof AbstractOutputWriterAnalyzer) {
             LifeCycleHelper helper = new LifeCycleHelper(analysisJobBuilder.getConfiguration()
-                    .getInjectionManager(null), null);
+                    .getInjectionManager(null), null, true);
             helper.assignProvidedProperties(analyzerJobBuilder.getDescriptor(), analyzer);
             ((AbstractOutputWriterAnalyzer) analyzer).configureForFilterOutcome(analysisJobBuilder,
                     _filterJobBuilder.getDescriptor(), _categoryName);

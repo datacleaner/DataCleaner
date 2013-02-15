@@ -26,6 +26,7 @@ import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
+import org.eobjects.analyzer.beans.api.Distributed;
 import org.eobjects.analyzer.beans.writers.WriteDataCategory;
 import org.eobjects.analyzer.beans.writers.WriteDataResult;
 import org.eobjects.analyzer.beans.writers.WriteDataResultImpl;
@@ -44,6 +45,7 @@ import org.eobjects.datacleaner.user.UserPreferences;
 @Alias("Write to Datastore")
 @Description("Write data to DataCleaner's embedded staging database (based on H2), which provides a convenient location for staging data or simply storing data temporarily for further analysis.")
 @Categorized(WriteDataCategory.class)
+@Distributed(false)
 public class CreateStagingTableAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	/**

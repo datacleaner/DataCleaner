@@ -26,6 +26,7 @@ import org.eobjects.analyzer.beans.api.AnalyzerBean;
 import org.eobjects.analyzer.beans.api.Categorized;
 import org.eobjects.analyzer.beans.api.Configured;
 import org.eobjects.analyzer.beans.api.Description;
+import org.eobjects.analyzer.beans.api.Distributed;
 import org.eobjects.analyzer.beans.api.FileProperty;
 import org.eobjects.analyzer.beans.api.Validate;
 import org.eobjects.analyzer.beans.api.FileProperty.FileAccessMode;
@@ -44,6 +45,7 @@ import org.eobjects.datacleaner.output.excel.ExcelOutputWriterFactory;
 @Alias("Write to Excel spreadsheet")
 @Description("Write data to an Excel spreadsheet, useful for manually editing and inspecting the data in Microsoft Excel.")
 @Categorized(WriteDataCategory.class)
+@Distributed(false)
 public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer {
 
 	@Configured

@@ -25,6 +25,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eobjects.analyzer.cluster.SlaveJobInterceptor;
 import org.eobjects.analyzer.cluster.http.SlaveServletHelper;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -51,6 +52,9 @@ public class ClusterSlaveController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
+    @Autowired(required = false)
+    SlaveJobInterceptor _slaveJobInterceptor;
+
     @RolesAllowed({ SecurityRoles.SCHEDULE_EDITOR, SecurityRoles.ADMIN })
     @RequestMapping(method = RequestMethod.POST, produces = "application/octet-stream")
     @ResponseBody
@@ -62,7 +66,7 @@ public class ClusterSlaveController {
         logger.info("Accepting slave job request for tenant: {}", tenant);
 
         try {
-            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration);
+            final SlaveServletHelper slaveServletHelper = new SlaveServletHelper(configuration, _slaveJobInterceptor);
             slaveServletHelper.handleRequest(request, response);
         } catch (RuntimeException e) {
             logger.error("Unexpected runtime exception occurred during slave job execution", e);

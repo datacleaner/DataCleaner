@@ -73,6 +73,9 @@ public class JaxbScheduleWriter extends AbstractJaxbAdaptor<Schedule> {
             schedule.setVariableProvider(variableProvider);
         }
 
+        final boolean distributedExecution = scheduleDefinition.isDistributedExecution();
+        schedule.setDistributedExecution(distributedExecution);
+
         final Alerts alerts = new Alerts();
         final List<AlertDefinition> alertDefinitions = scheduleDefinition.getAlerts();
         for (AlertDefinition alertDefinition : alertDefinitions) {

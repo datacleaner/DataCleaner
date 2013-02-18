@@ -24,6 +24,8 @@ import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.Map;
 
+import org.eobjects.analyzer.cluster.ClusterManager;
+import org.eobjects.analyzer.cluster.DistributedAnalysisRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.connection.Datastore;
@@ -37,6 +39,7 @@ import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
 import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.datacleaner.monitor.cluster.ClusterManagerFactory;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -49,6 +52,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -70,8 +74,9 @@ public class ExecuteJob extends AbstractQuartzJob {
         final ApplicationContext applicationContext;
         final ExecutionLog execution;
         final ScheduleDefinition schedule;
+        final TenantIdentifier tenant;
         final TenantContext context;
-        
+
         try {
             logger.debug("executeInternal({})", jobExecutionContext);
 
@@ -92,16 +97,24 @@ public class ExecuteJob extends AbstractQuartzJob {
             }
 
             final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
-            final String tenantId = schedule.getTenant().getId();
-            logger.info("Tenant {} executing job {}", tenantId, schedule.getJob());
+            tenant = schedule.getTenant();
+            logger.info("Tenant {} executing job {}", tenant.getId(), schedule.getJob());
 
-            context = contextFactory.getContext(tenantId);
+            context = contextFactory.getContext(tenant);
         } catch (RuntimeException e) {
             logger.error("Unexpected error occurred in executeInternal!", e);
             throw e;
         }
 
-        executeJob(context, execution, applicationContext);
+        final ClusterManager clusterManager;
+        if (schedule.isDistributedExecution()) {
+            ClusterManagerFactory clusterManagerFactory = applicationContext.getBean(ClusterManagerFactory.class);
+            clusterManager = clusterManagerFactory.getClusterManager(tenant);
+        } else {
+            clusterManager = null;
+        }
+
+        executeJob(context, execution, applicationContext, clusterManager);
     }
 
     /**
@@ -115,11 +128,15 @@ public class ExecuteJob extends AbstractQuartzJob {
      *            publisher of application events, specifically for
      *            {@link JobTriggeredEvent}, {@link JobExecutedEvent} and
      *            {@link JobFailedEvent}.
+     * @param clusterManager
+     *            optionally a {@link ClusterManager} for driving clustered
+     *            execution
      * 
      * @return The expected result name, which can be used to get updates about
      *         execution status etc. at a later state.
      */
-    protected String executeJob(TenantContext context, ExecutionLog execution, ApplicationEventPublisher eventPublisher) {
+    protected String executeJob(final TenantContext context, final ExecutionLog execution,
+            final ApplicationEventPublisher eventPublisher, final ClusterManager clusterManager) {
         if (execution.getJobBeginDate() == null) {
             // although the job begin date will in vanilla scenarios be set by
             // the MonitorAnalysisListener, we also set it here, just in case of
@@ -151,10 +168,16 @@ public class ExecuteJob extends AbstractQuartzJob {
 
             preExecuteJob(context, job, analysisJob);
 
-            final AnalysisRunner runner = new AnalysisRunnerImpl(configuration, analysisListener);
+            final AnalysisRunner runner;
+            if (clusterManager == null) {
+                runner = new AnalysisRunnerImpl(configuration, analysisListener);
+            } else {
+                runner = new DistributedAnalysisRunner(configuration, clusterManager, analysisListener);
+            }
 
             // fire and forget (the listener will do the rest)
             runner.run(analysisJob);
+
         } catch (Throwable e) {
 
             // only initialization issues are catched here, eg. failing to load

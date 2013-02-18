@@ -15,6 +15,7 @@
 					<element name="cron-expression" type="string" />
 					<element name="dependent-job" type="string" />
 				</choice>
+				<element name="distributed-execution" type="boolean" minOccurs="0" maxOccurs="1" />
 				<element name="variable-provider" minOccurs="0" maxOccurs="1" type="schedule:variableProvider" />
 				<element name="alerts" minOccurs="0" maxOccurs="1">
 					<complexType>

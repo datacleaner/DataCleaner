@@ -51,7 +51,7 @@ public class ExecuteJobTest extends TestCase {
         ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, datastoreIdentifier);
         ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null);
+        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, null);
 
         assertNotNull(executionId);
         try {
@@ -83,7 +83,7 @@ public class ExecuteJobTest extends TestCase {
         ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, datastoreIdentifier);
         ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
-        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null);
+        String executionId = new ExecuteJob().executeJob(tenantContext, execution, null, null);
         assertNotNull(executionId);
         try {
             SchedulingService schedulingService = new SchedulingServiceImpl(repo, tenantContextFactory);

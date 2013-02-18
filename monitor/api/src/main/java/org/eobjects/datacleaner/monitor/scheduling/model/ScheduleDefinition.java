@@ -41,6 +41,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private List<AlertDefinition> _alerts;
     private DatastoreIdentifier _datastore;
     private VariableProviderDefinition _variableProvider;
+    private boolean _distributedExecution;
 
     // no-args constructor
     public ScheduleDefinition() {
@@ -101,6 +102,14 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
 
     public void setAlerts(List<AlertDefinition> alerts) {
         _alerts = alerts;
+    }
+    
+    public boolean isDistributedExecution() {
+        return _distributedExecution;
+    }
+    
+    public void setDistributedExecution(boolean distributedExecution) {
+        _distributedExecution = distributedExecution;
     }
 
     public TriggerType getTriggerType() {

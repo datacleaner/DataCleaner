@@ -46,5 +46,10 @@
 	<!-- Extensions can put a context/extension-context.xml file in the JAR 
 		file to include additional Spring config. -->
 	<import resource="classpath*:context/extension-context.xml" />
+	
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<!-- Logs uncaught exceptions to the logger category 'org.eobjects.datacleaner.monitor.ExceptionResolver' -->
+		<property name="warnLogCategory" value="org.eobjects.datacleaner.monitor.ExceptionResolver"/>
+	</bean>
 
 </beans>

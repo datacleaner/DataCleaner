@@ -46,6 +46,12 @@
 			</exclusions>
 		</dependency>
 
+		<dependency>
+			<groupId>org.eobjects.analyzerbeans</groupId>
+			<artifactId>AnalyzerBeans-cluster</artifactId>
+			<version>${analyzerbeans.version}</version>
+		</dependency>
+
 		<!-- GWT servlet server side -->
 		<dependency>
 			<groupId>com.google.gwt</groupId>

@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Represents a column in a table
  */
-public class ColumnIdentifier implements Serializable {
+public class ColumnIdentifier implements Serializable, HasName {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,6 +40,7 @@ public class ColumnIdentifier implements Serializable {
         this(null, null);
     }
 
+    @Override
     public String getName() {
         return _name;
     }

@@ -19,41 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.shared.model;
 
-import java.io.Serializable;
-
 /**
- * Represents a schema of a datastore
+ * Indicates that an object has a name to present to the user
  */
-public class SchemaIdentifier implements Serializable, HasName {
+public interface HasName {
 
-    private static final long serialVersionUID = 1L;
-
-    private String _name;
-    private DatastoreIdentifier _datastore;
-
-    public SchemaIdentifier(DatastoreIdentifier datastore, String name) {
-        _name = name;
-        _datastore = datastore;
-    }
-
-    public SchemaIdentifier() {
-        this(null, null);
-    }
-
-    public DatastoreIdentifier getDatastore() {
-        return _datastore;
-    }
-
-    public void setDatastore(DatastoreIdentifier datastore) {
-        _datastore = datastore;
-    }
-
-    @Override
-    public String getName() {
-        return _name;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
+    public String getName();
 }

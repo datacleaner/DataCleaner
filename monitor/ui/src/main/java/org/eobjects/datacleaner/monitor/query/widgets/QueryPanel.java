@@ -21,12 +21,14 @@ package org.eobjects.datacleaner.monitor.query.widgets;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.DatastoreServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.SchemaIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TableIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
+import org.eobjects.datacleaner.monitor.shared.widgets.SchemaTree;
 import org.eobjects.datacleaner.monitor.util.DCRequestBuilder;
 import org.eobjects.datacleaner.monitor.util.DCRequestCallback;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
@@ -34,6 +36,8 @@ import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
@@ -42,6 +46,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TreeItem;
 
 /**
  * Main panel of the query module - contains the text area for the query, the
@@ -56,8 +61,8 @@ public class QueryPanel extends FlowPanel {
     private final HTML _resultPanel;
     private final LoadingIndicator _loadingIcon;
 
-    public QueryPanel(TenantIdentifier tenant, DatastoreIdentifier datastore, SchemaIdentifier schema,
-            List<TableIdentifier> tables) {
+    public QueryPanel(TenantIdentifier tenant, DatastoreServiceAsync service, DatastoreIdentifier datastore,
+            SchemaIdentifier schema, List<TableIdentifier> tables) {
         super();
         setStyleName("QueryPanel");
 
@@ -66,9 +71,10 @@ public class QueryPanel extends FlowPanel {
         _queryTextArea = new TextArea();
 
         if (tables.isEmpty()) {
-            _queryTextArea.setText("SELECT *\nFROM [table] \nLIMIT 50");
+            writeQuery(null);
         } else {
-            _queryTextArea.setText("SELECT *\nFROM " + schema.getName() + "." + tables.get(0).getName() + "\nLIMIT 50");
+            writeQuery(tables.get(0));
+
         }
 
         _executeQueryButton = new Button("Ok");
@@ -110,12 +116,33 @@ public class QueryPanel extends FlowPanel {
             }
         });
 
+        final SchemaTree schemaPanel = new SchemaTree(_tenant, _datastore, service);
+        schemaPanel.addSelectionHandler(new SelectionHandler<TreeItem>() {
+            @Override
+            public void onSelection(SelectionEvent<TreeItem> event) {
+                TreeItem selectedItem = event.getSelectedItem();
+                if (selectedItem.getUserObject() instanceof TableIdentifier) {
+                    writeQuery((TableIdentifier) selectedItem.getUserObject());
+                }
+            }
+        });
+
+        add(schemaPanel);
         add(new HeadingLabel("Query datastore: " + _datastore.getName()));
         add(new Label("Please fill in your query below and click the 'Ok' button to execute it on the server."));
         add(_queryTextArea);
         add(_executeQueryButton);
         add(_loadingIcon);
         add(_resultPanel);
+    }
+
+    protected void writeQuery(TableIdentifier table) {
+        if (table == null) {
+            _queryTextArea.setText("SELECT *\nFROM [table] \nLIMIT 50");
+        } else {
+            _queryTextArea.setText("SELECT *\nFROM " + table.getSchema().getName() + "." + table.getName()
+                    + "\nLIMIT 50");
+        }
     }
 
     private String getCurrentQuery() {

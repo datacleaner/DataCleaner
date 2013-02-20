@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Identifies a job in the repository.
  */
-public class JobIdentifier implements Serializable, Comparable<JobIdentifier> {
+public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +38,7 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier> {
         this(null);
     }
 
+    @Override
     public String getName() {
         return _name;
     }

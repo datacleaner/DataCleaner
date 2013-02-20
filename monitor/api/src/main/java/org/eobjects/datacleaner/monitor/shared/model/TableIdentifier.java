@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Represents the table of a schema in a datastore
  */
-public class TableIdentifier implements Serializable {
+public class TableIdentifier implements Serializable, HasName {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,6 +48,7 @@ public class TableIdentifier implements Serializable {
         _schema = schema;
     }
 
+    @Override
     public String getName() {
         return _name;
     }

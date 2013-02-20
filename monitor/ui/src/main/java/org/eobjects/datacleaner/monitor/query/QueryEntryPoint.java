@@ -75,7 +75,7 @@ public class QueryEntryPoint implements EntryPoint {
 
     private void render(TenantIdentifier tenant, DatastoreIdentifier datastore, SchemaIdentifier schema,
             List<TableIdentifier> tables) {
-        final QueryPanel queryPanel = new QueryPanel(tenant, datastore, schema, tables);
+        final QueryPanel queryPanel = new QueryPanel(tenant, datastoreService, datastore, schema, tables);
 
         final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
         rootPanel.add(queryPanel);

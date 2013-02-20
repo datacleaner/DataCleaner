@@ -24,7 +24,7 @@ import java.io.Serializable;
 /**
  * Identifies a Datastore in the repository.
  */
-public class DatastoreIdentifier implements Serializable, Comparable<JobIdentifier> {
+public class DatastoreIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,6 +38,7 @@ public class DatastoreIdentifier implements Serializable, Comparable<JobIdentifi
         _name = name;
     }
 
+    @Override
     public String getName() {
         return _name;
     }

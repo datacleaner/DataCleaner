@@ -177,6 +177,37 @@ a:hover {
 }
 
 /**
+ * Styling for Schema tree
+ */
+.SchemaTree .gwt-TreeItem {
+	margin-left: 20px;
+}
+ 
+.SchemaTree .datastoreItem {
+	background-image: url("datastore.png");
+	background-repeat: no-repeat;
+	background-position: 20px top;
+}
+
+.SchemaTree .schemaItem {
+	background-image: url("schema.png");
+	background-repeat: no-repeat;
+	background-position: 20px 5px;
+}
+
+.SchemaTree .tableItem {
+	background-image: url("table.png");
+	background-repeat: no-repeat;
+	background-position: 20px 5px;
+}
+
+.SchemaTree .columnItem {
+	background-image: url("column.png");
+	background-repeat: no-repeat;
+	background-position: 20px 5px;
+}
+
+/**
  * Styling for metric definition and selection
  */
 .DefineMetricPanel {
@@ -204,6 +235,7 @@ a:hover {
 	height: 24px;
 	float: right;
 }
+
 .DefineMetricPanel .RemoveMetricButton {
 	background-image: url("remove.png");
 	background-repeat: no-repeat;

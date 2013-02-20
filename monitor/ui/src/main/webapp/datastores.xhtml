@@ -26,12 +26,12 @@
 							<c:choose>
 								<c:when test="#{param['gwt.codesvr'] != null}">
 									<button
-										onclick="window.open('query.jsf?ds=#{ds.name}&amp;gwt.codesvr=#{param['gwt.codesvr']}','_blank','location=no,width=600,height=400,toolbar=no,menubar=no');"
+										onclick="window.open('query.jsf?ds=#{ds.name}&amp;gwt.codesvr=#{param['gwt.codesvr']}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
 										class="QueryButton">Query</button>
 								</c:when>
 								<c:otherwise>
 									<button
-										onclick="window.open('query.jsf?ds=#{ds.name}','_blank','location=no,width=600,height=400,toolbar=no,menubar=no');"
+										onclick="window.open('query.jsf?ds=#{ds.name}','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');"
 										class="QueryButton">Query</button>
 								</c:otherwise>
 							</c:choose>

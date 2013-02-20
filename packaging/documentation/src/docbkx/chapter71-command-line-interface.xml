@@ -5,11 +5,16 @@
 
 	<title>Command-line interface</title>
 
-	<para>DataCleaner offers a Command-Line Interface (CLI) for performing
-		various tasks, including executing analysis jobs, via simple commands
-		that can be invoked eg. as a scheduled tasks.
-	</para>
-
+	<chapterinfo>
+		<abstract>
+			<para>DataCleaner offers a Command-Line Interface (CLI) for
+				performing
+				various tasks, including executing analysis jobs, via simple commands
+				that can be invoked eg. as a scheduled tasks.
+			</para>
+		</abstract>
+	</chapterinfo>
+	
 	<section>
 		<title>Executables</title>
 		<para>Depending on your distribution of DataCleaner, you will have one
@@ -257,7 +262,7 @@
 		</programlisting>
 	</section>
 
-	<section>
+	<section id="section_parameterizable_jobs">
 		<title>Parameterizable jobs</title>
 		<para>If you want to make a part of a job parameterizable/variable,
 			then it is possible to do so. Currently this is a feature only
@@ -351,7 +356,8 @@
 			&#160;&#160;&lt;csv-datastore&#160;name="My csv file"&gt;
 			&#160;&#160;&#160;&#160;&lt;filename&gt;/path/to/file.csv&lt;/filename&gt;
 			&#160;&#160;&lt;/csv-datastore&gt;
-			&lt;/datastore-catalog&gt;</programlisting>
+			&lt;/datastore-catalog&gt;
+		</programlisting>
 		<para>To override the filename dynamically, you have to specify the
 			property path (datastore catalog, then datastore name, then property
 			name) with a '-D' parameter on the command line. Furthermore any
@@ -362,7 +368,8 @@
 		<programlisting>DataCleaner-console.exe&#160;...&#160;-DdatastoreCatalog.myCsvFile.filename=anotherfile.csv
 		</programlisting>
 		<para>This mechanism can be used for any configuration property within
-			the datastore catalog and reference data catalog.</para>
+			the datastore catalog and reference data catalog.
+		</para>
 	</section>
 
 </chapter>

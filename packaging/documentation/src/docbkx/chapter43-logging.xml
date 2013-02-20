@@ -6,11 +6,13 @@
 	<title>Logging</title>
 
 	<chapterinfo>
-		<para>
-			Logging in DataCleaner is configurable either by supplying an
-			XML file or a properties file. In this chapter we explore logging
-			configuration and how you can fine-tune logging to your needs.
-		</para>
+		<abstract>
+			<para>
+				Logging in DataCleaner is configurable either by supplying an
+				XML file or a properties file. In this chapter we explore logging
+				configuration and how you can fine-tune logging to your needs.
+			</para>
+		</abstract>
 	</chapterinfo>
 
 	<section>
@@ -18,9 +20,11 @@
 		<para>Logging in DataCleaner is based on Log4j, an open source logging
 			framework by the Apache foundation. With log4j you can configure
 			logging at a very detailed level, while at the same time keeping a
-			centralized configuration.</para>
+			centralized configuration.
+		</para>
 		<para>There are three approaches to configuring logging in
-			DataCleaner:</para>
+			DataCleaner:
+		</para>
 		<orderedlist>
 			<listitem>
 				<para>
@@ -60,10 +64,13 @@
 	<section>
 		<title>Default logging configuration</title>
 		<para>Here's a listing of the default logging configuration, in XML
-			format:</para>
+			format:
+		</para>
 		<programlisting lang="xml">
-			&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
-			&lt;!DOCTYPE log4j:configuration SYSTEM "log4j.dtd"&gt;
+			&lt;?xml version="1.0"
+			encoding="UTF-8" ?&gt;
+			&lt;!DOCTYPE log4j:configuration SYSTEM
+			"log4j.dtd"&gt;
 			&lt;log4j:configuration&#160;xmlns:log4j="http://jakarta.apache.org/log4j/"&gt;
 
 			&#160;&lt;appender&#160;name="consoleAppender"&#160;class="org.apache.log4j.ConsoleAppender"&gt;
@@ -116,16 +123,19 @@
 			default level of logging. It appends (outputs) log messages to the
 			console (if
 			available) and to a file with the path:
-			log/datacleaner.log</para>
+			log/datacleaner.log
+		</para>
 		<para>We recommend using this default configuration as a template for
 			custom log configurations. Next we will explore how to modify the
-			configuration and create new logging outputs.</para>
+			configuration and create new logging outputs.
+		</para>
 	</section>
 
 	<section>
 		<title>Modifying logging levels</title>
 		<para>These are the logging levels available in DataCleaner and Log4j,
-			order by priority (highest priority first):</para>
+			order by priority (highest priority first):
+		</para>
 		<orderedlist>
 			<listitem>
 				error
@@ -145,7 +155,8 @@
 		</orderedlist>
 		<para>Typically the bottom-two logging levels (debug and trace) are
 			not used unless unexpected situations has to be investigated by
-			developers.</para>
+			developers.
+		</para>
 		<para>
 			Modifying the logging levels can be done either globally or in a
 			hierarical manner:
@@ -153,13 +164,15 @@
 		<orderedlist>
 			<listitem>
 				<para>If you change the &lt;priority&gt; element's value attribute,
-					you change the global threshold for logging messages.</para>
+					you change the global threshold for logging messages.
+				</para>
 			</listitem>
 			<listitem>
 				<para>If you change the &lt;logger&gt; element's level,
 					you change
 					the logging priority logging messages that pertain to a particular
-					hierachy of loggers.</para>
+					hierachy of loggers.
+				</para>
 			</listitem>
 		</orderedlist>
 	</section>

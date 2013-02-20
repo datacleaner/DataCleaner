@@ -5,26 +5,30 @@
 
 	<title>Analyzers</title>
 
-	<para>This chapter deals with one of the most important concepts in
-		DataCleaner: Analyzers. Analyzers are the endpoints of any analysis
-		job, meaning that a job requires at least on analyzer.
-	</para>
-	<para>An analyzer consumes a (set of) column(s) and generates an
-		analysis result based on the values in the consumed columns.
-	</para>
-	<para>Here is an example of a configuration panel pertaining to an
-		analyzer:
-	</para>
-	<mediaobject>
-		<imageobject>
-			<imagedata fileref="analysis_job_04_analyzer.jpg" format="JPG"
-				scalefit="1" />
-		</imageobject>
-	</mediaobject>
-	<para>In the panel there will always be one or more selections of
-		columns. The configuration panel may also contain additional
-		properties for configuration.
-	</para>
+	<chapterinfo>
+		<abstract>
+			<para>This chapter deals with one of the most important concepts in
+				DataCleaner: Analyzers. Analyzers are the endpoints of any analysis
+				job, meaning that a job requires at least on analyzer.
+			</para>
+			<para>An analyzer consumes a (set of) column(s) and generates an
+				analysis result based on the values in the consumed columns.
+			</para>
+			<para>Here is an example of a configuration panel pertaining to an
+				analyzer:
+			</para>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="analysis_job_04_analyzer.jpg" format="JPG"
+						scalefit="1" />
+				</imageobject>
+			</mediaobject>
+			<para>In the panel there will always be one or more selections of
+				columns. The configuration panel may also contain additional
+				properties for configuration.
+			</para>
+		</abstract>
+	</chapterinfo>
 
 	<section id="completeness_analyzer">
 		<title>Completeness analyzer</title>
@@ -349,6 +353,33 @@
 				</tbody>
 			</tgroup>
 		</table>
+	</section>
+
+	<section id="value_matcher">
+		<title>Value matcher</title>
+		<para>
+			The value matcher works very similar to the
+			<link linkend="value_distribution">Value distribution</link>
+			, except for the fact that it takes a list of expected values and
+			everything else is put into a group of 'unexpected values'. This
+			division of values means a couple of things:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>You get a built-in validation mechanism. You expect maybe only
+					'M' and 'F' values for your 'gender' column, and everything else is
+					in a sense invalid, since it is unexpected.</para>
+			</listitem>
+			<listitem>
+				<para>The division makes it easier to monitor specific values in the
+					data quality monitoring web application.</para>
+			</listitem>
+			<listitem>
+				<para>This analyzer scales much better for large datasets, since the
+					groupings are deterministic and thus can be prepared for in the
+					batch run.</para>
+			</listitem>
+		</orderedlist>
 	</section>
 
 	<section id="weekday_distribution">

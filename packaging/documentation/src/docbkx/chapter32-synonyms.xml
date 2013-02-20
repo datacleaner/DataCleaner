@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="synonym_catalogs"
-	xmlns="http://www.oasis-open.org/docbook/4.5"
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	id="synonym_catalogs" xmlns="http://www.oasis-open.org/docbook/4.5"
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Synonyms (aka. Synonym catalogs)</title>
 
-	<para>Synonym catalogs are used to replace and standardize values to
-		their master terms, in order to avoid multiple terms for the same real
-		world thing.
-	</para>
-
-	<para>There are many real life examples of synonyms that make for messy
-		data, for example:
-	</para>
-
-	<orderedlist>
-		<listitem>
-			<para>Company and brand names, like "Coca-Cola", "Coca cola" and
-				"Coke".
+	<chapterinfo>
+		<abstract>
+			<para>Synonym catalogs are used to replace and standardize values to
+				their master terms, in order to avoid multiple terms for the same
+				real
+				world thing.
 			</para>
-		</listitem>
-		<listitem>
-			<para>Titles, like "Doctor", "Dr." and "Doc"</para>
-		</listitem>
-	</orderedlist>
 
-	<para>In the following sections we will describe how to set up synonym
-		catalogs that can be used in a variety of ways to standardize your
-		database.
-	</para>
+			<para>There are many real life examples of synonyms that make for
+				messy
+				data, for example:
+			</para>
 
+			<orderedlist>
+				<listitem>
+					<para>Company and brand names, like "Coca-Cola", "Coca cola" and
+						"Coke".
+					</para>
+				</listitem>
+				<listitem>
+					<para>Titles, like "Doctor", "Dr." and "Doc"</para>
+				</listitem>
+			</orderedlist>
+
+			<para>In the following sections we will describe how to set up
+				synonym
+				catalogs that can be used in a variety of ways to standardize your
+				database.
+			</para>
+		</abstract>
+	</chapterinfo>
+	
 	<section>
 		<title>Text file synonym catalog</title>
 		<para>A text file synonym catalog is the easiest and often also the

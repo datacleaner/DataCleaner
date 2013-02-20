@@ -5,24 +5,29 @@
 	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
 
 	<title>Transformations</title>
-
-	<para>With transformations (accessible through the 'Transform' button
-		in the main window) you can pre- and postprocess your data as part of
-		your DQ project.
-	</para>
-	<para>Technically speaking there are two kinds of transformations:
-		Transformers and Filters. Transformers are used to extract, generate
-		or refine data (new columns and sometimes also new rows), whereas
-		filters are used to limit the dataset. In previous version (2.0 -
-		2.4)
-		of DataCleaner filters and transformers were completely
-		separated
-		concepts, also in the user interface.
-	</para>
-	<para>There's quite a lot of transformations available in DataCleaner,
-		more than will be feasible to describe all in detail. This chapter
-		provides a documentation for some of the essential ones.
-	</para>
+	<chapterinfo>
+		<abstract>
+			<para>With transformations (accessible through the 'Transform' button
+				in the main window) you can pre- and postprocess your data as part
+				of
+				your DQ project.
+			</para>
+			<para>Technically speaking there are two kinds of transformations:
+				Transformers and Filters. Transformers are used to extract, generate
+				or refine data (new columns and sometimes also new rows), whereas
+				filters are used to limit the dataset. In previous version (2.0 -
+				2.4)
+				of DataCleaner filters and transformers were completely
+				separated
+				concepts, also in the user interface.
+			</para>
+			<para>There's quite a lot of transformations available in
+				DataCleaner,
+				more than will be feasible to describe all in detail. This chapter
+				provides a documentation for some of the essential ones.
+			</para>
+		</abstract>
+	</chapterinfo>
 
 	<section id="table_lookup_transformer">
 		<title>Table lookup</title>
@@ -65,7 +70,8 @@
 			synonym.
 		</para>
 		<para>Below is a screenshot of the synonym lookup's configuration
-			panel:</para>
+			panel:
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="transformer_reference_synonym_lookup.png"
@@ -82,7 +88,8 @@
 			<listitem>
 				<para>Use the 'Retain original value' option to determine if
 					unmatched values (non-synonyms) should be retained or if a null
-					value should be returned if there is no match.</para>
+					value should be returned if there is no match.
+				</para>
 			</listitem>
 			<listitem>
 				<para>Select the synonym catalog to use for lookups.</para>

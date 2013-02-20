@@ -5,17 +5,22 @@
 
 	<title>Extension packaging</title>
 
-	<para>
-		DataCleaner extensions are packages of added functionality,
-		written in Java. To correctly package an extension, this chapter will
-		walk through the details.
-	</para>
+	<chapterinfo>
+		<abstract>
+			<para>
+				DataCleaner extensions are packages of added functionality,
+				written in Java. To correctly package an extension, this chapter will
+				walk through the details.
+			</para>
+		</abstract>
+	</chapterinfo>
 
 	<section>
 		<title>Annotated component</title>
 		<para>The main principle behind extension discovery in DataCleaner is
 			annotated classes. These are the annotations that will work to
-			activate components within your extension:</para>
+			activate components within your extension:
+		</para>
 
 		<orderedlist>
 			<listitem>
@@ -33,7 +38,8 @@
 		</orderedlist>
 
 		<para>Please refer to the javadoc documentation of these
-			annotations/classes for details on usage.</para>
+			annotations/classes for details on usage.
+		</para>
 	</section>
 
 	<section>
@@ -66,7 +72,8 @@
 		<para>If you wish to add a custom icon for your components (eg. a
 			transformer or analyzer), you need to place the icon as a PNG image
 			with the same name as the fully classified class name of the
-			component.</para>
+			component.
+		</para>
 		<para>An example: If your component class name is
 			"com.company.ext.MyAnalyzer", then the icon for this component should
 			be located at "/com/company/ext/MyAnalyzer.png" in the extension JAR
@@ -76,7 +83,8 @@
 			implementations (which define the menu groups in DataCleaner), you
 			can define icons for these by adding a PNG file with a fully
 			classified filename corresponding to the ComponentCategory class
-			name.</para>
+			name.
+		</para>
 	</section>
 
 </chapter>

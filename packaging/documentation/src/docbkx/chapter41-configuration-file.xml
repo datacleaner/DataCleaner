@@ -7,31 +7,34 @@
 	<title>Configuration file</title>
 
 	<chapterinfo>
-		<para>
-			In this chapter we go through the elements of a configuration
-			file,
-			<emphasis>conf.xml</emphasis>
-			, making it possible (although optional) to change the
-			static
-			configuration and configure the environment of DataCleaner.
-		</para>
-		<para>
-			In the DataCleaner monitoring web application, the conf.xml file
-			is the only point of configuration. The file is located in the root
-			of each tenant's repository folder. For more information, refer to the repository chapter.
-		</para>
-		<para>
-			Most of the elements in the configuration file is also editable
-			within the Desktop application. It is however important to note that
-			changes made in the GUI are not saved directly to the configuration
-			file, but to the
-			<emphasis>userpreferences.dat</emphasis>
-			file. You can consider the relationship between the two files this
-			way: The configuration file defines a static, unmodifyable prototype
-			of the applications environment. All customizations made to this
-			prototype in the Desktop application is saved in the
-			userpreferences.dat file.
-		</para>
+		<abstract>
+			<para>
+				In this chapter we go through the elements of a configuration
+				file,
+				<emphasis>conf.xml</emphasis>
+				, making it possible (although optional) to change the
+				static
+				configuration and configure the environment of DataCleaner.
+			</para>
+			<para>
+				In the DataCleaner monitoring web application, the conf.xml file
+				is the only point of configuration. The file is located in the root
+				of each tenant's repository folder. For more information, refer to
+				the repository chapter.
+			</para>
+			<para>
+				Most of the elements in the configuration file is also editable
+				within the Desktop application. It is however important to note that
+				changes made in the GUI are not saved directly to the configuration
+				file, but to the
+				<emphasis>userpreferences.dat</emphasis>
+				file. You can consider the relationship between the two files this
+				way: The configuration file defines a static, unmodifyable prototype
+				of the applications environment. All customizations made to this
+				prototype in the Desktop application is saved in the
+				userpreferences.dat file.
+			</para>
+		</abstract>
 	</chapterinfo>
 
 	<section>
@@ -132,6 +135,38 @@
 			&#160;&lt;fail-on-inconsistencies&gt;true&lt;/fail-on-inconsistencies&gt;
 			&#160;&lt;header-line-number&gt;1&lt;/header-line-number&gt;
 			&lt;/csv-datastore&gt; </programlisting>
+	</section>
+
+	<section>
+		<title>Fixed width value files</title>
+		<para>Files with fixed width values can be registered in two ways -
+			either with a single fixed-width size for all columns, or with
+			individual value-widths.
+		</para>
+		<para>Here's an example with a fixed width specification for all
+			columns:</para>
+		<programlisting>
+			&lt;fixed-width-datastore&#160;name="My&#160;file"&gt;
+			&#160;&lt;filename&gt;foobar.txt&lt;/filename&gt;
+			&#160;&lt;width-specification&gt;
+			&#160;&#160;&lt;fixed-value-width&gt;20&lt;/fixed-value-width&gt;
+			&#160;&lt;/width-specification&gt;
+			&#160;&lt;encoding&gt;UTF-8&lt;/encoding&gt;
+			&#160;&lt;fail-on-inconsistencies&gt;true&lt;/fail-on-inconsistencies&gt;
+			&lt;/fixed-width-datastore&gt; </programlisting>
+		<para>Here's an example with individual (3 columns) width
+			specifications:</para>
+		<programlisting>
+			&lt;fixed-width-datastore&#160;name="My&#160;file"&gt;
+			&#160;&lt;filename&gt;foobar.txt&lt;/filename&gt;
+			&#160;&lt;width-specification&gt;
+			&#160;&#160;&lt;value-width&gt;4&lt;/value-width&gt;
+			&#160;&#160;&lt;value-width&gt;17&lt;/value-width&gt;
+			&#160;&#160;&lt;value-width&gt;19&lt;/value-width&gt;
+			&#160;&lt;/width-specification&gt;
+			&#160;&lt;encoding&gt;UTF-8&lt;/encoding&gt;
+			&#160;&lt;fail-on-inconsistencies&gt;true&lt;/fail-on-inconsistencies&gt;
+			&lt;/fixed-width-datastore&gt; </programlisting>
 	</section>
 
 	<section>

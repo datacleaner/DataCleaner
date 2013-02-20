@@ -5,6 +5,26 @@
 
 	<title>Analysis job files</title>
 
+	<chapterinfo>
+		<abstract>
+			<para>
+				Job files contain the information about the execution of a
+				DataCleaner job. Typically these files have the file extension
+				<emphasis>.analysis.xml</emphasis>
+				. In this file we will explain the file format, which is XML based,
+				and explain how it relates to what DataCleaner does.
+			</para>
+			<para>
+				A job will always reference items in a configuration, such as
+				datastores, reference data and more. Therefore a job alone is not
+				enough to execute. But multiple jobs can use the same configuration.
+				For more information on the configuration, see the
+				<link linkend="chapter_configuration_file">configuration file</link>
+				chapter.
+			</para>
+		</abstract>
+	</chapterinfo>
+
 	<section id="job_files_xml_schema">
 		<title>XML schema</title>
 		<para>Analysis job files are written in an XML format pertaining to
@@ -20,6 +40,69 @@
 			</link>
 			.
 		</para>
+		<para>Read on in this chapter for notes on individual parts of the job
+			file format.
+		</para>
 	</section>
 
+	<section id="job_files_source_section">
+		<title>Source section</title>
+		<para>The source section of the job file format is probably the most
+			interesting one to manually edit or review. Here's an example source
+			section:
+		</para>
+		<programlisting>
+			&lt;source&gt;
+			&#160;&#160;&lt;data-context&#160;ref="orderdb"&#160;/&gt;
+			&#160;&#160;&lt;columns&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.EMPLOYEENUMBER"&#160;id="col_0"&#160;type="INTEGER"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.LASTNAME"&#160;id="col_1"&#160;type="VARCHAR"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.FIRSTNAME"&#160;id="col_2"&#160;type="VARCHAR"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.EXTENSION"&#160;id="col_3"&#160;type="VARCHAR"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.EMAIL"&#160;id="col_4"&#160;type="VARCHAR"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.OFFICECODE"&#160;id="col_5"&#160;type="VARCHAR"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.REPORTSTO"&#160;id="col_6"&#160;type="INTEGER"&#160;/&gt;
+			&#160;&#160;&#160;&#160;&lt;column&#160;path="PUBLIC.EMPLOYEES.JOBTITLE"&#160;id="col_7"&#160;type="VARCHAR"&#160;/&gt;
+			&#160;&#160;&lt;/columns&gt;
+			&#160;&#160;&lt;variables&gt;
+			&#160;&#160;&#160;&#160;&lt;variable&#160;id="employee&#160;type"&#160;value="Sales&#160;Rep"&#160;/&gt;
+			&#160;&#160;&lt;/variables&gt;
+			&lt;/source&gt; </programlisting>
+		<para>
+			From this source section we can derive these interesting facts:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					The job is using the datastore called 'orderdb'. How this datastore
+					is configured, the job is not aware of, since it is defined in the
+					<emphasis>configuration</emphasis>
+					. Potentially the job could be used with multiple similar
+					datastores, as long as their name was 'orderdb'.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					The columns defined make up the base of the source query that
+					the job will fire. Each column is assigned an artificial ID, and a
+					hint about it's data type is provided. This information is there to
+					be able to detach or replace a column with a new definition. That
+					means that if you've spend a long time building the perfect job,
+					but want to apply it to a different column, you can potentially
+					"just" change the column definition here and retain the original
+					column ID.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					In this source section we also see some variables. This is an
+					optional sub-section and not that common. The variables are
+					property values that can be replaced at runtime with new values.
+					See the chapter
+					<link linkend="section_parameterizable_jobs">Parameterizable jobs</link>
+					for more information and examples.
+				</para>
+			</listitem>
+		</orderedlist>
+	</section>
 </chapter>

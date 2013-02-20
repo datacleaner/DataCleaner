@@ -19,10 +19,18 @@
  */
 package org.eobjects.datacleaner.monitor.query;
 
+import java.util.List;
+
 import org.eobjects.datacleaner.monitor.query.widgets.QueryPanel;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.DatastoreService;
+import org.eobjects.datacleaner.monitor.shared.DatastoreServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.SchemaIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TableIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -35,19 +43,41 @@ import com.google.gwt.user.client.ui.RootPanel;
  */
 public class QueryEntryPoint implements EntryPoint {
 
+    private static final DatastoreServiceAsync datastoreService = GWT.create(DatastoreService.class);
+
     @Override
     public void onModuleLoad() {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
         final TenantIdentifier tenant = clientConfig.getTenant();
-        
+
         final String datastoreName = Window.Location.getParameter("ds");
-        
-        final QueryPanel queryPanel = new QueryPanel(tenant, datastoreName);
+        if (datastoreName == null || datastoreName.length() == 0) {
+            GWT.log("No 'ds' parameter found in URL");
+            return;
+        }
+
+        final DatastoreIdentifier datastore = new DatastoreIdentifier(datastoreName);
+        datastoreService.getDefaultSchema(tenant, datastore, new DCAsyncCallback<SchemaIdentifier>() {
+            @Override
+            public void onSuccess(final SchemaIdentifier schema) {
+                datastoreService.getTables(tenant, schema, new DCAsyncCallback<List<TableIdentifier>>() {
+
+                    @Override
+                    public void onSuccess(final List<TableIdentifier> tables) {
+                        render(tenant, datastore, schema, tables);
+                    }
+                });
+            }
+        });
+    }
+
+    private void render(TenantIdentifier tenant, DatastoreIdentifier datastore, SchemaIdentifier schema,
+            List<TableIdentifier> tables) {
+        final QueryPanel queryPanel = new QueryPanel(tenant, datastore, schema, tables);
 
         final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
         rootPanel.add(queryPanel);
     }
-
 }

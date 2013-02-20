@@ -19,6 +19,11 @@
  */
 package org.eobjects.datacleaner.monitor.query.widgets;
 
+import java.util.List;
+
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.SchemaIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TableIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
@@ -45,20 +50,26 @@ import com.google.gwt.user.client.ui.TextArea;
 public class QueryPanel extends FlowPanel {
 
     private final TextArea _queryTextArea;
-    private final String _datastoreName;
+    private final DatastoreIdentifier _datastore;
     private final TenantIdentifier _tenant;
     private final Button _executeQueryButton;
     private final HTML _resultPanel;
     private final LoadingIndicator _loadingIcon;
 
-    public QueryPanel(TenantIdentifier tenant, String datastoreName) {
+    public QueryPanel(TenantIdentifier tenant, DatastoreIdentifier datastore, SchemaIdentifier schema,
+            List<TableIdentifier> tables) {
         super();
         setStyleName("QueryPanel");
 
         _tenant = tenant;
-        _datastoreName = datastoreName;
+        _datastore = datastore;
         _queryTextArea = new TextArea();
-        _queryTextArea.setText("SELECT *\nFROM [TABLE]\nLIMIT 50");
+
+        if (tables.isEmpty()) {
+            _queryTextArea.setText("SELECT *\nFROM [table] \nLIMIT 50");
+        } else {
+            _queryTextArea.setText("SELECT *\nFROM " + schema.getName() + "." + tables.get(0).getName() + "\nLIMIT 50");
+        }
 
         _executeQueryButton = new Button("Ok");
         _executeQueryButton.addStyleName("ExecuteQueryButton");
@@ -68,7 +79,7 @@ public class QueryPanel extends FlowPanel {
         _resultPanel = new HTML();
         _resultPanel.addStyleName("QueryResultPanel");
 
-        final String url = Urls.createRepositoryUrl(_tenant, "datastores/" + _datastoreName + ".query");
+        final String url = Urls.createRepositoryUrl(_tenant, "datastores/" + _datastore.getName() + ".query");
 
         _executeQueryButton.addClickHandler(new ClickHandler() {
             @Override
@@ -89,7 +100,8 @@ public class QueryPanel extends FlowPanel {
                     public void onResponseReceived(Request request, Response response) {
                         _loadingIcon.setVisible(false);
                         if (response.getStatusCode() == 400) {
-                            ErrorHandler.showErrorDialog("Failed to handle query!", response.getStatusText(), (String) null);
+                            ErrorHandler.showErrorDialog("Failed to handle query!", response.getStatusText(),
+                                    (String) null);
                             return;
                         }
                         super.onResponseReceived(request, response);
@@ -98,7 +110,7 @@ public class QueryPanel extends FlowPanel {
             }
         });
 
-        add(new HeadingLabel("Query datastore: " + _datastoreName));
+        add(new HeadingLabel("Query datastore: " + _datastore.getName()));
         add(new Label("Please fill in your query below and click the 'Ok' button to execute it on the server."));
         add(_queryTextArea);
         add(_executeQueryButton);

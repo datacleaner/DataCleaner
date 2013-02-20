@@ -115,6 +115,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>JobWizardService</servlet-name>
+		<url-pattern>/query/jobWizardService</url-pattern>
 		<url-pattern>/scheduling/jobWizardService</url-pattern>
 		<url-pattern>/dashboard/jobWizardService</url-pattern>
 	</servlet-mapping>
@@ -126,8 +127,21 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DescriptorService</servlet-name>
+		<url-pattern>/query/descriptorService</url-pattern>
 		<url-pattern>/scheduling/descriptorService</url-pattern>
 		<url-pattern>/dashboard/descriptorService</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>DatastoreService</servlet-name>
+		<servlet-class>org.eobjects.datacleaner.monitor.server.DatastoreServiceServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DatastoreService</servlet-name>
+		<url-pattern>/query/datastoreService</url-pattern>
+		<url-pattern>/scheduling/datastoreService</url-pattern>
+		<url-pattern>/dashboard/datastoreService</url-pattern>
 	</servlet-mapping>
 
 	<!-- Default page to serve -->

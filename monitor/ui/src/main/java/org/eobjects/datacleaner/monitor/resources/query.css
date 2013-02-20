@@ -39,11 +39,16 @@
 .QueryPanel .SchemaTree {
 	float: right;
 	border-left: 1px solid #f0f0f0;
-	width: 200px;
+	border-bottom: 1px solid #f0f0f0;
+	width: 230px;
+	position: absolute !important;
+	right: 0;
+	top: 56px;
+	background-color: white;
 }
 
 .QueryResultPanel {
-	clear: both;
+	clear: left;
 	margin-top: 20px;
 }
 

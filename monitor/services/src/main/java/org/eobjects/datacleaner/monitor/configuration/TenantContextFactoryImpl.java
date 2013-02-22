@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("tenantContextFactory")
 public class TenantContextFactoryImpl implements TenantContextFactory {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(TenantContextFactoryImpl.class);
 
     private final ConcurrentHashMap<String, TenantContext> _contexts;
@@ -69,10 +70,16 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     }
 
     public TenantContext getContext(TenantIdentifier tenant) {
+        if (tenant == null) {
+            throw new IllegalArgumentException("Tenant cannot be null");
+        }
         return getContext(tenant.getId());
     }
 
     public TenantContext getContext(String tenantId) {
+        if (StringUtils.isNullOrEmpty(tenantId)) {
+            throw new IllegalArgumentException("Tenant cannot be null or empty string");
+        }
         TenantContext context = _contexts.get(tenantId);
         if (context == null) {
             logger.info("Initializing tenant context: {}", tenantId);

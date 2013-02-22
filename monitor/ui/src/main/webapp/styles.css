@@ -635,6 +635,10 @@ button.LaunchButton:active {
 	background-image: url("images/repository_file.png");
 }
 
+.repositoryView .file.DATASTORE {
+	background-image: url("images/datastore_database.png");
+}
+
 .repositoryView .file.ANALYSIS_JOB {
 	background-image: url("images/repository_file_job.png");
 }

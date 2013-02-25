@@ -10,7 +10,7 @@
 	<name>DataCleaner monitor modules</name>
 
 	<properties>
-		<gwt.version>2.4.0</gwt.version>
+		<gwt.version>2.5.0</gwt.version>
 		<spring.core.version>3.1.3.RELEASE</spring.core.version>
 		<spring.security.version>3.1.3.RELEASE</spring.security.version>
 		<quartz.version>2.1.6</quartz.version>

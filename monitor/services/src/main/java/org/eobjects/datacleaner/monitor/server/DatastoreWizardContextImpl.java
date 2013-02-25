@@ -17,28 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.movedata;
+package org.eobjects.datacleaner.monitor.server;
 
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
-import org.springframework.stereotype.Component;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 
-@Component
-public class MoveDataWizard implements JobWizard {
+/**
+ * Default implementation of {@link DatastoreWizardContext}.
+ */
+public class DatastoreWizardContextImpl implements DatastoreWizardContext {
 
-    @Override
-    public String getDisplayName() {
-        return "Move data";
+    private final TenantContext _tenantContext;
+    private final String _datastoreName;
+
+    public DatastoreWizardContextImpl(TenantContext tenantContext, String datastoreName) {
+        _tenantContext = tenantContext;
+        _datastoreName = datastoreName;
     }
 
     @Override
-    public JobWizardSession start(JobWizardContext context) {
-        return new MoveDataWizardSession(context);
+    public TenantContext getTenantContext() {
+        return _tenantContext;
     }
 
     @Override
-    public int getExpectedPageCount() {
-        return 4;
+    public String getDatastoreName() {
+        return _datastoreName;
     }
+
 }

@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardPageController;
-import org.eobjects.datacleaner.monitor.jobwizard.common.AbstractFreemarkerWizardPage;
-import org.eobjects.datacleaner.monitor.jobwizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
 import org.eobjects.metamodel.schema.Table;
 
 class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
@@ -49,7 +49,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
     }
 
     @Override
-    public JobWizardPageController nextPageController(Map<String, List<String>> formParameters) {
+    public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
         final String name = formParameters.get("datastoreName").get(0);
         final Datastore datastore = _session.getDatastore(name);
 
@@ -61,7 +61,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
             }
 
             @Override
-            protected JobWizardPageController nextPageController(Table selectedTable) {
+            protected WizardPageController nextPageController(Table selectedTable) {
                 return new MoveDataMappingPage(_analysisJobBuilder, _sourceTable, datastore, selectedTable);
             }
         };

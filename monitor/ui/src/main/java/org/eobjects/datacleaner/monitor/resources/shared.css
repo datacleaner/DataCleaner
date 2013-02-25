@@ -143,6 +143,14 @@ a:hover {
 	padding: 10px;
 }
 
+.NewJobButton {
+	background-image: url("new.png");
+}
+
+.NewDatastoreButton {
+	background-image: url("new.png");
+}
+
 .FormRow {
 	clear: left;
 }
@@ -170,9 +178,9 @@ div.center {
 }
 
 /**
- * Styling for the job wizards
+ * Styling for the wizards
  */
-.JobWizardPopupPanel .DCPopupPanelContent {
+.JobWizardPopupPanel .DCPopupPanelContent, .DatastoreWizardPopupPanel  .DCPopupPanelContent {
 	min-height: 300px;
 	min-width: 500px;
 }
@@ -203,6 +211,20 @@ div.center {
 
 .JobWizardPopupPanel table td {
 	padding: 2px;
+}
+
+.DatastoreWizardPopupPanel .HeadingLabel {
+	padding-left: 26px;
+	background-image: url("datastore.png");
+	background-repeat: no-repeat;
+	background-position: left center;
+	min-height: 22px;
+}
+
+.DatastoreWizardPopupPanel .gwt-RadioButton {
+	display: block;
+	margin: 6px;
+	margin-left: 20px;
 }
 
 /**

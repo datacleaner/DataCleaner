@@ -26,36 +26,40 @@ import javax.annotation.security.RolesAllowed;
 
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
- * Defines a service for Job Wizards which are pluggable wizard components that
- * allow the user to create job as per some wizard UI.
+ * Defines a service for Job and Datastore Wizards which are pluggable wizard
+ * components that allow the user to create job as per some wizard UI.
  */
-@RemoteServiceRelativePath("jobWizardService")
-public interface JobWizardService extends RemoteService {
+@RemoteServiceRelativePath("wizardService")
+public interface WizardService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant);
+    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant);
 
     @RolesAllowed(SecurityRoles.VIEWER)
-    public List<JobWizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant);
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant);
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public JobWizardPage startWizard(TenantIdentifier tenant, JobWizardIdentifier wizard,
+    public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard,
             DatastoreIdentifier selectedDatastore, String jobName) throws IllegalArgumentException;
 
+    @RolesAllowed(SecurityRoles.ADMIN)
+    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String datastoreName)
+            throws IllegalArgumentException;
+
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public JobWizardPage nextPage(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier,
+    public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) throws DCUserInputException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
-    public Boolean cancelWizard(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier);
+    public Boolean cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier);
 }

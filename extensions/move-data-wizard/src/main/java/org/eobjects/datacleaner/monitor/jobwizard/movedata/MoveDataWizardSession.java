@@ -23,10 +23,10 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardPageController;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardSession;
-import org.eobjects.datacleaner.monitor.jobwizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.eobjects.metamodel.schema.Table;
 
 final class MoveDataWizardSession implements JobWizardSession {
@@ -42,10 +42,10 @@ final class MoveDataWizardSession implements JobWizardSession {
     }
 
     @Override
-    public JobWizardPageController firstPageController() {
+    public WizardPageController firstPageController() {
         return new SelectTableWizardPage(_context, 0) {
             @Override
-            protected JobWizardPageController nextPageController(Table selectedTable) {
+            protected WizardPageController nextPageController(Table selectedTable) {
                 return new SelectDatastoreWizardPage(MoveDataWizardSession.this, _analysisJobBuilder, selectedTable);
             }
         };

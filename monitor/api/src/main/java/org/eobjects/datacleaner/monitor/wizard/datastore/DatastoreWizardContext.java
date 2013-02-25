@@ -17,38 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.shared.model;
+package org.eobjects.datacleaner.monitor.wizard.datastore;
 
-import java.io.Serializable;
+import org.eobjects.datacleaner.monitor.wizard.WizardContext;
 
 /**
- * Identifies a job creation wizard
+ * Context object which is shared throughout the wizard session
  */
-public class JobWizardIdentifier implements Serializable {
+public interface DatastoreWizardContext extends WizardContext {
 
-    private static final long serialVersionUID = 1L;
-
-    private String displayName;
-    private int _expectedPageCount;
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public int getExpectedPageCount() {
-        return _expectedPageCount;
-    }
-
-    public void setExpectedPageCount(int expectedPageCount) {
-        _expectedPageCount = expectedPageCount;
-    }
-
-    @Override
-    public String toString() {
-        return "JobWizardIdentifier[" + displayName + "]";
-    }
+    public String getDatastoreName();
 }

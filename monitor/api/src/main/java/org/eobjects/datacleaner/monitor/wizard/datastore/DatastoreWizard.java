@@ -17,28 +17,30 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.movedata;
+package org.eobjects.datacleaner.monitor.wizard.datastore;
 
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
-import org.springframework.stereotype.Component;
+/**
+ * A pluggable component (plug-in / extension) which provides a wizard in the
+ * webapp for creating a datastore in the DC monitor configuration.
+ */
+public interface DatastoreWizard {
 
-@Component
-public class MoveDataWizard implements JobWizard {
+    public String getDisplayName();
 
-    @Override
-    public String getDisplayName() {
-        return "Move data";
-    }
+    /**
+     * Gets an expected count of pages in this wizard. Since the amount of pages
+     * can vary depending on different routes in a wizard, this number should
+     * just represent the most "plain" scenario's number of pages.
+     * 
+     * @return
+     */
+    public int getExpectedPageCount();
 
-    @Override
-    public JobWizardSession start(JobWizardContext context) {
-        return new MoveDataWizardSession(context);
-    }
-
-    @Override
-    public int getExpectedPageCount() {
-        return 4;
-    }
+    /**
+     * Starts the wizard
+     * 
+     * @param context
+     * @return
+     */
+    public DatastoreWizardSession start(DatastoreWizardContext context);
 }

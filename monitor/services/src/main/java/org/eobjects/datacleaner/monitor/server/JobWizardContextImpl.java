@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 
 /**
  * Default implementation of {@link JobWizardContext}.

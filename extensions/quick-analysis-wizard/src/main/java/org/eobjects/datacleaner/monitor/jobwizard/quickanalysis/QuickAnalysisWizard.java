@@ -19,9 +19,9 @@
  */
 package org.eobjects.datacleaner.monitor.jobwizard.quickanalysis;
 
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizard;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardSession;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.springframework.stereotype.Component;
 
 /**

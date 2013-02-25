@@ -27,8 +27,9 @@ import junit.framework.TestCase;
 import org.easymock.EasyMock;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.PojoDatastore;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.metamodel.pojo.ArrayTableDataProvider;
 import org.eobjects.metamodel.pojo.TableDataProvider;
 import org.eobjects.metamodel.schema.Table;
@@ -51,7 +52,7 @@ public class SelectTableWizardPageTest extends TestCase {
 
         final SelectTableWizardPage page = new SelectTableWizardPage(context, pageIndex) {
             @Override
-            protected JobWizardPageController nextPageController(Table selectedTable) {
+            protected WizardPageController nextPageController(Table selectedTable) {
                 throw new IllegalStateException("Should not happen in this test");
             }
         };

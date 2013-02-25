@@ -19,10 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.shared.widgets;
 
-import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
+import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -42,17 +42,17 @@ import com.google.gwt.user.client.ui.SimplePanel;
  * Command that starts a job wizard. Used by the {@link CreateJobButton}'s drop
  * down menu.
  */
-final class StartWizardCommand implements Command {
+final class StartJobWizardCommand implements Command {
 
-    private final JobWizardServiceAsync _service;
+    private final WizardServiceAsync _service;
     private final TenantIdentifier _tenant;
-    private final JobWizardIdentifier _wizard;
+    private final WizardIdentifier _wizard;
     private final LoadingIndicator _loadingIndicator;
     private final WizardProgressBar _progressBar;
     private final SimplePanel _targetPanel;
     private WizardPanel _currentPanel;
 
-    public StartWizardCommand(JobWizardServiceAsync service, TenantIdentifier tenant, JobWizardIdentifier wizard) {
+    public StartJobWizardCommand(WizardServiceAsync service, TenantIdentifier tenant, WizardIdentifier wizard) {
         _service = service;
         _tenant = tenant;
         _wizard = wizard;
@@ -87,9 +87,9 @@ final class StartWizardCommand implements Command {
             @Override
             public void onClick(ClickEvent event) {
                 _targetPanel.setWidget(_loadingIndicator);
-                _currentPanel.requestNextPage(new DCAsyncCallback<JobWizardPage>() {
+                _currentPanel.requestNextPage(new DCAsyncCallback<WizardPage>() {
                     @Override
-                    public void onSuccess(JobWizardPage page) {
+                    public void onSuccess(WizardPage page) {
                         if (page == null) {
                             _currentPanel = null;
                             wizardFinished(popup, _targetPanel);
@@ -113,13 +113,13 @@ final class StartWizardCommand implements Command {
                     // wizard ended
                     return;
                 }
-                JobWizardSessionIdentifier sessionIdentifier = _currentPanel.getSessionIdentifier();
+                WizardSessionIdentifier sessionIdentifier = _currentPanel.getSessionIdentifier();
                 if (sessionIdentifier == null) {
                     // session not started yet
                     return;
                 }
                 // cancel the wizard
-                _service.cancelWizard(_tenant, startWizardPanel.getSessionIdentifier(), new DCAsyncCallback<Boolean>() {
+                _service.cancelWizard(_tenant, sessionIdentifier, new DCAsyncCallback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean result) {
                         assert result.booleanValue();

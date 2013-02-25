@@ -36,8 +36,8 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardPageController;
-import org.eobjects.datacleaner.monitor.jobwizard.common.AbstractFreemarkerWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.CollectionUtils;
@@ -80,7 +80,7 @@ class MoveDataMappingPage extends AbstractFreemarkerWizardPage {
     }
 
     @Override
-    public JobWizardPageController nextPageController(Map<String, List<String>> formParameters) {
+    public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
         final List<ColumnMapping> mappings = new ArrayList<ColumnMapping>();
 
         final Column[] sourceColumns = _sourceTable.getColumns();

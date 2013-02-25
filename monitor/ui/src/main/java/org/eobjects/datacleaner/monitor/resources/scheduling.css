@@ -26,10 +26,6 @@
 	padding-left: 0;
 }
 
-.SchedulingOverviewPanel .NewJobButton {
-	background-image: url("new.png");
-}
-
 .SchedulingOverviewPanel .EmptyColumn {
 	min-height: 1em;
 	width: 5%;

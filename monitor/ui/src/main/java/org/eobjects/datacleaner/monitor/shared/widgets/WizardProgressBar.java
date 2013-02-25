@@ -40,7 +40,7 @@ public class WizardProgressBar extends FlowPanel {
     }
 
     public int getSteps() {
-        return getChildren().size();
+        return getChildren().size() - 2;
     }
 
     public void setSteps(final Integer steps) {

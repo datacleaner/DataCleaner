@@ -21,13 +21,15 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.DatastoreService;
+import org.eobjects.datacleaner.monitor.shared.DatastoreServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -40,15 +42,17 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 final class StartWizardPanel extends Composite implements WizardPanel {
+    
+    private static final DatastoreServiceAsync datastoreService = GWT.create(DatastoreService.class);
 
     interface MyUiBinder extends UiBinder<Widget, StartWizardPanel> {
     }
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-    private final JobWizardServiceAsync _service;
+    private final WizardServiceAsync _service;
     private final TenantIdentifier _tenant;
-    private final JobWizardIdentifier _wizard;
+    private final WizardIdentifier _wizard;
 
     @UiField(provided = true)
     WizardProgressBar progressBar;
@@ -59,7 +63,7 @@ final class StartWizardPanel extends Composite implements WizardPanel {
     @UiField
     TextBox jobNameTextBox;
 
-    public StartWizardPanel(JobWizardServiceAsync service, TenantIdentifier tenant, JobWizardIdentifier wizard,
+    public StartWizardPanel(WizardServiceAsync service, TenantIdentifier tenant, WizardIdentifier wizard,
             WizardProgressBar wizardProgressBar) {
         _service = service;
         _tenant = tenant;
@@ -69,7 +73,7 @@ final class StartWizardPanel extends Composite implements WizardPanel {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        _service.getAvailableDatastores(_tenant, new DCAsyncCallback<List<DatastoreIdentifier>>() {
+        datastoreService.getAvailableDatastores(_tenant, new DCAsyncCallback<List<DatastoreIdentifier>>() {
             @Override
             public void onSuccess(List<DatastoreIdentifier> result) {
                 for (DatastoreIdentifier datastoreIdentifier : result) {
@@ -82,12 +86,12 @@ final class StartWizardPanel extends Composite implements WizardPanel {
     }
 
     @Override
-    public JobWizardSessionIdentifier getSessionIdentifier() {
+    public WizardSessionIdentifier getSessionIdentifier() {
         return null;
     }
 
     @Override
-    public void requestNextPage(AsyncCallback<JobWizardPage> callback) throws DCUserInputException {
+    public void requestNextPage(AsyncCallback<WizardPage> callback) throws DCUserInputException {
         final String jobName = jobNameTextBox.getText();
         if (jobName == null || jobName.trim().isEmpty()) {
             throw new DCUserInputException("Please enter a valid job name");
@@ -101,6 +105,6 @@ final class StartWizardPanel extends Composite implements WizardPanel {
         final String datastoreName = datastoreListBox.getItemText(selectedIndex);
         final DatastoreIdentifier selectedDatastore = new DatastoreIdentifier(datastoreName);
 
-        _service.startWizard(_tenant, _wizard, selectedDatastore, jobName, callback);
+        _service.startJobWizard(_tenant, _wizard, selectedDatastore, jobName, callback);
     }
 }

@@ -1,15 +1,15 @@
 package org.eobjects.datacleaner.monitor.jobwizard.movedata
+import scala.collection.JavaConversions._
+
+import org.easymock.EasyMock
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl
+import org.eobjects.analyzer.connection.DatastoreCatalogImpl
+import org.eobjects.analyzer.test.TestHelper
+import org.eobjects.datacleaner.monitor.configuration.TenantContext
+import org.eobjects.datacleaner.monitor.server.JobWizardContextImpl
+import org.junit.Assert._
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext
-import org.eobjects.datacleaner.monitor.server.JobWizardContextImpl
-import org.eobjects.analyzer.test.TestHelper
-import org.easymock.EasyMock
-import org.eobjects.datacleaner.monitor.configuration.TenantContext
-import org.junit.Assert._
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl
-import scala.collection.JavaConversions._
-import org.eobjects.analyzer.connection.DatastoreCatalogImpl
 
 class MoveDataWizardTest extends AssertionsForJUnit {
 
@@ -98,23 +98,20 @@ class MoveDataWizardTest extends AssertionsForJUnit {
     val page4 = page3.nextPageController(formParams3);
 
     assertEquals(normalize("""<div>
-    <div>
-        <input id="move_data_update_primary_keys" type="checkbox" name="updatePrimaryKeys" value="true" checked="checked" />
-        <label for="move_data_update_primary_keys">Use UPDATEs when primary key already exists?</label>
-    </div>
+    <p>Please map source and target columns:</p>
 
     <table>
         <tr>
-            <th>ID?</th>
+            <th class="center">ID?</th>
             <th>Source</th>
             <th>Target</th>
         </tr>
                 <tr>
-            <td>
-                <input type="checkbox" name="id_0" value="true" checked="checked" />
+            <td class="center">
+                <input type="checkbox" id="checkbox_input_id_0" name="id_0" value="true" checked="checked" />
             </td>
             <td>
-                CUSTOMERNUMBER
+                <label for="checkbox_input_id_0">CUSTOMERNUMBER</label>
             </td>
             <td>
                 <select name="mapping_0">
@@ -131,11 +128,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_1" value="true" />
             </td>
             <td>
-                CUSTOMERNAME
+                <label for="checkbox_input_id_1">CUSTOMERNAME</label>
             </td>
             <td>
                 <select name="mapping_1">
@@ -152,11 +149,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_2" value="true" />
             </td>
             <td>
-                CONTACTLASTNAME
+                <label for="checkbox_input_id_2">CONTACTLASTNAME</label>
             </td>
             <td>
                 <select name="mapping_2">
@@ -173,11 +170,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_3" value="true" />
             </td>
             <td>
-                CONTACTFIRSTNAME
+                <label for="checkbox_input_id_3">CONTACTFIRSTNAME</label>
             </td>
             <td>
                 <select name="mapping_3">
@@ -194,11 +191,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_4" value="true" />
             </td>
             <td>
-                PHONE
+                <label for="checkbox_input_id_4">PHONE</label>
             </td>
             <td>
                 <select name="mapping_4">
@@ -215,11 +212,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_5" value="true" />
             </td>
             <td>
-                ADDRESSLINE1
+                <label for="checkbox_input_id_5">ADDRESSLINE1</label>
             </td>
             <td>
                 <select name="mapping_5">
@@ -236,11 +233,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_6" value="true" />
             </td>
             <td>
-                ADDRESSLINE2
+                <label for="checkbox_input_id_6">ADDRESSLINE2</label>
             </td>
             <td>
                 <select name="mapping_6">
@@ -257,11 +254,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_7" value="true" />
             </td>
             <td>
-                CITY
+                <label for="checkbox_input_id_7">CITY</label>
             </td>
             <td>
                 <select name="mapping_7">
@@ -278,11 +275,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_8" value="true" />
             </td>
             <td>
-                STATE
+                <label for="checkbox_input_id_8">STATE</label>
             </td>
             <td>
                 <select name="mapping_8">
@@ -299,11 +296,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_9" value="true" />
             </td>
             <td>
-                POSTALCODE
+                <label for="checkbox_input_id_9">POSTALCODE</label>
             </td>
             <td>
                 <select name="mapping_9">
@@ -320,11 +317,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_10" value="true" />
             </td>
             <td>
-                COUNTRY
+                <label for="checkbox_input_id_10">COUNTRY</label>
             </td>
             <td>
                 <select name="mapping_10">
@@ -341,11 +338,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_11" value="true" />
             </td>
             <td>
-                SALESREPEMPLOYEENUMBER
+                <label for="checkbox_input_id_11">SALESREPEMPLOYEENUMBER</label>
             </td>
             <td>
                 <select name="mapping_11">
@@ -362,11 +359,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td>
+            <td class="center">
                 <input type="checkbox" name="id_12" value="true" />
             </td>
             <td>
-                CREDITLIMIT
+                <label for="checkbox_input_id_12">CREDITLIMIT</label>
             </td>
             <td>
                 <select name="mapping_12">
@@ -383,6 +380,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
     </table>
+        
+    <p>
+        <input id="move_data_update_primary_keys" type="checkbox" name="updatePrimaryKeys" value="true" checked="checked" />
+        <label for="move_data_update_primary_keys">Use UPDATEs when primary key already exists?</label>
+    </p>
 </div>"""), normalize(page4.getFormInnerHtml()));
 
     // map EMPLOYEENUMBER to CUSTOMERNUMBER and contact name to employee name

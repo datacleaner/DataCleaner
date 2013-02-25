@@ -28,6 +28,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.CreateDatastoreButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.CreateJobButton;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -63,9 +64,11 @@ public class SchedulingOverviewPanel extends Composite {
 
     private Panel createButtonPanel() {
         final CreateJobButton newJobButton = new CreateJobButton(_tenant);
+        final CreateDatastoreButton newDatastoreButton = new CreateDatastoreButton(_tenant);
         
         final ButtonPanel buttonPanel = new ButtonPanel();
         buttonPanel.add(newJobButton);
+        buttonPanel.add(newDatastoreButton);
         return buttonPanel;
     }
 

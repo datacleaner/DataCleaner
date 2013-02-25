@@ -17,28 +17,25 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.movedata;
+package org.eobjects.datacleaner.monitor.wizard;
 
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
-import org.springframework.stereotype.Component;
+/**
+ * Represents the session of going through a wizard
+ */
+public interface WizardSession {
 
-@Component
-public class MoveDataWizard implements JobWizard {
+    /**
+     * Gets the first page of the wizard
+     * 
+     * @param params
+     * @return
+     */
+    public WizardPageController firstPageController();
 
-    @Override
-    public String getDisplayName() {
-        return "Move data";
-    }
-
-    @Override
-    public JobWizardSession start(JobWizardContext context) {
-        return new MoveDataWizardSession(context);
-    }
-
-    @Override
-    public int getExpectedPageCount() {
-        return 4;
-    }
+    /**
+     * Gets the expected amount of pages in this wizard.
+     * 
+     * @return the count of pages, or null if not known.
+     */
+    public Integer getPageCount();
 }

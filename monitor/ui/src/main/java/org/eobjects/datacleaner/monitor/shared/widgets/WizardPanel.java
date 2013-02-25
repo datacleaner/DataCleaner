@@ -20,8 +20,8 @@
 package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.IsWidget;
  */
 public interface WizardPanel extends IsWidget {
 
-    public JobWizardSessionIdentifier getSessionIdentifier();
+    public WizardSessionIdentifier getSessionIdentifier();
 
-    public void requestNextPage(AsyncCallback<JobWizardPage> callback) throws DCUserInputException;
+    public void requestNextPage(AsyncCallback<WizardPage> callback) throws DCUserInputException;
 }

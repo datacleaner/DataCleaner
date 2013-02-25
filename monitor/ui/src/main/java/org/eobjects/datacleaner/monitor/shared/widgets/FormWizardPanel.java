@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
+import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
 import com.google.gwt.dom.client.BodyElement;
@@ -42,12 +42,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 final class FormWizardPanel implements WizardPanel {
 
-    private final JobWizardServiceAsync _service;
+    private final WizardServiceAsync _service;
     private final TenantIdentifier _tenant;
-    private final JobWizardPage _wizardPage;
+    private final WizardPage _wizardPage;
     private final Element _form;
 
-    public FormWizardPanel(JobWizardServiceAsync service, TenantIdentifier tenant, JobWizardPage wizardPage) {
+    public FormWizardPanel(WizardServiceAsync service, TenantIdentifier tenant, WizardPage wizardPage) {
         _service = service;
         _tenant = tenant;
         _wizardPage = wizardPage;
@@ -56,7 +56,7 @@ final class FormWizardPanel implements WizardPanel {
     }
 
     @Override
-    public JobWizardSessionIdentifier getSessionIdentifier() {
+    public WizardSessionIdentifier getSessionIdentifier() {
         return _wizardPage.getSessionIdentifier();
     }
 
@@ -72,7 +72,7 @@ final class FormWizardPanel implements WizardPanel {
     }
 
     @Override
-    public void requestNextPage(AsyncCallback<JobWizardPage> callback) {
+    public void requestNextPage(AsyncCallback<WizardPage> callback) {
         final Map<String, List<String>> formParameters = new HashMap<String, List<String>>();
 
         final FormElement formElement = FormElement.as(_form);

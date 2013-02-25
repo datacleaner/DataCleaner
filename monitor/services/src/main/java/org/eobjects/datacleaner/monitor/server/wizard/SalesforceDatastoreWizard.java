@@ -17,31 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.shared.model;
+package org.eobjects.datacleaner.monitor.server.wizard;
 
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
+import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
+/**
+ * Datastore wizard for salesforce datastores
+ */
+@Component
+public class SalesforceDatastoreWizard implements DatastoreWizard {
 
-public class JobWizardSessionIdentifier implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private String sessionId;
-    private JobWizardIdentifier wizardIdentifier;
-
-    public JobWizardIdentifier getWizardIdentifier() {
-        return wizardIdentifier;
+    @Override
+    public String getDisplayName() {
+        return "Salesforce.com connection";
     }
 
-    public void setWizardIdentifier(JobWizardIdentifier wizardIdentifier) {
-        this.wizardIdentifier = wizardIdentifier;
+    @Override
+    public int getExpectedPageCount() {
+        return 2;
     }
 
-    public String getSessionId() {
-        return sessionId;
+    @Override
+    public DatastoreWizardSession start(DatastoreWizardContext context) {
+        return new SalesforceDatastoreWizardSession(context);
     }
 
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
 }

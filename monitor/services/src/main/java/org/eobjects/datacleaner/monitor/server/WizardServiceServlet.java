@@ -24,20 +24,20 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.eobjects.datacleaner.monitor.shared.JobWizardService;
+import org.eobjects.datacleaner.monitor.shared.WizardService;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-public class JobWizardServiceServlet extends SecureGwtServlet implements JobWizardService {
+public class WizardServiceServlet extends SecureGwtServlet implements WizardService {
 
     private static final long serialVersionUID = 1L;
 
-    private JobWizardService _delegate;
+    private WizardService _delegate;
 
     @Override
     public void init() throws ServletException {
@@ -45,7 +45,7 @@ public class JobWizardServiceServlet extends SecureGwtServlet implements JobWiza
 
         if (_delegate == null) {
             WebApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
-            JobWizardService delegate = applicationContext.getBean(JobWizardService.class);
+            WizardService delegate = applicationContext.getBean(WizardService.class);
             if (delegate == null) {
                 throw new ServletException("No delegate found in application context!");
             }
@@ -53,34 +53,40 @@ public class JobWizardServiceServlet extends SecureGwtServlet implements JobWiza
         }
     }
 
-    public JobWizardService getDelegate() {
+    public WizardService getDelegate() {
         return _delegate;
     }
 
     @Override
-    public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant) {
-        return _delegate.getAvailableDatastores(tenant);
-    }
-
-    @Override
-    public List<JobWizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant) {
+    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant) {
         return _delegate.getJobWizardIdentifiers(tenant);
     }
 
     @Override
-    public JobWizardPage startWizard(TenantIdentifier tenant, JobWizardIdentifier wizardIdentifier,
+    public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
             DatastoreIdentifier selectedDatastore, String jobName) {
-        return _delegate.startWizard(tenant, wizardIdentifier, selectedDatastore, jobName);
+        return _delegate.startJobWizard(tenant, wizardIdentifier, selectedDatastore, jobName);
     }
 
     @Override
-    public Boolean cancelWizard(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier) {
+    public Boolean cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier) {
         return _delegate.cancelWizard(tenant, sessionIdentifier);
     }
 
     @Override
-    public JobWizardPage nextPage(TenantIdentifier tenant, JobWizardSessionIdentifier sessionIdentifier,
+    public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) {
         return _delegate.nextPage(tenant, sessionIdentifier, formParameters);
+    }
+
+    @Override
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant) {
+        return _delegate.getDatastoreWizardIdentifiers(tenant);
+    }
+
+    @Override
+    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String datastoreName)
+            throws IllegalArgumentException {
+        return _delegate.startDatastoreWizard(tenant, wizard, datastoreName);
     }
 }

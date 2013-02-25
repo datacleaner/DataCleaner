@@ -21,9 +21,9 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.shared.JobWizardService;
-import org.eobjects.datacleaner.monitor.shared.JobWizardServiceAsync;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.WizardService;
+import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -39,7 +39,7 @@ import com.google.gwt.user.client.ui.MenuBar;
  */
 public class CreateJobButton extends Button implements ClickHandler {
 
-    private final JobWizardServiceAsync service = GWT.create(JobWizardService.class);
+    private final WizardServiceAsync service = GWT.create(WizardService.class);
     
     private final TenantIdentifier _tenant;
     private final MenuBar _menuBar;
@@ -58,9 +58,9 @@ public class CreateJobButton extends Button implements ClickHandler {
     }
 
     private void populateMenuBar() {
-        service.getJobWizardIdentifiers(_tenant, new DCAsyncCallback<List<JobWizardIdentifier>>() {
+        service.getJobWizardIdentifiers(_tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
             @Override
-            public void onSuccess(List<JobWizardIdentifier> result) {
+            public void onSuccess(List<WizardIdentifier> result) {
                 if (result.isEmpty()) {
                     _menuBar.addItem("(no job wizards installed)", new Command() {
                         @Override
@@ -70,9 +70,9 @@ public class CreateJobButton extends Button implements ClickHandler {
                     });
                 }
 
-                for (JobWizardIdentifier wizard : result) {
+                for (WizardIdentifier wizard : result) {
                     final String displayName = wizard.getDisplayName();
-                    final StartWizardCommand command = new StartWizardCommand(service, _tenant, wizard);
+                    final StartJobWizardCommand command = new StartJobWizardCommand(service, _tenant, wizard);
                     _menuBar.addItem(displayName, command);
                 }
             }

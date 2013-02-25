@@ -22,9 +22,11 @@ package org.eobjects.datacleaner.monitor.jobwizard.common;
 import java.util.List;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardContext;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardPageController;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizardSession;
+import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -44,13 +46,13 @@ final class MockWizardSession implements JobWizardSession {
     }
 
     @Override
-    public JobWizardPageController firstPageController() {
+    public WizardPageController firstPageController() {
         return new SelectTableWizardPage(_context, 0) {
             @Override
-            protected JobWizardPageController nextPageController(Table selectedTable) {
+            protected WizardPageController nextPageController(Table selectedTable) {
                 return new SelectColumnsWizardPage(1, selectedTable) {
                     @Override
-                    protected JobWizardPageController nextPageController(List<Column> selectedColumns) {
+                    protected WizardPageController nextPageController(List<Column> selectedColumns) {
                         _analysisJobBuilder.addSourceColumns(selectedColumns);
                         return null;
                     }

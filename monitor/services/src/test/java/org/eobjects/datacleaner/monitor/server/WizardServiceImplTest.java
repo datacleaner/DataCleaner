@@ -32,22 +32,23 @@ import org.easymock.EasyMock;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
-import org.eobjects.datacleaner.monitor.jobwizard.api.JobWizard;
 import org.eobjects.datacleaner.monitor.jobwizard.common.MockAnalysisWizard;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardPage;
-import org.eobjects.datacleaner.monitor.shared.model.JobWizardSessionIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.springframework.context.ApplicationContext;
 
-public class JobWizardServiceImplTest extends TestCase {
+public class WizardServiceImplTest extends TestCase {
 
-    private JobWizardServiceImpl service;
+    private WizardServiceImpl service;
     private ApplicationContext applicationContextMock;
+    private DatastoreServiceImpl datastoreService;
 
     @Override
     protected void setUp() throws Exception {
@@ -61,9 +62,12 @@ public class JobWizardServiceImplTest extends TestCase {
         EasyMock.expect(applicationContextMock.getBeansOfType(JobWizard.class)).andReturn(wizardMap).anyTimes();
         EasyMock.replay(applicationContextMock);
 
-        service = new JobWizardServiceImpl();
-        service._tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl());
+        final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl());
+        service = new WizardServiceImpl();
+        service._tenantContextFactory = tenantContextFactory;
         service._applicationContext = applicationContextMock;
+        
+        datastoreService = new DatastoreServiceImpl(tenantContextFactory);
     }
 
     @Override
@@ -77,30 +81,30 @@ public class JobWizardServiceImplTest extends TestCase {
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
-        final List<JobWizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant);
+        final List<WizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant);
         assertEquals(1, jobWizardIdentifiers.size());
 
-        final JobWizardIdentifier jobWizardIdentifier = jobWizardIdentifiers.get(0);
+        final WizardIdentifier jobWizardIdentifier = jobWizardIdentifiers.get(0);
         assertEquals("JobWizardIdentifier[Mock wizard]", jobWizardIdentifier.toString());
-
-        final List<DatastoreIdentifier> datastores = service.getAvailableDatastores(tenant);
+        
+        final List<DatastoreIdentifier> datastores = datastoreService.getAvailableDatastores(tenant);
         assertEquals(2, datastores.size());
         assertEquals("[DatastoreIdentifier[name=Vendors], DatastoreIdentifier[name=orderdb]]", datastores.toString());
 
-        JobWizardPage wizardPage;
+        WizardPage wizardPage;
         Map<String, List<String>> formParameters;
 
         final String jobName = "JobWizardServiceImplTest-job1";
 
         // first page is the select table page.
-        wizardPage = service.startWizard(tenant, jobWizardIdentifier, datastores.get(1), jobName);
+        wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, datastores.get(1), jobName);
 
         assertEquals(1, service.getOpenSessionCount());
         assertNotNull(wizardPage);
         assertEquals(0, wizardPage.getPageIndex().intValue());
         assertNotNull(wizardPage.getFormInnerHtml());
 
-        final JobWizardSessionIdentifier wizardSession = wizardPage.getSessionIdentifier();
+        final WizardSessionIdentifier wizardSession = wizardPage.getSessionIdentifier();
         assertNotNull(wizardSession.getSessionId());
 
         formParameters = new HashMap<String, List<String>>();

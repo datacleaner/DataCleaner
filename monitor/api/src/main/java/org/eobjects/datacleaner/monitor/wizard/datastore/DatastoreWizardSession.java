@@ -17,28 +17,21 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.movedata;
+package org.eobjects.datacleaner.monitor.wizard.datastore;
 
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
-import org.springframework.stereotype.Component;
+import org.eobjects.analyzer.connection.Datastore;
+import org.eobjects.datacleaner.monitor.wizard.WizardSession;
 
-@Component
-public class MoveDataWizard implements JobWizard {
+/**
+ * Represents the session of creating a datastore
+ */
+public interface DatastoreWizardSession extends WizardSession {
 
-    @Override
-    public String getDisplayName() {
-        return "Move data";
-    }
-
-    @Override
-    public JobWizardSession start(JobWizardContext context) {
-        return new MoveDataWizardSession(context);
-    }
-
-    @Override
-    public int getExpectedPageCount() {
-        return 4;
-    }
+    /**
+     * Creates the final datastore as prescribed by the wizard. This method will
+     * be invoked when no more pages are available and the wizard has ended.
+     * 
+     * @return
+     */
+    public Datastore createDatastore();
 }

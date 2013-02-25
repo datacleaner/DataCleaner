@@ -21,11 +21,14 @@ package org.eobjects.datacleaner.monitor.shared.model;
 
 import java.io.Serializable;
 
-public class JobWizardPage implements Serializable {
+/**
+ * The client-side representation of a wizard page
+ */
+public class WizardPage implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private JobWizardSessionIdentifier sessionIdentifier;
+    private WizardSessionIdentifier sessionIdentifier;
     private String formInnerHtml;
     private Integer pageIndex;
     private Integer expectedPageCount;
@@ -38,11 +41,11 @@ public class JobWizardPage implements Serializable {
         this.formInnerHtml = formInnerHtml;
     }
 
-    public JobWizardSessionIdentifier getSessionIdentifier() {
+    public WizardSessionIdentifier getSessionIdentifier() {
         return sessionIdentifier;
     }
 
-    public void setSessionIdentifier(JobWizardSessionIdentifier sessionIdentifier) {
+    public void setSessionIdentifier(WizardSessionIdentifier sessionIdentifier) {
         this.sessionIdentifier = sessionIdentifier;
     }
 

@@ -17,28 +17,30 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.movedata;
+package org.eobjects.datacleaner.monitor.shared.model;
 
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
-import org.springframework.stereotype.Component;
+import java.io.Serializable;
 
-@Component
-public class MoveDataWizard implements JobWizard {
+public class WizardSessionIdentifier implements Serializable {
 
-    @Override
-    public String getDisplayName() {
-        return "Move data";
+    private static final long serialVersionUID = 1L;
+
+    private String sessionId;
+    private WizardIdentifier wizardIdentifier;
+
+    public WizardIdentifier getWizardIdentifier() {
+        return wizardIdentifier;
     }
 
-    @Override
-    public JobWizardSession start(JobWizardContext context) {
-        return new MoveDataWizardSession(context);
+    public void setWizardIdentifier(WizardIdentifier wizardIdentifier) {
+        this.wizardIdentifier = wizardIdentifier;
     }
 
-    @Override
-    public int getExpectedPageCount() {
-        return 4;
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

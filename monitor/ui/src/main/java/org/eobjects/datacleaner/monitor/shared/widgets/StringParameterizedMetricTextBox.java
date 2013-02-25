@@ -47,7 +47,7 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
         addStyleName("StringParameterizedMetricTextBox");
         setText(text);
 
-        getTextBox().addFocusHandler(new FocusHandler() {
+        getValueBox().addFocusHandler(new FocusHandler() {
             @Override
             public void onFocus(FocusEvent event) {
                 showSuggestionList();
@@ -55,7 +55,7 @@ public class StringParameterizedMetricTextBox extends SuggestBox {
         });
 
         if (checkBoxToActivate != null) {
-            getTextBox().addKeyUpHandler(new KeyUpHandler() {
+            getValueBox().addKeyUpHandler(new KeyUpHandler() {
                 @Override
                 public void onKeyUp(KeyUpEvent event) {
                     final String text = getText();

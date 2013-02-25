@@ -32,6 +32,8 @@ import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -41,7 +43,7 @@ import com.google.gwt.user.client.ui.TreeItem;
  */
 public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
 
-    private static final String LOADING_ITEM_TEXT = "Loading...";
+    private static final SafeHtml LOADING_ITEM_TEXT = SafeHtmlUtils.fromString("Loading...");
 
     private final DatastoreIdentifier _datastore;
     private final DatastoreServiceAsync _service;
@@ -55,7 +57,7 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
         _datastore = datastore;
         _service = service;
 
-        TreeItem rootItem = addItem(datastore.getName());
+        TreeItem rootItem = addItem(SafeHtmlUtils.fromString(datastore.getName()));
         rootItem.setUserObject(datastore);
         rootItem.addStyleName("datastoreItem");
         rootItem.addItem(LOADING_ITEM_TEXT);
@@ -98,7 +100,7 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
                 item.removeItems();
                 for (E child : children) {
                     final String name = child.getName();
-                    final TreeItem childItem = item.addItem(name);
+                    final TreeItem childItem = item.addItem(SafeHtmlUtils.fromString(name));
                     childItem.setUserObject(child);
                     childItem.addStyleName(childStyleName);
                     if (addLoadingItem) {

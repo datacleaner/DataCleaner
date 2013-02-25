@@ -85,7 +85,7 @@ public class CustomizeSchedulePanel extends Composite {
         suggestions.add("@hourly");
         suggestions.add("@minutely");
         periodicTriggerExpressionTextBox = new SuggestBox(suggestions);
-        periodicTriggerExpressionTextBox.getTextBox().addFocusHandler(new FocusHandler() {
+        periodicTriggerExpressionTextBox.getValueBox().addFocusHandler(new FocusHandler() {
             @Override
             public void onFocus(FocusEvent event) {
                 periodicTriggerRadio.setValue(true);

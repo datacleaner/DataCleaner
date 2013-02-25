@@ -19,11 +19,13 @@
  */
 package org.eobjects.datacleaner.monitor.server.wizard;
 
-import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.connection.SalesforceDatastore;
+import javax.xml.parsers.DocumentBuilder;
+
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
 
@@ -50,15 +52,27 @@ final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
         _username = username;
         _password = password;
     }
-    
+
     protected void setSecurityToken(String securityToken) {
         _securityToken = securityToken;
     }
 
     @Override
-    public Datastore createDatastore() {
-        SalesforceDatastore datastore = new SalesforceDatastore(_context.getDatastoreName(), _username, _password,
-                _securityToken);
-        return datastore;
+    public Element createDatastoreElement(DocumentBuilder documentBuilder) {
+        final Document doc = documentBuilder.newDocument();
+        final Element username = doc.createElement("username");
+        final Element password = doc.createElement("password");
+        final Element securityToken = doc.createElement("security-token");
+
+        username.setTextContent(_username);
+        password.setTextContent(_password);
+        securityToken.setTextContent(_securityToken);
+
+        final Element element = doc.createElement("salesforce-datastore");
+        element.setAttribute("name", _context.getDatastoreName());
+        element.appendChild(username);
+        element.appendChild(password);
+        element.appendChild(securityToken);
+        return element;
     }
 }

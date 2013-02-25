@@ -19,8 +19,10 @@
  */
 package org.eobjects.datacleaner.monitor.wizard.datastore;
 
-import org.eobjects.analyzer.connection.Datastore;
+import javax.xml.parsers.DocumentBuilder;
+
 import org.eobjects.datacleaner.monitor.wizard.WizardSession;
+import org.w3c.dom.Element;
 
 /**
  * Represents the session of creating a datastore
@@ -28,10 +30,13 @@ import org.eobjects.datacleaner.monitor.wizard.WizardSession;
 public interface DatastoreWizardSession extends WizardSession {
 
     /**
-     * Creates the final datastore as prescribed by the wizard. This method will
-     * be invoked when no more pages are available and the wizard has ended.
+     * Creates the final datastore node (to be inserted into conf.xml) as
+     * prescribed by the wizard. This method will be invoked when no more pages
+     * are available and the wizard has ended.
+     * 
+     * @param documentBuilder
      * 
      * @return
      */
-    public Datastore createDatastore();
+    public Element createDatastoreElement(DocumentBuilder documentBuilder);
 }

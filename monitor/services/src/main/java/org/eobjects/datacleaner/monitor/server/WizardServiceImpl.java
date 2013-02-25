@@ -28,6 +28,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.job.AnalysisJob;
@@ -35,6 +38,7 @@ import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.server.controllers.DatastoresFolderController;
 import org.eobjects.datacleaner.monitor.shared.WizardService;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -56,6 +60,7 @@ import org.eobjects.metamodel.util.Action;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Element;
 
 @Component("wizardService")
 public class WizardServiceImpl implements WizardService {
@@ -205,8 +210,26 @@ public class WizardServiceImpl implements WizardService {
     }
 
     private void finishDatastoreWizard(DatastoreWizardContext wizardContext, DatastoreWizardSession session) {
-        // TODO: Not yet implemented
+        final DocumentBuilder documentBuilder;
+        try {
+            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
 
+        final TenantContext tenantContext = wizardContext.getTenantContext();
+        final Element datastoreNode = session.createDatastoreElement(documentBuilder);
+
+        try {
+            DatastoresFolderController
+                    .addDatastoreElementToConfiguration(tenantContext, datastoreNode, documentBuilder);
+        } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException) e;
+            }
+            throw new IllegalStateException("Failed to add datastore element to configuration file", e);
+        }
     }
 
     private void finishJobWizard(final JobWizardContext wizardContext, final JobWizardSession session) {

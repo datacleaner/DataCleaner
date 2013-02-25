@@ -32,10 +32,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -102,9 +104,17 @@ public class DatastoresFolderController {
         final InputSource inputSource = new InputSource(reader);
         final Document datastoreDocument = documentBuilder.parse(inputSource);
 
-        // parse the configuration file
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
+
+        addDatastoreElementToConfiguration(tenantContext, datastoreDocument.getDocumentElement(), documentBuilder);
+    }
+
+    public static void addDatastoreElementToConfiguration(TenantContext tenantContext, Element datastoreElement,
+            final DocumentBuilder documentBuilder) throws ParserConfigurationException,
+            TransformerConfigurationException, IllegalStateException {
+
         final RepositoryFile confFile = tenantContext.getConfigurationFile();
+        // parse the configuration file
         final Document configurationFileDocument = confFile.readFile(new Func<InputStream, Document>() {
             @Override
             public Document eval(InputStream in) {
@@ -126,7 +136,7 @@ public class DatastoresFolderController {
             throw new IllegalStateException("Could not find <datastore-catalog> element in configuration file");
         }
 
-        final Node importedNode = configurationFileDocument.importNode(datastoreDocument.getDocumentElement(), true);
+        final Node importedNode = configurationFileDocument.importNode(datastoreElement, true);
         datastoreCatalogElement.appendChild(importedNode);
 
         // write the updated configuration file

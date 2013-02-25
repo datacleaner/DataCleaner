@@ -28,6 +28,7 @@ public class JobWizardPage implements Serializable {
     private JobWizardSessionIdentifier sessionIdentifier;
     private String formInnerHtml;
     private Integer pageIndex;
+    private Integer expectedPageCount;
 
     public String getFormInnerHtml() {
         return formInnerHtml;
@@ -44,12 +45,20 @@ public class JobWizardPage implements Serializable {
     public void setSessionIdentifier(JobWizardSessionIdentifier sessionIdentifier) {
         this.sessionIdentifier = sessionIdentifier;
     }
-    
+
     public Integer getPageIndex() {
         return pageIndex;
     }
-    
+
     public void setPageIndex(Integer pageIndex) {
         this.pageIndex = pageIndex;
+    }
+
+    public Integer getExpectedPageCount() {
+        return expectedPageCount;
+    }
+
+    public void setExpectedPageCount(Integer expectedPageCount) {
+        this.expectedPageCount = expectedPageCount;
     }
 }

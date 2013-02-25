@@ -104,6 +104,7 @@ public class JobWizardServiceImpl implements JobWizardService {
         final String displayName = jobWizard.getDisplayName();
         final JobWizardIdentifier jobWizardIdentifier = new JobWizardIdentifier();
         jobWizardIdentifier.setDisplayName(displayName);
+        jobWizardIdentifier.setExpectedPageCount(jobWizard.getExpectedPageCount());
         return jobWizardIdentifier;
     }
 
@@ -134,7 +135,7 @@ public class JobWizardServiceImpl implements JobWizardService {
 
         createSession(sessionId, session, context, firstPageController);
 
-        return createPage(sessionIdentifier, firstPageController);
+        return createPage(sessionIdentifier, firstPageController, session);
     }
 
     @Override
@@ -169,24 +170,28 @@ public class JobWizardServiceImpl implements JobWizardService {
             // wizard is done.
             return null;
         } else {
+            final JobWizardSession session = _sessions.get(sessionId);
             _currentControllers.put(sessionId, nextPageController);
-            return createPage(sessionIdentifier, nextPageController);
+            return createPage(sessionIdentifier, nextPageController, session);
         }
     }
 
     private JobWizardPage createPage(JobWizardSessionIdentifier sessionIdentifier,
-            JobWizardPageController pageController) {
+            JobWizardPageController pageController, JobWizardSession session) {
         final JobWizardPage page = new JobWizardPage();
         page.setSessionIdentifier(sessionIdentifier);
         page.setFormInnerHtml(pageController.getFormInnerHtml());
         page.setPageIndex(pageController.getPageIndex());
+        if (session != null) {
+            page.setExpectedPageCount(session.getPageCount());
+        }
         return page;
     }
 
     private String createSessionId() {
         return UUID.randomUUID().toString();
     }
-    
+
     public int getOpenSessionCount() {
         return _sessions.size();
     }

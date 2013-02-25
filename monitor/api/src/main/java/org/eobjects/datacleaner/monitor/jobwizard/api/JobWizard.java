@@ -24,8 +24,17 @@ package org.eobjects.datacleaner.monitor.jobwizard.api;
  * webapp for creating a job in the DC monitor repository.
  */
 public interface JobWizard {
-    
+
     public String getDisplayName();
+
+    /**
+     * Gets an expected count of pages in this wizard. Since the amount of pages
+     * can vary depending on different routes in a wizard, this number should
+     * just represent the most "plain" scenario's number of pages.
+     * 
+     * @return
+     */
+    public int getExpectedPageCount();
 
     /**
      * Starts the wizard

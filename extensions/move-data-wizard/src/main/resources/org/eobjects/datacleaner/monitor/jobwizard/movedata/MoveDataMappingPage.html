@@ -1,26 +1,23 @@
 <div>
-	<div>
-		<input id="move_data_update_primary_keys" type="checkbox" name="updatePrimaryKeys" value="true" checked="checked" />
-		<label for="move_data_update_primary_keys">Use UPDATEs when primary key already exists?</label>
-	</div>
+	<p>Please map source and target columns:</p>
 
 	<table>
 		<tr>
-			<th>ID?</th>
+			<th class="center">ID?</th>
 			<th>Source</th>
 			<th>Target</th>
 		</tr>
 		<#list sourceColumns as sourceColumn>
 		<tr>
-			<td>
+			<td class="center">
 				<#if sourceColumn.primaryKey>
-				<input type="checkbox" name="id_${sourceColumn_index}" value="true" checked="checked" />
+				<input type="checkbox" id="checkbox_input_id_${sourceColumn_index}" name="id_${sourceColumn_index}" value="true" checked="checked" />
 				<#else>
 				<input type="checkbox" name="id_${sourceColumn_index}" value="true" />
 				</#if>
 			</td>
 			<td>
-				${sourceColumn.name}
+				<label for="checkbox_input_id_${sourceColumn_index}">${sourceColumn.name}</label>
 			</td>
 			<td>
 				<select name="mapping_${sourceColumn_index}">
@@ -33,4 +30,9 @@
 		</tr>
 		</#list>
 	</table>
+		
+	<p>
+		<input id="move_data_update_primary_keys" type="checkbox" name="updatePrimaryKeys" value="true" checked="checked" />
+		<label for="move_data_update_primary_keys">Use UPDATEs when primary key already exists?</label>
+	</p>
 </div>

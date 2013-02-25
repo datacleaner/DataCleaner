@@ -37,4 +37,9 @@ public class MockAnalysisWizard implements JobWizard {
         return "Mock wizard";
     }
 
+    @Override
+    public int getExpectedPageCount() {
+        return 2;
+    }
+
 }

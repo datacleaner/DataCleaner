@@ -33,8 +33,10 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 /**
  * Command that starts a job wizard. Used by the {@link CreateJobButton}'s drop
@@ -46,7 +48,8 @@ final class StartWizardCommand implements Command {
     private final TenantIdentifier _tenant;
     private final JobWizardIdentifier _wizard;
     private final LoadingIndicator _loadingIndicator;
-
+    private final WizardProgressBar _progressBar;
+    private final SimplePanel _targetPanel;
     private WizardPanel _currentPanel;
 
     public StartWizardCommand(JobWizardServiceAsync service, TenantIdentifier tenant, JobWizardIdentifier wizard) {
@@ -54,35 +57,48 @@ final class StartWizardCommand implements Command {
         _tenant = tenant;
         _wizard = wizard;
         _loadingIndicator = new LoadingIndicator();
+        _progressBar = new WizardProgressBar();
+        _progressBar.setSteps(wizard.getExpectedPageCount() + 1);
+        _progressBar.setProgress(0);
+        
+        _targetPanel = new SimplePanel();
     }
 
     @Override
     public void execute() {
-        final StartWizardPanel startWizardPanel = new StartWizardPanel(_service, _tenant, _wizard);
+        final StartWizardPanel startWizardPanel = new StartWizardPanel(_service, _tenant, _wizard, _progressBar);
         _currentPanel = startWizardPanel;
+        _targetPanel.setWidget(_currentPanel);
 
         final Button nextStepButton = new Button("Next");
+        
+        final FlowPanel popupContent = new FlowPanel();
+        popupContent.add(_progressBar);
+        popupContent.add(_targetPanel);
 
         final DCPopupPanel popup = new DCPopupPanel("New job: " + _wizard.getDisplayName());
         popup.addStyleName("JobWizardPopupPanel");
         popup.setAutoHideEnabled(false);
-        popup.setWidget(startWizardPanel);
+        popup.setWidget(popupContent);
         popup.addButton(nextStepButton);
         popup.addButton(new CancelPopupButton(popup));
 
         nextStepButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                popup.setWidget(_loadingIndicator);
+                _targetPanel.setWidget(_loadingIndicator);
                 _currentPanel.requestNextPage(new DCAsyncCallback<JobWizardPage>() {
                     @Override
-                    public void onSuccess(JobWizardPage result) {
-                        if (result == null) {
+                    public void onSuccess(JobWizardPage page) {
+                        if (page == null) {
                             _currentPanel = null;
-                            wizardFinished(popup);
+                            wizardFinished(popup, _targetPanel);
                         } else {
-                            _currentPanel = new FormWizardPanel(_service, _tenant, result);
-                            popup.setWidget(_currentPanel);
+                            _progressBar.setSteps(page.getExpectedPageCount() + 1);
+                            _progressBar.setProgress(page.getPageIndex() + 1);
+                            _currentPanel = new FormWizardPanel(_service, _tenant, page);
+
+                            _targetPanel.setWidget(_currentPanel);
                             popup.center();
                         }
                     }
@@ -116,7 +132,7 @@ final class StartWizardCommand implements Command {
         popup.show();
     }
 
-    private void wizardFinished(DCPopupPanel popup) {
+    private void wizardFinished(DCPopupPanel popup, SimplePanel targetPanel) {
         final CancelPopupButton button = new CancelPopupButton(popup, "Close");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -126,7 +142,7 @@ final class StartWizardCommand implements Command {
             }
         });
 
-        popup.setWidget(new Label("Job created! Wizard finished."));
+        targetPanel.setWidget(new Label("Job created! Wizard finished."));
         popup.getButtonPanel().clear();
         popup.addButton(button);
         popup.center();

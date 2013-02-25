@@ -40,4 +40,8 @@ public class QuickAnalysisWizard implements JobWizard {
         return "Quick analysis";
     }
 
+    @Override
+    public int getExpectedPageCount() {
+        return 2;
+    }
 }

@@ -9,9 +9,11 @@
 	distribution; if not, write to: Free Software Foundation, Inc. 51 Franklin 
 	Street, Fifth Floor Boston, MA 02110-1301 USA -->
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui' xmlns:shared="urn:import:org.eobjects.datacleaner.monitor.shared.widgets">
 
 	<g:HTMLPanel styleName="StartWizardPanel">
+	
+		<shared:WizardProgressBar ui:field="progressBar" />
 	
 		<p>Name the job you are about to create:</p>
 		<g:TextBox ui:field="jobNameTextBox" />

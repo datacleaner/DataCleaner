@@ -37,4 +37,8 @@ public class MoveDataWizard implements JobWizard {
         return new MoveDataWizardSession(context);
     }
 
+    @Override
+    public int getExpectedPageCount() {
+        return 4;
+    }
 }

@@ -34,9 +34,13 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.MenuBar;
 
+/**
+ * A button which will pop up a list of available job creation wizards, and let the user start it
+ */
 public class CreateJobButton extends Button implements ClickHandler {
 
     private final JobWizardServiceAsync service = GWT.create(JobWizardService.class);
+    
     private final TenantIdentifier _tenant;
     private final MenuBar _menuBar;
 

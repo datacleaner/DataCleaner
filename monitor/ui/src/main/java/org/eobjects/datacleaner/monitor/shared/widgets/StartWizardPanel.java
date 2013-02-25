@@ -50,16 +50,22 @@ final class StartWizardPanel extends Composite implements WizardPanel {
     private final TenantIdentifier _tenant;
     private final JobWizardIdentifier _wizard;
 
+    @UiField(provided = true)
+    WizardProgressBar progressBar;
+
     @UiField
     ListBox datastoreListBox;
 
     @UiField
     TextBox jobNameTextBox;
 
-    public StartWizardPanel(JobWizardServiceAsync service, TenantIdentifier tenant, JobWizardIdentifier wizard) {
+    public StartWizardPanel(JobWizardServiceAsync service, TenantIdentifier tenant, JobWizardIdentifier wizard,
+            WizardProgressBar wizardProgressBar) {
         _service = service;
         _tenant = tenant;
         _wizard = wizard;
+
+        progressBar = wizardProgressBar;
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -74,7 +80,7 @@ final class StartWizardPanel extends Composite implements WizardPanel {
             }
         });
     }
-    
+
     @Override
     public JobWizardSessionIdentifier getSessionIdentifier() {
         return null;
@@ -86,7 +92,7 @@ final class StartWizardPanel extends Composite implements WizardPanel {
         if (jobName == null || jobName.trim().isEmpty()) {
             throw new DCUserInputException("Please enter a valid job name");
         }
-        
+
         final int selectedIndex = datastoreListBox.getSelectedIndex();
         if (selectedIndex == -1) {
             throw new DCUserInputException("Please select a valid source datastore");

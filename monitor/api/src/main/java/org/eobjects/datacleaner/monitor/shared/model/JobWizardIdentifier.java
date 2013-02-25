@@ -29,6 +29,7 @@ public class JobWizardIdentifier implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String displayName;
+    private int _expectedPageCount;
 
     public String getDisplayName() {
         return displayName;
@@ -36,6 +37,14 @@ public class JobWizardIdentifier implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public int getExpectedPageCount() {
+        return _expectedPageCount;
+    }
+
+    public void setExpectedPageCount(int expectedPageCount) {
+        _expectedPageCount = expectedPageCount;
     }
 
     @Override

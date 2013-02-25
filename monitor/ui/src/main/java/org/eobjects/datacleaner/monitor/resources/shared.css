@@ -160,6 +160,15 @@ a:hover {
 	float: right;
 }
 
+th.center, td.center {
+	text-align: center;
+}
+
+div.center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
 /**
  * Styling for the job wizards
  */
@@ -174,6 +183,59 @@ a:hover {
 	background-repeat: no-repeat;
 	background-position: left center;
 	min-height: 22px;
+}
+
+.JobWizardPopupPanel table {
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	border-spacing: 0px;
+	background-color: #f0f0f0;
+	border: 1px solid #ddd;
+}
+
+.JobWizardPopupPanel table th {
+	background-color: #5594DD;
+	color: white;
+	font-weight: normal;
+	padding: 4px;
+}
+
+.JobWizardPopupPanel table td {
+	padding: 2px;
+}
+
+/**
+ * Styling for wizard progress bar
+ */
+.WizardProgressBar {
+	padding-left: 26px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #ccc;
+}
+
+.WizardProgressBar .WizardProgressItem {
+	background-color: #333;
+	border-radius: 15px;
+	color: white;
+	float: left;
+	margin-right: 10px;
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	font-size: 11px;
+}
+
+.WizardProgressBar .WizardProgressItem.current {
+	background-color: #5594DD;
+}
+
+.WizardProgressBar .MetaItem.before {
+}
+
+.WizardProgressBar .MetaItem.after {
+	clear: both;
 }
 
 /**

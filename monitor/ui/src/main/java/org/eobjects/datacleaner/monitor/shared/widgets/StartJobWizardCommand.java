@@ -133,7 +133,7 @@ final class StartJobWizardCommand implements Command {
     }
 
     private void wizardFinished(DCPopupPanel popup, SimplePanel targetPanel) {
-        final CancelPopupButton button = new CancelPopupButton(popup, "Close");
+        final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

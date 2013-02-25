@@ -92,7 +92,7 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
         _nextStepButton = new Button("Next");
         addButton(_nextStepButton);
         addButton(new CancelPopupButton(this));
-        
+
         addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> event) {
@@ -115,7 +115,6 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
             }
         });
     }
-    
 
     protected void showWizardSelection(final List<WizardIdentifier> wizards) {
         final FlowPanel panel = new FlowPanel();
@@ -196,7 +195,7 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
     }
 
     private void wizardFinished() {
-        final CancelPopupButton button = new CancelPopupButton(this, "Close");
+        final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

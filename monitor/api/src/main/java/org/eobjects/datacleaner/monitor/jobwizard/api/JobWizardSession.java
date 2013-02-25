@@ -21,6 +21,9 @@ package org.eobjects.datacleaner.monitor.jobwizard.api;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 
+/**
+ * Represents the session of creating a job
+ */
 public interface JobWizardSession {
     
     /**

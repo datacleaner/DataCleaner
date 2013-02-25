@@ -24,6 +24,9 @@ import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 
+/**
+ * A controller interface for job wizards
+ */
 public interface JobWizardPageController {
 
     /**

@@ -22,11 +22,14 @@ package org.eobjects.datacleaner.monitor.jobwizard.api;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 
+/**
+ * Context object which is shared throughout the wizard session
+ */
 public interface JobWizardContext {
-    
+
     public String getJobName();
 
     public Datastore getSourceDatastore();
-    
+
     public TenantContext getTenantContext();
 }

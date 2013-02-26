@@ -70,7 +70,9 @@ public class SchemaTree extends Tree implements OpenHandler<TreeItem> {
         final TreeItem item = event.getTarget();
 
         if (item.getChildCount() == 1) {
-            if (LOADING_ITEM_TEXT.equals(item.getChild(0).getText())) {
+            final TreeItem child = item.getChild(0);
+            final String childText = child.getText();
+            if (LOADING_ITEM_TEXT.asString().equals(childText)) {
                 loadChildren(item);
             }
         }

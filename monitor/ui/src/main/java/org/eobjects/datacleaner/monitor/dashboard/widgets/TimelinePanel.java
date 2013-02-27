@@ -215,7 +215,7 @@ public class TimelinePanel extends FlowPanel {
 
     private void renderChart() {
         remove(_loadingIndicator);
-        TimeLineDesigner timeLineDesigner = new TimeLineDesigner(_timelineDefinition, _timelineData, this,
+        TimelineDesigner timeLineDesigner = new TimelineDesigner(_timelineDefinition, _timelineData, this,
                 _isDashboardEditor);
         add(timeLineDesigner.createPlot());
         add(timeLineDesigner.getLegendPanel());

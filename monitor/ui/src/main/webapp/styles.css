@@ -709,3 +709,13 @@ button.QueryButton:hover {
 button.QueryButton:active {
 	border: 1px inset #ccc;
 }
+
+.timeline_popup {
+	position: absolute;
+	left: 0;
+	background: white;
+	color: black;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 5px;
+}

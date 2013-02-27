@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
 import java.util.Date;
 
+import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
@@ -28,7 +29,6 @@ import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -39,60 +39,39 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.events.SelectHandler;
-import com.google.gwt.visualization.client.visualizations.corechart.CoreChart;
+import com.googlecode.gflot.client.event.PlotItem;
 
 /**
  * Handler invoked when selecting a point in a timeline chart
  */
-public class DrillToProfilingResultSelectHandler extends SelectHandler {
+public class DrillToProfilingResultSelectHandler {
 
     public static final String PROPERTY_NAME_RESULT_FILE = "path";
 
-    private final CoreChart _chart;
-    private final AbstractDataTable _data;
     private final DCPopupPanel _popup;
     private final TimelineDefinition _timelineDefinition;
+    private final TimelineData _timelineData;
 
-    public DrillToProfilingResultSelectHandler(CoreChart chart, AbstractDataTable data,
-            TimelineDefinition timelineDefinition) {
-        _chart = chart;
-        _data = data;
+    private PlotItem _item;
+
+    public DrillToProfilingResultSelectHandler(PlotItem item, TimelineDefinition timelineDefinition,
+            TimelineData timelineData) {
+        _item = item;
         _timelineDefinition = timelineDefinition;
+        _timelineData = timelineData;
         _popup = new DCPopupPanel("Inspect profiling result?");
         _popup.addStyleName("DrillToProfilingResultPopupPanel");
     }
 
-    @Override
-    public void onSelect(SelectEvent event) {
-        final JsArray<Selection> selections = _chart.getSelections();
+    public void onSelect() {
 
-        if (selections == null || selections.length() != 1) {
-            // this handler only reacts to single cell selections
-            return;
-        }
+        final String metricLabel = _item.getSeries().getLabel();
 
-        final Selection selection = selections.get(0);
-        if (!selection.isCell()) {
-            final SafeHtml labelHtml = new SafeHtmlBuilder()
-                    .appendHtmlConstant("Do you wish to inspect the profiling result for ").appendHtmlConstant("?")
-                    .toSafeHtml();
-
-            _popup.setWidget(new HTML(labelHtml));
-            return;
-        }
-
-        final int column = selection.getColumn();
-        final int row = selection.getRow();
-        final String metricLabel = _data.getColumnLabel(column);
-
-        final Date date = _data.getValueDate(row, 0);
-        final String resultFilePath = _data.getProperty(row, 0, PROPERTY_NAME_RESULT_FILE);
+        final Date date = _timelineData.getRows().get(_item.getSeriesIndex()).getDate();
+        final String resultFilePath = _timelineData.getRows().get(_item.getSeriesIndex()).getResultFilePath();
         final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
 
-        final String analyzerDescriptorName = getAnalyzerDescriptorName(column);
+        final String analyzerDescriptorName = getAnalyzerDescriptorName();
         final String bookmark = createResultUrlBookmark(analyzerDescriptorName);
 
         final String url = Urls.createRelativeUrl("repository" + resultFilePath) + bookmark;
@@ -149,7 +128,7 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
         }
         analyzerDescriptorName = analyzerDescriptorName.trim();
         StringBuilder sb = new StringBuilder(analyzerDescriptorName);
-        
+
         boolean capitalizeNext = true;
         for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
@@ -168,8 +147,8 @@ public class DrillToProfilingResultSelectHandler extends SelectHandler {
         return sb.toString();
     }
 
-    private String getAnalyzerDescriptorName(int column) {
-        final MetricIdentifier metric = _timelineDefinition.getMetrics().get(column - 1);
+    private String getAnalyzerDescriptorName() {
+        final MetricIdentifier metric = _timelineDefinition.getMetrics().get(_item.getSeriesIndex());
         GWT.log("Clicked metric is: " + metric);
         if (metric.isFormulaBased()) {
             return metric.getChildren().get(0).getAnalyzerDescriptorName();

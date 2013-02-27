@@ -19,19 +19,11 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
-import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions;
 import org.eobjects.datacleaner.monitor.dashboard.model.DefaultVAxisOption;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
-import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
-import org.eobjects.datacleaner.monitor.dashboard.util.ColorProvider;
-import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
@@ -43,21 +35,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.visualization.client.AbstractDataTable;
-import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
-import com.google.gwt.visualization.client.ChartArea;
-import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.LegendPosition;
-import com.google.gwt.visualization.client.VisualizationUtils;
-import com.google.gwt.visualization.client.visualizations.corechart.AxisOptions;
-import com.google.gwt.visualization.client.visualizations.corechart.LineChart;
-import com.google.gwt.visualization.client.visualizations.corechart.Options;
 
 /**
  * Panel that displays a timeline.
  */
 public class TimelinePanel extends FlowPanel {
-    
+
     /**
      * The width of the full panel, minus the width of the group selection
      * panel, minus 10 px margin
@@ -231,91 +214,11 @@ public class TimelinePanel extends FlowPanel {
     }
 
     private void renderChart() {
-        final Runnable lineChartRunnable = new Runnable() {
-            @Override
-            public void run() {
-                final Options options = Options.create();
-
-                final ChartOptions chartOptions = _timelineDefinition.getChartOptions();
-
-                final Integer height = chartOptions.getVerticalAxisOption().getHeight();
-                final Integer maximumValue = chartOptions.getVerticalAxisOption().getMaximumValue();
-                final Integer minimumValue = chartOptions.getVerticalAxisOption().getMinimumValue();
-                final boolean logarithmicScale = chartOptions.getVerticalAxisOption().isLogarithmicScale();
-
-                final ChartArea chartArea = ChartArea.create();
-                chartArea.setLeft(50d);
-                chartArea.setTop(10d);
-                chartArea.setWidth(WIDTH - 60);
-                chartArea.setHeight(height * 0.8d);
-                options.setChartArea(chartArea);
-                options.setWidth(WIDTH);
-                options.setHeight(height);
-
-                if (logarithmicScale || maximumValue != null || minimumValue != null) {
-                    final AxisOptions axisOptions = AxisOptions.create();
-                    if (minimumValue != null) {
-                        axisOptions.setMinValue(minimumValue);
-                    }
-                    if (maximumValue != null) {
-                        axisOptions.setMaxValue(maximumValue);
-                    }
-
-                    axisOptions.setIsLogScale(logarithmicScale);
-
-                    options.setVAxisOptions(axisOptions);
-                }
-
-                if (_timelineIdentifier != null) {
-                    options.setTitle(_timelineIdentifier.getName());
-                }
-                options.setLegend(LegendPosition.NONE);
-                
-                if (_timelineData.getRows().size() == 1) {
-                    options.setPointSize(6);
-                } else if (_timelineData.getRows().size() < 10) {
-                    options.setPointSize(3);
-                } else if (_timelineData.getRows().size() < 20) {
-                    options.setPointSize(2);
-                }
-
-                final AbstractDataTable dataTable = createDataTable(_timelineDefinition, _timelineData);
-                final List<String> colors = createColors(_timelineDefinition, new ColorProvider());
-                options.setColors(colors.toArray(new String[colors.size()]));
-
-                final LineChart chart = new LineChart(dataTable, options);
-                chart.addSelectHandler(new DrillToProfilingResultSelectHandler(chart, dataTable, _timelineDefinition));
-                chart.addStyleName("TimelineChart");
-
-                remove(_loadingIndicator);
-                add(chart);
-
-                final LegendPanel legendPanel = new LegendPanel();
-                for (int i = 1; i < dataTable.getNumberOfColumns(); i++) {
-                    Legend legend = new Legend(dataTable.getColumnLabel(i), colors.get(i - 1));
-                    legendPanel.addLegend(
-                            legend,
-                            new LegendClickHandler(dataTable.getColumnLabel(i), _timelineDefinition.getMetrics().get(
-                                    i - 1), TimelinePanel.this, legend, _isDashboardEditor));
-
-                }
-                add(legendPanel);
-            }
-        };
-        VisualizationUtils.loadVisualizationApi(lineChartRunnable, LineChart.PACKAGE);
-    }
-
-    protected List<String> createColors(TimelineDefinition definition, ColorProvider colorProvider) {
-        final List<String> colors = new ArrayList<String>();
-
-        for (MetricIdentifier metricIdentifier : definition.getMetrics()) {
-            String color = metricIdentifier.getMetricColor();
-            if (color == "" || color == null) {
-                color = colorProvider.getNextColor();
-            }
-            colors.add(color);
-        }
-        return colors;
+        remove(_loadingIndicator);
+        TimeLineDesigner timeLineDesigner = new TimeLineDesigner(_timelineDefinition, _timelineData, this,
+                _isDashboardEditor);
+        add(timeLineDesigner.createPlot());
+        add(timeLineDesigner.getLegendPanel());
     }
 
     public TimelineData getTimelineData() {
@@ -354,38 +257,6 @@ public class TimelinePanel extends FlowPanel {
         buttonPanel.add(_deleteButton);
 
         return buttonPanel;
-    }
-
-    private void addRow(DataTable data, Date date, String resultFilePath, List<Number> values) {
-        int rowIndex = data.addRow();
-        data.setValue(rowIndex, 0, date);
-        data.setProperty(rowIndex, 0, DrillToProfilingResultSelectHandler.PROPERTY_NAME_RESULT_FILE, resultFilePath);
-        for (int i = 0; i < values.size(); i++) {
-            int columnIndex = i + 1;
-            final Number value = values.get(i);
-            if (value != null) {
-                // TODO: Is it always an int?
-                final int intValue = value.intValue();
-                data.setValue(rowIndex, columnIndex, intValue);
-            }
-        }
-    }
-
-    private AbstractDataTable createDataTable(TimelineDefinition definition, TimelineData timelineData) {
-        final DataTable data = DataTable.create();
-        data.addColumn(ColumnType.DATE, "Date");
-
-        final List<MetricIdentifier> metrics = definition.getMetrics();
-        for (MetricIdentifier metricIdentifier : metrics) {
-            data.addColumn(ColumnType.NUMBER, metricIdentifier.getDisplayName());
-        }
-
-        final List<TimelineDataRow> rows = timelineData.getRows();
-        for (TimelineDataRow row : rows) {
-            addRow(data, row.getDate(), row.getResultFilePath(), row.getMetricValues());
-        }
-
-        return data;
     }
 
     public DashboardGroupPanel getTimelineGroupPanel() {

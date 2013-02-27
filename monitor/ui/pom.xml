@@ -153,11 +153,11 @@
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
-			<groupId>com.google.gwt.google-apis</groupId>
-			<artifactId>gwt-visualization</artifactId>
-			<version>1.1.2</version>
-			<scope>provided</scope>
+			<groupId>com.googlecode.gflot</groupId>
+			<artifactId>gflot</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<!-- JSF -->

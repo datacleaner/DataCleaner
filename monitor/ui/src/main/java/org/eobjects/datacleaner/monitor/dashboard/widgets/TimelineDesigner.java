@@ -62,6 +62,12 @@ import com.googlecode.gflot.client.options.TimeSeriesAxisOptions;
  * 
  */
 public class TimelineDesigner {
+	
+	/**
+     * The width of the full panel, minus the width of the group selection
+     * panel, minus 10 px margin
+     */
+    public static final int WIDTH = 540;
 
     private TimelineDefinition _timelineDefinition;
     private TimelineData _timelineData;
@@ -153,10 +159,8 @@ public class TimelineDesigner {
 
         legendPanel = new LegendPanel();
         plot = new SimplePlot(model, plotOptions);
-        plot.setWidth(540);
-        plot.setPixelSize(540, height);
-        // plot.setHeight("" + height + "");
-        // plot.setSize("540", "" + height + "");
+        plot.setHeight(height);
+        plot.setWidth(WIDTH);
         final PopupPanel popup = new PopupPanel();
         final com.google.gwt.user.client.ui.Label dateLabel = new com.google.gwt.user.client.ui.Label();
         popup.add(dateLabel);

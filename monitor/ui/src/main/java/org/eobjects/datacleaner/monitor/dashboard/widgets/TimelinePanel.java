@@ -41,11 +41,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
  */
 public class TimelinePanel extends FlowPanel {
 
-    /**
-     * The width of the full panel, minus the width of the group selection
-     * panel, minus 10 px margin
-     */
-    public static final int WIDTH = 540;
+    
 
     private final DashboardServiceAsync _service;
     private final LoadingIndicator _loadingIndicator;

@@ -19,34 +19,30 @@
  */
 package org.eobjects.datacleaner.monitor.server.wizard;
 
-import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
+import org.springframework.stereotype.Component;
 
 /**
- * Wizard session for JDBC datastores.
+ * Datastore wizard for Microsoft SQL server database connection datastores
  */
-public class JdbcDatastoreWizardSession extends AbstractJdbcDatastoreWizardSession implements DatastoreWizardSession {
+@Component
+public class SQLServerDatastoreWizard implements DatastoreWizard {
 
-    public JdbcDatastoreWizardSession(DatastoreWizardContext context, String driverClassName, String url) {
-        super(context);
-        setDriverClassName(driverClassName);
-        setUrl(url);
+    @Override
+    public String getDisplayName() {
+        return "Microsoft SQL server";
     }
 
     @Override
-    public WizardPageController firstPageController() {
-        return new JdbcConnectionInformationWizardPage(this, getUrl()) {
-            @Override
-            public Integer getPageIndex() {
-                return 0;
-            }
-        };
-    }
-
-    @Override
-    public Integer getPageCount() {
+    public int getExpectedPageCount() {
         return 2;
     }
 
+    @Override
+    public DatastoreWizardSession start(DatastoreWizardContext context) {
+        final String url = "jdbc:jtds:sqlserver://<hostname>/<database>;useUnicode=true;characterEncoding=UTF-8";
+        return new JdbcDatastoreWizardSession(context, "net.sourceforge.jtds.jdbc.Driver", url);
+    }
 }

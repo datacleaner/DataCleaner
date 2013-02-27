@@ -19,34 +19,29 @@
  */
 package org.eobjects.datacleaner.monitor.server.wizard;
 
-import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
+import org.springframework.stereotype.Component;
 
 /**
- * Wizard session for JDBC datastores.
+ * Datastore wizard for generic JDBC database connection datastores
  */
-public class JdbcDatastoreWizardSession extends AbstractJdbcDatastoreWizardSession implements DatastoreWizardSession {
+@Component
+public class GenericJdbcDatastoreWizard implements DatastoreWizard {
 
-    public JdbcDatastoreWizardSession(DatastoreWizardContext context, String driverClassName, String url) {
-        super(context);
-        setDriverClassName(driverClassName);
-        setUrl(url);
+    @Override
+    public String getDisplayName() {
+        return "JDBC database (generic)";
     }
 
     @Override
-    public WizardPageController firstPageController() {
-        return new JdbcConnectionInformationWizardPage(this, getUrl()) {
-            @Override
-            public Integer getPageIndex() {
-                return 0;
-            }
-        };
+    public int getExpectedPageCount() {
+        return 3;
     }
 
     @Override
-    public Integer getPageCount() {
-        return 2;
+    public DatastoreWizardSession start(DatastoreWizardContext context) {
+        return new GenericJdbcDatastoreWizardSession(context);
     }
-
 }

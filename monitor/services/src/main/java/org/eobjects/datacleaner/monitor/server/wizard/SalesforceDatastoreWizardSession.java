@@ -70,6 +70,7 @@ final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
 
         final Element element = doc.createElement("salesforce-datastore");
         element.setAttribute("name", _context.getDatastoreName());
+        element.setAttribute("description", "Connects to the web services of Salesforce.com");
         element.appendChild(username);
         element.appendChild(password);
         element.appendChild(securityToken);

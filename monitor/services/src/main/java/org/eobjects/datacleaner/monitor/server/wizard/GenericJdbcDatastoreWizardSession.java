@@ -24,29 +24,23 @@ import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 
 /**
- * Wizard session for JDBC datastores.
+ * Wizard session for generic JDBC connections
  */
-public class JdbcDatastoreWizardSession extends AbstractJdbcDatastoreWizardSession implements DatastoreWizardSession {
+public class GenericJdbcDatastoreWizardSession extends AbstractJdbcDatastoreWizardSession implements
+        DatastoreWizardSession {
 
-    public JdbcDatastoreWizardSession(DatastoreWizardContext context, String driverClassName, String url) {
+    public GenericJdbcDatastoreWizardSession(DatastoreWizardContext context) {
         super(context);
-        setDriverClassName(driverClassName);
-        setUrl(url);
     }
 
     @Override
     public WizardPageController firstPageController() {
-        return new JdbcConnectionInformationWizardPage(this, getUrl()) {
-            @Override
-            public Integer getPageIndex() {
-                return 0;
-            }
-        };
+        return new JdbcDriverWizardPage(this);
     }
 
     @Override
     public Integer getPageCount() {
-        return 2;
+        return 3;
     }
 
 }

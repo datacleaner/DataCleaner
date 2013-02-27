@@ -71,7 +71,7 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
         _tenant = tenant;
         _loadingIndicator = new LoadingIndicator();
         _progressBar = new WizardProgressBar();
-        _progressBar.setSteps(2);
+        _progressBar.setSteps(1, true);
         _progressBar.setProgress(0);
 
         _targetPanel = new SimplePanel();

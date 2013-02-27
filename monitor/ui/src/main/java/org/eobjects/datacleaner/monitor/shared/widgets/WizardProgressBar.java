@@ -44,6 +44,10 @@ public class WizardProgressBar extends FlowPanel {
     }
 
     public void setSteps(final Integer steps) {
+        setSteps(steps, false);
+    }
+
+    public void setSteps(final Integer steps, boolean indicateMore) {
         if (steps == null) {
             return;
         }
@@ -67,6 +71,13 @@ public class WizardProgressBar extends FlowPanel {
                 child.addStyleName("last");
             }
             add(child);
+        }
+        
+        if (indicateMore) {
+            Widget metaAfter = new Label("...");
+            metaAfter.setStyleName("MetaItem");
+            metaAfter.addStyleName("more");
+            add(metaAfter);
         }
 
         Widget metaAfter = new Label();

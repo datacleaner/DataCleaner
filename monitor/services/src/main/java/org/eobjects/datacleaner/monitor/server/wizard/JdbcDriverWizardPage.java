@@ -23,49 +23,65 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
+import org.eobjects.datacleaner.database.DatabaseDriverDescriptor;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
 
-abstract class JdbcConnectionInformationWizardPage extends AbstractFreemarkerWizardPage {
+/**
+ * Page for entering JDBC driver class
+ */
+final class JdbcDriverWizardPage extends AbstractFreemarkerWizardPage {
 
-    private final AbstractJdbcDatastoreWizardSession _session;
-    private final String _templateUrl;
+    private final GenericJdbcDatastoreWizardSession _session;
 
-    public JdbcConnectionInformationWizardPage(AbstractJdbcDatastoreWizardSession session, String templateUrl) {
+    public JdbcDriverWizardPage(GenericJdbcDatastoreWizardSession session) {
         _session = session;
-        _templateUrl = templateUrl;
+    }
+
+    @Override
+    public Integer getPageIndex() {
+        return 0;
     }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        final String url = formParameters.get("url").get(0);
-        _session.setUrl(url);
+        String driverClassName = formParameters.get("driverClassName").get(0);
 
-        final String username = formParameters.get("username").get(0);
-        final String password = formParameters.get("password").get(0);
-        _session.setCredentials(username, password);
+        _session.setDriverClassName(driverClassName);
 
-        return new DatastoreDescriptionWizardPage(getPageIndex() + 1, new DatastoreDescriptionCallback() {
-            @Override
-            public WizardPageController nextPageController(String description) {
-                _session.setDescription(description);
-                return null;
+        final DatabaseDriverDescriptor driver = DatabaseDriverCatalog
+                .getDatabaseDriverByDriverClassName(driverClassName);
+        final String templateUrl;
+        if (driver == null) {
+            templateUrl = "jdbc:<vendor>://<hostname>/<database>";
+        } else {
+            String[] connectionUrlTemplates = driver.getConnectionUrlTemplates();
+            if (connectionUrlTemplates == null || connectionUrlTemplates.length == 0) {
+                templateUrl = "jdbc:<vendor>://<hostname>/<database>";
+            } else {
+                templateUrl = connectionUrlTemplates[0];
             }
-        });
+        }
+
+        return new JdbcConnectionInformationWizardPage(_session, templateUrl) {
+            @Override
+            public Integer getPageIndex() {
+                return JdbcDriverWizardPage.this.getPageIndex() + 1;
+            }
+        };
     }
 
     @Override
     protected String getTemplateFilename() {
-        return "JdbcConnectionInformationWizardPage.html";
+        return "JdbcDriverWizardPage.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("templateUrl", _templateUrl);
-        return map;
+        return new HashMap<String, Object>();
     }
 
 }

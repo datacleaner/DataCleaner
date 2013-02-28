@@ -47,6 +47,7 @@ import com.googlecode.gflot.client.event.PlotHoverListener;
 import com.googlecode.gflot.client.event.PlotItem;
 import com.googlecode.gflot.client.event.PlotPosition;
 import com.googlecode.gflot.client.jsni.Plot;
+import com.googlecode.gflot.client.options.AbstractAxisOptions.TransformAxis;
 import com.googlecode.gflot.client.options.AxisOptions;
 import com.googlecode.gflot.client.options.GlobalSeriesOptions;
 import com.googlecode.gflot.client.options.GridOptions;
@@ -102,7 +103,11 @@ public class TimelineDesigner {
      * legend panel
      */
     private LegendPanel legendPanel;
-
+    
+    /**
+     * get legend Panel widget to be added to timeline
+     * @return
+     */
     public LegendPanel getLegendPanel() {
         return legendPanel;
     }
@@ -122,8 +127,7 @@ public class TimelineDesigner {
 
         PlotModel model = new PlotModel();
         PlotOptions plotOptions = PlotOptions.create();
-
-        plotOptions.addXAxisOptions(TimeSeriesAxisOptions.create());
+        
 
         plotOptions.setGlobalSeriesOptions(GlobalSeriesOptions.create()
                 .setLineSeriesOptions(LineSeriesOptions.create().setShow(true).setLineWidth(2))
@@ -148,14 +152,37 @@ public class TimelineDesigner {
         plotOptions.setGridOptions(GridOptions.create().setShow(true).setBorderWidth(0).setBorderColor("#221f1f")
                 .setHoverable(true).setMouseActiveRadius(2).setClickable(true));
 
-        AxisOptions axisOptions = AxisOptions.create();
+        TimeSeriesAxisOptions xAxisOptions = TimeSeriesAxisOptions.create();
+        
+        AxisOptions yAxisOptions = AxisOptions.create();
+        
+        if(logarithmicScale){
+            //TODO:
+//            transformToLogarithmicScale(yAxisOptions);
+//            xAxisOptions.setTransform(new TransformAxis() {
+//                
+//                @Override
+//                public double transform(double value) {
+//                    
+//                    return Math.log(value);
+//                }
+//                
+//                @Override
+//                public double inverseTransform(double value) {
+//                    return Math.exp(value);
+//                }
+//            });
+        }
+        
         if (minimumValue != null) {
-            axisOptions.setMinimum(minimumValue);
+            yAxisOptions.setMinimum(minimumValue);
         }
         if (maximumValue != null) {
-            axisOptions.setMaximum(maximumValue);
+            yAxisOptions.setMaximum(maximumValue);
         }
-        plotOptions.addYAxisOptions(axisOptions);
+        
+        plotOptions.addXAxisOptions(xAxisOptions);
+        plotOptions.addYAxisOptions(yAxisOptions);
 
         legendPanel = new LegendPanel();
         plot = new SimplePlot(model, plotOptions);
@@ -176,10 +203,25 @@ public class TimelineDesigner {
         return _binder.createAndBindUi(this);
     }
 
+    private void transformToLogarithmicScale(AxisOptions axisOptions) {
+        axisOptions.setTransform(new TransformAxis() {
+            
+            @Override
+            public double transform(double value) {
+                return Math.log(value);
+            }
+            
+            @Override
+            public double inverseTransform(double value) {
+                return Math.exp(value);
+            }
+        });
+    }
+
     private void createTimeLineAndLegendItems(ColorProvider colorProvider, PlotModel model,
             final List<MetricIdentifier> metrics, int index) {
         String color = metrics.get(index).getMetricColor();
-        color = (color == "" || color == null) ? color : colorProvider.getNextColor();
+        color = (color == "" || color == null) ? colorProvider.getNextColor() : color;
         addLegendItem(legendPanel, metrics, index, color);
         SeriesHandler series = model.addSeries(Series.of(metrics.get(index).getDisplayName()).setColor(color));
         List<TimelineDataRow> rows = _timelineData.getRows();

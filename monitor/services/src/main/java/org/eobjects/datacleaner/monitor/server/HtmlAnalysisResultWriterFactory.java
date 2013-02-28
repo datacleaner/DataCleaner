@@ -36,18 +36,35 @@ import org.springframework.stereotype.Component;
 public class HtmlAnalysisResultWriterFactory {
 
     private String resourcesDirectory;
+    private String flotLibraryLocation;
 
     public String getResourcesDirectory() {
         return resourcesDirectory;
+    }
+
+    public String getFlotLibraryLocation() {
+        return flotLibraryLocation;
+    }
+
+    public void setFlotLibraryLocation(String flotLibraryLocation) {
+        this.flotLibraryLocation = flotLibraryLocation;
     }
 
     public void setResourcesDirectory(String resourcesDirectory) {
         this.resourcesDirectory = resourcesDirectory;
     }
 
-    public HtmlAnalysisResultWriter create(boolean tabs,
-            Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate, boolean headers) {
-        return new HtmlAnalysisResultWriter(tabs, jobInclusionPredicate, headers) {
+    public HtmlAnalysisResultWriter create(
+            boolean tabs,
+            Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
+            boolean headers) {
+        if (null != flotLibraryLocation) {
+            System.setProperty(
+                    "org.eobjects.analyzer.valuedist.flotLibraryLocation",
+                    flotLibraryLocation);
+        }
+        return new HtmlAnalysisResultWriter(tabs, jobInclusionPredicate,
+                headers) {
             @Override
             protected HeadElement createBaseHeadElement() {
                 if (resourcesDirectory == null) {

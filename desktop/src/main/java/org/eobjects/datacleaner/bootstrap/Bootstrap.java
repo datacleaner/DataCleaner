@@ -357,6 +357,8 @@ public final class Bootstrap {
                         return new DelegateFileObject(fileName, fileSystem, ramFile);
                     } finally {
                         httpClient.close();
+                        
+                        userPreferences.setMonitorConnection(monitorConnection);
                     }
 
                 }

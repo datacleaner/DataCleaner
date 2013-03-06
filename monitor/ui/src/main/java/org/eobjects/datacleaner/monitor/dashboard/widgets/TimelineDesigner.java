@@ -63,8 +63,8 @@ import com.googlecode.gflot.client.options.TimeSeriesAxisOptions;
  * 
  */
 public class TimelineDesigner {
-	
-	/**
+
+    /**
      * The width of the full panel, minus the width of the group selection
      * panel, minus 10 px margin
      */
@@ -103,9 +103,10 @@ public class TimelineDesigner {
      * legend panel
      */
     private LegendPanel legendPanel;
-    
+
     /**
      * get legend Panel widget to be added to timeline
+     * 
      * @return
      */
     public LegendPanel getLegendPanel() {
@@ -127,7 +128,6 @@ public class TimelineDesigner {
 
         PlotModel model = new PlotModel();
         PlotOptions plotOptions = PlotOptions.create();
-        
 
         plotOptions.setGlobalSeriesOptions(GlobalSeriesOptions.create()
                 .setLineSeriesOptions(LineSeriesOptions.create().setShow(true).setLineWidth(2))
@@ -136,51 +136,32 @@ public class TimelineDesigner {
         legendOptions.setShow(false);
         plotOptions.setLegendOptions(legendOptions);
 
-        // TODO:
-        // if (_timelineIdentifier != null) {
-        // options.setTitle(_timelineIdentifier.getName());
-        // }
-
         if (_timelineData.getRows().size() == 1) {
-            plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(6);
+            plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(4);
         } else if (_timelineData.getRows().size() < 10) {
-            plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(3);
-        } else if (_timelineData.getRows().size() < 20) {
             plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(2);
+        } else if (_timelineData.getRows().size() < 20) {
+            plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(1);
         }
 
         plotOptions.setGridOptions(GridOptions.create().setShow(true).setBorderWidth(0).setBorderColor("#221f1f")
                 .setHoverable(true).setMouseActiveRadius(2).setClickable(true));
 
         TimeSeriesAxisOptions xAxisOptions = TimeSeriesAxisOptions.create();
-        
+
         AxisOptions yAxisOptions = AxisOptions.create();
-        
-        if(logarithmicScale){
-            //TODO:
-//            transformToLogarithmicScale(yAxisOptions);
-//            xAxisOptions.setTransform(new TransformAxis() {
-//                
-//                @Override
-//                public double transform(double value) {
-//                    
-//                    return Math.log(value);
-//                }
-//                
-//                @Override
-//                public double inverseTransform(double value) {
-//                    return Math.exp(value);
-//                }
-//            });
+
+        if (logarithmicScale) {
+            transformToLogarithmicScale(yAxisOptions);
         }
-        
+
         if (minimumValue != null) {
             yAxisOptions.setMinimum(minimumValue);
         }
         if (maximumValue != null) {
             yAxisOptions.setMaximum(maximumValue);
         }
-        
+
         plotOptions.addXAxisOptions(xAxisOptions);
         plotOptions.addYAxisOptions(yAxisOptions);
 
@@ -205,14 +186,20 @@ public class TimelineDesigner {
 
     private void transformToLogarithmicScale(AxisOptions axisOptions) {
         axisOptions.setTransform(new TransformAxis() {
-            
+
             @Override
             public double transform(double value) {
+                if (value == 0) {
+                    return -1;
+                }
                 return Math.log(value);
             }
-            
+
             @Override
             public double inverseTransform(double value) {
+                if (value == -1) {
+                    return 0;
+                }
                 return Math.exp(value);
             }
         });

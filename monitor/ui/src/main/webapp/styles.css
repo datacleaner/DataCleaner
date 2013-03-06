@@ -609,7 +609,19 @@ button.LaunchButton:active {
 	padding: 0px;
 	margin: 0px;
 }
- 
+
+.uploadJobPanel form {
+	display: inline;
+}
+
+.uploadJobPanel .showFormButton {
+	background-color: transparent;
+	border: none;
+	background-image: url("images/upload.png");
+	width: 22px;
+	height: 22px;
+	cursor: pointer;
+}
  
 .repositoryView {
 	margin-left: 22px;

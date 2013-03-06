@@ -5,6 +5,21 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
+		<script type="text/javascript">
+		//<![CDATA[
+		    function confirmUpload(fileType) {
+		    	if (confirm('Are you sure you wish to upload (and overwrite) the ' + fileType + ' file?\nUploading a corrupt file may cause system ineffeciencies or even crashes.')) {
+		    		return true;
+		    	}
+		    	return false;
+		    }
+		           
+			function showUploadJobForm(button) {
+				var form = button.form;
+				form.innerHTML = '<input type="file" name="file" /> <input type="submit" value="Upload" onclick="return confirmUpload(\'job\')" />';
+			}
+		//]]>
+		</script>
 	</ui:define>
 
 	<ui:define name="content">
@@ -19,7 +34,7 @@
 				enctype="multipart/form-data">
 				<input type="file" name="file" /> <input type="submit"
 					value="Upload"
-					onclick="if (confirm('Are you sure you wish to upload (and overwrite) the configuration file?')) {return true;} else {return false;};" />
+					onclick="return confirmUpload('configuration')" />
 			</form>
 		</h:panelGroup>
 		
@@ -35,7 +50,15 @@
 			</ui:repeat>
 			<ui:repeat var="file" value="#{tenantContext.jobFolder.files}">
 				<h:panelGroup rendered="#{file.type eq 'ANALYSIS_JOB'}">
-					<li class="file #{file.type}"><a href="repository/#{user.tenant}/jobs/#{file.name}">#{file.name}</a></li>
+					<li class="file #{file.type}">
+						<a href="repository/#{user.tenant}/jobs/#{file.name}">#{file.name}</a>
+						<h:panelGroup rendered="#{user.admin}" styleClass="uploadJobPanel">
+							<form action="repository/#{user.tenant}/jobs/#{file.name}" method="post"
+								enctype="multipart/form-data">
+								<input class="showFormButton" onclick="showUploadJobForm(this)" type="button" alt="Upload/replace the job file contents" />
+							</form>
+						</h:panelGroup>
+					</li>
 				</h:panelGroup>
 				<h:panelGroup rendered="#{file.type ne 'ANALYSIS_JOB'}">
 					<li class="file #{file.type}">#{file.name}</li>

@@ -115,9 +115,8 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>WizardService</servlet-name>
-		<url-pattern>/query/wizardService</url-pattern>
+		<url-pattern>/datastores/wizardService</url-pattern>
 		<url-pattern>/scheduling/wizardService</url-pattern>
-		<url-pattern>/dashboard/wizardService</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>

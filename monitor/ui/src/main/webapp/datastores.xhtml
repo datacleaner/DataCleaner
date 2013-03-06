@@ -6,9 +6,13 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:define name="head">
+		<script type="text/javascript" language="javascript"
+			src="datastores/datastores.nocache.js" />
 	</ui:define>
 
 	<ui:define name="content">
+		
+		<div id="RootPanelTarget"></div>
 		
 		<div class="datastoreList">
 			<ui:repeat var="ds" value="#{jsfHelper.datastores}">

@@ -86,7 +86,7 @@ public class JobInvocationController {
      */
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    @RolesAllowed({ SecurityRoles.SCHEDULE_EDITOR })
+    @RolesAllowed(SecurityRoles.TASK_ATOMIC_EXECUTOR)
     public JobInvocationPayload invokeJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestBody final JobInvocationPayload input) throws Throwable {
         logger.info("Request payload: {}", input);

@@ -159,4 +159,14 @@ public class UserBean implements User, Serializable {
     public boolean isViewer() {
         return hasRole(SecurityRoles.VIEWER);
     }
+    
+    @Override
+    public boolean isQueryAllowed() {
+        return hasRole(SecurityRoles.TASK_QUERY);
+    }
+    
+    @Override
+    public boolean isConfigurationEditor() {
+        return hasRole(SecurityRoles.CONFIGURATION_EDITOR);
+    }
 }

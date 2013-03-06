@@ -53,7 +53,7 @@ public class ConfigurationFileController {
     @Autowired
     TenantContextFactory _contextFactory;
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, String> uploadConfigurationFile(@PathVariable("tenant") final String tenant,
@@ -93,7 +93,7 @@ public class ConfigurationFileController {
         }
     }
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
     public void downloadConfigurationFile(@PathVariable("tenant") final String tenant, final OutputStream out) {
 

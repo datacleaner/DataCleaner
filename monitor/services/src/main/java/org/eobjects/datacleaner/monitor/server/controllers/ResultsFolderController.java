@@ -49,7 +49,7 @@ public class ResultsFolderController {
     @RolesAllowed(SecurityRoles.VIEWER)
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public List<Map<String, String>> resultsFolderHtml(@PathVariable("tenant") String tenant) {
+    public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") String tenant) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final RepositoryFolder resultsFolder = context.getResultFolder();

@@ -52,7 +52,7 @@ public class DatastoreDownloadController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.download", method = RequestMethod.GET)
     protected void downloadFileRepo(HttpServletRequest request, HttpServletResponse response,
             @PathVariable("tenant") final String tenant, @PathVariable("datastore") String datastoreName)

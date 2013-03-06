@@ -74,7 +74,7 @@ public class ResultFileController {
     @Autowired
     HtmlAnalysisResultWriterFactory _htmlAnalysisResultWriterFactory;
 
-    @RolesAllowed({ SecurityRoles.JOB_EDITOR, SecurityRoles.SCHEDULE_EDITOR })
+    @RolesAllowed(SecurityRoles.RESULT_EDITOR)
     @RequestMapping(method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     public Map<String, String> uploadAnalysisResult(@PathVariable("tenant") String tenant,

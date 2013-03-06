@@ -28,6 +28,13 @@ public interface SecurityRoles {
     public static final String JOB_EDITOR = "ROLE_JOB_EDITOR";
     public static final String DASHBOARD_EDITOR = "ROLE_DASHBOARD_EDITOR";
     public static final String SCHEDULE_EDITOR = "ROLE_SCHEDULE_EDITOR";
+    public static final String CONFIGURATION_EDITOR = "ROLE_CONFIGURATION_EDITOR";
+    public static final String RESULT_EDITOR = "ROLE_RESULT_EDITOR";
+
+    // task-specific privileges
+    public static final String TASK_QUERY = "ROLE_TASK_QUERY";
+    public static final String TASK_SLAVE_EXECUTOR = "ROLE_SLAVE_EXECUTOR";
+    public static final String TASK_ATOMIC_EXECUTOR = "ROLE_ATOMIC_EXECUTOR";
 
     // super roles
     public static final String ADMIN = "ROLE_ADMIN";

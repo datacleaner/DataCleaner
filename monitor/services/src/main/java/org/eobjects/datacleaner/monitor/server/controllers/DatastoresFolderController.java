@@ -91,7 +91,7 @@ public class DatastoresFolderController {
         return result;
     }
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     @RequestMapping(method = RequestMethod.POST)
     protected void registerDatastore(@PathVariable("tenant") String tenant, HttpServletRequest request,
             HttpServletResponse response) throws Exception {

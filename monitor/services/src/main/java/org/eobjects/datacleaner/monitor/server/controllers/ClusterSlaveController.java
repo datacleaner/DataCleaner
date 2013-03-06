@@ -55,7 +55,7 @@ public class ClusterSlaveController {
     @Autowired(required = false)
     SlaveJobInterceptor _slaveJobInterceptor;
 
-    @RolesAllowed({ SecurityRoles.SCHEDULE_EDITOR, SecurityRoles.ADMIN })
+    @RolesAllowed(SecurityRoles.TASK_SLAVE_EXECUTOR)
     @RequestMapping(method = RequestMethod.POST, produces = "application/octet-stream")
     @ResponseBody
     public void executeJob(@PathVariable("tenant") final String tenant, final HttpServletRequest request,

@@ -51,7 +51,7 @@ public class JobTriggeringController {
 
     @RequestMapping(produces = "application/json")
     @ResponseBody
-    @RolesAllowed({ SecurityRoles.SCHEDULE_EDITOR })
+    @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public Map<String, String> invokeJob(@PathVariable("tenant") final String tenant,
             @PathVariable("job") String jobName, @RequestParam(value = "block", required = false) Boolean block,
             @RequestParam(value = "timeoutMillis", required = false) Integer timeoutMillis) throws Throwable {

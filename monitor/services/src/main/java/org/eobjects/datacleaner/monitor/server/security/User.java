@@ -50,12 +50,27 @@ public interface User {
     public boolean isAdmin();
 
     /**
+     * Determines whether the user has the {@link SecurityRoles#TASK_QUERY} role
+     * 
+     * @return
+     */
+    public boolean isQueryAllowed();
+
+    /**
      * Determines whether the user has the {@link SecurityRoles#JOB_EDITOR}
      * role.
      * 
      * @return whether the user has the {@link SecurityRoles#JOB_EDITOR} role.
      */
     public boolean isJobEditor();
+
+    /**
+     * Determines whether the user has the
+     * {@link SecurityRoles#CONFIGURATION_EDITOR} role.
+     * 
+     * @return
+     */
+    public boolean isConfigurationEditor();
 
     /**
      * Determines whether the user has the

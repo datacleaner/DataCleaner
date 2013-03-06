@@ -26,7 +26,7 @@
 								class="LaunchButton">Analyze</button>
 						</div>
 					</h:panelGroup>
-					<h:panelGroup rendered="#{user.admin}">
+					<h:panelGroup rendered="#{user.queryAllowed}">
 						<div style="float: right">
 							<c:choose>
 								<c:when test="#{param['gwt.codesvr'] != null}">
@@ -42,8 +42,7 @@
 							</c:choose>
 						</div>
 					</h:panelGroup>
-					<h:panelGroup rendered="#{ds.fileDatastore and user.admin}">
-
+					<h:panelGroup rendered="#{ds.fileDatastore and user.configurationEditor}">
 						<div style="float: right">
 							<button
 								onclick="window.location='repository/#{tenantContext.tenantId}/datastores/#{ds.name}.download'"

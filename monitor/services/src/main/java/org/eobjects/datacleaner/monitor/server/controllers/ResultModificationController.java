@@ -68,7 +68,7 @@ public class ResultModificationController {
 
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    @RolesAllowed({ SecurityRoles.ADMIN })
+    @RolesAllowed(SecurityRoles.RESULT_EDITOR)
     public Map<String, String> modifyResult(@PathVariable("tenant") final String tenant,
             @PathVariable("result") String resultName, @RequestBody final ResultModificationPayload input) {
 

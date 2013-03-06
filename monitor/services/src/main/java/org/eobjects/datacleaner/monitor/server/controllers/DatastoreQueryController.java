@@ -58,7 +58,7 @@ public class DatastoreQueryController {
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.POST, produces = {
             "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
     public void queryDatastorePost(HttpServletResponse response, @PathVariable("tenant") final String tenant,
@@ -66,7 +66,7 @@ public class DatastoreQueryController {
         queryDatastore(tenant, datastoreName, query, response);
     }
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.TASK_QUERY)
     @RequestMapping(value = "/{tenant}/datastores/{datastore}.query", method = RequestMethod.GET, produces = {
             "text/xml", "application/xml", "application/xhtml+xml", "text/html" })
     public void queryDatastoreGet(HttpServletResponse response, @PathVariable("tenant") final String tenant,

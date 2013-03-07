@@ -37,7 +37,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * Service interface for the scheduling module
  */
-@RemoteServiceRelativePath("schedulingService")
+@RemoteServiceRelativePath("../gwtrpc/schedulingService")
 public interface SchedulingService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.VIEWER)

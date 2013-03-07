@@ -36,7 +36,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * A service for exploring datastores
  */
-@RemoteServiceRelativePath("datastoreService")
+@RemoteServiceRelativePath("../gwtrpc/datastoreService")
 public interface DatastoreService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.VIEWER)

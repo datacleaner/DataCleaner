@@ -39,7 +39,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * Defines a service for Job and Datastore Wizards which are pluggable wizard
  * components that allow the user to create job as per some wizard UI.
  */
-@RemoteServiceRelativePath("wizardService")
+@RemoteServiceRelativePath("../gwtrpc/wizardService")
 public interface WizardService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.VIEWER)

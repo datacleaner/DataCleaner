@@ -38,7 +38,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 /**
  * Service interface for the timeline module
  */
-@RemoteServiceRelativePath("dashboardService")
+@RemoteServiceRelativePath("../gwtrpc/dashboardService")
 public interface DashboardService extends RemoteService {
 
     /**

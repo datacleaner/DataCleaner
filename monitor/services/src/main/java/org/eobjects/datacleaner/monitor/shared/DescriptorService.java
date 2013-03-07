@@ -37,7 +37,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * Service interface for operations pertaining to descriptors and
  * meta-information about jobs.
  */
-@RemoteServiceRelativePath("descriptorService")
+@RemoteServiceRelativePath("../gwtrpc/descriptorService")
 public interface DescriptorService extends RemoteService {
 
     /**

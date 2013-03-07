@@ -213,7 +213,13 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final List<String> jobNames = context.getJobNames();
         final List<ScheduleDefinition> schedules = new ArrayList<ScheduleDefinition>(jobNames.size());
         for (String jobName : jobNames) {
-            schedules.add(getSchedule(tenant, jobName));
+            try {
+                ScheduleDefinition schedule = getSchedule(tenant, jobName);
+                schedules.add(schedule);
+            } catch (Exception e) {
+                logger.error("Failed to initialize schedule for tenant '" + tenant.getId() + "' job '" + jobName + "'.",
+                        e);
+            }
         }
         return schedules;
     }
@@ -297,7 +303,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
                 final JobDataMap jobDataMap = jobDetail.getJobDataMap();
                 jobDataMap.put(ExecuteJob.DETAIL_SCHEDULE_DEFINITION, schedule);
-                
+
                 if (triggerType == TriggerType.PERIODIC) {
                     // time based trigger
 

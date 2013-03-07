@@ -282,6 +282,9 @@ public class WizardServiceImpl implements WizardService {
 
     public void createSession(String sessionId, WizardSession session, WizardContext context,
             WizardPageController controller) {
+        if (sessionId == null) {
+            throw new IllegalArgumentException("Session ID cannot be null");
+        }
         _sessions.put(sessionId, session);
         _contexts.put(sessionId, context);
         _currentControllers.put(sessionId, controller);

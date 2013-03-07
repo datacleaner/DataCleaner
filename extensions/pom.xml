@@ -41,6 +41,7 @@
 				<module>network-tools</module>
 				<module>quick-analysis-wizard</module>
 				<module>move-data-wizard</module>
+				<module>completeness-analysis-wizard</module>
 			</modules>
 		</profile>
 		<profile>

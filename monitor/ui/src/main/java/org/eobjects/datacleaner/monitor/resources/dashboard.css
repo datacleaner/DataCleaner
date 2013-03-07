@@ -164,7 +164,7 @@
 }
 
 .CustomizeTimelinePopupPanel {
-	min-width: 500px;
+	width: 700px;
 	min-height: 500px;
 }
 

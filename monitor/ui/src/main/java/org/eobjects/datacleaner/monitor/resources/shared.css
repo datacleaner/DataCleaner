@@ -115,6 +115,10 @@ a:hover {
 /*
  * General purpose style modifiers
  */
+.DCPopupPanel {
+	max-width: 80%;
+}
+ 
 .DCPopupPanelContent {
 	max-height: 600px;
 	overflow: auto;

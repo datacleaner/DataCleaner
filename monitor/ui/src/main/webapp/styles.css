@@ -7,18 +7,45 @@ body {
 	padding: 0px;
 }
 
-body,table td,select,button,input {
+body,table td,select,input {
 	font-family: "Open Sans", sans-serif;
 	font-size: small;
 }
 
-select,button,input,textarea {
+select,input,textarea {
 	background-color: white;
 	padding: 5px 4px;
 	border: 1px solid #CCC;
 	border-top: 1px solid #999;
 	border-radius: 2px;
 	font-family: "Open Sans", sans-serif;
+}
+
+input[type="file"] {
+	border: none;
+	background-color: transparent;
+	font-size: 12px;
+	line-height: 12px;
+}
+
+input[type="submit"], input[type="button"], button {
+	font-family: "Open Sans", sans-serif;
+	font-size: 0.9em;
+	text-decoration: none;
+	cursor: pointer;
+	height: 26px;
+	border: 1px solid #BBB;
+	border-bottom-color: #A0A0A0;
+	border-radius: 3px;
+	background-color: #F1F1F1;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover, button:hover {
+	border-color: #939393;
+}
+
+input[type="submit"]:active, input[type="button"]:active, button:active {
+	border: 1px inset #ccc;
 }
 
 optgroup {
@@ -565,30 +592,14 @@ button.LaunchButton {
 	background-position: 4px center;
 	background-image: url("images/launch.png") !important;
 	min-width: 30px;
-	height: 26px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	padding-left: 28px;
 	padding-right: 3px;
-	background-color: #F1F1F1;
-	font-size: 0.9em;
-	border: 1px solid #BBB;
-	border-bottom-color: #A0A0A0;
-	border-radius: 3px;
 	margin-left: 0px;
 	margin-right: 2px;
 	margin-top: 3px;
 	margin-bottom: 3px;
-	text-decoration: none;
-	cursor: pointer;
-}
-
-button.LaunchButton:hover {
-	border-color: #939393;
-}
-
-button.LaunchButton:active {
-	border: 1px inset #ccc;
 }
 
 /**
@@ -618,6 +629,8 @@ button.LaunchButton:active {
 	background-color: transparent;
 	border: none;
 	background-image: url("images/upload.png");
+	background-repeat: no-repeat;
+	padding: 0;
 	width: 22px;
 	height: 22px;
 	cursor: pointer;
@@ -662,34 +675,20 @@ button.LaunchButton:active {
 .repositoryView .file.TIMELINE_SPEC {
 	background-image: url("images/repository_file_timeline.png");
 }
+
 button.DownloadButton {
 	background-repeat: no-repeat;
 	background-position: 4px center;
 	background-image: url("images/save.png") !important;
 	min-width: 30px;
-	height: 26px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	padding-left: 28px;
 	padding-right: 3px;
-	background-color: #F1F1F1;
-	font-size: 0.9em;
-	border: 1px solid #BBB;
-	border-bottom-color: #A0A0A0;
-	border-radius: 3px;
 	margin-left: 0px;
 	margin-right: 2px;
 	margin-top: 3px;
 	margin-bottom: 3px;
-	text-decoration: none;
-	cursor: pointer;
-}
-button.DownloadButton:hover {
-	border-color: #939393;
-}
-
-button.DownloadButton:active {
-	border: 1px inset #ccc;
 }
 
 button.QueryButton {
@@ -697,29 +696,14 @@ button.QueryButton {
 	background-position: 4px center;
 	background-image: url("images/query.png") !important;
 	min-width: 30px;
-	height: 26px;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	padding-left: 28px;
 	padding-right: 3px;
-	background-color: #F1F1F1;
-	font-size: 0.9em;
-	border: 1px solid #BBB;
-	border-bottom-color: #A0A0A0;
-	border-radius: 3px;
 	margin-left: 0px;
 	margin-right: 2px;
 	margin-top: 3px;
 	margin-bottom: 3px;
-	text-decoration: none;
-	cursor: pointer;
-}
-button.QueryButton:hover {
-	border-color: #939393;
-}
-
-button.QueryButton:active {
-	border: 1px inset #ccc;
 }
 
 .timeline_popup {

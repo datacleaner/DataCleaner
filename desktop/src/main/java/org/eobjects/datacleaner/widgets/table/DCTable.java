@@ -221,16 +221,23 @@ public class DCTable extends JXTable implements MouseListener {
             return false;
         }
 
-        Object value = getValueAt(row, col);
-        if (value instanceof JComponent) {
-            JComponent component = (JComponent) value;
-            MouseEvent newEvent = SwingUtilities.convertMouseEvent(this, e, component);
+        try {
+            Object value = getValueAt(row, col);
+            if (value instanceof JComponent) {
+                JComponent component = (JComponent) value;
+                MouseEvent newEvent = SwingUtilities.convertMouseEvent(this, e, component);
 
-            component.dispatchEvent(newEvent);
-            repaint();
-            return true;
+                component.dispatchEvent(newEvent);
+                repaint();
+                return true;
+            }
+            return false;
+        } catch (IndexOutOfBoundsException exception) {
+            // on some machines this may occur if x/y coordinates are dragged
+            // outside of the table
+            logger.debug("Failed to dispatch event for component because of IndexOutOfBoundsException", exception);
+            return false;
         }
-        return false;
     }
 
     /**

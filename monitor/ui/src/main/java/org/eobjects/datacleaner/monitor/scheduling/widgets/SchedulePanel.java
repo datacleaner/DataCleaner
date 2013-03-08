@@ -26,6 +26,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
@@ -59,7 +60,7 @@ public class SchedulePanel extends Composite {
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     private final ScheduleDefinition _schedule;
-    private final TenantIdentifier _tenant;
+    private final ClientConfig _clientConfig;
 
     @UiField
     DropDownAnchor jobLabel;
@@ -79,48 +80,65 @@ public class SchedulePanel extends Composite {
     @UiField
     FlowPanel alertsPanel;
 
-    public SchedulePanel(final TenantIdentifier tenant, final ScheduleDefinition schedule,
+    public SchedulePanel(final ClientConfig clientConfig, final ScheduleDefinition schedule,
             final SchedulingServiceAsync service) {
         super();
 
-        _tenant = tenant;
+        _clientConfig = clientConfig;
         _schedule = schedule;
 
         initWidget(uiBinder.createAndBindUi(this));
 
         updateScheduleWidgets();
 
-        jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant));
+        final TenantIdentifier tenant = _clientConfig.getTenant();
 
-        scheduleAnchor.addClickHandler(new CustomizeScheduleClickHandler(this, service, tenant, schedule));
+        if (_clientConfig.isJobEditor()) {
+            jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant));
+        }
 
-        triggerNowButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                final DCPopupPanel popupPanel = new DCPopupPanel("Execute job");
-                popupPanel.setWidget(new LoadingIndicator());
-                popupPanel.addButton(new CancelPopupButton(popupPanel, "Close"));
-                popupPanel.center();
-                popupPanel.show();
+        if (_clientConfig.isScheduleEditor()) {
+            scheduleAnchor.addClickHandler(new CustomizeScheduleClickHandler(this, service, tenant, schedule));
+        }
 
-                service.triggerExecution(tenant, _schedule.getJob(), new DCAsyncCallback<ExecutionLog>() {
-                    @Override
-                    public void onSuccess(ExecutionLog result) {
-                        final ExecutionLogPanel panel = new ExecutionLogPanel(service, _tenant, result);
-                        popupPanel.setWidget(panel);
-                        popupPanel.center();
-                    }
-                });
-            }
-        });
+        if (!_clientConfig.isJobEditor()) {
+            alertsPanel.setVisible(false);
+        }
 
-        launchButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                String url = Urls.createRepositoryUrl(tenant, "jobs/" + schedule.getJob().getName() + ".launch.jnlp");
-                Window.open(url, "_blank", null);
-            }
-        });
+        if (_clientConfig.isScheduleEditor()) {
+            triggerNowButton.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    final DCPopupPanel popupPanel = new DCPopupPanel("Execute job");
+                    popupPanel.setWidget(new LoadingIndicator());
+                    popupPanel.addButton(new CancelPopupButton(popupPanel, "Close"));
+                    popupPanel.center();
+                    popupPanel.show();
+
+                    service.triggerExecution(tenant, _schedule.getJob(), new DCAsyncCallback<ExecutionLog>() {
+                        @Override
+                        public void onSuccess(ExecutionLog result) {
+                            final ExecutionLogPanel panel = new ExecutionLogPanel(service, tenant, result);
+                            popupPanel.setWidget(panel);
+                            popupPanel.center();
+                        }
+                    });
+                }
+            });
+        }
+
+        if (_clientConfig.isJobEditor()) {
+            launchButton.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    String url = Urls.createRepositoryUrl(tenant, "jobs/" + schedule.getJob().getName()
+                            + ".launch.jnlp");
+                    Window.open(url, "_blank", null);
+                }
+            });
+        } else {
+            launchButton.setVisible(false);
+        }
 
         historyButton.addClickHandler(new JobHistoryClickHandler(service, tenant, schedule));
 

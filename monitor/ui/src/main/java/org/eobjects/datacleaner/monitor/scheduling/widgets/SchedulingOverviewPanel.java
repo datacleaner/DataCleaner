@@ -25,8 +25,8 @@ import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.CreateJobButton;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
@@ -41,13 +41,13 @@ import com.google.gwt.user.client.ui.Panel;
  */
 public class SchedulingOverviewPanel extends Composite {
 
-    private final TenantIdentifier _tenant;
+    private final ClientConfig _clientConfig;
     private final SchedulingServiceAsync _service;
     private final Map<String, ScheduleGroupPanel> _scheduleGroupPanels;
     private final FlowPanel _panel;
 
-    public SchedulingOverviewPanel(TenantIdentifier tenant, SchedulingServiceAsync service) {
-        _tenant = tenant;
+    public SchedulingOverviewPanel(ClientConfig clientConfig, SchedulingServiceAsync service) {
+        _clientConfig = clientConfig;
         _service = service;
         _scheduleGroupPanels = new HashMap<String, ScheduleGroupPanel>();
 
@@ -62,15 +62,18 @@ public class SchedulingOverviewPanel extends Composite {
     }
 
     private Panel createButtonPanel() {
-        final CreateJobButton newJobButton = new CreateJobButton(_tenant);
-        
         final ButtonPanel buttonPanel = new ButtonPanel();
-        buttonPanel.add(newJobButton);
+        
+        if (_clientConfig.isJobEditor()) {
+            final CreateJobButton newJobButton = new CreateJobButton(_clientConfig.getTenant());
+            buttonPanel.add(newJobButton);
+        }
+        
         return buttonPanel;
     }
 
     public void initialize(final Runnable listener) {
-        _service.getSchedules(_tenant, new DCAsyncCallback<List<ScheduleDefinition>>() {
+        _service.getSchedules(_clientConfig.getTenant(), new DCAsyncCallback<List<ScheduleDefinition>>() {
             @Override
             public void onSuccess(List<ScheduleDefinition> result) {
                 for (ScheduleDefinition scheduleDefinition : result) {
@@ -88,7 +91,7 @@ public class SchedulingOverviewPanel extends Composite {
         if (_scheduleGroupPanels.containsKey(name)) {
             scheduleGroupPanel = _scheduleGroupPanels.get(name);
         } else {
-            scheduleGroupPanel = new ScheduleGroupPanel(name, _tenant, _service);
+            scheduleGroupPanel = new ScheduleGroupPanel(name, _clientConfig, _service);
             _panel.add(scheduleGroupPanel);
             _scheduleGroupPanels.put(name, scheduleGroupPanel);
         }

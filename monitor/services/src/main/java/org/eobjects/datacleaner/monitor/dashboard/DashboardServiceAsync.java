@@ -60,7 +60,4 @@ public interface DashboardServiceAsync {
 
     public void removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup,
             AsyncCallback<Boolean> callback);
-
-    void isDashboardEditor(TenantIdentifier tenant, AsyncCallback<Boolean> callback);
-
 }

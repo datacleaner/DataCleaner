@@ -19,11 +19,9 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard;
 
+import org.eobjects.datacleaner.monitor.dashboard.widgets.DashboardGroupSelectionPanel;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.monitor.dashboard.widgets.DashboardGroupSelectionPanel;
-import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -41,26 +39,18 @@ public class DashboardEntryPoint implements EntryPoint {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
-        final TenantIdentifier tenant = clientConfig.getTenant();
 
         final DashboardServiceAsync service = GWT.create(DashboardService.class);
-
-        service.isDashboardEditor(tenant, new DCAsyncCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {
-                render(service, clientConfig, result.booleanValue());
-            }
-        });
+        render(service, clientConfig);
     }
 
-    protected void render(DashboardServiceAsync service, ClientConfig clientConfig, boolean isDashboardEditor) {
+    protected void render(DashboardServiceAsync service, ClientConfig clientConfig) {
         final FlowPanel timelinesSplitPanel = new FlowPanel();
         timelinesSplitPanel.setStyleName("TimelinesSplitPanel");
         {
             final SimplePanel targetPanel = new SimplePanel();
-            final DashboardGroupSelectionPanel selectionPanel = new DashboardGroupSelectionPanel(
-                    clientConfig.getTenant(), service, targetPanel, isDashboardEditor,
-                    clientConfig.isDefaultDashboardGroupDisplayed(), clientConfig.isInformercialDisplayed());
+            final DashboardGroupSelectionPanel selectionPanel = new DashboardGroupSelectionPanel(clientConfig, service,
+                    targetPanel);
 
             timelinesSplitPanel.add(selectionPanel);
             timelinesSplitPanel.add(targetPanel);

@@ -42,15 +42,15 @@ public interface DatastoreService extends RemoteService {
     @RolesAllowed(SecurityRoles.VIEWER)
     public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant);
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.TASK_QUERY)
     public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastore);
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.TASK_QUERY)
     public List<SchemaIdentifier> getSchemas(TenantIdentifier tenant, DatastoreIdentifier datastore);
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.TASK_QUERY)
     public List<TableIdentifier> getTables(TenantIdentifier tenant, SchemaIdentifier schema);
 
-    @RolesAllowed(SecurityRoles.ADMIN)
+    @RolesAllowed(SecurityRoles.TASK_QUERY)
     public List<ColumnIdentifier> getColumns(TenantIdentifier tenant, TableIdentifier table);
 }

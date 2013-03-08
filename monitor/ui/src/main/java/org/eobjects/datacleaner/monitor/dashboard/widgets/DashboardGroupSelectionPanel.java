@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
@@ -56,16 +57,16 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
     private final boolean _displayDefaultGroup;
     private final boolean _displayInfomercial;
 
-    public DashboardGroupSelectionPanel(TenantIdentifier tenant, DashboardServiceAsync service,
-            SimplePanel targetPanel, boolean isDashboardEditor, boolean displayDefaultGroup, boolean displayInfomercial) {
+    public DashboardGroupSelectionPanel(ClientConfig clientConfig, DashboardServiceAsync service,
+            SimplePanel targetPanel) {
         super();
 
-        _tenant = tenant;
+        _tenant = clientConfig.getTenant();
         _service = service;
         _targetPanel = targetPanel;
-        _isDashboardEditor = isDashboardEditor;
-        _displayDefaultGroup = displayDefaultGroup;
-        _displayInfomercial = displayInfomercial;
+        _isDashboardEditor = clientConfig.isDashboardEditor();
+        _displayDefaultGroup = clientConfig.isDefaultDashboardGroupDisplayed();
+        _displayInfomercial = clientConfig.isInformercialDisplayed();
         _anchors = new HashMap<String, Anchor>();
         _anchorPanel = new FlowPanel();
         _anchorPanel.setStyleName("AnchorPanel");

@@ -21,7 +21,7 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.widgets.HeadingLabel;
 
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -33,10 +33,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class ScheduleGroupPanel extends FlowPanel {
 
     private final SchedulingServiceAsync _service;
-    private final TenantIdentifier _tenant;
+    private final ClientConfig _clientConfig;
 
-    public ScheduleGroupPanel(String name, TenantIdentifier tenant, SchedulingServiceAsync service) {
-        _tenant = tenant;
+    public ScheduleGroupPanel(String name, ClientConfig clientConfig, SchedulingServiceAsync service) {
+        _clientConfig = clientConfig;
         _service = service;
 
         addStyleName("ScheduleGroupPanel");
@@ -51,7 +51,7 @@ public class ScheduleGroupPanel extends FlowPanel {
     }
 
     public void addSchedule(ScheduleDefinition schedule) {
-        final SchedulePanel panel = new SchedulePanel(_tenant, schedule, _service);
+        final SchedulePanel panel = new SchedulePanel(_clientConfig, schedule, _service);
         add(panel);
     }
 }

@@ -15,7 +15,7 @@
 			</h:outputLink></li>
 	</c:if>
 
-	<c:if test="#{user.scheduleEditor}">
+	<c:if test="#{user.scheduleEditor or user.jobEditor}">
 		<li
 			class="#{ (view.viewId == '/scheduling.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
 				value="scheduling.jsf" styleClass="SchedulingTabTitle">
@@ -26,7 +26,7 @@
 			</h:outputLink></li>
 	</c:if>
 
-	<c:if test="#{user.jobEditor}">
+	<c:if test="#{user.configurationEditor or user.queryAllowed}">
 		<li
 			class="#{ (view.viewId == '/datastores.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
 				value="datastores.jsf" styleClass="DatastoresTabTitle">
@@ -37,7 +37,7 @@
 			</h:outputLink></li>
 	</c:if>
 
-	<c:if test="#{user.admin}">
+	<c:if test="#{user.configurationEditor or user.jobEditor}">
 		<li
 			class="#{ (view.viewId == '/repository.xhtml') ? 'selected' : 'not-selected' }"><h:outputLink
 				value="repository.jsf" styleClass="RepositoryTabTitle">

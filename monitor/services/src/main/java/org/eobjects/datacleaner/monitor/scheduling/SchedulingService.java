@@ -40,7 +40,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("../gwtrpc/schedulingService")
 public interface SchedulingService extends RemoteService {
 
-    @RolesAllowed(SecurityRoles.VIEWER)
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) throws DCSecurityException;
 
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
@@ -53,9 +53,9 @@ public interface SchedulingService extends RemoteService {
     @RolesAllowed(SecurityRoles.SCHEDULE_EDITOR)
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
 
-    @RolesAllowed(SecurityRoles.VIEWER)
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public ExecutionLog getLatestExecution(TenantIdentifier tenant, JobIdentifier job) throws DCSecurityException;
-    
+
     /**
      * Gets the full details about an {@link ExecutionIdentifier}.
      * 
@@ -64,14 +64,14 @@ public interface SchedulingService extends RemoteService {
      * @return
      * @throws DCSecurityException
      */
-    @RolesAllowed(SecurityRoles.VIEWER)
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public ExecutionLog getExecution(TenantIdentifier tenant, ExecutionIdentifier executionIdentifier)
             throws DCSecurityException;
 
     /**
      * Gets all executions of a particular job.
      */
-    @RolesAllowed(SecurityRoles.VIEWER)
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.SCHEDULE_EDITOR })
     public List<ExecutionIdentifier> getAllExecutions(TenantIdentifier tenant, JobIdentifier job)
             throws DCSecurityException;
 

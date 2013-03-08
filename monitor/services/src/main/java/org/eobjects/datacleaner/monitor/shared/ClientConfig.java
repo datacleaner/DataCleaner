@@ -29,7 +29,15 @@ public interface ClientConfig {
 
     public TenantIdentifier getTenant();
     
+    public boolean isJobEditor();
+    
+    public boolean isScheduleEditor();
+    
+    public boolean isConfigurationEditor();
+    
     public boolean isDefaultDashboardGroupDisplayed();
     
     public boolean isInformercialDisplayed();
+    
+    public boolean isDashboardEditor();
 }

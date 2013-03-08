@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.monitor.scheduling;
 import org.eobjects.datacleaner.monitor.scheduling.widgets.SchedulingOverviewPanel;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
 import org.eobjects.datacleaner.monitor.shared.DictionaryClientConfig;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
@@ -40,14 +39,13 @@ public class SchedulingEntryPoint implements EntryPoint {
         GWT.setUncaughtExceptionHandler(ErrorHandler.getUncaughtExceptionHandler());
 
         final ClientConfig clientConfig = new DictionaryClientConfig();
-        final TenantIdentifier tenant = clientConfig.getTenant();
 
         final SchedulingServiceAsync service = GWT.create(SchedulingService.class);
 
         final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
         rootPanel.add(new LoadingIndicator());
 
-        final SchedulingOverviewPanel overviewPanel = new SchedulingOverviewPanel(tenant, service);
+        final SchedulingOverviewPanel overviewPanel = new SchedulingOverviewPanel(clientConfig, service);
         overviewPanel.initialize(new Runnable() {
             @Override
             public void run() {

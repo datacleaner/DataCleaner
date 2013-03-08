@@ -39,14 +39,44 @@ public class DictionaryClientConfig implements ClientConfig {
 
     @Override
     public TenantIdentifier getTenant() {
-        String tenantId = get("tenant_id");
+        String tenantId = getString("tenant_id");
         if (tenantId == null) {
             return null;
         }
         return new TenantIdentifier(tenantId);
     }
 
-    private String get(String key) {
+    @Override
+    public boolean isDefaultDashboardGroupDisplayed() {
+        return getBoolean("dashboard_default_group", true);
+    }
+
+    @Override
+    public boolean isInformercialDisplayed() {
+        return getBoolean("dashboard_infomercial", true);
+    }
+
+    @Override
+    public boolean isJobEditor() {
+        return getBoolean("role_job_editor", false);
+    }
+
+    @Override
+    public boolean isScheduleEditor() {
+        return getBoolean("role_schedule_editor", false);
+    }
+
+    @Override
+    public boolean isConfigurationEditor() {
+        return getBoolean("role_configuration_editor", false);
+    }
+    
+    @Override
+    public boolean isDashboardEditor() {
+        return getBoolean("role_dashboard_editor", false);
+    }
+
+    private String getString(String key) {
         try {
             return _dictionary.get(key);
         } catch (MissingResourceException e) {
@@ -54,22 +84,11 @@ public class DictionaryClientConfig implements ClientConfig {
         }
     }
 
-    @Override
-    public boolean isDefaultDashboardGroupDisplayed() {
-        final String str = get("dashboard_default_group");
+    private boolean getBoolean(String key, boolean defaultValue) {
+        final String str = getString(key);
         if (str == null) {
             // default is true
-            return true;
-        }
-        return "true".equalsIgnoreCase(str);
-    }
-
-    @Override
-    public boolean isInformercialDisplayed() {
-        final String str = get("dashboard_infomercial");
-        if (str == null) {
-            // default is true
-            return true;
+            return defaultValue;
         }
         return "true".equalsIgnoreCase(str);
     }

@@ -41,10 +41,12 @@ public class DatastoresEntryPoint implements EntryPoint {
         final ClientConfig clientConfig = new DictionaryClientConfig();
         final TenantIdentifier tenant = clientConfig.getTenant();
         
-        final CreateDatastoreButton button = new CreateDatastoreButton(tenant);
-
-        final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
-        rootPanel.add(button);
+        
+        if (clientConfig.isConfigurationEditor()) {
+            final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
+            final CreateDatastoreButton button = new CreateDatastoreButton(tenant);
+            rootPanel.add(button);
+        }
     }
 
 }

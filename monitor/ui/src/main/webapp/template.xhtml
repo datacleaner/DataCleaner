@@ -19,7 +19,11 @@
 			var dq_monitor_client_config = {
 				tenant_id : '#{user.tenant}',
 				dashboard_default_group : 'true',
-				dashboard_infomercial : 'true'
+				dashboard_infomercial : 'true',
+				role_job_editor : '#{user.jobEditor}',
+				role_schedule_editor : '#{user.scheduleEditor}',
+				role_configuration_editor : '#{user.configurationEditor}',
+				role_dashboard_editor : '#{user.dashboardEditor}'
 			}
 		//]]>
 		</script>

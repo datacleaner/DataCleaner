@@ -29,7 +29,6 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
@@ -117,10 +116,5 @@ public class DashboardServiceServlet extends SecureGwtServlet implements Dashboa
     @Override
     public Boolean removeDashboardGroup(TenantIdentifier tenant, DashboardGroup timelineGroup) {
         return _delegate.removeDashboardGroup(tenant, timelineGroup);
-    }
-
-    @Override
-    public boolean isDashboardEditor(TenantIdentifier tenant) {
-        return hasRole(SecurityRoles.DASHBOARD_EDITOR) && _delegate.isDashboardEditor(tenant);
     }
 }

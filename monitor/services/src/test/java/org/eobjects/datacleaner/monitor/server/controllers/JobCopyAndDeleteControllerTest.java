@@ -96,7 +96,7 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
         };
 
         result = jobDeleteController.deleteJob("tenant1", "product_analysis");
-        assertEquals("{job=product_analysis}", result.toString());
+        assertEquals("{action=delete, job=product_analysis}", result.toString());
 
         assertTrue(deleteEventReceived.get());
 

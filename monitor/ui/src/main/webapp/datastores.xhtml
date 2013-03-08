@@ -16,8 +16,7 @@
 		
 		<div class="datastoreList">
 			<ui:repeat var="ds" value="#{jsfHelper.datastores}">
-				<div
-					class="datastore #{ds.fileDatastore ? 'FileDatastore' : ''} #{ds.simpleClassName}">
+				<div class="datastore #{ds.fileDatastore ? 'FileDatastore' : ''} #{ds.simpleClassName}">
 
 					<h:panelGroup rendered="#{user.jobEditor}">
 						<div style="float: right">
@@ -58,7 +57,7 @@
 						<div class="datastoreType">
 							<span class="label">Type:</span> <span class="value">#{ds.simpleClassName}</span>
 						</div>
-						<h:panelGroup rendered="#{ds.fileDatastore}">
+						<h:panelGroup rendered="#{ds.fileDatastore and user.configurationEditor}">
 							<div class="filename">
 								<span class="label">Filename:</span> <span class="value">
 									#{ds.filename} <h:panelGroup
@@ -73,7 +72,7 @@
 								<span class="label">Hostname:</span> <span class="value">#{ds.hostname}</span>
 							</div>
 						</h:panelGroup>
-						<h:panelGroup rendered="#{ds.jdbcDatastore}">
+						<h:panelGroup rendered="#{ds.jdbcDatastore and user.configurationEditor}">
 							<div class="url">
 								<span class="label">URL:</span> <span class="value">#{ds.jdbcUrl}</span>
 							</div>

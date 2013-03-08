@@ -31,6 +31,9 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Default implementation of {@link ResultDao}
+ */
 @Component
 public class ResultDaoImpl implements ResultDao {
     

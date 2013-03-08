@@ -28,6 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
+import org.eobjects.datacleaner.monitor.server.dao.DatastoreDaoImpl;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.metamodel.util.Action;
@@ -47,6 +48,7 @@ public class DatastoresFolderControllerTest extends TestCase {
 
         DatastoresFolderController controller = new DatastoresFolderController();
         controller._contextFactory = contextFactory;
+        controller._datastoreDao = new DatastoreDaoImpl();
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent("<foo><bar>baz</bar></foo>".getBytes());

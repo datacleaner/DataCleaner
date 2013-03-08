@@ -38,7 +38,7 @@ import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.server.controllers.DatastoresFolderController;
+import org.eobjects.datacleaner.monitor.server.dao.DatastoreDao;
 import org.eobjects.datacleaner.monitor.shared.WizardService;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -74,6 +74,9 @@ public class WizardServiceImpl implements WizardService {
 
     @Autowired
     ApplicationContext _applicationContext;
+
+    @Autowired
+    DatastoreDao _datastoreDao;
 
     public WizardServiceImpl() {
         _sessions = new ConcurrentHashMap<String, WizardSession>();
@@ -221,15 +224,7 @@ public class WizardServiceImpl implements WizardService {
         final TenantContext tenantContext = wizardContext.getTenantContext();
         final Element datastoreNode = session.createDatastoreElement(documentBuilder);
 
-        try {
-            DatastoresFolderController
-                    .addDatastoreElementToConfiguration(tenantContext, datastoreNode, documentBuilder);
-        } catch (Exception e) {
-            if (e instanceof RuntimeException) {
-                throw (RuntimeException) e;
-            }
-            throw new IllegalStateException("Failed to add datastore element to configuration file", e);
-        }
+        _datastoreDao.addDatastore(tenantContext, datastoreNode);
     }
 
     private void finishJobWizard(final JobWizardContext wizardContext, final JobWizardSession session) {

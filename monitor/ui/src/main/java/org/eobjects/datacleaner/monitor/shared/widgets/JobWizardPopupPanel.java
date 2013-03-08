@@ -22,14 +22,18 @@ package org.eobjects.datacleaner.monitor.shared.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.shared.DatastoreService;
+import org.eobjects.datacleaner.monitor.shared.DatastoreServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -46,9 +50,11 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 /**
- * A popup for a datastore wizard.
+ * A popup for a job wizard
  */
-public class DatastoreWizardPopupPanel extends DCPopupPanel {
+public class JobWizardPopupPanel extends DCPopupPanel {
+    
+    private final DatastoreServiceAsync datastoreService = GWT.create(DatastoreService.class);
 
     private final WizardServiceAsync _service;
     private final TenantIdentifier _tenant;
@@ -62,26 +68,26 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
     private HandlerRegistration _clickRegistration;
     private WizardPanel _currentPanel;
 
-    public DatastoreWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
-        super("New datastore");
+    public JobWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
+        super("New job");
 
         addStyleName("WizardPopupPanel");
-        addStyleName("DatastoreWizardPopupPanel");
+        addStyleName("JobWizardPopupPanel");
 
         _service = service;
         _tenant = tenant;
         _loadingIndicator = new LoadingIndicator();
         _progressBar = new WizardProgressBar();
-        _progressBar.setSteps(1, true);
+        _progressBar.setSteps(2, true);
         _progressBar.setProgress(0);
 
         _targetPanel = new SimplePanel();
         _targetPanel.setWidget(_loadingIndicator);
-
-        _service.getDatastoreWizardIdentifiers(_tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
+        
+        datastoreService.getAvailableDatastores(_tenant, new DCAsyncCallback<List<DatastoreIdentifier>>() {
             @Override
-            public void onSuccess(List<WizardIdentifier> wizards) {
-                showWizardSelection(wizards);
+            public void onSuccess(List<DatastoreIdentifier> datastores) {
+                showDatastoreSelection(datastores);
             }
         });
 
@@ -116,13 +122,54 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
             }
         });
     }
+    
+    private void showDatastoreSelection(final List<DatastoreIdentifier> datastores) {
+        final FlowPanel panel = new FlowPanel();
 
-    protected void showWizardSelection(final List<WizardIdentifier> wizards) {
+        panel.add(new Label("Please select the source datastore of the job:"));
+
+        final List<RadioButton> radios = new ArrayList<RadioButton>(datastores.size());
+
+        for (final DatastoreIdentifier datastore : datastores) {
+            final RadioButton radio = new RadioButton("datastoreName", datastore.getName());
+            panel.add(radio);
+            radios.add(radio);
+        }
+
+        _clickRegistration = _nextStepButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (int i = 0; i < radios.size(); i++) {
+                    final RadioButton radio = radios.get(i);
+                    if (radio.getValue().booleanValue()) {
+                        final DatastoreIdentifier datastore = datastores.get(i);
+                        _targetPanel.setWidget(_loadingIndicator);
+                        setHeader("New job: " + datastore.getName());
+                        
+                        _service.getJobWizardIdentifiers(_tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
+                            @Override
+                            public void onSuccess(List<WizardIdentifier> wizards) {
+                                showWizardSelection(datastore, wizards);
+                            }
+                        });
+                        return;
+                    }
+                }
+            }
+        });
+
+        _targetPanel.setWidget(panel);
+        center();
+    }
+
+    protected void showWizardSelection(final DatastoreIdentifier datastore, final List<WizardIdentifier> wizards) {
+        final int progress = 1;
+        
         final FlowPanel panel = new FlowPanel();
 
         final TextBox nameTextBox = new TextBox();
 
-        panel.add(new Label("Please select the datastore type:"));
+        panel.add(new Label("Please select the job type:"));
 
         final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
 
@@ -131,37 +178,39 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
             radio.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    _progressBar.setSteps(wizard.getExpectedPageCount() + 1);
-                    _progressBar.setProgress(0);
+                    _progressBar.setSteps(wizard.getExpectedPageCount() + 2);
+                    _progressBar.setProgress(progress);
                 }
             });
             panel.add(radio);
             radios.add(radio);
         }
 
-        panel.add(new Label("Please name the datastore you are about to create:"));
+        panel.add(new Label("Please name the job you are about to create:"));
         panel.add(nameTextBox);
 
+        _clickRegistration.removeHandler();
         _clickRegistration = _nextStepButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final String datastoreName = nameTextBox.getText();
-                if (datastoreName == null || datastoreName.trim().isEmpty()) {
-                    throw new DCUserInputException("Please enter a valid datastore name");
+                final String jobName = nameTextBox.getText();
+                if (jobName == null || jobName.trim().isEmpty()) {
+                    throw new DCUserInputException("Please enter a valid job name");
                 }
                 for (int i = 0; i < radios.size(); i++) {
                     final RadioButton radio = radios.get(i);
                     if (radio.getValue().booleanValue()) {
                         final WizardIdentifier wizard = wizards.get(i);
                         _targetPanel.setWidget(_loadingIndicator);
-                        setHeader("New datastore: " + datastoreName);
-                        _service.startDatastoreWizard(_tenant, wizard, datastoreName, createNextPageCallback());
+                        setHeader("New job: " + jobName);
+                        _service.startJobWizard(_tenant, wizard, datastore, jobName, createNextPageCallback());
                         return;
                     }
                 }
             }
         });
 
+        _progressBar.setProgress(progress);
         _targetPanel.setWidget(panel);
         center();
     }
@@ -173,8 +222,8 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
                 if (page == null) {
                     wizardFinished();
                 } else {
-                    _progressBar.setSteps(page.getExpectedPageCount() + 1);
-                    _progressBar.setProgress(page.getPageIndex() + 1);
+                    _progressBar.setSteps(page.getExpectedPageCount() + 2);
+                    _progressBar.setProgress(page.getPageIndex() + 2);
 
                     _currentPanel = new FormWizardPanel(_service, _tenant, page);
 
@@ -189,7 +238,7 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
                         }
                     });
 
-                    DatastoreWizardPopupPanel.this.center();
+                    JobWizardPopupPanel.this.center();
                 }
             }
         };
@@ -205,9 +254,10 @@ public class DatastoreWizardPopupPanel extends DCPopupPanel {
             }
         });
 
-        _targetPanel.setWidget(new Label("Datastore created! Wizard finished."));
+        _targetPanel.setWidget(new Label("Job created! Wizard finished."));
         getButtonPanel().clear();
         addButton(button);
         center();
     }
+
 }

@@ -184,21 +184,13 @@ div.center {
 /**
  * Styling for the wizards
  */
-.JobWizardPopupPanel .DCPopupPanelContent, .DatastoreWizardPopupPanel  .DCPopupPanelContent {
+.WizardPopupPanel .DCPopupPanelContent {
 	min-height: 300px;
 	min-width: 500px;
 	max-width: 700px;
 }
 
-.JobWizardPopupPanel .HeadingLabel {
-	padding-left: 26px;
-	background-image: url("job.png");
-	background-repeat: no-repeat;
-	background-position: left center;
-	min-height: 22px;
-}
-
-.JobWizardPopupPanel table {
+.WizardPopupPanel table {
 	margin-left: auto;
 	margin-right: auto;
 	width: 90%;
@@ -207,29 +199,41 @@ div.center {
 	border: 1px solid #ddd;
 }
 
-.JobWizardPopupPanel table th {
+.WizardPopupPanel table th {
 	background-color: #5594DD;
 	color: white;
 	font-weight: normal;
 	padding: 4px;
 }
 
-.JobWizardPopupPanel table td {
+.WizardPopupPanel table td {
 	padding: 2px;
 }
 
-.DatastoreWizardPopupPanel .HeadingLabel {
+.WizardPopupPanel .gwt-RadioButton {
+	display: block;
+	margin: 6px;
+	margin-left: 20px;
+}
+
+.WizardPopupPanel .gwt-RadioButton label {
+	padding-left: 6px;
+	color: #5594DD;
+}
+
+.WizardPopupPanel .HeadingLabel {
 	padding-left: 26px;
-	background-image: url("datastore.png");
 	background-repeat: no-repeat;
 	background-position: left center;
 	min-height: 22px;
 }
 
-.DatastoreWizardPopupPanel .gwt-RadioButton {
-	display: block;
-	margin: 6px;
-	margin-left: 20px;
+.JobWizardPopupPanel .HeadingLabel {
+	background-image: url("job.png");
+}
+
+.DatastoreWizardPopupPanel .HeadingLabel {
+	background-image: url("datastore.png");
 }
 
 /**

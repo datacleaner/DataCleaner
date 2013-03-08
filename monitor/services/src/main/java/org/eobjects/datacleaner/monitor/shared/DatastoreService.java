@@ -39,7 +39,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("../gwtrpc/datastoreService")
 public interface DatastoreService extends RemoteService {
 
-    @RolesAllowed(SecurityRoles.VIEWER)
+    @RolesAllowed({ SecurityRoles.VIEWER, SecurityRoles.JOB_EDITOR, SecurityRoles.SCHEDULE_EDITOR,
+            SecurityRoles.CONFIGURATION_EDITOR })
     public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant);
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)

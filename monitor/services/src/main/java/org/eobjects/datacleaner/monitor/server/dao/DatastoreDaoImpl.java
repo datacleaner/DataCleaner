@@ -44,6 +44,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.Func;
+import org.springframework.stereotype.Component;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,10 +54,11 @@ import org.xml.sax.InputSource;
 /**
  * Default implementation of {@link DatastoreDao}
  */
+@Component
 public class DatastoreDaoImpl implements DatastoreDao {
 
     @Override
-    public void removeDatastore(TenantContext tenantContext, String datastoreName) {
+    public void removeDatastore(TenantContext tenantContext, String datastoreName) throws IllegalArgumentException {
         if (datastoreName == null) {
             throw new IllegalArgumentException("Datastore name cannot be null");
         }

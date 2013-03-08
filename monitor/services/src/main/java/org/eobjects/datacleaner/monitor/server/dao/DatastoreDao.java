@@ -51,5 +51,5 @@ public interface DatastoreDao {
      * @param tenantContext
      * @param datastoreName
      */
-    public void removeDatastore(TenantContext tenantContext, String datastoreName);
+    public void removeDatastore(TenantContext tenantContext, String datastoreName) throws IllegalArgumentException;
 }

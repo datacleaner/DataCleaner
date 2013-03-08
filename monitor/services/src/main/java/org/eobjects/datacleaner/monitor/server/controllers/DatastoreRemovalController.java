@@ -24,17 +24,13 @@ import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
-import org.eobjects.datacleaner.monitor.events.JobDeletionEvent;
-import org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl;
+import org.eobjects.datacleaner.monitor.server.dao.DatastoreDao;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
-import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,47 +38,52 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/{tenant}/jobs/{job}.delete")
-public class JobDeletionController {
+@RequestMapping(value = "/{tenant}/datastores/{datastore}.remove")
+public class DatastoreRemovalController {
 
-    private static final Logger logger = LoggerFactory.getLogger(JobDeletionController.class);
-
-    @Autowired
-    ApplicationEventPublisher _eventPublisher;
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreRemovalController.class);
 
     @Autowired
     TenantContextFactory _contextFactory;
 
+    @Autowired
+    DatastoreDao datastoreDao;
+
     @RequestMapping(method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
     @ResponseBody
-    @RolesAllowed({ SecurityRoles.JOB_EDITOR })
-    public Map<String, String> deleteJob(@PathVariable("tenant") final String tenant,
-            @PathVariable("job") String jobName) {
+    @RolesAllowed({ SecurityRoles.CONFIGURATION_EDITOR })
+    public Map<String, String> removeDatastore(@PathVariable("tenant") final String tenant,
+            @PathVariable("datastore") String datastoreName) {
 
-        logger.info("Request payload: {} - {}", tenant, jobName);
+        logger.info("Request payload: {} - {}", tenant, datastoreName);
 
-        jobName = jobName.replaceAll("\\+", " ");
-
-        final TenantContext tenantContext = _contextFactory.getContext(tenant);
-
-        final JobContext job = tenantContext.getJob(jobName);
-
-        RepositoryFile file = job.getJobFile();
-        file.delete();
-        
-        final RepositoryFile scheduleFile = tenantContext.getJobFolder().getFile(
-                jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
-        if (scheduleFile != null) {
-            scheduleFile.delete();
-        }
-
-        _eventPublisher.publishEvent(new JobDeletionEvent(this, tenant, jobName));
+        datastoreName = datastoreName.replaceAll("\\+", " ");
 
         final Map<String, String> response = new TreeMap<String, String>();
-        response.put("job", jobName);
-        response.put("action", "delete");
-        logger.debug("Response payload: {}", response);
+        response.put("datastore", datastoreName);
+        response.put("action", "remove");
 
+        final TenantContext tenantContext = _contextFactory.getContext(tenant);
+        if (tenantContext.getConfiguration().getDatastoreCatalog().getDatastore(datastoreName) == null) {
+            response.put("status", "FAILURE");
+            response.put("message", "No such datastore: " + datastoreName);
+            return response;
+        }
+
+        try {
+            datastoreDao.removeDatastore(tenantContext, datastoreName);
+        } catch (Exception e) {
+            logger.error("Removing datastore '" + datastoreName + "' from tenant '" + tenant
+                    + "'s configuration failed", e);
+            response.put("status", "FAILURE");
+            response.put("message", e.getMessage());
+            return response;
+        }
+
+        response.put("status", "SUCCESS");
+        response.put("message", "Datastore was removed succesfully");
+
+        logger.debug("Response payload: {}", response);
         return response;
     }
 

@@ -8,6 +8,16 @@
 	<ui:define name="head">
 		<script type="text/javascript" language="javascript"
 			src="datastores/datastores.nocache.js" />
+		<script type="text/javascript">
+		//<![CDATA[
+		    function confirmRemoveDatastore(datastore) {
+		    	if (confirm('Are you sure you wish to remove datastore "' + datastore + '"?\nRemoving the datastore may cause jobs to fail, if they depend on it.')) {
+		    		return true;
+		    	}
+		    	return false;
+		    }
+		//]]>
+		</script>
 	</ui:define>
 
 	<ui:define name="content">
@@ -16,8 +26,14 @@
 		
 		<div class="datastoreList">
 			<ui:repeat var="ds" value="#{jsfHelper.datastores}">
-				<div class="datastore #{ds.fileDatastore ? 'FileDatastore' : ''} #{ds.simpleClassName}">
-
+					<div class="datastore #{ds.fileDatastore ? 'FileDatastore' : ''} #{ds.simpleClassName}">
+						<h:panelGroup rendered="#{user.configurationEditor}">
+							<div style="float: right">
+								<form action="repository/#{tenantContext.tenantId}/datastores/#{ds.name}.remove" method="post">
+									<input class="RemoveButton" type="submit" value="Remove" onclick="return confirmRemoveDatastore('#{ds.name}');" />
+								</form>
+							</div>
+						</h:panelGroup>
 					<h:panelGroup rendered="#{user.jobEditor}">
 						<div style="float: right">
 							<button

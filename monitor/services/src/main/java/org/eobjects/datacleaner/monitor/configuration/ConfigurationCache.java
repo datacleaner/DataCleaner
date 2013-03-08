@@ -39,18 +39,20 @@ import org.slf4j.LoggerFactory;
  * every time it is needed.
  */
 final class ConfigurationCache {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationCache.class);
 
     private final InjectionManagerFactory _injectionManagerFactory;
     private final RepositoryFolder _tenantFolder;
     private final RepositoryFile _file;
+    private final String _tenantId;
 
     private volatile AnalyzerBeansConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
     public ConfigurationCache(String tenantId, RepositoryFolder tenantFolder,
             InjectionManagerFactory injectionManagerFactory) {
+        _tenantId = tenantId;
         _tenantFolder = tenantFolder;
         _injectionManagerFactory = injectionManagerFactory;
 
@@ -96,11 +98,16 @@ final class ConfigurationCache {
                 if (_tenantFolder instanceof FileRepositoryFolder) {
                     File file = ((FileRepositoryFolder) _tenantFolder).getFile();
                     return file.getAbsolutePath() + File.separatorChar + filename;
-                } else {
-                    // TODO: What about other non-file based repos?
-                    logger.warn("File path is relative, but repository is not file-based: {}", filename);
                 }
-                return super.createFilename(filename);
+
+                final String userHome = System.getProperty("user.home");
+                final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantId
+                        + File.separator + filename;
+
+                logger.warn("File path is relative, but repository is not file-based: {}. Returning: {}", filename,
+                        result);
+
+                return result;
             }
 
             @Override
@@ -108,21 +115,21 @@ final class ConfigurationCache {
                 return new AnalyzerBeansConfigurationImpl(_injectionManagerFactory);
             }
         });
-        
+
         final RepositoryFile configurationFile = getConfigurationFile();
         _lastModifiedCache = configurationFile.getLastModified();
-        
+
         logger.info("Reading configuration from file: {}", configurationFile);
-        
-        final AnalyzerBeansConfiguration readConfiguration = configurationFile.readFile(
-                new Func<InputStream, AnalyzerBeansConfiguration>() {
+
+        final AnalyzerBeansConfiguration readConfiguration = configurationFile
+                .readFile(new Func<InputStream, AnalyzerBeansConfiguration>() {
                     @Override
                     public AnalyzerBeansConfiguration eval(InputStream inputStream) {
                         final AnalyzerBeansConfiguration readConfiguration = reader.read(inputStream);
                         return readConfiguration;
                     }
                 });
-        
+
         return readConfiguration;
     }
 

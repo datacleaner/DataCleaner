@@ -5,9 +5,9 @@
 		<artifactId>DataCleaner-extensions</artifactId>
 		<version>3.1.3-SNAPSHOT</version>
 	</parent>
-	<artifactId>DataCleaner-move-data-wizard</artifactId>
+	<artifactId>DataCleaner-copy-data-wizard</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner - 'move data' wizard extension</name>
+	<name>DataCleaner - 'copy data' wizard extension</name>
 
 	<build>
 		<plugins>

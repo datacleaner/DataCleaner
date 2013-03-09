@@ -59,7 +59,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-move-data-wizard</artifactId>
+			<artifactId>DataCleaner-copy-data-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

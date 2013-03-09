@@ -25,11 +25,11 @@ class MoveDataWizardTest extends AssertionsForJUnit {
 
     val ctx = new JobWizardContextImpl(tenantContext, datastore, "My job");
 
-    val session = new MoveDataWizard().start(ctx);
+    val session = new CopyDataWizard().start(ctx);
 
     assertNotNull(session);
 
-    assertEquals(4, session.getPageCount());
+    assertEquals(5, session.getPageCount());
 
     val page1 = session.firstPageController()
     assertEquals(normalize("""<div>
@@ -98,24 +98,20 @@ class MoveDataWizardTest extends AssertionsForJUnit {
     val page4 = page3.nextPageController(formParams3);
 
     assertEquals(normalize("""<div>
-    <p>Please map source and target columns:</p>
+    <p>Please map source columns to their targets:</p>
 
     <table>
         <tr>
-            <th class="center">ID?</th>
             <th>Source</th>
             <th>Target</th>
         </tr>
                 <tr>
-            <td class="center">
-                <input type="checkbox" id="checkbox_input_id_0" name="id_0" value="true" checked="checked" />
-            </td>
             <td>
                 <label for="checkbox_input_id_0">CUSTOMERNUMBER</label>
             </td>
             <td>
                 <select name="mapping_0">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -128,15 +124,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_1" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_1">CUSTOMERNAME</label>
             </td>
             <td>
                 <select name="mapping_1">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -149,15 +142,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_2" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_2">CONTACTLASTNAME</label>
             </td>
             <td>
                 <select name="mapping_2">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -170,15 +160,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_3" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_3">CONTACTFIRSTNAME</label>
             </td>
             <td>
                 <select name="mapping_3">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -191,15 +178,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_4" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_4">PHONE</label>
             </td>
             <td>
                 <select name="mapping_4">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -212,15 +196,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_5" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_5">ADDRESSLINE1</label>
             </td>
             <td>
                 <select name="mapping_5">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -233,15 +214,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_6" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_6">ADDRESSLINE2</label>
             </td>
             <td>
                 <select name="mapping_6">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -254,15 +232,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_7" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_7">CITY</label>
             </td>
             <td>
                 <select name="mapping_7">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -275,15 +250,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_8" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_8">STATE</label>
             </td>
             <td>
                 <select name="mapping_8">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -296,15 +268,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_9" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_9">POSTALCODE</label>
             </td>
             <td>
                 <select name="mapping_9">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -317,15 +286,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_10" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_10">COUNTRY</label>
             </td>
             <td>
                 <select name="mapping_10">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -338,15 +304,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_11" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_11">SALESREPEMPLOYEENUMBER</label>
             </td>
             <td>
                 <select name="mapping_11">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -359,15 +322,12 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
         <tr>
-            <td class="center">
-                <input type="checkbox" name="id_12" value="true" />
-            </td>
             <td>
                 <label for="checkbox_input_id_12">CREDITLIMIT</label>
             </td>
             <td>
                 <select name="mapping_12">
-                    <option label="- none -" value=""></option>
+                    <option label="- not copied -" value=""></option>
                         <option value="EMPLOYEENUMBER">EMPLOYEENUMBER</option>
                         <option value="LASTNAME">LASTNAME</option>
                         <option value="FIRSTNAME">FIRSTNAME</option>
@@ -380,34 +340,70 @@ class MoveDataWizardTest extends AssertionsForJUnit {
             </td>
         </tr>
     </table>
-        
-    <p>
-        <input id="move_data_update_primary_keys" type="checkbox" name="updatePrimaryKeys" value="true" checked="checked" />
-        <label for="move_data_update_primary_keys">Use UPDATEs when primary key already exists?</label>
-    </p>
 </div>"""), normalize(page4.getFormInnerHtml()));
 
     // map EMPLOYEENUMBER to CUSTOMERNUMBER and contact name to employee name
     val formParams4: Map[String, java.util.List[String]] = Map("updatePrimaryKeys" -> List("true"), "id_0" -> List("true"), "mapping_0" -> List("EMPLOYEENUMBER"), "mapping_2" -> List("LASTNAME"), "mapping_3" -> List("FIRSTNAME"));
-    
+
     val page5 = page4.nextPageController(formParams4)
-    assertNull(page5);
-    
+
+    assertEquals(normalize("""<div>
+    <p>How should the job handle updates to data over time?</p>
+
+    <input type="radio" name="update_strategy" value="truncate"
+        checked="checked" id="update_strategy_checkbox_truncate" /> <label class="blue"
+        for="update_strategy_checkbox_truncate">Truncate target table</label>
+    <div style="margin: 20px; margin-top: 4px;">
+        <p>Using this option you truncate (delete all existing records)
+            the target table every time, before inserting the records from the
+            source table.</p>
+    </div>
+
+    <input type="radio" name="update_strategy" value="lookup_and_update"
+        id="update_strategy_checkbox_lookup_and_update" /> <label class="blue"
+        for="update_strategy_checkbox_lookup_and_update">Toggle insert
+        and update based on primary key lookup</label>
+    <div style="margin: 20px; margin-top: 4px;">
+        <p>Use a primary key column to look up if a record already has
+            been copied or not. If the record exists in the target already, issue
+            an UPDATE instead of an INSERT.</p>
+        <p>Primary key column: <select name="lookup_and_update_column_select">
+                            <option value="CUSTOMERNUMBER">CUSTOMERNUMBER</option>
+                <option value="CONTACTLASTNAME">CONTACTLASTNAME</option>
+                <option value="CONTACTFIRSTNAME">CONTACTFIRSTNAME</option>
+        </select> </p>
+    </div>
+
+    <input type="radio" name="update_strategy" value="no_strategy"
+        id="update_strategy_checkbox_no_strategy" /> <label class="blue"
+        for="update_strategy_checkbox_no_strategy">No update strategy</label>
+    <div style="margin: 20px; margin-top: 4px;">
+        <p>Do not handle update logic in the job / handled elsewhere
+            (running the job several times may cause duplicates).</p>
+    </div>
+</div>"""), normalize(page5.getFormInnerHtml()));
+
+    val formParams5: Map[String, java.util.List[String]] = Map("update_strategy" -> List("lookup_and_update"), "lookup_and_update_column_select" -> List("CUSTOMERNUMBER"))
+
+    val page6 = page5.nextPageController(formParams5)
+
+    assertNull(page6);
+
     val job = session.createJob()
     assertNotNull(job);
-    
+
     val columnNames = job.getSourceColumns().map(_.getName());
     assertEquals("CUSTOMERNUMBER,CONTACTLASTNAME,CONTACTFIRSTNAME", columnNames.mkString(","));
-    
+
     val analyzerNames = job.getAnalyzerJobBuilders().map(_.getDescriptor().getDisplayName())
     assertEquals("Insert into table,Update table", analyzerNames.mkString(","));
-    
+
     val transformerNames = job.getTransformerJobBuilders().map(_.getDescriptor().getDisplayName())
     assertEquals("Table lookup", transformerNames.mkString(","));
-    
+
     val filterNames = job.getFilterJobBuilders().map(_.getDescriptor().getDisplayName())
     assertEquals("Null check", filterNames.mkString(","));
-    
+
     val configured = job.isConfigured(true)
     assertTrue(configured);
   }

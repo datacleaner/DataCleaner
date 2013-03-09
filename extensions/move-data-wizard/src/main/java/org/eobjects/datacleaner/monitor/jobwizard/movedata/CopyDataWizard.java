@@ -25,11 +25,11 @@ import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MoveDataWizard implements JobWizard {
+public class CopyDataWizard implements JobWizard {
 
     @Override
     public String getDisplayName() {
-        return "Move data";
+        return "Copy data";
     }
     
     @Override
@@ -39,11 +39,11 @@ public class MoveDataWizard implements JobWizard {
 
     @Override
     public JobWizardSession start(JobWizardContext context) {
-        return new MoveDataWizardSession(context);
+        return new CopyDataWizardSession(context);
     }
 
     @Override
     public int getExpectedPageCount() {
-        return 4;
+        return 5;
     }
 }

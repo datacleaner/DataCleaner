@@ -29,12 +29,12 @@ import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.eobjects.metamodel.schema.Table;
 
-final class MoveDataWizardSession implements JobWizardSession {
+final class CopyDataWizardSession implements JobWizardSession {
 
     private final JobWizardContext _context;
     private final AnalysisJobBuilder _analysisJobBuilder;
 
-    public MoveDataWizardSession(JobWizardContext context) {
+    public CopyDataWizardSession(JobWizardContext context) {
         _context = context;
 
         _analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
@@ -46,7 +46,7 @@ final class MoveDataWizardSession implements JobWizardSession {
         return new SelectTableWizardPage(_context, 0) {
             @Override
             protected WizardPageController nextPageController(Table selectedTable) {
-                return new SelectDatastoreWizardPage(MoveDataWizardSession.this, _analysisJobBuilder, selectedTable);
+                return new SelectDatastoreWizardPage(CopyDataWizardSession.this, _analysisJobBuilder, selectedTable);
             }
         };
     }
@@ -60,7 +60,7 @@ final class MoveDataWizardSession implements JobWizardSession {
 
     @Override
     public Integer getPageCount() {
-        return 4;
+        return 5;
     }
 
     public String[] getDatastoreNames() {

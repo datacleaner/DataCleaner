@@ -32,11 +32,11 @@ import org.eobjects.metamodel.schema.Table;
 
 class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
 
-    private final MoveDataWizardSession _session;
+    private final CopyDataWizardSession _session;
     private final AnalysisJobBuilder _analysisJobBuilder;
     private final Table _sourceTable;
 
-    public SelectDatastoreWizardPage(MoveDataWizardSession session, AnalysisJobBuilder analysisJobBuilder,
+    public SelectDatastoreWizardPage(CopyDataWizardSession session, AnalysisJobBuilder analysisJobBuilder,
             Table sourceTable) {
         _session = session;
         _analysisJobBuilder = analysisJobBuilder;
@@ -62,7 +62,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
 
             @Override
             protected WizardPageController nextPageController(Table selectedTable) {
-                return new MoveDataMappingPage(_analysisJobBuilder, _sourceTable, datastore, selectedTable);
+                return new ColumnMappingPage(_analysisJobBuilder, _sourceTable, datastore, selectedTable);
             }
         };
     }

@@ -28,12 +28,10 @@ final class ColumnMapping {
 
     private final Column _sourceColumn;
     private final Column _targetColumn;
-    private final boolean _id;
 
-    public ColumnMapping(Column sourceColumn, Column targetColumn, boolean id) {
+    public ColumnMapping(Column sourceColumn, Column targetColumn) {
         _sourceColumn = sourceColumn;
         _targetColumn = targetColumn;
-        _id = id;
     }
 
     public Column getSourceColumn() {
@@ -42,9 +40,5 @@ final class ColumnMapping {
 
     public Column getTargetColumn() {
         return _targetColumn;
-    }
-
-    public boolean isId() {
-        return _id;
     }
 }

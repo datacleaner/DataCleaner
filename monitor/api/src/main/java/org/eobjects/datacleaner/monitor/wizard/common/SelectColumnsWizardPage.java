@@ -34,59 +34,86 @@ import org.eobjects.metamodel.util.Func;
  * A simple {@link WizardPageController} that asks the user to select the
  * {@link Column}s of interest.
  */
-public abstract class SelectColumnsWizardPage extends AbstractFreemarkerWizardPage {
+public abstract class SelectColumnsWizardPage extends
+		AbstractFreemarkerWizardPage {
 
-    private final Integer _pageIndex;
-    private final Map<String, Column> _availableColumns;
+	private final Integer _pageIndex;
+	private final Map<String, Column> _availableColumns;
 
-    public SelectColumnsWizardPage(Integer pageIndex, Table table) {
-        this(pageIndex, table.getColumns());
-    }
+	public SelectColumnsWizardPage(Integer pageIndex, Table table) {
+		this(pageIndex, table.getColumns());
+	}
 
-    public SelectColumnsWizardPage(Integer pageIndex, Column[] availableColumns) {
-        _pageIndex = pageIndex;
-        _availableColumns = new LinkedHashMap<String, Column>();
-        for (Column column : availableColumns) {
-            _availableColumns.put(column.getName(), column);
-        }
-    }
+	public SelectColumnsWizardPage(Integer pageIndex, Column[] availableColumns) {
+		_pageIndex = pageIndex;
+		_availableColumns = new LinkedHashMap<String, Column>();
+		for (Column column : availableColumns) {
+			_availableColumns.put(column.getName(), column);
+		}
+	}
 
-    @Override
-    protected Class<?> getTemplateFriendlyClass() {
-        return SelectColumnsWizardPage.class;
-    }
+	@Override
+	protected Class<?> getTemplateFriendlyClass() {
+		return SelectColumnsWizardPage.class;
+	}
 
-    @Override
-    protected String getTemplateFilename() {
-        return "SelectColumnsWizardPage.html";
-    }
+	/**
+	 * Gets the "header" part of the page, shown before the table of column
+	 * selections. Typically this part will contain instructions to the user as
+	 * to which columns to select
+	 * 
+	 * @return
+	 */
+	protected String getHeaderHtml() {
+		return "<p>Please select the source columns of the job:</p>";
+	}
 
-    @Override
-    public Integer getPageIndex() {
-        return _pageIndex;
-    }
+	/**
+	 * Gets a "footer" part of the page, shown after the table of column
+	 * selections.
+	 * 
+	 * @return
+	 */
+	protected String getFooterHtml() {
+		return "";
+	}
 
-    @Override
-    protected Map<String, Object> getFormModel() {
-        final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("columns", _availableColumns.values());
-        return map;
-    }
+	@Override
+	protected String getTemplateFilename() {
+		return "SelectColumnsWizardPage.html";
+	}
 
-    @Override
-    public WizardPageController nextPageController(Map<String, List<String>> formParameters) {
-        final List<String> columnNames = formParameters.get("columns");
+	@Override
+	public Integer getPageIndex() {
+		return _pageIndex;
+	}
 
-        final List<Column> selectedColumns = CollectionUtils.map(columnNames, new Func<String, Column>() {
-            @Override
-            public Column eval(String columnName) {
-                return _availableColumns.get(columnName);
-            }
-        });
+	@Override
+	protected Map<String, Object> getFormModel() {
+		final Map<String, Object> map = new HashMap<String, Object>();
+		map.put("headerHtml", getHeaderHtml());
+		map.put("columns", _availableColumns.values());
+		map.put("footerHtml", getFooterHtml());
+		return map;
+	}
 
-        return nextPageController(selectedColumns);
-    }
+	@Override
+	public WizardPageController nextPageController(
+			Map<String, List<String>> formParameters) {
+		final List<String> columnNames = formParameters.get("columns");
 
-    protected abstract WizardPageController nextPageController(List<Column> selectedColumns);
+		final List<Column> selectedColumns = CollectionUtils.map(columnNames,
+				new Func<String, Column>() {
+					@Override
+					public Column eval(String columnName) {
+						return _availableColumns.get(columnName);
+					}
+				});
+
+		return nextPageController(selectedColumns);
+	}
+
+	protected abstract WizardPageController nextPageController(
+			List<Column> selectedColumns);
 
 }

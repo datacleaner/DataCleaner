@@ -62,6 +62,12 @@ final class QuickAnalysisWizardSession implements JobWizardSession {
 				}
 
 				return new SelectColumnsWizardPage(1, selectedTable) {
+
+					@Override
+					protected String getHeaderHtml() {
+						return "<p>Please select columns to check for <b>standard data quality metrics</b>, based on data type:</p>";
+					}
+
 					@Override
 					protected WizardPageController nextPageController(
 							final List<Column> selectedColumns) {

@@ -146,7 +146,7 @@ public class JobWizardPopupPanel extends DCPopupPanel {
                         _targetPanel.setWidget(_loadingIndicator);
                         setHeader("New job: " + datastore.getName());
                         
-                        _service.getJobWizardIdentifiers(_tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
+                        _service.getJobWizardIdentifiers(_tenant, datastore, new DCAsyncCallback<List<WizardIdentifier>>() {
                             @Override
                             public void onSuccess(List<WizardIdentifier> wizards) {
                                 showWizardSelection(datastore, wizards);

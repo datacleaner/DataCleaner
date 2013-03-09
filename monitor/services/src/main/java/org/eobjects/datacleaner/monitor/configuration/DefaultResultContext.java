@@ -24,6 +24,7 @@ import java.io.InputStream;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
 
 /**
@@ -44,12 +45,15 @@ public class DefaultResultContext implements ResultContext {
         final AnalysisResult analysisResult = _repositoryFile.readFile(new Func<InputStream, AnalysisResult>() {
             @Override
             public AnalysisResult eval(InputStream in) {
+            	ChangeAwareObjectInputStream inputStream = null;
                 try {
-                    final ChangeAwareObjectInputStream inputStream = new ChangeAwareObjectInputStream(in);
+                	inputStream = new ChangeAwareObjectInputStream(in);
                     final AnalysisResult analysisResult = (AnalysisResult) inputStream.readObject();
                     return analysisResult;
                 } catch (Exception e) {
                     throw new IllegalStateException(e);
+                } finally {
+                	FileHelper.safeClose(inputStream);
                 }
             }
         });

@@ -40,6 +40,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.dao.DatastoreDao;
 import org.eobjects.datacleaner.monitor.shared.WizardService;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
@@ -57,6 +58,8 @@ import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -64,6 +67,8 @@ import org.w3c.dom.Element;
 
 @Component("wizardService")
 public class WizardServiceImpl implements WizardService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(WizardServiceImpl.class);
 
 	private final ConcurrentMap<String, WizardSession> _sessions;
 	private final ConcurrentMap<String, WizardContext> _contexts;
@@ -215,12 +220,25 @@ public class WizardServiceImpl implements WizardService {
 	@Override
 	public WizardPage nextPage(TenantIdentifier tenant,
 			WizardSessionIdentifier sessionIdentifier,
-			Map<String, List<String>> formParameters) {
+			Map<String, List<String>> formParameters)
+			throws DCUserInputException {
 		final String sessionId = sessionIdentifier.getSessionId();
 		final WizardPageController controller = _currentControllers
 				.get(sessionId);
-		final WizardPageController nextPageController = controller
-				.nextPageController(formParameters);
+
+		final WizardPageController nextPageController;
+		
+		try {
+			nextPageController = controller.nextPageController(formParameters);
+		} catch (DCUserInputException e) {
+			logger.info("A user input exception was thrown by wizard controller - rethrowing to UI: {}", e.getMessage());
+			throw e;
+		} catch (RuntimeException e) {
+			logger.error("An unexpected error occurred in the wizard controller, wizard will be closed", e);
+			closeSession(sessionId);
+			throw e;
+		}
+
 		if (nextPageController == null) {
 			final WizardContext wizardContext = _contexts.get(sessionId);
 			final WizardSession session = _sessions.get(sessionId);
@@ -334,6 +352,9 @@ public class WizardServiceImpl implements WizardService {
 	}
 
 	private void closeSession(String sessionId) {
+		if (sessionId == null) {
+			return;
+		}
 		_sessions.remove(sessionId);
 		_contexts.remove(sessionId);
 		_currentControllers.remove(sessionId);

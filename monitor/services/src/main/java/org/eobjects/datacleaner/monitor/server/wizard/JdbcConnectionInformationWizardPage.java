@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
@@ -41,6 +42,11 @@ abstract class JdbcConnectionInformationWizardPage extends AbstractFreemarkerWiz
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String url = formParameters.get("url").get(0);
+        
+        if (StringUtils.isNullOrEmpty(url)) {
+        	throw new DCUserInputException("Connection string / URL cannot be empty");
+        }
+        
         _session.setUrl(url);
 
         final String username = formParameters.get("username").get(0);

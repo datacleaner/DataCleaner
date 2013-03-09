@@ -15,6 +15,8 @@ class CompletenessAnalysisJobWizard extends JobWizard {
   override def getDisplayName = "Completeness analysis";
 
   override def getExpectedPageCount = 4;
+  
+  override def isApplicableTo(context: JobWizardContext) = true
 
   override def start(context: JobWizardContext) = new JobWizardSession() {
 

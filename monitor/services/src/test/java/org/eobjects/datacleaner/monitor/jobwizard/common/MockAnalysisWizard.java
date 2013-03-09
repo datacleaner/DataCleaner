@@ -42,4 +42,9 @@ public class MockAnalysisWizard implements JobWizard {
         return 2;
     }
 
+	@Override
+	public boolean isApplicableTo(JobWizardContext datastore) {
+		return true;
+	}
+
 }

@@ -58,8 +58,8 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     }
 
     @Override
-    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant) {
-        return _delegate.getJobWizardIdentifiers(tenant);
+    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore) {
+        return _delegate.getJobWizardIdentifiers(tenant, selectedDatastore);
     }
 
     @Override

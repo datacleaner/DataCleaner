@@ -31,6 +31,11 @@ public class MoveDataWizard implements JobWizard {
     public String getDisplayName() {
         return "Move data";
     }
+    
+    @Override
+    public boolean isApplicableTo(JobWizardContext datastore) {
+    	return true;
+    }
 
     @Override
     public JobWizardSession start(JobWizardContext context) {

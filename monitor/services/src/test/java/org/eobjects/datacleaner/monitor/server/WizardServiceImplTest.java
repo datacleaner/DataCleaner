@@ -80,16 +80,18 @@ public class WizardServiceImplTest extends TestCase {
         assertEquals(0, service.getOpenSessionCount());
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
-
-        final List<WizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant);
-        assertEquals(1, jobWizardIdentifiers.size());
-
-        final WizardIdentifier jobWizardIdentifier = jobWizardIdentifiers.get(0);
-        assertEquals("JobWizardIdentifier[Mock wizard]", jobWizardIdentifier.toString());
         
         final List<DatastoreIdentifier> datastores = datastoreService.getAvailableDatastores(tenant);
         assertEquals(2, datastores.size());
         assertEquals("[DatastoreIdentifier[name=Vendors], DatastoreIdentifier[name=orderdb]]", datastores.toString());
+
+        final DatastoreIdentifier selectedDatastore = datastores.get(1);
+        
+        final List<WizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant, selectedDatastore);
+        assertEquals(1, jobWizardIdentifiers.size());
+
+        final WizardIdentifier jobWizardIdentifier = jobWizardIdentifiers.get(0);
+        assertEquals("JobWizardIdentifier[Mock wizard]", jobWizardIdentifier.toString());
 
         WizardPage wizardPage;
         Map<String, List<String>> formParameters;
@@ -97,7 +99,7 @@ public class WizardServiceImplTest extends TestCase {
         final String jobName = "JobWizardServiceImplTest-job1";
 
         // first page is the select table page.
-        wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, datastores.get(1), jobName);
+		wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore, jobName);
 
         assertEquals(1, service.getOpenSessionCount());
         assertNotNull(wizardPage);

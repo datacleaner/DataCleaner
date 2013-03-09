@@ -34,6 +34,11 @@ public class QuickAnalysisWizard implements JobWizard {
     public JobWizardSession start(JobWizardContext context) {
         return new QuickAnalysisWizardSession(context);
     }
+    
+    @Override
+    public boolean isApplicableTo(JobWizardContext datastore) {
+    	return true;
+    }
 
     @Override
     public String getDisplayName() {

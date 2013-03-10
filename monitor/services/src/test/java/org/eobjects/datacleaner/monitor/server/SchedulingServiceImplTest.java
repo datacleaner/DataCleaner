@@ -179,13 +179,13 @@ public class SchedulingServiceImplTest extends TestCase {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(callTime);
+        while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }
         cal.set(Calendar.MILLISECOND, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.HOUR_OF_DAY, 0);
-        while (cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-            cal.add(Calendar.DATE, 1);
-        }
 
         assertEquals(cal.getTime(), dailyExpr.getNextValidTimeAfter(callTime));
 

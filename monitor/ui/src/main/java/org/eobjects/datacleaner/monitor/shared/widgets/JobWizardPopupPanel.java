@@ -46,145 +46,159 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
 
-	private final DatastoreServiceAsync datastoreService = GWT
-			.create(DatastoreService.class);
+    private final DatastoreServiceAsync datastoreService = GWT.create(DatastoreService.class);
+    private final int _stepsBeforeWizardPages;
 
-	public JobWizardPopupPanel(WizardServiceAsync service,
-			TenantIdentifier tenant) {
-		super("New job", service, tenant);
-		addStyleName("JobWizardPopupPanel");
+    public JobWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
+        this(service, tenant, null);
+    }
 
-		datastoreService.getAvailableDatastores(tenant,
-				new DCAsyncCallback<List<DatastoreIdentifier>>() {
-					@Override
-					public void onSuccess(List<DatastoreIdentifier> datastores) {
-						showDatastoreSelection(datastores);
-					}
-				});
-	}
+    public JobWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant, DatastoreIdentifier datastore) {
+        super("New job", service, tenant);
+        addStyleName("JobWizardPopupPanel");
 
-	@Override
-	protected int getStepsBeforeWizardPages() {
-		return 2;
-	}
+        if (datastore == null) {
+            _stepsBeforeWizardPages = 2;
+            showDatastoreSelection();
+        } else {
+            _stepsBeforeWizardPages = 1;
+            showWizardSelection(datastore);
+        }
+    }
 
-	private void showDatastoreSelection(
-			final List<DatastoreIdentifier> datastores) {
-		final FlowPanel panel = new FlowPanel();
+    @Override
+    protected int getStepsBeforeWizardPages() {
+        return _stepsBeforeWizardPages;
+    }
 
-		panel.add(new Label("Please select the source datastore of the job:"));
+    private void showDatastoreSelection() {
+        datastoreService.getAvailableDatastores(_tenant, new DCAsyncCallback<List<DatastoreIdentifier>>() {
+            @Override
+            public void onSuccess(List<DatastoreIdentifier> datastores) {
+                showDatastoreSelection(datastores);
+            }
+        });
+    }
 
-		final List<RadioButton> radios = new ArrayList<RadioButton>(
-				datastores.size());
+    private void showDatastoreSelection(final List<DatastoreIdentifier> datastores) {
+        final FlowPanel panel = new FlowPanel();
 
-		for (final DatastoreIdentifier datastore : datastores) {
-			final RadioButton radio = new RadioButton("datastoreName",
-					datastore.getName());
-			panel.add(radio);
-			radios.add(radio);
-		}
+        panel.add(new Label("Please select the source datastore of the job:"));
 
-		setNextClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				for (int i = 0; i < radios.size(); i++) {
-					final RadioButton radio = radios.get(i);
-					if (radio.getValue().booleanValue()) {
-						final DatastoreIdentifier datastore = datastores.get(i);
-						setLoading();
-						setHeader("New job: " + datastore.getName());
+        final List<RadioButton> radios = new ArrayList<RadioButton>(datastores.size());
 
-						_service.getJobWizardIdentifiers(_tenant, datastore,
-								new DCAsyncCallback<List<WizardIdentifier>>() {
-									@Override
-									public void onSuccess(
-											List<WizardIdentifier> wizards) {
-										showWizardSelection(datastore, wizards);
-									}
-								});
-						return;
-					}
-				}
-			}
-		});
+        for (final DatastoreIdentifier datastore : datastores) {
+            final RadioButton radio = new RadioButton("datastoreName", datastore.getName());
+            panel.add(radio);
+            radios.add(radio);
+        }
 
-		setContent(panel);
-		center();
-	}
+        setNextClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                for (int i = 0; i < radios.size(); i++) {
+                    final RadioButton radio = radios.get(i);
+                    if (radio.getValue().booleanValue()) {
+                        final DatastoreIdentifier datastore = datastores.get(i);
 
-	protected void showWizardSelection(final DatastoreIdentifier datastore,
-			final List<WizardIdentifier> wizards) {
-		final int progress = 1;
+                        showWizardSelection(datastore);
+                        return;
+                    }
+                }
+            }
+        });
 
-		final FlowPanel panel = new FlowPanel();
+        setContent(panel);
+        center();
+    }
 
-		final TextBox nameTextBox = new TextBox();
+    protected void showWizardSelection(final DatastoreIdentifier datastore) {
+        setLoading();
+        setHeader("New job: " + datastore.getName());
 
-		panel.add(new Label("Please select the job type:"));
+        _service.getJobWizardIdentifiers(_tenant, datastore, new DCAsyncCallback<List<WizardIdentifier>>() {
+            @Override
+            public void onSuccess(List<WizardIdentifier> wizards) {
+                showWizardSelection(datastore, wizards);
+            }
+        });
+    }
 
-		final List<RadioButton> radios = new ArrayList<RadioButton>(
-				wizards.size());
+    protected void showWizardSelection(final DatastoreIdentifier datastore, final List<WizardIdentifier> wizards) {
+        final int progress = _stepsBeforeWizardPages - 1;
 
-		for (final WizardIdentifier wizard : wizards) {
-			final RadioButton radio = new RadioButton("wizardIdentifier",
-					wizard.getDisplayName());
-			radio.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					setSteps(wizard.getExpectedPageCount()
-							+ getStepsBeforeWizardPages());
-					setProgress(progress);
-				}
-			});
-			panel.add(radio);
-			radios.add(radio);
-		}
+        final FlowPanel panel = new FlowPanel();
 
-		panel.add(new Label("Please name the job you are about to create:"));
-		panel.add(nameTextBox);
+        final TextBox nameTextBox = new TextBox();
 
-		setNextClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				final String jobName = nameTextBox.getText();
-				if (jobName == null || jobName.trim().isEmpty()) {
-					throw new DCUserInputException(
-							"Please enter a valid job name");
-				}
-				for (int i = 0; i < radios.size(); i++) {
-					final RadioButton radio = radios.get(i);
-					if (radio.getValue().booleanValue()) {
-						final WizardIdentifier wizard = wizards.get(i);
-						setLoading();
-						setHeader("New job: " + jobName);
-						_service.startJobWizard(_tenant, wizard, datastore,
-								jobName, createNextPageCallback());
-						return;
-					}
-				}
-			}
-		});
+        panel.add(new Label("Please select the job type:"));
 
-		setProgress(progress);
-		setContent(panel);
-		center();
-	}
+        final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
+        
+        if (wizards == null || wizards.isEmpty()) {
+            panel.add(new Label("(no job wizards available)"));
+        } else {
+            for (final WizardIdentifier wizard : wizards) {
+                final RadioButton radio = new RadioButton("wizardIdentifier", wizard.getDisplayName());
+                radio.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
+                        setProgress(progress);
+                    }
+                });
+                panel.add(radio);
+                radios.add(radio);
+            }
+            
+        }
 
-	@Override
-	protected void wizardFinished() {
-		final Button button = new Button("Close");
-		button.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				// full page refresh.
-				Window.Location.reload();
-			}
-		});
+        panel.add(new Label("Please name the job you are about to create:"));
+        panel.add(nameTextBox);
 
-		setContent(new Label("Job created! Wizard finished."));
-		getButtonPanel().clear();
-		addButton(button);
-		center();
-	}
+        setNextClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final String jobName = nameTextBox.getText();
+                if (jobName == null || jobName.trim().isEmpty()) {
+                    throw new DCUserInputException("Please enter a valid job name");
+                }
+                for (int i = 0; i < radios.size(); i++) {
+                    final RadioButton radio = radios.get(i);
+                    if (radio.getValue().booleanValue()) {
+                        final WizardIdentifier wizard = wizards.get(i);
+                        setLoading();
+                        setHeader("New job: " + jobName);
+                        _service.startJobWizard(_tenant, wizard, datastore, jobName, createNextPageCallback());
+                        return;
+                    }
+                }
+                
+                // no job wizard is selected if we reach this point
+                Window.alert("Please select a job type to create");
+            }
+        });
+        
+        setProgress(progress);
+        setContent(panel);
+        center();
+    }
+
+    @Override
+    protected void wizardFinished() {
+        final Button button = new Button("Close");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // full page refresh.
+                Window.Location.reload();
+            }
+        });
+
+        setContent(new Label("Job created! Wizard finished."));
+        getButtonPanel().clear();
+        addButton(button);
+        center();
+    }
 
 }

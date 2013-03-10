@@ -73,6 +73,7 @@ public class ErrorHandler {
         }
         
         GWT.log("Uncaught exception", t);
+        GWT.log("Additional details: " + additionalDetails);
 
         final String detailsMessage;
         if (t instanceof UmbrellaException) {
@@ -96,7 +97,7 @@ public class ErrorHandler {
             detailsMessage = t.getMessage();
         }
 
-        final String details = t + "\n" + detailsMessage;
+        final String details = detailsMessage + "\n\n" + t;
         showErrorDialog(headerMessage, details, additionalDetails);
     }
 

@@ -24,13 +24,16 @@ import java.util.List;
 
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
+import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -42,93 +45,116 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
 
-	public DatastoreWizardPopupPanel(WizardServiceAsync service,
-			TenantIdentifier tenant) {
-		super("New datastore", service, tenant);
-		addStyleName("DatastoreWizardPopupPanel");
+    private String _datastoreName;
 
-		service.getDatastoreWizardIdentifiers(tenant,
-				new DCAsyncCallback<List<WizardIdentifier>>() {
-					@Override
-					public void onSuccess(List<WizardIdentifier> wizards) {
-						showWizardSelection(wizards);
-					}
-				});
-	}
+    public DatastoreWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
+        super("New datastore", service, tenant);
+        addStyleName("DatastoreWizardPopupPanel");
 
-	@Override
-	protected int getStepsBeforeWizardPages() {
-		return 1;
-	}
+        service.getDatastoreWizardIdentifiers(tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
+            @Override
+            public void onSuccess(List<WizardIdentifier> wizards) {
+                showWizardSelection(wizards);
+            }
+        });
+    }
 
-	protected void showWizardSelection(final List<WizardIdentifier> wizards) {
-		final FlowPanel panel = new FlowPanel();
+    @Override
+    protected int getStepsBeforeWizardPages() {
+        return 1;
+    }
 
-		final TextBox nameTextBox = new TextBox();
+    protected void showWizardSelection(final List<WizardIdentifier> wizards) {
+        final FlowPanel panel = new FlowPanel();
 
-		panel.add(new Label("Please select the datastore type:"));
+        final TextBox nameTextBox = new TextBox();
 
-		final List<RadioButton> radios = new ArrayList<RadioButton>(
-				wizards.size());
+        panel.add(new Label("Please select the datastore type:"));
 
-		for (final WizardIdentifier wizard : wizards) {
-			final RadioButton radio = new RadioButton("wizardIdentifier",
-					wizard.getDisplayName());
-			radio.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
-					setProgress(0);
-				}
-			});
-			panel.add(radio);
-			radios.add(radio);
-		}
+        final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
 
-		panel.add(new Label(
-				"Please name the datastore you are about to create:"));
-		panel.add(nameTextBox);
+        for (final WizardIdentifier wizard : wizards) {
+            final RadioButton radio = new RadioButton("wizardIdentifier", wizard.getDisplayName());
+            radio.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
+                    setProgress(0);
+                }
+            });
+            panel.add(radio);
+            radios.add(radio);
+        }
 
-		setNextClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				final String datastoreName = nameTextBox.getText();
-				if (datastoreName == null || datastoreName.trim().isEmpty()) {
-					throw new DCUserInputException(
-							"Please enter a valid datastore name");
-				}
-				for (int i = 0; i < radios.size(); i++) {
-					final RadioButton radio = radios.get(i);
-					if (radio.getValue().booleanValue()) {
-						final WizardIdentifier wizard = wizards.get(i);
-						setLoading();
-						setHeader("New datastore: " + datastoreName);
-						_service.startDatastoreWizard(_tenant, wizard,
-								datastoreName, createNextPageCallback());
-						return;
-					}
-				}
-			}
-		});
+        panel.add(new Label("Please name the datastore you are about to create:"));
+        panel.add(nameTextBox);
 
-		setContent(panel);
-		center();
-	}
+        setNextClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                _datastoreName = nameTextBox.getText();
+                if (_datastoreName == null || _datastoreName.trim().isEmpty()) {
+                    throw new DCUserInputException("Please enter a valid datastore name");
+                }
+                for (int i = 0; i < radios.size(); i++) {
+                    final RadioButton radio = radios.get(i);
+                    if (radio.getValue().booleanValue()) {
+                        final WizardIdentifier wizard = wizards.get(i);
+                        setLoading();
+                        setHeader("New datastore: " + _datastoreName);
+                        _service.startDatastoreWizard(_tenant, wizard, _datastoreName, createNextPageCallback());
+                        return;
+                    }
+                }
+            }
+        });
 
-	@Override
-	protected void wizardFinished() {
-		final Button button = new Button("Close");
-		button.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				// full page refresh.
-				Window.Location.reload();
-			}
-		});
+        setContent(panel);
+        center();
+    }
 
-		setContent(new Label("Datastore created! Wizard finished."));
-		getButtonPanel().clear();
-		addButton(button);
-		center();
-	}
+    @Override
+    protected void wizardFinished() {
+        final Button button = new Button("Close");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                // full page refresh.
+                Window.Location.reload();
+            }
+        });
+
+        final Anchor jobWizardAnchor = new Anchor("Build a job for this datastore");
+        jobWizardAnchor.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                hide();
+                final DatastoreIdentifier datastore = new DatastoreIdentifier(_datastoreName);
+                final JobWizardPopupPanel jobWizardPopupPanel = new JobWizardPopupPanel(_service, _tenant, datastore);
+                jobWizardPopupPanel.show();
+            }
+        });
+
+        final Anchor queryAnchor = new Anchor("Explore / query this datastore");
+        queryAnchor.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final String url = Urls.createRelativeUrl("query.jsf?ds=" + _datastoreName);
+                Window.open(url, "_blank", "location=no,width=770,height=400,toolbar=no,menubar=no");
+            }
+        });
+
+        final FlowPanel contentPanel = new FlowPanel();
+        contentPanel.addStyleName("WizardFinishedPanel");
+        contentPanel.add(new Label("Datastore created! Wizard finished."));
+        contentPanel.add(new Label(
+                "Close the dialog to return, or click one of the links below to start using the datastore."));
+        contentPanel.add(jobWizardAnchor);
+        contentPanel.add(queryAnchor);
+
+        setContent(contentPanel);
+        getButtonPanel().clear();
+        addButton(button);
+        center();
+    }
 }

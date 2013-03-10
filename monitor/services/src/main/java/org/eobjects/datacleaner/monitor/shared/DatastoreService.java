@@ -44,14 +44,18 @@ public interface DatastoreService extends RemoteService {
     public List<DatastoreIdentifier> getAvailableDatastores(TenantIdentifier tenant);
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastore);
+    public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastore)
+            throws DatastoreConnectionException;
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    public List<SchemaIdentifier> getSchemas(TenantIdentifier tenant, DatastoreIdentifier datastore);
+    public List<SchemaIdentifier> getSchemas(TenantIdentifier tenant, DatastoreIdentifier datastore)
+            throws DatastoreConnectionException;
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    public List<TableIdentifier> getTables(TenantIdentifier tenant, SchemaIdentifier schema);
+    public List<TableIdentifier> getTables(TenantIdentifier tenant, SchemaIdentifier schema)
+            throws DatastoreConnectionException;
 
     @RolesAllowed(SecurityRoles.TASK_QUERY)
-    public List<ColumnIdentifier> getColumns(TenantIdentifier tenant, TableIdentifier table);
+    public List<ColumnIdentifier> getColumns(TenantIdentifier tenant, TableIdentifier table)
+            throws DatastoreConnectionException;
 }

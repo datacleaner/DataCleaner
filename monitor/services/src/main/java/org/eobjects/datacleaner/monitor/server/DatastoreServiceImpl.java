@@ -26,6 +26,7 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.shared.DatastoreConnectionException;
 import org.eobjects.datacleaner.monitor.shared.DatastoreService;
 import org.eobjects.datacleaner.monitor.shared.model.ColumnIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
@@ -36,6 +37,8 @@ import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.Func;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +47,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DatastoreServiceImpl implements DatastoreService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DashboardServiceImpl.class);
 
     private final TenantContextFactory _tenantContextFactory;
 
@@ -66,41 +71,55 @@ public class DatastoreServiceImpl implements DatastoreService {
     }
 
     @Override
-    public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastoreId) {
+    public SchemaIdentifier getDefaultSchema(TenantIdentifier tenant, DatastoreIdentifier datastoreId)
+            throws DatastoreConnectionException {
         final DatastoreCatalog datastoreCatalog = getDatastoreCatalog(tenant);
         final Datastore datastore = datastoreCatalog.getDatastore(datastoreId.getName());
         if (datastore == null) {
             return null;
         }
-        final DatastoreConnection con = datastore.openConnection();
+
         try {
-            final Schema schema = con.getDataContext().getDefaultSchema();
-            return new SchemaIdentifier(datastoreId, schema.getName());
-        } finally {
-            con.close();
+            final DatastoreConnection con = datastore.openConnection();
+            try {
+                final Schema schema = con.getDataContext().getDefaultSchema();
+                return new SchemaIdentifier(datastoreId, schema.getName());
+            } finally {
+                con.close();
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to open connection to datastore: " + datastoreId.getName(), e);
+            throw new DatastoreConnectionException(e.getMessage());
         }
     }
 
     @Override
-    public List<SchemaIdentifier> getSchemas(final TenantIdentifier tenant, final DatastoreIdentifier datastoreId) {
+    public List<SchemaIdentifier> getSchemas(final TenantIdentifier tenant, final DatastoreIdentifier datastoreId)
+            throws DatastoreConnectionException {
         final DatastoreCatalog datastoreCatalog = getDatastoreCatalog(tenant);
         final Datastore datastore = datastoreCatalog.getDatastore(datastoreId.getName());
         if (datastore == null) {
             return null;
         }
-        final DatastoreConnection con = datastore.openConnection();
+
         try {
-            final String[] schemaNames = con.getDataContext().getSchemaNames();
-            final List<SchemaIdentifier> schemaIdentifiers = CollectionUtils.map(schemaNames,
-                    new Func<String, SchemaIdentifier>() {
-                        @Override
-                        public SchemaIdentifier eval(String schemaName) {
-                            return new SchemaIdentifier(datastoreId, schemaName);
-                        }
-                    });
-            return schemaIdentifiers;
-        } finally {
-            con.close();
+            final DatastoreConnection con = datastore.openConnection();
+            try {
+                final String[] schemaNames = con.getDataContext().getSchemaNames();
+                final List<SchemaIdentifier> schemaIdentifiers = CollectionUtils.map(schemaNames,
+                        new Func<String, SchemaIdentifier>() {
+                            @Override
+                            public SchemaIdentifier eval(String schemaName) {
+                                return new SchemaIdentifier(datastoreId, schemaName);
+                            }
+                        });
+                return schemaIdentifiers;
+            } finally {
+                con.close();
+            }
+        } catch (Exception e) {
+            logger.warn("Failed to open connection to datastore: " + datastoreId.getName(), e);
+            throw new DatastoreConnectionException(e.getMessage());
         }
     }
 

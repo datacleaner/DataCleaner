@@ -236,6 +236,11 @@ div.center {
 	background-image: url("datastore.png");
 }
 
+.WizardFinishedPanel .gwt-Anchor {
+	margin: 10px;
+	display: block;
+}
+
 /**
  * Styling for wizard progress bar
  */
@@ -243,6 +248,7 @@ div.center {
 	padding-left: 26px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid #ccc;
+	margin-bottom: 10px;
 }
 
 .WizardProgressBar .WizardProgressItem {
@@ -257,11 +263,9 @@ div.center {
 	text-align: center;
 	font-size: 11px;
 }
-
 .WizardProgressBar .WizardProgressItem.current {
 	background-color: #5594DD;
 }
-
 .WizardProgressBar .MetaItem.before {
 }
 .WizardProgressBar .MetaItem.more {

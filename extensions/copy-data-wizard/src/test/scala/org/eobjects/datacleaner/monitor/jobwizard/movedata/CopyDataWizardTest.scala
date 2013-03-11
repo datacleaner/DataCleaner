@@ -23,7 +23,7 @@ class MoveDataWizardTest extends AssertionsForJUnit {
 
     EasyMock.replay(tenantContext);
 
-    val ctx = new JobWizardContextImpl(tenantContext, datastore, "My job");
+    val ctx = new JobWizardContextImpl(tenantContext, datastore, "My job", null);
 
     val session = new CopyDataWizard().start(ctx);
 

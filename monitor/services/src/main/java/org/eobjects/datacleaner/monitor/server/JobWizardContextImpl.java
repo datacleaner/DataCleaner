@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * Default implementation of {@link JobWizardContext}.
@@ -31,11 +32,14 @@ public final class JobWizardContextImpl implements JobWizardContext {
     private final TenantContext _tenantContext;
     private final Datastore _sourceDatastore;
     private final String _jobName;
+    private final Func<String, Object> _sessionFunc;
 
-    public JobWizardContextImpl(TenantContext tenantContext, Datastore sourceDatastore, String jobName) {
+    public JobWizardContextImpl(TenantContext tenantContext, Datastore sourceDatastore, String jobName,
+            Func<String, Object> sessionFunc) {
         _tenantContext = tenantContext;
         _sourceDatastore = sourceDatastore;
         _jobName = jobName;
+        _sessionFunc = sessionFunc;
     }
 
     @Override
@@ -53,4 +57,8 @@ public final class JobWizardContextImpl implements JobWizardContext {
         return _jobName;
     }
 
+    @Override
+    public Func<String, Object> getHttpSession() {
+        return _sessionFunc;
+    }
 }

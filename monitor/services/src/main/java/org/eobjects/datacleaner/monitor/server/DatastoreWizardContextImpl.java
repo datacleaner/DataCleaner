@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * Default implementation of {@link DatastoreWizardContext}.
@@ -29,10 +30,13 @@ public class DatastoreWizardContextImpl implements DatastoreWizardContext {
 
     private final TenantContext _tenantContext;
     private final String _datastoreName;
+    private final Func<String, Object> _sessionFunc;
 
-    public DatastoreWizardContextImpl(TenantContext tenantContext, String datastoreName) {
+    public DatastoreWizardContextImpl(TenantContext tenantContext, String datastoreName,
+            Func<String, Object> sessionFunc) {
         _tenantContext = tenantContext;
         _datastoreName = datastoreName;
+        _sessionFunc = sessionFunc;
     }
 
     @Override
@@ -45,4 +49,8 @@ public class DatastoreWizardContextImpl implements DatastoreWizardContext {
         return _datastoreName;
     }
 
+    @Override
+    public Func<String, Object> getHttpSession() {
+        return _sessionFunc;
+    }
 }

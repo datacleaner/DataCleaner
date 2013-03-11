@@ -67,7 +67,16 @@ public class FileUploadServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         clearSession(req);
 
-        final File tempFolder = FileHelper.getTempDir();
+        File tempFolder = FileHelper.getTempDir();
+        try {
+            File subDirectory = new File(tempFolder, ".datacleaner_upload");
+            if (subDirectory.mkdirs()) {
+                tempFolder = subDirectory;
+            }
+        } catch (Exception e) {
+            logger.warn("Could not create subdirectory in temp folder", e);
+        }
+
         final FileItemFactory fileItemFactory = new DiskFileItemFactory(0, tempFolder);
         final ServletFileUpload servletFileUpload = new ServletFileUpload(fileItemFactory);
         servletFileUpload.setFileSizeMax(FILE_SIZE_MAX);
@@ -85,7 +94,11 @@ public class FileUploadServlet extends HttpServlet {
                     logger.warn("Ignoring form field in request: {}", item);
                 } else {
                     final String sessionKey = "file_upload_" + index;
-                    session.setAttribute(sessionKey, item.getStoreLocation());
+                    final File file = item.getStoreLocation();
+
+                    logger.info("File '{}' uploaded to temporary location: {}", item.getName(), file);
+
+                    session.setAttribute(sessionKey, file);
 
                     final Map<String, String> resultItem = new LinkedHashMap<String, String>();
                     resultItem.put("field_name", item.getFieldName());
@@ -104,7 +117,12 @@ public class FileUploadServlet extends HttpServlet {
             throw new IOException(e);
         }
 
-        resp.setContentType("application/json");
+        final String contentType = req.getParameter("contentType");
+        if (contentType == null) {
+            resp.setContentType("application/json");
+        } else {
+            resp.setContentType(contentType);
+        }
 
         final Map<String, Object> resultMap = new LinkedHashMap<String, Object>();
         resultMap.put("status", "success");

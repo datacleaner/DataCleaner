@@ -17,27 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.wizard;
+package org.eobjects.datacleaner.monitor.server.wizard;
 
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.metamodel.util.Func;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
+import org.springframework.stereotype.Component;
 
 /**
- * Context object which is shared throughout the wizard session
+ * Datastore wizard for CSV files
  */
-public interface WizardContext {
+@Component
+public class CsvDatastoreWizard implements DatastoreWizard {
 
-    /**
-     * Gets the tenant context of the current wizard session
-     * 
-     * @return
-     */
-    public TenantContext getTenantContext();
+    @Override
+    public String getDisplayName() {
+        return "CSV file";
+    }
 
-    /**
-     * Gets a read-only view of the HTTP session of the user.
-     * 
-     * @return
-     */
-    public Func<String, Object> getHttpSession();
+    @Override
+    public int getExpectedPageCount() {
+        return 3;
+    }
+
+    @Override
+    public DatastoreWizardSession start(final DatastoreWizardContext context) {
+        return new CsvDatastoreWizardSession(context);
+    }
+
 }

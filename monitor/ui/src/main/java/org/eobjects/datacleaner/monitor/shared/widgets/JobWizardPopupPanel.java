@@ -56,7 +56,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
     public JobWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant, DatastoreIdentifier datastore) {
         super("New job", service, tenant);
         addStyleName("JobWizardPopupPanel");
-
+        
         if (datastore == null) {
             _stepsBeforeWizardPages = 2;
             showDatastoreSelection();

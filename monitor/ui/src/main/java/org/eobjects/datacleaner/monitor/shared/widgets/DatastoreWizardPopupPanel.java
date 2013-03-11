@@ -135,6 +135,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
                 hide();
                 final DatastoreIdentifier datastore = new DatastoreIdentifier(_datastoreName);
                 final JobWizardPopupPanel jobWizardPopupPanel = new JobWizardPopupPanel(_service, _tenant, datastore);
+                jobWizardPopupPanel.center();
                 jobWizardPopupPanel.show();
             }
         });

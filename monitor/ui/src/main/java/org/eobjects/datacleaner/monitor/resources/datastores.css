@@ -17,27 +17,3 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.wizard;
-
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.metamodel.util.Func;
-
-/**
- * Context object which is shared throughout the wizard session
- */
-public interface WizardContext {
-
-    /**
-     * Gets the tenant context of the current wizard session
-     * 
-     * @return
-     */
-    public TenantContext getTenantContext();
-
-    /**
-     * Gets a read-only view of the HTTP session of the user.
-     * 
-     * @return
-     */
-    public Func<String, Object> getHttpSession();
-}

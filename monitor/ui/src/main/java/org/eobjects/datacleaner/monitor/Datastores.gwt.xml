@@ -23,6 +23,7 @@
 <module rename-to='datastores'>
 	<inherits name='com.google.gwt.user.User' />
 	<inherits name='com.google.gwt.user.theme.clean.Clean' />
+	<inherits name='com.google.gwt.json.JSON' />
 
 	<entry-point
 		class='org.eobjects.datacleaner.monitor.datastores.DatastoresEntryPoint' />

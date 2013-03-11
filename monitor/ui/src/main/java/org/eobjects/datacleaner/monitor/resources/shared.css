@@ -221,6 +221,15 @@ div.center {
 	color: #5594DD;
 }
 
+.WizardPopupPanel .NameLabel {
+	margin-top: 20px;
+}
+
+.WizardPopupPanel .NameTextBox {
+	margin: 20px;
+	margin-top: 5px;
+}
+
 .WizardPopupPanel .HeadingLabel {
 	padding-left: 26px;
 	background-repeat: no-repeat;

@@ -129,12 +129,10 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
 
         final FlowPanel panel = new FlowPanel();
 
-        final TextBox nameTextBox = new TextBox();
-
         panel.add(new Label("Please select the job type:"));
 
         final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
-        
+
         if (wizards == null || wizards.isEmpty()) {
             panel.add(new Label("(no job wizards available)"));
         } else {
@@ -150,10 +148,16 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                 panel.add(radio);
                 radios.add(radio);
             }
-            
+
         }
 
-        panel.add(new Label("Please name the job you are about to create:"));
+        final TextBox nameTextBox = new TextBox();
+        nameTextBox.addStyleName("NameTextBox");
+        
+        final Label nameLabel = new Label("Please name the job you are about to create:");
+        nameLabel.addStyleName("NameLabel");
+        
+        panel.add(nameLabel);
         panel.add(nameTextBox);
 
         setNextClickHandler(new ClickHandler() {
@@ -173,12 +177,12 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                         return;
                     }
                 }
-                
+
                 // no job wizard is selected if we reach this point
                 Window.alert("Please select a job type to create");
             }
         });
-        
+
         setProgress(progress);
         setContent(panel);
         center();

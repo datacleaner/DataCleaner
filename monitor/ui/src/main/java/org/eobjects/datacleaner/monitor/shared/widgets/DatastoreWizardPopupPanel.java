@@ -67,8 +67,6 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
     protected void showWizardSelection(final List<WizardIdentifier> wizards) {
         final FlowPanel panel = new FlowPanel();
 
-        final TextBox nameTextBox = new TextBox();
-
         panel.add(new Label("Please select the datastore type:"));
 
         final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
@@ -86,7 +84,13 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
             radios.add(radio);
         }
 
-        panel.add(new Label("Please name the datastore you are about to create:"));
+        final TextBox nameTextBox = new TextBox();
+        nameTextBox.addStyleName("NameTextBox");
+
+        final Label nameLabel = new Label("Please name the datastore you are about to create:");
+        nameLabel.addStyleName("NameLabel");
+        
+        panel.add(nameLabel);
         panel.add(nameTextBox);
 
         setNextClickHandler(new ClickHandler() {

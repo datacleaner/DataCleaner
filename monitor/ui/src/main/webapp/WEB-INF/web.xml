@@ -86,6 +86,16 @@
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<url-pattern>/repository/*</url-pattern>
 	</filter-mapping>
+	
+	<!-- Image servlet (for plugins) -->
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>org.eobjects.datacleaner.monitor.server.media.ImageServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>/util/img/*</url-pattern>
+	</servlet-mapping>
 
 	<!-- GWT RPC servlets -->
 	<servlet>

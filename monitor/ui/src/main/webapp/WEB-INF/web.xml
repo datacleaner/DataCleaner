@@ -96,6 +96,16 @@
 		<servlet-name>ImageServlet</servlet-name>
 		<url-pattern>/util/img/*</url-pattern>
 	</servlet-mapping>
+	
+	<!-- File upload servlet (for plugins) -->
+	<servlet>
+		<servlet-name>ImageServlet</servlet-name>
+		<servlet-class>org.eobjects.datacleaner.monitor.server.media.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ImageServlet</servlet-name>
+		<url-pattern>/util/upload</url-pattern>
+	</servlet-mapping>
 
 	<!-- GWT RPC servlets -->
 	<servlet>

@@ -1,0 +1,30 @@
+<assembly>
+	<id>all</id>
+	<formats>
+		<format>tar.gz</format>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>true</includeBaseDirectory>
+	<baseDirectory>DataCleaner-monitor-server</baseDirectory>
+	<files>
+		<file>
+			<source>target/DataCleaner-monitor-server.jar</source>
+		</file>
+		<file>
+			<source>target/datacleaner-monitor-server.exe</source>
+		</file>
+		<file>
+			<source>src/main/assembly/datacleaner-monitor-server.cmd</source>
+		</file>
+		<file>
+			<source>src/main/assembly/datacleaner-monitor-server.sh</source>
+			<fileMode>755</fileMode>
+		</file>
+		<file>
+			<source>../../COPYING.txt</source>
+		</file>
+		<file>
+			<source>../../NOTICE.txt</source>
+		</file>
+	</files>
+</assembly>

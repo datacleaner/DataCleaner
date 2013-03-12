@@ -30,8 +30,6 @@ import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,8 +37,6 @@ import org.w3c.dom.Element;
  * Wizard session for creating a CSV file datastore.
  */
 public class CsvDatastoreWizardSession implements DatastoreWizardSession {
-
-    private static final Logger logger = LoggerFactory.getLogger(CsvDatastoreWizardSession.class);
 
     private final DatastoreWizardContext _context;
     private File _file;
@@ -162,13 +158,24 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
         if (value == null) {
             return;
         }
-        if (value instanceof Character && ((Character) value).charValue() == CsvConfiguration.NOT_A_CHAR) {
-            logger.warn("Cannot serialize NOT_A_CHAR value of '{}' element to XML, omitting element", elementName);
-            return;
+
+        String stringValue = value.toString();
+
+        if (value instanceof Character) {
+            final char c = ((Character) value).charValue();
+            if (c == CsvConfiguration.NOT_A_CHAR) {
+                stringValue = "NOT_A_CHAR";
+            } else if (c == '\t') {
+                stringValue = "\\t";
+            } else if (c == '\n') {
+                stringValue = "\\n";
+            } else if (c == '\r') {
+                stringValue = "\\r";
+            }
         }
 
         final Element element = doc.createElement(elementName);
-        element.setTextContent(value.toString());
+        element.setTextContent(stringValue);
         parent.appendChild(element);
     }
 }

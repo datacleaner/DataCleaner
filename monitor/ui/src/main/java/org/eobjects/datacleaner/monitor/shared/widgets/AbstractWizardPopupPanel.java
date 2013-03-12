@@ -43,133 +43,132 @@ import com.google.gwt.user.client.ui.SimplePanel;
  */
 public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
 
-	protected final WizardServiceAsync _service;
-	protected final TenantIdentifier _tenant;
-	private final LoadingIndicator _loadingIndicator;
-	private final WizardProgressBar _progressBar;
-	private final SimplePanel _targetPanel;
-	private final Button _nextStepButton;
+    protected final WizardServiceAsync _service;
+    protected final TenantIdentifier _tenant;
+    private final LoadingIndicator _loadingIndicator;
+    private final WizardProgressBar _progressBar;
+    private final SimplePanel _targetPanel;
+    private final Button _nextStepButton;
 
-	// always holds the current "click handler registration" of the next step
-	// button
-	private HandlerRegistration _clickRegistration;
-	private WizardPanel _currentPanel;
+    // always holds the current "click handler registration" of the next step
+    // button
+    private HandlerRegistration _clickRegistration;
+    private WizardPanel _currentPanel;
 
-	public AbstractWizardPopupPanel(String heading, WizardServiceAsync service,
-			TenantIdentifier tenant) {
-		super(heading);
-		addStyleName("WizardPopupPanel");
-		
-		FileUploadFunctionHandler.exportFileUploadFunction();
+    public AbstractWizardPopupPanel(String heading, WizardServiceAsync service, TenantIdentifier tenant) {
+        super(heading);
+        addStyleName("WizardPopupPanel");
 
-		_service = service;
-		_tenant = tenant;
+        FileUploadFunctionHandler.exportFileUploadFunction();
 
-		_loadingIndicator = new LoadingIndicator();
-		_progressBar = new WizardProgressBar();
-		_progressBar.setSteps(getStepsBeforeWizardPages(), true);
-		_progressBar.setProgress(0);
+        _service = service;
+        _tenant = tenant;
 
-		_targetPanel = new SimplePanel();
-		_targetPanel.setWidget(_loadingIndicator);
+        _loadingIndicator = new LoadingIndicator();
+        _progressBar = new WizardProgressBar();
 
-		final FlowPanel popupContent = new FlowPanel();
-		popupContent.add(_progressBar);
-		popupContent.add(_targetPanel);
-		setWidget(popupContent);
+        _targetPanel = new SimplePanel();
+        _targetPanel.setWidget(_loadingIndicator);
 
-		_nextStepButton = new Button("Next");
-		addButton(_nextStepButton);
-		addButton(new CancelPopupButton(this));
+        final FlowPanel popupContent = new FlowPanel();
+        popupContent.add(_progressBar);
+        popupContent.add(_targetPanel);
+        setWidget(popupContent);
 
-		addCloseHandler(new CloseHandler<PopupPanel>() {
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-				if (_currentPanel == null) {
-					// wizard ended
-					return;
-				}
-				WizardSessionIdentifier sessionIdentifier = _currentPanel
-						.getSessionIdentifier();
-				if (sessionIdentifier == null) {
-					// session not started yet
-					return;
-				}
-				// cancel the wizard
-				_service.cancelWizard(_tenant, sessionIdentifier,
-						new DCAsyncCallback<Boolean>() {
-							@Override
-							public void onSuccess(Boolean result) {
-								assert result.booleanValue();
-							}
-						});
-			}
-		});
-	}
+        _nextStepButton = new Button("Next");
+        addButton(_nextStepButton);
+        addButton(new CancelPopupButton(this));
 
-	protected abstract int getStepsBeforeWizardPages();
+        addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> event) {
+                if (_currentPanel == null) {
+                    // wizard ended
+                    return;
+                }
+                WizardSessionIdentifier sessionIdentifier = _currentPanel.getSessionIdentifier();
+                if (sessionIdentifier == null) {
+                    // session not started yet
+                    return;
+                }
+                // cancel the wizard
+                _service.cancelWizard(_tenant, sessionIdentifier, new DCAsyncCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean result) {
+                        assert result.booleanValue();
+                    }
+                });
+            }
+        });
+    }
 
-	protected abstract void wizardFinished();
+    @Override
+    protected void onAttach() {
+        super.onAttach();
+        _progressBar.setSteps(getStepsBeforeWizardPages(), true);
+        _progressBar.setProgress(0);
+    }
 
-	protected final void setLoading() {
-		setContent(_loadingIndicator);
-	}
+    protected abstract int getStepsBeforeWizardPages();
 
-	protected final void setProgress(int stepIndex) {
-		_progressBar.setProgress(stepIndex);
-	}
+    protected abstract void wizardFinished();
 
-	protected final void setSteps(int steps) {
-		_progressBar.setSteps(steps);
-	}
+    protected final void setLoading() {
+        setContent(_loadingIndicator);
+    }
 
-	protected final void setContent(IsWidget w) {
-		_targetPanel.setWidget(w);
-	}
+    protected final void setProgress(int stepIndex) {
+        _progressBar.setProgress(stepIndex);
+    }
 
-	protected final void setNextClickHandler(ClickHandler clickHandler) {
-		if (_clickRegistration != null) {
-			_clickRegistration.removeHandler();
-		}
-		_clickRegistration = _nextStepButton.addClickHandler(clickHandler);
-	}
+    protected final void setSteps(int steps) {
+        _progressBar.setSteps(steps);
+    }
 
-	protected final AsyncCallback<WizardPage> createNextPageCallback() {
-		return new DCAsyncCallback<WizardPage>() {
-			@Override
-			public void onSuccess(final WizardPage page) {
-				if (page == null) {
-					wizardFinished();
-				} else {
-					_progressBar.setSteps(page.getExpectedPageCount()
-							+ getStepsBeforeWizardPages());
-					_progressBar.setProgress(page.getPageIndex()
-							+ getStepsBeforeWizardPages());
+    protected final void setContent(IsWidget w) {
+        _targetPanel.setWidget(w);
+    }
 
-					_currentPanel = new FormWizardPanel(_service, _tenant, page);
+    protected final void setNextClickHandler(ClickHandler clickHandler) {
+        if (_clickRegistration != null) {
+            _clickRegistration.removeHandler();
+        }
+        _clickRegistration = _nextStepButton.addClickHandler(clickHandler);
+    }
 
-					_targetPanel.setWidget(_currentPanel);
+    protected final AsyncCallback<WizardPage> createNextPageCallback() {
+        return new DCAsyncCallback<WizardPage>() {
+            @Override
+            public void onSuccess(final WizardPage page) {
+                if (page == null) {
+                    wizardFinished();
+                } else {
+                    _progressBar.setSteps(page.getExpectedPageCount() + getStepsBeforeWizardPages());
+                    _progressBar.setProgress(page.getPageIndex() + getStepsBeforeWizardPages());
 
-					setNextClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							_targetPanel.setWidget(_loadingIndicator);
-							_currentPanel
-									.requestNextPage(createNextPageCallback());
-						}
-					});
-					AbstractWizardPopupPanel.this.center();
-				}
-			}
+                    _currentPanel = new FormWizardPanel(_service, _tenant, page);
 
-			@Override
-			public void onFailure(Throwable e) {
-				if (e instanceof DCUserInputException) {
-					// restore the previous panel view
-					_targetPanel.setWidget(_currentPanel);
-				}
-				super.onFailure(e);
-			}
-		};
-	}
+                    _targetPanel.setWidget(_currentPanel);
+
+                    setNextClickHandler(new ClickHandler() {
+                        @Override
+                        public void onClick(ClickEvent event) {
+                            _targetPanel.setWidget(_loadingIndicator);
+                            _currentPanel.requestNextPage(createNextPageCallback());
+                        }
+                    });
+                    AbstractWizardPopupPanel.this.center();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                if (e instanceof DCUserInputException) {
+                    // restore the previous panel view
+                    _targetPanel.setWidget(_currentPanel);
+                }
+                super.onFailure(e);
+            }
+        };
+    }
 }

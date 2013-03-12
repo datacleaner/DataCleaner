@@ -29,24 +29,16 @@ import org.eobjects.metamodel.util.Func;
 public class DatastoreWizardContextImpl implements DatastoreWizardContext {
 
     private final TenantContext _tenantContext;
-    private final String _datastoreName;
     private final Func<String, Object> _sessionFunc;
 
-    public DatastoreWizardContextImpl(TenantContext tenantContext, String datastoreName,
-            Func<String, Object> sessionFunc) {
+    public DatastoreWizardContextImpl(TenantContext tenantContext, Func<String, Object> sessionFunc) {
         _tenantContext = tenantContext;
-        _datastoreName = datastoreName;
         _sessionFunc = sessionFunc;
     }
 
     @Override
     public TenantContext getTenantContext() {
         return _tenantContext;
-    }
-
-    @Override
-    public String getDatastoreName() {
-        return _datastoreName;
     }
 
     @Override

@@ -127,7 +127,7 @@ public class WizardServiceImplTest extends TestCase {
         // submit second page
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
 
-        assertNull(wizardPage);
+        assertTrue(wizardPage.isFinished());
 
         // find the job and do assertions on it.
 

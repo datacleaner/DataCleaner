@@ -111,7 +111,7 @@ public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
 
     protected abstract int getStepsBeforeWizardPages();
 
-    protected abstract void wizardFinished();
+    protected abstract void wizardFinished(String entityName);
 
     protected final void setLoading() {
         setContent(_loadingIndicator);
@@ -140,8 +140,8 @@ public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
         return new DCAsyncCallback<WizardPage>() {
             @Override
             public void onSuccess(final WizardPage page) {
-                if (page == null) {
-                    wizardFinished();
+                if (page.isFinished()) {
+                    wizardFinished(page.getWizardResult());
                 } else {
                     _progressBar.setSteps(page.getExpectedPageCount() + getStepsBeforeWizardPages());
                     _progressBar.setProgress(page.getPageIndex() + getStepsBeforeWizardPages());

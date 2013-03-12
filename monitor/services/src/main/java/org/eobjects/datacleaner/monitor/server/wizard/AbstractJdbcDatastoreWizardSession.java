@@ -37,6 +37,7 @@ abstract class AbstractJdbcDatastoreWizardSession implements DatastoreWizardSess
     private String _username;
     private String _password;
     private String _description;
+    private String _name;
 
     public AbstractJdbcDatastoreWizardSession(DatastoreWizardContext context) {
         _context = context;
@@ -63,6 +64,14 @@ abstract class AbstractJdbcDatastoreWizardSession implements DatastoreWizardSess
         return _description;
     }
 
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
     public void setDriverClassName(String driverClassName) {
         _driverClassName = driverClassName;
     }
@@ -80,7 +89,7 @@ abstract class AbstractJdbcDatastoreWizardSession implements DatastoreWizardSess
         final Document document = documentBuilder.newDocument();
 
         final Element datastore = document.createElement("jdbc-datastore");
-        datastore.setAttribute("name", _context.getDatastoreName());
+        datastore.setAttribute("name", _name);
         datastore.setAttribute("description", _description);
 
         final Element url = document.createElement("url");

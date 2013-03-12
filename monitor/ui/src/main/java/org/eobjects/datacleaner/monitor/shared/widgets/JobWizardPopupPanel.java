@@ -56,7 +56,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
     public JobWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant, DatastoreIdentifier datastore) {
         super("New job", service, tenant);
         addStyleName("JobWizardPopupPanel");
-        
+
         if (datastore == null) {
             _stepsBeforeWizardPages = 2;
             showDatastoreSelection();
@@ -153,10 +153,10 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
 
         final TextBox nameTextBox = new TextBox();
         nameTextBox.addStyleName("NameTextBox");
-        
+
         final Label nameLabel = new Label("Please name the job you are about to create:");
         nameLabel.addStyleName("NameLabel");
-        
+
         panel.add(nameLabel);
         panel.add(nameTextBox);
 
@@ -189,7 +189,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
     }
 
     @Override
-    protected void wizardFinished() {
+    protected void wizardFinished(String jobName) {
         final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -199,7 +199,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
             }
         });
 
-        setContent(new Label("Job created! Wizard finished."));
+        setContent(new Label("Job '" + jobName + "' created! Wizard finished."));
         getButtonPanel().clear();
         addButton(button);
         center();

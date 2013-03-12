@@ -35,27 +35,20 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface WizardServiceAsync {
 
-	void getJobWizardIdentifiers(TenantIdentifier tenant,
-			DatastoreIdentifier selectedDatastore,
-			AsyncCallback<List<WizardIdentifier>> callback);
+    void getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore,
+            AsyncCallback<List<WizardIdentifier>> callback);
 
-	void getDatastoreWizardIdentifiers(TenantIdentifier tenant,
-			AsyncCallback<List<WizardIdentifier>> callback);
+    void getDatastoreWizardIdentifiers(TenantIdentifier tenant, AsyncCallback<List<WizardIdentifier>> callback);
 
-	void startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard,
-			DatastoreIdentifier selectedDatastore, String jobName,
-			AsyncCallback<WizardPage> callback);
+    void startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard, DatastoreIdentifier selectedDatastore,
+            String jobName, AsyncCallback<WizardPage> callback);
 
-	void startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard,
-			String datastoreName, AsyncCallback<WizardPage> callback);
+    void startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, AsyncCallback<WizardPage> callback);
 
-	void cancelWizard(TenantIdentifier tenant,
-			WizardSessionIdentifier sessionIdentifier,
-			AsyncCallback<Boolean> callback);
+    void cancelWizard(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
+            AsyncCallback<Boolean> callback);
 
-	void nextPage(TenantIdentifier tenant,
-			WizardSessionIdentifier sessionIdentifier,
-			Map<String, List<String>> formParameters,
-			AsyncCallback<WizardPage> callback);
+    void nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
+            Map<String, List<String>> formParameters, AsyncCallback<WizardPage> callback);
 
 }

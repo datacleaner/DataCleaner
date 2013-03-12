@@ -48,10 +48,18 @@ final class SugarCrmDatastoreCredentialsPage extends AbstractFreemarkerWizardPag
             throws DCUserInputException {
         String username = formParameters.get("sugarcrm_username").get(0);
         String password = formParameters.get("sugarcrm_password").get(0);
-        
+
         _session.setCredentials(username, password);
-        
-        return null;
+
+        return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1, "SugarCRM",
+                "Connects to the web services of SugarCRM") {
+            @Override
+            protected WizardPageController nextPageController(String name, String description) {
+                _session.setName(name);
+                _session.setDescription(description);
+                return null;
+            }
+        };
     }
 
     @Override

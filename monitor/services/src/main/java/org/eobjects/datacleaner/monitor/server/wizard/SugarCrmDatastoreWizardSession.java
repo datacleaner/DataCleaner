@@ -36,6 +36,8 @@ final class SugarCrmDatastoreWizardSession implements DatastoreWizardSession {
     private String _username;
     private String _password;
     private String _baseUrl;
+    private String _name;
+    private String _description;
 
     public SugarCrmDatastoreWizardSession(DatastoreWizardContext context) {
         _context = context;
@@ -54,12 +56,24 @@ final class SugarCrmDatastoreWizardSession implements DatastoreWizardSession {
 
     @Override
     public Integer getPageCount() {
-        return 2;
+        return 3;
+    }
+
+    public DatastoreWizardContext getWizardContext() {
+        return _context;
     }
 
     protected void setCredentials(String username, String password) {
         _username = username;
         _password = password;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public void setDescription(String description) {
+        _description = description;
     }
 
     @Override
@@ -74,8 +88,8 @@ final class SugarCrmDatastoreWizardSession implements DatastoreWizardSession {
         baseUrl.setTextContent(_baseUrl);
 
         final Element element = doc.createElement("sugar-crm-datastore");
-        element.setAttribute("name", _context.getDatastoreName());
-        element.setAttribute("description", "Connects to the web services of SugarCRM");
+        element.setAttribute("name", _name);
+        element.setAttribute("description", _description);
         element.appendChild(baseUrl);
         element.appendChild(username);
         element.appendChild(password);

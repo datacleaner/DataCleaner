@@ -165,19 +165,13 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            String datastoreName) throws IllegalArgumentException {
+    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier)
+            throws IllegalArgumentException {
         final DatastoreWizard wizard = instantiateDatastoreWizard(wizardIdentifier);
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
 
-        final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore(datastoreName);
-        if (datastore != null) {
-            throw new IllegalArgumentException("A datastore with the name '" + datastoreName + "' already exist.");
-        }
-
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(tenantContext, datastoreName,
-                createSessionFunc());
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(tenantContext, createSessionFunc());
 
         final WizardSession session = wizard.start(context);
 
@@ -241,11 +235,13 @@ public class WizardServiceImpl implements WizardService {
         if (nextPageController == null) {
             final WizardContext wizardContext = _contexts.get(sessionId);
             final WizardSession session = _sessions.get(sessionId);
+            final String wizardResult;
             try {
                 if (wizardContext instanceof JobWizardContext) {
-                    finishJobWizard((JobWizardContext) wizardContext, (JobWizardSession) session);
+                    wizardResult = finishJobWizard((JobWizardContext) wizardContext, (JobWizardSession) session);
                 } else if (wizardContext instanceof DatastoreWizardContext) {
-                    finishDatastoreWizard((DatastoreWizardContext) wizardContext, (DatastoreWizardSession) session);
+                    wizardResult = finishDatastoreWizard((DatastoreWizardContext) wizardContext,
+                            (DatastoreWizardSession) session);
                 } else {
                     throw new UnsupportedOperationException("Unexpected wizard type: " + wizardContext);
                 }
@@ -255,7 +251,7 @@ public class WizardServiceImpl implements WizardService {
 
             // returning null signals that no more pages should be shown, the
             // wizard is done.
-            return null;
+            return createFinishPage(sessionIdentifier, wizardResult);
         } else {
             final WizardSession session = _sessions.get(sessionId);
             _currentControllers.put(sessionId, nextPageController);
@@ -263,7 +259,22 @@ public class WizardServiceImpl implements WizardService {
         }
     }
 
-    private void finishDatastoreWizard(DatastoreWizardContext wizardContext, DatastoreWizardSession session) {
+    /**
+     * Creates a "page" that symbolizes a finished wizard.
+     * 
+     * @param sessionId
+     * @param wizardResult
+     * @return
+     */
+    private WizardPage createFinishPage(WizardSessionIdentifier sessionIdentifier, String wizardResult) {
+        WizardPage page = new WizardPage();
+        page.setPageIndex(WizardPage.PAGE_INDEX_FINISHED);
+        page.setSessionIdentifier(sessionIdentifier);
+        page.setWizardResult(wizardResult);
+        return page;
+    }
+
+    private String finishDatastoreWizard(DatastoreWizardContext wizardContext, DatastoreWizardSession session) {
         final DocumentBuilder documentBuilder;
         try {
             final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -275,13 +286,15 @@ public class WizardServiceImpl implements WizardService {
         final TenantContext tenantContext = wizardContext.getTenantContext();
         final Element datastoreNode = session.createDatastoreElement(documentBuilder);
 
-        _datastoreDao.addDatastore(tenantContext, datastoreNode);
+        String datastoreName = _datastoreDao.addDatastore(tenantContext, datastoreNode);
+        return datastoreName;
     }
 
-    private void finishJobWizard(final JobWizardContext wizardContext, final JobWizardSession session) {
+    private String finishJobWizard(final JobWizardContext wizardContext, final JobWizardSession session) {
         final TenantContext tenantContext = wizardContext.getTenantContext();
         final RepositoryFolder jobFolder = tenantContext.getJobFolder();
-        jobFolder.createFile(wizardContext.getJobName() + FileFilters.ANALYSIS_XML.getExtension(),
+        final String jobName = wizardContext.getJobName();
+        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(),
                 new Action<OutputStream>() {
                     @Override
                     public void run(OutputStream out) throws Exception {
@@ -294,6 +307,7 @@ public class WizardServiceImpl implements WizardService {
                         writer.write(analysisJob, out);
                     }
                 });
+        return jobName;
     }
 
     private WizardPage createPage(WizardSessionIdentifier sessionIdentifier, WizardPageController pageController,

@@ -42,8 +42,9 @@ public interface DatastoreDao {
      * 
      * @param tenantContext
      * @param datastoreElement
+     * @return the name of the datastore that was added
      */
-    public void addDatastore(TenantContext tenantContext, Element datastoreElement);
+    public String addDatastore(TenantContext tenantContext, Element datastoreElement);
 
     /**
      * Removes a datastore from a tenant's configuration

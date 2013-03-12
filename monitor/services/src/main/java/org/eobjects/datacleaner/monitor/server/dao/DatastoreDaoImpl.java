@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server.dao;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,10 +41,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.configuration.jaxb.AbstractDatastoreType;
 import org.eobjects.analyzer.configuration.jaxb.Configuration;
+import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.Func;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
@@ -56,6 +60,8 @@ import org.xml.sax.InputSource;
  */
 @Component
 public class DatastoreDaoImpl implements DatastoreDao {
+
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreDaoImpl.class);
 
     @Override
     public void removeDatastore(TenantContext tenantContext, String datastoreName) throws IllegalArgumentException {
@@ -119,7 +125,7 @@ public class DatastoreDaoImpl implements DatastoreDao {
     }
 
     @Override
-    public void addDatastore(TenantContext tenantContext, Element datastoreElement) {
+    public String addDatastore(TenantContext tenantContext, Element datastoreElement) {
 
         final RepositoryFile confFile = tenantContext.getConfigurationFile();
         // parse the configuration file
@@ -147,6 +153,8 @@ public class DatastoreDaoImpl implements DatastoreDao {
         final Node importedNode = configurationFileDocument.importNode(datastoreElement, true);
         datastoreCatalogElement.appendChild(importedNode);
 
+        final int datastoreIndex = DomUtils.getChildElements(datastoreCatalogElement).size() - 1;
+
         // write the updated configuration file
         final Transformer transformer = getTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -160,6 +168,20 @@ public class DatastoreDaoImpl implements DatastoreDao {
                 out.flush();
             }
         });
+
+        String datastoreName = datastoreElement.getAttribute("name");
+        if (datastoreName == null) {
+            // slightly more intricate way of getting datastore name by index
+            DatastoreCatalog datastoreCatalog = tenantContext.getConfiguration().getDatastoreCatalog();
+            String[] datastoreNames = datastoreCatalog.getDatastoreNames();
+            try {
+                datastoreName = datastoreNames[datastoreIndex];
+            } catch (IndexOutOfBoundsException e) {
+                logger.warn("Failed to get index {} of datastore names: {}", datastoreCatalog,
+                        Arrays.toString(datastoreNames));
+            }
+        }
+        return datastoreName;
     }
 
     protected DocumentBuilder getDocumentBuilder() {

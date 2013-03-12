@@ -26,13 +26,22 @@ import java.io.Serializable;
  */
 public class WizardPage implements Serializable {
 
+    public static final int PAGE_INDEX_FINISHED = -1000;
+
     private static final long serialVersionUID = 1L;
 
     private WizardSessionIdentifier sessionIdentifier;
     private String formInnerHtml;
     private Integer pageIndex;
     private Integer expectedPageCount;
+    private String wizardResult;
 
+    /**
+     * Gets the HTML of the current page. If the wizard has finished (see
+     * {@link #isFinished()}), this method will return null.
+     * 
+     * @return
+     */
     public String getFormInnerHtml() {
         return formInnerHtml;
     }
@@ -41,6 +50,11 @@ public class WizardPage implements Serializable {
         this.formInnerHtml = formInnerHtml;
     }
 
+    /**
+     * Gets the session identifier of the wizard.
+     * 
+     * @return
+     */
     public WizardSessionIdentifier getSessionIdentifier() {
         return sessionIdentifier;
     }
@@ -49,6 +63,13 @@ public class WizardPage implements Serializable {
         this.sessionIdentifier = sessionIdentifier;
     }
 
+    /**
+     * Gets the index (0-based) of the current page of the wizard. In case the
+     * wizard has finished, this method will return {@link #PAGE_INDEX_FINISHED}
+     * .
+     * 
+     * @return
+     */
     public Integer getPageIndex() {
         return pageIndex;
     }
@@ -57,11 +78,40 @@ public class WizardPage implements Serializable {
         this.pageIndex = pageIndex;
     }
 
+    /**
+     * Gets the expected count of pages as per the current state of the wizard
+     * session
+     * 
+     * @return
+     */
     public Integer getExpectedPageCount() {
         return expectedPageCount;
     }
 
     public void setExpectedPageCount(Integer expectedPageCount) {
         this.expectedPageCount = expectedPageCount;
+    }
+
+    /**
+     * If a wizard has finished (see {@link #isFinished()}) then this method
+     * will return the name of the entity (the 'result') that was created.
+     * 
+     * @return
+     */
+    public String getWizardResult() {
+        return wizardResult;
+    }
+
+    public void setWizardResult(String wizardResult) {
+        this.wizardResult = wizardResult;
+    }
+
+    /**
+     * Determines if the wizard is finished
+     * 
+     * @return
+     */
+    public boolean isFinished() {
+        return getPageIndex() == PAGE_INDEX_FINISHED;
     }
 }

@@ -42,24 +42,25 @@ abstract class JdbcConnectionInformationWizardPage extends AbstractFreemarkerWiz
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
         final String url = formParameters.get("url").get(0);
-        
+
         if (StringUtils.isNullOrEmpty(url)) {
-        	throw new DCUserInputException("Connection string / URL cannot be empty");
+            throw new DCUserInputException("Connection string / URL cannot be empty");
         }
-        
+
         _session.setUrl(url);
 
         final String username = formParameters.get("username").get(0);
         final String password = formParameters.get("password").get(0);
         _session.setCredentials(username, password);
 
-        return new DatastoreDescriptionWizardPage(getPageIndex() + 1, new DatastoreDescriptionCallback() {
+        return new DatastoreNameAndDescriptionWizardPage(_session.getWizardContext(), getPageIndex() + 1) {
             @Override
-            public WizardPageController nextPageController(String description) {
+            protected WizardPageController nextPageController(String name, String description) {
                 _session.setDescription(description);
+                _session.setName(name);
                 return null;
             }
-        });
+        };
     }
 
     @Override

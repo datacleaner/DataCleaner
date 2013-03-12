@@ -26,5 +26,4 @@ import org.eobjects.datacleaner.monitor.wizard.WizardContext;
  */
 public interface DatastoreWizardContext extends WizardContext {
 
-    public String getDatastoreName();
 }

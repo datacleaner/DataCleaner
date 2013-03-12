@@ -42,6 +42,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
     private File _file;
     private String _filepath;
     private CsvConfiguration _configuration;
+    private String _name;
     private String _description;
 
     public CsvDatastoreWizardSession(DatastoreWizardContext context) {
@@ -74,7 +75,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
                         FileHelper.copy(tempFile, file);
                         _file = file;
                         _filepath = filepath;
-                        return showCsvConfigurationPage();
+                        return showCsvConfigurationPage(filename);
                     }
                 };
             }
@@ -101,7 +102,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
 
                         _file = file;
                         _filepath = filepath;
-                        return showCsvConfigurationPage();
+                        return showCsvConfigurationPage(file.getName());
                     }
                 };
             }
@@ -116,19 +117,20 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
      * 
      * @return
      */
-    protected WizardPageController showCsvConfigurationPage() {
+    protected WizardPageController showCsvConfigurationPage(final String filename) {
         return new CsvConfigurationWizardPage(_file) {
             @Override
             protected WizardPageController nextPageController(CsvConfiguration configuration) {
                 _configuration = configuration;
-                return new DatastoreDescriptionWizardPage(3, new DatastoreDescriptionCallback() {
+                return new DatastoreNameAndDescriptionWizardPage(_context, 3, filename) {
 
                     @Override
-                    public WizardPageController nextPageController(String description) {
+                    protected WizardPageController nextPageController(String name, String description) {
+                        _name = name;
                         _description = description;
                         return null;
                     }
-                });
+                };
             }
         };
     }
@@ -138,7 +140,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
         final Document doc = documentBuilder.newDocument();
 
         final Element datastoreElement = doc.createElement("csv-datastore");
-        datastoreElement.setAttribute("name", _context.getDatastoreName());
+        datastoreElement.setAttribute("name", _name);
         if (!StringUtils.isNullOrEmpty(_description)) {
             datastoreElement.setAttribute("description", _description);
         }

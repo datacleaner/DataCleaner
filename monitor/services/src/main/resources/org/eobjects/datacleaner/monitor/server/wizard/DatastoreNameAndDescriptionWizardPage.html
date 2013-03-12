@@ -1,5 +1,8 @@
 <div style="min-height: 256px; background-repeat: no-repeat; background-position: bottom right; background-image: url('util/img/org/eobjects/datacleaner/monitor/server/wizard/jdbc-wizard-background.png');">
+
+	<p>Please provide a name for the datastore:</p>
+	<input type="text" value="${name?html}" size="30" name="name" />
+
 	<p>Please provide a short description of the datastore:</p>
-	
-	<textarea rows="6" cols="50" name="description"></textarea>
+	<textarea rows="6" cols="50" name="description">${description?html}</textarea>
 </div>

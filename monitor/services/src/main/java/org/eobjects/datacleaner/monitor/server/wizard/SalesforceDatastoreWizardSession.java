@@ -33,6 +33,8 @@ import org.w3c.dom.Element;
 final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
 
     private final DatastoreWizardContext _context;
+    private String _name;
+    private String _description;
     private String _username;
     private String _password;
     private String _securityToken;
@@ -48,7 +50,19 @@ final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
 
     @Override
     public Integer getPageCount() {
-        return 2;
+        return 3;
+    }
+
+    public DatastoreWizardContext getWizardContext() {
+        return _context;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public void setDescription(String description) {
+        _description = description;
     }
 
     protected void setCredentials(String username, String password) {
@@ -72,8 +86,8 @@ final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
         securityToken.setTextContent(_securityToken);
 
         final Element element = doc.createElement("salesforce-datastore");
-        element.setAttribute("name", _context.getDatastoreName());
-        element.setAttribute("description", "Connects to the web services of Salesforce.com");
+        element.setAttribute("name", _name);
+        element.setAttribute("description", _description);
         element.appendChild(username);
         element.appendChild(password);
         element.appendChild(securityToken);

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eobjects.datacleaner.monitor.shared.WizardServiceAsync;
-import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
@@ -38,14 +37,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.TextBox;
 
 /**
  * A popup for a datastore wizard.
  */
 public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
-
-    private String _datastoreName;
 
     public DatastoreWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
         super("New datastore", service, tenant);
@@ -84,29 +80,15 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
             radios.add(radio);
         }
 
-        final TextBox nameTextBox = new TextBox();
-        nameTextBox.addStyleName("NameTextBox");
-
-        final Label nameLabel = new Label("Please name the datastore you are about to create:");
-        nameLabel.addStyleName("NameLabel");
-        
-        panel.add(nameLabel);
-        panel.add(nameTextBox);
-
         setNextClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                _datastoreName = nameTextBox.getText();
-                if (_datastoreName == null || _datastoreName.trim().isEmpty()) {
-                    throw new DCUserInputException("Please enter a valid datastore name");
-                }
                 for (int i = 0; i < radios.size(); i++) {
                     final RadioButton radio = radios.get(i);
                     if (radio.getValue().booleanValue()) {
                         final WizardIdentifier wizard = wizards.get(i);
                         setLoading();
-                        setHeader("New datastore: " + _datastoreName);
-                        _service.startDatastoreWizard(_tenant, wizard, _datastoreName, createNextPageCallback());
+                        _service.startDatastoreWizard(_tenant, wizard, createNextPageCallback());
                         return;
                     }
                 }
@@ -118,7 +100,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
     }
 
     @Override
-    protected void wizardFinished() {
+    protected void wizardFinished(final String datastoreName) {
         final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -133,7 +115,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
             @Override
             public void onClick(ClickEvent event) {
                 hide();
-                final DatastoreIdentifier datastore = new DatastoreIdentifier(_datastoreName);
+                final DatastoreIdentifier datastore = new DatastoreIdentifier(datastoreName);
                 final JobWizardPopupPanel jobWizardPopupPanel = new JobWizardPopupPanel(_service, _tenant, datastore);
                 jobWizardPopupPanel.center();
                 jobWizardPopupPanel.show();
@@ -144,14 +126,14 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
         queryAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final String url = Urls.createRelativeUrl("query.jsf?ds=" + _datastoreName);
+                final String url = Urls.createRelativeUrl("query.jsf?ds=" + datastoreName);
                 Window.open(url, "_blank", "location=no,width=770,height=400,toolbar=no,menubar=no");
             }
         });
 
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
-        contentPanel.add(new Label("Datastore created! Wizard finished."));
+        contentPanel.add(new Label("Datastore '" + datastoreName + "' created! Wizard finished."));
         contentPanel.add(new Label(
                 "Close the dialog to return, or click one of the links below to start using the datastore."));
         contentPanel.add(jobWizardAnchor);

@@ -250,6 +250,11 @@ div.center {
 	display: block;
 }
 
+.WizardFinishedPanel .gwt-Label {
+	margin-top: 10px;
+	display: block;
+}
+
 /**
  * Styling for wizard progress bar
  */

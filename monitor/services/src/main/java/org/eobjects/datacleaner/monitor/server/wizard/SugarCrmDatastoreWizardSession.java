@@ -28,22 +28,28 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Wizard session for Salesforce datastore wizard
+ * Wizard session for SugarCRM datastore wizard
  */
-final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
+final class SugarCrmDatastoreWizardSession implements DatastoreWizardSession {
 
     private final DatastoreWizardContext _context;
     private String _username;
     private String _password;
-    private String _securityToken;
+    private String _baseUrl;
 
-    public SalesforceDatastoreWizardSession(DatastoreWizardContext context) {
+    public SugarCrmDatastoreWizardSession(DatastoreWizardContext context) {
         _context = context;
     }
 
     @Override
     public WizardPageController firstPageController() {
-        return new SalesforceDatastoreCredentialsPage(this);
+        return new SugarCrmBaseUrlWizardPage() {
+            @Override
+            protected WizardPageController nextPageController(String baseUrl) {
+                _baseUrl = baseUrl;
+                return new SugarCrmDatastoreCredentialsPage(SugarCrmDatastoreWizardSession.this);
+            }
+        };
     }
 
     @Override
@@ -56,27 +62,23 @@ final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
         _password = password;
     }
 
-    protected void setSecurityToken(String securityToken) {
-        _securityToken = securityToken;
-    }
-
     @Override
     public Element createDatastoreElement(DocumentBuilder documentBuilder) {
         final Document doc = documentBuilder.newDocument();
         final Element username = doc.createElement("username");
         final Element password = doc.createElement("password");
-        final Element securityToken = doc.createElement("security-token");
+        final Element baseUrl = doc.createElement("base-url");
 
         username.setTextContent(_username);
         password.setTextContent(_password);
-        securityToken.setTextContent(_securityToken);
+        baseUrl.setTextContent(_baseUrl);
 
-        final Element element = doc.createElement("salesforce-datastore");
+        final Element element = doc.createElement("sugar-crm-datastore");
         element.setAttribute("name", _context.getDatastoreName());
-        element.setAttribute("description", "Connects to the web services of Salesforce.com");
+        element.setAttribute("description", "Connects to the web services of SugarCRM");
+        element.appendChild(baseUrl);
         element.appendChild(username);
         element.appendChild(password);
-        element.appendChild(securityToken);
         return element;
     }
 }

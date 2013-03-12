@@ -180,8 +180,8 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>verify-license-headers</id>
-						<phase>verify</phase>
+						<id>validate-license-headers</id>
+						<phase>validate</phase>
 						<goals>
 							<goal>check</goal>
 						</goals>

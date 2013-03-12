@@ -59,7 +59,7 @@
 		</para>
 		<para>
 			Signed JAR files can be
-			<link xl:href="http://datacleaner.eobjects.org/downloads">downloaded separately</link>
+			<link xl:href="http://datacleaner.org/downloads">downloaded separately</link>
 			and should be extracted into a directory of choice on the server.
 			Once extracted you need to configure the application with the
 			directory path. Find the file

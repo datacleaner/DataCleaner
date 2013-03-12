@@ -8,7 +8,7 @@
 	<artifactId>DataCleaner-extensions</artifactId>
 	<name>DataCleaner extensions modules</name>
 	<description>A collection of extensions, typically shared through the online extension swap.</description>
-	<url>http://datacleaner.eobjects.org/extensions</url>
+	<url>http://datacleaner.org/extensions</url>
 	<packaging>pom</packaging>
 	<build>
 		<pluginManagement>

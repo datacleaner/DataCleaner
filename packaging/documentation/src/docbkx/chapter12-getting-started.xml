@@ -34,7 +34,7 @@
 				<para>
 					Download DataCleaner as a distributable package (.zip or .tar.gz)
 					from the release list on our
-					<link xl:href="http://datacleaner.eobjects.org/downloads">downloads page</link>
+					<link xl:href="http://datacleaner.org/downloads">downloads page</link>
 					.
 				</para>
 
@@ -47,7 +47,7 @@
 				<para>
 					Run DataCleaner as a Java WebStart application. You can do this by
 					clicking the WebStart link on our
-					<link xl:href="http://datacleaner.eobjects.org/downloads">downloads page</link>
+					<link xl:href="http://datacleaner.org/downloads">downloads page</link>
 					.
 				</para>
 				<para>In WebStart the application will be installed in your JRE's
@@ -75,7 +75,7 @@
 		</para>
 		<para>
 			To install the monitoring web application,
-			<link xl:href="http://datacleaner.eobjects.org/downloads">download</link>
+			<link xl:href="http://datacleaner.org/downloads">download</link>
 			the Web Archive (.war) distribution of DataCleaner. Install the .war
 			file in your container. If you're using Apache Tomcat, this is done
 			by copying the .war file to the "webapps" folder within your tomcat

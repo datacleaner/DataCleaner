@@ -1,12 +1,13 @@
 <div>
-
-	<p>What should be the server location of the CSV file:</p>
+	
+	<p>${introductionText}</p>
+	<p></p>
 
 	<div
 		style="margin: 10px; padding: 10px; background-color: #f4f4d3; border-radius: 5px;">
 		<input type="radio" name="location" value="repository"
 			id="location_radio_repository" /> <label
-			for="location_radio_repository">Put it in the repository:</label><br />
+			for="location_radio_repository">${repositoryText}</label><br />
 		<input style="margin: 10px;" name="filepath_repository"
 			value="datastores/${filename}" size="60" />
 	</div>
@@ -14,8 +15,7 @@
 	<div
 		style="margin: 10px; padding: 10px; background-color: #f4f4d3; border-radius: 5px;">
 		<input type="radio" name="location" value="absolute"
-			id="location_radio_absolute" /> <label for="location_radio_absolute">Put
-			it in a absolute location:</label><br /> <input style="margin: 10px;"
+			id="location_radio_absolute" /> <label for="location_radio_absolute">${absoluteText}</label><br /> <input style="margin: 10px;"
 			name="filepath_absolute" value="${absolutePrefix}${filename}" size="60" />
 	</div>
 </div>

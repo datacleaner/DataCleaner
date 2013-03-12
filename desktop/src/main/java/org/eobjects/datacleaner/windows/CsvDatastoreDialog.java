@@ -23,7 +23,6 @@ import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -41,6 +40,7 @@ import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.guice.Nullable;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.UserPreferences;
+import org.eobjects.datacleaner.util.CsvConfigurationDetection;
 import org.eobjects.datacleaner.util.DCDocumentListener;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.datacleaner.util.IconUtils;
@@ -61,418 +61,384 @@ import org.eobjects.metamodel.util.FileHelper;
  */
 public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<CsvDatastore> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final String SEPARATOR_TAB = "Tab (\\t)";
-	private static final String SEPARATOR_COMMA = "Comma (,)";
-	private static final String SEPARATOR_SEMICOLON = "Semicolon (;)";
-	private static final String SEPARATOR_PIPE = "Pipe (|)";
+    private static final String SEPARATOR_TAB = "Tab (\\t)";
+    private static final String SEPARATOR_COMMA = "Comma (,)";
+    private static final String SEPARATOR_SEMICOLON = "Semicolon (;)";
+    private static final String SEPARATOR_PIPE = "Pipe (|)";
 
-	private static final String QUOTE_DOUBLE_QUOTE = "Double quote (\")";
-	private static final String QUOTE_SINGLE_QUOTE = "Single quote (')";
-	private static final String QUOTE_NONE = "(None)";
+    private static final String QUOTE_DOUBLE_QUOTE = "Double quote (\")";
+    private static final String QUOTE_SINGLE_QUOTE = "Single quote (')";
+    private static final String QUOTE_NONE = "(None)";
 
-	private static final String ESCAPE_BACKSLASH = "Backslash (\\)";
-	private static final String ESCAPE_NONE = "(None)";
+    private static final String ESCAPE_BACKSLASH = "Backslash (\\)";
+    private static final String ESCAPE_NONE = "(None)";
 
-	private final JComboBox _separatorCharField;
-	private final JComboBox _quoteCharField;
-	private final JComboBox _escapeCharField;
-	private final HeaderLineComboBox _headerLineComboBox;
-	private final CharSetEncodingComboBox _encodingComboBox;
-	private final JCheckBox _failOnInconsistenciesCheckBox;
+    private final JComboBox _separatorCharField;
+    private final JComboBox _quoteCharField;
+    private final JComboBox _escapeCharField;
+    private final HeaderLineComboBox _headerLineComboBox;
+    private final CharSetEncodingComboBox _encodingComboBox;
+    private final JCheckBox _failOnInconsistenciesCheckBox;
 
-	private volatile boolean showPreview = true;
+    private volatile boolean showPreview = true;
 
-	@Inject
-	public CsvDatastoreDialog(@Nullable CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
-			WindowContext windowContext, UserPreferences userPreferences) {
-		super(datastore, mutableDatastoreCatalog, windowContext, userPreferences);
-		_separatorCharField = new JComboBox(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
-				SEPARATOR_PIPE });
-		_separatorCharField.setEditable(true);
+    @Inject
+    public CsvDatastoreDialog(@Nullable CsvDatastore datastore, MutableDatastoreCatalog mutableDatastoreCatalog,
+            WindowContext windowContext, UserPreferences userPreferences) {
+        super(datastore, mutableDatastoreCatalog, windowContext, userPreferences);
+        _separatorCharField = new JComboBox(new String[] { SEPARATOR_COMMA, SEPARATOR_TAB, SEPARATOR_SEMICOLON,
+                SEPARATOR_PIPE });
+        _separatorCharField.setEditable(true);
 
-		_quoteCharField = new JComboBox(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
-		_quoteCharField.setEditable(true);
+        _quoteCharField = new JComboBox(new String[] { QUOTE_NONE, QUOTE_DOUBLE_QUOTE, QUOTE_SINGLE_QUOTE });
+        _quoteCharField.setEditable(true);
 
-		_escapeCharField = new JComboBox(new String[] { ESCAPE_NONE, ESCAPE_BACKSLASH });
-		_escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
-		_escapeCharField.setEditable(true);
+        _escapeCharField = new JComboBox(new String[] { ESCAPE_NONE, ESCAPE_BACKSLASH });
+        _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
+        _escapeCharField.setEditable(true);
 
-		_encodingComboBox = new CharSetEncodingComboBox();
+        _encodingComboBox = new CharSetEncodingComboBox();
 
-		_headerLineComboBox = new HeaderLineComboBox();
+        _headerLineComboBox = new HeaderLineComboBox();
 
-		_failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
-		_failOnInconsistenciesCheckBox.setOpaque(false);
-		_failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
+        _failOnInconsistenciesCheckBox = new JCheckBox("Fail on inconsistent column count", true);
+        _failOnInconsistenciesCheckBox.setOpaque(false);
+        _failOnInconsistenciesCheckBox.setForeground(WidgetUtils.BG_COLOR_BRIGHTEST);
 
-		_addDatastoreButton.setEnabled(false);
-		showPreview = true;
+        _addDatastoreButton.setEnabled(false);
+        showPreview = true;
 
-		if (_originalDatastore != null) {
-			_failOnInconsistenciesCheckBox.setSelected(_originalDatastore.isFailOnInconsistencies());
-			_encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
+        if (_originalDatastore != null) {
+            _failOnInconsistenciesCheckBox.setSelected(_originalDatastore.isFailOnInconsistencies());
+            _encodingComboBox.setSelectedItem(_originalDatastore.getEncoding());
 
-			_headerLineComboBox.setSelectedItem(_originalDatastore.getHeaderLineNumber());
+            _headerLineComboBox.setSelectedItem(_originalDatastore.getHeaderLineNumber());
 
-			Character separatorChar = _originalDatastore.getSeparatorChar();
-			String separator = null;
-			if (separatorChar != null) {
-				if (separatorChar.charValue() == ',') {
-					separator = SEPARATOR_COMMA;
-				} else if (separatorChar.charValue() == ';') {
-					separator = SEPARATOR_SEMICOLON;
-				} else if (separatorChar.charValue() == '|') {
-					separator = SEPARATOR_PIPE;
-				} else if (separatorChar.charValue() == '\t') {
-					separator = SEPARATOR_TAB;
-				} else {
-					separator = separatorChar.toString();
-				}
-			}
-			_separatorCharField.setSelectedItem(separator);
+            Character separatorChar = _originalDatastore.getSeparatorChar();
+            String separator = null;
+            if (separatorChar != null) {
+                if (separatorChar.charValue() == ',') {
+                    separator = SEPARATOR_COMMA;
+                } else if (separatorChar.charValue() == ';') {
+                    separator = SEPARATOR_SEMICOLON;
+                } else if (separatorChar.charValue() == '|') {
+                    separator = SEPARATOR_PIPE;
+                } else if (separatorChar.charValue() == '\t') {
+                    separator = SEPARATOR_TAB;
+                } else {
+                    separator = separatorChar.toString();
+                }
+            }
+            _separatorCharField.setSelectedItem(separator);
 
-			Character quoteChar = _originalDatastore.getQuoteChar();
-			final String quote;
-			if (quoteChar == null) {
-				quote = QUOTE_NONE;
-			} else {
-				if (quoteChar.charValue() == CsvDatastore.NOT_A_CHAR) {
-					quote = QUOTE_NONE;
-				} else if (quoteChar.charValue() == '"') {
-					quote = QUOTE_DOUBLE_QUOTE;
-				} else if (quoteChar.charValue() == '\'') {
-					quote = QUOTE_SINGLE_QUOTE;
-				} else {
-					quote = quoteChar.toString();
-				}
-			}
-			_quoteCharField.setSelectedItem(quote);
+            Character quoteChar = _originalDatastore.getQuoteChar();
+            final String quote;
+            if (quoteChar == null) {
+                quote = QUOTE_NONE;
+            } else {
+                if (quoteChar.charValue() == CsvDatastore.NOT_A_CHAR) {
+                    quote = QUOTE_NONE;
+                } else if (quoteChar.charValue() == '"') {
+                    quote = QUOTE_DOUBLE_QUOTE;
+                } else if (quoteChar.charValue() == '\'') {
+                    quote = QUOTE_SINGLE_QUOTE;
+                } else {
+                    quote = quoteChar.toString();
+                }
+            }
+            _quoteCharField.setSelectedItem(quote);
 
-			Character escapeChar = _originalDatastore.getEscapeChar();
-			final String escape;
-			if (escapeChar == null) {
-				escape = ESCAPE_NONE;
-			} else {
-				if (escapeChar.charValue() == CsvDatastore.NOT_A_CHAR) {
-					escape = ESCAPE_NONE;
-				} else if (escapeChar.charValue() == '\\') {
-					escape = ESCAPE_BACKSLASH;
-				} else {
-					escape = escapeChar.toString();
-				}
-			}
-			_escapeCharField.setSelectedItem(escape);
+            Character escapeChar = _originalDatastore.getEscapeChar();
+            final String escape;
+            if (escapeChar == null) {
+                escape = ESCAPE_NONE;
+            } else {
+                if (escapeChar.charValue() == CsvDatastore.NOT_A_CHAR) {
+                    escape = ESCAPE_NONE;
+                } else if (escapeChar.charValue() == '\\') {
+                    escape = ESCAPE_BACKSLASH;
+                } else {
+                    escape = escapeChar.toString();
+                }
+            }
+            _escapeCharField.setSelectedItem(escape);
 
-			onSettingsUpdated(false, false);
-		}
+            onSettingsUpdated(false, false);
+        }
 
-		// add listeners
-		_separatorCharField.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(false, false);
-			}
-		});
-		_quoteCharField.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(false, false);
-			}
-		});
-		_escapeCharField.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				onSettingsUpdated(false, false);
-			}
-		});
-		_encodingComboBox.addListener(new Listener<String>() {
-			@Override
-			public void onItemSelected(String item) {
-				onSettingsUpdated(true, false);
-			}
-		});
-		_headerLineComboBox.addListener(new DCComboBox.Listener<Integer>() {
-			@Override
-			public void onItemSelected(Integer item) {
-				onSettingsUpdated(false, false);
-			}
-		});
-	}
+        // add listeners
+        _separatorCharField.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                onSettingsUpdated(false, false);
+            }
+        });
+        _quoteCharField.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                onSettingsUpdated(false, false);
+            }
+        });
+        _escapeCharField.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                onSettingsUpdated(false, false);
+            }
+        });
+        _encodingComboBox.addListener(new Listener<String>() {
+            @Override
+            public void onItemSelected(String item) {
+                onSettingsUpdated(true, false);
+            }
+        });
+        _headerLineComboBox.addListener(new DCComboBox.Listener<Integer>() {
+            @Override
+            public void onItemSelected(Integer item) {
+                onSettingsUpdated(false, false);
+            }
+        });
+    }
 
-	@Override
-	protected String getBannerTitle() {
-		return "Comma-separated file";
-	}
+    @Override
+    protected String getBannerTitle() {
+        return "Comma-separated file";
+    }
 
-	@Override
-	protected void onFileSelected(File file) {
-		onSettingsUpdated(true, true);
-	}
+    @Override
+    protected void onFileSelected(File file) {
+        onSettingsUpdated(true, true);
+    }
 
-	private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding) {
-		onSettingsUpdated(autoDetectSeparatorAndQuote, autoDetectEncoding, getSampleBuffer());
-	}
+    private void onSettingsUpdated(final boolean autoDetectSeparatorAndQuote, final boolean autoDetectEncoding) {
+        if (!validateForm()) {
+            return;
+        }
 
-	private void onSettingsUpdated(boolean autoDetectSeparatorAndQuote, boolean autoDetectEncoding, byte[] sampleBuffer) {
-		if (!validateForm()) {
-			return;
-		}
+        final File file = new File(getFilename());
+        if (file == null || !file.exists()) {
+            setStatusError("No file selected, or file does not exist");
+            showPreview = false;
+            return;
+        }
 
-		if (sampleBuffer == null || sampleBuffer.length == 0) {
-			logger.debug("No bytes read to autodetect settings");
-			return;
-		}
+        final CsvConfigurationDetection detection = new CsvConfigurationDetection(file);
 
-		final List<String> warnings = new ArrayList<String>();
-		showPreview = true;
+        final CsvConfiguration configuration;
 
-		final String charSet;
-		if (autoDetectEncoding) {
-			charSet = _encodingComboBox.autoDetectEncoding(sampleBuffer);
-		} else {
-			charSet = _encodingComboBox.getSelectedItem().toString();
-		}
+        try {
+            if (autoDetectEncoding) {
+                configuration = detection.suggestCsvConfiguration();
+            } else {
+                String charSet = _encodingComboBox.getSelectedItem().toString();
+                configuration = detection.suggestCsvConfiguration(charSet);
+            }
+        } catch (IllegalStateException e) {
+            logger.debug("Failed to auto detect CSV configuration", e);
+            setStatusError(e.getMessage());
+            return;
+        }
 
-		char[] sampleChars = readSampleBuffer(sampleBuffer, charSet);
+        if (autoDetectEncoding) {
+            _encodingComboBox.setSelectedItem(configuration.getEncoding());
+        }
 
-		if (StringUtils.indexOf('\n', sampleChars) == -1 && StringUtils.indexOf('\r', sampleChars) == -1) {
-			warnings.add("No newline in first " + sampleChars.length + " chars");
-			// don't show the preview if no newlines where found (it may try
-			// to treat the whole file as a single row)
-			showPreview = false;
-		}
+        if (autoDetectSeparatorAndQuote) {
+            // set the separator
+            final char separatorChar = configuration.getSeparatorChar();
+            if (separatorChar == ',') {
+                _separatorCharField.setSelectedItem(SEPARATOR_COMMA);
+            } else if (separatorChar == ';') {
+                _separatorCharField.setSelectedItem(SEPARATOR_SEMICOLON);
+            } else if (separatorChar == '\t') {
+                _separatorCharField.setSelectedItem(SEPARATOR_TAB);
+            } else if (separatorChar == '|') {
+                _separatorCharField.setSelectedItem(SEPARATOR_PIPE);
+            } else {
+                _separatorCharField.setSelectedItem(separatorChar + "");
+            }
 
-		if (autoDetectSeparatorAndQuote) {
-			int newlines = 0;
-			int tabs = 0;
-			int commas = 0;
-			int semicolons = 0;
-			int pipes = 0;
-			int singleQuotes = 0;
-			int doubleQuotes = 0;
-			for (int i = 0; i < sampleChars.length; i++) {
-				char c = sampleChars[i];
-				if (c == '\n') {
-					newlines++;
-				} else if (c == '\t') {
-					tabs++;
-				} else if (c == ',') {
-					commas++;
-				} else if (c == ';') {
-					semicolons++;
-				} else if (c == '\'') {
-					singleQuotes++;
-				} else if (c == '|') {
-					pipes++;
-				} else if (c == '"') {
-					doubleQuotes++;
-				}
-			}
+            // set the quote
+            final char quoteChar = configuration.getQuoteChar();
+            if (quoteChar == CsvConfiguration.NOT_A_CHAR) {
+                _quoteCharField.setSelectedItem(QUOTE_NONE);
+            } else if (quoteChar == '\'') {
+                _quoteCharField.setSelectedItem(QUOTE_SINGLE_QUOTE);
+            } else if (quoteChar == '"') {
+                _quoteCharField.setSelectedItem(QUOTE_DOUBLE_QUOTE);
+            } else {
+                _quoteCharField.setSelectedItem(quoteChar + "");
+            }
 
-			int detectedSeparator = Math.max(tabs, Math.max(commas, Math.max(semicolons, pipes)));
-			if (detectedSeparator == 0 || detectedSeparator < newlines) {
-				warnings.add("Could not autodetect separator char");
-			} else {
-				// set the separator
-				if (detectedSeparator == commas) {
-					_separatorCharField.setSelectedItem(SEPARATOR_COMMA);
-				} else if (detectedSeparator == semicolons) {
-					_separatorCharField.setSelectedItem(SEPARATOR_SEMICOLON);
-				} else if (detectedSeparator == tabs) {
-					_separatorCharField.setSelectedItem(SEPARATOR_TAB);
-				} else if (detectedSeparator == pipes) {
-					_separatorCharField.setSelectedItem(SEPARATOR_PIPE);
-				}
-			}
+            // set the escape char
+            char escapeChar = configuration.getEscapeChar();
+            if (escapeChar == '\\') {
+                _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
+            }
+        }
+        
+        showPreview = true;
+        validateAndUpdate();
+    }
 
-			int detectedQuote = Math.max(singleQuotes, doubleQuotes);
-			if (detectedQuote == 0 || detectedQuote < newlines) {
-				_quoteCharField.setSelectedItem(QUOTE_NONE);
-			} else {
-				// set the quote
-				if (detectedQuote == singleQuotes) {
-					_quoteCharField.setSelectedItem(QUOTE_SINGLE_QUOTE);
-				} else if (detectedQuote == doubleQuotes) {
-					_quoteCharField.setSelectedItem(QUOTE_DOUBLE_QUOTE);
-				}
-			}
-		}
+    @Override
+    protected boolean validateForm() {
+        Object selectedEncoding = _encodingComboBox.getSelectedItem();
+        if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
+            setStatusError("Please select a character encoding!");
+            return false;
+        }
+        return super.validateForm();
+    }
 
-		if (showPreview) {
-			validateAndUpdate();
-		}
+    @Override
+    protected boolean isPreviewTableEnabled() {
+        return true;
+    }
 
-		if (warnings.isEmpty()) {
-			setStatusValid();
-		} else {
-			StringBuilder sb = new StringBuilder();
-			for (String warning : warnings) {
-				sb.append(warning);
-				sb.append(". ");
-			}
-			setStatusWarning(sb.toString());
-		}
-	}
+    @Override
+    protected boolean isPreviewDataAvailable() {
+        return showPreview;
+    }
 
-	@Override
-	protected boolean validateForm() {
-		Object selectedEncoding = _encodingComboBox.getSelectedItem();
-		if (selectedEncoding == null || selectedEncoding.toString().length() == 0) {
-			setStatusError("Please select a character encoding!");
-			return false;
-		}
-		return super.validateForm();
-	}
+    @Override
+    protected List<Entry<String, JComponent>> getFormElements() {
+        List<Entry<String, JComponent>> result = super.getFormElements();
+        result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
+        result.add(new ImmutableEntry<String, JComponent>("Separator", _separatorCharField));
+        result.add(new ImmutableEntry<String, JComponent>("Quote char", _quoteCharField));
+        result.add(new ImmutableEntry<String, JComponent>("Escape char", _escapeCharField));
+        result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
+        result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
+        return result;
+    }
 
-	@Override
-	protected boolean isPreviewTableEnabled() {
-		return true;
-	}
+    public int getHeaderLine() {
+        Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
+        if (headerLineComboValue != null) {
+            int intComboValue = headerLineComboValue.intValue();
+            if (intComboValue < 0) {
+                return CsvConfiguration.NO_COLUMN_NAME_LINE;
+            } else {
+                // MetaModel's headerline number is 0-based
+                return intComboValue;
+            }
+        } else {
+            return CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
+        }
+    }
 
-	@Override
-	protected boolean isPreviewDataAvailable() {
-		return showPreview;
-	}
+    public String getEncoding() {
+        String encoding = _encodingComboBox.getSelectedItem().toString();
+        if (StringUtils.isNullOrEmpty(encoding)) {
+            encoding = FileHelper.UTF_8_ENCODING;
+        }
+        return encoding;
+    }
 
-	@Override
-	protected List<Entry<String, JComponent>> getFormElements() {
-		List<Entry<String, JComponent>> result = super.getFormElements();
-		result.add(new ImmutableEntry<String, JComponent>("Character encoding", _encodingComboBox));
-		result.add(new ImmutableEntry<String, JComponent>("Separator", _separatorCharField));
-		result.add(new ImmutableEntry<String, JComponent>("Quote char", _quoteCharField));
-		result.add(new ImmutableEntry<String, JComponent>("Escape char", _escapeCharField));
-		result.add(new ImmutableEntry<String, JComponent>("Header line", _headerLineComboBox));
-		result.add(new ImmutableEntry<String, JComponent>("", _failOnInconsistenciesCheckBox));
-		return result;
-	}
+    public Character getSeparatorChar() {
+        Object separatorItem = _separatorCharField.getSelectedItem();
+        if (SEPARATOR_COMMA.equals(separatorItem)) {
+            return ',';
+        } else if (SEPARATOR_SEMICOLON.equals(separatorItem)) {
+            return ';';
+        } else if (SEPARATOR_TAB.equals(separatorItem)) {
+            return '\t';
+        } else if (SEPARATOR_PIPE.equals(separatorItem)) {
+            return '|';
+        } else {
+            return separatorItem.toString().charAt(0);
+        }
+    }
 
-	public int getHeaderLine() {
-		Number headerLineComboValue = _headerLineComboBox.getSelectedItem();
-		if (headerLineComboValue != null) {
-			int intComboValue = headerLineComboValue.intValue();
-			if (intComboValue < 0) {
-				return CsvConfiguration.NO_COLUMN_NAME_LINE;
-			} else {
-				// MetaModel's headerline number is 0-based
-				return intComboValue;
-			}
-		} else {
-			return CsvConfiguration.DEFAULT_COLUMN_NAME_LINE;
-		}
-	}
+    public Character getQuoteChar() {
+        Object quoteItem = _quoteCharField.getSelectedItem();
+        if (QUOTE_NONE.equals(quoteItem)) {
+            return CsvDatastore.NOT_A_CHAR;
+        } else if (QUOTE_DOUBLE_QUOTE.equals(quoteItem)) {
+            return '"';
+        } else if (QUOTE_SINGLE_QUOTE.equals(quoteItem)) {
+            return '\'';
+        } else {
+            return quoteItem.toString().charAt(0);
+        }
+    }
 
-	public String getEncoding() {
-		String encoding = _encodingComboBox.getSelectedItem().toString();
-		if (StringUtils.isNullOrEmpty(encoding)) {
-			encoding = FileHelper.UTF_8_ENCODING;
-		}
-		return encoding;
-	}
+    public Character getEscapeChar() {
+        Object escapeItem = _escapeCharField.getSelectedItem();
+        if (ESCAPE_NONE.equals(escapeItem)) {
+            return CsvDatastore.NOT_A_CHAR;
+        } else if (ESCAPE_BACKSLASH.equals(escapeItem)) {
+            return '\\';
+        } else {
+            return escapeItem.toString().charAt(0);
+        }
+    }
 
-	public Character getSeparatorChar() {
-		Object separatorItem = _separatorCharField.getSelectedItem();
-		if (SEPARATOR_COMMA.equals(separatorItem)) {
-			return ',';
-		} else if (SEPARATOR_SEMICOLON.equals(separatorItem)) {
-			return ';';
-		} else if (SEPARATOR_TAB.equals(separatorItem)) {
-			return '\t';
-		} else if (SEPARATOR_PIPE.equals(separatorItem)) {
-			return '|';
-		} else {
-			return separatorItem.toString().charAt(0);
-		}
-	}
+    @Override
+    protected boolean isWindowResizable() {
+        return true;
+    }
 
-	public Character getQuoteChar() {
-		Object quoteItem = _quoteCharField.getSelectedItem();
-		if (QUOTE_NONE.equals(quoteItem)) {
-			return CsvDatastore.NOT_A_CHAR;
-		} else if (QUOTE_DOUBLE_QUOTE.equals(quoteItem)) {
-			return '"';
-		} else if (QUOTE_SINGLE_QUOTE.equals(quoteItem)) {
-			return '\'';
-		} else {
-			return quoteItem.toString().charAt(0);
-		}
-	}
+    @Override
+    public Image getWindowIcon() {
+        return imageManager.getImage(IconUtils.CSV_IMAGEPATH);
+    }
 
-	public Character getEscapeChar() {
-		Object escapeItem = _escapeCharField.getSelectedItem();
-		if (ESCAPE_NONE.equals(escapeItem)) {
-			return CsvDatastore.NOT_A_CHAR;
-		} else if (ESCAPE_BACKSLASH.equals(escapeItem)) {
-			return '\\';
-		} else {
-			return escapeItem.toString().charAt(0);
-		}
-	}
+    @Override
+    public String getWindowTitle() {
+        return "CSV file datastore";
+    }
 
-	@Override
-	protected boolean isWindowResizable() {
-		return true;
-	}
+    @Override
+    protected CsvDatastore getPreviewDatastore(String filename) {
+        return createDatastore("Preview", filename, false);
+    }
 
-	@Override
-	public Image getWindowIcon() {
-		return imageManager.getImage(IconUtils.CSV_IMAGEPATH);
-	}
+    @Override
+    protected CsvDatastore createDatastore(String name, String filename) {
+        boolean failOnInconsistentRecords = _failOnInconsistenciesCheckBox.isSelected();
+        return createDatastore(name, filename, failOnInconsistentRecords);
+    }
 
-	@Override
-	public String getWindowTitle() {
-		return "CSV file datastore";
-	}
+    private CsvDatastore createDatastore(String name, String filename, boolean failOnInconsistentRecords) {
+        return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEscapeChar(), getEncoding(),
+                failOnInconsistentRecords, getHeaderLine());
+    }
 
-	@Override
-	protected CsvDatastore getPreviewDatastore(String filename) {
-		return createDatastore("Preview", filename, false);
-	}
+    @Override
+    protected String getDatastoreIconPath() {
+        return IconUtils.CSV_IMAGEPATH;
+    }
 
-	@Override
-	protected CsvDatastore createDatastore(String name, String filename) {
-		boolean failOnInconsistentRecords = _failOnInconsistenciesCheckBox.isSelected();
-		return createDatastore(name, filename, failOnInconsistentRecords);
-	}
+    @Override
+    protected void setFileFilters(final FilenameTextField filenameField) {
+        FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV,
+                FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
+        filenameField.addChoosableFileFilter(combinedFilter);
+        filenameField.addChoosableFileFilter(FileFilters.CSV);
+        filenameField.addChoosableFileFilter(FileFilters.TSV);
+        filenameField.addChoosableFileFilter(FileFilters.DAT);
+        filenameField.addChoosableFileFilter(FileFilters.TXT);
+        filenameField.addChoosableFileFilter(FileFilters.ALL);
+        filenameField.setSelectedFileFilter(combinedFilter);
 
-	private CsvDatastore createDatastore(String name, String filename, boolean failOnInconsistentRecords) {
-		return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEscapeChar(), getEncoding(),
-				failOnInconsistentRecords, getHeaderLine());
-	}
+        filenameField.addFileSelectionListener(new FileSelectionListener() {
 
-	@Override
-	protected String getDatastoreIconPath() {
-		return IconUtils.CSV_IMAGEPATH;
-	}
+            @Override
+            public void onSelected(FilenameTextField filenameTextField, File file) {
+                if (FileFilters.TSV.accept(file)) {
+                    _separatorCharField.setSelectedItem(SEPARATOR_TAB);
+                }
+            }
+        });
 
-	@Override
-	protected void setFileFilters(final FilenameTextField filenameField) {
-		FileFilter combinedFilter = FileFilters.combined("Any raw data file (.csv, .tsv, .dat, .txt)", FileFilters.CSV,
-				FileFilters.TSV, FileFilters.DAT, FileFilters.TXT);
-		filenameField.addChoosableFileFilter(combinedFilter);
-		filenameField.addChoosableFileFilter(FileFilters.CSV);
-		filenameField.addChoosableFileFilter(FileFilters.TSV);
-		filenameField.addChoosableFileFilter(FileFilters.DAT);
-		filenameField.addChoosableFileFilter(FileFilters.TXT);
-		filenameField.addChoosableFileFilter(FileFilters.ALL);
-		filenameField.setSelectedFileFilter(combinedFilter);
-
-		filenameField.addFileSelectionListener(new FileSelectionListener() {
-
-			@Override
-			public void onSelected(FilenameTextField filenameTextField, File file) {
-				if (FileFilters.TSV.accept(file)) {
-					_separatorCharField.setSelectedItem(SEPARATOR_TAB);
-				}
-			}
-		});
-
-		filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-			@Override
-			protected void onChange(DocumentEvent e) {
-				onSettingsUpdated(true, true);
-			}
-		});
-	}
+        filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
+            @Override
+            protected void onChange(DocumentEvent e) {
+                onSettingsUpdated(true, true);
+            }
+        });
+    }
 }

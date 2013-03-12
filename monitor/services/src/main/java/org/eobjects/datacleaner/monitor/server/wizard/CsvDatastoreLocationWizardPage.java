@@ -38,10 +38,12 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
 
     private final WizardContext _wizardContext;
     private final String _filename;
+    private final boolean _newFile;
 
-    public CsvDatastoreLocationWizardPage(WizardContext wizardContext, String filename) {
+    public CsvDatastoreLocationWizardPage(WizardContext wizardContext, String filename, boolean newFile) {
         _wizardContext = wizardContext;
         _filename = filename;
+        _newFile = newFile;
     }
 
     @Override
@@ -61,6 +63,17 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("filename", _filename);
         map.put("absolutePrefix", absolutePrefix);
+
+        if (_newFile) {
+            map.put("introductionText", "What should be the server location of the CSV file:");
+            map.put("repositoryText", "Copy it to a location in the repository:");
+            map.put("absoluteText", "Copy it to an absolute location on the server:");
+        } else {
+            map.put("introductionText", "What is the server location of the CSV file:");
+            map.put("repositoryText", "It's located in the repository:");
+            map.put("absoluteText", "It's at an absolute location on the server:");
+        }
+
         return map;
     }
 
@@ -95,6 +108,14 @@ public abstract class CsvDatastoreLocationWizardPage extends AbstractFreemarkerW
         return nextPageController(filepath, file);
     }
 
+    /**
+     * Invoked when the user has selected a file location on the server of the
+     * CSV file.
+     * 
+     * @param filepath
+     * @param file
+     * @return
+     */
     protected abstract WizardPageController nextPageController(String filepath, File file);
 
 }

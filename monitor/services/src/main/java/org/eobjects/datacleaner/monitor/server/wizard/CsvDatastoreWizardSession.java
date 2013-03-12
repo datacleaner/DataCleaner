@@ -78,7 +78,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
                         FileHelper.copy(tempFile, file);
                         _file = file;
                         _filepath = filepath;
-                        return csvConfigurationPage();
+                        return showCsvConfigurationPage();
                     }
                 };
             }
@@ -89,13 +89,23 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
 
                     @Override
                     protected WizardPageController nextPageController(String filepath, File file) {
+                        if (!filepath.toLowerCase().endsWith(".csv")) {
+                            if (!filepath.toLowerCase().endsWith(".tsv")) {
+                                // only .csv and .tsv files are allowed to be
+                                // referenced on the server, for security
+                                // reasons.
+                                throw new DCUserInputException(
+                                        "For security reasons, only existing .csv and .tsv files can be referenced on the server");
+                            }
+                        }
+
                         if (file.exists() && !file.canRead()) {
                             throw new DCUserInputException("Cannot read from file:\n" + filepath);
                         }
 
                         _file = file;
                         _filepath = filepath;
-                        return csvConfigurationPage();
+                        return showCsvConfigurationPage();
                     }
                 };
             }
@@ -110,7 +120,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
      * 
      * @return
      */
-    protected WizardPageController csvConfigurationPage() {
+    protected WizardPageController showCsvConfigurationPage() {
         return new CsvConfigurationWizardPage(_file) {
             @Override
             protected WizardPageController nextPageController(CsvConfiguration configuration) {
@@ -156,7 +166,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
             logger.warn("Cannot serialize NOT_A_CHAR value of '{}' element to XML, omitting element", elementName);
             return;
         }
-        
+
         final Element element = doc.createElement(elementName);
         element.setTextContent(value.toString());
         parent.appendChild(element);

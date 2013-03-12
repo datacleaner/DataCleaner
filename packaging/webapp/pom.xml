@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.eobjects.datacleaner</groupId>
@@ -11,29 +12,64 @@
 
 	<build>
 		<finalName>DataCleaner-monitor</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<id>tomcat-run</id>
+						<goals>
+							<goal>exec-war-only</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<path>/DataCleaner-monitor</path>
+							<finalName>DataCleaner-monitor-server.jar</finalName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 
 	<profiles>
 		<profile>
-			<id>default</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
+			<id>windows</id>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.tomcat.maven</groupId>
-						<artifactId>tomcat7-maven-plugin</artifactId>
-						<version>2.0</version>
+						<!-- Create win32 executable -->
+						<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+						<artifactId>launch4j-plugin</artifactId>
+						<version>1.5.0.0</version>
 						<executions>
 							<execution>
-								<id>tomcat-run</id>
+								<id>launch4j-server</id>
+								<phase>verify</phase>
 								<goals>
-									<goal>exec-war-only</goal>
+									<goal>launch4j</goal>
 								</goals>
-								<phase>package</phase>
 								<configuration>
-									<path>/DataCleaner-monitor</path>
+									<dontWrapJar>true</dontWrapJar>
+									<headerType>console</headerType>
+									<jar>DataCleaner-monitor-server.jar</jar>
+									<outfile>target/DataCleaner-monitor-server.exe</outfile>
+									<errTitle>DataCleaner monitor</errTitle>
+									<priority>normal</priority>
+									<downloadUrl>http://java.com/download</downloadUrl>
+									<supportUrl>http://datacleaner.org</supportUrl>
+									<customProcName>true</customProcName>
+									<stayAlive>false</stayAlive>
+									<icon>src/main/assembly/app-icon.ico</icon>
+									<jre>
+										<path />
+										<minVersion>1.6.0</minVersion>
+										<maxVersion />
+										<initialHeapSize>512</initialHeapSize>
+										<maxHeapSize>1024</maxHeapSize>
+									</jre>
 								</configuration>
 							</execution>
 						</executions>

@@ -199,7 +199,7 @@
 									<errTitle>DataCleaner</errTitle>
 									<priority>normal</priority>
 									<downloadUrl>http://java.com/download</downloadUrl>
-									<supportUrl>http://datacleaner.eobjects.org</supportUrl>
+									<supportUrl>http://datacleaner.org</supportUrl>
 									<customProcName>true</customProcName>
 									<stayAlive>false</stayAlive>
 									<icon>src/main/assembly/app-icon.ico</icon>
@@ -226,7 +226,7 @@
 									<errTitle>DataCleaner</errTitle>
 									<priority>normal</priority>
 									<downloadUrl>http://java.com/download</downloadUrl>
-									<supportUrl>http://datacleaner.eobjects.org</supportUrl>
+									<supportUrl>http://datacleaner.org</supportUrl>
 									<customProcName>true</customProcName>
 									<stayAlive>false</stayAlive>
 									<icon>src/main/assembly/app-icon.ico</icon>

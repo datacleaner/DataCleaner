@@ -33,12 +33,13 @@ public abstract class DCRequestCallback implements RequestCallback {
 
     @Override
     public void onResponseReceived(Request request, Response response) {
-        if (response.getStatusCode() == 200) {
+        final int statusCode = response.getStatusCode();
+        if (statusCode == 200) {
             onSuccess(request, response);
             return;
         }
-        
-        ErrorHandler.showErrorDialog("Server reported error", response.getStatusText(), response.getText());
+
+        onNonSuccesfullStatusCode(request, response, statusCode, response.getStatusText());
     }
 
     protected abstract void onSuccess(Request request, Response response);
@@ -46,6 +47,10 @@ public abstract class DCRequestCallback implements RequestCallback {
     @Override
     public void onError(Request request, Throwable exception) {
         ErrorHandler.showErrorDialog("Server reported error", null, exception);
+    }
+
+    public void onNonSuccesfullStatusCode(Request request, Response response, int statusCode, String statusText) {
+        ErrorHandler.showErrorDialog("Server reported error (HTTP " + statusCode + ")", statusText, response.getText());
     }
 
 }

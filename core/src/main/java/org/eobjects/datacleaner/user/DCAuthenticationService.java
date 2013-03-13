@@ -38,7 +38,7 @@ public class DCAuthenticationService implements AuthenticationService {
 	private final HttpXmlUtils _httpXmlUtils;
 
 	@Inject
-	protected DCAuthenticationService(HttpXmlUtils httpXmlUtils) {
+	public DCAuthenticationService(HttpXmlUtils httpXmlUtils) {
 		_httpXmlUtils = httpXmlUtils;
 	}
 

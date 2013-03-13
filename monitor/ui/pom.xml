@@ -127,21 +127,6 @@
 		</profile>
 	</profiles>
 
-	<repositories>
-		<repository>
-			<!-- Up-to-date GWT visualization is not available in central repo. Using 
-				alfresco instead. -->
-			<id>alfresco-repository</id>
-			<url>http://maven.alfresco.com/nexus/content/repositories/activiti-thirdparty/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<!-- DataCleaner monitor services -->
 		<dependency>
@@ -157,7 +142,6 @@
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.googlecode.gflot</groupId>
 			<artifactId>gflot</artifactId>

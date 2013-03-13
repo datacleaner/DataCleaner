@@ -35,11 +35,15 @@ import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link RepositoryFile} implementation based on a local file.
  */
 final class FileRepositoryFile implements RepositoryFile {
+
+    private static final Logger logger = LoggerFactory.getLogger(FileRepositoryFile.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -199,6 +203,14 @@ final class FileRepositoryFile implements RepositoryFile {
 
     @Override
     public long getLastModified() {
-        return _file.lastModified();
+        long lastModified = _file.lastModified();
+        if (lastModified == 0) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("File.lastModified() return 0. File.exists()={}, File.getPath()={}",
+                        Boolean.valueOf(_file.exists()), _file.getPath());
+            }
+            return -1;
+        }
+        return lastModified;
     }
 }

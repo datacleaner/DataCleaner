@@ -118,6 +118,10 @@ final class ConfigurationCache {
 
         final RepositoryFile configurationFile = getConfigurationFile();
         _lastModifiedCache = configurationFile.getLastModified();
+        if (_lastModifiedCache < 0) {
+            logger.warn("Last modified timestamp was negative ({})! Returning plain AnalyzerBeansConfiguration since this indicates that the file has been deleted.", _lastModifiedCache);
+            return new AnalyzerBeansConfigurationImpl();
+        }
 
         logger.info("Reading configuration from file: {}", configurationFile);
 

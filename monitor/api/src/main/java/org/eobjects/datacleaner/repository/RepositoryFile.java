@@ -84,7 +84,8 @@ public interface RepositoryFile extends RepositoryNode {
     /**
      * Gets the last modified timestamp.
      * 
-     * @return
+     * @return the last modified timestamp, or -1 if there was an error reading
+     *         the timestamp
      */
     public long getLastModified();
 }

@@ -11,7 +11,7 @@
 			<source>target/DataCleaner-monitor-server.jar</source>
 		</file>
 		<file>
-			<source>target/datacleaner-monitor-server.exe</source>
+			<source>target/DataCleaner-monitor-server.exe</source>
 		</file>
 		<file>
 			<source>src/main/assembly/datacleaner-monitor-server.cmd</source>

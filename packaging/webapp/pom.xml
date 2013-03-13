@@ -46,7 +46,7 @@
 						<executions>
 							<execution>
 								<id>launch4j-server</id>
-								<phase>package</phase>
+								<phase>verify</phase>
 								<goals>
 									<goal>launch4j</goal>
 								</goals>
@@ -85,7 +85,7 @@
 						</configuration>
 						<executions>
 							<execution>
-								<phase>package</phase>
+								<phase>verify</phase>
 								<goals>
 									<goal>single</goal>
 								</goals>

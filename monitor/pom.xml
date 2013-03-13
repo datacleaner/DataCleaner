@@ -20,6 +20,7 @@
 	<modules>
 		<module>api</module>
 		<module>services</module>
+		<module>widgets</module>
 		<module>ui</module>
 	</modules>
 

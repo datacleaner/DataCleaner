@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.shared.widgets;
 
-import org.eobjects.datacleaner.monitor.server.media.FileUploadServlet;
 import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
@@ -38,7 +37,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Handler class that registers a method for uploading files to the
- * {@link FileUploadServlet}.
+ * FileUploadServlet available in DC monitor.
  */
 public class FileUploadFunctionHandler {
 

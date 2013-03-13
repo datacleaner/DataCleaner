@@ -13,7 +13,7 @@
 		<!-- DataCleaner monitor services -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-monitor-services</artifactId>
+			<artifactId>DataCleaner-monitor-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

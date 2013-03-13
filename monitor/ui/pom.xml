@@ -19,6 +19,7 @@
 					<compileSourcesArtifacts>
 						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-api</artifact>
 						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-services</artifact>
+						<artifact>org.eobjects.datacleaner:DataCleaner-monitor-widgets</artifact>
 					</compileSourcesArtifacts>
 				</configuration>
 				<executions>
@@ -40,21 +41,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<plugin>
-				<!-- Use eclipse:eclipse to set up GWT, Maven and eclipse -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<additionalprojectnatures>
-						<projectnature>org.maven.ide.eclipse.maven2Nature</projectnature>
-					</additionalprojectnatures>
-					<additionalbuildcommands>
-						<buildcommand>org.maven.ide.eclipse.maven2Builder</buildcommand>
-					</additionalbuildcommands>
-				</configuration>
 			</plugin>
 
 			<plugin>
@@ -128,10 +114,15 @@
 	</profiles>
 
 	<dependencies>
-		<!-- DataCleaner monitor services -->
+		<!-- DataCleaner monitor dependencies -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-monitor-services</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-widgets</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

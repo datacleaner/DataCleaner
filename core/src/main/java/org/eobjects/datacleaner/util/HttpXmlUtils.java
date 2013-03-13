@@ -58,10 +58,17 @@ public final class HttpXmlUtils {
     private static final Logger logger = LoggerFactory.getLogger(HttpXmlUtils.class);
 
     private final UserPreferences _userPreferences;
+    private final HttpClient _httpClient;
 
     @Inject
-    protected HttpXmlUtils(UserPreferences userPreferences) {
+    public HttpXmlUtils(UserPreferences userPreferences) {
         _userPreferences = userPreferences;
+        _httpClient = null;
+    }
+
+    public HttpXmlUtils(HttpClient httpClient) {
+        _userPreferences = null;
+        _httpClient = httpClient;
     }
 
     public String getUrlContent(String url, Map<String, String> params) throws IOException {
@@ -80,16 +87,11 @@ public final class HttpXmlUtils {
         return response;
     }
 
-    /**
-     * Gets a HTTP client to use for Http/XML requests.
-     * 
-     * @return
-     * 
-     * @deprecated use {@link UserPreferences#createHttpClient()}
-     */
-    @Deprecated
-    public HttpClient getHttpClient() {
-        return _userPreferences.createHttpClient();
+    private HttpClient getHttpClient() {
+        if (_httpClient == null) {
+            return _userPreferences.createHttpClient();
+        }
+        return _httpClient;
     }
 
     public static Element getRootNode(HttpClient httpClient, String url) throws InvalidHttpResponseException {

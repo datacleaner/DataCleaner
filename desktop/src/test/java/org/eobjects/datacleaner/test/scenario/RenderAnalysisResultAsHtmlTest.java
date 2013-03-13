@@ -59,6 +59,7 @@ public class RenderAnalysisResultAsHtmlTest extends TestCase {
         File file = new File("src/test/resources/all_analyzers.analysis.result.dat");
         ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(new FileInputStream(file));
         AnalysisResult analysisResult = (AnalysisResult) is.readObject();
+        is.close();
 
         RendererFactory rendererFactory = new RendererFactory(configuration);
 

@@ -75,6 +75,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 		value = widget.getValue();
 		assertEquals("[MetaModelInputColumn[foo]]", Arrays.toString(value));
 		assertEquals("foo,foobar", getAvailableCheckBoxValues(widget));
+		ajb.close();
 	}
 
 	public void testAddAndRemoveExpressionColumn() throws Exception {
@@ -116,6 +117,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 		value = widget.getValue();
 		assertEquals("[MetaModelInputColumn[bar], ELInputColumn[Hi #{nickname}]]", Arrays.toString(value));
 		assertEquals("\"Hello #{name}\",foo,bar,\"Hi #{nickname}\"", getAvailableCheckBoxValues(widget));
+		
+		ajb.close();
 	}
 
 	public void testInitializeReordered() throws Exception {
@@ -137,6 +140,7 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 
 		assertEquals("baz,foo,bar", getAvailableCheckBoxValues(widget));
 		assertEquals("[MetaModelInputColumn[baz], MetaModelInputColumn[foo]]", Arrays.toString(widget.getValue()));
+		ajb.close();
 	}
 
 	public void testReorderColumns() throws Exception {
@@ -168,6 +172,8 @@ public class MultipleInputColumnsPropertyWidgetTest extends TestCase {
 		assertEquals(
 				"[MetaModelInputColumn[foo], ELInputColumn[Hello #{name}], MetaModelInputColumn[bar], MetaModelInputColumn[baz]]",
 				Arrays.toString(widget.getValue()));
+		
+		ajb.close();
 	}
 
 	/**

@@ -48,6 +48,7 @@ import org.eobjects.datacleaner.widgets.OpenAnalysisJobFileChooserAccessory;
 import org.eobjects.datacleaner.windows.AnalysisJobBuilderWindow;
 import org.eobjects.datacleaner.windows.OpenAnalysisJobAsTemplateDialog;
 import org.eobjects.datacleaner.windows.ResultWindow;
+import org.eobjects.metamodel.util.FileHelper;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -130,8 +131,12 @@ public class OpenAnalysisJobActionListener implements ActionListener {
         final AnalysisResult analysisResult;
         try {
             ChangeAwareObjectInputStream is = new ChangeAwareObjectInputStream(fileObject.getContent().getInputStream());
-            is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
-            analysisResult = (AnalysisResult) is.readObject();
+            try {
+                is.addClassLoader(ExtensionPackage.getExtensionClassLoader());
+                analysisResult = (AnalysisResult) is.readObject();
+            } finally {
+                FileHelper.safeClose(is);
+            }
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

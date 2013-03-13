@@ -85,22 +85,6 @@
 			<version>1.0.14</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>4.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-			<version>4.2</version>
-		</dependency>
-		<dependency>
 			<groupId>org.simpleframework</groupId>
 			<artifactId>simple</artifactId>
 			<version>4.1.21</version>

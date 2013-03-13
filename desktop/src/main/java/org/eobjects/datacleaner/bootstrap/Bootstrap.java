@@ -299,6 +299,7 @@ public final class Bootstrap {
 
                     final WindowContext windowContext = new SimpleWindowContext();
 
+                    @SuppressWarnings("resource")
                     MonitorHttpClient httpClient = new SimpleWebServiceHttpClient();
                     MonitorConnection monitorConnection = null;
 

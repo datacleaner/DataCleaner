@@ -61,6 +61,7 @@ public class MultipleEnumPropertyWidgetTest extends TestCase {
 		widget.onValueTouched(new ValidationCategory[] { ValidationCategory.INVALID });
 		assertEquals("VALID,INVALID", getAvailableCheckboxValues(widget));
 		assertEquals("[INVALID]", Arrays.toString(widget.getValue()));
+		ajb.close();
 	}
 
 	private String getAvailableCheckboxValues(MultipleEnumPropertyWidget widget) {

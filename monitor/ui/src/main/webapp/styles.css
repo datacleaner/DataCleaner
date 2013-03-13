@@ -330,6 +330,11 @@ img.scalable_background {
 
 #user_panel span.logout a {
 	color: white;
+	text-decoration: none;
+}
+
+#user_panel span.logout a:hover {
+	text-decoration: underline;
 }
 
 /**

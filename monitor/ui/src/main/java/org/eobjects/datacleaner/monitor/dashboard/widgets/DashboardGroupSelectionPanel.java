@@ -108,13 +108,16 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
             @Override
             public void onClick(ClickEvent event) {
                 String name = Window.prompt("Name of the new group?", "");
-                if (name != null && name.trim().length() > 1) {
+                boolean validName = name != null && name.trim().length() > 1;
+                if (validName) {
                     _service.addDashboardGroup(_tenant, name, new DCAsyncCallback<DashboardGroup>() {
                         @Override
                         public void onSuccess(DashboardGroup result) {
                             addGroup(result);
                         }
                     });
+                } else {
+                    Window.alert("Please provide a valid group name of at least 2 characters");
                 }
             }
         });

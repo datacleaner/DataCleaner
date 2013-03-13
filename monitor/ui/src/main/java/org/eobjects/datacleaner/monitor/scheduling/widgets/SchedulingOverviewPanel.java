@@ -31,6 +31,7 @@ import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.CreateJobButton;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -67,6 +68,11 @@ public class SchedulingOverviewPanel extends Composite {
         if (_clientConfig.isJobEditor()) {
             final CreateJobButton newJobButton = new CreateJobButton(_clientConfig.getTenant());
             buttonPanel.add(newJobButton);
+            
+            final String token = History.getToken();
+            if ("startWizard".equals(token)) {
+                newJobButton.startWizard();
+            }
         }
         
         return buttonPanel;

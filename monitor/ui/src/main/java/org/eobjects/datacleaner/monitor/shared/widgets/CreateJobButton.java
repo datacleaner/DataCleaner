@@ -29,12 +29,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 
 /**
- * A button which will pop up a list of available job creation wizards, and let the user start it
+ * A button which will pop up a list of available job creation wizards, and let
+ * the user start it
  */
 public class CreateJobButton extends Button implements ClickHandler {
 
     private final WizardServiceAsync service = GWT.create(WizardService.class);
-    
+
     private final TenantIdentifier _tenant;
 
     public CreateJobButton(TenantIdentifier tenant) {
@@ -49,6 +50,10 @@ public class CreateJobButton extends Button implements ClickHandler {
 
     @Override
     public void onClick(ClickEvent event) {
+        startWizard();
+    }
+
+    public void startWizard() {
         DCPopupPanel popup = new JobWizardPopupPanel(service, _tenant);
         popup.center();
         popup.show();

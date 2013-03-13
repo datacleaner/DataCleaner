@@ -49,6 +49,10 @@ public class CreateDatastoreButton extends Button implements ClickHandler {
 
     @Override
     public void onClick(ClickEvent event) {
+        startWizard();
+    }
+    
+    public void startWizard() {
         DCPopupPanel popup = new DatastoreWizardPopupPanel(service, _tenant);
         popup.center();
         popup.show();

@@ -27,6 +27,7 @@ import org.eobjects.datacleaner.monitor.util.ErrorHandler;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -46,6 +47,11 @@ public class DatastoresEntryPoint implements EntryPoint {
             final RootPanel rootPanel = RootPanel.get("RootPanelTarget");
             final CreateDatastoreButton button = new CreateDatastoreButton(tenant);
             rootPanel.add(button);
+            
+            String token = History.getToken();
+            if ("startWizard".equals(token)) {
+                button.startWizard();
+            }
         }
     }
 

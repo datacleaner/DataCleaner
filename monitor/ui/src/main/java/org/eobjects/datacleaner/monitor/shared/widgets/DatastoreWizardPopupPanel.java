@@ -106,7 +106,8 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
             @Override
             public void onClick(ClickEvent event) {
                 // full page refresh.
-                Window.Location.reload();
+                final String url = Urls.createRelativeUrl("datastores.jsf");
+                Window.Location.assign(url);
             }
         });
 

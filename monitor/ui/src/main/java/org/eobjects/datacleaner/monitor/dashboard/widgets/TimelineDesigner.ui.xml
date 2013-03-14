@@ -29,6 +29,5 @@
 
 	<g:HTMLPanel>
 		<p:SimplePlot ui:field="plot"  />
-		<p ui:field='hovering' />
 	</g:HTMLPanel>
 </ui:UiBinder>

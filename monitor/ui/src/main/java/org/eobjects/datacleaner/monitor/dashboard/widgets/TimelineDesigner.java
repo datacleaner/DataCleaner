@@ -30,11 +30,13 @@ import org.eobjects.datacleaner.monitor.dashboard.util.ColorProvider;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gflot.client.DataPoint;
@@ -70,10 +72,15 @@ public class TimelineDesigner {
      */
     public static final int WIDTH = 540;
 
-    private TimelineDefinition _timelineDefinition;
-    private TimelineData _timelineData;
-    private TimelinePanel _timelinePanel;
-    private boolean _isDashboardEditor;
+    private final TimelineDefinition _timelineDefinition;
+    private final TimelineData _timelineData;
+    private final TimelinePanel _timelinePanel;
+    private final boolean _isDashboardEditor;
+
+    private final PopupPanel _popup;
+    
+    // the data point most recently hovered across (to compensate for 'too precise' clickhandler).
+    private PlotItem _activePlotItem;
 
     interface Binder extends UiBinder<Widget, TimelineDesigner> {
     }
@@ -84,6 +91,8 @@ public class TimelineDesigner {
         _timelineData = timelineData;
         _timelinePanel = timelinePanel;
         _isDashboardEditor = isDashboardEditor;
+        _popup = new PopupPanel();
+        _popup.setStyleName("timeline_popup");
     }
 
     /**
@@ -94,11 +103,6 @@ public class TimelineDesigner {
     @UiField(provided = true)
     SimplePlot plot;
 
-    /**
-     * Paragraph to add the hovering series
-     */
-    @UiField
-    ParagraphElement hovering;
     /**
      * legend panel
      */
@@ -136,20 +140,26 @@ public class TimelineDesigner {
         legendOptions.setShow(false);
         plotOptions.setLegendOptions(legendOptions);
 
-        if (_timelineData.getRows().size() == 1) {
-            plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(4);
-        } else if (_timelineData.getRows().size() < 10) {
-            plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(2);
-        } else if (_timelineData.getRows().size() < 20) {
-            plotOptions.getGlobalSeriesOptions().getPointsSeriesOptions().setRadius(1);
+        final GlobalSeriesOptions globalSeriesOptions = plotOptions.getGlobalSeriesOptions();
+        final PointsSeriesOptions pointsSeriesOptions = globalSeriesOptions.getPointsSeriesOptions();
+        final int pointCount = _timelineData.getRows().size();
+
+        if (pointCount < 8) {
+            pointsSeriesOptions.setRadius(4);
+        } else if (pointCount < 16) {
+            pointsSeriesOptions.setRadius(3);
+        } else {
+            pointsSeriesOptions.setRadius(2);
         }
+
+        GWT.log("Setting point radius: " + pointsSeriesOptions.getRadius() + " (for " + pointCount + " points)");
 
         plotOptions.setGridOptions(GridOptions.create().setShow(true).setBorderWidth(0).setBorderColor("#221f1f")
                 .setHoverable(true).setMouseActiveRadius(2).setClickable(true));
 
-        TimeSeriesAxisOptions xAxisOptions = TimeSeriesAxisOptions.create();
+        final TimeSeriesAxisOptions xAxisOptions = TimeSeriesAxisOptions.create();
 
-        AxisOptions yAxisOptions = AxisOptions.create();
+        final AxisOptions yAxisOptions = AxisOptions.create();
 
         if (logarithmicScale) {
             transformToLogarithmicScale(yAxisOptions);
@@ -169,9 +179,6 @@ public class TimelineDesigner {
         plot = new SimplePlot(model, plotOptions);
         plot.setHeight(height);
         plot.setWidth(WIDTH);
-        final PopupPanel popup = new PopupPanel();
-        final com.google.gwt.user.client.ui.Label dateLabel = new com.google.gwt.user.client.ui.Label();
-        popup.add(dateLabel);
         plot.addStyleName("TimelineChart");
         final List<MetricIdentifier> metrics = _timelineDefinition.getMetrics();
         for (int index = 0; index < metrics.size(); index++) {
@@ -179,7 +186,7 @@ public class TimelineDesigner {
         }
 
         addPlotClickListener();
-        addHoverListener(popup, dateLabel);
+        addHoverListener();
 
         return _binder.createAndBindUi(this);
     }
@@ -223,30 +230,50 @@ public class TimelineDesigner {
         plot.addClickListener(new PlotClickListener() {
             @Override
             public void onPlotClick(Plot plot, PlotPosition position, PlotItem item) {
-                new DrillToProfilingResultSelectHandler(item, _timelineDefinition, _timelineData).onSelect();
+                GWT.log("Clicked! plot=" + plot + ", position=" + position + ", item=" + item);
+                if (item == null) {
+                    if (_activePlotItem == null) {
+                        return;
+                    }
+                    // use the latest hovered item
+                    item = _activePlotItem;
+                }
+
+                final DrillToProfilingResultSelectHandler handler = new DrillToProfilingResultSelectHandler(item,
+                        _timelineDefinition, _timelineData);
+                handler.onSelect();
             }
-        }, true);
+        }, false);
     }
 
-    private void addHoverListener(final PopupPanel popup, final com.google.gwt.user.client.ui.Label dateLabel) {
+    private void addHoverListener() {
         plot.addHoverListener(new PlotHoverListener() {
             @Override
             public void onPlotHover(Plot plot, PlotPosition position, PlotItem item) {
-                Date date = _timelineData.getRows().get(item.getSeriesIndex()).getDate();
+                if (item == _activePlotItem && _popup.isShowing()) {
+                    return;
+                }
+                _activePlotItem = item;
+                
+                final Integer dataIndex = item.getDataIndex();
+                final Date date = _timelineData.getRows().get(dataIndex).getDate();
+                final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
 
-                dateLabel.setText(date + " " + item.getSeries().getLabel() + " "
-                        + item.getSeries().getData().getY(item.getDataIndex()));
-                popup.setPopupPosition(position.getPageX() + 10, position.getPageY() - 25);
-                popup.setStyleName("timeline_popup");
-                popup.show();
+                final String metric = item.getSeries().getLabel();
+                final double value = item.getSeries().getData().getY(dataIndex);
+                final HTML label = new HTML("<b>" + formattedDate + "</b><br/> " + metric + ": <b>" + value + "</b>");
+
+                _popup.setWidget(label);
+                _popup.setPopupPosition(position.getPageX() + 10, position.getPageY() - 25);
+                _popup.show();
             }
         }, true);
 
         plot.addDomHandler(new MouseOutHandler() {
             @Override
             public void onMouseOut(MouseOutEvent event) {
-                hovering.setInnerText("");
-                popup.hide();
+                _activePlotItem = null;
+                _popup.hide();
             }
         }, MouseOutEvent.getType());
     }

@@ -67,9 +67,12 @@ public class DrillToProfilingResultSelectHandler {
 
         final String metricLabel = _item.getSeries().getLabel();
 
-        final Date date = _timelineData.getRows().get(_item.getSeriesIndex()).getDate();
-        final String resultFilePath = _timelineData.getRows().get(_item.getSeriesIndex()).getResultFilePath();
+        final Integer index = _item.getDataIndex();
+        GWT.log("Item index: " + index);
+        
+        final Date date = _timelineData.getRows().get(index).getDate();
         final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT).format(date);
+        final String resultFilePath = _timelineData.getRows().get(index).getResultFilePath();
 
         final String analyzerDescriptorName = getAnalyzerDescriptorName();
         final String bookmark = createResultUrlBookmark(analyzerDescriptorName);

@@ -28,6 +28,8 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +38,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ResultDaoImpl implements ResultDao {
-    
+
     private final TenantContextFactory _tenantContextFactory;
 
     @Autowired
@@ -47,13 +49,37 @@ public class ResultDaoImpl implements ResultDao {
     @Override
     public List<RepositoryFile> getResultsForJob(TenantIdentifier tenantIdentifier, JobIdentifier job) {
         final TenantContext context = _tenantContextFactory.getContext(tenantIdentifier.getId());
-
         final RepositoryFolder resultsFolder = context.getResultFolder();
-
         final String jobName = job.getName();
 
-        final List<RepositoryFile> files = resultsFolder.getFiles(jobName,
-                FileFilters.ANALYSIS_RESULT_SER.getExtension());
+        return getResultsForJob(jobName, resultsFolder);
+    }
+
+    protected static List<RepositoryFile> getResultsForJob(String jobName, RepositoryFolder resultsFolder) {
+
+        final String extension = FileFilters.ANALYSIS_RESULT_SER.getExtension();
+        final String prefix = jobName + "-";
+
+        final List<RepositoryFile> candidatesByFilename = resultsFolder.getFiles(prefix, extension);
+
+        final List<RepositoryFile> files = CollectionUtils.filter(candidatesByFilename,
+                new Predicate<RepositoryFile>() {
+                    @Override
+                    public Boolean eval(RepositoryFile file) {
+                        // check that the remainding part of the file is ONLY a
+                        // timestamp - or else it might be a name conflict
+                        // between similarly named jobs.
+                        String timestampPart = file.getName();
+                        timestampPart = timestampPart.substring(prefix.length());
+                        timestampPart = timestampPart.substring(0, timestampPart.length() - extension.length());
+                        try {
+                            Long.parseLong(timestampPart);
+                            return true;
+                        } catch (NumberFormatException e) {
+                            return false;
+                        }
+                    }
+                });
 
         return files;
     }

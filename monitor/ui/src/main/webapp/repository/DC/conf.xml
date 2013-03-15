@@ -1,21 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?><configuration xmlns="http://eobjects.org/analyzerbeans/configuration/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
 	<datastore-catalog>
-		<jdbc-datastore name="orderdb" description="DataCleaner sample database, containing an example data warehouse with orders, customers, products, employees etc.">
+		<jdbc-datastore description="DataCleaner sample database, containing an example data warehouse with orders, customers, products, employees etc." name="orderdb">
 			<url>jdbc:hsqldb:res:orderdb</url>
 			<driver>org.hsqldb.jdbcDriver</driver>
 			<username>SA</username>
-			<password></password>
+			<password/>
 		</jdbc-datastore>
 		
-		<csv-datastore name="Vendor list" description="A growing list of known product vendor names, used as a reference dictionary in the example product profiling job to ensure that vendor names are correctly filled and spelled.">
+		<csv-datastore description="A growing list of known product vendor names, used as a reference dictionary in the example product profiling job to ensure that vendor names are correctly filled and spelled." name="Vendor list">
 			<filename>reference-data/vendor_dictionary.txt</filename>
 		</csv-datastore>
 
-		<pojo-datastore name="Contributors"
-			description="A simple example datastore with a (limited) selection of contributors to the DataCleaner open source project.">
+		<pojo-datastore description="A simple example datastore with a (limited) selection of contributors to the DataCleaner open source project." name="Contributors">
 			<schema-name>contributors</schema-name>
 			<table>
 				<name>Companies</name>
@@ -82,7 +79,7 @@
 						<v>Stefan Janssen</v>
 						<v>[stefan.janssen@humaninference.com]</v>
 						<v>The Netherlands</v>
-						<v />
+						<v/>
 						<v>1</v>
 					</row>
 					<row>
@@ -90,7 +87,7 @@
 						<v>Ankit Kumar</v>
 						<v>[ankit.kumar@humaninference.com]</v>
 						<v>The Netherlands</v>
-						<v />
+						<v/>
 						<v>1</v>
 					</row>
 					<row>
@@ -98,7 +95,7 @@
 						<v>Nancy Sharma</v>
 						<v>[nsharma@xebia.com]</v>
 						<v>India</v>
-						<v />
+						<v/>
 						<v>2</v>
 					</row>
 					<row>
@@ -122,7 +119,7 @@
 						<v>Swapnil Dubey</v>
 						<v>[sdubey@xebia.com]</v>
 						<v>India</v>
-						<v />
+						<v/>
 						<v>2</v>
 					</row>
 					<row>
@@ -130,13 +127,18 @@
 						<v>Nikhil Srivastava</v>
 						<v>[nsrivastava@xebia.com]</v>
 						<v>India</v>
-						<v />
+						<v/>
 						<v>2</v>
 					</row>
 				</rows>
 			</table>
 		</pojo-datastore>
-	</datastore-catalog>
+	<salesforce-datastore description="Connects to the web services of Salesforce.com" name="Salesforce.com">
+<username>f.bebseler@21demo.com</username>
+<password>Dertig=30</password>
+<security-token>QalEQQdpWymJCmDqkJ2wsz7mU</security-token>
+</salesforce-datastore>
+</datastore-catalog>
 
 	<reference-data-catalog>
 		<dictionaries>
@@ -149,15 +151,13 @@
 		</synonym-catalogs>
 	</reference-data-catalog>
 
-	<custom-taskrunner
-		class-name="org.eobjects.datacleaner.monitor.configuration.SharedTaskRunner" />
+	<custom-taskrunner class-name="org.eobjects.datacleaner.monitor.configuration.SharedTaskRunner"/>
 
 	<storage-provider>
-		<in-memory max-rows-threshold="500" />
+		<in-memory max-rows-threshold="500"/>
 	</storage-provider>
 
-	<custom-descriptor-provider
-		class-name="org.eobjects.datacleaner.monitor.configuration.SharedDescriptorProvider" />
+	<custom-descriptor-provider class-name="org.eobjects.datacleaner.monitor.configuration.SharedDescriptorProvider"/>
 
 
 </configuration>

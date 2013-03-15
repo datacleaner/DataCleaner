@@ -60,7 +60,7 @@ public final class DefaultMetricValues implements MetricValues {
         final List<AnalyzerJob> analyzerJobs = new ArrayList<AnalyzerJob>(metricCount);
         final List<MetricDescriptor> metricDescriptors = new ArrayList<MetricDescriptor>(metricCount);
         final List<MetricParameters> metricParameters = new ArrayList<MetricParameters>(metricCount);
-        MetricValueUtils metricValueUtils = new MetricValueUtils();
+        final MetricValueUtils metricValueUtils = new MetricValueUtils();
 
         for (MetricIdentifier metricIdentifier : _metricIdentifiers) {
             final AnalyzerJob analyzerJob = metricValueUtils.getAnalyzerJob(metricIdentifier, _analysisJob);

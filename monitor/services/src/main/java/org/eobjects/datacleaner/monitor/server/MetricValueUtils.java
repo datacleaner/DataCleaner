@@ -54,7 +54,17 @@ public class MetricValueUtils {
 
     public AnalyzerResult getResult(final AnalysisResult analysisResult, final AnalyzerJob analyzerJob,
             final MetricIdentifier metricIdentifier) {
-        AnalyzerResult result = analysisResult.getResult(analyzerJob);
+        AnalyzerResult result = null;
+        try {
+            result = analysisResult.getResult(analyzerJob);
+        } catch (Exception e) {
+            // We are extra careful here because there has been a history of
+            // bugs in proper retrieving analyzerJobs, related to comparison of
+            // MetaModel schema objects which are deserialized etc.
+            if (logger.isWarnEnabled()) {
+                logger.warn("An error occurred while retrieving the AnalyzerResult of : " + analyzerJob, e);
+            }
+        }
         if (result == null) {
             logger.debug("Could not resolve AnalyzerResult using key={}, reiterating using non-exact matching",
                     analyzerJob);
@@ -149,7 +159,8 @@ public class MetricValueUtils {
         }
 
         final AnalyzerJobHelper analyzerJobHelper = new AnalyzerJobHelper(analysisJob);
-        final AnalyzerJob analyzerJob = analyzerJobHelper.getAnalyzerJob(metricIdentifier.getAnalyzerDescriptorName(), metric.getAnalyzerName(), metric.getAnalyzerInputName());
+        final AnalyzerJob analyzerJob = analyzerJobHelper.getAnalyzerJob(metricIdentifier.getAnalyzerDescriptorName(),
+                metric.getAnalyzerName(), metric.getAnalyzerInputName());
         return analyzerJob;
     }
 

@@ -37,107 +37,115 @@ import org.eobjects.metamodel.schema.Table;
 
 public class DatastoreOutputWriterFactoryTest extends TestCase {
 
-	private static final File outputDir = new File("target/test-output");
-	private boolean _datastoreCreated = false;
-	private Datastore _datastore;
-	private Exception _exception;
+    private static final File OUTPUT_DIR = new File("target/test-output");
+    
+    private boolean _datastoreCreated = false;
+    private volatile Exception _exception;
+    private Datastore _datastore;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		if (outputDir.exists()) {
-			File[] files = outputDir.listFiles();
-			for (File file : files) {
-				file.delete();
-			}
-		}
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (OUTPUT_DIR.exists()) {
+            File[] files = OUTPUT_DIR.listFiles();
+            for (File file : files) {
+                file.delete();
+            }
+        }
+        _exception = null;
+    }
 
-	public void testMultiThreadedWriting() throws Exception {
-		final AtomicInteger datastoreCount = new AtomicInteger();
-		final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
+    public void testMultiThreadedWriting() throws Exception {
+        final AtomicInteger datastoreCount = new AtomicInteger();
+        final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
 
-		final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
+        final DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
 
-			@Override
-			public synchronized void createDatastore(Datastore datastore) {
-				if (_datastore != null) {
-					assertEquals(_datastore, datastore);
-				}
-				_datastore = datastore;
-				datastoreCount.incrementAndGet();
-			}
-		};
+            @Override
+            public synchronized void createDatastore(Datastore datastore) {
+                if (_datastore != null) {
+                    assertEquals(_datastore, datastore);
+                }
+                _datastore = datastore;
+                datastoreCount.incrementAndGet();
+            }
+        };
 
-		final InputColumn<?>[] columns = scenarioHelper.getColumns().toArray(new InputColumn[0]);
+        final InputColumn<?>[] columns = scenarioHelper.getColumns().toArray(new InputColumn[0]);
 
-		// creating 9 similar writers that all write at the same time
-		Thread[] threads = new Thread[9];
-		for (int i = 0; i < threads.length; i++) {
-			threads[i] = new Thread() {
-				@Override
-				public void run() {
-					try {
-						OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "ds",
-								"tab", false, columns);
-						scenarioHelper.writeExampleData(writer);
-					} catch (Exception e) {
-						_exception = e;
-					}
-				};
-			};
-		}
-		for (int i = 0; i < threads.length; i++) {
-			threads[i].start();
-		}
-		for (int i = 0; i < threads.length; i++) {
-			threads[i].join();
-		}
+        // creating 9 similar writers that all write at the same time
+        Thread[] threads = new Thread[9];
+        for (int i = 0; i < threads.length; i++) {
+            threads[i] = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        OutputWriter writer = DatastoreOutputWriterFactory.getWriter(OUTPUT_DIR, creationDelegate, "ds",
+                                "tab", false, columns);
+                        scenarioHelper.writeExampleData(writer);
+                    } catch (RuntimeException e) {
+                        _exception = e;
+                    }
+                };
+            };
+        }
+        for (int i = 0; i < threads.length; i++) {
+            threads[i].start();
+        }
+        for (int i = 0; i < threads.length; i++) {
+            threads[i].join();
+        }
 
-		if (_exception != null) {
-			throw _exception;
-		}
-		assertEquals(9, datastoreCount.get());
+        if (_exception != null) {
+            throw _exception;
+        }
+        assertEquals(9, datastoreCount.get());
 
-		assertNotNull(_datastore);
-		DatastoreConnection dataContextProvider = _datastore.openConnection();
-		DataContext dc = dataContextProvider.getDataContext();
-		dc.refreshSchemas();
-		String[] tableNames = dc.getDefaultSchema().getTableNames();
-		Arrays.sort(tableNames);
+        assertNotNull(_datastore);
+        DatastoreConnection connection = _datastore.openConnection();
+        try {
+            DataContext dc = connection.getDataContext();
+            dc.refreshSchemas();
+            String[] tableNames = dc.getDefaultSchema().getTableNames();
+            Arrays.sort(tableNames);
 
-		assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]", Arrays.toString(tableNames));
-	}
+            assertEquals("[TAB_1, TAB_2, TAB_3, TAB_4, TAB_5, TAB_6, TAB_7, TAB_8, TAB_9]", Arrays.toString(tableNames));
+        } finally {
+            connection.close();
+        }
+    }
 
-	public void testFullScenario() throws Exception {
-		final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
+    public void testFullScenario() throws Exception {
+        final OutputWriterScenarioHelper scenarioHelper = new OutputWriterScenarioHelper();
 
-		DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
+        DatastoreCreationDelegate creationDelegate = new DatastoreCreationDelegate() {
 
-			@Override
-			public void createDatastore(Datastore datastore) {
-				_datastoreCreated = true;
-				assertEquals("my datastore", datastore.getName());
+            @Override
+            public void createDatastore(Datastore datastore) {
+                _datastoreCreated = true;
+                assertEquals("my datastore", datastore.getName());
 
-				DatastoreConnection con = datastore.openConnection();
-				DataContext dc = con.getDataContext();
+                DatastoreConnection con = datastore.openConnection();
+                try {
+                    DataContext dc = con.getDataContext();
 
-				Table table = dc.getDefaultSchema().getTables()[0];
-				Query q = dc.query().from(table).select(table.getColumns()).toQuery();
-				DataSet dataSet = dc.executeQuery(q);
+                    Table table = dc.getDefaultSchema().getTables()[0];
+                    Query q = dc.query().from(table).select(table.getColumns()).toQuery();
+                    DataSet dataSet = dc.executeQuery(q);
 
-				scenarioHelper.performAssertions(dataSet, true);
+                    scenarioHelper.performAssertions(dataSet, true);
+                } finally {
+                    con.close();
+                }
+            }
+        };
+        OutputWriter writer = DatastoreOutputWriterFactory.getWriter(OUTPUT_DIR, creationDelegate, "my datastore",
+                "my dataset", scenarioHelper.getColumns().toArray(new InputColumn[0]));
 
-				con.close();
-			}
-		};
-		OutputWriter writer = DatastoreOutputWriterFactory.getWriter(outputDir, creationDelegate, "my datastore",
-				"my dataset", scenarioHelper.getColumns().toArray(new InputColumn[0]));
+        scenarioHelper.writeExampleData(writer);
 
-		scenarioHelper.writeExampleData(writer);
+        assertEquals("my_dataset", DatastoreOutputWriterFactory.getActualTableName(writer));
 
-		assertEquals("my_dataset", DatastoreOutputWriterFactory.getActualTableName(writer));
-
-		assertTrue(_datastoreCreated);
-	}
+        assertTrue(_datastoreCreated);
+    }
 }

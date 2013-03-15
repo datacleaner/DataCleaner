@@ -26,33 +26,33 @@ import org.eobjects.analyzer.util.StringUtils;
 
 final class DatastoreOutputUtils {
 
-	private DatastoreOutputUtils() {
-		// prevent instantiation
-	}
+    private DatastoreOutputUtils() {
+        // prevent instantiation
+    }
 
-	public static String safeName(String str) {
-		if (StringUtils.isNullOrEmpty(str)) {
-			throw new IllegalArgumentException("Cannot create safe name from empty/null string: " + str);
-		}
+    public static String safeName(String str) {
+        if (StringUtils.isNullOrEmpty(str)) {
+            throw new IllegalArgumentException("Cannot create safe name from empty/null string: " + str);
+        }
 
-		CharIterator ci = new CharIterator(str);
-		while (ci.hasNext()) {
-			ci.next();
-			if (!ci.isLetter() && !ci.isDigit()) {
-				// replaces unexpected chars with underscore
-				ci.set('_');
-			}
-		}
+        CharIterator ci = new CharIterator(str);
+        while (ci.hasNext()) {
+            ci.next();
+            if (!ci.isLetter() && !ci.isDigit()) {
+                // replaces unexpected chars with underscore
+                ci.set('_');
+            }
+        }
 
-		str = ci.toString();
-		if (!Character.isLetter(str.charAt(0))) {
-			str = "db" + str;
-		}
-		return str;
-	}
+        str = ci.toString();
+        if (!Character.isLetter(str.charAt(0))) {
+            str = "db" + str;
+        }
+        return str;
+    }
 
-	public static String getJdbcUrl(File directory, String dbName) {
-		final String urlSuffix = directory.getPath() + File.separatorChar + safeName(dbName);
-		return "jdbc:h2:" + urlSuffix;
-	}
+    public static String getJdbcUrl(File directory, String dbName) {
+        final String urlSuffix = directory.getPath() + File.separatorChar + safeName(dbName);
+        return "jdbc:h2:" + urlSuffix + ";FILE_LOCK=FS";
+    }
 }

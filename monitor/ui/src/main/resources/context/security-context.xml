@@ -14,7 +14,7 @@
 	<http pattern="/favicon.ico" security="none" />
 	<http pattern="/login.jsf" security="none" />
 	<http pattern="/images/**" security="none" />
-	<http pattern="/styles.css" security="none" />
+	<http pattern="/*.css" security="none" />
 
 	<!-- HTTP basic authentication for the repository RESTful services -->
 	<http pattern="/repository/**" realm="DataCleaner monitor">

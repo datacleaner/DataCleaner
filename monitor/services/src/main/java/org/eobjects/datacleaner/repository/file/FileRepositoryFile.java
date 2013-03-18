@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link RepositoryFile} implementation based on a local file.
  */
-final class FileRepositoryFile implements RepositoryFile {
+public final class FileRepositoryFile implements RepositoryFile {
 
     private static final Logger logger = LoggerFactory.getLogger(FileRepositoryFile.class);
 

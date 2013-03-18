@@ -103,10 +103,16 @@ public class WizardServiceImpl implements WizardService {
 
     @Override
     public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant) {
-        List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
+        
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(tenantContext, createSessionFunc());
+        
+        final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
         for (DatastoreWizard datastoreWizard : getAvailableDatastoreWizards()) {
-            WizardIdentifier wizardIdentifier = createDatastoreWizardIdentifier(datastoreWizard);
-            result.add(wizardIdentifier);
+            if (datastoreWizard.isApplicableTo(context)) {
+                WizardIdentifier wizardIdentifier = createDatastoreWizardIdentifier(datastoreWizard);
+                result.add(wizardIdentifier);
+            }
         }
         return result;
     }
@@ -294,19 +300,18 @@ public class WizardServiceImpl implements WizardService {
         final TenantContext tenantContext = wizardContext.getTenantContext();
         final RepositoryFolder jobFolder = tenantContext.getJobFolder();
         final String jobName = wizardContext.getJobName();
-        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(),
-                new Action<OutputStream>() {
-                    @Override
-                    public void run(OutputStream out) throws Exception {
+        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), new Action<OutputStream>() {
+            @Override
+            public void run(OutputStream out) throws Exception {
 
-                        final AnalysisJobBuilder jobBuilder = session.createJob();
-                        final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
+                final AnalysisJobBuilder jobBuilder = session.createJob();
+                final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
 
-                        final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
-                        final JaxbJobWriter writer = new JaxbJobWriter(configuration);
-                        writer.write(analysisJob, out);
-                    }
-                });
+                final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
+                final JaxbJobWriter writer = new JaxbJobWriter(configuration);
+                writer.write(analysisJob, out);
+            }
+        });
         return jobName;
     }
 

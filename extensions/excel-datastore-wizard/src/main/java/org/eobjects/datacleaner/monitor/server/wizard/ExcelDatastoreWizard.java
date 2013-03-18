@@ -45,4 +45,8 @@ public class ExcelDatastoreWizard implements DatastoreWizard {
         return new ExcelDatastoreWizardSession(context);
     }
 
+    @Override
+    public boolean isApplicableTo(DatastoreWizardContext context) {
+        return true;
+    }
 }

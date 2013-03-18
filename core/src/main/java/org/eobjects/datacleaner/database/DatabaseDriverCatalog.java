@@ -31,6 +31,8 @@ import org.eobjects.datacleaner.user.UserDatabaseDriver;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A catalog of metadata about database drivers and their current installation
@@ -42,6 +44,8 @@ import org.eobjects.metamodel.util.Predicate;
 public class DatabaseDriverCatalog implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseDriverCatalog.class);
 
     public static final String DATABASE_NAME_JDBC_ODBC_BRIDGE = "JDBC-ODBC bridge";
     public static final String DATABASE_NAME_TERADATA = "Teradata";
@@ -144,7 +148,7 @@ public class DatabaseDriverCatalog implements Serializable {
     private final UserPreferences _userPreferences;
 
     @Inject
-    protected DatabaseDriverCatalog(UserPreferences userPreferences) {
+    public DatabaseDriverCatalog(UserPreferences userPreferences) {
         _userPreferences = userPreferences;
     }
 
@@ -185,10 +189,12 @@ public class DatabaseDriverCatalog implements Serializable {
 
     public DatabaseDriverState getState(DatabaseDriverDescriptor databaseDescriptor) {
         String driverClassName = databaseDescriptor.getDriverClassName();
-        List<UserDatabaseDriver> drivers = _userPreferences.getDatabaseDrivers();
-        for (UserDatabaseDriver userDatabaseDriver : drivers) {
-            if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
-                return userDatabaseDriver.getState();
+        if (_userPreferences != null) {
+            List<UserDatabaseDriver> drivers = _userPreferences.getDatabaseDrivers();
+            for (UserDatabaseDriver userDatabaseDriver : drivers) {
+                if (userDatabaseDriver.getDriverClassName().equals(driverClassName)) {
+                    return userDatabaseDriver.getState();
+                }
             }
         }
         try {
@@ -197,6 +203,7 @@ public class DatabaseDriverCatalog implements Serializable {
         } catch (ClassNotFoundException e) {
             return DatabaseDriverState.NOT_INSTALLED;
         } catch (Exception e) {
+            logger.warn("Unexpected error occurred while initializing driver class: " + driverClassName, e);
             return DatabaseDriverState.INSTALLED_NOT_WORKING;
         }
     }

@@ -25,7 +25,24 @@ package org.eobjects.datacleaner.monitor.wizard.datastore;
  */
 public interface DatastoreWizard {
 
+    /**
+     * Gets the name of the wizard, as presented to the user when asked a
+     * question like: "what type of datastore do you wish to register".
+     * 
+     * @return
+     */
     public String getDisplayName();
+
+    /**
+     * Determines if a wizard is applicable to the initial settings, provided in
+     * the {@link DatastoreWizardContext}. This method allows a wizard to be
+     * applicable only to e.g. certain configurations, tenants or other
+     * circumstances.
+     * 
+     * @param context
+     * @return
+     */
+    public boolean isApplicableTo(DatastoreWizardContext context);
 
     /**
      * Gets an expected count of pages in this wizard. Since the amount of pages

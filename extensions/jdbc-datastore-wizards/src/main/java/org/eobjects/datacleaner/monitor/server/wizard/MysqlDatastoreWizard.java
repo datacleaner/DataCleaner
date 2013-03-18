@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.wizard;
 
+import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
@@ -46,4 +47,12 @@ public class MysqlDatastoreWizard implements DatastoreWizard {
                 + "&largeRowSizeThreshold=1024";
         return new JdbcDatastoreWizardSession(context, "org.mysql.jdbc.Driver", url);
     }
+
+    @Override
+    public boolean isApplicableTo(DatastoreWizardContext context) {
+        final DatabaseDriverCatalog catalog = new DatabaseDriverCatalog(null);
+        final boolean installed = catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MYSQL);
+        return installed;
+    }
+
 }

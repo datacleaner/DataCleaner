@@ -45,4 +45,8 @@ public class SugarCrmDatastoreWizard implements DatastoreWizard {
         return new SugarCrmDatastoreWizardSession(context);
     }
 
+    @Override
+    public boolean isApplicableTo(DatastoreWizardContext context) {
+        return true;
+    }
 }

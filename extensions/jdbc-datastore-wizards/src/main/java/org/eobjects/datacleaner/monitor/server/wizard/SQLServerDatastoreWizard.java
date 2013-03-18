@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.wizard;
 
+import org.eobjects.datacleaner.database.DatabaseDriverCatalog;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
@@ -44,5 +45,12 @@ public class SQLServerDatastoreWizard implements DatastoreWizard {
     public DatastoreWizardSession start(DatastoreWizardContext context) {
         final String url = "jdbc:jtds:sqlserver://<hostname>/<database>;useUnicode=true;characterEncoding=UTF-8";
         return new JdbcDatastoreWizardSession(context, "net.sourceforge.jtds.jdbc.Driver", url);
+    }
+
+    @Override
+    public boolean isApplicableTo(DatastoreWizardContext context) {
+        final DatabaseDriverCatalog catalog = new DatabaseDriverCatalog(null);
+        final boolean installed = catalog.isInstalled(DatabaseDriverCatalog.DATABASE_NAME_MICROSOFT_SQL_SERVER_JTDS);
+        return installed;
     }
 }

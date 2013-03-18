@@ -45,4 +45,8 @@ public class SalesforceDatastoreWizard implements DatastoreWizard {
         return new SalesforceDatastoreWizardSession(context);
     }
 
+    @Override
+    public boolean isApplicableTo(DatastoreWizardContext context) {
+        return true;
+    }
 }

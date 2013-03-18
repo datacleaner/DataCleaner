@@ -25,36 +25,39 @@ package org.eobjects.datacleaner.monitor.wizard.job;
  */
 public interface JobWizard {
 
-	/**
-	 * Determines if a wizard is applicable to the initial settings, provided in
-	 * the {@link JobWizardContext}. This method allows a wizard to be
-	 * applicable only to e.g. certain types of datastores, tenants or other
-	 * circumstances.
-	 */
-	public boolean isApplicableTo(JobWizardContext datastore);
+    /**
+     * Determines if a wizard is applicable to the initial settings, provided in
+     * the {@link JobWizardContext}. This method allows a wizard to be
+     * applicable only to e.g. certain types of datastores, tenants or other
+     * circumstances.
+     * 
+     * @param context
+     * @return
+     */
+    public boolean isApplicableTo(JobWizardContext context);
 
-	/**
-	 * Gets the display name of this wizard - this name will guide the user as
-	 * to what kind of job he is creating.
-	 * 
-	 * @return
-	 */
-	public String getDisplayName();
+    /**
+     * Gets the display name of this wizard - this name will guide the user as
+     * to what kind of job he is creating.
+     * 
+     * @return
+     */
+    public String getDisplayName();
 
-	/**
-	 * Gets an expected count of pages in this wizard. Since the amount of pages
-	 * can vary depending on different routes in a wizard, this number should
-	 * just represent the most "plain" scenario's number of pages.
-	 * 
-	 * @return
-	 */
-	public int getExpectedPageCount();
+    /**
+     * Gets an expected count of pages in this wizard. Since the amount of pages
+     * can vary depending on different routes in a wizard, this number should
+     * just represent the most "plain" scenario's number of pages.
+     * 
+     * @return
+     */
+    public int getExpectedPageCount();
 
-	/**
-	 * Starts the wizard
-	 * 
-	 * @param context
-	 * @return
-	 */
-	public JobWizardSession start(JobWizardContext context);
+    /**
+     * Starts the wizard
+     * 
+     * @param context
+     * @return
+     */
+    public JobWizardSession start(JobWizardContext context);
 }

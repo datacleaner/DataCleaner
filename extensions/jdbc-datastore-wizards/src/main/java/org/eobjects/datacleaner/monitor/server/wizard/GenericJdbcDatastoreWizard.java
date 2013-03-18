@@ -44,4 +44,9 @@ public class GenericJdbcDatastoreWizard implements DatastoreWizard {
     public DatastoreWizardSession start(DatastoreWizardContext context) {
         return new GenericJdbcDatastoreWizardSession(context);
     }
+
+    @Override
+    public boolean isApplicableTo(DatastoreWizardContext context) {
+        return true;
+    }
 }

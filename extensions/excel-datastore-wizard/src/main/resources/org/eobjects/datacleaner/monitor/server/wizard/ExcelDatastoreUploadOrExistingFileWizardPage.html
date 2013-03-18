@@ -1,0 +1,30 @@
+<div>
+
+	<p>Where is the Excel spreadsheet to add as a datastore?</p>
+
+	<div
+		style="margin: 10px; padding: 10px; background-color: #f4f4d3; border-radius: 5px;">
+		<input type="radio" name="source" value="existing"
+			id="source_radio_existing" /> <label for="location_radio_repository">The
+			file is already located on the server</label><br />
+
+		<p>
+			Use this option if you know the location of the file on the server.
+			For security reasons, only files with the suffix of <b>.xls</b> or <b>.xlsx</b>
+			will be accepted.
+		</p>
+	</div>
+
+	<div
+		style="margin: 10px; padding: 10px; background-color: #f4f4d3; border-radius: 5px;">
+		<input type="radio" name="source" value="upload"
+			id="source_radio_upload" /> <label for="source_radio_upload">I
+			want to upload the file to the server</label><br />
+
+		<div id="excel_spreadsheet_upload_div">
+			<input type="file" name="excel_spreadsheet_upload" /> <input type="button"
+				value="upload now"
+				onclick="window.uploadFile('excel_spreadsheet_upload');" />
+		</div>
+	</div>
+</div>

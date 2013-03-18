@@ -5,9 +5,9 @@
 		<artifactId>DataCleaner-extensions</artifactId>
 		<version>3.5-RC2-SNAPSHOT</version>
 	</parent>
-	<artifactId>DataCleaner-excel-datastore-wizards</artifactId>
+	<artifactId>DataCleaner-sugarcrm-datastore-wizard</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner - Excel datastore wizard extension</name>
+	<name>DataCleaner - SugarCRM datastore wizard extension</name>
 
 	<dependencies>
 		<dependency>

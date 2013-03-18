@@ -104,7 +104,34 @@
 			<type>war</type>
 		</dependency>
 
-		<!-- Extensions -->
+		<!-- Datastore wizard extensions -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-jdbc-datastores-wizards</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-csv-datastores-wizard</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-excel-datastores-wizard</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-salesforce-datastores-wizard</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-sugarcrm-datastores-wizard</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- Job wizard extensions -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
 			<artifactId>DataCleaner-quick-analysis-wizard</artifactId>

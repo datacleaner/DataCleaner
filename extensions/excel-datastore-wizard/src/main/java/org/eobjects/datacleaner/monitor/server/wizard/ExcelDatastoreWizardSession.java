@@ -23,6 +23,7 @@ import java.io.File;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
@@ -36,6 +37,8 @@ public class ExcelDatastoreWizardSession implements DatastoreWizardSession {
     private final DatastoreWizardContext _context;
 
     private String _filepath;
+    private String _name;
+    private String _description;
 
     public ExcelDatastoreWizardSession(DatastoreWizardContext context) {
         _context = context;
@@ -45,7 +48,7 @@ public class ExcelDatastoreWizardSession implements DatastoreWizardSession {
     public WizardPageController firstPageController() {
         return new ExcelDatastoreUploadOrExistingFileWizardPage(_context) {
             @Override
-            protected WizardPageController nextPageControllerUpload(String filename, final File tempFile) {
+            protected WizardPageController nextPageControllerUpload(final String filename, final File tempFile) {
                 return new ExcelDatastoreLocationWizardPage(_context, filename, true) {
 
                     @Override
@@ -60,7 +63,8 @@ public class ExcelDatastoreWizardSession implements DatastoreWizardSession {
 
                         FileHelper.copy(tempFile, file);
                         _filepath = filepath;
-                        return null;
+
+                        return createNameAndDescriptionWizardPage(filename);
                     }
                 };
             }
@@ -86,22 +90,38 @@ public class ExcelDatastoreWizardSession implements DatastoreWizardSession {
                         }
 
                         _filepath = filepath;
-                        return null;
+                        return createNameAndDescriptionWizardPage(file.getName());
                     }
                 };
             }
         };
     }
 
+    private WizardPageController createNameAndDescriptionWizardPage(String name) {
+        return new DatastoreNameAndDescriptionWizardPage(_context, 2, name) {
+            @Override
+            protected WizardPageController nextPageController(String name, String description) {
+                _name = name;
+                _description = description;
+                return null;
+            }
+        };
+    }
+
     @Override
     public Integer getPageCount() {
-        return 2;
+        return 3;
     }
 
     @Override
     public Element createDatastoreElement(DocumentBuilder documentBuilder) {
         final Document doc = documentBuilder.newDocument();
         final Element ds = doc.createElement("excel-datastore");
+
+        ds.setAttribute("name", _name);
+        if (!StringUtils.isNullOrEmpty(_description)) {
+            ds.setAttribute("description", _description);
+        }
 
         final Element filename = doc.createElement("filename");
         filename.setTextContent(_filepath);

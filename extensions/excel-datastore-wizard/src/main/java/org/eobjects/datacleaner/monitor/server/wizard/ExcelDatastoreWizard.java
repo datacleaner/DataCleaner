@@ -37,7 +37,7 @@ public class ExcelDatastoreWizard implements DatastoreWizard {
 
     @Override
     public int getExpectedPageCount() {
-        return 2;
+        return 3;
     }
 
     @Override

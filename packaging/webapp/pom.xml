@@ -107,27 +107,27 @@
 		<!-- Datastore wizard extensions -->
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-jdbc-datastores-wizards</artifactId>
+			<artifactId>DataCleaner-jdbc-datastore-wizards</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-csv-datastores-wizard</artifactId>
+			<artifactId>DataCleaner-csv-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-excel-datastores-wizard</artifactId>
+			<artifactId>DataCleaner-excel-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-salesforce-datastores-wizard</artifactId>
+			<artifactId>DataCleaner-salesforce-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eobjects.datacleaner</groupId>
-			<artifactId>DataCleaner-sugarcrm-datastores-wizard</artifactId>
+			<artifactId>DataCleaner-sugarcrm-datastore-wizard</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		

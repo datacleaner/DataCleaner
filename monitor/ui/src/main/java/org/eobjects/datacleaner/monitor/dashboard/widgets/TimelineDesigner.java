@@ -78,15 +78,16 @@ public class TimelineDesigner {
     private final boolean _isDashboardEditor;
 
     private final PopupPanel _popup;
-    
-    // the data point most recently hovered across (to compensate for 'too precise' clickhandler).
+
+    // the data point most recently hovered across (to compensate for 'too
+    // precise' clickhandler).
     private PlotItem _activePlotItem;
 
     interface Binder extends UiBinder<Widget, TimelineDesigner> {
     }
 
-    public TimelineDesigner(TimelineDefinition timelineDefinition, TimelineData timelineData,
-            TimelinePanel timelinePanel, boolean isDashboardEditor) {
+    public TimelineDesigner(TimelineDefinition timelineDefinition, TimelineData timelineData, TimelinePanel timelinePanel,
+            boolean isDashboardEditor) {
         _timelineDefinition = timelineDefinition;
         _timelineData = timelineData;
         _timelinePanel = timelinePanel;
@@ -212,8 +213,8 @@ public class TimelineDesigner {
         });
     }
 
-    private void createTimeLineAndLegendItems(ColorProvider colorProvider, PlotModel model,
-            final List<MetricIdentifier> metrics, int index) {
+    private void createTimeLineAndLegendItems(ColorProvider colorProvider, PlotModel model, final List<MetricIdentifier> metrics,
+            int index) {
         String color = metrics.get(index).getMetricColor();
         color = (color == "" || color == null) ? colorProvider.getNextColor() : color;
         addLegendItem(legendPanel, metrics, index, color);
@@ -221,8 +222,13 @@ public class TimelineDesigner {
         List<TimelineDataRow> rows = _timelineData.getRows();
 
         for (TimelineDataRow timelineDataRow : rows) {
-            series.add(DataPoint.of(timelineDataRow.getDate().getTime(), timelineDataRow.getMetricValues().get(index)
-                    .doubleValue()));
+            final Number value = timelineDataRow.getMetricValues().get(index);
+            final Date date = timelineDataRow.getDate();
+            if (value == null) {
+                GWT.log("No value at index no. " + index + " @ date: " + date);
+            } else {
+                series.add(DataPoint.of(date.getTime(), value.doubleValue()));
+            }
         }
     }
 
@@ -254,7 +260,7 @@ public class TimelineDesigner {
                     return;
                 }
                 _activePlotItem = item;
-                
+
                 final Integer dataIndex = item.getDataIndex();
                 final Date date = _timelineData.getRows().get(dataIndex).getDate();
                 final String formattedDate = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
@@ -278,8 +284,7 @@ public class TimelineDesigner {
         }, MouseOutEvent.getType());
     }
 
-    private void addLegendItem(final LegendPanel legendPanel, final List<MetricIdentifier> metrics, int index,
-            String color) {
+    private void addLegendItem(final LegendPanel legendPanel, final List<MetricIdentifier> metrics, int index, String color) {
         Legend legend = new Legend(metrics.get(index).getDisplayName(), color);
         legendPanel.addLegend(legend, new LegendClickHandler(metrics.get(index).getDisplayName(), metrics.get(index),
                 _timelinePanel, legend, _isDashboardEditor));

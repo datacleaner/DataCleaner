@@ -26,6 +26,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -39,8 +40,7 @@ public class SaveTimelineClickHandler implements ClickHandler {
     private final TenantIdentifier _tenantIdentifier;
     private final TimelinePanel _timelinePanel;
 
-    public SaveTimelineClickHandler(DashboardServiceAsync service, TenantIdentifier tenantIdentifier,
-            TimelinePanel timelinePanel) {
+    public SaveTimelineClickHandler(DashboardServiceAsync service, TenantIdentifier tenantIdentifier, TimelinePanel timelinePanel) {
         _service = service;
         _tenantIdentifier = tenantIdentifier;
         _timelinePanel = timelinePanel;
@@ -51,9 +51,13 @@ public class SaveTimelineClickHandler implements ClickHandler {
         final boolean create;
         TimelineIdentifier timelineIdentifier = _timelinePanel.getTimelineIdentifier();
         if (timelineIdentifier == null) {
-            // TODO: This is a bit too naive :P
-            String name = Window.prompt("Name of timeline?", "");
-            DashboardGroup timelineGroup = _timelinePanel.getTimelineGroupPanel().getTimelineGroup();;
+            final String name = Window.prompt("Name of timeline?", "");
+            if (name == null || name.trim().length() == 0) {
+                GWT.log("Not a valid timeline name: " + name);
+                _timelinePanel.setTimelineDefinitionChanged();
+                return;
+            }
+            final DashboardGroup timelineGroup = _timelinePanel.getTimelineGroupPanel().getTimelineGroup();
             timelineIdentifier = new TimelineIdentifier(name, null, timelineGroup);
             create = true;
         } else {
@@ -61,6 +65,8 @@ public class SaveTimelineClickHandler implements ClickHandler {
         }
         TimelineDefinition timelineDefinition = _timelinePanel.getTimelineDefinition();
 
+        _timelinePanel.setTimelineDefinitionUnchanged();
+        
         if (create) {
             _service.createTimelineDefinition(_tenantIdentifier, timelineIdentifier, timelineDefinition,
                     new DCAsyncCallback<TimelineIdentifier>() {

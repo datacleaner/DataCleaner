@@ -41,8 +41,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
  */
 public class TimelinePanel extends FlowPanel {
 
-    
-
     private final DashboardServiceAsync _service;
     private final LoadingIndicator _loadingIndicator;
     private final TenantIdentifier _tenant;
@@ -75,18 +73,11 @@ public class TimelinePanel extends FlowPanel {
         _saveButton.setTitle("Save timeline");
         _saveButton.addStyleName("SaveButton");
         _saveButton.addClickHandler(new SaveTimelineClickHandler(_service, _tenant, this));
-        _saveButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // disable button once saved
-                _saveButton.setEnabled(false);
-            }
-        });
 
         if (_timelineIdentifier != null) {
             // initially does not make sense to save an (unchanged) and
             // identifyable timeline.
-            _saveButton.setEnabled(false);
+            setTimelineDefinitionUnchanged();
         }
 
         _deleteButton = new Button();
@@ -180,7 +171,7 @@ public class TimelinePanel extends FlowPanel {
         _timelineDefinition = timelineDefinition;
         if (fireEvents) {
             if (timelineDefinition.isChanged()) {
-                _saveButton.setEnabled(true);
+                setTimelineDefinitionChanged();
             }
             setLoading();
             _service.getTimelineData(_tenant, timelineDefinition, new DCAsyncCallback<TimelineData>() {
@@ -211,8 +202,7 @@ public class TimelinePanel extends FlowPanel {
 
     private void renderChart() {
         remove(_loadingIndicator);
-        TimelineDesigner timeLineDesigner = new TimelineDesigner(_timelineDefinition, _timelineData, this,
-                _isDashboardEditor);
+        TimelineDesigner timeLineDesigner = new TimelineDesigner(_timelineDefinition, _timelineData, this, _isDashboardEditor);
         add(timeLineDesigner.createPlot());
         add(timeLineDesigner.getLegendPanel());
     }
@@ -237,8 +227,7 @@ public class TimelinePanel extends FlowPanel {
         copyButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel,
-                        _isDashboardEditor);
+                TimelinePanel copyPanel = new TimelinePanel(_tenant, _service, null, _timelineGroupPanel, _isDashboardEditor);
                 copyPanel.setTimelineDefinition(_timelineDefinition);
                 _timelineGroupPanel.add(copyPanel);
             }
@@ -276,6 +265,14 @@ public class TimelinePanel extends FlowPanel {
         if (isSaveTimelineActive) {
             _saveButton.setEnabled(true);
         }
+    }
+
+    public void setTimelineDefinitionChanged() {
+        _saveButton.setEnabled(true);
+    }
+
+    public void setTimelineDefinitionUnchanged() {
+        _saveButton.setEnabled(false);
     }
 
 }

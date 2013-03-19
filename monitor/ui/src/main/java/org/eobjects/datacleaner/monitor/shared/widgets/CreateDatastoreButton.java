@@ -38,7 +38,7 @@ public class CreateDatastoreButton extends Button implements ClickHandler {
     private final TenantIdentifier _tenant;
 
     public CreateDatastoreButton(TenantIdentifier tenant) {
-        super("New datastore");
+        super("Register datastore");
         _tenant = tenant;
 
         addStyleDependentName("ImageTextButton");

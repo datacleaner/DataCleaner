@@ -56,7 +56,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
     }
 
     public JobWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant, DatastoreIdentifier datastore) {
-        super("New job", service, tenant);
+        super("Build job", service, tenant);
         addStyleName("JobWizardPopupPanel");
 
         if (datastore == null) {
@@ -116,7 +116,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
 
     protected void showWizardSelection(final DatastoreIdentifier datastore) {
         setLoading();
-        setHeader("New job: " + datastore.getName());
+        setHeader("Build job: " + datastore.getName());
 
         _service.getJobWizardIdentifiers(_tenant, datastore, new DCAsyncCallback<List<WizardIdentifier>>() {
             @Override
@@ -131,7 +131,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
 
         final FlowPanel panel = new FlowPanel();
 
-        panel.add(new Label("Please select the job type:"));
+        panel.add(new Label("Please select the type of job to build:"));
 
         final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
 
@@ -174,7 +174,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                     if (radio.getValue().booleanValue()) {
                         final WizardIdentifier wizard = wizards.get(i);
                         setLoading();
-                        setHeader("New job: " + jobName);
+                        setHeader("Build job: " + jobName);
                         _service.startJobWizard(_tenant, wizard, datastore, jobName, createNextPageCallback());
                         return;
                     }
@@ -203,6 +203,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
         });
 
         final Anchor triggerAnchor = new Anchor("Run this job now");
+        triggerAnchor.addStyleName("TriggerJob");
         triggerAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -212,6 +213,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
         });
         
         final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
+        schedulingAnchor.addStyleName("ScheduleJob");
         schedulingAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

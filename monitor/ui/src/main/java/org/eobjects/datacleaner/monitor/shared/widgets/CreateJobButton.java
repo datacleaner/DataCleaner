@@ -39,7 +39,7 @@ public class CreateJobButton extends Button implements ClickHandler {
     private final TenantIdentifier _tenant;
 
     public CreateJobButton(TenantIdentifier tenant) {
-        super("New job");
+        super("Build job");
         _tenant = tenant;
 
         addStyleDependentName("ImageTextButton");

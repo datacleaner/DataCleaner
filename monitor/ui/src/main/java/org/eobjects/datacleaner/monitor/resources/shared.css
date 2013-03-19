@@ -252,6 +252,21 @@ div.center {
 .WizardFinishedPanel .gwt-Anchor {
 	margin: 10px;
 	display: block;
+	background-repeat: no-repeat;
+	padding-left: 22px;
+	line-height: 22px;
+}
+.WizardFinishedPanel .gwt-Anchor.QueryDatastore {
+	background-image: url("query.png");
+}
+.WizardFinishedPanel .gwt-Anchor.BuildJob {
+	background-image: url("job.png");
+}
+.WizardFinishedPanel .gwt-Anchor.TriggerJob {
+	background-image: url("trigger.png");
+}
+.WizardFinishedPanel .gwt-Anchor.ScheduleJob {
+	background-image: url("trigger_type_periodic.png");
 }
 
 .WizardFinishedPanel .gwt-Label {

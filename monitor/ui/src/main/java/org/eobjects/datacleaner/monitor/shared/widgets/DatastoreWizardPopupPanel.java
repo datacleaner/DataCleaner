@@ -44,7 +44,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
 
     public DatastoreWizardPopupPanel(WizardServiceAsync service, TenantIdentifier tenant) {
-        super("New datastore", service, tenant);
+        super("Register datastore", service, tenant);
         addStyleName("DatastoreWizardPopupPanel");
 
         service.getDatastoreWizardIdentifiers(tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
@@ -63,21 +63,25 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
     protected void showWizardSelection(final List<WizardIdentifier> wizards) {
         final FlowPanel panel = new FlowPanel();
 
-        panel.add(new Label("Please select the datastore type:"));
+        panel.add(new Label("Please select the type of datastore to register:"));
 
         final List<RadioButton> radios = new ArrayList<RadioButton>(wizards.size());
 
-        for (final WizardIdentifier wizard : wizards) {
-            final RadioButton radio = new RadioButton("wizardIdentifier", wizard.getDisplayName());
-            radio.addClickHandler(new ClickHandler() {
-                @Override
-                public void onClick(ClickEvent event) {
-                    setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
-                    setProgress(0);
-                }
-            });
-            panel.add(radio);
-            radios.add(radio);
+        if (wizards == null || wizards.isEmpty()) {
+            panel.add(new Label("(no datastore wizards available)"));
+        } else {
+            for (final WizardIdentifier wizard : wizards) {
+                final RadioButton radio = new RadioButton("wizardIdentifier", wizard.getDisplayName());
+                radio.addClickHandler(new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        setSteps(wizard.getExpectedPageCount() + getStepsBeforeWizardPages());
+                        setProgress(0);
+                    }
+                });
+                panel.add(radio);
+                radios.add(radio);
+            }
         }
 
         setNextClickHandler(new ClickHandler() {
@@ -112,6 +116,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
         });
 
         final Anchor jobWizardAnchor = new Anchor("Build a job for this datastore");
+        jobWizardAnchor.addStyleName("BuildJob");
         jobWizardAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -124,6 +129,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
         });
 
         final Anchor queryAnchor = new Anchor("Explore / query this datastore");
+        queryAnchor.addStyleName("QueryDatastore");
         queryAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

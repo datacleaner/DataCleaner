@@ -28,6 +28,11 @@ input[type="file"] {
 	line-height: 12px;
 }
 
+input[type="radio"], input[type="checkbox"] {
+	border: none;
+	background-color: transparent;
+}
+
 input[type="submit"], input[type="button"], button {
 	font-family: "Open Sans", sans-serif;
 	font-size: 0.9em;

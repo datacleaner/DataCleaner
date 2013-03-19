@@ -36,6 +36,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -78,11 +79,19 @@ public class ExecutionLogPanel extends Composite {
     @UiField(provided = true)
     LoadingIndicator loadingIndicator;
 
+    private boolean _showResultsWhenDone;
+    
     public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog) {
+        this(service, tenant, executionLog, false);
+    }
+
+    public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog, boolean showResultsWhenDone) {
         super();
 
         _service = service;
         _tenant = tenant;
+        _showResultsWhenDone = showResultsWhenDone;
+        
         loadingIndicator = new LoadingIndicator();
 
         initWidget(uiBinder.createAndBindUi(this));
@@ -144,6 +153,15 @@ public class ExecutionLogPanel extends Composite {
 
         if (executionStatus == ExecutionStatus.SUCCESS) {
             resultAnchor.setVisible(true);
+            
+            GWT.log("SUCCESS - show results: " + _showResultsWhenDone);
+            
+            if (_showResultsWhenDone) {
+                // show result in a popup window.
+                final String url = resultAnchor.getHref();
+                Window.open(url, "_blank", "location=no,width=770,height=400,toolbar=no,menubar=no");
+                GWT.log("Opened url in popup: " + url);
+            }
         } else {
             resultAnchor.setVisible(false);
         }

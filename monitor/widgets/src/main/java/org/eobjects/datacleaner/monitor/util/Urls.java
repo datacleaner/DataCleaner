@@ -57,6 +57,27 @@ public final class Urls {
      * @return
      */
     public static String createRelativeUrl(String relativePath) {
+        if (!GWT.isProdMode()) {
+            String gwtCodeServer = Window.Location.getParameter("gwt.codesvr");
+            if (gwtCodeServer != null) {
+                // build a proper URL with the 'gwt.codesvr' parameter in it.
+                final int historyTokenIndex = relativePath.indexOf("#");
+                final String historyToken;
+                if (historyTokenIndex != -1) {
+                    historyToken = "#" + relativePath.substring(historyTokenIndex + 1);
+                    relativePath = relativePath.substring(0, historyTokenIndex);
+                } else {
+                    historyToken = "";
+                }
+
+                final int questionMarkIndex = relativePath.indexOf("?");
+                if (questionMarkIndex == -1) {
+                    relativePath = relativePath + "?gwt.codesvr=" + gwtCodeServer + historyToken;
+                } else {
+                    relativePath = relativePath + "&gwt.codesvr=" + gwtCodeServer + historyToken;
+                }
+            }
+        }
         return CONTEXT_PATH + relativePath;
     }
 

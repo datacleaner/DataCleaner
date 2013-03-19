@@ -30,11 +30,13 @@ import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
+import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -189,17 +191,43 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
     }
 
     @Override
-    protected void wizardFinished(String jobName) {
+    protected void wizardFinished(final String jobName) {
         final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 // full page refresh.
-                Window.Location.reload();
+                final String url = Urls.createRelativeUrl("scheduling.jsf");
+                Window.Location.assign(url);
             }
         });
 
-        setContent(new Label("Job '" + jobName + "' created! Wizard finished."));
+        final Anchor triggerAnchor = new Anchor("Run this job now");
+        triggerAnchor.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final String url = Urls.createRelativeUrl("scheduling.jsf#trigger_" + jobName);
+                Window.Location.assign(url);
+            }
+        });
+        
+        final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
+        schedulingAnchor.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final String url = Urls.createRelativeUrl("scheduling.jsf#schedule_" + jobName);
+                Window.Location.assign(url);
+            }
+        });
+
+        final FlowPanel contentPanel = new FlowPanel();
+        contentPanel.addStyleName("WizardFinishedPanel");
+        contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
+        contentPanel.add(new Label("Close the dialog to return, or click one of the links below to start using the job."));
+        contentPanel.add(triggerAnchor);
+        contentPanel.add(schedulingAnchor);
+
+        setContent(contentPanel);
         getButtonPanel().clear();
         addButton(button);
         center();

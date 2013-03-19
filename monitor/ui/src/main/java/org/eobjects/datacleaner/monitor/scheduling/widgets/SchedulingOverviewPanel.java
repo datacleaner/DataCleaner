@@ -71,6 +71,7 @@ public class SchedulingOverviewPanel extends Composite {
             
             final String token = History.getToken();
             if ("startWizard".equals(token)) {
+                History.newItem("");
                 newJobButton.startWizard();
             }
         }

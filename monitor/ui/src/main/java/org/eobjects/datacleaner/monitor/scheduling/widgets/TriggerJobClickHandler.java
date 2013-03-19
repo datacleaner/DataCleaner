@@ -20,65 +20,53 @@
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
+import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 
 /**
- * The {@link ClickHandler} invoked when user clicks on a schedule expression.
+ * The {@link ClickHandler} invoked when the user clicks the 'trigger now'
+ * button of a job.
  */
-public class CustomizeScheduleClickHandler implements ClickHandler {
+public class TriggerJobClickHandler implements ClickHandler {
 
     private final SchedulingServiceAsync _service;
     private final TenantIdentifier _tenant;
     private final ScheduleDefinition _schedule;
-    private final SchedulePanel _schedulePanel;
 
-    public CustomizeScheduleClickHandler(SchedulePanel schedulePanel, SchedulingServiceAsync service,
-            TenantIdentifier tenant, ScheduleDefinition schedule) {
-        _schedulePanel = schedulePanel;
+    public TriggerJobClickHandler(SchedulingServiceAsync service, TenantIdentifier tenant, ScheduleDefinition schedule) {
         _service = service;
         _tenant = tenant;
         _schedule = schedule;
     }
-    
-    public void showSchedulingPopup() {
-        final DCPopupPanel popup = new DCPopupPanel("Customize schedule");
 
-        final CustomizeSchedulePanel customizeSchedulePanel = new CustomizeSchedulePanel(_service, _tenant, _schedule);
+    public void showExecutionPopup(final boolean showResultsWhenDone) {
+        final DCPopupPanel popupPanel = new DCPopupPanel("Execute job");
+        popupPanel.setWidget(new LoadingIndicator());
+        popupPanel.addButton(new CancelPopupButton(popupPanel, "Close"));
+        popupPanel.center();
+        popupPanel.show();
 
-        final Button saveButton = new Button("Save schedule");
-        saveButton.addClickHandler(new ClickHandler() {
+        _service.triggerExecution(_tenant, _schedule.getJob(), new DCAsyncCallback<ExecutionLog>() {
             @Override
-            public void onClick(ClickEvent event) {
-                ScheduleDefinition updatedSchedule = customizeSchedulePanel.getUpdatedSchedule();
-                _service.updateSchedule(_tenant, updatedSchedule, new DCAsyncCallback<ScheduleDefinition>() {
-                    @Override
-                    public void onSuccess(ScheduleDefinition result) {
-                        _schedulePanel.updateScheduleWidgets();
-                        popup.hide();
-                    }
-                });
+            public void onSuccess(ExecutionLog result) {
+                final ExecutionLogPanel panel = new ExecutionLogPanel(_service, _tenant, result, showResultsWhenDone);
+                popupPanel.setWidget(panel);
+                popupPanel.center();
             }
         });
-
-        popup.setWidget(customizeSchedulePanel);
-
-        popup.addButton(saveButton);
-        popup.addButton(new CancelPopupButton(popup));
-
-        popup.center();
-        popup.show();
     }
 
     @Override
     public void onClick(ClickEvent event) {
-        showSchedulingPopup();
+        showExecutionPopup(false);
     }
+
 }

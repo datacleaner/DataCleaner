@@ -50,6 +50,7 @@ public class DatastoresEntryPoint implements EntryPoint {
             
             String token = History.getToken();
             if ("startWizard".equals(token)) {
+                History.newItem("");
                 button.startWizard();
             }
         }

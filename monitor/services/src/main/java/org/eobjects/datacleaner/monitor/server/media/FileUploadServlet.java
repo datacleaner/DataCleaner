@@ -96,13 +96,14 @@ public class FileUploadServlet extends HttpServlet {
                     final String sessionKey = "file_upload_" + index;
                     final File file = item.getStoreLocation();
 
-                    logger.info("File '{}' uploaded to temporary location: {}", item.getName(), file);
+                    String filename = toFilename(item.getName());
+                    logger.info("File '{}' uploaded to temporary location: {}", filename, file);
 
                     session.setAttribute(sessionKey, file);
 
                     final Map<String, String> resultItem = new LinkedHashMap<String, String>();
                     resultItem.put("field_name", item.getFieldName());
-                    resultItem.put("file_name", item.getName());
+                    resultItem.put("file_name", filename);
                     resultItem.put("content_type", item.getContentType());
                     resultItem.put("size", Long.toString(item.getSize()));
                     resultItem.put("session_key", sessionKey);
@@ -131,6 +132,23 @@ public class FileUploadServlet extends HttpServlet {
         // write result as JSON
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.writeValue(resp.getOutputStream(), resultMap);
+    }
+
+    protected static String toFilename(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.endsWith("/") || name.endsWith("\\")) {
+            final String substr = name.substring(0, name.length() - 1);
+            return toFilename(substr);
+        }
+        int index1 = name.lastIndexOf('\\');
+        int index2 = name.lastIndexOf('/');
+        int index = Math.max(index1, index2);
+        if (index != -1) {
+            return name.substring(index + 1);
+        }
+        return name;
     }
 
     /**

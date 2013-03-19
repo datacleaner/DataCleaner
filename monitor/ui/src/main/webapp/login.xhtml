@@ -87,6 +87,19 @@
 			</div>
 
 			<div class="login_demo_accounts_panel">
+				<c:if test="#{not empty param.error}">
+					<div class="warning">
+						Your login attempt was unsuccessful,<br/>
+						please try again.
+					</div>
+					<c:if test="#{not empty param.debug}">
+						<div class="warning">
+							#{SPRING_SECURITY_LAST_EXCEPTION.class.simpleName}:
+							#{SPRING_SECURITY_LAST_EXCEPTION.message}
+						</div>
+					</c:if>
+				</c:if>
+				
 				<h3 class="login_panel_header">Demo accounts</h3>
 				<div class="login_panel_content">
 

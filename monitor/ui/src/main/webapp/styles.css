@@ -392,6 +392,14 @@ img.scalable_background {
 	z-index: 1000;
 }
 
+.login_demo_accounts_panel .warning {
+	text-align: left;
+	padding-left: 40px;
+	margin-bottom: 30px; 
+	color: red;
+	font-size: 0.9em;
+}
+
 h3.login_panel_header {
 	text-align: left;
 	background-image: url("images/user.png");

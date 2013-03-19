@@ -31,7 +31,7 @@
 
 		<intercept-url pattern="/**" access="ROLE_USER" />
 
-		<form-login login-page="/login.jsf" login-processing-url="/j_spring_security_check"
+		<form-login login-page="/login.jsf" authentication-failure-url="/login.jsf?error=true" login-processing-url="/j_spring_security_check"
 			username-parameter="j_username" password-parameter="j_password"
 			default-target-url="/index.html" />
 		<logout logout-url="/logout" />

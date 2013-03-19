@@ -111,6 +111,11 @@ a:hover {
 	border: none;
 }
 
+.gwt-PopupPanelGlass {
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
+
 /*
  * General purpose style modifiers
  */

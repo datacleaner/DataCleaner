@@ -52,8 +52,23 @@ public class MetricValueUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(MetricValueUtils.class);
 
+    /**
+     * Gets the {@link AnalyzerResult} from an {@link AnalysisResult} object,
+     * matching a particular {@link AnalyzerJob}. Unlike the plain
+     * {@link AnalysisResult#getResult(ComponentJob)} method, this method will
+     * apply fuzzy logic to identify the right component, to overcome
+     * serialization and deserialization differences.
+     * 
+     * @param analysisResult
+     * @param analyzerJob
+     * @param metricIdentifier
+     * @return
+     * @throws IllegalArgumentException
+     *             if it was not possible to identify a proper
+     *             {@link AnalyzerResult} based on the parameters.
+     */
     public AnalyzerResult getResult(final AnalysisResult analysisResult, final AnalyzerJob analyzerJob,
-            final MetricIdentifier metricIdentifier) {
+            final MetricIdentifier metricIdentifier) throws IllegalArgumentException {
         AnalyzerResult result = null;
         try {
             result = analysisResult.getResult(analyzerJob);
@@ -66,8 +81,7 @@ public class MetricValueUtils {
             }
         }
         if (result == null) {
-            logger.debug("Could not resolve AnalyzerResult using key={}, reiterating using non-exact matching",
-                    analyzerJob);
+            logger.debug("Could not resolve AnalyzerResult using key={}, reiterating using non-exact matching", analyzerJob);
             result = getResultFuzzy(analysisResult, analyzerJob, metricIdentifier);
         } else {
             logger.debug("Resolved AnalyzerResult using key={}", analyzerJob);
@@ -76,13 +90,13 @@ public class MetricValueUtils {
     }
 
     private AnalyzerResult getResultFuzzy(final AnalysisResult analysisResult, final AnalyzerJob analyzerJob,
-            final MetricIdentifier metricIdentifier) {
+            final MetricIdentifier metricIdentifier) throws IllegalArgumentException {
         Collection<ComponentJob> componentJobs = analysisResult.getResultMap().keySet();
 
         List<AnalyzerJob> candidates = CollectionUtils2.filterOnClass(componentJobs, AnalyzerJob.class);
 
         // filter analyzers of the corresponding type
-        candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
+        candidates = CollectionUtils.filter(candidates, new Predicate<AnalyzerJob>() {
             @Override
             public Boolean eval(AnalyzerJob o) {
                 final String actualDescriptorName = o.getDescriptor().getDisplayName();
@@ -108,10 +122,9 @@ public class MetricValueUtils {
         candidates = CollectionUtils2.refineCandidates(candidates, new Predicate<AnalyzerJob>() {
             @Override
             public Boolean eval(AnalyzerJob o) {
-                final String actualAnalyzerInputNames = CollectionUtils.map(o.getInput(), new HasNameMapper())
+                final String actualAnalyzerInputNames = CollectionUtils.map(o.getInput(), new HasNameMapper()).toString();
+                final String metricAnalyzerInputNames = CollectionUtils.map(analyzerJob.getInput(), new HasNameMapper())
                         .toString();
-                final String metricAnalyzerInputNames = CollectionUtils
-                        .map(analyzerJob.getInput(), new HasNameMapper()).toString();
                 return metricAnalyzerInputNames.equals(actualAnalyzerInputNames);
             }
         });
@@ -143,8 +156,8 @@ public class MetricValueUtils {
             int candidateHash = candidate.hashCode();
             int keyHash = analyzerJob.hashCode();
             boolean equals = candidate.equals(analyzerJob);
-            logger.debug("Result of fuzzy result lookup: Equals={}, CandidateHash={}, KeyHash={}", new Object[] {
-                    equals, candidateHash, keyHash });
+            logger.debug("Result of fuzzy result lookup: Equals={}, CandidateHash={}, KeyHash={}", new Object[] { equals,
+                    candidateHash, keyHash });
         }
 
         return analysisResult.getResult(candidate);
@@ -198,8 +211,8 @@ public class MetricValueUtils {
         final MetricDescriptor metric = analyzerDescriptor.getResultMetric(metricIdentifier.getMetricDescriptorName());
 
         if (metric == null) {
-            logger.error("Did not find any metric descriptors with name '{}' in {}",
-                    metricIdentifier.getMetricDescriptorName(), analyzerDescriptor.getResultClass());
+            logger.error("Did not find any metric descriptors with name '{}' in {}", metricIdentifier.getMetricDescriptorName(),
+                    analyzerDescriptor.getResultClass());
         }
         return metric;
     }
@@ -214,8 +227,8 @@ public class MetricValueUtils {
         return variableName;
     }
 
-    public MetricParameters getParameters(final MetricIdentifier metricIdentifier,
-            final MetricDescriptor metricDescriptor, AnalyzerJob analyzerJob) {
+    public MetricParameters getParameters(final MetricIdentifier metricIdentifier, final MetricDescriptor metricDescriptor,
+            AnalyzerJob analyzerJob) {
         final String queryString;
         final InputColumn<?> queryInputColumn;
 
@@ -249,7 +262,20 @@ public class MetricValueUtils {
 
     public Number getMetricValue(MetricIdentifier metricIdentifier, MetricDescriptor metric, AnalysisJob analysisJob,
             AnalyzerJob job, AnalysisResult analysisResult, MetricParameters parameters) {
-        final AnalyzerResult analyzerResult = getResult(analysisResult, job, metricIdentifier);
+        final AnalyzerResult analyzerResult;
+
+        try {
+            analyzerResult = getResult(analysisResult, job, metricIdentifier);
+        } catch (IllegalArgumentException e) {
+            // typically this can occur if the job has changed over time and
+            // metrics are not resolveable.
+            if (logger.isWarnEnabled()) {
+                logger.warn(
+                        "Failed to get analyzer result for " + metricIdentifier + " in result of date: "
+                                + analysisResult.getCreationDate(), e);
+            }
+            return null;
+        }
 
         if (metricIdentifier.isFormulaBased()) {
             final ExpressionFactory factory = createExpressionFactory();
@@ -260,8 +286,8 @@ public class MetricValueUtils {
                 final MetricDescriptor childDescriptor = getMetricDescriptor(child, analysisJob, null);
                 final AnalyzerJob childAnalyzerJob = getAnalyzerJob(child, analysisJob);
                 final MetricParameters childParameters = getParameters(child, childDescriptor, childAnalyzerJob);
-                final Number childValue = getMetricValue(child, childDescriptor, analysisJob, childAnalyzerJob,
-                        analysisResult, childParameters);
+                final Number childValue = getMetricValue(child, childDescriptor, analysisJob, childAnalyzerJob, analysisResult,
+                        childParameters);
                 final String variableName = prepareVariableName(child.getDisplayName());
                 context.getELResolver().setValue(context, null, variableName, childValue);
             }
@@ -277,8 +303,9 @@ public class MetricValueUtils {
                 // typically this can occur if the job has changed over time and
                 // metrics are not resolveable.
                 if (logger.isWarnEnabled()) {
-                    logger.warn("Failed to get metric value for " + metricIdentifier + " in result of date: "
-                            + analysisResult.getCreationDate(), e);
+                    logger.warn(
+                            "Failed to get metric value for " + metricIdentifier + " in result of date: "
+                                    + analysisResult.getCreationDate(), e);
                 }
                 return null;
             }

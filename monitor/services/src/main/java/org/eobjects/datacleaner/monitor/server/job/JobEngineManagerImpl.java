@@ -69,7 +69,7 @@ public class JobEngineManagerImpl implements JobEngineManager {
         for (JobEngine<?> jobEngine : jobEngines) {
             final Class<?> jobEngineTypeParameter = ReflectionUtils.getTypeParameter(jobEngine.getClass(),
                     JobEngine.class, 0);
-            if (ReflectionUtils.is(jobEngineTypeParameter, jobContext)) {
+            if (ReflectionUtils.is(jobContext, jobEngineTypeParameter)) {
                 return (JobEngine<? extends T>) jobEngine;
             }
         }

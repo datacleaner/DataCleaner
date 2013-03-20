@@ -62,6 +62,9 @@ public class TenantContextImpl implements TenantContext {
         _repository = repository;
         _injectionManagerFactory = injectionManagerFactory;
         _jobEngineManager = jobEngineManager;
+        if (jobEngineManager == null) {
+            throw new IllegalArgumentException("JobEngineManager cannot be null");
+        }
         _configurationCache = new ConfigurationCache(tenantId, getTenantRootFolder(), _injectionManagerFactory);
         _jobCache = new ConcurrentHashMap<String, JobContext>();
     }

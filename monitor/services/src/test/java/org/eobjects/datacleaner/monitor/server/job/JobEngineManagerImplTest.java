@@ -54,9 +54,11 @@ public class JobEngineManagerImplTest extends TestCase {
 
         JobEngine<?> engine;
         
-        engine = manager.getJobEngine(MetricJobContext.class);
+        engine = manager.getJobEngine(DataCleanerAnalysisJobContextImpl.class);
         assertNotNull(engine);
-        
         assertEquals(DataCleanerAnalysisJobEngine.class, engine.getClass());
+
+        engine = manager.getJobEngine(MetricJobContext.class);
+        assertNull(engine);
     }
 }

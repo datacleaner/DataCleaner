@@ -22,7 +22,6 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 import java.util.Date;
 import java.util.Map;
 
-import org.eobjects.analyzer.cluster.ClusterManager;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManager;
 import org.eobjects.analyzer.descriptors.ComponentDescriptor;
@@ -68,6 +67,7 @@ public class ExecuteJob extends AbstractQuartzJob {
         final ScheduleDefinition schedule;
         final TenantIdentifier tenant;
         final TenantContext context;
+        final JobEngineManager jobEngineManager;
 
         try {
             logger.debug("executeInternal({})", jobExecutionContext);
@@ -87,7 +87,8 @@ public class ExecuteJob extends AbstractQuartzJob {
                 final TriggerType triggerType = schedule.getTriggerType();
                 execution = new ExecutionLog(schedule, triggerType);
             }
-
+            
+            jobEngineManager = applicationContext.getBean(JobEngineManager.class);
             final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
             tenant = schedule.getTenant();
             logger.info("Tenant {} executing job {}", tenant.getId(), schedule.getJob());
@@ -98,7 +99,7 @@ public class ExecuteJob extends AbstractQuartzJob {
             throw e;
         }
 
-        executeJob(context, execution, applicationContext);
+        executeJob(context, execution, applicationContext, jobEngineManager);
     }
 
     /**
@@ -112,23 +113,21 @@ public class ExecuteJob extends AbstractQuartzJob {
      *            publisher of application events, specifically for
      *            {@link JobTriggeredEvent}, {@link JobExecutedEvent} and
      *            {@link JobFailedEvent}.
-     * @param clusterManager
-     *            optionally a {@link ClusterManager} for driving clustered
-     *            execution
+     * @param jobEngineManager
+     *            A {@link JobEngineManager} for determining the job engine to
+     *            use
      * 
      * @return The expected result name, which can be used to get updates about
      *         execution status etc. at a later state.
      */
     protected String executeJob(final TenantContext context, final ExecutionLog execution,
-            final ApplicationContext applicationContext) {
+            final ApplicationEventPublisher eventPublisher, final JobEngineManager jobEngineManager) {
         if (execution.getJobBeginDate() == null) {
             // although the job begin date will in vanilla scenarios be set by
             // the MonitorAnalysisListener, we also set it here, just in case of
             // unknown exception scenarios.
             execution.setJobBeginDate(new Date());
         }
-
-        final ApplicationEventPublisher eventPublisher = applicationContext;
 
         if (eventPublisher != null) {
             eventPublisher.publishEvent(new JobTriggeredEvent(this, execution));
@@ -140,7 +139,6 @@ public class ExecuteJob extends AbstractQuartzJob {
         try {
             final JobContext job = context.getJob(execution.getJob().getName());
 
-            final JobEngineManager jobEngineManager = applicationContext.getBean(JobEngineManager.class);
             final JobEngine<? extends JobContext> jobEngine = jobEngineManager.getJobEngine(job);
             if (jobEngine == null) {
                 throw new UnsupportedOperationException("No Job engine available for job: " + job);

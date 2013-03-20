@@ -53,8 +53,9 @@ public class CustomJavaJobEngine extends AbstractJobEngine<CustomJavaJobContext>
     @Override
     public void executeJob(TenantContext context, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception {
-        // TODO Auto-generated method stub
-
+        // TODO : Implement job execution here.
+        Exception error = new UnsupportedOperationException("Custom Java jobs are not yet implemented");
+        executionLogger.setStatusFailed(this, null, error);
     }
 
 }

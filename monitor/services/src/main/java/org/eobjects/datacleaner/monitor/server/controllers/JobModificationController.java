@@ -34,7 +34,6 @@ import org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
@@ -51,8 +50,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/{tenant}/jobs/{job}.modify")
 public class JobModificationController {
-
-    private static final String EXTENSION = FileFilters.ANALYSIS_XML.getExtension();
 
     private static final Logger logger = LoggerFactory.getLogger(JobModificationController.class);
 
@@ -77,12 +74,18 @@ public class JobModificationController {
         final JobContext oldJob = tenantContext.getJob(jobName);
 
         final RepositoryFile existingFile = oldJob.getJobFile();
+        if (existingFile == null) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
+        }
+
+        final String extension = existingFile.getName().substring(jobName.length());
+
         final RepositoryFile oldScheduleFile = tenantContext.getJobFolder().getFile(
                 jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
 
         final String nameInput = input.getName();
 
-        final String newFilename = nameInput + EXTENSION;
+        final String newFilename = nameInput + extension;
 
         final RepositoryFolder jobFolder = tenantContext.getJobFolder();
         final RepositoryFile newFile = jobFolder.getFile(newFilename);

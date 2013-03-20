@@ -26,9 +26,8 @@ import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,16 +47,15 @@ public class JobsFolderController {
     public List<Map<String, String>> resultsFolderJson(@PathVariable("tenant") String tenant) {
         final TenantContext context = _contextFactory.getContext(tenant);
 
-        final RepositoryFolder jobsFolder = context.getJobFolder();
-
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
         {
-            final String extension = FileFilters.ANALYSIS_XML.getExtension();
-            final List<RepositoryFile> files = jobsFolder.getFiles(null, extension);
-            for (RepositoryFile file : files) {
-                Map<String, String> map = new HashMap<String, String>();
-                String jobName = file.getName().substring(0, file.getName().length() - extension.length());
+            final List<String> jobNames = context.getJobNames();
+            for (String jobName : jobNames) {
+                final JobContext jobContext = context.getJob(jobName);
+                final RepositoryFile file = jobContext.getJobFile();
+                
+                final  Map<String, String> map = new HashMap<String, String>();
                 map.put("name", jobName);
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());

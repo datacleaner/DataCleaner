@@ -33,7 +33,6 @@ import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
@@ -50,8 +49,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/{tenant}/jobs/{job}.copy")
 public class JobCopyController {
-
-    private static final String EXTENSION = FileFilters.ANALYSIS_XML.getExtension();
 
     private static final Logger logger = LoggerFactory.getLogger(JobCopyController.class);
 
@@ -72,10 +69,18 @@ public class JobCopyController {
         jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
+        final JobContext sourceJob = tenantContext.getJob(jobName);
+        final RepositoryFile existingFile = sourceJob.getJobFile();
+        
+        if (existingFile == null) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
+        }
+
+        final String extension = existingFile.getName().substring(jobName.length());
 
         String newJobFilename = input.getName();
-        if (!newJobFilename.endsWith(EXTENSION)) {
-            newJobFilename = newJobFilename + EXTENSION;
+        if (!newJobFilename.endsWith(extension)) {
+            newJobFilename = newJobFilename + extension;
         }
 
         final RepositoryFolder jobFolder = tenantContext.getJobFolder();
@@ -83,12 +88,11 @@ public class JobCopyController {
             throw new IllegalArgumentException("The job '" + newJobFilename + "' already exists.");
         }
 
-        final JobContext sourceJob = tenantContext.getJob(jobName);
 
         final RepositoryFile newJobFile = jobFolder.createFile(newJobFilename, new Action<OutputStream>() {
             @Override
             public void run(final OutputStream out) throws Exception {
-                sourceJob.getJobFile().readFile(new Action<InputStream>() {
+                existingFile.readFile(new Action<InputStream>() {
                     @Override
                     public void run(final InputStream in) throws Exception {
                         FileHelper.copy(in, out);

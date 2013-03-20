@@ -19,16 +19,21 @@
  */
 package org.eobjects.datacleaner.monitor.server.job;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.metamodel.util.Action;
+import org.eobjects.metamodel.util.FileHelper;
 
 /**
  * {@link JobContext} for custom Java jobs.
  */
-public class CustomJavaJobContext implements JobContext {
+public class CustomJavaJobContext implements XmlJobContext {
 
     private final RepositoryFile _file;
 
@@ -56,6 +61,16 @@ public class CustomJavaJobContext implements JobContext {
     @Override
     public Map<String, String> getVariables() {
         return Collections.emptyMap();
+    }
+
+    @Override
+    public void toXml(final OutputStream out) {
+        _file.readFile(new Action<InputStream>() {
+            @Override
+            public void run(InputStream in) throws Exception {
+                FileHelper.copy(in, out);
+            }
+        });
     }
 
 }

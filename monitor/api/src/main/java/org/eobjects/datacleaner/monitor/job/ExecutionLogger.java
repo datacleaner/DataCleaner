@@ -20,8 +20,8 @@
 package org.eobjects.datacleaner.monitor.job;
 
 /**
- * Represents a log writer for the user-visible log on the history and audit
- * pages of DataCleaner.
+ * Represents a callback for progress of job execution, and log writer for the
+ * user-visible log on the history and audit pages of DataCleaner.
  */
 public interface ExecutionLogger {
 

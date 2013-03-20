@@ -17,36 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.eobjects.datacleaner.monitor.server.job;
 
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
-import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
+import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 
 /**
- * Defines a context around an {@link AnalysisJob}.
+ * Specialized {@link JobContext} for jobs that are typical DataCleaner
+ * {@link AnalysisJob}s
  */
-public interface JobContext {
-    
-    public String getName();
-    
+public interface DataCleanerAnalysisJobContext extends XmlJobContext, MetricJobContext {
+
+    public String getSourceDatastoreName();
+
     public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
 
     public AnalysisJob getAnalysisJob();
 
-    public String getSourceDatastoreName();
-    
     public List<String> getSourceColumnPaths();
-    
-    public Map<String, String> getVariables();
-
-    public void toXml(OutputStream out);
-
-    public RepositoryFile getJobFile();
-    
-    public JobMetrics getJobMetrics();
 }

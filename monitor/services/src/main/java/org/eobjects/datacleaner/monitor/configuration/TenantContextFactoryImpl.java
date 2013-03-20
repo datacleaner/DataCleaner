@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.monitor.job.JobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
     private final ConcurrentHashMap<String, TenantContext> _contexts;
     private final Repository _repository;
     private final InjectionManagerFactory _injectionManagerFactory;
+    private final JobEngineManager _jobEngineManager;
 
     /**
      * Constructs a {@link TenantContextFactoryImpl}.
@@ -53,7 +55,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      */
     @Deprecated
     public TenantContextFactoryImpl(Repository repository) {
-        this(repository, new InjectionManagerFactoryImpl());
+        this(repository, new InjectionManagerFactoryImpl(), null);
     }
 
     /**
@@ -63,9 +65,11 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      * @param injectionManagerFactory
      */
     @Autowired
-    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory injectionManagerFactory) {
+    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory injectionManagerFactory,
+            JobEngineManager jobEngineManager) {
         _repository = repository;
         _injectionManagerFactory = injectionManagerFactory;
+        _jobEngineManager = jobEngineManager;
         _contexts = new ConcurrentHashMap<String, TenantContext>();
     }
 
@@ -83,7 +87,8 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
         TenantContext context = _contexts.get(tenantId);
         if (context == null) {
             logger.info("Initializing tenant context: {}", tenantId);
-            final TenantContext newContext = new TenantContextImpl(tenantId, _repository, _injectionManagerFactory);
+            final TenantContext newContext = new TenantContextImpl(tenantId, _repository, _injectionManagerFactory,
+                    _jobEngineManager);
             context = _contexts.putIfAbsent(tenantId, newContext);
             if (context == null) {
                 context = newContext;

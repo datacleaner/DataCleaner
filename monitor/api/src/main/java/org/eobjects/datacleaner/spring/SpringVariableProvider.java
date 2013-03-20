@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.eobjects.analyzer.beans.api.Provided;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.scheduling.api.VariableProvider;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.springframework.core.env.Environment;

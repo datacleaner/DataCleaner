@@ -33,6 +33,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.events.ResultModificationEvent;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.server.listeners.ResultModificationEventExecutionLogListener;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
@@ -56,7 +57,7 @@ public class ResultModificationControllerTest extends TestCase {
         repository = new FileRepository(targetDir);
 
         TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
 
         resultModificationController = new ResultModificationController();
         resultModificationListener = new ResultModificationEventExecutionLogListener(tenantContextFactory);

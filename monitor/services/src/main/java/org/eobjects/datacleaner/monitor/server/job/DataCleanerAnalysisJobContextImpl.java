@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.configuration;
+package org.eobjects.datacleaner.monitor.server.job;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,6 +37,8 @@ import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.AnalyzerJobHelper;
 import org.eobjects.analyzer.job.JaxbJobReader;
 import org.eobjects.analyzer.util.LabelUtils;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.MonitorJobReader;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
@@ -49,10 +51,10 @@ import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
 
 /**
- * Default {@link JobContext} implementation. This implementation caches the
- * read analysis jobs for quick access.
+ * The {@link JobContext} implementation for DataCleaner analysis jobs. This
+ * implementation caches the read analysis jobs for quick access.
  */
-class DefaultJobContext implements JobContext {
+public class DataCleanerAnalysisJobContextImpl implements DataCleanerAnalysisJobContext {
 
     private final RepositoryFile _file;
     private final TenantContext _context;
@@ -63,7 +65,7 @@ class DefaultJobContext implements JobContext {
     private volatile List<String> _sourceColumnPaths;
     private volatile Map<String, String> _variables;
 
-    public DefaultJobContext(TenantContext context, RepositoryFile file) {
+    public DataCleanerAnalysisJobContextImpl(TenantContext context, RepositoryFile file) {
         _context = context;
         _file = file;
 
@@ -111,6 +113,12 @@ class DefaultJobContext implements JobContext {
     @Override
     public AnalysisJob getAnalysisJob() {
         return getAnalysisJob(null);
+    }
+
+    @Override
+    public String getGroupName() {
+        // use datastore as group name
+        return getSourceDatastoreName();
     }
 
     @Override

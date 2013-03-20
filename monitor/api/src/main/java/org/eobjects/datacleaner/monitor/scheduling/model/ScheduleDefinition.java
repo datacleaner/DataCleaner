@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 
@@ -39,7 +38,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     private JobIdentifier _dependentJob;
     private String _cronExpression;
     private List<AlertDefinition> _alerts;
-    private DatastoreIdentifier _datastore;
+    private String _groupName;
     private VariableProviderDefinition _variableProvider;
     private boolean _distributedExecution;
 
@@ -47,10 +46,10 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     public ScheduleDefinition() {
     }
 
-    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, DatastoreIdentifier datastoreIdentifier) {
+    public ScheduleDefinition(TenantIdentifier tenant, JobIdentifier job, String groupName) {
         _tenant = tenant;
         _job = job;
-        _datastore = datastoreIdentifier;
+        _groupName = groupName;
     }
 
     public TenantIdentifier getTenant() {
@@ -77,12 +76,12 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         return _cronExpression;
     }
 
-    public DatastoreIdentifier getDatastore() {
-        return _datastore;
+    public void setGroupName(String groupName) {
+        _groupName = groupName;
     }
 
-    public void setDatastore(DatastoreIdentifier datastore) {
-        _datastore = datastore;
+    public String getGroupName() {
+        return _groupName;
     }
 
     public void setDependentJob(JobIdentifier dependentJob) {
@@ -103,11 +102,11 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
     public void setAlerts(List<AlertDefinition> alerts) {
         _alerts = alerts;
     }
-    
+
     public boolean isDistributedExecution() {
         return _distributedExecution;
     }
-    
+
     public void setDistributedExecution(boolean distributedExecution) {
         _distributedExecution = distributedExecution;
     }
@@ -136,7 +135,7 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
         int result = 1;
         result = prime * result + ((_alerts == null) ? 0 : _alerts.hashCode());
         result = prime * result + ((_cronExpression == null) ? 0 : _cronExpression.hashCode());
-        result = prime * result + ((_datastore == null) ? 0 : _datastore.hashCode());
+        result = prime * result + ((_groupName == null) ? 0 : _groupName.hashCode());
         result = prime * result + ((_dependentJob == null) ? 0 : _dependentJob.hashCode());
         result = prime * result + ((_job == null) ? 0 : _job.hashCode());
         result = prime * result + ((_tenant == null) ? 0 : _tenant.hashCode());
@@ -163,10 +162,10 @@ public class ScheduleDefinition implements Comparable<ScheduleDefinition>, Seria
                 return false;
         } else if (!_cronExpression.equals(other._cronExpression))
             return false;
-        if (_datastore == null) {
-            if (other._datastore != null)
+        if (_groupName == null) {
+            if (other._groupName != null)
                 return false;
-        } else if (!_datastore.equals(other._datastore))
+        } else if (!_groupName.equals(other._groupName))
             return false;
         if (_dependentJob == null) {
             if (other._dependentJob != null)

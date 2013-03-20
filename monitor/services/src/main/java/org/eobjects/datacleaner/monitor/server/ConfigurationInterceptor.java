@@ -22,7 +22,7 @@ package org.eobjects.datacleaner.monitor.server;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
 
 /**
  * Interface for the component which intercepts a tenant's server-side
@@ -45,6 +45,6 @@ public interface ConfigurationInterceptor {
      * @param out
      * @throws Exception
      */
-    public void intercept(final String tenantId, JobContext job, final String datastoreName, final InputStream in,
+    public void intercept(final String tenantId, DataCleanerAnalysisJobContext job, final String datastoreName, final InputStream in,
             final OutputStream out) throws Exception;
 }

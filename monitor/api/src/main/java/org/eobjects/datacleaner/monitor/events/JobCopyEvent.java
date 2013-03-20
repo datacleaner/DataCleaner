@@ -20,7 +20,7 @@
 package org.eobjects.datacleaner.monitor.events;
 
 import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.springframework.context.ApplicationEvent;
 
 /**

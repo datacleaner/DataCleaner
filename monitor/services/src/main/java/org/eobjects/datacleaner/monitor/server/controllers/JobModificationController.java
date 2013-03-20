@@ -26,10 +26,10 @@ import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.events.JobModificationEvent;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -75,6 +75,7 @@ public class JobModificationController {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
 
         final JobContext oldJob = tenantContext.getJob(jobName);
+
         final RepositoryFile existingFile = oldJob.getJobFile();
         final RepositoryFile oldScheduleFile = tenantContext.getJobFolder().getFile(
                 jobName + SchedulingServiceImpl.EXTENSION_SCHEDULE_XML);
@@ -90,8 +91,13 @@ public class JobModificationController {
 
         final Action<OutputStream> writeAction = new Action<OutputStream>() {
             @Override
-            public void run(OutputStream out) throws Exception {
-                oldJob.toXml(out);
+            public void run(final OutputStream out) throws Exception {
+                existingFile.readFile(new Action<InputStream>() {
+                    @Override
+                    public void run(InputStream in) throws Exception {
+                        FileHelper.copy(in, out);
+                    }
+                });
             }
         };
 

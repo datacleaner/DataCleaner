@@ -30,9 +30,9 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
@@ -48,7 +48,6 @@ import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleWriter;
 import org.eobjects.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
@@ -228,8 +227,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
         final JobContext jobContext = context.getJob(jobName);
-        final String datastoreName = jobContext.getSourceDatastoreName();
-        final DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier(datastoreName);
+        final String groupName = jobContext.getGroupName();
 
         final RepositoryFolder jobsFolder = context.getJobFolder();
 
@@ -240,12 +238,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         final JobIdentifier jobIdentifier = new JobIdentifier(jobName);
         if (scheduleFile == null) {
-            schedule = new ScheduleDefinition(tenant, jobIdentifier, datastoreIdentifier);
+            schedule = new ScheduleDefinition(tenant, jobIdentifier, groupName);
         } else {
             schedule = scheduleFile.readFile(new Func<InputStream, ScheduleDefinition>() {
                 @Override
                 public ScheduleDefinition eval(InputStream inputStream) {
-                    return reader.read(inputStream, jobIdentifier, tenant, datastoreIdentifier);
+                    return reader.read(inputStream, jobIdentifier, tenant, groupName);
                 }
             });
         }

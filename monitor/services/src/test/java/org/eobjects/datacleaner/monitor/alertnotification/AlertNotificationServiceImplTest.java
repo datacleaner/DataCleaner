@@ -31,7 +31,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.metamodel.util.Ref;
@@ -44,7 +43,7 @@ public class AlertNotificationServiceImplTest extends TestCase {
         final File targetDir = new File("target/example_repo");
         FileUtils.deleteDirectory(targetDir);
         FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
-        
+
         final AtomicInteger counter = new AtomicInteger();
 
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
@@ -63,8 +62,7 @@ public class AlertNotificationServiceImplTest extends TestCase {
 
         TenantIdentifier tenant = new TenantIdentifier("tenant1");
         JobIdentifier job = new JobIdentifier("product_profiling");
-        DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier("orderdb");
-        ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, datastoreIdentifier);
+        ScheduleDefinition schedule = new ScheduleDefinition(tenant, job, "orderdb");
         ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
         execution.setResultId("product_profiling-3.analysis.result.dat");
         alertNotificationService.notifySubscribers(execution);

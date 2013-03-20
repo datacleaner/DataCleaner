@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 
@@ -35,7 +36,7 @@ public class JobInvocationControllerTest extends TestCase {
     public void testInvokeDatabaseSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 
@@ -57,7 +58,7 @@ public class JobInvocationControllerTest extends TestCase {
     public void testInvokeFileWithExtensionNameSchema() throws Throwable {
         final Repository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         final JobInvocationController controller = new JobInvocationController();
         controller._contextFactory = contextFactory;
 

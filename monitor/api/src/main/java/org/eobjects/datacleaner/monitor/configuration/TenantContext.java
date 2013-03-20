@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 

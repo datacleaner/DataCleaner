@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;

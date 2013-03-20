@@ -24,10 +24,10 @@ import java.util.TreeMap;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.events.JobDeletionEvent;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;

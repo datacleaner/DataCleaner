@@ -26,6 +26,7 @@ import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 
@@ -41,7 +42,7 @@ public class DatastoreDaoImplTest extends TestCase {
         final Repository repository = new FileRepository(targetDir);
         
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         
         DatastoreDao dao = new DatastoreDaoImpl();
         

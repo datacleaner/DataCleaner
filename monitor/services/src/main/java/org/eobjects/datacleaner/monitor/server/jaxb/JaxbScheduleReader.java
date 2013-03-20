@@ -32,7 +32,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.AlertDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.AlertSeverity;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -46,10 +45,9 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
         super(Schedule.class);
     }
 
-    public ScheduleDefinition read(InputStream inputStream, JobIdentifier job, TenantIdentifier tenant,
-            DatastoreIdentifier datastore) {
+    public ScheduleDefinition read(InputStream inputStream, JobIdentifier job, TenantIdentifier tenant, String groupName) {
         final Schedule schedule = unmarshal(inputStream);
-        final ScheduleDefinition scheduleDefinition = createSchedule(schedule, job, tenant, datastore, true);
+        final ScheduleDefinition scheduleDefinition = createSchedule(schedule, job, tenant, groupName, true);
         return scheduleDefinition;
     }
 
@@ -83,7 +81,7 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
     }
 
     public ScheduleDefinition createSchedule(Schedule schedule, JobIdentifier job, TenantIdentifier tenant,
-            DatastoreIdentifier datastore, boolean includeAlerts) {
+            String groupName, boolean includeAlerts) {
         final ScheduleDefinition scheduleDefinition = new ScheduleDefinition();
         if (schedule != null) {
             scheduleDefinition.setCronExpression(schedule.getCronExpression());
@@ -107,7 +105,7 @@ public class JaxbScheduleReader extends AbstractJaxbAdaptor<Schedule> {
 
         scheduleDefinition.setJob(job);
         scheduleDefinition.setTenant(tenant);
-        scheduleDefinition.setDatastore(datastore);
+        scheduleDefinition.setGroupName(groupName);
 
         if (includeAlerts && schedule != null) {
             final Alerts jaxbAlerts = schedule.getAlerts();

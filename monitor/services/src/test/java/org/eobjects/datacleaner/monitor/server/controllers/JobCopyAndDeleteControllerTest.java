@@ -30,6 +30,7 @@ import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.events.JobCopyEvent;
 import org.eobjects.datacleaner.monitor.events.JobDeletionEvent;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.springframework.context.ApplicationEvent;
@@ -46,7 +47,7 @@ public class JobCopyAndDeleteControllerTest extends TestCase {
         FileUtils.copyDirectory(new File("src/test/resources/example_repo"), targetDir);
         repository = new FileRepository(targetDir);
 
-        tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl());
+        tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(), new MockJobEngineManager());
     }
 
     public void testRenameJobAndResult() throws Exception {

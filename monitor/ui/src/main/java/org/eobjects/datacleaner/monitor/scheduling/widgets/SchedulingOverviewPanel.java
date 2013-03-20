@@ -26,7 +26,6 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.ButtonPanel;
 import org.eobjects.datacleaner.monitor.shared.widgets.CreateJobButton;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
@@ -92,15 +91,14 @@ public class SchedulingOverviewPanel extends Composite {
     }
 
     public void addSchedule(ScheduleDefinition schedule) {
-        final DatastoreIdentifier datastore = schedule.getDatastore();
-        final String name = datastore.getName();
+        final String groupName = schedule.getGroupName();
         final ScheduleGroupPanel scheduleGroupPanel;
-        if (_scheduleGroupPanels.containsKey(name)) {
-            scheduleGroupPanel = _scheduleGroupPanels.get(name);
+        if (_scheduleGroupPanels.containsKey(groupName)) {
+            scheduleGroupPanel = _scheduleGroupPanels.get(groupName);
         } else {
-            scheduleGroupPanel = new ScheduleGroupPanel(name, _clientConfig, _service);
+            scheduleGroupPanel = new ScheduleGroupPanel(groupName, _clientConfig, _service);
             _panel.add(scheduleGroupPanel);
-            _scheduleGroupPanels.put(name, scheduleGroupPanel);
+            _scheduleGroupPanels.put(groupName, scheduleGroupPanel);
         }
 
         scheduleGroupPanel.addSchedule(schedule);

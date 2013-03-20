@@ -30,14 +30,15 @@ import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.jobwizard.common.MockAnalysisWizard;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
@@ -62,11 +63,12 @@ public class WizardServiceImplTest extends TestCase {
         EasyMock.expect(applicationContextMock.getBeansOfType(JobWizard.class)).andReturn(wizardMap).anyTimes();
         EasyMock.replay(applicationContextMock);
 
-        final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl());
+        final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         service = new WizardServiceImpl();
         service._tenantContextFactory = tenantContextFactory;
         service._applicationContext = applicationContextMock;
-        
+
         datastoreService = new DatastoreServiceImpl(tenantContextFactory);
     }
 
@@ -80,13 +82,13 @@ public class WizardServiceImplTest extends TestCase {
         assertEquals(0, service.getOpenSessionCount());
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
-        
+
         final List<DatastoreIdentifier> datastores = datastoreService.getAvailableDatastores(tenant);
         assertEquals(2, datastores.size());
         assertEquals("[DatastoreIdentifier[name=Vendors], DatastoreIdentifier[name=orderdb]]", datastores.toString());
 
         final DatastoreIdentifier selectedDatastore = datastores.get(1);
-        
+
         final List<WizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant, selectedDatastore);
         assertEquals(1, jobWizardIdentifiers.size());
 
@@ -99,7 +101,7 @@ public class WizardServiceImplTest extends TestCase {
         final String jobName = "JobWizardServiceImplTest-job1";
 
         // first page is the select table page.
-		wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore, jobName);
+        wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore, jobName);
 
         assertEquals(1, service.getOpenSessionCount());
         assertNotNull(wizardPage);
@@ -131,7 +133,8 @@ public class WizardServiceImplTest extends TestCase {
 
         // find the job and do assertions on it.
 
-        final JobContext job = service._tenantContextFactory.getContext(tenant).getJob(jobName);
+        final DataCleanerAnalysisJobContext job = (DataCleanerAnalysisJobContext) service._tenantContextFactory.getContext(tenant).getJob(
+                jobName);
         assertNotNull(job);
         assertEquals("orderdb", job.getSourceDatastoreName());
         assertEquals("[PUBLIC.CUSTOMERS.CUSTOMERNUMBER, PUBLIC.CUSTOMERS.CUSTOMERNAME]", job.getSourceColumnPaths()

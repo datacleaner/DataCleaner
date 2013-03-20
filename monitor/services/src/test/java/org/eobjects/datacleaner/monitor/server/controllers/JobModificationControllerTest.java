@@ -33,6 +33,7 @@ import org.eobjects.datacleaner.monitor.events.JobModificationEvent;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDaoImpl;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDaoImpl;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.server.listeners.JobModificationEventRenameResultsListener;
 import org.eobjects.datacleaner.monitor.server.listeners.JobModificationEventUpdateTimelinesListener;
 import org.eobjects.datacleaner.repository.Repository;
@@ -57,7 +58,7 @@ public class JobModificationControllerTest extends TestCase {
         repository = new FileRepository(targetDir);
 
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
 
         resultModificationController = new ResultModificationController();
         resultModificationController._contextFactory = tenantContextFactory;

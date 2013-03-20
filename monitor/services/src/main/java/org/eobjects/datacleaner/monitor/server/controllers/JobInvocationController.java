@@ -33,10 +33,11 @@ import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderAnalysisJob;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
 import org.eobjects.metamodel.pojo.ArrayTableDataProvider;
@@ -95,9 +96,14 @@ public class JobInvocationController {
 
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);
+        
+        if (!(job instanceof DataCleanerAnalysisJobContext)) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
+        }
 
-        final String datastoreName = job.getSourceDatastoreName();
-        final List<String> columnPaths = job.getSourceColumnPaths();
+        final DataCleanerAnalysisJobContext analysisJobContext = (DataCleanerAnalysisJobContext)job;
+        final String datastoreName = analysisJobContext.getSourceDatastoreName();
+        final List<String> columnPaths = analysisJobContext.getSourceColumnPaths();
 
         final String tablePath = getTablePath(columnPaths);
 
@@ -133,7 +139,7 @@ public class JobInvocationController {
 
         final PojoDatastore placeholderDatastore = new PojoDatastore(datastoreName, schemaName, tableDataProviders);
 
-        final AnalysisJob originalJob = job.getAnalysisJob();
+        final AnalysisJob originalJob = analysisJobContext.getAnalysisJob();
 
         final PlaceholderAnalysisJob placeholderAnalysisJob = new PlaceholderAnalysisJob(placeholderDatastore,
                 originalJob);

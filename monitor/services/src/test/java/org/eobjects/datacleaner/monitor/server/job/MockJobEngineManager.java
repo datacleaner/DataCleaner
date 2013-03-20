@@ -17,18 +17,32 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.api;
+package org.eobjects.datacleaner.monitor.server.job;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.job.JobEngine;
 
 /**
- * Defines a mechanism to provide variable values to the DataCleaner monitor
- * application at runtime.
+ * Simple job engine manager that just holds a single engine (DataCleaner's
+ * engine)
  */
-public interface VariableProvider {
+public class MockJobEngineManager extends JobEngineManagerImpl {
 
-    public Map<String, String> provideValues(JobContext job, ExecutionLog execution);
+    private final DataCleanerAnalysisJobEngine _jobEngine;
+
+    public MockJobEngineManager() {
+        super(null);
+        _jobEngine = new DataCleanerAnalysisJobEngine(null);
+    }
+
+    @Override
+    public Collection<JobEngine<?>> getJobEngines() {
+        final List<JobEngine<?>> list = new ArrayList<JobEngine<?>>(1);
+        list.add(_jobEngine);
+        return list;
+    }
+
 }

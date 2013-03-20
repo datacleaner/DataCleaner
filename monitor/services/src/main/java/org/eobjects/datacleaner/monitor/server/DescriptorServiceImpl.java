@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
@@ -31,13 +32,16 @@ import org.eobjects.analyzer.job.NoSuchComponentException;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
 import org.eobjects.datacleaner.monitor.shared.DescriptorNotFoundException;
 import org.eobjects.datacleaner.monitor.shared.DescriptorService;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -68,7 +72,12 @@ public class DescriptorServiceImpl implements DescriptorService {
             throws DescriptorNotFoundException {
         try {
             final JobContext jobContext = _tenantContextFactory.getContext(tenant).getJob(jobIdentifier.getName());
-            return jobContext.getJobMetrics();
+            if (jobContext instanceof MetricJobContext) {
+                return ((MetricJobContext) jobContext).getJobMetrics();
+            }
+
+            final List<MetricGroup> list = new ArrayList<MetricGroup>(0);
+            return new JobMetrics(jobIdentifier, list);
         } catch (NoSuchComponentException e) {
             logger.warn("Encountered exception while get Job metrics", e);
             throw new DescriptorNotFoundException(e.getMessage());
@@ -112,7 +121,7 @@ public class DescriptorServiceImpl implements DescriptorService {
 
         final AnalysisResult analysisResult = context.getResult(resultFile.getName()).getAnalysisResult();
 
-        final AnalysisJob analysisJob = context.getJob(job.getName()).getAnalysisJob();
+        final AnalysisJob analysisJob = ((DataCleanerAnalysisJobContext) context.getJob(job.getName())).getAnalysisJob();
         final AnalyzerJob analyzerJob = metricValueUtils.getAnalyzerJob(metric, analysisJob);
 
         final AnalyzerResult result = metricValueUtils.getResult(analysisResult, analyzerJob, metric);

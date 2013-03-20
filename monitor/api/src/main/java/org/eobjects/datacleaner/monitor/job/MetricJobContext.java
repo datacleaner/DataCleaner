@@ -17,18 +17,11 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.scheduling.api;
+package org.eobjects.datacleaner.monitor.job;
 
-import java.util.Map;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+public interface MetricJobContext extends JobContext {
 
-/**
- * Defines a mechanism to provide variable values to the DataCleaner monitor
- * application at runtime.
- */
-public interface VariableProvider {
-
-    public Map<String, String> provideValues(JobContext job, ExecutionLog execution);
+    public JobMetrics getJobMetrics();
 }

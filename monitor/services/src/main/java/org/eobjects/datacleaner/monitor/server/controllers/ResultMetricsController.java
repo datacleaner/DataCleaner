@@ -34,12 +34,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.jaxb.MetricType;
 import org.eobjects.datacleaner.monitor.jaxb.MetricsType;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.server.MetricValueProducer;
 import org.eobjects.datacleaner.monitor.server.MetricValues;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbMetricAdaptor;
@@ -134,7 +135,12 @@ public class ResultMetricsController {
 
         final ResultContext resultContext = context.getResult(resultName);
         final JobContext job = resultContext.getJob();
-        final JobMetrics jobMetrics = job.getJobMetrics();
+
+        if (!(job instanceof MetricJobContext)) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + job);
+        }
+
+        final JobMetrics jobMetrics = ((MetricJobContext) job).getJobMetrics();
         final List<MetricGroup> metricGroups = jobMetrics.getMetricGroups();
         for (final MetricGroup metricGroup : metricGroups) {
             final List<MetricIdentifier> metrics = metricGroup.getMetrics();

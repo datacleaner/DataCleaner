@@ -37,11 +37,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.monitor.server.SecurityConfiguration;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +114,12 @@ public class LaunchDataCleanerController {
         }
 
         final JobContext job = context.getJob(jobName);
-        final String datastoreName = job.getSourceDatastoreName();
+
+        if (!(job instanceof DataCleanerAnalysisJobContext)) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + job);
+        }
+
+        final String datastoreName = ((DataCleanerAnalysisJobContext) job).getSourceDatastoreName();
         final String encodedJobName = URLEncoder.encode(jobName, FileHelper.UTF_8_ENCODING);
 
         final String scheme = request.getScheme();
@@ -187,7 +193,8 @@ public class LaunchDataCleanerController {
                 }
 
                 if (securityURLHolder == null) {
-                    if (line.indexOf("$MONITOR_SECURITY_MODE") != -1 || line.indexOf("$MONITOR_SECURITY_CASSERVERURL") != -1) {
+                    if (line.indexOf("$MONITOR_SECURITY_MODE") != -1
+                            || line.indexOf("$MONITOR_SECURITY_CASSERVERURL") != -1) {
                         line = "";
                     }
                 } else {

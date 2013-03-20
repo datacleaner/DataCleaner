@@ -33,10 +33,12 @@ import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbConfigurationInterceptor;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
@@ -59,7 +61,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
 
         final Repository repository = new FileRepository("src/test/resources/example_repo");
 
-        _contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl());
+        _contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(), new MockJobEngineManager());
     }
 
     public void testGenerateGenericConfiguration() throws Exception {
@@ -76,7 +78,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
             assertEquals(expected, actual);
         }
     }
-    
+
     public void testGenerateDatastoreSpecificConfiguration() throws Exception {
         String actual = generationConf(null, "orderdb");
 
@@ -127,7 +129,8 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         }
     }
 
-    private String generationConf(final JobContext job, final String datastoreName) throws Exception {
+    private String generationConf(final JobContext jobContext, final String datastoreName) throws Exception {
+        final DataCleanerAnalysisJobContext job = (DataCleanerAnalysisJobContext) jobContext;
 
         final Ref<Calendar> dateRef = new Ref<Calendar>() {
             @Override
@@ -152,7 +155,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
         final RepositoryFile file = (RepositoryFile) repo.getRepositoryNode("/tenant1/conf.xml");
 
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        
+
         file.readFile(new Action<InputStream>() {
             @Override
             public void run(InputStream in) throws Exception {

@@ -29,6 +29,7 @@ import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.server.dao.DatastoreDaoImpl;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.metamodel.util.Action;
@@ -44,7 +45,7 @@ public class DatastoresFolderControllerTest extends TestCase {
 
         final FileRepository repository = new FileRepository("target/repo_datastore_registration");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
 
         DatastoresFolderController controller = new DatastoresFolderController();
         controller._contextFactory = contextFactory;

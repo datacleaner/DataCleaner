@@ -38,6 +38,7 @@ import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDaoImpl;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDaoImpl;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.DescriptorService;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
@@ -51,7 +52,7 @@ public class DashboardServiceImplTest extends TestCase {
     public void testBasicInteraction() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
@@ -129,7 +130,7 @@ public class DashboardServiceImplTest extends TestCase {
     public void testFormulaBasedTimeline() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);

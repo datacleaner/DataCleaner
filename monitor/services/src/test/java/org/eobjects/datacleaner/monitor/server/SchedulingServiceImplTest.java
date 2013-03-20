@@ -36,6 +36,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.file.FileRepository;
@@ -60,7 +61,7 @@ public class SchedulingServiceImplTest extends TestCase {
 
         final Repository repository = new FileRepository(targetDir);
         final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
                 "context/application-context.xml");
 

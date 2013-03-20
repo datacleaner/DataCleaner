@@ -30,7 +30,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.server.SchedulingServiceImpl;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
+import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
@@ -42,13 +42,12 @@ public class ExecuteJobTest extends TestCase {
     public void testFileNotFound() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
 
         TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
         JobIdentifier job = new JobIdentifier("some_csv_profiling");
-        DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier("SomeCSV");
         TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant3");
-        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, datastoreIdentifier);
+        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, "SomeCSV");
         ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
         String executionId = new ExecuteJob().executeJob(tenantContext, execution, null);
@@ -74,13 +73,12 @@ public class ExecuteJobTest extends TestCase {
     public void testInvalidDatastoreInJob() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");
         final TenantContextFactory tenantContextFactory = new TenantContextFactoryImpl(repo,
-                new InjectionManagerFactoryImpl());
+                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
 
         TenantContext tenantContext = tenantContextFactory.getContext("tenant3");
         JobIdentifier job = new JobIdentifier("product_profiling");
-        DatastoreIdentifier datastoreIdentifier = new DatastoreIdentifier("orderdb");
         TenantIdentifier tenantIdentifier = new TenantIdentifier("tenant3");
-        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, datastoreIdentifier);
+        ScheduleDefinition schedule = new ScheduleDefinition(tenantIdentifier, job, "orderdb");
         ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
         String executionId = new ExecuteJob().executeJob(tenantContext, execution, null);

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.configuration;
 
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContextImpl;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.file.FileRepository;
 
@@ -29,7 +31,7 @@ public class DefaultJobContextTest extends TestCase {
     public void testGetName() throws Exception {
         RepositoryFile file = (RepositoryFile) new FileRepository("src/test/resources/example_repo")
                 .getRepositoryNode("/tenant1/jobs/email_standardizer.analysis.xml");
-        JobContext jobContext = new DefaultJobContext(null, file);
+        JobContext jobContext = new DataCleanerAnalysisJobContextImpl(null, file);
         
         assertEquals("email_standardizer", jobContext.getName());
     }

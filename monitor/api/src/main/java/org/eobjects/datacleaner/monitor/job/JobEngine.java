@@ -20,16 +20,19 @@
 package org.eobjects.datacleaner.monitor.job;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 
 /**
- * A component responsible for jobs of a particular type.
+ * A component responsible for discovery and execution of jobs of a particular
+ * type.
  * 
  * @param <T>
+ *            the type of Jobs (JobContexts) that are produced by this engine.
  */
-public interface JobManager {
+public interface JobEngine<T extends JobContext> {
 
     /**
      * Gets the display name of a particular job type, such as 'DataCleaner
@@ -48,11 +51,36 @@ public interface JobManager {
     public List<String> getJobNames(TenantContext tenantContext);
 
     /**
+     * Gets/produces a job context for a specific job.
+     * 
+     * @param jobName
+     * @return
+     */
+    public T getJobContext(TenantContext tenantContext, String jobName);
+
+    /**
      * Executes a job
      * 
      * @param context
      * @param execution
      * @param executionLogger
+     * @param variables
+     *            special variables/parameters/properties for this job execution
+     * 
+     * @throws Exception
+     *             if something goes wrong while executing the job, in which
+     *             case the job status will be set to FAILURE and the exception
+     *             logged.
      */
-    public void executeJob(TenantContext context, ExecutionLog execution, ExecutionLogger executionLogger);
+    public void executeJob(TenantContext context, ExecutionLog execution, ExecutionLogger executionLogger,
+            Map<String, String> variables) throws Exception;
+
+    /**
+     * Determines if a particular job is available within this job engine's jobs
+     * 
+     * @param tenantContext
+     * @param jobName
+     * @return
+     */
+    public boolean containsJob(TenantContext tenantContext, String jobName);
 }

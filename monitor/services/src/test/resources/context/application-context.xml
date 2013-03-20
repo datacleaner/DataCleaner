@@ -14,6 +14,16 @@
 		class="org.eobjects.datacleaner.monitor.server.DefaultMetricValueProducer">
 		<constructor-arg ref="tenantContextFactory" />
 	</bean>
+	
+	<bean class="org.eobjects.datacleaner.monitor.server.job.JobEngineManagerImpl" autowire="constructor" />
+	
+	<bean class="org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobEngine">
+		<constructor-arg index="0">
+			<null />
+		</constructor-arg>	
+	</bean>
+	
+	<bean class="org.eobjects.datacleaner.monitor.server.job.CustomJavaJobEngine" />
 
 	<bean id="repository" class="org.eobjects.datacleaner.repository.file.FileRepository">
 		<constructor-arg type="java.io.File"

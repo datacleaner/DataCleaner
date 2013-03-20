@@ -27,11 +27,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -100,9 +101,14 @@ public class LaunchResourcesController {
             @RequestParam(value = "job", required = false) final String jobName,
             @RequestParam(value = "datastore", required = false) final String datastoreName,
             final HttpServletResponse response) throws Exception {
-        
+
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);
+
+        if (!(job instanceof DataCleanerAnalysisJobContext)) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + job);
+        }
+
         final RepositoryFile confFile = tenantContext.getConfigurationFile();
 
         response.setContentType("application/xml");
@@ -114,7 +120,7 @@ public class LaunchResourcesController {
             public void run(InputStream in) throws Exception {
                 // intercept the input stream to decorate it with client-side
                 // config elements.
-                _configurationInterceptor.intercept(tenant, job, datastoreName, in, out);
+                _configurationInterceptor.intercept(tenant, (DataCleanerAnalysisJobContext) job, datastoreName, in, out);
             }
         });
     }

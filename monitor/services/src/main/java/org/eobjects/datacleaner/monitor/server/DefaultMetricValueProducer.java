@@ -26,6 +26,8 @@ import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -53,7 +55,8 @@ public class DefaultMetricValueProducer implements MetricValueProducer {
         String resultFilename = resultFile.getName();
         ResultContext resultContext = tenantContext.getResult(resultFilename);
         String jobName = jobIdentifier.getName();
-        AnalysisJob analysisJob = tenantContext.getJob(jobName).getAnalysisJob();
+        JobContext job = tenantContext.getJob(jobName);
+        AnalysisJob analysisJob = ((DataCleanerAnalysisJobContext) job).getAnalysisJob();
         AnalysisResult analysisResult = resultContext.getAnalysisResult();
 
         return new DefaultMetricValues(metricIdentifiers, analysisResult, analysisJob);

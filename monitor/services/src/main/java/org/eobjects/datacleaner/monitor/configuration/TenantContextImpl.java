@@ -19,19 +19,21 @@
  */
 package org.eobjects.datacleaner.monitor.configuration;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.JobEngine;
+import org.eobjects.datacleaner.monitor.job.JobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.CollectionUtils;
-import org.eobjects.metamodel.util.Func;
-import org.eobjects.metamodel.util.HasNameMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,35 +47,34 @@ public class TenantContextImpl implements TenantContext {
     private static final String PATH_TIMELINES = "timelines";
     private static final String PATH_JOBS = "jobs";
     private static final String PATH_RESULTS = "results";
-    private static final String EXTENSION_JOB = FileFilters.ANALYSIS_XML.getExtension();
     private static final String EXTENSION_RESULT = FileFilters.ANALYSIS_RESULT_SER.getExtension();
 
     private final String _tenantId;
     private final Repository _repository;
     private final InjectionManagerFactory _injectionManagerFactory;
     private final ConfigurationCache _configurationCache;
+    private final JobEngineManager _jobEngineManager;
     private final ConcurrentHashMap<String, JobContext> _jobCache;
 
-    public TenantContextImpl(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory) {
+    public TenantContextImpl(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory,
+            JobEngineManager jobEngineManager) {
         _tenantId = tenantId;
         _repository = repository;
         _injectionManagerFactory = injectionManagerFactory;
+        _jobEngineManager = jobEngineManager;
         _configurationCache = new ConfigurationCache(tenantId, getTenantRootFolder(), _injectionManagerFactory);
         _jobCache = new ConcurrentHashMap<String, JobContext>();
     }
 
     @Override
     public List<String> getJobNames() {
+        final List<String> jobNames = new ArrayList<String>();
 
-        final RepositoryFolder jobsFolder = getJobFolder();
-        final List<RepositoryFile> files = jobsFolder.getFiles(null, EXTENSION_JOB);
-        final List<String> filenames = CollectionUtils.map(files, new HasNameMapper());
-        final List<String> jobNames = CollectionUtils.map(filenames, new Func<String, String>() {
-            @Override
-            public String eval(String filename) {
-                return filename.substring(0, filename.length() - EXTENSION_JOB.length());
-            }
-        });
+        final Collection<JobEngine<?>> jobEngines = _jobEngineManager.getJobEngines();
+        for (JobEngine<?> jobEngine : jobEngines) {
+            final List<String> jobEngineJobNames = jobEngine.getJobNames(this);
+            jobNames.addAll(jobEngineJobNames);
+        }
         return jobNames;
     }
 
@@ -84,15 +85,11 @@ public class TenantContextImpl implements TenantContext {
         }
         JobContext job = _jobCache.get(jobName);
         if (job == null) {
-            if (!jobName.endsWith(EXTENSION_JOB)) {
-                jobName = jobName + EXTENSION_JOB;
+            final JobEngine<?> jobEngine = _jobEngineManager.getJobEngine(this, jobName);
+            if (jobEngine == null) {
+                return null;
             }
-
-            final RepositoryFile file = getJobFolder().getFile(jobName);
-            if (file == null) {
-                throw new IllegalArgumentException("No such job: " + jobName);
-            }
-            final JobContext newJob = new DefaultJobContext(this, file);
+            final JobContext newJob = jobEngine.getJobContext(this, jobName);
             job = _jobCache.putIfAbsent(jobName, newJob);
             if (job == null) {
                 job = newJob;

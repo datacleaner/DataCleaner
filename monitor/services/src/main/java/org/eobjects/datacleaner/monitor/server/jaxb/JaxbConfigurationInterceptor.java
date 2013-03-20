@@ -68,10 +68,10 @@ import org.eobjects.analyzer.util.JaxbValidationEventHandler;
 import org.eobjects.analyzer.util.SchemaNavigator;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.ConfigurationFactory;
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
 import org.eobjects.metamodel.DataContext;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.MutableSchema;
@@ -143,7 +143,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
     }
 
     @Override
-    public void intercept(final String tenantId, final JobContext job, final String datastoreName,
+    public void intercept(final String tenantId, final DataCleanerAnalysisJobContext job, final String datastoreName,
             final InputStream in, final OutputStream out) throws Exception {
         final TenantContext context = _contextFactory.getContext(tenantId);
 
@@ -198,7 +198,7 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      * @param originalDatastoreCatalog
      * @return
      */
-    private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context, final JobContext job,
+    private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context, final DataCleanerAnalysisJobContext job,
             final String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
 

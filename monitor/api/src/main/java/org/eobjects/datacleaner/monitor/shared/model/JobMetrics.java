@@ -32,6 +32,14 @@ public class JobMetrics implements Serializable {
 
     private JobIdentifier _job;
     private List<MetricGroup> _metricGroups;
+    
+    public JobMetrics(JobIdentifier job, List<MetricGroup> metricGroups) {
+        _job = job;
+        _metricGroups = metricGroups;
+    }
+    
+    public JobMetrics() {
+    }
 
     public JobIdentifier getJob() {
         return _job;

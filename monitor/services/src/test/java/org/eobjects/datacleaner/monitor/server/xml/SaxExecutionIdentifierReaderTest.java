@@ -33,7 +33,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
 import org.eobjects.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
-import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.metamodel.util.DateUtils;
@@ -44,7 +43,7 @@ public class SaxExecutionIdentifierReaderTest extends TestCase {
     public void testRead() throws Exception {
 
         final ScheduleDefinition schedule = new ScheduleDefinition(new TenantIdentifier("DC"),
-                new JobIdentifier("job1"), new DatastoreIdentifier("my_ds"));
+                new JobIdentifier("job1"), "my_ds");
         schedule.setDependentJob(new JobIdentifier("job2"));
         final ExecutionLog executionLog = new ExecutionLog();
         executionLog.setResultId("my-result");

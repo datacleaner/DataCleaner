@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.configuration;
 
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 
 /**

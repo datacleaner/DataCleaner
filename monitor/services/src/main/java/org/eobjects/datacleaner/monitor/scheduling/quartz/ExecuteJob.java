@@ -20,18 +20,29 @@
 package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.eobjects.analyzer.cluster.ClusterManager;
+import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.analyzer.configuration.InjectionManager;
+import org.eobjects.analyzer.descriptors.ComponentDescriptor;
+import org.eobjects.analyzer.descriptors.Descriptors;
+import org.eobjects.analyzer.lifecycle.LifeCycleHelper;
+import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
 import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
 import org.eobjects.datacleaner.monitor.events.JobTriggeredEvent;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.JobEngine;
+import org.eobjects.datacleaner.monitor.job.JobEngineManager;
+import org.eobjects.datacleaner.monitor.scheduling.api.VariableProvider;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobManager;
+import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinition;
 import org.eobjects.datacleaner.monitor.server.job.ExecutionLoggerImpl;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -116,7 +127,7 @@ public class ExecuteJob extends AbstractQuartzJob {
             // unknown exception scenarios.
             execution.setJobBeginDate(new Date());
         }
-        
+
         final ApplicationEventPublisher eventPublisher = applicationContext;
 
         if (eventPublisher != null) {
@@ -126,15 +137,56 @@ public class ExecuteJob extends AbstractQuartzJob {
         final RepositoryFolder resultFolder = context.getResultFolder();
         final ExecutionLogger executionLogger = new ExecutionLoggerImpl(execution, resultFolder, eventPublisher);
 
-        // TODO: Select JobManager based on the input job
-        final DataCleanerAnalysisJobManager jobManager;
-        if (applicationContext == null) {
-            jobManager = new DataCleanerAnalysisJobManager(null);
-        } else {
-            jobManager = applicationContext.getBean(DataCleanerAnalysisJobManager.class);
-        }
-        jobManager.executeJob(context, execution, executionLogger);
+        try {
+            final JobContext job = context.getJob(execution.getJob().getName());
 
+            final JobEngineManager jobEngineManager = applicationContext.getBean(JobEngineManager.class);
+            final JobEngine<? extends JobContext> jobEngine = jobEngineManager.getJobEngine(job);
+            if (jobEngine == null) {
+                throw new UnsupportedOperationException("No Job engine available for job: " + job);
+            }
+
+            final AnalyzerBeansConfiguration configuration = context.getConfiguration();
+
+            final VariableProviderDefinition variableProviderDef = execution.getSchedule().getVariableProvider();
+            final Map<String, String> variables = overrideVariables(variableProviderDef, job, execution, configuration);
+
+            jobEngine.executeJob(context, execution, executionLogger, variables);
+
+        } catch (Exception e) {
+            // only initialization issues are catched here, eg. failing to load
+            // job or configuration. Other issues will be reported to the
+            // listener by the runner.
+            executionLogger.setStatusFailed(null, null, e);
+        }
         return execution.getResultId();
+    }
+
+    private Map<String, String> overrideVariables(VariableProviderDefinition variableProviderDef, JobContext job,
+            ExecutionLog execution, AnalyzerBeansConfiguration configuration) throws ClassNotFoundException {
+        if (variableProviderDef == null) {
+            return null;
+        }
+
+        final String className = variableProviderDef.getClassName();
+        if (className == null) {
+            return null;
+        }
+
+        final InjectionManager injectionManager = configuration.getInjectionManager(null);
+        final LifeCycleHelper lifeCycleHelper = new LifeCycleHelper(injectionManager, null, true);
+
+        @SuppressWarnings("unchecked")
+        final Class<? extends VariableProvider> cls = (Class<? extends VariableProvider>) Class.forName(className);
+        final ComponentDescriptor<? extends VariableProvider> descriptor = Descriptors.ofComponent(cls);
+        final VariableProvider variableProvider = ReflectionUtils.newInstance(cls);
+        lifeCycleHelper.assignProvidedProperties(descriptor, variableProvider);
+        lifeCycleHelper.initialize(descriptor, variableProvider);
+        try {
+            final Map<String, String> variableOverrides = variableProvider.provideValues(job, execution);
+            return variableOverrides;
+        } finally {
+            lifeCycleHelper.close(descriptor, variableProvider);
+        }
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.controllers;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -26,9 +27,10 @@ import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.eobjects.datacleaner.monitor.configuration.JobContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -49,11 +51,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/{tenant}/jobs/{job}.analysis.xml")
 public class JobFileController {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(JobFileController.class);
 
     private static final String EXTENSION = FileFilters.ANALYSIS_XML.getExtension();
-    
+
     @Autowired
     TenantContextFactory _contextFactory;
 
@@ -101,7 +103,7 @@ public class JobFileController {
             logger.info("Overwriting job from uploaded file: {}", jobFile.getName());
             jobFile.writeFile(writeCallback);
         }
-        
+
         final Map<String, String> result = new HashMap<String, String>();
         result.put("status", "Success");
         result.put("file_type", jobFile.getType().toString());
@@ -114,12 +116,18 @@ public class JobFileController {
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     @RequestMapping(method = RequestMethod.GET, produces = "application/xml")
     public void jobXml(@PathVariable("tenant") final String tenant, @PathVariable("job") String jobName,
-            final OutputStream out) {
+            OutputStream out) throws IOException {
 
         jobName = jobName.replaceAll("\\+", " ");
 
         final TenantContext context = _contextFactory.getContext(tenant);
-        JobContext job = context.getJob(jobName);
-        job.toXml(out);
+        final JobContext job = context.getJob(jobName);
+
+        if (!(job instanceof XmlJobContext)) {
+            throw new UnsupportedOperationException("Job not compatible with operation: " + job);
+        }
+
+        XmlJobContext xmlJob = (XmlJobContext) job;
+        xmlJob.toXml(out);
     }
 }

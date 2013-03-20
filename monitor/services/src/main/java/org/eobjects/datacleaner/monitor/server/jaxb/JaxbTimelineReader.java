@@ -64,8 +64,7 @@ public class JaxbTimelineReader extends AbstractJaxbAdaptor<Timeline> implements
     }
 
     private TimelineDefinition createTimeline(Timeline timeline) {
-        final JobIdentifier jobIdentifier = new JobIdentifier();
-        jobIdentifier.setName(timeline.getJobName());
+        final JobIdentifier jobIdentifier = new JobIdentifier(timeline.getJobName());
 
         final TimelineDefinition timelineDefinition = new TimelineDefinition();
         timelineDefinition.setJobIdentifier(jobIdentifier);

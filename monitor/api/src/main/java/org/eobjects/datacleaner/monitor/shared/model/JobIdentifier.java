@@ -22,13 +22,16 @@ package org.eobjects.datacleaner.monitor.shared.model;
 import java.io.Serializable;
 
 /**
- * Identifies a job in the repository.
+ * Identifies a job in the repository. The identifier is based on the name of
+ * the job, but typically also holds the type (in the form of a JobType class
+ * name) of the job.
  */
 public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
     private static final long serialVersionUID = 1L;
 
     private String _name;
+    private String _type;
 
     public JobIdentifier(String name) {
         _name = name;
@@ -36,6 +39,14 @@ public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, H
 
     public JobIdentifier() {
         this(null);
+    }
+
+    public String getType() {
+        return _type;
+    }
+
+    public void setType(String type) {
+        _type = type;
     }
 
     @Override

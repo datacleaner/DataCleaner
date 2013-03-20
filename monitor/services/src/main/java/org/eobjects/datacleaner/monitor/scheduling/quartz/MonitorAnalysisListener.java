@@ -21,10 +21,6 @@ package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,19 +39,13 @@ import org.eobjects.analyzer.job.runner.RowProcessingMetrics;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.SimpleAnalysisResult;
-import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.events.JobExecutedEvent;
-import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
+import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
-import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
-import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogWriter;
-import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.query.Query;
 import org.eobjects.metamodel.schema.Table;
 import org.eobjects.metamodel.util.Action;
-import org.springframework.context.ApplicationEventPublisher;
 
 /**
  * AnalysisListener for DataCleaner monitor. Picks up metrics and logging
@@ -63,60 +53,34 @@ import org.springframework.context.ApplicationEventPublisher;
  */
 public class MonitorAnalysisListener implements AnalysisListener {
 
-    private final ExecutionLog _execution;
-    private final StringBuilder _log;
-    private final RepositoryFolder _resultFolder;
     private final Map<ComponentJob, AnalyzerResult> _results;
+    private final ExecutionLogger _executionLogger;
     private final String _resultFilename;
-    private final RepositoryFile _logFile;
-    private final JaxbExecutionLogWriter _executionLogWriter;
-    private final ApplicationEventPublisher _eventPublisher;
+    private RepositoryFolder _resultFolder;
 
     public MonitorAnalysisListener(ExecutionLog execution, RepositoryFolder resultFolder,
-            ApplicationEventPublisher eventPublisher) {
-        _eventPublisher = eventPublisher;
-        _execution = execution;
+            ExecutionLogger executionLogger) {
+        _executionLogger = executionLogger;
         _resultFolder = resultFolder;
-        _executionLogWriter = new JaxbExecutionLogWriter();
 
+        _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
         final String resultId = execution.getResultId();
         _resultFilename = resultId + FileFilters.ANALYSIS_RESULT_SER.getExtension();
-        _results = new ConcurrentHashMap<ComponentJob, AnalyzerResult>();
-        _log = new StringBuilder();
-
-        final String logFilename = resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension();
-        _logFile = resultFolder.createFile(logFilename, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                _executionLogWriter.write(_execution, out);
-            }
-        });
     }
 
     @Override
     public void jobBegin(AnalysisJob job, AnalysisJobMetrics metrics) {
-        _execution.setExecutionStatus(ExecutionStatus.RUNNING);
-        _execution.setJobBeginDate(new Date());
-
-        log("Job execution BEGIN", false);
+        _executionLogger.setStatusRunning();
     }
 
     @Override
     public void jobSuccess(AnalysisJob job, AnalysisJobMetrics metrics) {
 
         final AnalysisResult result = new SimpleAnalysisResult(_results);
-        
+
         writeResult(result);
 
-        log("Job execution SUCCESS");
-        _execution.setJobEndDate(new Date());
-        _execution.setExecutionStatus(ExecutionStatus.SUCCESS);
-
-        flushLog();
-
-        if (_eventPublisher != null) {
-            _eventPublisher.publishEvent(new JobExecutedEvent(this, _execution, result));
-        }
+        _executionLogger.setStatusSuccess(result);
     }
 
     private void writeResult(final AnalysisResult result) {
@@ -138,92 +102,7 @@ public class MonitorAnalysisListener implements AnalysisListener {
      * @param throwable
      */
     private void jobFailed(ComponentJob componentJob, InputRow row, Throwable throwable) {
-        _execution.setJobEndDate(new Date());
-        _execution.setExecutionStatus(ExecutionStatus.FAILURE);
-
-        final StringWriter stringWriter = new StringWriter();
-        stringWriter.write("Job execution FAILURE");
-
-        if (throwable != null && !StringUtils.isNullOrEmpty(throwable.getMessage())) {
-            stringWriter.write("\n - ");
-            stringWriter.write(throwable.getMessage());
-            stringWriter.write(" (");
-            stringWriter.write(throwable.getClass().getSimpleName());
-            stringWriter.write(")");
-        }
-
-        if (componentJob != null) {
-            stringWriter.write('\n');
-            stringWriter.write(" - Failure component: " + componentJob);
-        }
-
-        if (row != null) {
-            stringWriter.write('\n');
-            stringWriter.write(" - Failure row: " + row);
-        }
-
-        if (throwable != null) {
-            stringWriter.write('\n');
-            stringWriter.write(" - Exception stacktrace of failure condition:");
-            stringWriter.write('\n');
-            final PrintWriter printWriter = new PrintWriter(stringWriter);
-            throwable.printStackTrace(printWriter);
-            printWriter.flush();
-        }
-
-        stringWriter.write("\nCheck the server logs for more details, warnings and debug information.");
-
-        log(stringWriter.toString());
-        flushLog();
-        
-        if (_eventPublisher != null) {
-            _eventPublisher.publishEvent(new JobFailedEvent(this, _execution, componentJob, row, throwable));
-        }
-    }
-
-    private void flushLog() {
-        _execution.setLogOutput(_log.toString());
-
-        _logFile.writeFile(new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                // synchronize while writing
-                synchronized (_log) {
-                    _executionLogWriter.write(_execution, out);
-                }
-            }
-        });
-    }
-
-    /**
-     * Logs a message to the {@link HistoricExecution}'s log output
-     * 
-     * @param message
-     */
-    private void log(String message) {
-        log(message, true);
-    }
-
-    /**
-     * Logs a message to the {@link HistoricExecution}'s log output
-     * 
-     * @param message
-     * @param newline
-     *            whether or not to insert a newline in the beginning of the
-     *            message
-     */
-    private void log(final String message, final boolean newline) {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        final String dateString = dateFormat.format(new Date());
-
-        synchronized (_log) {
-            if (newline) {
-                _log.append('\n');
-            }
-            _log.append(dateString);
-            _log.append(" - ");
-            _log.append(message);
-        }
+        _executionLogger.setStatusFailed(componentJob, row, throwable);
     }
 
     @Override
@@ -247,23 +126,23 @@ public class MonitorAnalysisListener implements AnalysisListener {
             sb.append(expectedRows);
         }
 
-        log(sb.toString());
-        flushLog();
+        _executionLogger.log(sb.toString());
+        _executionLogger.flushLog();
     }
 
     @Override
     public void rowProcessingProgress(AnalysisJob job, RowProcessingMetrics metrics, int currentRow) {
         if (currentRow > 0 && currentRow % 1000 == 0) {
             final Table table = metrics.getTable();
-            log("Row processing of table " + table + " progress: " + currentRow + " rows processed");
-            flushLog();
+            _executionLogger.log("Row processing of table " + table + " progress: " + currentRow + " rows processed");
+            _executionLogger.flushLog();
         }
     }
 
     @Override
     public void rowProcessingSuccess(AnalysisJob job, RowProcessingMetrics metrics) {
         final Table table = metrics.getTable();
-        log("Row processing of table " + table + " SUCCESS");
+        _executionLogger.log("Row processing of table " + table + " SUCCESS");
     }
 
     @Override
@@ -277,15 +156,15 @@ public class MonitorAnalysisListener implements AnalysisListener {
     @Override
     public void analyzerSuccess(AnalysisJob job, AnalyzerJob analyzerJob, AnalyzerResult result) {
         _results.put(analyzerJob, result);
-        log("Result gathered from analyzer: " + analyzerJob);
-        flushLog();
+        _executionLogger.log("Result gathered from analyzer: " + analyzerJob);
+        _executionLogger.flushLog();
     }
 
     @Override
     public void explorerSuccess(AnalysisJob job, ExplorerJob explorerJob, AnalyzerResult result) {
         _results.put(explorerJob, result);
-        log("Result gathered from explorer: " + explorerJob);
-        flushLog();
+        _executionLogger.log("Result gathered from explorer: " + explorerJob);
+        _executionLogger.flushLog();
     }
 
     @Override

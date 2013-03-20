@@ -64,6 +64,7 @@ public class TenantContextImpl implements TenantContext {
 
     @Override
     public List<String> getJobNames() {
+
         final RepositoryFolder jobsFolder = getJobFolder();
         final List<RepositoryFile> files = jobsFolder.getFiles(null, EXTENSION_JOB);
         final List<String> filenames = CollectionUtils.map(files, new HasNameMapper());
@@ -171,12 +172,13 @@ public class TenantContextImpl implements TenantContext {
         if (!resultFilename.endsWith(EXTENSION_RESULT)) {
             resultFilename = resultFilename + EXTENSION_RESULT;
         }
-        
+
         final RepositoryFolder resultsFolder = getResultFolder();
-        
+
         final RepositoryFile resultFile;
         if (resultFilename.endsWith("-latest" + EXTENSION_RESULT)) {
-            final String jobName = resultFilename.substring(0, resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
+            final String jobName = resultFilename.substring(0,
+                    resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
             resultFile = resultsFolder.getLatestFile(jobName, EXTENSION_RESULT);
         } else {
             resultFile = resultsFolder.getFile(resultFilename);

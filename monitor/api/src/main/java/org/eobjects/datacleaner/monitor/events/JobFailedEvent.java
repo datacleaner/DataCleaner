@@ -33,8 +33,8 @@ public class JobFailedEvent extends ApplicationEvent {
     private static final long serialVersionUID = 1L;
 
     private final ExecutionLog _executionLog;
-    private final ComponentJob _componentJob;
-    private final InputRow _row;
+    private final Object _component;
+    private final Object _data;
     private final Throwable _throwable;
 
     /**
@@ -43,35 +43,72 @@ public class JobFailedEvent extends ApplicationEvent {
      * @param source
      * @param executionLog
      *            the execution log of the triggered job
-     * @param componentJob
+     * @param component
      *            the component that made job fail, if available, or else null.
-     * @param row
-     *            the record that made the job fail, if available, or else null.
+     * @param data
+     *            the data/record that made the job fail, if available, or else
+     *            null.
      * @param throwable
      *            the exception thrown that made the job fail, if available, or
      *            null.
      */
-    public JobFailedEvent(Object source, ExecutionLog executionLog, ComponentJob componentJob, InputRow row,
-            Throwable throwable) {
+    public JobFailedEvent(Object source, ExecutionLog executionLog, Object component, Object data, Throwable throwable) {
         super(source);
         _executionLog = executionLog;
-        _componentJob = componentJob;
-        _row = row;
+        _component = component;
+        _data = data;
         _throwable = throwable;
     }
 
+    /**
+     * Gets the execution log of the triggered job
+     * 
+     * @return the execution log of the triggered job
+     */
     public ExecutionLog getExecutionLog() {
         return _executionLog;
     }
 
+    /**
+     * @deprecated use {@link #getComponent()} instead.
+     */
+    @Deprecated
     public ComponentJob getComponentJob() {
-        return _componentJob;
+        return (ComponentJob) _component;
     }
 
+    /**
+     * Gets the component that made job fail, if available, or else null.
+     * 
+     * @return the component that made job fail, if available, or else null.
+     */
+    public Object getComponent() {
+        return _component;
+    }
+
+    /**
+     * @deprecated use {@link #getData()} instead
+     */
     public InputRow getRow() {
-        return _row;
+        return (InputRow) _data;
     }
 
+    /**
+     * Gets the data/record that made the job fail, if available, or else null.
+     * 
+     * @return the data/record that made the job fail, if available, or else
+     *         null.
+     */
+    public Object getData() {
+        return _data;
+    }
+
+    /**
+     * Gets the exception thrown that made the job fail, if available, or null.
+     * 
+     * @return the exception thrown that made the job fail, if available, or
+     *         null.
+     */
     public Throwable getThrowable() {
         return _throwable;
     }

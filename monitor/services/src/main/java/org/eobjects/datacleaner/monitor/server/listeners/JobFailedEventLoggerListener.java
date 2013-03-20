@@ -19,9 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.server.listeners;
 
-import org.eobjects.analyzer.data.InputRow;
 import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.datacleaner.monitor.events.JobFailedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +38,14 @@ public class JobFailedEventLoggerListener implements ApplicationListener<JobFail
     public void onApplicationEvent(JobFailedEvent event) {
         logger.warn("Job execution failed: {}", event.getExecutionLog());
 
-        final InputRow row = event.getRow();
-        if (row != null) {
-            logger.info("Failure row: {}", row);
+        final Object data = event.getData();
+        if (data != null) {
+            logger.info("Failure input data: {}", data);
         }
         
-        final ComponentJob componentJob = event.getComponentJob();
-        if (componentJob != null) {
-            logger.info("Failure component: {}", componentJob);
+        final Object component = event.getComponent();
+        if (component != null) {
+            logger.info("Failure component: {}", component);
         }
         
         final Throwable throwable = event.getThrowable();

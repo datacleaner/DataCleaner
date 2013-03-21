@@ -57,6 +57,7 @@ public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
 
     public AbstractWizardPopupPanel(String heading, WizardServiceAsync service, TenantIdentifier tenant) {
         super(heading);
+        setAutoHideEnabled(false);
         addStyleName("WizardPopupPanel");
 
         FileUploadFunctionHandler.exportFileUploadFunction();

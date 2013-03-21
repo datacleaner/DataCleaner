@@ -34,7 +34,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbCustomJavaJobAdaptor;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Func;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**

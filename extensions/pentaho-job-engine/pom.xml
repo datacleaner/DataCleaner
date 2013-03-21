@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.eobjects.datacleaner</groupId>
+		<artifactId>DataCleaner-extensions</artifactId>
+		<version>3.5-RC2-SNAPSHOT</version>
+	</parent>
+	<artifactId>DataCleaner-pentaho-job-engine</artifactId>
+	<packaging>jar</packaging>
+	<name>DataCleaner - 'Pentaho job engine' extension</name>
+	<description>A 'job engine' for DataCleaner monitor that allows users to schedule Pentaho Data Integration (aka. Kettle) jobs alongside other job types.</description>
+
+	<dependencies>
+		<dependency>
+			<!-- Include DataCleaner as a provided dependency -->
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-monitor-api</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>

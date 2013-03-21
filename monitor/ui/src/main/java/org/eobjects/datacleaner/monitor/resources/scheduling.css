@@ -105,6 +105,10 @@
 	background-image: url("custom-job.png");
 }
 
+.SchedulePanel.PentahoJob {
+	background-image: url("pentaho-job.png");
+}
+
 .SchedulePanel .ScheduleColumn {
 	overflow: hidden;
 	white-space: nowrap;

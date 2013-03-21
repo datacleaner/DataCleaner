@@ -157,7 +157,6 @@ public class DatastoreDaoImpl implements DatastoreDao {
 
         // write the updated configuration file
         final Transformer transformer = getTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         final Source source = new DOMSource(configurationFileDocument);
 
         confFile.writeFile(new Action<OutputStream>() {
@@ -197,7 +196,9 @@ public class DatastoreDaoImpl implements DatastoreDao {
     protected Transformer getTransformer() {
         try {
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            return transformerFactory.newTransformer();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            return transformer;
         } catch (TransformerConfigurationException e) {
             throw new IllegalStateException(e);
         }

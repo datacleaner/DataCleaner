@@ -151,11 +151,11 @@ public class ExecuteJob extends AbstractQuartzJob {
 
             jobEngine.executeJob(context, execution, executionLogger, variables);
 
-        } catch (Exception e) {
+        } catch (Throwable error) {
             // only initialization issues are catched here, eg. failing to load
             // job or configuration. Other issues will be reported to the
             // listener by the runner.
-            executionLogger.setStatusFailed(null, null, e);
+            executionLogger.setStatusFailed(null, null, error);
         }
         return execution.getResultId();
     }

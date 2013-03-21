@@ -103,6 +103,13 @@
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
+		
+		<!-- Job engine extensions -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-pentaho-job-engine</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Datastore wizard extensions -->
 		<dependency>

@@ -9,7 +9,7 @@
 		<all>
 			<element name="group-name" minOccurs="0" maxOccurs="1" type="string" />
 			<element name="carte-hostname" minOccurs="0" maxOccurs="1" type="string" />
-			<element name="carte-port" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="carte-port" minOccurs="0" maxOccurs="1" type="int" />
 			<element name="carte-username" minOccurs="0" maxOccurs="1" type="string" />
 			<element name="carte-password" minOccurs="0" maxOccurs="1" type="string" />
 			<element name="transformation-name" minOccurs="0" maxOccurs="1" type="string" />

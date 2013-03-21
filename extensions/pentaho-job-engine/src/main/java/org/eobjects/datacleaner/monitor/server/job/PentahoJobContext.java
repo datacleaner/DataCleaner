@@ -25,9 +25,11 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.job.XmlJobContext;
+import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Func;
 
 /**
  * Job context object for Pentaho jobs
@@ -54,8 +56,18 @@ public class PentahoJobContext implements XmlJobContext {
 
     @Override
     public String getGroupName() {
-        // TODO
-        return "Pentaho jobs";
+        return getPentahoJobType().getGroupName();
+    }
+
+    public PentahoJobType getPentahoJobType() {
+        PentahoJobType pentahoJobType = _file.readFile(new Func<InputStream, PentahoJobType>() {
+            @Override
+            public PentahoJobType eval(InputStream in) {
+                JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
+                return adaptor.unmarshal(in);
+            }
+        });
+        return pentahoJobType;
     }
 
     @Override

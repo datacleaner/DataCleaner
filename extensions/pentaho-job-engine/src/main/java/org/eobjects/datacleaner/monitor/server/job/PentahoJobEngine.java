@@ -21,9 +21,11 @@ package org.eobjects.datacleaner.monitor.server.job;
 
 import java.util.Map;
 
+import org.apache.commons.codec.net.URLCodec;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
+import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.springframework.stereotype.Component;
@@ -49,7 +51,17 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
     @Override
     public void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception {
-        // TODO
+        final PentahoJobContext jobContext = getJobContext(tenantContext, execution.getJob());
+        final PentahoJobType pentahoJobType = jobContext.getPentahoJobType();
+
+        final URLCodec urlCodec = new URLCodec();
+        final String encodedName = urlCodec.encode(pentahoJobType.getTransformationName());
+        final String encodedId = urlCodec.encode(pentahoJobType.getTransformationId());
+
+        final String url = "http://" + pentahoJobType.getCarteHostname() + ":" + pentahoJobType.getCartePort()
+                + "/kettle/startTrans?xml=y&name=" + encodedName + "&id=" + encodedId;
+
+        throw new UnsupportedOperationException("Not yet implemented, but carte URL is: " + url);
     }
 
     @Override

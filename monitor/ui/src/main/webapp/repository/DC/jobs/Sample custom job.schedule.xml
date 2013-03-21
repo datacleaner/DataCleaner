@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<schedule xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/custom-job/1.0" xmlns:ns5="http://eobjects.org/datacleaner/execution-log/1.0">
+    <cron-expression>@hourly</cron-expression>
+    <distributed-execution>false</distributed-execution>
+    <alerts/>
+</schedule>

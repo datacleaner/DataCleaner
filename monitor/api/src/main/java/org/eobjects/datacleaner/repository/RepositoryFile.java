@@ -82,7 +82,9 @@ public interface RepositoryFile extends RepositoryNode {
     public Type getType();
 
     /**
-     * Gets the last modified timestamp.
+     * Gets the last modified timestamp, specified as the number of milliseconds
+     * since the standard base time known as "the epoch", namely January 1,
+     * 1970, 00:00:00 GMT.
      * 
      * @return the last modified timestamp, or -1 if there was an error reading
      *         the timestamp

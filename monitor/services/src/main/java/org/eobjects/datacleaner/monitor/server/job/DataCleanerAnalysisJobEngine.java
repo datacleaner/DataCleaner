@@ -66,8 +66,8 @@ public class DataCleanerAnalysisJobEngine extends AbstractJobEngine<DataCleanerA
     }
 
     @Override
-    public String getJobTypeDisplayName() {
-        return "DataCleaner analysis job";
+    public String getJobType() {
+        return "DataCleanerAnalysisJob";
     }
 
     @Override

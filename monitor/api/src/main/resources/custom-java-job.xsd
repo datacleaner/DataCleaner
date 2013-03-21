@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://eobjects.org/datacleaner/custom-java-job/1.0"
-	xmlns:java="http://eobjects.org/datacleaner/custom-java-job/1.0"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/datacleaner/custom-job/1.0"
+	xmlns:custom="http://eobjects.org/datacleaner/custom-job/1.0"
 	elementFormDefault="qualified">
 
-	<element name="custom-java-job">
-		<complexType>
-			<sequence>
-				<element name="class-name" minOccurs="0" maxOccurs="1" type="string" />
-				<element name="properties" minOccurs="0" maxOccurs="1"
-					type="java:propertiesType" />
-				<element name="group-name" minOccurs="0" maxOccurs="1" type="string" />
-			</sequence>
-		</complexType>
-	</element>
+	<element name="custom-job" type="custom:customJavaComponentJob" />
+
+	<complexType name="customJavaComponentJob">
+		<all>
+			<element name="class-name" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="properties" minOccurs="0" maxOccurs="1"
+				type="custom:propertiesType" />
+			<element name="group-name" minOccurs="0" maxOccurs="1" type="string" />
+		</all>
+	</complexType>
 
 	<complexType name="propertiesType">
 		<sequence>

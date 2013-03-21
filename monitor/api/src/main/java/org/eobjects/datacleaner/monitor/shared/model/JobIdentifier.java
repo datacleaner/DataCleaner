@@ -29,12 +29,20 @@ import java.io.Serializable;
 public class JobIdentifier implements Serializable, Comparable<JobIdentifier>, HasName {
 
     private static final long serialVersionUID = 1L;
+    
+    public static final String JOB_TYPE_ANALYSIS_JOB = "DataCleanerAnalysisJob";
+    public static final String JOB_TYPE_CUSTOM_JOB = "CustomJob";
 
     private String _name;
     private String _type;
+    
+    public JobIdentifier(String name, String type) {
+        _name = name;
+        _type = type;
+    }
 
     public JobIdentifier(String name) {
-        _name = name;
+        this(name, null);
     }
 
     public JobIdentifier() {

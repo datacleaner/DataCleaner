@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 
 /**
  * A component responsible for discovery and execution of jobs of a particular
@@ -35,33 +36,34 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 public interface JobEngine<T extends JobContext> {
 
     /**
-     * Gets the display name of a particular job type, such as 'DataCleaner
-     * analysis job', 'Custom Java class' or other names of the job type.
+     * Gets the type string, such as 'DataCleanerAnalysisJob', 'CustomJob' or
+     * other names of the job type. These string should not contain white space
+     * or special signs.
      * 
      * @return
      */
-    public String getJobTypeDisplayName();
+    public String getJobType();
 
     /**
-     * Gets all job names of a particular tenant.
+     * Gets all jobs of a particular tenant.
      * 
      * @param tenantContext
      * @return
      */
-    public List<String> getJobNames(TenantContext tenantContext);
+    public List<JobIdentifier> getJobs(TenantContext tenantContext);
 
     /**
      * Gets/produces a job context for a specific job.
      * 
-     * @param jobName
+     * @param job
      * @return
      */
-    public T getJobContext(TenantContext tenantContext, String jobName);
+    public T getJobContext(TenantContext tenantContext, JobIdentifier job);
 
     /**
      * Executes a job
      * 
-     * @param context
+     * @param tenantContext
      * @param execution
      * @param executionLogger
      * @param variables
@@ -72,7 +74,7 @@ public interface JobEngine<T extends JobContext> {
      *             case the job status will be set to FAILURE and the exception
      *             logged.
      */
-    public void executeJob(TenantContext context, ExecutionLog execution, ExecutionLogger executionLogger,
+    public void executeJob(TenantContext tenantContext, ExecutionLog execution, ExecutionLogger executionLogger,
             Map<String, String> variables) throws Exception;
 
     /**

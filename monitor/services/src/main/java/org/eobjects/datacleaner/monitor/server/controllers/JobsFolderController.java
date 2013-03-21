@@ -27,6 +27,7 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,13 +51,13 @@ public class JobsFolderController {
         final List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 
         {
-            final List<String> jobNames = context.getJobNames();
-            for (String jobName : jobNames) {
-                final JobContext jobContext = context.getJob(jobName);
+            final List<JobIdentifier> jobs = context.getJobs();
+            for (JobIdentifier job : jobs) {
+                final JobContext jobContext = context.getJob(job);
                 final RepositoryFile file = jobContext.getJobFile();
                 
                 final  Map<String, String> map = new HashMap<String, String>();
-                map.put("name", jobName);
+                map.put("name", job.getName());
                 map.put("filename", file.getName());
                 map.put("repository_path", file.getQualifiedPath());
                 result.add(map);

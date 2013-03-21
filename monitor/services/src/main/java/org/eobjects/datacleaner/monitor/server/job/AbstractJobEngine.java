@@ -24,6 +24,7 @@ import java.util.List;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.metamodel.util.CollectionUtils;
@@ -55,7 +56,8 @@ public abstract class AbstractJobEngine<T extends JobContext> implements JobEngi
     }
 
     @Override
-    public T getJobContext(TenantContext tenantContext, String jobName) {
+    public T getJobContext(TenantContext tenantContext, JobIdentifier job) {
+        final String jobName = job.getName();
         final String jobFilename = getJobFilename(jobName);
         final RepositoryFile file = tenantContext.getJobFolder().getFile(jobFilename);
         if (file == null) {
@@ -67,18 +69,18 @@ public abstract class AbstractJobEngine<T extends JobContext> implements JobEngi
     protected abstract T getJobContext(TenantContext tenantContext, RepositoryFile file);
 
     @Override
-    public final List<String> getJobNames(TenantContext tenantContext) {
+    public final List<JobIdentifier> getJobs(TenantContext tenantContext) {
         final RepositoryFolder jobsFolder = tenantContext.getJobFolder();
         final List<RepositoryFile> files = jobsFolder.getFiles(null, _fileExtension);
         final List<String> filenames = CollectionUtils.map(files, new HasNameMapper());
-        final List<String> jobNames = CollectionUtils.map(filenames, new Func<String, String>() {
+        final List<JobIdentifier> jobs = CollectionUtils.map(filenames, new Func<String, JobIdentifier>() {
             @Override
-            public String eval(String filename) {
+            public JobIdentifier eval(String filename) {
                 String jobName = filename.substring(0, filename.length() - _fileExtension.length());
-                return jobName;
+                return new JobIdentifier(jobName, getJobType());
             }
         });
-        return jobNames;
+        return jobs;
     }
 
     @Override

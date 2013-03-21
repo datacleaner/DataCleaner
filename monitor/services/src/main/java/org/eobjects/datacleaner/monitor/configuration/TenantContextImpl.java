@@ -30,6 +30,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -70,29 +71,41 @@ public class TenantContextImpl implements TenantContext {
     }
 
     @Override
-    public List<String> getJobNames() {
-        final List<String> jobNames = new ArrayList<String>();
+    public List<JobIdentifier> getJobs() {
+        final List<JobIdentifier> jobs = new ArrayList<JobIdentifier>();
 
         final Collection<JobEngine<?>> jobEngines = _jobEngineManager.getJobEngines();
         for (JobEngine<?> jobEngine : jobEngines) {
-            final List<String> jobEngineJobNames = jobEngine.getJobNames(this);
-            jobNames.addAll(jobEngineJobNames);
+            final List<JobIdentifier> jobEngineJobs = jobEngine.getJobs(this);
+            jobs.addAll(jobEngineJobs);
         }
-        return jobNames;
+        
+        return jobs;
+    }
+    
+    @Override
+    public JobContext getJob(String jobName) {
+        return getJob(new JobIdentifier(jobName));
     }
 
     @Override
-    public JobContext getJob(String jobName) throws IllegalArgumentException {
+    public JobContext getJob(JobIdentifier jobIdentifier) throws IllegalArgumentException {
+        if (jobIdentifier == null) {
+            return null;
+        }
+        final String jobName = jobIdentifier.getName();
         if (StringUtils.isNullOrEmpty(jobName)) {
             return null;
         }
+        
         JobContext job = _jobCache.get(jobName);
         if (job == null) {
+            // TODO: Use the job type to easier identify the engine?
             final JobEngine<?> jobEngine = _jobEngineManager.getJobEngine(this, jobName);
             if (jobEngine == null) {
                 return null;
             }
-            final JobContext newJob = jobEngine.getJobContext(this, jobName);
+            final JobContext newJob = jobEngine.getJobContext(this, jobIdentifier);
             job = _jobCache.putIfAbsent(jobName, newJob);
             if (job == null) {
                 job = newJob;
@@ -185,7 +198,7 @@ public class TenantContextImpl implements TenantContext {
         }
 
         if (resultFile == null) {
-            throw new IllegalArgumentException("No such result: " + resultFilename);
+            return null;
         }
         return new DefaultResultContext(this, resultFile);
     }

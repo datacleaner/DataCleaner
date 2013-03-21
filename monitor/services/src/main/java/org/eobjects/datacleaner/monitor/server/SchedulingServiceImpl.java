@@ -209,24 +209,26 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public List<ScheduleDefinition> getSchedules(TenantIdentifier tenant) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final List<String> jobNames = context.getJobNames();
-        final List<ScheduleDefinition> schedules = new ArrayList<ScheduleDefinition>(jobNames.size());
-        for (String jobName : jobNames) {
+        final List<JobIdentifier> jobs = context.getJobs();
+        final List<ScheduleDefinition> schedules = new ArrayList<ScheduleDefinition>(jobs.size());
+        for (JobIdentifier job : jobs) {
             try {
-                ScheduleDefinition schedule = getSchedule(tenant, jobName);
+                ScheduleDefinition schedule = getSchedule(tenant, job);
                 schedules.add(schedule);
             } catch (Exception e) {
-                logger.error("Failed to initialize schedule for tenant '" + tenant.getId() + "' job '" + jobName + "'.",
-                        e);
+                logger.error("Failed to initialize schedule for tenant '" + tenant.getId() + "' job '" + job.getName()
+                        + "'.", e);
             }
         }
         return schedules;
     }
 
-    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final String jobName) {
+    private ScheduleDefinition getSchedule(final TenantIdentifier tenant, final JobIdentifier jobIdentifier) {
         final TenantContext context = _tenantContextFactory.getContext(tenant);
 
-        final JobContext jobContext = context.getJob(jobName);
+        final String jobName = jobIdentifier.getName();
+
+        final JobContext jobContext = context.getJob(jobIdentifier);
         final String groupName = jobContext.getGroupName();
 
         final RepositoryFolder jobsFolder = context.getJobFolder();
@@ -236,7 +238,6 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
 
         final ScheduleDefinition schedule;
 
-        final JobIdentifier jobIdentifier = new JobIdentifier(jobName);
         if (scheduleFile == null) {
             schedule = new ScheduleDefinition(tenant, jobIdentifier, groupName);
         } else {
@@ -385,7 +386,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public ExecutionLog triggerExecution(TenantIdentifier tenant, JobIdentifier job) {
 
         final String jobNameToBeTriggered = job.getName();
-        final ScheduleDefinition schedule = getSchedule(tenant, jobNameToBeTriggered);
+        final ScheduleDefinition schedule = getSchedule(tenant, job);
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
 
         try {
@@ -537,11 +538,12 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
     public List<JobIdentifier> getDependentJobCandidates(TenantIdentifier tenant, ScheduleDefinition schedule)
             throws DCSecurityException {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final List<String> jobNames = tenantContext.getJobNames();
+        final List<JobIdentifier> jobs = tenantContext.getJobs();
         final List<JobIdentifier> result = new ArrayList<JobIdentifier>();
-        for (String jobName : jobNames) {
+        for (JobIdentifier job : jobs) {
+            final String jobName = job.getName();
             if (!jobName.equals(schedule.getJob().getName())) {
-                result.add(new JobIdentifier(jobName));
+                result.add(job);
             }
         }
         return result;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <schedule xmlns="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0">
-    <dependent-job>Customer completeness</dependent-job>
+    <dependent-job>Contributor name cleansing</dependent-job>
     <alerts>
         <alert>
             <description>Duplicate record rate</description>

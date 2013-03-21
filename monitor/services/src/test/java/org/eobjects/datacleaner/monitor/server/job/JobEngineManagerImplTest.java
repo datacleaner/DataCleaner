@@ -42,8 +42,8 @@ public class JobEngineManagerImplTest extends TestCase {
         engine = manager.getJobEngine(DataCleanerAnalysisJobContext.class);
         assertEquals(DataCleanerAnalysisJobEngine.class, engine.getClass());
         
-        engine = manager.getJobEngine(CustomJavaJobContext.class);
-        assertEquals(CustomJavaJobEngine.class, engine.getClass());
+        engine = manager.getJobEngine(CustomJobContext.class);
+        assertEquals(CustomJobEngine.class, engine.getClass());
     }
     
     public void testGetJobEngineHierarchy() throws Exception {

@@ -83,6 +83,14 @@ public class SchedulePanel extends Composite {
         _schedule = schedule;
 
         initWidget(uiBinder.createAndBindUi(this));
+        
+        // add the job type as a style name
+        final String jobType = schedule.getJob().getType();
+        if (jobType != null) {
+            addStyleName(jobType);
+        }
+        
+        final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(jobType);
 
         updateScheduleWidgets();
 
@@ -117,8 +125,8 @@ public class SchedulePanel extends Composite {
                 handler.showExecutionPopup(true);
             }
         }
-
-        if (_clientConfig.isJobEditor()) {
+        
+        if (_clientConfig.isJobEditor() && analysisJob) {
             launchButton.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
@@ -140,17 +148,22 @@ public class SchedulePanel extends Composite {
         expandAlertsAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                alertsPanel.clear();
-                alertsPanel.add(new CreateAlertAnchor(service, schedule));
+                final FlowPanel alertListPanel = new FlowPanel();
+                alertListPanel.setStyleName("AlertListPanel");
+                
                 if (alerts.isEmpty()) {
                     Label label = new Label("(no alerts)");
                     label.setStylePrimaryName("AlertPanel");
-                    alertsPanel.add(label);
+                    alertListPanel.add(label);
                 }
                 for (AlertDefinition alert : alerts) {
                     AlertPanel alertPanel = new AlertPanel(service, schedule, alert);
-                    alertsPanel.add(alertPanel);
+                    alertListPanel.add(alertPanel);
                 }
+
+                alertsPanel.clear();
+                alertsPanel.add(new CreateAlertAnchor(service, schedule));
+                alertsPanel.add(alertListPanel);
             }
         });
         alertsPanel.add(expandAlertsAnchor);

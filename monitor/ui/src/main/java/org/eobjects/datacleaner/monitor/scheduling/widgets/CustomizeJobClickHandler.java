@@ -140,24 +140,28 @@ public class CustomizeJobClickHandler implements ClickHandler {
             }
         });
         
-        menuBar.addSeparator();
-
-        menuBar.addItem("Job definition (xml)", new Command() {
-            @Override
-            public void execute() {
-                String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".analysis.xml");
-                Window.open(url, "datacleaner_job_details", null);
-                _popup.hide();
-            }
-        });
-        menuBar.addItem("Show latest result", new Command() {
-            @Override
-            public void execute() {
-                String url = Urls.createRepositoryUrl(_tenant, "results/" + job.getName() + "-latest.analysis.result.dat");
-                Window.open(url, "datacleaner_job_details", null);
-                _popup.hide();
-            }
-        });
+        final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
+        
+        if (analysisJob) {
+            menuBar.addSeparator();
+            
+            menuBar.addItem("Job definition (xml)", new Command() {
+                @Override
+                public void execute() {
+                    String url = Urls.createRepositoryUrl(_tenant, "jobs/" + job.getName() + ".analysis.xml");
+                    Window.open(url, "datacleaner_job_details", null);
+                    _popup.hide();
+                }
+            });
+            menuBar.addItem("Show latest result", new Command() {
+                @Override
+                public void execute() {
+                    String url = Urls.createRepositoryUrl(_tenant, "results/" + job.getName() + "-latest.analysis.result.dat");
+                    Window.open(url, "datacleaner_job_details", null);
+                    _popup.hide();
+                }
+            });
+        }
         
         _popup.setWidget(menuBar);
         _popup.showRelativeTo((UIObject) event.getSource());

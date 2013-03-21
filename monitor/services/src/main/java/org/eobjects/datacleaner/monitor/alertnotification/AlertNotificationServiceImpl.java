@@ -78,6 +78,10 @@ public class AlertNotificationServiceImpl implements AlertNotificationService {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(execution.getSchedule().getTenant());
         final ResultContext resultContext = tenantContext.getResult(execution.getResultId());
+        if (resultContext == null) {
+            // nothing to tell about
+            return;
+        }
 
         final Ref<Map<AlertDefinition, Number>> activeAlerts = new LazyRef<Map<AlertDefinition, Number>>() {
             @Override

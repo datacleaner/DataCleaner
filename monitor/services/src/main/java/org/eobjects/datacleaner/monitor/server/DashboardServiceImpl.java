@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.dashboard.DashboardService;
 import org.eobjects.datacleaner.monitor.dashboard.model.ChartOptions.HorizontalAxisOption;
@@ -35,6 +36,8 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineData;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDataRow;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -45,6 +48,8 @@ import org.eobjects.datacleaner.repository.RepositoryFile.Type;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,17 +196,24 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public List<JobIdentifier> getJobs(final TenantIdentifier tenant) {
-        final List<String> jobNames = _tenantContextFactory.getContext(tenant).getJobNames();
-        final List<JobIdentifier> result = new ArrayList<JobIdentifier>(jobNames.size());
-
-        for (String jobName : jobNames) {
-            final JobIdentifier job = new JobIdentifier(jobName);
-            result.add(job);
-        }
-
-        Collections.sort(result);
-
-        return result;
+        final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
+        List<JobIdentifier> jobs = tenantContext.getJobs();
+        jobs = CollectionUtils.filter(jobs, new Predicate<JobIdentifier>() {
+            @Override
+            public Boolean eval(JobIdentifier job) {
+                boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job);
+                if (analysisJob) {
+                    return true;
+                }
+                final JobContext jobContext = tenantContext.getJob(job);
+                if (jobContext instanceof MetricJobContext) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        Collections.sort(jobs);
+        return jobs;
     }
 
     @Override

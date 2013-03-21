@@ -20,11 +20,23 @@
 package org.eobjects.datacleaner.monitor.configuration;
 
 import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.eobjects.analyzer.descriptors.UnidentifiedComponentJob;
+import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.analyzer.result.AnalyzerResult;
+import org.eobjects.analyzer.result.DataSetResult;
+import org.eobjects.analyzer.result.ListResult;
+import org.eobjects.analyzer.result.NumberResult;
+import org.eobjects.analyzer.result.SimpleAnalysisResult;
 import org.eobjects.analyzer.util.ChangeAwareObjectInputStream;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.metamodel.data.DataSet;
 import org.eobjects.metamodel.util.FileHelper;
 import org.eobjects.metamodel.util.Func;
 
@@ -43,22 +55,58 @@ public class DefaultResultContext implements ResultContext {
 
     @Override
     public AnalysisResult getAnalysisResult() throws IllegalStateException {
-        final AnalysisResult analysisResult = _repositoryFile.readFile(new Func<InputStream, AnalysisResult>() {
+        final Object deserializedObject = _repositoryFile.readFile(new Func<InputStream, Object>() {
             @Override
-            public AnalysisResult eval(InputStream in) {
-            	ChangeAwareObjectInputStream inputStream = null;
+            public Object eval(InputStream in) {
+                ChangeAwareObjectInputStream inputStream = null;
                 try {
-                	inputStream = new ChangeAwareObjectInputStream(in);
-                    final AnalysisResult analysisResult = (AnalysisResult) inputStream.readObject();
-                    return analysisResult;
+                    inputStream = new ChangeAwareObjectInputStream(in);
+                    return inputStream.readObject();
                 } catch (Exception e) {
                     throw new IllegalStateException(e);
                 } finally {
-                	FileHelper.safeClose(inputStream);
+                    FileHelper.safeClose(inputStream);
                 }
             }
         });
+        final AnalysisResult analysisResult = toAnalysisResult(deserializedObject);
         return analysisResult;
+    }
+
+    private AnalysisResult toAnalysisResult(Object deserializedObject) {
+        if (deserializedObject instanceof AnalysisResult) {
+            // this is the most common case
+            return (AnalysisResult) deserializedObject;
+        }
+
+        // we allow custom jobs to serialize an AnalyzerResult directly, in
+        // which case we'll wrap it in a AnalysisResult
+        if (deserializedObject instanceof AnalyzerResult) {
+            final AnalyzerResult analyzerResult = (AnalyzerResult) deserializedObject;
+            final Date creationDate = new Date(_repositoryFile.getLastModified());
+            final Map<ComponentJob, AnalyzerResult> results = new HashMap<ComponentJob, AnalyzerResult>(1);
+            ComponentJob componentJob = new UnidentifiedComponentJob(analyzerResult);
+            results.put(componentJob, (AnalyzerResult) deserializedObject);
+            return new SimpleAnalysisResult(results, creationDate);
+        }
+        
+        if (deserializedObject instanceof DataSet) {
+            DataSetResult dataSetResult = new DataSetResult((DataSet)deserializedObject);
+            return toAnalysisResult(dataSetResult);
+        }
+
+        if (deserializedObject instanceof List) {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            ListResult<?> listResult = new ListResult((List<?>) deserializedObject);
+            return toAnalysisResult(listResult);
+        }
+        
+        if (deserializedObject instanceof Number) {
+            NumberResult numberResult = new NumberResult((Number) deserializedObject);
+            return toAnalysisResult(numberResult);
+        }
+
+        throw new UnsupportedOperationException("No handling logic for result: " + deserializedObject);
     }
 
     @Override

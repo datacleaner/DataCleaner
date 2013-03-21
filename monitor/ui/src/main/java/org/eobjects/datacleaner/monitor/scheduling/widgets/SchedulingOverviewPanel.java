@@ -91,7 +91,10 @@ public class SchedulingOverviewPanel extends Composite {
     }
 
     public void addSchedule(ScheduleDefinition schedule) {
-        final String groupName = schedule.getGroupName();
+        String groupName = schedule.getGroupName();
+        if (groupName == null || groupName.trim().length() == 0) {
+            groupName = "(other)";
+        }
         final ScheduleGroupPanel scheduleGroupPanel;
         if (_scheduleGroupPanels.containsKey(groupName)) {
             scheduleGroupPanel = _scheduleGroupPanels.get(groupName);

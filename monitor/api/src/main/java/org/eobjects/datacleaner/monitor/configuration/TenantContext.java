@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 
@@ -34,9 +35,11 @@ public interface TenantContext {
     
     public String getTenantId();
     
-    public List<String> getJobNames();
-
+    public List<JobIdentifier> getJobs();
+    
     public JobContext getJob(String jobName);
+
+    public JobContext getJob(JobIdentifier jobIdentifier);
     
     public ResultContext getResult(String resultFileName);
     

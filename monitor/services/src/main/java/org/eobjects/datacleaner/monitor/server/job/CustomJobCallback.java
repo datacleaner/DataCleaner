@@ -19,26 +19,17 @@
  */
 package org.eobjects.datacleaner.monitor.server.job;
 
-import javax.inject.Inject;
-
-import org.eobjects.analyzer.beans.api.Configured;
-import org.eobjects.analyzer.beans.api.Initialize;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 
 /**
- * Interface for jobs that can be run and scheduled in DataCleaner using the
- * {@link CustomJavaJobEngine}.
- * 
- * Instances of this interface can have {@link Inject}ed fields, declare
- * {@link Configured} properties and {@link Initialize} methods etc., just like
- * any other AnalyzerBeans component.
+ * A callback for {@link CustomJob}s to be able to push messages to the user
+ * about progress and retrieve contextual information about the job.
  */
-public interface CustomJavaJob {
+public interface CustomJobCallback {
 
-    /**
-     * Called by the {@link CustomJavaJobEngine} when the user or schedule
-     * triggers job execution.
-     * 
-     * @throws Exception
-     */
-    public void execute() throws Exception;
+    public TenantContext getTenantContext();
+
+    public void log(String message);
+
+    public void log(String message, Throwable throwable);
 }

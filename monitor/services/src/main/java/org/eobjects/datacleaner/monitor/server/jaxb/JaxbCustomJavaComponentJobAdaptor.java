@@ -22,24 +22,24 @@ package org.eobjects.datacleaner.monitor.server.jaxb;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eobjects.datacleaner.monitor.jaxb.CustomJavaJob;
+import org.eobjects.datacleaner.monitor.jaxb.CustomJavaComponentJob;
 
 /**
  * Simple JAXB adaptor for {@link CustomJavaJob}s.
  */
-public class JaxbCustomJavaJobAdaptor extends AbstractJaxbAdaptor<CustomJavaJob> {
+public class JaxbCustomJavaComponentJobAdaptor extends AbstractJaxbAdaptor<CustomJavaComponentJob> {
 
-    public JaxbCustomJavaJobAdaptor() {
-        super(CustomJavaJob.class);
+    public JaxbCustomJavaComponentJobAdaptor() {
+        super(CustomJavaComponentJob.class);
     }
 
     @Override
-    public CustomJavaJob unmarshal(InputStream in) {
+    public CustomJavaComponentJob unmarshal(InputStream in) {
         return super.unmarshal(in);
     }
 
     @Override
-    public void marshal(CustomJavaJob obj, OutputStream outputStream) {
+    public void marshal(CustomJavaComponentJob obj, OutputStream outputStream) {
         super.marshal(obj, outputStream);
     }
 }

@@ -39,6 +39,10 @@ public class JobExecutedEventNotifyAlertsListener implements ApplicationListener
     @Override
     public void onApplicationEvent(JobExecutedEvent event) {
         ExecutionLog executionLog = event.getExecutionLog();
+        Object result = event.getResult();
+        if (result == null) {
+            return;
+        }
         alertNotificationService.notifySubscribers(executionLog);
     }
 

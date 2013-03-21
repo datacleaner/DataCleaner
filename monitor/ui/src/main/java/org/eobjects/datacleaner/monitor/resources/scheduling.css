@@ -73,10 +73,13 @@
 /* a "row" representing a datastore header */
 .SchedulingOverviewPanel .ScheduleGroupPanel .HeadingLabel {
 	clear: both;
+	/*
 	background-image: url("datastore.png");
 	background-position: 4px center;
 	background-repeat: no-repeat;
 	padding-left: 30px;
+	*/
+	padding-left: 4px;
 	background-color: #f0f0f0;
 	color: #333;
 	margin-bottom: 0;
@@ -92,6 +95,14 @@
 
 .SchedulePanel {
 	font-size: 0.9em;
+	background-image: url("job.png");
+	background-repeat: no-repeat;
+	background-position: 4px center;
+	height: 30px;
+}
+
+.SchedulePanel.CustomJob {
+	background-image: url("custom-job.png");
 }
 
 .SchedulePanel .ScheduleColumn {
@@ -115,10 +126,6 @@
 
 .SchedulePanel .ScheduleColumn a.TriggerAnchor-MANUAL {
 	background-image: url("trigger_type_manual.png");
-}
-
-.SchedulePanel .AlertsColumn {
-	background-color: white;
 }
 
 .ScheduleGroupPanel a {
@@ -167,6 +174,10 @@
 	padding-left: 4px;
 }
 
+.SchedulePanel .AlertsColumn {
+	background-color: white;
+}
+
 .SchedulePanel .ActionsColumn .gwt-Button {
 	margin-left: 0px;
 	margin-right: 2px;
@@ -180,8 +191,14 @@
 	padding-left: 20px;
 }
 
+.AlertListPanel {
+	border-left: 1px solid #f0f0f0;
+	border-bottom: 1px solid #f0f0f0;
+	border-right: 1px solid #f0f0f0;
+	padding-left: 2px;
+}
+
 .AlertPanel {
-	border-left: 2px solid #f0f0f0;
 	margin-top: 2px;
 	margin-bottom: 2px;
 	background-repeat: no-repeat;

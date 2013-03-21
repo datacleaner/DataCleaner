@@ -130,7 +130,7 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
         flushLog();
 
-        if (_eventPublisher != null && result != null) {
+        if (_eventPublisher != null) {
             _eventPublisher.publishEvent(new JobExecutedEvent(this, _execution, result));
         }
     }

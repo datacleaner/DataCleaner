@@ -73,6 +73,18 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
 
     public static final String EXTENSION = ".pentaho.job.xml";
 
+    /**
+     * Defines the interval duration when polling for updates from the
+     * transformation
+     */
+    private static final int POLL_INTERVAL_MILLIS = 800;
+
+    /**
+     * Defines the duration between adding a progress update in the execution
+     * log.
+     */
+    private static final int PROGRESS_UPDATE_INTERVAL_MILLIS = 10000;
+
     public PentahoJobEngine() {
         super(EXTENSION);
     }
@@ -90,23 +102,117 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
 
         final HttpClient httpClient = createHttpClient(pentahoJobType);
 
+        final boolean ready = fillMissingDetails(httpClient, pentahoJobType, executionLogger);
+        if (!ready) {
+            return;
+        }
+
         final boolean started = startTrans(httpClient, pentahoJobType, executionLogger);
 
         if (!started) {
             return;
         }
 
+        long lastStatusUpdateTime = System.currentTimeMillis();
         boolean running = true;
         while (running) {
-            // sleep for half a second at a time
-            Thread.sleep(500);
+            Thread.sleep(POLL_INTERVAL_MILLIS);
 
-            running = transStatus(httpClient, pentahoJobType, executionLogger, tenantContext, execution);
+            final boolean progressUpdate;
+            if (System.currentTimeMillis() - lastStatusUpdateTime > PROGRESS_UPDATE_INTERVAL_MILLIS) {
+                lastStatusUpdateTime = System.currentTimeMillis();
+                progressUpdate = true;
+            } else {
+                progressUpdate = false;
+            }
+
+            running = transStatus(httpClient, pentahoJobType, executionLogger, tenantContext, execution, progressUpdate);
 
             if (!running) {
                 break;
             }
         }
+    }
+
+    /**
+     * Fills in any missing details of the request
+     * 
+     * @param httpClient
+     * @param pentahoJobType
+     * @param executionLogger
+     * @return true if the job should continue, or false if it has been
+     *         aborted/failed.
+     * @throws Exception
+     */
+    private boolean fillMissingDetails(HttpClient httpClient, PentahoJobType pentahoJobType,
+            ExecutionLogger executionLogger) throws Exception {
+        final String queriedTransformationId = pentahoJobType.getTransformationId();
+        final String queriedTransformationName = pentahoJobType.getTransformationName();
+        if (!StringUtils.isNullOrEmpty(queriedTransformationId) && StringUtils.isNullOrEmpty(queriedTransformationName)) {
+            // both 'id' and 'name' of transformation is filled already.
+            return true;
+        }
+
+        // remove id and name from config for now - just to get the proper
+        // status URL
+        pentahoJobType.setTransformationId(null);
+        pentahoJobType.setTransformationName(null);
+
+        final String statusUrl = getUrl("status", pentahoJobType);
+
+        final HttpGet request = new HttpGet(statusUrl);
+        try {
+            final HttpResponse response = httpClient.execute(request);
+            final int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                final Document doc = parse(documentBuilder, response.getEntity());
+                final Element serverstatusElement = doc.getDocumentElement();
+                final Element transstatuslistElement = DomUtils.getChildElementByTagName(serverstatusElement,
+                        "transstatuslist");
+                final List<Element> transstatusElements = DomUtils.getChildElements(transstatuslistElement);
+                for (Element transstatusElement : transstatusElements) {
+                    final String transId = DomUtils.getChildElementValueByTagName(transstatusElement, "id");
+                    final String transName = DomUtils.getChildElementValueByTagName(transstatusElement, "transname");
+                    if (matchesTransformationQuery(queriedTransformationName, queriedTransformationId, transName,
+                            transId)) {
+                        pentahoJobType.setTransformationId(transId);
+                        pentahoJobType.setTransformationName(transName);
+                        executionLogger.log("Identified transformation: name=" + transName + ", id=" + transId);
+                        return true;
+                    }
+                }
+
+                executionLogger.setStatusFailed(null, statusUrl, new PentahoJobException(
+                        "Carte did not present any transformations with id='" + queriedTransformationId + "' or name='"
+                                + queriedTransformationName + "'"));
+                return false;
+            } else {
+                String responseString = EntityUtils.toString(response.getEntity());
+                executionLogger.log(responseString);
+                executionLogger.setStatusFailed(null, statusUrl, new PentahoJobException(
+                        "Unexpected response status when updating transformation status: " + statusCode));
+                return false;
+            }
+        } finally {
+            request.releaseConnection();
+        }
+    }
+
+    private boolean matchesTransformationQuery(String queriedTransformationName, String queriedTransformationId,
+            String transName, String transId) {
+        if (!StringUtils.isNullOrEmpty(queriedTransformationName)) {
+            if (queriedTransformationName.equals(transName)) {
+                return true;
+            }
+        }
+
+        if (!StringUtils.isNullOrEmpty(queriedTransformationId)) {
+            if (queriedTransformationId.equals(transId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -116,12 +222,13 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
      * @param httpClient
      * @param pentahoJobType
      * @param executionLogger
-     * @param execution 
+     * @param execution
+     * @param progressUpdate
      * @return
      * @throws Exception
      */
-    private boolean transStatus(HttpClient httpClient, PentahoJobType pentahoJobType, ExecutionLogger executionLogger, TenantContext tenantContext, ExecutionLog execution)
-            throws Exception {
+    private boolean transStatus(HttpClient httpClient, PentahoJobType pentahoJobType, ExecutionLogger executionLogger,
+            TenantContext tenantContext, ExecutionLog execution, boolean progressUpdate) throws Exception {
         final String transStatusUrl = getUrl("transStatus", pentahoJobType);
         final HttpGet request = new HttpGet(transStatusUrl);
         try {
@@ -136,9 +243,16 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
                         webresultElement, "status_desc"));
                 if ("Running".equalsIgnoreCase(statusDescription)) {
                     // the job is still running
+
+                    if (progressUpdate) {
+                        logTransStatus("progress", pentahoJobType, executionLogger, doc);
+                    }
+
                     return true;
                 } else if ("Waiting".equalsIgnoreCase(statusDescription)) {
                     // the job has finished - serialize and return succesfully
+
+                    logTransStatus("finished", pentahoJobType, executionLogger, doc);
 
                     final String documentString;
                     {
@@ -151,15 +265,16 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
                     }
 
                     final PentahoJobResult result = new PentahoJobResult(documentString);
-                    
-                    final String resultFilename = execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
+
+                    final String resultFilename = execution.getResultId()
+                            + FileFilters.ANALYSIS_RESULT_SER.getExtension();
                     tenantContext.getResultFolder().createFile(resultFilename, new Action<OutputStream>() {
                         @Override
                         public void run(OutputStream out) throws Exception {
                             SerializationUtils.serialize(result, out);
                         }
                     });
-                    
+
                     executionLogger.setStatusSuccess(result);
                     return false;
                 } else if ("Paused".equalsIgnoreCase(statusDescription)) {
@@ -182,6 +297,62 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
         } finally {
             request.releaseConnection();
         }
+    }
+
+    /**
+     * Logs the progress of a job in Carte based on the XML response of a
+     * 'transUpdate' call.
+     * 
+     * @param statusType
+     *            the type of status update - expecting a word to put into an
+     *            update sentence like 'progress' or 'finished'.
+     * @param pentahoJobType
+     * @param executionLogger
+     * @param document
+     */
+    private void logTransStatus(String statusType, PentahoJobType pentahoJobType, ExecutionLogger executionLogger,
+            Document document) {
+        final Element transstatusElement = document.getDocumentElement();
+        final Element stepstatuslistElement = DomUtils.getChildElementByTagName(transstatusElement, "stepstatuslist");
+        final List<Element> stepstatusElements = DomUtils.getChildElements(stepstatuslistElement);
+        for (Element stepstatusElement : stepstatusElements) {
+            final String stepName = DomUtils.getChildElementValueByTagName(stepstatusElement, "stepname");
+            final String linesInput = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesInput");
+            final String linesOutput = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesOutput");
+            final String linesRead = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesRead");
+            final String linesWritten = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesWritten");
+            final String statusDescription = DomUtils.getChildElementValueByTagName(stepstatusElement,
+                    "statusDescription");
+            
+            final StringBuilder update = new StringBuilder();
+            update.append("Step '");
+            update.append(stepName);
+            update.append("' ");
+            update.append(statusType);
+            update.append(": status='");
+            update.append(statusDescription);
+            update.append("'");
+            
+            if (!"0".equals(linesRead)) {
+                update.append(", linesRead=");
+                update.append(linesRead);
+            }
+            if (!"0".equals(linesWritten)) {
+                update.append(", linesWritten=");
+                update.append(linesWritten);
+            }
+            if (!"0".equals(linesInput)) {
+                update.append(", linesInput=");
+                update.append(linesInput);
+            }
+            if (!"0".equals(linesOutput)) {
+                update.append(", linesOutput=");
+                update.append(linesOutput);
+            }
+            
+            executionLogger.log(update.toString());
+        }
+        executionLogger.flushLog();
     }
 
     protected Transformer getTransformer() {
@@ -259,10 +430,28 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
 
     private String getUrl(String serviceName, PentahoJobType pentahoJobType) throws EncoderException {
         final URLCodec urlCodec = new URLCodec();
-        final String encodedName = urlCodec.encode(pentahoJobType.getTransformationName());
-        final String encodedId = urlCodec.encode(pentahoJobType.getTransformationId());
-        return "http://" + pentahoJobType.getCarteHostname() + ":" + pentahoJobType.getCartePort() + "/kettle/"
-                + serviceName + "/?xml=y&name=" + encodedName + "&id=" + encodedId;
+
+        final StringBuilder url = new StringBuilder();
+        url.append("http://");
+        url.append(pentahoJobType.getCarteHostname());
+        url.append(':');
+        url.append(pentahoJobType.getCartePort());
+        url.append("/kettle/");
+        url.append(serviceName);
+        url.append("/?xml=y");
+        if (!StringUtils.isNullOrEmpty(pentahoJobType.getTransformationId())) {
+            url.append("&id=");
+            final String encodedId = urlCodec.encode(pentahoJobType.getTransformationId());
+            url.append(encodedId);
+        }
+
+        if (!StringUtils.isNullOrEmpty(pentahoJobType.getTransformationName())) {
+            url.append("&name=");
+            final String encodedName = urlCodec.encode(pentahoJobType.getTransformationName());
+            url.append(encodedName);
+        }
+
+        return url.toString();
     }
 
     private HttpClient createHttpClient(PentahoJobType pentahoJobType) {

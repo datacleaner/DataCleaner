@@ -4,6 +4,5 @@
 	<carte-port>8081</carte-port>
 	<carte-username>cluster</carte-username>
 	<carte-password>cluster</carte-password>
-	<transformation-id>19bbba52-9a0c-47b0-9348-58ca092c23f2</transformation-id>
 	<transformation-name>Row generator test</transformation-name>
 </pentaho-job>

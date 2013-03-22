@@ -71,7 +71,7 @@ public class ErrorHandler {
             Window.alert(t.getMessage());
             return;
         }
-        
+
         GWT.log("Uncaught exception", t);
         GWT.log("Additional details: " + additionalDetails);
 
@@ -154,7 +154,7 @@ public class ErrorHandler {
 
             panel.add(textArea);
         }
-        
+
         final Button closeButton = new Button("Close");
         closeButton.addClickHandler(new ClickHandler() {
             @Override
@@ -162,7 +162,7 @@ public class ErrorHandler {
                 dialogBox.hide();
             }
         });
-        
+
         final ButtonPanel buttonPanel = new ButtonPanel();
         buttonPanel.add(closeButton);
         panel.add(buttonPanel);

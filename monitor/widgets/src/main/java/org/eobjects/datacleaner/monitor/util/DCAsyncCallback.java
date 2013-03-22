@@ -20,7 +20,9 @@
 package org.eobjects.datacleaner.monitor.util;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.InvocationException;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 /**
@@ -37,6 +39,16 @@ public abstract class DCAsyncCallback<T> implements AsyncCallback<T> {
     @Override
     public void onFailure(Throwable e) {
         GWT.log("Error occurred", e);
+
+        if (e instanceof InvocationException) {
+            String message = e.getMessage();
+            if (message != null && message.indexOf("j_spring_security_check") != -1) {
+                // user has been logged out, reload the page!
+                Window.Location.reload();
+                return;
+            }
+        }
+        
         if (e instanceof StatusCodeException) {
             final String response = ((StatusCodeException) e).getEncodedResponse();
 

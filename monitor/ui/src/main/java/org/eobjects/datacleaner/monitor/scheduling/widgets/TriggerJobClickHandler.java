@@ -49,6 +49,7 @@ public class TriggerJobClickHandler implements ClickHandler {
 
     public void showExecutionPopup(final boolean showResultsWhenDone) {
         final DCPopupPanel popupPanel = new DCPopupPanel("Execute job");
+        popupPanel.setAutoHideEnabled(false);
         popupPanel.setWidget(new LoadingIndicator());
         popupPanel.addButton(new CancelPopupButton(popupPanel, "Close"));
         popupPanel.center();

@@ -19,13 +19,17 @@
  */
 package org.eobjects.datacleaner.monitor.dashboard.widgets;
 
+import java.util.List;
+
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -69,10 +73,15 @@ public class CustomizeTimelineHandler implements ClickHandler {
         saveButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                final List<MetricIdentifier> selectedMetrics = _customizeMetricsPanel.getSelectedMetrics();
+                if (selectedMetrics == null || selectedMetrics.isEmpty()) {
+                    Window.alert("Please select one or more metrics to plot in the timeline");
+                    return;
+                }
 
                 final TimelineDefinition timelineDefinition = new TimelineDefinition(true);
                 timelineDefinition.setJobIdentifier(_timelinePanel.getTimelineDefinition().getJobIdentifier());
-                timelineDefinition.setMetrics(_customizeMetricsPanel.getSelectedMetrics());
+                timelineDefinition.setMetrics(selectedMetrics);
                 timelineDefinition.setChartOptions(_customizeChartOptionsPanel.getChartOptions());
 
                 _timelinePanel.setTimelineDefinition(timelineDefinition);

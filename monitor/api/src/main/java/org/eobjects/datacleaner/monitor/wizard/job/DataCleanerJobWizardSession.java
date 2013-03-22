@@ -34,29 +34,17 @@ import org.eobjects.metamodel.util.Action;
  * Represents a typically used abstract class of {@link JobWizardSession}, which
  * is applicable for every job wizard that produces DataCleaner jobs.
  */
-public abstract class DataCleanerJobWizardSession implements JobWizardSession {
+public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSession implements JobWizardSession {
 
-    private final JobWizardContext _wizardContext;
-
-    public DataCleanerJobWizardSession(JobWizardContext wizardContext) {
-        _wizardContext = wizardContext;
-    }
-
-    @Override
-    public final JobWizardContext getWizardContext() {
-        return _wizardContext;
-    }
-
-    @Override
-    public Integer getPageCount() {
-        return _wizardContext.getJobWizard().getExpectedPageCount();
+    public DataCleanerJobWizardSession(JobWizardContext context) {
+        super(context);
     }
 
     @Override
     public final String finished() {
-        final TenantContext tenantContext = _wizardContext.getTenantContext();
+        final TenantContext tenantContext = getWizardContext().getTenantContext();
         final RepositoryFolder jobFolder = tenantContext.getJobFolder();
-        final String jobName = _wizardContext.getJobName();
+        final String jobName = getWizardContext().getJobName();
         jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {

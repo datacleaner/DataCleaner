@@ -20,24 +20,23 @@
 package org.eobjects.datacleaner.monitor.wizard.job;
 
 /**
- * Abstract job wizard implementation for DataCleaner jobs.
+ * Abstract job wizard session implementation
  */
-public abstract class DataCleanerJobWizard implements JobWizard {
+public abstract class AbstractJobWizardSession implements JobWizardSession {
+
+    private final JobWizardContext _wizardContext;
+
+    public AbstractJobWizardSession(JobWizardContext wizardContext) {
+        _wizardContext = wizardContext;
+    }
 
     @Override
-    public final DataCleanerJobWizardSession start(JobWizardContext context) {
-        return startInternal(context);
-    }
-    
-    @Override
-    public final boolean isDatastoreConsumer() {
-        return true;
-    }
-    
-    @Override
-    public boolean isApplicableTo(JobWizardContext context) {
-        return true;
+    public final JobWizardContext getWizardContext() {
+        return _wizardContext;
     }
 
-    protected abstract DataCleanerJobWizardSession startInternal(JobWizardContext context);
+    @Override
+    public Integer getPageCount() {
+        return _wizardContext.getJobWizard().getExpectedPageCount();
+    }
 }

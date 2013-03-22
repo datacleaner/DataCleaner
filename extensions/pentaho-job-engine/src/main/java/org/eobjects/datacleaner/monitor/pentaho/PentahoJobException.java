@@ -31,4 +31,7 @@ public class PentahoJobException extends RuntimeException {
         super(message);
     }
 
+    public PentahoJobException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

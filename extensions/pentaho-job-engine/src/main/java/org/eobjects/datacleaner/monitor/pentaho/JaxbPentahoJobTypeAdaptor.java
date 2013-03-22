@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.pentaho;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.xml.bind.JAXBElement;
+
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
 import org.eobjects.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
 
@@ -30,7 +32,7 @@ import org.eobjects.datacleaner.monitor.server.jaxb.AbstractJaxbAdaptor;
  */
 public class JaxbPentahoJobTypeAdaptor extends AbstractJaxbAdaptor<PentahoJobType> {
 
-    protected JaxbPentahoJobTypeAdaptor() {
+    public JaxbPentahoJobTypeAdaptor() {
         super(PentahoJobType.class);
     }
 
@@ -40,7 +42,7 @@ public class JaxbPentahoJobTypeAdaptor extends AbstractJaxbAdaptor<PentahoJobTyp
     }
 
     @Override
-    public void marshal(PentahoJobType obj, OutputStream outputStream) {
+    public void marshal(JAXBElement<PentahoJobType> obj, OutputStream outputStream) {
         super.marshal(obj, outputStream);
     }
 }

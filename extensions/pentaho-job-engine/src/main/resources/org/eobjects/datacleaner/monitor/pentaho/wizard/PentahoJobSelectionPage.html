@@ -1,0 +1,10 @@
+<div>
+	<p>Please select the Pentaho Data Integration transformation that
+		this job should trigger.</p>
+
+	<select name="transformation">
+		<#list transformations as transformation>
+			<option value="${transformation.id}">${transformation.name}</option>
+		</#list>
+	</select>
+</div>

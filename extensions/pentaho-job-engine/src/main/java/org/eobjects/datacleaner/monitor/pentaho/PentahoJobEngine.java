@@ -19,15 +19,11 @@
  */
 package org.eobjects.datacleaner.monitor.pentaho;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -36,19 +32,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.codec.EncoderException;
-import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.auth.params.AuthPNames;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.AuthPolicy;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
@@ -101,14 +87,14 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
         final PentahoJobContext jobContext = getJobContext(tenantContext, execution.getJob());
         final PentahoJobType pentahoJobType = jobContext.getPentahoJobType();
 
-        final HttpClient httpClient = createHttpClient(pentahoJobType);
+        final PentahoCarteClient carteClient = new PentahoCarteClient(pentahoJobType);
 
-        final boolean ready = fillMissingDetails(httpClient, pentahoJobType, executionLogger);
+        final boolean ready = fillMissingDetails(carteClient, pentahoJobType, executionLogger);
         if (!ready) {
             return;
         }
 
-        final boolean started = startTrans(httpClient, pentahoJobType, executionLogger);
+        final boolean started = startTrans(carteClient, pentahoJobType, executionLogger);
 
         if (!started) {
             return;
@@ -127,7 +113,8 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
                 progressUpdate = false;
             }
 
-            running = transStatus(httpClient, pentahoJobType, executionLogger, tenantContext, execution, progressUpdate);
+            running = transStatus(carteClient, pentahoJobType, executionLogger, tenantContext, execution,
+                    progressUpdate);
 
             if (!running) {
                 break;
@@ -138,14 +125,14 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
     /**
      * Fills in any missing details of the request
      * 
-     * @param httpClient
+     * @param carteClient
      * @param pentahoJobType
      * @param executionLogger
      * @return true if the job should continue, or false if it has been
      *         aborted/failed.
      * @throws Exception
      */
-    private boolean fillMissingDetails(HttpClient httpClient, PentahoJobType pentahoJobType,
+    private boolean fillMissingDetails(PentahoCarteClient carteClient, PentahoJobType pentahoJobType,
             ExecutionLogger executionLogger) throws Exception {
         final String queriedTransformationId = pentahoJobType.getTransformationId();
         final String queriedTransformationName = pentahoJobType.getTransformationName();
@@ -154,65 +141,20 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
             return true;
         }
 
-        // remove id and name from config for now - just to get the proper
-        // status URL
-        pentahoJobType.setTransformationId(null);
-        pentahoJobType.setTransformationName(null);
-
-        final String statusUrl = getUrl("status", pentahoJobType);
-
-        final HttpGet request = new HttpGet(statusUrl);
-        try {
-            final HttpResponse response = httpClient.execute(request);
-            final int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 200) {
-                final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                final Document doc = parse(documentBuilder, response.getEntity());
-                final Element serverstatusElement = doc.getDocumentElement();
-                final Element transstatuslistElement = DomUtils.getChildElementByTagName(serverstatusElement,
-                        "transstatuslist");
-                final List<Element> transstatusElements = DomUtils.getChildElements(transstatuslistElement);
-                for (Element transstatusElement : transstatusElements) {
-                    final String transId = DomUtils.getChildElementValueByTagName(transstatusElement, "id");
-                    final String transName = DomUtils.getChildElementValueByTagName(transstatusElement, "transname");
-                    if (matchesTransformationQuery(queriedTransformationName, queriedTransformationId, transName,
-                            transId)) {
-                        pentahoJobType.setTransformationId(transId);
-                        pentahoJobType.setTransformationName(transName);
-                        executionLogger.log("Identified transformation: name=" + transName + ", id=" + transId);
-                        return true;
-                    }
-                }
-
-                executionLogger.setStatusFailed(null, statusUrl, new PentahoJobException(
-                        "Carte did not present any transformations with id='" + queriedTransformationId + "' or name='"
-                                + queriedTransformationName + "'"));
-                return false;
-            } else {
-                String responseString = EntityUtils.toString(response.getEntity());
-                executionLogger.log(responseString);
-                executionLogger.setStatusFailed(null, statusUrl, new PentahoJobException(
-                        "Unexpected response status when updating transformation status: " + statusCode));
-                return false;
-            }
-        } finally {
-            request.releaseConnection();
-        }
-    }
-
-    private boolean matchesTransformationQuery(String queriedTransformationName, String queriedTransformationId,
-            String transName, String transId) {
-        if (!StringUtils.isNullOrEmpty(queriedTransformationName)) {
-            if (queriedTransformationName.equals(transName)) {
+        final List<PentahoTransformation> availableTransformations = carteClient.getAvailableTransformations();
+        for (PentahoTransformation candidate : availableTransformations) {
+            if (candidate.matches(queriedTransformationId, queriedTransformationName)) {
+                pentahoJobType.setTransformationId(candidate.getId());
+                pentahoJobType.setTransformationName(candidate.getName());
+                executionLogger.log("Identified transformation: name=" + candidate.getName() + ", id="
+                        + candidate.getId());
                 return true;
             }
         }
 
-        if (!StringUtils.isNullOrEmpty(queriedTransformationId)) {
-            if (queriedTransformationId.equals(transId)) {
-                return true;
-            }
-        }
+        executionLogger.setStatusFailed(null, null, new PentahoJobException(
+                "Carte did not present any transformations with id='" + queriedTransformationId + "' or name='"
+                        + queriedTransformationName + "'"));
         return false;
     }
 
@@ -220,7 +162,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
      * Fires the HTTP request to the Carte server to get the updated status of
      * the execution
      * 
-     * @param httpClient
+     * @param carteClient
      * @param pentahoJobType
      * @param executionLogger
      * @param execution
@@ -228,16 +170,16 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
      * @return
      * @throws Exception
      */
-    private boolean transStatus(HttpClient httpClient, PentahoJobType pentahoJobType, ExecutionLogger executionLogger,
-            TenantContext tenantContext, ExecutionLog execution, boolean progressUpdate) throws Exception {
-        final String transStatusUrl = getUrl("transStatus", pentahoJobType);
+    private boolean transStatus(PentahoCarteClient carteClient, PentahoJobType pentahoJobType,
+            ExecutionLogger executionLogger, TenantContext tenantContext, ExecutionLog execution, boolean progressUpdate)
+            throws Exception {
+        final String transStatusUrl = carteClient.getUrl("transStatus");
         final HttpGet request = new HttpGet(transStatusUrl);
         try {
-            final HttpResponse response = httpClient.execute(request);
+            final HttpResponse response = carteClient.execute(request);
             final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 200) {
-                final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                final Document doc = parse(documentBuilder, response.getEntity());
+                final Document doc = carteClient.parse(response.getEntity());
                 final Element webresultElement = doc.getDocumentElement();
 
                 final String statusDescription = DomUtils.getTextValue(DomUtils.getChildElementByTagName(
@@ -324,7 +266,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
             final String linesWritten = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesWritten");
             final String statusDescription = DomUtils.getChildElementValueByTagName(stepstatusElement,
                     "statusDescription");
-            
+
             final StringBuilder update = new StringBuilder();
             update.append("Step '");
             update.append(stepName);
@@ -333,7 +275,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
             update.append(": status='");
             update.append(statusDescription);
             update.append("'");
-            
+
             if (!"0".equals(linesRead)) {
                 update.append(", linesRead=");
                 update.append(linesRead);
@@ -350,7 +292,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
                 update.append(", linesOutput=");
                 update.append(linesOutput);
             }
-            
+
             executionLogger.log(update.toString());
         }
         executionLogger.flushLog();
@@ -370,22 +312,21 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
     /**
      * Fires the HTTP request to Carte to start processing the transformation.
      * 
-     * @param httpClient
+     * @param carteClient
      * @param pentahoJobType
      * @param executionLogger
      * @return
      * @throws Exception
      */
-    private boolean startTrans(HttpClient httpClient, PentahoJobType pentahoJobType, ExecutionLogger executionLogger)
-            throws Exception {
-        final String startTransUrl = getUrl("startTrans", pentahoJobType);
+    private boolean startTrans(PentahoCarteClient carteClient, PentahoJobType pentahoJobType,
+            ExecutionLogger executionLogger) throws Exception {
+        final String startTransUrl = carteClient.getUrl("startTrans");
         final HttpGet request = new HttpGet(startTransUrl);
         try {
-            final HttpResponse response = httpClient.execute(request);
+            final HttpResponse response = carteClient.execute(request);
             final int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 200) {
-                final DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-                final Document doc = parse(documentBuilder, response.getEntity());
+                final Document doc = carteClient.parse(response.getEntity());
                 final Element webresultElement = doc.getDocumentElement();
 
                 final String message = DomUtils.getTextValue(DomUtils.getChildElementByTagName(webresultElement,
@@ -418,61 +359,6 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
         } finally {
             request.releaseConnection();
         }
-    }
-
-    private Document parse(DocumentBuilder documentBuilder, HttpEntity entity) throws Exception {
-        InputStream content = entity.getContent();
-        try {
-            return documentBuilder.parse(content);
-        } finally {
-            content.close();
-        }
-    }
-
-    private String getUrl(String serviceName, PentahoJobType pentahoJobType) throws EncoderException {
-        final URLCodec urlCodec = new URLCodec();
-
-        final StringBuilder url = new StringBuilder();
-        url.append("http://");
-        url.append(pentahoJobType.getCarteHostname());
-        url.append(':');
-        url.append(pentahoJobType.getCartePort());
-        url.append("/kettle/");
-        url.append(serviceName);
-        url.append("/?xml=y");
-        if (!StringUtils.isNullOrEmpty(pentahoJobType.getTransformationId())) {
-            url.append("&id=");
-            final String encodedId = urlCodec.encode(pentahoJobType.getTransformationId());
-            url.append(encodedId);
-        }
-
-        if (!StringUtils.isNullOrEmpty(pentahoJobType.getTransformationName())) {
-            url.append("&name=");
-            final String encodedName = urlCodec.encode(pentahoJobType.getTransformationName());
-            url.append(encodedName);
-        }
-
-        return url.toString();
-    }
-
-    private HttpClient createHttpClient(PentahoJobType pentahoJobType) {
-        final String hostname = pentahoJobType.getCarteHostname();
-        final Integer port = pentahoJobType.getCartePort();
-        final String username = pentahoJobType.getCarteUsername();
-        final String password = pentahoJobType.getCartePassword();
-
-        final DefaultHttpClient httpClient = new DefaultHttpClient();
-        final CredentialsProvider credentialsProvider = httpClient.getCredentialsProvider();
-
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
-
-        final List<String> authpref = new ArrayList<String>();
-        authpref.add(AuthPolicy.BASIC);
-        authpref.add(AuthPolicy.DIGEST);
-        httpClient.getParams().setParameter(AuthPNames.PROXY_AUTH_PREF, authpref);
-
-        credentialsProvider.setCredentials(new AuthScope(hostname, port), credentials);
-        return httpClient;
     }
 
     @Override

@@ -17,23 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.common;
+package org.eobjects.datacleaner.monitor.pentaho.wizard;
 
-import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizard;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.springframework.stereotype.Component;
 
+/**
+ * {@link JobWizard} for Pentaho jobs running on a Carte server
+ */
 @Component
-public class MockAnalysisWizard extends DataCleanerJobWizard {
+public class PentahoJobWizard implements JobWizard {
 
     @Override
-    public MockWizardSession startInternal(JobWizardContext context) {
-        return new MockWizardSession(context);
+    public boolean isApplicableTo(JobWizardContext context) {
+        return true;
     }
 
     @Override
     public String getDisplayName() {
-        return "Mock wizard";
+        return "Pentaho Data Integration transformation";
     }
 
     @Override
@@ -41,9 +45,14 @@ public class MockAnalysisWizard extends DataCleanerJobWizard {
         return 2;
     }
 
-	@Override
-	public boolean isApplicableTo(JobWizardContext datastore) {
-		return true;
-	}
+    @Override
+    public JobWizardSession start(JobWizardContext context) {
+        return new PentahoJobWizardSession(context);
+    }
+
+    @Override
+    public boolean isDatastoreConsumer() {
+        return false;
+    }
 
 }

@@ -26,6 +26,14 @@ package org.eobjects.datacleaner.monitor.wizard.job;
 public interface JobWizard {
 
     /**
+     * Determines if this wizard produces jobs that consumes one or more
+     * datastores in the DataCleaner repository. Most jobs do, but some, such as
+     * command line scripts or third party applications do not, so they are
+     * presented differently to the user.
+     */
+    public boolean isDatastoreConsumer();
+
+    /**
      * Determines if a wizard is applicable to the initial settings, provided in
      * the {@link JobWizardContext}. This method allows a wizard to be
      * applicable only to e.g. certain types of datastores, tenants or other

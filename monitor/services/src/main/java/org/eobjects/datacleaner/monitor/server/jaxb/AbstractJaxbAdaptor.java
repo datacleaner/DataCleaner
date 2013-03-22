@@ -44,8 +44,7 @@ public abstract class AbstractJaxbAdaptor<E> {
 
     protected AbstractJaxbAdaptor(Class<E> clazz) {
         try {
-            _jaxbContext = JAXBContext.newInstance(clazz.getPackage().getName(),
-                    clazz.getClassLoader());
+            _jaxbContext = JAXBContext.newInstance(clazz.getPackage().getName(), clazz.getClassLoader());
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -67,14 +66,14 @@ public abstract class AbstractJaxbAdaptor<E> {
         cal.setTime(date);
         return getDatatypeFactory().newXMLGregorianCalendar(cal);
     }
-    
+
     protected Date createDate(XMLGregorianCalendar gregorianCalendar) {
         if (gregorianCalendar == null) {
             return null;
         }
         return gregorianCalendar.toGregorianCalendar().getTime();
     }
-    
+
     @SuppressWarnings("unchecked")
     protected E unmarshal(InputStream in) {
         final Unmarshaller unmarshaller = createUnmarshaller();
@@ -105,6 +104,15 @@ public abstract class AbstractJaxbAdaptor<E> {
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.setEventHandler(new JaxbValidationEventHandler());
             return marshaller;
+        } catch (JAXBException e) {
+            throw new JaxbException(e);
+        }
+    }
+
+    protected void marshal(JAXBElement<E> obj, OutputStream outputStream) {
+        Marshaller marshaller = createMarshaller();
+        try {
+            marshaller.marshal(obj, outputStream);
         } catch (JAXBException e) {
             throw new JaxbException(e);
         }

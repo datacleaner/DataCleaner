@@ -25,40 +25,35 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.eobjects.analyzer.beans.api.Analyzer;
 import org.eobjects.analyzer.beans.api.ComponentCategory;
-import org.eobjects.analyzer.data.InputColumn;
-import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.CloseMethodDescriptor;
-import org.eobjects.analyzer.descriptors.ComponentDescriptor;
-import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.InitializeMethodDescriptor;
-import org.eobjects.analyzer.descriptors.MetricDescriptor;
-import org.eobjects.analyzer.descriptors.MetricDescriptorImpl;
-import org.eobjects.analyzer.descriptors.ProvidedPropertyDescriptor;
-import org.eobjects.analyzer.descriptors.ValidateMethodDescriptor;
-import org.eobjects.analyzer.job.AnalyzerJob;
-import org.eobjects.analyzer.job.BeanConfiguration;
-import org.eobjects.analyzer.job.Outcome;
+import org.eobjects.analyzer.beans.api.Description;
+import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.AnalyzerResultReducer;
+import org.eobjects.analyzer.result.HasAnalyzerResult;
 import org.eobjects.analyzer.result.Metric;
 import org.eobjects.analyzer.util.ReflectionUtils;
+import org.eobjects.analyzer.util.StringUtils;
 
 /**
- * A 'dummy' component job instance to put as a placeholder when rendering
+ * A placeholder component job instance to put as a key when rendering
  * "unidentified" result objects, ie. result objects that are serialized outside
  * of a {@link AnalysisResult}
  */
-public class UnidentifiedComponentJob implements AnalyzerJob, AnalyzerBeanDescriptor<Analyzer<?>> {
+public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements ComponentJob, ComponentDescriptor<C>,
+        HasAnalyzerResultBeanDescriptor<C> {
 
     private static final long serialVersionUID = 1L;
 
+    private final String _name;
+    private final Class<C> _componentClass;
     private final AnalyzerResult _analyzerResult;
     private final Set<MetricDescriptor> _metrics;
 
-    public UnidentifiedComponentJob(AnalyzerResult analyzerResult) {
+    public PlaceholderComponentJob(String name, Class<C> componentClass, AnalyzerResult analyzerResult) {
+        _name = name;
+        _componentClass = componentClass;
         _analyzerResult = analyzerResult;
         _metrics = new TreeSet<MetricDescriptor>();
 
@@ -71,13 +66,13 @@ public class UnidentifiedComponentJob implements AnalyzerJob, AnalyzerBeanDescri
     }
 
     @Override
-    public AnalyzerBeanDescriptor<?> getDescriptor() {
+    public ComponentDescriptor<?> getDescriptor() {
         return this;
     }
 
     @Override
     public String getName() {
-        return "Result";
+        return _name;
     }
 
     @Override
@@ -87,17 +82,22 @@ public class UnidentifiedComponentJob implements AnalyzerJob, AnalyzerBeanDescri
 
     @Override
     public String getDisplayName() {
-        return getName();
+        // this is the 'descriptor' name, e.g. will be used for CSS styling
+        final Description desc = ReflectionUtils.getAnnotation(_componentClass, Description.class);
+        if (desc == null || StringUtils.isNullOrEmpty(desc.value())) {
+            return _componentClass.getSimpleName();
+        }
+        return desc.value();
     }
 
     @Override
-    public Analyzer<?> newInstance() {
+    public C newInstance() {
         return null;
     }
 
     @Override
-    public Class<Analyzer<?>> getComponentClass() {
-        return null;
+    public Class<C> getComponentClass() {
+        return _componentClass;
     }
 
     @Override
@@ -224,20 +224,4 @@ public class UnidentifiedComponentJob implements AnalyzerJob, AnalyzerBeanDescri
     public String[] getAliases() {
         return new String[0];
     }
-
-    @Override
-    public BeanConfiguration getConfiguration() {
-        return null;
-    }
-
-    @Override
-    public InputColumn<?>[] getInput() {
-        return new InputColumn[0];
-    }
-
-    @Override
-    public Outcome[] getRequirements() {
-        return null;
-    }
-
 }

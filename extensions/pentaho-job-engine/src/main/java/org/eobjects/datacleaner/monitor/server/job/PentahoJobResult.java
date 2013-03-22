@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eobjects.analyzer.beans.api.Description;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabNavigator;
@@ -40,6 +41,7 @@ import org.xml.sax.InputSource;
 /**
  * Result of running a Pentaho job
  */
+@Description("Pentaho job result")
 public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;

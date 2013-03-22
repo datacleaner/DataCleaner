@@ -44,7 +44,7 @@ public class PentahoJobContext implements XmlJobContext {
 
     @Override
     public String getName() {
-        final int extensionLength = CustomJobEngine.EXTENSION.length();
+        final int extensionLength = PentahoJobEngine.EXTENSION.length();
         final String filename = _file.getName();
         return filename.substring(0, filename.length() - extensionLength);
     }

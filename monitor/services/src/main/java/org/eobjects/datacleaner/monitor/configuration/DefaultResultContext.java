@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.analyzer.descriptors.UnidentifiedComponentJob;
+import org.eobjects.analyzer.descriptors.PlaceholderComponentJob;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
@@ -85,8 +85,11 @@ public class DefaultResultContext implements ResultContext {
             final AnalyzerResult analyzerResult = (AnalyzerResult) deserializedObject;
             final Date creationDate = new Date(_repositoryFile.getLastModified());
             final Map<ComponentJob, AnalyzerResult> results = new HashMap<ComponentJob, AnalyzerResult>(1);
-            ComponentJob componentJob = new UnidentifiedComponentJob(analyzerResult);
-            results.put(componentJob, (AnalyzerResult) deserializedObject);
+            final JobContext job = getJob();
+            
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            final ComponentJob componentJob = new PlaceholderComponentJob(job.getName(), analyzerResult.getClass(), analyzerResult);
+            results.put(componentJob, analyzerResult);
             return new SimpleAnalysisResult(results, creationDate);
         }
         

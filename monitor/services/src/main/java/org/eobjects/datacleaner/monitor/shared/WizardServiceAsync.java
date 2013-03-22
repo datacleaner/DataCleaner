@@ -35,13 +35,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface WizardServiceAsync {
 
+    void getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant,
+            AsyncCallback<List<WizardIdentifier>> callback);
+
     void getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore,
             AsyncCallback<List<WizardIdentifier>> callback);
 
     void getDatastoreWizardIdentifiers(TenantIdentifier tenant, AsyncCallback<List<WizardIdentifier>> callback);
 
     void startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard, DatastoreIdentifier selectedDatastore,
-            String jobName, AsyncCallback<WizardPage> callback);
+            AsyncCallback<WizardPage> callback);
 
     void startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, AsyncCallback<WizardPage> callback);
 

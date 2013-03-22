@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.jobwizard.common;
 import java.util.List;
 
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.datacleaner.monitor.server.wizard.JobNameWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
@@ -53,7 +54,13 @@ final class MockWizardSession extends DataCleanerJobWizardSession {
                     @Override
                     protected WizardPageController nextPageController(List<Column> selectedColumns) {
                         _analysisJobBuilder.addSourceColumns(selectedColumns);
-                        return null;
+                        return new JobNameWizardPage(getWizardContext(), 2) {
+                            @Override
+                            protected WizardPageController nextPageController(String name) {
+                                setJobName(name);
+                                return null;
+                            }
+                        };
                     }
                 };
             }

@@ -25,7 +25,9 @@ import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.JaxbJobWriter;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
@@ -36,15 +38,28 @@ import org.eobjects.metamodel.util.Action;
  */
 public abstract class DataCleanerJobWizardSession extends AbstractJobWizardSession implements JobWizardSession {
 
+    private String _jobName;
+
     public DataCleanerJobWizardSession(JobWizardContext context) {
         super(context);
+    }
+    
+    public String getJobName() {
+        return _jobName;
+    }
+    
+    public void setJobName(String jobName) {
+        _jobName = jobName;
     }
 
     @Override
     public final String finished() {
         final TenantContext tenantContext = getWizardContext().getTenantContext();
         final RepositoryFolder jobFolder = tenantContext.getJobFolder();
-        final String jobName = getWizardContext().getJobName();
+        final String jobName = getJobName();
+        if (StringUtils.isNullOrEmpty(jobName)) {
+            throw new DCUserInputException("No job name provided");
+        }
         jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {

@@ -62,7 +62,7 @@ class SelectDatastoreWizardPage extends AbstractFreemarkerWizardPage {
 
             @Override
             protected WizardPageController nextPageController(Table selectedTable) {
-                return new ColumnMappingPage(_analysisJobBuilder, _sourceTable, datastore, selectedTable);
+                return new ColumnMappingPage(_session, _analysisJobBuilder, _sourceTable, datastore, selectedTable);
             }
         };
     }

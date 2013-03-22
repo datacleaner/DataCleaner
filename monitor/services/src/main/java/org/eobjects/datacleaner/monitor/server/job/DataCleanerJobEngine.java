@@ -83,9 +83,10 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
         final AnalysisListener analysisListener = new MonitorAnalysisListener(execution, resultFolder, executionLogger);
 
-        final String jobName = execution.getJob().getName();
-
-        final DataCleanerJobContext job = (DataCleanerJobContext) context.getJob(jobName);
+        final DataCleanerJobContext job = (DataCleanerJobContext) context.getJob(execution.getJob());
+        if (job == null) {
+            throw new IllegalStateException("No such job: " + execution.getJob());
+        }
 
         preLoadJob(context, job);
 

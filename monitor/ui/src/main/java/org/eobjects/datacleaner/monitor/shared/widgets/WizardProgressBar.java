@@ -29,6 +29,8 @@ import com.google.gwt.user.client.ui.WidgetCollection;
  */
 public class WizardProgressBar extends FlowPanel {
 
+    private boolean _indicatingMore;
+
     public WizardProgressBar() {
         this(0);
     }
@@ -51,7 +53,7 @@ public class WizardProgressBar extends FlowPanel {
         if (steps == null) {
             return;
         }
-        if (steps.intValue() == getSteps()) {
+        if (steps.intValue() == getSteps() && _indicatingMore == indicateMore) {
             return;
         }
 
@@ -73,6 +75,7 @@ public class WizardProgressBar extends FlowPanel {
             add(child);
         }
         
+        _indicatingMore = indicateMore;
         if (indicateMore) {
             Widget metaAfter = new Label("...");
             metaAfter.setStyleName("MetaItem");

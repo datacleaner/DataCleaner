@@ -19,7 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.configuration;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
@@ -32,6 +33,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 /**
  * Factory and tenant-wise cache for {@link TenantContext} objects.
  */
@@ -40,7 +45,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(TenantContextFactoryImpl.class);
 
-    private final ConcurrentHashMap<String, TenantContext> _contexts;
+    private final LoadingCache<String, TenantContext> _contexts;
     private final Repository _repository;
     private final InjectionManagerFactory _injectionManagerFactory;
     private final JobEngineManager _jobEngineManager;
@@ -70,7 +75,21 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
         _repository = repository;
         _injectionManagerFactory = injectionManagerFactory;
         _jobEngineManager = jobEngineManager;
-        _contexts = new ConcurrentHashMap<String, TenantContext>();
+        _contexts = buildTenantContextCache();
+    }
+
+    private LoadingCache<String, TenantContext> buildTenantContextCache() {
+        LoadingCache<String, TenantContext> cache = CacheBuilder.newBuilder().expireAfterAccess(30, TimeUnit.SECONDS)
+                .build(new CacheLoader<String, TenantContext>() {
+                    @Override
+                    public TenantContext load(String tenantId) throws Exception {
+                        logger.info("Initializing tenant context: {}", tenantId);
+                        final TenantContext context = new TenantContextImpl(tenantId, _repository,
+                                _injectionManagerFactory, _jobEngineManager);
+                        return context;
+                    }
+                });
+        return cache;
     }
 
     public TenantContext getContext(TenantIdentifier tenant) {
@@ -84,16 +103,14 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
         if (StringUtils.isNullOrEmpty(tenantId)) {
             throw new IllegalArgumentException("Tenant cannot be null or empty string");
         }
-        TenantContext context = _contexts.get(tenantId);
-        if (context == null) {
-            logger.info("Initializing tenant context: {}", tenantId);
-            final TenantContext newContext = new TenantContextImpl(tenantId, _repository, _injectionManagerFactory,
-                    _jobEngineManager);
-            context = _contexts.putIfAbsent(tenantId, newContext);
-            if (context == null) {
-                context = newContext;
+        try {
+            return _contexts.get(tenantId);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
             }
+            throw new IllegalStateException(e);
         }
-        return context;
     }
 }

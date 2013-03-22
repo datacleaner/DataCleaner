@@ -25,6 +25,7 @@ import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.datacleaner.monitor.server.wizard.JobNameWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
@@ -46,7 +47,7 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
         super(context);
         _analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
         _analysisJobBuilder.setDatastore(context.getSourceDatastore());
-        _pageCount = 3;
+        _pageCount = 4;
     }
 
     @Override
@@ -54,9 +55,19 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
         return new SelectTableWizardPage(getWizardContext(), 0) {
             @Override
             protected WizardPageController nextPageController(final Table selectedTable) {
-                if (selectedTable.getLiteralColumns().length == 0) {
-                    _pageCount = 2;
+                final boolean hasStringColumns = selectedTable.getLiteralColumns().length > 0;
+                if (!hasStringColumns) {
+                    _pageCount = 3;
                 }
+
+                final JobNameWizardPage lastPage = new JobNameWizardPage(getWizardContext(), _pageCount - 1,
+                        "Quick analysis of " + selectedTable.getName()) {
+                    @Override
+                    protected WizardPageController nextPageController(String name) {
+                        setJobName(name);
+                        return null;
+                    }
+                };
 
                 return new SelectColumnsWizardPage(1, selectedTable) {
 
@@ -72,8 +83,8 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                         final QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy(5, false, false);
                         quickAnalysisStrategy.configureAnalysisJobBuilder(_analysisJobBuilder);
 
-                        if (selectedTable.getLiteralColumns().length == 0) {
-                            return null;
+                        if (!hasStringColumns) {
+                            return lastPage;
                         }
                         return new SelectPatternFinderColumnsPage(2, selectedTable) {
                             @Override
@@ -88,7 +99,7 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                                     patternFinder.addInputColumn(sourceColumn);
                                 }
 
-                                return null;
+                                return lastPage;
                             }
                         };
                     }

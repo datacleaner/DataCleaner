@@ -22,7 +22,8 @@ package org.eobjects.datacleaner.monitor.configuration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
@@ -37,6 +38,10 @@ import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Default implementation of {@link TenantContext}.
@@ -55,7 +60,7 @@ public class TenantContextImpl implements TenantContext {
     private final InjectionManagerFactory _injectionManagerFactory;
     private final ConfigurationCache _configurationCache;
     private final JobEngineManager _jobEngineManager;
-    private final ConcurrentHashMap<String, JobContext> _jobCache;
+    private final LoadingCache<JobIdentifier, JobContext> _jobCache;
 
     public TenantContextImpl(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory,
             JobEngineManager jobEngineManager) {
@@ -67,7 +72,29 @@ public class TenantContextImpl implements TenantContext {
             throw new IllegalArgumentException("JobEngineManager cannot be null");
         }
         _configurationCache = new ConfigurationCache(tenantId, getTenantRootFolder(), _injectionManagerFactory);
-        _jobCache = new ConcurrentHashMap<String, JobContext>();
+        _jobCache = buildJobCache();
+    }
+
+    private LoadingCache<JobIdentifier, JobContext> buildJobCache() {
+        final LoadingCache<JobIdentifier, JobContext> cache = CacheBuilder.newBuilder()
+                .expireAfterWrite(5, TimeUnit.SECONDS).build(new CacheLoader<JobIdentifier, JobContext>() {
+                    @Override
+                    public JobContext load(JobIdentifier job) throws Exception {
+                        final String jobName = job.getName();
+                        if (StringUtils.isNullOrEmpty(jobName)) {
+                            throw new NoSuchObjectException();
+                        }
+
+                        final TenantContext tenantContext = TenantContextImpl.this;
+                        final JobEngine<?> jobEngine = _jobEngineManager.getJobEngine(tenantContext, jobName);
+                        if (jobEngine == null) {
+                            throw new NoSuchObjectException();
+                        }
+                        final JobContext result = jobEngine.getJobContext(tenantContext, job);
+                        return result;
+                    }
+                });
+        return cache;
     }
 
     @Override
@@ -79,10 +106,10 @@ public class TenantContextImpl implements TenantContext {
             final List<JobIdentifier> jobEngineJobs = jobEngine.getJobs(this);
             jobs.addAll(jobEngineJobs);
         }
-        
+
         return jobs;
     }
-    
+
     @Override
     public JobContext getJob(String jobName) {
         return getJob(new JobIdentifier(jobName));
@@ -91,27 +118,22 @@ public class TenantContextImpl implements TenantContext {
     @Override
     public JobContext getJob(JobIdentifier jobIdentifier) throws IllegalArgumentException {
         if (jobIdentifier == null) {
-            return null;
+            throw new IllegalArgumentException("JobIdentifier cannot be null");
         }
-        final String jobName = jobIdentifier.getName();
-        if (StringUtils.isNullOrEmpty(jobName)) {
-            return null;
-        }
-        
-        JobContext job = _jobCache.get(jobName);
-        if (job == null) {
-            // TODO: Use the job type to easier identify the engine?
-            final JobEngine<?> jobEngine = _jobEngineManager.getJobEngine(this, jobName);
-            if (jobEngine == null) {
+
+        try {
+            return _jobCache.get(jobIdentifier);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof NoSuchObjectException) {
+                // expected exception at this point
                 return null;
             }
-            final JobContext newJob = jobEngine.getJobContext(this, jobIdentifier);
-            job = _jobCache.putIfAbsent(jobName, newJob);
-            if (job == null) {
-                job = newJob;
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
             }
+            throw new IllegalStateException(e);
         }
-        return job;
     }
 
     @Override

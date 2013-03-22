@@ -43,11 +43,14 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface WizardService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant);
+
+    @RolesAllowed(SecurityRoles.JOB_EDITOR)
     public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore);
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard,
-            DatastoreIdentifier selectedDatastore, String jobName) throws IllegalArgumentException;
+            DatastoreIdentifier selectedDatastore) throws IllegalArgumentException;
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
     public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant);

@@ -10,20 +10,22 @@ import org.eobjects.metamodel.schema.Table
 import org.springframework.stereotype.Component
 import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession
 import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizard
+import org.eobjects.datacleaner.monitor.server.wizard.JobNameWizardPage
 
 @Component
 class CompletenessAnalysisJobWizard extends DataCleanerJobWizard {
 
   override def getDisplayName = "Completeness analysis";
 
-  override def getExpectedPageCount = 4;
-  
+  override def getExpectedPageCount = 5;
+
   override def startInternal(context: JobWizardContext) = new DataCleanerJobWizardSession(context) {
 
     val analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
     var fieldGroupsCount = 2;
+    var jobName: String = "";
 
-    override def getPageCount = 2 + fieldGroupsCount;
+    override def getPageCount = 3 + fieldGroupsCount;
     override def createJob = analysisJobBuilder;
     override def firstPageController = new SelectTableWizardPage(context, 0) {
 
@@ -32,7 +34,14 @@ class CompletenessAnalysisJobWizard extends DataCleanerJobWizard {
 
         override def nextPageController(fieldGroups: Int): WizardPageController = {
           fieldGroupsCount = fieldGroups
-          return new DefineFieldGroupPage(2, 0, fieldGroupsCount, selectedTable, analysisJobBuilder);
+          return new DefineFieldGroupPage(2, 0, fieldGroupsCount, selectedTable, analysisJobBuilder, {
+            return new JobNameWizardPage(context, 2 + fieldGroupsCount, selectedTable.getName() + " completeness") {
+              override def nextPageController(name: String): WizardPageController = {
+                setJobName(name);
+                return null;
+              }
+            }
+          });
         }
       }
     };

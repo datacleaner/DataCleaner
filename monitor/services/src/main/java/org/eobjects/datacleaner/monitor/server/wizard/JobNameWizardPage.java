@@ -17,60 +17,78 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.pentaho.wizard;
+package org.eobjects.datacleaner.monitor.server.wizard;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eobjects.datacleaner.monitor.pentaho.PentahoTransformation;
+import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 
 /**
- * Configuration page for Carte connection
+ * Page for entering a name for a job.
  */
-abstract class PentahoJobSelectionPage extends AbstractFreemarkerWizardPage {
+public abstract class JobNameWizardPage extends AbstractFreemarkerWizardPage {
 
+    private final JobWizardContext _context;
     private final int _pageIndex;
-    private final List<PentahoTransformation> _availableTransformations;
+    private final String _suggestedName;
 
-    public PentahoJobSelectionPage(int pageIndex, List<PentahoTransformation> availableTransformations) {
+    public JobNameWizardPage(JobWizardContext context, int pageIndex, String suggestedName) {
+        _context = context;
         _pageIndex = pageIndex;
-        _availableTransformations = availableTransformations;
+        _suggestedName = (suggestedName == null ? "" : suggestedName);
+    }
+
+    public JobNameWizardPage(JobWizardContext context, int pageIndex) {
+        this(context, pageIndex, null);
     }
 
     @Override
     public Integer getPageIndex() {
         return _pageIndex;
     }
+    
+    @Override
+    protected Class<?> getTemplateFriendlyClass() {
+        return JobNameWizardPage.class;
+    }
 
     @Override
     public WizardPageController nextPageController(Map<String, List<String>> formParameters)
             throws DCUserInputException {
-        final String groupName = formParameters.get("groupName").get(0);
-        final String transformationId = formParameters.get("transformation").get(0);
-        for (PentahoTransformation candidate : _availableTransformations) {
-            if (candidate.matches(transformationId, null)) {
-                return nextPageController(candidate, groupName);
-            }
+        final String name = formParameters.get("name").get(0);
+
+        if (StringUtils.isNullOrEmpty(name)) {
+            throw new DCUserInputException("Please provide a job name.");
         }
-        throw new DCUserInputException("Please select a transformation");
+
+        final TenantContext tenantContext = _context.getTenantContext();
+
+        boolean exists = tenantContext.containsJob(name);
+        if (exists) {
+            throw new DCUserInputException("A job with the name '" + name + "' already exist.");
+        }
+
+        return nextPageController(name);
     }
 
-    protected abstract WizardPageController nextPageController(PentahoTransformation transformation, String groupName);
+    protected abstract WizardPageController nextPageController(String name);
 
     @Override
     protected String getTemplateFilename() {
-        return "PentahoJobSelectionPage.html";
+        return "JobNameWizardPage.html";
     }
 
     @Override
     protected Map<String, Object> getFormModel() {
         final Map<String, Object> map = new HashMap<String, Object>();
-        map.put("transformations", _availableTransformations);
-        map.put("groupName", "Pentaho jobs");
+        map.put("name", _suggestedName);
         return map;
     }
 

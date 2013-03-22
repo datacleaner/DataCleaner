@@ -20,18 +20,18 @@ class MoveDataWizardTest extends AssertionsForJUnit {
     val tenantContext = EasyMock.createMock(classOf[TenantContext]);
     val configuration = new AnalyzerBeansConfigurationImpl().replace(new DatastoreCatalogImpl(datastore));
     EasyMock.expect(tenantContext.getConfiguration()).andReturn(configuration).anyTimes();
-
+    EasyMock.expect(tenantContext.containsJob("copy_data_job")).andReturn(false);
     EasyMock.replay(tenantContext);
-    
+
     val wizard = new CopyDataWizard();
 
-    val ctx = new JobWizardContextImpl(wizard, tenantContext, datastore, "My job", null);
+    val ctx = new JobWizardContextImpl(wizard, tenantContext, datastore, null);
 
     val session = new CopyDataWizard().start(ctx);
 
     assertNotNull(session);
 
-    assertEquals(5, session.getPageCount());
+    assertEquals(6, session.getPageCount());
 
     val page1 = session.firstPageController()
     assertEquals(normalize("""<div>
@@ -389,7 +389,21 @@ class MoveDataWizardTest extends AssertionsForJUnit {
 
     val page6 = page5.nextPageController(formParams5)
 
-    assertNull(page6);
+    assertNotNull(page6);
+
+    assertEquals(normalize("""<div>
+    <p>Please provide a name for the new job:</p>
+    <input type="text" value="Copy data" size="30" name="name" />
+    
+    <p>The name is the unique identifier for your job. It should be concise as well as descriptive to help provide both overview and transparency to your solution.</p>
+    
+    <p>Should you decide, you can also rename the job later.</p>
+</div>"""), normalize(page6.getFormInnerHtml()));
+    
+    val formParams6: Map[String, java.util.List[String]] = Map("name" -> List("copy_data_job"))
+
+    val page7 = page6.nextPageController(formParams6)
+    assertNull(page7);
 
     val job = session.createJob()
     assertNotNull(job);

@@ -125,6 +125,10 @@ public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
     protected final void setSteps(int steps) {
         _progressBar.setSteps(steps);
     }
+    
+    protected final void setSteps(int steps, boolean indicateMore) {
+        _progressBar.setSteps(steps, indicateMore);
+    }
 
     protected final void setContent(IsWidget w) {
         _targetPanel.setWidget(w);

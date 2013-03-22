@@ -17,28 +17,14 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.jobwizard.movedata;
+package org.eobjects.datacleaner.monitor.configuration;
 
-import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizard;
-import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.springframework.stereotype.Component;
+/**
+ * Indicator exception thrown when a cache loader method does not find a
+ * matching object
+ */
+public final class NoSuchObjectException extends Exception {
 
-@Component
-public class CopyDataWizard extends DataCleanerJobWizard {
+    private static final long serialVersionUID = 1L;
 
-    @Override
-    public String getDisplayName() {
-        return "Copy data";
-    }
-
-    @Override
-    public DataCleanerJobWizardSession startInternal(JobWizardContext context) {
-        return new CopyDataWizardSession(context);
-    }
-
-    @Override
-    public int getExpectedPageCount() {
-        return 6;
-    }
 }

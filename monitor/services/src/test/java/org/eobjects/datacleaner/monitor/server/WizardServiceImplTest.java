@@ -101,7 +101,7 @@ public class WizardServiceImplTest extends TestCase {
         final String jobName = "JobWizardServiceImplTest-job1";
 
         // first page is the select table page.
-        wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore, jobName);
+        wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore);
 
         assertEquals(1, service.getOpenSessionCount());
         assertNotNull(wizardPage);
@@ -128,7 +128,13 @@ public class WizardServiceImplTest extends TestCase {
 
         // submit second page
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
-
+        assertEquals(2, wizardPage.getPageIndex().intValue());
+        
+        // now we submit a name for the job
+        formParameters = new HashMap<String, List<String>>();
+        formParameters.put("name",Arrays.asList( jobName));
+        wizardPage = service.nextPage(tenant, wizardSession, formParameters);
+        
         assertTrue(wizardPage.isFinished());
 
         // find the job and do assertions on it.

@@ -29,7 +29,5 @@ public interface JobWizardContext extends WizardContext {
     
     public JobWizard getJobWizard();
 
-    public String getJobName();
-
     public Datastore getSourceDatastore();
 }

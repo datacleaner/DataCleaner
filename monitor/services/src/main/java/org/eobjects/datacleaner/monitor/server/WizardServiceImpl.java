@@ -89,6 +89,19 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant) {
+        final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
+        final Collection<JobWizard> jobWizards = getAvailableJobWizards();
+        for (JobWizard jobWizard : jobWizards) {
+            if (!jobWizard.isDatastoreConsumer()) {
+                final WizardIdentifier jobWizardIdentifier = createJobWizardIdentifier(jobWizard);
+                result.add(jobWizardIdentifier);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
@@ -112,12 +125,11 @@ public class WizardServiceImpl implements WizardService {
         final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
                 .getDatastore(datastoreIdentifier.getName());
 
-        final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, null,
-                createSessionFunc());
+        final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, createSessionFunc());
 
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
         for (JobWizard jobWizard : getAvailableJobWizards()) {
-            if (jobWizard.isApplicableTo(context)) {
+            if (jobWizard.isDatastoreConsumer() && jobWizard.isApplicableTo(context)) {
                 WizardIdentifier wizardIdentifier = createJobWizardIdentifier(jobWizard);
                 result.add(wizardIdentifier);
             }
@@ -155,6 +167,7 @@ public class WizardServiceImpl implements WizardService {
         final WizardIdentifier jobWizardIdentifier = new WizardIdentifier();
         jobWizardIdentifier.setDisplayName(displayName);
         jobWizardIdentifier.setExpectedPageCount(jobWizard.getExpectedPageCount());
+        jobWizardIdentifier.setDatastoreConsumer(jobWizard.isDatastoreConsumer());
         return jobWizardIdentifier;
     }
 
@@ -175,19 +188,20 @@ public class WizardServiceImpl implements WizardService {
 
     @Override
     public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            DatastoreIdentifier selectedDatastore, String jobName) throws IllegalArgumentException {
+            DatastoreIdentifier selectedDatastore) throws IllegalArgumentException {
         final JobWizard wizard = instantiateJobWizard(wizardIdentifier);
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        if (tenantContext.containsJob(jobName)) {
-            throw new IllegalArgumentException("A job with the name '" + jobName + "' already exist.");
+
+        final Datastore datastore;
+        if (selectedDatastore == null) {
+            datastore = null;
+        } else {
+            datastore = tenantContext.getConfiguration().getDatastoreCatalog()
+                    .getDatastore(selectedDatastore.getName());
         }
 
-        final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
-                .getDatastore(selectedDatastore.getName());
-
-        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, jobName,
-                createSessionFunc());
+        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, createSessionFunc());
 
         final WizardSession session = wizard.start(context);
 

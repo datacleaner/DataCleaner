@@ -56,6 +56,11 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     public WizardService getDelegate() {
         return _delegate;
     }
+    
+    @Override
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant) {
+        return _delegate.getNonDatastoreConsumingJobWizardIdentifiers(tenant);
+    }
 
     @Override
     public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore) {
@@ -64,8 +69,8 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
 
     @Override
     public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            DatastoreIdentifier selectedDatastore, String jobName) {
-        return _delegate.startJobWizard(tenant, wizardIdentifier, selectedDatastore, jobName);
+            DatastoreIdentifier selectedDatastore) {
+        return _delegate.startJobWizard(tenant, wizardIdentifier, selectedDatastore);
     }
 
     @Override

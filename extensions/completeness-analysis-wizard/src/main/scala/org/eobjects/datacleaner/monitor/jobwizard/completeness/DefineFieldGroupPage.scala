@@ -7,8 +7,10 @@ import org.eobjects.analyzer.beans.CompletenessAnalyzer
 import scala.collection.JavaConversions
 import org.eobjects.analyzer.data.InputColumn
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException
+import org.eobjects.datacleaner.monitor.server.wizard.JobNameWizardPage
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext
 
-class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldGroupCount: Int, selectedTable: Table, analysisJobBuilder: AnalysisJobBuilder) extends WizardPageController {
+class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldGroupCount: Int, selectedTable: Table, analysisJobBuilder: AnalysisJobBuilder, nextPage: => WizardPageController) extends WizardPageController {
 
   override def getPageIndex = pageIndex
 
@@ -69,10 +71,10 @@ class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldGroupCount
     completenessAnalyzer.isConfigured(true)
 
     if (fieldGroupCount - 1 == fieldGroupIndex) {
-      // wizard is done
-      return null;
+      // done with field groups
+      return nextPage;
     }
 
-    return new DefineFieldGroupPage(pageIndex + 1, fieldGroupIndex + 1, fieldGroupCount, selectedTable, analysisJobBuilder);
+    return new DefineFieldGroupPage(pageIndex + 1, fieldGroupIndex + 1, fieldGroupCount, selectedTable, analysisJobBuilder, nextPage);
   }
 }

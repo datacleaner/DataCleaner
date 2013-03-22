@@ -35,9 +35,12 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.TransformerJobBuilder;
+import org.eobjects.datacleaner.monitor.server.wizard.JobNameWizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.AbstractFreemarkerWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
 
@@ -45,174 +48,166 @@ import org.eobjects.metamodel.schema.Table;
  * Page that allows the user to specify how source data updates is handled by
  * the job.
  */
-public class SelectUpdateStrategyWizardPage extends
-		AbstractFreemarkerWizardPage {
+public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage {
 
-	private final Datastore _targetDatastore;
-	private final Table _targetTable;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final AnalyzerJobBuilder<InsertIntoTableAnalyzer> _insert;
-	private final List<ColumnMapping> _columnMappings;
+    private final Datastore _targetDatastore;
+    private final Table _targetTable;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final AnalyzerJobBuilder<InsertIntoTableAnalyzer> _insert;
+    private final List<ColumnMapping> _columnMappings;
+    private final DataCleanerJobWizardSession _session;
 
-	public SelectUpdateStrategyWizardPage(AnalysisJobBuilder jobBuilder,
-			Datastore targetDatastore, Table targetTable,
-			AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert,
-			List<ColumnMapping> columnMappings) {
-		_analysisJobBuilder = jobBuilder;
-		_targetDatastore = targetDatastore;
-		_targetTable = targetTable;
-		_insert = insert;
-		_columnMappings = columnMappings;
-	}
+    public SelectUpdateStrategyWizardPage(DataCleanerJobWizardSession session, AnalysisJobBuilder jobBuilder,
+            Datastore targetDatastore, Table targetTable, AnalyzerJobBuilder<InsertIntoTableAnalyzer> insert,
+            List<ColumnMapping> columnMappings) {
+        _session = session;
+        _analysisJobBuilder = jobBuilder;
+        _targetDatastore = targetDatastore;
+        _targetTable = targetTable;
+        _insert = insert;
+        _columnMappings = columnMappings;
+    }
 
-	@Override
-	public Integer getPageIndex() {
-		return 4;
-	}
+    @Override
+    public Integer getPageIndex() {
+        return 4;
+    }
 
-	@Override
-	protected String getTemplateFilename() {
-		return "SelectUpdateStrategyWizardPage.html";
-	}
+    @Override
+    protected String getTemplateFilename() {
+        return "SelectUpdateStrategyWizardPage.html";
+    }
 
-	@Override
-	protected Map<String, Object> getFormModel() {
-		final List<String> columnNames = new ArrayList<String>();
-		for (final ColumnMapping columnMapping : _columnMappings) {
-			final Column sourceColumn = columnMapping.getSourceColumn();
-			final String columnName = sourceColumn.getName();
-			if (sourceColumn.isPrimaryKey()) {
-				// add primary keys as the first column
-				columnNames.add(0, columnName);
-			} else {
-				columnNames.add(columnName);
-			}
-		}
+    @Override
+    protected Map<String, Object> getFormModel() {
+        final List<String> columnNames = new ArrayList<String>();
+        for (final ColumnMapping columnMapping : _columnMappings) {
+            final Column sourceColumn = columnMapping.getSourceColumn();
+            final String columnName = sourceColumn.getName();
+            if (sourceColumn.isPrimaryKey()) {
+                // add primary keys as the first column
+                columnNames.add(0, columnName);
+            } else {
+                columnNames.add(columnName);
+            }
+        }
 
-		final Map<String, Object> map = new HashMap<String, Object>();
-		map.put("columnNames", columnNames);
-		return map;
-	}
+        final Map<String, Object> map = new HashMap<String, Object>();
+        map.put("columnNames", columnNames);
+        return map;
+    }
 
-	@Override
-	public WizardPageController nextPageController(
-			Map<String, List<String>> formParameters)
-			throws DCUserInputException {
+    @Override
+    public WizardPageController nextPageController(Map<String, List<String>> formParameters)
+            throws DCUserInputException {
 
-		String updateStrategy = formParameters.get("update_strategy").get(0);
+        String updateStrategy = formParameters.get("update_strategy").get(0);
 
-		if ("truncate".equals(updateStrategy)) {
-			setUpdateStrategyTruncate();
-		} else if ("lookup_and_update".equals(updateStrategy)) {
-			final String primaryKeyColumnName = formParameters.get(
-					"lookup_and_update_column_select").get(0);
-			for (final ColumnMapping columnMapping : _columnMappings) {
-				final Column sourceColumn = columnMapping.getSourceColumn();
-				final String columnName = sourceColumn.getName();
-				if (columnName.equals(primaryKeyColumnName)) {
-					setUpdateStrategyPrimaryKeyLookup(columnMapping);
-					break;
-				}
-			}
-		} else if ("no_strategy".equals(updateStrategy)) {
-			// do nothing
-		} else {
-			throw new IllegalStateException(
-					"Unexpected update strategy value: " + updateStrategy);
-		}
+        if ("truncate".equals(updateStrategy)) {
+            setUpdateStrategyTruncate();
+        } else if ("lookup_and_update".equals(updateStrategy)) {
+            final String primaryKeyColumnName = formParameters.get("lookup_and_update_column_select").get(0);
+            for (final ColumnMapping columnMapping : _columnMappings) {
+                final Column sourceColumn = columnMapping.getSourceColumn();
+                final String columnName = sourceColumn.getName();
+                if (columnName.equals(primaryKeyColumnName)) {
+                    setUpdateStrategyPrimaryKeyLookup(columnMapping);
+                    break;
+                }
+            }
+        } else if ("no_strategy".equals(updateStrategy)) {
+            // do nothing
+        } else {
+            throw new IllegalStateException("Unexpected update strategy value: " + updateStrategy);
+        }
+        
+        final JobWizardContext wizardContext = _session.getWizardContext();
+        return new JobNameWizardPage(wizardContext, getPageIndex() + 1, "Copy data") {
 
-		return null;
-	}
+            @Override
+            protected WizardPageController nextPageController(String name) {
+                _session.setJobName(name);
+                return null;
+            }
+        };
+    }
 
-	private void setUpdateStrategyTruncate() {
-		_insert.setConfiguredProperty("Truncate table", true);
-	}
+    private void setUpdateStrategyTruncate() {
+        _insert.setConfiguredProperty("Truncate table", true);
+    }
 
-	private void setUpdateStrategyPrimaryKeyLookup(
-			ColumnMapping primaryKeyColumnMapping) {
-		final TransformerJobBuilder<TableLookupTransformer> tableLookup = buildLookup(primaryKeyColumnMapping);
-		final AnalyzerJobBuilder<UpdateTableAnalyzer> update = buildUpdate(
-				primaryKeyColumnMapping, _columnMappings);
+    private void setUpdateStrategyPrimaryKeyLookup(ColumnMapping primaryKeyColumnMapping) {
+        final TransformerJobBuilder<TableLookupTransformer> tableLookup = buildLookup(primaryKeyColumnMapping);
+        final AnalyzerJobBuilder<UpdateTableAnalyzer> update = buildUpdate(primaryKeyColumnMapping, _columnMappings);
 
-		// bind UPDATE and INSERT to outcome of a null check on the looked
-		// up fields
-		final FilterJobBuilder<NullCheckFilter, NullCheckCategory> nullCheck = _analysisJobBuilder
-				.addFilter(NullCheckFilter.class);
-		nullCheck.addInputColumns(tableLookup.getOutputColumns());
-		update.setRequirement(nullCheck, NullCheckCategory.NOT_NULL);
-		_insert.setRequirement(nullCheck, NullCheckCategory.NULL);
-	}
+        // bind UPDATE and INSERT to outcome of a null check on the looked
+        // up fields
+        final FilterJobBuilder<NullCheckFilter, NullCheckCategory> nullCheck = _analysisJobBuilder
+                .addFilter(NullCheckFilter.class);
+        nullCheck.addInputColumns(tableLookup.getOutputColumns());
+        update.setRequirement(nullCheck, NullCheckCategory.NOT_NULL);
+        _insert.setRequirement(nullCheck, NullCheckCategory.NULL);
+    }
 
-	private AnalyzerJobBuilder<UpdateTableAnalyzer> buildUpdate(
-			final ColumnMapping primaryKeyColumnMapping,
-			final List<ColumnMapping> mappings) {
+    private AnalyzerJobBuilder<UpdateTableAnalyzer> buildUpdate(final ColumnMapping primaryKeyColumnMapping,
+            final List<ColumnMapping> mappings) {
 
-		// set the ID conditions of the UPDATE ... WHERE clause
-		final InputColumn<?>[] conditionValues = new InputColumn[1];
-		final String[] conditionColumns = new String[1];
-		conditionValues[0] = _analysisJobBuilder
-				.getSourceColumnByName(primaryKeyColumnMapping
-						.getSourceColumn().getQualifiedLabel());
-		conditionColumns[0] = primaryKeyColumnMapping.getTargetColumn()
-				.getName();
+        // set the ID conditions of the UPDATE ... WHERE clause
+        final InputColumn<?>[] conditionValues = new InputColumn[1];
+        final String[] conditionColumns = new String[1];
+        conditionValues[0] = _analysisJobBuilder.getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn()
+                .getQualifiedLabel());
+        conditionColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
-		// UPDATE those colums which are not IDs
-		final InputColumn<?>[] values = new InputColumn[mappings.size() - 1];
-		final String[] columnNames = new String[mappings.size() - 1];
-		int i = 0;
-		for (ColumnMapping mapping : mappings) {
-			if (!primaryKeyColumnMapping.equals(mapping)) {
-				values[i] = _analysisJobBuilder.getSourceColumnByName(mapping
-						.getSourceColumn().getQualifiedLabel());
-				columnNames[i] = mapping.getTargetColumn().getName();
-				i++;
-			}
-		}
+        // UPDATE those colums which are not IDs
+        final InputColumn<?>[] values = new InputColumn[mappings.size() - 1];
+        final String[] columnNames = new String[mappings.size() - 1];
+        int i = 0;
+        for (ColumnMapping mapping : mappings) {
+            if (!primaryKeyColumnMapping.equals(mapping)) {
+                values[i] = _analysisJobBuilder.getSourceColumnByName(mapping.getSourceColumn().getQualifiedLabel());
+                columnNames[i] = mapping.getTargetColumn().getName();
+                i++;
+            }
+        }
 
-		final AnalyzerJobBuilder<UpdateTableAnalyzer> update = _analysisJobBuilder
-				.addAnalyzer(UpdateTableAnalyzer.class);
-		update.setConfiguredProperty("Datastore", _targetDatastore);
-		update.setConfiguredProperty("Schema name", _targetTable.getSchema()
-				.getName());
-		update.setConfiguredProperty("Table name", _targetTable.getName());
-		update.setConfiguredProperty("Column names", columnNames);
-		update.setConfiguredProperty("Values", values);
-		update.setConfiguredProperty("Condition column names", conditionColumns);
-		update.setConfiguredProperty("Condition values", conditionValues);
+        final AnalyzerJobBuilder<UpdateTableAnalyzer> update = _analysisJobBuilder
+                .addAnalyzer(UpdateTableAnalyzer.class);
+        update.setConfiguredProperty("Datastore", _targetDatastore);
+        update.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());
+        update.setConfiguredProperty("Table name", _targetTable.getName());
+        update.setConfiguredProperty("Column names", columnNames);
+        update.setConfiguredProperty("Values", values);
+        update.setConfiguredProperty("Condition column names", conditionColumns);
+        update.setConfiguredProperty("Condition values", conditionValues);
 
-		// set an empty array, or else JaxbJobWriter will fail (Ticket #900)
-		update.setConfiguredProperty("Additional error log values",
-				new InputColumn[0]);
-		return update;
-	}
+        // set an empty array, or else JaxbJobWriter will fail (Ticket #900)
+        update.setConfiguredProperty("Additional error log values", new InputColumn[0]);
+        return update;
+    }
 
-	private TransformerJobBuilder<TableLookupTransformer> buildLookup(
-			final ColumnMapping primaryKeyColumnMapping) {
-		final InputColumn<?>[] conditionValues = new InputColumn[1];
-		final String[] conditionColumns = new String[1];
-		conditionValues[0] = _analysisJobBuilder
-				.getSourceColumnByName(primaryKeyColumnMapping
-						.getSourceColumn().getQualifiedLabel());
-		conditionColumns[0] = primaryKeyColumnMapping.getTargetColumn()
-				.getName();
+    private TransformerJobBuilder<TableLookupTransformer> buildLookup(final ColumnMapping primaryKeyColumnMapping) {
+        final InputColumn<?>[] conditionValues = new InputColumn[1];
+        final String[] conditionColumns = new String[1];
+        conditionValues[0] = _analysisJobBuilder.getSourceColumnByName(primaryKeyColumnMapping.getSourceColumn()
+                .getQualifiedLabel());
+        conditionColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
-		// use the target (ANY) column as output of the lookup
-		final String[] outputColumns = new String[1];
-		outputColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
+        // use the target (ANY) column as output of the lookup
+        final String[] outputColumns = new String[1];
+        outputColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
-		final TransformerJobBuilder<TableLookupTransformer> tableLookup = _analysisJobBuilder
-				.addTransformer(TableLookupTransformer.class);
-		tableLookup.setConfiguredProperty("Datastore", _targetDatastore);
-		tableLookup.setConfiguredProperty("Schema name", _targetTable
-				.getSchema().getName());
-		tableLookup.setConfiguredProperty("Table name", _targetTable.getName());
-		tableLookup
-				.setConfiguredProperty("Condition columns", conditionColumns);
-		tableLookup.setConfiguredProperty("Condition values", conditionValues);
-		tableLookup.setConfiguredProperty("Output columns", outputColumns);
+        final TransformerJobBuilder<TableLookupTransformer> tableLookup = _analysisJobBuilder
+                .addTransformer(TableLookupTransformer.class);
+        tableLookup.setConfiguredProperty("Datastore", _targetDatastore);
+        tableLookup.setConfiguredProperty("Schema name", _targetTable.getSchema().getName());
+        tableLookup.setConfiguredProperty("Table name", _targetTable.getName());
+        tableLookup.setConfiguredProperty("Condition columns", conditionColumns);
+        tableLookup.setConfiguredProperty("Condition values", conditionValues);
+        tableLookup.setConfiguredProperty("Output columns", outputColumns);
 
-		tableLookup.getOutputColumns().get(0).setName("lookup_output");
+        tableLookup.getOutputColumns().get(0).setName("lookup_output");
 
-		return tableLookup;
-	}
+        return tableLookup;
+    }
 }

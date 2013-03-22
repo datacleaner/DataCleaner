@@ -42,7 +42,7 @@ public class PentahoJobWizard implements JobWizard {
 
     @Override
     public int getExpectedPageCount() {
-        return 2;
+        return 3;
     }
 
     @Override

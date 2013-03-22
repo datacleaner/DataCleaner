@@ -32,16 +32,14 @@ public final class JobWizardContextImpl implements JobWizardContext {
 
     private final TenantContext _tenantContext;
     private final Datastore _sourceDatastore;
-    private final String _jobName;
     private final Func<String, Object> _sessionFunc;
     private final JobWizard _jobWizard;
 
     public JobWizardContextImpl(JobWizard jobWizard, TenantContext tenantContext, Datastore sourceDatastore,
-            String jobName, Func<String, Object> sessionFunc) {
+            Func<String, Object> sessionFunc) {
         _jobWizard = jobWizard;
         _tenantContext = tenantContext;
         _sourceDatastore = sourceDatastore;
-        _jobName = jobName;
         _sessionFunc = sessionFunc;
     }
 
@@ -58,11 +56,6 @@ public final class JobWizardContextImpl implements JobWizardContext {
     @Override
     public TenantContext getTenantContext() {
         return _tenantContext;
-    }
-
-    @Override
-    public String getJobName() {
-        return _jobName;
     }
 
     @Override

@@ -31,6 +31,8 @@ import org.eobjects.datacleaner.monitor.pentaho.PentahoJobEngine;
 import org.eobjects.datacleaner.monitor.pentaho.PentahoTransformation;
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.ObjectFactory;
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
+import org.eobjects.datacleaner.monitor.server.wizard.JobNameWizardPage;
+import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.job.AbstractJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
@@ -42,7 +44,8 @@ import org.eobjects.metamodel.util.Action;
  */
 final class PentahoJobWizardSession extends AbstractJobWizardSession {
 
-    final PentahoJobType _pentahoJobType;
+    private final PentahoJobType _pentahoJobType;
+    private String _jobName;
 
     public PentahoJobWizardSession(JobWizardContext context) {
         super(context);
@@ -66,29 +69,40 @@ final class PentahoJobWizardSession extends AbstractJobWizardSession {
         _pentahoJobType.setCarteUsername(username);
         _pentahoJobType.setCartePassword(password);
 
-        final PentahoCarteClient carteClient = new PentahoCarteClient(_pentahoJobType);
-        final List<PentahoTransformation> availableTransformations = carteClient.getAvailableTransformations();
+        final List<PentahoTransformation> availableTransformations;
+        try {
+            final PentahoCarteClient carteClient = new PentahoCarteClient(_pentahoJobType);
+            availableTransformations = carteClient.getAvailableTransformations();
+        } catch (Exception e) {
+            throw new DCUserInputException(e.getMessage());
+        }
 
         return new PentahoJobSelectionPage(1, availableTransformations) {
             @Override
-            protected WizardPageController nextPageController(PentahoTransformation transformation) {
+            protected WizardPageController nextPageController(PentahoTransformation transformation, String groupName) {
                 _pentahoJobType.setTransformationId(transformation.getId());
                 _pentahoJobType.setTransformationName(transformation.getName());
+                _pentahoJobType.setGroupName(groupName);
 
-                return null;
+                return new JobNameWizardPage(getWizardContext(), 2, transformation.getName()) {
+                    @Override
+                    protected WizardPageController nextPageController(String name) {
+                        _jobName = name;
+                        return null;
+                    }
+                };
             }
         };
     }
 
     @Override
     public String finished() {
-        final String jobName = getWizardContext().getJobName();
         final TenantContext tenantContext = getWizardContext().getTenantContext();
         final RepositoryFolder jobFolder = tenantContext.getJobFolder();
-        
+
         final JAXBElement<PentahoJobType> pentahoJob = new ObjectFactory().createPentahoJob(_pentahoJobType);
 
-        jobFolder.createFile(jobName + PentahoJobEngine.EXTENSION, new Action<OutputStream>() {
+        jobFolder.createFile(_jobName + PentahoJobEngine.EXTENSION, new Action<OutputStream>() {
             @Override
             public void run(OutputStream out) throws Exception {
                 JaxbPentahoJobTypeAdaptor adaptor = new JaxbPentahoJobTypeAdaptor();
@@ -96,7 +110,7 @@ final class PentahoJobWizardSession extends AbstractJobWizardSession {
             }
         });
 
-        return jobName;
+        return _jobName;
     }
 
 }

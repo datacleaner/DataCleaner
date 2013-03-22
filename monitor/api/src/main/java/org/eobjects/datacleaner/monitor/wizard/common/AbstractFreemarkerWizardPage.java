@@ -19,7 +19,9 @@
  */
 package org.eobjects.datacleaner.monitor.wizard.common;
 
+import java.io.FileNotFoundException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Map;
 
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
@@ -64,6 +66,12 @@ public abstract class AbstractFreemarkerWizardPage implements WizardPageControll
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
+            
+            if (e instanceof FileNotFoundException) {
+                URL url = templateFriendlyClass.getResource(templateFilename);
+                System.out.println(url);
+            }
+            
             throw new IllegalStateException("Could not render freemarker template: " + templateFilename, e);
         }
 

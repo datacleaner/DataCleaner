@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.eobjects.datacleaner.monitor.pentaho;
 
 import java.io.InputStream;
 import java.io.OutputStream;

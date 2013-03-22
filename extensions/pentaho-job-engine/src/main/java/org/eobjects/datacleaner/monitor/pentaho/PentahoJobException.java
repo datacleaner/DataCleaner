@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.eobjects.datacleaner.monitor.pentaho;
 
 /**
  * High-level exception type to use for errors and assertion issues when dealing

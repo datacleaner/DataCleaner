@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
+package org.eobjects.datacleaner.monitor.pentaho;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,6 +56,7 @@ import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.server.job.AbstractJobEngine;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;

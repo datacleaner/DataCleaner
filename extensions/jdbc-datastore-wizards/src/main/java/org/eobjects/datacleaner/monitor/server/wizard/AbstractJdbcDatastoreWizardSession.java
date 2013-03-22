@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server.wizard;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 import org.w3c.dom.Document;
@@ -29,9 +30,8 @@ import org.w3c.dom.Element;
 /**
  * Abstract core {@link DatastoreWizardSession} for JDBC based datastores
  */
-abstract class AbstractJdbcDatastoreWizardSession implements DatastoreWizardSession {
+abstract class AbstractJdbcDatastoreWizardSession extends AbstractDatastoreWizardSession {
 
-    private final DatastoreWizardContext _context;
     private String _driverClassName;
     private String _url;
     private String _username;
@@ -40,7 +40,7 @@ abstract class AbstractJdbcDatastoreWizardSession implements DatastoreWizardSess
     private String _name;
 
     public AbstractJdbcDatastoreWizardSession(DatastoreWizardContext context) {
-        _context = context;
+        super(context);
     }
 
     public void setUrl(String url) {
@@ -78,10 +78,6 @@ abstract class AbstractJdbcDatastoreWizardSession implements DatastoreWizardSess
 
     public String getDriverClassName() {
         return _driverClassName;
-    }
-
-    public DatastoreWizardContext getWizardContext() {
-        return _context;
     }
 
     @Override

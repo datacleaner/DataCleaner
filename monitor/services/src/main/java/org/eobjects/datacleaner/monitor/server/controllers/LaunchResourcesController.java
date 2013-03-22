@@ -32,7 +32,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.ConfigurationInterceptor;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -105,7 +105,7 @@ public class LaunchResourcesController {
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);
 
-        if (!(job instanceof DataCleanerAnalysisJobContext)) {
+        if (!(job instanceof DataCleanerJobContext)) {
             throw new UnsupportedOperationException("Job not compatible with operation: " + job);
         }
 
@@ -120,7 +120,7 @@ public class LaunchResourcesController {
             public void run(InputStream in) throws Exception {
                 // intercept the input stream to decorate it with client-side
                 // config elements.
-                _configurationInterceptor.intercept(tenant, (DataCleanerAnalysisJobContext) job, datastoreName, in, out);
+                _configurationInterceptor.intercept(tenant, (DataCleanerJobContext) job, datastoreName, in, out);
             }
         });
     }

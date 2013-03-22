@@ -26,8 +26,8 @@ import javax.xml.parsers.DocumentBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
 import org.w3c.dom.Document;
@@ -36,9 +36,8 @@ import org.w3c.dom.Element;
 /**
  * Wizard session for creating a CSV file datastore.
  */
-public class CsvDatastoreWizardSession implements DatastoreWizardSession {
+public class CsvDatastoreWizardSession extends AbstractDatastoreWizardSession {
 
-    private final DatastoreWizardContext _context;
     private File _file;
     private String _filepath;
     private CsvConfiguration _configuration;
@@ -46,7 +45,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
     private String _description;
 
     public CsvDatastoreWizardSession(DatastoreWizardContext context) {
-        _context = context;
+        super(context);
     }
 
     @Override
@@ -56,11 +55,11 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
 
     @Override
     public WizardPageController firstPageController() {
-        return new CsvDatastoreUploadOrExistingFileWizardPage(_context) {
+        return new CsvDatastoreUploadOrExistingFileWizardPage(getWizardContext()) {
 
             @Override
             protected WizardPageController nextPageControllerUpload(final String filename, final File tempFile) {
-                return new CsvDatastoreLocationWizardPage(_context, filename, true) {
+                return new CsvDatastoreLocationWizardPage(getWizardContext(), filename, true) {
 
                     @Override
                     protected WizardPageController nextPageController(String filepath, File file) {
@@ -82,7 +81,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
 
             @Override
             protected WizardPageController nextPageControllerExisting() {
-                return new CsvDatastoreLocationWizardPage(_context, "my_file.csv", false) {
+                return new CsvDatastoreLocationWizardPage(getWizardContext(), "my_file.csv", false) {
 
                     @Override
                     protected WizardPageController nextPageController(String filepath, File file) {
@@ -122,7 +121,7 @@ public class CsvDatastoreWizardSession implements DatastoreWizardSession {
             @Override
             protected WizardPageController nextPageController(CsvConfiguration configuration) {
                 _configuration = configuration;
-                return new DatastoreNameAndDescriptionWizardPage(_context, 3, filename) {
+                return new DatastoreNameAndDescriptionWizardPage(getWizardContext(), 3, filename) {
 
                     @Override
                     protected WizardPageController nextPageController(String name, String description) {

@@ -19,6 +19,7 @@
  */
 package org.eobjects.datacleaner.monitor.wizard.datastore;
 
+
 /**
  * A pluggable component (plug-in / extension) which provides a wizard in the
  * webapp for creating a datastore in the DC monitor configuration.

@@ -53,14 +53,14 @@ import org.springframework.stereotype.Component;
  * The {@link JobEngine} implementation for DataCleaner .analysis.xml jobs.
  */
 @Component
-public class DataCleanerAnalysisJobEngine extends AbstractJobEngine<DataCleanerAnalysisJobContext> {
+public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContext> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataCleanerAnalysisJobEngine.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataCleanerJobEngine.class);
 
     private final ClusterManagerFactory _clusterManagerFactory;
 
     @Autowired
-    public DataCleanerAnalysisJobEngine(ClusterManagerFactory clusterManagerFactory) {
+    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory) {
         super(FileFilters.ANALYSIS_XML.getExtension());
         _clusterManagerFactory = clusterManagerFactory;
     }
@@ -71,8 +71,8 @@ public class DataCleanerAnalysisJobEngine extends AbstractJobEngine<DataCleanerA
     }
 
     @Override
-    protected DataCleanerAnalysisJobContext getJobContext(TenantContext tenantContext, RepositoryFile file) {
-        final DataCleanerAnalysisJobContext job = new DataCleanerAnalysisJobContextImpl(tenantContext, file);
+    protected DataCleanerJobContext getJobContext(TenantContext tenantContext, RepositoryFile file) {
+        final DataCleanerJobContext job = new DataCleanerJobContextImpl(tenantContext, file);
         return job;
     }
 
@@ -85,7 +85,7 @@ public class DataCleanerAnalysisJobEngine extends AbstractJobEngine<DataCleanerA
 
         final String jobName = execution.getJob().getName();
 
-        final DataCleanerAnalysisJobContext job = (DataCleanerAnalysisJobContext) context.getJob(jobName);
+        final DataCleanerJobContext job = (DataCleanerJobContext) context.getJob(jobName);
 
         preLoadJob(context, job);
 
@@ -122,7 +122,7 @@ public class DataCleanerAnalysisJobEngine extends AbstractJobEngine<DataCleanerA
      * 
      * @throws FileNotFoundException
      */
-    private void preLoadJob(TenantContext context, DataCleanerAnalysisJobContext job) throws FileNotFoundException {
+    private void preLoadJob(TenantContext context, DataCleanerJobContext job) throws FileNotFoundException {
         final String sourceDatastoreName = job.getSourceDatastoreName();
         final Datastore datastore = context.getConfiguration().getDatastoreCatalog().getDatastore(sourceDatastoreName);
 
@@ -145,7 +145,7 @@ public class DataCleanerAnalysisJobEngine extends AbstractJobEngine<DataCleanerA
      * 
      * @throws NoSuchDatastoreException
      */
-    private void preExecuteJob(TenantContext context, DataCleanerAnalysisJobContext job, AnalysisJob analysisJob)
+    private void preExecuteJob(TenantContext context, DataCleanerJobContext job, AnalysisJob analysisJob)
             throws NoSuchDatastoreException {
         final Datastore datastore = analysisJob.getDatastore();
 

@@ -17,14 +17,27 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.wizard.datastore;
+package org.eobjects.datacleaner.monitor.server.job;
 
-import org.eobjects.datacleaner.monitor.wizard.WizardSession;
+import java.util.List;
+import java.util.Map;
+
+import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
+import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 
 /**
- * Represents the session of creating a datastore
+ * Specialized {@link JobContext} for jobs that are typical DataCleaner
+ * {@link AnalysisJob}s
  */
-public interface DatastoreWizardSession extends WizardSession {
+public interface DataCleanerJobContext extends XmlJobContext, MetricJobContext {
 
-    public DatastoreWizardContext getWizardContext();
+    public String getSourceDatastoreName();
+
+    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
+
+    public AnalysisJob getAnalysisJob();
+
+    public List<String> getSourceColumnPaths();
 }

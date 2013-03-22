@@ -17,27 +17,22 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server.job;
-
-import java.util.List;
-import java.util.Map;
-
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.job.XmlJobContext;
+package org.eobjects.datacleaner.monitor.wizard.job;
 
 /**
- * Specialized {@link JobContext} for jobs that are typical DataCleaner
- * {@link AnalysisJob}s
+ * Abstract job wizard implementation for DataCleaner jobs.
  */
-public interface DataCleanerAnalysisJobContext extends XmlJobContext, MetricJobContext {
+public abstract class DataCleanerJobWizard implements JobWizard {
 
-    public String getSourceDatastoreName();
+    @Override
+    public final DataCleanerJobWizardSession start(JobWizardContext context) {
+        return startInternal(context);
+    }
 
-    public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides);
+    @Override
+    public boolean isApplicableTo(JobWizardContext context) {
+        return true;
+    }
 
-    public AnalysisJob getAnalysisJob();
-
-    public List<String> getSourceColumnPaths();
+    protected abstract DataCleanerJobWizardSession startInternal(JobWizardContext context);
 }

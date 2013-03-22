@@ -98,10 +98,11 @@
 	</build>
 
 	<dependencies>
-		<!-- AnalyzerBeans API dependency -->
+		<!-- DataCleaner core dependency -->
 		<dependency>
-			<groupId>org.eobjects.analyzerbeans</groupId>
-			<artifactId>AnalyzerBeans-core</artifactId>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-core</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Jackson specificied here to overwrite older versions 

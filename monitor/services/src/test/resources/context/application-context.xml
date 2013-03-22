@@ -22,7 +22,7 @@
 	
 	<bean name="jobEngineManager" class="org.eobjects.datacleaner.monitor.server.job.JobEngineManagerImpl" autowire="constructor" />
 	
-	<bean class="org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobEngine">
+	<bean class="org.eobjects.datacleaner.monitor.server.job.DataCleanerJobEngine">
 		<constructor-arg index="0">
 			<null />
 		</constructor-arg>	

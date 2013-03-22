@@ -54,7 +54,7 @@ import org.eobjects.metamodel.util.Func;
  * The {@link JobContext} implementation for DataCleaner analysis jobs. This
  * implementation caches the read analysis jobs for quick access.
  */
-public class DataCleanerAnalysisJobContextImpl implements DataCleanerAnalysisJobContext {
+public class DataCleanerJobContextImpl implements DataCleanerJobContext {
 
     private final RepositoryFile _file;
     private final TenantContext _context;
@@ -65,7 +65,7 @@ public class DataCleanerAnalysisJobContextImpl implements DataCleanerAnalysisJob
     private volatile List<String> _sourceColumnPaths;
     private volatile Map<String, String> _variables;
 
-    public DataCleanerAnalysisJobContextImpl(TenantContext context, RepositoryFile file) {
+    public DataCleanerJobContextImpl(TenantContext context, RepositoryFile file) {
         _context = context;
         _file = file;
 

@@ -31,11 +31,11 @@ import org.eobjects.datacleaner.monitor.job.JobEngine;
  */
 public class MockJobEngineManager extends JobEngineManagerImpl {
 
-    private final DataCleanerAnalysisJobEngine _jobEngine;
+    private final DataCleanerJobEngine _jobEngine;
 
     public MockJobEngineManager() {
         super(null);
-        _jobEngine = new DataCleanerAnalysisJobEngine(null);
+        _jobEngine = new DataCleanerJobEngine(null);
     }
 
     @Override

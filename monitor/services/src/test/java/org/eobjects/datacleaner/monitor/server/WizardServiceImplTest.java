@@ -32,7 +32,7 @@ import org.easymock.EasyMock;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.jobwizard.common.MockAnalysisWizard;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -133,7 +133,7 @@ public class WizardServiceImplTest extends TestCase {
 
         // find the job and do assertions on it.
 
-        final DataCleanerAnalysisJobContext job = (DataCleanerAnalysisJobContext) service._tenantContextFactory.getContext(tenant).getJob(
+        final DataCleanerJobContext job = (DataCleanerJobContext) service._tenantContextFactory.getContext(tenant).getJob(
                 jobName);
         assertNotNull(job);
         assertEquals("orderdb", job.getSourceDatastoreName());

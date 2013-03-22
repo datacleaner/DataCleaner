@@ -37,7 +37,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbConfigurationInterceptor;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -130,7 +130,7 @@ public class JaxbConfigurationInterceptorTest extends TestCase {
     }
 
     private String generationConf(final JobContext jobContext, final String datastoreName) throws Exception {
-        final DataCleanerAnalysisJobContext job = (DataCleanerAnalysisJobContext) jobContext;
+        final DataCleanerJobContext job = (DataCleanerJobContext) jobContext;
 
         final Ref<Calendar> dateRef = new Ref<Calendar>() {
             @Override

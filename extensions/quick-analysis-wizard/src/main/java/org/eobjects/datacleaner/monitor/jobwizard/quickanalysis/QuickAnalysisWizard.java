@@ -19,26 +19,16 @@
  */
 package org.eobjects.datacleaner.monitor.jobwizard.quickanalysis;
 
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizard;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.springframework.stereotype.Component;
 
 /**
  * A simple wizard which auto-generates a job with a default set of analyzers.
  */
 @Component
-public class QuickAnalysisWizard implements JobWizard {
-
-    @Override
-    public JobWizardSession start(JobWizardContext context) {
-        return new QuickAnalysisWizardSession(context);
-    }
-    
-    @Override
-    public boolean isApplicableTo(JobWizardContext datastore) {
-    	return true;
-    }
+public class QuickAnalysisWizard extends DataCleanerJobWizard {
 
     @Override
     public String getDisplayName() {
@@ -48,5 +38,10 @@ public class QuickAnalysisWizard implements JobWizard {
     @Override
     public int getExpectedPageCount() {
         return 3;
+    }
+
+    @Override
+    protected DataCleanerJobWizardSession startInternal(JobWizardContext context) {
+        return new QuickAnalysisWizardSession(context);
     }
 }

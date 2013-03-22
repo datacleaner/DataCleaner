@@ -22,17 +22,16 @@ package org.eobjects.datacleaner.monitor.server.wizard;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Wizard session for SugarCRM datastore wizard
  */
-final class SugarCrmDatastoreWizardSession implements DatastoreWizardSession {
+final class SugarCrmDatastoreWizardSession extends AbstractDatastoreWizardSession {
 
-    private final DatastoreWizardContext _context;
     private String _username;
     private String _password;
     private String _baseUrl;
@@ -40,7 +39,7 @@ final class SugarCrmDatastoreWizardSession implements DatastoreWizardSession {
     private String _description;
 
     public SugarCrmDatastoreWizardSession(DatastoreWizardContext context) {
-        _context = context;
+        super(context);
     }
 
     @Override
@@ -57,10 +56,6 @@ final class SugarCrmDatastoreWizardSession implements DatastoreWizardSession {
     @Override
     public Integer getPageCount() {
         return 3;
-    }
-
-    public DatastoreWizardContext getWizardContext() {
-        return _context;
     }
 
     protected void setCredentials(String username, String password) {

@@ -42,7 +42,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
 import org.eobjects.datacleaner.monitor.server.SecurityConfiguration;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,11 +115,11 @@ public class LaunchDataCleanerController {
 
         final JobContext job = context.getJob(jobName);
 
-        if (!(job instanceof DataCleanerAnalysisJobContext)) {
+        if (!(job instanceof DataCleanerJobContext)) {
             throw new UnsupportedOperationException("Job not compatible with operation: " + job);
         }
 
-        final String datastoreName = ((DataCleanerAnalysisJobContext) job).getSourceDatastoreName();
+        final String datastoreName = ((DataCleanerJobContext) job).getSourceDatastoreName();
         final String encodedJobName = URLEncoder.encode(jobName, FileHelper.UTF_8_ENCODING);
 
         final String scheme = request.getScheme();

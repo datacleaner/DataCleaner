@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,14 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpSession;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.JaxbJobWriter;
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.dao.DatastoreDao;
@@ -52,13 +45,8 @@ import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.WizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
-import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +55,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.w3c.dom.Element;
 
 @Component("wizardService")
 public class WizardServiceImpl implements WizardService {
@@ -103,10 +90,10 @@ public class WizardServiceImpl implements WizardService {
 
     @Override
     public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant) {
-        
+
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(tenantContext, createSessionFunc());
-        
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(null, tenantContext, createSessionFunc());
+
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
         for (DatastoreWizard datastoreWizard : getAvailableDatastoreWizards()) {
             if (datastoreWizard.isApplicableTo(context)) {
@@ -125,7 +112,8 @@ public class WizardServiceImpl implements WizardService {
         final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
                 .getDatastore(datastoreIdentifier.getName());
 
-        final JobWizardContext context = new JobWizardContextImpl(tenantContext, datastore, null, createSessionFunc());
+        final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, null,
+                createSessionFunc());
 
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
         for (JobWizard jobWizard : getAvailableJobWizards()) {
@@ -177,7 +165,8 @@ public class WizardServiceImpl implements WizardService {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
 
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(tenantContext, createSessionFunc());
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(wizard, tenantContext,
+                createSessionFunc());
 
         final WizardSession session = wizard.start(context);
 
@@ -197,7 +186,7 @@ public class WizardServiceImpl implements WizardService {
         final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
                 .getDatastore(selectedDatastore.getName());
 
-        final JobWizardContext context = new JobWizardContextImpl(tenantContext, datastore, jobName,
+        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, jobName,
                 createSessionFunc());
 
         final WizardSession session = wizard.start(context);
@@ -239,18 +228,10 @@ public class WizardServiceImpl implements WizardService {
         }
 
         if (nextPageController == null) {
-            final WizardContext wizardContext = _contexts.get(sessionId);
             final WizardSession session = _sessions.get(sessionId);
             final String wizardResult;
             try {
-                if (wizardContext instanceof JobWizardContext) {
-                    wizardResult = finishJobWizard((JobWizardContext) wizardContext, (JobWizardSession) session);
-                } else if (wizardContext instanceof DatastoreWizardContext) {
-                    wizardResult = finishDatastoreWizard((DatastoreWizardContext) wizardContext,
-                            (DatastoreWizardSession) session);
-                } else {
-                    throw new UnsupportedOperationException("Unexpected wizard type: " + wizardContext);
-                }
+                wizardResult = session.finished();
             } finally {
                 closeSession(sessionId);
             }
@@ -278,41 +259,6 @@ public class WizardServiceImpl implements WizardService {
         page.setSessionIdentifier(sessionIdentifier);
         page.setWizardResult(wizardResult);
         return page;
-    }
-
-    private String finishDatastoreWizard(DatastoreWizardContext wizardContext, DatastoreWizardSession session) {
-        final DocumentBuilder documentBuilder;
-        try {
-            final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-
-        final TenantContext tenantContext = wizardContext.getTenantContext();
-        final Element datastoreNode = session.createDatastoreElement(documentBuilder);
-
-        String datastoreName = _datastoreDao.addDatastore(tenantContext, datastoreNode);
-        return datastoreName;
-    }
-
-    private String finishJobWizard(final JobWizardContext wizardContext, final JobWizardSession session) {
-        final TenantContext tenantContext = wizardContext.getTenantContext();
-        final RepositoryFolder jobFolder = tenantContext.getJobFolder();
-        final String jobName = wizardContext.getJobName();
-        jobFolder.createFile(jobName + FileFilters.ANALYSIS_XML.getExtension(), new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-
-                final AnalysisJobBuilder jobBuilder = session.createJob();
-                final AnalysisJob analysisJob = jobBuilder.toAnalysisJob();
-
-                final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
-                final JaxbJobWriter writer = new JaxbJobWriter(configuration);
-                writer.write(analysisJob, out);
-            }
-        });
-        return jobName;
     }
 
     private WizardPage createPage(WizardSessionIdentifier sessionIdentifier, WizardPageController pageController,

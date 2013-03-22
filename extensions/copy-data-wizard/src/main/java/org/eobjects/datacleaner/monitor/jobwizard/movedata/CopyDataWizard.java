@@ -19,26 +19,21 @@
  */
 package org.eobjects.datacleaner.monitor.jobwizard.movedata;
 
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizard;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CopyDataWizard implements JobWizard {
+public class CopyDataWizard extends DataCleanerJobWizard {
 
     @Override
     public String getDisplayName() {
         return "Copy data";
     }
-    
-    @Override
-    public boolean isApplicableTo(JobWizardContext datastore) {
-    	return true;
-    }
 
     @Override
-    public JobWizardSession start(JobWizardContext context) {
+    public DataCleanerJobWizardSession startInternal(JobWizardContext context) {
         return new CopyDataWizardSession(context);
     }
 

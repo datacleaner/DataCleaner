@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.wizard.job;
 
-import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.wizard.WizardSession;
 
 /**
@@ -27,12 +26,5 @@ import org.eobjects.datacleaner.monitor.wizard.WizardSession;
  */
 public interface JobWizardSession extends WizardSession {
 
-    /**
-     * Creates the final analysis job as prescribed by the wizard. This method
-     * will be invoked when no more pages are available and the wizard has
-     * ended.
-     * 
-     * @return
-     */
-    public AnalysisJobBuilder createJob();
+    public JobWizardContext getWizardContext();
 }

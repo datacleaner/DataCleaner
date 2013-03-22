@@ -202,32 +202,40 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
             }
         });
 
-        final Anchor triggerAnchor = new Anchor("Run this job now");
-        triggerAnchor.addStyleName("TriggerJob");
-        triggerAnchor.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                final String url = Urls.createRelativeUrl("scheduling.jsf#trigger_" + jobName);
-                Window.Location.assign(url);
-            }
-        });
-        
-        final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
-        schedulingAnchor.addStyleName("ScheduleJob");
-        schedulingAnchor.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                final String url = Urls.createRelativeUrl("scheduling.jsf#schedule_" + jobName);
-                Window.Location.assign(url);
-            }
-        });
-
         final FlowPanel contentPanel = new FlowPanel();
         contentPanel.addStyleName("WizardFinishedPanel");
-        contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
-        contentPanel.add(new Label("Close the dialog to return, or click one of the links below to start using the job."));
-        contentPanel.add(triggerAnchor);
-        contentPanel.add(schedulingAnchor);
+        if (jobName == null) {
+            contentPanel.add(new Label("Job created! Wizard finished."));
+        } else {
+            contentPanel.add(new Label("Job '" + jobName + "' created! Wizard finished."));
+        }
+        contentPanel.add(new Label(
+                "Close the dialog to return, or click one of the links below to start using the job."));
+
+        if (jobName != null) {
+            final Anchor triggerAnchor = new Anchor("Run this job now");
+            triggerAnchor.addStyleName("TriggerJob");
+            triggerAnchor.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    final String url = Urls.createRelativeUrl("scheduling.jsf#trigger_" + jobName);
+                    Window.Location.assign(url);
+                }
+            });
+
+            final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
+            schedulingAnchor.addStyleName("ScheduleJob");
+            schedulingAnchor.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    final String url = Urls.createRelativeUrl("scheduling.jsf#schedule_" + jobName);
+                    Window.Location.assign(url);
+                }
+            });
+
+            contentPanel.add(triggerAnchor);
+            contentPanel.add(schedulingAnchor);
+        }
 
         setContent(contentPanel);
         getButtonPanel().clear();

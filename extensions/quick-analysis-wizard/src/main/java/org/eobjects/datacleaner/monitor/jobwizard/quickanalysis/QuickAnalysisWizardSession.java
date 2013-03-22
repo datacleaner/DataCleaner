@@ -28,8 +28,8 @@ import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -37,84 +37,73 @@ import org.eobjects.metamodel.schema.Table;
 /**
  * Session implementation for the Quick Analysis wizard.
  */
-final class QuickAnalysisWizardSession implements JobWizardSession {
+final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
 
-	private final JobWizardContext _context;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private int _pageCount;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private int _pageCount;
 
-	public QuickAnalysisWizardSession(JobWizardContext context) {
-		_context = context;
-		_analysisJobBuilder = new AnalysisJobBuilder(_context
-				.getTenantContext().getConfiguration());
-		_analysisJobBuilder.setDatastore(_context.getSourceDatastore());
-		_pageCount = 3;
-	}
+    public QuickAnalysisWizardSession(JobWizardContext context) {
+        super(context);
+        _analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
+        _analysisJobBuilder.setDatastore(context.getSourceDatastore());
+        _pageCount = 3;
+    }
 
-	@Override
-	public WizardPageController firstPageController() {
-		return new SelectTableWizardPage(_context, 0) {
-			@Override
-			protected WizardPageController nextPageController(
-					final Table selectedTable) {
-				if (selectedTable.getLiteralColumns().length == 0) {
-					_pageCount = 2;
-				}
+    @Override
+    public WizardPageController firstPageController() {
+        return new SelectTableWizardPage(getWizardContext(), 0) {
+            @Override
+            protected WizardPageController nextPageController(final Table selectedTable) {
+                if (selectedTable.getLiteralColumns().length == 0) {
+                    _pageCount = 2;
+                }
 
-				return new SelectColumnsWizardPage(1, selectedTable) {
+                return new SelectColumnsWizardPage(1, selectedTable) {
 
-					@Override
-					protected String getHeaderHtml() {
-						return "<p>Please select columns to check for <b>standard data quality metrics</b>, based on data type:</p>";
-					}
+                    @Override
+                    protected String getHeaderHtml() {
+                        return "<p>Please select columns to check for <b>standard data quality metrics</b>, based on data type:</p>";
+                    }
 
-					@Override
-					protected WizardPageController nextPageController(
-							final List<Column> selectedColumns) {
-						_analysisJobBuilder.addSourceColumns(selectedColumns);
+                    @Override
+                    protected WizardPageController nextPageController(final List<Column> selectedColumns) {
+                        _analysisJobBuilder.addSourceColumns(selectedColumns);
 
-						final QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy(
-								5, false, false);
-						quickAnalysisStrategy
-								.configureAnalysisJobBuilder(_analysisJobBuilder);
+                        final QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy(5, false, false);
+                        quickAnalysisStrategy.configureAnalysisJobBuilder(_analysisJobBuilder);
 
-						if (selectedTable.getLiteralColumns().length == 0) {
-							return null;
-						}
-						return new SelectPatternFinderColumnsPage(2,
-								selectedTable) {
-							@Override
-							protected WizardPageController nextPageController(
-									List<Column> selectedColumns) {
-								for (Column selectedColumn : selectedColumns) {
-									_analysisJobBuilder
-											.addSourceColumn(selectedColumn);
-									final InputColumn<?> sourceColumn = _analysisJobBuilder
-											.getSourceColumnByName(selectedColumn
-													.getName());
-									final AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinder = _analysisJobBuilder
-											.addAnalyzer(PatternFinderAnalyzer.class);
-									patternFinder.setName("Patterns of "
-											+ selectedColumn.getName());
-									patternFinder.addInputColumn(sourceColumn);
-								}
+                        if (selectedTable.getLiteralColumns().length == 0) {
+                            return null;
+                        }
+                        return new SelectPatternFinderColumnsPage(2, selectedTable) {
+                            @Override
+                            protected WizardPageController nextPageController(List<Column> selectedColumns) {
+                                for (Column selectedColumn : selectedColumns) {
+                                    _analysisJobBuilder.addSourceColumn(selectedColumn);
+                                    final InputColumn<?> sourceColumn = _analysisJobBuilder
+                                            .getSourceColumnByName(selectedColumn.getName());
+                                    final AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinder = _analysisJobBuilder
+                                            .addAnalyzer(PatternFinderAnalyzer.class);
+                                    patternFinder.setName("Patterns of " + selectedColumn.getName());
+                                    patternFinder.addInputColumn(sourceColumn);
+                                }
 
-								return null;
-							}
-						};
-					}
-				};
-			}
-		};
-	}
+                                return null;
+                            }
+                        };
+                    }
+                };
+            }
+        };
+    }
 
-	@Override
-	public Integer getPageCount() {
-		return _pageCount;
-	}
+    @Override
+    public Integer getPageCount() {
+        return _pageCount;
+    }
 
-	@Override
-	public AnalysisJobBuilder createJob() {
-		return _analysisJobBuilder;
-	}
+    @Override
+    public AnalysisJobBuilder createJob() {
+        return _analysisJobBuilder;
+    }
 }

@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.metamodel.util.Func;
 
@@ -33,13 +34,20 @@ public final class JobWizardContextImpl implements JobWizardContext {
     private final Datastore _sourceDatastore;
     private final String _jobName;
     private final Func<String, Object> _sessionFunc;
+    private final JobWizard _jobWizard;
 
-    public JobWizardContextImpl(TenantContext tenantContext, Datastore sourceDatastore, String jobName,
-            Func<String, Object> sessionFunc) {
+    public JobWizardContextImpl(JobWizard jobWizard, TenantContext tenantContext, Datastore sourceDatastore,
+            String jobName, Func<String, Object> sessionFunc) {
+        _jobWizard = jobWizard;
         _tenantContext = tenantContext;
         _sourceDatastore = sourceDatastore;
         _jobName = jobName;
         _sessionFunc = sessionFunc;
+    }
+
+    @Override
+    public JobWizard getJobWizard() {
+        return _jobWizard;
     }
 
     @Override

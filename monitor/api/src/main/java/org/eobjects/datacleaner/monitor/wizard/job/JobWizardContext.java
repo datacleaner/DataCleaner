@@ -26,6 +26,8 @@ import org.eobjects.datacleaner.monitor.wizard.WizardContext;
  * Context object which is shared throughout the wizard session
  */
 public interface JobWizardContext extends WizardContext {
+    
+    public JobWizard getJobWizard();
 
     public String getJobName();
 

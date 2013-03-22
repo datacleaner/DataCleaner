@@ -36,7 +36,7 @@ import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.shared.DescriptorNotFoundException;
 import org.eobjects.datacleaner.monitor.shared.DescriptorService;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -121,7 +121,7 @@ public class DescriptorServiceImpl implements DescriptorService {
 
         final AnalysisResult analysisResult = context.getResult(resultFile.getName()).getAnalysisResult();
 
-        final AnalysisJob analysisJob = ((DataCleanerAnalysisJobContext) context.getJob(job.getName())).getAnalysisJob();
+        final AnalysisJob analysisJob = ((DataCleanerJobContext) context.getJob(job.getName())).getAnalysisJob();
         final AnalyzerJob analyzerJob = metricValueUtils.getAnalyzerJob(metric, analysisJob);
 
         final AnalyzerResult result = metricValueUtils.getResult(analysisResult, analyzerJob, metric);

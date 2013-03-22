@@ -37,7 +37,7 @@ import org.eobjects.datacleaner.monitor.configuration.PlaceholderAnalysisJob;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.datacleaner.util.PreviewTransformedDataAnalyzer;
 import org.eobjects.metamodel.pojo.ArrayTableDataProvider;
@@ -97,11 +97,11 @@ public class JobInvocationController {
         final TenantContext tenantContext = _contextFactory.getContext(tenant);
         final JobContext job = tenantContext.getJob(jobName);
         
-        if (!(job instanceof DataCleanerAnalysisJobContext)) {
+        if (!(job instanceof DataCleanerJobContext)) {
             throw new UnsupportedOperationException("Job not compatible with operation: " + jobName);
         }
 
-        final DataCleanerAnalysisJobContext analysisJobContext = (DataCleanerAnalysisJobContext)job;
+        final DataCleanerJobContext analysisJobContext = (DataCleanerJobContext)job;
         final String datastoreName = analysisJobContext.getSourceDatastoreName();
         final List<String> columnPaths = analysisJobContext.getSourceColumnPaths();
 

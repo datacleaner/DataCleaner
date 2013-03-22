@@ -25,8 +25,8 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectColumnsWizardPage;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.eobjects.datacleaner.user.QuickAnalysisStrategy;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.Table;
@@ -34,20 +34,19 @@ import org.eobjects.metamodel.schema.Table;
 /**
  * Session implementation for the Quick Analysis wizard.
  */
-final class MockWizardSession implements JobWizardSession {
+final class MockWizardSession extends DataCleanerJobWizardSession {
 
-    private final JobWizardContext _context;
     private final AnalysisJobBuilder _analysisJobBuilder;
 
     public MockWizardSession(JobWizardContext context) {
-        _context = context;
-        _analysisJobBuilder = new AnalysisJobBuilder(_context.getTenantContext().getConfiguration());
-        _analysisJobBuilder.setDatastore(_context.getSourceDatastore());
+        super(context);
+        _analysisJobBuilder = new AnalysisJobBuilder(getWizardContext().getTenantContext().getConfiguration());
+        _analysisJobBuilder.setDatastore(getWizardContext().getSourceDatastore());
     }
 
     @Override
     public WizardPageController firstPageController() {
-        return new SelectTableWizardPage(_context, 0) {
+        return new SelectTableWizardPage(getWizardContext(), 0) {
             @Override
             protected WizardPageController nextPageController(Table selectedTable) {
                 return new SelectColumnsWizardPage(1, selectedTable) {

@@ -26,30 +26,28 @@ import javax.xml.parsers.DocumentBuilder;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 import org.eobjects.metamodel.util.FileHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class ExcelDatastoreWizardSession implements DatastoreWizardSession {
-
-    private final DatastoreWizardContext _context;
+public class ExcelDatastoreWizardSession extends AbstractDatastoreWizardSession {
 
     private String _filepath;
     private String _name;
     private String _description;
 
     public ExcelDatastoreWizardSession(DatastoreWizardContext context) {
-        _context = context;
+        super(context);
     }
 
     @Override
     public WizardPageController firstPageController() {
-        return new ExcelDatastoreUploadOrExistingFileWizardPage(_context) {
+        return new ExcelDatastoreUploadOrExistingFileWizardPage(getWizardContext()) {
             @Override
             protected WizardPageController nextPageControllerUpload(final String filename, final File tempFile) {
-                return new ExcelDatastoreLocationWizardPage(_context, filename, true) {
+                return new ExcelDatastoreLocationWizardPage(getWizardContext(), filename, true) {
 
                     @Override
                     protected WizardPageController nextPageController(String filepath, File file) {
@@ -71,7 +69,7 @@ public class ExcelDatastoreWizardSession implements DatastoreWizardSession {
 
             @Override
             protected WizardPageController nextPageControllerExisting() {
-                return new ExcelDatastoreLocationWizardPage(_context, "my_spreadsheet.xlsx", false) {
+                return new ExcelDatastoreLocationWizardPage(getWizardContext(), "my_spreadsheet.xlsx", false) {
 
                     @Override
                     protected WizardPageController nextPageController(String filepath, File file) {
@@ -98,7 +96,7 @@ public class ExcelDatastoreWizardSession implements DatastoreWizardSession {
     }
 
     private WizardPageController createNameAndDescriptionWizardPage(String name) {
-        return new DatastoreNameAndDescriptionWizardPage(_context, 2, name) {
+        return new DatastoreNameAndDescriptionWizardPage(getWizardContext(), 2, name) {
             @Override
             protected WizardPageController nextPageController(String name, String description) {
                 _name = name;

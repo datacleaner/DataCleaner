@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.server;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.metamodel.util.Func;
 
@@ -28,12 +29,19 @@ import org.eobjects.metamodel.util.Func;
  */
 public class DatastoreWizardContextImpl implements DatastoreWizardContext {
 
+    private final DatastoreWizard _wizard;
     private final TenantContext _tenantContext;
     private final Func<String, Object> _sessionFunc;
 
-    public DatastoreWizardContextImpl(TenantContext tenantContext, Func<String, Object> sessionFunc) {
+    public DatastoreWizardContextImpl(DatastoreWizard wizard, TenantContext tenantContext, Func<String, Object> sessionFunc) {
+        _wizard = wizard;
         _tenantContext = tenantContext;
         _sessionFunc = sessionFunc;
+    }
+    
+    @Override
+    public DatastoreWizard getDatastoreWizard() {
+        return _wizard;
     }
 
     @Override

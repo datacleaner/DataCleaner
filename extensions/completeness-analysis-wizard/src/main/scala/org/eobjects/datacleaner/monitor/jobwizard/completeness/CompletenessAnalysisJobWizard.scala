@@ -8,17 +8,17 @@ import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController
 import org.eobjects.metamodel.schema.Table
 import org.springframework.stereotype.Component
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizard
 
 @Component
-class CompletenessAnalysisJobWizard extends JobWizard {
+class CompletenessAnalysisJobWizard extends DataCleanerJobWizard {
 
   override def getDisplayName = "Completeness analysis";
 
   override def getExpectedPageCount = 4;
   
-  override def isApplicableTo(context: JobWizardContext) = true
-
-  override def start(context: JobWizardContext) = new JobWizardSession() {
+  override def startInternal(context: JobWizardContext) = new DataCleanerJobWizardSession(context) {
 
     val analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
     var fieldGroupsCount = 2;

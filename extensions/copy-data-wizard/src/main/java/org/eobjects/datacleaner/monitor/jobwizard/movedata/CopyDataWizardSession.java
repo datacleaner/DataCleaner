@@ -25,17 +25,16 @@ import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.common.SelectTableWizardPage;
+import org.eobjects.datacleaner.monitor.wizard.job.DataCleanerJobWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.job.JobWizardSession;
 import org.eobjects.metamodel.schema.Table;
 
-final class CopyDataWizardSession implements JobWizardSession {
+final class CopyDataWizardSession extends DataCleanerJobWizardSession {
 
-    private final JobWizardContext _context;
     private final AnalysisJobBuilder _analysisJobBuilder;
 
     public CopyDataWizardSession(JobWizardContext context) {
-        _context = context;
+        super(context);
 
         _analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
         _analysisJobBuilder.setDatastore(context.getSourceDatastore());
@@ -43,7 +42,7 @@ final class CopyDataWizardSession implements JobWizardSession {
 
     @Override
     public WizardPageController firstPageController() {
-        return new SelectTableWizardPage(_context, 0) {
+        return new SelectTableWizardPage(getWizardContext(), 0) {
             @Override
             protected WizardPageController nextPageController(Table selectedTable) {
                 return new SelectDatastoreWizardPage(CopyDataWizardSession.this, _analysisJobBuilder, selectedTable);
@@ -58,19 +57,14 @@ final class CopyDataWizardSession implements JobWizardSession {
         return _analysisJobBuilder;
     }
 
-    @Override
-    public Integer getPageCount() {
-        return 5;
-    }
-
     public String[] getDatastoreNames() {
-        final TenantContext tenantContext = _context.getTenantContext();
+        final TenantContext tenantContext = getWizardContext().getTenantContext();
         final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
         return configuration.getDatastoreCatalog().getDatastoreNames();
     }
 
     public Datastore getDatastore(String name) {
-        final TenantContext tenantContext = _context.getTenantContext();
+        final TenantContext tenantContext = getWizardContext().getTenantContext();
         final AnalyzerBeansConfiguration configuration = tenantContext.getConfiguration();
         return configuration.getDatastoreCatalog().getDatastore(name);
     }

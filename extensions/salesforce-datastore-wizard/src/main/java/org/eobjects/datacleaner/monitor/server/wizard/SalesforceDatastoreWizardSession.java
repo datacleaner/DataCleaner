@@ -22,17 +22,16 @@ package org.eobjects.datacleaner.monitor.server.wizard;
 import javax.xml.parsers.DocumentBuilder;
 
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
+import org.eobjects.datacleaner.monitor.wizard.datastore.AbstractDatastoreWizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
-import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardSession;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
  * Wizard session for Salesforce datastore wizard
  */
-final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
+final class SalesforceDatastoreWizardSession extends AbstractDatastoreWizardSession {
 
-    private final DatastoreWizardContext _context;
     private String _name;
     private String _description;
     private String _username;
@@ -40,7 +39,7 @@ final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
     private String _securityToken;
 
     public SalesforceDatastoreWizardSession(DatastoreWizardContext context) {
-        _context = context;
+        super(context);
     }
 
     @Override
@@ -51,10 +50,6 @@ final class SalesforceDatastoreWizardSession implements DatastoreWizardSession {
     @Override
     public Integer getPageCount() {
         return 3;
-    }
-
-    public DatastoreWizardContext getWizardContext() {
-        return _context;
     }
 
     public void setName(String name) {

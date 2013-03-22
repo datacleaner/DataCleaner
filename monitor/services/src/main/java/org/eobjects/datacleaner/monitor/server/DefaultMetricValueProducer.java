@@ -29,7 +29,7 @@ import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -72,7 +72,7 @@ public class DefaultMetricValueProducer implements MetricValueProducer {
         }
         String jobName = jobIdentifier.getName();
         JobContext job = tenantContext.getJob(jobName);
-        AnalysisJob analysisJob = ((DataCleanerAnalysisJobContext) job).getAnalysisJob();
+        AnalysisJob analysisJob = ((DataCleanerJobContext) job).getAnalysisJob();
 
         return new DefaultMetricValues(metricIdentifiers, analysisResult, analysisJob);
     }

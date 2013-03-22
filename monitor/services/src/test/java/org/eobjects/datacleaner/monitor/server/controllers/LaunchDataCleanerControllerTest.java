@@ -30,7 +30,7 @@ import org.easymock.EasyMock;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.LaunchArtifactProvider;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerAnalysisJobContext;
+import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.metamodel.util.FileHelper;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -42,7 +42,7 @@ public class LaunchDataCleanerControllerTest extends TestCase {
     public void testCreateJnlpOutput() throws Exception {
         final TenantContextFactory contextFactoryMock = EasyMock.createMock(TenantContextFactory.class);
         final TenantContext contextMock = EasyMock.createMock(TenantContext.class);
-        final DataCleanerAnalysisJobContext jobMock = EasyMock.createMock(DataCleanerAnalysisJobContext.class);
+        final DataCleanerJobContext jobMock = EasyMock.createMock(DataCleanerJobContext.class);
 
         EasyMock.expect(contextFactoryMock.getContext("DC")).andReturn(contextMock);
         EasyMock.expect(contextMock.containsJob("my job")).andReturn(true);

@@ -21,11 +21,21 @@ package org.eobjects.datacleaner.monitor.pentaho;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eobjects.analyzer.descriptors.MetricDescriptor;
+import org.eobjects.analyzer.descriptors.PlaceholderComponentJob;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
+import org.eobjects.datacleaner.monitor.server.MetricValueUtils;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
+import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
+import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.Action;
 import org.eobjects.metamodel.util.FileHelper;
@@ -34,12 +44,19 @@ import org.eobjects.metamodel.util.Func;
 /**
  * Job context object for Pentaho jobs
  */
-public class PentahoJobContext implements XmlJobContext {
+public class PentahoJobContext implements XmlJobContext, MetricJobContext {
 
-    private RepositoryFile _file;
+    private final RepositoryFile _file;
+    private final PentahoJobEngine _engine;
 
-    public PentahoJobContext(RepositoryFile file) {
+    public PentahoJobContext(PentahoJobEngine engine, RepositoryFile file) {
+        _engine = engine;
         _file = file;
+    }
+
+    @Override
+    public PentahoJobEngine getJobEngine() {
+        return _engine;
     }
 
     @Override
@@ -83,5 +100,22 @@ public class PentahoJobContext implements XmlJobContext {
                 FileHelper.copy(in, out);
             }
         });
+    }
+
+    @Override
+    public JobMetrics getJobMetrics() {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final PlaceholderComponentJob<?> componentJob = new PlaceholderComponentJob(getName(), PentahoJobResult.class,
+                PentahoJobResult.class);
+        final Set<MetricDescriptor> metricDescriptors = componentJob.getResultMetrics();
+
+        final List<MetricGroup> metricGroups = new ArrayList<MetricGroup>();
+        final MetricValueUtils utils = new MetricValueUtils();
+        utils.buildMetricGroups(metricGroups, componentJob, metricDescriptors);
+
+        final JobMetrics metrics = new JobMetrics();
+        metrics.setMetricGroups(metricGroups);
+        metrics.setJob(new JobIdentifier(getName()));
+        return metrics;
     }
 }

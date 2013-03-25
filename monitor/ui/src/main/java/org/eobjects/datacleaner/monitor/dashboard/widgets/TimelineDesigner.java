@@ -222,12 +222,17 @@ public class TimelineDesigner {
         List<TimelineDataRow> rows = _timelineData.getRows();
 
         for (TimelineDataRow timelineDataRow : rows) {
-            final Number value = timelineDataRow.getMetricValues().get(index);
             final Date date = timelineDataRow.getDate();
-            if (value == null) {
-                GWT.log("No value at index no. " + index + " @ date: " + date);
+            final List<Number> metricValues = timelineDataRow.getMetricValues();
+            if (metricValues.size() > index) {
+                final Number value = metricValues.get(index);
+                if (value == null) {
+                    GWT.log("No value at index no. " + index + " @ date: " + date);
+                } else {
+                    series.add(DataPoint.of(date.getTime(), value.doubleValue()));
+                }
             } else {
-                series.add(DataPoint.of(date.getTime(), value.doubleValue()));
+                GWT.log("Metric values list is too small for index no. " + index + " @ date: " + date);
             }
         }
     }

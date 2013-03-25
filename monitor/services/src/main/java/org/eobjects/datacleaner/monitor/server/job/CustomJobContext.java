@@ -59,11 +59,13 @@ public class CustomJobContext implements XmlJobContext {
 
     private final RepositoryFile _file;
     private final InjectionManager _injectionManager;
+    private final CustomJobEngine _engine;
 
     private long _cachedReadTime = -1;
     private CustomJavaComponentJob _cachedCustomJavaJob;
 
-    public CustomJobContext(RepositoryFile file, InjectionManager injectionManager) {
+    public CustomJobContext(CustomJobEngine engine, RepositoryFile file, InjectionManager injectionManager) {
+        _engine = engine;
         _file = file;
         _injectionManager = injectionManager;
     }
@@ -194,6 +196,11 @@ public class CustomJobContext implements XmlJobContext {
         final Class<? extends Converter<?>> customConverter = configuredProperty.getCustomConverter();
         final Object value = stringConverter.deserialize(valueString, configuredProperty.getType(), customConverter);
         propertyMap.put(configuredProperty, value);
+    }
+
+    @Override
+    public CustomJobEngine getJobEngine() {
+        return _engine;
     }
 
 }

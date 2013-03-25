@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.pentaho;
 
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -36,13 +37,20 @@ import org.apache.commons.lang.SerializationUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
+import org.eobjects.datacleaner.monitor.job.MetricValues;
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
+import org.eobjects.datacleaner.monitor.server.DefaultMetricValues;
 import org.eobjects.datacleaner.monitor.server.job.AbstractJobEngine;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
@@ -56,7 +64,7 @@ import org.w3c.dom.Element;
  * in within DataCleaner.
  */
 @Component
-public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
+public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> implements MetricJobEngine<PentahoJobContext> {
 
     public static final String EXTENSION = ".pentaho.job.xml";
 
@@ -113,8 +121,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
                 progressUpdate = false;
             }
 
-            running = transStatus(carteClient, pentahoJobType, executionLogger, tenantContext, execution,
-                    progressUpdate);
+            running = transStatus(carteClient, pentahoJobType, executionLogger, tenantContext, execution, progressUpdate);
 
             if (!running) {
                 break;
@@ -146,15 +153,13 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
             if (candidate.matches(queriedTransformationId, queriedTransformationName)) {
                 pentahoJobType.setTransformationId(candidate.getId());
                 pentahoJobType.setTransformationName(candidate.getName());
-                executionLogger.log("Identified transformation: name=" + candidate.getName() + ", id="
-                        + candidate.getId());
+                executionLogger.log("Identified transformation: name=" + candidate.getName() + ", id=" + candidate.getId());
                 return true;
             }
         }
 
-        executionLogger.setStatusFailed(null, null, new PentahoJobException(
-                "Carte did not present any transformations with id='" + queriedTransformationId + "' or name='"
-                        + queriedTransformationName + "'"));
+        executionLogger.setStatusFailed(null, null, new PentahoJobException("Carte did not present any transformations with id='"
+                + queriedTransformationId + "' or name='" + queriedTransformationName + "'"));
         return false;
     }
 
@@ -170,9 +175,8 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
      * @return
      * @throws Exception
      */
-    private boolean transStatus(PentahoCarteClient carteClient, PentahoJobType pentahoJobType,
-            ExecutionLogger executionLogger, TenantContext tenantContext, ExecutionLog execution, boolean progressUpdate)
-            throws Exception {
+    private boolean transStatus(PentahoCarteClient carteClient, PentahoJobType pentahoJobType, ExecutionLogger executionLogger,
+            TenantContext tenantContext, ExecutionLog execution, boolean progressUpdate) throws Exception {
         final String transStatusUrl = carteClient.getUrl("transStatus");
         final HttpGet request = new HttpGet(transStatusUrl);
         try {
@@ -182,8 +186,8 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
                 final Document doc = carteClient.parse(response.getEntity());
                 final Element webresultElement = doc.getDocumentElement();
 
-                final String statusDescription = DomUtils.getTextValue(DomUtils.getChildElementByTagName(
-                        webresultElement, "status_desc"));
+                final String statusDescription = DomUtils.getTextValue(DomUtils.getChildElementByTagName(webresultElement,
+                        "status_desc"));
                 if ("Running".equalsIgnoreCase(statusDescription)) {
                     // the job is still running
 
@@ -209,8 +213,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
 
                     final PentahoJobResult result = new PentahoJobResult(documentString);
 
-                    final String resultFilename = execution.getResultId()
-                            + FileFilters.ANALYSIS_RESULT_SER.getExtension();
+                    final String resultFilename = execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
                     tenantContext.getResultFolder().createFile(resultFilename, new Action<OutputStream>() {
                         @Override
                         public void run(OutputStream out) throws Exception {
@@ -264,8 +267,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
             final String linesOutput = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesOutput");
             final String linesRead = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesRead");
             final String linesWritten = DomUtils.getChildElementValueByTagName(stepstatusElement, "linesWritten");
-            final String statusDescription = DomUtils.getChildElementValueByTagName(stepstatusElement,
-                    "statusDescription");
+            final String statusDescription = DomUtils.getChildElementValueByTagName(stepstatusElement, "statusDescription");
 
             final StringBuilder update = new StringBuilder();
             update.append("Step '");
@@ -318,8 +320,8 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
      * @return
      * @throws Exception
      */
-    private boolean startTrans(PentahoCarteClient carteClient, PentahoJobType pentahoJobType,
-            ExecutionLogger executionLogger) throws Exception {
+    private boolean startTrans(PentahoCarteClient carteClient, PentahoJobType pentahoJobType, ExecutionLogger executionLogger)
+            throws Exception {
         final String startTransUrl = carteClient.getUrl("startTrans");
         final HttpGet request = new HttpGet(startTransUrl);
         try {
@@ -329,13 +331,11 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
                 final Document doc = carteClient.parse(response.getEntity());
                 final Element webresultElement = doc.getDocumentElement();
 
-                final String message = DomUtils.getTextValue(DomUtils.getChildElementByTagName(webresultElement,
-                        "message"));
+                final String message = DomUtils.getTextValue(DomUtils.getChildElementByTagName(webresultElement, "message"));
                 if (!StringUtils.isNullOrEmpty(message)) {
                     executionLogger.log(message);
                 }
-                final String result = DomUtils.getTextValue(DomUtils.getChildElementByTagName(webresultElement,
-                        "result"));
+                final String result = DomUtils.getTextValue(DomUtils.getChildElementByTagName(webresultElement, "result"));
                 if ("OK".equalsIgnoreCase(result)) {
                     executionLogger.setStatusRunning();
                     executionLogger.flushLog();
@@ -363,6 +363,23 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> {
 
     @Override
     protected PentahoJobContext getJobContext(TenantContext tenantContext, RepositoryFile file) {
-        return new PentahoJobContext(file);
+        return new PentahoJobContext(this, file);
+    }
+
+    @Override
+    public MetricValues getMetricValues(MetricJobContext job, ResultContext result, List<MetricIdentifier> metricIdentifiers) {
+        final AnalysisResult analysisResult = result.getAnalysisResult();
+        return new DefaultMetricValues(metricIdentifiers, analysisResult);
+    }
+
+    @Override
+    public Collection<String> getMetricParameterSuggestions(MetricJobContext job, ResultContext result,
+            MetricIdentifier metricIdentifier) {
+        // We take a less generic shortcut here - the only parameterized metrics
+        // of PentahoJobResult is the step names, so we will just use those.
+        final AnalysisResult analysisResult = result.getAnalysisResult();
+        final PentahoJobResult pentahoJobResult = (PentahoJobResult) analysisResult.getResults().get(0);
+
+        return pentahoJobResult.getStepNames();
     }
 }

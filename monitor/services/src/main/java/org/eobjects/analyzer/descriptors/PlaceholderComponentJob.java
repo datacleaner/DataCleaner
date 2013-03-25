@@ -20,10 +20,8 @@
 package org.eobjects.analyzer.descriptors;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eobjects.analyzer.beans.api.ComponentCategory;
 import org.eobjects.analyzer.beans.api.Description;
@@ -32,7 +30,6 @@ import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.AnalyzerResultReducer;
 import org.eobjects.analyzer.result.HasAnalyzerResult;
-import org.eobjects.analyzer.result.Metric;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.analyzer.util.StringUtils;
 
@@ -48,21 +45,12 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
 
     private final String _name;
     private final Class<C> _componentClass;
-    private final AnalyzerResult _analyzerResult;
-    private final Set<MetricDescriptor> _metrics;
+    private final ResultDescriptor _resultDescriptor;
 
-    public PlaceholderComponentJob(String name, Class<C> componentClass, AnalyzerResult analyzerResult) {
+    public PlaceholderComponentJob(String name, Class<C> componentClass, Class<? extends AnalyzerResult> resultClass) {
         _name = name;
         _componentClass = componentClass;
-        _analyzerResult = analyzerResult;
-        _metrics = new TreeSet<MetricDescriptor>();
-
-        final Class<? extends AnalyzerResult> resultClass = analyzerResult.getClass();
-        final Method[] metricMethods = ReflectionUtils.getMethods(resultClass, Metric.class);
-        for (Method method : metricMethods) {
-            MetricDescriptor metric = new MetricDescriptorImpl(resultClass, method);
-            _metrics.add(metric);
-        }
+        _resultDescriptor = new ResultDescriptorImpl(resultClass);
     }
 
     @Override
@@ -147,42 +135,22 @@ public class PlaceholderComponentJob<C extends HasAnalyzerResult<?>> implements 
 
     @Override
     public Class<? extends AnalyzerResult> getResultClass() {
-        return _analyzerResult.getClass();
+        return _resultDescriptor.getResultClass();
     }
 
     @Override
     public MetricDescriptor getResultMetric(String name) {
-        if (name == null) {
-            return null;
-        }
-
-        for (MetricDescriptor metric : _metrics) {
-            if (name.equals(metric.getName())) {
-                return metric;
-            }
-        }
-
-        // second try - case insensitive
-        for (MetricDescriptor metric : _metrics) {
-            if (name.equalsIgnoreCase(metric.getName())) {
-                return metric;
-            }
-        }
-        return null;
+        return _resultDescriptor.getResultMetric(name);
     }
 
     @Override
     public Set<MetricDescriptor> getResultMetrics() {
-        if (_metrics == null) {
-            // can happen with deserialized instances only
-            return Collections.emptySet();
-        }
-        return Collections.unmodifiableSet(_metrics);
+        return _resultDescriptor.getResultMetrics();
     }
 
     @Override
     public Class<? extends AnalyzerResultReducer<?>> getResultReducerClass() {
-        return null;
+        return _resultDescriptor.getResultReducerClass();
     }
 
     @Override

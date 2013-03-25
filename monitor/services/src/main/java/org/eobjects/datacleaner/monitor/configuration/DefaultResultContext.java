@@ -88,7 +88,7 @@ public class DefaultResultContext implements ResultContext {
             final JobContext job = getJob();
             
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final ComponentJob componentJob = new PlaceholderComponentJob(job.getName(), analyzerResult.getClass(), analyzerResult);
+            final ComponentJob componentJob = new PlaceholderComponentJob(job.getName(), analyzerResult.getClass(), analyzerResult.getClass());
             results.put(componentJob, analyzerResult);
             return new SimpleAnalysisResult(results, creationDate);
         }

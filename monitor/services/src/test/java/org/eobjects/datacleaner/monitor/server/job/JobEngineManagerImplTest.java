@@ -29,13 +29,21 @@ import junit.framework.TestCase;
 
 public class JobEngineManagerImplTest extends TestCase {
 
-    final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
+    private ApplicationContext applicationContext;
+    
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        if (applicationContext == null) {
+            applicationContext  = new ClassPathXmlApplicationContext("context/application-context.xml");
+        }
+    }
 
     public void testGetJobEngineVanilla() throws Exception {
         JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
 
         // check that we're actually testing this implementation
-        assertTrue(manager instanceof JobEngineManagerImpl);
+        assertTrue(manager instanceof DefaultJobEngineManager);
 
         JobEngine<?> engine;
         
@@ -50,7 +58,7 @@ public class JobEngineManagerImplTest extends TestCase {
         JobEngineManager manager = applicationContext.getBean(JobEngineManager.class);
 
         // check that we're actually testing this implementation
-        assertTrue(manager instanceof JobEngineManagerImpl);
+        assertTrue(manager instanceof DefaultJobEngineManager);
 
         JobEngine<?> engine;
         

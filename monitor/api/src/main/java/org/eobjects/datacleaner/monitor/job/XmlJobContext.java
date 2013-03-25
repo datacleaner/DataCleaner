@@ -26,5 +26,10 @@ import java.io.OutputStream;
  */
 public interface XmlJobContext extends JobContext {
 
+    /**
+     * Prints the XML content of the job to the output stream.
+     * 
+     * @param out
+     */
     public void toXml(OutputStream out);
 }

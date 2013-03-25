@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server.dao;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -32,4 +33,6 @@ import org.eobjects.datacleaner.repository.RepositoryFile;
 public interface ResultDao {
 
     public List<RepositoryFile> getResultsForJob(TenantIdentifier tenantIdentifier, JobIdentifier job);
+
+    public ResultContext getLatestResult(TenantIdentifier tenant, JobIdentifier job);
 }

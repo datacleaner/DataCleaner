@@ -21,7 +21,21 @@ package org.eobjects.datacleaner.monitor.job;
 
 import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 
+/**
+ * Represents a job that exposes and produces metrics
+ */
 public interface MetricJobContext extends JobContext {
 
+    /**
+     * Gets the metrics exposed by the job.
+     * 
+     * @return
+     */
     public JobMetrics getJobMetrics();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MetricJobEngine<? extends MetricJobContext> getJobEngine();
 }

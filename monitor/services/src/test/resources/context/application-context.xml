@@ -22,13 +22,13 @@
 	
 	<bean name="jobEngineManager" class="org.eobjects.datacleaner.monitor.server.job.JobEngineManagerImpl" autowire="constructor" />
 	
-	<bean class="org.eobjects.datacleaner.monitor.server.job.DataCleanerJobEngine">
-		<constructor-arg index="0">
-			<null />
-		</constructor-arg>	
-	</bean>
+	<bean class="org.eobjects.datacleaner.monitor.server.job.DataCleanerJobEngine" autowire="constructor" />
 	
 	<bean class="org.eobjects.datacleaner.monitor.server.job.CustomJobEngine" />
+	
+	<bean class="org.eobjects.datacleaner.monitor.cluster.HttpClusterManagerFactory" />
+	
+	<bean class="org.eobjects.analyzer.descriptors.SimpleDescriptorProvider" />
 
 	<bean id="repository" class="org.eobjects.datacleaner.repository.file.FileRepository">
 		<constructor-arg type="java.io.File"

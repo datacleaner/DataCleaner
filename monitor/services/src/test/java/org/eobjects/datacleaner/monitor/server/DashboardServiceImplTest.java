@@ -57,7 +57,7 @@ public class DashboardServiceImplTest extends TestCase {
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
-        final DescriptorService descriptorService = new DescriptorServiceImpl(contextFactory);
+        final DescriptorService descriptorService = new DescriptorServiceImpl(contextFactory, resultDao);
         final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
                 timelineDao);
 

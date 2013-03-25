@@ -21,16 +21,22 @@ package org.eobjects.datacleaner.monitor.pentaho;
 
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eobjects.analyzer.beans.api.Description;
+import org.eobjects.analyzer.beans.api.ParameterizableMetric;
+import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabNavigator;
 import org.eobjects.analyzer.result.CrosstabResult;
+import org.eobjects.analyzer.result.Metric;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.xml.DomUtils;
@@ -45,7 +51,7 @@ import org.xml.sax.InputSource;
 public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(PentahoJobResult.class);
 
     private final String _documentString;
@@ -66,17 +72,135 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
         return "PentahoJobResult";
     }
 
+    @Metric("Lines input")
+    public ParameterizableMetric getLinesInput() {
+        return new ParameterizableMetric() {
+            @Override
+            public Number getValue(String parameter) {
+                Element stepElement = getStepStatusElement(parameter);
+                return getMeasure(stepElement, "linesInput");
+            }
+
+            @Override
+            public Collection<String> getParameterSuggestions() {
+                return getStepNames();
+            }
+        };
+    }
+
+    @Metric("Lines output")
+    public ParameterizableMetric getLinesOutput() {
+        return new ParameterizableMetric() {
+            @Override
+            public Number getValue(String parameter) {
+                Element stepElement = getStepStatusElement(parameter);
+                return getMeasure(stepElement, "linesOutput");
+            }
+
+            @Override
+            public Collection<String> getParameterSuggestions() {
+                return getStepNames();
+            }
+        };
+    }
+
+    @Metric("Lines written")
+    public ParameterizableMetric getLinesWritten() {
+        return new ParameterizableMetric() {
+            @Override
+            public Number getValue(String parameter) {
+                Element stepElement = getStepStatusElement(parameter);
+                return getMeasure(stepElement, "linesWritten");
+            }
+
+            @Override
+            public Collection<String> getParameterSuggestions() {
+                return getStepNames();
+            }
+        };
+    }
+
+    @Metric("Lines updated")
+    public ParameterizableMetric getLinesUpdated() {
+        return new ParameterizableMetric() {
+            @Override
+            public Number getValue(String parameter) {
+                Element stepElement = getStepStatusElement(parameter);
+                return getMeasure(stepElement, "linesUpdated");
+            }
+
+            @Override
+            public Collection<String> getParameterSuggestions() {
+                return getStepNames();
+            }
+        };
+    }
+
+    @Metric("Lines rejected")
+    public ParameterizableMetric getLinesRejected() {
+        return new ParameterizableMetric() {
+            @Override
+            public Number getValue(String parameter) {
+                Element stepElement = getStepStatusElement(parameter);
+                return getMeasure(stepElement, "linesRejected");
+            }
+
+            @Override
+            public Collection<String> getParameterSuggestions() {
+                return getStepNames();
+            }
+        };
+    }
+
+    protected Number getMeasure(Element stepElement, String measureKey) {
+        if (stepElement == null) {
+            return null;
+        }
+        final String measure = DomUtils.getChildElementValueByTagName(stepElement, measureKey);
+        return ConvertToNumberTransformer.transformValue(measure);
+    }
+
+    protected Collection<String> getStepNames() {
+        List<Element> elements = getStepStatusElements();
+        return CollectionUtils.map(elements, new Func<Element, String>() {
+            @Override
+            public String eval(Element element) {
+                final String stepName = DomUtils.getChildElementValueByTagName(element, "stepname");
+                return stepName;
+            }
+        });
+    }
+
+    private List<Element> getStepStatusElements() {
+        final Document document = getDocument();
+
+        final Element transstatusElement = document.getDocumentElement();
+        final Element stepstatuslistElement = DomUtils.getChildElementByTagName(transstatusElement, "stepstatuslist");
+        final List<Element> stepstatusElements = DomUtils.getChildElements(stepstatuslistElement);
+        return stepstatusElements;
+    }
+
+    private Element getStepStatusElement(String name) {
+        if (name == null) {
+            return null;
+        }
+        List<Element> elements = getStepStatusElements();
+        for (Element element : elements) {
+            final String stepName = DomUtils.getChildElementValueByTagName(element, "stepname");
+            if (name.equals(stepName)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
     @Override
     public Crosstab<?> getCrosstab() {
         // create the crosstab dynamically based on the document, it's more
         // flexible
-        final Document document = getDocument();
-
         final Crosstab<Serializable> crosstab = new Crosstab<Serializable>(Serializable.class, "Step", "Measure");
-        final Element transstatusElement = document.getDocumentElement();
-        final Element stepstatuslistElement = DomUtils.getChildElementByTagName(transstatusElement, "stepstatuslist");
-        final List<Element> stepstatusElements = DomUtils.getChildElements(stepstatuslistElement);
-        for (Element stepstatusElement : stepstatusElements) {
+
+        for (Element stepstatusElement : getStepStatusElements()) {
             final String stepName = DomUtils.getChildElementValueByTagName(stepstatusElement, "stepname");
 
             final CrosstabNavigator<Serializable> nav = crosstab.where("Step", stepName);

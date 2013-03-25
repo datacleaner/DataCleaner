@@ -39,6 +39,13 @@ public interface JobContext extends HasName {
     public String getName();
 
     /**
+     * Gets the {@link JobEngine} responsible for running this type of job
+     * 
+     * @return
+     */
+    public JobEngine<?> getJobEngine();
+
+    /**
      * Gets the file in the repository which holds the file, or null if the job
      * is not contained within a repository file.
      * 

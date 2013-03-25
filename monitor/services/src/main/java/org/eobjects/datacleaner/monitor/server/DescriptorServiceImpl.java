@@ -23,20 +23,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
-import org.eobjects.analyzer.descriptors.AnalyzerBeanDescriptor;
-import org.eobjects.analyzer.descriptors.MetricDescriptor;
-import org.eobjects.analyzer.job.AnalysisJob;
-import org.eobjects.analyzer.job.AnalyzerJob;
 import org.eobjects.analyzer.job.NoSuchComponentException;
-import org.eobjects.analyzer.result.AnalysisResult;
-import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.util.StringUtils;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobContext;
-import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
+import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.shared.DescriptorNotFoundException;
 import org.eobjects.datacleaner.monitor.shared.DescriptorService;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -44,9 +38,6 @@ import org.eobjects.datacleaner.monitor.shared.model.JobMetrics;
 import org.eobjects.datacleaner.monitor.shared.model.MetricGroup;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
-import org.eobjects.datacleaner.repository.RepositoryFile;
-import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.util.FileFilters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +52,12 @@ public class DescriptorServiceImpl implements DescriptorService {
     private static final Logger logger = LoggerFactory.getLogger(DescriptorServiceImpl.class);
 
     private final TenantContextFactory _tenantContextFactory;
+    private final ResultDao _resultDao;
 
     @Autowired
-    public DescriptorServiceImpl(TenantContextFactory tenantContextFactory) {
+    public DescriptorServiceImpl(TenantContextFactory tenantContextFactory, ResultDao resultDao) {
         _tenantContextFactory = tenantContextFactory;
+        _resultDao = resultDao;
     }
 
     @Override
@@ -85,7 +78,7 @@ public class DescriptorServiceImpl implements DescriptorService {
     }
 
     @Override
-    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier job,
+    public Collection<String> getMetricParameterSuggestions(TenantIdentifier tenant, JobIdentifier jobIdentifier,
             MetricIdentifier metric) {
         if (metric == null || metric.isFormulaBased()) {
             return new ArrayList<String>(0);
@@ -97,41 +90,10 @@ public class DescriptorServiceImpl implements DescriptorService {
             return new ArrayList<String>(0);
         }
 
-        final TenantContext context = _tenantContextFactory.getContext(tenant);
-        final MetricValueUtils metricValueUtils = new MetricValueUtils();
+        final ResultContext result = _resultDao.getLatestResult(tenant, jobIdentifier);
+        final MetricJobContext job = (MetricJobContext) result.getJob();
+        final MetricJobEngine<?> jobEngine = job.getJobEngine();
 
-        final AnalyzerBeansConfiguration configuration = context.getConfiguration();
-
-        final AnalyzerBeanDescriptor<?> analyzerDescriptor = configuration.getDescriptorProvider()
-                .getAnalyzerBeanDescriptorByDisplayName(analyzerDescriptorName);
-        final MetricDescriptor metricDescriptor = analyzerDescriptor.getResultMetric(metricDescriptorName);
-
-        if (!metricDescriptor.isParameterizedByString()) {
-            return null;
-        }
-
-        final RepositoryFolder resultsFolder = context.getResultFolder();
-        final String jobName = job.getName();
-
-        final RepositoryFile resultFile = resultsFolder.getLatestFile(jobName,
-                FileFilters.ANALYSIS_RESULT_SER.getExtension());
-        if (resultFile == null) {
-            return new ArrayList<String>(0);
-        }
-
-        final AnalysisResult analysisResult = context.getResult(resultFile.getName()).getAnalysisResult();
-
-        final AnalysisJob analysisJob = ((DataCleanerJobContext) context.getJob(job.getName())).getAnalysisJob();
-        final AnalyzerJob analyzerJob = metricValueUtils.getAnalyzerJob(metric, analysisJob);
-
-        final AnalyzerResult result = metricValueUtils.getResult(analysisResult, analyzerJob, metric);
-
-        final Collection<String> suggestions = metricDescriptor.getMetricParameterSuggestions(result);
-
-        // make sure we can send it across the GWT-RPC wire.
-        if (suggestions instanceof ArrayList) {
-            return suggestions;
-        }
-        return new ArrayList<String>(suggestions);
+        return jobEngine.getMetricParameterSuggestions(job, result, metric);
     }
 }

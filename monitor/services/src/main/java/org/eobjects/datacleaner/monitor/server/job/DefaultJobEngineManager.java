@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eobjects.analyzer.util.ReflectionUtils;
-import org.eobjects.datacleaner.monitor.configuration.TenantContext;
-import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +33,13 @@ import org.springframework.stereotype.Component;
  * Default {@link JobEngineManager} implementation.
  */
 @Component
-public class JobEngineManagerImpl implements JobEngineManager {
+public class DefaultJobEngineManager extends SimpleJobEngineManager {
 
     private final ApplicationContext _applicationContext;
 
     @Autowired
-    public JobEngineManagerImpl(ApplicationContext applicationContext) {
+    public DefaultJobEngineManager(ApplicationContext applicationContext) {
+        super();
         _applicationContext = applicationContext;
     }
 
@@ -54,37 +52,6 @@ public class JobEngineManagerImpl implements JobEngineManager {
             result.add(jobEngine);
         }
         return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends JobContext> JobEngine<? extends T> getJobEngine(T jobContext) {
-        return (JobEngine<? extends T>) getJobEngine(jobContext.getClass());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T extends JobContext> JobEngine<? extends T> getJobEngine(Class<T> jobContext) {
-        final Collection<JobEngine<?>> jobEngines = getJobEngines();
-        for (JobEngine<?> jobEngine : jobEngines) {
-            final Class<?> jobEngineTypeParameter = ReflectionUtils.getTypeParameter(jobEngine.getClass(),
-                    JobEngine.class, 0);
-            if (ReflectionUtils.is(jobContext, jobEngineTypeParameter)) {
-                return (JobEngine<? extends T>) jobEngine;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public JobEngine<?> getJobEngine(TenantContext tenantContext, String jobName) {
-        final Collection<JobEngine<?>> jobEngines = getJobEngines();
-        for (JobEngine<?> jobEngine : jobEngines) {
-            if (jobEngine.containsJob(tenantContext, jobName)) {
-                return jobEngine;
-            }
-        }
-        return null;
     }
 
 }

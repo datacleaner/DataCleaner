@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.server;
 import java.util.Date;
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.job.MetricValues;
+
 /**
  * Simple POJO style implementation of {@link MetricValues}. Requires an eagerly
  * calculation of metric values.

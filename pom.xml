@@ -5,10 +5,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sshwagon.version>2.3</sshwagon.version>
 		<javadoc.version>2.9</javadoc.version>
-		<slf4j.version>1.7.2</slf4j.version>
+		<slf4j.version>1.7.4</slf4j.version>
 		<junit.version>4.11</junit.version>
 		<httpcomponents.version>4.2.3</httpcomponents.version>
-		<analyzerbeans.version>0.28</analyzerbeans.version>
+		<analyzerbeans.version>0.29-SNAPSHOT</analyzerbeans.version>
 	</properties>
 	<parent>
 		<!-- Uses the OSS sonatype nexus repository for distribution -->

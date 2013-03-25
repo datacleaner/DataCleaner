@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.job.MetricValues;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;

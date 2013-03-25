@@ -38,6 +38,7 @@ import org.eobjects.datacleaner.monitor.dashboard.model.TimelineDefinition;
 import org.eobjects.datacleaner.monitor.dashboard.model.TimelineIdentifier;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobContext;
+import org.eobjects.datacleaner.monitor.job.MetricValues;
 import org.eobjects.datacleaner.monitor.server.dao.ResultDao;
 import org.eobjects.datacleaner.monitor.server.dao.TimelineDao;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -69,8 +70,8 @@ public class DashboardServiceImpl implements DashboardService {
     private final TimelineDao _timelineDao;
 
     @Autowired
-    public DashboardServiceImpl(final TenantContextFactory tenantContextFactory,
-            final MetricValueProducer metricValueProducer, ResultDao resultDao, TimelineDao timelineDao) {
+    public DashboardServiceImpl(final TenantContextFactory tenantContextFactory, final MetricValueProducer metricValueProducer,
+            ResultDao resultDao, TimelineDao timelineDao) {
         _tenantContextFactory = tenantContextFactory;
         _metricValueProducer = metricValueProducer;
         _resultDao = resultDao;
@@ -155,9 +156,9 @@ public class DashboardServiceImpl implements DashboardService {
         final HorizontalAxisOption horizontalAxisOption = timeline.getChartOptions().getHorizontalAxisOption();
 
         for (RepositoryFile resultFile : resultFiles) {
-            MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers, resultFile, tenant,
+            final MetricValues metricValues = _metricValueProducer.getMetricValues(metricIdentifiers, resultFile, tenant,
                     jobIdentifier);
-            Date date = metricValues.getMetricDate();
+            final Date date = metricValues.getMetricDate();
             if (isInRange(date, horizontalAxisOption)) {
                 final TimelineDataRow row = new TimelineDataRow(date, resultFile.getQualifiedPath());
                 final List<Number> metricValuesList = metricValues.getValues();
@@ -201,8 +202,10 @@ public class DashboardServiceImpl implements DashboardService {
         jobs = CollectionUtils.filter(jobs, new Predicate<JobIdentifier>() {
             @Override
             public Boolean eval(JobIdentifier job) {
-                boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job);
+                final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(job.getType());
                 if (analysisJob) {
+                    // in most cases we have DC jobs, and this evaluation is
+                    // faster
                     return true;
                 }
                 final JobContext jobContext = tenantContext.getJob(job);

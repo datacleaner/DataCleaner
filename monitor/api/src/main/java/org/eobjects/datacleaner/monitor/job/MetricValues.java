@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor
  * Boston, MA  02110-1301  USA
  */
-package org.eobjects.datacleaner.monitor.server;
+package org.eobjects.datacleaner.monitor.job;
 
 import java.util.Date;
 import java.util.List;

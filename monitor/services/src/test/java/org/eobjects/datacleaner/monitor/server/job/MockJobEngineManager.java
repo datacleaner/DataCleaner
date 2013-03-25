@@ -21,27 +21,24 @@ package org.eobjects.datacleaner.monitor.server.job;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
+import org.eobjects.analyzer.descriptors.SimpleDescriptorProvider;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 
 /**
  * Simple job engine manager that just holds a single engine (DataCleaner's
  * engine)
  */
-public class MockJobEngineManager extends JobEngineManagerImpl {
-
-    private final DataCleanerJobEngine _jobEngine;
+public class MockJobEngineManager extends SimpleJobEngineManager {
 
     public MockJobEngineManager() {
-        super(null);
-        _jobEngine = new DataCleanerJobEngine(null);
+        super(createDefaultJobEngines());
     }
 
-    @Override
-    public Collection<JobEngine<?>> getJobEngines() {
-        final List<JobEngine<?>> list = new ArrayList<JobEngine<?>>(1);
-        list.add(_jobEngine);
+    private static Collection<JobEngine<?>> createDefaultJobEngines() {
+        JobEngine<?> engine = new DataCleanerJobEngine(null, new SimpleDescriptorProvider(true));
+        ArrayList<JobEngine<?>> list = new ArrayList<JobEngine<?>>(1);
+        list.add(engine);
         return list;
     }
 

@@ -21,6 +21,9 @@ package org.eobjects.datacleaner.monitor.server.job;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eobjects.analyzer.cluster.ClusterManager;
@@ -28,18 +31,31 @@ import org.eobjects.analyzer.cluster.DistributedAnalysisRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.descriptors.DescriptorProvider;
+import org.eobjects.analyzer.descriptors.HasAnalyzerResultBeanDescriptor;
+import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
+import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.datacleaner.monitor.cluster.ClusterManagerFactory;
 import org.eobjects.datacleaner.monitor.configuration.PlaceholderDatastore;
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
+import org.eobjects.datacleaner.monitor.job.MetricValues;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.quartz.MonitorAnalysisListener;
+import org.eobjects.datacleaner.monitor.server.DefaultMetricValues;
+import org.eobjects.datacleaner.monitor.server.MetricValueUtils;
+import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
@@ -53,16 +69,19 @@ import org.springframework.stereotype.Component;
  * The {@link JobEngine} implementation for DataCleaner .analysis.xml jobs.
  */
 @Component
-public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContext> {
+public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContext> implements
+        MetricJobEngine<DataCleanerJobContext> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataCleanerJobEngine.class);
 
     private final ClusterManagerFactory _clusterManagerFactory;
+    private final DescriptorProvider _descriptorProvider;
 
     @Autowired
-    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory) {
+    public DataCleanerJobEngine(ClusterManagerFactory clusterManagerFactory, DescriptorProvider descriptorProvider) {
         super(FileFilters.ANALYSIS_XML.getExtension());
         _clusterManagerFactory = clusterManagerFactory;
+        _descriptorProvider = descriptorProvider;
     }
 
     @Override
@@ -72,8 +91,16 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
 
     @Override
     protected DataCleanerJobContext getJobContext(TenantContext tenantContext, RepositoryFile file) {
-        final DataCleanerJobContext job = new DataCleanerJobContextImpl(tenantContext, file);
+        final DataCleanerJobContext job = new DataCleanerJobContextImpl(this, tenantContext, file);
         return job;
+    }
+
+    @Override
+    public MetricValues getMetricValues(MetricJobContext job, ResultContext result, List<MetricIdentifier> metricIdentifiers) {
+        final DataCleanerJobContext dataCleanerJobContext = (DataCleanerJobContext) job;
+        final AnalysisJob analysisJob = dataCleanerJobContext.getAnalysisJob();
+        final AnalysisResult analysisResult = result.getAnalysisResult();
+        return new DefaultMetricValues(metricIdentifiers, analysisResult, analysisJob);
     }
 
     @Override
@@ -154,10 +181,60 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             // the job was materialized using a placeholder datastore - ie.
             // the real datastore was not found!
             final String sourceDatastoreName = job.getSourceDatastoreName();
-            logger.warn(
-                    "Raising a NoSuchDatastoreException since a PlaceholderDatastore was found at execution time: {}",
+            logger.warn("Raising a NoSuchDatastoreException since a PlaceholderDatastore was found at execution time: {}",
                     sourceDatastoreName);
             throw new NoSuchDatastoreException(sourceDatastoreName);
         }
+    }
+
+    @Override
+    public Collection<String> getMetricParameterSuggestions(MetricJobContext job, ResultContext result,
+            MetricIdentifier metricIdentifier) {
+
+        final String analyzerDescriptorName = metricIdentifier.getAnalyzerDescriptorName();
+        final String metricDescriptorName = metricIdentifier.getMetricDescriptorName();
+
+        final MetricValueUtils metricValueUtils = new MetricValueUtils();
+
+        MetricDescriptor metricDescriptor = null;
+        HasAnalyzerResultBeanDescriptor<?> componentDescriptor = _descriptorProvider
+                .getAnalyzerBeanDescriptorByDisplayName(analyzerDescriptorName);
+
+        if (componentDescriptor == null) {
+            // in some cases we have results of components that are not
+            // discovered by the descriptor provider. Although this is not
+            // ideal, we will apply a work-around.
+            logger.debug("Analyzer descriptor not found: {}. Continuing using the result file.", analyzerDescriptorName);
+        } else {
+            metricDescriptor = componentDescriptor.getResultMetric(metricDescriptorName);
+
+            if (!metricDescriptor.isParameterizedByString()) {
+                return null;
+            }
+        }
+
+        final AnalysisResult analysisResult = result.getAnalysisResult();
+
+        final AnalysisJob analysisJob = ((DataCleanerJobContext) job).getAnalysisJob();
+        final ComponentJob componentJob = metricValueUtils.getComponentJob(metricIdentifier, analysisJob, analysisResult);
+
+        if (componentDescriptor == null) {
+            componentDescriptor = (HasAnalyzerResultBeanDescriptor<?>) componentJob.getDescriptor();
+            metricDescriptor = componentDescriptor.getResultMetric(metricDescriptorName);
+
+            if (!metricDescriptor.isParameterizedByString()) {
+                return null;
+            }
+            logger.debug("Component descriptor inferred as: {}", componentDescriptor);
+        }
+
+        final AnalyzerResult analyzerResult = metricValueUtils.getResult(analysisResult, componentJob, metricIdentifier);
+        final Collection<String> suggestions = metricDescriptor.getMetricParameterSuggestions(analyzerResult);
+
+        // make sure we can send it across the GWT-RPC wire.
+        if (suggestions instanceof ArrayList) {
+            return suggestions;
+        }
+        return new ArrayList<String>(suggestions);
     }
 }

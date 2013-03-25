@@ -46,8 +46,7 @@ public class AlertNotificationServiceImplTest extends TestCase {
 
         final AtomicInteger counter = new AtomicInteger();
 
-        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-                "context/application-context.xml");
+        final ApplicationContext applicationContext = new ClassPathXmlApplicationContext("context/application-context.xml");
         final AlertNotificationServiceImpl alertNotificationService = (AlertNotificationServiceImpl) applicationContext
                 .getBean(AlertNotificationService.class);
         alertNotificationService.getAlertNotifiers().add(new AlertNotifier() {

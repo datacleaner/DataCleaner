@@ -21,6 +21,7 @@ package org.eobjects.datacleaner.monitor.server.dao;
 
 import java.util.List;
 
+import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
@@ -53,6 +54,17 @@ public class ResultDaoImpl implements ResultDao {
         final String jobName = job.getName();
 
         return getResultsForJob(jobName, resultsFolder);
+    }
+    
+    @Override
+    public ResultContext getLatestResult(TenantIdentifier tenantIdentifier, JobIdentifier job) {
+        final TenantContext context = _tenantContextFactory.getContext(tenantIdentifier.getId());
+        final RepositoryFolder resultsFolder = context.getResultFolder();
+        final String jobName = job.getName();
+
+        final RepositoryFile resultFile = resultsFolder.getLatestFile(jobName, FileFilters.ANALYSIS_RESULT_SER.getExtension());
+        
+        return context.getResult(resultFile.getName());
     }
 
     protected static List<RepositoryFile> getResultsForJob(String jobName, RepositoryFolder resultsFolder) {

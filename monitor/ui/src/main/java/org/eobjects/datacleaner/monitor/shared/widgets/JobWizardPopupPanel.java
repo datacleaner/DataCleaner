@@ -34,6 +34,7 @@ import org.eobjects.datacleaner.monitor.util.Urls;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -270,12 +271,14 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                 "Close the dialog to return, or click one of the links below to start using the job."));
 
         if (jobName != null) {
+            final String encodedJobName = URL.encodeQueryString(jobName);
+            
             final Anchor triggerAnchor = new Anchor("Run this job now");
             triggerAnchor.addStyleName("TriggerJob");
             triggerAnchor.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    final String url = Urls.createRelativeUrl("scheduling.jsf#trigger_" + jobName);
+                    final String url = Urls.createRelativeUrl("scheduling.jsf#trigger_" + encodedJobName);
                     Window.Location.assign(url);
                 }
             });
@@ -285,7 +288,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
             schedulingAnchor.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    final String url = Urls.createRelativeUrl("scheduling.jsf#schedule_" + jobName);
+                    final String url = Urls.createRelativeUrl("scheduling.jsf#schedule_" + encodedJobName);
                     Window.Location.assign(url);
                 }
             });

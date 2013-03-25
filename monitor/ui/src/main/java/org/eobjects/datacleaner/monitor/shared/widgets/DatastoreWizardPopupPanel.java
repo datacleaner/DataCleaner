@@ -31,6 +31,7 @@ import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -105,6 +106,8 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
 
     @Override
     protected void wizardFinished(final String datastoreName) {
+        final String encodedDatastoreName = URL.encodeQueryString(datastoreName);
+        
         final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -133,7 +136,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
         queryAnchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                final String url = Urls.createRelativeUrl("query.jsf?ds=" + datastoreName);
+                final String url = Urls.createRelativeUrl("query.jsf?ds=" + encodedDatastoreName);
                 Window.open(url, "_blank", "location=no,width=770,height=400,toolbar=no,menubar=no");
             }
         });

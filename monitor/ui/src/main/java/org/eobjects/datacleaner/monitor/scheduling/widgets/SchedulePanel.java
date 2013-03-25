@@ -34,6 +34,7 @@ import org.eobjects.datacleaner.monitor.util.Urls;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
@@ -83,18 +84,20 @@ public class SchedulePanel extends Composite {
         _schedule = schedule;
 
         initWidget(uiBinder.createAndBindUi(this));
-        
+
         // add the job type as a style name
         final String jobType = schedule.getJob().getType();
         if (jobType != null) {
             addStyleName(jobType);
         }
-        
+
         final boolean analysisJob = JobIdentifier.JOB_TYPE_ANALYSIS_JOB.equals(jobType);
 
         updateScheduleWidgets();
 
         final TenantIdentifier tenant = _clientConfig.getTenant();
+
+        final String encodedJobName = URL.encodeQueryString(schedule.getJob().getName());
 
         if (_clientConfig.isJobEditor()) {
             jobLabel.addClickHandler(new CustomizeJobClickHandler(this, tenant));
@@ -105,7 +108,8 @@ public class SchedulePanel extends Composite {
             scheduleAnchor.addClickHandler(handler);
 
             final String token = History.getToken();
-            if (("schedule_" + schedule.getJob().getName()).equals(token)) {
+            GWT.log("Encoded job name: " + encodedJobName);
+            if (("schedule_" + encodedJobName).equals(token)) {
                 History.newItem("");
                 handler.showSchedulingPopup();
             }
@@ -118,14 +122,14 @@ public class SchedulePanel extends Composite {
         if (_clientConfig.isScheduleEditor()) {
             TriggerJobClickHandler handler = new TriggerJobClickHandler(service, tenant, _schedule);
             triggerNowButton.addClickHandler(handler);
-            
+
             final String token = History.getToken();
-            if (("trigger_" + schedule.getJob().getName()).equals(token)) {
+            if (("trigger_" + encodedJobName).equals(token)) {
                 History.newItem("");
                 handler.showExecutionPopup(true);
             }
         }
-        
+
         if (_clientConfig.isJobEditor() && analysisJob) {
             launchButton.addClickHandler(new ClickHandler() {
                 @Override
@@ -150,7 +154,7 @@ public class SchedulePanel extends Composite {
             public void onClick(ClickEvent event) {
                 final FlowPanel alertListPanel = new FlowPanel();
                 alertListPanel.setStyleName("AlertListPanel");
-                
+
                 if (alerts.isEmpty()) {
                     Label label = new Label("(no alerts)");
                     label.setStylePrimaryName("AlertPanel");

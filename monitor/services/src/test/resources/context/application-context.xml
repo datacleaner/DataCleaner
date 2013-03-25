@@ -20,7 +20,7 @@
 		<constructor-arg ref="tenantContextFactory" />
 	</bean>
 	
-	<bean name="jobEngineManager" class="org.eobjects.datacleaner.monitor.server.job.JobEngineManagerImpl" autowire="constructor" />
+	<bean name="jobEngineManager" class="org.eobjects.datacleaner.monitor.server.job.DefaultJobEngineManager" autowire="constructor" />
 	
 	<bean class="org.eobjects.datacleaner.monitor.server.job.DataCleanerJobEngine" autowire="constructor" />
 	

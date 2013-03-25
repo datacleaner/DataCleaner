@@ -51,15 +51,14 @@ public class DashboardServiceImplTest extends TestCase {
 
     public void testBasicInteraction() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
+                new MockJobEngineManager());
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
         final DescriptorService descriptorService = new DescriptorServiceImpl(contextFactory, resultDao);
-        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
-                timelineDao);
+        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao, timelineDao);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
         assertEquals("TenantIdentifier[tenant1]", tenant.toString());
@@ -81,8 +80,8 @@ public class DashboardServiceImplTest extends TestCase {
 
         assertEquals("MetricGroup[Pattern finder (PRODUCTCODE)]", metricGroups.get(0).toString());
         assertEquals("MetricGroup[Value distribution (PRODUCTLINE)]", metricGroups.get(1).toString());
-        assertEquals("MetricGroup[Vendor whitelist check (Reference data matcher) (PRODUCTVENDOR)]", metricGroups
-                .get(2).toString());
+        assertEquals("MetricGroup[Vendor whitelist check (Reference data matcher) (PRODUCTVENDOR)]", metricGroups.get(2)
+                .toString());
 
         List<MetricIdentifier> metrics = metricGroups.get(2).getMetrics();
         assertEquals(
@@ -92,8 +91,8 @@ public class DashboardServiceImplTest extends TestCase {
         metrics = metricGroups.get(0).getMetrics();
         // 2 metrics in the Pattern finder
         assertEquals(2, metrics.size());
-        assertEquals("PRODUCTCODE", metrics.get(0).getAnalyzerInputName());
-        assertEquals("Match count", metrics.get(0).getMetricDescriptorName());
+        assertEquals("Unexpected: " + metrics.get(0), "PRODUCTCODE", metrics.get(0).getAnalyzerInputName());
+        assertEquals("Unexpected: " + metrics.get(0), "Match count", metrics.get(0).getMetricDescriptorName());
 
         List<TimelineIdentifier> timelines = service.getTimelines(tenant, null);
         assertEquals(0, timelines.size());
@@ -129,14 +128,13 @@ public class DashboardServiceImplTest extends TestCase {
 
     public void testFormulaBasedTimeline() throws Exception {
         final FileRepository repository = new FileRepository("src/test/resources/example_repo");
-        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository,
-                new InjectionManagerFactoryImpl(), new MockJobEngineManager());
+        final TenantContextFactory contextFactory = new TenantContextFactoryImpl(repository, new InjectionManagerFactoryImpl(),
+                new MockJobEngineManager());
         final MetricValueProducer metricValueCache = new DefaultMetricValueProducer(contextFactory);
         final ResultDao resultDao = new ResultDaoImpl(contextFactory);
         final TimelineDao timelineDao = new TimelineDaoImpl(contextFactory, repository);
 
-        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao,
-                timelineDao);
+        final DashboardService service = new DashboardServiceImpl(contextFactory, metricValueCache, resultDao, timelineDao);
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
@@ -146,10 +144,10 @@ public class DashboardServiceImplTest extends TestCase {
         TimelineDefinition timeline = service.getTimelineDefinition(tenant, new TimelineIdentifier(name, path, group));
 
         TimelineData data = service.getTimelineData(tenant, timeline);
-        
+
         List<TimelineDataRow> rows = data.getRows();
         assertEquals(6, rows.size());
-        
+
         assertEquals("[11, 0, 20, 22, 110]", rows.get(0).getMetricValues().toString());
     }
 }

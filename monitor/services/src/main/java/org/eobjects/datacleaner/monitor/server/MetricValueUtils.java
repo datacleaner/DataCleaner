@@ -243,16 +243,16 @@ public class MetricValueUtils {
             return null;
         }
 
-        final ComponentJob analyzerJobToUse;
+        final ComponentJob componentJobToUse;
         if (componentJob == null) {
             // analyzer job has not been specified yet, probably because this
             // metric is a child to a formula based metric
-            analyzerJobToUse = getComponentJob(metricIdentifier, analysisJob, analysisResult);
+            componentJobToUse = getComponentJob(metricIdentifier, analysisJob, analysisResult);
         } else {
-            analyzerJobToUse = componentJob;
+            componentJobToUse = componentJob;
         }
 
-        final ComponentDescriptor<?> componentDescriptor = analyzerJobToUse.getDescriptor();
+        final ComponentDescriptor<?> componentDescriptor = componentJobToUse.getDescriptor();
 
         if (componentDescriptor instanceof HasAnalyzerResultBeanDescriptor) {
             HasAnalyzerResultBeanDescriptor<?> hasAnalyzerResultBeanDescriptor = (HasAnalyzerResultBeanDescriptor<?>) componentDescriptor;
@@ -265,7 +265,7 @@ public class MetricValueUtils {
             }
             return metric;
         }
-        
+
         return null;
     }
 
@@ -403,59 +403,54 @@ public class MetricValueUtils {
 
     public void buildMetricGroups(List<MetricGroup> metricGroups, ComponentJob componentJob,
             Set<MetricDescriptor> metricDescriptors) {
-        if (!metricDescriptors.isEmpty()) {
-            final String label = LabelUtils.getLabel(componentJob);
-            final InputColumn<?> identifyingInputColumn;
+        if (metricDescriptors.isEmpty()) {
+            return;
+        }
+        final String label = LabelUtils.getLabel(componentJob);
+        final InputColumn<?> identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn(componentJob);
 
-            if (componentJob instanceof AnalyzerJob) {
-                identifyingInputColumn = AnalyzerJobHelper.getIdentifyingInputColumn((AnalyzerJob) componentJob);
-            } else {
-                identifyingInputColumn = null;
+        final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
+
+        for (MetricDescriptor metricDescriptor : metricDescriptors) {
+            MetricIdentifier metricIdentifier = new MetricIdentifier();
+            metricIdentifier.setAnalyzerDescriptorName(componentJob.getDescriptor().getDisplayName());
+            metricIdentifier.setAnalyzerName(componentJob.getName());
+            if (identifyingInputColumn != null) {
+                metricIdentifier.setAnalyzerInputName(identifyingInputColumn.getName());
             }
+            metricIdentifier.setMetricDescriptorName(metricDescriptor.getName());
+            metricIdentifier.setParameterizedByColumnName(metricDescriptor.isParameterizedByInputColumn());
+            metricIdentifier.setParameterizedByQueryString(metricDescriptor.isParameterizedByString());
 
-            final List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
+            metricIdentifiers.add(metricIdentifier);
+        }
 
-            for (MetricDescriptor metricDescriptor : metricDescriptors) {
-                MetricIdentifier metricIdentifier = new MetricIdentifier();
-                metricIdentifier.setAnalyzerDescriptorName(componentJob.getDescriptor().getDisplayName());
-                metricIdentifier.setAnalyzerName(componentJob.getName());
-                if (identifyingInputColumn != null) {
-                    metricIdentifier.setAnalyzerInputName(identifyingInputColumn.getName());
-                }
-                metricIdentifier.setMetricDescriptorName(metricDescriptor.getName());
-                metricIdentifier.setParameterizedByColumnName(metricDescriptor.isParameterizedByInputColumn());
-                metricIdentifier.setParameterizedByQueryString(metricDescriptor.isParameterizedByString());
-
-                metricIdentifiers.add(metricIdentifier);
-            }
-
-            final List<String> columnNames = new ArrayList<String>();
-            if (componentJob instanceof AnalyzerJob) {
-                AnalyzerJob analyzerJob = (AnalyzerJob) componentJob;
-                final Set<ConfiguredPropertyDescriptor> inputProperties = analyzerJob.getDescriptor()
-                        .getConfiguredPropertiesForInput(false);
-                for (ConfiguredPropertyDescriptor inputProperty : inputProperties) {
-                    final Object input = analyzerJob.getConfiguration().getProperty(inputProperty);
-                    if (input instanceof InputColumn) {
-                        String columnName = ((InputColumn<?>) input).getName();
-                        columnNames.add(columnName);
-                    } else if (input instanceof InputColumn[]) {
-                        InputColumn<?>[] inputColumns = (InputColumn<?>[]) input;
-                        for (InputColumn<?> inputColumn : inputColumns) {
-                            String columnName = inputColumn.getName();
-                            if (!columnNames.contains(columnName)) {
-                                columnNames.add(columnName);
-                            }
+        final List<String> columnNames = new ArrayList<String>();
+        if (componentJob instanceof AnalyzerJob) {
+            AnalyzerJob analyzerJob = (AnalyzerJob) componentJob;
+            final Set<ConfiguredPropertyDescriptor> inputProperties = analyzerJob.getDescriptor()
+                    .getConfiguredPropertiesForInput(false);
+            for (ConfiguredPropertyDescriptor inputProperty : inputProperties) {
+                final Object input = analyzerJob.getConfiguration().getProperty(inputProperty);
+                if (input instanceof InputColumn) {
+                    String columnName = ((InputColumn<?>) input).getName();
+                    columnNames.add(columnName);
+                } else if (input instanceof InputColumn[]) {
+                    InputColumn<?>[] inputColumns = (InputColumn<?>[]) input;
+                    for (InputColumn<?> inputColumn : inputColumns) {
+                        String columnName = inputColumn.getName();
+                        if (!columnNames.contains(columnName)) {
+                            columnNames.add(columnName);
                         }
                     }
                 }
             }
-
-            final MetricGroup metricGroup = new MetricGroup();
-            metricGroup.setName(label);
-            metricGroup.setMetrics(metricIdentifiers);
-            metricGroup.setColumnNames(columnNames);
-            metricGroups.add(metricGroup);
         }
+
+        final MetricGroup metricGroup = new MetricGroup();
+        metricGroup.setName(label);
+        metricGroup.setMetrics(metricIdentifiers);
+        metricGroup.setColumnNames(columnNames);
+        metricGroups.add(metricGroup);
     }
 }

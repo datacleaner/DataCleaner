@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns5:execution-log xmlns="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns2="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns3="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns4="http://eobjects.org/datacleaner/custom-job/1.0" xmlns:ns5="http://eobjects.org/datacleaner/execution-log/1.0">
+    <ns5:result-id>Sample Pentaho job-1364292609710</ns5:result-id>
+    <ns5:job-begin-date>2013-03-26T11:10:09.992+01:00</ns5:job-begin-date>
+    <ns5:job-end-date>2013-03-26T11:10:53.203+01:00</ns5:job-end-date>
+    <ns5:execution-status>SUCCESS</ns5:execution-status>
+    <ns5:trigger-type>MANUAL</ns5:trigger-type>
+    <ns5:triggered-by>admin</ns5:triggered-by>
+    <ns3:schedule>
+        <ns3:manual-trigger>true</ns3:manual-trigger>
+        <ns3:distributed-execution>false</ns3:distributed-execution>
+        <ns3:alerts/>
+    </ns3:schedule>
+    <ns5:log-output>2013-03-26 11:10:09 - Identified transformation: name=Row generator test, id=dc1f3f82-fa18-432d-b7ad-9b1dc5a6d23c
+2013-03-26 11:10:09 - Transformation [Row generator test] was started.
+2013-03-26 11:10:09 - Job execution BEGIN
+2013-03-26 11:10:20 - Step 'A' progress: status='Running', linesWritten=25752493
+2013-03-26 11:10:20 - Step 'dummy' progress: status='Running', linesRead=25750203, linesWritten=25750202
+2013-03-26 11:10:30 - Step 'A' progress: status='Running', linesWritten=48153648
+2013-03-26 11:10:30 - Step 'dummy' progress: status='Running', linesRead=48151163, linesWritten=48151163
+2013-03-26 11:10:41 - Step 'A' progress: status='Running', linesWritten=73534476
+2013-03-26 11:10:41 - Step 'dummy' progress: status='Running', linesRead=73532076, linesWritten=73532076
+2013-03-26 11:10:52 - Step 'A' progress: status='Running', linesWritten=99135219
+2013-03-26 11:10:52 - Step 'dummy' progress: status='Running', linesRead=99133425, linesWritten=99133425
+2013-03-26 11:10:53 - Step 'A' finished: status='Finished', linesWritten=100000000
+2013-03-26 11:10:53 - Step 'dummy' finished: status='Finished', linesRead=100000000, linesWritten=100000000
+2013-03-26 11:10:53 - Job execution SUCCESS</ns5:log-output>
+</ns5:execution-log>

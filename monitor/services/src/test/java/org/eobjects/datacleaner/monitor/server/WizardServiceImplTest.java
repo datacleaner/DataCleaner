@@ -79,7 +79,7 @@ public class WizardServiceImplTest extends TestCase {
     }
 
     public void testScenario() throws Exception {
-        assertEquals(0, service.getOpenSessionCount());
+        assertEquals(0l, service.getOpenSessionCount());
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
@@ -103,7 +103,7 @@ public class WizardServiceImplTest extends TestCase {
         // first page is the select table page.
         wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore);
 
-        assertEquals(1, service.getOpenSessionCount());
+        assertEquals(1l, service.getOpenSessionCount());
         assertNotNull(wizardPage);
         assertEquals(0, wizardPage.getPageIndex().intValue());
         assertNotNull(wizardPage.getFormInnerHtml());
@@ -118,7 +118,7 @@ public class WizardServiceImplTest extends TestCase {
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
 
         // second page is select columns page.
-        assertEquals(1, service.getOpenSessionCount());
+        assertEquals(1l, service.getOpenSessionCount());
         assertNotNull(wizardPage);
         assertEquals(1, wizardPage.getPageIndex().intValue());
         assertNotNull(wizardPage.getFormInnerHtml());

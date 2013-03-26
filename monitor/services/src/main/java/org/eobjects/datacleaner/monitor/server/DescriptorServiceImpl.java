@@ -89,8 +89,11 @@ public class DescriptorServiceImpl implements DescriptorService {
         if (StringUtils.isNullOrEmpty(analyzerDescriptorName) || StringUtils.isNullOrEmpty(metricDescriptorName)) {
             return new ArrayList<String>(0);
         }
-
+        
         final ResultContext result = _resultDao.getLatestResult(tenant, jobIdentifier);
+        if (result == null) {
+            return new ArrayList<String>(0);
+        }
         final MetricJobContext job = (MetricJobContext) result.getJob();
         final MetricJobEngine<?> jobEngine = job.getJobEngine();
 

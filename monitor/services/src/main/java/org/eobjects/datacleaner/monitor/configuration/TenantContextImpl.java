@@ -31,6 +31,7 @@ import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.job.JobEngine;
 import org.eobjects.datacleaner.monitor.job.JobEngineManager;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
@@ -76,8 +77,8 @@ public class TenantContextImpl implements TenantContext {
     }
 
     private LoadingCache<JobIdentifier, JobContext> buildJobCache() {
-        final LoadingCache<JobIdentifier, JobContext> cache = CacheBuilder.newBuilder()
-                .expireAfterWrite(5, TimeUnit.SECONDS).build(new CacheLoader<JobIdentifier, JobContext>() {
+        final LoadingCache<JobIdentifier, JobContext> cache = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS)
+                .build(new CacheLoader<JobIdentifier, JobContext>() {
                     @Override
                     public JobContext load(JobIdentifier job) throws Exception {
                         final String jobName = job.getName();
@@ -200,6 +201,21 @@ public class TenantContextImpl implements TenantContext {
     }
 
     @Override
+    public ResultContext getLatestResult(MetricJobContext job) {
+        final String jobName = job.getName();
+        final RepositoryFolder resultFolder = getResultFolder();
+        final RepositoryFile resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
+        return getResult(resultFile);
+    }
+
+    private ResultContext getResult(RepositoryFile resultFile) {
+        if (resultFile == null) {
+            return null;
+        }
+        return new DefaultResultContext(this, resultFile);
+    }
+
+    @Override
     public ResultContext getResult(String resultFilename) {
         if (StringUtils.isNullOrEmpty(resultFilename)) {
             return null;
@@ -208,21 +224,17 @@ public class TenantContextImpl implements TenantContext {
             resultFilename = resultFilename + EXTENSION_RESULT;
         }
 
-        final RepositoryFolder resultsFolder = getResultFolder();
+        final RepositoryFolder resultFolder = getResultFolder();
 
         final RepositoryFile resultFile;
         if (resultFilename.endsWith("-latest" + EXTENSION_RESULT)) {
-            final String jobName = resultFilename.substring(0,
-                    resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
-            resultFile = resultsFolder.getLatestFile(jobName, EXTENSION_RESULT);
+            final String jobName = resultFilename.substring(0, resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
+            resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
         } else {
-            resultFile = resultsFolder.getFile(resultFilename);
+            resultFile = resultFolder.getFile(resultFilename);
         }
 
-        if (resultFile == null) {
-            return null;
-        }
-        return new DefaultResultContext(this, resultFile);
+        return getResult(resultFile);
     }
 
     @Override

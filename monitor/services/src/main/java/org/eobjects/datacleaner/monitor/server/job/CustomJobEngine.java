@@ -60,7 +60,7 @@ public class CustomJobEngine extends AbstractJobEngine<CustomJobContext> {
     protected CustomJobContext getJobContext(TenantContext context, RepositoryFile file) {
         final InjectionManager injectionManager = context.getConfiguration().getInjectionManager(null);
 
-        return new CustomJobContext(this, file, injectionManager);
+        return new CustomJobContext(context, this, file, injectionManager);
     }
 
     @Override

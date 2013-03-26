@@ -28,6 +28,8 @@ import org.eobjects.analyzer.descriptors.MetricParameters;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobEngine;
 import org.eobjects.datacleaner.monitor.job.MetricValues;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
@@ -37,19 +39,27 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
  */
 public final class DefaultMetricValues implements MetricValues {
 
+    private final MetricJobEngine<?> _jobEngine;
+    private final MetricJobContext _job;
     private final Date _metricDate;
     private final List<MetricIdentifier> _metricIdentifiers;
     private final AnalysisResult _analysisResult;
     private final AnalysisJob _analysisJob;
 
-    public DefaultMetricValues(List<MetricIdentifier> metricIdentifiers, AnalysisResult analysisResult, AnalysisJob analysisJob) {
+    public DefaultMetricValues(MetricJobEngine<?> jobEngine, MetricJobContext job, List<MetricIdentifier> metricIdentifiers,
+            AnalysisResult analysisResult, AnalysisJob analysisJob) {
+        _jobEngine = jobEngine;
+        _job = job;
         _metricIdentifiers = metricIdentifiers;
         _analysisResult = analysisResult;
         _analysisJob = analysisJob;
         _metricDate = analysisResult.getCreationDate();
     }
 
-    public DefaultMetricValues(List<MetricIdentifier> metricIdentifiers, AnalysisResult analysisResult) {
+    public DefaultMetricValues(MetricJobEngine<?> jobEngine, MetricJobContext job, List<MetricIdentifier> metricIdentifiers,
+            AnalysisResult analysisResult) {
+        _jobEngine = jobEngine;
+        _job = job;
         _metricIdentifiers = metricIdentifiers;
         _analysisResult = analysisResult;
         _analysisJob = null;
@@ -77,7 +87,8 @@ public final class DefaultMetricValues implements MetricValues {
                     analyzerJob, _analysisResult);
             metricDescriptors.add(metricDescriptor);
 
-            MetricParameters parameter = metricValueUtils.getParameters(metricIdentifier, metricDescriptor, analyzerJob);
+            MetricParameters parameter = metricValueUtils.getParameters(_jobEngine, _job, metricIdentifier, metricDescriptor,
+                    analyzerJob);
             metricParameters.add(parameter);
         }
 
@@ -88,8 +99,8 @@ public final class DefaultMetricValues implements MetricValues {
             final MetricDescriptor metric = metricDescriptors.get(i);
             final MetricParameters parameters = metricParameters.get(i);
 
-            final Number metricValue = metricValueUtils.getMetricValue(metricIdentifier, metric, _analysisJob, job,
-                    _analysisResult, parameters);
+            final Number metricValue = metricValueUtils.getMetricValue(_jobEngine, _job, metricIdentifier, metric, _analysisJob,
+                    job, _analysisResult, parameters);
             metricValuesList.add(metricValue);
         }
 

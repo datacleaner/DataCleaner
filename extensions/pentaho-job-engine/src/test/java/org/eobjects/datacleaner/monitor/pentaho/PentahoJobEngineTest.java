@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
@@ -72,15 +73,16 @@ public class PentahoJobEngineTest extends TestCase {
         
         ResultContext result = tenantContext.getResult("Sample Pentaho job-1364228636342");
         
-        Collection<String> suggestions = jobEngine.getMetricParameterSuggestions(job, result, metric);
-        assertEquals("[A, dummy]", suggestions.toString());
+        Collection<InputColumn<?>> columns = jobEngine.getMetricParameterColumns(job, null);
+        
+        assertEquals("[MockInputColumn[name=A], MockInputColumn[name=dummy]]", columns.toString());
         
         List<MetricIdentifier> metricIdentifiers = new ArrayList<MetricIdentifier>();
         MetricIdentifier copy1 = metric.copy();
-        copy1.setParamQueryString("A");
+        copy1.setParamColumnName("dummy");
         metricIdentifiers.add(copy1);
         MetricIdentifier copy2 = metric.copy();
-        copy2.setParamQueryString("A");
+        copy2.setParamColumnName("A");
         metricIdentifiers.add(copy2);
         
         MetricValues metricValues = jobEngine.getMetricValues(job, result, metricIdentifiers);

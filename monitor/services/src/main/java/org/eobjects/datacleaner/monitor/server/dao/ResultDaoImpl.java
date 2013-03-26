@@ -64,6 +64,10 @@ public class ResultDaoImpl implements ResultDao {
 
         final RepositoryFile resultFile = resultsFolder.getLatestFile(jobName, FileFilters.ANALYSIS_RESULT_SER.getExtension());
         
+        if (resultFile == null) {
+            return null;
+        }
+        
         return context.getResult(resultFile.getName());
     }
 

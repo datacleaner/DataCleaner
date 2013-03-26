@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.job;
 import java.util.Map;
 
 import org.eobjects.analyzer.job.AnalysisJob;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.metamodel.util.HasName;
 
@@ -37,6 +38,13 @@ public interface JobContext extends HasName {
      */
     @Override
     public String getName();
+
+    /**
+     * Gets the tenant of this job's context.
+     * 
+     * @return
+     */
+    public TenantContext getTenantContext();
 
     /**
      * Gets the {@link JobEngine} responsible for running this type of job

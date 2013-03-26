@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,11 +32,13 @@ import org.eobjects.analyzer.cluster.DistributedAnalysisRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.descriptors.HasAnalyzerResultBeanDescriptor;
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.job.AnalysisJob;
 import org.eobjects.analyzer.job.ComponentJob;
+import org.eobjects.analyzer.job.InputColumnSinkJob;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
@@ -64,6 +67,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import scala.actors.threadpool.Arrays;
 
 /**
  * The {@link JobEngine} implementation for DataCleaner .analysis.xml jobs.
@@ -100,7 +105,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         final DataCleanerJobContext dataCleanerJobContext = (DataCleanerJobContext) job;
         final AnalysisJob analysisJob = dataCleanerJobContext.getAnalysisJob();
         final AnalysisResult analysisResult = result.getAnalysisResult();
-        return new DefaultMetricValues(metricIdentifiers, analysisResult, analysisJob);
+        return new DefaultMetricValues(this, job, metricIdentifiers, analysisResult, analysisJob);
     }
 
     @Override
@@ -236,5 +241,16 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             return suggestions;
         }
         return new ArrayList<String>(suggestions);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component) {
+        if (component instanceof InputColumnSinkJob) {
+            final InputColumnSinkJob inputColumnSinkJob = (InputColumnSinkJob) job;
+            final InputColumn<?>[] inputColumns = inputColumnSinkJob.getInput();
+            return Arrays.asList(inputColumns);
+        }
+        return Collections.emptyList();
     }
 }

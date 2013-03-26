@@ -48,8 +48,8 @@ import org.eobjects.metamodel.util.Func;
 public class DataCleanerJobContextImpl implements DataCleanerJobContext {
 
     private final RepositoryFile _file;
-    private final TenantContext _context;
     private final DataCleanerJobEngine _engine;
+    private final TenantContext _tenantContext;
 
     private volatile long _lastModifiedCache;
     private volatile AnalysisJob _job;
@@ -57,9 +57,9 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
     private volatile List<String> _sourceColumnPaths;
     private volatile Map<String, String> _variables;
 
-    public DataCleanerJobContextImpl(DataCleanerJobEngine engine, TenantContext context, RepositoryFile file) {
+    public DataCleanerJobContextImpl(DataCleanerJobEngine engine, TenantContext tenantContext, RepositoryFile file) {
+        _tenantContext = tenantContext;
         _engine = engine;
-        _context = context;
         _file = file;
 
         _lastModifiedCache = -1;
@@ -67,7 +67,12 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
         _variables = null;
         _job = null;
     }
-    
+
+    @Override
+    public TenantContext getTenantContext() {
+        return _tenantContext;
+    }
+
     @Override
     public DataCleanerJobEngine getJobEngine() {
         return _engine;
@@ -84,14 +89,14 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
     public AnalysisJob getAnalysisJob(Map<String, String> variableOverrides) {
         if (variableOverrides == null || variableOverrides.isEmpty()) {
             // cached job definition may be used, if not outdated
-            final long configurationLastModified = _context.getConfigurationFile().getLastModified();
+            final long configurationLastModified = _tenantContext.getConfigurationFile().getLastModified();
             long lastModified = Math.max(_file.getLastModified(), configurationLastModified);
             if (_job == null || lastModified != _lastModifiedCache) {
                 synchronized (this) {
                     lastModified = Math.max(_file.getLastModified(), configurationLastModified);
                     if (_job == null || lastModified != _lastModifiedCache) {
                         _lastModifiedCache = lastModified;
-                        final AnalyzerBeansConfiguration configuration = _context.getConfiguration();
+                        final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
                         final MonitorJobReader reader = new MonitorJobReader(configuration, _file);
                         _job = reader.readJob();
                         _sourceDatastoreName = _job.getDatastore().getName();
@@ -101,7 +106,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
             return _job;
         }
 
-        final AnalyzerBeansConfiguration configuration = _context.getConfiguration();
+        final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
         final MonitorJobReader reader = new MonitorJobReader(configuration, _file);
         final AnalysisJob job = reader.readJob(variableOverrides);
         _sourceDatastoreName = _job.getDatastore().getName();
@@ -149,7 +154,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
             synchronized (this) {
                 lastModified = _file.getLastModified();
                 if (_sourceDatastoreName == null || lastModified != _lastModifiedCache) {
-                    final AnalyzerBeansConfiguration configuration = _context.getConfiguration();
+                    final AnalyzerBeansConfiguration configuration = _tenantContext.getConfiguration();
                     final AnalysisJobMetadata metadata = _file.readFile(new Func<InputStream, AnalysisJobMetadata>() {
                         @Override
                         public AnalysisJobMetadata eval(InputStream in) {
@@ -186,7 +191,7 @@ public class DataCleanerJobContextImpl implements DataCleanerJobContext {
         final AnalysisJob job = getAnalysisJob();
 
         final MetricValueUtils utils = new MetricValueUtils();
-        final List<MetricGroup> metricGroups = utils.getMetricGroups(job);
+        final List<MetricGroup> metricGroups = utils.getMetricGroups(this, job);
 
         final JobMetrics metrics = new JobMetrics();
         metrics.setMetricGroups(metricGroups);

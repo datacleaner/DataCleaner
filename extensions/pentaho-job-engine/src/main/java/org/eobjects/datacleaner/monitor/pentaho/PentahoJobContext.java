@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.eobjects.analyzer.descriptors.MetricDescriptor;
 import org.eobjects.analyzer.descriptors.PlaceholderComponentJob;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.job.XmlJobContext;
 import org.eobjects.datacleaner.monitor.pentaho.jaxb.PentahoJobType;
@@ -48,10 +49,17 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
 
     private final RepositoryFile _file;
     private final PentahoJobEngine _engine;
+    private final TenantContext _tenantContext;
 
-    public PentahoJobContext(PentahoJobEngine engine, RepositoryFile file) {
+    public PentahoJobContext(TenantContext tenantContext, PentahoJobEngine engine, RepositoryFile file) {
+        _tenantContext = tenantContext;
         _engine = engine;
         _file = file;
+    }
+
+    @Override
+    public TenantContext getTenantContext() {
+        return _tenantContext;
     }
 
     @Override
@@ -109,9 +117,11 @@ public class PentahoJobContext implements XmlJobContext, MetricJobContext {
                 PentahoJobResult.class);
         final Set<MetricDescriptor> metricDescriptors = componentJob.getResultMetrics();
 
-        final List<MetricGroup> metricGroups = new ArrayList<MetricGroup>();
         final MetricValueUtils utils = new MetricValueUtils();
-        utils.buildMetricGroups(metricGroups, componentJob, metricDescriptors);
+
+        final MetricGroup metricGroup = utils.getMetricGroup(this, componentJob, metricDescriptors);
+        final List<MetricGroup> metricGroups = new ArrayList<MetricGroup>();
+        metricGroups.add(metricGroup);
 
         final JobMetrics metrics = new JobMetrics();
         metrics.setMetricGroups(metricGroups);

@@ -28,8 +28,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eobjects.analyzer.beans.api.Description;
-import org.eobjects.analyzer.beans.api.ParameterizableMetric;
 import org.eobjects.analyzer.beans.convert.ConvertToNumberTransformer;
+import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.Crosstab;
 import org.eobjects.analyzer.result.CrosstabNavigator;
@@ -72,91 +72,83 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
         return "PentahoJobResult";
     }
 
-    @Metric("Lines input")
-    public ParameterizableMetric getLinesInput() {
-        return new ParameterizableMetric() {
-            @Override
-            public Number getValue(String parameter) {
-                Element stepElement = getStepStatusElement(parameter);
-                return getMeasure(stepElement, "linesInput");
-            }
-
-            @Override
-            public Collection<String> getParameterSuggestions() {
-                return getStepNames();
-            }
-        };
+    @Metric(order = 101, value = "Lines input")
+    public Number getLinesInput(InputColumn<?> step) {
+        Element stepElement = getStepStatusElement(step.getName());
+        return getMeasure(stepElement, "linesInput");
     }
 
-    @Metric("Lines output")
-    public ParameterizableMetric getLinesOutput() {
-        return new ParameterizableMetric() {
-            @Override
-            public Number getValue(String parameter) {
-                Element stepElement = getStepStatusElement(parameter);
-                return getMeasure(stepElement, "linesOutput");
-            }
-
-            @Override
-            public Collection<String> getParameterSuggestions() {
-                return getStepNames();
-            }
-        };
+    @Metric(order = 102, value = "Lines output")
+    public Number getLinesOutput(InputColumn<?> step) {
+        Element stepElement = getStepStatusElement(step.getName());
+        return getMeasure(stepElement, "linesOutput");
     }
 
-    @Metric("Lines written")
-    public ParameterizableMetric getLinesWritten() {
-        return new ParameterizableMetric() {
-            @Override
-            public Number getValue(String parameter) {
-                Element stepElement = getStepStatusElement(parameter);
-                return getMeasure(stepElement, "linesWritten");
-            }
-
-            @Override
-            public Collection<String> getParameterSuggestions() {
-                return getStepNames();
-            }
-        };
+    @Metric(order = 103, value = "Lines written")
+    public Number getLinesWritten(InputColumn<?> step) {
+        Element stepElement = getStepStatusElement(step.getName());
+        return getMeasure(stepElement, "linesWritten");
     }
 
-    @Metric("Lines updated")
-    public ParameterizableMetric getLinesUpdated() {
-        return new ParameterizableMetric() {
-            @Override
-            public Number getValue(String parameter) {
-                Element stepElement = getStepStatusElement(parameter);
-                return getMeasure(stepElement, "linesUpdated");
-            }
-
-            @Override
-            public Collection<String> getParameterSuggestions() {
-                return getStepNames();
-            }
-        };
+    @Metric(order = 104, value = "Lines updated")
+    public Number getLinesUpdated(InputColumn<?> step) {
+        Element stepElement = getStepStatusElement(step.getName());
+        return getMeasure(stepElement, "linesUpdated");
     }
 
-    @Metric("Lines rejected")
-    public ParameterizableMetric getLinesRejected() {
-        return new ParameterizableMetric() {
-            @Override
-            public Number getValue(String parameter) {
-                Element stepElement = getStepStatusElement(parameter);
-                return getMeasure(stepElement, "linesRejected");
-            }
-
-            @Override
-            public Collection<String> getParameterSuggestions() {
-                return getStepNames();
-            }
-        };
+    @Metric(order = 105, value = "Lines rejected")
+    public Number getLinesRejected(InputColumn<?> step) {
+        Element stepElement = getStepStatusElement(step.getName());
+        return getMeasure(stepElement, "linesRejected");
     }
 
-    protected Number getMeasure(Element stepElement, String measureKey) {
-        if (stepElement == null) {
+    @Metric(order = 106, value = "Seconds")
+    public Number getSeconds(InputColumn<?> step) {
+        Element stepElement = getStepStatusElement(step.getName());
+        return getMeasure(stepElement, "seconds");
+    }
+
+    @Metric(order = 107, value = "Speed")
+    public Number getSpeed(InputColumn<?> step) {
+        Element stepElement = getStepStatusElement(step.getName());
+        return getMeasure(stepElement, "speed");
+    }
+    
+    @Metric(order = 201, value = "First log line no.")
+    public Number getFirstLogLine() {
+        Element transStatusElement = getTransStatusElement();
+        return getMeasure(transStatusElement, "first_log_line_nr");
+    }
+    
+    @Metric(order = 202, value = "Last log line no.")
+    public Number getLastLogLine() {
+        Element transStatusElement = getTransStatusElement();
+        return getMeasure(transStatusElement, "last_log_line_nr");
+    }
+    
+    @Metric(order = 203, value = "Error count")
+    public Number getErrorCount() {
+        Element resultStatusElement = getResultStatusElement();
+        return getMeasure(resultStatusElement, "nr_errors");
+    }
+    
+    @Metric(order = 204, value = "Files retrieved")
+    public Number getFilesRetrieved() {
+        Element resultStatusElement = getResultStatusElement();
+        return getMeasure(resultStatusElement, "nr_files_retrieved");
+    }
+
+    private Element getResultStatusElement() {
+        final Element transstatusElement = getTransStatusElement();
+        final Element resultStatusElement = DomUtils.getChildElementByTagName(transstatusElement, "result");
+        return resultStatusElement;
+    }
+
+    protected Number getMeasure(Element parentElement, String measureKey) {
+        if (parentElement == null) {
             return null;
         }
-        final String measure = DomUtils.getChildElementValueByTagName(stepElement, measureKey);
+        final String measure = DomUtils.getChildElementValueByTagName(parentElement, measureKey);
         return ConvertToNumberTransformer.transformValue(measure);
     }
 
@@ -172,9 +164,7 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
     }
 
     private List<Element> getStepStatusElements() {
-        final Document document = getDocument();
-
-        final Element transstatusElement = document.getDocumentElement();
+        final Element transstatusElement = getTransStatusElement();
         final Element stepstatuslistElement = DomUtils.getChildElementByTagName(transstatusElement, "stepstatuslist");
         final List<Element> stepstatusElements = DomUtils.getChildElements(stepstatuslistElement);
         return stepstatusElements;
@@ -192,6 +182,12 @@ public class PentahoJobResult extends CrosstabResult implements AnalyzerResult {
             }
         }
         return null;
+    }
+
+    public Element getTransStatusElement() {
+        final Document document = getDocument();
+        final Element transstatusElement = document.getDocumentElement();
+        return transstatusElement;
     }
 
     @Override

@@ -23,11 +23,15 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eobjects.analyzer.beans.api.ParameterizableMetric;
+import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.job.ComponentJob;
+import org.eobjects.analyzer.result.Metric;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 /**
- * Defines a {@link JobEngine} whose jobs and results expose metrics.
+ * Defines a {@link JobEngine} whose jobs and results expose metrics that can be
+ * monitored in the timelines of DataCleaner monitor.
  * 
  * @param <T>
  *            the job context type
@@ -45,8 +49,11 @@ public interface MetricJobEngine<T extends MetricJobContext> extends JobEngine<T
     public MetricValues getMetricValues(MetricJobContext job, ResultContext result, List<MetricIdentifier> metricIdentifiers);
 
     /**
-     * Gets suggestions for any string-parameterized metrics.
+     * Gets suggestions for a string-parameterized metric. This method will only
+     * be invoked if results of the jobs expose {@link ParameterizableMetric}
+     * metric methods.
      * 
+     * @see {@link Metric}
      * @see {@link ParameterizableMetric}
      * 
      * @param job
@@ -56,4 +63,16 @@ public interface MetricJobEngine<T extends MetricJobContext> extends JobEngine<T
      */
     public Collection<String> getMetricParameterSuggestions(MetricJobContext job, ResultContext result,
             MetricIdentifier metricIdentifier);
+
+    /**
+     * Gets the available column values for a column-parameterized metric. This
+     * method will only be invoked if results of the jobs expose metric methods
+     * which take {@link InputColumn} as a parameter.
+     * 
+     * @see {@link Metric}
+     * 
+     * @param job
+     * @return
+     */
+    public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component);
 }

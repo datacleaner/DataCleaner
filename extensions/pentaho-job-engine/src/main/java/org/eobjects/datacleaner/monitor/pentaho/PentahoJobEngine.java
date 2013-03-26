@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.pentaho;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -37,6 +39,9 @@ import org.apache.commons.lang.SerializationUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import org.eobjects.analyzer.data.InputColumn;
+import org.eobjects.analyzer.data.MockInputColumn;
+import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.ResultContext;
@@ -54,6 +59,10 @@ import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.util.FileFilters;
 import org.eobjects.metamodel.util.Action;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Func;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
@@ -65,6 +74,8 @@ import org.w3c.dom.Element;
  */
 @Component
 public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> implements MetricJobEngine<PentahoJobContext> {
+
+    private static final Logger logger = LoggerFactory.getLogger(PentahoJobEngine.class);
 
     public static final String EXTENSION = ".pentaho.job.xml";
 
@@ -201,16 +212,7 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> imple
 
                     logTransStatus("finished", pentahoJobType, executionLogger, doc);
 
-                    final String documentString;
-                    {
-                        final Transformer transformer = getTransformer();
-                        final Source source = new DOMSource(doc);
-                        final StringWriter outText = new StringWriter();
-                        final StreamResult target = new StreamResult(outText);
-                        transformer.transform(source, target);
-                        documentString = outText.toString();
-                    }
-
+                    final String documentString = createDocumentString(doc);
                     final PentahoJobResult result = new PentahoJobResult(documentString);
 
                     final String resultFilename = execution.getResultId() + FileFilters.ANALYSIS_RESULT_SER.getExtension();
@@ -242,6 +244,19 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> imple
             }
         } finally {
             request.releaseConnection();
+        }
+    }
+
+    private String createDocumentString(Document doc) {
+        final Transformer transformer = getTransformer();
+        final Source source = new DOMSource(doc);
+        final StringWriter outText = new StringWriter();
+        final StreamResult target = new StreamResult(outText);
+        try {
+            transformer.transform(source, target);
+            return outText.toString();
+        } catch (TransformerException e) {
+            throw new PentahoJobException("Failed to build XML string", e);
         }
     }
 
@@ -363,23 +378,56 @@ public class PentahoJobEngine extends AbstractJobEngine<PentahoJobContext> imple
 
     @Override
     protected PentahoJobContext getJobContext(TenantContext tenantContext, RepositoryFile file) {
-        return new PentahoJobContext(this, file);
+        return new PentahoJobContext(tenantContext, this, file);
     }
 
     @Override
     public MetricValues getMetricValues(MetricJobContext job, ResultContext result, List<MetricIdentifier> metricIdentifiers) {
         final AnalysisResult analysisResult = result.getAnalysisResult();
-        return new DefaultMetricValues(metricIdentifiers, analysisResult);
+        return new DefaultMetricValues(this, job, metricIdentifiers, analysisResult);
     }
 
     @Override
     public Collection<String> getMetricParameterSuggestions(MetricJobContext job, ResultContext result,
             MetricIdentifier metricIdentifier) {
-        // We take a less generic shortcut here - the only parameterized metrics
-        // of PentahoJobResult is the step names, so we will just use those.
-        final AnalysisResult analysisResult = result.getAnalysisResult();
-        final PentahoJobResult pentahoJobResult = (PentahoJobResult) analysisResult.getResults().get(0);
+        // no string parameterized metrics available
+        return Collections.emptyList();
+    }
 
-        return pentahoJobResult.getStepNames();
+    @Override
+    public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component) {
+        try {
+            final ResultContext result = job.getTenantContext().getLatestResult(job);
+
+            final PentahoJobResult pentahoJobResult;
+            if (result == null) {
+                // no step names available from previous results - we'll have to
+                // query the Carte server.
+                final PentahoJobContext pentahoJobContext = (PentahoJobContext) job;
+                final PentahoJobType pentahoJobType = pentahoJobContext.getPentahoJobType();
+                final PentahoCarteClient client = new PentahoCarteClient(pentahoJobType);
+                final String url = client.getUrl("transStatus");
+                final HttpResponse response = client.execute(new HttpGet(url));
+                final Document document = client.parse(response.getEntity());
+                final String documentString = createDocumentString(document);
+                pentahoJobResult = new PentahoJobResult(documentString);
+            } else {
+                // we'll fetch the step names locally from the result file
+                final AnalysisResult analysisResult = result.getAnalysisResult();
+                pentahoJobResult = (PentahoJobResult) analysisResult.getResults().get(0);
+            }
+
+            final Collection<String> stepNames = pentahoJobResult.getStepNames();
+            final List<InputColumn<?>> inputColumns = CollectionUtils.map(stepNames, new Func<String, InputColumn<?>>() {
+                @Override
+                public InputColumn<?> eval(String stepName) {
+                    return new MockInputColumn<String>(stepName);
+                }
+            });
+            return inputColumns;
+        } catch (RuntimeException e) {
+            logger.warn("Failed to get step names as InputColumn parameter list", e);
+            return Collections.emptyList();
+        }
     }
 }

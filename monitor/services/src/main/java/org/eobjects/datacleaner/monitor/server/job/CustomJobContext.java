@@ -37,6 +37,7 @@ import org.eobjects.analyzer.job.ComponentConfigurationException;
 import org.eobjects.analyzer.job.ImmutableBeanConfiguration;
 import org.eobjects.analyzer.job.NoSuchComponentException;
 import org.eobjects.analyzer.util.convert.StringConverter;
+import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.jaxb.CustomJavaComponentJob;
 import org.eobjects.datacleaner.monitor.jaxb.PropertiesType;
 import org.eobjects.datacleaner.monitor.jaxb.PropertiesType.Property;
@@ -60,11 +61,13 @@ public class CustomJobContext implements XmlJobContext {
     private final RepositoryFile _file;
     private final InjectionManager _injectionManager;
     private final CustomJobEngine _engine;
+    private final TenantContext _tenantContext;
 
     private long _cachedReadTime = -1;
     private CustomJavaComponentJob _cachedCustomJavaJob;
 
-    public CustomJobContext(CustomJobEngine engine, RepositoryFile file, InjectionManager injectionManager) {
+    public CustomJobContext(TenantContext tenantContext, CustomJobEngine engine, RepositoryFile file, InjectionManager injectionManager) {
+        _tenantContext = tenantContext;
         _engine = engine;
         _file = file;
         _injectionManager = injectionManager;
@@ -75,6 +78,11 @@ public class CustomJobContext implements XmlJobContext {
         final int extensionLength = CustomJobEngine.EXTENSION.length();
         final String filename = _file.getName();
         return filename.substring(0, filename.length() - extensionLength);
+    }
+    
+    @Override
+    public TenantContext getTenantContext() {
+        return _tenantContext;
     }
 
     @Override

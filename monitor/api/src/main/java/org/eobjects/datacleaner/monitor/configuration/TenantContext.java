@@ -23,32 +23,35 @@ import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.datacleaner.monitor.job.JobContext;
+import org.eobjects.datacleaner.monitor.job.MetricJobContext;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 
 /**
- * Defines a context for a <i>single</i> tenant in which access to shared entries in
- * the repository can be reached.
+ * Defines a context for a <i>single</i> tenant in which access to shared
+ * entries in the repository can be reached.
  */
 public interface TenantContext {
-    
+
     public String getTenantId();
-    
+
     public List<JobIdentifier> getJobs();
-    
+
     public JobContext getJob(String jobName);
 
     public JobContext getJob(JobIdentifier jobIdentifier);
-    
+
+    public ResultContext getLatestResult(MetricJobContext job);
+
     public ResultContext getResult(String resultFileName);
-    
+
     public RepositoryFolder getTenantRootFolder();
-    
+
     public RepositoryFolder getJobFolder();
-    
+
     public RepositoryFolder getResultFolder();
-    
+
     public RepositoryFolder getTimelineFolder();
 
     public RepositoryFile getConfigurationFile();
@@ -56,5 +59,4 @@ public interface TenantContext {
     public AnalyzerBeansConfiguration getConfiguration();
 
     public boolean containsJob(String jobName);
-
 }

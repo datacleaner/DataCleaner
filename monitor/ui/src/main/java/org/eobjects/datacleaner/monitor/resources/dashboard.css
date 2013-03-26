@@ -255,6 +255,11 @@
 	text-align: center;
 }
 
+.MetricGroupPanel .ColumnParameterizedMetricsPresenter span.gwt-CheckBox label {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
 .MetricGroupPanel .ColumnParameterizedMetricsPresenter .gwt-Label {
 	display: table-cell;
 	width: 150px;

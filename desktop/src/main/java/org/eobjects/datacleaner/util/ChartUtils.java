@@ -55,14 +55,17 @@ public final class ChartUtils {
 	}
 
 	public static void applyStyles(JFreeChart chart) {
-		chart.getTitle().setFont(WidgetUtils.FONT_HEADER1);
-		chart.getTitle().setBackgroundPaint(WidgetUtils.BG_COLOR_BRIGHTEST);
-
+		TextTitle title = chart.getTitle();
+		if (title != null) {
+		    title.setFont(WidgetUtils.FONT_HEADER1);
+		    title.setBackgroundPaint(WidgetUtils.BG_COLOR_BRIGHTEST);
+		}
+		
 		for (int i = 0; i < chart.getSubtitleCount(); i++) {
-			Title subtitle = chart.getSubtitle(i);
-			if (subtitle instanceof TextTitle) {
-				((TextTitle) subtitle).setFont(WidgetUtils.FONT_NORMAL);
-			}
+		    Title subtitle = chart.getSubtitle(i);
+		    if (subtitle instanceof TextTitle) {
+		        ((TextTitle) subtitle).setFont(WidgetUtils.FONT_NORMAL);
+		    }
 		}
 
 		LegendTitle legend = chart.getLegend();

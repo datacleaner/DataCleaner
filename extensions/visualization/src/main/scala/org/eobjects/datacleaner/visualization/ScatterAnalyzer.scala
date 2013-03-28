@@ -12,6 +12,7 @@ import org.eobjects.analyzer.beans.api.Configured
 import org.eobjects.analyzer.beans.api.Provided
 import org.eobjects.analyzer.storage.RowAnnotationFactory
 import scala.collection.mutable.Map;
+import org.eobjects.analyzer.util.LabelUtils
 
 @AnalyzerBean("Scatter analyzer")
 class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
@@ -43,8 +44,8 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
     val value1 = row.getValue(variable1);
     val value2 = row.getValue(variable2);
     
-    val groupNameValue = if (groupColumn == null) null else row.getValue(groupColumn)
-    val groupName = if (groupNameValue == null) "" else groupNameValue.toString
+    val groupNameValue = if (groupColumn == null) "Observations" else row.getValue(groupColumn)
+    val groupName = LabelUtils.getValueLabel(groupNameValue)
 
     val point = (value1, value2);
     val group = groups(groupName);
@@ -54,6 +55,6 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
 
   override def getResult: ScatterAnalyzerResult = {
     val groupSeq = groups.values;
-    new ScatterAnalyzerResult(groupSeq);
+    new ScatterAnalyzerResult(groupSeq, variable1, variable2, groupColumn);
   }
 }

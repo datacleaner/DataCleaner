@@ -47,18 +47,19 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
   override def run(row: InputRow, distinctCount: Int) = {
     val value1 = row.getValue(variable1);
     val value2 = row.getValue(variable2);
-
-    val groupNameValue = if (groupColumn == null) "Observations" else row.getValue(groupColumn)
-    val groupName = LabelUtils.getValueLabel(groupNameValue)
-
-    val point = (value1, value2);
-    val group = groups(groupName);
-    group.register(point, row, distinctCount);
-
+    
+    if (value1 != null && value2 != null) {
+        val groupNameValue = if (groupColumn == null) "Observations" else row.getValue(groupColumn)
+                val groupName = LabelUtils.getValueLabel(groupNameValue)
+                
+                val point = (value1, value2);
+        val group = groups(groupName);
+        group.register(point, row, distinctCount);
+    }
   }
 
   override def getResult: ScatterAnalyzerResult = {
-    val groupSeq = groups.values;
-    new ScatterAnalyzerResult(groupSeq, variable1, variable2, groupColumn);
+    val groupList = groups.values.toList;
+    new ScatterAnalyzerResult(groupList, variable1, variable2, groupColumn);
   }
 }

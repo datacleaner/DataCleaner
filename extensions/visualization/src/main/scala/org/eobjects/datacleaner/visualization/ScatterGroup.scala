@@ -25,5 +25,9 @@ class ScatterGroup(name: String, rowAnnotationFactory: RowAnnotationFactory) {
     rowAnnotationFactory.annotate(row, distinctCount, annotation);
   }
   
+  def getRowAnnotationFactory() = rowAnnotationFactory;
+  
+  def getRowAnnotation(point: (Number, Number)) = annotations.getOrElse(point, null)
+  
   def getCoordinates(): Iterable[(Number, Number)] = annotations.keys
 }

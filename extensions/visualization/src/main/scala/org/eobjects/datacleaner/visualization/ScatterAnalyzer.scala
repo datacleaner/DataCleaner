@@ -11,18 +11,22 @@ import org.eobjects.analyzer.beans.api.AnalyzerBean
 import org.eobjects.analyzer.beans.api.Configured
 import org.eobjects.analyzer.beans.api.Provided
 import org.eobjects.analyzer.storage.RowAnnotationFactory
-import scala.collection.mutable.Map;
+import scala.collection.mutable.Map
 import org.eobjects.analyzer.util.LabelUtils
+import org.eobjects.analyzer.beans.api.Description
 
-@AnalyzerBean("Scatter analyzer")
+@AnalyzerBean("Scatter plot")
+@Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")
 class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
 
   @Inject
   @Configured
+  @Description("The field with the first variable. Will be plotted on the vertical Y-axis.")
   var variable1: InputColumn[Number] = null;
 
   @Inject
   @Configured
+  @Description("The field with the second variable. Will be plotted on the horizontal X-axis.")
   var variable2: InputColumn[Number] = null;
 
   @Inject
@@ -33,7 +37,7 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
   @Provided
   var rowAnnotationFactory: RowAnnotationFactory = null;
 
-  val groups : Map[String, ScatterGroup] = Map[String, ScatterGroup]().withDefault(
+  val groups: Map[String, ScatterGroup] = Map[String, ScatterGroup]().withDefault(
     groupName => {
       val group = new ScatterGroup(groupName, rowAnnotationFactory)
       groups.put(groupName, group)
@@ -43,14 +47,14 @@ class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
   override def run(row: InputRow, distinctCount: Int) = {
     val value1 = row.getValue(variable1);
     val value2 = row.getValue(variable2);
-    
+
     val groupNameValue = if (groupColumn == null) "Observations" else row.getValue(groupColumn)
     val groupName = LabelUtils.getValueLabel(groupNameValue)
 
     val point = (value1, value2);
     val group = groups(groupName);
     group.register(point, row, distinctCount);
-    
+
   }
 
   override def getResult: ScatterAnalyzerResult = {

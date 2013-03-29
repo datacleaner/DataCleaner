@@ -401,6 +401,22 @@ public class UserPreferencesImpl implements UserPreferences, Serializable {
     public void setExtensionPackages(List<ExtensionPackage> extensionPackages) {
         this.extensionPackages = extensionPackages;
     }
+    
+    @Override
+    public void removeExtensionPackage(ExtensionPackage extensionPackage) {
+        if (extensionPackages == null) {
+            extensionPackages = new ArrayList<ExtensionPackage>();
+        }
+        extensionPackages.remove(extensionPackage);
+    }
+    
+    @Override
+    public void addExtensionPackage(ExtensionPackage extensionPackage) {
+        if (extensionPackages == null) {
+            extensionPackages = new ArrayList<ExtensionPackage>();
+        }
+        extensionPackages.add(extensionPackage);
+    }
 
     @Override
     public Map<String, String> getAdditionalProperties() {

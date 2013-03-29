@@ -30,6 +30,7 @@ import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.actions.DownloadFilesActionListener;
 import org.eobjects.datacleaner.actions.FileDownloadListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.extensions.ExtensionReader;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.HttpXmlUtils;
@@ -42,7 +43,6 @@ public final class ExtensionSwapClient {
     public static final String DEFAULT_WEBSITE_HOSTNAME = "datacleaner.org";
 
     private static final String EXTENSIONSWAP_ID_PROPERTY = "extensionswap.id";
-    private static final String EXTENSIONSWAP_VERSION_PROPERTY = "extensionswap.version";
 
     private final HttpClient _httpClient;
     private final WindowContext _windowContext;
@@ -70,15 +70,11 @@ public final class ExtensionSwapClient {
     }
 
     public ExtensionPackage registerExtensionPackage(ExtensionSwapPackage extensionSwapPackage, File jarFile) {
-        String packageName = extensionSwapPackage.getPackageName();
-        if (packageName == null) {
-            packageName = ExtensionPackage.autoDetectPackageName(jarFile);
-        }
-        ExtensionPackage extensionPackage = new ExtensionPackage(extensionSwapPackage.getName(), packageName, true,
-                new File[] { jarFile });
+        final ExtensionReader reader = new ExtensionReader();
+        final ExtensionPackage extensionPackage = reader.readExternalExtension(new File[] { jarFile });
+
         extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_ID_PROPERTY, extensionSwapPackage.getId());
-        extensionPackage.getAdditionalProperties().put(EXTENSIONSWAP_VERSION_PROPERTY,
-                Integer.toString(extensionSwapPackage.getVersion()));
+        extensionPackage.getAdditionalProperties().put("version", Integer.toString(extensionSwapPackage.getVersion()));
         extensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
         _userPreferences.getExtensionPackages().add(extensionPackage);
         return extensionPackage;

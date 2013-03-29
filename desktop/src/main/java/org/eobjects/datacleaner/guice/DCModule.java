@@ -42,6 +42,7 @@ import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
+import org.eobjects.datacleaner.extensions.ExtensionReader;
 import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.DCAuthenticationService;
 import org.eobjects.datacleaner.user.DataCleanerConfigurationReader;
@@ -242,6 +243,12 @@ public class DCModule extends AbstractModule {
                             c.getReferenceDataCatalog(), userPreferences, new LifeCycleHelper(
                                     injectionManagerFactory.getInjectionManager(c, null), null, true));
                     final DescriptorProvider descriptorProvider = c.getDescriptorProvider();
+
+                    final ExtensionReader extensionReader = new ExtensionReader();
+                    final List<ExtensionPackage> internalExtensions = extensionReader.getInternalExtensions();
+                    for (ExtensionPackage extensionPackage : internalExtensions) {
+                        extensionPackage.loadDescriptors(descriptorProvider);
+                    }
 
                     final List<ExtensionPackage> extensionPackages = userPreferences.getExtensionPackages();
                     for (ExtensionPackage extensionPackage : extensionPackages) {

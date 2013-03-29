@@ -126,4 +126,8 @@ public interface UserPreferences {
     public File getSaveDownloadedFilesDirectory();
 
     public void setSaveDownloadedFilesDirectory(File directory);
+
+    public void addExtensionPackage(ExtensionPackage extensionPackage);
+
+    public void removeExtensionPackage(ExtensionPackage extensionPackage);
 }

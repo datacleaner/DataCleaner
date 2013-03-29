@@ -24,18 +24,19 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
+import org.eobjects.datacleaner.extensions.ExtensionReader;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.UserPreferences;
 import org.eobjects.datacleaner.util.ExtensionFilter;
@@ -57,139 +58,170 @@ import cern.colt.Arrays;
  */
 public class ExtensionPackagesPanel extends DCPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final UserPreferences _userPreferences;
-	private final ImageManager imageManager = ImageManager.getInstance();
-	private final AnalyzerBeansConfiguration _configuration;
+    private static final ImageManager imageManager = ImageManager.getInstance();
 
-	@Inject
-	protected ExtensionPackagesPanel(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
-		super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
-		_configuration = configuration;
-		_userPreferences = userPreferences;
+    private static final ImageIcon ICON_PLUGIN = imageManager.getImageIcon("images/component-types/plugin.png");
+    private static final ImageIcon ICON_ERROR = imageManager.getImageIcon(IconUtils.STATUS_ERROR);
 
-		setLayout(new BorderLayout());
+    private final UserPreferences _userPreferences;
+    private final AnalyzerBeansConfiguration _configuration;
 
-		updateComponents();
-	}
+    @Inject
+    protected ExtensionPackagesPanel(AnalyzerBeansConfiguration configuration, UserPreferences userPreferences) {
+        super(WidgetUtils.BG_COLOR_BRIGHT, WidgetUtils.BG_COLOR_BRIGHTEST);
+        _configuration = configuration;
+        _userPreferences = userPreferences;
 
-	private void updateComponents() {
-		removeAll();
+        setLayout(new BorderLayout());
 
-		final List<ExtensionPackage> extensionPackages = _userPreferences.getExtensionPackages();
+        updateComponents();
+    }
 
-		final JButton addExtensionButton = new JButton("Add extension package",
-				imageManager.getImageIcon(IconUtils.ACTION_ADD));
-		addExtensionButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap", imageManager
-						.getImageIcon("images/actions/website.png"));
-				extensionSwapMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.org/extensions"));
+    private void updateComponents() {
+        removeAll();
 
-				final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file", imageManager
-						.getImageIcon("images/filetypes/archive.png"));
-				manualInstallMenuItem.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						final DCFileChooser fileChooser = new DCFileChooser(_userPreferences.getConfiguredFileDirectory());
-						fileChooser.setMultiSelectionEnabled(true);
-						fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
-						int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
-						if (result == DCFileChooser.APPROVE_OPTION) {
+        final List<ExtensionPackage> extensionPackages = new ArrayList<ExtensionPackage>();
+        extensionPackages.addAll(_userPreferences.getExtensionPackages());
+        extensionPackages.addAll(new ExtensionReader().getInternalExtensions());
 
-							final File[] files = fileChooser.getSelectedFiles();
+        final JButton addExtensionButton = new JButton("Add extension package",
+                imageManager.getImageIcon(IconUtils.ACTION_ADD));
+        addExtensionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JMenuItem extensionSwapMenuItem = new JMenuItem("Browse the ExtensionSwap", imageManager
+                        .getImageIcon("images/actions/website.png"));
+                extensionSwapMenuItem.addActionListener(new OpenBrowserAction("http://datacleaner.org/extensions"));
 
-							final String suggestedPackageName = ExtensionPackage.autoDetectPackageName(files[0]);
-							final String packageName = JOptionPane.showInputDialog(
-									"Please provide the package name of the extension", suggestedPackageName);
+                final JMenuItem manualInstallMenuItem = new JMenuItem("Manually install JAR file", imageManager
+                        .getImageIcon("images/filetypes/archive.png"));
+                manualInstallMenuItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        final DCFileChooser fileChooser = new DCFileChooser(_userPreferences
+                                .getConfiguredFileDirectory());
+                        fileChooser.setMultiSelectionEnabled(true);
+                        fileChooser.setFileFilter(new ExtensionFilter("DataCleaner extension JAR file (.jar)", ".jar"));
+                        int result = fileChooser.showOpenDialog(ExtensionPackagesPanel.this);
+                        if (result == DCFileChooser.APPROVE_OPTION) {
 
-							final StringBuilder extensionNameBuilder = new StringBuilder();
-							for (File file : files) {
-								if (extensionNameBuilder.length() > 0) {
-									extensionNameBuilder.append(", ");
-								}
-								extensionNameBuilder.append(file.getName());
-							}
-							final String extensionName = extensionNameBuilder.toString();
-							final ExtensionPackage userExtensionPackage = new ExtensionPackage(extensionName, packageName,
-									true, files);
-							userExtensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
-							extensionPackages.add(userExtensionPackage);
+                            final File[] files = fileChooser.getSelectedFiles();
 
-							updateComponents();
-						}
-					}
-				});
+                            final ExtensionReader extensionReader = new ExtensionReader();
+                            final ExtensionPackage extensionPackage = extensionReader.readExternalExtension(files);
 
-				final JPopupMenu popup = new JPopupMenu("Add extension");
-				popup.add(extensionSwapMenuItem);
-				popup.add(manualInstallMenuItem);
-				popup.show(addExtensionButton, 0, addExtensionButton.getHeight());
-			}
-		});
+                            extensionPackage.loadDescriptors(_configuration.getDescriptorProvider());
+                            _userPreferences.addExtensionPackage(extensionPackage);
 
-		final JToolBar toolBar = WidgetFactory.createToolBar();
-		toolBar.add(WidgetFactory.createToolBarSeparator());
-		toolBar.add(addExtensionButton);
+                            updateComponents();
+                        }
+                    }
+                });
 
-		final DCPanel listPanel = new DCPanel();
-		listPanel.setLayout(new VerticalLayout(4));
-		listPanel.setBorder(new EmptyBorder(0, 10, 10, 0));
+                final JPopupMenu popup = new JPopupMenu("Add extension");
+                popup.add(extensionSwapMenuItem);
+                popup.add(manualInstallMenuItem);
+                popup.show(addExtensionButton, 0, addExtensionButton.getHeight());
+            }
+        });
 
-		final ImageIcon pluginIcon = imageManager.getImageIcon("images/component-types/plugin.png");
-		final ImageIcon errorIcon = imageManager.getImageIcon(IconUtils.STATUS_ERROR);
+        final JToolBar toolBar = WidgetFactory.createToolBar();
+        toolBar.add(WidgetFactory.createToolBarSeparator());
+        toolBar.add(addExtensionButton);
 
-		for (final ExtensionPackage extensionPackage : extensionPackages) {
-			File[] files = extensionPackage.getFiles();
-			boolean valid = true;
-			for (File file : files) {
-				if (!file.exists()) {
-					valid = false;
-				}
-			}
+        final DCPanel listPanel = new DCPanel();
+        listPanel.setLayout(new VerticalLayout(4));
+        listPanel.setBorder(new EmptyBorder(0, 10, 10, 0));
 
-			final DCLabel extensionLabel;
-			if (valid) {
-				extensionLabel = DCLabel.dark("<html><b>" + extensionPackage.getName() + "</b><br/>Loaded: "
-						+ extensionPackage.getLoadedAnalyzers() + " Analyzers, " + extensionPackage.getLoadedTransformers()
-						+ " Transformers, " + extensionPackage.getLoadedFilters() + " Filters.<br/>Root package: '"
-						+ extensionPackage.getScanPackage() + "'.</html>");
-				extensionLabel.setIcon(pluginIcon);
-			} else {
-				extensionLabel = DCLabel.dark("<html><b>" + extensionPackage.getName()
-						+ "</b><br/>Error loading extension files:<br/>" + Arrays.toString(files) + "</html>");
-				extensionLabel.setIcon(errorIcon);
-			}
+        for (final ExtensionPackage extensionPackage : extensionPackages) {
+            final DCPanel extensionPanel = createExtensionPanel(extensionPackage);
+            listPanel.add(extensionPanel);
+        }
 
-			final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
-			removeButton.setToolTipText("Remove extension");
-			removeButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					extensionPackages.remove(extensionPackage);
-					removeButton.setEnabled(false);
-					extensionLabel.setText("*** Removal requires application restart ***");
-				}
-			});
+        if (extensionPackages.isEmpty()) {
+            listPanel.add(DCLabel.dark("(none)"));
+        }
 
-			final DCPanel extensionPanel = new DCPanel();
-			extensionPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        add(toolBar, BorderLayout.NORTH);
+        add(listPanel, BorderLayout.CENTER);
 
-			WidgetUtils.addToGridBag(extensionLabel, extensionPanel, 0, 0, 1.0, 0.0);
-			WidgetUtils.addToGridBag(removeButton, extensionPanel, 1, 0, GridBagConstraints.EAST);
+        updateUI();
+    }
 
-			listPanel.add(extensionPanel);
-		}
+    private DCPanel createExtensionPanel(final ExtensionPackage extensionPackage) {
+        boolean valid = true;
+        final File[] files = extensionPackage.getFiles();
+        if (extensionPackage.isExternal()) {
+            for (File file : files) {
+                if (!file.exists()) {
+                    valid = false;
+                }
+            }
+        }
 
-		if (extensionPackages.isEmpty()) {
-			listPanel.add(DCLabel.dark("(none)"));
-		}
+        final DCLabel extensionLabel;
+        if (valid) {
+            final String iconPath = extensionPackage.getAdditionalProperties().get("icon");
+            final ImageIcon extensionIcon;
+            if (iconPath != null) {
+                final ImageIcon imageIcon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_LARGE,
+                        ExtensionPackage.getExtensionClassLoader());
+                if (imageIcon == null) {
+                    extensionIcon = ICON_PLUGIN;
+                } else {
+                    extensionIcon = imageIcon;
+                }
+            } else {
+                extensionIcon = ICON_PLUGIN;
+            }
 
-		add(toolBar, BorderLayout.NORTH);
-		add(listPanel, BorderLayout.CENTER);
+            final StringBuilder labelBuilder = new StringBuilder();
+            labelBuilder.append("<html><b>");
+            labelBuilder.append(extensionPackage.getName());
+            labelBuilder.append("</b>");
 
-		updateUI();
-	}
+            final String description = extensionPackage.getDescription();
+            if (description != null) {
+                labelBuilder.append("<br/>");
+                labelBuilder.append(description);
+            }
+
+            final String version = extensionPackage.getVersion();
+            if (version != null) {
+                labelBuilder.append("<br/>Version ");
+                labelBuilder.append(version);
+            }
+
+            labelBuilder.append("</html>");
+
+            extensionLabel = DCLabel.dark(labelBuilder.toString());
+            extensionLabel.setIcon(extensionIcon);
+        } else {
+            extensionLabel = DCLabel.dark("<html><b>" + extensionPackage.getName()
+                    + "</b><br/>Error loading extension files:<br/>" + Arrays.toString(files) + "</html>");
+            extensionLabel.setIcon(ICON_ERROR);
+        }
+
+        final DCPanel extensionPanel = new DCPanel();
+        extensionPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
+        WidgetUtils.addToGridBag(extensionLabel, extensionPanel, 0, 0, 1.0, 0.0);
+
+        if (extensionPackage.isExternal()) {
+            final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
+            removeButton.setToolTipText("Remove extension");
+            removeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    _userPreferences.removeExtensionPackage(extensionPackage);
+                    removeButton.setEnabled(false);
+                    extensionLabel.setText("*** Removal requires application restart ***");
+                }
+            });
+            WidgetUtils.addToGridBag(removeButton, extensionPanel, 1, 0, GridBagConstraints.EAST);
+        }
+
+        return extensionPanel;
+    }
 }

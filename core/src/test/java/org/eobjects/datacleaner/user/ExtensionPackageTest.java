@@ -51,11 +51,4 @@ public class ExtensionPackageTest extends TestCase {
         assertEquals("[AnnotationBasedFilterBeanDescriptor[foo.bar.filter.BazFilter]]", descriptorProvider
                 .getFilterBeanDescriptors().toString());
     }
-
-    public void testAutoDetectPackageName() throws Exception {
-        File file = new File("src/test/resources/FooBarPlugin.jar");
-        assertTrue("example plugin jar does not exist", file.exists());
-
-        assertEquals("foo.bar", ExtensionPackage.autoDetectPackageName(file));
-    }
 }

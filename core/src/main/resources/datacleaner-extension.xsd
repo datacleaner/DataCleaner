@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://eobjects.org/datacleaner/extension/1.0"
+	xmlns:extension="http://eobjects.org/datacleaner/extension/1.0"
+	elementFormDefault="qualified">
+
+	<element name="extension" type="extension:extensionType" />
+
+	<complexType name="extensionType">
+		<all>
+			<element name="name" minOccurs="1" maxOccurs="1" type="string" />
+			<element name="package" minOccurs="1" maxOccurs="1" type="string">
+				<annotation>
+					<documentation>
+						Determines the root Java package to scan for
+						DataCleaner components. For instance
+						'org.eobjects.datacleaner.extension'.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="version" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="icon" minOccurs="0" maxOccurs="1" type="string">
+				<annotation>
+					<documentation>
+						The path of a 32x32 pixel icon image for the
+						extension (typically provided in the extension JAR file itself).
+					</documentation>
+				</annotation>
+			</element>
+			<element name="url" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="author" minOccurs="0" maxOccurs="1" type="string" />
+			<element name="description" minOccurs="0" maxOccurs="1" type="string" />
+		</all>
+	</complexType>
+
+</schema>

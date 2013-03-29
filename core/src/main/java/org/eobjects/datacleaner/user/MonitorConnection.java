@@ -36,8 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Describes the connection information needed to connect to the DQ monitor
- * application.
+ * Describes the connection information needed to connect to the DataCleaner
+ * monitor web application.
  */
 public class MonitorConnection implements Serializable {
 
@@ -53,7 +53,7 @@ public class MonitorConnection implements Serializable {
     private final String _username;
     private final String _encodedPassword;
     private final UserPreferences _userPreferences;
-    
+
     private transient boolean _acceptUnverifiedSslPeers = false;
 
     public MonitorConnection(UserPreferences userPreferences, String hostname, int port, String contextPath,
@@ -81,7 +81,7 @@ public class MonitorConnection implements Serializable {
         } else {
             httpClient = _userPreferences.createHttpClient();
         }
-        
+
         if (_acceptUnverifiedSslPeers) {
             SecurityUtils.removeSshCertificateChecks(httpClient);
         }
@@ -216,11 +216,11 @@ public class MonitorConnection implements Serializable {
         }
         return contextPath;
     }
-    
+
     public boolean isAcceptUnverifiedSslPeers() {
         return _acceptUnverifiedSslPeers;
     }
-    
+
     public void setAcceptUnverifiedSslPeers(boolean acceptUnverifiedSslPeers) {
         _acceptUnverifiedSslPeers = acceptUnverifiedSslPeers;
     }

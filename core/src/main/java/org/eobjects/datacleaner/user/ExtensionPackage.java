@@ -22,18 +22,13 @@ package org.eobjects.datacleaner.user;
 import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.eobjects.analyzer.descriptors.ClasspathScanDescriptorProvider;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.util.ClassLoaderUtils;
-import org.eobjects.analyzer.util.StringUtils;
+import org.eobjects.metamodel.util.HasName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Kasper Sørensen
  */
-public final class ExtensionPackage implements Serializable {
+public final class ExtensionPackage implements Serializable, HasName {
 
     private static final long serialVersionUID = 1L;
 
@@ -80,6 +75,30 @@ public final class ExtensionPackage implements Serializable {
         return Arrays.copyOf(_files, _files.length);
     }
 
+    /**
+     * Determines if this extension is externally installed from a file not in
+     * the primary classpath.
+     * 
+     * @return
+     */
+    public boolean isExternal() {
+        return _files != null && _files.length > 0;
+    }
+
+    /**
+     * Determines if this extension is internally installed by being placed on
+     * the primary classpath.
+     * 
+     * @return
+     */
+    private boolean isInternal() {
+        return !isExternal();
+    }
+
+    /**
+     * Gets the name of the extension
+     */
+    @Override
     public String getName() {
         return _name;
     }
@@ -93,6 +112,11 @@ public final class ExtensionPackage implements Serializable {
     }
 
     public void loadExtension() {
+        if (isInternal()) {
+            // no reason to change _latestClassLoader
+            _classLoader = ClassLoaderUtils.getParentClassLoader();
+            return;
+        }
         synchronized (ExtensionPackage.class) {
             // each loaded extension package is loaded within it's own
             // classloader which is a child of the previous extension's
@@ -109,18 +133,19 @@ public final class ExtensionPackage implements Serializable {
                 throw new IllegalStateException(
                         "Can only load user extensions when descriptor provider is of classpath scanner type.");
             }
-            ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
 
-            int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors().size();
-            int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();
-            int filtersBefore = classpathScanner.getFilterBeanDescriptors().size();
-            int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
+            final ClasspathScanDescriptorProvider classpathScanner = (ClasspathScanDescriptorProvider) descriptorProvider;
+
+            final int analyzersBefore = classpathScanner.getAnalyzerBeanDescriptors().size();
+            final int transformersBefore = classpathScanner.getTransformerBeanDescriptors().size();
+            final int filtersBefore = classpathScanner.getFilterBeanDescriptors().size();
+            final int renderersBefore = classpathScanner.getRendererBeanDescriptors().size();
 
             if (_classLoader == null) {
                 loadExtension();
             }
 
-            classpathScanner = classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, _files);
+            classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, _files);
 
             _loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;
             _loadedTransformers = classpathScanner.getTransformerBeanDescriptors().size() - transformersBefore;
@@ -161,47 +186,6 @@ public final class ExtensionPackage implements Serializable {
         return _loadedTransformers;
     }
 
-    public static String autoDetectPackageName(File file) {
-        try {
-            Set<String> packageNames = new HashSet<String>();
-            JarFile jarFile = new JarFile(file);
-            Enumeration<JarEntry> entries = jarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String name = entry.getName();
-                if (name.endsWith(".class")) {
-                    logger.debug("Considering package of entry '{}'", name);
-
-                    int lastIndexOfSlash = name.lastIndexOf('/');
-                    if (lastIndexOfSlash != -1) {
-                        name = name.substring(0, lastIndexOfSlash);
-                        packageNames.add(name);
-                    }
-
-                }
-            }
-
-            if (packageNames.isEmpty()) {
-                return null;
-            }
-
-            logger.info("Found {} packages in extension jar: {}", packageNames.size(), packageNames);
-
-            // find the longest common prefix of all the package names
-            String packageName = StringUtils.getLongestCommonToken(packageNames, '/');
-            if (packageName == "") {
-                logger.debug("No common package prefix");
-                return null;
-            }
-
-            packageName = packageName.replace('/', '.');
-            return packageName;
-        } catch (Exception e) {
-            logger.warn("Error occurred while auto detecting package name", e);
-            return null;
-        }
-    }
-
     /**
      * Gets the classloader that represents the currently loaded extensions'
      * classes.
@@ -210,5 +194,13 @@ public final class ExtensionPackage implements Serializable {
      */
     public static ClassLoader getExtensionClassLoader() {
         return _latestClassLoader;
+    }
+
+    public String getDescription() {
+        return _additionalProperties.get("description");
+    }
+
+    public String getVersion() {
+        return _additionalProperties.get("version");
     }
 }

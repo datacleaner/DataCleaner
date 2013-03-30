@@ -145,7 +145,9 @@ public final class ExtensionPackage implements Serializable, HasName {
                 loadExtension();
             }
 
-            classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, _files);
+            if (_scanPackage != null) {
+                classpathScanner.scanPackage(_scanPackage, _scanRecursive, _classLoader, true, _files);
+            }
 
             _loadedAnalyzers = classpathScanner.getAnalyzerBeanDescriptors().size() - analyzersBefore;
             _loadedTransformers = classpathScanner.getTransformerBeanDescriptors().size() - transformersBefore;

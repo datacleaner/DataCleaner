@@ -21,7 +21,7 @@ class ScatterAnalyzerTest extends AssertionsForJUnit {
     analyzer.run(new MockInputRow().put(analyzer.variable1, 1).put(analyzer.variable2, 2), 1);
     analyzer.run(new MockInputRow().put(analyzer.variable1, 1).put(analyzer.variable2, 1), 1);
     
-    val group = analyzer.getResult.groups.first
+    val group = analyzer.getResult.groups.head
     val str = group.annotations.map(entry => (entry._1, entry._2.getRowCount())).mkString(", ");
     Assert.assertEquals("(1,2) -> 1, (1,1) -> 2", str);
   }

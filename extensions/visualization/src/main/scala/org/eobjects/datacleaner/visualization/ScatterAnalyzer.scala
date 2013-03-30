@@ -14,9 +14,11 @@ import org.eobjects.analyzer.storage.RowAnnotationFactory
 import scala.collection.mutable.Map
 import org.eobjects.analyzer.util.LabelUtils
 import org.eobjects.analyzer.beans.api.Description
+import org.eobjects.analyzer.beans.api.Categorized
 
 @AnalyzerBean("Scatter plot")
 @Description("Plots the occurences of two number variables in a scatter plot chart. A useful visualization for identifying outliers in numeric data relationships.")
+@Categorized(Array(classOf[VisualizationCategory]))
 class ScatterAnalyzer extends Analyzer[ScatterAnalyzerResult] {
 
   @Inject

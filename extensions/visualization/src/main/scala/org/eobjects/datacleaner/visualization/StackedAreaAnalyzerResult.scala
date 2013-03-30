@@ -16,6 +16,8 @@ class StackedAreaAnalyzerResult(CategoryColumn: InputColumn[_], measureColumns: 
   def isNumberCategory(): Boolean = ReflectionUtils.isNumber(CategoryColumn.getDataType());
 
   def getCategoryColumn() = CategoryColumn
+  
+  def getCategoryCount() = measureMap.size
 
   def getCategories(): List[_] = {
     val list = measureMap.keys.toList

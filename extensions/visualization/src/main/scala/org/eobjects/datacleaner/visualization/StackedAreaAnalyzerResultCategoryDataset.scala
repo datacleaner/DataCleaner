@@ -5,7 +5,12 @@ import org.jfree.data.category.CategoryDataset
 import org.jfree.data.general.DatasetChangeListener
 import org.jfree.data.general.DatasetGroup
 import scala.collection.JavaConversions._
+import org.jfree.data.xy.TableXYDataset
+import org.jfree.data.DomainOrder
 
+/**
+ * CategoryDataset implementation of the StackedAreaAnalyzerResult for JFreeCharts
+ */
 class StackedAreaAnalyzerResultCategoryDataset(result: StackedAreaAnalyzerResult) extends CategoryDataset {
 
   private val columnNames = result.getMeasureColumns.map(col => col.getName())
@@ -51,6 +56,6 @@ class StackedAreaAnalyzerResultCategoryDataset(result: StackedAreaAnalyzerResult
     val columnKey = getColumnKey(column)
     val measures = result.getMeasures(columnKey)
     return measures(row);
-  }
-
+  }  
+  
 }

@@ -33,6 +33,7 @@ class StackedAreaAnalyzerResultSwingRenderer extends Renderer[StackedAreaAnalyze
     val urls = false;
     val orientation = PlotOrientation.VERTICAL
     val title = null
+    
     val chart = ChartFactory.createStackedAreaChart(title, categoryAxisLabel, valueAxisLabel, dataset, orientation, legend, tooltips, urls)
     chart.getLegend().setPosition(RectangleEdge.TOP);
     

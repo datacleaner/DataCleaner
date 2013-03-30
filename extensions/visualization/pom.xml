@@ -7,7 +7,7 @@
 	</parent>
 	<artifactId>DataCleaner-visualization</artifactId>
 	<packaging>jar</packaging>
-	<name>DataCleaner - 'visualization' extension</name>
+	<name>DataCleaner - 'visualization analyzers' extension</name>
 	
 	<build>
 		<plugins>

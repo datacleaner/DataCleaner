@@ -7,32 +7,35 @@
     <source>
         <data-context ref="orderdb"/>
         <columns>
-            <column type="INTEGER" path="PUBLIC.ORDERFACT.ORDERNUMBER" id="col_0"/>
-            <column type="VARCHAR" path="PUBLIC.ORDERFACT.PRODUCTCODE" id="col_1"/>
-            <column type="INTEGER" path="PUBLIC.ORDERFACT.QUANTITYORDERED" id="col_2"/>
-            <column type="DECIMAL" path="PUBLIC.ORDERFACT.PRICEEACH" id="col_3"/>
-            <column type="INTEGER" path="PUBLIC.ORDERFACT.ORDERLINENUMBER" id="col_4"/>
-            <column type="REAL" path="PUBLIC.ORDERFACT.TOTALPRICE" id="col_5"/>
-            <column type="TIMESTAMP" path="PUBLIC.ORDERFACT.ORDERDATE" id="col_6"/>
-            <column type="TIMESTAMP" path="PUBLIC.ORDERFACT.REQUIREDDATE" id="col_7"/>
-            <column type="TIMESTAMP" path="PUBLIC.ORDERFACT.SHIPPEDDATE" id="col_8"/>
-            <column type="VARCHAR" path="PUBLIC.ORDERFACT.STATUS" id="col_9"/>
-            <column type="LONGVARCHAR" path="PUBLIC.ORDERFACT.COMMENTS" id="col_10"/>
-            <column type="INTEGER" path="PUBLIC.ORDERFACT.CUSTOMERNUMBER" id="col_11"/>
-            <column type="VARCHAR" path="PUBLIC.ORDERFACT.TIME_ID" id="col_12"/>
-            <column type="BIGINT" path="PUBLIC.ORDERFACT.QTR_ID" id="col_13"/>
-            <column type="BIGINT" path="PUBLIC.ORDERFACT.MONTH_ID" id="col_14"/>
-            <column type="BIGINT" path="PUBLIC.ORDERFACT.YEAR_ID" id="col_15"/>
+            <column type="INTEGER" path="PUBLIC.PAYMENTS.CUSTOMERNUMBER" id="col_0"/>
+            <column type="VARCHAR" path="PUBLIC.PAYMENTS.CHECKNUMBER" id="col_1"/>
+            <column type="TIMESTAMP" path="PUBLIC.PAYMENTS.PAYMENTDATE" id="col_2"/>
+            <column type="NUMERIC" path="PUBLIC.PAYMENTS.AMOUNT" id="col_3"/>
         </columns>
     </source>
-    <transformation/>
+    <transformation>
+        <transformer>
+            <descriptor ref="Table lookup"/>
+            <properties>
+                <property value="true" name="Cache lookups"/>
+                <property value="[CUSTOMERNUMBER]" name="Condition columns"/>
+                <property value="orderdb" name="Datastore"/>
+                <property value="LEFT_JOIN_MAX_ONE" name="Join semantic"/>
+                <property value="[CREDITLIMIT]" name="Output columns"/>
+                <property value="PUBLIC" name="Schema name"/>
+                <property value="CUSTOMERS" name="Table name"/>
+            </properties>
+            <input ref="col_0"/>
+            <output id="col_4" name="CREDITLIMIT"/>
+        </transformer>
+    </transformation>
     <analysis>
         <analyzer>
             <descriptor ref="Stacked area plot"/>
             <properties/>
+            <input name="Measure columns" ref="col_4"/>
             <input name="Measure columns" ref="col_3"/>
-            <input name="Measure columns" ref="col_5"/>
-            <input name="Category column" ref="col_6"/>
+            <input name="Category column" ref="col_2"/>
         </analyzer>
     </analysis>
 </job>

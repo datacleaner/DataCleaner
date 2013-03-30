@@ -43,7 +43,7 @@ class ScatterAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
     val analysisResult = new AnalysisRunnerImpl(configuration).run(job);
 
     val writer = new HtmlAnalysisResultWriter()
-    val fileWriter = FileHelper.getBufferedWriter(new File("target/render_simple.html"))
+    val fileWriter = FileHelper.getBufferedWriter(new File("target/render_scatter_simple.html"))
     writer.write(analysisResult, configuration, fileWriter);
     fileWriter.close();
   }
@@ -64,7 +64,7 @@ class ScatterAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
     val analysisResult = new AnalysisRunnerImpl(configuration).run(job);
 
     val writer = new HtmlAnalysisResultWriter()
-    val fileWriter = FileHelper.getBufferedWriter(new File("target/render_with_group.html"))
+    val fileWriter = FileHelper.getBufferedWriter(new File("target/render_scatter_with_group.html"))
     writer.write(analysisResult, configuration, fileWriter);
     fileWriter.close();
   }

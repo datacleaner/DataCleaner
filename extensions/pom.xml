@@ -39,6 +39,7 @@
 				<module>phonetic</module>
 				<module>test-tools</module>
 				<module>network-tools</module>
+				<module>visualization</module>
 				<module>pentaho-job-engine</module>
 				<module>jdbc-datastore-wizards</module>
 				<module>csv-datastore-wizard</module>

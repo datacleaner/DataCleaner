@@ -16,7 +16,7 @@
 	</chapterinfo>
 
 	<section>
-		<title>Annotated component</title>
+		<title>Annotated components</title>
 		<para>The main principle behind extension discovery in DataCleaner is
 			annotated classes. These are the annotations that will work to
 			activate components within your extension:
@@ -41,7 +41,7 @@
 			annotations/classes for details on usage.
 		</para>
 	</section>
-
+	
 	<section>
 		<title>Single JAR file</title>
 		<para>The extension must consist of a single JAR file. If you have
@@ -50,7 +50,7 @@
 			you're using Maven for your build, the Maven Assembly Plugin can
 			provide this functionality easily using this snippet in your POM:
 		</para>
-		<programlisting>
+		<programlisting lang="xml">
 			&lt;build&gt;
 			&#160;&lt;plugins&gt;
 			&#160;&#160;&lt;plugin&gt;
@@ -65,6 +65,24 @@
 			&#160;&#160;&lt;/plugin&gt;
 			&#160;&lt;/plugins&gt;
 			&lt;/build&gt; </programlisting>
+	</section>
+	
+	<section>
+		<title>Extension metadata XML</title>
+		<para>To improve the experience, you can optionally include metadata about the extension in an XML file, bundled <emphasis>within</emphasis> the JAR file itself.</para>
+		<para>The name of the extension metadata file has to be <emphasis>datacleaner-extension.xml</emphasis> and be placed in the root directory of the JAR file. Here's an example of how the file looks like:</para>
+		<programlisting lang="xml">
+			&lt;extension&#160;xmlns="http://eobjects.org/datacleaner/extension/1.0"&gt;
+			&#160;&#160;&lt;name&gt;My&#160;extension&lt;/name&gt;
+			&#160;&#160;&lt;package&gt;path.to.extension&lt;/package&gt;
+			&#160;&#160;&lt;description&gt;This&#160;is&#160;an&#160;example&#160;extension.&#160;I&#160;should&#160;put&#160;a&#160;short&#160;description&#160;here.&lt;/description&gt;
+			&#160;&#160;&lt;icon&gt;path/to/extension/ExtensionIcon.png&lt;/icon&gt;
+			&#160;&#160;&lt;author&gt;John&#160;Doe&lt;/author&gt;
+			&#160;&#160;&lt;url&gt;http://datacleaner.org/extensions&lt;/url&gt;
+			&#160;&#160;&lt;version&gt;1.0&lt;/version&gt;
+			&lt;/extension&gt;
+		</programlisting>
+		<para>The added value of this metadata is that DataCleaner can expose this information to the user and also use it to manage updates of the the extension etc. The metadata file is however, completely optional.</para>
 	</section>
 
 	<section>

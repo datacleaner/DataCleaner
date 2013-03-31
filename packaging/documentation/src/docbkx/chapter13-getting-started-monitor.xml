@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Getting started with DataCleaner monitor</title>
+
+	<section id="installing_datacleaner_monitor">
+		<title>Installing the monitoring web application</title>
+		<para>In addition to (and in some cases, even as a replacement for)
+			the desktop version of DataCleaner, we also provide a web application
+			for monitoring, scheduling and sharing analysis jobs and results.
+		</para>
+		<para>
+			A Java servlet container and web server is required to run the
+			monitoring web application. An example of this is
+			<link xl:href="http://tomcat.apache.org/download-70.cgi">Apache Tomcat 7.x</link>
+			, which is often used and tested by the DataCleaner development
+			team.
+		</para>
+		<para>
+			To install the monitoring web application,
+			<link xl:href="http://datacleaner.org/downloads">download</link>
+			the Web Archive (.war) distribution of DataCleaner. Install the .war
+			file in your container. If you're using Apache Tomcat, this is done
+			by copying the .war file to the "webapps" folder within your tomcat
+			directory. Afterwards, start the container and go to
+			<link xl:href="http://localhost:8080/DataCleaner-monitor">http://localhost:8080/DataCleaner-monitor</link>
+			to see the welcome/login screen:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_01_login.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>In the community edition of DataCleaner, you will find
+			suggestions for login credentials directly on the screen, to get you
+			started quickly.
+		</para>
+	</section>
+
+	<section id="connecting_to_your_datastore_montitor">
+		<title>Connecting to your datastore</title>
+		<para>DataCleaner monitor displays and manages datastores through the
+			'Datastores' page. Click the "Register datastore" button to set up a
+			new datastore:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_02_register_datastore.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>Follow the on-screen instructions to go through the process of
+			registering the datastore. When the wizard is finished you can find
+			the datastore on the 'Datastores' page where you can work with it in
+			different ways - e.g. do ad-hoc querying, download the data (if it is
+			a file-based datastore), launch DataCleaner desktop to build custom
+			jobs etc.
+		</para>
+
+		<tip>
+			<para>
+				You can also configure your datastore by means of the
+				configuration
+				file (conf.xml), which has both some pros and some cons.
+				For more
+				information, read the
+				<link linkend="chapter_configuration_file">configuration file chapter</link>
+				.
+			</para>
+		</tip>
+	</section>
+
+	<section id="repository_adding_job">
+		<title>Building a job</title>
+
+		<para>There are multiple ways to add a new job to DataCleaner monitor.
+			The
+			most fail-safe way is to use one of the job wizards. These are
+			found on the
+			'Scheduling' page, using the "Build job" button.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_02_new_job.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+
+		<para>Simply follow the on-screen instructions to build the job
+			according to the wizards intent.
+		</para>
+
+		<para>Once the job has been built, you will have options to trigger
+			it's execution, schedule it, set up alerting and start building
+			monitoring timelines for it's result's metrics.
+		</para>
+
+		<para>
+			Alternatively, you can create the job using the desktop application.
+			In that case, make sure that the
+			<emphasis>name of any involved datastore in the desktop application
+				matches the name of the datastore in the repository!
+			</emphasis>
+			If so, you can safely drop the .analysis.xml job file in the
+			<emphasis>jobs</emphasis>
+			folder on the repository. It will be immediately available in the web
+			UI of the monitor application.
+		</para>
+	</section>
+
+	<section id="repository_adding_job">
+		<title>Scheduling jobs</title>
+		<para>The DataCleaner monitor web application is the preferred
+			application for scheduling of DataCleaner jobs.
+		</para>
+		<para>Below is a screenshot of the Scheduling page of the DataCleaner
+			monitor. To access this page, your user needs to have the
+			ROLE_SCHEDULE_EDITOR security role.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_03_scheduling.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>Things to notice on this page:</para>
+
+		<orderedlist>
+			<listitem>
+				<para>Each job is categorized by their datastores. This is to
+					provide an overview of which jobs are
+					executing based on which
+					datastores. Technically, a job can interact with
+					more than one
+					datastore,
+					but it will be categorized on this page based on which
+					datastore is
+					acting as source for the
+					job's execution flow.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					Besides the datastore and job name, we have a
+					<emphasis>Scheduling</emphasis>
+					column. In the case shown, all jobs
+					are 'Manually triggered',
+					meaning that they are not scheduled by the
+					DataCleaner monitor.
+					Click the link to
+					change the trigger:
+				</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="monitor_04_scheduling_triggers.jpg"
+							format="JPG" scalefit="1" />
+					</imageobject>
+				</mediaobject>
+				<para>The three types of triggering is explained on the screen:
+					Periodic trigger, Dependent trigger, Manual trigger.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					In the next column
+					<emphasis>Alerts</emphasis>
+					are defined.
+					Alerts define conditions that should be inspected after
+					execution.
+					An alert is based on metrics, similar to those that can
+					be shown in the timelines on the Dashboard page.
+					An alert also
+					contains a severity, defining how severe the alert is, if it is
+					raised. The severity scale is (increasing severity):
+					<emphasis>Intelligence, Surveillance, Warning, Fatal</emphasis>
+					.
+				</para>
+				<para>
+					Typical handling of raised alerts include sending an email or SMS
+					to the data stewards.
+					These alert notification mechanisms are
+					included in the commercial editions of DataCleaner.
+					You can also
+					develop your own alert notification handlers, by implementing the
+					<emphasis>org.eobjects.datacleaner.monitor.alertnotification.AlertNotifier
+					</emphasis>
+					interface in Java.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					In the last column,
+					<emphasis>Actions</emphasis>
+					can be found. The following options are there:
+				</para>
+				<orderedlist>
+					<listitem>
+						<para>
+							<emphasis>Trigger</emphasis>
+							, which triggers a job for immediate execution.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Open</emphasis>
+							, which launches the DataCleaner desktop application with the job
+							loaded. Note that for security and bandwidth concerns, only the
+							first 20 input records of the job is transferred to the desktop
+							application. It is in other words not possible to "trigger" the
+							job run on the desktop as if it is running on the server, but it
+							provides a good playground for experiments and testing. Jobs can
+							even be modified and saved back onto the monitoring server this
+							way.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>History</emphasis>
+							, which displays a dialog with execution log information about
+							each triggered job execution.
+						</para>
+					</listitem>
+				</orderedlist>
+			</listitem>
+		</orderedlist>
+	</section>
+
+	<section id="monitor_dashboard_page">
+		<title>Adding metric charts on the dashboard</title>
+
+		<para>On the 'Dashboard' page you can set up a visual representation
+			of the metrics that your jobs are gathering. The DataCleaner monitor
+			comes with some example timeline charts that demonstrate how metrics
+			are plotted, that you can click at a point in these timeline charts
+			and see further details about those metrics.
+		</para>
+		<para>Now let's see how we can define our own timelines. Select the
+			appropriate group on the left-hand side of the page and then click
+			"New timeline chart". You'll have to select the job which to base the
+			metric data upon and then select from the metrics made available by
+			that job:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_05_new_timeline.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>Note that the contents of the dialog is highly dependent on the
+			contents of the selected job, so the screenshot above will not
+			necesarily resemble the options available to you.
+		</para>
+		<para>There are four different types of metrics in DataCleaner
+			monitor, and they may or may not be exposed through your job:
+		</para>
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>Non-parameterized metrics.</emphasis>
+					These are the most "plain" metrics, which will be represented
+					only
+					by a checkbox.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>String-parameterized metrics.</emphasis>
+					These are metrics that take a string parameter. For instance we see
+					that the "Match count" metric of the "Pattern finder" component
+					takes a string parameter (screenshot above). In this case the
+					parameter represents the pattern to look for when counting matches.
+					Usually suggestions will be shown in the UI to help you figure out
+					what type of parameter is expected.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Column-parameterized metrics.</emphasis>
+					Some metrics are collected per column. Since we know which columns
+					a specific component is working on, a list of columns and
+					corresponding checkboxes are shown to make the parameter selection
+					easier:
+				</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="monitor_05_column_parameterized_metrics.jpg"
+							format="JPG" scalefit="1" />
+					</imageobject>
+				</mediaobject>
+			</listitem>
+			<listitem>
+				<para>
+					<emphasis>Formula metrics.</emphasis>
+					Lastly, you can define your own metrics based on a formula of other
+					metrics. This functionality is similar to building formulas in a
+					spreadsheet - you simply reference other metrics and provide an
+					equation for calculating the metric.
+				</para>
+				<para>Adding a formula metric is done by clicking the "Add metric
+					formula" button and filling out the formula details:</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="monitor_05_formula_metrics.jpg"
+							format="JPG" scalefit="1" />
+					</imageobject>
+				</mediaobject>
+				<para>Metric formulas support the basic mathematical operators: plus
+					(+), minus (-), divide (/) and multiply (*).</para>
+			</listitem>
+		</orderedlist>
+	
+		<para>When the metric selection is done, a new unsaved timeline is
+			shown:</para>
+	
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_05_unsaved_timeline.jpg"
+					format="JPG" scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		
+		<para>You can go back to selecting the metrics or customizing the chart's look and feel by clicking the 'Wrench' icon, or you can start by saving it using the save icon.</para>
+		
+		<para>Names and colors of the metrics in the timeline chart can be customized by clicking the legend of the chart.</para>
+	</section>
+
+</chapter>

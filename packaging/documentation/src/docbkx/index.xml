@@ -9,7 +9,7 @@
 		<releaseinfo><?eval ${project.version}?>
 		</releaseinfo>
 		<copyright>
-			<year>2008-2011</year>
+			<year>2008-2013</year>
 		</copyright>
 		<legalnotice>
 			<para>Copies of this document may be made for your own use and for
@@ -26,8 +26,8 @@
 		</partinfo>
 
 		<xi:include href="chapter11-concepts.xml" />
-		<xi:include href="chapter12-getting-started.xml" />
-		<xi:include href="chapter13-building-jobs.xml" />
+		<xi:include href="chapter12-getting-started-desktop.xml" />
+		<xi:include href="chapter13-getting-started-monitor.xml" />
 	</part>
 
 	<part>
@@ -80,7 +80,13 @@
 			<title>Invoking DataCleaner jobs from the command-line</title>
 		</partinfo>
 		<xi:include href="chapter71-command-line-interface.xml" />
-		<xi:include href="chapter72-scheduling-jobs.xml" />
+	</part>
+	
+	<part>
+		<partinfo>
+			<title>Third party integrations</title>
+		</partinfo>
+		<xi:include href="chapter72-pentaho-integration.xml" />
 	</part>
 
 	<part>

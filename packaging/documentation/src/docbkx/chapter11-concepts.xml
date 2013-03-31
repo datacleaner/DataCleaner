@@ -23,7 +23,7 @@
 	</chapterinfo>
 
 	<section id="what_is_dq">
-		<title>What is Data Quality (DQ)?</title>
+		<title>What is data quality (DQ)?</title>
 		<para>Data Quality (DQ) is a concept and a business term covering the
 			quality of the data used for a particular purpose. Often times the DQ
 			term is applied to the quality of data used in business decisions but
@@ -52,37 +52,17 @@
 			are of high quality "if they are fit for their intended uses in
 			operations, decision making and planning" (J. M. Juran).
 		</para>
-	</section>
 
-	<section id="what_is_mdm">
-		<title>What is Master Data Management (MDM)?</title>
-		<para>Master Data Management (MDM) is a very broad term and is seen
-			materialized in a variety of ways. For the scope of this document it
-			serves more as a context of data quality than an activity that we
-			actually target per-se.
-		</para>
-		<para>The overall goals of MDM is to manage the important data of an
-			organization. By "master data" we refer to "a single version of the
-			truth", ie. not the data of a particular system, but for example all
-			the customer data of a company.
-		</para>
-		<para>Obviously one of the very important issues to handle in MDM is
-			the quality of data. If you simply gather eg. "all customer data"
-			from all systems in an organization, you will most likely see a lot
-			of data quality issues. There will be a lot of duplicate entries,
-			there will be variances in the way that customer data is filled out,
-			there will be different identifiers and even different levels of
-			granularity for defining "what is a customer?".
-		</para>
-	</section>
-
-	<section id="what_is_data_quality_analysis">
-		<title>What is Data Quality Analysis (DQA)?</title>
-		<para>Data Quality Analysis (DQA) is the (human) process of examining
-			the quality of data for a particular process or organization. The DQA
-			includes both technical and non-technical elements. For example, to
-			do a good DQA you will probably need to talk to users, business
-			people, partner organizations and maybe customers. This is needed to
+		<para>a data quality analysis (DQA) is the (human) process of
+			examining
+			the quality of data for a particular process or
+			organization. The DQA
+			includes both technical and non-technical
+			elements. For example, to
+			do a good DQA you will probably need to talk
+			to users, business
+			people, partner organizations and maybe customers.
+			This is needed to
 			asses what the goal of the DQA should be.
 		</para>
 		<para>From a technical viewpoint the main task in a DQA is the data
@@ -92,10 +72,10 @@
 	</section>
 
 	<section id="what_is_data_profiling">
-		<title>What is Data Profiling?</title>
-		<para>Data Profiling is the activity of investigating a datastore to
+		<title>What is data profiling?</title>
+		<para>Data profiling is the activity of investigating a datastore to
 			create a 'profile' of it. With a profile of your datastore you will
-			be a lot better equipped to actually improve it.
+			be a lot better equipped to actually use and improve it.
 		</para>
 		<para>
 			The way you do profiling often depends on whether you already
@@ -111,63 +91,98 @@
 			correct! Typically it's cheap to include a bit more data into your
 			analysis and the results just might surprise you and save you time!
 		</para>
+		<para>DataCleaner comprises (amongst other aspects) a desktop
+			application for doing data profiling on just about any kind of
+			datastore.
+		</para>
 	</section>
 
-	<section id="what_is_data_quality_monitoring">
-		<title>What is Data Quality Monitoring?</title>
-		<para>We've argued that Data Profiling is ideally an explorative
-			activity. Data Quality Monitoring typically isn't! The measurements
-			that you do
-			when profiling often times needs to be continuously
-			checked so that
-			your improvements are enforced through time. This is
-			what Data
-			Quality Monitoring is about.
+	<section id="what_is_datastore">
+		<title>What is a datastore?</title>
+		<para>
+			A datastore is the place where data is stored. Usually
+			enterprise data
+			lives in relational databases, but there are numerous
+			exceptions to
+			that rule.
+		</para>
+		<para>
+			To comprehend different sources of data, such as
+			databases,
+			spreadsheets, XML files and even standard business
+			applications, we
+			employ the umbrella term
+			<emphasis>datastore</emphasis>
+			. DataCleaner is capable of retrieving data from a very wide range of
+			datastores. And furthermore, DataCleaner can update the data of most
+			of these datastores as well.
+		</para>
+	</section>
+
+	<section id="what_is_data_monitoring">
+		<title>What is data monitoring?</title>
+		<para>We've argued that data profiling is ideally an explorative
+			activity. Data monitoring typically isn't! The measurements that you
+			do when profiling often times needs to be continuously checked so
+			that your improvements are enforced through time. This is what data
+			monitoring is typically about.
+		</para>
+		<para>Data monitoring solutions comes in different shapes and sizes.
+			You can set
+			up your own bulk of scheduled jobs that run every night.
+			You can
+			build alerts around it that send you emails if a particular
+			measure
+			goes beyond it's allowed thresholds, or in some cases you can
+			attempt
+			ruling out the issue entirely by applying First-Time-Right
+			(FTR)
+			principles that validate data at entry-time. eg. at data
+			registration
+			forms and more.
 		</para>
 		<para>As of version 3, DataCleaner now also includes a monitoring web
-			application.
+			application, dubbed "DataCleaner monitor". The monitor is a server
+			application that supports orchestrating and scheduling of jobs, as
+			well as exposing metrics through web services and through interactive
+			timelines and reports. It also supports the configuration and
+			job-building process through wizards and management pages for all the
+			components of the solution. As such, we like to say that the
+			DataCleaner monitor provides a is a good
+			foundation for the
+			infrastructure needed in a Master Data Management
+			hub.
 		</para>
-		<para>Data Quality Monitoring comes in different shapes and sizes. You
-			can set up your own bulk of scheduled jobs that run every night. You
-			can build alerts around it that send you emails if a particular
-			measure goes beyond it's allowed thresholds, or in some cases you can
-			attempt ruling out the issue entirely by applying First-Time-Right
-			(FTR) principles that validate data at entry-time. eg. at data
-			registration forms and more. With the DataCleaner monitoring
-			application, these scenarios are provided in a convenient way for
-			users of the DataCleaner profiler.
-		</para>
+
 	</section>
 
-	<section id="what_is_open_source">
-		<title>What is Open Source software?</title>
-		<para>That software is Open Source software basically means that the
-			software is licensed under a license that gives you the right to use
-			it (and it's source code) freely. But there are of course some
-			limitations to these rights: First and foremost you cannot sell the
-			software
-			to a third party for money. In the case of DataCleaner it
-			also means
-			that if you modify or enhance the product, then you have to
-			contribute back to the community your modifications. The idea here is
-			that we should cooperate on building great software and that we
-			should make this great software available to anyone for everybody's
-			benefit.
+	<section id="what_is_mdm">
+		<title>What is master data management (MDM)?</title>
+		<para>Master data management (MDM) is a very broad term and is seen
+			materialized in a variety of ways. For the scope of this document it
+			serves more as a context of data quality than an activity that we
+			actually target with DataCleaner per-se.
 		</para>
-		<para>
-			So what
-			<emphasis>can</emphasis>
-			you do with it? You can use it for any purpose you'd like. You can
-			even include it in a software bundle that you sell for money - but
-			you can only sell the bundle, not DataCleaner as such.
+		<para>The overall goals of MDM is to manage the important data of an
+			organization. By "master data" we refer to "a single version of the
+			truth", ie. not the data of a particular system, but for example all
+			the customer data or product data of a company. Usually this data is
+			dispersed over
+			multiple datastores, so an important part of MDM
+			is the
+			process of unifying the data into a single model.
 		</para>
-		<para>
-			For more information on Open Source software and the LGPL
-			license which DataCleaner is distributed under, visit the Free
-			Software Foundation:
-		</para>
-		<para>
-			<link xl:href="http://www.gnu.org/copyleft/lesser.html">http://www.gnu.org/copyleft/lesser.html</link>
+		<para>Obviously another of the very important issues to handle in MDM
+			is
+			the quality of data. If you simply gather eg. "all customer data"
+			from all systems in an organization, you will most likely see a lot
+			of data quality issues. There will be a lot of duplicate entries,
+			there will be variances in the way that customer data is filled,
+			there will be different identifiers and even different levels of
+			granularity for defining "what is a customer?". In the context of
+			MDM, DataCleaner can serve as the engine to cleanse, transform and
+			unify data from multiple datastores into the single view of the
+			master data.
 		</para>
 	</section>
 

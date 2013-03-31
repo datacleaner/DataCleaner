@@ -16,7 +16,7 @@
 		<orderedlist>
 			<listitem>
 				<para>
-					<link xl:href="http://datacleaner.org/media">Webcast: Developing DataCleaner extensions
+					<link xl:href="http://datacleaner.org/docs#webcasts">Webcast: Developing DataCleaner extensions
 					</link>
 				</para>
 			</listitem>
@@ -56,7 +56,7 @@
 			</listitem>
 			<listitem>
 				<para>
-					<link xl:href="metamodel.eobjects.org/apidocs/">Javadoc: MetaModel</link>
+					<link xl:href="http://metamodel.eobjects.org/apidocs/">Javadoc: MetaModel</link>
 				</para>
 			</listitem>
 		</orderedlist>

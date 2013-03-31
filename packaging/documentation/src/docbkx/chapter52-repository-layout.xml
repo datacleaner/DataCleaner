@@ -68,32 +68,4 @@
 		</para>
 	</section>
 
-	<section id="repository_adding_job">
-		<title>Adding a new job to the repository</title>
-
-		<para>There are multiple ways to add a new job to the repository. The
-			most fail-safe way is to use one of the job wizards, provided by the
-			DataCleaner monitoring web application. These are found on the
-			'Scheduling' page, using the "New job" button.
-		</para>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="monitor_02_new_job.jpg" format="JPG"
-					scalefit="1" />
-			</imageobject>
-		</mediaobject>
-
-		<para>
-			Alternatively, you can create the job using the desktop application.
-			In that case, make sure that the
-			<emphasis>name of any involved datastore in the desktop application
-				matches the name of the datastore in the repository!
-			</emphasis>
-			If so, you can safely drop the .analysis.xml job file in the
-			<emphasis>jobs</emphasis>
-			folder on the repository. It will be immediately available in the web
-			UI of the monitor application.
-		</para>
-	</section>
-	
 </chapter>

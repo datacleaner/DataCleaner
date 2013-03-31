@@ -1,3 +1,6 @@
+/*Import 'Ubuntu' font from Google*/
+@import url("http://fonts.googleapis.com/css?family=Ubuntu");
+
 /*reset all the values*/
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,button,table,caption,tbody,tfoot,thead,tr,th,td
 	{
@@ -5,9 +8,9 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 	padding: 0;
 	border: 0;
 	outline: 0;
-	font-size: 12px;
+	font-size: 16px;
 	background: transparent;
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Ubuntu, Arial, sans-serif;
 }
 
 html,body {
@@ -20,15 +23,15 @@ body {
 }
 
 h1 {
-	font-size: 20px;
+	font-size: 1.6em;
 }
 
 h2 {
-	font-size: 16px;
+	font-size: 1.4em;
 }
 
 h3 {
-	font-size: 14px;
+	font-size: 1.2em;
 }
 
 p {
@@ -114,6 +117,7 @@ body>div {
 
 .toc a {
 	text-decoration: none !important;
+	font-size: 0.8em;
 }
 
 .toc .part {
@@ -127,7 +131,6 @@ body>div {
 .toc .part a {
 	color: #fff;
 	font-weight: bold;
-	font-size: 12pt;
 }
 
 .toc .chapter {
@@ -171,7 +174,7 @@ body>div {
 
 .copyright,.legalnotice {
 	color: #7b7b7a;
-	font-size: 11px;
+	font-size: 0.7em;
 }
 
 .mediaobject {
@@ -197,7 +200,7 @@ body>div {
 
 pre.programlisting {
 	font-family: 'Lucida Console', monospace;
-	font-size: 12px;
+	font-size: 0.8em;
 	margin: 10px;
 	padding: 12px;
 	background-color: #eee;

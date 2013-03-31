@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Pentaho integration jobs</title>
+	<chapterinfo>
+		<abstract>
+			<para>
+				DataCleaner offers a number of integrations with the
+				<link xl:href="http://www.pentaho.com">Pentaho</link>
+				open source business intelligence suite. In this chapter we will
+				present an overview of the options available.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<section>
+		<title>Launch DataCleaner to profile Pentaho Data Integration steps
+		</title>
+		<para>In Pentaho Data Integration you can launch DataCleaner by
+			right-clicking any step of your transformations. This will start up
+			DataCleaner with the transformations data pre-loaded, ready for
+			profiling.
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="dc_profile_context_menu.png" format="PNG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>
+			This functionality requires installation of the data profiling
+			plugin
+			for Pentaho Data Integration. The instructions and further
+			documentation of this is maintained at Pentaho's wiki page:
+			<link
+				xl:href="http://wiki.pentaho.com/display/EAI/Kettle+Data+Profiling+with+DataCleaner">Kettle Data Profiling with DataCleaner</link>
+			.
+		</para>
+	</section>
+
+	<section>
+		<title>Run Pentaho Data Integration jobs in DataCleaner monitor
+		</title>
+		<para>
+			DataCleaner monitor can also be used to run and schedule other
+			jobs
+			than just DataCleaner jobs. An example of this is using
+			DataCleaner
+			monitor to schedule a Pentaho Data Integration
+			transformation. The
+			interoperability in this case is provided through the
+			<emphasis>Carte</emphasis>
+			service provided by Pentaho Data Integration.
+		</para>
+		<para>To set up the job in DataCleaner monitor, go to the 'Scheduling'
+			page and click 'Build job'. Select the Pentaho Data Integration
+			transformation option:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="monitor_06_pentaho_job.jpg" format="JPG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>
+			Follow the on-screen wizard to connect to the Pentaho
+			<emphasis>Carte</emphasis>
+			service and select the transformation to execute.
+		</para>
+		<para>
+			When the job has been registered, you can use DataCleaner monitor to
+			schedule it, and to monitor execution metrics exposed by the job on
+			the 'Dashboard' page (read more in the
+			<link linkend="monitor_dashboard_page">section about metric charting</link>
+			).
+		</para>
+	</section>
+
+	<section>
+		<title>Run DataCleaner jobs in Pentaho Data Integration</title>
+
+		<para>
+			<emphasis>Pentaho Data Integration job entry</emphasis>
+			. If you want to have DataCleaner scheduled and integrated into an
+			environment where you can eg. iterate over files in a folder etc.,
+			then you can use Pentaho Data Integration (PDI), which is an open
+			source
+			ETL tool that includes a scheduler.
+		</para>
+		<para>Construct a PDI "job" (ie. not a "transformation") and add the
+			DataCleaner job entry. The configuration dialog will look like
+			this:
+		</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="dc_job_entry.png" format="PNG"
+					scalefit="1" />
+			</imageobject>
+		</mediaobject>
+		<para>The most tricky part is to fill out the executable and the job
+			filename. Note that all configuration options can contain PDI
+			variables, like it is the case with ${user.home} in the screenshot
+			above. This is useful if you want to eg. timestamp your resulting
+			files etc.
+		</para>
+	</section>
+
+</chapter>

@@ -111,7 +111,7 @@
 		</para>
 	</section>
 
-	<section id="repository_adding_job">
+	<section id="monitor_scheduling_jobs">
 		<title>Scheduling jobs</title>
 		<para>The DataCleaner monitor web application is the preferred
 			application for scheduling of DataCleaner jobs.

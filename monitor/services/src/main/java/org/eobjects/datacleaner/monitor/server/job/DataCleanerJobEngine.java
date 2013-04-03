@@ -247,7 +247,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     @Override
     public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component) {
         if (component instanceof InputColumnSinkJob) {
-            final InputColumnSinkJob inputColumnSinkJob = (InputColumnSinkJob) job;
+            final InputColumnSinkJob inputColumnSinkJob = (InputColumnSinkJob)component;
             final InputColumn<?>[] inputColumns = inputColumnSinkJob.getInput();
             return Arrays.asList(inputColumns);
         }

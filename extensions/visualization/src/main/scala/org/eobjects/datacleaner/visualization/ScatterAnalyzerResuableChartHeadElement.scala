@@ -3,13 +3,16 @@ package org.eobjects.datacleaner.visualization
 import org.eobjects.analyzer.result.html.HeadElement
 import org.eobjects.analyzer.result.html.HtmlRenderingContext
 
+/**
+ * Head element which defines the necesary script and style elements for scatter charts
+ */
 object ScatterAnalyzerResuableChartHeadElement extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
     val flotBaseLocation = if (null == System.getProperty("org.eobjects.analyzer.valuedist.flotLibraryLocation")) { "http://cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js" } else { System.getProperty("org.eobjects.analyzer.valuedist.flotLibraryLocation") + """/jquery.flot.min.js"""; }
     return """<script type="text/javascript">
 //<![CDATA[
-function draw_scatter_analyzer_chart(chartElement, chartData, retries) {
+function draw_scatter_chart(chartElement, chartData, retries) {
    
     wait_for_script_load('jQuery', function() {
         importJS('""" + flotBaseLocation + """', 'jQuery.plot', function() {
@@ -39,7 +42,7 @@ function draw_scatter_analyzer_chart(chartElement, chartData, retries) {
 //]]>
 </script>
 <style type="text/css">
-.scatterAnalyzerChart {
+.scatterChart {
     width: 700px;
     height: 550px;
 }

@@ -43,17 +43,8 @@ class DensityAnalyzerResultSwingRenderer extends Renderer[DensityAnalyzerResult,
 
     val dataset = new DefaultXYZDataset()
     dataset.addSeries("Observations", arrays);
-
-    val minimumColor = WidgetUtils.BG_COLOR_BRIGHT
-    val paintScale = new LookupPaintScale(0.0, 100.0, minimumColor)
-
-    val colors = getColors
-    val zIncrement = scala.math.max(1.0, maxZvalue * 1.0 / colors.length)
-    for (i <- 0 to colors.length - 1) {
-      val color = colors(i)
-      val zValue = zIncrement * (i + 0.5)
-      paintScale.add(zValue, color);
-    }
+    
+    val paintScale = DensityAnalyzerColors.getPaintScale(maxZvalue)
 
     val renderer = new XYBlockRenderer()
     renderer.setPaintScale(paintScale)
@@ -75,15 +66,4 @@ class DensityAnalyzerResultSwingRenderer extends Renderer[DensityAnalyzerResult,
     return chartPanel;
   }
 
-  /**
-   * Builds a list of colors to use in the density plot
-   */
-  def getColors(): Array[Color] = Array(
-    WidgetUtils.BG_COLOR_ORANGE_BRIGHT,
-    WidgetUtils.BG_COLOR_ORANGE_MEDIUM,
-    WidgetUtils.BG_COLOR_ORANGE_DARK,
-    WidgetUtils.BG_COLOR_BLUE_BRIGHT,
-    WidgetUtils.BG_COLOR_BLUE_MEDIUM,
-    WidgetUtils.BG_COLOR_BLUE_DARK,
-    WidgetUtils.BG_COLOR_DARKEST);
 }

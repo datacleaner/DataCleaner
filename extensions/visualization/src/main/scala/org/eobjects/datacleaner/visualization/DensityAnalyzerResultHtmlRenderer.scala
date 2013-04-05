@@ -12,16 +12,16 @@ import org.eobjects.analyzer.result.renderer.HtmlRenderingFormat
 import org.eobjects.analyzer.result.html.HtmlRenderer
 
 @RendererBean(classOf[HtmlRenderingFormat])
-class ScatterAnalyzerResultHtmlRenderer extends HtmlRenderer[ScatterAnalyzerResult] {
+class DensityAnalyzerResultHtmlRenderer extends HtmlRenderer[DensityAnalyzerResult] {
 
-  override def handleFragment(frag: SimpleHtmlFragment, result: ScatterAnalyzerResult, context: HtmlRenderingContext) {
+  override def handleFragment(frag: SimpleHtmlFragment, result: DensityAnalyzerResult, context: HtmlRenderingContext) {
     val elementId = context.createElementId()
 
     frag.addHeadElement(ScatterAnalyzerResuableChartHeadElement)
-    frag.addHeadElement(new ScatterAnalyzerChartScriptHeadElement(result, elementId));
+    frag.addHeadElement(new DensityAnalyzerChartScriptHeadElement(result, elementId));
 
     val html =
-      <div class="scatterAnalyzerDiv">
+      <div class="densityAnalyzerDiv">
         <div class="scatterChart" id={ elementId }>
         </div>
       </div>

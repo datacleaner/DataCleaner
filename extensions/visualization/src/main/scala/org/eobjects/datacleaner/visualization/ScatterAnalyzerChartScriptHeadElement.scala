@@ -19,7 +19,7 @@ class ScatterAnalyzerChartScriptHeadElement(result: ScatterAnalyzerResult, eleme
         label: """" + group.name + """"
               }""").mkString(",") + """
     ];
-    draw_scatter_analyzer_chart('""" + elementId + """', data, 2);
+    draw_scatter_chart('""" + elementId + """', data, 2);
     //]]>
 </script>
 """

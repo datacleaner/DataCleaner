@@ -20,7 +20,7 @@ object StackedAreaAnalyzerResultSwingRendererTestApp {
 
   def main(args: Array[String]) {
     val analyzer = new StackedAreaAnalyzer
-    analyzer.categoryColumn = new MockInputColumn("category", classOf[Integer])
+    analyzer.categoryColumn = new MockInputColumn("category", classOf[Number])
 
     val col1 = new MockInputColumn("foo", classOf[Number])
     val col2 = new MockInputColumn("bar", classOf[Number])

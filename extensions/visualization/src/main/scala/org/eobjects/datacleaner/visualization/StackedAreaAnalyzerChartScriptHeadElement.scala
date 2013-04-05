@@ -19,6 +19,8 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResul
 
     // stack height will contain the offset of each stacked value and will be updated through the rendering of new points..
     val stackHeight: Array[Number] = categories.map(_ => 0.asInstanceOf[Number]).toArray;
+    
+    val colors = StackedAreaColors.getColors()
 
     for (i <- 0 to measureColumns.size - 1) {
       val measureColumn = measureColumns(i)
@@ -26,6 +28,10 @@ class StackedAreaAnalyzerChartScriptHeadElement(result: StackedAreaAnalyzerResul
       html.append(i);
       html.append("={label:\"");
       html.append(context.escapeJson(measureColumn.getName()));
+      if (i < colors.size) {
+          html.append("\",color:\"#");
+          html.append(StackedAreaColors.toHexString(colors(i)))
+      }
       html.append("\",data:[");
       for (j <- 0 to categories.size - 1) {
         if (j != 0) {

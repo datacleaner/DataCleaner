@@ -21,8 +21,8 @@ function draw_stacked_area_analyzer_chart(chartElement, chartData, retries) {
                         lines: {
                             active: true,
                             show: true,
-                            lineWidth: 1,
-                            fill: true
+                            lineWidth: 0,
+                            fill: 1
                         }
                     },
                     points: {show:false},

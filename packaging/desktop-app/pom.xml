@@ -15,6 +15,13 @@
 			<artifactId>DataCleaner-desktop</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- Extensions -->
+		<dependency>
+			<groupId>org.eobjects.datacleaner</groupId>
+			<artifactId>DataCleaner-visualization</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

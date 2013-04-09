@@ -2,11 +2,13 @@ package org.eobjects.datacleaner.visualization
 
 import org.eobjects.analyzer.result.html.HeadElement
 import org.eobjects.analyzer.result.html.HtmlRenderingContext
+import org.eobjects.analyzer.result.html.FlotChartLocator
 
 object StackedAreaAnalyzerResuableChartHeadElement extends HeadElement {
 
   override def toHtml(context: HtmlRenderingContext): String = {
-    val flotBaseLocation = if (null == System.getProperty("org.eobjects.analyzer.valuedist.flotLibraryLocation")) { "http://cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js" } else { System.getProperty("org.eobjects.analyzer.valuedist.flotLibraryLocation") + """/jquery.flot.min.js"""; }
+    val flotBaseLocation = FlotChartLocator.getFlotBaseUrl
+    
     return """<script type="text/javascript">
 //<![CDATA[
 function draw_stacked_area_analyzer_chart(chartElement, chartData, retries) {

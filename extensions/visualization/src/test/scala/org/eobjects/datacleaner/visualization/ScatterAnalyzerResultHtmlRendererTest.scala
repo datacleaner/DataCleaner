@@ -34,9 +34,15 @@ class ScatterAnalyzerResultHtmlRendererTest extends AssertionsForJUnit {
     ajb.setDatastore(orderdb);
     ajb.addSourceColumns("ORDERFACT.QUANTITYORDERED", "ORDERFACT.TOTALPRICE");
 
-    val analyzer = ajb.addAnalyzer(classOf[ScatterAnalyzer]);
-    analyzer.setConfiguredProperty("Variable1", ajb.getSourceColumnByName("QUANTITYORDERED"));
-    analyzer.setConfiguredProperty("Variable2", ajb.getSourceColumnByName("TOTALPRICE"));
+    val analyzer1 = ajb.addAnalyzer(classOf[ScatterAnalyzer]);
+    analyzer1.setName("quantity vs price");
+    analyzer1.setConfiguredProperty("Variable1", ajb.getSourceColumnByName("QUANTITYORDERED"));
+    analyzer1.setConfiguredProperty("Variable2", ajb.getSourceColumnByName("TOTALPRICE"));
+    
+    val analyzer2 = ajb.addAnalyzer(classOf[ScatterAnalyzer]);
+    analyzer2.setName("price vs quantity");
+    analyzer2.setConfiguredProperty("Variable1", ajb.getSourceColumnByName("TOTALPRICE"));
+    analyzer2.setConfiguredProperty("Variable2", ajb.getSourceColumnByName("QUANTITYORDERED"));
 
     val job = ajb.toAnalysisJob()
 

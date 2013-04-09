@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.result.AnalyzerResult;
 import org.eobjects.analyzer.result.html.BaseHeadElement;
+import org.eobjects.analyzer.result.html.FlotChartLocator;
 import org.eobjects.analyzer.result.html.HeadElement;
 import org.eobjects.analyzer.result.html.HtmlAnalysisResultWriter;
 import org.eobjects.metamodel.util.Predicate;
@@ -58,10 +59,9 @@ public class HtmlAnalysisResultWriterFactory {
             boolean tabs,
             Predicate<Entry<ComponentJob, AnalyzerResult>> jobInclusionPredicate,
             boolean headers) {
+        
         if (null != flotLibraryLocation) {
-            System.setProperty(
-                    "org.eobjects.analyzer.valuedist.flotLibraryLocation",
-                    flotLibraryLocation);
+            FlotChartLocator.setFlotHome(flotLibraryLocation);
         }
         return new HtmlAnalysisResultWriter(tabs, jobInclusionPredicate,
                 headers) {

@@ -33,7 +33,7 @@ function draw_scatter_chart(chartElement, chartData, retries) {
                                 fillColor: "#000000"
                             }
                         },
-                        legend: { show: showLegend },
+                        legend: {show: showLegend,position:"se"},
                         selection: {
                             mode: "xy"
                         }

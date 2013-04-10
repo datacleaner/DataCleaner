@@ -2,7 +2,7 @@
 <job xmlns="http://eobjects.org/analyzerbeans/job/1.0">
     <job-metadata>
         <job-description>Created with DataCleaner 3.5-SNAPSHOT</job-description>
-        <updated-date>2013-03-28+01:00</updated-date>
+        <updated-date>2013-04-10+02:00</updated-date>
     </job-metadata>
     <source>
         <data-context ref="orderdb"/>
@@ -21,11 +21,10 @@
             <input name="Variable2" ref="col_1"/>
         </analyzer>
         <analyzer>
-            <descriptor ref="Scatter plot"/>
+            <descriptor ref="Density plot"/>
             <properties/>
-            <input name="Group column" ref="col_2"/>
             <input name="Variable1" ref="col_0"/>
-            <input name="Variable2" ref="col_1"/>
+            <input name="Variable2" ref="col_2"/>
         </analyzer>
     </analysis>
 </job>

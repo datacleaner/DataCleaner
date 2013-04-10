@@ -52,6 +52,6 @@ class DensityAnalyzer extends Analyzer[DensityAnalyzerResult] {
   }
 
   override def getResult: DensityAnalyzerResult = {
-    new DensityAnalyzerResult(annotations.toMap, variable1, variable2);
+    new DensityAnalyzerResult(annotations.toMap, variable1, variable2, rowAnnotationFactory);
   }
 }

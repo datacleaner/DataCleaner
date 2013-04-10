@@ -19,7 +19,7 @@ class DensityAnalyzerChartScriptHeadElement(result: DensityAnalyzerResult, eleme
 
   override def toHtml(context: HtmlRenderingContext): String = {
 
-    val annotations = result.getAnnotations
+    val annotations = result.getRowAnnotations
 
     val maxRowsAnnotation = annotations.values.reduce((a, b) => if (a.getRowCount() > b.getRowCount()) a else b)
     val maxRows = maxRowsAnnotation.getRowCount()

@@ -54,6 +54,18 @@
 			<emphasis>Carte</emphasis>
 			service provided by Pentaho Data Integration.
 		</para>
+		
+		<tip>
+			<para>For more information on configuring Carte, we recommend the Pentaho wiki page on the subject:
+			
+			<link xl:href="http://wiki.pentaho.com/display/EAI/Carte+Configuration">http://wiki.pentaho.com/display/EAI/Carte+Configuration</link>
+			
+			</para>
+			
+		</tip>
+		
+		
+		
 		<para>To set up the job in DataCleaner monitor, go to the 'Scheduling'
 			page and click 'Build job'. Select the Pentaho Data Integration
 			transformation option:

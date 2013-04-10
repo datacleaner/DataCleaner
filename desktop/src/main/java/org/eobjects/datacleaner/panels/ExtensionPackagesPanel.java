@@ -24,14 +24,14 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
@@ -82,10 +82,6 @@ public class ExtensionPackagesPanel extends DCPanel {
     private void updateComponents() {
         removeAll();
 
-        final List<ExtensionPackage> extensionPackages = new ArrayList<ExtensionPackage>();
-        extensionPackages.addAll(_userPreferences.getExtensionPackages());
-        extensionPackages.addAll(new ExtensionReader().getInternalExtensions());
-
         final JButton addExtensionButton = new JButton("Add extension package",
                 imageManager.getImageIcon(IconUtils.ACTION_ADD));
         addExtensionButton.addActionListener(new ActionListener() {
@@ -135,17 +131,23 @@ public class ExtensionPackagesPanel extends DCPanel {
         listPanel.setLayout(new VerticalLayout(4));
         listPanel.setBorder(new EmptyBorder(0, 10, 10, 0));
 
-        for (final ExtensionPackage extensionPackage : extensionPackages) {
+        for (final ExtensionPackage extensionPackage : _userPreferences.getExtensionPackages()) {
             final DCPanel extensionPanel = createExtensionPanel(extensionPackage);
             listPanel.add(extensionPanel);
         }
 
-        if (extensionPackages.isEmpty()) {
-            listPanel.add(DCLabel.dark("(none)"));
+        listPanel.add(Box.createVerticalStrut(20));
+
+        for (final ExtensionPackage extensionPackage : new ExtensionReader().getInternalExtensions()) {
+            final DCPanel extensionPanel = createExtensionPanel(extensionPackage);
+            listPanel.add(extensionPanel);
         }
 
+        final JScrollPane scrollArea = WidgetUtils.scrolleable(listPanel);
+        scrollArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         add(toolBar, BorderLayout.NORTH);
-        add(listPanel, BorderLayout.CENTER);
+        add(scrollArea, BorderLayout.CENTER);
 
         updateUI();
     }
@@ -178,7 +180,7 @@ public class ExtensionPackagesPanel extends DCPanel {
             }
 
             final StringBuilder labelBuilder = new StringBuilder();
-            labelBuilder.append("<html><b>");
+            labelBuilder.append("<html><div style='width:300px'><b>");
             labelBuilder.append(extensionPackage.getName());
             labelBuilder.append("</b>");
 
@@ -194,15 +196,17 @@ public class ExtensionPackagesPanel extends DCPanel {
                 labelBuilder.append(version);
             }
 
-            labelBuilder.append("</html>");
+            labelBuilder.append("</div></html>");
 
             extensionLabel = DCLabel.dark(labelBuilder.toString());
             extensionLabel.setIcon(extensionIcon);
         } else {
-            extensionLabel = DCLabel.dark("<html><b>" + extensionPackage.getName()
-                    + "</b><br/>Error loading extension files:<br/>" + Arrays.toString(files) + "</html>");
+            extensionLabel = DCLabel.dark("<html><div style='width:300px'><b>" + extensionPackage.getName()
+                    + "</b><br/>Error loading extension files:<br/>" + Arrays.toString(files) + "</div></html>");
             extensionLabel.setIcon(ICON_ERROR);
         }
+
+        extensionLabel.setFont(WidgetUtils.FONT_SMALL);
 
         final DCPanel extensionPanel = new DCPanel();
         extensionPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
@@ -220,6 +224,9 @@ public class ExtensionPackagesPanel extends DCPanel {
                 }
             });
             WidgetUtils.addToGridBag(removeButton, extensionPanel, 1, 0, GridBagConstraints.EAST);
+        } else {
+            // make extensions that cannot be removed less emphasized
+            extensionLabel.setForeground(WidgetUtils.BG_COLOR_LESS_DARK);
         }
 
         return extensionPanel;

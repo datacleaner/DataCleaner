@@ -15,7 +15,7 @@
 		</abstract>
 	</chapterinfo>
 
-	<section>
+	<section id="monitor_metrics_background">
 		<title>Metrics background</title>
 
 		<para>Data quality metrics are all contained within result files.
@@ -41,7 +41,7 @@
 
 	</section>
 
-	<section>
+	<section id="monitor_metrics_listing_metrics">
 		<title>Getting a list of available metrics</title>
 
 		<para>To get a list of metrics exposed by a particular result, use the
@@ -81,7 +81,7 @@
 
 	</section>
 
-	<section>
+	<section id="monitor_metrics_getting_values">
 		<title>Getting the values of particular metrics</title>
 
 		<para>Using the available metrics we saw before, we can build our own

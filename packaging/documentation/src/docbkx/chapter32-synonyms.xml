@@ -37,7 +37,7 @@
 		</abstract>
 	</chapterinfo>
 	
-	<section>
+	<section id="reference_data_synonym_catalog_text">
 		<title>Text file synonym catalog</title>
 		<para>A text file synonym catalog is the easiest and often also the
 			fastest way to perform synonym replacement. Simply create a text file
@@ -53,7 +53,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="reference_data_synonym_catalog_datastore">
 		<title>Datastore synonym catalog</title>
 		<para>If your synonyms are located in a database or another type of
 			datastore, then you can also create synonym catalogs based on this.

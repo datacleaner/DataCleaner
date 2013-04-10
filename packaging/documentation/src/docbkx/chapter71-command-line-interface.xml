@@ -15,7 +15,7 @@
 		</abstract>
 	</chapterinfo>
 	
-	<section>
+	<section id="cli_executables">
 		<title>Executables</title>
 		<para>Depending on your distribution of DataCleaner, you will have one
 			of these CLI executables included:
@@ -48,7 +48,7 @@
 		</orderedlist>
 	</section>
 
-	<section>
+	<section id="cli_usage_scenarios">
 		<title>Usage scenarios</title>
 		<para>The usage scenarios of DataCleaner's CLI are:</para>
 
@@ -98,7 +98,7 @@
 
 	</section>
 
-	<section>
+	<section id="cli_executing_a_job">
 		<title>Executing an analysis job</title>
 		<para>Here's how to execute an analysis job - we'll use the bundled
 			example job "employees.analysis.xml":
@@ -149,7 +149,7 @@
 			typically using the '&gt;' operator.</para>
 	</section>
 
-	<section>
+	<section id="cli_listing">
 		<title>Listing datastore contents and available components</title>
 		<para>
 			The Command-Line Interface allows for listing of datastore
@@ -336,7 +336,7 @@
 		</programlisting>
 	</section>
 
-	<section>
+	<section id="cli_overriding_configuration_elements">
 		<title>Dynamically overriding configuration elements</title>
 		<para>
 			Since version 2.5 of DataCleaner it is possible to override elements

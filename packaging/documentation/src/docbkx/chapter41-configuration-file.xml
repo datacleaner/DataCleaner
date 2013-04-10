@@ -37,7 +37,7 @@
 		</abstract>
 	</chapterinfo>
 
-	<section>
+	<section id="configuration_file_xml_schema">
 		<title>XML schema</title>
 		<para>The configuration file (conf.xml) is an XML file pertaining to
 			the XML namespace
@@ -54,7 +54,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastores">
 		<title>Datastores</title>
 		<para>Datastores can be configured in the configuration file under
 			the
@@ -63,7 +63,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastore_jdbc">
 		<title>Database (JDBC) connections</title>
 
 		<para>Here are a few examples of common database types.</para>
@@ -123,7 +123,7 @@
 			&#160;&lt;url&gt;jdbc:jtds:sqlserver://hostname/database;instance=SQLEXPRESS;useUnicode=true;characterEncoding=UTF-8&lt;/url&gt; </programlisting>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastore_csv">
 		<title>Comma-Separated Values (CSV) files</title>
 		<para>This is an example of a CSV file datastore</para>
 		<programlisting>
@@ -137,7 +137,7 @@
 			&lt;/csv-datastore&gt; </programlisting>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastore_fixed_width">
 		<title>Fixed width value files</title>
 		<para>Files with fixed width values can be registered in two ways -
 			either with a single fixed-width size for all columns, or with
@@ -169,7 +169,7 @@
 			&lt;/fixed-width-datastore&gt; </programlisting>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastore_excel">
 		<title>Excel spreadsheets</title>
 		<para>This is an example of a Excel spreadsheet datastore</para>
 		<programlisting>
@@ -178,7 +178,7 @@
 			&lt;/excel-datastore&gt; </programlisting>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastore_xml">
 		<title>XML file datastores</title>
 		<para>Defining XML datastores can be done in both a simple
 			(automatically mapped) way, or an advanced (and more performant and
@@ -224,7 +224,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastore_mongodb">
 		<title>MongoDB databases</title>
 		<para>This is an example of a fully specified MongoDB datastore, with
 			an example table structure based on two collections.
@@ -283,7 +283,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="configuration_file_datastore_couchdb">
 		<title>CouchDB databases</title>
 		<para>This is an example of a fully specified CouchDB datastore, with
 			an example table structure based on two CouchDB databases.
@@ -345,13 +345,13 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="configuration_file_reference_data">
 		<title>Reference data</title>
 		<para>Reference data are defined in the configuration file in the
 			element &lt;reference-data-catalog&gt;.</para>
 	</section>
 
-	<section>
+	<section id="configuration_file_task_runner">
 		<title>Task runner</title>
 		<para>The task runner defines how DataCleaner's will engine will
 			execute the tasks of an analysis job. Typically you shouldn't edit
@@ -372,7 +372,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="configuration_file_storage_provider">
 		<title>Storage provider</title>
 		<para>The storage provider is used for storing temporary data used
 			while executing an analysis job. There are two types of storage:

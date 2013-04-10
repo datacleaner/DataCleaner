@@ -15,7 +15,7 @@
 		</abstract>
 	</chapterinfo>
 
-	<section>
+	<section id="extensions_annotated_components">
 		<title>Annotated components</title>
 		<para>The main principle behind extension discovery in DataCleaner is
 			annotated classes. These are the annotations that will work to
@@ -42,7 +42,7 @@
 		</para>
 	</section>
 	
-	<section>
+	<section id="extensions_single_jar_file">
 		<title>Single JAR file</title>
 		<para>The extension must consist of a single JAR file. If you have
 			dependencies other than the libraries provided by the DataCleaner
@@ -67,7 +67,7 @@
 			&lt;/build&gt; </programlisting>
 	</section>
 	
-	<section>
+	<section id="extensions_metadata_xml">
 		<title>Extension metadata XML</title>
 		<para>To improve the experience, you can optionally include metadata about the extension in an XML file, bundled <emphasis>within</emphasis> the JAR file itself.</para>
 		<para>The name of the extension metadata file has to be <emphasis>datacleaner-extension.xml</emphasis> and be placed in the root directory of the JAR file. Here's an example of how the file looks like:</para>
@@ -85,7 +85,7 @@
 		<para>The added value of this metadata is that DataCleaner can expose this information to the user and also use it to manage updates of the the extension etc. The metadata file is however, completely optional.</para>
 	</section>
 
-	<section>
+	<section id="extensions_component_icons">
 		<title>Component icons</title>
 		<para>If you wish to add a custom icon for your components (eg. a
 			transformer or analyzer), you need to place the icon as a PNG image

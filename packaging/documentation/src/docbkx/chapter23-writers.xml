@@ -39,7 +39,7 @@
 		</abstract>
 	</chapterinfo>
 	
-	<section>
+	<section id="writers_create_csv">
 		<title>Create CSV file</title>
 		<para>Writes a data set to an Comma Separated Values file.
 			CSV files
@@ -50,7 +50,7 @@
 			of data into databases.
 		</para>
 	</section>
-	<section>
+	<section id="writers_create_excel">
 		<title>Create Excel spreadsheet</title>
 		<para>Writes a data set to an Excel spreadsheet.
 			An advantage of this
@@ -62,7 +62,7 @@
 			performant.
 		</para>
 	</section>
-	<section>
+	<section id="writers_create_staging">
 		<title>Create staging table</title>
 		<para>Writes a data set to an embedded relational database, which
 			DataCleaner manages. This option is primarily used for staging data
@@ -73,7 +73,7 @@
 			applications (unless exported again).
 		</para>
 	</section>
-	<section>
+	<section id="writers_insert_into_table">
 		<title>Insert into table</title>
 		<para>Using this writer you can insert your data into a table of an
 			existing datastore. If you already have a table layout ready or if

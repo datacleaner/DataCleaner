@@ -261,3 +261,11 @@ pre.programlisting {
 	visibility: hidden;
 	display: none;
 }
+
+#disqus_thread {
+	margin-top: 80px;
+	width: 930px;
+	border-radius: 5px;
+	padding: 5px;
+	border: 2px solid #f5f5f5;
+}

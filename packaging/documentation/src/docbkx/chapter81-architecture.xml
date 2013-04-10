@@ -15,7 +15,7 @@
 		</abstract>
 	</chapterinfo>
 
-	<section>
+	<section id="architecture_data_access">
 		<title>Data access</title>
 
 		<para>In DataCleaner all sources of data are called 'datastores'. This
@@ -64,7 +64,7 @@
 		</para>
 
 	</section>
-	<section>
+	<section id="architecture_processing_framework">
 		<title>Processing framework</title>
 
 		<para>
@@ -123,10 +123,5 @@
 		</para>
 
 	</section>
-
-	<!-- <section> <title>Component framework</title> <para>TODO: Pluggability, 
-		</para> </section> <section> <title>Application integration</title> <para>TODO: 
-		Command-Line Interface</para> <para>TODO: Embedded usage</para> <para>TODO: 
-		AnalyzerBeans API</para> </section> -->
 
 </chapter>

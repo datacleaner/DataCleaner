@@ -62,7 +62,7 @@
 		</orderedlist>
 	</section>
 
-	<section>
+	<section id="developer_issue_tracking">
 		<title>Issue tracking</title>
 		<para>
 			The development of DataCleaner is driven primarily by issues
@@ -80,7 +80,7 @@
 			and their corresponding patches.</para>
 	</section>
 
-	<section>
+	<section id="developer_building_datacleaner">
 		<title>Building DataCleaner</title>
 
 		<para>

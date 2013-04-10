@@ -15,7 +15,7 @@
 		</abstract>
 	</chapterinfo>
 
-	<section>
+	<section id="logging_configuration_file">
 		<title>Logging configuration file</title>
 		<para>Logging in DataCleaner is based on Log4j, an open source logging
 			framework by the Apache foundation. With log4j you can configure
@@ -61,7 +61,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="logging_default_configuration">
 		<title>Default logging configuration</title>
 		<para>Here's a listing of the default logging configuration, in XML
 			format:
@@ -131,7 +131,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="logging_levels">
 		<title>Modifying logging levels</title>
 		<para>These are the logging levels available in DataCleaner and Log4j,
 			order by priority (highest priority first):
@@ -177,7 +177,7 @@
 		</orderedlist>
 	</section>
 
-	<section>
+	<section id="logging_alternative_outputs">
 		<title>Alternative logging outputs</title>
 		<para>Log
 			messages are printed to an output, typically a file or the

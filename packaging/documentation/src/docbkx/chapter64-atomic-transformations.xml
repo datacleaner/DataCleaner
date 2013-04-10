@@ -23,7 +23,7 @@
 		</abstract>
 	</chapterinfo>
 
-	<section>
+	<section id="monitor_atomic_background">
 		<title>What are atomic transformation services?</title>
 
 		<para>DataCleaner jobs normally operate on batches of records, for
@@ -49,7 +49,7 @@
 
 	</section>
 
-	<section>
+	<section id="monitor_atomic_invocation">
 		<title>Invoking atomic transformations</title>
 
 		<para>The contract of the atomic transformation invocation service is

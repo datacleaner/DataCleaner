@@ -15,7 +15,7 @@
 		</abstract>
 	</chapterinfo>
 
-	<section>
+	<section id="pentaho_launch_dc_from_pdi">
 		<title>Launch DataCleaner to profile Pentaho Data Integration steps
 		</title>
 		<para>In Pentaho Data Integration you can launch DataCleaner by
@@ -40,7 +40,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="pentaho_run_pdi_jobs_from_dc_monitor">
 		<title>Run Pentaho Data Integration jobs in DataCleaner monitor
 		</title>
 		<para>
@@ -63,8 +63,6 @@
 			</para>
 			
 		</tip>
-		
-		
 		
 		<para>To set up the job in DataCleaner monitor, go to the 'Scheduling'
 			page and click 'Build job'. Select the Pentaho Data Integration
@@ -90,7 +88,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="pentaho_run_dc_jobs_from_pdi">
 		<title>Run DataCleaner jobs in Pentaho Data Integration</title>
 
 		<para>

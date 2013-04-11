@@ -31,16 +31,24 @@ public class ExtensionReaderTest extends TestCase {
 
     public void testGetInternalExtensions() throws Exception {
         final List<ExtensionPackage> extensions = new ExtensionReader().getInternalExtensions();
-        assertEquals(1, extensions.size());
+        assertTrue(extensions.size() >= 1);
         
-        final ExtensionPackage extensionPackage = extensions.get(0);
-        assertEquals("Test extension", extensionPackage.getName());
-        assertEquals("org.eobjects.foobar", extensionPackage.getScanPackage());
-        assertEquals(false, extensionPackage.isExternal());
-        assertEquals(false, extensionPackage.isLoaded());
+        boolean foundTestExtension= false;
+        for (ExtensionPackage extensionPackage : extensions) {
+            if ("Test extension".equals(extensionPackage.getName())) {
+                
+                foundTestExtension = true;
+                
+                assertEquals("org.eobjects.foobar", extensionPackage.getScanPackage());
+                assertEquals(false, extensionPackage.isExternal());
+                assertEquals(false, extensionPackage.isLoaded());
+                
+                final Map<String, String> additionalProperties = extensionPackage.getAdditionalProperties();
+                assertEquals("{description=This is just a dummy test file for unittesting the extension file reader.}", additionalProperties.toString());
+            }
+        }
+        assertTrue(foundTestExtension);
         
-        final Map<String, String> additionalProperties = extensionPackage.getAdditionalProperties();
-        assertEquals("{description=This is just a dummy test file for unittesting the extension file reader.}", additionalProperties.toString());
     }
 
     public void testAutoDetectPackageName() throws Exception {

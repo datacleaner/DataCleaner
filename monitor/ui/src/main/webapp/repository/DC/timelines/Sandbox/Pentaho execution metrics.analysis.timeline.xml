@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:timeline xmlns="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns2="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns3="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns4="http://eobjects.org/datacleaner/custom-job/1.0" xmlns:ns5="http://eobjects.org/datacleaner/execution-log/1.0">
+<ns2:timeline xmlns="http://eobjects.org/datacleaner/shared/1.0" xmlns:ns2="http://eobjects.org/datacleaner/timeline/1.0" xmlns:ns3="http://eobjects.org/datacleaner/custom-job/1.0" xmlns:ns4="http://eobjects.org/datacleaner/schedule/1.0" xmlns:ns5="http://eobjects.org/datacleaner/execution-log/1.0">
     <ns2:job-name>Sample Pentaho job</ns2:job-name>
     <ns2:metrics>
         <metric>
@@ -9,20 +9,11 @@
             <metric-descriptor-name>Error count</metric-descriptor-name>
         </metric>
         <metric>
-            <metric-display-name>Seconds (A step)</metric-display-name>
             <metric-color>#00008b</metric-color>
             <analyzer-descriptor-name>Pentaho job result</analyzer-descriptor-name>
             <analyzer-name>Sample Pentaho job</analyzer-name>
             <metric-descriptor-name>Seconds</metric-descriptor-name>
             <metric-param-column-name>A</metric-param-column-name>
-        </metric>
-        <metric>
-            <metric-display-name>Seconds (dummy step)</metric-display-name>
-            <metric-color>#0cb01f</metric-color>
-            <analyzer-descriptor-name>Pentaho job result</analyzer-descriptor-name>
-            <analyzer-name>Sample Pentaho job</analyzer-name>
-            <metric-descriptor-name>Seconds</metric-descriptor-name>
-            <metric-param-column-name>dummy</metric-param-column-name>
         </metric>
     </ns2:metrics>
     <ns2:chart-options>

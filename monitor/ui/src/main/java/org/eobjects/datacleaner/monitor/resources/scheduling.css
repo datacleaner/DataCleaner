@@ -245,6 +245,37 @@
 /**
  * Job history and Execution log panels
  */
+.ExecutionStatusPanel {
+	width: 550px;
+	height: 300px;
+	text-align: center;
+}
+
+.ExecutionStatusPanel .HeadingLabel {
+	color: black;
+	font-size: 1.5em;
+	margin-top: 30px;
+}
+
+.ExecutionStatusPanel .ResultAnchor {
+	margin-top: 30px;
+	padding-top: 180px;
+	background-image: url("result-large.png");
+	background-repeat: no-repeat;
+	background-position: top center;
+	font-size: 1.5em;
+	display: block;
+}
+
+.ExecutionStatusPanel .loader {
+	width: 100%;
+	min-width: 128px;
+	background: url("job_loader.gif") no-repeat center center;
+	height: 128px;
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+ 
 .JobHistoryPanel {
 	width: 720px;
 }

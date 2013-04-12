@@ -126,7 +126,7 @@ public class SchedulePanel extends Composite {
             final String token = History.getToken();
             if (("trigger_" + encodedJobName).equals(token)) {
                 History.newItem("");
-                handler.showExecutionPopup(true);
+                handler.showExecutionPopup();
             }
         }
 

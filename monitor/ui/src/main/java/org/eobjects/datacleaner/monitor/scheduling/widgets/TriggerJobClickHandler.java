@@ -25,7 +25,6 @@ import org.eobjects.datacleaner.monitor.scheduling.model.ScheduleDefinition;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.CancelPopupButton;
 import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
-import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,27 +46,28 @@ public class TriggerJobClickHandler implements ClickHandler {
         _schedule = schedule;
     }
 
-    public void showExecutionPopup(final boolean showResultsWhenDone) {
-        final DCPopupPanel popupPanel = new DCPopupPanel("Execute job");
+    public void showExecutionPopup() {
+        final DCPopupPanel popupPanel = new DCPopupPanel("");
+
+        final ExecutionStatusPanel panel = new ExecutionStatusPanel(_service, _tenant, _schedule, popupPanel);
+        
         popupPanel.setAutoHideEnabled(false);
-        popupPanel.setWidget(new LoadingIndicator());
+        popupPanel.setWidget(panel);
         popupPanel.addButton(new CancelPopupButton(popupPanel, "Close"));
         popupPanel.center();
         popupPanel.show();
 
         _service.triggerExecution(_tenant, _schedule.getJob(), new DCAsyncCallback<ExecutionLog>() {
             @Override
-            public void onSuccess(ExecutionLog result) {
-                final ExecutionLogPanel panel = new ExecutionLogPanel(_service, _tenant, result, showResultsWhenDone);
-                popupPanel.setWidget(panel);
-                popupPanel.center();
+            public void onSuccess(final ExecutionLog result) {
+                panel.jobStarted(result);
             }
         });
     }
 
     @Override
     public void onClick(ClickEvent event) {
-        showExecutionPopup(false);
+        showExecutionPopup();
     }
 
 }

@@ -70,7 +70,7 @@ public class JobHistoryPanel extends Composite {
         _callback = new DCAsyncCallback<ExecutionLog>() {
             @Override
             public void onSuccess(ExecutionLog result) {
-                executionLogPanelTarget.setWidget(new ExecutionLogPanel(_service, _tenant, result));
+                executionLogPanelTarget.setWidget(new ExecutionLogPanel(_service, _tenant, result, true));
             }
         };
 

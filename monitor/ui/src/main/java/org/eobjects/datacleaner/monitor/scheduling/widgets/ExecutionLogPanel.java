@@ -25,19 +25,15 @@ import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
 import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
+import org.eobjects.datacleaner.monitor.scheduling.widgets.ExecutionLogPoller.Callback;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.widgets.LoadingIndicator;
-import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
-import org.eobjects.datacleaner.monitor.util.Urls;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -70,8 +66,8 @@ public class ExecutionLogPanel extends Composite {
     @UiField
     Label logOutputLabel;
 
-    @UiField
-    Anchor resultAnchor;
+    @UiField(provided = true)
+    ResultAnchor resultAnchor;
 
     @UiField
     Label triggeredByLabel;
@@ -79,27 +75,32 @@ public class ExecutionLogPanel extends Composite {
     @UiField(provided = true)
     LoadingIndicator loadingIndicator;
 
-    private boolean _showResultsWhenDone;
-    
-    public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog) {
-        this(service, tenant, executionLog, false);
-    }
-
-    public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog, boolean showResultsWhenDone) {
+    public ExecutionLogPanel(SchedulingServiceAsync service, TenantIdentifier tenant, ExecutionLog executionLog,
+            boolean pollForUpdates) {
         super();
 
         _service = service;
         _tenant = tenant;
-        _showResultsWhenDone = showResultsWhenDone;
-        
+
         loadingIndicator = new LoadingIndicator();
+        resultAnchor = new ResultAnchor(tenant);
 
         initWidget(uiBinder.createAndBindUi(this));
 
         updateContent(executionLog);
+
+        if (pollForUpdates) {
+            final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, new Callback() {
+                @Override
+                public void updateExecutionLog(ExecutionLog executionLog) {
+                    updateContent(executionLog);
+                }
+            });
+            poller.start(executionLog);
+        }
     }
 
-    private void updateContent(final ExecutionLog executionLog) {
+    public void updateContent(final ExecutionLog executionLog) {
         final ExecutionStatus executionStatus;
         if (executionLog == null) {
             executionStatus = ExecutionStatus.UNKNOWN;
@@ -142,49 +143,18 @@ public class ExecutionLogPanel extends Composite {
             triggeredByLabel.setText(executionLog.getTriggeredBy());
 
             logOutputLabel.setText(executionLog.getLogOutput());
-
-            final String resultId = executionLog.getResultId();
-            final String resultFilename = resultId + ".analysis.result.dat";
-            final String url = Urls.createRelativeUrl("repository/" + _tenant.getId() + "/results/" + resultFilename);
-            resultAnchor.setHref(url);
-            resultAnchor.setTarget("_blank");
-            resultAnchor.setText(resultId);
+            
+            resultAnchor.setResult(executionLog);
         }
 
         if (executionStatus == ExecutionStatus.SUCCESS) {
             resultAnchor.setVisible(true);
-            
-            GWT.log("SUCCESS - show results: " + _showResultsWhenDone);
-            
-            if (_showResultsWhenDone) {
-                // show result in a popup window.
-                final String url = resultAnchor.getHref();
-                Window.open(url, "_blank", "location=no,width=770,height=400,toolbar=no,menubar=no");
-                GWT.log("Opened url in popup: " + url);
-            }
         } else {
             resultAnchor.setVisible(false);
         }
 
         GWT.log("Execution status: " + executionStatus);
-        if (executionLog != null && !executionLog.isFinished()) {
-            new Timer() {
-                @Override
-                public void run() {
-                    _service.getExecution(_tenant, executionLog, new DCAsyncCallback<ExecutionLog>() {
-                        @Override
-                        public void onSuccess(ExecutionLog result) {
-                            updateContent(result);
-                        }
-
-                        public void onFailure(Throwable e) {
-                            GWT.log("Failed to get execution log, silently ignoring...", e);
-                            updateContent(executionLog); // retry with previous log
-                        };
-                    });
-                }
-            }.schedule(1000);
-        } else {
+        if (executionLog != null && executionLog.isFinished()) {
             GWT.log("Hiding loading indicator. Execution status: " + executionStatus);
             loadingIndicator.setVisible(false);
         }

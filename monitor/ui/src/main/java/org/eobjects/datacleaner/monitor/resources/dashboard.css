@@ -134,13 +134,29 @@
 	text-align: center;
 }
 
+.TimelineChartContainer {
+	position: relative;
+}
+
 .TimelineChart {
 	clear: both;
 	float: left;
 	text-align: center;
 }
 
-.LegendPanel {
+.TimelineChartContainer .ZoomOutButton {
+    cursor: pointer;
+    background-color:#333;
+    color:white;
+    padding:3px;
+    font-size:11px;
+    position:absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 3px;
+}
+
+.TimelinePanel .LegendPanel {
 	float: right;
 	margin-top: 10px;
 	width: 170px;

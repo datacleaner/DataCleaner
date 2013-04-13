@@ -30,17 +30,22 @@ import org.eobjects.datacleaner.monitor.dashboard.util.ColorProvider;
 import org.eobjects.datacleaner.monitor.shared.model.MetricIdentifier;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.googlecode.gflot.client.DataPoint;
 import com.googlecode.gflot.client.PlotModel;
+import com.googlecode.gflot.client.PlotSelectionArea;
 import com.googlecode.gflot.client.Series;
 import com.googlecode.gflot.client.SeriesHandler;
 import com.googlecode.gflot.client.SimplePlot;
@@ -48,7 +53,9 @@ import com.googlecode.gflot.client.event.PlotClickListener;
 import com.googlecode.gflot.client.event.PlotHoverListener;
 import com.googlecode.gflot.client.event.PlotItem;
 import com.googlecode.gflot.client.event.PlotPosition;
+import com.googlecode.gflot.client.event.PlotSelectedListener;
 import com.googlecode.gflot.client.jsni.Plot;
+import com.googlecode.gflot.client.options.AbstractAxisOptions;
 import com.googlecode.gflot.client.options.AbstractAxisOptions.TransformAxis;
 import com.googlecode.gflot.client.options.AxisOptions;
 import com.googlecode.gflot.client.options.GlobalSeriesOptions;
@@ -57,6 +64,9 @@ import com.googlecode.gflot.client.options.LegendOptions;
 import com.googlecode.gflot.client.options.LineSeriesOptions;
 import com.googlecode.gflot.client.options.PlotOptions;
 import com.googlecode.gflot.client.options.PointsSeriesOptions;
+import com.googlecode.gflot.client.options.Range;
+import com.googlecode.gflot.client.options.SelectionOptions;
+import com.googlecode.gflot.client.options.SelectionOptions.SelectionMode;
 import com.googlecode.gflot.client.options.TimeSeriesAxisOptions;
 
 /**
@@ -72,6 +82,14 @@ public class TimelineDesigner {
      */
     public static final int WIDTH = 540;
 
+    /**
+     * UI Binder
+     */
+    private static Binder _binder = GWT.create(Binder.class);
+
+    @UiField
+    HTMLPanel container;
+
     private final TimelineDefinition _timelineDefinition;
     private final TimelineData _timelineData;
     private final TimelinePanel _timelinePanel;
@@ -86,8 +104,8 @@ public class TimelineDesigner {
     interface Binder extends UiBinder<Widget, TimelineDesigner> {
     }
 
-    public TimelineDesigner(TimelineDefinition timelineDefinition, TimelineData timelineData, TimelinePanel timelinePanel,
-            boolean isDashboardEditor) {
+    public TimelineDesigner(TimelineDefinition timelineDefinition, TimelineData timelineData,
+            TimelinePanel timelinePanel, boolean isDashboardEditor) {
         _timelineDefinition = timelineDefinition;
         _timelineData = timelineData;
         _timelinePanel = timelinePanel;
@@ -95,14 +113,6 @@ public class TimelineDesigner {
         _popup = new PopupPanel();
         _popup.setStyleName("timeline_popup");
     }
-
-    /**
-     * UI Binder
-     */
-    private static Binder _binder = GWT.create(Binder.class);
-
-    @UiField(provided = true)
-    SimplePlot plot;
 
     /**
      * legend panel
@@ -131,8 +141,13 @@ public class TimelineDesigner {
         final Integer minimumValue = chartOptions.getVerticalAxisOption().getMinimumValue();
         final boolean logarithmicScale = chartOptions.getVerticalAxisOption().isLogarithmicScale();
 
-        PlotModel model = new PlotModel();
-        PlotOptions plotOptions = PlotOptions.create();
+        final PlotModel model = new PlotModel();
+        final PlotOptions plotOptions = PlotOptions.create();
+
+        // use selection plugin to allow zooming
+        final SelectionOptions selectionOptions = SelectionOptions.create();
+        selectionOptions.setMode(SelectionMode.XY);
+        plotOptions.setSelectionOptions(selectionOptions);
 
         plotOptions.setGlobalSeriesOptions(GlobalSeriesOptions.create()
                 .setLineSeriesOptions(LineSeriesOptions.create().setShow(true).setLineWidth(2))
@@ -177,19 +192,83 @@ public class TimelineDesigner {
         plotOptions.addYAxisOptions(yAxisOptions);
 
         legendPanel = new LegendPanel();
-        plot = new SimplePlot(model, plotOptions);
-        plot.setHeight(height);
-        plot.setWidth(WIDTH);
-        plot.addStyleName("TimelineChart");
+
         final List<MetricIdentifier> metrics = _timelineDefinition.getMetrics();
         for (int index = 0; index < metrics.size(); index++) {
             createTimeLineAndLegendItems(colorProvider, model, metrics, index);
         }
 
-        addPlotClickListener();
-        addHoverListener();
+        final SimplePlot plot = createPlot(model, plotOptions, height);
 
-        return _binder.createAndBindUi(this);
+        final Widget widget = _binder.createAndBindUi(this);
+
+        container.setWidth(WIDTH + "px");
+        container.clear();
+        container.add(plot);
+
+        return widget;
+    }
+
+    private SimplePlot createPlot(PlotModel model, PlotOptions plotOptions, Integer height) {
+        final SimplePlot plot = new SimplePlot(model, plotOptions);
+        plot.setWidth(WIDTH);
+        plot.setStyleName("TimelineChart");
+
+        addPlotClickListener(plot);
+        addHoverListener(plot);
+        addSelectedListener(plot, plotOptions, height);
+        return plot;
+    }
+
+    private void addSelectedListener(SimplePlot plot, final PlotOptions plotOptions, final Integer height) {
+        final PlotModel model = plot.getModel();
+        // use selections to zoom
+        plot.addSelectedListener(new PlotSelectedListener() {
+            @Override
+            public void onPlotSelected(PlotSelectionArea area) {
+                GWT.log("Got a selection: " + area);
+
+                final Range yRange = area.getY();
+                final AbstractAxisOptions<?> yAxisOptions = plotOptions.getYAxisOptions(1);
+                yAxisOptions.setMinimum(yRange.getFrom());
+                yAxisOptions.setMaximum(yRange.getTo());
+
+                final Range xRange = area.getX();
+                final AbstractAxisOptions<?> xAxisOptions = plotOptions.getXAxisOptions(1);
+                xAxisOptions.setMinimum(xRange.getFrom());
+                xAxisOptions.setMaximum(xRange.getTo());
+
+                final SimplePlot newPlot = createPlot(model, plotOptions, height);
+                container.clear();
+                container.add(newPlot);
+                container.add(createZoomOutButton(model, plotOptions, height));
+                _activePlotItem = null;
+            }
+        });
+    }
+
+    protected Widget createZoomOutButton(final PlotModel model, final PlotOptions plotOptions, final Integer height) {
+        final Anchor button = new Anchor("Zoom out");
+        button.setStyleName("ZoomOutButton");
+        button.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                final AbstractAxisOptions<?> yAxisOptions = plotOptions.getYAxisOptions(1);
+                yAxisOptions.clearMinimum();
+                yAxisOptions.clearMaximum();
+
+                final AbstractAxisOptions<?> xAxisOptions = plotOptions.getXAxisOptions(1);
+                xAxisOptions.clearMinimum();
+                xAxisOptions.clearMaximum();
+
+                final SimplePlot newPlot = createPlot(model, plotOptions, height);
+                container.clear();
+                container.add(newPlot);
+                _activePlotItem = null;
+            }
+        });
+
+        return button;
     }
 
     private void transformToLogarithmicScale(AxisOptions axisOptions) {
@@ -213,8 +292,8 @@ public class TimelineDesigner {
         });
     }
 
-    private void createTimeLineAndLegendItems(ColorProvider colorProvider, PlotModel model, final List<MetricIdentifier> metrics,
-            int index) {
+    private void createTimeLineAndLegendItems(ColorProvider colorProvider, PlotModel model,
+            final List<MetricIdentifier> metrics, int index) {
         String color = metrics.get(index).getMetricColor();
         color = (color == "" || color == null) ? colorProvider.getNextColor() : color;
         addLegendItem(legendPanel, metrics, index, color);
@@ -237,7 +316,7 @@ public class TimelineDesigner {
         }
     }
 
-    private void addPlotClickListener() {
+    private void addPlotClickListener(SimplePlot plot) {
         plot.addClickListener(new PlotClickListener() {
             @Override
             public void onPlotClick(Plot plot, PlotPosition position, PlotItem item) {
@@ -257,7 +336,7 @@ public class TimelineDesigner {
         }, false);
     }
 
-    private void addHoverListener() {
+    private void addHoverListener(SimplePlot plot) {
         plot.addHoverListener(new PlotHoverListener() {
             @Override
             public void onPlotHover(Plot plot, PlotPosition position, PlotItem item) {
@@ -289,7 +368,8 @@ public class TimelineDesigner {
         }, MouseOutEvent.getType());
     }
 
-    private void addLegendItem(final LegendPanel legendPanel, final List<MetricIdentifier> metrics, int index, String color) {
+    private void addLegendItem(final LegendPanel legendPanel, final List<MetricIdentifier> metrics, int index,
+            String color) {
         Legend legend = new Legend(metrics.get(index).getDisplayName(), color);
         legendPanel.addLegend(legend, new LegendClickHandler(metrics.get(index).getDisplayName(), metrics.get(index),
                 _timelinePanel, legend, _isDashboardEditor));

@@ -36,8 +36,10 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
+import org.eobjects.analyzer.result.CompositeValueFrequency;
 import org.eobjects.analyzer.result.GroupedValueCountingAnalyzerResult;
-import org.eobjects.analyzer.result.ValueCount;
+import org.eobjects.analyzer.result.SingleValueFrequency;
+import org.eobjects.analyzer.result.ValueFrequency;
 import org.eobjects.analyzer.result.ValueCountingAnalyzerResult;
 import org.eobjects.analyzer.result.renderer.AbstractRenderer;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
@@ -110,7 +112,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
 
             final String label = "Value distribution for group '" + LabelUtils.getLabel(res.getName()) + "'";
 
-            final ValueCount distinctValue = getDistinctValueCount(res);
+            final ValueFrequency distinctValue = getDistinctValueCount(res);
             final DCCollapsiblePanel collapsiblePanel;
             if (distinctValue == null) {
                 collapsiblePanel = new DCCollapsiblePanel(label, label, false, componentRef);
@@ -131,12 +133,12 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
      * @param res
      * @return
      */
-    private ValueCount getDistinctValueCount(ValueCountingAnalyzerResult res) {
+    private ValueFrequency getDistinctValueCount(ValueCountingAnalyzerResult res) {
         int distinctValueCounter = 0;
-        ValueCount valueCount = null;
+        ValueFrequency valueCount = null;
         if (res.getNullCount() > 0) {
             distinctValueCounter++;
-            valueCount = new ValueCount(LabelUtils.NULL_LABEL, res.getNullCount());
+            valueCount = new SingleValueFrequency(LabelUtils.NULL_LABEL, res.getNullCount());
         }
         int uniqueCount = res.getUniqueCount();
         if (uniqueCount > 0) {
@@ -150,7 +152,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
             if (!uniqueValues.isEmpty()) {
                 label = uniqueValues.iterator().next();
             }
-            valueCount = new ValueCount(label, 1);
+            valueCount = new CompositeValueFrequency(label, 1);
         }
 
         if (distinctValueCounter > 1) {
@@ -158,7 +160,7 @@ public class ValueDistributionResultSwingRenderer extends AbstractRenderer<Value
             return null;
         }
 
-        final Collection<ValueCount> valueCounts = res.getValueCounts();
+        final Collection<ValueFrequency> valueCounts = res.getValueCounts();
         if (valueCounts.size() > 0) {
             distinctValueCounter += valueCounts.size();
             valueCount = valueCounts.iterator().next();

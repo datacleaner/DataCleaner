@@ -133,12 +133,7 @@
 				</rows>
 			</table>
 		</pojo-datastore>
-	<salesforce-datastore description="Connects to the web services of Salesforce.com" name="Salesforce.com">
-<username>f.bebseler@21demo.com</username>
-<password>Dertig=30</password>
-<security-token>QalEQQdpWymJCmDqkJ2wsz7mU</security-token>
-</salesforce-datastore>
-</datastore-catalog>
+	</datastore-catalog>
 
 	<reference-data-catalog>
 		<dictionaries>

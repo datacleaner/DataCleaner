@@ -27,6 +27,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eobjects.analyzer.util.StringUtils;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.job.JobContext;
@@ -103,10 +104,16 @@ public class LaunchResourcesController {
             final HttpServletResponse response) throws Exception {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final JobContext job = tenantContext.getJob(jobName);
-
-        if (!(job instanceof DataCleanerJobContext)) {
-            throw new UnsupportedOperationException("Job not compatible with operation: " + job);
+        
+        final DataCleanerJobContext jobContext;
+        if (StringUtils.isNullOrEmpty(jobName)) { 
+            jobContext = null;
+        } else {
+            final JobContext job = tenantContext.getJob(jobName);
+            if (!(job instanceof DataCleanerJobContext)) {
+                throw new UnsupportedOperationException("Job not compatible with operation: " + job);
+            }
+            jobContext = (DataCleanerJobContext) job;
         }
 
         final RepositoryFile confFile = tenantContext.getConfigurationFile();
@@ -120,7 +127,7 @@ public class LaunchResourcesController {
             public void run(InputStream in) throws Exception {
                 // intercept the input stream to decorate it with client-side
                 // config elements.
-                _configurationInterceptor.intercept(tenant, (DataCleanerJobContext) job, datastoreName, in, out);
+                _configurationInterceptor.intercept(tenant, jobContext, datastoreName, in, out);
             }
         });
     }

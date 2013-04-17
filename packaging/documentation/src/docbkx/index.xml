@@ -61,7 +61,7 @@
 		<partinfo>
 			<title>DataCleaner monitor repository</title>
 		</partinfo>
-		<xi:include href="chapter51-repository-location.xml" />
+		<xi:include href="chapter51-repository-configuration.xml" />
 		<xi:include href="chapter52-repository-layout.xml" />
 	</part>
 	

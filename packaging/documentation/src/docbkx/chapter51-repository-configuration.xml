@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.oasis-open.org/docbook/4.5" xmlns:xl="http://www.w3.org/1999/xlink"
+	xsi:schemaLocation="http://www.oasis-open.org/docbook/4.5 http://www.oasis-open.org/docbook/xsd/4.5/docbook.xsd">
+
+	<title>Repository configuration</title>
+	<chapterinfo>
+		<abstract>
+			<para>In this chapter we will explain configuration of the repository
+				of the DataCleaner monitor web application. By default the
+				repository and other artifacts are bundled with the application, but
+				for production deployments this configuration may not be sufficient.
+				Learn about how to deploy a repository that is located independently
+				of the web application code.
+			</para>
+		</abstract>
+	</chapterinfo>
+
+	<section id="repository_location_configuration">
+		<title>Configure repository location</title>
+		<para>
+			By default DataCleaner monitor web application uses a file-based
+			repository location which is relative to the deployed web archive.
+			This makes it easy to deploy and test-drive, but it might not be the
+			best production deployment choice.
+		</para>
+		<para>
+			To change the repository location, find the file
+			<emphasis>WEB-INF/classes/context/repository-context.xml</emphasis>
+			within the deployed web archive folder. Find the &lt;bean&gt;
+			element
+			which initially looks like this:
+		</para>
+		<programlisting lang="xml">
+			&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="repository"/&gt;
+			&lt;/bean&gt; </programlisting>
+		<para>You can modify the value attribute of the inner
+			&lt;constructor-arg&gt; element to point to a directory location of
+			choice. The location can be absolute or relative to the web archive
+			folder. For instance you might want to use a configuration like this
+			in a unix environment:
+		</para>
+		<programlisting lang="xml">
+			&lt;bean&#160;name="repository"&#160;class="org.eobjects.datacleaner.repository.file.FileRepository"&gt;
+			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/repository"/&gt;
+			&lt;/bean&gt; </programlisting>
+
+		<tip>
+			<para>
+				The
+				<emphasis>enterprise edition</emphasis>
+				of DataCleaner also includes a database backed repository - this
+				makes larger deployments both faster, easier to administer and
+				scalable to multiple machines.
+			</para>
+		</tip>
+	</section>
+
+	<section id="signed_jar_files_folder">
+		<title>Providing signed Java WebStart client files</title>
+		<para>
+			The DataCleaner monitor web application features an option to
+			let the user launch the desktop application for editing and testing
+			jobs deployed on the monitor server. To enable this special mode of
+			interoperability, signed JAR files needs to be provided, since
+			otherwise the desktop application will not be allowed to launch by
+			most Java runtime configurations.
+		</para>
+		<para>
+			Signed JAR files can be
+			<link xl:href="http://datacleaner.org/downloads">downloaded separately</link>
+			and should be extracted into a directory of choice on the server.
+			Once extracted you need to configure the application with the
+			directory path. Find the file
+			<emphasis>WEB-INF/classes/context/repository-context.xml</emphasis>
+			within the deployed web archive folder. Remove or comment the
+			&lt;bean&gt;
+			element which initially looks like this:
+		</para>
+		<programlisting lang="xml">
+			&lt;bean&#160;name="launchArtifactProvider"&#160;lazy-init="true"
+			&#160;&#160;&#160;class="org.eobjects.datacleaner.monitor.server.DevModeLaunchArtifactProvider"/&gt; </programlisting>
+		<para>It needs to be replaced with a new &lt;bean&gt; element which
+			will look like this:
+		</para>
+		<programlisting lang="xml">
+			&lt;bean&#160;name="launchArtifactProvider"&#160;
+			&#160;&#160;&#160;&#160;lazy-init="true"&#160;class="org.eobjects.datacleaner.monitor.server.FileFolderLaunchArtifactProvider"&gt;
+			&#160;&#160;&lt;constructor-arg&#160;type="java.io.File"&#160;value="/var/datacleaner/signed_jars"/&gt;
+			&lt;/bean&gt;</programlisting>
+	</section>
+
+	<section id="cluster_configuration">
+		<title>Cluster configuration (distributed execution)</title>
+
+		<para>DataCleaner monitor allows execution of jobs through a cluster
+			of machines - essentially to increase fault tolerance and performance
+			by adding more machines instead of having to upgrade the hardware of
+			a single machine.
+		</para>
+
+		<para>When executing distributed jobs, DataCleaner will initially
+			estimate how many records needs to be processed. Depending on this
+			number, a number of "chunks" of records will be assigned to be
+			executed on different slave execution nodes. After execution, the
+			master node will collect the slave node results and combine them into
+			a single result report.
+		</para>
+
+		<para>
+			The configuration of DataCleaner's cluster is handled through the
+			file
+			<emphasis>WEB-INF/classes/context/cluster-context.xml</emphasis>
+			within the deployed web archive folder. By default it defines this
+			&lt;bean&gt; element:
+		</para>
+
+		<programlisting lang="xml">
+			&lt;bean&#160;id="clusterManagerFactory"&#160;class="org.eobjects.datacleaner.monitor.cluster.HttpClusterManagerFactory"&gt;
+			&#160;&#160;&lt;property&#160;name="username"&#160;value="admin"&#160;/&gt;
+			&#160;&#160;&lt;property&#160;name="password"&#160;value="admin"&#160;/&gt;
+			&#160;&#160;&lt;property&#160;name="slaveServerUrls"&gt;
+			&#160;&#160;&#160;&#160;&lt;list&gt;
+			&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;http://localhost:8080/DataCleaner-monitor&lt;/value&gt;
+			&#160;&#160;&#160;&#160;&#160;&#160;&lt;value&gt;http://localhost:9090/DataCleaner-monitor&lt;/value&gt;
+			&#160;&#160;&#160;&#160;&lt;/list&gt;
+			&#160;&#160;&lt;/property&gt;
+			&lt;/bean&gt; </programlisting>
+
+		<para>The above definition states that the cluster has two slave
+			execution nodes. As an example, these are using 'localhost'
+			references, but you can also use other hostnames.
+		</para>
+
+		<para>
+			To enable clustered execution of a job, you need to open it's
+			<emphasis>.schedule.xml</emphasis>
+			file in the 'jobs' folder of the repository. In this XML file you
+			will find a &lt;distributed-execution&gt; element which determines if
+			local or distributed execution will be executed. For example, the
+			file 'Customer completeness.schedule.xml' starts like this:
+		</para>
+
+		<programlisting lang="xml">
+			&lt;?xml version="1.0"
+			encoding="UTF-8" standalone="yes"?&gt;
+			&lt;schedule
+			xmlns="http://eobjects.org/datacleaner/schedule/1.0"
+			&#160;&#160;xmlns:ns2="http://eobjects.org/datacleaner/shared/1.0"
+			xmlns:ns3="http://eobjects.org/datacleaner/timeline/1.0"
+			&#160;&#160;xmlns:ns4="http://eobjects.org/datacleaner/execution-log/1.0"&gt;
+			&#160;&#160;&lt;cron-expression&gt;@daily&lt;/cron-expression&gt;
+			&#160;&#160;&lt;distributed-execution&gt;false&lt;/distributed-execution&gt;
+			&#160;&#160;&lt;alerts&gt;
+			&#160;&#160;&#160;&#160;...
+			&#160;&#160;&lt;/alerts&gt;
+			&lt;/schedule&gt; </programlisting>
+
+		<para>Changing this value to 'true' would trigger DataCleaner monitor
+			to use the cluster configuration when executing the job.
+		</para>
+
+		<tip>
+			<para>
+				The
+				<emphasis>enterprise edition</emphasis>
+				of DataCleaner also include other mechanisms of communication
+				between cluster nodes. One short-coming of the above approach is
+				that it is not tolerant to network issues or crashing nodes.
+				Consider DataCleaner enterprise edition for such deployments, since
+				it supports elastic clusters without having the master to be aware
+				of each single node.
+			</para>
+		</tip>
+	</section>
+</chapter>

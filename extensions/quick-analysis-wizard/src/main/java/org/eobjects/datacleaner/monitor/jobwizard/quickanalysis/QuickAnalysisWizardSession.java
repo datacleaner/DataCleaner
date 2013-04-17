@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.jobwizard.quickanalysis;
 import java.util.List;
 
 import org.eobjects.analyzer.beans.stringpattern.PatternFinderAnalyzer;
+import org.eobjects.analyzer.beans.valuedist.ValueDistributionAnalyzer;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.analyzer.job.builder.AnalyzerJobBuilder;
@@ -47,7 +48,7 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
         super(context);
         _analysisJobBuilder = new AnalysisJobBuilder(context.getTenantContext().getConfiguration());
         _analysisJobBuilder.setDatastore(context.getSourceDatastore());
-        _pageCount = 4;
+        _pageCount = 5;
     }
 
     @Override
@@ -57,7 +58,7 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
             protected WizardPageController nextPageController(final Table selectedTable) {
                 final boolean hasStringColumns = selectedTable.getLiteralColumns().length > 0;
                 if (!hasStringColumns) {
-                    _pageCount = 3;
+                    _pageCount = 4;
                 }
 
                 final JobNameWizardPage lastPage = new JobNameWizardPage(getWizardContext(), _pageCount - 1,
@@ -83,23 +84,38 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
                         final QuickAnalysisStrategy quickAnalysisStrategy = new QuickAnalysisStrategy(5, false, false);
                         quickAnalysisStrategy.configureAnalysisJobBuilder(_analysisJobBuilder);
 
-                        if (!hasStringColumns) {
-                            return lastPage;
-                        }
-                        return new SelectPatternFinderColumnsPage(2, selectedTable) {
+                        return new SelectValueDistributionColumnsPage(2, selectedTable) {
                             @Override
                             protected WizardPageController nextPageController(List<Column> selectedColumns) {
                                 for (Column selectedColumn : selectedColumns) {
                                     _analysisJobBuilder.addSourceColumn(selectedColumn);
                                     final InputColumn<?> sourceColumn = _analysisJobBuilder
                                             .getSourceColumnByName(selectedColumn.getName());
-                                    final AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinder = _analysisJobBuilder
-                                            .addAnalyzer(PatternFinderAnalyzer.class);
-                                    patternFinder.setName("Patterns of " + selectedColumn.getName());
-                                    patternFinder.addInputColumn(sourceColumn);
+                                    final AnalyzerJobBuilder<ValueDistributionAnalyzer> valueDistribution = _analysisJobBuilder
+                                            .addAnalyzer(ValueDistributionAnalyzer.class);
+                                    valueDistribution.setName("Value distribution of " + selectedColumn.getName());
+                                    valueDistribution.addInputColumn(sourceColumn);
                                 }
+                                
+                                if (!hasStringColumns) {
+                                    return lastPage;
+                                }
+                                return new SelectPatternFinderColumnsPage(3, selectedTable) {
+                                    @Override
+                                    protected WizardPageController nextPageController(List<Column> selectedColumns) {
+                                        for (Column selectedColumn : selectedColumns) {
+                                            _analysisJobBuilder.addSourceColumn(selectedColumn);
+                                            final InputColumn<?> sourceColumn = _analysisJobBuilder
+                                                    .getSourceColumnByName(selectedColumn.getName());
+                                            final AnalyzerJobBuilder<PatternFinderAnalyzer> patternFinder = _analysisJobBuilder
+                                                    .addAnalyzer(PatternFinderAnalyzer.class);
+                                            patternFinder.setName("Patterns of " + selectedColumn.getName());
+                                            patternFinder.addInputColumn(sourceColumn);
+                                        }
 
-                                return lastPage;
+                                        return lastPage;
+                                    }
+                                };
                             }
                         };
                     }

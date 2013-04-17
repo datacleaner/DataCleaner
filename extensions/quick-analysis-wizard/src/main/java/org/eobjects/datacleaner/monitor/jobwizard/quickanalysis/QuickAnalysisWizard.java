@@ -37,7 +37,7 @@ public class QuickAnalysisWizard extends DataCleanerJobWizard {
 
     @Override
     public int getExpectedPageCount() {
-        return 4;
+        return 5;
     }
 
     @Override

@@ -152,7 +152,7 @@ public class AboutDialog extends AbstractDialog {
 		});
 
 		final JComboBox librariesComboBox = new JComboBox();
-		final JButton visitProjectButton = WidgetFactory.createSmallButton("images/actions/website.png");
+		final JButton visitProjectButton = WidgetFactory.createSmallButton(IconUtils.WEBSITE);
 
 		librariesComboBox.setRenderer(new DCListCellRenderer() {
 

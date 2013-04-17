@@ -205,4 +205,12 @@ public final class ExtensionPackage implements Serializable, HasName {
     public String getVersion() {
         return _additionalProperties.get("version");
     }
+
+    public String getUrl() {
+        return _additionalProperties.get("url");
+    }
+    
+    public String getAuthor() {
+        return _additionalProperties.get("author");
+    }
 }

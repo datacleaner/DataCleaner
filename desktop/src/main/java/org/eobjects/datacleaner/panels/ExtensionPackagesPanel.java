@@ -180,9 +180,15 @@ public class ExtensionPackagesPanel extends DCPanel {
             }
 
             final StringBuilder labelBuilder = new StringBuilder();
-            labelBuilder.append("<html><div style='width:300px'><b>");
+            labelBuilder.append("<html><div style='width:280px'><b>");
             labelBuilder.append(extensionPackage.getName());
             labelBuilder.append("</b>");
+
+            final String author = extensionPackage.getAuthor();
+            if (author != null) {
+                labelBuilder.append("<br/>By ");
+                labelBuilder.append(author);
+            }
 
             final String description = extensionPackage.getDescription();
             if (description != null) {
@@ -210,7 +216,19 @@ public class ExtensionPackagesPanel extends DCPanel {
 
         final DCPanel extensionPanel = new DCPanel();
         extensionPanel.setBorder(WidgetUtils.BORDER_LIST_ITEM);
-        WidgetUtils.addToGridBag(extensionLabel, extensionPanel, 0, 0, 1.0, 0.0);
+
+        int col = 0;
+
+        WidgetUtils.addToGridBag(extensionLabel, extensionPanel, col, 0, 1.0, 0.0);
+        col++;
+
+        final String url = extensionPackage.getUrl();
+        if (url != null) {
+            final JButton urlButton = WidgetFactory.createSmallButton(IconUtils.WEBSITE);
+            urlButton.addActionListener(new OpenBrowserAction(url));
+            WidgetUtils.addToGridBag(urlButton, extensionPanel, col, 0, GridBagConstraints.EAST);
+            col++;
+        }
 
         if (extensionPackage.isExternal()) {
             final JButton removeButton = WidgetFactory.createSmallButton(IconUtils.ACTION_REMOVE);
@@ -223,7 +241,7 @@ public class ExtensionPackagesPanel extends DCPanel {
                     extensionLabel.setText("*** Removal requires application restart ***");
                 }
             });
-            WidgetUtils.addToGridBag(removeButton, extensionPanel, 1, 0, GridBagConstraints.EAST);
+            WidgetUtils.addToGridBag(removeButton, extensionPanel, col, 0, GridBagConstraints.EAST);
         } else {
             // make extensions that cannot be removed less emphasized
             extensionLabel.setForeground(WidgetUtils.BG_COLOR_LESS_DARK);

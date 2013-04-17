@@ -72,6 +72,8 @@ public final class IconUtils {
     public static final String ACTION_ADD = "images/actions/add.png";
     public static final String ACTION_REMOVE = "images/actions/remove.png";
 
+    public static final String WEBSITE = "images/actions/website.png";
+
     public static final String STATUS_INFO = "images/status/info.png";
     public static final String STATUS_WARNING = "images/status/warning.png";
     public static final String STATUS_ERROR = "images/status/error.png";

@@ -157,6 +157,16 @@ public class ExtensionReader {
         if (!StringUtils.isNullOrEmpty(icon)) {
             extensionPackage.getAdditionalProperties().put("icon", icon);
         }
+        
+        final String url = HttpXmlUtils.getChildNodeText(documentElement, "url");
+        if (!StringUtils.isNullOrEmpty(url)) {
+            extensionPackage.getAdditionalProperties().put("url", url);
+        }
+        
+        final String author = HttpXmlUtils.getChildNodeText(documentElement, "author");
+        if (!StringUtils.isNullOrEmpty(url)) {
+            extensionPackage.getAdditionalProperties().put("author", author);
+        }
 
         return extensionPackage;
     }

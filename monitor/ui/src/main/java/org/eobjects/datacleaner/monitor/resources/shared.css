@@ -253,7 +253,7 @@ div.center {
 	margin: 10px;
 	display: block;
 	background-repeat: no-repeat;
-	padding-left: 22px;
+	padding-left: 28px;
 	line-height: 22px;
 }
 .WizardFinishedPanel .gwt-Anchor.QueryDatastore {
@@ -264,6 +264,9 @@ div.center {
 }
 .WizardFinishedPanel .gwt-Anchor.TriggerJob {
 	background-image: url("trigger.png");
+}
+.WizardFinishedPanel .gwt-Anchor.MonitorJob {
+	background-image: url("timeline.png");
 }
 .WizardFinishedPanel .gwt-Anchor.ScheduleJob {
 	background-image: url("trigger_type_periodic.png");

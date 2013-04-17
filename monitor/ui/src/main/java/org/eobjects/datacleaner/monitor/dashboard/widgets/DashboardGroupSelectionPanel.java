@@ -28,11 +28,15 @@ import java.util.Map;
 import org.eobjects.datacleaner.monitor.dashboard.DashboardServiceAsync;
 import org.eobjects.datacleaner.monitor.dashboard.model.DashboardGroup;
 import org.eobjects.datacleaner.monitor.shared.ClientConfig;
+import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
+import org.eobjects.datacleaner.monitor.shared.widgets.DCPopupPanel;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
@@ -56,6 +60,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
     private final boolean _isDashboardEditor;
     private final boolean _displayDefaultGroup;
     private final boolean _displayInfomercial;
+    private DashboardGroupPanel _defaultGroupPanel;
 
     public DashboardGroupSelectionPanel(ClientConfig clientConfig, DashboardServiceAsync service,
             SimplePanel targetPanel) {
@@ -73,9 +78,16 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
 
         addStyleName("DashboardGroupSelectionPanel");
 
+        // need to get history token as very first thing to see what happens
+        // before the token is manipulated
+        final String historyToken = History.getToken();
+
         if (_displayDefaultGroup) {
             // add the default/"welcome" group
             addGroup(null);
+
+            // this method sets the default group panel
+            assert _defaultGroupPanel != null;
         }
 
         // load all other groups
@@ -88,6 +100,9 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
                     addGroup(group);
                 }
                 initializeSelectedAnchor();
+
+                // check if a new timeline is requested through history token
+                initializeNewTimelineIfNeeded(historyToken);
             }
 
             private void sortDashboardGroups(List<DashboardGroup> result) {
@@ -152,6 +167,21 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         }
     }
 
+    private void initializeNewTimelineIfNeeded(final String historyToken) {
+        final String prefix = "new_timeline_";
+        if (historyToken != null && historyToken.startsWith(prefix)) {
+            String jobName = historyToken.substring(prefix.length());
+            jobName = URL.decodeQueryString(jobName);
+            
+            GWT.log("Showing new timeline popup for job: " + jobName);
+
+            final CreateTimelineHandler handler = new CreateTimelineHandler(_service, _tenant, _defaultGroupPanel);
+            final DCPopupPanel popup = handler.createPopup();
+            handler.setJob(popup, new JobIdentifier(jobName));
+            popup.show();
+        }
+    }
+
     private Anchor getFirstAnchor() {
         final int widgetCount = _anchorPanel.getWidgetCount();
         for (int i = 0; i < widgetCount; i++) {
@@ -165,15 +195,19 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
 
     public Anchor addGroup(final DashboardGroup group) {
         final String groupName;
+        final DashboardGroupPanel groupPanel;
         if (group == null) {
             groupName = DEFAULT_GROUP_NAME;
+            groupPanel = new DashboardGroupPanel(_service, _tenant, group, _isDashboardEditor, _displayInfomercial);
+            _defaultGroupPanel = groupPanel;
         } else {
             groupName = group.getName();
+            groupPanel = null;
         }
 
         final Anchor anchor = new Anchor(groupName);
         anchor.addClickHandler(new ClickHandler() {
-            private DashboardGroupPanel panel = null;
+            private DashboardGroupPanel panel = groupPanel;
 
             @Override
             public void onClick(ClickEvent event) {
@@ -184,6 +218,9 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
 
                 if (panel == null) {
                     panel = new DashboardGroupPanel(_service, _tenant, group, _isDashboardEditor, _displayInfomercial);
+                }
+                if (_defaultGroupPanel == null) {
+                    _defaultGroupPanel = panel;
                 }
                 _targetPanel.setWidget(panel);
                 History.newItem(groupName);

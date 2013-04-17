@@ -282,6 +282,16 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                     Window.Location.assign(url);
                 }
             });
+            
+            final Anchor monitorAnchor = new Anchor("Monitor this job's metrics on the dashboard");
+            monitorAnchor.addStyleName("MonitorJob");
+            monitorAnchor.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    final String url = Urls.createRelativeUrl("dashboard.jsf#new_timeline_" + encodedJobName);
+                    Window.Location.assign(url);
+                }
+            });
 
             final Anchor schedulingAnchor = new Anchor("Set up a job schedule");
             schedulingAnchor.addStyleName("ScheduleJob");
@@ -294,6 +304,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
             });
 
             contentPanel.add(triggerAnchor);
+            contentPanel.add(monitorAnchor);
             contentPanel.add(schedulingAnchor);
         }
 

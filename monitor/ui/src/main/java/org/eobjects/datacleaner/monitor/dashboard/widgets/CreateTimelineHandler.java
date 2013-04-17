@@ -40,21 +40,20 @@ import com.google.gwt.user.client.ui.FlowPanel;
  */
 public class CreateTimelineHandler implements ClickHandler {
 
-    private final DashboardGroupPanel _timelineListPanel;
+    private final DashboardGroupPanel _groupPanel;
     private final DashboardServiceAsync _service;
     private final TenantIdentifier _tenant;
 
     public CreateTimelineHandler(DashboardServiceAsync service, TenantIdentifier tenant,
-            DashboardGroupPanel timelineListPanel) {
+            DashboardGroupPanel groupPanel) {
         _service = service;
         _tenant = tenant;
-        _timelineListPanel = timelineListPanel;
+        _groupPanel = groupPanel;
     }
 
     @Override
     public void onClick(ClickEvent event) {
-        final DCPopupPanel popup = new DCPopupPanel("Create timeline");
-        popup.addStyleName("CreateTimelinePopupPanel");
+        final DCPopupPanel popup = createPopup();
 
         final SelectJobPanel selectJobPanel = new SelectJobPanel(_service, _tenant) {
             @Override
@@ -70,11 +69,17 @@ public class CreateTimelineHandler implements ClickHandler {
         popup.show();
     }
 
-    private void setJob(final DCPopupPanel popup, final JobIdentifier job) {
+    protected DCPopupPanel createPopup() {
+        final DCPopupPanel popup = new DCPopupPanel("Create timeline");
+        popup.addStyleName("CreateTimelinePopupPanel");
+        return popup;
+    }
+
+    protected void setJob(final DCPopupPanel popup, final JobIdentifier job) {
         final TimelineDefinition timelineDefinition = new TimelineDefinition();
         timelineDefinition.setJobIdentifier(job);
 
-        final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, null, _timelineListPanel, true);
+        final TimelinePanel timelinePanel = new TimelinePanel(_tenant, _service, null, _groupPanel, true);
         timelinePanel.setTimelineDefinition(timelineDefinition, false);
 
         final CustomizeMetricsPanel customizeMetricsPanel = new CustomizeMetricsPanel(_service, _tenant,
@@ -93,7 +98,7 @@ public class CreateTimelineHandler implements ClickHandler {
                 final List<MetricIdentifier> selectedMetrics = customizeMetricsPanel.getSelectedMetrics();
                 timelineDefinition.setMetrics(selectedMetrics);
                 timelinePanel.setTimelineDefinition(timelineDefinition);
-                _timelineListPanel.addTimelinePanel(timelinePanel);
+                _groupPanel.addTimelinePanel(timelinePanel);
                 popup.hide();
             }
         });

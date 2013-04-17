@@ -54,7 +54,7 @@ class ScatterAnalyzerResultSwingRenderer extends Renderer[ScatterAnalyzerResult,
     val legend = result.hasGroups();
     val tooltips = true;
     val urls = false;
-    val orientation = PlotOrientation.HORIZONTAL
+    val orientation = PlotOrientation.VERTICAL
     val chart = ChartFactory.createScatterPlot(null, xAxisLabel, yAxisLabel, dataset, orientation, legend, tooltips, urls)
 
     ChartUtils.applyStyles(chart);

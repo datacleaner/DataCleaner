@@ -21,12 +21,12 @@ class DensityAnalyzer extends Analyzer[DensityAnalyzerResult] {
 
   @Inject
   @Configured
-  @Description("The field with the first variable. Will be plotted on the vertical Y-axis.")
+  @Description("The field with the first variable. Will be plotted on the horizontal X-axis.")
   var variable1: InputColumn[Number] = null;
 
   @Inject
   @Configured
-  @Description("The field with the second variable. Will be plotted on the horizontal X-axis.")
+  @Description("The field with the second variable. Will be plotted on the vertical Y-axis.")
   var variable2: InputColumn[Number] = null;
 
   @Inject

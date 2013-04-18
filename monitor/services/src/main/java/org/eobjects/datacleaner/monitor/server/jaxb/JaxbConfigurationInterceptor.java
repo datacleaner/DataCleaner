@@ -186,8 +186,8 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
      * @param originalDatastoreCatalog
      * @return
      */
-    private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context, final DataCleanerJobContext job,
-            String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
+    private DatastoreCatalogType interceptDatastoreCatalog(final TenantContext context,
+            final DataCleanerJobContext job, String datastoreName, final DatastoreCatalogType originalDatastoreCatalog) {
         final AnalyzerBeansConfiguration configuration = context.getConfiguration();
 
         final DatastoreCatalog datastoreCatalog = configuration.getDatastoreCatalog();
@@ -195,53 +195,53 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
         // Create a map of all used datastores and the columns which are
         // being accessed within them.
         final Map<String, MutableSchema> datastoreUsage = new LinkedHashMap<String, MutableSchema>();
-        
+
         if (job != null && StringUtils.isNullOrEmpty(datastoreName)) {
             datastoreName = job.getSourceDatastoreName();
         }
 
-            if (StringUtils.isNullOrEmpty(datastoreName)) {
-                // represent all datastores (no job-specific information is
-                // known)
-                for (final String name : datastoreCatalog.getDatastoreNames()) {
+        if (StringUtils.isNullOrEmpty(datastoreName)) {
+            // represent all datastores (no job-specific information is
+            // known)
+            for (final String name : datastoreCatalog.getDatastoreNames()) {
+                datastoreUsage.put(name, new MutableSchema());
+            }
+        } else {
+            // represent the single datastore fully
+
+            final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
+            if (datastore == null) {
+                throw new IllegalArgumentException("Datastore '" + datastoreName + "' does not exist");
+            }
+            DatastoreConnection con = datastore.openConnection();
+            try {
+                final MutableSchema usageSchema = new MutableSchema();
+                final Schema schema;
+                if (job == null) {
+                    schema = con.getDataContext().getDefaultSchema();
+                } else {
+                    String columnPath = job.getSourceColumnPaths().get(0);
+                    Column column = con.getDataContext().getColumnByQualifiedLabel(columnPath);
+                    schema = column.getTable().getSchema();
+                    usageSchema.setName(schema.getName());
+                }
+                String[] tableNames = schema.getTableNames();
+                for (String tableName : tableNames) {
+                    usageSchema.addTable(new MutableTable(tableName).setSchema(usageSchema).setRemarks(
+                            REMARK_INCLUDE_IN_QUERY));
+                }
+                datastoreUsage.put(datastoreName, usageSchema);
+            } finally {
+                con.close();
+            }
+
+            // add schema information about the remaining datastores
+            for (final String name : datastoreCatalog.getDatastoreNames()) {
+                if (!datastoreName.equals(name)) {
                     datastoreUsage.put(name, new MutableSchema());
                 }
-            } else {
-                // represent the single datastore fully
-
-                final Datastore datastore = datastoreCatalog.getDatastore(datastoreName);
-                if (datastore == null) {
-                    throw new IllegalArgumentException("Datastore '" + datastoreName + "' does not exist");
-                }
-                DatastoreConnection con = datastore.openConnection();
-                try {
-                    final MutableSchema usageSchema = new MutableSchema();
-                    final Schema schema;
-                    if (job == null) {
-                        schema = con.getDataContext().getDefaultSchema();
-                    } else {
-                        String columnPath = job.getSourceColumnPaths().get(0);
-                        Column column = con.getDataContext().getColumnByQualifiedLabel(columnPath);
-                        schema = column.getTable().getSchema();
-                        usageSchema.setName(schema.getName());
-                    }
-                    String[] tableNames = schema.getTableNames();
-                    for (String tableName : tableNames) {
-                        usageSchema.addTable(new MutableTable(tableName).setSchema(usageSchema).setRemarks(
-                                REMARK_INCLUDE_IN_QUERY));
-                    }
-                    datastoreUsage.put(datastoreName, usageSchema);
-                } finally {
-                    con.close();
-                }
-
-                // add schema information about the remaining datastores
-                for (final String name : datastoreCatalog.getDatastoreNames()) {
-                    if (!datastoreName.equals(name)) {
-                        datastoreUsage.put(name, new MutableSchema());
-                    }
-                }
             }
+        }
 
         return interceptDatastoreCatalog(datastoreCatalog, datastoreUsage);
     }
@@ -284,33 +284,43 @@ public class JaxbConfigurationInterceptor implements ConfigurationInterceptor {
                         usageTables = dataContext.getDefaultSchema().getTables();
                     }
 
+                    final String schemaName = schema.getName();
                     for (final Table usageTable : usageTables) {
                         Column[] usageColumns = usageTable.getColumns();
                         if (usageColumns == null || usageColumns.length == 0) {
                             // an unspecified table entry will be interpreted by
                             // including all columns of that table
-                            Table table = dataContext.getSchemaByName(schema.getName()).getTableByName(
-                                    usageTable.getName());
-                            usageColumns = table.getColumns();
+                            final String tableName = usageTable.getName();
+                            final Schema schemaByName = dataContext.getSchemaByName(schemaName);
+                            if (schemaByName == null) {
+                                logger.error("Could not find schema by name: {}, skipping table: {}", schemaName, usageTable);
+                                usageColumns = new Column[0];
+                            } else {
+                                final Table table = schemaByName.getTableByName(tableName);
+                                usageColumns = table.getColumns();
+                            }
                         }
-                        Arrays.sort(usageColumns, columnComparator);
-
-                        final int maxRows = REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS : 0;
-
-                        final Table sourceTable = usageColumns[0].getTable();
-                        try {
-                            final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable,
-                                    usageColumns, maxRows);
-                            pojoTables.add(pojoTable);
-                        } catch (Exception e) {
-                            // allow omitting errornous tables here.
-                            logger.error("Failed to serialize table '" + sourceTable + "' of datastore '" + name
-                                    + "' to POJO format: " + e.getMessage(), e);
+                        
+                        if (usageColumns != null && usageColumns.length > 0) {
+                            Arrays.sort(usageColumns, columnComparator);
+                            
+                            final int maxRows = REMARK_INCLUDE_IN_QUERY.equals(usageTable.getRemarks()) ? MAX_POJO_ROWS : 0;
+                            
+                            final Table sourceTable = usageColumns[0].getTable();
+                            try {
+                                final PojoTableType pojoTable = adaptor.createPojoTable(dataContext, sourceTable,
+                                        usageColumns, maxRows);
+                                pojoTables.add(pojoTable);
+                            } catch (Exception e) {
+                                // allow omitting errornous tables here.
+                                logger.error("Failed to serialize table '" + sourceTable + "' of datastore '" + name
+                                        + "' to POJO format: " + e.getMessage(), e);
+                            }
                         }
                     }
 
                     final AbstractDatastoreType pojoDatastoreType = adaptor.createPojoDatastore(datastore.getName(),
-                            schema.getName(), pojoTables);
+                            schemaName, pojoTables);
                     pojoDatastoreType.setDescription(datastore.getDescription());
 
                     newDatastoreCatalog.getJdbcDatastoreOrAccessDatastoreOrCsvDatastore().add(pojoDatastoreType);

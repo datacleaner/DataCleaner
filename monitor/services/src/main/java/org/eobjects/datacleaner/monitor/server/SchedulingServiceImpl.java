@@ -229,6 +229,9 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final String jobName = jobIdentifier.getName();
 
         final JobContext jobContext = context.getJob(jobIdentifier);
+        if (jobContext == null) {
+            throw new IllegalArgumentException("No such job: " + jobName);
+        }
         final String groupName = jobContext.getGroupName();
 
         final RepositoryFolder jobsFolder = context.getJobFolder();

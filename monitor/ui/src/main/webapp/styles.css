@@ -347,7 +347,7 @@ img.scalable_background {
  */
 .pageFooter {
 	font-family: "Ubuntu", sans-serif;
-	height: 35px;
+	height: 34px;
 	width: 100%;
 	position: fixed;
 	bottom: 0;
@@ -360,8 +360,9 @@ img.scalable_background {
 }
 
 .pageFooter .logo {
-	height: 35px;
 	float: right;
+	line-height: 34px;
+	height: 34px;
 	padding-right: 100px;
 	background-image: url("images/login_footer_logo.png");
 	background-repeat: no-repeat;
@@ -370,12 +371,11 @@ img.scalable_background {
 
 .pageFooter .logo .tagline {
 	display: block;
-	margin-top: 15px;
 }
 
 .pageFooter .versionInformation {
 	float: left;
-	margin-top: 15px;
+	line-height: 34px;
 	margin-left: 6px;
 }
 

@@ -9,108 +9,72 @@
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<title>DataCleaner monitor</title>
 
-		<link href='http://fonts.googleapis.com/css?family=Ubuntu|Lobster|Open+Sans'
+		<link
+			href='http://fonts.googleapis.com/css?family=Ubuntu|Lobster|Open+Sans'
 			rel='stylesheet' type='text/css' />
 		<link rel="stylesheet" type="text/css" href="styles.css" />
+		<link rel="stylesheet" type="text/css" href="styles_login.css" />
 		<link rel="shortcut icon" href="images/favicon.png" />
-
 	</h:head>
 	<h:body>
 
 		<div class="pageContainer">
+			<div class="pageHeader">
+				<div class="logo"></div>
+			</div>
 
-			<div
-				style="position: absolute; top: 90px; right: 10px; padding-bottom: 80px;">
-				<div class="InfographicContainer">
-					<div class="InfographicPart InfographicIntro">
-						<h1>
-							Welcome to <span class="blue">DataCleaner</span> <span
+			<div class="login_panel_container">
+				<div class="login_panel_form_container">
+					<form action="j_spring_security_check" method="POST">
+						<h3 class="login_panel_header">
+							Log in to <span class="blue">DataCleaner</span> <span
 								class="orange">monitor</span>
-						</h1>
-						<span class="ScrollDownTeaser"> <a
-							href="#first_infographic_part">What is it?</a>
-						</span>
-					</div>
-					<div style="height: 300px;"></div>
-					<div class="InfographicPart InfographicEvolution">
-						<a name="first_infographic_part"></a>
-						<h2>Monitor the evolution of your data</h2>
-						<div class="Description">DataCleaner monitor helps your
-							visualize and explore the evolution of your data. Use it to
-							surveil your data activities and manage your data’s quality.</div>
-					</div>
-					<div class="InfographicPart InfographicShare">
-						<h2>Share your data analysis with everyone</h2>
-						<div class="Description">Use DataCleaner to explore, profile
-							and analyze your data. Use the monitor webapplication to share it
-							with anyone, even to set up an automatic analysis at regular
-							intervals.</div>
-					</div>
-					<div class="InfographicPart InfographicImprove">
-						<h2>Continuously improve your data’s quality</h2>
-						<div class="Description">DataCleaner monitor orchestrates
-							and schedules DataCleaner jobs, used to cleanse and enrich your
-							data.</div>
-					</div>
-					<div class="InfographicPart InfographicConnect">
-						<h2>Connect DataCleaner to the world</h2>
-						<div class="Description">With the monitor you can
-							securely connect DataCleaner jobs to other business processes
-							using web services, scheduled executions and more. Instantly use
-							your jobs for both batch and real-time processing of data.</div>
-					</div>
-				</div>
-			</div>
+						</h3>
+						<div class="login_panel_content">
+							<p>Username:</p>
+							<p>
+								<input name="j_username" type="text" size="20" />
+							</p>
 
-			<div class="login_panel">
-				<form action="j_spring_security_check" method="POST">
-					<h3 class="login_panel_header">
-						Log in to <span class="blue">DataCleaner</span> <span
-							class="orange">monitor</span>
-					</h3>
-					<div class="login_panel_content">
-						<p>Username:</p>
-						<p>
-							<input name="j_username" type="text" size="20" />
-						</p>
-
-						<p>Password:</p>
-						<p>
-							<input name="j_password" type="password" size="20" />
-						</p>
-					</div>
-
-					<input type="submit" value="Log in" />
-
-					<div style="clear: both"></div>
-				</form>
-			</div>
-
-			<div class="login_demo_accounts_panel">
-				<c:if test="#{not empty param.error}">
-					<div class="warning">
-						Your login attempt was unsuccessful,<br/>
-						please try again.
-					</div>
-					<c:if test="#{not empty param.debug}">
-						<div class="warning">
-							#{SPRING_SECURITY_LAST_EXCEPTION.class.simpleName}:
-							#{SPRING_SECURITY_LAST_EXCEPTION.message}
+							<p>Password:</p>
+							<p>
+								<input name="j_password" type="password" size="20" />
+							</p>
 						</div>
-					</c:if>
-				</c:if>
-				
-				<h3 class="login_panel_header">Demo accounts</h3>
-				<div class="login_panel_content">
 
-					<p>Try logging in using any of these demo credentials:</p>
-					<ul>
-						<li>admin/admin: The administrator of the 'DC' tenant.</li>
-						<li>viewer/viewer: A dashboard viewer of the 'DC' tenant</li>
-					</ul>
+						<input type="submit" value="Log in" />
+
+						<div style="clear: both"></div>
+					</form>
+				</div>
+
+				<div class="login_panel_information">
+					<c:if test="#{not empty param.error}">
+						<div class="warning">
+							Your login attempt was unsuccessful,<br/>
+							please try again.
+						</div>
+						<c:if test="#{not empty param.debug}">
+							<div class="warning">
+								#{SPRING_SECURITY_LAST_EXCEPTION.class.simpleName}:
+								#{SPRING_SECURITY_LAST_EXCEPTION.message}
+							</div>
+						</c:if>
+					</c:if>
+					
+					<h3 class="login_panel_header">Demo accounts</h3>
+					<div class="login_panel_content">
+
+						<p>Try logging in using any of these demo credentials:</p>
+						<ul>
+							<li>admin/admin: The administrator of the 'DC' tenant.</li>
+							<li>viewer/viewer: A dashboard viewer of the 'DC' tenant</li>
+						</ul>
+						
+					</div>
 				</div>
 			</div>
-
+			
 			<div class="pageFooter">
 				<ui:include src="version-info.xhtml" />
 				

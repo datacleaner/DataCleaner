@@ -1,0 +1,70 @@
+body {
+	background: black url("images/login-background.jpg") no-repeat center center fixed;
+	-webkit-background-size : cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	overflow: hidden;
+}
+
+.tagline h1 {
+	color: #f0f0f0;
+}
+
+.login_panel_container {
+	width: 370px;
+	background-image: url("images/white_trans_80.png");
+	border-radius: 10px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -190px; /* half of #content height*/
+	margin-left: -185px; /* half of it's width */
+}
+
+.login_panel_form_container {
+	background-image: url("images/black_trans_80.png");
+	/*background-color: #333;*/
+	border-radius: 10px;
+	padding: 20px;
+	padding-left: 50px;
+	color: #eee;
+	text-align: center;
+	width: 300px;
+	z-index: 1000;
+}
+
+.login_panel_information {
+	margin-top: -10px;
+	padding: 20px;
+	padding-top: 40px;
+	padding-left: 50px;
+	color: #333;
+	text-align: center;
+	width: 300px;
+	z-index: -1;
+	padding-left: 50px;
+}
+
+.login_panel_information .warning {
+	text-align: left;
+	padding-left: 40px;
+	margin-bottom: 30px; 
+	color: red;
+	font-size: 0.9em;
+}
+
+/**
+ * Overrides of existing styles in styles.css
+ */
+div.pageHeader div.logo {
+   margin-left: 6px;
+}
+ 
+ 
+.pageFooter {
+	background-image: url("images/white_trans_20.png");
+	background-color: transparent;
+	border-top: none;
+	background-repeat: repeat;
+}

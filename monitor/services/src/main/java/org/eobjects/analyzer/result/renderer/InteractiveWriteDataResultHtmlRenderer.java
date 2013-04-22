@@ -34,6 +34,8 @@ import org.eobjects.analyzer.connection.DatastoreCatalog;
 import org.eobjects.analyzer.connection.FileDatastore;
 import org.eobjects.analyzer.result.html.HtmlFragment;
 import org.eobjects.analyzer.result.html.SimpleHtmlFragment;
+import org.eobjects.datacleaner.monitor.server.security.TenantResolver;
+import org.eobjects.datacleaner.monitor.server.security.UserBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +53,9 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
     @Inject
     AnalyzerBeansConfiguration _configuration;
 
+    @Inject
+    TenantResolver _tenantResolver;
+
     @Override
     public RendererPrecedence getPrecedence(WriteDataResult res) {
         final DatastoreCatalog datastoreCatalog = _configuration.getDatastoreCatalog();
@@ -65,6 +70,12 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
 
     @Override
     public HtmlFragment render(WriteDataResult res) {
+        // TODO: Dirty way of obtaining the user bean - ideally we would be able
+        // to just inject it, but SpringInjectionManager does not support
+        // session scoped beans.
+        final UserBean user = new UserBean(_tenantResolver);
+        user.updateUser();
+
         final WriteDataResultHtmlRenderer delegateRenderer = new WriteDataResultHtmlRenderer();
         delegateRenderer.setConfiguration(_configuration);
 
@@ -78,15 +89,19 @@ public class InteractiveWriteDataResultHtmlRenderer implements Renderer<WriteDat
                 try {
                     final String encodedName = URLEncoder.encode(datastore.getName(), "UTF8");
 
-                    if (datastore instanceof FileDatastore) {
-                        final String html = "<button onclick=\"window.location='" + "../datastores/" + encodedName
-                                + ".download'\" class=\"DownloadButton\">Download</button>";
-                        frag.addBodyElement(html);
+                    if (user.isConfigurationEditor()) {
+                        if (datastore instanceof FileDatastore) {
+                            final String html = "<button onclick=\"window.location='" + "../datastores/" + encodedName
+                                    + ".download'\" class=\"DownloadButton\">Download</button>";
+                            frag.addBodyElement(html);
+                        }
                     }
 
-                    frag.addBodyElement("<button onclick=\"window.open('../../../query.jsf?ds="
-                            + encodedName
-                            + "','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');\" class=\"QueryButton\">Query</button>");
+                    if (user.isQueryAllowed()) {
+                        frag.addBodyElement("<button onclick=\"window.open('../../../query.jsf?ds="
+                                + encodedName
+                                + "','_blank','location=no,width=770,height=400,toolbar=no,menubar=no');\" class=\"QueryButton\">Query</button>");
+                    }
                 } catch (Exception e) {
                     logger.error("Failed to append interactive HTML fragments to result", e);
                 }

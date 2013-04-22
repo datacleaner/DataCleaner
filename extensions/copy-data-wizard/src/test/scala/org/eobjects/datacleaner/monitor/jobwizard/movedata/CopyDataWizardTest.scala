@@ -37,8 +37,6 @@ class MoveDataWizardTest extends AssertionsForJUnit {
     assertEquals(normalize("""<div>
     <p>Please select the source table of the job:</p>
     <select name="tableName">
-            <optgroup label="INFORMATION_SCHEMA">
-            </optgroup>
             <optgroup label="PUBLIC">
                     <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
                     <option value="PUBLIC.CUSTOMER_W_TER">CUSTOMER_W_TER</option>
@@ -75,8 +73,6 @@ class MoveDataWizardTest extends AssertionsForJUnit {
     assertEquals(normalize("""<div>
     <p>Select the target table to write to:</p>
     <select name="tableName">
-            <optgroup label="INFORMATION_SCHEMA">
-            </optgroup>
             <optgroup label="PUBLIC">
                     <option value="PUBLIC.CUSTOMERS">CUSTOMERS</option>
                     <option value="PUBLIC.CUSTOMER_W_TER">CUSTOMER_W_TER</option>

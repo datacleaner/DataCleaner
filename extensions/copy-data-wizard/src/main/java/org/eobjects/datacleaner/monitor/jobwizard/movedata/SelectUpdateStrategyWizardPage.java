@@ -94,6 +94,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
 
         final Map<String, Object> map = new HashMap<String, Object>();
         map.put("columnNames", columnNames);
+
         return map;
     }
 
@@ -120,7 +121,7 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
         } else {
             throw new IllegalStateException("Unexpected update strategy value: " + updateStrategy);
         }
-        
+
         final JobWizardContext wizardContext = _session.getWizardContext();
         return new JobNameWizardPage(wizardContext, getPageIndex() + 1, "Copy data") {
 
@@ -159,15 +160,28 @@ public class SelectUpdateStrategyWizardPage extends AbstractFreemarkerWizardPage
                 .getQualifiedLabel());
         conditionColumns[0] = primaryKeyColumnMapping.getTargetColumn().getName();
 
-        // UPDATE those colums which are not IDs
-        final InputColumn<?>[] values = new InputColumn[mappings.size() - 1];
-        final String[] columnNames = new String[mappings.size() - 1];
-        int i = 0;
-        for (ColumnMapping mapping : mappings) {
-            if (!primaryKeyColumnMapping.equals(mapping)) {
-                values[i] = _analysisJobBuilder.getSourceColumnByName(mapping.getSourceColumn().getQualifiedLabel());
-                columnNames[i] = mapping.getTargetColumn().getName();
-                i++;
+        final InputColumn<?>[] values;
+        final String[] columnNames;
+        if (mappings.size() == 1) {
+            // special case when there is only a single column in play: Just
+            // update the column
+            values = new InputColumn[1];
+            columnNames = new String[1];
+            final ColumnMapping mapping = mappings.get(0);
+            values[0] = _analysisJobBuilder.getSourceColumnByName(mapping.getSourceColumn().getQualifiedLabel());
+            columnNames[0] = mapping.getTargetColumn().getName();
+        } else {
+            // UPDATE those colums which are not IDs
+            values = new InputColumn[mappings.size() - 1];
+            columnNames = new String[mappings.size() - 1];
+            int i = 0;
+            for (ColumnMapping mapping : mappings) {
+                if (!primaryKeyColumnMapping.equals(mapping)) {
+                    values[i] = _analysisJobBuilder
+                            .getSourceColumnByName(mapping.getSourceColumn().getQualifiedLabel());
+                    columnNames[i] = mapping.getTargetColumn().getName();
+                    i++;
+                }
             }
         }
 

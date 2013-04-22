@@ -19,7 +19,6 @@
  */
 package org.eobjects.datacleaner.monitor.wizard.common;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +27,11 @@ import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.DatastoreConnection;
 import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
+import org.eobjects.datacleaner.util.SchemaComparator;
 import org.eobjects.metamodel.schema.Schema;
 import org.eobjects.metamodel.schema.Table;
+import org.eobjects.metamodel.util.CollectionUtils;
+import org.eobjects.metamodel.util.Predicate;
 
 /**
  * A simple {@link WizardPageController} that asks the user to select the
@@ -75,11 +77,18 @@ public abstract class SelectTableWizardPage extends AbstractFreemarkerWizardPage
         final DatastoreConnection con = _datastore.openConnection();
         try {
             final Schema[] schemas = con.getSchemaNavigator().getSchemas();
-            for (Schema schema : schemas) {
+            final List<Schema> schemaList = CollectionUtils.filter(schemas, new Predicate<Schema>() {
+                @Override
+                public Boolean eval(Schema schema) {
+                    final boolean isInformationSchema = SchemaComparator.isInformationSchema(schema);
+                    return !isInformationSchema;
+                }
+            });
+            for (Schema schema : schemaList) {
                 // make sure all table names are cached.
                 schema.getTableNames();
             }
-            map.put("schemas", Arrays.asList(schemas));
+            map.put("schemas", schemaList);
             return map;
         } finally {
             con.close();

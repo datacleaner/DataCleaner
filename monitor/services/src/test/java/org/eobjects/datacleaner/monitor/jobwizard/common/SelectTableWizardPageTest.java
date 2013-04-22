@@ -60,11 +60,6 @@ public class SelectTableWizardPageTest extends TestCase {
         assertEquals("<div>\n" + 
         		"    <p>Please select the source table of the job:</p>\n" + 
         		"    <select name=\"tableName\">\n" + 
-        		"            <optgroup label=\"information_schema\">\n" + 
-        		"                    <option value=\"information_schema.tables\">tables</option>\n" + 
-        		"                    <option value=\"information_schema.columns\">columns</option>\n" + 
-        		"                    <option value=\"information_schema.relationships\">relationships</option>\n" + 
-        		"            </optgroup>\n" + 
         		"            <optgroup label=\"my_pojo_ds\">\n" + 
         		"                    <option value=\"my_pojo_ds.tab\">tab</option>\n" + 
         		"            </optgroup>\n" + 

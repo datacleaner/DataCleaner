@@ -98,7 +98,7 @@
 	background-image: url("job.png");
 	background-repeat: no-repeat;
 	background-position: 4px center;
-	height: 30px;
+	min-height: 30px;
 }
 
 .SchedulePanel.CustomJob {

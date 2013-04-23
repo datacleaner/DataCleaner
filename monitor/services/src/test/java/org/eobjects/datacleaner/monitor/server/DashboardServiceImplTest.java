@@ -80,7 +80,7 @@ public class DashboardServiceImplTest extends TestCase {
 
         assertEquals("MetricGroup[Pattern finder (PRODUCTCODE)]", metricGroups.get(0).toString());
         assertEquals("MetricGroup[Value distribution (PRODUCTLINE)]", metricGroups.get(1).toString());
-        assertEquals("MetricGroup[Vendor whitelist check (Reference data matcher) (PRODUCTVENDOR)]", metricGroups.get(2)
+        assertEquals("MetricGroup[Vendor whitelist check (PRODUCTVENDOR)]", metricGroups.get(2)
                 .toString());
 
         List<MetricIdentifier> metrics = metricGroups.get(2).getMetrics();

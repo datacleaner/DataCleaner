@@ -34,25 +34,25 @@
 
 .SchedulingOverviewPanel .JobColumn {
 	min-height: 1em;
-	width: 22%;
+	width: 26%;
 	float: left;
 }
 
 .SchedulingOverviewPanel .ScheduleColumn {
 	min-height: 1em;
-	width: 22%;
+	width: 21%;
 	float: left;
 }
 
 .SchedulingOverviewPanel .AlertsColumn {
 	min-height: 1em;
-	width: 23%;
+	width: 22%;
 	float: left;
 }
 
 .SchedulingOverviewPanel .ActionsColumn {
 	min-height: 1em;
-	width: 27%;
+	width: 25%;
 	float: right;
 }
 
@@ -196,9 +196,6 @@
 }
 
 .AlertListPanel {
-	border-left: 1px solid #f0f0f0;
-	border-bottom: 1px solid #f0f0f0;
-	border-right: 1px solid #f0f0f0;
 	padding-left: 2px;
 }
 

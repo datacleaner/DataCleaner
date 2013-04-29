@@ -34,14 +34,16 @@ class CompletenessAnalysisJobWizard extends DataCleanerJobWizard {
 
         override def nextPageController(fieldGroups: Int): WizardPageController = {
           fieldGroupsCount = fieldGroups
-          return new DefineFieldGroupPage(2, 0, fieldGroupsCount, selectedTable, analysisJobBuilder, {
-            return new JobNameWizardPage(context, 2 + fieldGroupsCount, selectedTable.getName() + " completeness") {
-              override def nextPageController(name: String): WizardPageController = {
-                setJobName(name);
-                return null;
+          return new DefineFieldGroupPage(2, 0, fieldGroupsCount, selectedTable, analysisJobBuilder) {
+            override def nextPageController(): WizardPageController = {
+              return new JobNameWizardPage(context, 2 + fieldGroupsCount, selectedTable.getName() + " completeness") {
+                override def nextPageController(name: String): WizardPageController = {
+                  setJobName(name);
+                  return null;
+                }
               }
             }
-          });
+          };
         }
       }
     };

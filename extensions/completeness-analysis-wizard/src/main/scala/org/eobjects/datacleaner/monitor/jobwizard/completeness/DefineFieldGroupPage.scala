@@ -10,7 +10,7 @@ import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException
 import org.eobjects.datacleaner.monitor.server.wizard.JobNameWizardPage
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext
 
-class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldGroupCount: Int, selectedTable: Table, analysisJobBuilder: AnalysisJobBuilder, nextPage: => WizardPageController) extends WizardPageController {
+abstract class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldGroupCount: Int, selectedTable: Table, analysisJobBuilder: AnalysisJobBuilder) extends WizardPageController {
 
   override def getPageIndex = pageIndex
 
@@ -72,9 +72,17 @@ class DefineFieldGroupPage(pageIndex: Int, fieldGroupIndex: Int, fieldGroupCount
 
     if (fieldGroupCount - 1 == fieldGroupIndex) {
       // done with field groups
-      return nextPage;
+      return nextPageController();
     }
 
-    return new DefineFieldGroupPage(pageIndex + 1, fieldGroupIndex + 1, fieldGroupCount, selectedTable, analysisJobBuilder, nextPage);
+    val parent = this;
+    return new DefineFieldGroupPage(pageIndex + 1, fieldGroupIndex + 1, fieldGroupCount, selectedTable, analysisJobBuilder) {
+      override def nextPageController(): WizardPageController = {
+        return parent.nextPageController();
+      }
+    }
   }
+  
+  def nextPageController(): WizardPageController;
+  
 }

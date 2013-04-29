@@ -25,14 +25,18 @@ abstract class SelectFieldGroupsPage(pageIndex: Int) extends WizardPageControlle
 
   override def nextPageController(formParameters: java.util.Map[String, java.util.List[String]]): WizardPageController = {
     val fieldGroupsStr = formParameters.get("num_field_groups").get(0);
+    val fieldGroups = parseInt(fieldGroupsStr);
+    if (fieldGroups <= 0) {
+      throw new DCUserInputException("Number of field groups must be a positive integer");
+    }
+    return nextPageController(fieldGroups);
+  }
+
+  def parseInt(fieldGroupsStr: String): Int = {
     try {
-      val fieldGroups = Integer.parseInt(fieldGroupsStr);
-      if (fieldGroups <= 0) {
-        throw new DCUserInputException("Number of field groups must be a positive integer");
-      }
-      return nextPageController(fieldGroups);
+      return Integer.parseInt(fieldGroupsStr);
     } catch {
-      case e: NumberFormatException =>
+      case _ =>
         throw new DCUserInputException("Please provide a valid number of field groups");
     }
   }

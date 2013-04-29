@@ -5,11 +5,6 @@
   <versioning>
     <release>1.16</release>
     <versions>
-      <version>1.3</version>
-      <version>1.4</version>
-      <version>1.5</version>
-      <version>1.11</version>
-      <version>1.13</version>
       <version>1.15</version>
       <version>1.16</version>
     </versions>

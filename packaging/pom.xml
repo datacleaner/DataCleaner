@@ -10,6 +10,7 @@
 	<name>DataCleaner packaging modules</name>
 	<properties>
 		<mainClass>org.eobjects.datacleaner.Main</mainClass>
+		<easydq.version>1.16</easydq.version>
 	</properties>
 
 	<profiles>
@@ -71,6 +72,31 @@
 		</plugins>
 	</build>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.hi.easydq</groupId>
+				<artifactId>EasyDQ-cleansing-DataCleaner</artifactId>
+				<version>${easydq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.hi.easydq</groupId>
+				<artifactId>EasyDQ-dedup-DataCleaner</artifactId>
+				<version>${easydq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.hi.easydq</groupId>
+				<artifactId>EasyDQ-sanctionlist-DataCleaner</artifactId>
+				<version>${easydq.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.hi.easydq</groupId>
+				<artifactId>EasyDQ-job-wizards-DataCleaner</artifactId>
+				<version>${easydq.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<repositories>
 		<repository>
 			<!-- Custom repository containing jar files that are not available via 
@@ -85,17 +111,18 @@
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-cleansing-DataCleaner</artifactId>
-			<version>1.15</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-dedup-DataCleaner</artifactId>
-			<version>1.15</version>
 		</dependency>
 		<dependency>
 			<groupId>com.hi.easydq</groupId>
 			<artifactId>EasyDQ-sanctionlist-DataCleaner</artifactId>
-			<version>1.15</version>
+		</dependency>
+		<dependency>
+			<groupId>com.hi.easydq</groupId>
+			<artifactId>EasyDQ-job-wizards-DataCleaner</artifactId>
 		</dependency>
 
 		<!-- Default database drivers -->

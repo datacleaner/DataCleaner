@@ -81,6 +81,8 @@ public class SecureGwtServlet extends RemoteServiceServlet {
             } catch (IOException e) {
                 logger.error("Failed to send error: " + exception.getMessage(), e);
             }
+        } else {
+            logger.warn("Unexpected exception occurred in GWT servlet: " + exception.getMessage(), exception);
         }
 
         super.doUnexpectedFailure(exception);

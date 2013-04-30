@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.server.controllers;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.eobjects.analyzer.connection.CompositeDatastore;
@@ -29,6 +30,8 @@ import org.eobjects.analyzer.connection.JdbcDatastore;
 import org.eobjects.analyzer.connection.UsernameDatastore;
 import org.eobjects.metamodel.util.CollectionUtils;
 import org.eobjects.metamodel.util.HasNameMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper for datastore to facilitate property retrieval in ui
@@ -36,6 +39,8 @@ import org.eobjects.metamodel.util.HasNameMapper;
  * @author anand
  */
 public class DatastoreBeanWrapper {
+    
+    private static final Logger logger = LoggerFactory.getLogger(DatastoreBeanWrapper.class);
 
     private final Datastore _datastore;
 
@@ -105,6 +110,23 @@ public class DatastoreBeanWrapper {
         }
     }
 
+    public String getHostname() {
+        try {
+            Method hostnameMethod = _datastore.getClass().getDeclaredMethod("getHostname");
+            if (hostnameMethod != null) {
+                hostnameMethod.setAccessible(true);
+                Object result = hostnameMethod.invoke(_datastore);
+                if (result != null && result instanceof String) {
+                    return (String) result;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            logger.debug("Failed to invoke method 'getHostname'",e);
+            return null;
+        }
+    }
+
     public boolean isFileFound() {
         String filename = getFilename();
         if (filename == null) {
@@ -122,6 +144,7 @@ public class DatastoreBeanWrapper {
         try {
             return _datastore.getClass().getDeclaredMethod("getHostname") != null;
         } catch (Exception e) {
+            logger.debug("Failed to get method 'getHostname'",e);
             return false;
         }
     }

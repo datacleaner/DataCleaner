@@ -140,6 +140,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         if (clusterManager == null) {
             runner = new AnalysisRunnerImpl(configuration, analysisListener);
         } else {
+            executionLogger.log("Partitioning and dispatching job to run in distributed mode.");
             runner = new DistributedAnalysisRunner(configuration, clusterManager, analysisListener);
         }
 

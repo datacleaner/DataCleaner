@@ -56,6 +56,15 @@ final class QuickAnalysisWizardSession extends DataCleanerJobWizardSession {
         return new SelectTableWizardPage(getWizardContext(), 0) {
             @Override
             protected WizardPageController nextPageController(final Table selectedTable) {
+                
+                // add primary key columns for reference
+                final Column[] primaryKeys = selectedTable.getPrimaryKeys();
+                if (primaryKeys != null && primaryKeys.length > 0) {
+                    for (Column primaryKeyColumn : primaryKeys) {
+                        _analysisJobBuilder.addSourceColumn(primaryKeyColumn);
+                    }
+                }
+                
                 final boolean hasStringColumns = selectedTable.getLiteralColumns().length > 0;
                 if (!hasStringColumns) {
                     _pageCount = 4;

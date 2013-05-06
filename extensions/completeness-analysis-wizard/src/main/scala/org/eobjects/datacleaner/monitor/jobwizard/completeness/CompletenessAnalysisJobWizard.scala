@@ -31,6 +31,11 @@ class CompletenessAnalysisJobWizard extends DataCleanerJobWizard {
 
       override def nextPageController(selectedTable: Table) = new SelectFieldGroupsPage(1) {
         analysisJobBuilder.setDatastore(context.getSourceDatastore());
+        
+        // add all primary keys as source columns - for reference
+        selectedTable.getPrimaryKeys().foreach(col => {
+          analysisJobBuilder.addSourceColumn(col);
+        });
 
         override def nextPageController(fieldGroups: Int): WizardPageController = {
           fieldGroupsCount = fieldGroups

@@ -256,7 +256,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
             public void onClick(ClickEvent event) {
                 // full page refresh.
                 final String url = Urls.createRelativeUrl("scheduling.jsf");
-                Window.Location.assign(url);
+                Urls.assign(url);
             }
         });
 
@@ -279,7 +279,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                 @Override
                 public void onClick(ClickEvent event) {
                     final String url = Urls.createRelativeUrl("scheduling.jsf#trigger_" + encodedJobName);
-                    Window.Location.assign(url);
+                    Urls.assign(url);
                 }
             });
             
@@ -289,7 +289,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                 @Override
                 public void onClick(ClickEvent event) {
                     final String url = Urls.createRelativeUrl("dashboard.jsf#new_timeline_" + encodedJobName);
-                    Window.Location.assign(url);
+                    Urls.assign(url);
                 }
             });
 
@@ -299,7 +299,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                 @Override
                 public void onClick(ClickEvent event) {
                     final String url = Urls.createRelativeUrl("scheduling.jsf#schedule_" + encodedJobName);
-                    Window.Location.assign(url);
+                    Urls.assign(url);
                 }
             });
 

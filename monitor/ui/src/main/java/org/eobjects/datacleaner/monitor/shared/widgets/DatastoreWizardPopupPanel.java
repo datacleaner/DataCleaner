@@ -107,14 +107,14 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
     @Override
     protected void wizardFinished(final String datastoreName) {
         final String encodedDatastoreName = URL.encodeQueryString(datastoreName);
-        
+
         final Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 // full page refresh.
                 final String url = Urls.createRelativeUrl("datastores.jsf");
-                Window.Location.assign(url);
+                Urls.assign(url);
             }
         });
 

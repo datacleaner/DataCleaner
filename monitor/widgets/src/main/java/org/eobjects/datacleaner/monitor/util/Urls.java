@@ -91,4 +91,15 @@ public final class Urls {
     public static String createRepositoryUrl(TenantIdentifier tenant, String relativePath) {
         return createRelativeUrl("repository/" + tenant.getId() + "/" + relativePath);
     }
+
+    /**
+     * Utility function to ensure that a URL is properly assigned to the window
+     * location, and the location is reloaded no matter what.
+     * 
+     * @param url
+     */
+    public static void assign(String url) {
+        Window.Location.assign(url);
+        Window.Location.reload();
+    }
 }

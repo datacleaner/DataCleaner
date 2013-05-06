@@ -36,6 +36,12 @@ public class SchemaComparator implements Comparator<Schema>, Serializable {
 
 	@Override
 	public int compare(Schema o1, Schema o2) {
+	    if (o1 == null) {
+	        return -1;
+	    }
+	    if (o2 == null) {
+	        return 1;
+	    }
 		if (isInformationSchema(o1)) {
 			return -1;
 		}

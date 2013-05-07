@@ -54,13 +54,15 @@
 		<profile>
 			<id>quick</id>
 			<modules>
-				<module>jdbc-datastores-wizard</module>
 				<module>csv-datastore-wizard</module>
 				<module>excel-datastore-wizard</module>
 				<module>salesforce-datastore-wizard</module>
 				<module>sugarcrm-datastore-wizard</module>
 				<module>quick-analysis-wizard</module>
-				<module>move-data-wizard</module>
+				<module>visualization</module>
+				<module>pentaho-job-engine</module>
+				<module>jdbc-datastore-wizards</module>
+				<module>copy-data-wizard</module>
 				<module>completeness-analysis-wizard</module>
 			</modules>
 		</profile>

@@ -72,6 +72,7 @@ public final class IconUtils {
     public static final String MODEL_COLUMN = "images/model/column.png";
     public static final String MODEL_COLUMN_KEY = "images/model/column_primary_key.png";
     public static final String MODEL_QUERY = "images/model/query.png";
+    public static final String MODEL_ROW = "images/model/row.png";
 
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";

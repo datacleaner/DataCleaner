@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 
 import org.eobjects.analyzer.descriptors.BeanDescriptor;
 import org.eobjects.analyzer.descriptors.ConfiguredPropertyDescriptor;
@@ -80,7 +81,9 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 		_visualizationPanel.setLayout(new BorderLayout());
 
 		setLayout(new BorderLayout());
-		add(WidgetUtils.scrolleable(_taskPaneContainer), BorderLayout.CENTER);
+		
+		final JScrollPane scrolleable = WidgetUtils.scrolleable(_taskPaneContainer);
+        add(scrolleable, BorderLayout.CENTER);
 
 		if (beanJobBuilder instanceof AbstractBeanWithInputColumnsBuilder) {
 			_requirementButton = new ChangeRequirementButton(
@@ -170,7 +173,7 @@ public abstract class AbstractJobBuilderPanel extends DCPanel implements Compone
 		}
 
 		final List<ConfiguredPropertyTaskPane> result = new ArrayList<ConfiguredPropertyTaskPane>();
-		result.add(new ConfiguredPropertyTaskPane("Input columns", "images/model/column.png", inputProperties));
+		result.add(new ConfiguredPropertyTaskPane("Input columns", IconUtils.MODEL_COLUMN, inputProperties));
 		result.add(new ConfiguredPropertyTaskPane("Required properties", IconUtils.MENU_OPTIONS, requiredProperties));
 		result.add(new ConfiguredPropertyTaskPane("Optional properties (" + optionalProperties.size() + ")",
 				"images/actions/edit.png", optionalProperties, false));

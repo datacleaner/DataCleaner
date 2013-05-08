@@ -48,6 +48,8 @@ import org.eobjects.datacleaner.widgets.DCFileChooser;
 import org.eobjects.datacleaner.widgets.DCLabel;
 import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.action.OpenBrowserAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cern.colt.Arrays;
 
@@ -60,6 +62,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private static final Logger logger = LoggerFactory.getLogger(ExtensionPackagesPanel.class);
     private static final ImageManager imageManager = ImageManager.getInstance();
 
     private static final ImageIcon ICON_PLUGIN = imageManager.getImageIcon("images/component-types/plugin.png");
@@ -165,19 +168,7 @@ public class ExtensionPackagesPanel extends DCPanel {
 
         final DCLabel extensionLabel;
         if (valid) {
-            final String iconPath = extensionPackage.getAdditionalProperties().get("icon");
-            final ImageIcon extensionIcon;
-            if (iconPath != null) {
-                final ImageIcon imageIcon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_LARGE,
-                        ExtensionPackage.getExtensionClassLoader());
-                if (imageIcon == null) {
-                    extensionIcon = ICON_PLUGIN;
-                } else {
-                    extensionIcon = imageIcon;
-                }
-            } else {
-                extensionIcon = ICON_PLUGIN;
-            }
+            final ImageIcon extensionIcon = getExtensionIcon(extensionPackage);
 
             final StringBuilder labelBuilder = new StringBuilder();
             labelBuilder.append("<html><div style='width:280px'><b>");
@@ -248,5 +239,23 @@ public class ExtensionPackagesPanel extends DCPanel {
         }
 
         return extensionPanel;
+    }
+
+    private ImageIcon getExtensionIcon(ExtensionPackage extensionPackage) {
+        final String iconPath = extensionPackage.getAdditionalProperties().get("icon");
+        if (iconPath != null) {
+            try {
+                final ImageIcon imageIcon = imageManager.getImageIcon(iconPath, IconUtils.ICON_SIZE_LARGE,
+                        ExtensionPackage.getExtensionClassLoader());
+                if (imageIcon != null) {
+                    return imageIcon;
+                }
+            } catch (Exception e) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Failed to get extension icon of path: " + iconPath, e);
+                }
+            }
+        }
+        return ICON_PLUGIN;
     }
 }

@@ -65,6 +65,13 @@ public final class IconUtils {
     public static int ICON_SIZE_LARGE = 32;
     public static int ICON_SIZE_MEDIUM = 22;
     public static int ICON_SIZE_SMALL = 16;
+    
+    public static final String MODEL_SCHEMA = "images/model/schema.png";
+    public static final String MODEL_SCHEMA_INFORMATION = "images/model/schema_information.png";
+    public static final String MODEL_TABLE = "images/model/table.png";
+    public static final String MODEL_COLUMN = "images/model/column.png";
+    public static final String MODEL_COLUMN_KEY = "images/model/column_primary_key.png";
+    public static final String MODEL_QUERY = "images/model/query.png";
 
     public static final String MENU_OPTIONS = "images/menu/options.png";
     public static final String MENU_DQ_MONITOR = "images/menu/dq_monitor.png";
@@ -316,14 +323,14 @@ public final class IconUtils {
         if (column.isPhysicalColumn()) {
             return getColumnIcon(column.getPhysicalColumn(), iconSize);
         }
-        return _imageManager.getImageIcon("images/model/column.png", IconUtils.ICON_SIZE_SMALL);
+        return _imageManager.getImageIcon(MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL);
     }
 
     public static Icon getColumnIcon(Column column, int iconSize) {
         if (column.isPrimaryKey()) {
-            return _imageManager.getImageIcon("images/model/column_primary_key.png", iconSize);
+            return _imageManager.getImageIcon(MODEL_COLUMN_KEY, iconSize);
         }
-        return _imageManager.getImageIcon("images/model/column.png", iconSize);
+        return _imageManager.getImageIcon(MODEL_COLUMN, iconSize);
     }
 
     protected static String getDatastoreImagePath(Datastore datastore) {

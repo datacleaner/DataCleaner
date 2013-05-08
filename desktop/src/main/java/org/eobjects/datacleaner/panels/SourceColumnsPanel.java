@@ -33,6 +33,7 @@ import org.eobjects.analyzer.job.builder.FilterJobBuilder;
 import org.eobjects.analyzer.job.builder.SourceColumnChangeListener;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.panels.maxrows.MaxRowsFilterShortcutPanel;
+import org.eobjects.datacleaner.util.IconUtils;
 import org.eobjects.datacleaner.util.ImageManager;
 import org.eobjects.datacleaner.util.WidgetUtils;
 import org.eobjects.datacleaner.widgets.DCLabel;
@@ -45,128 +46,119 @@ import org.jdesktop.swingx.VerticalLayout;
  * 
  * @author Kasper Sørensen
  */
-public final class SourceColumnsPanel extends DCPanel implements
-		SourceColumnChangeListener {
+public final class SourceColumnsPanel extends DCPanel implements SourceColumnChangeListener {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final List<ColumnListTable> _sourceColumnTables = new ArrayList<ColumnListTable>();
-	private final DCLabel _hintLabel;
-	private final AnalysisJobBuilder _analysisJobBuilder;
-	private final MaxRowsFilterShortcutPanel _maxRowsFilterShortcutPanel;
-	private final WindowContext _windowContext;
+    private final List<ColumnListTable> _sourceColumnTables = new ArrayList<ColumnListTable>();
+    private final DCLabel _hintLabel;
+    private final AnalysisJobBuilder _analysisJobBuilder;
+    private final MaxRowsFilterShortcutPanel _maxRowsFilterShortcutPanel;
+    private final WindowContext _windowContext;
 
-	@Inject
-	protected SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder,
-			WindowContext windowContext) {
-		super();
-		_analysisJobBuilder = analysisJobBuilder;
-		_windowContext = windowContext;
+    @Inject
+    protected SourceColumnsPanel(AnalysisJobBuilder analysisJobBuilder, WindowContext windowContext) {
+        super();
+        _analysisJobBuilder = analysisJobBuilder;
+        _windowContext = windowContext;
 
-		_maxRowsFilterShortcutPanel = createMaxRowsFilterShortcutPanel();
+        _maxRowsFilterShortcutPanel = createMaxRowsFilterShortcutPanel();
 
-		_hintLabel = DCLabel
-				.darkMultiLine("Please select the source columns of your job in the tree to the left.\n\n"
-						+ "Source columns define where to retrieve the input of your analysis.");
-		_hintLabel.setFont(WidgetUtils.FONT_HEADER2);
-		_hintLabel.setBorder(new EmptyBorder(20, 20, 20, 20));
-		_hintLabel.setIconTextGap(20);
-		_hintLabel.setIcon(ImageManager.getInstance().getImageIcon(
-				"images/model/column.png"));
+        _hintLabel = DCLabel.darkMultiLine("Please select the source columns of your job in the tree to the left.\n\n"
+                + "Source columns define where to retrieve the input of your analysis.");
+        _hintLabel.setFont(WidgetUtils.FONT_HEADER2);
+        _hintLabel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        _hintLabel.setIconTextGap(20);
+        _hintLabel.setIcon(ImageManager.getInstance().getImageIcon(IconUtils.MODEL_COLUMN));
 
-		_analysisJobBuilder.getSourceColumnListeners().add(this);
-		setBorder(WidgetUtils.BORDER_EMPTY);
-		setLayout(new VerticalLayout(4));
+        _analysisJobBuilder.getSourceColumnListeners().add(this);
+        setBorder(WidgetUtils.BORDER_EMPTY);
+        setLayout(new VerticalLayout(4));
 
-		add(_maxRowsFilterShortcutPanel);
-		add(_hintLabel);
-		add(Box.createVerticalStrut(10));
+        add(_maxRowsFilterShortcutPanel);
+        add(_hintLabel);
+        add(Box.createVerticalStrut(10));
 
-		List<MetaModelInputColumn> sourceColumns = analysisJobBuilder
-				.getSourceColumns();
-		for (InputColumn<?> column : sourceColumns) {
-			onAdd(column);
-		}
-	}
+        List<MetaModelInputColumn> sourceColumns = analysisJobBuilder.getSourceColumns();
+        for (InputColumn<?> column : sourceColumns) {
+            onAdd(column);
+        }
+    }
 
-	private MaxRowsFilterShortcutPanel createMaxRowsFilterShortcutPanel() {
-		MaxRowsFilterShortcutPanel maxRowsFilterShortcutPanel = null;
-		List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder
-				.getFilterJobBuilders();
-		for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
-			if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
-				maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(
-						_analysisJobBuilder, filterJobBuilder);
-				break;
-			}
-		}
-		if (maxRowsFilterShortcutPanel == null) {
-			maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(
-					_analysisJobBuilder);
-		}
-		maxRowsFilterShortcutPanel.setEnabled(false);
-		return maxRowsFilterShortcutPanel;
-	}
+    private MaxRowsFilterShortcutPanel createMaxRowsFilterShortcutPanel() {
+        MaxRowsFilterShortcutPanel maxRowsFilterShortcutPanel = null;
+        List<FilterJobBuilder<?, ?>> filterJobBuilders = _analysisJobBuilder.getFilterJobBuilders();
+        for (FilterJobBuilder<?, ?> filterJobBuilder : filterJobBuilders) {
+            if (MaxRowsFilterShortcutPanel.isFilter(filterJobBuilder)) {
+                maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder, filterJobBuilder);
+                break;
+            }
+        }
+        if (maxRowsFilterShortcutPanel == null) {
+            maxRowsFilterShortcutPanel = new MaxRowsFilterShortcutPanel(_analysisJobBuilder);
+        }
+        maxRowsFilterShortcutPanel.setEnabled(false);
+        return maxRowsFilterShortcutPanel;
+    }
 
-	@Override
-	public void onAdd(InputColumn<?> sourceColumn) {
-		_hintLabel.setVisible(false);
-		_maxRowsFilterShortcutPanel.setEnabled(true);
+    @Override
+    public void onAdd(InputColumn<?> sourceColumn) {
+        _hintLabel.setVisible(false);
+        _maxRowsFilterShortcutPanel.setEnabled(true);
 
-		Column column = sourceColumn.getPhysicalColumn();
-		Table table = column.getTable();
+        Column column = sourceColumn.getPhysicalColumn();
+        Table table = column.getTable();
 
-		ColumnListTable sourceColumnTable = getColumnListTable(table);
-		sourceColumnTable.addColumn(sourceColumn);
-	}
+        ColumnListTable sourceColumnTable = getColumnListTable(table);
+        sourceColumnTable.addColumn(sourceColumn);
+    }
 
-	@Override
-	public void onRemove(InputColumn<?> sourceColumn) {
-		Column column = sourceColumn.getPhysicalColumn();
-		Table table = column.getTable();
-		ColumnListTable sourceColumnTable = getColumnListTable(table);
-		sourceColumnTable.removeColumn(sourceColumn);
-		if (sourceColumnTable.getColumnCount() == 0) {
-			this.remove(sourceColumnTable);
-			_sourceColumnTables.remove(sourceColumnTable);
+    @Override
+    public void onRemove(InputColumn<?> sourceColumn) {
+        Column column = sourceColumn.getPhysicalColumn();
+        Table table = column.getTable();
+        ColumnListTable sourceColumnTable = getColumnListTable(table);
+        sourceColumnTable.removeColumn(sourceColumn);
+        if (sourceColumnTable.getColumnCount() == 0) {
+            this.remove(sourceColumnTable);
+            _sourceColumnTables.remove(sourceColumnTable);
 
-			if (_analysisJobBuilder.getSourceColumns().isEmpty()) {
-				_hintLabel.setVisible(true);
-				_maxRowsFilterShortcutPanel.setEnabled(false);
-			}
+            if (_analysisJobBuilder.getSourceColumns().isEmpty()) {
+                _hintLabel.setVisible(true);
+                _maxRowsFilterShortcutPanel.setEnabled(false);
+            }
 
-			// force UI update because sometimes the removed panel doesn't go
-			// away automatically
-			updateUI();
-		}
-	}
+            // force UI update because sometimes the removed panel doesn't go
+            // away automatically
+            updateUI();
+        }
+    }
 
-	private ColumnListTable getColumnListTable(Table table) {
-		ColumnListTable sourceColumnTable = null;
-		for (ColumnListTable sct : _sourceColumnTables) {
-			if (sct.getTable() == table) {
-				sourceColumnTable = sct;
-				break;
-			}
-		}
+    private ColumnListTable getColumnListTable(Table table) {
+        ColumnListTable sourceColumnTable = null;
+        for (ColumnListTable sct : _sourceColumnTables) {
+            if (sct.getTable() == table) {
+                sourceColumnTable = sct;
+                break;
+            }
+        }
 
-		if (sourceColumnTable == null) {
-			sourceColumnTable = new ColumnListTable(table, _analysisJobBuilder,
-					true, _windowContext);
-			this.add(sourceColumnTable);
-			_sourceColumnTables.add(sourceColumnTable);
-			updateUI();
-		}
-		return sourceColumnTable;
-	}
+        if (sourceColumnTable == null) {
+            sourceColumnTable = new ColumnListTable(table, _analysisJobBuilder, true, _windowContext);
+            this.add(sourceColumnTable);
+            _sourceColumnTables.add(sourceColumnTable);
+            updateUI();
+        }
+        return sourceColumnTable;
+    }
 
-	@Override
-	public void removeNotify() {
-		_analysisJobBuilder.getSourceColumnListeners().remove(this);
-		super.removeNotify();
-	}
+    @Override
+    public void removeNotify() {
+        _analysisJobBuilder.getSourceColumnListeners().remove(this);
+        super.removeNotify();
+    }
 
-	public MaxRowsFilterShortcutPanel getMaxRowsFilterShortcutPanel() {
-		return _maxRowsFilterShortcutPanel;
-	}
+    public MaxRowsFilterShortcutPanel getMaxRowsFilterShortcutPanel() {
+        return _maxRowsFilterShortcutPanel;
+    }
 }

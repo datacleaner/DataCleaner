@@ -100,7 +100,7 @@ public final class ColumnListTable extends DCPanel {
             final DCPanel headerPanel = new DCPanel();
             headerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
             final JLabel tableNameLabel = new JLabel(table.getQualifiedLabel(), imageManager.getImageIcon(
-                    "images/model/column.png", IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
+                    IconUtils.MODEL_COLUMN, IconUtils.ICON_SIZE_SMALL), JLabel.LEFT);
             tableNameLabel.setOpaque(false);
             tableNameLabel.setFont(WidgetUtils.FONT_HEADER1);
 
@@ -109,7 +109,7 @@ public final class ColumnListTable extends DCPanel {
             previewButton.addActionListener(new PreviewSourceDataActionListener(_windowContext, _analysisJobBuilder
                     .getDatastore(), _columns));
             
-            final JButton queryButton = WidgetFactory.createSmallButton("images/model/query.png");
+            final JButton queryButton = WidgetFactory.createSmallButton(IconUtils.MODEL_QUERY);
             queryButton.setToolTipText("Ad-hoc query");
             queryButton.addActionListener(new QueryActionListener(_windowContext, _analysisJobBuilder, _table, _columns));
 

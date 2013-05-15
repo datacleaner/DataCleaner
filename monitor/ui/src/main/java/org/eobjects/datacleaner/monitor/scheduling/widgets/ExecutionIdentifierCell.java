@@ -22,6 +22,8 @@ package org.eobjects.datacleaner.monitor.scheduling.widgets;
 import java.util.Date;
 
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionStatus;
+import org.eobjects.datacleaner.monitor.scheduling.model.TriggerType;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -56,15 +58,24 @@ final class ExecutionIdentifierCell extends AbstractCell<ExecutionIdentifier> {
 
         // trigger type
         sb.appendHtmlConstant("<span class=\"triggerTypes\">");
-        sb.appendEscaped(executionIdentifier.getTriggerType().toString());
+        final TriggerType triggerType = executionIdentifier.getTriggerType();
+        if (triggerType == null) {
+            sb.appendEscaped("(n/a)");
+        } else {
+            sb.appendEscaped(triggerType.toString());
+        }
         sb.appendHtmlConstant("</span>");
 
         // execution status
         sb.appendHtmlConstant("<span class=\"executionStatus\">");
-        sb.appendEscaped(executionIdentifier.getExecutionStatus().toString());
+        final ExecutionStatus executionStatus = executionIdentifier.getExecutionStatus();
+        if (executionStatus == null) {
+            sb.appendEscaped("(n/a)");
+        } else {
+            sb.appendEscaped(executionStatus.toString());
+        }
         sb.appendHtmlConstant("</span>");
 
         sb.appendHtmlConstant("</div>");
     }
-
 }

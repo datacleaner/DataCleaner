@@ -45,6 +45,7 @@ import org.eobjects.datacleaner.monitor.scheduling.model.VariableProviderDefinit
 import org.eobjects.datacleaner.monitor.server.job.ExecutionLoggerImpl;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -54,7 +55,15 @@ import org.springframework.context.ApplicationEventPublisher;
 /**
  * Quartz job which encapsulates the process of executing a DataCleaner job and
  * writes the result to the repository.
+ * 
+ * The {@link ExecuteJob} class is annotated with
+ * {@link DisallowConcurrentExecution}. This ensures that Quartz will not run a
+ * job instance concurrently. For more details, please check out the section
+ * "job instances" and "job state and concurrency", <a href=
+ * "http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-03"
+ * >in the quartz documentation</a>.
  */
+@DisallowConcurrentExecution
 public class ExecuteJob extends AbstractQuartzJob {
 
     public static final String DETAIL_SCHEDULE_DEFINITION = "DataCleaner.schedule.definition";
@@ -87,7 +96,7 @@ public class ExecuteJob extends AbstractQuartzJob {
                 final TriggerType triggerType = schedule.getTriggerType();
                 execution = new ExecutionLog(schedule, triggerType);
             }
-            
+
             jobEngineManager = applicationContext.getBean(JobEngineManager.class);
             final TenantContextFactory contextFactory = applicationContext.getBean(TenantContextFactory.class);
             tenant = schedule.getTenant();

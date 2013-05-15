@@ -47,9 +47,16 @@ public class ExecutionLog extends ExecutionIdentifier implements Serializable {
     }
 
     public ExecutionLog(ScheduleDefinition schedule, TriggerType triggerType) {
-        super(schedule.getJob().getName() + "-" + new Date().getTime(), triggerType);
+        super(createResultId(schedule), triggerType);
         _schedule = schedule;
-        _job = schedule.getJob();
+        _job = (schedule == null ? null : schedule.getJob());
+    }
+
+    private static String createResultId(ScheduleDefinition schedule) {
+        if (schedule == null || schedule.getJob() == null) {
+            return null;
+        }
+        return schedule.getJob().getName() + "-" + new Date().getTime();
     }
 
     public ScheduleDefinition getSchedule() {

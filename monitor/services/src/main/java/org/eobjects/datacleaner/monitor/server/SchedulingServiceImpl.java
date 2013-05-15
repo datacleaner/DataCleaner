@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ import javax.annotation.PreDestroy;
 
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
+import org.eobjects.datacleaner.monitor.job.ExecutionLogger;
 import org.eobjects.datacleaner.monitor.job.JobContext;
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingService;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
@@ -47,6 +49,7 @@ import org.eobjects.datacleaner.monitor.server.jaxb.JaxbExecutionLogReader;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleReader;
 import org.eobjects.datacleaner.monitor.server.jaxb.JaxbScheduleWriter;
 import org.eobjects.datacleaner.monitor.server.jaxb.SaxExecutionIdentifierReader;
+import org.eobjects.datacleaner.monitor.server.job.ExecutionLoggerImpl;
 import org.eobjects.datacleaner.monitor.shared.model.DCSecurityException;
 import org.eobjects.datacleaner.monitor.shared.model.JobIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
@@ -391,6 +394,7 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
         final String jobNameToBeTriggered = job.getName();
         final ScheduleDefinition schedule = getSchedule(tenant, job);
         final ExecutionLog execution = new ExecutionLog(schedule, TriggerType.MANUAL);
+        execution.setJobBeginDate(new Date());
 
         try {
             boolean addJob = true;
@@ -415,6 +419,11 @@ public class SchedulingServiceImpl implements SchedulingService, ApplicationCont
                 final String username = authentication.getName();
                 execution.setTriggeredBy(username);
             }
+            
+            // save the initial result log file
+            final RepositoryFolder resultFolder = _tenantContextFactory.getContext(tenant).getResultFolder();
+            final ExecutionLogger executionLogger = new ExecutionLoggerImpl(execution, resultFolder, null);
+            executionLogger.flushLog();
 
             final JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put(ExecuteJob.DETAIL_EXECUTION_LOG, execution);

@@ -87,16 +87,20 @@ public class ExecutionLogPanel extends Composite {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        updateContent(executionLog);
-
-        if (pollForUpdates) {
-            final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, new Callback() {
-                @Override
-                public void updateExecutionLog(ExecutionLog executionLog) {
-                    updateContent(executionLog);
-                }
-            });
-            poller.start(executionLog);
+        if (executionLog == null) {
+            loadingIndicator.setVisible(false);
+        } else {
+            updateContent(executionLog);
+            
+            if (pollForUpdates) {
+                final ExecutionLogPoller poller = new ExecutionLogPoller(_service, _tenant, new Callback() {
+                    @Override
+                    public void updateExecutionLog(ExecutionLog executionLog) {
+                        updateContent(executionLog);
+                    }
+                });
+                poller.start(executionLog);
+            }
         }
     }
 
@@ -127,17 +131,19 @@ public class ExecutionLogPanel extends Composite {
             }
 
             final TriggerType triggerType = executionLog.getTriggerType();
-            switch (triggerType) {
-            case PERIODIC:
-                triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
-                break;
-            case DEPENDENT:
-                triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName()
-                        + "'");
-                break;
-            case MANUAL:
-                triggerLabel.setText("Manually triggered");
-                break;
+            if (triggerType != null) {
+                switch (triggerType) {
+                case PERIODIC:
+                    triggerLabel.setText("Scheduled: Periodic '" + executionLog.getSchedule().getCronExpression() + "'");
+                    break;
+                case DEPENDENT:
+                    triggerLabel.setText("Scheduled: After '" + executionLog.getSchedule().getDependentJob().getName()
+                            + "'");
+                    break;
+                case MANUAL:
+                    triggerLabel.setText("Manually triggered");
+                    break;
+                }
             }
 
             triggeredByLabel.setText(executionLog.getTriggeredBy());

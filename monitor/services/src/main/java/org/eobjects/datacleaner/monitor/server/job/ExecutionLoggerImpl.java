@@ -61,18 +61,26 @@ public class ExecutionLoggerImpl implements ExecutionLogger {
 
         final String resultId = execution.getResultId();
         final String logFilename = resultId + FileFilters.ANALYSIS_EXECUTION_LOG_XML.getExtension();
-        _logFile = resultFolder.createFile(logFilename, new Action<OutputStream>() {
-            @Override
-            public void run(OutputStream out) throws Exception {
-                _executionLogWriter.write(_execution, out);
-            }
-        });
+        
+        final RepositoryFile existingLogFile = resultFolder.getFile(logFilename);
+        if (existingLogFile == null) {
+            _logFile = resultFolder.createFile(logFilename, new Action<OutputStream>() {
+                @Override
+                public void run(OutputStream out) throws Exception {
+                    _executionLogWriter.write(_execution, out);
+                }
+            });
+        } else {
+            _logFile = existingLogFile;
+        }
     }
 
     @Override
     public void setStatusRunning() {
         _execution.setExecutionStatus(ExecutionStatus.RUNNING);
-        _execution.setJobBeginDate(new Date());
+        if (_execution.getJobBeginDate() == null) {
+            _execution.setJobBeginDate(new Date());
+        }
 
         log("Job execution BEGIN");
     }

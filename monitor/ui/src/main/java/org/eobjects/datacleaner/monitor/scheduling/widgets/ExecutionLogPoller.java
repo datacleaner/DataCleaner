@@ -20,6 +20,7 @@
 package org.eobjects.datacleaner.monitor.scheduling.widgets;
 
 import org.eobjects.datacleaner.monitor.scheduling.SchedulingServiceAsync;
+import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionIdentifier;
 import org.eobjects.datacleaner.monitor.scheduling.model.ExecutionLog;
 import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.util.DCAsyncCallback;
@@ -58,7 +59,7 @@ public class ExecutionLogPoller {
         schedulePoll(executionLog);
     }
 
-    private void schedulePoll(final ExecutionLog executionLog) {
+    public void schedulePoll(final ExecutionIdentifier executionLog) {
         if (executionLog == null || executionLog.isFinished()) {
             return;
         }

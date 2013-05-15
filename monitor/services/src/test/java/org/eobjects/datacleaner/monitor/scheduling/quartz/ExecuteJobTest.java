@@ -36,8 +36,56 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryNode;
 import org.eobjects.datacleaner.repository.file.FileRepository;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
 
 public class ExecuteJobTest extends TestCase {
+
+    public void testAssumptionsAboutDisallowConcurrentExecution() throws Exception {
+        Scheduler scheduler = new StdSchedulerFactory().getScheduler();
+
+        JobDetail job1 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant1").build();
+        JobDetail job2 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job2", "tenant1").build();
+
+        scheduler.addJob(job1, true);
+        scheduler.addJob(job2, true);
+        
+        assertEquals(1, scheduler.getJobGroupNames().size());
+        assertEquals(2, scheduler.getJobKeys(GroupMatcher.jobGroupEquals("tenant1")).size());
+        
+        JobDetail job3 = JobBuilder.newJob(MockNonConcurrentJob.class).withIdentity("job1", "tenant2").build();
+        scheduler.addJob(job3, true);
+        
+        assertEquals(2, scheduler.getJobGroupNames().size());
+        assertEquals(2, scheduler.getJobKeys(GroupMatcher.jobGroupEquals("tenant1")).size());
+        assertEquals(1, scheduler.getJobKeys(GroupMatcher.jobGroupEquals("tenant2")).size());
+        
+        scheduler.start();
+        
+        scheduler.triggerJob(new JobKey("job1", "tenant1"));
+        scheduler.triggerJob(new JobKey("job1", "tenant1"));
+        scheduler.triggerJob(new JobKey("job1", "tenant1"));
+        scheduler.triggerJob(new JobKey("job1", "tenant1"));
+        Thread.sleep(100);
+        
+        assertEquals(1, scheduler.getCurrentlyExecutingJobs().size());
+
+        scheduler.triggerJob(new JobKey("job2", "tenant1"));
+        Thread.sleep(100);
+        
+        assertEquals(2, scheduler.getCurrentlyExecutingJobs().size());
+        
+        scheduler.triggerJob(new JobKey("job1", "tenant2"));
+        scheduler.triggerJob(new JobKey("job1", "tenant2"));
+        scheduler.triggerJob(new JobKey("job1", "tenant2"));
+        Thread.sleep(100);
+        
+        assertEquals(3, scheduler.getCurrentlyExecutingJobs().size());
+    }
 
     public void testFileNotFound() throws Exception {
         final Repository repo = new FileRepository("src/test/resources/example_repo");

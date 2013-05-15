@@ -285,6 +285,11 @@
 
 .JobHistoryPanel .ExecutionCellList .ExecutionIdentifier span {
 	padding-left: 4px;
+	font-size: 0.85em;
+}
+
+.JobHistoryPanel .ExecutionCellList .ExecutionIdentifier span.beginDate {
+	font-size: 1em;
 }
 
 .JobHistoryPanel .ExecutionLogPanelTarget {

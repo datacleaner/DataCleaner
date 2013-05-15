@@ -106,28 +106,44 @@ public class ExecutionIdentifier implements Serializable, Comparable<ExecutionId
         }
 
         if (_jobBeginDate != null) {
-            int diff = _jobBeginDate.compareTo(o.getJobBeginDate());
+            final Date otherJobBeginDate = o.getJobBeginDate();
+            if (otherJobBeginDate == null) {
+                return 1;
+            }
+            final int diff = _jobBeginDate.compareTo(otherJobBeginDate);
             if (diff != 0) {
                 return diff;
             }
         }
 
         if (_resultId != null) {
-            int diff = _resultId.compareTo(o.getResultId());
+            final String otherResultId = o.getResultId();
+            if (otherResultId == null) {
+                return 1;
+            }
+            final int diff = _resultId.compareTo(otherResultId);
             if (diff != 0) {
                 return diff;
             }
         }
 
         if (_executionStatus != null) {
-            int diff = _executionStatus.compareTo(o.getExecutionStatus());
+            final ExecutionStatus otherExecutionStatus = o.getExecutionStatus();
+            if (otherExecutionStatus == null) {
+                return 1;
+            }
+            final int diff = _executionStatus.compareTo(otherExecutionStatus);
             if (diff != 0) {
                 return diff;
             }
         }
 
         if (_triggerType != null) {
-            int diff = _triggerType.compareTo(o.getTriggerType());
+            final TriggerType otherTriggerType = o.getTriggerType();
+            if (otherTriggerType == null) {
+                return 1;
+            }
+            final int diff = _triggerType.compareTo(otherTriggerType);
             if (diff != 0) {
                 return diff;
             }

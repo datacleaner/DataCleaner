@@ -67,6 +67,7 @@ public class ExtensionReader {
     }
 
     private ExtensionPackage getInternalExtension(URL url) {
+        logger.info("Reading extension descriptor: {}", url);
         try {
             final InputStream inputStream = url.openStream();
             try {

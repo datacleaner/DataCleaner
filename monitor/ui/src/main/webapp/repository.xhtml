@@ -23,94 +23,95 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<h:panelGroup rendered="#{user.configurationEditor}"
-			styleClass="uploadConfigurationPanel">
-			<h3>Configuration file</h3>
-			<p>
-				Upload new <a href="repository/#{user.tenant}/conf.xml"
-					target="_blank">conf.xml</a> file:
-			</p>
-			<form action="repository/#{user.tenant}/conf.xml" method="post"
-				enctype="multipart/form-data">
-				<input type="file" name="file" /> <input type="submit"
-					value="Upload"
-					onclick="return confirmUpload('configuration')" />
-			</form>
-		</h:panelGroup>
-		
-		<h2>Jobs</h2>
-		<ul class="repositoryView">
-			<ui:repeat var="folder" value="#{tenantContext.jobFolder.folders}">
-				<li class="folder">#{folder.name}</li>
-				<ul class="repositoryView">
-					<ui:repeat var="file" value="#{folder.files}">
+		<div id="RepositoryPage">
+			<h:panelGroup rendered="#{user.configurationEditor}"
+				styleClass="uploadConfigurationPanel">
+				<h3>Configuration file</h3>
+				<p>
+					Upload new <a href="repository/#{user.tenant}/conf.xml"
+						target="_blank">conf.xml</a> file:
+				</p>
+				<form action="repository/#{user.tenant}/conf.xml" method="post"
+					enctype="multipart/form-data">
+					<input type="file" name="file" /> <input type="submit"
+						value="Upload"
+						onclick="return confirmUpload('configuration')" />
+				</form>
+			</h:panelGroup>
+			
+			<h2>Jobs</h2>
+			<ul class="repositoryView">
+				<ui:repeat var="folder" value="#{tenantContext.jobFolder.folders}">
+					<li class="folder">#{folder.name}</li>
+					<ul class="repositoryView">
+						<ui:repeat var="file" value="#{folder.files}">
+							<li class="file #{file.type}">#{file.name}</li>
+						</ui:repeat>
+					</ul>
+				</ui:repeat>
+				<ui:repeat var="file" value="#{tenantContext.jobFolder.files}">
+					<h:panelGroup rendered="#{file.type eq 'ANALYSIS_JOB'}">
+						<li class="file #{file.type}">
+							<a href="repository/#{user.tenant}/jobs/#{file.name}">#{file.name}</a>
+							<h:panelGroup rendered="#{user.jobEditor}" styleClass="uploadJobPanel">
+								<form action="repository/#{user.tenant}/jobs/#{file.name}" method="post"
+									enctype="multipart/form-data">
+									<input class="showFormButton" onclick="showUploadJobForm(this)" type="button" alt="Upload/replace the job file contents" />
+								</form>
+							</h:panelGroup>
+						</li>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{file.type ne 'ANALYSIS_JOB'}">
 						<li class="file #{file.type}">#{file.name}</li>
-					</ui:repeat>
-				</ul>
-			</ui:repeat>
-			<ui:repeat var="file" value="#{tenantContext.jobFolder.files}">
-				<h:panelGroup rendered="#{file.type eq 'ANALYSIS_JOB'}">
-					<li class="file #{file.type}">
-						<a href="repository/#{user.tenant}/jobs/#{file.name}">#{file.name}</a>
-						<h:panelGroup rendered="#{user.jobEditor}" styleClass="uploadJobPanel">
-							<form action="repository/#{user.tenant}/jobs/#{file.name}" method="post"
-								enctype="multipart/form-data">
-								<input class="showFormButton" onclick="showUploadJobForm(this)" type="button" alt="Upload/replace the job file contents" />
-							</form>
-						</h:panelGroup>
-					</li>
-				</h:panelGroup>
-				<h:panelGroup rendered="#{file.type ne 'ANALYSIS_JOB'}">
-					<li class="file #{file.type}">#{file.name}</li>
-				</h:panelGroup>
-			</ui:repeat>
-		</ul>
-		
-		<h2>Timelines</h2>
-		<ul class="repositoryView">
-			<ui:repeat var="folder"
-				value="#{tenantContext.timelineFolder.folders}">
-				<li class="folder">#{folder.name}</li>
-				<ul class="repositoryView">
-					<ui:repeat var="file" value="#{folder.files}">
-						<li class="file #{file.type}"><a href="dashboard.jsf##{folder.name}">#{file.name}</a></li>
-					</ui:repeat>
-				</ul>
-			</ui:repeat>
-			<ui:repeat var="file" value="#{tenantContext.timelineFolder.files}">
-				<li class="file #{file.type}"><a href="dashboard.jsf">#{file.name}</a></li>
-			</ui:repeat>
-		</ul>
-		
-				
-		<h2>Datastores</h2>
-		<ul class="repositoryView">
-			<ui:repeat var="ds" value="#{jsfHelper.datastores}">
-				<li class="file DATASTORE">#{ds.name}</li>
-			</ui:repeat>
-		</ul>
-
-		<h2>Results</h2>
-		<ul class="repositoryView">
-			<ui:repeat var="folder" value="#{tenantContext.resultFolder.folders}">
-				<li class="folder">#{folder.name}</li>
-				<ul class="repositoryView">
-					<ui:repeat var="file" value="#{folder.files}">
+					</h:panelGroup>
+				</ui:repeat>
+			</ul>
+			
+			<h2>Timelines</h2>
+			<ul class="repositoryView">
+				<ui:repeat var="folder"
+					value="#{tenantContext.timelineFolder.folders}">
+					<li class="folder">#{folder.name}</li>
+					<ul class="repositoryView">
+						<ui:repeat var="file" value="#{folder.files}">
+							<li class="file #{file.type}"><a href="dashboard.jsf##{folder.name}">#{file.name}</a></li>
+						</ui:repeat>
+					</ul>
+				</ui:repeat>
+				<ui:repeat var="file" value="#{tenantContext.timelineFolder.files}">
+					<li class="file #{file.type}"><a href="dashboard.jsf">#{file.name}</a></li>
+				</ui:repeat>
+			</ul>
+			
+					
+			<h2>Datastores</h2>
+			<ul class="repositoryView">
+				<ui:repeat var="ds" value="#{jsfHelper.datastores}">
+					<li class="file DATASTORE">#{ds.name}</li>
+				</ui:repeat>
+			</ul>
+	
+			<h2>Results</h2>
+			<ul class="repositoryView">
+				<ui:repeat var="folder" value="#{tenantContext.resultFolder.folders}">
+					<li class="folder">#{folder.name}</li>
+					<ul class="repositoryView">
+						<ui:repeat var="file" value="#{folder.files}">
+							<li class="file #{file.type}">#{file.name}</li>
+						</ui:repeat>
+					</ul>
+				</ui:repeat>
+				<ui:repeat var="file" value="#{tenantContext.resultFolder.files}">
+					<h:panelGroup rendered="#{file.type eq 'ANALYSIS_RESULT'}">
+						<li class="file #{file.type}"><a
+							href="repository/#{user.tenant}/results/#{file.name}">#{file.name}</a></li>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{file.type ne 'ANALYSIS_RESULT'}">
 						<li class="file #{file.type}">#{file.name}</li>
-					</ui:repeat>
-				</ul>
-			</ui:repeat>
-			<ui:repeat var="file" value="#{tenantContext.resultFolder.files}">
-				<h:panelGroup rendered="#{file.type eq 'ANALYSIS_RESULT'}">
-					<li class="file #{file.type}"><a
-						href="repository/#{user.tenant}/results/#{file.name}">#{file.name}</a></li>
-				</h:panelGroup>
-				<h:panelGroup rendered="#{file.type ne 'ANALYSIS_RESULT'}">
-					<li class="file #{file.type}">#{file.name}</li>
-				</h:panelGroup>
-			</ui:repeat>
-		</ul>
-
+					</h:panelGroup>
+				</ui:repeat>
+			</ul>
+		</div>
 	</ui:define>
 
 </ui:composition>

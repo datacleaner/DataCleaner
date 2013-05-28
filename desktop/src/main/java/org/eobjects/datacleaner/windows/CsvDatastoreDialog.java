@@ -53,6 +53,8 @@ import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.datacleaner.widgets.HeaderLineComboBox;
 import org.eobjects.metamodel.csv.CsvConfiguration;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.FileResource;
+import org.eobjects.metamodel.util.Resource;
 
 /**
  * Dialog for setting up CSV datastores.
@@ -277,7 +279,7 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
                 _escapeCharField.setSelectedItem(ESCAPE_BACKSLASH);
             }
         }
-        
+
         showPreview = true;
         validateAndUpdate();
     }
@@ -403,8 +405,9 @@ public final class CsvDatastoreDialog extends AbstractFileBasedDatastoreDialog<C
     }
 
     private CsvDatastore createDatastore(String name, String filename, boolean failOnInconsistentRecords) {
-        return new CsvDatastore(name, filename, getQuoteChar(), getSeparatorChar(), getEscapeChar(), getEncoding(),
-                failOnInconsistentRecords, getHeaderLine());
+        final Resource resource = new FileResource(filename);
+        return new CsvDatastore(name, resource, filename, getQuoteChar(), getSeparatorChar(), getEscapeChar(),
+                getEncoding(), failOnInconsistentRecords, getHeaderLine());
     }
 
     @Override

@@ -40,6 +40,7 @@ import org.eobjects.analyzer.descriptors.TransformerBeanDescriptor;
 import org.eobjects.analyzer.job.builder.AnalysisJobBuilder;
 import org.eobjects.datacleaner.output.OutputWriter;
 import org.eobjects.datacleaner.output.excel.ExcelOutputWriterFactory;
+import org.eobjects.metamodel.util.FileResource;
 
 @AnalyzerBean("Create Excel spreadsheet")
 @Alias("Write to Excel spreadsheet")
@@ -85,7 +86,7 @@ public class CreateExcelSpreadsheetAnalyzer extends AbstractOutputWriterAnalyzer
 
 	@Override
 	protected WriteDataResult getResultInternal(int rowCount) {
-		Datastore datastore = new ExcelDatastore(file.getName(), file.getAbsolutePath());
+		Datastore datastore = new ExcelDatastore(file.getName(), new FileResource(file), file.getAbsolutePath());
 		WriteDataResult result = new WriteDataResultImpl(rowCount, datastore, null, sheetName);
 		return result;
 	}

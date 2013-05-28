@@ -173,7 +173,7 @@ public class PropertyWidgetFactoryTest extends TestCase {
 				MultipleSynonymCatalogsPropertyWidget.class, new SynonymCatalog[0], new SynonymCatalog[] { syn1, syn3 });
 
 		performAssertions(propertyWidgetFactory, "Datastore property", SingleDatastorePropertyWidget.class, null,
-				new ExcelDatastore("my ds", "target/foobar.xlsx"));
+				new ExcelDatastore("my ds", null, "target/foobar.xlsx"));
 
 		performAssertions(propertyWidgetFactory, "Updateable datastore property", SingleDatastorePropertyWidget.class,
 				null, new CsvDatastore("foo", "foo.csv"));

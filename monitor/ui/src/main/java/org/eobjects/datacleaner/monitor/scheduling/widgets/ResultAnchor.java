@@ -44,14 +44,19 @@ public class ResultAnchor extends Anchor {
 
     public void setResult(ExecutionLog executionLog, String text) {
         final String resultId = executionLog.getResultId();
-        final String resultFilename = resultId + ".analysis.result.dat";
-        final String url = Urls.createRelativeUrl("repository/" + _tenant.getId() + "/results/" + resultFilename);
-        setHref(url);
-        setTarget("_blank");
-        if (text == null) {
-            setText(resultId);
+        if (resultId == null) {
+            setEnabled(false);
+            setText("");
         } else {
-            setText(text);
+            final String resultFilename = resultId + ".analysis.result.dat";
+            final String url = Urls.createRelativeUrl("repository/" + _tenant.getId() + "/results/" + resultFilename);
+            setHref(url);
+            setTarget("_blank");
+            if (text == null) {
+                setText(resultId);
+            } else {
+                setText(text);
+            }
         }
     }
 

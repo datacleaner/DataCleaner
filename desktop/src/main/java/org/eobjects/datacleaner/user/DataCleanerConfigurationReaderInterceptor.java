@@ -58,7 +58,7 @@ public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurat
             return null;
         }
         
-        File file = new File(filename);
+        final File file = new File(filename);
         if (file.isAbsolute()) {
             return filename;
         }

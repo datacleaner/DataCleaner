@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.scheduling.quartz;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
@@ -70,19 +72,19 @@ public class ExecuteJobTest extends TestCase {
         scheduler.triggerJob(new JobKey("job1", "tenant1"));
         scheduler.triggerJob(new JobKey("job1", "tenant1"));
         scheduler.triggerJob(new JobKey("job1", "tenant1"));
-        Thread.sleep(100);
+        Thread.sleep(40);
         
         assertEquals(1, scheduler.getCurrentlyExecutingJobs().size());
 
         scheduler.triggerJob(new JobKey("job2", "tenant1"));
-        Thread.sleep(100);
+        Thread.sleep(40);
         
         assertEquals(2, scheduler.getCurrentlyExecutingJobs().size());
         
         scheduler.triggerJob(new JobKey("job1", "tenant2"));
         scheduler.triggerJob(new JobKey("job1", "tenant2"));
         scheduler.triggerJob(new JobKey("job1", "tenant2"));
-        Thread.sleep(100);
+        Thread.sleep(40);
         
         assertEquals(3, scheduler.getCurrentlyExecutingJobs().size());
     }
@@ -106,8 +108,8 @@ public class ExecuteJobTest extends TestCase {
 
             ExecutionLog log = schedulingService.getExecution(tenantIdentifier, execution);
             String logOutput = log.getLogOutput();
-            assertTrue(logOutput, logOutput.indexOf("foo/bar.csv (FileNotFoundException)") != -1);
-            assertTrue(logOutput, logOutput.indexOf("java.io.FileNotFoundException: ") != -1);
+            assertTrue(logOutput, logOutput.indexOf("Resource does not exist: FileResource[" + new File("src/test/resources/example_repo/tenant3/foo/bar.csv").getPath() + "] (ResourceException)") != -1);
+            assertTrue(logOutput, logOutput.indexOf("org.eobjects.metamodel.util.ResourceException: ") != -1);
         } finally {
             RepositoryNode logNode = repo.getRepositoryNode("/tenant3/results/" + executionId
                     + ".analysis.execution.log.xml");

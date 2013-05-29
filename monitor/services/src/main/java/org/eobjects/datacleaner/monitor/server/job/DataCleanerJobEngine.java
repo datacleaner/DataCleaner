@@ -32,6 +32,7 @@ import org.eobjects.analyzer.cluster.DistributedAnalysisRunner;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.connection.ResourceDatastore;
 import org.eobjects.analyzer.data.InputColumn;
 import org.eobjects.analyzer.descriptors.DescriptorProvider;
 import org.eobjects.analyzer.descriptors.HasAnalyzerResultBeanDescriptor;
@@ -63,6 +64,8 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
 import org.eobjects.datacleaner.util.FileFilters;
+import org.eobjects.metamodel.util.Resource;
+import org.eobjects.metamodel.util.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +104,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     }
 
     @Override
-    public MetricValues getMetricValues(MetricJobContext job, ResultContext result, List<MetricIdentifier> metricIdentifiers) {
+    public MetricValues getMetricValues(MetricJobContext job, ResultContext result,
+            List<MetricIdentifier> metricIdentifiers) {
         final DataCleanerJobContext dataCleanerJobContext = (DataCleanerJobContext) job;
         final AnalysisJob analysisJob = dataCleanerJobContext.getAnalysisJob();
         final AnalysisResult analysisResult = result.getAnalysisResult();
@@ -156,11 +160,18 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
      * 
      * @throws FileNotFoundException
      */
-    private void preLoadJob(TenantContext context, DataCleanerJobContext job) throws FileNotFoundException {
+    private void preLoadJob(TenantContext context, DataCleanerJobContext job) throws FileNotFoundException,
+            ResourceException {
         final String sourceDatastoreName = job.getSourceDatastoreName();
         final Datastore datastore = context.getConfiguration().getDatastoreCatalog().getDatastore(sourceDatastoreName);
 
-        if (datastore instanceof FileDatastore) {
+        if (datastore instanceof ResourceDatastore) {
+            Resource resource = ((ResourceDatastore) datastore).getResource();
+            if (resource == null || !resource.isExists()) {
+                logger.warn("Raising ResourceException from datastore: {}", datastore);
+                throw new ResourceException(resource, "Resource does not exist: " + resource);
+            }
+        } else if (datastore instanceof FileDatastore) {
             final String filename = ((FileDatastore) datastore).getFilename();
             final File file = new File(filename);
             if (!file.exists()) {
@@ -187,7 +198,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             // the job was materialized using a placeholder datastore - ie.
             // the real datastore was not found!
             final String sourceDatastoreName = job.getSourceDatastoreName();
-            logger.warn("Raising a NoSuchDatastoreException since a PlaceholderDatastore was found at execution time: {}",
+            logger.warn(
+                    "Raising a NoSuchDatastoreException since a PlaceholderDatastore was found at execution time: {}",
                     sourceDatastoreName);
             throw new NoSuchDatastoreException(sourceDatastoreName);
         }
@@ -222,7 +234,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
         final AnalysisResult analysisResult = result.getAnalysisResult();
 
         final AnalysisJob analysisJob = ((DataCleanerJobContext) job).getAnalysisJob();
-        final ComponentJob componentJob = metricValueUtils.getComponentJob(metricIdentifier, analysisJob, analysisResult);
+        final ComponentJob componentJob = metricValueUtils.getComponentJob(metricIdentifier, analysisJob,
+                analysisResult);
 
         if (componentDescriptor == null) {
             componentDescriptor = (HasAnalyzerResultBeanDescriptor<?>) componentJob.getDescriptor();
@@ -234,7 +247,8 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             logger.debug("Component descriptor inferred as: {}", componentDescriptor);
         }
 
-        final AnalyzerResult analyzerResult = metricValueUtils.getResult(analysisResult, componentJob, metricIdentifier);
+        final AnalyzerResult analyzerResult = metricValueUtils
+                .getResult(analysisResult, componentJob, metricIdentifier);
         final Collection<String> suggestions = metricDescriptor.getMetricParameterSuggestions(analyzerResult);
 
         // make sure we can send it across the GWT-RPC wire.
@@ -248,7 +262,7 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
     @Override
     public Collection<InputColumn<?>> getMetricParameterColumns(MetricJobContext job, ComponentJob component) {
         if (component instanceof InputColumnSinkJob) {
-            final InputColumnSinkJob inputColumnSinkJob = (InputColumnSinkJob)component;
+            final InputColumnSinkJob inputColumnSinkJob = (InputColumnSinkJob) component;
             final InputColumn<?>[] inputColumns = inputColumnSinkJob.getInput();
             return Arrays.asList(inputColumns);
         }

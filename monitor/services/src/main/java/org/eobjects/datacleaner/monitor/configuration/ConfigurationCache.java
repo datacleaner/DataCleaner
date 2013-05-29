@@ -21,14 +21,19 @@ package org.eobjects.datacleaner.monitor.configuration;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
+import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
+import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
+import org.eobjects.datacleaner.repository.RepositoryFileResourceTypeHandler;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
+import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
 import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
@@ -43,22 +48,23 @@ final class ConfigurationCache {
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationCache.class);
 
     private final InjectionManagerFactory _injectionManagerFactory;
-    private final RepositoryFolder _tenantFolder;
+    private final Repository _repository;
     private final RepositoryFile _file;
     private final String _tenantId;
 
     private volatile AnalyzerBeansConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
-    public ConfigurationCache(String tenantId, RepositoryFolder tenantFolder,
-            InjectionManagerFactory injectionManagerFactory) {
+    public ConfigurationCache(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory) {
         _tenantId = tenantId;
-        _tenantFolder = tenantFolder;
+        _repository = repository;
         _injectionManagerFactory = injectionManagerFactory;
 
-        RepositoryFile file = _tenantFolder.getFile("conf.xml");
+        RepositoryFolder tenantFolder = repository.getFolder(tenantId);
+
+        RepositoryFile file = tenantFolder.getFile("conf.xml");
         if (file == null) {
-            file = _tenantFolder.createFile("conf.xml", new WriteDefaultTenantConfigurationAction());
+            file = tenantFolder.createFile("conf.xml", new WriteDefaultTenantConfigurationAction());
         }
         _file = file;
     }
@@ -89,15 +95,28 @@ final class ConfigurationCache {
 
     protected AnalyzerBeansConfiguration readConfiguration() {
         final JaxbConfigurationReader reader = new JaxbConfigurationReader(new DefaultConfigurationReaderInterceptor() {
+
+            @Override
+            protected File getRelativeParentDirectory() {
+                if (_repository instanceof FileRepository) {
+                    FileRepositoryFolder tenantFolder = (FileRepositoryFolder) _repository.getFolder(_tenantId);
+                    File file = tenantFolder.getFile();
+                    return file;
+                }
+                return super.getRelativeParentDirectory();
+            }
+
             @Override
             public String createFilename(String filename) {
                 if (isAbsolute(filename)) {
-                    return filename;
+                    return super.createFilename(filename);
                 }
 
-                if (_tenantFolder instanceof FileRepositoryFolder) {
-                    File file = ((FileRepositoryFolder) _tenantFolder).getFile();
-                    return file.getAbsolutePath() + File.separatorChar + filename;
+                if (_repository instanceof FileRepository) {
+                    // for FileRepository implementations, the super
+                    // implementation will also "just work" because of the above
+                    // getRelativeParentDirectory method.
+                    return super.createFilename(filename);
                 }
 
                 final String userHome = System.getProperty("user.home");
@@ -111,6 +130,13 @@ final class ConfigurationCache {
             }
 
             @Override
+            protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
+                List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
+                handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantId));
+                return handlers;
+            }
+
+            @Override
             public AnalyzerBeansConfigurationImpl createBaseConfiguration() {
                 return new AnalyzerBeansConfigurationImpl(_injectionManagerFactory);
             }
@@ -119,7 +145,9 @@ final class ConfigurationCache {
         final RepositoryFile configurationFile = getConfigurationFile();
         _lastModifiedCache = configurationFile.getLastModified();
         if (_lastModifiedCache < 0) {
-            logger.warn("Last modified timestamp was negative ({})! Returning plain AnalyzerBeansConfiguration since this indicates that the file has been deleted.", _lastModifiedCache);
+            logger.warn(
+                    "Last modified timestamp was negative ({})! Returning plain AnalyzerBeansConfiguration since this indicates that the file has been deleted.",
+                    _lastModifiedCache);
             return new AnalyzerBeansConfigurationImpl();
         }
 

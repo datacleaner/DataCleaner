@@ -105,6 +105,11 @@ public class RepositoryFileResource implements Resource, Serializable {
     }
 
     @Override
+    public String toString() {
+        return "RepositoryFileResource[" + _qualifiedPath + "]";
+    }
+
+    @Override
     public long getLastModified() {
         return getRepositoryFile().getLastModified();
     }

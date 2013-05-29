@@ -72,13 +72,13 @@ public class TenantContextImpl implements TenantContext {
         if (jobEngineManager == null) {
             throw new IllegalArgumentException("JobEngineManager cannot be null");
         }
-        _configurationCache = new ConfigurationCache(tenantId, getTenantRootFolder(), _injectionManagerFactory);
+        _configurationCache = new ConfigurationCache(tenantId, repository, _injectionManagerFactory);
         _jobCache = buildJobCache();
     }
 
     private LoadingCache<JobIdentifier, JobContext> buildJobCache() {
-        final LoadingCache<JobIdentifier, JobContext> cache = CacheBuilder.newBuilder().expireAfterWrite(5, TimeUnit.SECONDS)
-                .build(new CacheLoader<JobIdentifier, JobContext>() {
+        final LoadingCache<JobIdentifier, JobContext> cache = CacheBuilder.newBuilder()
+                .expireAfterWrite(5, TimeUnit.SECONDS).build(new CacheLoader<JobIdentifier, JobContext>() {
                     @Override
                     public JobContext load(JobIdentifier job) throws Exception {
                         final String jobName = job.getName();
@@ -228,7 +228,8 @@ public class TenantContextImpl implements TenantContext {
 
         final RepositoryFile resultFile;
         if (resultFilename.endsWith("-latest" + EXTENSION_RESULT)) {
-            final String jobName = resultFilename.substring(0, resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
+            final String jobName = resultFilename.substring(0,
+                    resultFilename.length() - ("-latest" + EXTENSION_RESULT).length());
             resultFile = resultFolder.getLatestFile(jobName, EXTENSION_RESULT);
         } else {
             resultFile = resultFolder.getFile(resultFilename);

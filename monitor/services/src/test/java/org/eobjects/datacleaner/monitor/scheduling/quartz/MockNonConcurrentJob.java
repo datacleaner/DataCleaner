@@ -33,7 +33,7 @@ public class MockNonConcurrentJob extends AbstractQuartzJob {
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         System.out.println(context.getJobDetail().getKey() + " - starting");
         try {
-            Thread.sleep(200);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
         }
         System.out.println(context.getJobDetail().getKey() + " - finished");

@@ -37,6 +37,7 @@ import org.eobjects.analyzer.reference.StringPattern;
 import org.eobjects.analyzer.reference.SynonymCatalog;
 import org.eobjects.analyzer.util.ReflectionUtils;
 import org.eobjects.datacleaner.guice.InjectorBuilder;
+import org.eobjects.metamodel.util.Resource;
 
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
@@ -167,6 +168,8 @@ public final class PropertyWidgetFactory {
 				widgetClass = SingleStringPatternPropertyWidget.class;
 			} else if (type.isEnum()) {
 				widgetClass = SingleEnumPropertyWidget.class;
+			} else if (ReflectionUtils.is(type, Resource.class)) {
+                widgetClass = SingleResourcePropertyWidget.class;
 			} else if (type == File.class) {
 				widgetClass = SingleFilePropertyWidget.class;
 			} else if (type == Pattern.class) {

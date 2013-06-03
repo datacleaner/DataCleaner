@@ -143,7 +143,6 @@ public abstract class AbstractPropertyWidget<E> extends
 	/**
 	 * Notification method invoked when the resulting panel is added to the UI.
 	 */
-	@SuppressWarnings("deprecation")
 	protected void onPanelAdd() {
 		addNotify();
 	}
@@ -152,7 +151,6 @@ public abstract class AbstractPropertyWidget<E> extends
 	 * Notification method invoked when the resulting panel is removed from the
 	 * UI.
 	 */
-	@SuppressWarnings("deprecation")
     protected void onPanelRemove() {
 		removeNotify();
 	}

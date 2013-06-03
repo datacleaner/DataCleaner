@@ -68,10 +68,8 @@ public class SchedulingServiceImplTest extends TestCase {
         final SchedulingServiceImpl service = new SchedulingServiceImpl(repository, contextFactory);
         service.setApplicationContext(applicationContext);
 
-        Scheduler scheduler = service.getScheduler();
-        assertFalse(scheduler.isStarted());
-
         service.initialize();
+        Scheduler scheduler = service.getScheduler();
 
         assertTrue(scheduler.isStarted());
 

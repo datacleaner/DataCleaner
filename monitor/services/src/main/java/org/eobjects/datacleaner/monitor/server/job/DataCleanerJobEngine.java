@@ -42,6 +42,7 @@ import org.eobjects.analyzer.job.ComponentJob;
 import org.eobjects.analyzer.job.InputColumnSinkJob;
 import org.eobjects.analyzer.job.NoSuchDatastoreException;
 import org.eobjects.analyzer.job.runner.AnalysisListener;
+import org.eobjects.analyzer.job.runner.AnalysisResultFuture;
 import org.eobjects.analyzer.job.runner.AnalysisRunner;
 import org.eobjects.analyzer.job.runner.AnalysisRunnerImpl;
 import org.eobjects.analyzer.result.AnalysisResult;
@@ -148,8 +149,12 @@ public class DataCleanerJobEngine extends AbstractJobEngine<DataCleanerJobContex
             runner = new DistributedAnalysisRunner(configuration, clusterManager, analysisListener);
         }
 
-        // fire and forget (the listener will do the rest)
-        runner.run(analysisJob);
+        // fire the job
+        final AnalysisResultFuture resultFuture = runner.run(analysisJob);
+
+        // await the completion of the job (to block concurrent execution by
+        // Quartz).
+        resultFuture.await();
     }
 
     /**

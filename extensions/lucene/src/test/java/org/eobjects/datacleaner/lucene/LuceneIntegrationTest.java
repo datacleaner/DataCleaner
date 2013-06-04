@@ -126,6 +126,7 @@ public class LuceneIntegrationTest extends TestCase {
         analyzer.addInputColumns(transformer.getOutputColumns());
 
         final AnalysisJob job = analysisJobBuilder.toAnalysisJob();
+        analysisJobBuilder.close();
 
         final AnalysisResultFuture future = new AnalysisRunnerImpl(conf).run(job);
         if (future.isErrornous()) {
@@ -178,6 +179,7 @@ public class LuceneIntegrationTest extends TestCase {
         analyzer.addInputColumns(analysisJobBuilder.getSourceColumns());
 
         final AnalysisJob job = analysisJobBuilder.toAnalysisJob();
+        analysisJobBuilder.close();
 
         final AnalysisResultFuture future = new AnalysisRunnerImpl(conf).run(job);
         if (future.isErrornous()) {
@@ -189,5 +191,6 @@ public class LuceneIntegrationTest extends TestCase {
         }
 
         return searchIndex;
+        
     }
 }

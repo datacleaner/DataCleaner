@@ -29,6 +29,7 @@ import org.eobjects.metamodel.data.DataSet;
 import org.eobjects.metamodel.data.DefaultRow;
 import org.eobjects.metamodel.data.InMemoryDataSet;
 import org.eobjects.metamodel.data.Row;
+import org.eobjects.metamodel.data.SimpleDataSetHeader;
 import org.eobjects.metamodel.query.SelectItem;
 import org.eobjects.metamodel.schema.Column;
 import org.eobjects.metamodel.schema.ColumnType;
@@ -61,14 +62,15 @@ public class SampleDataContext extends QueryPostprocessDataContext {
     protected DataSet materializeMainSchemaTable(Table table, Column[] columns, int maxRows) {
         SelectItem[] tableSelectItems = MetaModelHelper.createSelectItems(table.getColumns());
         SelectItem[] selectItems = MetaModelHelper.createSelectItems(columns);
+        SimpleDataSetHeader header = new SimpleDataSetHeader(tableSelectItems);
 
         List<Row> rows = new ArrayList<Row>();
 
-        rows.add(new DefaultRow(tableSelectItems, new Object[] { 1, "hello" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(tableSelectItems, new Object[] { 2, "there" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(tableSelectItems, new Object[] { 3, "big" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(tableSelectItems, new Object[] { 4, "wide" }).getSubSelection(selectItems));
-        rows.add(new DefaultRow(tableSelectItems, new Object[] { 5, "world" }).getSubSelection(selectItems));
+		rows.add(new DefaultRow(header, new Object[] { 1, "hello" }).getSubSelection(selectItems));
+        rows.add(new DefaultRow(header, new Object[] { 2, "there" }).getSubSelection(selectItems));
+        rows.add(new DefaultRow(header, new Object[] { 3, "big" }).getSubSelection(selectItems));
+        rows.add(new DefaultRow(header, new Object[] { 4, "wide" }).getSubSelection(selectItems));
+        rows.add(new DefaultRow(header, new Object[] { 5, "world" }).getSubSelection(selectItems));
 
         return new InMemoryDataSet(rows);
     }

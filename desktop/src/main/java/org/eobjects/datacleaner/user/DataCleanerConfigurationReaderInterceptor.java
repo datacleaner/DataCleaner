@@ -20,11 +20,13 @@
 package org.eobjects.datacleaner.user;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.configuration.ConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
+import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +52,13 @@ public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurat
     public Class<?> loadClass(String className) throws ClassNotFoundException {
         ClassLoader classLoader = ExtensionPackage.getExtensionClassLoader();
         return Class.forName(className, true, classLoader);
+    }
+    
+    @Override
+    protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
+        final List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
+        handlers.add(new DummyRepositoryResourceFileTypeHandler());
+        return handlers;
     }
 
     @Override

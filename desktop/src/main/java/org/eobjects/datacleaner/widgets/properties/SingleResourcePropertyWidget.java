@@ -43,6 +43,7 @@ import org.eobjects.datacleaner.util.WidgetFactory;
 import org.eobjects.datacleaner.widgets.Alignment;
 import org.eobjects.datacleaner.widgets.DCComboBox;
 import org.eobjects.datacleaner.widgets.DCComboBox.Listener;
+import org.eobjects.datacleaner.widgets.DCLabel;
 import org.eobjects.datacleaner.widgets.FileSelectionListener;
 import org.eobjects.datacleaner.widgets.FilenameTextField;
 import org.eobjects.metamodel.util.ClasspathResource;
@@ -64,6 +65,10 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
     private final UserPreferences _userPreferences;
     private final DCComboBox<String> _resourceTypeComboBox;
     private final JXTextField _otherPathTextField;
+
+    // if the resource is of a type which is not catered for by the widget, then
+    // this field will hold it's value and the widget will be read only.
+    private final Resource _immutableValue;
 
     @Inject
     public SingleResourcePropertyWidget(ConfiguredPropertyDescriptor propertyDescriptor,
@@ -103,47 +108,59 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
             _filenameField.setSelectedFileFilter(FileFilters.ALL);
         }
 
-        Resource currentValue = getCurrentValue();
-        if (currentValue instanceof FileResource) {
+        final Resource currentValue = getCurrentValue();
+        if (currentValue == null) {
+            _immutableValue = null;
+        } else if (currentValue instanceof FileResource) {
             _filenameField.setFile(((FileResource) currentValue).getFile());
+            _immutableValue = null;
+        } else if (currentValue instanceof UrlResource || currentValue instanceof VfsResource
+                || currentValue instanceof ClasspathResource) {
+            _immutableValue = null;
+        } else {
+            _immutableValue = currentValue;
         }
 
-        _filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent e) {
-                fireValueChanged();
-            }
-        });
+        if (_immutableValue == null) {
+            _filenameField.getTextField().getDocument().addDocumentListener(new DCDocumentListener() {
+                @Override
+                protected void onChange(DocumentEvent e) {
+                    fireValueChanged();
+                }
+            });
 
-        _filenameField.addFileSelectionListener(new FileSelectionListener() {
-            @Override
-            public void onSelected(FilenameTextField filenameTextField, File file) {
-                File dir = file.getParentFile();
-                _userPreferences.setConfiguredFileDirectory(dir);
-                fireValueChanged();
-            }
-        });
+            _filenameField.addFileSelectionListener(new FileSelectionListener() {
+                @Override
+                public void onSelected(FilenameTextField filenameTextField, File file) {
+                    File dir = file.getParentFile();
+                    _userPreferences.setConfiguredFileDirectory(dir);
+                    fireValueChanged();
+                }
+            });
 
-        _otherPathTextField.getDocument().addDocumentListener(new DCDocumentListener() {
-            @Override
-            protected void onChange(DocumentEvent event) {
-                fireValueChanged();
-            }
-        });
-        _resourceTypeComboBox.addListener(new Listener<String>() {
-            @Override
-            public void onItemSelected(String item) {
-                boolean isFileMode = "file".equals(item);
-                _filenameField.setVisible(isFileMode);
-                _otherPathTextField.setVisible(!isFileMode);
+            _otherPathTextField.getDocument().addDocumentListener(new DCDocumentListener() {
+                @Override
+                protected void onChange(DocumentEvent event) {
+                    fireValueChanged();
+                }
+            });
+            _resourceTypeComboBox.addListener(new Listener<String>() {
+                @Override
+                public void onItemSelected(String item) {
+                    boolean isFileMode = "file".equals(item);
+                    _filenameField.setVisible(isFileMode);
+                    _otherPathTextField.setVisible(!isFileMode);
 
-                fireValueChanged();
-            }
-        });
+                    fireValueChanged();
+                }
+            });
 
-        final DCPanel panel = DCPanel.flow(Alignment.LEFT, 0, 0, _resourceTypeComboBox, _filenameField,
-                _otherPathTextField);
-        add(panel);
+            final DCPanel panel = DCPanel.flow(Alignment.LEFT, 0, 0, _resourceTypeComboBox, _filenameField,
+                    _otherPathTextField);
+            add(panel);
+        } else {
+            add(DCLabel.dark("- Resource: " + _immutableValue.getName() + " -"));
+        }
     }
 
     /**
@@ -167,6 +184,10 @@ public final class SingleResourcePropertyWidget extends AbstractPropertyWidget<R
 
     @Override
     public Resource getValue() {
+        if (_immutableValue != null) {
+            return _immutableValue;
+        }
+
         String path;
         String resourceType = _resourceTypeComboBox.getSelectedItem();
         if ("file".equals(resourceType)) {

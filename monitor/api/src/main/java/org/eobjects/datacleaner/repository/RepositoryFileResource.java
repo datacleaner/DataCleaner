@@ -29,6 +29,8 @@ import org.eobjects.metamodel.util.Func;
 import org.eobjects.metamodel.util.Resource;
 import org.eobjects.metamodel.util.ResourceException;
 import org.eobjects.metamodel.util.SerializableRef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Resource} wrapping of a {@link RepositoryFile}.
@@ -36,6 +38,8 @@ import org.eobjects.metamodel.util.SerializableRef;
 public class RepositoryFileResource implements Resource, Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryFileResource.class);
 
     private final SerializableRef<RepositoryFile> _fileRef;
     private final String _qualifiedPath;
@@ -49,7 +53,12 @@ public class RepositoryFileResource implements Resource, Serializable {
      */
     public RepositoryFileResource(Repository repo, String qualifiedPath) {
         _qualifiedPath = qualifiedPath;
-        _fileRef = new SerializableRef<RepositoryFile>((RepositoryFile) repo.getRepositoryNode(qualifiedPath));
+
+        final RepositoryFile file = (RepositoryFile) repo.getRepositoryNode(qualifiedPath);
+        if (file == null) {
+            logger.warn("Repository node did not exist: {}", qualifiedPath);
+        }
+        _fileRef = new SerializableRef<RepositoryFile>(file);
     }
 
     /**
@@ -84,7 +93,9 @@ public class RepositoryFileResource implements Resource, Serializable {
         if (_fileRef == null || _fileRef.get() == null) {
             throw new ResourceException(
                     this,
-                    "RepositoryFile is not available since it was not serializable. The RepositoryFileResource instance can be recreated using a live repository and the qualified path of the file.");
+                    "RepositoryFile '"
+                            + _qualifiedPath
+                            + "' is not available since it was not serializable. The RepositoryFileResource instance can be recreated using a live repository and the qualified path of the file.");
         }
         return _fileRef.get();
     }

@@ -26,14 +26,12 @@ import java.util.List;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfigurationImpl;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
-import org.eobjects.analyzer.configuration.InjectionManagerFactory;
 import org.eobjects.analyzer.configuration.JaxbConfigurationReader;
 import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.eobjects.datacleaner.repository.Repository;
 import org.eobjects.datacleaner.repository.RepositoryFile;
 import org.eobjects.datacleaner.repository.RepositoryFileResourceTypeHandler;
 import org.eobjects.datacleaner.repository.RepositoryFolder;
-import org.eobjects.datacleaner.repository.file.FileRepository;
 import org.eobjects.datacleaner.repository.file.FileRepositoryFolder;
 import org.eobjects.metamodel.util.Func;
 import org.slf4j.Logger;
@@ -47,20 +45,20 @@ final class ConfigurationCache {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationCache.class);
 
-    private final InjectionManagerFactory _injectionManagerFactory;
-    private final Repository _repository;
     private final RepositoryFile _file;
-    private final String _tenantId;
+    private final TenantContext _tenantContext;
+    private final TenantInjectionManagerFactory _injectionManagerFactory;
+    private final Repository _repository;
 
     private volatile AnalyzerBeansConfiguration _configuration;
     private volatile long _lastModifiedCache;
 
-    public ConfigurationCache(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory) {
-        _tenantId = tenantId;
-        _repository = repository;
+    public ConfigurationCache(TenantInjectionManagerFactory injectionManagerFactory, TenantContext tenantContext, Repository repository) {
         _injectionManagerFactory = injectionManagerFactory;
+        _tenantContext = tenantContext;
+        _repository = repository;
 
-        RepositoryFolder tenantFolder = repository.getFolder(tenantId);
+        final RepositoryFolder tenantFolder = _tenantContext.getTenantRootFolder();
 
         RepositoryFile file = tenantFolder.getFile("conf.xml");
         if (file == null) {
@@ -98,12 +96,16 @@ final class ConfigurationCache {
 
             @Override
             protected File getRelativeParentDirectory() {
-                if (_repository instanceof FileRepository) {
-                    FileRepositoryFolder tenantFolder = (FileRepositoryFolder) _repository.getFolder(_tenantId);
+                if (_tenantContext.getTenantRootFolder() instanceof FileRepositoryFolder) {
+                    FileRepositoryFolder tenantFolder = (FileRepositoryFolder) _tenantContext.getTenantRootFolder();
                     File file = tenantFolder.getFile();
                     return file;
                 }
-                return super.getRelativeParentDirectory();
+                
+                final String userHome = System.getProperty("user.home");
+                final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantContext.getTenantId();
+                
+                return new File(result);
             }
 
             @Override
@@ -112,7 +114,7 @@ final class ConfigurationCache {
                     return super.createFilename(filename);
                 }
 
-                if (_repository instanceof FileRepository) {
+                if (_tenantContext.getTenantRootFolder() instanceof FileRepositoryFolder) {
                     // for FileRepository implementations, the super
                     // implementation will also "just work" because of the above
                     // getRelativeParentDirectory method.
@@ -120,7 +122,7 @@ final class ConfigurationCache {
                 }
 
                 final String userHome = System.getProperty("user.home");
-                final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantId
+                final String result = userHome + File.separator + ".datacleaner/repository/" + _tenantContext.getTenantId()
                         + File.separator + filename;
 
                 logger.warn("File path is relative, but repository is not file-based: {}. Returning: {}", filename,
@@ -132,7 +134,7 @@ final class ConfigurationCache {
             @Override
             protected List<ResourceTypeHandler<?>> getResourceTypeHandlers() {
                 List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
-                handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantId));
+                handlers.add(new RepositoryFileResourceTypeHandler(_repository, _tenantContext.getTenantId()));
                 return handlers;
             }
 

@@ -58,21 +58,35 @@ public class TenantContextImpl implements TenantContext {
 
     private final String _tenantId;
     private final Repository _repository;
-    private final InjectionManagerFactory _injectionManagerFactory;
     private final ConfigurationCache _configurationCache;
     private final JobEngineManager _jobEngineManager;
     private final LoadingCache<JobIdentifier, JobContext> _jobCache;
 
+    /**
+     * Constructs the {@link TenantContext}.
+     * 
+     * @param tenantId
+     * @param repository
+     * @param injectionManagerFactory
+     *            the injection manager factory applicable to the whole
+     *            application. This injection manager will be decorated/wrapped
+     *            with a {@link TenantInjectionManagerFactory} in order to
+     *            provide tenant-specific injection options.
+     * @param jobEngineManager
+     */
     public TenantContextImpl(String tenantId, Repository repository, InjectionManagerFactory injectionManagerFactory,
             JobEngineManager jobEngineManager) {
         _tenantId = tenantId;
         _repository = repository;
-        _injectionManagerFactory = injectionManagerFactory;
         _jobEngineManager = jobEngineManager;
         if (jobEngineManager == null) {
             throw new IllegalArgumentException("JobEngineManager cannot be null");
         }
-        _configurationCache = new ConfigurationCache(tenantId, repository, _injectionManagerFactory);
+
+        final TenantInjectionManagerFactory tenantInjectionManagerFactory = new TenantInjectionManagerFactory(
+                injectionManagerFactory, repository, this);
+
+        _configurationCache = new ConfigurationCache(tenantInjectionManagerFactory, this, repository);
         _jobCache = buildJobCache();
     }
 

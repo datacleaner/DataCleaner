@@ -47,7 +47,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
 
     private final LoadingCache<String, TenantContext> _contexts;
     private final Repository _repository;
-    private final InjectionManagerFactory _injectionManagerFactory;
+    private final InjectionManagerFactory _parentInjectionManagerFactory;
     private final JobEngineManager _jobEngineManager;
 
     /**
@@ -67,13 +67,13 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
      * Constructs a {@link TenantContextFactoryImpl}.
      * 
      * @param repository
-     * @param injectionManagerFactory
+     * @param parentInjectionManagerFactory
      */
     @Autowired
-    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory injectionManagerFactory,
+    public TenantContextFactoryImpl(Repository repository, InjectionManagerFactory parentInjectionManagerFactory,
             JobEngineManager jobEngineManager) {
         _repository = repository;
-        _injectionManagerFactory = injectionManagerFactory;
+        _parentInjectionManagerFactory = parentInjectionManagerFactory;
         _jobEngineManager = jobEngineManager;
         _contexts = buildTenantContextCache();
     }
@@ -85,7 +85,7 @@ public class TenantContextFactoryImpl implements TenantContextFactory {
                     public TenantContext load(String tenantId) throws Exception {
                         logger.info("Initializing tenant context: {}", tenantId);
                         final TenantContext context = new TenantContextImpl(tenantId, _repository,
-                                _injectionManagerFactory, _jobEngineManager);
+                                _parentInjectionManagerFactory, _jobEngineManager);
                         return context;
                     }
                 });

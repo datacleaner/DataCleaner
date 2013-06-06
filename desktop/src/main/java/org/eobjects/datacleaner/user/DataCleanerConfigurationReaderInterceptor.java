@@ -26,6 +26,7 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eobjects.analyzer.configuration.ConfigurationReaderInterceptor;
 import org.eobjects.analyzer.configuration.DefaultConfigurationReaderInterceptor;
+import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.eobjects.metamodel.util.FileHelper;
 import org.slf4j.Logger;
@@ -59,6 +60,11 @@ public class DataCleanerConfigurationReaderInterceptor extends DefaultConfigurat
         final List<ResourceTypeHandler<?>> handlers = super.getResourceTypeHandlers();
         handlers.add(new DummyRepositoryResourceFileTypeHandler());
         return handlers;
+    }
+    
+    @Override
+    protected File getRelativeParentDirectory() {
+    	return VFSUtils.toFile(_dataCleanerHome);
     }
 
     @Override

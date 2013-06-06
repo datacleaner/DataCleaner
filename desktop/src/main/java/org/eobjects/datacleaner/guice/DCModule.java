@@ -19,6 +19,9 @@
  */
 package org.eobjects.datacleaner.guice;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
@@ -40,12 +43,20 @@ import org.eobjects.analyzer.result.AnalysisResult;
 import org.eobjects.analyzer.result.renderer.RendererFactory;
 import org.eobjects.analyzer.storage.StorageProvider;
 import org.eobjects.analyzer.util.VFSUtils;
+import org.eobjects.analyzer.util.convert.ClasspathResourceTypeHandler;
+import org.eobjects.analyzer.util.convert.FileResourceTypeHandler;
+import org.eobjects.analyzer.util.convert.ResourceConverter;
+import org.eobjects.analyzer.util.convert.UrlResourceTypeHandler;
+import org.eobjects.analyzer.util.convert.VfsResourceTypeHandler;
+import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.extensions.ExtensionReader;
 import org.eobjects.datacleaner.user.AuthenticationService;
 import org.eobjects.datacleaner.user.DCAuthenticationService;
 import org.eobjects.datacleaner.user.DataCleanerConfigurationReader;
+import org.eobjects.datacleaner.user.DataCleanerHome;
+import org.eobjects.datacleaner.user.DummyRepositoryResourceFileTypeHandler;
 import org.eobjects.datacleaner.user.ExtensionPackage;
 import org.eobjects.datacleaner.user.MutableDatastoreCatalog;
 import org.eobjects.datacleaner.user.MutableReferenceDataCatalog;
@@ -320,5 +331,22 @@ public class DCModule extends AbstractModule {
     @Provides
     public HttpClient getHttpClient(UserPreferences userPreferences) {
         return userPreferences.createHttpClient();
+    }
+
+    @Provides
+    public ResourceConverter getResourceConverter() {
+        final FileObject dataCleanerHome = DataCleanerHome.get();
+        final File dataCleanerHomeDirectory = VFSUtils.toFile(dataCleanerHome);
+
+        final List<ResourceTypeHandler<?>> handlers = new ArrayList<ResourceTypeHandler<?>>();
+        handlers.add(new FileResourceTypeHandler(dataCleanerHomeDirectory));
+        handlers.add(new UrlResourceTypeHandler());
+        handlers.add(new ClasspathResourceTypeHandler());
+        handlers.add(new VfsResourceTypeHandler());
+        handlers.add(new DummyRepositoryResourceFileTypeHandler());
+
+        final ResourceConverter resourceConverter = new ResourceConverter(handlers,
+                ResourceConverter.DEFAULT_DEFAULT_SCHEME);
+        return resourceConverter;
     }
 }

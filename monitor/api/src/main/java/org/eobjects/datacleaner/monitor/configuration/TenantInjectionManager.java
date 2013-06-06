@@ -48,11 +48,16 @@ public class TenantInjectionManager implements InjectionManager {
         _repository = repository;
         _tenantContext = tenantContext;
     }
+    
+    public String getTenantId() {
+        return _tenantContext.getTenantId();
+    }
 
     @SuppressWarnings("unchecked")
     @Override
     public <E> E getInstance(InjectionPoint<E> injectionPoint) {
-        if (injectionPoint.getBaseType() == ResourceConverter.class) {
+        final Class<E> baseType = injectionPoint.getBaseType();
+        if (baseType == ResourceConverter.class) {
             return (E) createResourceConverter();
         }
         return _delegate.getInstance(injectionPoint);

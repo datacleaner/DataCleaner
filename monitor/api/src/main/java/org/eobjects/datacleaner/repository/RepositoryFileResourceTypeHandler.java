@@ -39,6 +39,10 @@ public class RepositoryFileResourceTypeHandler implements ResourceTypeHandler<Re
         _tenantId = tenantId;
         _repository = repository;
     }
+    
+    public String getTenantId() {
+        return _tenantId;
+    }
 
     @Override
     public boolean isParserFor(Class<? extends Resource> cls) {

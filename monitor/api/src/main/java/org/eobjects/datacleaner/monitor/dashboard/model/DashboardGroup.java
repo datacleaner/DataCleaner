@@ -28,6 +28,8 @@ public class DashboardGroup implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String DEFAULT_GROUP_NAME = "(default)";
+
     private String _name;
     private String _description;
 
@@ -37,6 +39,16 @@ public class DashboardGroup implements Serializable {
 
     public DashboardGroup(String name) {
         _name = name;
+    }
+
+    /**
+     * Determines if this {@link DashboardGroup} is the "default" group, i.e.
+     * the first unnamed group shown.
+     * 
+     * @return
+     */
+    public boolean isDefaultGroup() {
+        return DEFAULT_GROUP_NAME.equals(_name);
     }
 
     public String getDescription() {

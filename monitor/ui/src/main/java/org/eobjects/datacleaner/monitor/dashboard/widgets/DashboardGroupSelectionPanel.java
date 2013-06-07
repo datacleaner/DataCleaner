@@ -50,8 +50,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class DashboardGroupSelectionPanel extends FlowPanel {
 
-    private static final String DEFAULT_GROUP_NAME = "(default)";
-
     private final TenantIdentifier _tenant;
     private final DashboardServiceAsync _service;
     private final SimplePanel _targetPanel;
@@ -147,7 +145,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         final String historyToken = History.getToken();
         if (historyToken == null || historyToken.length() == 0) {
             if (_displayDefaultGroup) {
-                anchor = _anchors.get(DEFAULT_GROUP_NAME);
+                anchor = _anchors.get(DashboardGroup.DEFAULT_GROUP_NAME);
             } else {
                 anchor = getFirstAnchor();
             }
@@ -155,7 +153,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
             anchor = _anchors.get(historyToken);
         } else {
             if (_displayDefaultGroup) {
-                anchor = _anchors.get(DEFAULT_GROUP_NAME);
+                anchor = _anchors.get(DashboardGroup.DEFAULT_GROUP_NAME);
             } else {
                 anchor = getFirstAnchor();
             }
@@ -197,7 +195,7 @@ public class DashboardGroupSelectionPanel extends FlowPanel {
         final String groupName;
         final DashboardGroupPanel groupPanel;
         if (group == null) {
-            groupName = DEFAULT_GROUP_NAME;
+            groupName = DashboardGroup.DEFAULT_GROUP_NAME;
             groupPanel = new DashboardGroupPanel(_service, _tenant, group, _isDashboardEditor, _displayInfomercial);
             _defaultGroupPanel = groupPanel;
         } else {

@@ -39,7 +39,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Job {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected ApplicationContext getApplicationContext(JobExecutionContext context) {
+    protected final ApplicationContext getApplicationContext(JobExecutionContext context) {
         try {
             final SchedulerContext schedulerContext = context.getScheduler().getContext();
             final ApplicationContext applicationContext = (ApplicationContext) schedulerContext

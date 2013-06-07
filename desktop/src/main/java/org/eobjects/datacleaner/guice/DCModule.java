@@ -21,7 +21,6 @@ package org.eobjects.datacleaner.guice;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileObject;
@@ -46,9 +45,9 @@ import org.eobjects.analyzer.util.VFSUtils;
 import org.eobjects.analyzer.util.convert.ClasspathResourceTypeHandler;
 import org.eobjects.analyzer.util.convert.FileResourceTypeHandler;
 import org.eobjects.analyzer.util.convert.ResourceConverter;
+import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.eobjects.analyzer.util.convert.UrlResourceTypeHandler;
 import org.eobjects.analyzer.util.convert.VfsResourceTypeHandler;
-import org.eobjects.analyzer.util.convert.ResourceConverter.ResourceTypeHandler;
 import org.eobjects.datacleaner.bootstrap.DCWindowContext;
 import org.eobjects.datacleaner.bootstrap.WindowContext;
 import org.eobjects.datacleaner.extensions.ExtensionReader;

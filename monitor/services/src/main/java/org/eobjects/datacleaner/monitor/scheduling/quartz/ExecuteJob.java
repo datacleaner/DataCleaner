@@ -71,6 +71,10 @@ public class ExecuteJob extends AbstractQuartzJob {
 
     @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        if (logger.isInfoEnabled()) {
+            logger.info("Executing quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(), jobExecutionContext.getJobInstance());
+        }
+        
         final ApplicationContext applicationContext;
         final ExecutionLog execution;
         final ScheduleDefinition schedule;
@@ -109,6 +113,10 @@ public class ExecuteJob extends AbstractQuartzJob {
         }
 
         executeJob(context, execution, applicationContext, jobEngineManager);
+        
+        if (logger.isInfoEnabled()) {
+            logger.info("Finished quartz job with key: {} - {}", jobExecutionContext.getJobDetail().getKey(), jobExecutionContext.getJobInstance());
+        }
     }
 
     /**

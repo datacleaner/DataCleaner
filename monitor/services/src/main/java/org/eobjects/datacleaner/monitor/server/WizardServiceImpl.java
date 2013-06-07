@@ -23,15 +23,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpSession;
 
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.server.dao.DatastoreDao;
+import org.eobjects.datacleaner.monitor.server.dao.WizardDao;
 import org.eobjects.datacleaner.monitor.shared.WizardService;
 import org.eobjects.datacleaner.monitor.shared.model.DCUserInputException;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
@@ -39,61 +36,34 @@ import org.eobjects.datacleaner.monitor.shared.model.TenantIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardIdentifier;
 import org.eobjects.datacleaner.monitor.shared.model.WizardPage;
 import org.eobjects.datacleaner.monitor.shared.model.WizardSessionIdentifier;
-import org.eobjects.datacleaner.monitor.wizard.WizardPageController;
 import org.eobjects.datacleaner.monitor.wizard.WizardSession;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizardContext;
 import org.eobjects.metamodel.util.Func;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
+/**
+ * Main implementation of {@link WizardService}.
+ */
 @Component("wizardService")
 public class WizardServiceImpl implements WizardService {
-
-    private static final Logger logger = LoggerFactory.getLogger(WizardServiceImpl.class);
-
-    private static class WizardState {
-        WizardSession session;
-        WizardPageController currentController;
-    }
-
-    private final Cache<String, WizardState> _wizardStateCache;
 
     @Autowired
     TenantContextFactory _tenantContextFactory;
 
     @Autowired
-    ApplicationContext _applicationContext;
-
-    @Autowired
     DatastoreDao _datastoreDao;
 
-    public WizardServiceImpl() {
-        _wizardStateCache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
-    }
-
-    private Collection<JobWizard> getAvailableJobWizards() {
-        return _applicationContext.getBeansOfType(JobWizard.class).values();
-    }
-
-    private Collection<DatastoreWizard> getAvailableDatastoreWizards() {
-        return _applicationContext.getBeansOfType(DatastoreWizard.class).values();
-    }
+    @Autowired
+    WizardDao _wizardDao;
 
     @Override
     public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant) {
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
-        final Collection<JobWizard> jobWizards = getAvailableJobWizards();
+        final Collection<JobWizard> jobWizards = _wizardDao.getWizardsOfType(JobWizard.class);
         for (JobWizard jobWizard : jobWizards) {
             if (!jobWizard.isDatastoreConsumer()) {
                 final WizardIdentifier jobWizardIdentifier = createJobWizardIdentifier(jobWizard);
@@ -107,10 +77,12 @@ public class WizardServiceImpl implements WizardService {
     public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(null, tenantContext, createSessionFunc());
+
+        final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(null, tenantContext, sessionFunc);
 
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
-        for (DatastoreWizard datastoreWizard : getAvailableDatastoreWizards()) {
+        for (DatastoreWizard datastoreWizard : _wizardDao.getWizardsOfType(DatastoreWizard.class)) {
             if (datastoreWizard.isApplicableTo(context)) {
                 WizardIdentifier wizardIdentifier = createDatastoreWizardIdentifier(datastoreWizard);
                 result.add(wizardIdentifier);
@@ -120,39 +92,24 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier datastoreIdentifier) {
+    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant,
+            DatastoreIdentifier datastoreIdentifier) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
                 .getDatastore(datastoreIdentifier.getName());
 
-        final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, createSessionFunc());
+        final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
+        final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, sessionFunc);
 
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
-        for (JobWizard jobWizard : getAvailableJobWizards()) {
+        for (JobWizard jobWizard : _wizardDao.getWizardsOfType(JobWizard.class)) {
             if (jobWizard.isDatastoreConsumer() && jobWizard.isApplicableTo(context)) {
                 WizardIdentifier wizardIdentifier = createJobWizardIdentifier(jobWizard);
                 result.add(wizardIdentifier);
             }
         }
         return result;
-    }
-
-    /**
-     * Create a convenience function that wraps the http session.
-     * 
-     * @return
-     */
-    private Func<String, Object> createSessionFunc() {
-        return new Func<String, Object>() {
-            @Override
-            public Object eval(String key) {
-                ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
-                        .currentRequestAttributes();
-                HttpSession session = requestAttributes.getRequest().getSession(true);
-                return session.getAttribute(key);
-            }
-        };
     }
 
     private WizardIdentifier createDatastoreWizardIdentifier(DatastoreWizard datastoreWizard) {
@@ -179,7 +136,8 @@ public class WizardServiceImpl implements WizardService {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
 
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(wizard, tenantContext, createSessionFunc());
+        final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(wizard, tenantContext, sessionFunc);
 
         final WizardSession session = wizard.start(context);
 
@@ -197,10 +155,12 @@ public class WizardServiceImpl implements WizardService {
         if (selectedDatastore == null) {
             datastore = null;
         } else {
-            datastore = tenantContext.getConfiguration().getDatastoreCatalog().getDatastore(selectedDatastore.getName());
+            datastore = tenantContext.getConfiguration().getDatastoreCatalog()
+                    .getDatastore(selectedDatastore.getName());
         }
 
-        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, createSessionFunc());
+        final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
+        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, sessionFunc);
 
         final WizardSession session = wizard.start(context);
 
@@ -208,94 +168,14 @@ public class WizardServiceImpl implements WizardService {
     }
 
     private WizardPage startSession(WizardSession session, WizardIdentifier wizardIdentifier) {
-        final String sessionId = createSessionId();
-
-        final WizardSessionIdentifier sessionIdentifier = new WizardSessionIdentifier();
-        sessionIdentifier.setSessionId(sessionId);
-        sessionIdentifier.setWizardIdentifier(wizardIdentifier);
-
-        final WizardPageController firstPageController = session.firstPageController();
-
-        createSession(sessionId, session, firstPageController);
-
-        return createPage(sessionIdentifier, firstPageController, session);
+        final WizardPage page = _wizardDao.startSession(wizardIdentifier, session);
+        return page;
     }
 
     @Override
     public WizardPage nextPage(TenantIdentifier tenant, WizardSessionIdentifier sessionIdentifier,
             Map<String, List<String>> formParameters) throws DCUserInputException {
-        final String sessionId = sessionIdentifier.getSessionId();
-        final WizardState state = getWizardState(sessionId);
-        final WizardPageController controller = state.currentController;
-
-        final WizardPageController nextPageController;
-
-        try {
-            nextPageController = controller.nextPageController(formParameters);
-        } catch (DCUserInputException e) {
-            logger.info("A user input exception was thrown by wizard controller - rethrowing to UI: {}", e.getMessage());
-            throw e;
-        } catch (RuntimeException e) {
-            logger.error("An unexpected error occurred in the wizard controller, wizard will be closed", e);
-            closeSession(sessionId);
-            throw e;
-        }
-
-        final WizardSession session = state.session;
-        if (nextPageController == null) {
-            final String wizardResult;
-            try {
-                wizardResult = session.finished();
-            } finally {
-                closeSession(sessionId);
-            }
-
-            // returning null signals that no more pages should be shown, the
-            // wizard is done.
-            return createFinishPage(sessionIdentifier, wizardResult);
-        } else {
-            state.currentController = nextPageController;
-            return createPage(sessionIdentifier, nextPageController, session);
-        }
-    }
-
-    private WizardState getWizardState(String sessionId) {
-        return _wizardStateCache.getIfPresent(sessionId);
-    }
-
-    /**
-     * Creates a "page" that symbolizes a finished wizard.
-     * 
-     * @param sessionId
-     * @param wizardResult
-     * @return
-     */
-    private WizardPage createFinishPage(WizardSessionIdentifier sessionIdentifier, String wizardResult) {
-        WizardPage page = new WizardPage();
-        page.setPageIndex(WizardPage.PAGE_INDEX_FINISHED);
-        page.setSessionIdentifier(sessionIdentifier);
-        page.setWizardResult(wizardResult);
-        return page;
-    }
-
-    private WizardPage createPage(WizardSessionIdentifier sessionIdentifier, WizardPageController pageController,
-            WizardSession session) {
-        final WizardPage page = new WizardPage();
-        page.setSessionIdentifier(sessionIdentifier);
-        page.setFormInnerHtml(pageController.getFormInnerHtml());
-        page.setPageIndex(pageController.getPageIndex());
-        if (session != null) {
-            page.setExpectedPageCount(session.getPageCount());
-        }
-        return page;
-    }
-
-    private String createSessionId() {
-        return UUID.randomUUID().toString();
-    }
-
-    public long getOpenSessionCount() {
-        return _wizardStateCache.size();
+        return _wizardDao.nextPage(tenant, sessionIdentifier, formParameters);
     }
 
     @Override
@@ -304,31 +184,12 @@ public class WizardServiceImpl implements WizardService {
             return true;
         }
         String sessionId = sessionIdentifier.getSessionId();
-        closeSession(sessionId);
+        _wizardDao.closeSession(sessionId);
         return true;
     }
 
-    public void createSession(String sessionId, WizardSession session, WizardPageController controller) {
-        if (sessionId == null) {
-            throw new IllegalArgumentException("Session ID cannot be null");
-        }
-
-        final WizardState state = new WizardState();
-        state.session = session;
-        state.currentController = controller;
-
-        _wizardStateCache.put(sessionId, state);
-    }
-
-    private void closeSession(String sessionId) {
-        if (sessionId == null) {
-            return;
-        }
-        _wizardStateCache.invalidate(sessionId);
-    }
-
     private JobWizard instantiateJobWizard(WizardIdentifier wizardIdentifier) {
-        for (JobWizard jobWizard : getAvailableJobWizards()) {
+        for (JobWizard jobWizard : _wizardDao.getWizardsOfType(JobWizard.class)) {
             final String displayName = jobWizard.getDisplayName();
             if (displayName.equals(wizardIdentifier.getDisplayName())) {
                 return jobWizard;
@@ -338,7 +199,7 @@ public class WizardServiceImpl implements WizardService {
     }
 
     private DatastoreWizard instantiateDatastoreWizard(WizardIdentifier wizardIdentifier) {
-        for (DatastoreWizard jobWizard : getAvailableDatastoreWizards()) {
+        for (DatastoreWizard jobWizard : _wizardDao.getWizardsOfType(DatastoreWizard.class)) {
             final String displayName = jobWizard.getDisplayName();
             if (displayName.equals(wizardIdentifier.getDisplayName())) {
                 return jobWizard;

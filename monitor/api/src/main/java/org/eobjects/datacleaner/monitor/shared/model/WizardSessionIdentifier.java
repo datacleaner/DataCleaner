@@ -21,12 +21,32 @@ package org.eobjects.datacleaner.monitor.shared.model;
 
 import java.io.Serializable;
 
+/**
+ * Represents a session ID on the client side.
+ */
 public class WizardSessionIdentifier implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String sessionId;
     private WizardIdentifier wizardIdentifier;
+
+    /**
+     * Default no-arg constructor
+     */
+    public WizardSessionIdentifier() {
+    }
+
+    /**
+     * Constructor with all arguments
+     * 
+     * @param sessionId
+     * @param wizardIdentifier
+     */
+    public WizardSessionIdentifier(String sessionId, WizardIdentifier wizardIdentifier) {
+        this.sessionId = sessionId;
+        this.wizardIdentifier = wizardIdentifier;
+    }
 
     public WizardIdentifier getWizardIdentifier() {
         return wizardIdentifier;

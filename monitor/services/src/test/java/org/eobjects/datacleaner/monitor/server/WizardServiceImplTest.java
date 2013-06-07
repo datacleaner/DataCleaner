@@ -32,6 +32,7 @@ import org.easymock.EasyMock;
 import org.eobjects.analyzer.configuration.InjectionManagerFactoryImpl;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactoryImpl;
 import org.eobjects.datacleaner.monitor.jobwizard.common.MockAnalysisWizard;
+import org.eobjects.datacleaner.monitor.server.dao.WizardDaoImpl;
 import org.eobjects.datacleaner.monitor.server.job.DataCleanerJobContext;
 import org.eobjects.datacleaner.monitor.server.job.MockJobEngineManager;
 import org.eobjects.datacleaner.monitor.shared.model.DatastoreIdentifier;
@@ -48,6 +49,7 @@ import org.springframework.context.ApplicationContext;
 public class WizardServiceImplTest extends TestCase {
 
     private WizardServiceImpl service;
+    private WizardDaoImpl wizardDao;
     private ApplicationContext applicationContextMock;
     private DatastoreServiceImpl datastoreService;
 
@@ -62,12 +64,14 @@ public class WizardServiceImplTest extends TestCase {
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
         EasyMock.expect(applicationContextMock.getBeansOfType(JobWizard.class)).andReturn(wizardMap).anyTimes();
         EasyMock.replay(applicationContextMock);
+        
+        wizardDao = new WizardDaoImpl(applicationContextMock);
 
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
                 new InjectionManagerFactoryImpl(), new MockJobEngineManager());
         service = new WizardServiceImpl();
         service._tenantContextFactory = tenantContextFactory;
-        service._applicationContext = applicationContextMock;
+        service._wizardDao = wizardDao;
 
         datastoreService = new DatastoreServiceImpl(tenantContextFactory);
     }
@@ -79,7 +83,7 @@ public class WizardServiceImplTest extends TestCase {
     }
 
     public void testScenario() throws Exception {
-        assertEquals(0l, service.getOpenSessionCount());
+        assertEquals(0l, wizardDao.getOpenSessionCount());
 
         final TenantIdentifier tenant = new TenantIdentifier("tenant1");
 
@@ -103,7 +107,7 @@ public class WizardServiceImplTest extends TestCase {
         // first page is the select table page.
         wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore);
 
-        assertEquals(1l, service.getOpenSessionCount());
+        assertEquals(1l, wizardDao.getOpenSessionCount());
         assertNotNull(wizardPage);
         assertEquals(0, wizardPage.getPageIndex().intValue());
         assertNotNull(wizardPage.getFormInnerHtml());
@@ -118,7 +122,7 @@ public class WizardServiceImplTest extends TestCase {
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
 
         // second page is select columns page.
-        assertEquals(1l, service.getOpenSessionCount());
+        assertEquals(1l, wizardDao.getOpenSessionCount());
         assertNotNull(wizardPage);
         assertEquals(1, wizardPage.getPageIndex().intValue());
         assertNotNull(wizardPage.getFormInnerHtml());

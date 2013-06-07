@@ -33,6 +33,13 @@ public interface WizardSession {
     public WizardPageController firstPageController();
 
     /**
+     * Gets the context of the wizard.s
+     * 
+     * @return
+     */
+    public WizardContext getWizardContext();
+
+    /**
      * Gets the expected amount of pages in this wizard.
      * 
      * @return the count of pages, or null if not known.

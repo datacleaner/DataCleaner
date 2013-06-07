@@ -26,5 +26,6 @@ import org.eobjects.datacleaner.monitor.wizard.WizardSession;
  */
 public interface JobWizardSession extends WizardSession {
 
+    @Override
     public JobWizardContext getWizardContext();
 }

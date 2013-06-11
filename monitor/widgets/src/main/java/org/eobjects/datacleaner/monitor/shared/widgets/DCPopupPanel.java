@@ -37,9 +37,11 @@ public class DCPopupPanel extends PopupPanel {
     private FlowPanel _outerPanel;
 
     public DCPopupPanel(String heading) {
-        super(true, true);
+        super();
         addStyleName("DCPopupPanel");
         setGlassEnabled(true);
+        setAutoHideEnabled(false);
+        setModal(false);
         _buttonPanel = new ButtonPanel();
         _panel = new SimplePanel();
         _panel.setStyleName("DCPopupPanelContent");

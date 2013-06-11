@@ -118,7 +118,7 @@ public class DashboardGroupPanel extends FlowPanel {
                     addTimelinePanel(identifier);
                 }
 
-                if (_dashboardWidgetCount == 0 && !_group.isDefaultGroup()) {
+                if (_dashboardWidgetCount == 0 && _group!= null && !_group.isDefaultGroup()) {
                     _removeGroupButton.setVisible(true);
                 }
             }

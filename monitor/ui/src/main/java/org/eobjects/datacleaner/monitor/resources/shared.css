@@ -112,6 +112,7 @@ a:hover {
 }
 
 .gwt-PopupPanelGlass {
+	position: fixed !important;
 	opacity: 0.5;
 	filter: alpha(opacity=50);
 }

@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.util.Locale;
+
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizard;
 import org.eobjects.datacleaner.monitor.wizard.datastore.DatastoreWizardContext;
@@ -32,11 +34,13 @@ public class DatastoreWizardContextImpl implements DatastoreWizardContext {
     private final DatastoreWizard _wizard;
     private final TenantContext _tenantContext;
     private final Func<String, Object> _sessionFunc;
+    private final Locale _locale;
 
-    public DatastoreWizardContextImpl(DatastoreWizard wizard, TenantContext tenantContext, Func<String, Object> sessionFunc) {
+    public DatastoreWizardContextImpl(DatastoreWizard wizard, TenantContext tenantContext, Func<String, Object> sessionFunc, Locale locale) {
         _wizard = wizard;
         _tenantContext = tenantContext;
         _sessionFunc = sessionFunc;
+        _locale = locale;
     }
     
     @Override
@@ -52,5 +56,10 @@ public class DatastoreWizardContextImpl implements DatastoreWizardContext {
     @Override
     public Func<String, Object> getHttpSession() {
         return _sessionFunc;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return _locale;
     }
 }

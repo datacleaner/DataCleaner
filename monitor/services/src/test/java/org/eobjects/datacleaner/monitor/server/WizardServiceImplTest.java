@@ -64,7 +64,7 @@ public class WizardServiceImplTest extends TestCase {
         applicationContextMock = EasyMock.createMock(ApplicationContext.class);
         EasyMock.expect(applicationContextMock.getBeansOfType(JobWizard.class)).andReturn(wizardMap).anyTimes();
         EasyMock.replay(applicationContextMock);
-        
+
         wizardDao = new WizardDaoImpl(applicationContextMock);
 
         final TenantContextFactoryImpl tenantContextFactory = new TenantContextFactoryImpl(repository,
@@ -93,7 +93,8 @@ public class WizardServiceImplTest extends TestCase {
 
         final DatastoreIdentifier selectedDatastore = datastores.get(1);
 
-        final List<WizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant, selectedDatastore);
+        final List<WizardIdentifier> jobWizardIdentifiers = service.getJobWizardIdentifiers(tenant, selectedDatastore,
+                "en");
         assertEquals(1, jobWizardIdentifiers.size());
 
         final WizardIdentifier jobWizardIdentifier = jobWizardIdentifiers.get(0);
@@ -105,7 +106,7 @@ public class WizardServiceImplTest extends TestCase {
         final String jobName = "JobWizardServiceImplTest-job1";
 
         // first page is the select table page.
-        wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore);
+        wizardPage = service.startJobWizard(tenant, jobWizardIdentifier, selectedDatastore, "en");
 
         assertEquals(1l, wizardDao.getOpenSessionCount());
         assertNotNull(wizardPage);
@@ -133,18 +134,18 @@ public class WizardServiceImplTest extends TestCase {
         // submit second page
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
         assertEquals(2, wizardPage.getPageIndex().intValue());
-        
+
         // now we submit a name for the job
         formParameters = new HashMap<String, List<String>>();
-        formParameters.put("name",Arrays.asList( jobName));
+        formParameters.put("name", Arrays.asList(jobName));
         wizardPage = service.nextPage(tenant, wizardSession, formParameters);
-        
+
         assertTrue(wizardPage.isFinished());
 
         // find the job and do assertions on it.
 
-        final DataCleanerJobContext job = (DataCleanerJobContext) service._tenantContextFactory.getContext(tenant).getJob(
-                jobName);
+        final DataCleanerJobContext job = (DataCleanerJobContext) service._tenantContextFactory.getContext(tenant)
+                .getJob(jobName);
         assertNotNull(job);
         assertEquals("orderdb", job.getSourceDatastoreName());
         assertEquals("[PUBLIC.CUSTOMERS.CUSTOMERNUMBER, PUBLIC.CUSTOMERS.CUSTOMERNAME]", job.getSourceColumnPaths()

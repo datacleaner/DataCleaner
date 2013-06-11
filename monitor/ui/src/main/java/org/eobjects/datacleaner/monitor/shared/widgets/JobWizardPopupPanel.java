@@ -124,13 +124,14 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
         final FlowPanel wizardSelectionPanel = new FlowPanel();
         outerPanel.add(wizardSelectionPanel);
 
-        _service.getNonDatastoreConsumingJobWizardIdentifiers(_tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
-            @Override
-            public void onSuccess(List<WizardIdentifier> wizards) {
-                _wizards = wizards;
-                showNonDatastoreConsumingWizardSelection(wizardSelectionPanel, wizards, radios);
-            }
-        });
+        _service.getNonDatastoreConsumingJobWizardIdentifiers(_tenant, getLocaleName(),
+                new DCAsyncCallback<List<WizardIdentifier>>() {
+                    @Override
+                    public void onSuccess(List<WizardIdentifier> wizards) {
+                        _wizards = wizards;
+                        showNonDatastoreConsumingWizardSelection(wizardSelectionPanel, wizards, radios);
+                    }
+                });
     }
 
     private void showNonDatastoreConsumingWizardSelection(final FlowPanel panel, final List<WizardIdentifier> wizards,
@@ -184,12 +185,13 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
         setLoading();
         setHeader("Build job: " + datastore.getName());
 
-        _service.getJobWizardIdentifiers(_tenant, datastore, new DCAsyncCallback<List<WizardIdentifier>>() {
-            @Override
-            public void onSuccess(List<WizardIdentifier> wizards) {
-                showWizardSelection(datastore, wizards);
-            }
-        });
+        _service.getJobWizardIdentifiers(_tenant, datastore, getLocaleName(),
+                new DCAsyncCallback<List<WizardIdentifier>>() {
+                    @Override
+                    public void onSuccess(List<WizardIdentifier> wizards) {
+                        showWizardSelection(datastore, wizards);
+                    }
+                });
     }
 
     protected void showWizardSelection(final DatastoreIdentifier datastore, final List<WizardIdentifier> wizards) {
@@ -244,7 +246,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
     private void startWizard(WizardIdentifier wizard, DatastoreIdentifier datastore) {
         setLoading();
         setHeader("Build job: " + wizard.getDisplayName());
-        _service.startJobWizard(_tenant, wizard, datastore, createNextPageCallback());
+        _service.startJobWizard(_tenant, wizard, datastore, getLocaleName(), createNextPageCallback());
         return;
     }
 
@@ -272,7 +274,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
 
         if (jobName != null) {
             final String encodedJobName = URL.encodeQueryString(jobName);
-            
+
             final Anchor triggerAnchor = new Anchor("Run this job now");
             triggerAnchor.addStyleName("TriggerJob");
             triggerAnchor.addClickHandler(new ClickHandler() {
@@ -282,7 +284,7 @@ public class JobWizardPopupPanel extends AbstractWizardPopupPanel {
                     Urls.assign(url);
                 }
             });
-            
+
             final Anchor monitorAnchor = new Anchor("Monitor this job's metrics on the dashboard");
             monitorAnchor.addStyleName("MonitorJob");
             monitorAnchor.addClickHandler(new ClickHandler() {

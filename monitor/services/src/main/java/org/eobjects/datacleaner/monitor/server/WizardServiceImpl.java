@@ -22,8 +22,10 @@ package org.eobjects.datacleaner.monitor.server;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
@@ -61,7 +63,7 @@ public class WizardServiceImpl implements WizardService {
     WizardDao _wizardDao;
 
     @Override
-    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant) {
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale) {
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
         final Collection<JobWizard> jobWizards = _wizardDao.getWizardsOfType(JobWizard.class);
         for (JobWizard jobWizard : jobWizards) {
@@ -74,12 +76,13 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant) {
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant, String localeString) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(null, tenantContext, sessionFunc);
+        final Locale locale = getLocale(localeString);
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(null, tenantContext, sessionFunc, locale);
 
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
         for (DatastoreWizard datastoreWizard : _wizardDao.getWizardsOfType(DatastoreWizard.class)) {
@@ -93,14 +96,15 @@ public class WizardServiceImpl implements WizardService {
 
     @Override
     public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant,
-            DatastoreIdentifier datastoreIdentifier) {
+            DatastoreIdentifier datastoreIdentifier, String localeString) {
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
         final Datastore datastore = tenantContext.getConfiguration().getDatastoreCatalog()
                 .getDatastore(datastoreIdentifier.getName());
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
-        final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, sessionFunc);
+        final Locale locale = getLocale(localeString);
+        final JobWizardContext context = new JobWizardContextImpl(null, tenantContext, datastore, sessionFunc, locale);
 
         final List<WizardIdentifier> result = new ArrayList<WizardIdentifier>();
         for (JobWizard jobWizard : _wizardDao.getWizardsOfType(JobWizard.class)) {
@@ -130,23 +134,36 @@ public class WizardServiceImpl implements WizardService {
     }
 
     @Override
-    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier)
-            throws IllegalArgumentException {
+    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
+            String localeString) throws IllegalArgumentException {
         final DatastoreWizard wizard = instantiateDatastoreWizard(wizardIdentifier);
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
-        final DatastoreWizardContext context = new DatastoreWizardContextImpl(wizard, tenantContext, sessionFunc);
+        final Locale locale = getLocale(localeString);
+
+        final DatastoreWizardContext context = new DatastoreWizardContextImpl(wizard, tenantContext, sessionFunc,
+                locale);
 
         final WizardSession session = wizard.start(context);
 
         return startSession(session, wizardIdentifier);
     }
 
+    private Locale getLocale(String localeString) {
+        if (localeString == null) {
+            return Locale.ENGLISH;
+        }
+        if ("".equals(localeString) || "default".equals(localeString)) {
+            return Locale.ENGLISH;
+        }
+        return LocaleUtils.toLocale(localeString);
+    }
+
     @Override
     public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            DatastoreIdentifier selectedDatastore) throws IllegalArgumentException {
+            DatastoreIdentifier selectedDatastore, String localeString) throws IllegalArgumentException {
         final JobWizard wizard = instantiateJobWizard(wizardIdentifier);
 
         final TenantContext tenantContext = _tenantContextFactory.getContext(tenant);
@@ -160,7 +177,9 @@ public class WizardServiceImpl implements WizardService {
         }
 
         final Func<String, Object> sessionFunc = _wizardDao.createSessionFunc();
-        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, sessionFunc);
+        final Locale locale = getLocale(localeString);
+
+        final JobWizardContext context = new JobWizardContextImpl(wizard, tenantContext, datastore, sessionFunc, locale);
 
         final WizardSession session = wizard.start(context);
 

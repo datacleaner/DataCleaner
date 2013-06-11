@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -125,7 +126,7 @@ public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
     protected final void setSteps(int steps) {
         _progressBar.setSteps(steps);
     }
-    
+
     protected final void setSteps(int steps, boolean indicateMore) {
         _progressBar.setSteps(steps, indicateMore);
     }
@@ -175,5 +176,16 @@ public abstract class AbstractWizardPopupPanel extends DCPopupPanel {
                 super.onFailure(e);
             }
         };
+    }
+
+    /**
+     * Gets the locale name for inclusion in many of the service requests.
+     * 
+     * @return
+     */
+    protected String getLocaleName() {
+        LocaleInfo locale = LocaleInfo.getCurrentLocale();
+        String localeName = locale.getLocaleName();
+        return localeName;
     }
 }

@@ -48,7 +48,7 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
         super("Register datastore", service, tenant);
         addStyleName("DatastoreWizardPopupPanel");
 
-        service.getDatastoreWizardIdentifiers(tenant, new DCAsyncCallback<List<WizardIdentifier>>() {
+        service.getDatastoreWizardIdentifiers(tenant, getLocaleName(), new DCAsyncCallback<List<WizardIdentifier>>() {
             @Override
             public void onSuccess(List<WizardIdentifier> wizards) {
                 showWizardSelection(wizards);
@@ -93,7 +93,8 @@ public class DatastoreWizardPopupPanel extends AbstractWizardPopupPanel {
                     if (radio.getValue().booleanValue()) {
                         final WizardIdentifier wizard = wizards.get(i);
                         setLoading();
-                        _service.startDatastoreWizard(_tenant, wizard, createNextPageCallback());
+
+                        _service.startDatastoreWizard(_tenant, wizard, getLocaleName(), createNextPageCallback());
                         return;
                     }
                 }

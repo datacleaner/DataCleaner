@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.server;
 
+import java.util.Locale;
+
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.datacleaner.monitor.wizard.job.JobWizard;
@@ -34,13 +36,15 @@ public final class JobWizardContextImpl implements JobWizardContext {
     private final Datastore _sourceDatastore;
     private final Func<String, Object> _sessionFunc;
     private final JobWizard _jobWizard;
+    private final Locale _locale;
 
     public JobWizardContextImpl(JobWizard jobWizard, TenantContext tenantContext, Datastore sourceDatastore,
-            Func<String, Object> sessionFunc) {
+            Func<String, Object> sessionFunc, Locale locale) {
         _jobWizard = jobWizard;
         _tenantContext = tenantContext;
         _sourceDatastore = sourceDatastore;
         _sessionFunc = sessionFunc;
+        _locale = locale;
     }
 
     @Override
@@ -61,5 +65,10 @@ public final class JobWizardContextImpl implements JobWizardContext {
     @Override
     public Func<String, Object> getHttpSession() {
         return _sessionFunc;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return _locale;
     }
 }

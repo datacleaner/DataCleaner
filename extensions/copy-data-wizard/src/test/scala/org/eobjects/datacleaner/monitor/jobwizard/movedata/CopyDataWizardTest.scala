@@ -11,7 +11,7 @@ import org.junit.Assert._
 import org.junit.Test
 import org.scalatest.junit.AssertionsForJUnit
 
-class MoveDataWizardTest extends AssertionsForJUnit {
+class CopyDataWizardTest extends AssertionsForJUnit {
 
   @Test
   def testScenario(): Unit = {
@@ -25,7 +25,7 @@ class MoveDataWizardTest extends AssertionsForJUnit {
 
     val wizard = new CopyDataWizard();
 
-    val ctx = new JobWizardContextImpl(wizard, tenantContext, datastore, null);
+    val ctx = new JobWizardContextImpl(wizard, tenantContext, datastore, null, null);
 
     val session = new CopyDataWizard().start(ctx);
 

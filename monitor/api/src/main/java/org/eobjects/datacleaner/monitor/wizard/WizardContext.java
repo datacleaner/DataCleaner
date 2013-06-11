@@ -19,6 +19,8 @@
  */
 package org.eobjects.datacleaner.monitor.wizard;
 
+import java.util.Locale;
+
 import org.eobjects.datacleaner.monitor.configuration.TenantContext;
 import org.eobjects.metamodel.util.Func;
 
@@ -26,6 +28,13 @@ import org.eobjects.metamodel.util.Func;
  * Context object which is shared throughout the wizard session
  */
 public interface WizardContext {
+
+    /**
+     * Gets the locale of the client that is accessing this wizard.
+     * 
+     * @return
+     */
+    public Locale getLocale();
 
     /**
      * Gets the tenant context of the current wizard session

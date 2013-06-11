@@ -43,20 +43,20 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface WizardService extends RemoteService {
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant);
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale);
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
-    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore);
+    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore, String locale);
 
     @RolesAllowed(SecurityRoles.JOB_EDITOR)
     public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizard,
-            DatastoreIdentifier selectedDatastore) throws IllegalArgumentException;
+            DatastoreIdentifier selectedDatastore, String locale) throws IllegalArgumentException;
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant);
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant, String locale);
 
     @RolesAllowed(SecurityRoles.CONFIGURATION_EDITOR)
-    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard)
+    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale)
             throws IllegalArgumentException;
 
     @RolesAllowed({ SecurityRoles.JOB_EDITOR, SecurityRoles.CONFIGURATION_EDITOR })

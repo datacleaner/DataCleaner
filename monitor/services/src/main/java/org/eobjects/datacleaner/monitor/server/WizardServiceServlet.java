@@ -58,19 +58,19 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     }
     
     @Override
-    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant) {
-        return _delegate.getNonDatastoreConsumingJobWizardIdentifiers(tenant);
+    public List<WizardIdentifier> getNonDatastoreConsumingJobWizardIdentifiers(TenantIdentifier tenant, String locale) {
+        return _delegate.getNonDatastoreConsumingJobWizardIdentifiers(tenant, locale);
     }
 
     @Override
-    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore) {
-        return _delegate.getJobWizardIdentifiers(tenant, selectedDatastore);
+    public List<WizardIdentifier> getJobWizardIdentifiers(TenantIdentifier tenant, DatastoreIdentifier selectedDatastore, String locale) {
+        return _delegate.getJobWizardIdentifiers(tenant, selectedDatastore, locale);
     }
 
     @Override
     public WizardPage startJobWizard(TenantIdentifier tenant, WizardIdentifier wizardIdentifier,
-            DatastoreIdentifier selectedDatastore) {
-        return _delegate.startJobWizard(tenant, wizardIdentifier, selectedDatastore);
+            DatastoreIdentifier selectedDatastore, String locale) {
+        return _delegate.startJobWizard(tenant, wizardIdentifier, selectedDatastore, locale);
     }
 
     @Override
@@ -85,13 +85,13 @@ public class WizardServiceServlet extends SecureGwtServlet implements WizardServ
     }
 
     @Override
-    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant) {
-        return _delegate.getDatastoreWizardIdentifiers(tenant);
+    public List<WizardIdentifier> getDatastoreWizardIdentifiers(TenantIdentifier tenant, String locale) {
+        return _delegate.getDatastoreWizardIdentifiers(tenant, locale);
     }
 
     @Override
-    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard)
+    public WizardPage startDatastoreWizard(TenantIdentifier tenant, WizardIdentifier wizard, String locale)
             throws IllegalArgumentException {
-        return _delegate.startDatastoreWizard(tenant, wizard);
+        return _delegate.startDatastoreWizard(tenant, wizard, locale);
     }
 }

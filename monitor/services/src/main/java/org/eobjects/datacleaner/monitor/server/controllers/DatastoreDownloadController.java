@@ -22,6 +22,7 @@ package org.eobjects.datacleaner.monitor.server.controllers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.annotation.security.RolesAllowed;
@@ -31,9 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.eobjects.analyzer.configuration.AnalyzerBeansConfiguration;
 import org.eobjects.analyzer.connection.Datastore;
 import org.eobjects.analyzer.connection.FileDatastore;
+import org.eobjects.analyzer.connection.ResourceDatastore;
 import org.eobjects.datacleaner.monitor.configuration.TenantContextFactory;
 import org.eobjects.datacleaner.monitor.shared.model.SecurityRoles;
 import org.eobjects.metamodel.util.FileHelper;
+import org.eobjects.metamodel.util.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,33 +69,66 @@ public class DatastoreDownloadController {
             return;
         }
 
-        if (ds instanceof FileDatastore) {
+        InputStream is = getInputStream(ds, response);
+        if (is == null) {
+            return;
+        }
+
+        String filename = getFilename(ds);
+
+        try {
+            response.setHeader("Content-Disposition", "attachment; filename=" + filename);
+
+            final OutputStream os = response.getOutputStream();
+            FileHelper.copy(is, os);
+        } finally {
+            FileHelper.safeClose(is);
+        }
+    }
+
+    private String getFilename(Datastore ds) {
+        if (ds instanceof ResourceDatastore) {
+            final Resource resource = ((ResourceDatastore) ds).getResource();
+            return resource.getName();
+        } else if (ds instanceof FileDatastore) {
+            final String filename = ((FileDatastore) ds).getFilename();
+            return new File(filename).getName();
+        }
+        return ds.getName();
+    }
+
+    private InputStream getInputStream(Datastore ds, HttpServletResponse response) throws IOException {
+        if (ds instanceof ResourceDatastore) {
+            final Resource resource = ((ResourceDatastore) ds).getResource();
+
+            if (resource == null || !resource.isExists()) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Datastore resource not found: " + ds);
+                return null;
+            }
+
+            String username = getUsername();
+            logger.info("Serving datastore resource {} to user: {}", resource, username);
+
+            return resource.read();
+        } else if (ds instanceof FileDatastore) {
             final FileDatastore fileDatastore = (FileDatastore) ds;
             final String filename = fileDatastore.getFilename();
             final File file = new File(filename);
 
             if (!file.exists() || !file.isFile()) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Datastore file not found: " + filename);
-                return;
+                return null;
             }
 
             String username = getUsername();
 
             logger.info("Serving datastore file {} to user: {}", filename, username);
 
-            final FileInputStream is = new FileInputStream(file);
-            try {
-                response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
-
-                final OutputStream os = response.getOutputStream();
-                FileHelper.copy(is, os);
-            } finally {
-                FileHelper.safeClose(is);
-            }
-        } else {
-            response.sendError(HttpServletResponse.SC_NO_CONTENT, "Datastore is not file based: " + datastoreName);
-            return;
+            return new FileInputStream(file);
         }
+
+        response.sendError(HttpServletResponse.SC_NO_CONTENT, "Datastore is not file based: " + ds.getName());
+        return null;
     }
 
     private String getUsername() {
